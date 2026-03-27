@@ -398,6 +398,35 @@ describe('pivotMode=true', () => {
             expect(getColumnOrder(gridApi, 'center')).toEqual(initialExpected);
         });
 
+        test('changing pivotComparator via setColumnDefs has no effect when enableStrictPivotColumnOrder=false', () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { field: 'a', rowGroup: true },
+                { field: 'b', pivot: true, pivotComparator: (a, b) => -a.localeCompare(b) },
+                { field: 'c', aggFunc: 'sum' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+                pivotMode: true,
+                enableStrictPivotColumnOrder: false,
+            });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
+            // Initial order sorted by reverse comparator
+            const initialExpected = [...groupColIds, 'pivot_b_3_c', 'pivot_b_2_c', 'pivot_b_1_c'];
+            expect(getColumnOrder(gridApi, 'center')).toEqual(initialExpected);
+
+            // Switch to a forward (ascending) comparator — with strict mode off this should have no effect
+            gridApi.setGridOption('columnDefs', [
+                { field: 'a', rowGroup: true },
+                { field: 'b', pivot: true, pivotComparator: (a, b) => a.localeCompare(b) },
+                { field: 'c', aggFunc: 'sum' },
+            ]);
+
+            expect(getColumnOrder(gridApi, 'center')).toEqual(initialExpected);
+        });
+
         test('stale closure pivotComparator is detected and re-sorts columns with enableStrictPivotColumnOrder=true', () => {
             let direction = 1;
             const comparator = (a: string, b: string) => direction * a.localeCompare(b);
@@ -570,6 +599,84 @@ describe('pivotMode=true', () => {
 
                 const reorderedExpected = [...groupColIds, 'pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c', 'pivot_b_0_c'];
                 expect(getColumnOrder(gridApi, 'center')).toEqual(reorderedExpected);
+            });
+
+            test('multiple new pivot result columns introduced by a transaction are appended at the end ordered by pivotComparator', () => {
+                // New columns are appended after all existing columns, but are ordered among themselves
+                // by the pivotComparator.
+                const columnDefs: (ColDef | ColGroupDef)[] = [
+                    { field: 'a', rowGroup: true },
+                    // Reverse comparator: initial order is 3, 2, 1
+                    { field: 'b', pivot: true, pivotComparator: (a, b) => -a.localeCompare(b) },
+                    { field: 'c', aggFunc: 'sum' },
+                ];
+
+                const gridApi = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    rowData,
+                    pivotMode: true,
+                    enableStrictPivotColumnOrder: false,
+                });
+
+                const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
+
+                // Add two new pivot values simultaneously — '4' and '5', added in ascending order
+                applyTransactionChecked(gridApi, {
+                    add: [
+                        { a: '1', b: '5', c: 3 },
+                        { a: '1', b: '4', c: 3 },
+                    ],
+                });
+
+                // Existing columns [3, 2, 1] keep their positions; new columns [5, 4] are appended
+                // at the end, ordered among themselves by the reverse comparator (5 before 4)
+                expect(getColumnOrder(gridApi, 'center')).toEqual([
+                    ...groupColIds,
+                    'pivot_b_3_c',
+                    'pivot_b_2_c',
+                    'pivot_b_1_c',
+                    'pivot_b_5_c',
+                    'pivot_b_4_c',
+                ]);
+            });
+
+            test('new pivot result column introduced by a transaction is appended at the end even with a pivotComparator', () => {
+                // With enableStrictPivotColumnOrder=false, new columns are always appended at the end of their
+                // parent group to preserve any order changes the user may have made — the pivotComparator does
+                // not control placement of new columns.
+                const columnDefs: (ColDef | ColGroupDef)[] = [
+                    { field: 'a', rowGroup: true },
+                    // Reverse comparator: initial order is 3, 2, 1
+                    { field: 'b', pivot: true, pivotComparator: (a, b) => -a.localeCompare(b) },
+                    { field: 'c', aggFunc: 'sum' },
+                ];
+
+                const gridApi = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    rowData,
+                    pivotMode: true,
+                    enableStrictPivotColumnOrder: false,
+                });
+
+                const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
+                expect(getColumnOrder(gridApi, 'center')).toEqual([
+                    ...groupColIds,
+                    'pivot_b_3_c',
+                    'pivot_b_2_c',
+                    'pivot_b_1_c',
+                ]);
+
+                // Add '4' — the reverse comparator would place it before '3', but with
+                // enableStrictPivotColumnOrder=false it is appended at the end instead
+                applyTransactionChecked(gridApi, { add: [{ a: '1', b: '4', c: 3 }] });
+
+                expect(getColumnOrder(gridApi, 'center')).toEqual([
+                    ...groupColIds,
+                    'pivot_b_3_c',
+                    'pivot_b_2_c',
+                    'pivot_b_1_c',
+                    'pivot_b_4_c',
+                ]);
             });
         });
 

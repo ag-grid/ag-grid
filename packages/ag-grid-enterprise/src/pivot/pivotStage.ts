@@ -120,10 +120,10 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         this.groupColumnsHashLastTime = groupColumnsHash;
 
         const pivotColumns = pivotColsSvc?.columns ?? [];
-        const anyComparators =
+        const shouldTrackPivotOrder =
             gos.get('enableStrictPivotColumnOrder') && pivotColumns.some((col) => col.getColDef().pivotComparator);
-        const pivotOrder = anyComparators ? computePivotOrder(this.uniqueValues, pivotColumns, 0) : [];
-        const pivotComparatorsChanged = !_areEqual(pivotOrder, this.pivotOrderLastTime);
+        const pivotOrder = shouldTrackPivotOrder ? computePivotOrder(this.uniqueValues, pivotColumns, 0) : [];
+        const pivotOrderChanged = !_areEqual(pivotOrder, this.pivotOrderLastTime);
         this.pivotOrderLastTime = pivotOrder;
 
         const anyGridOptionsChanged = this.refreshProps.some((p) => changedProps?.has(p));
@@ -134,7 +134,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
             aggregationColumnsChanged ||
             groupColumnsChanged ||
             aggregationFuncsChanged ||
-            pivotComparatorsChanged ||
+            pivotOrderChanged ||
             anyGridOptionsChanged
         ) {
             const pivotColumnGroupDefs = this.pivotColDefSvc.createPivotColumnDefs(this.uniqueValues);

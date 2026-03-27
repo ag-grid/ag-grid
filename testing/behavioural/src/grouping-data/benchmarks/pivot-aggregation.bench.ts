@@ -106,6 +106,92 @@ function buildPivotColumnDefs(): ColDef[] {
     return defs;
 }
 
+function buildPivotColumnDefsWithComparator(): ColDef[] {
+    const defs: ColDef[] = [
+        { field: 'group1', rowGroup: true, hide: true },
+        { field: 'group2', rowGroup: true, hide: true },
+        { field: 'year', pivot: true, hide: true, pivotComparator: (a, b) => a.localeCompare(b) },
+    ];
+    for (let v = 0; v < VALUE_COL_COUNT; ++v) {
+        defs.push({ field: `v${v}`, aggFunc: 'sum', hide: true });
+    }
+    return defs;
+}
+
+// ── High-cardinality pivot data ───────────────────────────────────────────────
+// 333 unique pivot values × 3 value columns = 999 result cols — near a 1000-col limit.
+// Exercises computePivotOrder with 333 keys per pipeline run (worst-case overhead).
+
+const HIGH_CARDINALITY_PIVOT_VALUES = 333;
+
+interface HighCardinalityRow {
+    id: string;
+    group1: string;
+    pivot: string;
+    [key: string]: string | number;
+}
+
+function buildHighCardinalityData(count: number, prng = new SimplePRNG(0xe7f8a9b0)): HighCardinalityRow[] {
+    const g1 = ['Dept A', 'Dept B', 'Dept C', 'Dept D', 'Dept E'];
+    const pivotValues = Array.from(
+        { length: HIGH_CARDINALITY_PIVOT_VALUES },
+        (_, i) => `pv${String(i).padStart(3, '0')}`
+    );
+    const rows: HighCardinalityRow[] = [];
+    for (let i = 0; i < count; ++i) {
+        const row: HighCardinalityRow = {
+            id: `h${i}`,
+            group1: prng.pick(g1)!,
+            pivot: prng.pick(pivotValues)!,
+        };
+        for (let v = 0; v < VALUE_COL_COUNT; ++v) {
+            row[`v${v}`] = prng.nextFloat(1, 1000);
+        }
+        rows.push(row);
+    }
+    return rows;
+}
+
+function buildHighCardinalityEdits(rows: HighCardinalityRow[], prng = new SimplePRNG(0xf8a9b0c1)) {
+    const forward: HighCardinalityRow[] = [];
+    const reverse: HighCardinalityRow[] = [];
+    const changeCount = Math.floor(rows.length * UPDATE_FRACTION);
+    const indices = new Set<number>();
+    while (indices.size < changeCount) {
+        indices.add(prng.nextInt(0, rows.length - 1));
+    }
+    for (const idx of indices) {
+        const original = rows[idx];
+        const modified = { ...original };
+        for (let v = 0; v < VALUE_COL_COUNT; ++v) {
+            modified[`v${v}`] = (modified[`v${v}`] as number) * prng.nextFloat(0.5, 1.5);
+        }
+        forward.push(modified);
+        reverse.push(original);
+    }
+    return { forward, reverse };
+}
+
+function buildHighCardinalityColumnDefs(withComparator: boolean): ColDef[] {
+    const defs: ColDef[] = [
+        { field: 'group1', rowGroup: true, hide: true },
+        {
+            field: 'pivot',
+            pivot: true,
+            hide: true,
+            ...(withComparator ? { pivotComparator: (a: string, b: string) => a.localeCompare(b) } : {}),
+        },
+    ];
+    for (let v = 0; v < VALUE_COL_COUNT; ++v) {
+        defs.push({ field: `v${v}`, aggFunc: 'sum', hide: true });
+    }
+    return defs;
+}
+
+const highCardinalityData = buildHighCardinalityData(ROW_COUNT);
+const highCardinalityEdits = buildHighCardinalityEdits(highCardinalityData);
+const highCardinalityResultCols = HIGH_CARDINALITY_PIVOT_VALUES * VALUE_COL_COUNT;
+
 // ── Pre-built data ───────────────────────────────────────────────────────────
 
 const dataA = buildPivotData(ROW_COUNT);
@@ -181,3 +267,115 @@ suite(desc, () => {
         dataA
     );
 });
+
+// ── pivotComparator overhead ─────────────────────────────────────────────────
+// Measures the cost of computePivotOrder running on every pipeline execution
+// when enableStrictPivotColumnOrder=true and a pivotComparator is present.
+// Compare transaction update timings against the baseline suite above.
+
+const gridOptionsWithComparator: GridOptions = {
+    columnDefs: buildPivotColumnDefsWithComparator(),
+    pivotMode: true,
+    autoGroupColumnDef: { headerName: 'Group' },
+    groupDefaultExpanded: -1,
+    suppressAggFuncInHeader: true,
+    enableStrictPivotColumnOrder: true,
+    getRowId: ({ data }: { data: { id: string } }) => data.id,
+};
+
+const descComparator = `pivot aggregation with pivotComparator — ${ROW_COUNT} rows, ${resultCols} result cols, ${updateCount} updated rows`;
+
+suite(descComparator, () => {
+    let gridId = 0;
+
+    const benchMode = (name: string, fn: (api: GridApi) => void, initialData: PivotRow[]) => {
+        const id = `PC${++gridId}`;
+        const gridsManager = new TestGridsManager({ benchmark: true, modules });
+        let api!: GridApi;
+
+        bench(name, () => fn(api), {
+            throws: true,
+            setup: () => {
+                gridsManager.reset();
+                api = gridsManager.createGrid(id, { ...gridOptionsWithComparator, rowData: initialData });
+            },
+        });
+    };
+
+    // Full refresh: cold path — pivot col defs rebuilt regardless, comparator overhead is minimal
+    benchMode(
+        'full refresh',
+        (api) => {
+            api.setGridOption('rowData', []);
+            api.setGridOption('rowData', dataA);
+        },
+        []
+    );
+
+    // Immutable update: computePivotOrder runs on each iteration to detect comparator output changes
+    benchMode(
+        `immutable update (${updateCount} rows)`,
+        (api) => {
+            api.setGridOption('rowData', immutableB);
+            api.setGridOption('rowData', immutableA);
+        },
+        immutableA
+    );
+
+    // Transaction update: hot path — computePivotOrder traverses uniqueValues on every transaction
+    benchMode(
+        `transaction update (${updateCount} rows)`,
+        (api) => {
+            api.applyTransaction({ update: edits.forward });
+            api.applyTransaction({ update: edits.reverse });
+        },
+        dataA
+    );
+});
+
+// ── High-cardinality pivot: baseline vs pivotComparator ───────────────────────
+// 333 unique pivot values × 3 value cols = 999 result cols (near a 1000-col limit).
+// Transactions only update value columns, so unique pivot values never change —
+// computePivotOrder runs on every iteration but never triggers a rebuild.
+// This isolates the detection overhead at scale.
+
+for (const withComparator of [false, true] as const) {
+    const hcOptions: GridOptions = {
+        columnDefs: buildHighCardinalityColumnDefs(withComparator),
+        pivotMode: true,
+        autoGroupColumnDef: { headerName: 'Group' },
+        groupDefaultExpanded: -1,
+        suppressAggFuncInHeader: true,
+        enableStrictPivotColumnOrder: true,
+        pivotMaxGeneratedColumns: 1000,
+        getRowId: ({ data }: { data: { id: string } }) => data.id,
+    };
+
+    const label = withComparator ? 'with pivotComparator' : 'no comparator (baseline)';
+    const hcDesc = `high-cardinality pivot ${label} — ${ROW_COUNT} rows, ${highCardinalityResultCols} result cols, ${updateCount} updated rows`;
+
+    suite(hcDesc, () => {
+        let gridId = 0;
+        const benchMode = (name: string, fn: (api: GridApi) => void, initialData: HighCardinalityRow[]) => {
+            const id = `HC${withComparator ? 'C' : 'B'}${++gridId}`;
+            const gridsManager = new TestGridsManager({ benchmark: true, modules });
+            let api!: GridApi;
+            bench(name, () => fn(api), {
+                throws: true,
+                setup: () => {
+                    gridsManager.reset();
+                    api = gridsManager.createGrid(id, { ...hcOptions, rowData: initialData });
+                },
+            });
+        };
+
+        benchMode(
+            `transaction update (${updateCount} rows)`,
+            (api) => {
+                api.applyTransaction({ update: highCardinalityEdits.forward });
+                api.applyTransaction({ update: highCardinalityEdits.reverse });
+            },
+            highCardinalityData
+        );
+    });
+}
