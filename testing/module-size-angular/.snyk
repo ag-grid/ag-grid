@@ -241,17 +241,6 @@ ignore:
                   Test dependency - not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-02T10:15:01.244Z
-    SNYK-JS-WEBPACKDEVSERVER-10300775:
-        - ag-grid-angular > @angular-devkit/build-angular@19.0.7 > webpack-dev-server@5.1.0:
-              reason: Only used for calculating module size and is dev only
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2025-06-06T14:47:25.226Z
-    SNYK-JS-VITE-9653016:
-        - '@angular-devkit/build-angular@19.0.7 > @angular/build@19.0.7 > vite@5.4.11':
-              reason: Only used for calculating module size and is dev only
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2025-06-06T14:47:25.226Z
-
     SNYK-JS-GLOB-14040952:
         - '@angular/cli@19.2.19 > pacote@20.0.0 > @npmcli/package-json@6.2.0 > glob@10.4.5':
               reason: Glob is only used for development and we control what files are passed in
@@ -359,15 +348,7 @@ ignore:
               reason: angular/downstream dependency
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-23T00:00:00.000Z
-        - '@angular/cli@18.2.21 > pacote@18.0.6 > @npmcli/run-script@8.1.0 > node-gyp@10.2.0 > make-fetch-happen@13.0.1 > cacache@18.0.3 > glob@10.3.14 > minimatch@9.0.3':
-              reason: angular/downstream dependency
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-23T00:00:00.000Z
         - '@angular/cli@19.2.19 > pacote@20.0.0 > npm-packlist@9.0.0 > ignore-walk@7.0.0 > minimatch@9.0.5':
-              reason: angular/downstream dependency
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-23T00:00:00.000Z
-        - '@angular/cli@18.2.21 > pacote@18.0.6 > @npmcli/run-script@8.1.0 > node-gyp@10.2.0 > glob@10.4.5 > minimatch@9.0.4':
               reason: angular/downstream dependency
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-23T00:00:00.000Z
@@ -375,19 +356,7 @@ ignore:
               reason: angular/downstream dependency
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-23T00:00:00.000Z
-        - 'ng-packagr@18.2.1 > cacache@18.0.3 > glob@10.3.14 > minimatch@9.0.3':
-              reason: angular/downstream dependency
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-23T00:00:00.000Z
         - 'karma-coverage@2.2.1 > minimatch@3.1.2':
-              reason: angular/downstream dependency
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-23T00:00:00.000Z
-        - 'karma@6.4.2 > minimatch@3.1.2':
-              reason: angular/downstream dependency
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-23T00:00:00.000Z
-        - 'karma@6.4.2 > glob@7.2.3 > minimatch@3.1.2':
               reason: angular/downstream dependency
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-23T00:00:00.000Z
@@ -401,10 +370,6 @@ ignore:
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-23T00:00:00.000Z
         - '@angular/cli@19.2.19 > pacote@20.0.0 > @npmcli/run-script@9.1.0 > node-gyp@11.5.0 > tar@7.5.2':
-              reason: angular/downstream dependency
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-23T00:00:00.000Z
-        - 'ng-packagr@18.2.1 > cacache@18.0.3 > tar@6.2.0':
               reason: angular/downstream dependency
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-23T00:00:00.000Z

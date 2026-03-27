@@ -784,35 +784,6 @@ ignore:
                   Used in build & dev - not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-23T10:10:48.076Z
-    SNYK-JS-UNDICI-15518070:
-        - rulesync@7.0.0 > fastmcp@3.31.0 > undici@6.21.3:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-16T10:18:19.780Z
-    SNYK-JS-UNDICI-15518068:
-        - rulesync@7.0.0 > fastmcp@3.31.0 > undici@6.21.3:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-16T10:18:17.019Z
-    SNYK-JS-UNDICI-15518064:
-        - rulesync@7.0.0 > fastmcp@3.31.0 > undici@6.21.3:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-16T10:18:13.556Z
-    SNYK-JS-FLATTED-15518041:
-        - stylelint@16.25.0 > file-entry-cache@10.1.4 > flat-cache@6.1.18 > flatted@3.3.3:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-16T10:07:31.450Z
-        - eslint@9.39.1 > file-entry-cache@8.0.0 > flat-cache@4.0.1 > flatted@3.3.3:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-16T10:07:27.919Z
     SNYK-JS-FILETYPE-15609896:
         - rulesync@7.0.0 > fastmcp@3.31.0 > file-type@21.3.0:
               reason: >-
@@ -1790,19 +1761,6 @@ ignore:
                   machines
               expires: 2026-06-08T00:00:00.000Z
               created: 2025-06-20T15:49:18.099Z
-    SNYK-JS-VITE-9653016:
-        - vitest@2.1.9 > vite@5.4.11:
-              reason: >-
-                  Vitest is only used for development and we do not expose
-                  the dev server to the network
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2025-06-25T14:14:23.307Z
-        - vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.11:
-              reason: >-
-                  Vitest is only used for development and we do not expose
-                  the dev server to the network
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2025-06-25T14:14:23.307Z
     SNYK-JS-CROSSSPAWN-8303230:
         - '@swc/cli@0.3.14 > @mole-inc/bin-wrapper@8.0.1 > bin-check@4.1.0 > execa@0.7.0 > cross-spawn@5.1.0':
               reason: >-
@@ -1810,18 +1768,6 @@ ignore:
                   developer machines
               expires: 2026-06-08T00:00:00.000Z
               created: 2025-06-25T15:10:07.411Z
-    SNYK-JS-ESLINTPLUGINKIT-8340627:
-        - eslint@9.14.0 > @eslint/plugin-kit@0.2.5:
-              reason: >-
-                  Only used for testing packages, so ReDos attack would only affect developer machines and CI
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2025-07-22T10:35:00.007Z
-    SNYK-JS-ESLINTPLUGINKIT-10847878:
-        - eslint@9.18.0 > @eslint/plugin-kit@0.2.5:
-              reason: >-
-                  Only used for testing packages, so ReDos attack would only affect developer machines and CI
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2025-07-22T10:35:00.007Z
     SNYK-JS-FORMDATA-10841150:
         - request@2.88.2 > form-data@2.3.3:
               reason: >-
@@ -1850,13 +1796,6 @@ ignore:
         - '@nx/react@20.3.1 > @nx/module-federation@20.3.1 > express@4.21.2 > body-parser@1.20.3 > qs@6.13.0':
               reason: >-
                   qs is only used during development so an attack would only affect
-                  developer machines
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2025-01-05T10:10:00.000Z
-    SNYK-JS-MODELCONTEXTPROTOCOLSDK-14871802:
-        - 'rulesync@5.2.0 > @modelcontextprotocol/sdk@1.25.1':
-              reason: >-
-                  rulesync is only used during development so an attack would only affect
                   developer machines
               expires: 2026-06-08T00:00:00.000Z
               created: 2025-01-05T10:10:00.000Z
@@ -1958,22 +1897,7 @@ ignore:
                   Used in linting - not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-02T10:53:07.358Z
-        - '@kazuph/mcp-fetch@1.5.0 > @modelcontextprotocol/sdk@1.26.0 > ajv@8.17.1':
-              reason: >-
-                  used by mcp so not a directly exposed dependency and only used during development
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-23T00:00:00.000Z
-        - '@modelcontextprotocol/server-puppeteer@2025.5.12 > @modelcontextprotocol/sdk@1.26.0 > ajv@8.17.1':
-              reason: >-
-                  used by mcp so not a directly exposed dependency and only used during development
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-23T00:00:00.000Z
         - '@modelcontextprotocol/server-sequential-thinking@2025.12.18 > @modelcontextprotocol/sdk@1.26.0 > ajv@8.17.1':
-              reason: >-
-                  used by mcp so not a directly exposed dependency and only used during development
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-23T00:00:00.000Z
-        - '@upstash/context7-mcp@1.0.14 > @modelcontextprotocol/sdk@1.26.0 > ajv@8.17.1':
               reason: >-
                   used by mcp so not a directly exposed dependency and only used during development
               expires: 2026-06-08T00:00:00.000Z
@@ -1983,22 +1907,7 @@ ignore:
                   used by mcp so not a directly exposed dependency and only used during development
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-23T00:00:00.000Z
-        - '@kazuph/mcp-fetch@1.5.0 > @modelcontextprotocol/sdk@1.26.0 > ajv-formats@3.0.1 > ajv@8.12.0':
-              reason: >-
-                  used by mcp so not a directly exposed dependency and only used during development
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-23T00:00:00.000Z
-        - '@modelcontextprotocol/server-puppeteer@2025.5.12 > @modelcontextprotocol/sdk@1.26.0 > ajv-formats@3.0.1 > ajv@8.12.0':
-              reason: >-
-                  used by mcp so not a directly exposed dependency and only used during development
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-23T00:00:00.000Z
         - '@modelcontextprotocol/server-sequential-thinking@2025.12.18 > @modelcontextprotocol/sdk@1.26.0 > ajv-formats@3.0.1 > ajv@8.17.1':
-              reason: >-
-                  used by mcp so not a directly exposed dependency and only used during development
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-23T00:00:00.000Z
-        - '@upstash/context7-mcp@1.0.14 > @modelcontextprotocol/sdk@1.26.0 > ajv-formats@3.0.1 > ajv@8.12.0':
               reason: >-
                   used by mcp so not a directly exposed dependency and only used during development
               expires: 2026-06-08T00:00:00.000Z
@@ -2368,23 +2277,7 @@ ignore:
               reason: test/lint library - not in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-24T00:00:00.000Z
-        - 'jest-image-snapshot@6.4.0 > rimraf@2.7.1 > glob@7.2.3 > minimatch@3.1.2':
-              reason: test/lint library - not in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/jest@20.3.1 > @nx/devkit@20.3.1 > ejs@3.1.9 > jake@10.8.7 > minimatch@3.1.2':
-              reason: test/lint library - not in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
         - 'jest-runner@29.7.0 > @jest/transform@29.7.0 > babel-plugin-istanbul@6.1.1 > test-exclude@6.0.0 > minimatch@3.1.2':
-              reason: test/lint library - not in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/jest@20.3.1 > @nx/js@20.3.1 > @nx/devkit@20.3.1 > ejs@3.1.9 > jake@10.8.7 > minimatch@3.1.2':
-              reason: test/lint library - not in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/jest@20.3.1 > @nx/devkit@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
               reason: test/lint library - not in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-24T00:00:00.000Z
@@ -2393,14 +2286,6 @@ ignore:
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-24T00:00:00.000Z
         - '@nx/jest@20.3.1 > @jest/reporters@29.7.0 > @jest/transform@29.7.0 > babel-plugin-istanbul@6.1.1 > test-exclude@6.0.0 > minimatch@3.1.2':
-              reason: test/lint library - not in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/jest@20.3.1 > @nx/js@20.3.1 > @nx/workspace@20.3.1 > @nx/devkit@20.3.1 > ejs@3.1.9 > jake@10.8.7 > minimatch@3.1.2':
-              reason: test/lint library - not in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/jest@20.3.1 > @nx/js@20.3.1 > @nx/devkit@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
               reason: test/lint library - not in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-24T00:00:00.000Z
@@ -2413,14 +2298,6 @@ ignore:
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-24T00:00:00.000Z
         - '@nx/jest@20.3.1 > jest-config@29.7.0 > jest-runner@29.7.0 > @jest/transform@29.7.0 > babel-plugin-istanbul@6.1.1 > test-exclude@6.0.0 > minimatch@3.1.2':
-              reason: test/lint library - not in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/jest@20.3.1 > @nx/js@20.3.1 > @nx/workspace@20.3.1 > @nx/devkit@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: test/lint library - not in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/jest@20.3.1 > @nx/js@20.3.1 > @nx/workspace@20.3.1 > nx@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
               reason: test/lint library - not in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-24T00:00:00.000Z
@@ -2469,10 +2346,6 @@ ignore:
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-24T00:00:00.000Z
         - 'typescript-eslint@7.18.0 > @typescript-eslint/eslint-plugin@7.18.0 > @typescript-eslint/type-utils@7.18.0 > @typescript-eslint/typescript-estree@7.18.0 > minimatch@9.0.5':
-              reason: test/lint library - not in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - 'madge@8.0.0 > dependency-tree@11.0.1 > precinct@12.1.2 > detective-typescript@13.0.0 > @typescript-eslint/typescript-estree@7.18.0 > minimatch@9.0.4':
               reason: test/lint library - not in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-24T00:00:00.000Z
@@ -2560,98 +2433,6 @@ ignore:
               reason: Used in build & dev but not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-24T00:00:00.000Z
-        - 'jscodeshift@0.16.1 > node-dir@0.1.17 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/devkit@20.3.1 > ejs@3.1.9 > jake@10.8.7 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - 'patch-package@8.0.0 > rimraf@2.7.1 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/esbuild@20.3.1 > @nx/devkit@20.3.1 > ejs@3.1.9 > jake@10.8.7 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/js@20.3.1 > @nx/devkit@20.3.1 > ejs@3.1.9 > jake@10.8.7 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/workspace@20.3.1 > @nx/devkit@20.3.1 > ejs@3.1.9 > jake@10.8.7 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/devkit@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - 'nx@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - 'react-query@3.39.3 > broadcast-channel@3.7.0 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - 'jscodeshift@0.16.1 > temp@0.9.4 > rimraf@2.6.3 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/esbuild@20.3.1 > @nx/js@20.3.1 > @nx/devkit@20.3.1 > ejs@3.1.9 > jake@10.8.7 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/js@20.3.1 > @nx/workspace@20.3.1 > @nx/devkit@20.3.1 > ejs@3.1.9 > jake@10.8.7 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/esbuild@20.3.1 > @nx/js@20.3.1 > @nx/workspace@20.3.1 > @nx/devkit@20.3.1 > ejs@3.1.9 > jake@10.8.7 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/esbuild@20.3.1 > @nx/devkit@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/js@20.3.1 > @nx/devkit@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/workspace@20.3.1 > @nx/devkit@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/workspace@20.3.1 > nx@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - 'madge@8.0.0 > dependency-tree@11.0.1 > filing-cabinet@5.0.2 > module-lookup-amd@9.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/esbuild@20.3.1 > @nx/js@20.3.1 > @nx/devkit@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/js@20.3.1 > @nx/workspace@20.3.1 > @nx/devkit@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/js@20.3.1 > @nx/workspace@20.3.1 > nx@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/esbuild@20.3.1 > @nx/js@20.3.1 > @nx/workspace@20.3.1 > @nx/devkit@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/esbuild@20.3.1 > @nx/js@20.3.1 > @nx/workspace@20.3.1 > nx@20.3.1 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
         - '@nx/devkit@20.3.1 > minimatch@9.0.3':
               reason: Used in build & dev but not included in final production build
               expires: 2026-06-08T00:00:00.000Z
@@ -2712,35 +2493,11 @@ ignore:
               reason: Used in build & dev but not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-24T00:00:00.000Z
-        - '@vitest/coverage-v8@2.1.9 > test-exclude@7.0.1 > minimatch@9.0.4':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@vitest/coverage-v8@2.1.9 > test-exclude@7.0.1 > glob@10.4.5 > minimatch@9.0.4':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
         - 'glob@11.1.0 > minimatch@10.1.1':
               reason: Used in build & dev but not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-24T00:00:00.000Z
         - 'glob@8.0.3 > minimatch@5.1.6':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/devkit@18.3.4 > ejs@3.1.9 > jake@10.8.7 > filelist@1.0.4 > minimatch@5.1.6':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/devkit@18.3.4 > ejs@3.1.9 > jake@10.8.7 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - '@nx/devkit@18.3.4 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
-              reason: Used in build & dev but not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-02-24T00:00:00.000Z
-        - 'del@6.1.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
               reason: Used in build & dev but not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-02-24T00:00:00.000Z

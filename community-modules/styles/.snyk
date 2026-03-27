@@ -96,12 +96,6 @@ ignore:
                   not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-16T10:07:55.749Z
-    SNYK-JS-FLATTED-15518041:
-        - stylelint@14.9.1 > file-entry-cache@6.0.1 > flat-cache@3.2.0 > flatted@3.3.3:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-16T10:07:31.454Z
     SNYK-JS-UNDERSCORE-15369786:
         - '@vusion/webfonts-generator@0.8.0 > underscore@1.13.7':
               reason: >-
