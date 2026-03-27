@@ -49,16 +49,14 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
     private groupColumnsHashLastTime: string | null;
 
-    private gridOptionsHashLastTime: string = '';
-
     private lastTimeFailed = false;
 
     private maxUniqueValues: number = -1;
 
     /** Returns `true` if the changedPath should be deactivated (e.g. pivot columns changed). */
-    public execute(changedPath: ChangedPath | undefined): boolean {
+    public execute(changedPath: ChangedPath | undefined, changedProps: Set<keyof GridOptions> | undefined): boolean {
         if (this.beans.colModel.isPivotActive()) {
-            return this.executePivotOn(changedPath);
+            return this.executePivotOn(changedPath, changedProps);
         } else {
             return this.executePivotOff();
         }
@@ -75,7 +73,10 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         return false;
     }
 
-    private executePivotOn(changedPath: ChangedPath | undefined): boolean {
+    private executePivotOn(
+        changedPath: ChangedPath | undefined,
+        changedProps: Set<keyof GridOptions> | undefined
+    ): boolean {
         const { valueColsSvc, gos, rowGroupColsSvc, pivotColsSvc } = this.beans;
         const numberOfAggregationColumns = valueColsSvc?.columns.length ?? 1;
 
@@ -125,18 +126,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         const pivotComparatorsChanged = !_areEqual(pivotOrder, this.pivotOrderLastTime);
         this.pivotOrderLastTime = pivotOrder;
 
-        const gridOptionsHash =
-            gos.get('pivotRowTotals') +
-            '-' +
-            gos.get('pivotColumnGroupTotals') +
-            '-' +
-            gos.get('suppressExpandablePivotGroups') +
-            '-' +
-            gos.get('removePivotHeaderRowWhenSingleValueColumn') +
-            '-' +
-            gos.get('enableStrictPivotColumnOrder');
-        const anyGridOptionsChanged = gridOptionsHash !== this.gridOptionsHashLastTime;
-        this.gridOptionsHashLastTime = gridOptionsHash;
+        const anyGridOptionsChanged = this.refreshProps.some((p) => changedProps?.has(p));
 
         if (
             this.lastTimeFailed ||
@@ -285,5 +275,12 @@ function computePivotOrder(values: Map<string, any>, pivotColumns: AgColumn[], d
     if (depth === pivotColumns.length - 1) {
         return keys;
     }
-    return keys.flatMap((key) => [key, ...computePivotOrder(values.get(key), pivotColumns, depth + 1)]);
+    return keys.flatMap((key) => {
+        const child = values.get(key);
+        // child is a nested Map at non-leaf levels; if absent (sparse map), skip its subtree.
+        if (!(child instanceof Map)) {
+            return [key];
+        }
+        return [key, ...computePivotOrder(child, pivotColumns, depth + 1)];
+    });
 }
