@@ -3,13 +3,10 @@ import type {
     BeanCollection,
     ChangedPath,
     ClientSideRowModelStage,
-    ColumnModel,
     GridOptions,
-    IColsService,
     IPivotResultColsService,
     NamedBean,
     RowNode,
-    ValueService,
     _IRowNodePivotStage,
 } from 'ag-grid-community';
 import { BeanStub, _forEachChangedGroupDepthFirst, _jsonEquals, _missing } from 'ag-grid-community';
@@ -28,7 +25,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
     beanName = 'pivotStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'pivot';
-    public readonly refreshProps: (keyof GridOptions<any>)[] = [
+    public readonly refreshProps: (keyof GridOptions)[] = [
         'removePivotHeaderRowWhenSingleValueColumn',
         'pivotRowTotals',
         'pivotColumnGroupTotals',
@@ -36,21 +33,11 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         'enableStrictPivotColumnOrder',
     ];
 
-    private valueSvc: ValueService;
-    private colModel: ColumnModel;
     private pivotResultCols: IPivotResultColsService;
-    private rowGroupColsSvc?: IColsService;
-    private valueColsSvc?: IColsService;
-    private pivotColsSvc?: IColsService;
     private pivotColDefSvc: PivotColDefService;
 
     public wireBeans(beans: BeanCollection) {
-        this.valueSvc = beans.valueSvc;
-        this.colModel = beans.colModel;
         this.pivotResultCols = beans.pivotResultCols!;
-        this.rowGroupColsSvc = beans.rowGroupColsSvc;
-        this.valueColsSvc = beans.valueColsSvc;
-        this.pivotColsSvc = beans.pivotColsSvc;
         this.pivotColDefSvc = beans.pivotColDefSvc as PivotColDefService;
     }
 
@@ -58,15 +45,11 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
     private aggregationColumnsHashLastTime: string | null;
     private aggregationFuncsHashLastTime: string;
-    private enableStrictPivotColumnOrderLastTime: GridOptions['enableStrictPivotColumnOrder'];
     private pivotComparatorsHashLastTime: string = '';
 
     private groupColumnsHashLastTime: string | null;
 
-    private pivotRowTotalsLastTime: GridOptions['pivotRowTotals'];
-    private pivotColumnGroupTotalsLastTime: GridOptions['pivotColumnGroupTotals'];
-    private suppressExpandablePivotGroupsLastTime: GridOptions['suppressExpandablePivotGroups'];
-    private removePivotHeaderRowWhenSingleValueColumnLastTime: GridOptions['removePivotHeaderRowWhenSingleValueColumn'];
+    private gridOptionsHashLastTime: string = '';
 
     private lastTimeFailed = false;
 
@@ -74,7 +57,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
     /** Returns `true` if the changedPath should be deactivated (e.g. pivot columns changed). */
     public execute(changedPath: ChangedPath | undefined): boolean {
-        if (this.colModel.isPivotActive()) {
+        if (this.beans.colModel.isPivotActive()) {
             return this.executePivotOn(changedPath);
         } else {
             return this.executePivotOff();
@@ -93,7 +76,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
     }
 
     private executePivotOn(changedPath: ChangedPath | undefined): boolean {
-        const { valueColsSvc, gos } = this;
+        const { valueColsSvc, gos, rowGroupColsSvc, pivotColsSvc } = this.beans;
         const numberOfAggregationColumns = valueColsSvc?.columns.length ?? 1;
 
         // As unique values creates one column per aggregation column, divide max columns by number of aggregation columns
@@ -131,34 +114,28 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
 
-        const groupColumnsHash = (this.rowGroupColsSvc?.columns ?? []).map((column) => column.getId()).join('#');
+        const groupColumnsHash = (rowGroupColsSvc?.columns ?? []).map((column) => column.getId()).join('#');
         const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
 
-        const pivotComparatorsHash = (this.pivotColsSvc?.columns ?? [])
+        const pivotComparatorsHash = (pivotColsSvc?.columns ?? [])
             .map((column) => `${column.getId()}-${column.getColDef().pivotComparator?.toString() ?? ''}`)
             .join('#');
         const pivotComparatorsChanged = pivotComparatorsHash !== this.pivotComparatorsHashLastTime;
         this.pivotComparatorsHashLastTime = pivotComparatorsHash;
 
-        const pivotRowTotals = gos.get('pivotRowTotals');
-        const pivotColumnGroupTotals = gos.get('pivotColumnGroupTotals');
-        const suppressExpandablePivotGroups = gos.get('suppressExpandablePivotGroups');
-        const removePivotHeaderRowWhenSingleValueColumn = gos.get('removePivotHeaderRowWhenSingleValueColumn');
-        const enableStrictPivotColumnOrder = gos.get('enableStrictPivotColumnOrder');
-
-        const anyGridOptionsChanged =
-            pivotRowTotals !== this.pivotRowTotalsLastTime ||
-            pivotColumnGroupTotals !== this.pivotColumnGroupTotalsLastTime ||
-            suppressExpandablePivotGroups !== this.suppressExpandablePivotGroupsLastTime ||
-            removePivotHeaderRowWhenSingleValueColumn !== this.removePivotHeaderRowWhenSingleValueColumnLastTime ||
-            enableStrictPivotColumnOrder !== this.enableStrictPivotColumnOrderLastTime;
-
-        this.pivotRowTotalsLastTime = pivotRowTotals;
-        this.pivotColumnGroupTotalsLastTime = pivotColumnGroupTotals;
-        this.suppressExpandablePivotGroupsLastTime = suppressExpandablePivotGroups;
-        this.removePivotHeaderRowWhenSingleValueColumnLastTime = removePivotHeaderRowWhenSingleValueColumn;
-        this.enableStrictPivotColumnOrderLastTime = enableStrictPivotColumnOrder;
+        const gridOptionsHash =
+            gos.get('pivotRowTotals') +
+            '-' +
+            gos.get('pivotColumnGroupTotals') +
+            '-' +
+            gos.get('suppressExpandablePivotGroups') +
+            '-' +
+            gos.get('removePivotHeaderRowWhenSingleValueColumn') +
+            '-' +
+            gos.get('enableStrictPivotColumnOrder');
+        const anyGridOptionsChanged = gridOptionsHash !== this.gridOptionsHashLastTime;
+        this.gridOptionsHashLastTime = gridOptionsHash;
 
         if (
             this.lastTimeFailed ||
@@ -193,21 +170,17 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
     private currentUniqueCount = 0;
     private bucketUpRowNodes(changedPath: ChangedPath | undefined): Map<string, any> {
+        const rowModel = this.beans.rowModel;
         this.currentUniqueCount = 0;
         // accessed from inside inner function
         const uniqueValues: Map<string, any> = new Map();
 
         // ensure childrenMapped is cleared, as if a node has been filtered out it should not have mapped children.
-        _forEachChangedGroupDepthFirst(
-            this.beans.rowModel.rootNode,
-            this.beans.rowModel.hierarchical,
-            changedPath,
-            (node) => {
-                if (node.leafGroup) {
-                    node.childrenMapped = null;
-                }
+        _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, (node) => {
+            if (node.leafGroup) {
+                node.childrenMapped = null;
             }
-        );
+        });
 
         const recursivelyBucketFilteredChildren = (node: RowNode) => {
             if (node.leafGroup) {
@@ -222,13 +195,13 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
             }
         };
 
-        recursivelyBucketFilteredChildren(this.beans.rowModel.rootNode!);
+        recursivelyBucketFilteredChildren(rowModel.rootNode!);
 
         return uniqueValues;
     }
 
     private bucketRowNode(rowNode: RowNode, uniqueValues: Map<string, any>): void {
-        const pivotColumns = this.pivotColsSvc?.columns;
+        const pivotColumns = this.beans.pivotColsSvc?.columns;
 
         if (pivotColumns?.length === 0) {
             rowNode.childrenMapped = null;
@@ -256,7 +229,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         // map the children out based on the pivot column
         for (let i = 0, len = children.length; i < len; ++i) {
             const child = children[i];
-            let key: string | null | undefined = this.valueSvc.getKeyForNode(pivotColumn, child);
+            let key: string | null | undefined = this.beans.valueSvc.getKeyForNode(pivotColumn, child);
 
             if (_missing(key)) {
                 key = '';
