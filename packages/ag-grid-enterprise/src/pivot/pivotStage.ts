@@ -9,7 +9,7 @@ import type {
     RowNode,
     _IRowNodePivotStage,
 } from 'ag-grid-community';
-import { BeanStub, _forEachChangedGroupDepthFirst, _jsonEquals, _missing } from 'ag-grid-community';
+import { BeanStub, _areEqual, _forEachChangedGroupDepthFirst, _jsonEquals, _missing } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 
@@ -45,7 +45,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
     private aggregationColumnsHashLastTime: string | null;
     private aggregationFuncsHashLastTime: string;
-    private pivotComparatorsHashLastTime: string = '';
+    private pivotOrderLastTime: string[] = [];
 
     private groupColumnsHashLastTime: string | null;
 
@@ -66,7 +66,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
     private executePivotOff(): boolean {
         this.aggregationColumnsHashLastTime = null;
-        this.pivotComparatorsHashLastTime = '';
+        this.pivotOrderLastTime = [];
         this.uniqueValues = new Map();
         if (this.pivotResultCols.isPivotResultColsPresent()) {
             this.pivotResultCols.setPivotResultCols(null, 'rowModelUpdated');
@@ -118,11 +118,12 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
 
-        const pivotComparatorsHash = (pivotColsSvc?.columns ?? [])
-            .map((column) => `${column.getId()}-${column.getColDef().pivotComparator?.toString() ?? ''}`)
-            .join('#');
-        const pivotComparatorsChanged = pivotComparatorsHash !== this.pivotComparatorsHashLastTime;
-        this.pivotComparatorsHashLastTime = pivotComparatorsHash;
+        const pivotColumns = pivotColsSvc?.columns ?? [];
+        const anyComparators =
+            gos.get('enableStrictPivotColumnOrder') && pivotColumns.some((col) => col.getColDef().pivotComparator);
+        const pivotOrder = anyComparators ? computePivotOrder(this.uniqueValues, pivotColumns, 0) : [];
+        const pivotComparatorsChanged = !_areEqual(pivotOrder, this.pivotOrderLastTime);
+        this.pivotOrderLastTime = pivotOrder;
 
         const gridOptionsHash =
             gos.get('pivotRowTotals') +
@@ -268,4 +269,21 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
         return result;
     }
+}
+
+/**
+ * Returns a flat depth-first array of pivot value keys sorted at each level by their column's pivotComparator.
+ * Used to detect when a comparator's output changes (e.g. due to closure mutation) without relying on
+ * function reference or source equality.
+ */
+function computePivotOrder(values: Map<string, any>, pivotColumns: AgColumn[], depth: number): string[] {
+    const comparator = pivotColumns[depth]?.getColDef().pivotComparator;
+    const keys = [...values.keys()];
+    if (comparator) {
+        keys.sort(comparator);
+    }
+    if (depth === pivotColumns.length - 1) {
+        return keys;
+    }
+    return keys.flatMap((key) => [key, ...computePivotOrder(values.get(key), pivotColumns, depth + 1)]);
 }

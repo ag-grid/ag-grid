@@ -398,6 +398,95 @@ describe('pivotMode=true', () => {
             expect(getColumnOrder(gridApi, 'center')).toEqual(initialExpected);
         });
 
+        test('stale closure pivotComparator is detected and re-sorts columns with enableStrictPivotColumnOrder=true', () => {
+            let direction = 1;
+            const comparator = (a: string, b: string) => direction * a.localeCompare(b);
+
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { field: 'a', rowGroup: true },
+                { field: 'b', pivot: true, pivotComparator: comparator },
+                { field: 'c', aggFunc: 'sum' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+                pivotMode: true,
+                enableStrictPivotColumnOrder: true,
+                getRowId: ({ data }) => `${data.a}-${data.b}`,
+            });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                ...groupColIds,
+                'pivot_b_1_c',
+                'pivot_b_2_c',
+                'pivot_b_3_c',
+            ]);
+
+            // Mutate the closure variable without changing the function reference
+            direction = -1;
+            // Trigger the pivot stage via a data update that keeps the same set of pivot values
+            applyTransactionChecked(gridApi, { update: [{ a: '1', b: '1', c: 99 }] });
+
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                ...groupColIds,
+                'pivot_b_3_c',
+                'pivot_b_2_c',
+                'pivot_b_1_c',
+            ]);
+        });
+
+        test('stale closure pivotComparator changes are detected at each level in multi-level pivot with enableStrictPivotColumnOrder=true', () => {
+            const multiLevelRowData = [
+                { a: 'x', b: '1', c: 1 },
+                { a: 'x', b: '2', c: 1 },
+                { a: 'y', b: '1', c: 1 },
+                { a: 'y', b: '2', c: 1 },
+            ];
+
+            let levelBDirection = 1;
+            const comparatorB = (a: string, b: string) => levelBDirection * a.localeCompare(b);
+
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { field: 'a', pivot: true },
+                { field: 'b', pivot: true, pivotComparator: comparatorB },
+                { field: 'c', aggFunc: 'sum' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: multiLevelRowData,
+                pivotMode: true,
+                enableStrictPivotColumnOrder: true,
+                // suppressExpandablePivotGroups ensures leaf columns are always visible
+                // (without it, collapsed outer groups show only their summary column)
+                suppressExpandablePivotGroups: true,
+                getRowId: ({ data }) => `${data.a}-${data.b}`,
+            });
+
+            // Level-A default (ascending: x, y), level-B ascending (1, 2)
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                'pivot_a-b_x-1_c',
+                'pivot_a-b_x-2_c',
+                'pivot_a-b_y-1_c',
+                'pivot_a-b_y-2_c',
+            ]);
+
+            // Mutate the level-B comparator closure without changing the function reference
+            levelBDirection = -1;
+            // Trigger the pivot stage via a data update that keeps the same set of pivot values
+            applyTransactionChecked(gridApi, { update: [{ a: 'x', b: '1', c: 99 }] });
+
+            // Level-B now descending (2, 1) within each level-A group
+            expect(getColumnOrder(gridApi, 'center')).toEqual([
+                'pivot_a-b_x-2_c',
+                'pivot_a-b_x-1_c',
+                'pivot_a-b_y-2_c',
+                'pivot_a-b_y-1_c',
+            ]);
+        });
+
         test('toggling enableStrictPivotColumnOrder from false to true re-sorts columns', () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 { field: 'a', rowGroup: true },
