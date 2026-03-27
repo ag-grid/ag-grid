@@ -16,12 +16,9 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { OverlayType } from '../rendering/overlays/overlayComponent';
 import type { ChangedPath } from '../utils/changedPath';
-import { _forEachChangedGroupDepthFirst } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import { ChangedRowNodes } from './changedRowNodes';
 import { ClientSideNodeManager } from './clientSideNodeManager';
-import { updateRowNodeAfterFilter } from './filterStage';
-import { updateRowNodeAfterSort } from './sortStage';
 
 interface BatchTransactionItem<TData = any> {
     rowDataTransaction: RowDataTransaction<TData>;
@@ -161,17 +158,21 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const orderedStages = [
             beans.groupStage,
             beans.filterStage,
+            beans.groupFilterStage,
             beans.pivotStage,
             beans.aggStage,
             beans.sortStage,
+            beans.groupSortStage,
             beans.filterAggStage,
             beans.flattenStage,
         ].filter((stage) => !!stage) as IRowNodeStage[];
         this.stages = orderedStages;
         for (let i = orderedStages.length - 1; i >= 0; --i) {
-            const stage = orderedStages[i];
-            for (const prop of stage.refreshProps) {
-                stagesRefreshProps.set(prop, i);
+            const props = orderedStages[i].refreshProps;
+            if (props) {
+                for (const prop of props) {
+                    stagesRefreshProps.set(prop, i);
+                }
             }
         }
 
@@ -948,13 +949,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doFilterAggregates(changedPath: ChangedPath | undefined): void {
-        const rootNode = this.rootNode!;
-        const filterAggStage = this.beans.filterAggStage;
-        if (filterAggStage && this.hierarchical) {
-            filterAggStage.execute(changedPath);
-            return;
+        if (this.hierarchical) {
+            const filterAggStage = this.beans.filterAggStage;
+            if (filterAggStage) {
+                filterAggStage.execute(changedPath);
+                return;
+            }
         }
         // Flat mode or no filterAggStage: no group nodes with aggregated values to filter.
+        const rootNode = this.rootNode!;
         rootNode.childrenAfterAggFilter = rootNode.childrenAfterFilter;
         const sibling = rootNode.sibling;
         if (sibling) {
@@ -963,15 +966,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doSort(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void {
-        const sortStage = this.beans.sortStage;
-        if (sortStage) {
-            sortStage.execute(changedPath, changedRowNodes);
-            return;
-        }
-        _forEachChangedGroupDepthFirst(this.rootNode, this.hierarchical, changedPath, (rowNode) => {
-            rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
-            updateRowNodeAfterSort(rowNode);
-        });
+        const beans = this.beans;
+        const stage = (this.hierarchical && beans.groupSortStage) || beans.sortStage!;
+        stage.execute(changedPath, changedRowNodes);
     }
 
     private doGrouping(rootNode: RowNode, params: RefreshModelParams): void {
@@ -996,15 +993,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doFilter(changedPath: ChangedPath | undefined): void {
-        const filterStage = this.beans.filterStage;
-        if (filterStage) {
-            filterStage.execute(changedPath);
-            return;
+        const beans = this.beans;
+        ((this.hierarchical && beans.groupFilterStage) || beans.filterStage!).execute(changedPath);
+        const rootNode = this.rootNode!;
+        const sibling = rootNode.sibling;
+        if (sibling) {
+            sibling.childrenAfterFilter = rootNode.childrenAfterFilter;
         }
-        _forEachChangedGroupDepthFirst(this.rootNode, this.hierarchical, changedPath, (rowNode) => {
-            rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
-            updateRowNodeAfterFilter(rowNode);
-        });
     }
 
     /** Returns `true` if pivot columns changed and changedPath should be deactivated. */

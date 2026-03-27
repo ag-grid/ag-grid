@@ -563,15 +563,10 @@ export class RowNode<TData = any>
             return false; // column not found
         }
 
-        // For leaf (non-group) rows with pivot result columns, resolve to the underlying value column.
-        // Pivot columns don't map to real data fields on leaf rows — only the source value column does.
-        // This allows groupRowValueSetter to cascade edits using the same column reference for both
-        // group and leaf rows.
-        if (!this.group) {
-            const colDef = column.getColDef();
-            if (colDef.pivotValueColumn) {
-                column = colDef.pivotValueColumn as AgColumn;
-            }
+        // Resolve pivot result columns to their underlying value column for non-group, non-pinned rows.
+        const pivotValueColumn = column.colDef.pivotValueColumn;
+        if (!this.group && !this.rowPinned && pivotValueColumn) {
+            column = pivotValueColumn as AgColumn;
         }
 
         const oldValue = valueSvc.getValueForDisplay({ column, node: this, from: 'data' }).value;

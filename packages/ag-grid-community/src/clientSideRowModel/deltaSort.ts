@@ -25,6 +25,8 @@ const MIN_DELTA_SORT_ROWS = 4;
  *
  * Time complexity: O(t log t + n) where t = touched rows, n = total rows
  * This is faster than full sort O(n log n) when t << n
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const doDeltaSort = (
     rowNodeSorter: RowNodeSorter,

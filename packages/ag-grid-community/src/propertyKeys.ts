@@ -280,6 +280,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'rowMultiSelectWithClick',
     'suppressRowHoverHighlight',
     'suppressRowTransform',
+    'suppressContentVisibilityAuto',
     'suppressClipboardPaste',
     'suppressLastEmptyLineOnPaste',
     'enableCharts',

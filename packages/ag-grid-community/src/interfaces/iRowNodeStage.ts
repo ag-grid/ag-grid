@@ -4,15 +4,18 @@ import type { RowNode } from '../entities/rowNode';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ClientSideRowModelStage, RefreshModelParams } from './iClientSideRowModel';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeStage<TData = any> {
     readonly step: ClientSideRowModelStage;
-    readonly refreshProps: (keyof GridOptions<TData>)[];
+    readonly refreshProps: (keyof GridOptions<TData>)[] | null;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeSortStage<TData = any> extends IRowNodeStage<TData> {
     execute(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes<TData> | undefined): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeFilterStage<TData = any> extends IRowNodeStage<TData> {
     execute(changedPath: ChangedPath | undefined): void;
 }

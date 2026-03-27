@@ -1805,6 +1805,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressRowTransform: boolean | undefined = undefined;
+    /** Set to `true` to suppress `content-visibility: auto` on the grid wrapper element. This degrades performance by causing the browser to render grids even when they are off screen, but may be necessary if your application depends on receiving resize events from hidden grids.
+     * @default false
+     * @initial
+     */
+    @Input({ transform: booleanAttribute }) public suppressContentVisibilityAuto: boolean | undefined = undefined;
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
      * @default false
      * @agModule `ColumnHoverModule`

@@ -27,8 +27,6 @@ const columnDefs: ColDef[] = [
         field: 'startDateTime',
         filter: 'agDateColumnFilter',
         cellDataType: 'dateTime',
-        valueFormatter: (params: ValueFormatterParams) =>
-            params.value.toISOString().replace(/[TZ]/g, ' ').trim().slice(0, -4),
     },
     {
         field: 'endDateTime',

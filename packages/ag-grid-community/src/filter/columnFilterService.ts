@@ -827,7 +827,7 @@ export class ColumnFilterService
             getValue: this.createGetValue(column),
             doesRowPassOtherFilter: forFloatingFilter
                 ? () => true
-                : (node) => filterManager?.doesRowPassOtherFilters(column.getColId(), node as RowNode) ?? true,
+                : (node) => filterManager?.doesRowPassFilter(node as RowNode, column.getColId()) ?? true,
             // to avoid breaking changes to `filterParams` defined as functions
             // we need to provide the below options even though they are not valid for handlers
             rowModel,
@@ -1095,7 +1095,7 @@ export class ColumnFilterService
             column,
             getValue: this.createGetValue(column),
             doesRowPassOtherFilter: (node) =>
-                this.beans.filterManager?.doesRowPassOtherFilters(colId, node as RowNode) ?? true,
+                this.beans.filterManager?.doesRowPassFilter(node as RowNode, colId) ?? true,
             onModelChange: (newModel, additionalEventAttributes) => {
                 this.updateStoredModel(colId, newModel);
                 this.refreshHandlerAndUi(column, newModel, 'handler', false, additionalEventAttributes).then(() => {
