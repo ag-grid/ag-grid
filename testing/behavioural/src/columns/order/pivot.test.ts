@@ -341,6 +341,92 @@ describe('pivotMode=true', () => {
             }
         );
 
+        test('runtime pivotComparator change re-sorts columns with enableStrictPivotColumnOrder=true', () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { field: 'a', rowGroup: true },
+                { field: 'b', pivot: true },
+                { field: 'c', aggFunc: 'sum' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+                pivotMode: true,
+                enableStrictPivotColumnOrder: true,
+            });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
+            const initialExpected = [...groupColIds, 'pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c'];
+            expect(getColumnOrder(gridApi, 'center')).toEqual(initialExpected);
+
+            // Update with a reverse comparator
+            gridApi.setGridOption('columnDefs', [
+                { field: 'a', rowGroup: true },
+                { field: 'b', pivot: true, pivotComparator: (a, b) => -a.localeCompare(b) },
+                { field: 'c', aggFunc: 'sum' },
+            ]);
+
+            const reversedExpected = [...groupColIds, 'pivot_b_3_c', 'pivot_b_2_c', 'pivot_b_1_c'];
+            expect(getColumnOrder(gridApi, 'center')).toEqual(reversedExpected);
+        });
+
+        test('runtime pivotComparator change preserves column order with enableStrictPivotColumnOrder=false', () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { field: 'a', rowGroup: true },
+                { field: 'b', pivot: true },
+                { field: 'c', aggFunc: 'sum' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+                pivotMode: true,
+                enableStrictPivotColumnOrder: false,
+            });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
+            const initialExpected = [...groupColIds, 'pivot_b_1_c', 'pivot_b_2_c', 'pivot_b_3_c'];
+            expect(getColumnOrder(gridApi, 'center')).toEqual(initialExpected);
+
+            // Update with a reverse comparator — existing columns keep their order
+            gridApi.setGridOption('columnDefs', [
+                { field: 'a', rowGroup: true },
+                { field: 'b', pivot: true, pivotComparator: (a, b) => -a.localeCompare(b) },
+                { field: 'c', aggFunc: 'sum' },
+            ]);
+
+            expect(getColumnOrder(gridApi, 'center')).toEqual(initialExpected);
+        });
+
+        test('toggling enableStrictPivotColumnOrder from false to true re-sorts columns', () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { field: 'a', rowGroup: true },
+                { field: 'b', pivot: true, pivotComparator: (a, b) => -a.localeCompare(b) },
+                { field: 'c', aggFunc: 'sum' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+                pivotMode: true,
+                enableStrictPivotColumnOrder: false,
+            });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
+            // Initial order uses comparator for creation, but restoreColOrder may reorder
+            const reversedExpected = [...groupColIds, 'pivot_b_3_c', 'pivot_b_2_c', 'pivot_b_1_c'];
+            expect(getColumnOrder(gridApi, 'center')).toEqual(reversedExpected);
+
+            // Move a column to disrupt the sorted order
+            gridApi.moveColumns(['pivot_b_1_c'], 1);
+            const movedExpected = [...groupColIds, 'pivot_b_1_c', 'pivot_b_3_c', 'pivot_b_2_c'];
+            expect(getColumnOrder(gridApi, 'center')).toEqual(movedExpected);
+
+            // Toggle to strict — columns should re-sort
+            gridApi.setGridOption('enableStrictPivotColumnOrder', true);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(reversedExpected);
+        });
+
         describe('with enableStrictPivotColumnOrder=false', () => {
             test('new pivot result columns are added at the end when a pivot column filter is removed', () => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [

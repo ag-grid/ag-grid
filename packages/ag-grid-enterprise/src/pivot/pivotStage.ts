@@ -33,6 +33,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         'pivotRowTotals',
         'pivotColumnGroupTotals',
         'suppressExpandablePivotGroups',
+        'enableStrictPivotColumnOrder',
     ];
 
     private valueSvc: ValueService;
@@ -57,6 +58,8 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
     private aggregationColumnsHashLastTime: string | null;
     private aggregationFuncsHashLastTime: string;
+    private enableStrictPivotColumnOrderLastTime: GridOptions['enableStrictPivotColumnOrder'];
+    private pivotComparatorsHashLastTime: string = '';
 
     private groupColumnsHashLastTime: string | null;
 
@@ -80,6 +83,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
     private executePivotOff(): boolean {
         this.aggregationColumnsHashLastTime = null;
+        this.pivotComparatorsHashLastTime = '';
         this.uniqueValues = new Map();
         if (this.pivotResultCols.isPivotResultColsPresent()) {
             this.pivotResultCols.setPivotResultCols(null, 'rowModelUpdated');
@@ -89,11 +93,12 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
     }
 
     private executePivotOn(changedPath: ChangedPath | undefined): boolean {
-        const numberOfAggregationColumns = this.valueColsSvc?.columns.length ?? 1;
+        const { valueColsSvc, gos } = this;
+        const numberOfAggregationColumns = valueColsSvc?.columns.length ?? 1;
 
         // As unique values creates one column per aggregation column, divide max columns by number of aggregation columns
         // to get the max number of unique values.
-        const configuredMaxCols = this.gos.get('pivotMaxGeneratedColumns');
+        const configuredMaxCols = gos.get('pivotMaxGeneratedColumns');
         this.maxUniqueValues = configuredMaxCols === -1 ? -1 : configuredMaxCols / numberOfAggregationColumns;
         let uniqueValues: Map<string, any>;
         try {
@@ -115,7 +120,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
         const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
-        const aggregationColumns = this.valueColsSvc?.columns ?? [];
+        const aggregationColumns = valueColsSvc?.columns ?? [];
         const aggregationColumnsHash = aggregationColumns
             .map((column) => `${column.getId()}-${column.getColDef().headerName}`)
             .join('#');
@@ -130,21 +135,30 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
 
-        const pivotRowTotals = this.gos.get('pivotRowTotals');
-        const pivotColumnGroupTotals = this.gos.get('pivotColumnGroupTotals');
-        const suppressExpandablePivotGroups = this.gos.get('suppressExpandablePivotGroups');
-        const removePivotHeaderRowWhenSingleValueColumn = this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
+        const pivotComparatorsHash = (this.pivotColsSvc?.columns ?? [])
+            .map((column) => `${column.getId()}-${column.getColDef().pivotComparator?.toString() ?? ''}`)
+            .join('#');
+        const pivotComparatorsChanged = pivotComparatorsHash !== this.pivotComparatorsHashLastTime;
+        this.pivotComparatorsHashLastTime = pivotComparatorsHash;
+
+        const pivotRowTotals = gos.get('pivotRowTotals');
+        const pivotColumnGroupTotals = gos.get('pivotColumnGroupTotals');
+        const suppressExpandablePivotGroups = gos.get('suppressExpandablePivotGroups');
+        const removePivotHeaderRowWhenSingleValueColumn = gos.get('removePivotHeaderRowWhenSingleValueColumn');
+        const enableStrictPivotColumnOrder = gos.get('enableStrictPivotColumnOrder');
 
         const anyGridOptionsChanged =
             pivotRowTotals !== this.pivotRowTotalsLastTime ||
             pivotColumnGroupTotals !== this.pivotColumnGroupTotalsLastTime ||
             suppressExpandablePivotGroups !== this.suppressExpandablePivotGroupsLastTime ||
-            removePivotHeaderRowWhenSingleValueColumn !== this.removePivotHeaderRowWhenSingleValueColumnLastTime;
+            removePivotHeaderRowWhenSingleValueColumn !== this.removePivotHeaderRowWhenSingleValueColumnLastTime ||
+            enableStrictPivotColumnOrder !== this.enableStrictPivotColumnOrderLastTime;
 
         this.pivotRowTotalsLastTime = pivotRowTotals;
         this.pivotColumnGroupTotalsLastTime = pivotColumnGroupTotals;
         this.suppressExpandablePivotGroupsLastTime = suppressExpandablePivotGroups;
         this.removePivotHeaderRowWhenSingleValueColumnLastTime = removePivotHeaderRowWhenSingleValueColumn;
+        this.enableStrictPivotColumnOrderLastTime = enableStrictPivotColumnOrder;
 
         if (
             this.lastTimeFailed ||
@@ -152,6 +166,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
             aggregationColumnsChanged ||
             groupColumnsChanged ||
             aggregationFuncsChanged ||
+            pivotComparatorsChanged ||
             anyGridOptionsChanged
         ) {
             const pivotColumnGroupDefs = this.pivotColDefSvc.createPivotColumnDefs(this.uniqueValues);
