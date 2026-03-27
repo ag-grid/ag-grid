@@ -2,6 +2,12 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-PICOMATCH-15765511:
+        - vite-plugin-vue-devtools@7.7.7 > vite-plugin-inspect@0.8.9 > @rollup/pluginutils@5.3.0 > picomatch@4.0.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-27T11:44:13.985Z
     SNYK-JS-ROLLUP-15340920:
         - vite@5.4.21 > rollup@4.52.5:
               reason: >-
