@@ -2,6 +2,12 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-ASTRO-15763371:
+        - astro@5.16.6:
+              reason: >-
+                  The website is a static site, so server-side vulns are not relevant
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-27T11:52:47.516Z
     SNYK-JS-PICOMATCH-15765511:
         - vite-plugin-svgr@4.5.0 > @rollup/pluginutils@5.3.0 > picomatch@4.0.3:
               reason: >-
