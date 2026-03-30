@@ -134,6 +134,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     isRowPinned: 'PinnedRow',
     localeText: 'Locale',
     masterDetail: 'SharedMasterDetail',
+    notesDataSource: 'Notes',
     pagination: 'Pagination',
     pinnedBottomRowData: 'PinnedRow',
     pinnedTopRowData: 'PinnedRow',

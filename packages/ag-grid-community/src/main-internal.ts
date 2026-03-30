@@ -198,6 +198,7 @@ export type {
     _GridChartsGridApi,
     _InfiniteRowModelGridApi,
     _MasterDetailGridApi,
+    _NotesGridApi,
     _PinnedRowGridApi,
     _PivotGridApi,
     _RowGroupingGridApi,
@@ -205,6 +206,7 @@ export type {
     _SideBarGridApi,
     _StatusBarGridApi,
 } from './api/gridApi';
+export type { ICellNotesFeature, INotesDataService, INotesService } from './interfaces/notes';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';
@@ -482,7 +484,7 @@ export {
     _suppressCellMouseEvent,
 } from './rendering/renderUtils';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
-export type { IRowComp, RowCtrl } from './rendering/row/rowCtrl';
+export type { IRowComp, RowCtrl, RowGui } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
 export { BaseSelectionService } from './selection/baseSelectionService';
 export type { RowRangeSelectionContext } from './selection/rowRangeSelectionContext';
@@ -552,7 +554,7 @@ export type {
 export { AgInputDateField } from './agStack/widgets/agInputDateField';
 export { AgInputNumberField, AgInputNumberFieldSelector } from './agStack/widgets/agInputNumberField';
 export type { AgInputNumberFieldParams } from './agStack/widgets/agInputNumberField';
-export { AgInputTextArea } from './agStack/widgets/agInputTextArea';
+export { AgInputTextArea, AgInputTextAreaSelector } from './agStack/widgets/agInputTextArea';
 export { AgInputTextField, AgInputTextFieldSelector } from './agStack/widgets/agInputTextField';
 export type { AgInputTextFieldParams } from './agStack/widgets/agInputTextField';
 export type { ListOption } from './agStack/widgets/agList';

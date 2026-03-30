@@ -72,6 +72,7 @@ import type {
     MenuItemDef,
     NavigateToNextCell,
     NavigateToNextHeader,
+    NotesDataSource,
     OverlaySelectorFunc,
     OverlayType,
     PaginationNumberFormatter,
@@ -1001,6 +1002,11 @@ export interface Props<TData> {
          * @agModule `FormulaModule`
          */
     formulaDataSource?: FormulaDataSource,
+    /** Provide a data source to control where notes are stored and retrieved.
+         * @initial
+         * @agModule `NotesModule`
+         */
+    notesDataSource?: NotesDataSource,
     /** A map of 'function name' to 'function' for custom functions that are used for formulas.
          * @initial
          * @agModule `FormulaModule`
@@ -2182,6 +2188,7 @@ export function getProps() {
         functionsReadOnly: undefined,
         aggFuncs: undefined,
         formulaDataSource: undefined,
+        notesDataSource: undefined,
         formulaFuncs: undefined,
         suppressAggFuncInHeader: undefined,
         alwaysAggregateAtRootLevel: undefined,

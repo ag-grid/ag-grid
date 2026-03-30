@@ -52,6 +52,7 @@ import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { IRowStyleFeature } from '../../interfaces/iRowStyleFeature';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import type { ICellNotesFeature } from '../../interfaces/notes';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
@@ -105,6 +106,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public readonly instanceId: RowCtrlInstanceId;
 
     private tooltipFeature: TooltipFeature | undefined;
+    private readonly fullWidthNotesFeature: ICellNotesFeature | undefined;
 
     private rowType: RowType;
 
@@ -187,6 +189,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowStyles = this.processStylesFromGridOptions();
 
         this.rowEditStyleFeature = beans.editSvc?.createRowStyleFeature(this);
+        this.fullWidthNotesFeature = this.isFullWidth()
+            ? beans.notesSvc?.createFullWidthRowNotesFeature(this)
+            : undefined;
 
         this.addListeners();
     }
@@ -230,6 +235,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.updateGui(containerType, gui);
 
         this.initialiseRowComp(gui);
+        this.fullWidthNotesFeature?.refresh();
 
         const rowNode = this.rowNode;
         const isSsrmLoadingRow = this.rowType === 'FullWidthLoading' || rowNode.stub;
@@ -780,8 +786,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const rightSuccess = tryRefresh(this.rightGui, 'right');
 
         const allFullWidthRowsRefreshed = fullWidthSuccess && centerSuccess && leftSuccess && rightSuccess;
+        this.fullWidthNotesFeature?.refresh();
 
         return allFullWidthRowsRefreshed;
+    }
+
+    public showFullWidthCellNote(column: AgColumn, focusEditor = false): void {
+        this.fullWidthNotesFeature?.show({ column, focusEditor });
     }
 
     private addListeners(): void {
@@ -838,6 +849,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.rowDragComps = this.destroyBeans(this.rowDragComps, context);
             this.tooltipFeature = this.destroyBean(this.tooltipFeature, context);
             this.rowEditStyleFeature = this.destroyBean(this.rowEditStyleFeature, context);
+            this.fullWidthNotesFeature?.destroy();
         });
 
         this.addManagedPropertyListeners(
@@ -1258,7 +1270,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.allRowGuis.find((c) => c.element.contains(target));
     }
 
-    private getColumnForFullWidth(fullWidthRowGui?: RowGui): AgColumn {
+    public getColumnForFullWidth(fullWidthRowGui?: RowGui): AgColumn {
         const { visibleCols } = this.beans;
         switch (fullWidthRowGui?.containerType) {
             case 'center':

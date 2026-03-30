@@ -157,6 +157,7 @@ import type {
     NavigateToNextCell,
     NavigateToNextHeader,
     NewColumnsLoadedEvent,
+    NotesDataSource,
     OverlaySelectorFunc,
     OverlayType,
     PaginationChangedEvent,
@@ -1177,6 +1178,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `FormulaModule`
      */
     @Input() public formulaDataSource: FormulaDataSource | undefined = undefined;
+    /** Provide a data source to control where notes are stored and retrieved.
+     * @initial
+     * @agModule `NotesModule`
+     */
+    @Input() public notesDataSource: NotesDataSource | undefined = undefined;
     /** A map of 'function name' to 'function' for custom functions that are used for formulas.
      * @initial
      * @agModule `FormulaModule`

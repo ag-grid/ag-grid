@@ -929,6 +929,14 @@ export type {
     SetFormulaParams,
     ValueParam,
 } from './interfaces/formulas';
+export type {
+    CellNote,
+    GetNoteParams,
+    NotesDataSource,
+    NotesDataSourceParams,
+    RefreshCellNotesParams,
+    SetNoteParams,
+} from './interfaces/notes';
 
 // Public AG Grid Modules and ModuleRegistry
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';

@@ -101,6 +101,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             chartMenuItemMapper,
             valueColsSvc,
             pinnedRowModel,
+            notesDataSvc,
+            notesSvc,
         } = beans;
 
         const getStockMenuItem = (
@@ -468,10 +470,60 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             }
         };
 
+        const createAddCellNoteMenuItem = (): MenuItemDef | null =>
+            notesDataSvc?.hasDataSource() &&
+            notesSvc &&
+            column &&
+            node &&
+            !notesSvc.getCellNote({ rowNode: node, column })
+                ? {
+                      name: localeTextFunc('addCellNote', 'Add Cell Note'),
+                      action: () => notesSvc.showCellNoteEditor({ rowNode: node, column }),
+                  }
+                : null;
+
+        const createEditCellNoteMenuItem = (): MenuItemDef | null =>
+            notesDataSvc?.hasDataSource() &&
+            notesSvc &&
+            column &&
+            node &&
+            notesSvc.getCellNote({ rowNode: node, column })
+                ? {
+                      name: localeTextFunc('editCellNote', 'Edit Note'),
+                      action: () => notesSvc.showCellNoteEditor({ rowNode: node, column }),
+                  }
+                : null;
+
+        const createDeleteCellNoteMenuItem = (): MenuItemDef | null =>
+            notesDataSvc?.hasDataSource() &&
+            notesSvc &&
+            column &&
+            node &&
+            notesSvc.getCellNote({ rowNode: node, column })
+                ? {
+                      name: localeTextFunc('deleteCellNote', 'Remove Note'),
+                      action: () => notesSvc.removeCellNote({ rowNode: node, column }),
+                  }
+                : null;
+
         for (const menuItemOrString of originalList) {
             let result: MenuItemDef | 'separator' | null;
 
             if (typeof menuItemOrString === 'string') {
+                if (menuItemOrString === 'cellNote') {
+                    const cellNoteItems = [
+                        createAddCellNoteMenuItem(),
+                        createEditCellNoteMenuItem(),
+                        createDeleteCellNoteMenuItem(),
+                    ].filter((item): item is MenuItemDef => !!item);
+
+                    if (cellNoteItems.length) {
+                        resultList.push(...cellNoteItems);
+                    }
+
+                    continue;
+                }
+
                 result = getStockMenuItem(menuItemOrString, column, sourceElement, source);
             } else {
                 // Spread to prevent leaking mapped subMenus back into the original menuItem
