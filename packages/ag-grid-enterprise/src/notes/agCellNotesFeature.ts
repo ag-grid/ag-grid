@@ -122,7 +122,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
                 note: this.notesSvc.getCellNote(target) ?? { text: '' },
                 anchorToElement: target.anchorElement,
                 focusEditor,
-                onClosed: (save, note) => this.onPopupClosed(save, note),
+                onClosed: (noteChanged, note) => this.onPopupClosed(noteChanged, note),
                 onPopupEnter: () => this.cancelHide(),
                 onPopupLeave: () => this.scheduleHide(),
             })
@@ -132,7 +132,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
         this.activeTarget = target;
     }
 
-    private onPopupClosed(save: boolean, note: CellNote | undefined): void {
+    private onPopupClosed(noteChanged: boolean, note: CellNote | undefined): void {
         const target = this.activeTarget;
         const popup = this.popup;
 
@@ -144,7 +144,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
             this.beans.context.destroyBean(popup);
         }
 
-        if (!save || !target) {
+        if (!noteChanged || !target) {
             return;
         }
 

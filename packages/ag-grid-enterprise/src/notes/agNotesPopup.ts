@@ -104,7 +104,7 @@ export class AgNotesPopup extends BeanStub {
             note?: CellNote;
             anchorToElement: HTMLElement;
             focusEditor?: boolean;
-            onClosed: (save: boolean, note: CellNote | undefined) => void;
+            onClosed: (noteChanged: boolean, note: CellNote | undefined) => void;
             onPopupEnter: () => void;
             onPopupLeave: () => void;
         }
@@ -191,9 +191,9 @@ export class AgNotesPopup extends BeanStub {
         }
 
         this.closed = true;
-        const shouldSave = this.saveOnClose && (this.contentComp?.isDirty() ?? false);
-        const editedNote = this.contentComp?.getEditedNote();
-        this.params.onClosed(shouldSave, editedNote);
+        const noteChanged = this.saveOnClose && (this.contentComp?.isDirty() ?? false);
+        const editedNote = noteChanged ? this.contentComp?.getEditedNote() : undefined;
+        this.params.onClosed(noteChanged, editedNote);
     }
 
     private onMouseDown(event: MouseEvent): void {
@@ -221,10 +221,10 @@ export class AgNotesPopup extends BeanStub {
     public override destroy(): void {
         if (!this.closed) {
             this.closed = true;
-            const shouldSave = this.saveOnClose && (this.contentComp?.isDirty() ?? false);
-            const editedNote = this.contentComp?.getEditedNote();
+            const noteChanged = this.saveOnClose && (this.contentComp?.isDirty() ?? false);
+            const editedNote = noteChanged ? this.contentComp?.getEditedNote() : undefined;
             super.destroy();
-            this.params.onClosed(shouldSave, editedNote);
+            this.params.onClosed(noteChanged, editedNote);
         } else {
             super.destroy();
         }
