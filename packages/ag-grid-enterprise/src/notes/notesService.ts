@@ -8,7 +8,7 @@ import type {
     RowCtrl,
     SetNoteParams,
 } from 'ag-grid-community';
-import { BeanStub, isColumn } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import { AgCellNotesFeature, AgFullWidthRowNotesFeature } from './agCellNotesFeature';
 import type { ICellNotePopupOwner, INotesFeatureSupport, InternalSetNoteParams } from './notesShared';
@@ -87,7 +87,7 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         }
 
         const { column: columnKey, rowNode, note } = params;
-        const column = isColumn(columnKey) ? columnKey : colModel.getCol(columnKey);
+        const column = colModel.getCol(columnKey);
 
         if (!column) {
             return;

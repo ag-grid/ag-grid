@@ -1,5 +1,6 @@
 import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
+import type { ColKey } from '../entities/colDef';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { Column } from './iColumn';
@@ -15,7 +16,7 @@ export interface CellNote {
 }
 
 export interface GetNoteParams {
-    column: Column;
+    column: ColKey;
     rowNode: IRowNode;
 }
 
