@@ -88,6 +88,7 @@ export interface IRowComp {
     refreshFullWidth(getUpdatedParams: () => ICellRendererParams): boolean;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface RowGui {
     rowComp: IRowComp;
     element: HTMLElement;
