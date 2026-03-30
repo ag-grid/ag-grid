@@ -15,7 +15,7 @@ export interface CellNote {
 }
 
 export interface GetNoteParams {
-    column: AgColumn;
+    column: Column;
     rowNode: IRowNode;
 }
 

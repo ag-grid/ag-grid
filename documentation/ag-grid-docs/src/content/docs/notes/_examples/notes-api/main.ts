@@ -1,5 +1,4 @@
 import type {
-    AgColumn,
     CellClickedEvent,
     CellNote,
     ColDef,
@@ -96,7 +95,7 @@ const gridOptions: GridOptions<OlympicWinner> = {
     onCellClicked: (event: CellClickedEvent<OlympicWinner>) => {
         selectedCell = {
             rowNode: event.node,
-            column: event.column as AgColumn,
+            column: event.column,
         };
 
         loadSelectedNote();

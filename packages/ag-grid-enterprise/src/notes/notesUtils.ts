@@ -10,13 +10,3 @@ export function cloneCellNote(note?: CellNote): CellNote | undefined {
         metadata: note.metadata ? { ...note.metadata } : undefined,
     };
 }
-
-export function areCellNotesEqual(previous?: CellNote, next?: CellNote): boolean {
-    if (!previous && !next) {
-        return true;
-    }
-    if (!previous || !next) {
-        return false;
-    }
-    return previous.text.trim() === next.text.trim();
-}

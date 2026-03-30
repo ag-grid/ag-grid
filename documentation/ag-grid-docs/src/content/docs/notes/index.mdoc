@@ -13,7 +13,7 @@ Notes are enabled by providing a `notesDataSource`. This lets you keep note stat
 
 Any note metadata, including `updatedAt` and `createdAt`, is rendered as provided by your datasource.
 
-```ts
+```{% frameworkTransform=true %}
 const noteStore = new Map();
 const noteKey = (rowId, colId) => `${rowId}::${colId}`;
 

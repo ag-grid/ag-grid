@@ -8,7 +8,7 @@ import type {
     RowCtrl,
     SetNoteParams,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, isColumn } from 'ag-grid-community';
 
 import { AgCellNotesFeature, AgFullWidthRowNotesFeature } from './agCellNotesFeature';
 import type { ICellNotePopupOwner, INotesFeatureSupport, InternalSetNoteParams } from './notesShared';
@@ -60,8 +60,13 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
     }
 
     public showCellNoteEditor(params: GetNoteParams): void {
-        const { rowRenderer } = this.beans;
-        const cellCtrl = rowRenderer.getCellCtrls([params.rowNode], [params.column])[0];
+        const { colModel, rowRenderer } = this.beans;
+        const column = colModel.getCol(params.column);
+        if (!column) {
+            return;
+        }
+
+        const cellCtrl = rowRenderer.getCellCtrls([params.rowNode], [column])[0];
 
         if (cellCtrl) {
             cellCtrl.showCellNote(true);
@@ -70,21 +75,26 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
 
         const rowCtrl = rowRenderer.getRowCtrlByNode(params.rowNode);
         if (rowCtrl?.isFullWidth()) {
-            rowCtrl.showFullWidthCellNote(params.column, true);
+            rowCtrl.showFullWidthCellNote(column, true);
         }
     }
 
-    public setCellNote(params: SetNoteParams): void;
-    public setCellNote(params: InternalSetNoteParams): void;
     public setCellNote(params: SetNoteParams | InternalSetNoteParams): void {
-        const dataSvc = this.beans.notesDataSvc;
-        if (!dataSvc?.hasDataSource()) {
+        const { notesDataSvc, colModel } = this.beans;
+
+        if (!notesDataSvc?.hasDataSource() || !colModel) {
             return;
         }
 
-        const previousNote = ('previousNote' in params ? params.previousNote : undefined) ?? dataSvc.getNote(params);
-        const note = params.note;
-        const source = ('source' in params ? params.source : undefined) ?? 'api';
+        const { column: columnKey, rowNode, note } = params;
+        const column = isColumn(columnKey) ? columnKey : colModel.getCol(columnKey);
+
+        if (!column) {
+            return;
+        }
+
+        const previousNote = (params as InternalSetNoteParams).previousNote ?? notesDataSvc.getNote(params);
+        const source = (params as InternalSetNoteParams).source ?? 'api';
 
         if (!note && !previousNote) {
             return;
@@ -94,21 +104,19 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
             this.activePopupOwner?.closeNotePopup(false);
         }
 
-        dataSvc.setNote({
-            rowNode: params.rowNode,
-            column: params.column,
+        notesDataSvc.setNote({
+            rowNode,
+            column,
             note,
         });
 
-        this.refreshCellNotes({ rowNodes: [params.rowNode], columns: [params.column] });
+        this.refreshCellNotes({ rowNodes: [params.rowNode], columns: [column] });
     }
 
     public removeCellNote(params: GetNoteParams): void {
         this.setCellNote({
             ...params,
             note: undefined,
-            previousNote: this.beans.notesDataSvc?.getNote(params),
-            source: 'api',
         });
     }
 

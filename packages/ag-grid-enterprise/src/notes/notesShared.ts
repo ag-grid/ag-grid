@@ -1,10 +1,13 @@
-import type { CellNote, GetNoteParams, SetNoteParams } from 'ag-grid-community';
+import type { AgColumn, CellNote, GetNoteParams, IRowNode, SetNoteParams } from 'ag-grid-community';
 
-export interface NoteTarget extends GetNoteParams {
+export interface NoteTarget {
+    column: AgColumn;
+    rowNode: IRowNode;
     anchorElement: HTMLElement;
 }
 
-export interface InternalSetNoteParams extends SetNoteParams {
+export interface InternalSetNoteParams extends Omit<SetNoteParams, 'column'> {
+    column: AgColumn;
     previousNote?: CellNote;
     source?: 'ui' | 'api';
 }

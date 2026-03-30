@@ -10,7 +10,6 @@ import type {
 
 import { AgNotesPopup } from './agNotesPopup';
 import type { ICellNotePopupOwner, INotesFeatureSupport, NoteTarget } from './notesShared';
-import { areCellNotesEqual } from './notesUtils';
 
 const CSS_HAS_CELL_NOTES = 'ag-has-cell-notes';
 const NOTE_SHOW_DELAY = 180;
@@ -149,17 +148,10 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
             return;
         }
 
-        const previousNote = this.notesSvc.getCellNote(target);
-        const nextNote = note;
-
-        if (areCellNotesEqual(previousNote, nextNote)) {
-            return;
-        }
-
         this.notesSvc.setCellNote({
             ...target,
-            note: nextNote,
-            previousNote,
+            note,
+            previousNote: this.notesSvc.getCellNote(target),
             source: 'ui',
         });
     }
