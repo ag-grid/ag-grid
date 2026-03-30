@@ -39,7 +39,16 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
     }
 
     public getCellNote(params: GetNoteParams): CellNote | undefined {
-        return this.beans.notesDataSvc?.getNote(params);
+        const { colModel, notesDataSvc } = this.beans;
+        const column = colModel.getCol(params.column);
+        if (!column) {
+            return undefined;
+        }
+
+        return notesDataSvc?.getNote({
+            ...params,
+            column,
+        });
     }
 
     public replaceActivePopupOwner(owner: ICellNotePopupOwner): ICellNotePopupOwner | undefined {

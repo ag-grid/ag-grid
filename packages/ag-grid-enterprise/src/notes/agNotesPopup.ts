@@ -36,9 +36,11 @@ class AgNotesPopupContent extends Component {
     private readonly eMeta: HTMLElement = RefPlaceholder;
     private readonly eFooter: HTMLElement = RefPlaceholder;
     private readonly eEditor: GridInputTextArea = RefPlaceholder;
+    private readonly initialText: string;
 
     constructor(private readonly note: CellNote | undefined) {
         super(NotesPopupContentElement, [AgInputTextAreaSelector]);
+        this.initialText = note?.text.trim() ?? '';
     }
 
     public postConstruct(): void {
@@ -81,6 +83,10 @@ class AgNotesPopupContent extends Component {
             ...(this.note ?? {}),
             text,
         };
+    }
+
+    public isDirty(): boolean {
+        return (this.eEditor.getValue()?.trim() ?? '') !== this.initialText;
     }
 }
 
@@ -183,9 +189,9 @@ export class AgNotesPopup extends BeanStub {
         }
 
         this.closed = true;
-        // contentComp is managed by us (not Dialog), so it's still alive here
+        const shouldSave = this.saveOnClose && (this.contentComp?.isDirty() ?? false);
         const editedNote = this.contentComp?.getEditedNote();
-        this.params.onClosed(this.saveOnClose, editedNote);
+        this.params.onClosed(shouldSave, editedNote);
     }
 
     private onMouseDown(event: MouseEvent): void {
@@ -213,9 +219,10 @@ export class AgNotesPopup extends BeanStub {
     public override destroy(): void {
         if (!this.closed) {
             this.closed = true;
+            const shouldSave = this.saveOnClose && (this.contentComp?.isDirty() ?? false);
             const editedNote = this.contentComp?.getEditedNote();
             super.destroy();
-            this.params.onClosed(this.saveOnClose, editedNote);
+            this.params.onClosed(shouldSave, editedNote);
         } else {
             super.destroy();
         }

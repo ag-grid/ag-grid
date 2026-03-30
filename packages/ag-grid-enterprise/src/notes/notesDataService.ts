@@ -27,13 +27,40 @@ export class NotesDataService extends BeanStub implements INotesDataService, Nam
     }
 
     public getNote(params: GetNoteParams) {
-        return cloneCellNote(this.dataSource?.getNote(params));
+        const {
+            beans: { colModel },
+            dataSource,
+        } = this;
+        const column = colModel.getCol(params.column);
+
+        if (!column) {
+            return undefined;
+        }
+
+        return cloneCellNote(
+            dataSource?.getNote({
+                ...params,
+                column,
+            })
+        );
     }
 
     public setNote(params: SetNoteParams): void {
-        this.dataSource?.setNote({
+        const {
+            beans: { colModel },
+            dataSource,
+        } = this;
+        const { column: colKey, note } = params;
+        const column = colModel.getCol(colKey);
+
+        if (!column) {
+            return;
+        }
+
+        dataSource?.setNote({
             ...params,
-            note: cloneCellNote(params.note),
+            column,
+            note: cloneCellNote(note),
         });
     }
 
