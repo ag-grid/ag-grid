@@ -276,26 +276,12 @@ function removeStaleEntries(content, stalePaths) {
 // ---------------------------------------------------------------------------
 
 function findStaleEntries(ignorePatterns, yarnLockPackages) {
-    // Build a set of just package names (no version) for versionless path segments
-    const packageNames = new Set();
-    for (const pkg of yarnLockPackages) {
-        const lastAt = pkg.lastIndexOf('@');
-        if (lastAt > 0) packageNames.add(pkg.slice(0, lastAt));
-    }
-
     const stale = [];
 
     for (const [vulnId, entries] of Object.entries(ignorePatterns)) {
         for (const entry of entries) {
             const segments = entry.path.split(' > ');
-            const missingSegment = segments.find((seg) => {
-                // If segment has no version (no @ after position 0), check by name only
-                const lastAt = seg.lastIndexOf('@');
-                if (lastAt <= 0) {
-                    return !packageNames.has(seg);
-                }
-                return !yarnLockPackages.has(seg);
-            });
+            const missingSegment = segments.find((seg) => !yarnLockPackages.has(seg));
             if (missingSegment) {
                 stale.push({ vulnId, path: entry.path, missingSegment });
             }
