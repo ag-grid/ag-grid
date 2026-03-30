@@ -113,11 +113,9 @@ export class AgNotesPopup extends BeanStub {
 
         const dialog = this.createManagedBean(
             new Dialog({
-                title: 'Cell Note',
                 ...DEFAULT_SIZE,
                 resizable: true,
                 movable: false,
-                modal: true,
                 closable: false,
                 hideTitleBar: true,
                 cssIdentifier: 'notes',
