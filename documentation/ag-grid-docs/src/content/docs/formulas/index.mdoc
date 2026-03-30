@@ -91,7 +91,7 @@ Formulas support built-in functions such as `SUM`, `AVERAGE`, and `CONCAT`. See 
 
 You can back formulas with a custom data source. This example uses a Map-based store for formula values:
 
-```{% frameworkTransform=true %}
+```ts
 const formulaStore = new Map();
 const formulaKey = (rowId, colId) => `${rowId}-${colId}`;
 

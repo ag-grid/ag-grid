@@ -124,6 +124,12 @@
                     "name": "Find",
                     "path": "find",
                     "isEnterprise": true
+                },
+                {
+                    "moduleName": "NotesModule",
+                    "name": "Notes",
+                    "path": "notes",
+                    "isEnterprise": true
                 }
             ]
         },

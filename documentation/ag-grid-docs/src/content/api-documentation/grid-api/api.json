@@ -1358,5 +1358,38 @@
                 "url": "./find/#content-to-search"
             }
         }
+    },
+    "notes": {
+        "meta": {
+            "displayName": "Notes",
+            "page": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "getCellNote": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#notes-api"
+            }
+        },
+        "setCellNote": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#notes-api"
+            }
+        },
+        "removeCellNote": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#notes-api"
+            }
+        },
+        "refreshCellNotes": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#notes-api"
+            }
+        }
     }
 }

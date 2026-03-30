@@ -1,0 +1,70 @@
+---
+title: "Notes"
+enterprise: true
+---
+
+Notes let users attach comments to individual cells without storing note text in row data. Cells with notes are marked in the grid, note actions are available from the context menu, and hovering a noted cell opens the built-in resizable note editor.
+
+{% gridExampleRunner title="Notes" name="notes" exampleHeight=440 /%}
+
+## Enabling Notes
+
+Notes are enabled by providing a `notesDataSource`. This lets you keep note state in a separate store and persist it independently of the row data.
+
+Any note metadata, including `updatedAt` and `createdAt`, is rendered as provided by your datasource.
+
+```ts
+const noteStore = new Map();
+const noteKey = (rowId, colId) => `${rowId}::${colId}`;
+
+const gridOptions = {
+    getRowId: (params) => String(params.data.id),
+    notesDataSource: {
+        getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+        setNote: ({ rowNode, column, note }) => {
+            const key = noteKey(rowNode.id, column.getColId());
+            if (note === undefined) {
+                noteStore.delete(key);
+            } else {
+                noteStore.set(key, note);
+            }
+        },
+    },
+};
+```
+
+The examples use `getRowId()` so the note store can key notes consistently by row ID and column ID.
+
+When the `ContextMenuModule` is loaded, the default context menu adds note actions automatically. If you customise `getContextMenuItems()`, include the built-in `cellNote` item to keep the standard note actions:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    getContextMenuItems: () => ['cellNote', 'copy', 'export'],
+};
+```
+
+## Notes API
+
+Use the grid API to read, write, remove and refresh notes programmatically. This is useful when notes are edited from application UI outside the grid, or when the underlying note store changes directly.
+
+{% gridExampleRunner title="Notes API" name="notes-api" exampleHeight=560 /%}
+
+In the example above, clicking a cell selects it, the toolbar reads the current note with `getCellNote()`, and the buttons update the selected note with `setCellNote()`, remove it with `removeCellNote()`, or call `refreshCellNotes()` after mutating the backing store directly.
+
+## API Reference
+
+{% apiDocumentation source="grid-api/api.json" section="notes" names=["getCellNote", "setCellNote", "removeCellNote", "refreshCellNotes"] /%}
+
+### NotesDataSource
+
+{% apiDocumentation source="grid-options/properties.json" section="notes" names=["notesDataSource"] /%}
+
+{% interfaceDocumentation interfaceName="NotesDataSource" /%}
+
+### CellNote
+
+{% interfaceDocumentation interfaceName="CellNote" config={"description":""} /%}
+
+### RefreshCellNotesParams
+
+{% interfaceDocumentation interfaceName="RefreshCellNotesParams" config={"description":""} /%}
