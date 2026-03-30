@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { readFileSync, writeFileSync, readdirSync } from 'fs';
 import { resolve, relative } from 'path';
 
 // ---------------------------------------------------------------------------
