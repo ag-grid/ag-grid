@@ -46,7 +46,9 @@ class AgNotesPopupContent extends Component {
     public postConstruct(): void {
         const translate = this.getLocaleTextFunc();
 
-        const metaParts = [this.note?.author, this.note?.updatedAt ?? this.note?.createdAt].filter(Boolean);
+        const author = this.note?.author?.trim();
+        const timestamp = this.note?.updatedAt?.trim() || this.note?.createdAt?.trim();
+        const metaParts = [author, timestamp].filter((part): part is string => !!part);
         this.eMeta.textContent = metaParts.join(' · ');
         _setDisplayed(this.eMeta, !!metaParts.length);
 

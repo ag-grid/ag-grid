@@ -13,6 +13,8 @@ Notes are enabled by providing a `notesDataSource`. This lets you keep note stat
 
 Any note metadata, including `updatedAt` and `createdAt`, is rendered as provided by your datasource.
 
+The built-in note editor only updates the note text. If notes created from the built-in UI should also include metadata such as the author, stamp that metadata inside `notesDataSource.setNote()`. The first example includes an `Authenticated User` input to simulate application state that the datasource can read when a user saves a note from the grid UI.
+
 ```{% frameworkTransform=true %}
 const noteStore = new Map();
 const noteKey = (rowId, colId) => `${rowId}::${colId}`;
@@ -23,10 +25,18 @@ const gridOptions = {
         getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
         setNote: ({ rowNode, column, note }) => {
             const key = noteKey(rowNode.id, column.getColId());
+            const existingNote = noteStore.get(key);
+
             if (note === undefined) {
                 noteStore.delete(key);
             } else {
-                noteStore.set(key, note);
+                noteStore.set(key, {
+                    ...existingNote,
+                    ...note,
+                    author: getCurrentUser(),
+                    createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                    updatedAt: getDisplayTimestamp(),
+                });
             }
         },
     },

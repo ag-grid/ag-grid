@@ -14,6 +14,15 @@ type OlympicWinner = {
 };
 
 const getNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
+const getDisplayTimestamp = () =>
+    new Intl.DateTimeFormat('en-GB', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    }).format(new Date());
+const getCurrentUser = () => {
+    const user = (document.getElementById('current-user') as HTMLInputElement | null)?.value.trim();
+    return user || undefined;
+};
 
 const noteStore = new Map<string, CellNote>([
     [
@@ -38,11 +47,18 @@ const notesDataSource: NotesDataSource = {
     getNote: ({ rowNode, column }) => noteStore.get(getNoteKey(rowNode.id!, column.getColId())),
     setNote: ({ rowNode, column, note }) => {
         const key = getNoteKey(rowNode.id!, column.getColId());
+        const existingNote = noteStore.get(key);
 
         if (note === undefined) {
             noteStore.delete(key);
         } else {
-            noteStore.set(key, note);
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
         }
     },
 };
