@@ -404,6 +404,15 @@ export type {
     StatusPanelDef,
 } from './interfaces/iStatusPanel';
 
+// Toolbar
+export type {
+    IToolbarItem,
+    IToolbarItemComp,
+    IToolbarItemParams,
+    Toolbar,
+    ToolbarItemDef,
+} from './interfaces/iToolbar';
+
 // Tool Panel
 export type { IColumnToolPanel } from './interfaces/iColumnToolPanel';
 export type { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
