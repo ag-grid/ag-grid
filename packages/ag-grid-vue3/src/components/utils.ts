@@ -104,6 +104,7 @@ import type {
     TabToNextGridContainer,
     TabToNextHeader,
     Theme,
+    Toolbar,
     TreeDataDisplayType,
     UseGroupTotalRow
 } from 'ag-grid-community';
@@ -240,6 +241,10 @@ export interface Props<TData> {
      modules?: Module[] | undefined;
 
      // @START_PROPS@
+    /** Specifies the toolbar items to use in the toolbar.
+         * @agModule `ToolbarModule`
+         */
+    toolbar?: Toolbar,
     /** Specifies the status bar components to use in the status bar.
          * @agModule `StatusBarModule`
          */
@@ -2023,6 +2028,7 @@ export function getProps() {
           modules: [] as any,
 
           // @START_DEFAULTS@
+        toolbar: undefined,
         statusBar: undefined,
         sideBar: undefined,
         suppressContextMenu: undefined,
