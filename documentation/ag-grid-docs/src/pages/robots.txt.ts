@@ -29,6 +29,7 @@ const fetchRobotsDisallow = async (urls: string[]) => {
                 return response.json();
             })
             .catch((error) => {
+                // eslint-disable-next-line no-console
                 console.error(`Error fetching ${url}:`, error);
                 throw error;
             })
