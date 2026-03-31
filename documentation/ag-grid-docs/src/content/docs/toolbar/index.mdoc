@@ -1,0 +1,56 @@
+---
+title: "Quick Access Toolbar"
+enterprise: true
+---
+
+The Toolbar appears above the grid and provides quick access to common grid actions. It supports custom components with configurable ordering and alignment.
+
+Configure the Toolbar with the `toolbar` grid option. The property takes a list of Toolbar Items.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: [
+            { toolbarItem: CustomToolbarItem },
+            { toolbarItem: AnotherToolbarItem, align: 'right' }
+        ]
+    }
+}
+```
+
+{% gridExampleRunner title="Toolbar" name="toolbar-simple" /%}
+
+## Configuration
+
+Items are rendered in the order they are defined.
+
+The `align` property can be `left` (default) or `right`.
+
+The `key` uniquely identifies a Toolbar Item.
+
+Additional props are passed to Toolbar Items using `toolbarItemParams`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: [
+            {
+                key: 'myItem',
+                toolbarItem: CustomToolbarItem,
+                align: 'left',
+                toolbarItemParams: {
+                    label: 'Custom Label'
+                }
+            }
+        ]
+    }
+}
+```
+
+## Custom Components
+
+Custom Toolbar Item components implement the `IToolbarItemComp` interface.
+
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="IToolbarItemParams" /%}
+{% /if %}
