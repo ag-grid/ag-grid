@@ -8,6 +8,8 @@ const disallowAllRobotsTxt = () => 'User-agent: * Disallow: /';
 
 const productionRobotsTxt = (disallowPaths: string[] = []) => `User-agent: *
 Allow: ${urlWithBaseUrl('/')}
+Allow: ${urlWithBaseUrl('/charts/')}
+Allow: ${urlWithBaseUrl('/studio/')}
 ${disallowPaths
     .map((path) => {
         return `Disallow: ${path}`;
