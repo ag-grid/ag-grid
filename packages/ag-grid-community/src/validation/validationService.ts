@@ -160,16 +160,18 @@ export class ValidationService extends BeanStub implements NamedBean {
                 continue;
             }
 
-            if (this.gridOptions.suppressPropertyNamesCheck !== true && !allValidNames.has(name)) {
-                const suggestions = _fuzzySuggestions({
-                    inputValue: name,
-                    allSuggestions: allProperties,
-                }).values;
-                let message = `invalid ${objectName} property '${name}' did you mean any of these: ${suggestions.slice(0, 8).join(', ')}.`;
-                if (allValidNames.has('context')) {
-                    message += `\nIf you are trying to annotate ${objectName} with application data, use the '${objectName}.context' property instead.`;
+            if (!allValidNames.has(name)) {
+                if (this.gridOptions.suppressPropertyNamesCheck !== true) {
+                    const suggestions = _fuzzySuggestions({
+                        inputValue: name,
+                        allSuggestions: allProperties,
+                    }).values;
+                    let message = `invalid ${objectName} property '${name}' did you mean any of these: ${suggestions.slice(0, 8).join(', ')}.`;
+                    if (allValidNames.has('context')) {
+                        message += `\nIf you are trying to annotate ${objectName} with application data, use the '${objectName}.context' property instead.`;
+                    }
+                    _warnOnce(message);
                 }
-                _warnOnce(message);
                 hasInvalidName = true;
                 cache.set(name, false);
                 continue;
