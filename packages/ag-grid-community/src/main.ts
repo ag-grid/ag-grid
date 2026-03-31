@@ -9,6 +9,8 @@ export {
 export { isColumn } from './entities/agColumn';
 export { isColumnGroup } from './entities/agColumnGroup';
 export { isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
+
+export { ROW_ID_GRAND_TOTAL } from './entities/rowNode';
 export type {
     AutoSizeStrategy,
     IColumnLimit,

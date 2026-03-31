@@ -26,6 +26,7 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
+    ROW_ID_GRAND_TOTAL,
     RowNode,
     _debounce,
     _getRowHeightAsNumber,
@@ -141,7 +142,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             ],
             resetListener
         );
-        this.addManagedPropertyListeners(['groupAllowUnbalanced', 'groupTotalRow'], () => this.onStoreUpdated());
+        this.addManagedPropertyListeners(['groupAllowUnbalanced', 'groupTotalRow', 'grandTotalRow'], () =>
+            this.onStoreUpdated()
+        );
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
         this.verifyProps();
 
@@ -656,6 +659,10 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public getRowNode(id: string): RowNode | undefined {
+        if (id === ROW_ID_GRAND_TOTAL) {
+            return this.getRootStore()?.getGrandTotalNode();
+        }
+
         let result: RowNode | undefined;
         this.forEachNode((rowNode) => {
             if (rowNode.id === id) {

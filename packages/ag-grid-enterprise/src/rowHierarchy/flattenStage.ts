@@ -62,13 +62,13 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
             grandTotalRow;
 
         if (includeGrandTotalRow) {
-            _createRowNodeFooter(rootNode, beans);
+            const footerNode = _createRowNodeFooter(rootNode, beans);
             // want to not render the footer row here if pinned via grid options
             if (grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop') {
                 this.beans.pinnedRowModel?.setGrandTotalPinned(grandTotalRow === 'pinnedBottom' ? 'bottom' : 'top');
             } else {
                 const addToTop = grandTotalRow === 'top';
-                this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0, addToTop);
+                this.addRowNodeToRowsToDisplay(details, footerNode, result, 0, addToTop);
             }
         }
 
@@ -129,9 +129,10 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
 
                     // if the parent was excluded, then ui level is that of the parent
                     const uiLevelForChildren = excludedParent ? uiLevel : uiLevel + 1;
+                    let footerNode: RowNode | undefined;
                     if (doesRowShowFooter === 'top') {
-                        _createRowNodeFooter(rowNode, this.beans);
-                        this.addRowNodeToRowsToDisplay(details, rowNode.sibling, result, uiLevelForChildren);
+                        footerNode = _createRowNodeFooter(rowNode, this.beans);
+                        this.addRowNodeToRowsToDisplay(details, footerNode, result, uiLevelForChildren);
                     }
 
                     const detailNode = masterDetailSvc?.getDetail(rowNode);
@@ -148,8 +149,8 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
                     );
 
                     if (doesRowShowFooter === 'bottom') {
-                        _createRowNodeFooter(rowNode, this.beans);
-                        this.addRowNodeToRowsToDisplay(details, rowNode.sibling, result, uiLevelForChildren);
+                        footerNode = _createRowNodeFooter(rowNode, this.beans);
+                        this.addRowNodeToRowsToDisplay(details, footerNode, result, uiLevelForChildren);
                     }
                 }
             } else {

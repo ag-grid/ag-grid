@@ -135,10 +135,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
         const getGroupIncludeFooter = _getGroupTotalRowCallback(this.beans.gos);
         const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
         if (doesRowShowFooter) {
-            _createRowNodeFooter(rowNode, this.beans);
-            if (rowNode.sibling) {
-                rowNode.sibling.uiLevel = rowNode.uiLevel + 1;
-            }
+            const footerNode = _createRowNodeFooter(rowNode, this.beans);
+            footerNode.uiLevel = rowNode.uiLevel + 1;
         }
     }
 

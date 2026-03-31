@@ -27,6 +27,14 @@ export const ROW_ID_PREFIX_TOP_PINNED = 't-';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const ROW_ID_PREFIX_BOTTOM_PINNED = 'b-';
 
+/**
+ * The row ID for the grand total footer row.
+ * Used in both CSRM and SSRM to identify the grand total row.
+ * In SSRM, the server should include a row with this ID (as returned by `getRowId`)
+ * when `needsGrandTotal` is `true` in the `getRows` params.
+ */
+export const ROW_ID_GRAND_TOTAL = 'rowGroupFooter_ROOT_NODE_ID';
+
 let OBJECT_ID_SEQUENCE = 0;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

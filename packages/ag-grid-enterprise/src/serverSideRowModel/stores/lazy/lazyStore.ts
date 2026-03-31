@@ -19,6 +19,7 @@ import type {
 import {
     BeanStub,
     ServerSideTransactionResultStatus,
+    _getGrandTotalRow,
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowIdCallback,
@@ -66,6 +67,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private cache: LazyCache;
     private readonly info: any;
 
+    /** Raw data for the grand total row, kept even when grandTotalRow option is not set. */
+    public grandTotalRowData: any;
+
     constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupLevelParams, parentRowNode: RowNode) {
         super();
         this.ssrmParams = ssrmParams;
@@ -100,8 +104,30 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     public override destroy(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
+        this.grandTotalRowData = undefined;
+        this.destroyGrandTotalRow();
         this.destroyBean(this.cache);
         super.destroy();
+    }
+
+    /** Returns the grand total node if one exists (root store only). Accessed via parentRowNode.sibling. */
+    public getGrandTotalNode(): RowNode | undefined {
+        if (this.parentRowNode.level === -1) {
+            const sibling = this.parentRowNode.sibling;
+            if (sibling?.footer) {
+                return sibling;
+            }
+        }
+        return undefined;
+    }
+
+    private destroyGrandTotalRow(): void {
+        const grandTotalNode = this.getGrandTotalNode();
+        if (grandTotalNode) {
+            this.parentRowNode.sibling = undefined as any;
+            grandTotalNode.sibling = undefined as any;
+            this.blockUtils.destroyRowNode(grandTotalNode);
+        }
     }
 
     /**
@@ -288,21 +314,50 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         const footerNode =
             this.parentRowNode.level > -1 && _getGroupTotalRowCallback(this.gos)({ node: this.parentRowNode });
-        if (!footerNode) {
+        if (!footerNode && this.parentRowNode.level > -1) {
             _destroyRowNodeFooter(this.parentRowNode);
         }
 
         if (footerNode === 'top') {
-            _createRowNodeFooter(this.parentRowNode, this.beans);
-            this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop, uiLevel);
+            this.blockUtils.setDisplayIndex(
+                _createRowNodeFooter(this.parentRowNode, this.beans),
+                displayIndexSeq,
+                nextRowTop,
+                uiLevel
+            );
+        }
+
+        const grandTotalPosition = this.parentRowNode.level === -1 ? _getGrandTotalRow(this.gos) : undefined;
+        let grandTotalNode = this.getGrandTotalNode();
+
+        if (grandTotalPosition && !grandTotalNode && this.grandTotalRowData) {
+            this.cache.createOrUpdateGrandTotalNode(this.grandTotalRowData);
+            grandTotalNode = this.getGrandTotalNode();
+        }
+        // e.g. when cleared via transaction remove or option toggled off
+        if (grandTotalNode && (!grandTotalPosition || !this.grandTotalRowData)) {
+            this.destroyGrandTotalRow();
+            grandTotalNode = undefined;
+        }
+
+        if (grandTotalPosition === 'top' && grandTotalNode) {
+            this.blockUtils.setDisplayIndex(grandTotalNode, displayIndexSeq, nextRowTop, uiLevel);
         }
 
         // delegate to the store to set the row display indexes
         this.cache.setDisplayIndexes(displayIndexSeq, nextRowTop, uiLevel);
 
         if (footerNode === 'bottom') {
-            _createRowNodeFooter(this.parentRowNode, this.beans);
-            this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop, uiLevel);
+            this.blockUtils.setDisplayIndex(
+                _createRowNodeFooter(this.parentRowNode, this.beans),
+                displayIndexSeq,
+                nextRowTop,
+                uiLevel
+            );
+        }
+
+        if (grandTotalPosition === 'bottom' && grandTotalNode) {
+            this.blockUtils.setDisplayIndex(grandTotalNode, displayIndexSeq, nextRowTop, uiLevel);
         }
 
         this.displayIndexEnd = displayIndexSeq.value;
@@ -355,6 +410,13 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             callback(this.parentRowNode.sibling, sequence.value++);
         }
 
+        // Grand total at top
+        const grandTotalPosition = this.parentRowNode.level === -1 ? _getGrandTotalRow(this.gos) : undefined;
+        const grandTotalNode = this.getGrandTotalNode();
+        if (grandTotalPosition === 'top' && grandTotalNode) {
+            callback(grandTotalNode, sequence.value++);
+        }
+
         const orderedNodes = this.cache.getOrderedNodeMap();
         for (const lazyNode of Object.values(orderedNodes)) {
             callback(lazyNode.node, sequence.value++);
@@ -366,6 +428,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         if (footerNode === 'bottom') {
             callback(this.parentRowNode.sibling, sequence.value++);
+        }
+
+        // Grand total at bottom
+        if (grandTotalPosition === 'bottom' && grandTotalNode) {
+            callback(grandTotalNode, sequence.value++);
         }
     }
 
@@ -621,6 +688,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      */
     refreshStore(purge: boolean) {
         if (purge) {
+            this.grandTotalRowData = undefined;
+            this.destroyGrandTotalRow();
             this.destroyBean(this.cache);
             this.cache = this.createManagedBean(new LazyCache(this, 1, false, this.storeParams));
             this.fireStoreUpdatedEvent();

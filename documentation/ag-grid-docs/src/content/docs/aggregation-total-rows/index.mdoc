@@ -12,6 +12,10 @@ A grand total row can be included in the grid by setting the `grandTotalRow` gri
 Setting a value of `"top"` or `"bottom"` renders the grand total row as the first or last row in the grid, respectively.
 Setting a value of `"pinnedTop"` or `"pinnedBottom"` renders the grand total row pinned to the top or bottom of the grid, respectively.
 
+{% note %}
+Grand total rows are also supported with the [Server-Side Row Model](./server-side-model-grouping/#grand-total-row), including on flat grids without grouping. The server provides the grand total data via `grandTotalRowData` or in the `rowData` array.
+{% /note %}
+
 {% gridExampleRunner title="Enabling Grand Total Row" name="enabling-grand-total" /%}
 
 The following configuration shows how grand total rows can be included at the bottom of the grid:
