@@ -138,6 +138,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
 
         // Check uncached property names: emit one-time warnings and record validity
+        const checkPropertyNames = this.gridOptions.suppressPropertyNamesCheck !== true;
         let hasInvalidName = false;
         for (const name of optionKeys) {
             if (isValidMap.has(name)) {
@@ -162,7 +163,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             }
 
             if (!allValidNames.has(name)) {
-                if (this.gridOptions.suppressPropertyNamesCheck !== true) {
+                if (checkPropertyNames) {
                     const suggestions = _fuzzySuggestions({
                         inputValue: name,
                         allSuggestions: allProperties,
@@ -172,8 +173,8 @@ export class ValidationService extends BeanStub implements NamedBean {
                         message += `\nIf you are trying to annotate ${objectName} with application data, use the '${objectName}.context' property instead.`;
                     }
                     _warnOnce(message);
-                    hasInvalidName = true;
                 }
+                hasInvalidName = true;
                 isValidMap.set(name, false);
                 continue;
             }
@@ -181,7 +182,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             isValidMap.set(name, true);
         }
 
-        if (hasInvalidName && docsUrl) {
+        if (hasInvalidName && docsUrl && checkPropertyNames) {
             const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
             _warnOnce(`to see all the valid ${objectName} properties please check: ${url}`);
         }
