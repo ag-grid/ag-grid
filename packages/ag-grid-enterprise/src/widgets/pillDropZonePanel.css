@@ -98,8 +98,7 @@
 
 .ag-column-drop-horizontal {
     white-space: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: auto hidden;
     scrollbar-width: thin;
     height: var(--ag-header-height);
     padding-left: var(--ag-cell-horizontal-padding);
