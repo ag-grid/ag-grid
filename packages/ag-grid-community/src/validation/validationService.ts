@@ -172,8 +172,8 @@ export class ValidationService extends BeanStub implements NamedBean {
                         message += `\nIf you are trying to annotate ${objectName} with application data, use the '${objectName}.context' property instead.`;
                     }
                     _warnOnce(message);
+                    hasInvalidName = true;
                 }
-                hasInvalidName = true;
                 isValidMap.set(name, false);
                 continue;
             }
