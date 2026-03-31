@@ -431,5 +431,6 @@ type UntypedBeanNames =
     | 'ssrmStoreFactory'
     | 'ssrmStoreUtils'
     | 'statusBarSvc'
+    | 'toolbarSvc'
     | 'testIdSvc'
     | 'formula';
