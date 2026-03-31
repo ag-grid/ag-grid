@@ -28,6 +28,8 @@ export class ValidationService extends BeanStub implements NamedBean {
     private gridOptions: GridOptions;
     /** Property names already checked via checkProperties, keyed by objectName. */
     private checkedPropertyNames: Map<string, Set<string>> = new Map();
+    /** Property names whose supportedRowModels check failed, keyed by objectName. */
+    private unsupportedRowModelProperties: Map<string, Set<string>> = new Map();
 
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
@@ -151,12 +153,18 @@ export class ValidationService extends BeanStub implements NamedBean {
 
                 const rules = validations[name as keyof T];
                 if (rules?.supportedRowModels && !rules.supportedRowModels.includes(rowModel)) {
+                    let unsupported = this.unsupportedRowModelProperties.get(objectName);
+                    if (!unsupported) {
+                        unsupported = new Set();
+                        this.unsupportedRowModelProperties.set(objectName, unsupported);
+                    }
+                    unsupported.add(name);
                     _warnOnce(
                         `${name} is not supported with the '${rowModel}' row model. It is only valid with: ${rules.supportedRowModels.join(', ')}.`
                     );
                 }
 
-                if (!deprecation && checkPropertyNames && !allValidNames.has(name)) {
+                if (checkPropertyNames && !allValidNames.has(name)) {
                     const suggestions = _fuzzySuggestions({
                         inputValue: name,
                         allSuggestions: allProperties,
@@ -177,11 +185,17 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
 
         const warnings = new Set<string>();
+        const unsupported = this.unsupportedRowModelProperties.get(objectName);
 
         optionKeys.forEach((key: keyof T) => {
             const value = options[key];
             if (value == null || value === false) {
                 // false implies feature is disabled, don't validate.
+                return;
+            }
+
+            // Skip dependencies/validate for properties not supported by the current row model
+            if (unsupported?.has(key as string)) {
                 return;
             }
 
