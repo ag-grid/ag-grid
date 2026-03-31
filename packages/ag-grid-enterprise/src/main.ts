@@ -62,6 +62,7 @@ export { MenuModule, ColumnMenuModule, ContextMenuModule } from './menu/menuModu
 export { RichSelectModule } from './richSelect/richSelectModule';
 export { SetFilterModule } from './setFilter/setFilterModule';
 export { StatusBarModule } from './statusBar/statusBarModule';
+export { ToolbarModule } from './toolbar/toolbarModule';
 export { ExcelExportModule } from './excelExport/excelExportModule';
 export { MultiFilterModule } from './multiFilter/multiFilterModule';
 export { GroupFilterModule, RowGroupingPanelModule, RowGroupingModule } from './rowGrouping/rowGroupingModule';
