@@ -275,12 +275,18 @@ function computePivotOrder(values: Map<string, any>, pivotColumns: AgColumn[], d
     if (depth === pivotColumns.length - 1) {
         return keys;
     }
-    return keys.flatMap((key) => {
+    const result: string[] = [];
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        result.push(key);
         const child = values.get(key);
         // child is a nested Map at non-leaf levels; if absent (sparse map), skip its subtree.
-        if (!(child instanceof Map)) {
-            return [key];
+        if (child instanceof Map) {
+            const childKeys = computePivotOrder(child, pivotColumns, depth + 1);
+            for (let j = 0; j < childKeys.length; j++) {
+                result.push(childKeys[j]);
+            }
         }
-        return [key, ...computePivotOrder(child, pivotColumns, depth + 1)];
-    });
+    }
+    return result;
 }
