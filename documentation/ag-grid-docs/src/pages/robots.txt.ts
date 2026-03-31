@@ -1,4 +1,4 @@
-import { CHARTS_ROBOTS_DISALLOW_JSON_URL, SITE_URL } from '@constants';
+import { CHARTS_ROBOTS_DISALLOW_JSON_URL, SITE_URL, STUDIO_ROBOTS_DISALLOW_JSON_URL } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import { pathJoin } from '@utils/pathJoin';
 import { getSitemapIgnorePaths } from '@utils/sitemapPages';
@@ -16,14 +16,37 @@ ${disallowPaths
 Sitemap: ${pathJoin(SITE_URL, urlWithBaseUrl('/sitemap-index.xml'))}
 `;
 
+const fetchRobotsDisallow = async (urls: string[]) => {
+    const fetches = urls.map((url) =>
+        fetch(url)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .catch((error) => {
+                console.error(`Error fetching ${url}:`, error);
+                throw error;
+            })
+    );
+
+    const results = await Promise.all(fetches);
+
+    return results.flat();
+};
+
 export async function GET() {
     // NOTE: /archive is ignored in `ignorePaths` on production
     const disallowAll = !getIsDev() && !getIsProduction();
 
     const gridIgnorePaths = await getSitemapIgnorePaths();
 
-    const chartsIgnorePaths = await fetch(CHARTS_ROBOTS_DISALLOW_JSON_URL).then((resp) => resp.json());
-    const ignorePaths = gridIgnorePaths.concat(chartsIgnorePaths);
+    const otherIgnorePaths = await fetchRobotsDisallow([
+        CHARTS_ROBOTS_DISALLOW_JSON_URL,
+        STUDIO_ROBOTS_DISALLOW_JSON_URL,
+    ]);
+    const ignorePaths = gridIgnorePaths.concat(otherIgnorePaths);
 
     const output = disallowAll ? disallowAllRobotsTxt() : productionRobotsTxt(ignorePaths);
 
