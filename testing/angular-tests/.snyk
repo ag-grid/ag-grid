@@ -2,6 +2,36 @@
 version: v1.25.1
 
 ignore:
+    SNYK-JS-HANDLEBARS-15807042:
+        - jest-preset-angular@14.6.2 > ts-jest@29.4.6 > handlebars@4.7.8:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-31T13:31:18.041Z
+    SNYK-JS-HANDLEBARS-15807040:
+        - jest-preset-angular@14.6.2 > ts-jest@29.4.6 > handlebars@4.7.8:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-31T13:31:08.944Z
+    SNYK-JS-HANDLEBARS-15803086:
+        - jest-preset-angular@14.6.2 > ts-jest@29.4.6 > handlebars@4.7.8:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-31T13:30:54.681Z
+    SNYK-JS-HANDLEBARS-15803084:
+        - jest-preset-angular@14.6.2 > ts-jest@29.4.6 > handlebars@4.7.8:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-31T13:30:41.178Z
+    SNYK-JS-HANDLEBARS-15803082:
+        - jest-preset-angular@14.6.2 > ts-jest@29.4.6 > handlebars@4.7.8:
+              reason: >-
+                  Test dependency - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-03-31T13:30:15.816Z
     SNYK-JS-BRACEEXPANSION-15789759:
         - jest@29.7.0 > @jest/core@29.7.0 > @jest/reporters@29.7.0 > @jest/transform@29.7.0 > babel-plugin-istanbul@6.1.1 > test-exclude@6.0.0 > glob@7.2.3 > minimatch@3.1.2 > brace-expansion@1.1.12:
               reason: >-
