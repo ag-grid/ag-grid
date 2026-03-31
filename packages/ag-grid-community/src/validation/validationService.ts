@@ -32,7 +32,7 @@ export class ValidationService extends BeanStub implements NamedBean {
      * A property is invalid if it has an unsupported row model, or is an unrecognised name.
      * Deprecation warnings and fuzzy suggestions are emitted once when first encountered.
      */
-    private propertyNameCache: Map<string, Map<string, boolean>> = new Map();
+    private readonly propertyNameCache: Map<string, Map<string, boolean>> = new Map();
 
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
