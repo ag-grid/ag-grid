@@ -1,0 +1,23 @@
+.ag-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+    border-bottom: var(--ag-header-row-border);
+    padding-right: calc(var(--ag-spacing) * 4);
+    padding-left: calc(var(--ag-spacing) * 4);
+    min-height: var(--ag-header-height);
+    line-height: 1.5;
+}
+
+.ag-toolbar-left {
+    display: inline-flex;
+}
+
+.ag-toolbar-right {
+    display: inline-flex;
+}
+
+.ag-toolbar-item {
+    display: inline-flex;
+}
