@@ -44,15 +44,18 @@ export async function GET() {
     // NOTE: /archive is ignored in `ignorePaths` on production
     const disallowAll = !getIsDev() && !getIsProduction();
 
-    const gridIgnorePaths = await getSitemapIgnorePaths();
-
-    const otherIgnorePaths = await fetchRobotsDisallow([
-        CHARTS_ROBOTS_DISALLOW_JSON_URL,
-        STUDIO_ROBOTS_DISALLOW_JSON_URL,
-    ]);
-    const ignorePaths = gridIgnorePaths.concat(otherIgnorePaths);
-
-    const output = disallowAll ? disallowAllRobotsTxt() : productionRobotsTxt(ignorePaths);
+    let output;
+    if (disallowAll) {
+        output = disallowAllRobotsTxt();
+    } else {
+        const gridIgnorePaths = await getSitemapIgnorePaths();
+        const otherIgnorePaths = await fetchRobotsDisallow([
+            CHARTS_ROBOTS_DISALLOW_JSON_URL,
+            STUDIO_ROBOTS_DISALLOW_JSON_URL,
+        ]);
+        const ignorePaths = gridIgnorePaths.concat(otherIgnorePaths);
+        output = productionRobotsTxt(ignorePaths);
+    }
 
     return new Response(output, {
         status: 200,
