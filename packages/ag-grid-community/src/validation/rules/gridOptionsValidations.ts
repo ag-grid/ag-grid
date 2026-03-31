@@ -4,6 +4,7 @@ import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } fr
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
+import { buildAllValidNames } from '../validationTypes';
 import type { Deprecations, OptionsValidator, RequiredModule, Validations } from '../validationTypes';
 
 /**
@@ -586,11 +587,19 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
     return validations;
 };
 
-export const GRID_OPTIONS_VALIDATORS: () => Required<OptionsValidator<GridOptions>> = () => ({
-    objectName: 'gridOptions',
-    allProperties: [..._GET_ALL_GRID_OPTIONS(), ...Object.values(_PUBLIC_EVENT_HANDLERS_MAP)],
-    propertyExceptions: ['api'],
-    docsUrl: 'grid-options/',
-    deprecations: GRID_OPTION_DEPRECATIONS(),
-    validations: GRID_OPTION_VALIDATIONS(),
-});
+let _gridOptionsValidatorsCache: Required<OptionsValidator<GridOptions>> | undefined;
+export const GRID_OPTIONS_VALIDATORS: () => Required<OptionsValidator<GridOptions>> = () =>
+    (_gridOptionsValidatorsCache ??= (() => {
+        const allProperties = [..._GET_ALL_GRID_OPTIONS(), ...Object.values(_PUBLIC_EVENT_HANDLERS_MAP)];
+        const deprecations = GRID_OPTION_DEPRECATIONS();
+        const propertyExceptions = ['api'];
+        return {
+            objectName: 'gridOptions',
+            allProperties,
+            allValidNames: buildAllValidNames(allProperties, deprecations, propertyExceptions),
+            propertyExceptions,
+            docsUrl: 'grid-options/',
+            deprecations,
+            validations: GRID_OPTION_VALIDATIONS(),
+        };
+    })());
