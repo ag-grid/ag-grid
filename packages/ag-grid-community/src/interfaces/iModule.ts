@@ -212,6 +212,7 @@ export type EnterpriseModuleName =
     | 'SideBar'
     | 'Sparklines'
     | 'StatusBar'
+    | 'Toolbar'
     | 'TreeData'
     | 'ViewportRowModel'
     | 'Formula'
@@ -296,6 +297,7 @@ export type AgModuleName =
     | 'SideBarModule'
     | 'SparklinesModule'
     | 'StatusBarModule'
+    | 'ToolbarModule'
     | 'TreeDataModule'
     | 'ViewportRowModelModule'
     | 'FormulaModule';
