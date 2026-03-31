@@ -33,6 +33,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     SideBar: 1,
     Sparklines: 1,
     StatusBar: 1,
+    Toolbar: 1,
     TreeData: 1,
     ViewportRowModel: 1,
     Formula: 1,
