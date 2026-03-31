@@ -26,10 +26,13 @@ export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validation' as const;
 
     private gridOptions: GridOptions;
-    /** Property names already checked via checkProperties, keyed by objectName. */
-    private checkedPropertyNames: Map<string, Set<string>> = new Map();
-    /** Property names whose supportedRowModels check failed, keyed by objectName. */
-    private unsupportedRowModelProperties: Map<string, Set<string>> = new Map();
+    /**
+     * Caches per-property-name validation results keyed by objectName.
+     * Each inner map records: property name → true if valid for runtime checks, false if not.
+     * A property is invalid if it has an unsupported row model, or is an unrecognised name.
+     * Deprecation warnings and fuzzy suggestions are emitted once when first encountered.
+     */
+    private propertyNameCache: Map<string, Map<string, boolean>> = new Map();
 
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
@@ -128,74 +131,69 @@ export class ValidationService extends BeanStub implements NamedBean {
         const { validations, deprecations, allProperties, allValidNames, objectName, docsUrl } = validator;
 
         const optionKeys = Object.keys(options) as (keyof T & string)[];
-        const checked = this.checkedPropertyNames.get(objectName);
-        const uncheckedNames = checked ? optionKeys.filter((name) => !checked.has(name)) : optionKeys;
-
-        if (uncheckedNames.length > 0) {
-            const target = checked ?? new Set<string>();
-            if (!checked) {
-                this.checkedPropertyNames.set(objectName, target);
-            }
-
-            const checkPropertyNames = this.gridOptions.suppressPropertyNamesCheck !== true;
-            let hasInvalid = false;
-
-            const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
-
-            for (const name of uncheckedNames) {
-                target.add(name);
-
-                const deprecation = deprecations[name as keyof T];
-                if (deprecation) {
-                    const { message, version } = deprecation;
-                    _warnOnce(`As of v${version}, ${name} is deprecated. ${message ?? ''}`);
-                }
-
-                const rules = validations[name as keyof T];
-                if (rules?.supportedRowModels && !rules.supportedRowModels.includes(rowModel)) {
-                    let unsupported = this.unsupportedRowModelProperties.get(objectName);
-                    if (!unsupported) {
-                        unsupported = new Set();
-                        this.unsupportedRowModelProperties.set(objectName, unsupported);
-                    }
-                    unsupported.add(name);
-                    _warnOnce(
-                        `${name} is not supported with the '${rowModel}' row model. It is only valid with: ${rules.supportedRowModels.join(', ')}.`
-                    );
-                }
-
-                if (checkPropertyNames && !allValidNames.has(name)) {
-                    const suggestions = _fuzzySuggestions({
-                        inputValue: name,
-                        allSuggestions: allProperties,
-                    }).values;
-                    let message = `invalid ${objectName} property '${name}' did you mean any of these: ${suggestions.slice(0, 8).join(', ')}.`;
-                    if (allValidNames.has('context')) {
-                        message += `\nIf you are trying to annotate ${objectName} with application data, use the '${objectName}.context' property instead.`;
-                    }
-                    _warnOnce(message);
-                    hasInvalid = true;
-                }
-            }
-
-            if (hasInvalid && docsUrl) {
-                const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
-                _warnOnce(`to see all the valid ${objectName} properties please check: ${url}`);
-            }
+        let cache = this.propertyNameCache.get(objectName);
+        if (!cache) {
+            cache = new Map();
+            this.propertyNameCache.set(objectName, cache);
         }
 
+        // Check uncached property names: emit one-time warnings and record validity
+        let hasInvalidName = false;
+        for (const name of optionKeys) {
+            if (cache.has(name)) {
+                continue;
+            }
+
+            const deprecation = deprecations[name as keyof T];
+            if (deprecation) {
+                const { message, version } = deprecation;
+                _warnOnce(`As of v${version}, ${name} is deprecated. ${message ?? ''}`);
+            }
+
+            const rules = validations[name as keyof T];
+            const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
+            if (rules?.supportedRowModels && !rules.supportedRowModels.includes(rowModel)) {
+                _warnOnce(
+                    `${name} is not supported with the '${rowModel}' row model. It is only valid with: ${rules.supportedRowModels.join(', ')}.`
+                );
+                cache.set(name, false);
+                continue;
+            }
+
+            if (this.gridOptions.suppressPropertyNamesCheck !== true && !allValidNames.has(name)) {
+                const suggestions = _fuzzySuggestions({
+                    inputValue: name,
+                    allSuggestions: allProperties,
+                }).values;
+                let message = `invalid ${objectName} property '${name}' did you mean any of these: ${suggestions.slice(0, 8).join(', ')}.`;
+                if (allValidNames.has('context')) {
+                    message += `\nIf you are trying to annotate ${objectName} with application data, use the '${objectName}.context' property instead.`;
+                }
+                _warnOnce(message);
+                hasInvalidName = true;
+                cache.set(name, false);
+                continue;
+            }
+
+            cache.set(name, true);
+        }
+
+        if (hasInvalidName && docsUrl) {
+            const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
+            _warnOnce(`to see all the valid ${objectName} properties please check: ${url}`);
+        }
+
+        // Run value-level validation only for properties marked valid
         const warnings = new Set<string>();
-        const unsupported = this.unsupportedRowModelProperties.get(objectName);
 
         optionKeys.forEach((key: keyof T) => {
-            const value = options[key];
-            if (value == null || value === false) {
-                // false implies feature is disabled, don't validate.
+            if (!cache!.get(key as string)) {
                 return;
             }
 
-            // Skip dependencies/validate for properties not supported by the current row model
-            if (unsupported?.has(key as string)) {
+            const value = options[key];
+            if (value == null || value === false) {
+                // false implies feature is disabled, don't validate.
                 return;
             }
 
