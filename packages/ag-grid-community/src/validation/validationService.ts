@@ -131,16 +131,17 @@ export class ValidationService extends BeanStub implements NamedBean {
         const { validations, deprecations, allProperties, allValidNames, objectName, docsUrl } = validator;
 
         const optionKeys = Object.keys(options) as (keyof T & string)[];
-        let cache = this.propertyNameCache.get(objectName);
-        if (!cache) {
-            cache = new Map();
-            this.propertyNameCache.set(objectName, cache);
+        let isValidMap = this.propertyNameCache.get(objectName);
+        if (!isValidMap) {
+            isValidMap = new Map();
+            this.propertyNameCache.set(objectName, isValidMap);
         }
 
         // Check uncached property names: emit one-time warnings and record validity
         let hasInvalidName = false;
         for (const name of optionKeys) {
-            if (cache.has(name)) {
+            if (isValidMap.has(name)) {
+                // Already validated this property name
                 continue;
             }
 
@@ -156,7 +157,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                 _warnOnce(
                     `${name} is not supported with the '${rowModel}' row model. It is only valid with: ${rules.supportedRowModels.join(', ')}.`
                 );
-                cache.set(name, false);
+                isValidMap.set(name, false);
                 continue;
             }
 
@@ -173,11 +174,11 @@ export class ValidationService extends BeanStub implements NamedBean {
                     _warnOnce(message);
                 }
                 hasInvalidName = true;
-                cache.set(name, false);
+                isValidMap.set(name, false);
                 continue;
             }
 
-            cache.set(name, true);
+            isValidMap.set(name, true);
         }
 
         if (hasInvalidName && docsUrl) {
@@ -189,7 +190,8 @@ export class ValidationService extends BeanStub implements NamedBean {
         const warnings = new Set<string>();
 
         optionKeys.forEach((key: keyof T) => {
-            if (!cache!.get(key as string)) {
+            if (isValidMap.get(key as string) === false) {
+                // Don't perform runtime validations on invalid properties
                 return;
             }
 
