@@ -95,7 +95,7 @@ export class LazyCache extends BeanStub {
     /**
      * Sibling services - 1-1 relationships.
      */
-    private readonly store: LazyStore;
+    public readonly store: LazyStore;
     private readonly storeParams: ServerSideGroupLevelParams;
 
     /**

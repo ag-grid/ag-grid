@@ -130,7 +130,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
     private executeLoad(cache: LazyCache, startRow: number, endRow: number) {
         const ssrmParams = cache.getSsrmParams();
-        const parentNode = (cache as any).store.getParentNode() as RowNode;
+        const parentNode = cache.store.getParentNode() as RowNode;
         const request: IServerSideGetRowsRequest = {
             startRow,
             endRow,
@@ -169,7 +169,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         };
 
         const isRootStore = parentNode.level === -1;
-        const store = isRootStore ? ((cache as any).store as LazyStore) : undefined;
+        const store = isRootStore ? cache.store : undefined;
         const needsGrandTotal = isRootStore && !store?.grandTotalRowData && !!_getGrandTotalRow(this.gos);
 
         const params: IServerSideGetRowsParams = _addGridCommonParams(this.gos, {
