@@ -28,7 +28,7 @@ export const ROW_ID_PREFIX_TOP_PINNED = 't-';
 export const ROW_ID_PREFIX_BOTTOM_PINNED = 'b-';
 
 /**
- * The row ID for the grand total footer row.
+ * The row ID for the grand total footer row, "rowGroupFooter_ROOT_NODE_ID".
  * Used in both CSRM and SSRM to identify the grand total row.
  * In SSRM, the server should include a row with this ID (as returned by `getRowId`)
  * when `needsGrandTotal` is `true` in the `getRows` params.

@@ -287,7 +287,6 @@ export {
     _isSameRow,
 } from './entities/positionUtils';
 export {
-    ROW_ID_GRAND_TOTAL,
     ROW_ID_PREFIX_BOTTOM_PINNED as _ROW_ID_PREFIX_BOTTOM_PINNED,
     ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP,
     ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
