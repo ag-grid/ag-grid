@@ -49,7 +49,11 @@ const umdPostBuildPlugin = {
                 const newPath = newBasename !== basename ? path.resolve(dir, newBasename) : resolvedOutput;
 
                 if (newBasename !== basename) {
-                    await fs.rename(resolvedOutput, newPath);
+                    try {
+                        await fs.rename(resolvedOutput, newPath);
+                    } catch (e) {
+                        if (e.code !== 'ENOENT') throw e;
+                    }
                 }
 
                 renamedFiles.push(newPath);

@@ -1,7 +1,7 @@
 import { bench, describe } from 'vitest';
 
 import type { GridApi, IRowNode } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowApiModule } from 'ag-grid-community';
+import { CellApiModule, ClientSideRowModelModule, RowApiModule } from 'ag-grid-community';
 
 import { SimplePRNG, TestGridsManager } from '../../test-utils';
 
@@ -24,7 +24,7 @@ describe('getValue profiling', () => {
 
     const gridsManager = new TestGridsManager({
         benchmark: true,
-        modules: [ClientSideRowModelModule, RowApiModule],
+        modules: [ClientSideRowModelModule, RowApiModule, CellApiModule],
     });
 
     const baseRowData = buildRandomData(rowCount);

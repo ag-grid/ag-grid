@@ -63,7 +63,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build:package"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",

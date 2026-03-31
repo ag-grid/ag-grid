@@ -9,5 +9,11 @@
 @media print {
     body {
         overflow: visible;
+
+        --ag-border-color: #bbb;
+    }
+
+    * {
+        color: black !important;
     }
 }

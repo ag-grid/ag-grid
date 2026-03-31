@@ -20,7 +20,7 @@
     },
     "build:umd": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build", "build:copy-styles", "build:package"],
+      "dependsOn": ["^build:package", "build:copy-styles", "build:package"],
       "inputs": ["tsDefaults", "styleOutputs"],
       "outputs": ["{projectRoot}/dist/ag-grid-community*.js"],
       "options": {
@@ -111,7 +111,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build:package"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -148,6 +148,38 @@
           "metafile": false
         }
       }
+    },
+    "build:package:watch": {
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": [],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:esbuild"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "{projectRoot}/dist/package",
+        "deleteOutputPath": false,
+        "main": "{projectRoot}/src/main.ts",
+        "tsConfig": "{projectRoot}/tsconfig.watch.json",
+        "skipTypeCheck": true,
+        "esbuildConfig": "esbuild.config.cjs",
+        "platform": "browser",
+        "target": "es2020",
+        "format": ["cjs", "esm"],
+        "sourcemap": true,
+        "metafile": false
+      },
+      "configurations": {
+        "watch": {}
+      },
+      "cache": true
     },
     "lint:knip": {
       "command": "knip",

@@ -32,7 +32,16 @@ description: >-
 -   **Base branch:** Detect the base branch from git context — do not assume `latest`. If the current branch was created from a `bX.Y.Z` release branch, the PR must target that release branch. This includes any changes needed during the current release cycle — code fixes, skill/prompt updates, example fixes, doc corrections. Only target `latest` for work that doesn't need to ship with the current release. To determine the base, run `.rulesync/skills/git-conventions/detect-base-branch.sh` — it compares merge-base distances from HEAD to all `origin/bX.Y.Z` release branches (newest version first) and prints `BASE_BRANCH=<branch>`. Fall back to `origin/latest` if no release branch is closer. The user may not mention which base to use, so always detect it from git ancestry.
 -   **Title:** `AG-XXXX <description>` for JIRA-linked; plain description otherwise. Under 70 characters.
 -   **Multiple tickets:** comma-separate keys (e.g. `CRT-1030, CRT-1044 Fix highlight`)
--   **Body (JIRA-linked):** JIRA ticket link(s). Add context only when the change needs explanation beyond the ticket.
--   **Body (no JIRA):** concise description of the change.
--   Keep descriptions concise — this is a public repo.
+-   **Body (JIRA-linked):** Always include: the JIRA ticket link, a `Fix #AG-XXXX` line (enables downstream automations), and a brief summary of what changed and why. The summary should be enough for a reviewer to understand the change without opening the ticket. Keep it concise — this is a public repo.
+-   **Body (no JIRA):** concise description of what changed and why.
 -   Never attribute agentic tooling.
+
+Example JIRA-linked body:
+```
+https://ag-grid.atlassian.net/browse/AG-16998
+
+Add `cellRenderer: true` to `EditorRendererComponent` so function-based renderers
+are correctly adapted, matching the behaviour of regular cell rendering.
+
+Fix #AG-16998
+```

@@ -26,6 +26,13 @@ export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validation' as const;
 
     private gridOptions: GridOptions;
+    /**
+     * Caches per-property-name validation results keyed by objectName.
+     * Each inner map records: property name → true if valid for runtime checks, false if not.
+     * A property is invalid if it has an unsupported row model, or is an unrecognised name.
+     * Deprecation warnings and fuzzy suggestions are emitted once when first encountered.
+     */
+    private readonly propertyNameCache: Map<string, Map<string, boolean>> = new Map();
 
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
@@ -121,26 +128,72 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 
     private processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {
-        const { validations, deprecations, allProperties, propertyExceptions, objectName, docsUrl } = validator;
+        const { validations, deprecations, allProperties, allValidNames, objectName, docsUrl } = validator;
 
-        if (allProperties && this.gridOptions.suppressPropertyNamesCheck !== true) {
-            this.checkProperties(
-                options,
-                [...(propertyExceptions ?? []), ...Object.keys(deprecations)],
-                allProperties,
-                objectName,
-                docsUrl
-            );
+        const optionKeys = Object.keys(options) as (keyof T & string)[];
+        let isValidMap = this.propertyNameCache.get(objectName);
+        if (!isValidMap) {
+            isValidMap = new Map();
+            this.propertyNameCache.set(objectName, isValidMap);
         }
 
-        const warnings = new Set<string>();
+        // Check uncached property names: emit one-time warnings and record validity
+        const checkPropertyNames = this.gridOptions.suppressPropertyNamesCheck !== true;
+        let hasInvalidName = false;
+        for (const name of optionKeys) {
+            if (isValidMap.has(name)) {
+                // Already validated this property name
+                continue;
+            }
 
-        const optionKeys = Object.keys(options) as (keyof T)[];
-        optionKeys.forEach((key: keyof T) => {
-            const deprecation = deprecations[key];
+            const deprecation = deprecations[name as keyof T];
             if (deprecation) {
                 const { message, version } = deprecation;
-                warnings.add(`As of v${version}, ${String(key)} is deprecated. ${message ?? ''}`);
+                _warnOnce(`As of v${version}, ${name} is deprecated. ${message ?? ''}`);
+            }
+
+            const rules = validations[name as keyof T];
+            const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
+            if (rules?.supportedRowModels && !rules.supportedRowModels.includes(rowModel)) {
+                _warnOnce(
+                    `${name} is not supported with the '${rowModel}' row model. It is only valid with: ${rules.supportedRowModels.join(', ')}.`
+                );
+                isValidMap.set(name, false);
+                continue;
+            }
+
+            if (!allValidNames.has(name)) {
+                if (checkPropertyNames) {
+                    const suggestions = _fuzzySuggestions({
+                        inputValue: name,
+                        allSuggestions: allProperties,
+                    }).values;
+                    let message = `invalid ${objectName} property '${name}' did you mean any of these: ${suggestions.slice(0, 8).join(', ')}.`;
+                    if (allValidNames.has('context')) {
+                        message += `\nIf you are trying to annotate ${objectName} with application data, use the '${objectName}.context' property instead.`;
+                    }
+                    _warnOnce(message);
+                }
+                hasInvalidName = true;
+                isValidMap.set(name, false);
+                continue;
+            }
+
+            isValidMap.set(name, true);
+        }
+
+        if (hasInvalidName && docsUrl && checkPropertyNames) {
+            const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
+            _warnOnce(`to see all the valid ${objectName} properties please check: ${url}`);
+        }
+
+        // Run value-level validation only for properties marked valid
+        const warnings = new Set<string>();
+
+        optionKeys.forEach((key: keyof T) => {
+            if (isValidMap.get(key as string) === false) {
+                // Don't perform runtime validations on invalid properties
+                return;
             }
 
             const value = options[key];
@@ -154,23 +207,13 @@ export class ValidationService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const { dependencies, validate, supportedRowModels, expectedType } = rules;
+            const { dependencies, validate, expectedType } = rules;
 
             if (expectedType) {
                 const actualType = typeof value;
                 if (actualType !== expectedType) {
                     warnings.add(
                         `${String(key)} should be of type '${expectedType}' but received '${actualType}' (${value}).`
-                    );
-                    return;
-                }
-            }
-
-            if (supportedRowModels) {
-                const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
-                if (!supportedRowModels.includes(rowModel)) {
-                    warnings.add(
-                        `${String(key)} is not supported with the '${rowModel}' row model. It is only valid with: ${supportedRowModels.join(', ')}.`
                     );
                     return;
                 }
@@ -230,58 +273,6 @@ export class ValidationService extends BeanStub implements NamedBean {
             )
             .join('\n           '); // make multiple messages easier to read
     }
-
-    private checkProperties<K extends string, O extends Record<K, any>>(
-        object: O,
-        exceptions: string[], // deprecated properties generally
-        validProperties: string[], // properties to recommend
-        containerName: string,
-        docsUrl?: string
-    ) {
-        // Vue adds these properties to all objects, so we ignore them when checking for invalid properties
-        const VUE_FRAMEWORK_PROPS = ['__ob__', '__v_skip', '__metadata__'];
-
-        const invalidProperties = _fuzzyCheckStrings(
-            Object.getOwnPropertyNames(object) as K[],
-            [...VUE_FRAMEWORK_PROPS, ...exceptions, ...validProperties],
-            validProperties
-        );
-
-        const invalidPropertiesKeys = Object.keys(invalidProperties) as K[];
-
-        for (const key of invalidPropertiesKeys) {
-            const value = invalidProperties[key];
-            let message = `invalid ${containerName} property '${key as string}' did you mean any of these: ${value.slice(0, 8).join(', ')}.`;
-            if (validProperties.includes('context')) {
-                message += `\nIf you are trying to annotate ${containerName} with application data, use the '${containerName}.context' property instead.`;
-            }
-            _warnOnce(message);
-        }
-
-        if (invalidPropertiesKeys.length > 0 && docsUrl) {
-            const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
-            _warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
-        }
-    }
-}
-
-function _fuzzyCheckStrings<V extends string>(
-    inputValues: V[],
-    validValues: string[],
-    allSuggestions: string[]
-): { [p in V]: string[] } {
-    const fuzzyMatches = {} as { [p in V]: string[] };
-    const invalidInputs = inputValues.filter(
-        (inputValue) => !validValues.some((validValue) => validValue === inputValue)
-    );
-
-    if (invalidInputs.length > 0) {
-        for (const invalidInput of invalidInputs) {
-            fuzzyMatches[invalidInput] = _fuzzySuggestions({ inputValue: invalidInput, allSuggestions }).values;
-        }
-    }
-
-    return fuzzyMatches;
 }
 
 const DEPRECATED_ROW_NODE_EVENTS: Set<RowNodeEventType> = new Set([

@@ -61,6 +61,7 @@ const CellRendererComponent: ComponentType = {
 const EditorRendererComponent: ComponentType = {
     name: 'cellRenderer',
     optionalMethods: ['refresh', 'afterGuiAttached'],
+    cellRenderer: true,
 };
 
 const LoadingCellRendererComponent: ComponentType = { name: 'loadingCellRenderer', cellRenderer: true };

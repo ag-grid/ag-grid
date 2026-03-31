@@ -166,6 +166,8 @@ export class ValueService extends BeanStub implements NamedBean {
         };
     }
 
+    // PERFORMANCE CRITICAL — called for every cell during filtering, rendering, and export.
+    // Any change here can have a large impact. Run the getValue benchmark to verify.
     public getValue(
         column: AgColumn,
         rowNode: IRowNode | null | undefined,
@@ -185,13 +187,11 @@ export class ValueService extends BeanStub implements NamedBean {
         const colDef = column.colDef;
         const isGroup = rowNode.group;
 
-        // For leaf (non-group) rows with pivot result columns, resolve to the underlying value column.
-        // Pivot columns don't map to real data fields on leaf rows — only the source value column does.
-        // This matches the behaviour of setDataValue which also resolves pivot columns for leaf rows.
-        if (!isGroup) {
-            const pivotValueColumn = colDef.pivotValueColumn as AgColumn | undefined;
+        // Resolve pivot result columns to their underlying value column for non-group, non-pinned rows.
+        if (!isGroup && !rowNode.rowPinned) {
+            const pivotValueColumn = colDef.pivotValueColumn;
             if (pivotValueColumn) {
-                column = pivotValueColumn;
+                column = pivotValueColumn as AgColumn;
             }
         }
 

@@ -75,6 +75,8 @@ import type {
     OverlaySelectorFunc,
     OverlayType,
     PaginationNumberFormatter,
+    PivotColumnGroupTotals,
+    PivotRowTotals,
     PostProcessPopup,
     PostSortRows,
     ProcessCellForClipboard,
@@ -968,11 +970,11 @@ export interface Props<TData> {
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.
          * @agModule `PivotModule`
          */
-    pivotColumnGroupTotals?: 'before' | 'after',
+    pivotColumnGroupTotals?: PivotColumnGroupTotals,
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.
          * @agModule `PivotModule`
          */
-    pivotRowTotals?: 'before' | 'after',
+    pivotRowTotals?: PivotRowTotals,
     /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column.
          * @default false
          * @initial
@@ -1626,6 +1628,11 @@ export interface Props<TData> {
          * @initial
          */
     suppressRowTransform?: boolean,
+    /** Set to `true` to suppress `content-visibility: auto` on the grid wrapper element. This degrades performance by causing the browser to render grids even when they are off screen, but may be necessary if your application depends on receiving resize events from hidden grids.
+         * @default false
+         * @initial
+         */
+    suppressContentVisibilityAuto?: boolean,
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
          * @default false
          * @agModule `ColumnHoverModule`
@@ -2302,6 +2309,7 @@ export function getProps() {
         rowClassRules: undefined,
         suppressRowHoverHighlight: undefined,
         suppressRowTransform: undefined,
+        suppressContentVisibilityAuto: undefined,
         columnHoverHighlight: undefined,
         gridId: undefined,
         deltaSort: undefined,

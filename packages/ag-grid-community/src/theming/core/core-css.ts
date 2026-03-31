@@ -596,6 +596,11 @@ export interface CoreParams extends SharedThemeParams {
     valueChangeValueHighlightBackgroundColor: ColorValue;
 
     /**
+     * Background color of the outermost container around the grid.
+     */
+    wrapperBackgroundColor: ColorValue;
+
+    /**
      * Borders around the outside of the grid
      */
     wrapperBorder: BorderValue;
@@ -699,6 +704,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     },
     dataBackgroundColor: backgroundColor,
     oddRowBackgroundColor: { ref: 'dataBackgroundColor' },
+    wrapperBackgroundColor: backgroundColor,
     wrapperBorderRadius: 8,
     cellHorizontalPadding: {
         calc: 'spacing * 2 * cellHorizontalPaddingScale',

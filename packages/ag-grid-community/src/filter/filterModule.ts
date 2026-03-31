@@ -1,5 +1,4 @@
 import type { _ColumnFilterGridApi, _FilterGridApi, _QuickFilterGridApi } from '../api/gridApi';
-import { FilterStage } from '../clientSideRowModel/filterStage';
 import { HeaderFilterCellCtrl } from '../headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 import type { FilterWrapperParams } from '../interfaces/iFilter';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
@@ -43,16 +42,6 @@ import { getQuickFilter, isQuickFilterPresent, resetQuickFilter } from './quickF
 import { QuickFilterService } from './quickFilterService';
 
 /**
- * @internal
- */
-const ClientSideRowModelFilterModule: _ModuleWithoutApi = {
-    moduleName: 'ClientSideRowModelFilter',
-    version: VERSION,
-    rowModels: ['clientSide'],
-    beans: [FilterStage],
-};
-
-/**
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const FilterCoreModule: _ModuleWithApi<_FilterGridApi> = {
@@ -64,7 +53,6 @@ export const FilterCoreModule: _ModuleWithApi<_FilterGridApi> = {
         onFilterChanged,
     },
     css: [columnFiltersCSS],
-    dependsOn: [ClientSideRowModelFilterModule],
 };
 
 /**

@@ -70,6 +70,10 @@ export class GridCtrl extends BeanStub {
 
         this.view.setRtlClass(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
 
+        if (this.gos.get('suppressContentVisibilityAuto')) {
+            this.eGui.style.setProperty('content-visibility', 'visible');
+        }
+
         const unsubscribeFromResize = _observeResize(this.beans, this.eGridHostDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
 

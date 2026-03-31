@@ -65,7 +65,9 @@
     },
     "dev": {
       "dependsOn": [
-        "^build",
+        "^build:types",
+        "^build:package",
+        "^build:copy-styles",
         "generate-doc-references",
         "generate-examples",
         "^docs-resolved-interfaces",
@@ -121,7 +123,13 @@
     "test:vitest": {
       "command": "npx vitest",
       "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
-      "dependsOn": ["ag-grid-community:build", "ag-grid-enterprise:build", "generate-doc-references"],
+      "dependsOn": [
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package",
+        "ag-grid-enterprise:build:types",
+        "ag-grid-enterprise:build:package",
+        "generate-doc-references"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "config": "vitest.config.ts",
