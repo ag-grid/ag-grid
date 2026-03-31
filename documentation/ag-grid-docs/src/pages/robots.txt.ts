@@ -7,6 +7,7 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 const disallowAllRobotsTxt = () => 'User-agent: * Disallow: /';
 
 const productionRobotsTxt = (disallowPaths: string[] = []) => `User-agent: *
+Allow: ${urlWithBaseUrl('/')}
 ${disallowPaths
     .map((path) => {
         return `Disallow: ${path}`;
