@@ -17,6 +17,7 @@ fi
 TIMESTAMP=$1
 
 CHARTS_ROOT_DIR="@CHARTS_ROOT_DIR@"
+STUDIO_ROOT_DIR="@STUDIO_ROOT_DIR@"
 GRID_ROOT_DIR="@GRID_ROOT_DIR@"
 WWW_ROOT_DIR="@WWW_ROOT_DIR@"
 
@@ -33,6 +34,7 @@ then
 
   # we don't copy the charts & associated archives - it's too big
   mv $CHARTS_ROOT_DIR $WWW_ROOT_DIR/public_html_$TIMESTAMP/charts
+  mv $STUDIO_ROOT_DIR $WWW_ROOT_DIR/public_html_$TIMESTAMP/studio
 
   # it's unlikely we'd need the version we're replacing, but just in case
   CURRENT_BACKUP_DIR="public_html_`date '+%Y%m%d_%H%M'`"
@@ -46,8 +48,9 @@ mv $WWW_ROOT_DIR/public_html_tmp $GRID_ROOT_DIR
 # we don't copy the archives - it's too big
 mv $WWW_ROOT_DIR/public_html_$TIMESTAMP/archive $GRID_ROOT_DIR/
 
-# we don't copy the charts & associated archives - it's too big
+# we don't copy the charts/studio & associated archives - they're too big
 mv $WWW_ROOT_DIR/public_html_$TIMESTAMP/charts $CHARTS_ROOT_DIR
+mv $WWW_ROOT_DIR/public_html_$TIMESTAMP/studio $STUDIO_ROOT_DIR
 
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/eula $GRID_ROOT_DIR/
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/ecommerce $GRID_ROOT_DIR/

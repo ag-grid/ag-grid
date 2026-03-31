@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO="ag-grid/ag-studio"
+REPO="ag-grid/ag-grid"
 BRANCH="latest"
 
 usage() {
