@@ -37,6 +37,8 @@ import type {
     IStatusPanelParams,
     IToolPanel,
     IToolPanelParams,
+    IToolbarItem,
+    IToolbarItemParams,
     ITooltipParams,
 } from 'ag-grid-community';
 
@@ -104,6 +106,8 @@ export interface INoMatchingRowsOverlayAngularComp
 export interface IStatusPanelAngularComp extends AgFrameworkComponent<IStatusPanelParams>, IStatusPanel {}
 
 export interface IToolPanelAngularComp extends AgFrameworkComponent<IToolPanelParams>, IToolPanel {}
+
+export interface IToolbarItemAngularComp extends AgFrameworkComponent<IToolbarItemParams>, IToolbarItem {}
 
 export interface ITooltipAngularComp extends AgFrameworkComponent<ITooltipParams> {}
 

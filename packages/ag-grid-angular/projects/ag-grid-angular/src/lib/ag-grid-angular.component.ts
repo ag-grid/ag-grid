@@ -221,6 +221,7 @@ import type {
     Theme,
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
+    Toolbar,
     TooltipHideEvent,
     TooltipShowEvent,
     TreeDataDisplayType,
@@ -406,6 +407,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public modules: Module[] | undefined;
 
     // @START@
+    /** Specifies the toolbar items to use in the toolbar.
+     * @agModule `ToolbarModule`
+     */
+    @Input() public toolbar: Toolbar | undefined = undefined;
     /** Specifies the status bar components to use in the status bar.
      * @agModule `StatusBarModule`
      */
