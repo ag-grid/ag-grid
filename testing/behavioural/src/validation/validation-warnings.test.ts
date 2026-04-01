@@ -188,6 +188,41 @@ describe('ag-grid validation warnings', () => {
             expect(rowModelWarnings()).toHaveLength(1);
         });
 
+        test('does not warn when unsupported row model property has null value', () => {
+            // Vue wrapper passes rowData: null even for serverSide row model grids
+            gridsManager.createGrid('myGrid', {
+                columnDefs: [],
+                rowData: null as any,
+                serverSideInitialRowCount: null as any,
+            });
+
+            const rowModelWarnings = consoleWarnSpy.mock.calls.filter((args) =>
+                String(args[0]).includes('not supported with')
+            );
+            expect(rowModelWarnings).toHaveLength(0);
+        });
+
+        test('warns when unsupported row model property is later set to a real value', () => {
+            // Initially null (no warning), then updated to a real value (should warn)
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [],
+                rowData: null as any,
+                serverSideInitialRowCount: null as any,
+            });
+
+            const rowModelWarnings = () =>
+                consoleWarnSpy.mock.calls.filter((args) =>
+                    String(args[0]).includes('serverSideInitialRowCount is not supported')
+                );
+
+            expect(rowModelWarnings()).toHaveLength(0);
+
+            // Now set a real value — should produce a warning
+            api.updateGridOptions({ serverSideInitialRowCount: 5 } as any);
+
+            expect(rowModelWarnings()).toHaveLength(1);
+        });
+
         test('skips value-level validation for unsupported row model properties', () => {
             // serverSideInitialRowCount has supportedRowModels: ['serverSide']
             // Setting it on clientSide should only produce the row model warning,

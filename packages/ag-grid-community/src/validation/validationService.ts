@@ -155,6 +155,12 @@ export class ValidationService extends BeanStub implements NamedBean {
             const rules = validations[name as keyof T];
             const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
             if (rules?.supportedRowModels && !rules.supportedRowModels.includes(rowModel)) {
+                const value = options[name as keyof T];
+                if (value == null || value === false) {
+                    // Value is disabled (e.g. Vue wrapper passes rowData: null) — don't cache
+                    // so the check runs again if a real value is provided later
+                    continue;
+                }
                 _warnOnce(
                     `${name} is not supported with the '${rowModel}' row model. It is only valid with: ${rules.supportedRowModels.join(', ')}.`
                 );
