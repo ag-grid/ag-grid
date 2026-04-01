@@ -8,5 +8,10 @@
         "title": "AG Charts",
         "description": "Best JavaScript Charts in the World",
         "url": "https://www.ag-grid.com/charts"
+    },
+    {
+        "title": "AG Studio",
+        "description": "Best JavaScript Dashboard in the World",
+        "url": "https://www.ag-grid.com/studio"
     }
 ]
