@@ -53,7 +53,7 @@ const GridExample = () => {
     );
     const toolbar = useMemo<Toolbar>(
         () => ({
-            items: [{ toolbarItem: CustomToolbarItem, key: 'logSelectedRows' }],
+            items: [{ component: CustomToolbarItem, key: 'logSelectedRows' }],
         }),
         []
     );

@@ -166,6 +166,12 @@ export type DynamicBeanName =
     | 'agTextColumnFilterHandler';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type ToolbarItemComponentName =
+    | 'agColumnChooserToolbarItem'
+    | 'agCsvExportToolbarItem'
+    | 'agResetColumnsToolbarItem';
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type StatusPanelComponentName =
     | 'agAggregationComponent'
     | 'agSelectedRowCountComponent'
@@ -224,6 +230,7 @@ export type UserComponentName =
     | 'agDetailCellRenderer'
     | 'agSparklineCellRenderer'
     | StatusPanelComponentName
+    | ToolbarItemComponentName
     | 'agFindCellRenderer';
 
 interface ComponentMetaWithParams {

@@ -39,7 +39,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     rowSelection: { mode: 'multiRow' },
     toolbar: {
-        items: [{ toolbarItem: CustomToolbarItem, key: 'logSelectedRows' }],
+        items: [{ component: CustomToolbarItem, key: 'logSelectedRows' }],
     },
 };
 

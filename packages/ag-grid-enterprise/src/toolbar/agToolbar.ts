@@ -1,0 +1,233 @@
+import type {
+    BeanCollection,
+    ComponentSelector,
+    ComponentType,
+    ElementParams,
+    FocusableContainer,
+    IToolbarItemComp,
+    IToolbarItemParams,
+    ToolbarItemDef,
+    UserCompDetails,
+    UserComponentFactory,
+} from 'ag-grid-community';
+import {
+    AgPromise,
+    Component,
+    RefPlaceholder,
+    _addFocusableContainerListener,
+    _addGridCommonParams,
+    _clearElement,
+    _removeFromParent,
+} from 'ag-grid-community';
+
+import agToolbarCSS from './agToolbar.css';
+import type { ToolbarService } from './toolbarService';
+
+function normaliseItem(item: ToolbarItemDef | string): ToolbarItemDef {
+    return typeof item === 'string' ? { component: item, key: item } : item;
+}
+
+function getToolbarItemCompDetails(
+    userCompFactory: UserComponentFactory,
+    def: ToolbarItemDef,
+    params: IToolbarItemParams
+): UserCompDetails<IToolbarItemComp> | undefined {
+    return userCompFactory.getCompDetails(def, ToolbarItemComponent, undefined, params, true);
+}
+
+const ToolbarItemComponent: ComponentType = {
+    name: 'component',
+    optionalMethods: ['refresh'],
+};
+
+const AgToolbarElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-toolbar',
+    children: [
+        {
+            tag: 'div',
+            ref: 'eToolbarLeft',
+            cls: 'ag-toolbar-left',
+            role: 'toolbar',
+        },
+        {
+            tag: 'div',
+            ref: 'eToolbarRight',
+            cls: 'ag-toolbar-right',
+            role: 'toolbar',
+        },
+    ],
+};
+
+class AgToolbar extends Component implements FocusableContainer {
+    private userCompFactory: UserComponentFactory;
+    private toolbarSvc: ToolbarService;
+    private updateQueued: boolean = false;
+    private itemsPromise: AgPromise<(void | null)[]> = AgPromise.resolve();
+
+    public wireBeans(beans: BeanCollection) {
+        this.userCompFactory = beans.userCompFactory;
+        this.toolbarSvc = beans.toolbarSvc as ToolbarService;
+    }
+
+    private readonly eToolbarLeft: HTMLElement = RefPlaceholder;
+    private readonly eToolbarRight: HTMLElement = RefPlaceholder;
+
+    private compDestroyFunctions: { [key: string]: () => void } = {};
+
+    constructor() {
+        super(AgToolbarElement);
+        this.registerCSS(agToolbarCSS);
+    }
+
+    public postConstruct(): void {
+        this.processToolbarItems(new Map());
+        this.addManagedPropertyListeners(['toolbar'], this.handleToolbarChanged.bind(this));
+        _addFocusableContainerListener(this.beans, this, this.getGui());
+    }
+
+    public getFocusableContainerName(): 'toolbar' {
+        return 'toolbar';
+    }
+
+    private getValidItems(): ToolbarItemDef[] | undefined {
+        const toolbar = this.gos.get('toolbar');
+        if (!toolbar) {
+            return undefined;
+        }
+        return toolbar.items.map(normaliseItem);
+    }
+
+    private processToolbarItems(existingItemsToReuse: Map<string, IToolbarItemComp>): void {
+        const items = this.getValidItems();
+        if (items) {
+            const leftItems = items.filter((item) => !item.alignment || item.alignment === 'left');
+            const rightItems = items.filter((item) => item.alignment === 'right');
+            this.itemsPromise = AgPromise.all([
+                this.createAndRenderComponents(leftItems, this.eToolbarLeft, existingItemsToReuse),
+                this.createAndRenderComponents(rightItems, this.eToolbarRight, existingItemsToReuse),
+            ]);
+        } else {
+            this.setDisplayed(false);
+        }
+    }
+
+    private handleToolbarChanged(): void {
+        if (this.updateQueued) {
+            return;
+        }
+        this.updateQueued = true;
+        this.itemsPromise.then(() => {
+            this.updateToolbar();
+            this.updateQueued = false;
+        });
+    }
+
+    private updateToolbar(): void {
+        const items = this.getValidItems();
+        const validItemsProvided = Array.isArray(items) && items.length > 0;
+        this.setDisplayed(validItemsProvided);
+
+        const existingItemsToReuse: Map<string, IToolbarItemComp> = new Map();
+
+        if (validItemsProvided) {
+            for (const itemConfig of items) {
+                const key = itemConfig.key ?? itemConfig.component;
+                const existingItem = this.toolbarSvc.getToolbarItem(key);
+                if (existingItem?.refresh) {
+                    const newParams: IToolbarItemParams = _addGridCommonParams(this.gos, {
+                        ...(itemConfig.toolbarItemParams ?? {}),
+                        key,
+                    });
+                    const hasRefreshed = existingItem.refresh(newParams);
+                    if (hasRefreshed) {
+                        existingItemsToReuse.set(key, existingItem);
+                        delete this.compDestroyFunctions[key];
+                        _removeFromParent(existingItem.getGui());
+                    }
+                }
+            }
+        }
+
+        this.resetToolbar();
+        if (validItemsProvided) {
+            this.processToolbarItems(existingItemsToReuse);
+        }
+    }
+
+    private resetToolbar(): void {
+        _clearElement(this.eToolbarLeft);
+        _clearElement(this.eToolbarRight);
+
+        this.destroyComponents();
+        this.toolbarSvc.unregisterAllComponents();
+    }
+
+    public override destroy(): void {
+        this.destroyComponents();
+        super.destroy();
+    }
+
+    private destroyComponents(): void {
+        for (const func of Object.values(this.compDestroyFunctions)) {
+            func();
+        }
+        this.compDestroyFunctions = {};
+    }
+
+    private createAndRenderComponents(
+        toolbarItems: ToolbarItemDef[],
+        eContainer: HTMLElement,
+        existingItemsToReuse: Map<string, IToolbarItemComp>
+    ): AgPromise<void> {
+        const componentDetails: { key: string; promise: AgPromise<IToolbarItemComp> }[] = [];
+
+        for (const itemConfig of toolbarItems) {
+            const key = itemConfig.key || itemConfig.component;
+            const existingItem = existingItemsToReuse.get(key);
+            let promise: AgPromise<IToolbarItemComp>;
+            if (existingItem) {
+                promise = AgPromise.resolve(existingItem);
+            } else {
+                const compDetails = getToolbarItemCompDetails(
+                    this.userCompFactory,
+                    itemConfig,
+                    _addGridCommonParams(this.gos, { key })
+                );
+
+                if (compDetails == null) {
+                    continue;
+                }
+                promise = compDetails.newAgStackInstance();
+            }
+
+            componentDetails.push({
+                key,
+                promise,
+            });
+        }
+
+        return AgPromise.all(componentDetails.map((details) => details.promise)).then(() => {
+            for (const componentDetail of componentDetails) {
+                componentDetail.promise.then((component: IToolbarItemComp) => {
+                    const destroyFunc = () => {
+                        this.destroyBean(component);
+                    };
+
+                    if (this.isAlive()) {
+                        this.toolbarSvc.registerToolbarItem(componentDetail.key, component);
+                        eContainer.appendChild(component.getGui());
+                        this.compDestroyFunctions[componentDetail.key] = destroyFunc;
+                    } else {
+                        destroyFunc();
+                    }
+                });
+            }
+        });
+    }
+}
+
+export const AgToolbarSelector: ComponentSelector = {
+    selector: 'AG-TOOLBAR',
+    component: AgToolbar,
+};

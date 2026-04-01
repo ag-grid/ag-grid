@@ -1,11 +1,17 @@
 import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { AgGridCommon } from './iCommon';
 
-export type Toolbar = { items: ToolbarItemDef[] };
+export type ToolbarDisplay = 'icon' | 'iconAndLabel';
+
+export type Toolbar = {
+    display?: ToolbarDisplay;
+    items: (ToolbarItemDef | string)[];
+};
 
 export interface ToolbarItemDef {
-    toolbarItem?: any;
-    align?: 'left' | 'right';
+    component?: any;
+    alignment?: 'left' | 'right';
+    display?: ToolbarDisplay;
     key?: string;
     toolbarItemParams?: any;
 }

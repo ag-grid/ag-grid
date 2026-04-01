@@ -124,6 +124,7 @@ const GridComp = ({ context }: GridCompProps) => {
             paginationSelector,
             sideBarSelector,
             statusBarSelector,
+            toolbarSelector,
             gridHeaderDropZonesSelector,
         } = gridCtrl.getOptionalSelectors();
         const additionalEls: HTMLElement[] = [];
@@ -137,6 +138,15 @@ const GridComp = ({ context }: GridCompProps) => {
             additionalEls.push(eGui);
             beansToDestroy.push(headerDropZonesComp);
             focusableContainersRef.current.push(...(headerDropZonesComp.getFocusableContainers?.() ?? []));
+        }
+
+        if (toolbarSelector) {
+            const toolbarComp = context.createBean(new toolbarSelector.component());
+            const eGui = toolbarComp.getGui();
+            eRootWrapper.insertAdjacentElement('afterbegin', eGui);
+            additionalEls.push(eGui);
+            beansToDestroy.push(toolbarComp);
+            focusableContainersRef.current.push(toolbarComp as FocusableContainerComp);
         }
 
         if (sideBarSelector) {

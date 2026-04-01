@@ -3,7 +3,7 @@ title: "Quick Access Toolbar"
 enterprise: true
 ---
 
-The Toolbar appears above the grid and provides quick access to common grid actions. It supports custom components with configurable ordering and alignment.
+The Toolbar appears above the grid and provides quick access to common grid actions. It supports built-in items, custom components, and configurable ordering and alignment.
 
 Configure the Toolbar with the `toolbar` grid option. The property takes a list of Toolbar Items.
 
@@ -11,8 +11,8 @@ Configure the Toolbar with the `toolbar` grid option. The property takes a list 
 const gridOptions = {
     toolbar: {
         items: [
-            { toolbarItem: CustomToolbarItem },
-            { toolbarItem: AnotherToolbarItem, align: 'right' }
+            { component: CustomToolbarComponent },
+            { component: AnotherToolbarComponent, alignment: 'right' }
         ]
     }
 }
@@ -24,7 +24,7 @@ const gridOptions = {
 
 Items are rendered in the order they are defined.
 
-The `align` property can be `left` (default) or `right`.
+The `alignment` property can be `left` (default) or `right`.
 
 The `key` uniquely identifies a Toolbar Item.
 
@@ -36,12 +36,28 @@ const gridOptions = {
         items: [
             {
                 key: 'myItem',
-                toolbarItem: CustomToolbarItem,
-                align: 'left',
+                component: CustomToolbarComponent,
+                alignment: 'left',
                 toolbarItemParams: {
                     label: 'Custom Label'
                 }
             }
+        ]
+    }
+}
+```
+
+### Display Mode
+
+Items can be displayed as icons only (default) or icons with labels. Set the `display` property at the toolbar level or per item.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        display: 'iconAndLabel',
+        items: [
+            { component: CustomToolbarComponent },
+            { component: AnotherToolbarComponent, display: 'icon' }
         ]
     }
 }
