@@ -566,7 +566,7 @@ function createCellNoteMenuItems({
         });
     }
 
-    if (!access.isReadOnly) {
+    if (!access.isReadOnly && !access.isSuppressed) {
         result.push({
             name: localeTextFunc('editCellNote', 'Edit Note'),
             disabled: !access.canEdit,

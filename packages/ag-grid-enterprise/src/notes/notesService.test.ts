@@ -118,6 +118,14 @@ describe('NotesService', () => {
         expect(cellCtrl.showCellNote).toHaveBeenCalledWith(true);
     });
 
+    it('opens suppressed existing notes through the cell controller', () => {
+        currentNote = { text: 'Suppressed note' };
+        colDef.suppressCellNote = true;
+
+        expect(service.showCellNote({ rowNode, column: 'athlete' }, true)).toBe(true);
+        expect(cellCtrl.showCellNote).toHaveBeenCalledWith(true);
+    });
+
     it('does not write notes for suppressed cells', () => {
         colDef.suppressCellNote = true;
 

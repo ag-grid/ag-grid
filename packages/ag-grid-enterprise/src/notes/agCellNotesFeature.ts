@@ -134,7 +134,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
                 readOnly: access.canView && !access.canEdit,
                 anchorToElement: target.anchorElement,
                 focusEditor,
-                onClosed: (noteChanged, note) => this.onPopupClosed(noteChanged, note),
+                onClosed: (noteChanged, note, closeEvent) => this.onPopupClosed(noteChanged, note, closeEvent),
                 onPopupEnter: () => this.cancelHide(),
                 onPopupLeave: () => this.scheduleHide(),
             })
@@ -144,7 +144,11 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
         this.activeTarget = target;
     }
 
-    private onPopupClosed(noteChanged: boolean, note: CellNote | undefined): void {
+    private onPopupClosed(
+        noteChanged: boolean,
+        note: CellNote | undefined,
+        closeEvent?: MouseEvent | TouchEvent | KeyboardEvent
+    ): void {
         const target = this.activeTarget;
         const popup = this.popup;
 
@@ -154,6 +158,17 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
 
         if (popup) {
             this.beans.context.destroyBean(popup);
+        }
+
+        if (target && closeEvent instanceof KeyboardEvent && closeEvent.key === 'Escape') {
+            this.beans.focusSvc.setFocusedCell({
+                rowIndex: target.rowNode.rowIndex!,
+                rowPinned: target.rowNode.rowPinned,
+                column: target.column,
+                forceBrowserFocus: true,
+                preventScrollOnBrowserFocus: true,
+                sourceEvent: closeEvent,
+            });
         }
 
         if (!noteChanged || !target) {

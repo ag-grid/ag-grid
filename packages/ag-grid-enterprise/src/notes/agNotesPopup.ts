@@ -119,7 +119,11 @@ export class AgNotesPopup extends BeanStub {
             readOnly?: boolean;
             anchorToElement: HTMLElement;
             focusEditor?: boolean;
-            onClosed: (noteChanged: boolean, note: CellNote | undefined) => void;
+            onClosed: (
+                noteChanged: boolean,
+                note: CellNote | undefined,
+                closeEvent?: MouseEvent | TouchEvent | KeyboardEvent
+            ) => void;
             onPopupEnter: () => void;
             onPopupLeave: () => void;
         }
@@ -144,7 +148,7 @@ export class AgNotesPopup extends BeanStub {
                 cssIdentifier: 'notes',
                 x,
                 y,
-                closedCallback: () => this.onDialogClosed(),
+                closedCallback: (event) => this.onDialogClosed(event),
             })
         );
         this.dialog = dialog;
@@ -201,13 +205,13 @@ export class AgNotesPopup extends BeanStub {
     }
 
     /** Called by Dialog's closedCallback (Escape key, click outside, etc.) */
-    private onDialogClosed(): void {
+    private onDialogClosed(event?: MouseEvent | TouchEvent | KeyboardEvent): void {
         if (this.closed) {
             return;
         }
 
         this.closed = true;
-        this.notifyClosed();
+        this.notifyClosed(event);
     }
 
     private onMouseDown(event: MouseEvent): void {
@@ -242,9 +246,9 @@ export class AgNotesPopup extends BeanStub {
         }
     }
 
-    private notifyClosed(): void {
+    private notifyClosed(closeEvent?: MouseEvent | TouchEvent | KeyboardEvent): void {
         const noteChanged = this.saveOnClose && (this.contentComp?.isDirty() ?? false);
         const editedNote = noteChanged ? this.contentComp?.getEditedNote() : undefined;
-        this.params.onClosed(noteChanged, editedNote);
+        this.params.onClosed(noteChanged, editedNote, closeEvent);
     }
 }

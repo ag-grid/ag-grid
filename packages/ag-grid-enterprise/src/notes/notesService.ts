@@ -113,7 +113,7 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
     public showCellNote(params: GetNoteParams, focusEditor = false): boolean {
         const access = this.getCellNoteAccess(params);
 
-        if (!access || access.isSuppressed || (!access.canView && !(focusEditor && access.canCreate))) {
+        if (!access || (!access.canView && !(focusEditor && access.canCreate))) {
             return false;
         }
 
