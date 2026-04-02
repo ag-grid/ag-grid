@@ -148,6 +148,8 @@
     "@nx/devkit/**/ejs": "3.1.10",
     "@nx/devkit/**/ejs/jake": "10.9.4",
     "**/flatted": "3.4.0",
-    "**/undici": "6.24.0"
+    "**/undici": "6.24.0",
+    "**/lodash": "4.18.1",
+    "**/lodash-es": "4.18.1"
   }
 }
