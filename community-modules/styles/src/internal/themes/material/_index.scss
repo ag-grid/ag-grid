@@ -202,7 +202,7 @@
     }
 
     .ag-filter-add-button .ag-icon {
-        color: var(--ag-material-active-color);
+        color: var(--ag-material-accent-color);
     }
 
     .ag-filter-apply-panel-button,
@@ -251,7 +251,7 @@
     }
 
     .ag-has-cell-notes::after {
-        border-color: transparent var(--ag-material-active-color) transparent transparent;
+        border-color: transparent var(--ag-material-accent-color) transparent transparent;
     }
 
     .ag-header-highlight-before::after,
