@@ -2546,6 +2546,478 @@ const myValueFormatter = params => {
 };"
 `;
 
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'angular' snippets 1`] = `
+"<ag-grid-angular
+    [getRowId]="getRowId"
+    [notesDataSource]="notesDataSource"
+    /* other grid options ... */ />
+
+const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.getRowId = (params) => String(params.data.id);
+this.notesDataSource = {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'angular' snippets with space between properties 1`] = `
+"<ag-grid-angular
+    [getRowId]="getRowId"
+    [notesDataSource]="notesDataSource"
+    /* other grid options ... */ />
+
+const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.getRowId = (params) => String(params.data.id);
+
+this.notesDataSource = {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'angular' snippets without framework context 1`] = `
+"const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.getRowId = (params) => String(params.data.id);
+this.notesDataSource = {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'angular' snippets without framework context and space between properties 1`] = `
+"const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.getRowId = (params) => String(params.data.id);
+
+this.notesDataSource = {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'javascript' snippets 1`] = `
+"const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+const gridOptions = {
+    getRowId: (params) => String(params.data.id),
+    notesDataSource: {
+        getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+        setNote: ({ rowNode, column, note }) => {
+            const key = noteKey(rowNode.id, column.getColId());
+            const existingNote = noteStore.get(key);
+
+            if (note === undefined) {
+                noteStore.delete(key);
+            } else {
+                noteStore.set(key, {
+                    ...existingNote,
+                    ...note,
+                    author: getCurrentUser(),
+                    createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                    updatedAt: getDisplayTimestamp(),
+                });
+            }
+        },
+    },
+
+    // other grid options ...
+}"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'javascript' snippets with space between properties 1`] = `
+"const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+const gridOptions = {
+    getRowId: (params) => String(params.data.id),
+
+    notesDataSource: {
+        getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+        setNote: ({ rowNode, column, note }) => {
+            const key = noteKey(rowNode.id, column.getColId());
+            const existingNote = noteStore.get(key);
+
+            if (note === undefined) {
+                noteStore.delete(key);
+            } else {
+                noteStore.set(key, {
+                    ...existingNote,
+                    ...note,
+                    author: getCurrentUser(),
+                    createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                    updatedAt: getDisplayTimestamp(),
+                });
+            }
+        },
+    },
+
+    // other grid options ...
+}"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'javascript' snippets without framework context 1`] = `
+"const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+
+getRowId: (params) => String(params.data.id),
+notesDataSource: {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+},"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'javascript' snippets without framework context and space between properties 1`] = `
+"const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+
+getRowId: (params) => String(params.data.id),
+
+notesDataSource: {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+},"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'react' snippets 1`] = `
+"const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+const getRowId = useCallback((params) => String(params.data.id), []);
+const notesDataSource = {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+};
+
+<AgGridReact
+    getRowId={getRowId}
+    notesDataSource={notesDataSource}
+/>"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'react' snippets with space between properties 1`] = `
+"const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+const getRowId = useCallback((params) => String(params.data.id), []);
+
+const notesDataSource = {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+};
+
+<AgGridReact
+    getRowId={getRowId}
+    notesDataSource={notesDataSource}
+/>"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'react' snippets without framework context 1`] = `
+"const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+const getRowId = useCallback((params) => String(params.data.id), []);
+const notesDataSource = {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+};
+
+<AgGridReact
+    getRowId={getRowId}
+    notesDataSource={notesDataSource}
+/>"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'react' snippets without framework context and space between properties 1`] = `
+"const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+const getRowId = useCallback((params) => String(params.data.id), []);
+
+const notesDataSource = {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+};
+
+<AgGridReact
+    getRowId={getRowId}
+    notesDataSource={notesDataSource}
+/>"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'vue' snippets 1`] = `
+"<ag-grid-vue
+    :getRowId="getRowId"
+    :notesDataSource="notesDataSource"
+    /* other grid options ... */>
+</ag-grid-vue>
+
+const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.getRowId = (params) => String(params.data.id);
+this.notesDataSource = {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'vue' snippets with space between properties 1`] = `
+"<ag-grid-vue
+    :getRowId="getRowId"
+    :notesDataSource="notesDataSource"
+    /* other grid options ... */>
+</ag-grid-vue>
+
+const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.getRowId = (params) => String(params.data.id);
+
+this.notesDataSource = {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'vue' snippets without framework context 1`] = `
+"const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.getRowId = (params) => String(params.data.id);
+this.notesDataSource = {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given optional chaining and nullish coalescing > it should create 'vue' snippets without framework context and space between properties 1`] = `
+"const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.getRowId = (params) => String(params.data.id);
+
+this.notesDataSource = {
+    getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+    setNote: ({ rowNode, column, note }) => {
+        const key = noteKey(rowNode.id, column.getColId());
+        const existingNote = noteStore.get(key);
+
+        if (note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
+        }
+    },
+};"
+`;
+
 exports[`Snippet Component > given simple column definitions > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
     [columnDefs]="columnDefs"

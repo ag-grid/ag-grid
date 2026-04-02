@@ -1,4 +1,4 @@
-import { parseScript } from 'esprima';
+import { parseScript } from 'esprima-next';
 
 export const transform = (snippet, framework, options) => {
     const transforms = {
