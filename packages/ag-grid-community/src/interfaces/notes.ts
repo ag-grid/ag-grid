@@ -24,6 +24,15 @@ export interface SetNoteParams extends GetNoteParams {
     note: CellNote | undefined;
 }
 
+export interface NotesDataSourceGetNoteParams {
+    column: Column;
+    rowNode: IRowNode;
+}
+
+export interface NotesDataSourceSetNoteParams extends NotesDataSourceGetNoteParams {
+    note: CellNote | undefined;
+}
+
 export interface NotesDataSourceParams extends AgGridCommon<any, any> {}
 
 /**
@@ -34,9 +43,9 @@ export interface NotesDataSource {
     /** Initialise the data source so that the user can take a reference to the gridApi if needed. */
     init?(params: NotesDataSourceParams): void;
     /** Return the note for the given cell. */
-    getNote(params: GetNoteParams): CellNote | undefined;
+    getNote(params: NotesDataSourceGetNoteParams): CellNote | undefined;
     /** Set or clear the note for the given cell. */
-    setNote(params: SetNoteParams): void;
+    setNote(params: NotesDataSourceSetNoteParams): void;
     /** Called by the grid when the data source is being disposed. */
     destroy?(): void;
 }

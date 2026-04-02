@@ -239,11 +239,9 @@ export class AgNotesPopup extends BeanStub {
     public override destroy(): void {
         if (!this.closed) {
             this.closed = true;
-            super.destroy();
             this.notifyClosed();
-        } else {
-            super.destroy();
         }
+        super.destroy();
     }
 
     private notifyClosed(closeEvent?: MouseEvent | TouchEvent | KeyboardEvent): void {

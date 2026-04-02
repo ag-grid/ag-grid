@@ -1,8 +1,13 @@
-import type { CellNote, ColDef, GetNoteParams, GetRowIdParams, GridOptions, NotesDataSource } from 'ag-grid-community';
+import type { CellNote, ColDef, GetRowIdParams, GridOptions, NotesDataSource } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ContextMenuModule, NotesModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ContextMenuModule, NotesModule, ValidationModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ContextMenuModule,
+    NotesModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 type OlympicWinner = {
     id: string;
@@ -14,8 +19,6 @@ type OlympicWinner = {
 };
 
 const getNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
-const getNoteColumnId = (column: GetNoteParams['column']) =>
-    typeof column === 'string' ? column : 'getColId' in column ? column.getColId() : column.colId ?? column.field ?? '';
 
 const noteStore = new Map<string, CellNote>([
     [
@@ -33,9 +36,9 @@ const noteStore = new Map<string, CellNote>([
 ]);
 
 const notesDataSource: NotesDataSource = {
-    getNote: ({ rowNode, column }) => noteStore.get(getNoteKey(rowNode.id!, getNoteColumnId(column))),
+    getNote: ({ rowNode, column }) => noteStore.get(getNoteKey(rowNode.id!, column.getColId())),
     setNote: ({ rowNode, column, note }) => {
-        const key = getNoteKey(rowNode.id!, getNoteColumnId(column));
+        const key = getNoteKey(rowNode.id!, column.getColId());
 
         if (note === undefined) {
             noteStore.delete(key);

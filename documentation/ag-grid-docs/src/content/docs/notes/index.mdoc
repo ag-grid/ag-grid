@@ -16,14 +16,13 @@ Notes are enabled by providing a `notesDataSource`. This lets you keep note stat
 ```{% frameworkTransform=true %}
 const noteStore = new Map();
 const noteKey = (rowId, colId) => `${rowId}::${colId}`;
-const getNoteColumnId = (column) => (typeof column === 'string' ? column : column.getColId());
 
 const gridOptions = {
     getRowId: (params) => String(params.data.id),
     notesDataSource: {
-        getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, getNoteColumnId(column))),
+        getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
         setNote: ({ rowNode, column, note }) => {
-            const key = noteKey(rowNode.id, getNoteColumnId(column));
+            const key = noteKey(rowNode.id, column.getColId());
 
             if (note === undefined) {
                 noteStore.delete(key);
@@ -56,7 +55,7 @@ const getDisplayTimestamp = () => new Intl.DateTimeFormat('en-GB', {
 const gridOptions = {
     notesDataSource: {
         setNote: ({ rowNode, column, note }) => {
-            const key = noteKey(rowNode.id, getNoteColumnId(column));
+            const key = noteKey(rowNode.id, column.getColId());
             const existingNote = noteStore.get(key);
 
             if (note === undefined) {

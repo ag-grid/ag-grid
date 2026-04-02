@@ -937,7 +937,9 @@ export type {
     CellNote,
     GetNoteParams,
     NotesDataSource,
+    NotesDataSourceGetNoteParams,
     NotesDataSourceParams,
+    NotesDataSourceSetNoteParams,
     RefreshCellNotesParams,
     SetNoteParams,
 } from './interfaces/notes';

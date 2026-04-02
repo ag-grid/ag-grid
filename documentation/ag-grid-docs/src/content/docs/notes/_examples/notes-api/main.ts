@@ -2,16 +2,22 @@ import type {
     CellClickedEvent,
     CellNote,
     ColDef,
-    GetNoteParams,
     GetRowIdParams,
     GridApi,
     GridOptions,
+    IRowNode,
     NotesDataSource,
+    Column,
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ContextMenuModule, NotesModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ContextMenuModule, NotesModule, ValidationModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ContextMenuModule,
+    NotesModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
 
 type OlympicWinner = {
     id: string;
@@ -33,11 +39,14 @@ declare global {
 }
 
 let gridApi: GridApi<OlympicWinner>;
-let selectedCell: GetNoteParams | undefined;
+type SelectedCell = {
+    rowNode: IRowNode<OlympicWinner>;
+    column: Column;
+};
+
+let selectedCell: SelectedCell | undefined;
 
 const getNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
-const getColumnId = (column: GetNoteParams['column']) =>
-    typeof column === 'string' ? column : 'getColId' in column ? column.getColId() : column.colId ?? column.field ?? '';
 const getDisplayTimestamp = () =>
     new Intl.DateTimeFormat('en-GB', {
         dateStyle: 'medium',
@@ -56,9 +65,9 @@ const noteStore = new Map<string, CellNote>([
 ]);
 
 const notesDataSource: NotesDataSource = {
-    getNote: ({ rowNode, column }) => noteStore.get(getNoteKey(rowNode.id!, getColumnId(column))),
+    getNote: ({ rowNode, column }) => noteStore.get(getNoteKey(rowNode.id!, column.getColId())),
     setNote: ({ rowNode, column, note }) => {
-        const key = getNoteKey(rowNode.id!, getColumnId(column));
+        const key = getNoteKey(rowNode.id!, column.getColId());
 
         if (note === undefined) {
             noteStore.delete(key);
@@ -109,8 +118,7 @@ const getAuthorInput = () => document.getElementById('note-author') as HTMLInput
 const getNoteTextArea = () => document.getElementById('note-text') as HTMLTextAreaElement;
 const getReadOnlyInput = () => document.getElementById('note-readonly') as HTMLInputElement;
 
-const describeCell = (cell: GetNoteParams) =>
-    `${cell.rowNode.data?.athlete ?? cell.rowNode.id} / ${getColumnId(cell.column)}`;
+const describeCell = (cell: SelectedCell) => `${cell.rowNode.data?.athlete ?? cell.rowNode.id} / ${cell.column.getColId()}`;
 const areNotesEqual = (left: CellNote | undefined, right: CellNote | undefined) =>
     JSON.stringify(left ?? null) === JSON.stringify(right ?? null);
 
@@ -118,7 +126,7 @@ const setStatus = (message: string) => {
     getSelectionStatusElement().textContent = message;
 };
 
-const getSelectedCell = (): GetNoteParams | undefined => {
+const getSelectedCell = (): SelectedCell | undefined => {
     if (!selectedCell) {
         setStatus('Click a cell to select it, then use the API controls.');
         return undefined;
@@ -211,7 +219,7 @@ function mutateStoreDirectly() {
         return;
     }
 
-    const key = getNoteKey(cell.rowNode.id!, getColumnId(cell.column));
+    const key = getNoteKey(cell.rowNode.id!, cell.column.getColId());
     const currentNote = noteStore.get(key);
     const author = getAuthorInput().value.trim() || 'External Store';
     const text = getNoteTextArea().value.trim() || currentNote?.text || 'Updated outside the grid';
