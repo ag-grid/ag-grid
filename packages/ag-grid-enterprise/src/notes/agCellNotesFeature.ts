@@ -79,7 +79,16 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
         }
 
         this.clearShowTimer();
-        this.showTimer = window.setTimeout(() => this.openPopup(target), NOTE_SHOW_DELAY);
+        const hoverGeneration = this.notesSvc.getHoverGeneration();
+        this.showTimer = window.setTimeout(() => {
+            // the NotesService increments the generation on scroll so delayed hover opens do not fire
+            // after the grid has moved and the original hover target is no longer relevant.
+            if (hoverGeneration !== this.notesSvc.getHoverGeneration()) {
+                return;
+            }
+
+            this.openPopup(target);
+        }, NOTE_SHOW_DELAY);
     }
 
     protected onPointerLeave(event: PointerEvent): void {
@@ -94,10 +103,6 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
 
     protected onContextMenu(): void {
         this.suppressHoverUntilPointerLeave = true;
-        this.closeNotePopup();
-    }
-
-    protected onBodyScroll(): void {
         this.closeNotePopup();
     }
 
@@ -202,9 +207,6 @@ export class AgCellNotesFeature extends BaseNotesFeature {
             pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
             contextmenu: () => this.onContextMenu(),
         });
-        this.ctrl.addManagedListeners(this.beans.eventSvc, {
-            bodyScroll: () => this.onBodyScroll(),
-        });
         this.refresh();
     }
 
@@ -239,9 +241,6 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
     }
 
     public initialise(): void {
-        this.ctrl.addManagedListeners(this.beans.eventSvc, {
-            bodyScroll: () => this.onBodyScroll(),
-        });
         this.refresh();
     }
 

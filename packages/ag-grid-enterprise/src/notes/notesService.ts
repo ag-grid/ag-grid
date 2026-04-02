@@ -18,9 +18,23 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
     public readonly beanName = 'notesSvc' as const;
 
     private activePopupOwner?: ICellNotePopupOwner;
+    private hoverGeneration = 0;
+
+    public postConstruct(): void {
+        this.addManagedListeners(this.beans.eventSvc, {
+            bodyScroll: () => {
+                this.hoverGeneration++;
+                this.activePopupOwner?.closeNotePopup();
+            },
+        });
+    }
 
     public hasDataSource(): boolean {
         return !!this.beans.notesDataSvc?.hasDataSource();
+    }
+
+    public getHoverGeneration(): number {
+        return this.hoverGeneration;
     }
 
     public createCellNotesFeature(ctrl: CellCtrl) {

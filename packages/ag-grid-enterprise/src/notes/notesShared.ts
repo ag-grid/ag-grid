@@ -18,6 +18,7 @@ export interface ICellNotePopupOwner {
 
 export interface INotesFeatureSupport {
     getCellNoteAccess(params: GetNoteParams): ICellNoteAccess | undefined;
+    getHoverGeneration(): number;
     setCellNote(params: InternalSetNoteParams): void;
     replaceActivePopupOwner(owner: ICellNotePopupOwner): ICellNotePopupOwner | undefined;
     clearActivePopupOwner(owner: ICellNotePopupOwner): void;
