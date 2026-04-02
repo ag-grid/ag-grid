@@ -62,7 +62,13 @@ Ask the user which CDN to use (staging vs versioned). Then resolve enterprise vs
 
 Record the resolved CDN URL for each assignment so sub-agents don't waste time discovering this themselves.
 
-### 2c. Launch Sub-Agents
+### 2c. Pre-flight Permission Check
+
+Before launching sub-agents, verify Bash and Write tools are available by running a trivial command (e.g., `echo "permission check"`). Sub-agents running in the background cannot prompt the user for tool approval — they silently fail.
+
+**If Bash or Write is denied:** Skip sub-agents entirely. Instead, create all plunkers sequentially in the main thread — create temp dirs, write files, copy CSS, and upload via `plnkr.sh` directly. Still follow Steps 2a–2b for context and CDN resolution, and Steps 3–4 for output and JIRA posting.
+
+### 2d. Launch Sub-Agents
 
 Launch one `general-purpose` Task sub-agent per assignment, **all in a single message** so they run concurrently. Use `run_in_background: true` on each.
 
@@ -90,7 +96,7 @@ Create a Plunker for the following assignment:
 ## Instructions
 
 1. Create a working directory: `PLNKR_DIR=$(mktemp -d /tmp/plnkr-batch-{PLUNKER_NUMBER}-XXXXXX)`
-2. If the assignment involves non-trivial APIs, verify them against `packages/ag-charts-types/src` before writing files
+2. **MANDATORY: Verify ALL API options** against `packages/ag-charts-types/src` before writing files. Grep for every option name, confirm nesting and value shapes. If not found in types, search for a working example in `packages/ag-charts-website/src/content/docs/*/_examples/`. Training data is unreliable — do NOT guess option names or structures
 3. Write all files per the product guide below (index.html, main.js, ag-example-styles.css, package.json, and optionally data.js)
 4. Upload: `bash "{ABSOLUTE_PATH_TO_PLNKR_SH}" upload "$PLNKR_DIR" --title "{TITLE}" --tags "ag-charts,qa"`
 5. Report the URL= line from the upload output
@@ -135,6 +141,10 @@ After collecting all results, mark every background task as completed using `Tas
 ## STEP 4 (Optional): Post Results to JIRA
 
 If the input was a JIRA ticket (Mode A), offer to post the results as a comment on the source ticket.
+
+**⚠️ This step applies whether you used sub-agents or created plunkers manually in the main thread. Always follow the ADF structure below when posting to JIRA — there is no shortcut.**
+
+**⚠️ The Atlassian MCP has no delete-comment tool. Get the format right on the first attempt — re-posting creates duplicates that must be cleaned up manually.**
 
 Use `contentFormat: "adf"` with `mcp__atlassian__addCommentToJiraIssue`. JIRA's markdown renderer does not reliably auto-link URLs, so you must use ADF with explicit link marks to guarantee clickable links. Never use markdown format or tables for this comment — ADF bullet lists are the only format that reliably renders clickable URLs in JIRA.
 

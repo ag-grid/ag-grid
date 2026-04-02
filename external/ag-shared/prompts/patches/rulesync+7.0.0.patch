@@ -1,5 +1,5 @@
 diff --git a/node_modules/rulesync/dist/index.cjs b/node_modules/rulesync/dist/index.cjs
-index b80488f..6f6f487 100644
+index b80488f..b3243cc 100644
 --- a/node_modules/rulesync/dist/index.cjs
 +++ b/node_modules/rulesync/dist/index.cjs
 @@ -1732,9 +1732,10 @@ var GeminiCliCommand = class _GeminiCliCommand extends ToolCommand {
@@ -14,7 +14,32 @@ index b80488f..6f6f487 100644
  """`;
      const paths = this.getSettablePaths({ global });
      return new _GeminiCliCommand({
-@@ -7287,7 +7288,9 @@ var ClaudecodeSkill = class _ClaudecodeSkill extends ToolSkill {
+@@ -2437,11 +2438,19 @@ var CommandsProcessor = class extends FeatureProcessor {
+     const rulesyncCommandPaths = await findFilesByGlobs(
+       (0, import_node_path19.join)(RulesyncCommand.getSettablePaths().relativeDirPath, "*.md")
+     );
+-    const rulesyncCommands = await Promise.all(
+-      rulesyncCommandPaths.map(
+-        (path4) => RulesyncCommand.fromFile({ relativeFilePath: (0, import_node_path19.basename)(path4) })
+-      )
+-    );
++    const rulesyncCommands = (await Promise.all(
++      rulesyncCommandPaths.map(async (path4) => {
++        try {
++          return await RulesyncCommand.fromFile({ relativeFilePath: (0, import_node_path19.basename)(path4) });
++        } catch (e) {
++          if (e.code === "ENOENT") {
++            logger.warn(`Skipping missing or broken symlink: ${(0, import_node_path19.basename)(path4)}`);
++            return null;
++          }
++          throw e;
++        }
++      })
++    )).filter(Boolean);
+     logger.info(`Successfully loaded ${rulesyncCommands.length} rulesync commands`);
+     return rulesyncCommands;
+   }
+@@ -7287,7 +7296,9 @@ var ClaudecodeSkill = class _ClaudecodeSkill extends ToolSkill {
      const claudecodeFrontmatter = {
        name: rulesyncFrontmatter.name,
        description: rulesyncFrontmatter.description,
@@ -25,7 +50,7 @@ index b80488f..6f6f487 100644
      };
      const settablePaths = _ClaudecodeSkill.getSettablePaths({ global });
      return new _ClaudecodeSkill({
-@@ -7627,7 +7630,8 @@ var CopilotSkill = class _CopilotSkill extends ToolSkill {
+@@ -7627,7 +7638,8 @@ var CopilotSkill = class _CopilotSkill extends ToolSkill {
      const copilotFrontmatter = {
        name: rulesyncFrontmatter.name,
        description: rulesyncFrontmatter.description,
@@ -35,7 +60,7 @@ index b80488f..6f6f487 100644
      };
      return new _CopilotSkill({
        baseDir: rulesyncSkill.getBaseDir(),
-@@ -7784,7 +7788,8 @@ var CursorSkill = class _CursorSkill extends ToolSkill {
+@@ -7784,7 +7796,8 @@ var CursorSkill = class _CursorSkill extends ToolSkill {
      const rulesyncFrontmatter = rulesyncSkill.getFrontmatter();
      const cursorFrontmatter = {
        name: rulesyncFrontmatter.name,
@@ -45,7 +70,32 @@ index b80488f..6f6f487 100644
      };
      return new _CursorSkill({
        baseDir: rulesyncSkill.getBaseDir(),
-@@ -13636,15 +13641,23 @@ var RulesProcessor = class extends FeatureProcessor {
+@@ -9066,11 +9079,19 @@ var SkillsProcessor = class extends DirFeatureProcessor {
+     const rulesyncSkillsDirPath = (0, import_node_path70.join)(this.baseDir, paths.relativeDirPath);
+     const dirPaths = await findFilesByGlobs((0, import_node_path70.join)(rulesyncSkillsDirPath, "*"), { type: "dir" });
+     const dirNames = dirPaths.map((path4) => (0, import_node_path70.basename)(path4));
+-    const rulesyncSkills = await Promise.all(
+-      dirNames.map(
+-        (dirName) => RulesyncSkill.fromDir({ baseDir: this.baseDir, dirName, global: this.global })
+-      )
+-    );
++    const rulesyncSkills = (await Promise.all(
++      dirNames.map(async (dirName) => {
++        try {
++          return await RulesyncSkill.fromDir({ baseDir: this.baseDir, dirName, global: this.global });
++        } catch (e) {
++          if (e.code === "ENOENT") {
++            logger.warn(`Skipping missing or broken symlink: ${dirName}`);
++            return null;
++          }
++          throw e;
++        }
++      })
++    )).filter(Boolean);
+     logger.info(`Successfully loaded ${rulesyncSkills.length} rulesync skills`);
+     return rulesyncSkills;
+   }
+@@ -13636,15 +13657,23 @@ var RulesProcessor = class extends FeatureProcessor {
      const rulesyncBaseDir = (0, import_node_path107.join)(this.baseDir, RULESYNC_RULES_RELATIVE_DIR_PATH);
      const files = await findFilesByGlobs((0, import_node_path107.join)(rulesyncBaseDir, "**", "*.md"));
      logger.debug(`Found ${files.length} rulesync files`);
@@ -76,7 +126,7 @@ index b80488f..6f6f487 100644
      if (rootRules.length > 1) {
        throw new Error("Multiple root rulesync rules found");
 diff --git a/node_modules/rulesync/dist/index.js b/node_modules/rulesync/dist/index.js
-index 7b7cdc2..d38a0f1 100755
+index 7b7cdc2..b6150f7 100755
 --- a/node_modules/rulesync/dist/index.js
 +++ b/node_modules/rulesync/dist/index.js
 @@ -1709,9 +1709,10 @@ var GeminiCliCommand = class _GeminiCliCommand extends ToolCommand {
@@ -91,7 +141,32 @@ index 7b7cdc2..d38a0f1 100755
  """`;
      const paths = this.getSettablePaths({ global });
      return new _GeminiCliCommand({
-@@ -7264,7 +7265,9 @@ var ClaudecodeSkill = class _ClaudecodeSkill extends ToolSkill {
+@@ -2414,11 +2415,19 @@ var CommandsProcessor = class extends FeatureProcessor {
+     const rulesyncCommandPaths = await findFilesByGlobs(
+       join18(RulesyncCommand.getSettablePaths().relativeDirPath, "*.md")
+     );
+-    const rulesyncCommands = await Promise.all(
+-      rulesyncCommandPaths.map(
+-        (path4) => RulesyncCommand.fromFile({ relativeFilePath: basename16(path4) })
+-      )
+-    );
++    const rulesyncCommands = (await Promise.all(
++      rulesyncCommandPaths.map(async (path4) => {
++        try {
++          return await RulesyncCommand.fromFile({ relativeFilePath: basename16(path4) });
++        } catch (e) {
++          if (e.code === "ENOENT") {
++            logger.warn(`Skipping missing or broken symlink: ${basename16(path4)}`);
++            return null;
++          }
++          throw e;
++        }
++      })
++    )).filter(Boolean);
+     logger.info(`Successfully loaded ${rulesyncCommands.length} rulesync commands`);
+     return rulesyncCommands;
+   }
+@@ -7264,7 +7273,9 @@ var ClaudecodeSkill = class _ClaudecodeSkill extends ToolSkill {
      const claudecodeFrontmatter = {
        name: rulesyncFrontmatter.name,
        description: rulesyncFrontmatter.description,
@@ -102,7 +177,7 @@ index 7b7cdc2..d38a0f1 100755
      };
      const settablePaths = _ClaudecodeSkill.getSettablePaths({ global });
      return new _ClaudecodeSkill({
-@@ -7604,7 +7607,8 @@ var CopilotSkill = class _CopilotSkill extends ToolSkill {
+@@ -7604,7 +7615,8 @@ var CopilotSkill = class _CopilotSkill extends ToolSkill {
      const copilotFrontmatter = {
        name: rulesyncFrontmatter.name,
        description: rulesyncFrontmatter.description,
@@ -112,7 +187,7 @@ index 7b7cdc2..d38a0f1 100755
      };
      return new _CopilotSkill({
        baseDir: rulesyncSkill.getBaseDir(),
-@@ -7761,7 +7765,8 @@ var CursorSkill = class _CursorSkill extends ToolSkill {
+@@ -7761,7 +7773,8 @@ var CursorSkill = class _CursorSkill extends ToolSkill {
      const rulesyncFrontmatter = rulesyncSkill.getFrontmatter();
      const cursorFrontmatter = {
        name: rulesyncFrontmatter.name,
@@ -122,7 +197,32 @@ index 7b7cdc2..d38a0f1 100755
      };
      return new _CursorSkill({
        baseDir: rulesyncSkill.getBaseDir(),
-@@ -13613,15 +13618,23 @@ var RulesProcessor = class extends FeatureProcessor {
+@@ -9043,11 +9056,19 @@ var SkillsProcessor = class extends DirFeatureProcessor {
+     const rulesyncSkillsDirPath = join69(this.baseDir, paths.relativeDirPath);
+     const dirPaths = await findFilesByGlobs(join69(rulesyncSkillsDirPath, "*"), { type: "dir" });
+     const dirNames = dirPaths.map((path4) => basename18(path4));
+-    const rulesyncSkills = await Promise.all(
+-      dirNames.map(
+-        (dirName) => RulesyncSkill.fromDir({ baseDir: this.baseDir, dirName, global: this.global })
+-      )
+-    );
++    const rulesyncSkills = (await Promise.all(
++      dirNames.map(async (dirName) => {
++        try {
++          return await RulesyncSkill.fromDir({ baseDir: this.baseDir, dirName, global: this.global });
++        } catch (e) {
++          if (e.code === "ENOENT") {
++            logger.warn(`Skipping missing or broken symlink: ${dirName}`);
++            return null;
++          }
++          throw e;
++        }
++      })
++    )).filter(Boolean);
+     logger.info(`Successfully loaded ${rulesyncSkills.length} rulesync skills`);
+     return rulesyncSkills;
+   }
+@@ -13613,15 +13634,23 @@ var RulesProcessor = class extends FeatureProcessor {
      const rulesyncBaseDir = join106(this.baseDir, RULESYNC_RULES_RELATIVE_DIR_PATH);
      const files = await findFilesByGlobs(join106(rulesyncBaseDir, "**", "*.md"));
      logger.debug(`Found ${files.length} rulesync files`);

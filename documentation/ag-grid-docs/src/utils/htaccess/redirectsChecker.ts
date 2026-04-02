@@ -16,6 +16,7 @@ type IgnoredResult = {
 
 type ErrorResult = {
     type: 'error';
+    message: string;
     path: string;
 };
 
@@ -27,7 +28,7 @@ const getErrors = (results: Result[]) => results.filter(({ type }) => type === '
 
 const getErrorOutput = (results: Result[]) => {
     const errorResults = getErrors(results);
-    const errorOutput = errorResults.map(({ path }) => `File not found: ${path}`).join('\n');
+    const errorOutput = errorResults.map(({ message, path }) => `${message}: ${path}`).join('\n');
     return errorResults.length ? errorOutput : '';
 };
 
@@ -52,13 +53,22 @@ function checkPathExists(pathToCheck: string): Result {
     } else {
         return {
             type: 'error',
+            message: 'File not found',
             path: pathToCheck,
         };
     }
 }
 
 export function redirectsChecker({ buildDir, logger }: { buildDir: string; logger: AstroIntegrationLogger }) {
-    const results: Result[] = SITE_301_REDIRECTS.map(({ to }) => {
+    const results: Result[] = SITE_301_REDIRECTS.map((redirect) => {
+        const { to } = redirect;
+        const from = 'from' in redirect ? redirect.from : null;
+
+        // Check that redirect source doesn't shadow an existing page
+        if (from && existsSync(path.join(buildDir, from, 'index.html'))) {
+            return { type: 'error', message: 'Redirect shadows existing page', path: from };
+        }
+
         if (to.startsWith('/')) {
             const toPath = to.split('#')[0]; // Remove search params
 
@@ -94,6 +104,6 @@ export function redirectsChecker({ buildDir, logger }: { buildDir: string; logge
         .forEach((line) => logger.info(line));
     const errorResults = getErrors(results);
     if (errorResults.length) {
-        throw new Error(`Redirect target/s not found. Fix them in '${REDIRECTS_FILE}'.\n${getErrorOutput(results)}`);
+        throw new Error(`Redirect issues found. Fix them in '${REDIRECTS_FILE}'.\n${getErrorOutput(results)}`);
     }
 }

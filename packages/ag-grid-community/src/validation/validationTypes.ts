@@ -3,10 +3,28 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { ValidationModuleName } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
 
+// Vue adds these properties to all objects, so we ignore them when checking for invalid properties
+const VUE_FRAMEWORK_PROPS = ['__ob__', '__v_skip', '__metadata__'];
+
+/** Build the set of all property names that should be accepted without warning. */
+export function buildAllValidNames<T extends object>(
+    allProperties: string[],
+    deprecations: Deprecations<T>,
+    propertyExceptions?: string[]
+): Set<string> {
+    return new Set([
+        ...VUE_FRAMEWORK_PROPS,
+        ...(propertyExceptions ?? []),
+        ...Object.keys(deprecations),
+        ...allProperties,
+    ]);
+}
+
 export interface OptionsValidator<T extends object> {
     objectName: string;
-    allProperties?: string[];
-    propertyExceptions?: string[];
+    allProperties: string[];
+    /** Pre-computed set of all accepted property names (valid + deprecated + exceptions + Vue). */
+    allValidNames: Set<string>;
     docsUrl?: `${string}/`;
     deprecations: Deprecations<T>;
     validations: Validations<T>;

@@ -2,6 +2,7 @@ import type { _ColumnChooserGridApi, _ContextMenuGridApi, _ModuleWithApi, _Modul
 import { _ColumnMoveModule, _PopupModule, _SharedDragAndDropModule, _SharedMenuModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { SharedColumnStateUpdateStrategyModule } from '../columnToolPanel/updates/columnStateUpdateStrategyModule';
 import { VERSION } from '../version';
 import { MenuItemModule } from '../widgets/menuItemModule';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
@@ -86,7 +87,7 @@ export const ColumnMenuModule: _ModuleWithApi<_ColumnChooserGridApi> = {
         showColumnChooser,
         hideColumnChooser,
     },
-    dependsOn: [MenuCoreModule, _SharedDragAndDropModule, _ColumnMoveModule],
+    dependsOn: [MenuCoreModule, SharedColumnStateUpdateStrategyModule, _SharedDragAndDropModule, _ColumnMoveModule],
 };
 
 /**

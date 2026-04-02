@@ -23,7 +23,7 @@ export interface IRowNodeFilterStage<TData = any> extends IRowNodeStage<TData> {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodePivotStage<TData = any> extends IRowNodeStage<TData> {
     /** Returns `true` if the changedPath should be deactivated (e.g. pivot columns changed). */
-    execute(changedPath: ChangedPath | undefined): boolean;
+    execute(changedPath: ChangedPath | undefined, changedProps: Set<keyof GridOptions> | undefined): boolean;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

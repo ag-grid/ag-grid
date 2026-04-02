@@ -2736,7 +2736,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     ...pageForAllFrameworks('total-rows', 'aggregation-total-rows'),
     ...pageForAllFrameworks('aggregation-other', 'aggregation'),
     ...pageForAllFrameworks('global-style', 'theming'),
-    ...pageForAllFrameworks('theming-api', 'theming'),
     ...pageForAllFrameworks('global-style-customisation-variables', 'theming-parameters'),
     ...pageForAllFrameworks('global-style-customisation-colours', 'theming-colors'),
     ...pageForAllFrameworks('global-style-customisation-compactness', 'theming-compactness'),

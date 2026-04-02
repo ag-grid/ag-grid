@@ -126,7 +126,7 @@ export class GroupFilterStage extends BeanStub implements NamedBean, _IRowNodeFi
             if (children) {
                 for (let i = 0, len = children.length; i < len; ++i) {
                     const child = children[i];
-                    const foundInParent = alreadyFoundInParent || !!(child.data && fm.doesRowPassFilter(child));
+                    const foundInParent = alreadyFoundInParent || fm.doesRowPassFilter(child);
                     if (child.childrenAfterGroup) {
                         depthFirst(child, foundInParent);
                     } else {

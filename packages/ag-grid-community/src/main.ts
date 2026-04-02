@@ -769,6 +769,8 @@ export type {
     LocaleText,
     MasterSelectionMode,
     MultiRowSelectionOptions,
+    PivotColumnGroupTotals,
+    PivotRowTotals,
     ProcessPivotResultColDef,
     ProcessPivotResultColGroupDef,
     RangeHandleOptions,
