@@ -772,7 +772,7 @@ this.getDataPath = (data) => data.path;"
 
 exports[`Snippet Component > given api statements > it should create 'angular' snippets 1`] = `
 "// save the columns state
-const savedState = this.gridApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState();
 
 // restore the column state
 this.gridApi.applyColumnState({ state: savedState });
@@ -783,7 +783,7 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'angular' snippets with space between properties 1`] = `
 "// save the columns state
-const savedState = this.gridApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState();
 
 // restore the column state
 this.gridApi.applyColumnState({ state: savedState });
@@ -794,7 +794,7 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'angular' snippets without framework context 1`] = `
 "// save the columns state
-const savedState = this.gridApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState();
 
 // restore the column state
 this.gridApi.applyColumnState({ state: savedState });
@@ -805,7 +805,7 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'angular' snippets without framework context and space between properties 1`] = `
 "// save the columns state
-const savedState = this.gridApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState();
 
 // restore the column state
 this.gridApi.applyColumnState({ state: savedState });
@@ -816,7 +816,7 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'javascript' snippets 1`] = `
 "// save the columns state
-const savedState = api.getColumnState(); 
+const savedState = api.getColumnState();
 
 // restore the column state
 api.applyColumnState({ state: savedState });
@@ -827,7 +827,7 @@ const rowNode = api.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'javascript' snippets with space between properties 1`] = `
 "// save the columns state
-const savedState = api.getColumnState(); 
+const savedState = api.getColumnState();
 
 // restore the column state
 api.applyColumnState({ state: savedState });
@@ -838,7 +838,7 @@ const rowNode = api.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'javascript' snippets without framework context 1`] = `
 "// save the columns state
-const savedState = api.getColumnState(); 
+const savedState = api.getColumnState();
 
 // restore the column state
 api.applyColumnState({ state: savedState });
@@ -849,7 +849,7 @@ const rowNode = api.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'javascript' snippets without framework context and space between properties 1`] = `
 "// save the columns state
-const savedState = api.getColumnState(); 
+const savedState = api.getColumnState();
 
 // restore the column state
 api.applyColumnState({ state: savedState });
@@ -860,7 +860,7 @@ const rowNode = api.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'react' snippets 1`] = `
 "// save the columns state
-const savedState = gridApi.getColumnState(); 
+const savedState = gridApi.getColumnState();
 
 // restore the column state
 gridApi.applyColumnState({ state: savedState });
@@ -871,7 +871,7 @@ const rowNode = gridApi.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'react' snippets with space between properties 1`] = `
 "// save the columns state
-const savedState = gridApi.getColumnState(); 
+const savedState = gridApi.getColumnState();
 
 // restore the column state
 gridApi.applyColumnState({ state: savedState });
@@ -882,7 +882,7 @@ const rowNode = gridApi.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'react' snippets without framework context 1`] = `
 "// save the columns state
-const savedState = gridApi.getColumnState(); 
+const savedState = gridApi.getColumnState();
 
 // restore the column state
 gridApi.applyColumnState({ state: savedState });
@@ -893,7 +893,7 @@ const rowNode = gridApi.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'react' snippets without framework context and space between properties 1`] = `
 "// save the columns state
-const savedState = gridApi.getColumnState(); 
+const savedState = gridApi.getColumnState();
 
 // restore the column state
 gridApi.applyColumnState({ state: savedState });
@@ -904,7 +904,7 @@ const rowNode = gridApi.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'vue' snippets 1`] = `
 "// save the columns state
-const savedState = this.gridApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState();
 
 // restore the column state
 this.gridApi.applyColumnState({ state: savedState });
@@ -915,7 +915,7 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'vue' snippets with space between properties 1`] = `
 "// save the columns state
-const savedState = this.gridApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState();
 
 // restore the column state
 this.gridApi.applyColumnState({ state: savedState });
@@ -926,7 +926,7 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'vue' snippets without framework context 1`] = `
 "// save the columns state
-const savedState = this.gridApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState();
 
 // restore the column state
 this.gridApi.applyColumnState({ state: savedState });
@@ -937,7 +937,7 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component > given api statements > it should create 'vue' snippets without framework context and space between properties 1`] = `
 "// save the columns state
-const savedState = this.gridApi.getColumnState(); 
+const savedState = this.gridApi.getColumnState();
 
 // restore the column state
 this.gridApi.applyColumnState({ state: savedState });
@@ -2040,6 +2040,398 @@ exports[`Snippet Component > given complex column definition with array property
         ]
     }
 ];"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'angular' snippets 1`] = `
+"<ag-grid-angular
+    [columnDefs]="columnDefs"
+    [formulaDataSource]="formulaDataSource"
+    /* other grid options ... */ />
+
+const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.columnDefs = [
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+];
+this.formulaDataSource = {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'angular' snippets with space between properties 1`] = `
+"<ag-grid-angular
+    [columnDefs]="columnDefs"
+    [formulaDataSource]="formulaDataSource"
+    /* other grid options ... */ />
+
+const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.columnDefs = [
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+];
+
+this.formulaDataSource = {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'angular' snippets without framework context 1`] = `
+"const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.columnDefs = [
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+];
+this.formulaDataSource = {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'angular' snippets without framework context and space between properties 1`] = `
+"const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.columnDefs = [
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+];
+
+this.formulaDataSource = {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'javascript' snippets 1`] = `
+"const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+const gridOptions = {
+    columnDefs: [
+        { field: 'sales' },
+        { field: 'tax', allowFormula: true },
+    ],
+    formulaDataSource: {
+        getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+        setFormula: ({ column, rowNode, formula }) => {
+            const key = formulaKey(rowNode.id, column.getColId());
+            if (formula === undefined) {
+                formulaStore.delete(key);
+            } else {
+                formulaStore.set(key, formula);
+            }
+        },
+    },
+
+    // other grid options ...
+}"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'javascript' snippets with space between properties 1`] = `
+"const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+const gridOptions = {
+    columnDefs: [
+        { field: 'sales' },
+        { field: 'tax', allowFormula: true },
+    ],
+
+    formulaDataSource: {
+        getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+        setFormula: ({ column, rowNode, formula }) => {
+            const key = formulaKey(rowNode.id, column.getColId());
+            if (formula === undefined) {
+                formulaStore.delete(key);
+            } else {
+                formulaStore.set(key, formula);
+            }
+        },
+    },
+
+    // other grid options ...
+}"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'javascript' snippets without framework context 1`] = `
+"const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+
+columnDefs: [
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+],
+formulaDataSource: {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+},"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'javascript' snippets without framework context and space between properties 1`] = `
+"const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+
+columnDefs: [
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+],
+
+formulaDataSource: {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+},"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'react' snippets 1`] = `
+"const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+const [columnDefs, setColumnDefs] = useState([
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+]);
+const formulaDataSource = {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+};
+
+<AgGridReact
+    columnDefs={columnDefs}
+    formulaDataSource={formulaDataSource}
+/>"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'react' snippets with space between properties 1`] = `
+"const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+const [columnDefs, setColumnDefs] = useState([
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+]);
+
+const formulaDataSource = {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+};
+
+<AgGridReact
+    columnDefs={columnDefs}
+    formulaDataSource={formulaDataSource}
+/>"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'react' snippets without framework context 1`] = `
+"const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+const [columnDefs, setColumnDefs] = useState([
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+]);
+const formulaDataSource = {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+};
+
+<AgGridReact
+    columnDefs={columnDefs}
+    formulaDataSource={formulaDataSource}
+/>"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'react' snippets without framework context and space between properties 1`] = `
+"const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+const [columnDefs, setColumnDefs] = useState([
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+]);
+
+const formulaDataSource = {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+};
+
+<AgGridReact
+    columnDefs={columnDefs}
+    formulaDataSource={formulaDataSource}
+/>"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'vue' snippets 1`] = `
+"<ag-grid-vue
+    :columnDefs="columnDefs"
+    :formulaDataSource="formulaDataSource"
+    /* other grid options ... */>
+</ag-grid-vue>
+
+const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.columnDefs = [
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+];
+this.formulaDataSource = {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'vue' snippets with space between properties 1`] = `
+"<ag-grid-vue
+    :columnDefs="columnDefs"
+    :formulaDataSource="formulaDataSource"
+    /* other grid options ... */>
+</ag-grid-vue>
+
+const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.columnDefs = [
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+];
+
+this.formulaDataSource = {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'vue' snippets without framework context 1`] = `
+"const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.columnDefs = [
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+];
+this.formulaDataSource = {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+};"
+`;
+
+exports[`Snippet Component > given const with new expression > it should create 'vue' snippets without framework context and space between properties 1`] = `
+"const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+this.columnDefs = [
+    { field: 'sales' },
+    { field: 'tax', allowFormula: true },
+];
+
+this.formulaDataSource = {
+    getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+    setFormula: ({ column, rowNode, formula }) => {
+        const key = formulaKey(rowNode.id, column.getColId());
+        if (formula === undefined) {
+            formulaStore.delete(key);
+        } else {
+            formulaStore.set(key, formula);
+        }
+    },
+};"
 `;
 
 exports[`Snippet Component > given function declaration > it should create 'angular' snippets 1`] = `

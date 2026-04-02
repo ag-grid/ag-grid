@@ -17,6 +17,7 @@ class SnippetTransformer {
 
     // used when adding framework context
     propertiesVisited = [];
+    expressions = [];
 
     constructor(snippet, options) {
         this.options = options;
@@ -29,8 +30,12 @@ class SnippetTransformer {
             // create a syntax tree from the supplied snippet (also contains separated comments)
             parsedSyntaxTreeResults = parseScript(this.snippet, { comment: true, loc: true, range: true });
         } catch (error) {
-            const errorMsg = "To troubleshoot paste snippet here: 'https://esprima.org/demo/parse.html'";
-            return `${error}\n\n${errorMsg}\n\n${this.snippet}`;
+            throw new Error(
+                `Snippet transformation failed (parse error).\n` +
+                    `To troubleshoot paste snippet here: 'https://esprima.org/demo/parse.html'\n\n` +
+                    `Snippet:\n${this.snippet}`,
+                { cause: error }
+            );
         }
 
         // associate comments with each node
@@ -41,7 +46,7 @@ class SnippetTransformer {
             // parse syntax tree to produce main snippet body
             snippetBody = this.parse(tree, this.initialDepth);
         } catch (error) {
-            return `${error}\n\n${this.snippet}`;
+            throw new Error(`Snippet transformation failed.\n\nSnippet:\n${this.snippet}`, { cause: error });
         }
 
         // wrap snippet body with framework context
@@ -97,18 +102,21 @@ class JavascriptTransformer extends SnippetTransformer {
     }
 
     parseExpression(expression, variableExpression) {
-        const comment = this.addComment(expression, 0);
+        const extraLine = expression.comment && this.expressions.length > 0 ? '\n' : '';
+        const comment = expression.comment ? `//${expression.comment}\n` : '';
         const exprPrefix = variableExpression ? 'const ' : '';
-        const exprPostfix = variableExpression ? '; ' : '';
+        const exprPostfix = variableExpression ? ';' : '';
         const [start, end] = expression.range;
-        return `\n${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`;
+        this.expressions.push(`${extraLine}${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`);
+        return '';
     }
 
     addFrameworkContext(result) {
+        const expressionSnippet = this.expressions.length > 0 ? this.expressions.join('\n') + '\n\n' : '';
         if (this.options.suppressFrameworkContext || this.propertiesVisited.length === 0) {
-            return result.trim();
+            return (expressionSnippet + result).trim();
         }
-        return `const gridOptions = {${result}` + `\n\n${tab(1)}// other grid options ...` + '\n}';
+        return expressionSnippet + `const gridOptions = {${result}` + `\n\n${tab(1)}// other grid options ...` + '\n}';
     }
 
     addComment(property, depth) {
@@ -130,22 +138,27 @@ class AngularTransformer extends SnippetTransformer {
     }
 
     parseExpression(expression, variableExpression) {
-        const comment = this.addComment(expression, 0);
+        const extraLine = expression.comment && this.expressions.length > 0 ? '\n' : '';
+        const comment = expression.comment ? `//${expression.comment}\n` : '';
         const exprPrefix = variableExpression ? 'const ' : '';
-        const exprPostfix = variableExpression ? '; ' : '';
+        const exprPostfix = variableExpression ? ';' : '';
         const [start, end] = expression.range;
-        return `\n${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`.replace(
-            'api',
-            'this.gridApi'
+        this.expressions.push(
+            `${extraLine}${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`.replace(
+                'api',
+                'this.gridApi'
+            )
         );
+        return '';
     }
 
     addFrameworkContext(result) {
+        const expressionSnippet = this.expressions.length > 0 ? '\n' + this.expressions.join('\n') + '\n' : '';
         if (this.options.suppressFrameworkContext || this.propertiesVisited.length === 0) {
-            return result.trim();
+            return (expressionSnippet + result).trim();
         }
         const props = this.propertiesVisited.map((property) => `${tab(1)}[${property}]="${property}"`).join('\n');
-        return '<ag-grid-angular\n' + props + '\n    /* other grid options ... */ />\n' + result;
+        return '<ag-grid-angular\n' + props + '\n    /* other grid options ... */ />\n' + expressionSnippet + result;
     }
 
     addComment(property) {
@@ -155,16 +168,23 @@ class AngularTransformer extends SnippetTransformer {
 
 class VueTransformer extends AngularTransformer {
     addFrameworkContext(result) {
+        const expressionSnippet = this.expressions.length > 0 ? '\n' + this.expressions.join('\n') + '\n' : '';
         if (this.options.suppressFrameworkContext || this.propertiesVisited.length === 0) {
-            return result.trim();
+            return (expressionSnippet + result).trim();
         }
         const props = this.propertiesVisited.map((property) => `${tab(1)}:${property}="${property}"`).join('\n');
-        return '<ag-grid-vue\n' + props + '\n    /* other grid options ... */>\n' + '</ag-grid-vue>\n' + result;
+        return (
+            '<ag-grid-vue\n' +
+            props +
+            '\n    /* other grid options ... */>\n' +
+            '</ag-grid-vue>\n' +
+            expressionSnippet +
+            result
+        );
     }
 }
 
 class ReactTransformer extends SnippetTransformer {
-    expressionSnippet = false;
     externalisedProperties = [];
     inlineProperties = [];
     inlinePropertiesWithValues = [];
@@ -185,12 +205,18 @@ class ReactTransformer extends SnippetTransformer {
     }
 
     parseExpression(expression, variableExpression) {
-        this.expressionSnippet = true;
-        const comment = this.getComment(expression, 0);
+        const extraLine = expression.comment && this.externalisedProperties.length > 0 ? '\n' : '';
+        const comment = expression.comment ? `//${expression.comment}\n` : '';
         const exprPrefix = variableExpression ? 'const ' : '';
-        const exprPostfix = variableExpression ? '; ' : '';
+        const exprPostfix = variableExpression ? ';' : '';
         const [start, end] = expression.range;
-        return `\n${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`.replace('api', 'gridApi');
+        this.externalisedProperties.push(
+            `${extraLine}${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`.replace(
+                'api',
+                'gridApi'
+            )
+        );
+        return '';
     }
 
     extractExternalProperty(property) {
@@ -216,20 +242,16 @@ class ReactTransformer extends SnippetTransformer {
     }
 
     addFrameworkContext(result) {
-        const externalProperties = this.externalisedProperties.length > 0;
-        const externalSnippet = externalProperties ? this.externalisedProperties.join('\n').trim() + '\n\n' : '';
+        const externalSnippet =
+            this.externalisedProperties.length > 0 ? this.externalisedProperties.join('\n').trim() + '\n\n' : '';
 
-        if (this.expressionSnippet) {
-            return result.trim();
-        }
-        if (this.options.suppressFrameworkContext && this.propertiesVisited.length === 0) {
-            // framework context is only hidden if no grid options exists (columnDefs excluded)
-            return decreaseIndent(result.trim());
+        if (this.propertiesVisited.length === 0) {
+            return externalSnippet.trim() || decreaseIndent(result.trim());
         }
 
         if (this.options.inlineReactProperties && this.inlinePropertiesWithValues.length > 0) {
             const space = this.inlinePropertiesWithValues.length > 0 ? ' ' : '';
-            return `<AgGridReact${space}${this.inlinePropertiesWithValues.join(' ')} />`;
+            return externalSnippet + `<AgGridReact${space}${this.inlinePropertiesWithValues.join(' ')} />`;
         }
 
         if (this.inlineProperties.length > 1) {
@@ -370,5 +392,5 @@ const isVarDeclarator = (node) => node.type === 'VariableDeclarator';
 const isExprStatement = (node) => node.type === 'ExpressionStatement';
 const isLabelStatement = (node) => node.type === 'LabeledStatement';
 const isBlockStatement = (node) => node.type === 'BlockStatement';
-const isCallableExpr = (node) => node.init.type === 'CallExpression';
+const isCallableExpr = (node) => node.init.type === 'CallExpression' || node.init.type === 'NewExpression';
 const isArrowFunctionExpr = (node) => node.init.type === 'ArrowFunctionExpression';

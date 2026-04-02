@@ -755,7 +755,8 @@
 
     .ag-column-drop.ag-column-drop-horizontal {
         white-space: nowrap;
-        overflow: hidden;
+        overflow: auto hidden;
+        scrollbar-width: thin;
     }
 
     .ag-column-drop-cell-button {
