@@ -45,12 +45,8 @@ Any note metadata, including `author`, `createdAt`, and `updatedAt`, is rendered
 The built-in note editor only updates the note text. If notes created from the built-in UI should also include metadata, stamp it inside `notesDataSource.setNote()`.
 
 ```{% frameworkTransform=true %}
-const getCurrentUser = () =>
-    document.querySelector<HTMLInputElement>('#current-user')?.value.trim() || undefined;
-const getDisplayTimestamp = () => new Intl.DateTimeFormat('en-GB', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-}).format(new Date());
+const getCurrentUser = () => document.getElementById('current-user').value;
+const getDisplayTimestamp = () => new Date().toLocaleString('en-GB');
 
 const gridOptions = {
     notesDataSource: {
