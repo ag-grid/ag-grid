@@ -28,7 +28,7 @@ build (nx:noop aggregator)
 
 ### Per-package overrides
 
-Individual packages can override `targetDefaults`. For example, a community package (e.g., `ag-charts-community`) may override `build:umd` to build from source rather than `dist/` output, because its UMD bundle is a self-contained browser bundle needing a dedicated entry point (`main-umd.ts`).
+Individual packages can override `targetDefaults`. For example, a community package may override `build:umd` to build from source rather than `dist/` output, because its UMD bundle is a self-contained browser bundle needing a dedicated entry point (`main-umd.ts`).
 
 ```json
 "build:umd": {
@@ -169,7 +169,7 @@ Convenience targets: `blt` (build-lint-test), `blt:ci` (adds e2e and pack), `cle
 
 ## Dynamic project creation
 
-AG product monorepos use custom Nx plugins (e.g., `ag-charts-task-autogen`) that scan example directories (e.g., `packages/*/src/**/_examples/*/main.ts`) and create virtual projects at graph-computation time, each with `generate-example`, `generate-thumbnail`, and `typecheck` targets.
+AG product monorepos use custom Nx plugins that scan example directories (e.g., `packages/*/src/**/_examples/*/main.ts`) and create virtual projects at graph-computation time, each with `generate-example`, `generate-thumbnail`, and `typecheck` targets.
 
 ### What to audit
 

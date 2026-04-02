@@ -34,6 +34,15 @@ When creating bug tickets, test affected versions **from the browser** (not by a
 2. Binary search versions to find when the bug was introduced.
 3. Set `versions` field to earliest affected version.
 
+## Design Document Links
+
+When linking to PRDs or design decisions in ticket descriptions, use the external URL pattern — not GitHub URLs:
+
+- **Correct:** `[Data Point Selection PRD](https://docs.ag-grid.com/design-decisions/charts/AG-5158-data-point-selection)`
+- **Incorrect:** `https://github.com/ag-grid/ag-grid-documentation/blob/latest/docs/design-decisions/charts/...`
+
+The base URL is `https://docs.ag-grid.com/design-decisions/charts/` followed by the folder name.
+
 ## Estimation Calibration Data
 
 Use these baseline estimates for common AG Charts work items:

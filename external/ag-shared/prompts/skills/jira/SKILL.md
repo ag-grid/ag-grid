@@ -129,6 +129,46 @@ mcp__atlassian__getJiraIssue
 
 **Warning:** The output is large (comments contain full ADF bodies). Pipe through Python/jq to extract text content. The `fetchAtlassian` ARI tool does **not** return comments — always use `getJiraIssue` with `fields: ["comment"]`.
 
+### Ranking Issues (Agile API)
+
+The Atlassian MCP tools **cannot** change issue rank. The `editJiraIssue` tool
+silently ignores rank field updates — it returns success but the rank value is
+unchanged. This is a known limitation of the standard JIRA REST API.
+
+**Ranking requires the dedicated Agile REST API** called via `curl`:
+
+```bash
+source ~/.zshrc  # load JIRA_URL, JIRA_USERNAME, JIRA_API_TOKEN
+curl -s -X PUT "${JIRA_URL}/rest/agile/1.0/issue/rank" \
+  -H 'Content-Type: application/json' \
+  -u "${JIRA_USERNAME}:${JIRA_API_TOKEN}" \
+  -d '{
+    "issues": ["PROJ-1", "PROJ-2", "PROJ-3"],
+    "rankBeforeIssue": "PROJ-99",
+    "rankCustomFieldId": 10120
+  }'
+```
+
+Key facts:
+
+-   **Rank custom field ID**: `10120` (`customfield_10120`, type
+    `com.pyxis.greenhopper.jira:gh-lexo-rank`). This is instance-specific — not
+    the common default `10019`. Discover it via
+    `mcp__atlassian__getJiraIssueTypeMetaWithFields` and look for the field
+    named "Rank".
+-   **`issues` array preserves order**: `["A", "B", "C"]` with
+    `rankBeforeIssue: "D"` results in A, B, C appearing in that order before D.
+-   **Max 50 issues** per request.
+-   **Success**: HTTP 204 (empty body). **Partial failure**: HTTP 207 with
+    per-issue status.
+-   **Auth**: Basic auth with `JIRA_USERNAME` (email) and `JIRA_API_TOKEN`
+    (Atlassian API token from
+    https://id.atlassian.com/manage-profile/security/api-tokens).
+-   **Verify auth first**: `curl -s "${JIRA_URL}/rest/api/3/myself" -u
+    "${JIRA_USERNAME}:${JIRA_API_TOKEN}"` — must return HTTP 200.
+-   **Verify result**: Query with `ORDER BY rank ASC` via
+    `${JIRA_URL}/rest/api/3/search/jql` to confirm the new ordering.
+
 ### Troubleshooting
 
 **Discovering required fields:** Use `mcp__atlassian__getJiraIssueTypeMetaWithFields` with `cloudId`, `projectIdOrKey: 'AG'`, `issueTypeId: '10105'` (Task).

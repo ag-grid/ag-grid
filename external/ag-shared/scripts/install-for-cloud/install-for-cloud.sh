@@ -1,84 +1,112 @@
 #!/bin/bash
+# external/ag-shared/scripts/install-for-cloud/install-for-cloud.sh
+#
+# Cloud-only bootstrap for environments where yarn/nx may not be installed.
+# Called from the SessionStart hook.
+#
+# In most cases (yarn present + node_modules exists), exits immediately (~10ms).
+# When bootstrapping is needed, installs yarn/nx globally then delegates to
+# `yarn install`, which triggers preinstall-worktree.sh for COW cloning etc.
 
-# Exit on any error, undefined variable, or pipe failure
 set -euo pipefail
 
 export AG_SKIP_NATIVE_DEP_VERSION_CHECK=1
 export PUPPETEER_SKIP_DOWNLOAD=true
 
-# Helper function to log info messages to stdout
-log_info() {
-    echo "[install-for-cloud] $*"
-}
+log_info() { echo "[install-for-cloud] $*"; }
+log_error() { echo "[install-for-cloud] ERROR: $*" >&2; }
 
-# Helper function to log error messages to stderr
-log_error() {
-    echo "[install-for-cloud] ERROR: $*" >&2
-}
+# ---------------------------------------------------------------------------
+# Environment detection — same signals as before
+# ---------------------------------------------------------------------------
 
-# Check if running in a Claude Code worktree (Claude Desktop)
-# Uses CLAUDE_PROJECT_DIR (set by Claude Code hooks) or PWD for detection
 is_claude_worktree() {
     local check_path="${CLAUDE_PROJECT_DIR:-$PWD}"
     [[ "$check_path" == *".claude-worktrees"* ]]
 }
 
-# Derive the root worktree path from current directory
-# e.g., /path/to/repo/.claude-worktrees/branch-name -> /path/to/repo
-get_root_worktree_path() {
-    local check_path="${CLAUDE_PROJECT_DIR:-$PWD}"
-    if [[ -n "${ROOT_WORKTREE_PATH:-}" ]]; then
-        echo "$ROOT_WORKTREE_PATH"
-    elif [[ "$check_path" == *".claude-worktrees"* ]]; then
-        echo "${check_path%%/.claude-worktrees/*}"
-    else
-        echo "$check_path"
-    fi
-}
-
-# Determine run mode
 RUN_MODE="skip"
-if [ "${AG_CLOUD_INSTALL:-}" == "1" ]; then
+if [[ "${AG_CLOUD_INSTALL:-}" == "1" ]]; then
     log_info "AG_CLOUD_INSTALL set, initializing environment"
     RUN_MODE="full"
-elif [ "${AG_CLOUD_INSTALL:-}" == "0" ]; then
+elif [[ "${AG_CLOUD_INSTALL:-}" == "0" ]]; then
     log_info "Disabled by AG_CLOUD_INSTALL, skipping environment initialization"
     exit 0
-elif [ "${CLAUDE_CODE_REMOTE:-}" == "true" ]; then
+elif [[ "${CLAUDE_CODE_REMOTE:-}" == "true" ]]; then
     log_info "CLAUDE_CODE_REMOTE set, initializing environment"
     RUN_MODE="full"
 elif is_claude_worktree; then
-    log_info "Claude Code worktree detected, cloning nx cache only"
+    log_info "Claude Code worktree detected"
     RUN_MODE="full"
 else
     log_info "No cloud/worktree environment detected, skipping initialization"
-    log_info "CLAUDE_PROJECT_DIR: $CLAUDE_PROJECT_DIR"
+    log_info "CLAUDE_PROJECT_DIR: ${CLAUDE_PROJECT_DIR:-}"
     log_info "PWD: $PWD"
     exit 0
 fi
 
+# ---------------------------------------------------------------------------
+# Fast path — if yarn exists and node_modules is present, nothing to do.
+# The preinstall-worktree.sh hook handles COW cloning and symlink fixes
+# when yarn install is eventually triggered.
+# ---------------------------------------------------------------------------
+
+if command -v yarn &>/dev/null && [[ -d node_modules ]]; then
+    # Verify lockfile hasn't changed since last install — Yarn 1 writes
+    # node_modules/.yarn-integrity which embeds a lockfile hash.
+    if yarn check --integrity &>/dev/null; then
+        log_info "yarn and node_modules present and valid, skipping bootstrap"
+        exit 0
+    fi
+    log_info "node_modules present but integrity check failed, running yarn install"
+    yarn install --prefer-offline
+    exit $?
+fi
+
+# ---------------------------------------------------------------------------
 # Ensure we're in the project directory
-if [ ! -f package.json ]; then
+# ---------------------------------------------------------------------------
+
+if [[ ! -f package.json ]]; then
     log_error "package.json not found in current directory"
     exit 2
 fi
 
-# Function to install nx globally
-install_nx() {
-    if command -v nx &> /dev/null; then
-        log_info "nx is already installed, skipping install"
+# ---------------------------------------------------------------------------
+# Bootstrap: install yarn and nx globally if missing
+# ---------------------------------------------------------------------------
+
+install_yarn_if_missing() {
+    # Create .yarnrc to ignore engine checks
+    cat >.yarnrc <<EOF
+--install.ignore-engines true
+--run.ignore-engines true
+EOF
+
+    if command -v yarn &>/dev/null; then
+        log_info "yarn is already installed"
         return 0
     fi
 
-    log_info "Installing nx globally"
+    log_info "Installing yarn@1 globally"
+    if ! npm i -g --force yarn@1; then
+        log_error "Failed to install yarn@1 globally"
+        return 2
+    fi
+    log_info "yarn@1 installed successfully"
+}
 
-    # Check if node is available
-    if ! command -v node &> /dev/null; then
+install_nx_if_missing() {
+    if command -v nx &>/dev/null; then
+        log_info "nx is already installed"
+        return 0
+    fi
+
+    if ! command -v node &>/dev/null; then
         log_error "node is not available"
         return 2
     fi
 
-    # Install Nx globally with the version from package.json
     local nx_version
     nx_version=$(node -p "require('./package.json').devDependencies.nx" 2>/dev/null) || {
         log_error "Failed to extract nx version from package.json"
@@ -90,191 +118,40 @@ install_nx() {
         log_error "Failed to install nx globally"
         return 2
     fi
-
     log_info "Successfully installed nx@${nx_version}"
-    return 0
 }
 
-# Function to install yarn and initial dependencies
-install_yarn() {
-    # Create .yarnrc to ignore engine checks
-    cat >.yarnrc <<EOF
---install.ignore-engines true
---run.ignore-engines true
-EOF
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
 
-    if command -v yarn &> /dev/null; then
-        log_info "yarn is already installed, skipping install"
-        return 0
-    fi
-
-    log_info "Installing yarn@1 and initial dependencies"
-
-    # Install yarn v1 globally
-    if ! npm i -g --force yarn@1; then
-        log_error "Failed to install yarn@1 globally"
-        return 2
-    fi
-
-    log_info "yarn@1 installed successfully"
-}
-
-clone_nx_cache() {
-    if [ -d .nx ]; then
-        log_info "nx cache directory already exists, skipping"
-        return 0
-    fi
-
-    local root_path
-    root_path=$(get_root_worktree_path)
-
-    if [ ! -d "${root_path}/.nx" ]; then
-        log_info "Root worktree .nx directory not found at ${root_path}"
-        return 0
-    fi
-
-    log_info "Cloning .nx directory from ${root_path} using CoW"
-    if clone_directory "${root_path}/.nx" ./.nx; then
-        log_info "Successfully cloned .nx from ${root_path}"
-    else
-        log_info "Failed to clone .nx, continuing without cache"
-        rm -rf ./.nx
-    fi
-}
-
-# Clone a directory using APFS COW clone, with rsync fallback.
-# Args: $1 = source, $2 = destination
-clone_directory() {
-    local src="$1" dest="$2"
-    if cp -cR "${src}/" "${dest}/" 2>/dev/null; then
-        return 0
-    fi
-    if rsync -a "${src}/" "${dest}/"; then
-        return 0
-    fi
-    return 1
-}
-
-# Try to copy node_modules from root worktree if lockfiles match.
-# Uses APFS COW clone (cp -cR) for speed and disk savings, with rsync fallback.
-# Returns 0 if copy succeeded (node_modules now exists), 1 if fallback to install needed.
-try_copy_node_modules() {
-    if ! is_claude_worktree && [[ -z "${ROOT_WORKTREE_PATH:-}" ]]; then
-        return 1
-    fi
-
-    local root_path
-    root_path=$(get_root_worktree_path)
-
-    if [ ! -d "${root_path}/node_modules" ]; then
-        log_info "Root worktree node_modules not found, falling back to install"
-        return 1
-    fi
-
-    if [ ! -f "${root_path}/yarn.lock" ]; then
-        log_info "Root worktree yarn.lock not found, falling back to install"
-        return 1
-    fi
-
-    if ! diff -q "${root_path}/yarn.lock" ./yarn.lock &>/dev/null; then
-        log_info "yarn.lock differs from root worktree, falling back to install"
-        return 1
-    fi
-
-    log_info "yarn.lock matches root worktree, copying node_modules"
-
-    # Try APFS COW clone first (fast, minimal disk usage), fall back to rsync
-    if clone_directory "${root_path}/node_modules" ./node_modules; then
-        log_info "Successfully cloned node_modules from ${root_path}"
-    else
-        log_error "Failed to copy node_modules"
-        rm -rf ./node_modules
-        return 1
-    fi
-
-    # Clone nested workspace node_modules (created by Yarn 1 nohoist/version conflicts)
-    local nested
-    while IFS= read -r nested; do
-        local rel_path="${nested#${root_path}/}"
-        if [ ! -d "${rel_path}" ]; then
-            mkdir -p "$(dirname "${rel_path}")"
-            if clone_directory "${nested}" "${rel_path}"; then
-                log_info "Cloned nested ${rel_path}"
-            else
-                log_info "Failed to clone nested ${rel_path}, skipping"
-            fi
-        fi
-    done < <(find "${root_path}" -name "node_modules" -type d \
-        -not -path "${root_path}/node_modules/*" \
-        -not -path "${root_path}/node_modules" \
-        -maxdepth 3 2>/dev/null)
-
-    return 0
-}
-
-# Function to install/update dependencies when node_modules exists
-install_dependencies() {
-    log_info "Checking dependency integrity"
-
-    # Check if dependencies are already installed and valid
-    if yarn check --integrity 2>/dev/null; then
-        log_info "Dependencies already installed and valid, running postinstall"
-        if ! yarn postinstall; then
-            log_error "postinstall script failed"
-            return 2
-        fi
-    else
-        log_info "Installing/updating dependencies"
-        if ! yarn install --ci --prefer-offline; then
-            log_error "Failed to install dependencies"
-            return 2
-        fi
-        log_info "Dependencies installed successfully"
-    fi
-
-    return 0
-}
-
-# Main installation logic
 main() {
-    log_info "Starting installation process (mode: ${RUN_MODE})"
+    log_info "Bootstrapping cloud environment"
 
-    # Full mode: install dependencies, yarn, nx, etc.
-    if [ -d node_modules ]; then
-        log_info "node_modules directory exists, checking dependencies"
-        clone_nx_cache
-        if ! install_dependencies; then
-            exit 2
-        fi
-    elif try_copy_node_modules; then
-        log_info "Validating copied node_modules"
-        clone_nx_cache
-        if ! install_dependencies; then
-            exit 2
-        fi
-    else
-        log_info "node_modules directory not found, performing fresh install"
-        if ! install_yarn; then
-            exit 2
-        fi
-        if ! install_nx; then
-            exit 2
-        fi
-        clone_nx_cache
-        if ! install_dependencies; then
-            exit 2
-        fi
+    if ! install_yarn_if_missing; then
+        exit 2
     fi
 
-    # Verify nx is available after installation
-    if command -v nx &> /dev/null; then
-        log_info "Installation completed successfully - nx is available"
+    if ! install_nx_if_missing; then
+        exit 2
+    fi
+
+    # Delegate to yarn install — preinstall-worktree.sh handles COW cloning,
+    # symlink fixes, and .nx cache. Postinstall handles patches, plugins, etc.
+    log_info "Running yarn install (preinstall hook will handle COW cloning)"
+    if ! yarn install --prefer-offline; then
+        log_error "yarn install failed"
+        exit 2
+    fi
+
+    # Verify nx is available
+    if command -v nx &>/dev/null; then
+        log_info "Bootstrap completed successfully — nx is available"
     else
-        log_info "Installation completed - nx may require shell restart to be available in PATH"
+        log_info "Bootstrap completed — nx may require shell restart to be available in PATH"
     fi
 
     exit 0
 }
 
-# Run main function
 main

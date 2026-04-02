@@ -110,7 +110,7 @@ Only run on `latest`/release branches or when test files are directly modified.
 
 ### Parallelism
 
-`NX_PARALLEL: 1` for test jobs — tests run sequentially within each shard to avoid resource contention (canvas rendering, GC-sensitive benchmarks).
+`NX_PARALLEL: 1` for test jobs — tests run sequentially within each shard to avoid resource contention.
 
 ---
 
