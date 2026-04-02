@@ -202,7 +202,7 @@
     }
 
     .ag-filter-add-button .ag-icon {
-        color: var(--ag-material-accent-color);
+        color: var(--ag-material-active-color);
     }
 
     .ag-filter-apply-panel-button,
@@ -239,7 +239,7 @@
     }
 
     .ag-filter-active .ag-icon-filter {
-        color: var(--ag-material-active-color);
+        color: var(--ag-material-accent-color);
     }
 
     .ag-list-item-hovered::after {

@@ -207,7 +207,7 @@ export class RowContainerEventsFeature extends BeanStub {
             return;
         }
 
-        if (!access.isSuppressed) {
+        if (!access.isSuppressed || access.canView) {
             notesSvc.showCellNote({ rowNode: access.rowNode, column: access.column }, true);
         }
 

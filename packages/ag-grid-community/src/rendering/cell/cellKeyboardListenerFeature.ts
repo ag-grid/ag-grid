@@ -219,7 +219,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
             const access = notesSvc.getCellNoteAccess({ rowNode: this.rowNode, column: cellCtrl.column });
 
             if (access) {
-                if (!access.isSuppressed) {
+                if (!access.isSuppressed || access.canView) {
                     notesSvc.showCellNote({ rowNode: access.rowNode, column: access.column }, true);
                 }
 
