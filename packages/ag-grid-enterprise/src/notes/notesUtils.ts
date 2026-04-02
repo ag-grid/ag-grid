@@ -5,8 +5,5 @@ export function cloneCellNote(note?: CellNote): CellNote | undefined {
         return undefined;
     }
 
-    return {
-        ...note,
-        metadata: note.metadata ? { ...note.metadata } : undefined,
-    };
+    return { ...note };
 }

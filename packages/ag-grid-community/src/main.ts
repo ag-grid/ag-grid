@@ -682,6 +682,8 @@ export type {
     SpanRowsParams,
     SuppressHeaderKeyboardEventFunc,
     SuppressHeaderKeyboardEventParams,
+    SuppressCellNoteCallback,
+    SuppressCellNoteCallbackParams,
     SuppressKeyboardEventFunc,
     SuppressKeyboardEventParams,
     SuppressNavigableCallback,

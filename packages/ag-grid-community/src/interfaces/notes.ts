@@ -9,10 +9,10 @@ import type { IRowNode } from './iRowNode';
 
 export interface CellNote {
     text: string;
+    readOnly?: boolean;
     author?: string;
     createdAt?: string;
     updatedAt?: string;
-    metadata?: Record<string, unknown>;
 }
 
 export interface GetNoteParams {
@@ -47,6 +47,19 @@ export interface RefreshCellNotesParams {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface ICellNoteAccess {
+    rowNode: IRowNode;
+    column: AgColumn;
+    note: CellNote | undefined;
+    isReadOnly: boolean;
+    isSuppressed: boolean;
+    canView: boolean;
+    canCreate: boolean;
+    canEdit: boolean;
+    canDelete: boolean;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ICellNotesFeature {
     refresh(): void;
     show(params?: { focusEditor?: boolean; column?: AgColumn }): void;
@@ -63,10 +76,12 @@ export interface INotesDataService extends Bean {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface INotesService extends Bean {
+    hasDataSource(): boolean;
     createCellNotesFeature(ctrl: CellCtrl): ICellNotesFeature | undefined;
     createFullWidthRowNotesFeature(ctrl: RowCtrl): ICellNotesFeature | undefined;
+    getCellNoteAccess(params: GetNoteParams): ICellNoteAccess | undefined;
     getCellNote(params: GetNoteParams): CellNote | undefined;
-    showCellNoteEditor(params: GetNoteParams): void;
+    showCellNote(params: GetNoteParams, focusEditor?: boolean): boolean;
     setCellNote(params: SetNoteParams): void;
     removeCellNote(params: GetNoteParams): void;
     refreshCellNotes(params?: RefreshCellNotesParams): void;

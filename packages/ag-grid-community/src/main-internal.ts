@@ -206,7 +206,7 @@ export type {
     _SideBarGridApi,
     _StatusBarGridApi,
 } from './api/gridApi';
-export type { ICellNotesFeature, INotesDataService, INotesService } from './interfaces/notes';
+export type { ICellNoteAccess, ICellNotesFeature, INotesDataService, INotesService } from './interfaces/notes';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';

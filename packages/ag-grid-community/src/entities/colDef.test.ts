@@ -150,6 +150,19 @@ describe('ColDef.field Types', () => {
         ];
     });
 
+    test('suppressCellNote callback types', () => {
+        interface RowData {
+            athlete: string;
+        }
+
+        const t: ColDef<RowData>[] = [
+            {
+                field: 'athlete',
+                suppressCellNote: ({ data, column, colDef, node }) => !!data?.athlete && !!column && !!colDef && !!node,
+            },
+        ];
+    });
+
     test('Recursive TData type instead of interface', () => {
         type RowData = {
             a: number;

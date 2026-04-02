@@ -132,7 +132,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private processFullWidthRowKeyboardEvent(rowCtrl: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
         const { rowNode } = rowCtrl;
-        const { focusSvc, navigation } = this.beans;
+        const { focusSvc, navigation, notesSvc } = this.beans;
         const focusedCell = focusSvc.getFocusedCell();
         const column = focusedCell?.column as AgColumn;
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
@@ -158,6 +158,28 @@ export class RowContainerEventsFeature extends BeanStub {
                     case KeyCode.DOWN:
                         rowCtrl.onKeyboardNavigate(keyboardEvent);
                         break;
+                    case KeyCode.F2: {
+                        if (!keyboardEvent.shiftKey) {
+                            break;
+                        }
+
+                        const fullWidthInfo = rowCtrl.findFullWidthInfoForEvent(keyboardEvent);
+                        const noteColumn = fullWidthInfo?.column ?? column;
+                        const access =
+                            notesSvc?.hasDataSource() && noteColumn
+                                ? notesSvc?.getCellNoteAccess({ rowNode, column: noteColumn })
+                                : undefined;
+
+                        if (access) {
+                            if (!access.isSuppressed) {
+                                notesSvc!.showCellNote({ rowNode: access.rowNode, column: access.column }, true);
+                            }
+
+                            keyboardEvent.preventDefault();
+                        }
+
+                        break;
+                    }
                     case KeyCode.TAB:
                         rowCtrl.onTabKeyDown(keyboardEvent);
                         break;

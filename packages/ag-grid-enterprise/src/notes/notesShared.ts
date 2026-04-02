@@ -1,4 +1,4 @@
-import type { AgColumn, CellNote, GetNoteParams, IRowNode, SetNoteParams } from 'ag-grid-community';
+import type { AgColumn, CellNote, GetNoteParams, ICellNoteAccess, IRowNode, SetNoteParams } from 'ag-grid-community';
 
 export interface NoteTarget {
     column: AgColumn;
@@ -17,7 +17,7 @@ export interface ICellNotePopupOwner {
 }
 
 export interface INotesFeatureSupport {
-    getCellNote(params: GetNoteParams): CellNote | undefined;
+    getCellNoteAccess(params: GetNoteParams): ICellNoteAccess | undefined;
     setCellNote(params: InternalSetNoteParams): void;
     replaceActivePopupOwner(owner: ICellNotePopupOwner): ICellNotePopupOwner | undefined;
     clearActivePopupOwner(owner: ICellNotePopupOwner): void;

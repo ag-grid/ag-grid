@@ -379,6 +379,14 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     suppressNavigable?: boolean | SuppressNavigableCallback<TData, TValue>;
     /**
+     * Set to `true` to suppress built-in Cell Note actions for this column.
+     * Existing notes remain viewable on hover and through `getCellNote()`.
+     * Can also be a callback function to suppress notes for specific rows.
+     * @default false
+     * @agModule `NotesModule`
+     */
+    suppressCellNote?: boolean | SuppressCellNoteCallback<TData, TValue>;
+    /**
      * Allows the user to suppress certain keyboard events in the grid cell.
      * @default false
      */
@@ -1049,6 +1057,11 @@ export interface SuppressNavigableCallbackParams<TData = any, TValue = any, TCon
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type SuppressNavigableCallback<TData = any, TValue = any, TContext = any> = (
     params: SuppressNavigableCallbackParams<TData, TValue, TContext>
+) => boolean;
+export interface SuppressCellNoteCallbackParams<TData = any, TValue = any, TContext = any>
+    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
+export type SuppressCellNoteCallback<TData = any, TValue = any, TContext = any> = (
+    params: SuppressCellNoteCallbackParams<TData, TValue, TContext>
 ) => boolean;
 export interface HeaderCheckboxSelectionCallbackParams<TData = any, TValue = any, TContext = any>
     extends AgGridCommon<TData, TContext> {

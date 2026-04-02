@@ -38,7 +38,10 @@ class AgNotesPopupContent extends Component {
     private readonly eEditor: GridInputTextArea = RefPlaceholder;
     private readonly initialText: string;
 
-    constructor(private readonly note: CellNote | undefined) {
+    constructor(
+        private readonly note: CellNote | undefined,
+        private readonly readOnly: boolean
+    ) {
         super(NotesPopupContentElement, [AgInputTextAreaSelector]);
         this.initialText = note?.text.trim() ?? '';
     }
@@ -52,18 +55,25 @@ class AgNotesPopupContent extends Component {
         this.eMeta.textContent = metaParts.join(' · ');
         _setDisplayed(this.eMeta, !!metaParts.length);
 
-        this.eFooter.textContent = translate(
-            'cellNoteHint',
-            'Hover to preview. Click inside to edit. Drag the corner to resize. Press Esc to close.'
-        );
+        this.eFooter.textContent = this.readOnly
+            ? translate(
+                  'cellNoteReadOnlyHint',
+                  'Read-only note. Select text to copy. Drag the corner to resize. Press Esc to close.'
+              )
+            : translate(
+                  'cellNoteHint',
+                  'Hover to preview. Click inside to edit. Drag the corner to resize. Press Esc to close.'
+              );
 
         this.eEditor
-            .setInputPlaceholder(translate('cellNotePlaceholder', 'Add a note...'))
+            .setInputPlaceholder(this.readOnly ? undefined : translate('cellNotePlaceholder', 'Add a note...'))
             .setRows(8)
             .setValue(this.note?.text ?? '', true)
             .setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
 
-        this.eEditor.getInputElement().setAttribute('title', '');
+        const inputEl = this.eEditor.getInputElement();
+        inputEl.setAttribute('title', '');
+        inputEl.readOnly = this.readOnly;
     }
 
     public focusEditor(): void {
@@ -88,6 +98,10 @@ class AgNotesPopupContent extends Component {
     }
 
     public isDirty(): boolean {
+        if (this.readOnly) {
+            return false;
+        }
+
         return (this.eEditor.getValue()?.trim() ?? '') !== this.initialText;
     }
 }
@@ -102,6 +116,7 @@ export class AgNotesPopup extends BeanStub {
     constructor(
         private readonly params: {
             note?: CellNote;
+            readOnly?: boolean;
             anchorToElement: HTMLElement;
             focusEditor?: boolean;
             onClosed: (noteChanged: boolean, note: CellNote | undefined) => void;
@@ -114,7 +129,7 @@ export class AgNotesPopup extends BeanStub {
 
     public postConstruct(): void {
         const note = cloneCellNote(this.params.note);
-        const contentComp = this.createManagedBean(new AgNotesPopupContent(note));
+        const contentComp = this.createManagedBean(new AgNotesPopupContent(note, !!this.params.readOnly));
         this.contentComp = contentComp;
 
         const { x, y } = this.computeInitialPosition();
@@ -138,6 +153,7 @@ export class AgNotesPopup extends BeanStub {
         const eGui = dialog.getGui();
         const translate = this.getLocaleTextFunc();
         eGui.classList.add('ag-notes-popup');
+        eGui.classList.toggle('ag-notes-popup-read-only', !!this.params.readOnly);
         eGui.setAttribute('aria-label', translate('cellNote', 'Cell Note'));
 
         this.addManagedElementListeners(eGui, {
@@ -191,9 +207,7 @@ export class AgNotesPopup extends BeanStub {
         }
 
         this.closed = true;
-        const noteChanged = this.saveOnClose && (this.contentComp?.isDirty() ?? false);
-        const editedNote = noteChanged ? this.contentComp?.getEditedNote() : undefined;
-        this.params.onClosed(noteChanged, editedNote);
+        this.notifyClosed();
     }
 
     private onMouseDown(event: MouseEvent): void {
@@ -221,12 +235,16 @@ export class AgNotesPopup extends BeanStub {
     public override destroy(): void {
         if (!this.closed) {
             this.closed = true;
-            const noteChanged = this.saveOnClose && (this.contentComp?.isDirty() ?? false);
-            const editedNote = noteChanged ? this.contentComp?.getEditedNote() : undefined;
             super.destroy();
-            this.params.onClosed(noteChanged, editedNote);
+            this.notifyClosed();
         } else {
             super.destroy();
         }
+    }
+
+    private notifyClosed(): void {
+        const noteChanged = this.saveOnClose && (this.contentComp?.isDirty() ?? false);
+        const editedNote = noteChanged ? this.contentComp?.getEditedNote() : undefined;
+        this.params.onClosed(noteChanged, editedNote);
     }
 }

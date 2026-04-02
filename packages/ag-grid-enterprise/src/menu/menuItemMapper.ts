@@ -3,7 +3,9 @@ import type {
     ColumnEventType,
     DefaultMenuItem,
     IAggFuncService,
+    ICellNoteAccess,
     IColsService,
+    INotesService,
     LocaleTextFunc,
     MenuItemDef,
     NamedBean,
@@ -101,7 +103,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             chartMenuItemMapper,
             valueColsSvc,
             pinnedRowModel,
-            notesDataSvc,
             notesSvc,
         } = beans;
 
@@ -470,52 +471,17 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             }
         };
 
-        const createAddCellNoteMenuItem = (): MenuItemDef | null =>
-            notesDataSvc?.hasDataSource() &&
-            notesSvc &&
-            column &&
-            node &&
-            !notesSvc.getCellNote({ rowNode: node, column })
-                ? {
-                      name: localeTextFunc('addCellNote', 'Add Cell Note'),
-                      action: () => notesSvc.showCellNoteEditor({ rowNode: node, column }),
-                  }
-                : null;
-
-        const createEditCellNoteMenuItem = (): MenuItemDef | null =>
-            notesDataSvc?.hasDataSource() &&
-            notesSvc &&
-            column &&
-            node &&
-            notesSvc.getCellNote({ rowNode: node, column })
-                ? {
-                      name: localeTextFunc('editCellNote', 'Edit Note'),
-                      action: () => notesSvc.showCellNoteEditor({ rowNode: node, column }),
-                  }
-                : null;
-
-        const createDeleteCellNoteMenuItem = (): MenuItemDef | null =>
-            notesDataSvc?.hasDataSource() &&
-            notesSvc &&
-            column &&
-            node &&
-            notesSvc.getCellNote({ rowNode: node, column })
-                ? {
-                      name: localeTextFunc('deleteCellNote', 'Remove Note'),
-                      action: () => notesSvc.removeCellNote({ rowNode: node, column }),
-                  }
-                : null;
-
         for (const menuItemOrString of originalList) {
             let result: MenuItemDef | 'separator' | null;
 
             if (typeof menuItemOrString === 'string') {
                 if (menuItemOrString === 'cellNote') {
-                    const cellNoteItems = [
-                        createAddCellNoteMenuItem(),
-                        createEditCellNoteMenuItem(),
-                        createDeleteCellNoteMenuItem(),
-                    ].filter((item): item is MenuItemDef => !!item);
+                    const cellNoteItems = createCellNoteMenuItems({
+                        notesSvc,
+                        column,
+                        node,
+                        localeTextFunc,
+                    });
 
                     if (cellNoteItems.length) {
                         resultList.push(...cellNoteItems);
@@ -558,6 +524,69 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         return resultList;
     }
 }
+
+function createCellNoteMenuItems({
+    notesSvc,
+    column,
+    node,
+    localeTextFunc,
+}: {
+    notesSvc:
+        | Pick<INotesService, 'hasDataSource' | 'getCellNoteAccess' | 'showCellNote' | 'removeCellNote'>
+        | undefined;
+    column: AgColumn | null;
+    node: RowNode | null;
+    localeTextFunc: LocaleTextFunc;
+}): MenuItemDef[] {
+    const access: ICellNoteAccess | undefined =
+        notesSvc?.hasDataSource() && column && node ? notesSvc.getCellNoteAccess({ rowNode: node, column }) : undefined;
+
+    if (!access) {
+        return [];
+    }
+
+    const result: MenuItemDef[] = [];
+
+    if (!access.note) {
+        result.push({
+            name: localeTextFunc('addCellNote', 'Add Cell Note'),
+            disabled: !access.canCreate,
+            action: access.canCreate
+                ? () => notesSvc!.showCellNote({ rowNode: access.rowNode, column: access.column }, true)
+                : undefined,
+        });
+
+        return result;
+    }
+
+    if (access.canView && (access.isReadOnly || access.isSuppressed)) {
+        result.push({
+            name: localeTextFunc('viewCellNote', 'View Note'),
+            action: () => notesSvc!.showCellNote({ rowNode: access.rowNode, column: access.column }, true),
+        });
+    }
+
+    if (!access.isReadOnly) {
+        result.push({
+            name: localeTextFunc('editCellNote', 'Edit Note'),
+            disabled: !access.canEdit,
+            action: access.canEdit
+                ? () => notesSvc!.showCellNote({ rowNode: access.rowNode, column: access.column }, true)
+                : undefined,
+        });
+    }
+
+    result.push({
+        name: localeTextFunc('deleteCellNote', 'Remove Note'),
+        disabled: !access.canDelete,
+        action: access.canDelete
+            ? () => notesSvc!.removeCellNote({ rowNode: access.rowNode, column: access.column })
+            : undefined,
+    });
+
+    return result;
+}
+
 function createAggregationSubMenu(
     column: AgColumn,
     aggFuncSvc: IAggFuncService,

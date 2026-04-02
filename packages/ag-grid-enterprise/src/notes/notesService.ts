@@ -2,6 +2,7 @@ import type {
     CellCtrl,
     CellNote,
     GetNoteParams,
+    ICellNoteAccess,
     INotesService,
     NamedBean,
     RefreshCellNotesParams,
@@ -18,8 +19,12 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
 
     private activePopupOwner?: ICellNotePopupOwner;
 
+    public hasDataSource(): boolean {
+        return !!this.beans.notesDataSvc?.hasDataSource();
+    }
+
     public createCellNotesFeature(ctrl: CellCtrl) {
-        if (!this.beans.notesDataSvc?.hasDataSource()) {
+        if (!this.hasDataSource()) {
             return undefined;
         }
 
@@ -29,7 +34,7 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
     }
 
     public createFullWidthRowNotesFeature(ctrl: RowCtrl) {
-        if (!this.beans.notesDataSvc?.hasDataSource()) {
+        if (!this.hasDataSource()) {
             return undefined;
         }
 
@@ -38,17 +43,40 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         return feature;
     }
 
-    public getCellNote(params: GetNoteParams): CellNote | undefined {
+    public getCellNoteAccess(params: GetNoteParams): ICellNoteAccess | undefined {
         const { colModel, notesDataSvc } = this.beans;
+
+        if (!this.hasDataSource()) {
+            return undefined;
+        }
+
         const column = colModel.getCol(params.column);
         if (!column) {
             return undefined;
         }
 
-        return notesDataSvc?.getNote({
+        const note = notesDataSvc!.getNote({
             ...params,
             column,
         });
+        const isSuppressed = column.isColumnFunc(params.rowNode, column.getColDef().suppressCellNote ?? null);
+        const isReadOnly = !!note?.readOnly;
+
+        return {
+            rowNode: params.rowNode,
+            column,
+            note,
+            isReadOnly,
+            isSuppressed,
+            canView: !!note,
+            canCreate: !note && !isSuppressed,
+            canEdit: !!note && !isSuppressed && !isReadOnly,
+            canDelete: !!note && !isSuppressed && !isReadOnly,
+        };
+    }
+
+    public getCellNote(params: GetNoteParams): CellNote | undefined {
+        return this.getCellNoteAccess(params)?.note;
     }
 
     public replaceActivePopupOwner(owner: ICellNotePopupOwner): ICellNotePopupOwner | undefined {
@@ -68,44 +96,49 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         }
     }
 
-    public showCellNoteEditor(params: GetNoteParams): void {
-        const { colModel, rowRenderer } = this.beans;
-        const column = colModel.getCol(params.column);
-        if (!column) {
-            return;
+    public showCellNote(params: GetNoteParams, focusEditor = false): boolean {
+        const access = this.getCellNoteAccess(params);
+
+        if (!access || access.isSuppressed || (!access.canView && !(focusEditor && access.canCreate))) {
+            return false;
         }
+
+        const { rowRenderer } = this.beans;
+        const { column } = access;
 
         const cellCtrl = rowRenderer.getCellCtrls([params.rowNode], [column])[0];
 
         if (cellCtrl) {
-            cellCtrl.showCellNote(true);
-            return;
+            cellCtrl.showCellNote(focusEditor);
+            return true;
         }
 
         const rowCtrl = rowRenderer.getRowCtrlByNode(params.rowNode);
         if (rowCtrl?.isFullWidth()) {
-            rowCtrl.showFullWidthCellNote(column, true);
+            rowCtrl.showFullWidthCellNote(column, focusEditor);
+            return true;
         }
+
+        return false;
     }
 
     public setCellNote(params: SetNoteParams | InternalSetNoteParams): void {
-        const { notesDataSvc, colModel } = this.beans;
+        const { notesDataSvc } = this.beans;
 
-        if (!notesDataSvc?.hasDataSource() || !colModel) {
+        if (!this.hasDataSource()) {
             return;
         }
 
-        const { column: columnKey, rowNode, note } = params;
-        const column = colModel.getCol(columnKey);
-
-        if (!column) {
+        const access = this.getCellNoteAccess(params);
+        if (!access) {
             return;
         }
 
-        const previousNote = (params as InternalSetNoteParams).previousNote ?? notesDataSvc.getNote(params);
+        const { rowNode, note } = params;
+        const previousNote = (params as InternalSetNoteParams).previousNote ?? access.note;
         const source = (params as InternalSetNoteParams).source ?? 'api';
 
-        if (!note && !previousNote) {
+        if ((!note && !previousNote) || access.isSuppressed || previousNote?.readOnly) {
             return;
         }
 
@@ -113,13 +146,13 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
             this.activePopupOwner?.closeNotePopup(false);
         }
 
-        notesDataSvc.setNote({
+        notesDataSvc!.setNote({
             rowNode,
-            column,
+            column: access.column,
             note,
         });
 
-        this.refreshCellNotes({ rowNodes: [params.rowNode], columns: [column] });
+        this.refreshCellNotes({ rowNodes: [params.rowNode], columns: [access.column] });
     }
 
     public removeCellNote(params: GetNoteParams): void {

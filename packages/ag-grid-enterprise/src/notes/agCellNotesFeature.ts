@@ -30,7 +30,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
     public refresh(): void {
         this.refreshHasNotesStyling();
 
-        if (this.activeTarget && !this.hasNote(this.activeTarget)) {
+        if (this.activeTarget && !this.notesSvc.getCellNoteAccess(this.activeTarget)?.canView) {
             this.closeNotePopup(false);
         }
     }
@@ -67,9 +67,10 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
             return;
         }
 
+        const access = target && this.notesSvc.getCellNoteAccess(target);
         this.cancelHide();
 
-        if (!target || !this.hasNote(target)) {
+        if (!target || !access?.canView) {
             return;
         }
 
@@ -105,6 +106,11 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
     protected abstract getTarget(column?: AgColumn): NoteTarget | undefined;
 
     private openPopup(target: NoteTarget, focusEditor = false): void {
+        const access = this.notesSvc.getCellNoteAccess(target);
+        if (!access || (!access.canView && !(focusEditor && access.canCreate))) {
+            return;
+        }
+
         this.cancelHide();
         this.clearShowTimer();
 
@@ -119,7 +125,8 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
 
         const popup = this.beans.context.createBean(
             new AgNotesPopup({
-                note: this.notesSvc.getCellNote(target) ?? { text: '' },
+                note: access.note ?? { text: '' },
+                readOnly: access.canView && !access.canEdit,
                 anchorToElement: target.anchorElement,
                 focusEditor,
                 onClosed: (noteChanged, note) => this.onPopupClosed(noteChanged, note),
@@ -151,13 +158,9 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
         this.notesSvc.setCellNote({
             ...target,
             note,
-            previousNote: this.notesSvc.getCellNote(target),
+            previousNote: this.notesSvc.getCellNoteAccess(target)?.note,
             source: 'ui',
         });
-    }
-
-    private hasNote(params: NoteTarget): boolean {
-        return !!this.notesSvc.getCellNote(params);
     }
 
     private matchesActiveTarget(target: NoteTarget): boolean {
@@ -206,7 +209,7 @@ export class AgCellNotesFeature extends BaseNotesFeature {
     }
 
     protected refreshHasNotesStyling(): void {
-        this.ctrl.comp.toggleCss(CSS_HAS_CELL_NOTES, !!this.notesSvc.getCellNote(this.getPosition()));
+        this.ctrl.comp.toggleCss(CSS_HAS_CELL_NOTES, !!this.notesSvc.getCellNoteAccess(this.getPosition())?.note);
     }
 
     private getPosition() {
@@ -251,7 +254,7 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
             this.registerGui(gui);
 
             const position = this.getPositionForGui(gui);
-            const hasNote = !!position && !!this.notesSvc.getCellNote(position);
+            const hasNote = !!position && !!this.notesSvc.getCellNoteAccess(position)?.note;
             gui.rowComp.toggleCss(CSS_HAS_CELL_NOTES, hasNote);
         });
     }
