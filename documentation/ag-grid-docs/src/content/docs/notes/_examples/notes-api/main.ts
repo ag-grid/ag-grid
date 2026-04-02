@@ -2,12 +2,12 @@ import type {
     CellClickedEvent,
     CellNote,
     ColDef,
+    Column,
     GetRowIdParams,
     GridApi,
     GridOptions,
     IRowNode,
     NotesDataSource,
-    Column,
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ContextMenuModule, NotesModule } from 'ag-grid-enterprise';
@@ -27,16 +27,6 @@ type OlympicWinner = {
     year: number;
     sport: string;
 };
-
-declare global {
-    interface Window {
-        loadSelectedNote: () => void;
-        saveSelectedNote: () => void;
-        removeSelectedNote: () => void;
-        mutateStoreDirectly: () => void;
-        refreshSelectedNotes: () => void;
-    }
-}
 
 let gridApi: GridApi<OlympicWinner>;
 type SelectedCell = {
@@ -118,7 +108,8 @@ const getAuthorInput = () => document.getElementById('note-author') as HTMLInput
 const getNoteTextArea = () => document.getElementById('note-text') as HTMLTextAreaElement;
 const getReadOnlyInput = () => document.getElementById('note-readonly') as HTMLInputElement;
 
-const describeCell = (cell: SelectedCell) => `${cell.rowNode.data?.athlete ?? cell.rowNode.id} / ${cell.column.getColId()}`;
+const describeCell = (cell: SelectedCell) =>
+    `${cell.rowNode.data?.athlete ?? cell.rowNode.id} / ${cell.column.getColId()}`;
 const areNotesEqual = (left: CellNote | undefined, right: CellNote | undefined) =>
     JSON.stringify(left ?? null) === JSON.stringify(right ?? null);
 
@@ -250,12 +241,6 @@ function refreshSelectedNotes() {
     loadSelectedNote();
     setStatus(`Refreshed notes for ${describeCell(cell)} via gridApi.refreshCellNotes().`);
 }
-
-window.loadSelectedNote = loadSelectedNote;
-window.saveSelectedNote = saveSelectedNote;
-window.removeSelectedNote = removeSelectedNote;
-window.mutateStoreDirectly = mutateStoreDirectly;
-window.refreshSelectedNotes = refreshSelectedNotes;
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
