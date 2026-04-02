@@ -152,7 +152,11 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         const previousNote = (params as InternalSetNoteParams).previousNote ?? access.note;
         const source = (params as InternalSetNoteParams).source ?? 'api';
 
-        if ((!note && !previousNote) || access.isSuppressed || previousNote?.readOnly) {
+        if ((!note && !previousNote) || previousNote?.readOnly) {
+            return;
+        }
+
+        if (source === 'ui' && access.isSuppressed) {
             return;
         }
 
