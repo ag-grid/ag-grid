@@ -12,12 +12,51 @@
 
 .ag-toolbar-left {
     display: inline-flex;
+    align-items: center;
+    gap: calc(var(--ag-spacing) * 0.5);
 }
 
 .ag-toolbar-right {
     display: inline-flex;
+    align-items: center;
+    gap: calc(var(--ag-spacing) * 0.5);
 }
 
 .ag-toolbar-item {
     display: inline-flex;
+}
+
+.ag-toolbar-button {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--ag-spacing) * 1);
+    padding: calc(var(--ag-spacing) * 1) calc(var(--ag-spacing) * 1.5);
+    border: 0;
+    border-radius: var(--ag-border-radius);
+    background: transparent;
+    color: var(--ag-text-color);
+    cursor: pointer;
+    line-height: 1;
+}
+
+.ag-toolbar-button:hover {
+    background-color: var(--ag-row-hover-color);
+}
+
+.ag-toolbar-button:active {
+    background-color: var(--ag-range-selection-background-color);
+}
+
+.ag-toolbar-button:focus-visible {
+    box-shadow: var(--ag-focus-shadow);
+}
+
+.ag-toolbar-button-icon {
+    display: inline-flex;
+    align-items: center;
+}
+
+.ag-toolbar-button-label {
+    white-space: nowrap;
+    font-size: var(--ag-font-size);
 }

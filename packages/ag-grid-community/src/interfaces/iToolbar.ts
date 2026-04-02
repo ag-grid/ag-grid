@@ -18,6 +18,7 @@ export interface ToolbarItemDef {
 
 export interface IToolbarItemParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     key: string;
+    display: ToolbarDisplay;
 }
 
 export interface IToolbarItem<TData = any, TContext = any> {

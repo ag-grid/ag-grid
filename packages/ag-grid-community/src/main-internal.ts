@@ -252,7 +252,13 @@ export {
 } from './components/framework/userCompUtils';
 export type { Bean, NamedBean } from './context/bean';
 export { BeanStub } from './context/beanStub';
-export type { BeanCollection, BeanName, SingletonBean, StatusPanelComponentName } from './context/context';
+export type {
+    BeanCollection,
+    BeanName,
+    SingletonBean,
+    StatusPanelComponentName,
+    ToolbarItemComponentName,
+} from './context/context';
 export type { Context } from './context/context';
 export type { CtrlsService } from './ctrlsService';
 export type { DragAndDropService } from './dragAndDrop/dragAndDropService';

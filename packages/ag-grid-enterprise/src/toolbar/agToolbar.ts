@@ -6,6 +6,7 @@ import type {
     FocusableContainer,
     IToolbarItemComp,
     IToolbarItemParams,
+    ToolbarDisplay,
     ToolbarItemDef,
     UserCompDetails,
     UserComponentFactory,
@@ -23,8 +24,18 @@ import {
 import agToolbarCSS from './agToolbar.css';
 import type { ToolbarService } from './toolbarService';
 
+const BUILT_IN_ITEMS: Record<string, string> = {
+    columnChooser: 'agColumnChooserToolbarItem',
+    csvExport: 'agCsvExportToolbarItem',
+    resetColumns: 'agResetColumnsToolbarItem',
+};
+
 function normaliseItem(item: ToolbarItemDef | string): ToolbarItemDef {
-    return typeof item === 'string' ? { component: item, key: item } : item;
+    if (typeof item === 'string') {
+        const component = BUILT_IN_ITEMS[item] ?? item;
+        return { component, key: item };
+    }
+    return item;
 }
 
 function getToolbarItemCompDetails(
@@ -98,6 +109,10 @@ class AgToolbar extends Component implements FocusableContainer {
         return toolbar.items.map(normaliseItem);
     }
 
+    private resolveDisplay(itemDef: ToolbarItemDef): ToolbarDisplay {
+        return itemDef.display ?? this.gos.get('toolbar')?.display ?? 'icon';
+    }
+
     private processToolbarItems(existingItemsToReuse: Map<string, IToolbarItemComp>): void {
         const items = this.getValidItems();
         if (items) {
@@ -138,6 +153,7 @@ class AgToolbar extends Component implements FocusableContainer {
                     const newParams: IToolbarItemParams = _addGridCommonParams(this.gos, {
                         ...(itemConfig.toolbarItemParams ?? {}),
                         key,
+                        display: this.resolveDisplay(itemConfig),
                     });
                     const hasRefreshed = existingItem.refresh(newParams);
                     if (hasRefreshed) {
@@ -192,7 +208,7 @@ class AgToolbar extends Component implements FocusableContainer {
                 const compDetails = getToolbarItemCompDetails(
                     this.userCompFactory,
                     itemConfig,
-                    _addGridCommonParams(this.gos, { key })
+                    _addGridCommonParams(this.gos, { key, display: this.resolveDisplay(itemConfig) })
                 );
 
                 if (compDetails == null) {
