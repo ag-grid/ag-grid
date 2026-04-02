@@ -126,17 +126,35 @@ describe('NotesService', () => {
         expect(cellCtrl.showCellNote).toHaveBeenCalledWith(true);
     });
 
-    it('does not write notes for suppressed cells', () => {
+    it('does not write notes for suppressed cells via UI', () => {
         colDef.suppressCellNote = true;
 
         service.setCellNote({
             rowNode,
             column: 'athlete',
             note: { text: 'Blocked note' },
-        });
+            source: 'ui',
+        } as any);
 
         expect(beans.notesDataSvc!.setNote).not.toHaveBeenCalled();
         expect(beans.rowRenderer!.refreshCells).not.toHaveBeenCalled();
+    });
+
+    it('allows API writes to suppressed cells', () => {
+        colDef.suppressCellNote = true;
+
+        service.setCellNote({
+            rowNode,
+            column: 'athlete',
+            note: { text: 'API note' },
+        });
+
+        expect(beans.notesDataSvc!.setNote).toHaveBeenCalledWith({
+            rowNode,
+            column,
+            note: { text: 'API note' },
+        });
+        expect(beans.rowRenderer!.refreshCells).toHaveBeenCalled();
     });
 
     it('does not update or remove existing read-only notes', () => {
