@@ -16,18 +16,33 @@ type OlympicWinner = {
 const getNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
 const getNoteColumnId = (column: GetNoteParams['column']) =>
     typeof column === 'string' ? column : 'getColId' in column ? column.getColId() : column.colId ?? column.field ?? '';
+const getDisplayTimestamp = () =>
+    new Intl.DateTimeFormat('en-GB', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    }).format(new Date());
+const getCurrentUser = () => {
+    const user = (document.getElementById('current-user') as HTMLInputElement | null)?.value.trim();
+    return user || undefined;
+};
 
 const noteStore = new Map<string, CellNote>([
     [
         getNoteKey('1', 'athlete'),
         {
             text: 'Confirm the athlete biography before the next review.',
+            author: 'AG Grid',
+            createdAt: '26 Mar 2026, 10:30',
+            updatedAt: '29 Mar 2026, 09:15',
         },
     ],
     [
         getNoteKey('3', 'country'),
         {
             text: 'Check the latest federation naming guidance for this country.',
+            author: 'Chris',
+            createdAt: '24 Mar 2026, 16:10',
+            updatedAt: '27 Mar 2026, 14:30',
         },
     ],
 ]);
@@ -36,11 +51,18 @@ const notesDataSource: NotesDataSource = {
     getNote: ({ rowNode, column }) => noteStore.get(getNoteKey(rowNode.id!, getNoteColumnId(column))),
     setNote: ({ rowNode, column, note }) => {
         const key = getNoteKey(rowNode.id!, getNoteColumnId(column));
+        const existingNote = noteStore.get(key);
 
         if (note === undefined) {
             noteStore.delete(key);
         } else {
-            noteStore.set(key, note);
+            noteStore.set(key, {
+                ...existingNote,
+                ...note,
+                author: getCurrentUser(),
+                createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                updatedAt: getDisplayTimestamp(),
+            });
         }
     },
 };

@@ -21,13 +21,22 @@ const noteStore = new Map<string, CellNote>([
     [
         getNoteKey('1', 'athlete'),
         {
-            text: 'Confirm the athlete biography before the next review.',
+            text: 'This cell still allows the full built-in note workflow.',
+            updatedAt: '29 Mar 2026, 09:15',
         },
     ],
     [
-        getNoteKey('3', 'country'),
+        getNoteKey('2', 'year'),
         {
-            text: 'Check the latest federation naming guidance for this country.',
+            text: 'Year suppresses note actions, but existing notes still open on hover.',
+            updatedAt: '28 Mar 2026, 11:45',
+        },
+    ],
+    [
+        getNoteKey('5', 'sport'),
+        {
+            text: 'Sport also suppresses note actions for the entire column.',
+            updatedAt: '27 Mar 2026, 14:30',
         },
     ],
 ]);
@@ -49,8 +58,8 @@ const columnDefs: ColDef<OlympicWinner>[] = [
     { field: 'athlete' },
     { field: 'age', maxWidth: 110 },
     { field: 'country' },
-    { field: 'year', maxWidth: 110 },
-    { field: 'sport' },
+    { field: 'year', maxWidth: 110, suppressCellNote: true },
+    { field: 'sport', suppressCellNote: true },
 ];
 
 const rowData: OlympicWinner[] = [

@@ -1,45 +1,31 @@
 .example-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     height: 100%;
 }
 
-.toolbar {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.toolbar-row {
+.example-toolbar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
 }
 
-.toolbar-row button {
-    margin-bottom: 0 !important;
-}
-
-.toolbar-field {
+.example-field {
     display: inline-flex;
     align-items: center;
     gap: 6px;
 }
 
-.toolbar-field input[type='text'] {
+.example-field input {
     padding: 0 0.25rem;
     width: 140px;
 }
 
-#selection-status {
+.example-header {
+    flex: 1 1 320px;
     color: var(--ag-secondary-foreground-color);
-}
-
-#note-text {
-    min-height: 72px;
-    resize: vertical;
 }
 
 #myGrid {

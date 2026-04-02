@@ -899,6 +899,11 @@
         resize: none;
     }
 
+    .ag-notes-popup-read-only :where(.ag-text-area-input-wrapper) {
+        background-color: var(--ag-input-disabled-background-color);
+        border-color: var(--ag-input-disabled-border-color);
+    }
+
     .ag-notes-popup-footer {
         padding-top: var(--ag-grid-size);
         margin-top: auto;

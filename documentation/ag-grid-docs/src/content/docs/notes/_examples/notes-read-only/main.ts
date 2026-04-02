@@ -21,13 +21,26 @@ const noteStore = new Map<string, CellNote>([
     [
         getNoteKey('1', 'athlete'),
         {
-            text: 'Confirm the athlete biography before the next review.',
+            text: 'This note can still be edited from hover, the context menu, or Shift + F2.',
+            author: 'AG Grid',
+            updatedAt: '29 Mar 2026, 09:15',
         },
     ],
     [
         getNoteKey('3', 'country'),
         {
-            text: 'Check the latest federation naming guidance for this country.',
+            text: 'This note is read-only, so the built-in UI opens it in view-only mode.',
+            author: 'AG Grid',
+            updatedAt: '27 Mar 2026, 14:30',
+            readOnly: true,
+        },
+    ],
+    [
+        getNoteKey('5', 'sport'),
+        {
+            text: 'Read-only notes can still show metadata and can still be opened with Shift + F2.',
+            updatedAt: '28 Mar 2026, 11:45',
+            readOnly: true,
         },
     ],
 ]);
