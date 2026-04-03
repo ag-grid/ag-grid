@@ -1181,7 +1181,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public formulaDataSource: FormulaDataSource | undefined = undefined;
     /** Provide a data source to control where notes are stored and retrieved.
-     * @initial
+     * Can be updated to enable, disable, or replace Notes at runtime.
      * @agModule `NotesModule`
      */
     @Input() public notesDataSource: NotesDataSource | undefined = undefined;

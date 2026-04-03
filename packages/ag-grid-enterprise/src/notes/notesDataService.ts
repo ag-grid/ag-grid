@@ -16,10 +16,11 @@ export class NotesDataService extends BeanStub implements INotesDataService, Nam
     private dataSource?: NotesDataSource;
 
     public postConstruct(): void {
-        const dataSource = this.gos.get('notesDataSource');
-        if (dataSource) {
-            this.setDataSource(dataSource);
-        }
+        this.setDataSource(this.gos.get('notesDataSource'));
+        this.addManagedPropertyListener('notesDataSource', ({ currentValue }) => {
+            this.setDataSource(currentValue);
+            this.beans.notesSvc?.onDataSourceChanged();
+        });
     }
 
     public hasDataSource(): boolean {
@@ -64,9 +65,14 @@ export class NotesDataService extends BeanStub implements INotesDataService, Nam
         });
     }
 
-    private setDataSource(dataSource: NotesDataSource): void {
+    private setDataSource(dataSource?: NotesDataSource): void {
+        if (this.dataSource === dataSource) {
+            return;
+        }
+
+        this.dataSource?.destroy?.();
         this.dataSource = dataSource;
-        dataSource.init?.(this.createInitParams());
+        dataSource?.init?.(this.createInitParams());
     }
 
     private createInitParams(): NotesDataSourceParams {

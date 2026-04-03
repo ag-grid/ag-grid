@@ -1188,7 +1188,7 @@ export interface GridOptions<TData = any> {
 
     /**
      * Provide a data source to control where notes are stored and retrieved.
-     * @initial
+     * Can be updated to enable, disable, or replace Notes at runtime.
      * @agModule `NotesModule`
      */
     notesDataSource?: NotesDataSource;

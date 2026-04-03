@@ -22,15 +22,17 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
 
     public postConstruct(): void {
         this.addManagedListeners(this.beans.eventSvc, {
-            bodyScroll: () => {
-                this.hoverGeneration++;
-                this.activePopupOwner?.closeNotePopup();
-            },
+            bodyScroll: () => this.resetActivePopupState(),
         });
     }
 
     public hasDataSource(): boolean {
         return !!this.beans.notesDataSvc?.hasDataSource();
+    }
+
+    public onDataSourceChanged(): void {
+        this.resetActivePopupState(false);
+        this.beans.rowRenderer.redrawRows();
     }
 
     public getHoverGeneration(): number {
@@ -108,6 +110,11 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         if (this.activePopupOwner === owner) {
             this.activePopupOwner = undefined;
         }
+    }
+
+    private resetActivePopupState(save = true): void {
+        this.hoverGeneration++;
+        this.activePopupOwner?.closeNotePopup(save);
     }
 
     public showCellNote(params: GetNoteParams, focusEditor = false): boolean {

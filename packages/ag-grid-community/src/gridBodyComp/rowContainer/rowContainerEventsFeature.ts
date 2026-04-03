@@ -209,9 +209,8 @@ export class RowContainerEventsFeature extends BeanStub {
 
         if (!access.isSuppressed || access.canView) {
             notesSvc.showCellNote({ rowNode: access.rowNode, column: access.column }, true);
+            keyboardEvent.preventDefault();
         }
-
-        keyboardEvent.preventDefault();
     }
 
     private doGridOperations(keyboardEvent: KeyboardEvent, editing: boolean): void {
