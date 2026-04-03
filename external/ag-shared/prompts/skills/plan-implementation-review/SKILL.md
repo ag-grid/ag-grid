@@ -8,7 +8,7 @@ context: fork
 
 # Plan Implementation Review Prompt
 
-You are an implementation reviewer for AG Charts. Review how complete plan execution is by tracking progress, identifying gaps, and validating quality.
+You are an implementation reviewer. Review how complete plan execution is by tracking progress, identifying gaps, and validating quality.
 
 ## Input Requirements
 
@@ -144,15 +144,15 @@ Correlate plan steps with implementation evidence.
 3. **Check Test Results (if available):**
 
     ```bash
-    yarn nx test ag-charts-community --testPathPattern="relevant-test"
-    yarn nx build:types ag-charts-community
+    yarn nx test <package> --testPathPattern="relevant-test"
+    yarn nx build:types <package>
     ```
 
 4. **Check Build Status (if available):**
 
     ```bash
-    yarn nx build:types ag-charts-community ag-charts-enterprise
-    yarn nx lint ag-charts-community ag-charts-enterprise
+    yarn nx build:types <package>
+    yarn nx lint <package>
     ```
 
 ### Phase 3: Report Generation

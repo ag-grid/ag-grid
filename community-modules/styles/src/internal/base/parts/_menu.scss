@@ -217,7 +217,7 @@
     }
 
     .ag-filter-menu .ag-set-filter-list {
-        min-width: 200px;
+        min-width: max(200px, 100%);
     }
 
     @include ag.keyboard-focus((ag-filter-virtual-list-item), 1px);

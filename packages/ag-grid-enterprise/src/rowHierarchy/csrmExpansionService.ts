@@ -12,7 +12,7 @@ import { _exists } from 'ag-grid-community';
 
 import { BaseExpansionService } from './baseExpansionService';
 
-export class ClientSideExpansionService
+export class CsrmExpansionService
     extends BaseExpansionService
     implements NamedBean, IExpansionService<RowGroupExpansionState>
 {

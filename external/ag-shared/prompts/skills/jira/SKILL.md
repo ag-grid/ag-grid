@@ -3,7 +3,8 @@ targets: ['*']
 name: jira
 description: >-
   Whenever the user asks to create a JIRA ticket, file a bug, log an issue,
-  write up a ticket, estimate a ticket, size effort, analyse a JIRA issue, do
+  write up a ticket, split out a ticket, split off a feedback point, extract
+  from a ticket, estimate a ticket, size effort, analyse a JIRA issue, do
   product analysis, or link tickets — ALWAYS invoke this skill first. Also
   invoke when **planning** ticket creation — e.g., drafting a plan that includes
   a "create JIRA ticket" step, or when in plan mode discussing what ticket to
@@ -55,7 +56,7 @@ Based on user intent, read the corresponding workflow file (in the `workflows/` 
 | Intent | Keywords | Workflow |
 |--------|----------|----------|
 | **Plan** | In plan mode, drafting a plan that includes JIRA ticket creation | `workflows/plan.md` |
-| **Create** | "create a JIRA", "file a bug", "write up a ticket", "log this issue" | `workflows/create.md` |
+| **Create** | "create a JIRA", "file a bug", "write up a ticket", "log this issue", "split out", "split off", "extract from ticket" | `workflows/create.md` |
 | **Estimate** | "estimate", "size", "analyse complexity", "how long", "effort" | `workflows/estimate.md` |
 | **Analyse** | "analyse this issue", "product analysis", "UX analysis", "propose solutions" | `workflows/analyze.md` |
 
@@ -99,7 +100,8 @@ Each ticket has exactly **one** track value. Never set multiple track values on 
 - **End numbered items with periods.**
 - Bold: `**text**`.
 - Code: backticks.
-- URLs: Paste raw URLs directly (JIRA auto-links them); avoid `[text](url)` markdown links.
+- **contentFormat**: Use `"markdown"` for all JIRA API calls. This accepts standard markdown syntax and converts it to JIRA's native ADF format.
+- **URLs must use explicit markdown link syntax** — bare URLs will NOT become clickable links in JIRA. Always write `[https://example.com](https://example.com)` instead of just `https://example.com`. The URL should be visible as both the link text and the href (never hide it behind display text like `[Plunker](url)`).
 - Empty sections: Just `N/A`.
 - No comments — all info in description.
 - When creating tickets from analysis/research documents, distil to decisions and recommendations only. Do not reproduce full analysis in the description — link to the analysis document in the "Design Documents" section instead.
@@ -111,6 +113,61 @@ Each ticket has exactly **one** track value. Never set multiple track values on 
 - **Bug**: `templates/bug.md` (TC-based format)
 
 Follow the exact structure from the template. Do not use free-form markdown headers (`##`), tables, or code blocks for top-level structure.
+
+### Reading JIRA Comments
+
+To read comments on a ticket (e.g., for split-out workflows where you need to find a specific feedback point):
+
+```
+mcp__atlassian__getJiraIssue
+  cloudId: "1565837d-d6d1-4228-bcb2-4cb74df700f2"
+  issueIdOrKey: "AG-XXXXX"
+  fields: ["comment"]
+  expand: "renderedFields"
+  responseContentFormat: "markdown"
+```
+
+**Warning:** The output is large (comments contain full ADF bodies). Pipe through Python/jq to extract text content. The `fetchAtlassian` ARI tool does **not** return comments — always use `getJiraIssue` with `fields: ["comment"]`.
+
+### Ranking Issues (Agile API)
+
+The Atlassian MCP tools **cannot** change issue rank. The `editJiraIssue` tool
+silently ignores rank field updates — it returns success but the rank value is
+unchanged. This is a known limitation of the standard JIRA REST API.
+
+**Ranking requires the dedicated Agile REST API** called via `curl`:
+
+```bash
+source ~/.zshrc  # load JIRA_URL, JIRA_USERNAME, JIRA_API_TOKEN
+curl -s -X PUT "${JIRA_URL}/rest/agile/1.0/issue/rank" \
+  -H 'Content-Type: application/json' \
+  -u "${JIRA_USERNAME}:${JIRA_API_TOKEN}" \
+  -d '{
+    "issues": ["PROJ-1", "PROJ-2", "PROJ-3"],
+    "rankBeforeIssue": "PROJ-99",
+    "rankCustomFieldId": 10120
+  }'
+```
+
+Key facts:
+
+-   **Rank custom field ID**: `10120` (`customfield_10120`, type
+    `com.pyxis.greenhopper.jira:gh-lexo-rank`). This is instance-specific — not
+    the common default `10019`. Discover it via
+    `mcp__atlassian__getJiraIssueTypeMetaWithFields` and look for the field
+    named "Rank".
+-   **`issues` array preserves order**: `["A", "B", "C"]` with
+    `rankBeforeIssue: "D"` results in A, B, C appearing in that order before D.
+-   **Max 50 issues** per request.
+-   **Success**: HTTP 204 (empty body). **Partial failure**: HTTP 207 with
+    per-issue status.
+-   **Auth**: Basic auth with `JIRA_USERNAME` (email) and `JIRA_API_TOKEN`
+    (Atlassian API token from
+    https://id.atlassian.com/manage-profile/security/api-tokens).
+-   **Verify auth first**: `curl -s "${JIRA_URL}/rest/api/3/myself" -u
+    "${JIRA_USERNAME}:${JIRA_API_TOKEN}"` — must return HTTP 200.
+-   **Verify result**: Query with `ORDER BY rank ASC` via
+    `${JIRA_URL}/rest/api/3/search/jql` to confirm the new ordering.
 
 ### Troubleshooting
 

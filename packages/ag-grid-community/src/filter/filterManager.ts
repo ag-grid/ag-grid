@@ -226,10 +226,6 @@ export class FilterManager extends BeanStub implements NamedBean {
         );
     }
 
-    public doesRowPassOtherFilters(colIdToSkip: string, rowNode: RowNode): boolean {
-        return this.doesRowPassFilter({ rowNode, colIdToSkip });
-    }
-
     public doesRowPassAggregateFilters(params: { rowNode: RowNode; colIdToSkip?: string }): boolean {
         const { rowNode } = params;
 
@@ -250,9 +246,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         return true;
     }
 
-    public doesRowPassFilter(params: { rowNode: RowNode; colIdToSkip?: string }): boolean {
-        const { rowNode } = params;
-
+    public doesRowPassFilter(rowNode: RowNode, colIdToSkip?: string): boolean {
         if (this.alwaysPassFilter?.(rowNode)) {
             return true;
         }
@@ -271,7 +265,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         }
 
         // lastly, check column filter
-        if (this.isColumnFilterPresent() && !this.colFilter!.doFiltersPass(rowNode, params.colIdToSkip)) {
+        if (this.isColumnFilterPresent() && !this.colFilter!.doFiltersPass(rowNode, colIdToSkip)) {
             return false;
         }
 

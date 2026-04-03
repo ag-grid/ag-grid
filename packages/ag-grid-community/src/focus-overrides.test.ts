@@ -1389,10 +1389,22 @@ describe('Focus override callbacks', () => {
 
             headerCtrlAny.onTabKeyDown(event);
 
-            expect(event.defaultPrevented).toBe(true);
+            expect(event.defaultPrevented).toBe(false);
             expect(gridCtrl.focusNextInnerContainer).toHaveBeenCalledTimes(1);
             expect(gridCtrl.focusNextInnerContainer).toHaveBeenCalledWith(true);
             expect(gridCtrl.forceFocusOutOfContainer).toHaveBeenCalledWith(true);
+        });
+
+        test('tab from header: unresolved movement forces focus out without preventing default', () => {
+            gridCtrl.focusNextInnerContainer.mockReturnValue(undefined);
+            const event = createTabEvent(false);
+
+            headerCtrlAny.onTabKeyDown(event);
+
+            expect(event.defaultPrevented).toBe(false);
+            expect(gridCtrl.focusNextInnerContainer).toHaveBeenCalledTimes(1);
+            expect(gridCtrl.focusNextInnerContainer).toHaveBeenCalledWith(false);
+            expect(gridCtrl.forceFocusOutOfContainer).toHaveBeenCalledWith(false);
         });
 
         test('shift-tab from header: successful first move does not trigger fallback call', () => {

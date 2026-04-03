@@ -2,6 +2,7 @@ import type { UserComponentName } from '../../context/context';
 import { _isSortDefValid, _isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
+import { buildAllValidNames } from '../validationTypes';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
@@ -497,10 +498,17 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
 };
 const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 
-export const COL_DEF_VALIDATORS: () => OptionsValidator<ColDef | ColGroupDef> = () => ({
-    objectName: 'colDef',
-    allProperties: ALL_PROPERTIES(),
-    docsUrl: 'column-properties/',
-    deprecations: COLUMN_DEFINITION_DEPRECATIONS(),
-    validations: COLUMN_DEFINITION_VALIDATIONS(),
-});
+let _colDefValidatorsCache: OptionsValidator<ColDef | ColGroupDef> | undefined;
+export const COL_DEF_VALIDATORS: () => OptionsValidator<ColDef | ColGroupDef> = () =>
+    (_colDefValidatorsCache ??= (() => {
+        const allProperties = ALL_PROPERTIES();
+        const deprecations = COLUMN_DEFINITION_DEPRECATIONS();
+        return {
+            objectName: 'colDef',
+            allProperties,
+            allValidNames: buildAllValidNames(allProperties, deprecations),
+            docsUrl: 'column-properties/',
+            deprecations,
+            validations: COLUMN_DEFINITION_VALIDATIONS(),
+        };
+    })());

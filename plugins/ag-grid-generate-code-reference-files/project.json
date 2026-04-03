@@ -45,7 +45,7 @@
         "{workspaceRoot}/packages/ag-grid-community/src/propertyKeys.ts",
         "{workspaceRoot}/packages/ag-grid-community/src/eventTypes.ts"
       ],
-      "outputs": ["{projectRoot}/src/executors/generate/generator/_copiedFromCore/"],
+      "outputs": ["{projectRoot}/src/executors/generate/_copiedFromCore/"],
       "options": {
         "cwd": "{projectRoot}"
       }

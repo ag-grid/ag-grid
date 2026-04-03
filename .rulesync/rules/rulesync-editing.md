@@ -1,0 +1,1 @@
+../../external/ag-shared/prompts/guides/rulesync-editing.md

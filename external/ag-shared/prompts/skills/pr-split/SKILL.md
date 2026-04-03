@@ -40,6 +40,16 @@ If the user provides a command option of `help`:
 
 Verify the working tree is clean, not on main branch, and gh CLI is authenticated before proceeding.
 
+### Identify Base Branch
+
+Determine the correct base branch — do not assume `latest`. The user's branch may have been created from a release branch. Run the shared detection script:
+
+```bash
+bash .rulesync/skills/git-conventions/detect-base-branch.sh
+```
+
+This iterates all `origin/bX.Y.Z` release branches (newest version first), compares merge-base distances, and prints `BASE_BRANCH=<branch>`. If a release branch is closer than `origin/latest`, it is selected. Otherwise `latest` is used. Store as `BASE_BRANCH` and use it everywhere this skill references the base branch.
+
 ### Extract JIRA Ticket or Branch Prefix
 
 Determine the commit message prefix from the branch name:
@@ -64,7 +74,7 @@ Use a sub-agent (type: `Explore`) to deeply analyse the changes:
 
 ### 1.1 Gather Information
 
-- Get the full diff against base branch (`latest`)
+- Get the full diff against `{BASE_BRANCH}`
 - Review all commit messages and their content
 - Understand the scope: files changed, lines added/removed, packages touched
 
@@ -144,14 +154,14 @@ Create a temporary branch that holds all changes as staged files:
 
 1. Record the current branch name
 2. Create a temporary branch from the current HEAD
-3. Soft reset to the merge base with `latest` (converts all commits to staged changes)
+3. Soft reset to the merge base with `{BASE_BRANCH}` (converts all commits to staged changes)
 
 ### 3.2 Create PR Branches
 
 For each PR in the plan:
 
 **First PR:**
-- Branch from `latest`
+- Branch from `{BASE_BRANCH}`
 - Bring in the relevant files from the temporary branch
 - Use `git checkout <temp-branch> -- <files>` for clean file extraction
 - Use `git add -p` for partial file staging when needed
@@ -198,7 +208,7 @@ This phase is essential. Each PR must be polished until reviewer-ready, not just
 ### 4.1 For Each PR Branch (in order)
 
 1. **Rebase onto base**
-   - First PR: rebase onto `latest`
+   - First PR: rebase onto `{BASE_BRANCH}`
    - Subsequent PRs: rebase onto previous PR branch
 
 2. **Run `/pr-review`** (via sub-agent)
@@ -257,7 +267,7 @@ git push -u origin "${branch_name}"
 
 For each branch, create a draft PR using `gh pr create`:
 
-- First PR targets `latest`
+- First PR targets `{BASE_BRANCH}`
 - Subsequent PRs target the previous PR's branch
 
 **PR Description Template:**
@@ -299,14 +309,14 @@ Split `{original_branch}` into {N} stacked PRs.
 
 | # | Branch | PR | Description | Base |
 |---|--------|-----|-------------|------|
-| 1 | {branch-part-1} | #{pr1} | {desc1} | latest |
+| 1 | {branch-part-1} | #{pr1} | {desc1} | {BASE_BRANCH} |
 | 2 | {branch-part-2} | #{pr2} | {desc2} | {branch-part-1} |
 | ... | ... | ... | ... | ... |
 
 ## Dependency Diagram
 
 ```
-latest
+{BASE_BRANCH}
   └── {branch-part-1} (PR #{pr1})
         └── {branch-part-2} (PR #{pr2})
               └── {branch-part-3} (PR #{pr3})
@@ -316,7 +326,7 @@ latest
 
 1. Review PRs in order (1, 2, 3, ...)
 2. Each PR shows only its incremental changes
-3. To see cumulative changes up to PR N, compare `{branch-part-N}` to `latest`
+3. To see cumulative changes up to PR N, compare `{branch-part-N}` to `{BASE_BRANCH}`
 4. Approve and merge in order; later PRs will auto-update their base
 ```
 

@@ -1,0 +1,12 @@
+name: tidy-nx-cache
+
+inputs:
+    branch_type:
+        description: 'Type of branch (pr, latest, release)'
+        required: false
+        default: 'pr'
+
+runs:
+    using: 'node20'
+    main: 'main.js'
+    post: 'post.js'

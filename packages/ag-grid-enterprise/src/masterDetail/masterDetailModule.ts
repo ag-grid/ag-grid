@@ -2,11 +2,7 @@ import { EventApiModule } from 'ag-grid-community';
 import type { _MasterDetailGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import {
-    ClientSideRowModelHierarchyModule,
-    GroupCellRendererModule,
-    StickyRowModule,
-} from '../rowHierarchy/rowHierarchyModule';
+import { CsrmHierarchyModule, GroupCellRendererModule, StickyRowModule } from '../rowHierarchy/rowHierarchyModule';
 import { VERSION } from '../version';
 import { DetailCellRenderer } from './detailCellRenderer';
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
@@ -40,5 +36,5 @@ const SharedMasterDetailModule: _ModuleWithApi<_MasterDetailGridApi> = {
 export const MasterDetailModule: _ModuleWithoutApi = {
     moduleName: 'MasterDetail',
     version: VERSION,
-    dependsOn: [SharedMasterDetailModule, ClientSideRowModelHierarchyModule, EventApiModule],
+    dependsOn: [SharedMasterDetailModule, CsrmHierarchyModule, EventApiModule],
 };

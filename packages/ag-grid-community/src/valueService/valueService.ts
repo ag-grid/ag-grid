@@ -166,6 +166,8 @@ export class ValueService extends BeanStub implements NamedBean {
         };
     }
 
+    // PERFORMANCE CRITICAL — called for every cell during filtering, rendering, and export.
+    // Any change here can have a large impact. Run the getValue benchmark to verify.
     public getValue(
         column: AgColumn,
         rowNode: IRowNode | null | undefined,
@@ -185,13 +187,11 @@ export class ValueService extends BeanStub implements NamedBean {
         const colDef = column.colDef;
         const isGroup = rowNode.group;
 
-        // For leaf (non-group) rows with pivot result columns, resolve to the underlying value column.
-        // Pivot columns don't map to real data fields on leaf rows — only the source value column does.
-        // This matches the behaviour of setDataValue which also resolves pivot columns for leaf rows.
-        if (!isGroup) {
-            const pivotValueColumn = colDef.pivotValueColumn as AgColumn | undefined;
+        // Resolve pivot result columns to their underlying value column for non-group, non-pinned rows.
+        if (!isGroup && !rowNode.rowPinned) {
+            const pivotValueColumn = colDef.pivotValueColumn;
             if (pivotValueColumn) {
-                column = pivotValueColumn;
+                column = pivotValueColumn as AgColumn;
             }
         }
 
@@ -434,7 +434,7 @@ export class ValueService extends BeanStub implements NamedBean {
             rowNode.data = {}; // enableGroupEdit allows editing group rows without data.
         }
 
-        if (!this.isSetValueSupported({ column, newValue, colDef })) {
+        if (!this.isSetValueSupported(column, rowNode, newValue, colDef)) {
             return false;
         }
 
@@ -568,12 +568,12 @@ export class ValueService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private isSetValueSupported(params: {
-        column: AgColumn;
-        newValue: any;
-        colDef: ReturnType<AgColumn['getColDef']>;
-    }): boolean {
-        const { column, newValue, colDef } = params;
+    private isSetValueSupported(
+        column: AgColumn,
+        rowNode: IRowNode,
+        newValue: any,
+        colDef: ReturnType<AgColumn['getColDef']>
+    ): boolean {
         const { field, valueSetter } = colDef;
 
         const formulaSvc = this.beans.formula;
@@ -581,6 +581,11 @@ export class ValueService extends BeanStub implements NamedBean {
         const hasExternalFormulaData = !!this.formulaDataSvc?.hasDataSource();
 
         if (_missing(field) && _missing(valueSetter) && !(hasExternalFormulaData && isFormulaValue)) {
+            // Group rows with groupRowValueSetter or groupRowEditable don't need field or valueSetter —
+            // the groupRowValueSetter handles the edit entirely.
+            if (rowNode.group && (colDef.groupRowValueSetter || colDef.groupRowEditable)) {
+                return true;
+            }
             _warn(17);
             return false;
         }

@@ -71,15 +71,12 @@ else
     git -C "$CWD" worktree add "$WT_PATH" -b "$NAME" origin/latest >&2
 fi
 
-# Run setup-worktree.sh if available (fixes symlinks, installs deps).
+# Run yarn install — preinstall-worktree.sh handles symlink fixes and COW cloning.
 export ROOT_WORKTREE_PATH="$CWD"
-SETUP_SCRIPT="$WT_PATH/external/ag-shared/scripts/setup-worktree/setup-worktree.sh"
-if [[ -f "$SETUP_SCRIPT" ]]; then
-    log "Running setup-worktree.sh..."
-    (cd "$WT_PATH" && bash "$SETUP_SCRIPT") >&2
-elif [[ -f "$WT_PATH/package.json" ]]; then
-    log "Running yarn install..."
-    (cd "$WT_PATH" && yarn install --frozen-lockfile 2>&1 | tail -3) >&2
+export AG_SKIP_NATIVE_DEP_VERSION_CHECK=1
+if [[ -f "$WT_PATH/package.json" ]]; then
+    log "Running yarn install (preinstall hook handles worktree setup)..."
+    (cd "$WT_PATH" && yarn install --prefer-offline 2>&1 | tail -20) >&2
 fi
 
 log "Worktree ready at: ${WT_PATH}"

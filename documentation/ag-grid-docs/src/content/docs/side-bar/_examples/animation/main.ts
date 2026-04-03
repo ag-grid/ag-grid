@@ -1,12 +1,23 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid, themeQuartz } from 'ag-grid-community';
-import { ColumnsToolPanelModule, NewFiltersToolPanelModule, SideBarModule } from 'ag-grid-enterprise';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    NumberFilterModule,
+    TextFilterModule,
+    ValidationModule,
+    createGrid,
+    themeQuartz,
+} from 'ag-grid-community';
+import { ColumnsToolPanelModule, NewFiltersToolPanelModule, PivotModule, SideBarModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
     NewFiltersToolPanelModule,
+    TextFilterModule,
+    NumberFilterModule,
     SideBarModule,
+    PivotModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 

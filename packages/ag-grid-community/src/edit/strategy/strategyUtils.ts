@@ -81,14 +81,11 @@ export function isCellEditable(beans: BeanCollection, editPosition: Required<Edi
 
     const editable = colDef.editable;
 
-    if (rowNode.group) {
-        const groupRowEditable = colDef.groupRowEditable;
-        if (groupRowEditable != null) {
-            if (column.isColumnFunc(rowNode, groupRowEditable)) {
-                return true;
-            }
-            return existingEditing(beans, editPosition);
+    if (rowNode.group && colDef.groupRowEditable != null) {
+        if (beans.rowGroupingEditValueSvc?.isGroupCellEditable(rowNode, column)) {
+            return true;
         }
+        return existingEditing(beans, editPosition);
     }
 
     if (column.isColumnFunc(rowNode, editable)) {

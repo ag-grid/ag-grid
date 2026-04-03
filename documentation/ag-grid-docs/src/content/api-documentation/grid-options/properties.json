@@ -1288,7 +1288,8 @@
                 "url": "./row-spanning/"
             }
         },
-        "suppressRowTransform": {}
+        "suppressRowTransform": {},
+        "suppressContentVisibilityAuto": {}
     },
     "rowDragging": {
         "meta": {

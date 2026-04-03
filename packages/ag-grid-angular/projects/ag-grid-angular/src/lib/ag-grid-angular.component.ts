@@ -165,7 +165,9 @@ import type {
     PasteStartEvent,
     PinnedRowDataChangedEvent,
     PinnedRowsChangedEvent,
+    PivotColumnGroupTotals,
     PivotMaxColumnsExceededEvent,
+    PivotRowTotals,
     PostProcessPopup,
     PostSortRows,
     ProcessCellForClipboard,
@@ -1149,11 +1151,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.
      * @agModule `PivotModule`
      */
-    @Input() public pivotColumnGroupTotals: 'before' | 'after' | undefined = undefined;
+    @Input() public pivotColumnGroupTotals: PivotColumnGroupTotals | undefined = undefined;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.
      * @agModule `PivotModule`
      */
-    @Input() public pivotRowTotals: 'before' | 'after' | undefined = undefined;
+    @Input() public pivotRowTotals: PivotRowTotals | undefined = undefined;
     /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column.
      * @default false
      * @initial
@@ -1275,10 +1277,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowDragModule`
      */
     @Input({ transform: booleanAttribute }) public rowDragManaged: boolean | undefined = undefined;
-    /** When `true`, managed row dragging updates grouped column values so rows can move between groups. When `false`,
-     * managed dragging only reorders rows inside their existing group.
+    /** When `true`, the grid re-evaluates the grouping hierarchy after editing a grouped column value,
+     * moving the row to the correct group instantly. Also enables managed row dragging to update
+     * grouped column values so rows can move between groups.
      * @default false
-     * @agModule `RowDragModule`
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public refreshAfterGroupEdit: boolean | undefined = undefined;
     /** Used if rowDragManaged is enabled and treeData is enabled,
@@ -1809,6 +1812,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressRowTransform: boolean | undefined = undefined;
+    /** Set to `true` to suppress `content-visibility: auto` on the grid wrapper element. This degrades performance by causing the browser to render grids even when they are off screen, but may be necessary if your application depends on receiving resize events from hidden grids.
+     * @default false
+     * @initial
+     */
+    @Input({ transform: booleanAttribute }) public suppressContentVisibilityAuto: boolean | undefined = undefined;
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
      * @default false
      * @agModule `ColumnHoverModule`

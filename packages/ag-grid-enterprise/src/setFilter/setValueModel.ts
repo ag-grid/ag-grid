@@ -18,7 +18,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
-import type { ClientSideValuesExtractor } from './clientSideValueExtractor';
+import type { CsrmValuesExtractor } from './csrmValueExtractor';
 import { createTreeDataOrGroupingComparator } from './setFilterUtils';
 
 type SetValueModelEvent = 'availableValuesChanged' | 'loadingStart' | 'loadingEnd' | 'destroyed';
@@ -56,7 +56,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     private initialised: boolean = false;
 
     constructor(
-        private readonly clientSideValuesExtractor: ClientSideValuesExtractor<TValue> | undefined,
+        private readonly csrmValuesExtractor: CsrmValuesExtractor<TValue> | undefined,
         private readonly caseFormat: <T extends string | null>(valueToFormat: T) => T,
         private readonly createKey: (value: TValue | null | undefined, node?: RowNode) => string | null,
         private readonly isTreeDataOrGrouping: () => boolean,
@@ -255,7 +255,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     private getParamsForValuesFromRows(
         removeUnavailableValues: boolean
     ): Map<string | null, TValue | null> | undefined {
-        if (!this.clientSideValuesExtractor) {
+        if (!this.csrmValuesExtractor) {
             _error(113);
             return undefined;
         }
@@ -271,15 +271,14 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     private getValuesFromRows(predicate: (node: RowNode) => boolean): Map<string | null, TValue | null> | null {
         const existingValues = this.getParamsForValuesFromRows(true);
 
-        return this.clientSideValuesExtractor?.extractUniqueValues(predicate, existingValues) ?? null;
+        return this.csrmValuesExtractor?.extractUniqueValues(predicate, existingValues) ?? null;
     }
 
     private getValuesFromRowsAsync(): AgPromise<Map<string | null, TValue | null> | null> {
         const existingValues = this.getParamsForValuesFromRows(false);
 
         return (
-            this.clientSideValuesExtractor?.extractUniqueValuesAsync(() => true, existingValues) ??
-            AgPromise.resolve(null)
+            this.csrmValuesExtractor?.extractUniqueValuesAsync(() => true, existingValues) ?? AgPromise.resolve(null)
         );
     }
 

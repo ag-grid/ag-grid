@@ -5,6 +5,10 @@ frameworks: ["angular"]
 
 Recommended NgZoneOptions and details of AG Grid's performance optimisations to avoid [Zone Pollution](https://angular.dev/best-practices/zone-pollution).
 
+{% note %}
+From Angular 21, new applications are zoneless by default. The optimisations on this page only apply to Zone based applications. See [Angular Zoneless](https://angular.dev/guide/zoneless) for more details.
+{% /note %}
+
 ## Recommended NgZoneOptions
 
 Angular supports coalescing of change detection cycles via [NgZoneOptions](https://angular.dev/api/core/NgZoneOptions). This can be set via `provideZoneChangeDetection` when bootstrapping your application. We recommend enabling `eventCoalescing` and `runCoalescing` for optimal AG Grid performance.

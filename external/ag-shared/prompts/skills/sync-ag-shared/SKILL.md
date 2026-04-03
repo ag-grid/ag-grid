@@ -94,23 +94,41 @@ If any destination has uncommitted changes, default to stashing all changes and 
 
 ## STEP 2: Analyse Source Changes
 
-Use a sub-agent (Task tool, `subagent_type: Explore`) to analyse changes on the source branch:
+### 2a. Determine the Last Sync Point
+
+The correct baseline for detecting unsynced changes is the `parent` commit in `.gitrepo` — this records the host-repo commit at the time of the last `subrepo push` or `pull`. Changes committed to `external/ag-shared/` after this commit (whether on `latest` or a feature branch) have not yet been synced.
 
 ```bash
-# Changes inside ag-shared
-git diff latest...HEAD -- external/ag-shared/
+# Extract the parent commit from .gitrepo
+SYNC_PARENT=$(git config -f external/ag-shared/.gitrepo subrepo.parent)
+```
 
-# Changes outside ag-shared
-git diff latest...HEAD -- ':!external/ag-shared/'
+### 2b. Analyse Changes
 
-# Commit log
-git log --oneline latest...HEAD
+Use a sub-agent (Task tool, `subagent_type: Explore`) to analyse changes since the last sync:
+
+```bash
+# Changes inside ag-shared since last sync
+git diff "${SYNC_PARENT}"..HEAD -- external/ag-shared/
+
+# Commit log for ag-shared changes since last sync
+git log --oneline "${SYNC_PARENT}"..HEAD -- external/ag-shared/
+
+# Companion changes outside ag-shared that relate to ag-shared (since last sync)
+# These are source-repo-specific config/linkage changes that destinations will
+# need their own equivalent of (e.g. .rulesync/ symlinks, .claude/settings.json,
+# setup-prompts output).
+git diff "${SYNC_PARENT}"..HEAD -- .rulesync/ .claude/settings.json .claude/settings.local.json
+
+# Full branch commit log (for context)
+git log --oneline "${SYNC_PARENT}"..HEAD
 ```
 
 The sub-agent should produce:
 
-1.  **Change summary** — what files changed in `external/ag-shared/` and why.
-2.  **Companion change predictions** — based on the ag-shared changes, what companion changes are likely needed in each destination repo. For example:
+1.  **ag-shared change summary** — what files changed in `external/ag-shared/` and why.
+2.  **Source companion changes** — what changed in `.rulesync/`, `.claude/settings.json`, or other ag-shared-related files outside `external/ag-shared/`. These represent configuration/linkage changes the source repo already applied that destinations will need their own equivalent of. Cross-reference with `external/ag-shared/docs/SYNC-LOG.md` entries to identify any migration actions that may have been applied in the source but not yet logged or propagated.
+3.  **Companion change predictions** — based on the ag-shared changes AND the source companion changes, what companion changes are likely needed in each destination repo. For example:
     -   New/renamed skills may need symlink updates in `.rulesync/`.
     -   Changed rule globs may need `.claude/settings.json` updates.
     -   Script changes may need `package.json` or CI updates.
@@ -118,14 +136,14 @@ The sub-agent should produce:
 
 ### No Changes Detected (Force Sync)
 
-If `git diff latest...HEAD` shows no changes (i.e., the branch is at the same commit as `latest` or has no ag-shared changes):
+If `git diff "${SYNC_PARENT}"..HEAD -- external/ag-shared/` shows no changes (i.e., `external/ag-shared/` has not changed since the last subrepo push/pull):
 
-1.  Inform the user that no local changes were found relative to `latest`.
+1.  Inform the user that no ag-shared changes were found since the last sync (show the `SYNC_PARENT` commit hash and date for context).
 2.  Use `AskUserQuestion` to ask whether they want to proceed with a **force sync** — this will `yarn subrepo push ag-shared` to push the current `external/ag-shared/` state to the ag-shared remote, then pull it into all destination repos. This is useful when:
     -   The ag-shared remote is out of sync with the consuming repos.
     -   A previous sync was incomplete or failed partway through.
-    -   Changes were committed directly to `latest` and need propagating.
-3.  If the user confirms, continue to Step 3 with an empty change summary. The plan should note this is a **force sync** with no new changes on the branch.
+    -   Destination repos missed a previous sync.
+3.  If the user confirms, continue to Step 3 with an empty change summary. The plan should note this is a **force sync** with no new changes since last sync.
 4.  If the user declines, **STOP**.
 
 ## STEP 3: Present Plan and Confirm
@@ -139,13 +157,13 @@ Display to the user:
 **Destinations:** <list of destination repos>
 
 ### Changes in ag-shared
-<summary from step 2>
+<ag-shared change summary from step 2>
 
-### Changes outside ag-shared
-<summary from step 2>
+### Source Companion Changes
+<source companion changes from step 2 — .rulesync/, .claude/settings.json, etc.>
 
-### Predicted Companion Changes
-<per-destination predictions from step 2>
+### Predicted Companion Changes per Destination
+<per-destination predictions from step 2, informed by both ag-shared changes and source companion changes>
 
 ### Steps
 1. Push ag-shared from <SOURCE_REPO>

@@ -104,6 +104,75 @@ describe('ag-grid tree transactions', () => {
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row3, row4, row5b]);
     });
 
+    test('allChildrenCount updates correctly through add/remove transactions (0→1→2→1→0)', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'x' }],
+            autoGroupColumnDef: { headerName: 'Hierarchy' },
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData: [
+                { id: 'parent', x: 'parent' },
+                { id: 'sibling', x: 'sibling' },
+            ],
+            getRowId: (params) => params.data.id,
+            treeDataParentIdField: 'parentId',
+        });
+
+        // Initial: parent is a LEAF with no children (allChildrenCount = null)
+        let gridRows = new GridRows(api, '0 children');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── parent LEAF id:parent ag-Grid-AutoColumn:"parent" x:"parent"
+            └── sibling LEAF id:sibling ag-Grid-AutoColumn:"sibling" x:"sibling"
+        `);
+        expect(api.getRowNode('parent')?.allChildrenCount).toBeNull();
+
+        // Add first child: parent becomes GROUP with allChildrenCount = 1
+        applyTransactionChecked(api, { add: [{ id: 'child-1', x: 'child-1', parentId: 'parent' }] });
+        gridRows = new GridRows(api, '1 child');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ parent GROUP id:parent ag-Grid-AutoColumn:"parent" x:"parent"
+            │ └── child-1 LEAF id:child-1 ag-Grid-AutoColumn:"child-1" x:"child-1"
+            └── sibling LEAF id:sibling ag-Grid-AutoColumn:"sibling" x:"sibling"
+        `);
+        expect(api.getRowNode('parent')?.allChildrenCount).toBe(1);
+
+        // Add second child: allChildrenCount = 2
+        applyTransactionChecked(api, { add: [{ id: 'child-2', x: 'child-2', parentId: 'parent' }] });
+        gridRows = new GridRows(api, '2 children');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ parent GROUP id:parent ag-Grid-AutoColumn:"parent" x:"parent"
+            │ ├── child-1 LEAF id:child-1 ag-Grid-AutoColumn:"child-1" x:"child-1"
+            │ └── child-2 LEAF id:child-2 ag-Grid-AutoColumn:"child-2" x:"child-2"
+            └── sibling LEAF id:sibling ag-Grid-AutoColumn:"sibling" x:"sibling"
+        `);
+        expect(api.getRowNode('parent')?.allChildrenCount).toBe(2);
+
+        // Remove first child: allChildrenCount = 1
+        applyTransactionChecked(api, { remove: [{ id: 'child-1' }] });
+        gridRows = new GridRows(api, '1 child again');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ parent GROUP id:parent ag-Grid-AutoColumn:"parent" x:"parent"
+            │ └── child-2 LEAF id:child-2 ag-Grid-AutoColumn:"child-2" x:"child-2"
+            └── sibling LEAF id:sibling ag-Grid-AutoColumn:"sibling" x:"sibling"
+        `);
+        expect(api.getRowNode('parent')?.allChildrenCount).toBe(1);
+
+        // Remove last child: parent becomes LEAF, allChildrenCount = null
+        applyTransactionChecked(api, { remove: [{ id: 'child-2' }] });
+        gridRows = new GridRows(api, '0 children again');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── parent LEAF id:parent ag-Grid-AutoColumn:"parent" x:"parent"
+            └── sibling LEAF id:sibling ag-Grid-AutoColumn:"sibling" x:"sibling"
+        `);
+        expect(api.getRowNode('parent')?.allChildrenCount).toBeNull();
+    });
+
     test('ag-grid parentId tree async complex transaction', async () => {
         const row0 = { id: '0', x: '0', parentId: null };
         const row1a = { id: '1', x: '1a', parentId: null };

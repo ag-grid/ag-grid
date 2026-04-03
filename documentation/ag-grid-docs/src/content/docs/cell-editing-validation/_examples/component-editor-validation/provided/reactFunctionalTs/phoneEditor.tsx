@@ -27,7 +27,7 @@ export default memo(({ value, onValueChange, validate, cellStartedEdit, eventKey
         inputRef.current?.focus();
         inputRef.current?.select();
 
-        if (cellStartedEdit && eventKey.length === 1) {
+        if (cellStartedEdit && eventKey?.length === 1) {
             setInternalValue(eventKey);
         }
     }, []);

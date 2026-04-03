@@ -888,6 +888,105 @@ describe('ag-grid hierarchical immutable tree data', () => {
         }
     });
 
+    test('allChildrenCount updates correctly through setRowData (0→1→2→1→0)', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'v' }],
+            treeData: true,
+            treeDataChildrenField: 'children',
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData: cachedJSONObjects.array([
+                { id: 'parent', v: 'parent' },
+                { id: 'sibling', v: 'sibling' },
+            ]),
+            getRowId: ({ data }) => data.id,
+        });
+
+        // Initial: parent is a LEAF with no children (allChildrenCount = null)
+        let gridRows = new GridRows(api, '0 children');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── parent LEAF id:parent ag-Grid-AutoColumn:"parent" v:"parent"
+            └── sibling LEAF id:sibling ag-Grid-AutoColumn:"sibling" v:"sibling"
+        `);
+        expect(api.getRowNode('parent')?.allChildrenCount).toBeNull();
+
+        // Add first child via setRowData: parent becomes GROUP with allChildrenCount = 1
+        setRowDataChecked(
+            api,
+            cachedJSONObjects.array([
+                { id: 'parent', v: 'parent', children: [{ id: 'child-1', v: 'child-1' }] },
+                { id: 'sibling', v: 'sibling' },
+            ])
+        );
+        gridRows = new GridRows(api, '1 child');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ parent GROUP id:parent ag-Grid-AutoColumn:"parent" v:"parent"
+            │ └── child-1 LEAF id:child-1 ag-Grid-AutoColumn:"child-1" v:"child-1"
+            └── sibling LEAF id:sibling ag-Grid-AutoColumn:"sibling" v:"sibling"
+        `);
+        expect(api.getRowNode('parent')?.allChildrenCount).toBe(1);
+
+        // Add second child: allChildrenCount = 2
+        setRowDataChecked(
+            api,
+            cachedJSONObjects.array([
+                {
+                    id: 'parent',
+                    v: 'parent',
+                    children: [
+                        { id: 'child-1', v: 'child-1' },
+                        { id: 'child-2', v: 'child-2' },
+                    ],
+                },
+                { id: 'sibling', v: 'sibling' },
+            ])
+        );
+        gridRows = new GridRows(api, '2 children');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ parent GROUP id:parent ag-Grid-AutoColumn:"parent" v:"parent"
+            │ ├── child-1 LEAF id:child-1 ag-Grid-AutoColumn:"child-1" v:"child-1"
+            │ └── child-2 LEAF id:child-2 ag-Grid-AutoColumn:"child-2" v:"child-2"
+            └── sibling LEAF id:sibling ag-Grid-AutoColumn:"sibling" v:"sibling"
+        `);
+        expect(api.getRowNode('parent')?.allChildrenCount).toBe(2);
+
+        // Remove first child: allChildrenCount = 1
+        setRowDataChecked(
+            api,
+            cachedJSONObjects.array([
+                { id: 'parent', v: 'parent', children: [{ id: 'child-2', v: 'child-2' }] },
+                { id: 'sibling', v: 'sibling' },
+            ])
+        );
+        gridRows = new GridRows(api, '1 child again');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ parent GROUP id:parent ag-Grid-AutoColumn:"parent" v:"parent"
+            │ └── child-2 LEAF id:child-2 ag-Grid-AutoColumn:"child-2" v:"child-2"
+            └── sibling LEAF id:sibling ag-Grid-AutoColumn:"sibling" v:"sibling"
+        `);
+        expect(api.getRowNode('parent')?.allChildrenCount).toBe(1);
+
+        // Remove last child: parent becomes LEAF, allChildrenCount = null
+        setRowDataChecked(
+            api,
+            cachedJSONObjects.array([
+                { id: 'parent', v: 'parent' },
+                { id: 'sibling', v: 'sibling' },
+            ])
+        );
+        gridRows = new GridRows(api, '0 children again');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── parent LEAF id:parent ag-Grid-AutoColumn:"parent" v:"parent"
+            └── sibling LEAF id:sibling ag-Grid-AutoColumn:"sibling" v:"sibling"
+        `);
+        expect(api.getRowNode('parent')?.allChildrenCount).toBeNull();
+    });
+
     test('suppressMaintainUnsortedOrder is respected', async () => {
         const rowData1 = cachedJSONObjects.array([
             {
