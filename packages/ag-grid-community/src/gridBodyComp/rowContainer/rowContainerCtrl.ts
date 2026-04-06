@@ -489,8 +489,8 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
     public getHScrollPosition(): { left: number; right: number } {
         const res = {
-            left: this.eViewport.scrollLeft,
-            right: this.eViewport.scrollLeft + this.eViewport.offsetWidth,
+            left: _getScrollLeft(this.eViewport, this.enableRtl),
+            right: _getScrollLeft(this.eViewport, this.enableRtl) + this.eViewport.offsetWidth,
         };
         return res;
     }

@@ -1,5 +1,5 @@
 import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
-import { _ensureDomOrder } from '../../agStack/utils/dom';
+import { _ensureDomOrder, _setScrollLeft } from '../../agStack/utils/dom';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { ElementParams } from '../../utils/element';
 import { Component } from '../../widgets/component';
@@ -36,13 +36,15 @@ export class HeaderRowContainerComp extends Component {
     public postConstruct(): void {
         this.selectAndSetTemplate();
 
+        const enableRtl = this.gos.get('enableRtl');
+
         const compProxy: IHeaderRowContainerComp = {
             setDisplayed: (displayed) => this.setDisplayed(displayed),
             setCtrls: (ctrls) => this.setCtrls(ctrls),
 
             // only gets called for center section
             setCenterWidth: (width) => (this.eCenterContainer.style.width = width),
-            setViewportScrollLeft: (left) => (this.getGui().scrollLeft = left),
+            setViewportScrollLeft: (left) => _setScrollLeft(this.getGui(), left, enableRtl),
 
             // only gets called for pinned sections
             setPinnedContainerWidth: (width) => {
