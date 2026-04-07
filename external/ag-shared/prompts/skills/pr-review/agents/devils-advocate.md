@@ -46,6 +46,7 @@ You operate as a sub-agent spawned after the standard review pass. The standard 
 - Are there breaking changes that are not obvious from the diff alone (e.g., subtle behaviour changes, type narrowing)?
 - Would a consumer need to migrate or update their code? Is that migration path clear?
 - Does this change alter any public API surface (types, events, callbacks, CSS classes)?
+- **Only flag something as a breaking change if the affected API or behaviour exists in a published release** (a `bX.Y.Z` branch or npm package). Changes that exist only on the unreleased `latest` branch are not breaking changes for consumers.
 
 ### 6. Play the Adversary
 

@@ -107,10 +107,12 @@ PAGER='' gh pr view $ARGUMENTS --json title,author,headRefOid,baseRefName,headRe
 
 | Priority | Meaning                          | Examples                                                       |
 | -------- | -------------------------------- | -------------------------------------------------------------- |
-| **P0**   | Critical - Must fix before merge | Security vulnerabilities, data loss, crashes, breaking changes |
+| **P0**   | Critical - Must fix before merge | Security vulnerabilities, data loss, crashes, breaking changes (see note below) |
 | **P1**   | High - Should fix before merge   | Logic errors, significant bugs, missing error handling         |
 | **P2**   | Medium - Consider fixing         | Minor bugs, performance concerns, maintainability issues       |
 | **P3**   | Low - Optional (count only)      | Documentation, minor style, suggestions                        |
+
+**Breaking change note:** Only flag something as a breaking change if the affected API or behaviour exists in a **published release** — i.e., present on a `bX.Y.Z` release branch or published npm package. Changes that exist only on the unreleased `latest` branch are not breaking changes for consumers.
 
 ## 6. Confidence Score Guidelines
 
