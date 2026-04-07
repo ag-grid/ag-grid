@@ -28,6 +28,7 @@ export abstract class AbstractToolbarItemComp extends Component implements ITool
         const label = this.getLocaleTextFunc()(this.getLocaleKey(), this.getDefaultLabel());
         this.eLabel.textContent = label;
         this.getGui().setAttribute('aria-label', label);
+        this.getGui().setAttribute('title', label);
 
         this.addManagedElementListeners(this.getGui(), { click: () => this.onAction() });
     }

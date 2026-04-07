@@ -10,22 +10,44 @@ Configure the Toolbar with the `toolbar` grid option. The property takes a list 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     toolbar: {
-        items: ['columnChooser', 'csvExport', 'resetColumns']
+        items: [
+            'rowGroupPanel',
+            'pivotPanel',
+            { component: 'quickFilter', alignment: 'right' },
+            { component: 'find', alignment: 'right' },
+            'separator',
+            { component: 'columnsPanel', alignment: 'right' },
+            { component: 'filtersPanel', alignment: 'right' },
+            { component: 'autoSizeAll', alignment: 'right' },
+            'separator',
+            { component: 'export', alignment: 'right' },
+            'separator',
+            { component: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
+        ]
     }
 }
 ```
 
-{% gridExampleRunner title="Built-in Items" name="built-in-items" /%}
+{% gridExampleRunner title="Built-in Items" name="built-in-items" exampleHeight=590 /%}
 
 ## Built-in Items
 
 The following built-in items are available as string shorthands:
 
--   `columnChooser`: Opens the Column Chooser dialog.
--   `csvExport`: Exports grid data as CSV.
+-   `autoSizeAll`: Auto-sizes all columns to fit their content. Requires `ColumnAutoSizeModule`.
+-   `columnChooser`: Opens the Column Chooser dialog. Requires `ColumnMenuModule`.
+-   `columnsPanel`: Toggles the Columns Tool Panel in the sidebar. Requires `SideBarModule` and `ColumnsToolPanelModule`. Hidden if the sidebar does not include a columns panel.
+-   `csvExport`: Exports grid data as CSV. Requires `CsvExportModule`.
+-   `excelExport`: Exports grid data as Excel. Requires `ExcelExportModule`.
+-   `export`: Opens an export submenu with available export options (CSV and/or Excel). Respects `suppressCsvExport` and `suppressExcelExport` grid options.
+-   `filtersPanel`: Toggles the Filters Tool Panel in the sidebar. Requires `SideBarModule` and `FiltersToolPanelModule`. Hidden if the sidebar does not include a filters panel.
+-   `find`: A text input that searches within grid cells using the Find feature. Requires `FindModule`.
+-   `pivotPanel`: Embeds the Pivot Panel in the toolbar. Requires `RowGroupingPanelModule`. If `pivotPanelShow` is also set, standard placement takes precedence and a console warning is logged.
+-   `quickFilter`: A text input that filters grid rows using the Quick Filter. Requires `QuickFilterModule`.
 -   `resetColumns`: Resets all columns to their default state.
+-   `rowGroupPanel`: Embeds the Row Group Panel in the toolbar. Requires `RowGroupingPanelModule`. If `rowGroupPanelShow` is also set, standard placement takes precedence and a console warning is logged.
 
-Built-in items require their corresponding modules to be registered. For example, `columnChooser` requires the `ColumnMenuModule` and `csvExport` requires the `CsvExportModule`. If a required module is not registered, the item will not render and a console warning will be logged.
+Built-in items require their corresponding modules to be registered. If a required module is not registered, the item will not render and a console warning will be logged.
 
 ## Configuration
 
@@ -41,7 +63,7 @@ Additional props are passed to Toolbar Items using `toolbarItemParams`.
 const gridOptions = {
     toolbar: {
         items: [
-            'columnChooser',
+            'autoSizeAll',
             {
                 key: 'myItem',
                 component: CustomToolbarComponent,
@@ -64,7 +86,7 @@ const gridOptions = {
     toolbar: {
         display: 'iconAndLabel',
         items: [
-            'columnChooser',
+            'autoSizeAll',
             { component: 'csvExport', display: 'icon' }
         ]
     }
@@ -80,3 +102,11 @@ Custom Toolbar Item components implement the `IToolbarItemComp` interface.
 {% /if %}
 
 {% gridExampleRunner title="Custom Toolbar Item" name="toolbar-simple" /%}
+
+## Overflow Handling
+
+The toolbar does not provide built-in responsive overflow behaviour. Users can implement custom overflow menus using a custom toolbar component.
+
+The following example demonstrates an overflow menu pattern where less-used actions are grouped into a "more" dropdown, keeping the toolbar clean at any width.
+
+{% gridExampleRunner title="Overflow Menu" name="overflow" /%}

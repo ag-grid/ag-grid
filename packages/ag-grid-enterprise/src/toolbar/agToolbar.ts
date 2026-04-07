@@ -25,15 +25,27 @@ import agToolbarCSS from './agToolbar.css';
 import type { ToolbarService } from './toolbarService';
 
 const BUILT_IN_ITEMS: Record<string, string> = {
+    autoSizeAll: 'agAutoSizeAllToolbarItem',
     columnChooser: 'agColumnChooserToolbarItem',
+    columnsPanel: 'agColumnsPanelToolbarItem',
     csvExport: 'agCsvExportToolbarItem',
+    excelExport: 'agExcelExportToolbarItem',
+    export: 'agExportToolbarItem',
+    filtersPanel: 'agFiltersPanelToolbarItem',
+    find: 'agFindToolbarItem',
+    pivotPanel: 'agPivotPanelToolbarItem',
+    quickFilter: 'agQuickFilterToolbarItem',
     resetColumns: 'agResetColumnsToolbarItem',
+    rowGroupPanel: 'agRowGroupPanelToolbarItem',
 };
 
 function normaliseItem(item: ToolbarItemDef | string): ToolbarItemDef {
     if (typeof item === 'string') {
         const component = BUILT_IN_ITEMS[item] ?? item;
         return { component, key: item };
+    }
+    if (typeof item.component === 'string' && BUILT_IN_ITEMS[item.component]) {
+        return { ...item, key: item.key ?? item.component, component: BUILT_IN_ITEMS[item.component] };
     }
     return item;
 }
@@ -116,8 +128,16 @@ class AgToolbar extends Component implements FocusableContainer {
     private processToolbarItems(existingItemsToReuse: Map<string, IToolbarItemComp>): void {
         const items = this.getValidItems();
         if (items) {
-            const leftItems = items.filter((item) => !item.alignment || item.alignment === 'left');
-            const rightItems = items.filter((item) => item.alignment === 'right');
+            const leftItems: ToolbarItemDef[] = [];
+            const rightItems: ToolbarItemDef[] = [];
+            let lastAlignment: 'left' | 'right' = 'left';
+            for (const item of items) {
+                const alignment = item.key === 'separator' ? lastAlignment : item.alignment ?? 'left';
+                (alignment === 'right' ? rightItems : leftItems).push(item);
+                if (item.key !== 'separator') {
+                    lastAlignment = alignment;
+                }
+            }
             this.itemsPromise = AgPromise.all([
                 this.createAndRenderComponents(leftItems, this.eToolbarLeft, existingItemsToReuse),
                 this.createAndRenderComponents(rightItems, this.eToolbarRight, existingItemsToReuse),
@@ -196,9 +216,17 @@ class AgToolbar extends Component implements FocusableContainer {
         eContainer: HTMLElement,
         existingItemsToReuse: Map<string, IToolbarItemComp>
     ): AgPromise<void> {
-        const componentDetails: { key: string; promise: AgPromise<IToolbarItemComp> }[] = [];
+        const componentDetails: { key: string; placeholder: HTMLElement; promise: AgPromise<IToolbarItemComp> }[] = [];
 
         for (const itemConfig of toolbarItems) {
+            if (itemConfig.key === 'separator') {
+                const separator = document.createElement('div');
+                separator.className = 'ag-toolbar-separator';
+                separator.setAttribute('role', 'separator');
+                eContainer.appendChild(separator);
+                continue;
+            }
+
             const key = itemConfig.key || itemConfig.component;
             const existingItem = existingItemsToReuse.get(key);
             let promise: AgPromise<IToolbarItemComp>;
@@ -208,7 +236,11 @@ class AgToolbar extends Component implements FocusableContainer {
                 const compDetails = getToolbarItemCompDetails(
                     this.userCompFactory,
                     itemConfig,
-                    _addGridCommonParams(this.gos, { key, display: this.resolveDisplay(itemConfig) })
+                    _addGridCommonParams(this.gos, {
+                        ...(itemConfig.toolbarItemParams ?? {}),
+                        key,
+                        display: this.resolveDisplay(itemConfig),
+                    })
                 );
 
                 if (compDetails == null) {
@@ -217,8 +249,12 @@ class AgToolbar extends Component implements FocusableContainer {
                 promise = compDetails.newAgStackInstance();
             }
 
+            const placeholder = document.createElement('div');
+            eContainer.appendChild(placeholder);
+
             componentDetails.push({
                 key,
+                placeholder,
                 promise,
             });
         }
@@ -232,9 +268,10 @@ class AgToolbar extends Component implements FocusableContainer {
 
                     if (this.isAlive()) {
                         this.toolbarSvc.registerToolbarItem(componentDetail.key, component);
-                        eContainer.appendChild(component.getGui());
+                        componentDetail.placeholder.replaceWith(component.getGui());
                         this.compDestroyFunctions[componentDetail.key] = destroyFunc;
                     } else {
+                        _removeFromParent(componentDetail.placeholder);
                         destroyFunc();
                     }
                 });
