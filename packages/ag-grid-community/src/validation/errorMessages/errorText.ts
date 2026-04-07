@@ -407,7 +407,8 @@ export const AG_GRID_ERRORS = {
     121: () =>
         'a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (see AG Grid docs) or b) to toString() on the object to return a key' as const,
     122: () => 'could not find the document, document is empty' as const,
-    123: () => 'Advanced Filter is only supported with the Client-Side Row Model or Server-Side Row Model.' as const,
+    123: () =>
+        'Advanced Filter is only supported with the Client-Side Row Model, Server-Side Row Model, or Viewport Row Model.' as const,
     124: () => 'No active charts to update.' as const,
     125: ({ chartId }: { chartId: string }) =>
         `Unable to update chart. No active chart found with ID: ${chartId}.` as const,

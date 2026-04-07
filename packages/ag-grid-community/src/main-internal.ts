@@ -382,6 +382,7 @@ export {
     _isRowSelection,
     _isServerSideRowModel,
     _isSetFilterByDefault,
+    _isViewportRowModel,
     _isUsingNewCellSelectionAPI,
     _isUsingNewRowSelectionAPI,
     _processOnChange,
