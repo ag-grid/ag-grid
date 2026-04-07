@@ -800,4 +800,16 @@ export const AG_GRID_LOCALE_PK = {
     timeFormatSpacesDDMMMMYYYY: 'دد مممم سسسس',
     timeFormatHHMMSS: 'گگ:مم:سس',
     timeFormatHHMMSSAmPm: 'گگ:مم:سس ص/ش',
+
+    // Cell Notes
+    cellNote: 'سیل نوٹ',
+    addCellNote: 'سیل نوٹ شامل کریں',
+    viewCellNote: 'نوٹ دیکھیں',
+    editCellNote: 'نوٹ میں ترمیم کریں',
+    deleteCellNote: 'نوٹ ہٹائیں',
+    cellNotePlaceholder: 'ایک نوٹ شامل کریں...',
+    cellNoteHint:
+        'پیش منظر دیکھنے کے لیے ماؤس اوپر لے جائیں۔ ترمیم کے لیے اندر کلک کریں۔ سائز بدلنے کے لیے کونے کو کھینچیں۔ بند کرنے کے لیے Esc دبائیں۔',
+    cellNoteReadOnlyHint:
+        'صرف پڑھنے والا نوٹ۔ نقل کرنے کے لیے متن منتخب کریں۔ سائز بدلنے کے لیے کونے کو کھینچیں۔ بند کرنے کے لیے Esc دبائیں۔',
 };

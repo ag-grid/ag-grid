@@ -804,4 +804,16 @@ export const AG_GRID_LOCALE_RO = {
     timeFormatSpacesDDMMMMYYYY: 'ZZ LLLL AAAA',
     timeFormatHHMMSS: 'OO:MM:SS',
     timeFormatHHMMSSAmPm: 'OO:MM:SS AM/PM',
+
+    // Cell Notes
+    cellNote: 'Notă celulă',
+    addCellNote: 'Adaugă notă la celulă',
+    viewCellNote: 'Vizualizează nota',
+    editCellNote: 'Editează nota',
+    deleteCellNote: 'Elimină nota',
+    cellNotePlaceholder: 'Adaugă o notă...',
+    cellNoteHint:
+        'Treceți cu cursorul pentru previzualizare. Faceți clic în interior pentru a edita. Trageți de colț pentru a redimensiona. Apăsați Esc pentru a închide.',
+    cellNoteReadOnlyHint:
+        'Notă doar pentru citire. Selectați textul pentru a-l copia. Trageți de colț pentru a redimensiona. Apăsați Esc pentru a închide.',
 };

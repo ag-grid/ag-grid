@@ -805,4 +805,16 @@ export const AG_GRID_LOCALE_BG = {
     timeFormatSpacesDDMMMMYYYY: 'ДД ММММ ГГГГ',
     timeFormatHHMMSS: 'ЧЧ:ММ:СС',
     timeFormatHHMMSSAmPm: 'ЧЧ:ММ:СС AM/PM',
+
+    // Cell Notes
+    cellNote: 'Бележка за клетка',
+    addCellNote: 'Добавяне на бележка към клетка',
+    viewCellNote: 'Преглед на бележката',
+    editCellNote: 'Редактиране на бележката',
+    deleteCellNote: 'Премахване на бележката',
+    cellNotePlaceholder: 'Добавете бележка...',
+    cellNoteHint:
+        'Задръжте курсора за преглед. Щракнете вътре, за да редактирате. Плъзнете ъгъла, за да преоразмерите. Натиснете Esc, за да затворите.',
+    cellNoteReadOnlyHint:
+        'Бележка само за четене. Изберете текста, за да го копирате. Плъзнете ъгъла, за да преоразмерите. Натиснете Esc, за да затворите.',
 };

@@ -800,4 +800,16 @@ export const AG_GRID_LOCALE_KR = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 오전/오후',
+
+    // Cell Notes
+    cellNote: '셀 메모',
+    addCellNote: '셀 메모 추가',
+    viewCellNote: '메모 보기',
+    editCellNote: '메모 편집',
+    deleteCellNote: '메모 제거',
+    cellNotePlaceholder: '메모 추가...',
+    cellNoteHint:
+        '미리 보려면 마우스를 올리세요. 편집하려면 안쪽을 클릭하세요. 크기를 조절하려면 모서리를 드래그하세요. 닫으려면 Esc를 누르세요.',
+    cellNoteReadOnlyHint:
+        '읽기 전용 메모입니다. 복사하려면 텍스트를 선택하세요. 크기를 조절하려면 모서리를 드래그하세요. 닫으려면 Esc를 누르세요.',
 };

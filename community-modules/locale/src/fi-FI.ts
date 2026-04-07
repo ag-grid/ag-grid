@@ -803,4 +803,16 @@ export const AG_GRID_LOCALE_FI = {
     timeFormatSpacesDDMMMMYYYY: 'PP KKKK VVVV',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
+
+    // Cell Notes
+    cellNote: 'Solumuistio',
+    addCellNote: 'Lisää solumuistio',
+    viewCellNote: 'Näytä muistiinpano',
+    editCellNote: 'Muokkaa muistiinpanoa',
+    deleteCellNote: 'Poista muistiinpano',
+    cellNotePlaceholder: 'Lisää muistiinpano...',
+    cellNoteHint:
+        'Näytä esikatselu viemällä osoitin päälle. Muokkaa napsauttamalla sisälle. Muuta kokoa vetämällä kulmasta. Sulje painamalla Esc.',
+    cellNoteReadOnlyHint:
+        'Vain luku -muistiinpano. Valitse teksti kopioidaksesi sen. Muuta kokoa vetämällä kulmasta. Sulje painamalla Esc.',
 };

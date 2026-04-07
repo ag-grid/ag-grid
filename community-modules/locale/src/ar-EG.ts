@@ -799,4 +799,14 @@ export const AG_GRID_LOCALE_EG = {
     timeFormatSpacesDDMMMMYYYY: 'يوم شهر سنة',
     timeFormatHHMMSS: 'ساعة:دقيقة:ثانية',
     timeFormatHHMMSSAmPm: 'ساعة:دقيقة:ثانية ص/م',
+
+    // Cell Notes
+    cellNote: 'ملاحظة الخلية',
+    addCellNote: 'إضافة ملاحظة للخلية',
+    viewCellNote: 'عرض الملاحظة',
+    editCellNote: 'تحرير الملاحظة',
+    deleteCellNote: 'إزالة الملاحظة',
+    cellNotePlaceholder: 'أضف ملاحظة...',
+    cellNoteHint: 'مرر المؤشر للمعاينة. انقر بالداخل للتحرير. اسحب الزاوية لتغيير الحجم. اضغط Esc للإغلاق.',
+    cellNoteReadOnlyHint: 'ملاحظة للقراءة فقط. حدد النص لنسخه. اسحب الزاوية لتغيير الحجم. اضغط Esc للإغلاق.',
 };

@@ -806,4 +806,16 @@ export const AG_GRID_LOCALE_GR = {
     timeFormatSpacesDDMMMMYYYY: 'ΗΗ ΜΜΜΜ ΕΕΕΕ',
     timeFormatHHMMSS: 'ΩΩ:ΛΛ:ΔΔ',
     timeFormatHHMMSSAmPm: 'ΩΩ:ΛΛ:ΔΔ ΠΜ/ΜΜ',
+
+    // Cell Notes
+    cellNote: 'Σημείωση κελιού',
+    addCellNote: 'Προσθήκη σημείωσης κελιού',
+    viewCellNote: 'Προβολή σημείωσης',
+    editCellNote: 'Επεξεργασία σημείωσης',
+    deleteCellNote: 'Αφαίρεση σημείωσης',
+    cellNotePlaceholder: 'Προσθέστε μια σημείωση...',
+    cellNoteHint:
+        'Τοποθετήστε τον δείκτη για προεπισκόπηση. Κάντε κλικ μέσα για επεξεργασία. Σύρετε τη γωνία για αλλαγή μεγέθους. Πατήστε Esc για κλείσιμο.',
+    cellNoteReadOnlyHint:
+        'Σημείωση μόνο για ανάγνωση. Επιλέξτε κείμενο για αντιγραφή. Σύρετε τη γωνία για αλλαγή μεγέθους. Πατήστε Esc για κλείσιμο.',
 };

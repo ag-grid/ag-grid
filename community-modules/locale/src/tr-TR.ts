@@ -805,4 +805,16 @@ export const AG_GRID_LOCALE_TR = {
     timeFormatSpacesDDMMMMYYYY: 'GG AAAA YYYY',
     timeFormatHHMMSS: 'SS:DD:SN',
     timeFormatHHMMSSAmPm: 'SS:DD:SN ÖÖ/ÖS',
+
+    // Cell Notes
+    cellNote: 'Hücre notu',
+    addCellNote: 'Hücre notu ekle',
+    viewCellNote: 'Notu görüntüle',
+    editCellNote: 'Notu düzenle',
+    deleteCellNote: 'Notu kaldır',
+    cellNotePlaceholder: 'Bir not ekle...',
+    cellNoteHint:
+        'Önizleme için üzerine gelin. Düzenlemek için içine tıklayın. Yeniden boyutlandırmak için köşeyi sürükleyin. Kapatmak için Esc tuşuna basın.',
+    cellNoteReadOnlyHint:
+        'Salt okunur not. Kopyalamak için metni seçin. Yeniden boyutlandırmak için köşeyi sürükleyin. Kapatmak için Esc tuşuna basın.',
 };

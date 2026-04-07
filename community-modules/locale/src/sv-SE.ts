@@ -803,4 +803,16 @@ export const AG_GRID_LOCALE_SE = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM ÅÅÅÅ',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS FM/EM',
+
+    // Cell Notes
+    cellNote: 'Cellanteckning',
+    addCellNote: 'Lägg till cellanteckning',
+    viewCellNote: 'Visa anteckning',
+    editCellNote: 'Redigera anteckning',
+    deleteCellNote: 'Ta bort anteckning',
+    cellNotePlaceholder: 'Lägg till en anteckning...',
+    cellNoteHint:
+        'Hovra för förhandsvisning. Klicka inuti för att redigera. Dra i hörnet för att ändra storlek. Tryck Esc för att stänga.',
+    cellNoteReadOnlyHint:
+        'Skrivskyddad anteckning. Markera text för att kopiera. Dra i hörnet för att ändra storlek. Tryck Esc för att stänga.',
 };

@@ -805,4 +805,16 @@ export const AG_GRID_LOCALE_BR = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM AAAA',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Cell Notes
+    cellNote: 'Nota da célula',
+    addCellNote: 'Adicionar nota da célula',
+    viewCellNote: 'Ver nota',
+    editCellNote: 'Editar nota',
+    deleteCellNote: 'Remover nota',
+    cellNotePlaceholder: 'Adicionar uma nota...',
+    cellNoteHint:
+        'Passe o cursor para visualizar. Clique dentro para editar. Arraste o canto para redimensionar. Pressione Esc para fechar.',
+    cellNoteReadOnlyHint:
+        'Nota somente leitura. Selecione o texto para copiar. Arraste o canto para redimensionar. Pressione Esc para fechar.',
 };

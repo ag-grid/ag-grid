@@ -801,4 +801,16 @@ export const AG_GRID_LOCALE_NO = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM ÅÅÅÅ',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
+
+    // Cell Notes
+    cellNote: 'Cellenotat',
+    addCellNote: 'Legg til cellenotat',
+    viewCellNote: 'Vis notat',
+    editCellNote: 'Rediger notat',
+    deleteCellNote: 'Fjern notat',
+    cellNotePlaceholder: 'Legg til et notat...',
+    cellNoteHint:
+        'Hold markøren over for forhåndsvisning. Klikk inni for å redigere. Dra i hjørnet for å endre størrelse. Trykk Esc for å lukke.',
+    cellNoteReadOnlyHint:
+        'Skrivebeskyttet notat. Merk teksten for å kopiere. Dra i hjørnet for å endre størrelse. Trykk Esc for å lukke.',
 };

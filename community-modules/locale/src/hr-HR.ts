@@ -802,4 +802,16 @@ export const AG_GRID_LOCALE_HR = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM GGGG',
     timeFormatHHMMSS: 'SS:MM:VV',
     timeFormatHHMMSSAmPm: 'SS:MM:VV AM/PM',
+
+    // Cell Notes
+    cellNote: 'Napomena ćelije',
+    addCellNote: 'Dodaj napomenu ćelije',
+    viewCellNote: 'Prikaži napomenu',
+    editCellNote: 'Uredi napomenu',
+    deleteCellNote: 'Ukloni napomenu',
+    cellNotePlaceholder: 'Dodaj napomenu...',
+    cellNoteHint:
+        'Zadržite pokazivač za pretpregled. Kliknite unutar za uređivanje. Povucite kut za promjenu veličine. Pritisnite Esc za zatvaranje.',
+    cellNoteReadOnlyHint:
+        'Napomena samo za čitanje. Označite tekst za kopiranje. Povucite kut za promjenu veličine. Pritisnite Esc za zatvaranje.',
 };
