@@ -85,9 +85,9 @@ noteStore.set(noteKey('3', 'country'), {
 });
 ```
 
-## Suppressing Notes
+## Suppressing Note Actions
 
-Use `colDef.suppressCellNoteEditing` to suppress built-in note actions for a column or specific row. Suppressed cells still allow existing notes to be viewed on hover and through `getCellNote()`, but add/edit/remove actions and note creation shortcuts are blocked.
+Use `colDef.suppressCellNoteActions` to suppress built-in note actions for a column or specific row. Suppressed cells still allow existing notes to be viewed on hover and through `getCellNote()`, but add/edit/remove actions and note creation shortcuts are blocked.
 
 {% gridExampleRunner title="Suppressing Notes" name="notes-suppressing" exampleHeight=440 /%}
 
@@ -95,8 +95,8 @@ Use `colDef.suppressCellNoteEditing` to suppress built-in note actions for a col
 const gridOptions = {
     columnDefs: [
         { field: 'athlete' },
-        { field: 'year', suppressCellNoteEditing: true },
-        { field: 'sport', suppressCellNoteEditing: params => params.data?.sport === 'Swimming' },
+        { field: 'year', suppressCellNoteActions: true },
+        { field: 'sport', suppressCellNoteActions: params => params.data?.sport === 'Swimming' },
     ],
 };
 ```
