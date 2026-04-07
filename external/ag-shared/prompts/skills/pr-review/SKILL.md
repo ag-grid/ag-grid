@@ -226,8 +226,9 @@ When `--full` is present, run **all** additional review passes in parallel after
 1. Devil's Advocate (as described above)
 2. JIRA Completeness Verification (described below)
 3. Code Simplification Review (described below)
+4. Codex Review (described below) — **only if available** (see detection below)
 
-All three sub-agents can be spawned simultaneously since they are independent of each other.
+All passes can be spawned simultaneously since they are independent of each other.
 
 ### JIRA Completeness Verification
 
@@ -285,3 +286,33 @@ The sub-agent should focus on the same concerns as the `/simplify` skill: reuse,
 #### 3. Verdict Impact
 
 Simplification findings are advisory and should not change the code correctness verdict or confidence score. They appear as P2 or P3 suggestions in `required_actions` only if they represent genuine quality concerns (e.g., copy-pasted logic that should be extracted).
+
+### Codex Review (Optional)
+
+This pass is **conditional** — it only runs when the Codex review skill is available in the current session.
+
+#### 1. Detect Availability
+
+Check the system-reminder skill list in the current conversation for the skill `codex:review`. If it is **not** listed, skip this entire section silently — do not warn, log, or mention its absence.
+
+#### 2. Invoke the Codex Review
+
+If `codex:review` is available, invoke it using the **Skill tool** with the PR number as the argument:
+
+```
+Skill: codex:review
+Args: {PR_NUMBER}
+```
+
+Invoke this in parallel with the other sub-agent spawns (Devil's Advocate, JIRA, Simplification) in the same message. The Codex review skill is responsible for its own prompting and diff retrieval.
+
+#### 3. Merge Codex Findings
+
+- Prefix all Codex-originated findings with `[CODEX]` in the title.
+- In Markdown mode, add a `## Codex Review` section after `## Simplification Opportunities` (or after whatever the last preceding section is).
+- In JSON mode, merge Codex findings into the `findings` array with the `[CODEX]` title prefix.
+- Deduplicate against findings from all other passes — if both the standard review (or any other pass) and Codex flag the same file and line for the same issue, keep the higher-priority version and note it was flagged by both.
+
+#### 4. Verdict Impact
+
+If the Codex review surfaces P0 or P1 issues not found by any other pass, adjust the verdict and confidence accordingly. P2/P3 Codex findings are advisory and do not change the verdict on their own.

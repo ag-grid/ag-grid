@@ -132,6 +132,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         eGui.current = eRef;
         updateClassName(props.className);
         if (!eRef) {
+            ready.current = false;
             for (const f of destroyFuncs.current) {
                 f();
             }

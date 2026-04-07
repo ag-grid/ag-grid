@@ -165,7 +165,9 @@ import type {
     PasteStartEvent,
     PinnedRowDataChangedEvent,
     PinnedRowsChangedEvent,
+    PivotColumnGroupTotals,
     PivotMaxColumnsExceededEvent,
+    PivotRowTotals,
     PostProcessPopup,
     PostSortRows,
     ProcessCellForClipboard,
@@ -1144,11 +1146,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.
      * @agModule `PivotModule`
      */
-    @Input() public pivotColumnGroupTotals: 'before' | 'after' | undefined = undefined;
+    @Input() public pivotColumnGroupTotals: PivotColumnGroupTotals | undefined = undefined;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.
      * @agModule `PivotModule`
      */
-    @Input() public pivotRowTotals: 'before' | 'after' | undefined = undefined;
+    @Input() public pivotRowTotals: PivotRowTotals | undefined = undefined;
     /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column.
      * @default false
      * @initial

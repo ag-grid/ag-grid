@@ -45,6 +45,8 @@ Based on ticket type, read the relevant template (in the `templates/` subdirecto
 - [ ] API design (if applicable).
 - [ ] Acceptance criteria.
 
+When the user provides requirements that differ from existing PRDs or design documents, the user's stated requirements take precedence. Confirm requirements with the user before drafting — do not assume PRD content is final.
+
 **For Tech-debt tickets, collect:**
 
 - [ ] Context (why this work is needed).
@@ -52,9 +54,31 @@ Based on ticket type, read the relevant template (in the `templates/` subdirecto
 - [ ] Proposed solution.
 - [ ] Acceptance criteria.
 
+## Subtask Rules
+
+When creating a **Sub-task** (issue type `"Sub-task"` with a `parent` field):
+
+1. **Track is always `Housekeeping`** — the parent ticket carries the feature/bug track. Subtasks are internal work items.
+2. **No "split from" issue link** — the parent field already provides this relationship. Do not create a redundant "Work item split" link.
+3. **Description format** — trivial or placeholder subtasks use bold headings + bullets. Subtasks with full requirements detail use the numbered template from `templates/feature-task.md`.
+4. **fixVersion from user input** — when the user provides a version number (e.g., `35.3`) alongside priority/status, this is the **fixVersion** (`fixVersions: [{"name": "35.3.0"}]`), not story points. Append `.0` if the user gives a two-part version.
+
 ## Step 3: Create the Ticket
 
-Use the `mcp__atlassian__createJiraIssue` tool. Substitute component, prefix, and project from the product file:
+Use the `mcp__atlassian__createJiraIssue` tool. Substitute component, prefix, and project from the product file.
+
+### Choose content format
+
+Pick the format **before** writing the description — it determines how you structure the entire payload:
+
+| Description mentions other JIRA tickets? | Format | Why |
+|------------------------------------------|--------|-----|
+| **Yes** (dependencies, related work, parent context) | `contentFormat: "adf"` | Only ADF supports `inlineCard` Smart Links. Markdown cannot render them. |
+| **No** (standalone bug report, no cross-references) | `contentFormat: "markdown"` | Simpler to write; no ticket references to render. |
+
+Most feature, subtask, and tech-debt tickets reference other tickets, so **ADF is the common case**. See the "Description Formatting" section for the `inlineCard` syntax.
+
+### API call structure
 
 ```json
 {
@@ -62,8 +86,8 @@ Use the `mcp__atlassian__createJiraIssue` tool. Substitute component, prefix, an
     "projectKey": "<from product file>",
     "issueTypeName": "Bug|Task",
     "summary": "[<Prefix>] Clear, concise title",
-    "description": "Formatted description from template",
-    "contentFormat": "markdown",
+    "description": "<formatted description — ADF document or markdown string>",
+    "contentFormat": "<adf or markdown — see table above>",
     "additional_fields": {
         "components": [{ "name": "<from product file>" }],
         "priority": { "name": "Medium" },
@@ -112,7 +136,13 @@ Bug descriptions should be concise: test cases + notes only. Do not add acceptan
 
 After the ticket is created, perform these steps as applicable:
 
-**1. Transition to "To Do" (only if a fixVersion was provided)**
+**1. Set fixVersion (if provided)**
+
+When the user provides a version number (e.g., `35.3`) alongside other ticket fields, set it as `fixVersions`. Append `.0` if the user gives a two-part version (e.g., `35.3` → `"35.3.0"`). This is never story points — it is always fixVersion.
+
+If `fixVersions` couldn't be set during creation (e.g., field not on create screen), use `mcp__atlassian__editJiraIssue` to set it after creation.
+
+**2. Transition to "To Do" (only if a fixVersion was provided)**
 
 If the user specified a fix version, transition the ticket out of Backlog immediately:
 
@@ -125,11 +155,13 @@ mcp__atlassian__transitionJiraIssue
 
 If no fixVersion was set, leave the ticket in Backlog.
 
-**2. Create issue links (if applicable)**
+**3. Create issue links (if applicable)**
 
 If this ticket was split off from another, or blocks/is blocked by another ticket, create the link using `mcp__atlassian__createIssueLink`. Do not put ticket references only in the description text — use a formal link.
 
-For "split from" links, see the "Issue Link Direction" section below for correct inward/outward usage.
+**Exception:** Do not create "split from" links for subtasks — the parent field already provides this relationship.
+
+For "split from" links on non-subtask tickets, see the "Issue Link Direction" section below for correct inward/outward usage.
 
 ## Completion Checklist
 
@@ -143,6 +175,7 @@ For "split from" links, see the "Issue Link Direction" section below for correct
 - [ ] For Bug and Improvement tickets: Affects Version included.
 - [ ] For Bug and Improvement tickets: Bug template used (reproduction steps, actual/expected).
 - [ ] URLs use explicit markdown link syntax `[url](url)` — bare URLs are not clickable in JIRA.
+- [ ] JIRA ticket references in description use ADF `inlineCard` Smart Links — not markdown links or bare keys.
 - [ ] If fixVersion was provided: ticket transitioned from Backlog to "To Do".
 - [ ] Issue links created (if split-off or related tickets exist).
 
@@ -158,6 +191,7 @@ Think of it as: the **inward** issue is the one being referenced ("split **from*
 
 ## Description Formatting
 
+- **JIRA ticket references must be Smart Links:** When referencing other JIRA tickets in description text, use ADF `inlineCard` nodes — these render as expanded Smart Links showing the ticket title and icon. Neither bare ticket keys (`AG-1234`) nor markdown links (`[AG-1234](url)`) expand into Smart Links. To create Smart Links: submit the description using `contentFormat: "adf"` with `{"type": "inlineCard", "attrs": {"url": "https://ag-grid.atlassian.net/browse/AG-1234"}}` inline in paragraph content. This applies everywhere a ticket is mentioned: dependencies, notes, parenthetical references, etc.
 - **Inline code for option names:** Always wrap API option names, property names, and programmatic values in backticks (e.g., `enableRtl`, `skipNullBars: true`, `bar`). This distinguishes code from prose and improves readability.
 - **Series type references:** When referencing series types, use backtick-wrapped type values (e.g., `bar`) rather than informal names like "bar/column".
 
@@ -171,3 +205,4 @@ Think of it as: the **inward** issue is the one being referenced ("split **from*
 6. **Improvement = internally reported bug** — Always use the bug template for Improvement tickets, not the feature/task template.
 7. **Inline code for options** — Always wrap API option/property names in backticks in descriptions.
 8. **URLs must be explicit markdown links** — Bare URLs are NOT clickable in JIRA. Always write `[https://url](https://url)`, never just `https://url`.
+9. **JIRA ticket references must be Smart Links** — Use ADF `inlineCard` nodes, not markdown links or bare keys. Only `inlineCard` renders as an expanded Smart Link with the ticket title.

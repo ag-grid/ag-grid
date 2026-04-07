@@ -1,3 +1,7 @@
+## Ambiguity and confidence
+
+**NEVER guess:** This is the number one rule; if requirements, facts or details are ambiguous it is much better to admit this and ask for guidance (with context on why the ambiguity where possible) or do more research to ground things out, than to guess with a risk of being wrong.
+
 ## AI Agent Instructions
 
 This file provides guidance to AI Agents when working with code in this repository.
@@ -27,12 +31,25 @@ This file provides guidance to AI Agents when working with code in this reposito
 -   **Main constraint:** Community and enterprise runtime bundles stay dependency-free beyond AG Grid code.
 -   **Default branch:** Target `latest`; follow release/JIRA naming conventions below for topic branches.
 -   **Build monitoring:** Check `node_modules/.cache/ag-watch-status.json` to monitor watch state (`yarn nx dev`) and build health (see [Development Server Guide](.rulesync/rules/dev-server.md)).
+-   **Self-review before committing:** Re-read your changes as if reviewing someone else's PR and verify: each new function/class has a single clear responsibility; names are meaningful; no unnecessary complexity; no copy-pasted logic that should be extracted; new code follows the patterns of the surrounding codebase.
 -   **Formatting:** Run `yarn nx format --sort-root-tsconfig-paths=false` from the repo root before proposing commits.
 -   **Typechecking:** Run `yarn nx build:types <package>` from the repo root before proposing commits.
 -   **Linting:** Run `yarn nx lint <package>` from the repo root before proposing commits.
 -   **Baseline verification:** Expect to run `yarn nx test ag-grid-community`, `yarn nx test ag-grid-enterprise`, and `yarn nx e2e ag-grid-docs` after meaningful grid changes.
 -   **Test verification patterns:** When writing or modifying tests, review similar tests to ensure consistent verification patterns (see [Testing Guide](.rulesync/rules/testing.md)).
 -   **Context docs:** Skim [technology-stack.md](.rulesync/rules/technology-stack.md) for stack or architectural decisions before introducing new patterns.
+
+### Tooling Health Check
+
+On the **first response** of a conversation, verify that project skills are available by checking the system-reminder skill list. If **any** of the canary skills are missing, display a one-time warning before doing anything else. Do not repeat the warning on subsequent responses.
+
+**Canary skills:** `example`, `dev-server`, `debug`, `git-conventions`, `jira`
+
+**Warning to display (if any canary skill is missing):**
+
+> **Agentic tooling is not initialised.** Expected skills (example, dev-server, debug, git-conventions, jira) are missing or incomplete. Run `yarn` from the repository root to set up AI tooling configuration, then restart your session. If you are in a worktree, ensure you ran `yarn` in the worktree directory (not just the main checkout).
+
+Continue assisting the user after displaying the warning.
 
 ### Specialized Guides
 

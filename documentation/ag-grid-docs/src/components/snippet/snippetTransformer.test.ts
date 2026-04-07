@@ -198,6 +198,61 @@ const rowNode = api.getRowNode('55');`
         );
     });
 
+    describe('given const with new expression', () => {
+        runSnippetFrameworkTests(
+            `const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+const gridOptions = {
+    columnDefs: [
+        { field: 'sales' },
+        { field: 'tax', allowFormula: true },
+    ],
+    formulaDataSource: {
+        getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+        setFormula: ({ column, rowNode, formula }) => {
+            const key = formulaKey(rowNode.id, column.getColId());
+            if (formula === undefined) {
+                formulaStore.delete(key);
+            } else {
+                formulaStore.set(key, formula);
+            }
+        },
+    },
+}`
+        );
+    });
+
+    describe('given optional chaining and nullish coalescing', () => {
+        runSnippetFrameworkTests(
+            `const noteStore = new Map();
+const noteKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+const gridOptions = {
+    getRowId: (params) => String(params.data.id),
+    notesDataSource: {
+        getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+        setNote: ({ rowNode, column, note }) => {
+            const key = noteKey(rowNode.id, column.getColId());
+            const existingNote = noteStore.get(key);
+
+            if (note === undefined) {
+                noteStore.delete(key);
+            } else {
+                noteStore.set(key, {
+                    ...existingNote,
+                    ...note,
+                    author: getCurrentUser(),
+                    createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
+                    updatedAt: getDisplayTimestamp(),
+                });
+            }
+        },
+    },
+}`
+        );
+    });
+
     describe('given useMemo and useCallback properties with JS literals does not add useMemo or useCallback', () => {
         runSnippetFrameworkTests(`const gridOptions = {
             popupParent: -Infinity,

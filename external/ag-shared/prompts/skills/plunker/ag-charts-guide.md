@@ -189,6 +189,7 @@ In `index.html`, add `<script src="data.js"></script>` **before** `<script src="
 | Styling issues | Missing inline styles in index.html | Add the `<style>` block in `<head>` |
 | Layout breaks | Extra HTML elements in body | Remove all elements except controls + `<div id="myChart">` |
 | Wrong UMD global | Using `agChartsEnterprise`/`agChartsCommunity` | Always use `agCharts` — `const { AgCharts } = agCharts;` |
-| Update API error | Using `AgCharts.update(chart, opts)` | Use instance method: `chart.update(options)` (v13+) |
+| Update API error | Using `AgCharts.update(chart, opts)` | Use instance method: `chart.update(options)` for full replacement (v13+) |
+| Partial update wipes options | Using `chart.update({ data: newData })` without full options | Use `chart.updateDelta({ data: newData })` for partial/delta updates |
 | Container not found | Using string selector `'#myChart'` | Use `document.getElementById('myChart')` |
 | Controls break chart layout | Chart div nested inside controls div | `<div id="myChart">` must be a **sibling** outside `<div class="example-controls">` |

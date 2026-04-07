@@ -82,10 +82,21 @@
         "deny": []
     },
     "env": {
+        "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+        "CLAUDE_CODE_NO_FLICKER": "1",
         "ENABLE_TOOL_SEARCH": "true"
     },
     "enabledPlugins": {
+        "codex@openai-codex": true,
         "skill-creator@claude-plugins-official": true
+    },
+    "extraKnownMarketplaces": {
+        "openai-codex": {
+            "source": {
+                "source": "github",
+                "repo": "openai/codex-plugin-cc"
+            }
+        }
     },
     "hooks": {
         "PostToolUse": [

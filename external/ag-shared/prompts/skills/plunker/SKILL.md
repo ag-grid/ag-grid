@@ -46,13 +46,14 @@ This ensures the implementation step uses the correct CDN URLs, CSS, and API pat
 ### Create a New Plunker
 
 1. Create a working directory: `PLNKR_DIR=$(mktemp -d /tmp/plnkr-new-XXXXXX)`
-2. Copy the CSS asset: `cp "<skill-base-directory>/assets/ag-example-styles.css" "$PLNKR_DIR/ag-example-styles.css"`
-3. Write remaining files per the product-specific guide (index.html, main.js, package.json, etc.)
-4. Upload:
+2. **Verify API options** — before writing any code, verify every API option against the product's public types package and find a working example that uses the same feature. Training data is unreliable for AG product APIs. Do not guess.
+3. Copy the CSS asset: `cp "<skill-base-directory>/assets/ag-example-styles.css" "$PLNKR_DIR/ag-example-styles.css"`
+4. Write remaining files per the product-specific guide (index.html, main.js, package.json, etc.)
+5. Upload:
    ```bash
    bash "<skill-base-directory>/plnkr.sh" upload "$PLNKR_DIR" --title "Example Title"
    ```
-5. Parse output for `URL=` — the shareable link.
+6. Parse output for `URL=` — the shareable link.
 
 ### Fork/Modify an Existing Plunker
 
@@ -83,12 +84,34 @@ Errors: `ERROR=<message>` on stderr, exit code 1.
 
 `--title`/`--tags` default to values from `.plnkr-meta.json` (written by download).
 
+## Plnkr URL Formats
+
+Use these when sharing links or loading existing content:
+
+| Purpose | URL Pattern |
+|---------|-------------|
+| Editor + preview | `https://plnkr.co/edit/<plunk-id>?preview` |
+| Embed (iframe-friendly) | `https://embed.plnkr.co/<plunk-id>` |
+| Load a GitHub Gist (editor) | `https://plnkr.co/edit/gist:<gist-id>?preview` |
+| Load a GitHub Gist (embed) | `https://embed.plnkr.co/gist/<gist-id>` |
+
+The gist must contain an `index.html` file. Plnkr reads the gist files directly — no upload needed.
+
 ## API Notes
 
 -   No true fork endpoint — "fork" = download + modify + upload as new.
 -   Access tokens are short-lived JWTs; the script manages them internally.
 -   Only the plunk creator can update (using the private token from creation).
 
+## Quick Checklist — Do NOT Rely on Training Data
+
+These rules apply to all products. Training data will lead you astray.
+
+1. **Verify every API option** — check the product's public types package to confirm option names, nesting, and value shapes BEFORE writing code. If unsure, find a working example in the product's docs examples directory. Do NOT guess option names from training data — they are frequently wrong.
+2. **UMD bundle via `<script>`** — NOT ESM `import`. Use the CDN URLs from the product-specific guide.
+3. **No description elements** — no `<h1>`, `<p>`, or explanatory text in the HTML body.
+4. **Follow the product guide** — each guide contains the exact HTML structure, CDN URLs, UMD globals, package.json format, and product-specific patterns. Do not improvise.
+
 ## Product-Specific Guide
 
-Use the **Product Detection** section above to identify which guide to read. Each guide contains the exact HTML structure, CDN URLs, package.json format, and product-specific patterns.
+Use the **Product Detection** section above to identify which guide to read. Product guides contain critical details (UMD globals, module registration rules, inline handler patterns) that differ between products.

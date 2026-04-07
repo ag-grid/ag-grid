@@ -627,7 +627,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 this.doFilter(changedPath);
             case 'pivot':
                 // Pivot may signal that columns changed, requiring full traversal for subsequent stages.
-                if (this.doPivot(changedPath)) {
+                if (this.doPivot(changedPath, params.changedProps)) {
                     changedPath = undefined;
                     params.changedPath = undefined;
                 }
@@ -1003,8 +1003,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     /** Returns `true` if pivot columns changed and changedPath should be deactivated. */
-    private doPivot(changedPath: ChangedPath | undefined): boolean {
-        return this.beans.pivotStage?.execute(changedPath) ?? false;
+    private doPivot(changedPath: ChangedPath | undefined, changedProps: Set<keyof GridOptions> | undefined): boolean {
+        return this.beans.pivotStage?.execute(changedPath, changedProps) ?? false;
     }
 
     public getRowNode(id: string): RowNode | undefined {

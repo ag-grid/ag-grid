@@ -183,6 +183,67 @@ Companion PRs (symlinked repos):
   <repo-name>: <URL>
 ```
 
+### STEP 9: Monitor CI and PR Feedback (Only If `--monitor`)
+
+If `${ARGUMENTS}` does **not** include `--monitor`, **STOP** after STEP 8.
+
+Otherwise, monitor both CI status and PR review feedback:
+
+#### 9a. Poll CI
+
+Poll the PR's CI status until all checks complete or a timeout is reached:
+
+1.  **Poll loop** — check every 60 seconds, up to 30 minutes:
+    ```bash
+    gh pr checks <PR_NUMBER> --json name,state,conclusion,link
+    ```
+    -   If all checks have `state == "COMPLETED"` with `conclusion == "SUCCESS"`, report success and proceed to **9b**.
+    -   If any check has `state == "COMPLETED"` with `conclusion != "SUCCESS"`, break out of the loop and proceed to failure triage.
+    -   Otherwise, continue polling.
+
+2.  **Failure triage** — for each failed check:
+    -   Extract the run ID from the check's `link` field (the numeric ID in the URL path, e.g. `https://github.com/.../actions/runs/12345/...` → `12345`).
+    -   Fetch the log:
+        ```bash
+        gh run view <RUN_ID> --log-failed
+        ```
+    -   Classify the failure:
+        -   **Lint / formatting**: run `yarn nx format` and/or `yarn nx lint <package>`, commit the fix, and push.
+        -   **Merge conflict**: attempt `git merge <BASE_BRANCH>`, resolve if straightforward (auto-resolvable), commit, and push. If conflicts require manual intervention, report them to the user and **STOP**.
+        -   **Type errors**: attempt to fix if the error is clearly in files changed by this PR. If unclear, report to the user and **STOP**.
+        -   **Other / unclear**: report the failure details to the user and **STOP**. Do not attempt blind fixes.
+
+3.  **After fixing** — push the fix commit and restart the poll loop (9a.1). Only attempt **one round** of automatic fixes. If CI fails again after a fix attempt, report the new failure to the user and **STOP**.
+
+#### 9b. Review PR Feedback
+
+After CI completes (pass or fail), check for review comments:
+
+1.  **Fetch reviews and comments:**
+    ```bash
+    gh api repos/<OWNER>/<REPO>/pulls/<PR_NUMBER>/reviews --jq '.[] | select(.state != "APPROVED" and .state != "DISMISSED")'
+    gh api repos/<OWNER>/<REPO>/pulls/<PR_NUMBER>/comments
+    ```
+
+2.  **For each actionable comment** (ignore bot comments that are purely informational, e.g. status badges):
+    -   Read the referenced file and line range.
+    -   Assess whether the feedback is a straightforward fix (typo, naming, style, missing validation) or requires design judgement.
+
+3.  **Propose fixes** — for each fixable comment, present the user with:
+    ```
+    PR feedback from <reviewer>:
+      "<comment summary>"
+      File: <path>:<line>
+
+    Proposed fix:
+      <description of the change>
+
+    Apply? [y/n]
+    ```
+    Wait for the user's explicit approval before applying each fix. Do **not** auto-commit feedback fixes — the user must choose which to accept.
+
+4.  **After applying approved fixes** — commit with a message referencing the review (e.g. `Address PR feedback: <summary>`), push, and report what was applied.
+
 ## Arguments
 
 `${ARGUMENTS}` can optionally include:
@@ -190,6 +251,7 @@ Companion PRs (symlinked repos):
 -   A JIRA ticket number (e.g., `AG-12345`) - used for branch naming, commit prefix, and PR title.
 -   A description of the change - used for branch slug, commit message, and PR title.
 -   `--base <branch>` - override the base branch detection.
+-   `--monitor` - after creating the PR, poll CI and automatically fix straightforward failures (lint, formatting, merge conflicts), then review PR feedback and propose fixes for the user to accept or reject.
 
 **Examples:**
 
@@ -197,3 +259,5 @@ Companion PRs (symlinked repos):
 -   `/pr-create AG-12345 Add tooltip delay support` - JIRA-linked PR.
 -   `/pr-create Fix axis label overlap for long text` - no-JIRA PR.
 -   `/pr-create --base b13.0.0` - target a specific release branch.
+-   `/pr-create --monitor` - create PR and monitor CI, fixing simple failures.
+-   `/pr-create AG-12345 Fix tooltip --base b13.2.0 --monitor` - combined options.

@@ -9,6 +9,10 @@
             "command": "yarn",
             "args": ["run", "--silent", "mcp-server-sequential-thinking"],
             "env": {}
+        },
+        "excalidraw": {
+            "type": "http",
+            "url": "https://mcp.excalidraw.com"
         }
     }
 }
