@@ -83,7 +83,7 @@ describe('NotesService', () => {
 
     it('allows suppressed notes to remain viewable', () => {
         currentNote = { text: 'Suppressed note' };
-        colDef.suppressCellNote = true;
+        colDef.suppressCellNoteEditing = true;
 
         expect(service.getCellNoteAccess({ rowNode, column: 'athlete' })).toEqual(
             expect.objectContaining({
@@ -96,8 +96,8 @@ describe('NotesService', () => {
         expect(service.getCellNote({ rowNode, column: 'athlete' })).toEqual(currentNote);
     });
 
-    it('evaluates suppressCellNote callbacks when resolving access', () => {
-        colDef.suppressCellNote = ({ data, column: callbackColumn, colDef: callbackColDef, node }) =>
+    it('evaluates suppressCellNoteEditing callbacks when resolving access', () => {
+        colDef.suppressCellNoteEditing = ({ data, column: callbackColumn, colDef: callbackColDef, node }) =>
             data === rowNode.data && callbackColumn === column && callbackColDef === colDef && node === rowNode;
 
         expect(service.getCellNoteAccess({ rowNode, column: 'athlete' })).toEqual(
@@ -120,14 +120,14 @@ describe('NotesService', () => {
 
     it('opens suppressed existing notes through the cell controller', () => {
         currentNote = { text: 'Suppressed note' };
-        colDef.suppressCellNote = true;
+        colDef.suppressCellNoteEditing = true;
 
         expect(service.showCellNote({ rowNode, column: 'athlete' }, true)).toBe(true);
         expect(cellCtrl.showCellNote).toHaveBeenCalledWith(true);
     });
 
     it('does not write notes for suppressed cells via UI', () => {
-        colDef.suppressCellNote = true;
+        colDef.suppressCellNoteEditing = true;
 
         service.setCellNote({
             rowNode,
@@ -141,7 +141,7 @@ describe('NotesService', () => {
     });
 
     it('allows API writes to suppressed cells', () => {
-        colDef.suppressCellNote = true;
+        colDef.suppressCellNoteEditing = true;
 
         service.setCellNote({
             rowNode,

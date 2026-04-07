@@ -495,7 +495,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     rowGroupingHierarchy: undefined,
     groupHierarchy: undefined,
     allowFormula: undefined,
-    suppressCellNote: undefined,
+    suppressCellNoteEditing: undefined,
 };
 const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 

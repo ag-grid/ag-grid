@@ -61,8 +61,8 @@ const columnDefs: ColDef<OlympicWinner>[] = [
     { field: 'athlete' },
     { field: 'age', maxWidth: 110 },
     { field: 'country' },
-    { field: 'year', maxWidth: 110, suppressCellNote: true },
-    { field: 'sport', suppressCellNote: true },
+    { field: 'year', maxWidth: 110, suppressCellNoteEditing: true },
+    { field: 'sport', suppressCellNoteEditing: true },
 ];
 
 const rowData: OlympicWinner[] = [

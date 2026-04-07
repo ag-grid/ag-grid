@@ -385,7 +385,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default false
      * @agModule `NotesModule`
      */
-    suppressCellNote?: boolean | SuppressCellNoteCallback<TData, TValue>;
+    suppressCellNoteEditing?: boolean | SuppressCellNoteCallback<TData, TValue>;
     /**
      * Allows the user to suppress certain keyboard events in the grid cell.
      * @default false
