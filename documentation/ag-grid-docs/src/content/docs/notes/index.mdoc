@@ -85,7 +85,7 @@ noteStore.set(noteKey('3', 'country'), {
 });
 ```
 
-## Suppressing Note Editing
+## Suppressing Notes
 
 Use `colDef.suppressCellNoteEditing` to suppress built-in note actions for a column or specific row. Suppressed cells still allow existing notes to be viewed on hover and through `getCellNote()`, but add/edit/remove actions and note creation shortcuts are blocked.
 
@@ -100,6 +100,22 @@ const gridOptions = {
     ],
 };
 ```
+
+## Full Width Rows
+
+Notes also work with full width rows.
+
+{% gridExampleRunner title="Notes with Full Width Rows" name="notes-full-width" exampleHeight=460 /%}
+
+Even though a full width row is not rendered as individual cells, the datasource still receives a `column`. For standard full width rows, AG Grid resolves this to the first displayed column in the grid. In the example below, that column is `athlete`, so the seeded full width note is stored under the `athlete` colId.
+
+```ts
+noteStore.set(noteKey('2', 'athlete'), {
+    text: 'This note belongs to a full width row.',
+});
+```
+
+If you are using embedded full width rows with pinned sections, the resolved note column comes from the row container being interacted with.
 
 ## Feature Interaction
 
