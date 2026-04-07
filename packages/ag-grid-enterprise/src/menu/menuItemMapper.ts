@@ -531,9 +531,7 @@ function createCellNoteMenuItems({
     node,
     localeTextFunc,
 }: {
-    notesSvc:
-        | Pick<INotesService, 'hasDataSource' | 'getCellNoteAccess' | 'showCellNote' | 'setCellNote'>
-        | undefined;
+    notesSvc: Pick<INotesService, 'hasDataSource' | 'getCellNoteAccess' | 'showCellNote' | 'setCellNote'> | undefined;
     column: AgColumn | null;
     node: RowNode | null;
     localeTextFunc: LocaleTextFunc;

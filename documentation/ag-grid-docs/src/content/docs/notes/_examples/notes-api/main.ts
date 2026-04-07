@@ -198,7 +198,9 @@ function removeSelectedNote() {
     loadSelectedNote();
 
     if (previousNote?.readOnly && areNotesEqual(previousNote, updatedNote)) {
-        setStatus(`The existing note for ${describeCell(cell)} is read-only, so removing it via gridApi.setCellNote() had no effect.`);
+        setStatus(
+            `The existing note for ${describeCell(cell)} is read-only, so removing it via gridApi.setCellNote() had no effect.`
+        );
         return;
     }
 
