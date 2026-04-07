@@ -112,7 +112,9 @@ describe('React Suspense', () => {
             lang: 'en' | 'fr';
             onReady: (api: GridApi) => void;
         }) => {
-            if (suspendPromise) throw suspendPromise;
+            if (suspendPromise) {
+                throw suspendPromise;
+            }
             return <GridComponent lang={lang} onReady={onReady} />;
         };
 
@@ -219,7 +221,9 @@ describe('React Suspense', () => {
             suspendPromise: Promise<void> | null;
             onReady: (api: GridApi) => void;
         }) => {
-            if (suspendPromise) throw suspendPromise;
+            if (suspendPromise) {
+                throw suspendPromise;
+            }
             return (
                 <AgGridReact
                     rowData={rowData}
@@ -316,7 +320,9 @@ describe('React Suspense', () => {
             rowData: { id: number; name: string }[];
             onReady: (api: GridApi) => void;
         }) => {
-            if (suspendPromise) throw suspendPromise;
+            if (suspendPromise) {
+                throw suspendPromise;
+            }
             return (
                 <AgGridReact
                     rowData={rowData}
@@ -412,7 +418,9 @@ describe('React Suspense', () => {
             label: string;
             onReady: (api: GridApi) => void;
         }) => {
-            if (suspendPromise) throw suspendPromise;
+            if (suspendPromise) {
+                throw suspendPromise;
+            }
             return (
                 <AgGridReact
                     rowData={[{ value: label }]}
@@ -526,7 +534,9 @@ describe('React Suspense', () => {
             lang: 'en' | 'fr';
             onReady: (api: GridApi) => void;
         }) => {
-            if (suspendPromise) throw suspendPromise;
+            if (suspendPromise) {
+                throw suspendPromise;
+            }
             const columnDefs = useMemo<ColDef[]>(
                 () => [
                     { field: 'name', pinned: 'left', width: 200 },
