@@ -818,7 +818,7 @@ export const AG_GRID_LOCALE_FR = {
     deleteCellNote: 'Supprimer la note',
     cellNotePlaceholder: 'Ajouter une note...',
     cellNoteHint:
-        'Survolez pour previsualiser. Cliquez a l interieur pour modifier. Faites glisser le coin pour redimensionner. Appuyez sur Echap pour fermer.',
+        "Survolez pour prévisualiser. Cliquez à l'intérieur pour modifier. Faites glisser le coin pour redimensionner. Appuyez sur Échap pour fermer.",
     cellNoteReadOnlyHint:
-        'Note en lecture seule. Selectionnez le texte pour le copier. Faites glisser le coin pour redimensionner. Appuyez sur Echap pour fermer.',
+        'Note en lecture seule. Sélectionnez le texte pour le copier. Faites glisser le coin pour redimensionner. Appuyez sur Échap pour fermer.',
 };
