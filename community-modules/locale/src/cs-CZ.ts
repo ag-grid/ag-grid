@@ -800,4 +800,16 @@ export const AG_GRID_LOCALE_CZ = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM RRRR',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Cell Notes
+    cellNote: 'Poznámka buňky',
+    addCellNote: 'Přidat poznámku buňky',
+    viewCellNote: 'Zobrazit poznámku',
+    editCellNote: 'Upravit poznámku',
+    deleteCellNote: 'Odstranit poznámku',
+    cellNotePlaceholder: 'Přidat poznámku...',
+    cellNoteHint:
+        'Najeďte pro náhled. Klikněte dovnitř pro úpravu. Přetažením rohu změňte velikost. Stiskněte Esc pro zavření.',
+    cellNoteReadOnlyHint:
+        'Poznámka jen pro čtení. Označte text pro kopírování. Přetažením rohu změňte velikost. Stiskněte Esc pro zavření.',
 };

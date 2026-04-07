@@ -806,4 +806,16 @@ export const AG_GRID_LOCALE_HU = {
     timeFormatSpacesDDMMMMYYYY: 'NN MMMM ÉÉÉÉ',
     timeFormatHHMMSS: 'ÓÓ:PP:MP',
     timeFormatHHMMSSAmPm: 'ÓÓ:PP:MP DE/DU',
+
+    // Cell Notes
+    cellNote: 'Cella megjegyzés',
+    addCellNote: 'Cella megjegyzés hozzáadása',
+    viewCellNote: 'Megjegyzés megtekintése',
+    editCellNote: 'Megjegyzés szerkesztése',
+    deleteCellNote: 'Megjegyzés eltávolítása',
+    cellNotePlaceholder: 'Megjegyzés hozzáadása...',
+    cellNoteHint:
+        'Vigye fölé az egeret az előnézethez. Kattintson bele a szerkesztéshez. Húzza a sarkát az átméretezéshez. Nyomja meg az Esc billentyűt a bezáráshoz.',
+    cellNoteReadOnlyHint:
+        'Csak olvasható megjegyzés. Jelölje ki a szöveget a másoláshoz. Húzza a sarkát az átméretezéshez. Nyomja meg az Esc billentyűt a bezáráshoz.',
 };

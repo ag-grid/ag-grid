@@ -802,4 +802,16 @@ export const AG_GRID_LOCALE_IR = {
     timeFormatSpacesDDMMMMYYYY: 'روز ماه سال',
     timeFormatHHMMSS: 'ساعت:دقیقه:ثانیه',
     timeFormatHHMMSSAmPm: 'ساعت:دقیقه:ثانیه ق.ظ/ب.ظ',
+
+    // Cell Notes
+    cellNote: 'یادداشت سلول',
+    addCellNote: 'افزودن یادداشت سلول',
+    viewCellNote: 'نمایش یادداشت',
+    editCellNote: 'ویرایش یادداشت',
+    deleteCellNote: 'حذف یادداشت',
+    cellNotePlaceholder: 'یک یادداشت اضافه کنید...',
+    cellNoteHint:
+        'برای پیش‌نمایش نشانگر را روی آن ببرید. برای ویرایش داخل آن کلیک کنید. گوشه را بکشید تا اندازه تغییر کند. برای بستن Esc را فشار دهید.',
+    cellNoteReadOnlyHint:
+        'یادداشت فقط خواندنی. برای کپی کردن متن را انتخاب کنید. گوشه را بکشید تا اندازه تغییر کند. برای بستن Esc را فشار دهید.',
 };

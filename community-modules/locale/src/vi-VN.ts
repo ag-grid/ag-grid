@@ -800,4 +800,16 @@ export const AG_GRID_LOCALE_VN = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS SA/CH',
+
+    // Cell Notes
+    cellNote: 'Ghi chú ô',
+    addCellNote: 'Thêm ghi chú ô',
+    viewCellNote: 'Xem ghi chú',
+    editCellNote: 'Chỉnh sửa ghi chú',
+    deleteCellNote: 'Xóa ghi chú',
+    cellNotePlaceholder: 'Thêm ghi chú...',
+    cellNoteHint:
+        'Di chuột để xem trước. Nhấp vào bên trong để chỉnh sửa. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
+    cellNoteReadOnlyHint:
+        'Ghi chú chỉ đọc. Chọn văn bản để sao chép. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
 };

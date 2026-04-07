@@ -799,4 +799,15 @@ export const AG_GRID_LOCALE_IL = {
     timeFormatSpacesDDMMMMYYYY: 'יי חחחח שששש',
     timeFormatHHMMSS: 'שש:דד:שש',
     timeFormatHHMMSSAmPm: 'שש:דד:שש לפנה״צ/אחה״צ',
+
+    // Cell Notes
+    cellNote: 'הערת תא',
+    addCellNote: 'הוסף הערת תא',
+    viewCellNote: 'הצג הערה',
+    editCellNote: 'ערוך הערה',
+    deleteCellNote: 'הסר הערה',
+    cellNotePlaceholder: 'הוסף הערה...',
+    cellNoteHint:
+        'רחף כדי להציג תצוגה מקדימה. לחץ פנימה כדי לערוך. גרור את הפינה כדי לשנות את הגודל. לחץ Esc כדי לסגור.',
+    cellNoteReadOnlyHint: 'הערה לקריאה בלבד. בחר טקסט כדי להעתיק. גרור את הפינה כדי לשנות את הגודל. לחץ Esc כדי לסגור.',
 };

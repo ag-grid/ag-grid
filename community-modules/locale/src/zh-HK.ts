@@ -799,4 +799,14 @@ export const AG_GRID_LOCALE_HK = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
+
+    // Cell Notes
+    cellNote: '儲存格備註',
+    addCellNote: '新增儲存格備註',
+    viewCellNote: '檢視備註',
+    editCellNote: '編輯備註',
+    deleteCellNote: '移除備註',
+    cellNotePlaceholder: '新增備註...',
+    cellNoteHint: '滑過即可預覽。按一下內部即可編輯。拖曳角落即可調整大小。按 Esc 關閉。',
+    cellNoteReadOnlyHint: '唯讀備註。選取文字即可複製。拖曳角落即可調整大小。按 Esc 關閉。',
 };

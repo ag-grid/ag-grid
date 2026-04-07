@@ -802,4 +802,16 @@ export const AG_GRID_LOCALE_UA = {
     timeFormatSpacesDDMMMMYYYY: 'ДД ММММ РРРР',
     timeFormatHHMMSS: 'ГГ:ХХ:СС',
     timeFormatHHMMSSAmPm: 'ГГ:ХХ:СС AM/PM',
+
+    // Cell Notes
+    cellNote: 'Нотатка комірки',
+    addCellNote: 'Додати нотатку комірки',
+    viewCellNote: 'Переглянути нотатку',
+    editCellNote: 'Редагувати нотатку',
+    deleteCellNote: 'Видалити нотатку',
+    cellNotePlaceholder: 'Додати нотатку...',
+    cellNoteHint:
+        'Наведіть курсор для попереднього перегляду. Клацніть усередині, щоб редагувати. Перетягніть кут, щоб змінити розмір. Натисніть Esc, щоб закрити.',
+    cellNoteReadOnlyHint:
+        'Нотатка лише для читання. Виділіть текст, щоб скопіювати. Перетягніть кут, щоб змінити розмір. Натисніть Esc, щоб закрити.',
 };
