@@ -1,0 +1,24 @@
+<div class="example-wrapper">
+    <div class="toolbar">
+        <div class="toolbar-row">
+            <span id="selection-status">Click a cell to select it, then edit its note with the API controls.</span>
+        </div>
+        <div class="toolbar-row">
+            <label class="toolbar-field">
+                <span>Author</span>
+                <input id="note-author" type="text" value="API Demo" />
+            </label>
+            <label class="toolbar-field">
+                <span>Read-only</span>
+                <input id="note-readonly" type="checkbox" />
+            </label>
+            <button onclick="loadSelectedNote()">Load Note</button>
+            <button onclick="saveSelectedNote()">Save via API</button>
+            <button onclick="removeSelectedNote()">Remove via API</button>
+            <button onclick="mutateStoreDirectly()">Mutate Store Directly</button>
+            <button onclick="refreshSelectedNotes()">Refresh Notes</button>
+        </div>
+        <textarea id="note-text" rows="3" placeholder="Select a cell, then edit the note text here."></textarea>
+    </div>
+    <div id="myGrid"></div>
+</div>

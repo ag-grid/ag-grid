@@ -41,6 +41,7 @@ import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { IRowStyleFeature } from '../../interfaces/iRowStyleFeature';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import type { ICellNotesFeature } from '../../interfaces/notes';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import type { Component } from '../../widgets/component';
@@ -80,7 +81,8 @@ export interface IRowComp {
     refreshEmbeddedFullWidth?(getUpdatedParams: (pinned: ColumnPinnedType) => ICellRendererParams): boolean;
 }
 
-interface RowGui {
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface RowGui {
     rowComp: IRowComp;
     element: HTMLElement;
     containerType: RowContainerType;
@@ -121,6 +123,7 @@ type RowCtrlEvent = RenderedRowEvent;
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public readonly instanceId: RowCtrlInstanceId;
 
+    private readonly fullWidthNotesFeature: ICellNotesFeature | undefined;
     private rowType: RowType;
 
     private rowGui: RowGui | undefined;
@@ -181,6 +184,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowModeFeature = this.createRowModeFeature();
 
         this.rowEditStyleFeature = beans.editSvc?.createRowStyleFeature(this);
+        this.fullWidthNotesFeature = this.isFullWidth()
+            ? beans.notesSvc?.createFullWidthRowNotesFeature(this)
+            : undefined;
 
         this.addListeners();
     }
@@ -219,6 +225,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowGui = rowGui;
 
         this.initialiseRowComp();
+        this.fullWidthNotesFeature?.refresh();
 
         const rowNode = this.rowNode;
         const isSsrmLoadingRow = this.rowType === 'FullWidthLoading' || rowNode.stub;
@@ -536,6 +543,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.rowGui?.element;
     }
 
+    public onFullWidthRowRefreshed(): void {
+        this.fullWidthNotesFeature?.refresh();
+    }
+
     public redrawThisRow(): void {
         this.beans.rowRenderer.redrawRow(this.rowNode);
     }
@@ -558,6 +569,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public shouldCreateCellSections(): boolean {
         return this.rowModeFeature.shouldCreateCellSections();
+    }
+
+    public showFullWidthCellNote(column: AgColumn, focusEditor = false): void {
+        this.fullWidthNotesFeature?.show({ column, focusEditor });
     }
 
     private addListeners(): void {
@@ -611,7 +626,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 }
                 this.refreshFirstAndLastRowStyles();
             },
-            columnMoved: this.rowModeFeature.onColumnMoved.bind(this.rowModeFeature),
+            columnMoved: () => {
+                this.rowModeFeature.onColumnMoved();
+                this.fullWidthNotesFeature?.refresh();
+            },
         });
 
         if (rowSpanSvc) {
@@ -626,6 +644,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.addDestroyFunc(() => {
             this.rowDragComps = this.destroyBeans(this.rowDragComps, context);
             this.rowEditStyleFeature = this.destroyBean(this.rowEditStyleFeature, context);
+            this.fullWidthNotesFeature?.destroy();
         });
 
         this.addManagedPropertyListeners(
@@ -709,6 +728,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private onDisplayedColumnsChanged(): void {
         this.rowModeFeature.onDisplayedColumnsChanged();
+        this.fullWidthNotesFeature?.refresh();
     }
 
     private onVirtualColumnsChanged(): void {
@@ -813,6 +833,68 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.eventSvc.dispatchEvent(rowEvent);
     }
 
+    public findFullWidthInfoForEvent(event?: Event): { column: AgColumn } | undefined {
+        if (!event) {
+            return;
+        }
+
+        const column = this.getColumnForFullWidthElement(event.target);
+
+        if (!column) {
+            return;
+        }
+
+        return { column };
+    }
+
+    public getFullWidthSectionElements(): HTMLElement[] {
+        const rowGui = this.rowGui;
+        const rowComp = rowGui?.rowComp;
+        const rowElement = rowGui?.element;
+
+        if (!rowComp || !rowElement) {
+            return [];
+        }
+
+        const elements = [
+            rowComp.getPinnedLeftRowElement(),
+            rowComp.getScrollingRowElement() ?? rowElement,
+            rowComp.getPinnedRightRowElement(),
+        ].filter((element): element is HTMLElement => !!element);
+
+        return [...new Set(elements)];
+    }
+
+    public getColumnForFullWidthElement(element?: EventTarget | null): AgColumn | undefined {
+        if (!this.isFullWidth()) {
+            return undefined;
+        }
+
+        const node = element instanceof Node ? element : undefined;
+        const rowComp = this.rowGui?.rowComp;
+
+        if (node && rowComp?.getPinnedLeftRowElement()?.contains(node)) {
+            return this.getFirstColumnForFullWidthSection('left');
+        }
+
+        if (node && rowComp?.getPinnedRightRowElement()?.contains(node)) {
+            return this.getFirstColumnForFullWidthSection('right');
+        }
+
+        return this.getFirstColumnForFullWidthSection(null);
+    }
+
+    private getFirstColumnForFullWidthSection(pinned: ColumnPinnedType): AgColumn | undefined {
+        const { visibleCols } = this.beans;
+        switch (pinned) {
+            case 'left':
+                return visibleCols.leftCols[0] ?? visibleCols.centerCols[0] ?? visibleCols.rightCols[0];
+            case 'right':
+                return visibleCols.rightCols[0] ?? visibleCols.centerCols[0] ?? visibleCols.leftCols[0];
+            default:
+                return visibleCols.centerCols[0] ?? visibleCols.leftCols[0] ?? visibleCols.rightCols[0];
+        }
+    }
     private onRowMouseDown(mouseEvent: MouseEvent) {
         this.lastMouseDownOnDragger = _isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
         this.rowModeFeature.onRowMouseDown?.(mouseEvent);

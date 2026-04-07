@@ -9,6 +9,8 @@ export {
 export { isColumn } from './entities/agColumn';
 export { isColumnGroup } from './entities/agColumnGroup';
 export { isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
+
+export { ROW_ID_GRAND_TOTAL } from './entities/rowNode';
 export type {
     AutoSizeStrategy,
     IColumnLimit,
@@ -682,6 +684,8 @@ export type {
     SpanRowsParams,
     SuppressHeaderKeyboardEventFunc,
     SuppressHeaderKeyboardEventParams,
+    SuppressCellNoteEditingCallback,
+    SuppressCellNoteEditingCallbackParams,
     SuppressKeyboardEventFunc,
     SuppressKeyboardEventParams,
     SuppressNavigableCallback,
@@ -931,6 +935,16 @@ export type {
     SetFormulaParams,
     ValueParam,
 } from './interfaces/formulas';
+export type {
+    CellNote,
+    GetNoteParams,
+    NotesDataSource,
+    NotesDataSourceGetNoteParams,
+    NotesDataSourceParams,
+    NotesDataSourceSetNoteParams,
+    RefreshCellNotesParams,
+    SetNoteParams,
+} from './interfaces/notes';
 
 // Public AG Grid Modules and ModuleRegistry
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';

@@ -12,8 +12,16 @@ import type {
     SortService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    ROW_ID_GRAND_TOTAL,
+    _getRowHeightAsNumber,
+    _getRowHeightForNode,
+    _getRowIdCallback,
+    _warn,
+} from 'ag-grid-community';
 
+import { _createRowNodeFooter } from '../../../aggregation/footerUtils';
 import { setRowNodeGroupValue } from '../../../rowGrouping/rowGroupingUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { NodeManager } from '../../nodeManager';
@@ -87,7 +95,7 @@ export class LazyCache extends BeanStub {
     /**
      * Sibling services - 1-1 relationships.
      */
-    private readonly store: LazyStore;
+    public readonly store: LazyStore;
     private readonly storeParams: ServerSideGroupLevelParams;
 
     /**
@@ -837,6 +845,11 @@ export class LazyCache extends BeanStub {
         const info = response.groupLevelInfo;
         this.store.setStoreInfo(info);
 
+        // For root store, detect grand total rows by ID. In-array detection requires getRowId;
+        // the grandTotalRowData field works without it.
+        const isRootStore = this.store.getParentNode().level === -1;
+        const grandTotalId = isRootStore && this.getRowIdFunc != null ? ROW_ID_GRAND_TOTAL : null;
+
         if (this.getRowIdFunc != null) {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
@@ -852,14 +865,25 @@ export class LazyCache extends BeanStub {
         }
 
         const wasRefreshing = this.nodesToRefresh.size > 0;
-        response.rowData.forEach((data, responseRowIndex) => {
-            const rowIndex = firstRowIndex + responseRowIndex;
+        let skippedRowCount = 0;
+        let grandTotalData: any = undefined;
+        for (let responseRowIndex = 0; responseRowIndex < response.rowData.length; responseRowIndex++) {
+            const data = response.rowData[responseRowIndex];
+
+            // Grand total rows are not regular store rows — collect and process after the loop
+            if (grandTotalId != null && this.getRowId(data) === grandTotalId) {
+                grandTotalData = data;
+                skippedRowCount++;
+                continue;
+            }
+
+            const rowIndex = firstRowIndex + responseRowIndex - skippedRowCount;
             const nodeFromCache = this.nodeMap.getBy('index', rowIndex);
 
             // if stub, overwrite
             if (nodeFromCache?.node?.stub) {
                 this.createRowAtIndex(rowIndex, data);
-                return;
+                continue;
             }
 
             // node already exists, and same as node at designated position, update data
@@ -867,23 +891,37 @@ export class LazyCache extends BeanStub {
                 this.blockUtils.updateDataIntoRowNode(nodeFromCache.node, data);
                 this.nodesToRefresh.delete(nodeFromCache.node);
                 nodeFromCache.node.__needsRefreshWhenVisible = false;
-                return;
+                continue;
             }
             // create row will handle deleting the overwritten row
             this.createRowAtIndex(rowIndex, data);
-        });
+        }
+
+        // grandTotalRowData field takes priority over in-array detection.
+        // null means explicit removal (clears cached data, setDisplayIndexes will destroy the node).
+        if (isRootStore) {
+            if (response.grandTotalRowData !== undefined) {
+                grandTotalData = response.grandTotalRowData;
+            }
+            if (grandTotalData !== undefined) {
+                this.store.grandTotalRowData = grandTotalData;
+            }
+        }
+
+        // Adjust for grand total rows extracted from the response
+        const dataRowCount = response.rowData.length - skippedRowCount;
 
         if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count
             this.numberOfRows = response.rowCount;
             this.isLastRowKnown = true;
-        } else if (numberOfRowsExpected > response.rowData.length) {
+        } else if (numberOfRowsExpected > dataRowCount) {
             // infer the last row as the response came back short
-            this.numberOfRows = firstRowIndex + response.rowData.length;
+            this.numberOfRows = firstRowIndex + dataRowCount;
             this.isLastRowKnown = true;
         } else if (!this.isLastRowKnown) {
             // add 1 for loading row, as we don't know the last row
-            const lastInferredRow = firstRowIndex + response.rowData.length + 1;
+            const lastInferredRow = firstRowIndex + dataRowCount + 1;
             if (lastInferredRow > this.numberOfRows) {
                 this.numberOfRows = lastInferredRow;
             }
@@ -1036,6 +1074,29 @@ export class LazyCache extends BeanStub {
         });
     }
 
+    /**
+     * Creates or updates the grand total row node from server response data.
+     * Uses _createRowNodeFooter with the same sibling pattern as CSRM.
+     */
+    public createOrUpdateGrandTotalNode(data: any): void {
+        const existingNode = this.store.getGrandTotalNode();
+        if (existingNode) {
+            this.blockUtils.updateDataIntoRowNode(existingNode, data);
+            return;
+        }
+
+        const parentNode = this.store.getParentNode();
+        const newNode = _createRowNodeFooter(parentNode, this.beans, ROW_ID_GRAND_TOTAL);
+        newNode.group = false;
+        newNode.stub = false;
+        newNode.data = data;
+
+        const rowHeight = _getRowHeightForNode(this.beans, newNode);
+        newNode.setRowHeight(rowHeight.height, rowHeight.estimated);
+
+        this.nodeManager.addRowNode(newNode);
+    }
+
     public getOrderedNodeMap() {
         const obj: { [key: number]: LazyStoreNode } = {};
         this.nodeMap.forEach((node) => (obj[node.index] = node));
@@ -1075,14 +1136,24 @@ export class LazyCache extends BeanStub {
      */
     public updateRowNodes(updates: any[]): RowNode[] {
         const updatedNodes: RowNode[] = [];
-        updates.forEach((data) => {
+        const { store, blockUtils, nodeMap } = this;
+        for (const data of updates) {
             const id = this.getRowId(data);
-            const lazyNode = this.nodeMap.getBy('id', id);
+            if (id === ROW_ID_GRAND_TOTAL) {
+                store.grandTotalRowData = data;
+                const grandTotalNode = store.getGrandTotalNode();
+                if (grandTotalNode) {
+                    blockUtils.updateDataIntoRowNode(grandTotalNode, data);
+                    updatedNodes.push(grandTotalNode);
+                }
+                continue;
+            }
+            const lazyNode = nodeMap.getBy('id', id);
             if (lazyNode) {
-                this.blockUtils.updateDataIntoRowNode(lazyNode.node, data);
+                blockUtils.updateDataIntoRowNode(lazyNode.node, data);
                 updatedNodes.push(lazyNode.node);
             }
-        });
+        }
         return updatedNodes;
     }
 
@@ -1102,6 +1173,12 @@ export class LazyCache extends BeanStub {
 
         inserts.forEach((data) => {
             const dataId = this.getRowId(data)!;
+            // Grand total is not a regular store row — store the data and let
+            // setDisplayIndexes create the footer node on next render.
+            if (dataId === ROW_ID_GRAND_TOTAL) {
+                this.store.grandTotalRowData = data;
+                return;
+            }
             if (dataId && this.isNodeInCache(dataId)) {
                 return;
             }
@@ -1141,10 +1218,15 @@ export class LazyCache extends BeanStub {
         const removedNodes: RowNode[] = [];
         const nodesToVerify: RowNode[] = [];
 
+        // Grand total removal — clear data, setDisplayIndexes will destroy the node.
+        // The grand total is not in the cache node map so the loop below won't find it.
+        const idsToRemoveSet = new Set(idsToRemove);
+        if (idsToRemoveSet.delete(ROW_ID_GRAND_TOTAL)) {
+            this.store.grandTotalRowData = undefined;
+        }
+
         // track how many nodes have been deleted, as when we pass other nodes we need to shift them up
         let deletedNodeCount = 0;
-
-        const remainingIdsToRemove = [...idsToRemove];
 
         const allNodes = this.getOrderedNodeMap();
         let contiguousIndex = -1;
@@ -1152,11 +1234,8 @@ export class LazyCache extends BeanStub {
             contiguousIndex += 1;
             const node = allNodes[stringIndex as any];
 
-            // finding the index allows the use of splice which should be slightly faster than both a check and filter
-            const matchIndex = remainingIdsToRemove.findIndex((idToRemove) => idToRemove === node.id);
-            if (matchIndex !== -1) {
-                // found node, remove it from nodes to remove
-                remainingIdsToRemove.splice(matchIndex, 1);
+            if (idsToRemoveSet.has(node.id)) {
+                idsToRemoveSet.delete(node.id);
 
                 this.destroyRowAtIndex(Number(stringIndex));
                 removedNodes.push(node.node);
@@ -1201,7 +1280,7 @@ export class LazyCache extends BeanStub {
             this.numberOfRows -= deletedNodeCount;
         }
 
-        if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
+        if (idsToRemoveSet.size > 0 && nodesToVerify.length > 0) {
             nodesToVerify.forEach((node) => (node.__needsRefreshWhenVisible = true));
             this.lazyBlockLoadingSvc.queueLoadCheck();
         }

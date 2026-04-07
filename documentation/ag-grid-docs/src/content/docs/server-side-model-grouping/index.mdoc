@@ -91,13 +91,43 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
 
 ## Group Total Rows
 
-To enable [Group Total Rows](./aggregation-total-rows/), set the `groupTotalRow` property to 'top' or 'bottom'. Note that the grand total row is not supported by the SSRM.
+To enable [Group Total Rows](./aggregation-total-rows/), set the `groupTotalRow` property to 'top' or 'bottom'.
 
 {% gridExampleRunner title="Group Totals" name="group-footer" /%}
 
 Group total rows can also be used with `groupDisplayType='multipleColumns'`, as demonstrated in the example below.
 
 {% gridExampleRunner title="Multiple Group Columns and Footers" name="group-footer-multiple-cols" /%}
+
+## Grand Total Row
+
+To display a grand total row, set the `grandTotalRow` property to `'top'`, `'bottom'`, `'pinnedTop'`, or `'pinnedBottom'`. This works on flat grids without any row grouping.
+
+### Providing Grand Total Data
+
+When `grandTotalRow` is set, the `needsGrandTotal` hint on `getRows` params will be `true` for root-level requests that don't yet have cached grand total data. The server may always provide updated grand total data regardless of this hint.
+
+Set the `grandTotalRowData` field on the `success` callback params to the row data object for the grand total. Set it to `null` to explicitly remove an existing grand total row.
+
+The example below shows a flat grid (no grouping) with the grand total provided via `grandTotalRowData` in the `getRows` response:
+
+{% gridExampleRunner title="Grand Total via getRows" name="grand-total-getrows" /%}
+
+If `getRowId` is configured, an alternative is to include the grand total row directly in the `rowData` array. The grid will automatically extract any row whose `getRowId` returns `ROW_ID_GRAND_TOTAL` (`'rowGroupFooter_ROOT_NODE_ID'`, exported from `ag-grid-community`) and treat it as the grand total. If both `grandTotalRowData` and a matching row in `rowData` are present, `grandTotalRowData` takes priority.
+
+### Updating the Grand Total Row via Transactions
+
+The grand total row can be updated, added, or removed via `applyServerSideTransaction`:
+
+-   **Update**: Include the grand total data in the `update` array. The `getRowId` must return `ROW_ID_GRAND_TOTAL` (`'rowGroupFooter_ROOT_NODE_ID'`) for this row.
+-   **Add**: Include the grand total data in the `add` array. If a grand total already exists, it will be updated.
+-   **Remove**: Include a row with `ROW_ID_GRAND_TOTAL` (`'rowGroupFooter_ROOT_NODE_ID'`) in the `remove` array to remove it.
+
+{% gridExampleRunner title="Grand Total with Transactions" name="grand-total-transactions" /%}
+
+### Grand Total Row API Reference
+
+{% apiDocumentation source="grid-options/properties.json" section="aggregation" names=["grandTotalRow"] /%}
 
 ## Hide Open Parents
 

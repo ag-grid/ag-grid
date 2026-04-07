@@ -90,7 +90,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         const defaultMenuOptions: DefaultMenuItem[] = [];
 
-        const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos } = this.beans;
+        const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos, notesSvc } = this.beans;
 
         if (_exists(node) && clipboardSvc) {
             if (column) {
@@ -100,6 +100,10 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
                 }
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
+        }
+
+        if (_exists(node) && column && notesSvc?.hasDataSource()) {
+            defaultMenuOptions.push('cellNote');
         }
 
         if (gos.get('enableCharts') && chartSvc) {

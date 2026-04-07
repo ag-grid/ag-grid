@@ -65,6 +65,7 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { IStatusPanel } from '../interfaces/iStatusPanel';
 import type { IToolPanel } from '../interfaces/iToolPanel';
 import type { DetailGridInfo } from '../interfaces/masterDetail';
+import type { CellNote, GetNoteParams, RefreshCellNotesParams, SetNoteParams } from '../interfaces/notes';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
@@ -1158,6 +1159,28 @@ export interface _FindApi<TData> {
     findRefresh(): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface _NotesGridApi {
+    /**
+     * Return the current note for a cell.
+     * @agModule `NotesModule`
+     */
+    getCellNote(params: GetNoteParams): CellNote | undefined;
+
+    /**
+     * Set or remove the note for a cell.
+     * Pass `note: undefined` to remove the note.
+     * @agModule `NotesModule`
+     */
+    setCellNote(params: SetNoteParams): void;
+
+    /**
+     * Refresh note presence for the currently rendered cells.
+     * @agModule `NotesModule`
+     */
+    refreshCellNotes(params?: RefreshCellNotesParams): void;
+}
+
 export interface _StateGridApi {
     /**
      * Get the current state of the grid.
@@ -1949,6 +1972,7 @@ export interface GridApi<TData = any>
         _ColumnFilterGridApi,
         _QuickFilterGridApi,
         _FindApi<TData>,
+        _NotesGridApi,
         _PaginationGridApi,
         _RowModelSharedApi,
         _CsrmSsrmSharedGridApi,

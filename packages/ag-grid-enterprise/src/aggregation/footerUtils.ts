@@ -1,14 +1,15 @@
 import type { BeanCollection, RowNode } from 'ag-grid-community';
 import { _createRowNodeSibling } from 'ag-grid-community';
 
-export function _createRowNodeFooter(rowNode: RowNode, beans: BeanCollection): void {
+export function _createRowNodeFooter(rowNode: RowNode, beans: BeanCollection, id?: string): RowNode {
     // only create footer node once, otherwise we have daemons and
     // the animate screws up with the daemons hanging around
-    if (rowNode.sibling) {
-        return;
+    let footerNode = rowNode.sibling;
+    if (footerNode) {
+        return footerNode;
     }
 
-    const footerNode = _createRowNodeSibling(rowNode, beans);
+    footerNode = _createRowNodeSibling(rowNode, beans);
 
     footerNode.footer = true;
     footerNode.setRowTop(null);
@@ -18,13 +19,15 @@ export function _createRowNodeFooter(rowNode: RowNode, beans: BeanCollection): v
     // previous information about its position.
     footerNode.oldRowTop = null;
 
-    footerNode.id = 'rowGroupFooter_' + rowNode.id;
+    footerNode.id = id ?? 'rowGroupFooter_' + rowNode.id;
 
     // get both header and footer to reference each other as siblings. this is never undone,
     // only overwritten. so if a group is expanded, then contracted, it will have a ghost
     // sibling - but that's fine, as we can ignore this if the header is contracted.
     footerNode.sibling = rowNode;
     rowNode.sibling = footerNode;
+
+    return footerNode;
 }
 
 export function _destroyRowNodeFooter(rowNode: RowNode): void {

@@ -101,6 +101,7 @@ import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { ITestIdService } from '../interfaces/iTestIdService';
 import type { IWatermark } from '../interfaces/iWatermark';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
+import type { INotesDataService, INotesService } from '../interfaces/notes';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { IRowNumbersService } from '../interfaces/rowNumbers';
 import type { IChangedPathFactory } from '../main-internal';
@@ -394,6 +395,8 @@ interface CoreBeanCollection
     formulaDataSvc?: IFormulaDataService;
     formula?: IFormulaService;
     formulaInputManager?: IFormulaInputManagerService;
+    notesDataSvc?: INotesDataService;
+    notesSvc?: INotesService;
     columnStateUpdateStrategy: IColumnStateUpdateStrategy;
 }
 

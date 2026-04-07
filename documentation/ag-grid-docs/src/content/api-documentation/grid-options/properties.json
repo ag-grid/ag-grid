@@ -627,6 +627,21 @@
             }
         }
     },
+    "notes": {
+        "meta": {
+            "displayName": "Notes",
+            "page": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "notesDataSource": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        }
+    },
     "charts": {
         "meta": {
             "displayName": "Integrated Charts",

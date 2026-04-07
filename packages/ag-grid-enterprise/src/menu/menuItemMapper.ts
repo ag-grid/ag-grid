@@ -3,7 +3,9 @@ import type {
     ColumnEventType,
     DefaultMenuItem,
     IAggFuncService,
+    ICellNoteAccess,
     IColsService,
+    INotesService,
     LocaleTextFunc,
     MenuItemDef,
     NamedBean,
@@ -101,6 +103,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             chartMenuItemMapper,
             valueColsSvc,
             pinnedRowModel,
+            notesSvc,
         } = beans;
 
         const getStockMenuItem = (
@@ -472,6 +475,21 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             let result: MenuItemDef | 'separator' | null;
 
             if (typeof menuItemOrString === 'string') {
+                if (menuItemOrString === 'cellNote') {
+                    const cellNoteItems = createCellNoteMenuItems({
+                        notesSvc,
+                        column,
+                        node,
+                        localeTextFunc,
+                    });
+
+                    if (cellNoteItems.length) {
+                        resultList.push(...cellNoteItems);
+                    }
+
+                    continue;
+                }
+
                 result = getStockMenuItem(menuItemOrString, column, sourceElement, source);
             } else {
                 // Spread to prevent leaking mapped subMenus back into the original menuItem
@@ -506,6 +524,72 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         return resultList;
     }
 }
+
+function createCellNoteMenuItems({
+    notesSvc,
+    column,
+    node,
+    localeTextFunc,
+}: {
+    notesSvc: Pick<INotesService, 'hasDataSource' | 'getCellNoteAccess' | 'showCellNote' | 'setCellNote'> | undefined;
+    column: AgColumn | null;
+    node: RowNode | null;
+    localeTextFunc: LocaleTextFunc;
+}): MenuItemDef[] {
+    const access: ICellNoteAccess | undefined =
+        notesSvc?.hasDataSource() && column && node ? notesSvc.getCellNoteAccess({ rowNode: node, column }) : undefined;
+
+    if (!access) {
+        return [];
+    }
+
+    const result: MenuItemDef[] = [];
+
+    if (!access.note) {
+        result.push({
+            name: localeTextFunc('addCellNote', 'Add Cell Note'),
+            disabled: !access.canCreate,
+            action: access.canCreate
+                ? () => notesSvc!.showCellNote({ rowNode: access.rowNode, column: access.column }, true)
+                : undefined,
+        });
+
+        return result;
+    }
+
+    if (access.canView && (access.isReadOnly || access.isSuppressed)) {
+        result.push({
+            name: localeTextFunc('viewCellNote', 'View Note'),
+            action: () => notesSvc!.showCellNote({ rowNode: access.rowNode, column: access.column }, true),
+        });
+    }
+
+    if (!access.isReadOnly && !access.isSuppressed) {
+        result.push({
+            name: localeTextFunc('editCellNote', 'Edit Note'),
+            disabled: !access.canEdit,
+            action: access.canEdit
+                ? () => notesSvc!.showCellNote({ rowNode: access.rowNode, column: access.column }, true)
+                : undefined,
+        });
+    }
+
+    result.push({
+        name: localeTextFunc('deleteCellNote', 'Remove Note'),
+        disabled: !access.canDelete,
+        action: access.canDelete
+            ? () =>
+                  notesSvc!.setCellNote({
+                      rowNode: access.rowNode,
+                      column: access.column,
+                      note: undefined,
+                  })
+            : undefined,
+    });
+
+    return result;
+}
+
 function createAggregationSubMenu(
     column: AgColumn,
     aggFuncSvc: IAggFuncService,

@@ -16,6 +16,7 @@ import { FormulaModule } from './formula/formulaModule';
 import { MasterDetailModule } from './masterDetail/masterDetailModule';
 import { ColumnMenuModule, ContextMenuModule } from './menu/menuModule';
 import { MultiFilterModule } from './multiFilter/multiFilterModule';
+import { NotesModule } from './notes/notesModule';
 import { PivotModule } from './pivot/pivotModule';
 import { CellSelectionModule } from './rangeSelection/rangeSelectionModule';
 import { RichSelectModule } from './richSelect/richSelectModule';
@@ -52,6 +53,7 @@ const dependsOn = [
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
     FormulaModule,
+    NotesModule,
     SetFilterModule,
     MultiFilterModule,
     AdvancedFilterModule,

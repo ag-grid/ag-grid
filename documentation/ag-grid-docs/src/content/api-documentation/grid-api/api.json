@@ -1358,5 +1358,32 @@
                 "url": "./find/#content-to-search"
             }
         }
+    },
+    "notes": {
+        "meta": {
+            "displayName": "Notes",
+            "page": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "getCellNote": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#api-reference"
+            }
+        },
+        "setCellNote": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#api-reference"
+            }
+        },
+        "refreshCellNotes": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#api-reference"
+            }
+        }
     }
 }

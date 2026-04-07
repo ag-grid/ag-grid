@@ -212,8 +212,20 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private onF2KeyDown(event: KeyboardEvent): void {
         const {
             cellCtrl,
-            beans: { editSvc },
+            beans: { editSvc, notesSvc },
         } = this;
+
+        if (event.shiftKey && notesSvc?.hasDataSource()) {
+            const access = notesSvc.getCellNoteAccess({ rowNode: this.rowNode, column: cellCtrl.column });
+
+            if (access) {
+                if (!access.isSuppressed || access.canView) {
+                    notesSvc.showCellNote({ rowNode: access.rowNode, column: access.column }, true);
+                    event.preventDefault();
+                    return;
+                }
+            }
+        }
 
         const editing = editSvc?.isEditing();
 

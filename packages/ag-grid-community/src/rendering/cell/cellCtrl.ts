@@ -34,6 +34,7 @@ import type { RefreshCellsParams } from '../../interfaces/iCellsParams';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import type { ICellNotesFeature } from '../../interfaces/notes';
 import type { IRowNumbersRowResizeFeature } from '../../interfaces/rowNumbers';
 import type { ILoadingCellRendererParams } from '../../main-umd-noStyles';
 import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
@@ -108,6 +109,7 @@ export class CellCtrl extends BeanStub {
 
     public rangeFeature: ICellRangeFeature | undefined = undefined;
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
+    private notesFeature: ICellNotesFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
     public editStyleFeature: ICellStyleFeature | undefined = undefined;
@@ -179,6 +181,8 @@ export class CellCtrl extends BeanStub {
         if (isRowNumberCol(this.column)) {
             this.rowResizeFeature = this.beans.rowNumbersSvc!.createRowNumbersRowResizerFeature(this);
         }
+
+        this.notesFeature = this.beans.notesSvc?.createCellNotesFeature(this);
     }
 
     public isCellSpanning(): boolean {
@@ -199,6 +203,7 @@ export class CellCtrl extends BeanStub {
         this.keyboardListener = context.destroyBean(this.keyboardListener);
         this.rangeFeature = context.destroyBean(this.rangeFeature);
         this.rowResizeFeature = context.destroyBean(this.rowResizeFeature);
+        this.notesFeature = context.destroyBean(this.notesFeature);
 
         this.disableTooltipFeature();
     }
@@ -644,10 +649,15 @@ export class CellCtrl extends BeanStub {
         }
 
         tooltipFeature?.refreshTooltip();
+        this.notesFeature?.refresh();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
         customStyleFeature?.applyCellClassRules();
+    }
+
+    public showCellNote(focusEditor = false): void {
+        this.notesFeature?.show({ focusEditor });
     }
 
     public isCellEditable(): boolean {

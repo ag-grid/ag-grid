@@ -7,7 +7,12 @@ import type {
     RowNode,
     RowRenderer,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _getMaxConcurrentDatasourceRequests } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _getGrandTotalRow,
+    _getMaxConcurrentDatasourceRequests,
+} from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../../serverSideRowModel';
 import type { LazyCache } from './lazyCache';
@@ -125,6 +130,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
     private executeLoad(cache: LazyCache, startRow: number, endRow: number) {
         const ssrmParams = cache.getSsrmParams();
+        const parentNode = cache.store.getParentNode() as RowNode;
         const request: IServerSideGetRowsRequest = {
             startRow,
             endRow,
@@ -132,7 +138,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             valueCols: ssrmParams.valueCols,
             pivotCols: ssrmParams.pivotCols,
             pivotMode: ssrmParams.pivotMode,
-            groupKeys: (cache as any).store.getParentNode().getRoute() ?? [],
+            groupKeys: parentNode.getRoute() ?? [],
             filterModel: ssrmParams.filterModel,
             sortModel: ssrmParams.sortModel,
         };
@@ -162,11 +168,16 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             removeNodesFromLoadingMap();
         };
 
+        const isRootStore = parentNode.level === -1;
+        const store = isRootStore ? cache.store : undefined;
+        const needsGrandTotal = isRootStore && !store?.grandTotalRowData && !!_getGrandTotalRow(this.gos);
+
         const params: IServerSideGetRowsParams = _addGridCommonParams(this.gos, {
             request,
             success,
             fail,
-            parentNode: (cache as any).store.getParentNode(),
+            parentNode,
+            needsGrandTotal,
         });
 
         addNodesToLoadingMap();

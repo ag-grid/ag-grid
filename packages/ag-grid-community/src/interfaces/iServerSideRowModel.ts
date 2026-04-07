@@ -64,4 +64,10 @@ export interface LoadSuccessParams<TData = any> {
      * The pivot fields in the response - if provided the grid will attempt to generate secondary columns.
      */
     pivotResultFields?: string[];
+    /**
+     * Data for the grand total row. When provided, the grid will display or update the grand total footer row.
+     * Set to `null` to remove an existing grand total row. Takes priority over a grand total row found in `rowData`.
+     * `getRowId` must return `ROW_ID_GRAND_TOTAL` (`'rowGroupFooter_ROOT_NODE_ID'`) for this data.
+     */
+    grandTotalRowData?: TData | null;
 }

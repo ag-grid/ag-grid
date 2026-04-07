@@ -58,7 +58,10 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
     public refreshRow(_params: RefreshRowsParams): void {
         if (!this.refreshFullWidthComp()) {
             this.rowCtrl.redrawThisRow();
+            return;
         }
+
+        this.rowCtrl.onFullWidthRowRefreshed();
     }
 
     private refreshFullWidthComp(): boolean {

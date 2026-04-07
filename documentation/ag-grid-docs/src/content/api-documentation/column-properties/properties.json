@@ -90,6 +90,7 @@
                 "url": "./context-menu/#configuring-the-context-menu"
             }
         },
+        "suppressCellNoteEditing": {},
         "context": {}
     },
     "charts": {

@@ -22,6 +22,7 @@ const MENU_ITEM_MODULES: Record<DefaultMenuItem, _ValidationModuleName | _Valida
     copyWithGroupHeaders: 'Clipboard',
     cut: 'Clipboard',
     paste: 'Clipboard',
+    cellNote: 'Notes',
     export: ['CsvExport', 'ExcelExport'],
     csvExport: 'CsvExport',
     excelExport: 'ExcelExport',

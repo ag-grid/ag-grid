@@ -135,42 +135,84 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private processFullWidthRowKeyboardEvent(rowCtrl: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
         const { rowNode } = rowCtrl;
-        const { focusSvc, navigation } = this.beans;
+        const { focusSvc, navigation, notesSvc } = this.beans;
         const focusedCell = focusSvc.getFocusedCell();
         const column = focusedCell?.column as AgColumn;
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
 
-        if (gridProcessingAllowed) {
-            const key = keyboardEvent.key;
-            if (eventName === 'keydown') {
-                switch (key) {
-                    case KeyCode.PAGE_HOME:
-                    case KeyCode.PAGE_END:
-                    case KeyCode.PAGE_UP:
-                    case KeyCode.PAGE_DOWN:
-                        navigation?.handlePageScrollingKey(keyboardEvent, true);
-                        break;
-
-                    case KeyCode.LEFT:
-                    case KeyCode.RIGHT:
-                        if (!this.gos.get('embedFullWidthRows')) {
-                            break;
-                        }
-                    /* eslint-ignore: no-fallthrough */
-                    case KeyCode.UP:
-                    case KeyCode.DOWN:
-                        rowCtrl.onKeyboardNavigate(keyboardEvent);
-                        break;
-                    case KeyCode.TAB:
-                        rowCtrl.onTabKeyDown(keyboardEvent);
-                        break;
-                    default:
-                }
-            }
+        if (gridProcessingAllowed && eventName === 'keydown') {
+            this.processFullWidthRowKeyDown(rowCtrl, keyboardEvent, column, navigation, notesSvc);
         }
 
         if (eventName === 'keydown') {
             this.eventSvc.dispatchEvent(rowCtrl.createRowEvent('cellKeyDown', keyboardEvent));
+        }
+    }
+
+    private processFullWidthRowKeyDown(
+        rowCtrl: RowCtrl,
+        keyboardEvent: KeyboardEvent,
+        focusedColumn: AgColumn | undefined,
+        navigation = this.beans.navigation,
+        notesSvc = this.beans.notesSvc
+    ): void {
+        switch (keyboardEvent.key) {
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
+            case KeyCode.PAGE_UP:
+            case KeyCode.PAGE_DOWN:
+                navigation?.handlePageScrollingKey(keyboardEvent, true);
+                return;
+
+            case KeyCode.LEFT:
+            case KeyCode.RIGHT:
+                if (!this.gos.get('embedFullWidthRows')) {
+                    return;
+                }
+            /* eslint-ignore: no-fallthrough */
+            case KeyCode.UP:
+            case KeyCode.DOWN:
+                rowCtrl.onKeyboardNavigate(keyboardEvent);
+                return;
+
+            case KeyCode.F2:
+                this.processFullWidthRowNoteShortcut(rowCtrl, keyboardEvent, focusedColumn, notesSvc);
+                return;
+
+            case KeyCode.TAB:
+                rowCtrl.onTabKeyDown(keyboardEvent);
+                return;
+
+            default:
+        }
+    }
+
+    private processFullWidthRowNoteShortcut(
+        rowCtrl: RowCtrl,
+        keyboardEvent: KeyboardEvent,
+        focusedColumn: AgColumn | undefined,
+        notesSvc = this.beans.notesSvc
+    ): void {
+        if (!keyboardEvent.shiftKey || !notesSvc?.hasDataSource()) {
+            return;
+        }
+
+        const rowNode = rowCtrl.rowNode;
+        const noteColumn = rowCtrl.findFullWidthInfoForEvent(keyboardEvent)?.column ?? focusedColumn;
+
+        if (!noteColumn) {
+            return;
+        }
+
+        const access = notesSvc.getCellNoteAccess({ rowNode, column: noteColumn });
+
+        if (!access) {
+            return;
+        }
+
+        if (!access.isSuppressed || access.canView) {
+            notesSvc.showCellNote({ rowNode: access.rowNode, column: access.column }, true);
+            keyboardEvent.preventDefault();
         }
     }
 
