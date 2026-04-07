@@ -7,7 +7,6 @@ import type { PaginationChangedEvent } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { ElementParams } from '../../utils/element';
 import { _warn } from '../../validation/logging';
-import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { GridSelect } from '../../widgets/gridWidgetTypes';
 import type { PaginationService } from '../paginationService';
@@ -200,8 +199,3 @@ export class PageSizeSelectorComp extends Component {
         super.destroy();
     }
 }
-
-export const PageSizeSelectorSelector: ComponentSelector = {
-    selector: 'AG-PAGE-SIZE-SELECTOR',
-    component: PageSizeSelectorComp,
-};
