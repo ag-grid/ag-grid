@@ -264,7 +264,6 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     ...mod<_NotesGridApi>('Notes', {
         getCellNote: 0,
         setCellNote: 0,
-        removeCellNote: 0,
         refreshCellNotes: 0,
     }),
     ...mod<_FindApi<any>>('Find', {

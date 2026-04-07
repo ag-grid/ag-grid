@@ -1379,12 +1379,6 @@
                 "url": "./notes/#api-reference"
             }
         },
-        "removeCellNote": {
-            "more": {
-                "name": "Notes API",
-                "url": "./notes/#api-reference"
-            }
-        },
         "refreshCellNotes": {
             "more": {
                 "name": "Notes API",

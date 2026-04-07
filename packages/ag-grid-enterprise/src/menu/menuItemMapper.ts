@@ -532,7 +532,7 @@ function createCellNoteMenuItems({
     localeTextFunc,
 }: {
     notesSvc:
-        | Pick<INotesService, 'hasDataSource' | 'getCellNoteAccess' | 'showCellNote' | 'removeCellNote'>
+        | Pick<INotesService, 'hasDataSource' | 'getCellNoteAccess' | 'showCellNote' | 'setCellNote'>
         | undefined;
     column: AgColumn | null;
     node: RowNode | null;
@@ -580,7 +580,12 @@ function createCellNoteMenuItems({
         name: localeTextFunc('deleteCellNote', 'Remove Note'),
         disabled: !access.canDelete,
         action: access.canDelete
-            ? () => notesSvc!.removeCellNote({ rowNode: access.rowNode, column: access.column })
+            ? () =>
+                  notesSvc!.setCellNote({
+                      rowNode: access.rowNode,
+                      column: access.column,
+                      note: undefined,
+                  })
             : undefined,
     });
 

@@ -165,9 +165,10 @@ describe('NotesService', () => {
             column: 'athlete',
             note: { text: 'Updated' },
         });
-        service.removeCellNote({
+        service.setCellNote({
             rowNode,
             column: 'athlete',
+            note: undefined,
         });
 
         expect(beans.notesDataSvc!.setNote).not.toHaveBeenCalled();

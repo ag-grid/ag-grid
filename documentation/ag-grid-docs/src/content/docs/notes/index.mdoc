@@ -126,11 +126,11 @@ Use the grid API to read, write, remove and refresh notes programmatically. This
 
 {% gridExampleRunner title="Notes API" name="notes-api" exampleHeight=560 /%}
 
-In the example above, clicking a cell selects it, the toolbar reads the current note with `getCellNote()`, and the controls update the selected note with `setCellNote()`, mark it read-only, remove it with `removeCellNote()`, or call `refreshCellNotes()` after mutating the backing store directly.
+In the example above, clicking a cell selects it, the toolbar reads the current note with `getCellNote()`, updates or removes the selected note with `setCellNote()`, and calls `refreshCellNotes()` after mutating the backing store directly.
 
 ### API Reference
 
-{% apiDocumentation source="grid-api/api.json" section="notes" names=["getCellNote", "setCellNote", "removeCellNote", "refreshCellNotes"] /%}
+{% apiDocumentation source="grid-api/api.json" section="notes" names=["getCellNote", "setCellNote", "refreshCellNotes"] /%}
 
 ### NotesDataSource
 

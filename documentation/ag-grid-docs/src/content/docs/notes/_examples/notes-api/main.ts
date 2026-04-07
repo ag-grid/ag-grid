@@ -179,7 +179,7 @@ function saveSelectedNote() {
     setStatus(
         text
             ? `Saved note for ${describeCell(cell)} via gridApi.setCellNote().`
-            : `Cleared note for ${describeCell(cell)} via gridApi.setCellNote().`
+            : `Removed note for ${describeCell(cell)} via gridApi.setCellNote().`
     );
 }
 
@@ -190,18 +190,19 @@ function removeSelectedNote() {
     }
 
     const previousNote = gridApi.getCellNote(cell);
-    gridApi.removeCellNote(cell);
+    gridApi.setCellNote({
+        ...cell,
+        note: undefined,
+    });
     const updatedNote = gridApi.getCellNote(cell);
     loadSelectedNote();
 
     if (previousNote?.readOnly && areNotesEqual(previousNote, updatedNote)) {
-        setStatus(
-            `The existing note for ${describeCell(cell)} is read-only, so gridApi.removeCellNote() had no effect.`
-        );
+        setStatus(`The existing note for ${describeCell(cell)} is read-only, so removing it via gridApi.setCellNote() had no effect.`);
         return;
     }
 
-    setStatus(`Removed note for ${describeCell(cell)} via gridApi.removeCellNote().`);
+    setStatus(`Removed note for ${describeCell(cell)} via gridApi.setCellNote().`);
 }
 
 function mutateStoreDirectly() {

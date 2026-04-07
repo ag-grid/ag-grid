@@ -8,10 +8,6 @@ export function setCellNote(beans: BeanCollection, params: SetNoteParams): void 
     beans.notesSvc?.setCellNote(params);
 }
 
-export function removeCellNote(beans: BeanCollection, params: GetNoteParams): void {
-    beans.notesSvc?.removeCellNote(params);
-}
-
 export function refreshCellNotes(beans: BeanCollection, params?: RefreshCellNotesParams): void {
     beans.notesSvc?.refreshCellNotes(params);
 }

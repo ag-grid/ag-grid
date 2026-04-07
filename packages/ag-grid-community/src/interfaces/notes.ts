@@ -93,6 +93,5 @@ export interface INotesService extends Bean {
     getCellNote(params: GetNoteParams): CellNote | undefined;
     showCellNote(params: GetNoteParams, focusEditor?: boolean): boolean;
     setCellNote(params: SetNoteParams): void;
-    removeCellNote(params: GetNoteParams): void;
     refreshCellNotes(params?: RefreshCellNotesParams): void;
 }

@@ -180,13 +180,6 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         this.refreshCellNotes({ rowNodes: [params.rowNode], columns: [access.column] });
     }
 
-    public removeCellNote(params: GetNoteParams): void {
-        this.setCellNote({
-            ...params,
-            note: undefined,
-        });
-    }
-
     public refreshCellNotes(params: RefreshCellNotesParams = {}): void {
         const { rowRenderer } = this.beans;
         rowRenderer.refreshCells({

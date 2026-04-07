@@ -1168,16 +1168,11 @@ export interface _NotesGridApi {
     getCellNote(params: GetNoteParams): CellNote | undefined;
 
     /**
-     * Set or clear the note for a cell.
+     * Set or remove the note for a cell.
+     * Pass `note: undefined` to remove the note.
      * @agModule `NotesModule`
      */
     setCellNote(params: SetNoteParams): void;
-
-    /**
-     * Remove the note for a cell.
-     * @agModule `NotesModule`
-     */
-    removeCellNote(params: GetNoteParams): void;
 
     /**
      * Refresh note presence for the currently rendered cells.
