@@ -881,7 +881,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return this.getFirstColumnForFullWidthSection('right');
         }
 
-        return this.getFirstColumnForFullWidthSection(null);
+        if (node && rowComp?.getScrollingRowElement()?.contains(node)) {
+            return this.getFirstColumnForFullWidthSection(null);
+        }
+
+        return this.getFirstDisplayedColumnForFullWidth();
     }
 
     private getFirstColumnForFullWidthSection(pinned: ColumnPinnedType): AgColumn | undefined {
@@ -894,6 +898,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             default:
                 return visibleCols.centerCols[0] ?? visibleCols.leftCols[0] ?? visibleCols.rightCols[0];
         }
+    }
+
+    private getFirstDisplayedColumnForFullWidth(): AgColumn | undefined {
+        return this.beans.visibleCols.allCols[0];
     }
     private onRowMouseDown(mouseEvent: MouseEvent) {
         this.lastMouseDownOnDragger = _isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
