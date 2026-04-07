@@ -59,6 +59,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         enableRowGroup: true,
         enablePivot: true,
     },
+    enableFilterHandlers: true,
     sideBar: {
         toolPanels: ['columns', 'filters-new'],
         defaultToolPanel: '',
