@@ -1,10 +1,12 @@
 import type {
     AgColumn,
     BeanCollection,
+    BeanStub,
     CellCtrl,
     CellNote,
     ICellNotesFeature,
     RowCtrl,
+    RowGui,
 } from 'ag-grid-community';
 
 import { AgNotesPopup } from './agNotesPopup';
@@ -244,7 +246,7 @@ export class AgCellNotesFeature extends BaseNotesFeature {
 }
 
 export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
-    private readonly registeredElements = new WeakSet<HTMLElement>();
+    private readonly registeredComponents = new WeakSet<BeanStub>();
 
     constructor(
         beans: BeanCollection,
@@ -263,21 +265,26 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
             return;
         }
 
-        for (const element of this.ctrl.getFullWidthSectionElements()) {
-            this.registerElement(element);
-            const position = this.getPositionForElement(element);
-            const hasNote = !!position && !!this.notesSvc.getCellNoteAccess(position)?.note;
-            element.classList.toggle(CSS_HAS_CELL_NOTES, hasNote);
-        }
-    }
+        const rowGui = this.ctrl.getGui();
 
-    private registerElement(element: HTMLElement): void {
-        if (this.registeredElements.has(element)) {
+        if (!rowGui) {
             return;
         }
 
-        this.registeredElements.add(element);
-        this.ctrl.addManagedElementListeners(element, {
+        this.registerGui(rowGui);
+        const position = this.getPositionForElement(rowGui.element);
+        const hasNote = !!position && !!this.notesSvc.getCellNoteAccess(position)?.note;
+        rowGui.rowComp.toggleCss(CSS_HAS_CELL_NOTES, hasNote);
+    }
+
+    private registerGui(gui: RowGui): void {
+        const { compBean, element } = gui;
+        if (this.registeredComponents.has(compBean)) {
+            return;
+        }
+
+        this.registeredComponents.add(compBean);
+        compBean.addManagedListeners(element, {
             pointerenter: (event: PointerEvent) => this.onPointerEnter(this.getTargetForElement(element), event),
             pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
             contextmenu: () => this.onContextMenu(),

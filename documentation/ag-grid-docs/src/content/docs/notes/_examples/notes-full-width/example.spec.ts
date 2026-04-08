@@ -7,7 +7,10 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('Hovering a noted full width row shows the note popup', async ({ page }) => {
-        const fullWidthRow = page.locator('.notes-full-width-row').first();
+        const fullWidthRow = page
+            .locator('.ag-row', { has: page.locator('.notes-full-width-row') })
+            .filter({ hasText: 'Usain Bolt' })
+            .first();
         await fullWidthRow.hover();
 
         const popup = page.locator('.ag-notes-popup');

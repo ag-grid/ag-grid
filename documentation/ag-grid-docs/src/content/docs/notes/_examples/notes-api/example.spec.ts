@@ -24,6 +24,7 @@ test.agExample(import.meta, () => {
         const cell = agIdFor.cell('1', 'athlete');
         await cell.click();
         await expect(cell).not.toHaveClass(/ag-has-cell-notes/);
+        await expect(page.locator('#selection-status')).toContainText('No note stored');
 
         // Fill in note text and save
         await page.locator('#note-text').fill('Test note from API');
@@ -38,6 +39,7 @@ test.agExample(import.meta, () => {
         // Click cell with existing note
         const cell = agIdFor.cell('2', 'athlete');
         await cell.click();
+        await expect(page.locator('#selection-status')).toContainText('Loaded note');
         await expect(cell).toHaveClass(/ag-has-cell-notes/);
 
         // Remove the note
@@ -53,6 +55,7 @@ test.agExample(import.meta, () => {
         const cell = agIdFor.cell('4', 'country');
         await cell.click();
         await expect(cell).not.toHaveClass(/ag-has-cell-notes/);
+        await expect(page.locator('#selection-status')).toContainText('No note stored');
 
         // Mutate the store directly — grid should not update yet
         await page.locator('button', { hasText: 'Mutate Store Directly' }).click();
