@@ -29,8 +29,11 @@ export function _fuzzySuggestions(params: {
 
     if (thisSuggestions.length > 0 && filterByPercentageOfBestMatch && filterByPercentageOfBestMatch > 0) {
         const bestMatch = thisSuggestions[0].relevance;
-        const limit = bestMatch * filterByPercentageOfBestMatch;
-        thisSuggestions = thisSuggestions.filter((suggestion) => limit - suggestion.relevance < 0);
+        // Lower scores are better. Keep only suggestions within a proportional distance of
+        // the best match: limit = bestMatch / percentage is the maximum allowed score.
+        // When bestMatch is 0 (exact prefix match), limit is also 0 so only perfect matches survive.
+        const limit = bestMatch / filterByPercentageOfBestMatch;
+        thisSuggestions = thisSuggestions.filter((suggestion) => suggestion.relevance <= limit);
     }
 
     const values: string[] = [];
