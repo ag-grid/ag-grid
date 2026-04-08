@@ -18,6 +18,10 @@
     gap: calc(var(--ag-spacing) * 0.5);
 }
 
+.ag-toolbar-left:empty {
+    display: none;
+}
+
 .ag-toolbar-right {
     display: inline-flex;
     align-items: center;
