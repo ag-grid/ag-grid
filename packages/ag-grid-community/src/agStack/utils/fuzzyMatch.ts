@@ -6,9 +6,9 @@ export function _fuzzySuggestions(params: {
     inputValue: string;
     allSuggestions: string[];
     hideIrrelevant?: boolean;
-    filterByPercentageOfBestMatch?: number;
+    maxSuggestions?: number;
 }): { values: string[]; indices: number[] } {
-    const { inputValue, allSuggestions, hideIrrelevant, filterByPercentageOfBestMatch } = params;
+    const { inputValue, allSuggestions, hideIrrelevant, maxSuggestions } = params;
 
     let thisSuggestions: { value: string; relevance: number; idx: number }[] = (allSuggestions ?? []).map(
         (text, idx) => ({
@@ -27,13 +27,8 @@ export function _fuzzySuggestions(params: {
         );
     }
 
-    if (thisSuggestions.length > 0 && filterByPercentageOfBestMatch && filterByPercentageOfBestMatch > 0) {
-        const bestMatch = thisSuggestions[0].relevance;
-        // Lower scores are better. Keep only suggestions within a proportional distance of
-        // the best match: limit = bestMatch / percentage is the maximum allowed score.
-        // When bestMatch is 0 (exact prefix match), limit is also 0 so only perfect matches survive.
-        const limit = bestMatch / filterByPercentageOfBestMatch;
-        thisSuggestions = thisSuggestions.filter((suggestion) => suggestion.relevance <= limit);
+    if (maxSuggestions != null && maxSuggestions > 0) {
+        thisSuggestions = thisSuggestions.slice(0, maxSuggestions);
     }
 
     const values: string[] = [];

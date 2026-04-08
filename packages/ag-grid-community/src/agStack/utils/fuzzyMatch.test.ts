@@ -42,10 +42,7 @@ describe('fuzzyMatch.ts', () => {
             expect(values[0]).toBe(exactMatch);
         });
 
-        it('returns the exact prefix match when filterByPercentageOfBestMatch is set (AG-15499)', () => {
-            // Regression: the percentage filter incorrectly removed the best match when it
-            // scored 0 (exact prefix). It now correctly keeps only the exact prefix match and
-            // trims the unrelated 'ag*' suggestions entirely.
+        it('exact prefix match ranks first with hideIrrelevant and maxSuggestions (AG-15499)', () => {
             const allSuggestions = [
                 'agTextCellEditor',
                 'agTooltipComponent',
@@ -82,7 +79,7 @@ describe('fuzzyMatch.ts', () => {
             const irrelevant = ['zz', 'vv'];
             const allSuggestionsWithIrrelevant = [...allSuggestions, ...irrelevant];
 
-            // hideIrrelevant trims 'zz'/'vv'; without filterByPercentageOfBestMatch all
+            // hideIrrelevant trims 'zz'/'vv'; without maxSuggestions all
             // remaining 27 suggestions are returned.
             const hideOnly = _fuzzySuggestions({
                 inputValue: 'noFilter',
@@ -94,125 +91,56 @@ describe('fuzzyMatch.ts', () => {
             expect(hideOnly.values).not.toContain('vv');
             expect(hideOnly.values.length).toBe(allSuggestions.length);
 
-            // filterByPercentageOfBestMatch with bestMatch = 0 keeps only exact prefix
-            // matches (limit = 0 / 0.8 = 0). The ag* strings all score > 0 so they are
-            // trimmed, leaving only 'noFilter1' regardless of hideIrrelevant.
-            const withPercentFilter = _fuzzySuggestions({
+            // maxSuggestions: 1 keeps only the best match ('noFilter1')
+            // regardless of hideIrrelevant.
+            const withMaxSuggestions = _fuzzySuggestions({
                 inputValue: 'noFilter',
                 allSuggestions: allSuggestionsWithIrrelevant,
                 hideIrrelevant: true,
-                filterByPercentageOfBestMatch: 0.8,
+                maxSuggestions: 1,
             });
-            expect(withPercentFilter.values).toEqual(['noFilter1']);
+            expect(withMaxSuggestions.values).toEqual(['noFilter1']);
 
-            const withPercentFilterNoHide = _fuzzySuggestions({
+            const withMaxSuggestionsNoHide = _fuzzySuggestions({
                 inputValue: 'noFilter',
                 allSuggestions: allSuggestionsWithIrrelevant,
                 hideIrrelevant: false,
-                filterByPercentageOfBestMatch: 0.8,
+                maxSuggestions: 1,
             });
-            expect(withPercentFilterNoHide.values).toEqual(['noFilter1']);
+            expect(withMaxSuggestionsNoHide.values).toEqual(['noFilter1']);
         });
 
-        it('filterByPercentageOfBestMatch trims far-off matches', () => {
-            // 'zzzzzzzzz' shares no characters with 'abc' so its score is much higher than
-            // 'abx'/'aby'. The filter keeps only suggestions within bestMatch / 0.8 of the
-            // best score, which excludes 'zzzzzzzzz'.
-            const allSuggestions = ['abx', 'aby', 'zzzzzzzzz'];
-            const withFilter = _fuzzySuggestions({
+        it('maxSuggestions limits the number of returned values', () => {
+            const allSuggestions = ['test', 'tester', 'testing', 'tested', 'toast'];
+            const { values } = _fuzzySuggestions({
+                inputValue: 'test',
+                allSuggestions,
+                maxSuggestions: 2,
+            });
+            expect(values).toHaveLength(2);
+            expect(values[0]).toBe('test');
+        });
+
+        it('maxSuggestions works together with hideIrrelevant', () => {
+            const allSuggestions = ['test', 'tester', 'zzz', 'testing'];
+            const { values } = _fuzzySuggestions({
+                inputValue: 'test',
+                allSuggestions,
+                hideIrrelevant: true,
+                maxSuggestions: 2,
+            });
+            expect(values).toHaveLength(2);
+            expect(values).not.toContain('zzz');
+        });
+
+        it('maxSuggestions returns all results when limit exceeds matches', () => {
+            const allSuggestions = ['abc', 'abd'];
+            const { values } = _fuzzySuggestions({
                 inputValue: 'abc',
                 allSuggestions,
-                filterByPercentageOfBestMatch: 0.8,
+                maxSuggestions: 10,
             });
-            const withoutFilter = _fuzzySuggestions({ inputValue: 'abc', allSuggestions });
-            expect(withoutFilter.values).toContain('zzzzzzzzz');
-            expect(withFilter.values).not.toContain('zzzzzzzzz');
-        });
-
-        it('a higher percentage keeps fewer matches than a lower one', () => {
-            // Scores for input "abcd":
-            //   "abce"  ≈ 0.091  (1 edit, strong secondary score from shared "abc" prefix)
-            //   "abyz"  ≈ 0.286  (2 edits, weaker secondary score)
-            //   "wxyz"  = 4.0    (4 edits, no shared characters)
-            //
-            // limit = bestMatch / percentage, so a higher percentage produces a tighter limit:
-            //   0.50 → limit ≈ 0.182  → only "abce" passes          (1 result)
-            //   0.25 → limit ≈ 0.364  → "abce" and "abyz" pass      (2 results)
-            //   0.02 → limit ≈ 4.55   → all three pass              (3 results)
-            const allSuggestions = ['abce', 'abyz', 'wxyz'];
-            const strict = _fuzzySuggestions({
-                inputValue: 'abcd',
-                allSuggestions,
-                filterByPercentageOfBestMatch: 0.5,
-            });
-            const medium = _fuzzySuggestions({
-                inputValue: 'abcd',
-                allSuggestions,
-                filterByPercentageOfBestMatch: 0.25,
-            });
-            const lenient = _fuzzySuggestions({
-                inputValue: 'abcd',
-                allSuggestions,
-                filterByPercentageOfBestMatch: 0.02,
-            });
-
-            expect(strict.values).toEqual(['abce']);
-            expect(medium.values).toEqual(['abce', 'abyz']);
-            expect(lenient.values).toEqual(['abce', 'abyz', 'wxyz']);
-        });
-
-        it('higher percentage is stricter', () => {
-            const allSuggestions = [
-                'agTextCellEditor',
-                'agTooltipComponent',
-                'agNumberCellEditor',
-                'agDateCellEditor',
-                'agDateStringCellEditor',
-                'agCheckboxCellEditor',
-                'agSelectCellEditor',
-                'agLargeTextCellEditor',
-                'agTextColumnFilter',
-                'agTextColumnFloatingFilter',
-                'agNumberColumnFilter',
-                'agNumberColumnFloatingFilter',
-                'agDateColumnFilter',
-                'agDateInput',
-                'agDateColumnFloatingFilter',
-                'agReadOnlyFloatingFilter',
-                'agDragAndDropImage',
-                'agAnimateShowChangeCellRenderer',
-                'agAnimateSlideCellRenderer',
-                'agGroupCellRenderer',
-                'agCheckboxCellRenderer',
-                'agColumnHeader',
-                'agColumnGroupHeader',
-                'agLoadingOverlay',
-                'agNoRowsOverlay',
-                'agSkeletonCellRenderer',
-                'noFilter1',
-            ];
-
-            const fiftyPercent = _fuzzySuggestions({
-                inputValue: 'agCell',
-                allSuggestions,
-                filterByPercentageOfBestMatch: 0.5,
-            });
-
-            expect(fiftyPercent.values).toEqual([
-                'agSelectCellEditor',
-                'agColumnHeader',
-                'agColumnGroupHeader',
-                'agSkeletonCellRenderer',
-                'agCheckboxCellEditor',
-                'agCheckboxCellRenderer',
-            ]);
-
-            const ninetyPercent = _fuzzySuggestions({
-                inputValue: 'agCell',
-                allSuggestions,
-                filterByPercentageOfBestMatch: 0.9,
-            });
-            expect(ninetyPercent.values).toEqual(['agSelectCellEditor']);
+            expect(values).toEqual(['abc', 'abd']);
         });
 
         it('returns an empty result for an empty suggestion list', () => {
