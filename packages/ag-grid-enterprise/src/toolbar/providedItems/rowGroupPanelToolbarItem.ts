@@ -11,15 +11,6 @@ export class RowGroupPanelToolbarItem extends Component implements IToolbarItemC
     }
 
     public init(_params: IToolbarItemParams): void {
-        this.panel = this.createManagedBean(new RowGroupDropZonePanel(true));
-        this.panel.setDisplayed(true);
-        this.getGui().appendChild(this.panel.getGui());
-
-        // Keep the inner panel always visible — the wrapper controls visibility
-        this.addManagedListeners(this.panel, {
-            displayChanged: () => this.panel!.setDisplayed(true),
-        });
-
         this.updateVisibility();
         this.addManagedPropertyListener('rowGroupPanelShow', () => this.updateVisibility());
         this.addManagedEventListeners({
@@ -32,12 +23,30 @@ export class RowGroupPanelToolbarItem extends Component implements IToolbarItemC
         return true;
     }
 
+    private ensurePanel(): void {
+        if (this.panel) {
+            return;
+        }
+        this.panel = this.createManagedBean(new RowGroupDropZonePanel(true));
+        this.getGui().appendChild(this.panel.getGui());
+
+        // Keep the inner panel always visible — the wrapper controls visibility
+        this.panel.setDisplayed(true);
+        this.addManagedListeners(this.panel, {
+            displayChanged: () => this.panel!.setDisplayed(true),
+        });
+    }
+
     private updateVisibility(): void {
         const rowGroupPanelShow = this.gos.get('rowGroupPanelShow');
         if (rowGroupPanelShow === 'always') {
+            this.ensurePanel();
             this.setDisplayed(true);
         } else if (rowGroupPanelShow === 'onlyWhenGrouping') {
             const grouping = (this.beans.rowGroupColsSvc?.columns?.length ?? 0) > 0;
+            if (grouping) {
+                this.ensurePanel();
+            }
             this.setDisplayed(grouping);
         } else {
             // 'never' or unset
