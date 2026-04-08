@@ -29,12 +29,11 @@ type OlympicWinner = {
 };
 
 let gridApi: GridApi<OlympicWinner>;
+
 type SelectedCell = {
     rowNode: IRowNode<OlympicWinner>;
     column: Column;
 };
-
-let selectedCell: SelectedCell | undefined;
 
 const getNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
 const getDisplayTimestamp = () =>
@@ -84,22 +83,25 @@ const rowData: OlympicWinner[] = [
     { id: '6', athlete: 'Mo Farah', age: 33, country: 'Great Britain', year: 2016, sport: 'Athletics' },
 ];
 
+const getRowId = ({ data }: GetRowIdParams<OlympicWinner>) => data.id;
+
 const gridOptions: GridOptions<OlympicWinner> = {
     columnDefs,
     rowData,
-    getRowId: ({ data }: GetRowIdParams<OlympicWinner>) => data.id,
+    getRowId,
     defaultColDef: {
         flex: 1,
         minWidth: 120,
     },
     notesDataSource,
     onCellClicked: (event: CellClickedEvent<OlympicWinner>) => {
-        selectedCell = {
+        const win = window as any;
+        win.selectedCell = {
             rowNode: event.node,
             column: event.column,
         };
 
-        loadSelectedNote();
+        syncNote(gridApi);
     },
 };
 
@@ -118,6 +120,9 @@ const setStatus = (message: string) => {
 };
 
 const getSelectedCell = (): SelectedCell | undefined => {
+    const win = window as any;
+    const selectedCell = win.selectedCell as SelectedCell | undefined;
+
     if (!selectedCell) {
         setStatus('Click a cell to select it, then use the API controls.');
         return undefined;
@@ -126,7 +131,7 @@ const getSelectedCell = (): SelectedCell | undefined => {
     return selectedCell;
 };
 
-function loadSelectedNote() {
+const syncNote = (gridApi: GridApi<OlympicWinner>) => {
     const cell = getSelectedCell();
     if (!cell || !gridApi) {
         return;
@@ -142,6 +147,10 @@ function loadSelectedNote() {
             ? `Loaded note for ${describeCell(cell)}.`
             : `No note stored for ${describeCell(cell)}. Type a note and save it via the API.`
     );
+};
+
+function loadSelectedNote() {
+    syncNote(gridApi);
 }
 
 function saveSelectedNote() {
@@ -169,7 +178,7 @@ function saveSelectedNote() {
     });
 
     const updatedNote = gridApi.getCellNote(cell);
-    loadSelectedNote();
+    syncNote(gridApi);
 
     if (previousNote?.readOnly && areNotesEqual(previousNote, updatedNote)) {
         setStatus(`The existing note for ${describeCell(cell)} is read-only, so gridApi.setCellNote() had no effect.`);
@@ -195,7 +204,7 @@ function removeSelectedNote() {
         note: undefined,
     });
     const updatedNote = gridApi.getCellNote(cell);
-    loadSelectedNote();
+    syncNote(gridApi);
 
     if (previousNote?.readOnly && areNotesEqual(previousNote, updatedNote)) {
         setStatus(
@@ -241,7 +250,7 @@ function refreshSelectedNotes() {
         columns: [cell.column],
     });
 
-    loadSelectedNote();
+    syncNote(gridApi);
     setStatus(`Refreshed notes for ${describeCell(cell)} via gridApi.refreshCellNotes().`);
 }
 
