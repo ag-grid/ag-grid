@@ -17,16 +17,18 @@ import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import type { ICellNotesFeature } from '../../interfaces/notes';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import type { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import { _suppressFullWidthMouseEvent } from '../renderUtils';
-import type { IRowModeFeature } from './iRowModeFeature';
+import type { FullWidthTarget, IRowModeFeature } from './iRowModeFeature';
 import type { RowCtrl } from './rowCtrl';
 
 export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
     private tooltipFeature: TooltipFeature | undefined;
+    private notesFeature: ICellNotesFeature | undefined;
     private focusEventWhileNotReady: CellFocusedEvent | null = null;
 
     public constructor(private readonly rowCtrl: RowCtrl) {
@@ -47,12 +49,14 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
                 right: this.createFullWidthCompDetails(rowComp.getPinnedRightRowElement() ?? eRow, 'right'),
             });
             this.rowCtrl.refreshPinnedCellGroupWidths();
-            return;
+        } else {
+            const compDetails = this.createFullWidthCompDetails(eRow, null);
+            rowComp.showFullWidth(compDetails);
+            this.rowCtrl.refreshPinnedCellGroupWidths();
         }
 
-        const compDetails = this.createFullWidthCompDetails(eRow, null);
-        rowComp.showFullWidth(compDetails);
-        this.rowCtrl.refreshPinnedCellGroupWidths();
+        // Create notes feature after component is attached — creation triggers initialise() → refresh()
+        this.notesFeature = this.beans.notesSvc?.createFullWidthRowNotesFeature(this.rowCtrl);
     }
 
     public refreshRow(_params: RefreshRowsParams): void {
@@ -61,7 +65,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
             return;
         }
 
-        this.rowCtrl.onFullWidthRowRefreshed();
+        this.notesFeature?.refresh();
     }
 
     private refreshFullWidthComp(): boolean {
@@ -87,7 +91,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
     }
 
     public shouldCreateCellSections(): boolean {
-        return this.rowCtrl.shouldEmbedFullWidthRowSections();
+        return this.rowCtrl.printLayout || this.gos.get('embedFullWidthRows');
     }
 
     public getModeCellRenderer() {
@@ -106,15 +110,17 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         // no-op: full-width rows have no individual cell ctrls
     }
 
-    public onDisplayedColumnsChanged(): void {}
+    public onDisplayedColumnsChanged(): void {
+        this.notesFeature?.refresh();
+    }
 
     public onVirtualColumnsChanged(): void {}
 
-    public onColumnMoved(): void {}
+    public onColumnMoved(): void {
+        this.notesFeature?.refresh();
+    }
 
     public onSpannedCellsUpdated(_pinned: ColumnPinnedType): void {}
-
-    // --- Full-width rendering ---
 
     public createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
         const { rowCtrl } = this;
@@ -206,11 +212,9 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         });
     }
 
-    // --- Focus ---
-
     public setupFocus(): void {
         this.restoreFullWidthFocus(true);
-        this.onFullWidthRowFocused(this.focusEventWhileNotReady ?? undefined);
+        this.onRowFocused(this.focusEventWhileNotReady ?? undefined);
     }
 
     private restoreFullWidthFocus(waitForRender = false): void {
@@ -249,7 +253,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         focus();
     }
 
-    public onFullWidthRowFocused(event?: CellFocusedEvent): void {
+    public onRowFocused(event?: CellFocusedEvent): void {
         const { focusSvc } = this.beans;
         const { rowCtrl } = this;
         const isFocused = focusSvc.isRowFocused(rowCtrl.rowNode.rowIndex!, rowCtrl.rowNode.rowPinned);
@@ -330,19 +334,17 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         }
     }
 
-    public getFullWidthElement(): HTMLElement | null {
+    public getRowContentElement(): HTMLElement | null {
         return this.rowCtrl.getCurrentRowElement() ?? null;
     }
 
-    public getFullWidthNavigationColumn(): AgColumn {
+    public getNavigationColumn(): AgColumn {
         return this.getFullWidthColumn();
     }
 
     private getFullWidthColumn(): AgColumn {
         return this.beans.visibleCols.centerCols[0];
     }
-
-    // --- Mouse events ---
 
     public onRowMouseDown(mouseEvent: MouseEvent): void {
         if (this.isSuppressMouseEvent(mouseEvent)) {
@@ -399,9 +401,103 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         return _suppressFullWidthMouseEvent(gos, fullWidthParams, rowCtrl.rowNode, mouseEvent);
     }
 
+    public getTargets(): FullWidthTarget[] {
+        const { rowCtrl } = this;
+        const rowGui = rowCtrl.getGui();
+        const rowComp = rowGui?.rowComp;
+        const rowElement = rowGui?.element;
+        const compBean = rowGui?.compBean;
+
+        if (!rowComp || !rowElement || !compBean) {
+            return [];
+        }
+
+        const ePinnedLeft = rowComp.getPinnedLeftRowElement();
+        const eCenter = rowComp.getScrollingRowElement();
+        const ePinnedRight = rowComp.getPinnedRightRowElement();
+
+        if (!ePinnedLeft && !eCenter && !ePinnedRight) {
+            const column = this.getFirstDisplayedColumnForFullWidth();
+            return column ? [{ compBean, element: rowElement, column }] : [];
+        }
+
+        const targets = new Map<HTMLElement, FullWidthTarget>();
+        this.addFullWidthTarget(targets, ePinnedLeft, compBean, this.getFirstColumnForFullWidthSection('left'));
+        this.addFullWidthTarget(targets, eCenter ?? rowElement, compBean, this.getFirstColumnForFullWidthSection(null));
+        this.addFullWidthTarget(targets, ePinnedRight, compBean, this.getFirstColumnForFullWidthSection('right'));
+
+        return [...targets.values()];
+    }
+
+    public getTarget(element?: EventTarget | null): FullWidthTarget | undefined {
+        const node = element instanceof Node ? element : undefined;
+        const targets = this.getTargets();
+
+        if (!targets.length) {
+            return undefined;
+        }
+
+        if (!node) {
+            return targets[0];
+        }
+
+        return targets.find((target) => target.element.contains(node)) ?? targets[0];
+    }
+
+    public findInfoForEvent(event?: Event): { column: AgColumn } | undefined {
+        const target = this.getTarget(event?.target);
+        if (!target) {
+            return;
+        }
+
+        return { column: target.column };
+    }
+
+    private addFullWidthTarget(
+        targets: Map<HTMLElement, FullWidthTarget>,
+        element: HTMLElement | undefined,
+        compBean: BeanStub,
+        column: AgColumn | undefined
+    ): void {
+        if (!element || !column || targets.has(element)) {
+            return;
+        }
+
+        targets.set(element, { compBean, element, column });
+    }
+
+    private getFirstColumnForFullWidthSection(pinned: ColumnPinnedType): AgColumn | undefined {
+        const { visibleCols } = this.beans;
+        switch (pinned) {
+            case 'left':
+                return visibleCols.leftCols[0] ?? visibleCols.centerCols[0] ?? visibleCols.rightCols[0];
+            case 'right':
+                return visibleCols.rightCols[0] ?? visibleCols.centerCols[0] ?? visibleCols.leftCols[0];
+            default:
+                return visibleCols.centerCols[0] ?? visibleCols.leftCols[0] ?? visibleCols.rightCols[0];
+        }
+    }
+
+    private getFirstDisplayedColumnForFullWidth(): AgColumn | undefined {
+        return this.beans.visibleCols.allCols[0];
+    }
+
+    public showCellNote(column: AgColumn, focusEditor = false): void {
+        this.notesFeature?.show({ column, focusEditor });
+    }
+
+    public addInitialRowClasses(classes: string[]): void {
+        classes.push('ag-full-width-row');
+        if (this.shouldCreateCellSections()) {
+            classes.push('ag-embedded-full-width-row');
+        }
+    }
+
     public override destroy(): void {
         const { context } = this.beans;
         this.tooltipFeature = this.destroyBean(this.tooltipFeature, context);
+        this.notesFeature?.destroy();
+        this.notesFeature = undefined;
         super.destroy();
     }
 }

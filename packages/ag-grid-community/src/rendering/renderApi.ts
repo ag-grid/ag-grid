@@ -73,7 +73,7 @@ export function getCellRendererInstances<TData = any>(
             continue;
         }
 
-        const renderer = rowCtrl.getFullWidthCellRenderer();
+        const renderer = rowCtrl.getModeCellRenderer();
         if (renderer != null) {
             fullWidthRenderers.push(_unwrapUserComp(renderer));
         }

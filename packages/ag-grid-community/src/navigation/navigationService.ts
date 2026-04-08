@@ -509,7 +509,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             };
 
             if (this.gos.get('embedFullWidthRows')) {
-                cellPos.column = previousCell.getFullWidthNavigationColumn();
+                cellPos.column = previousCell.getNavigationColumn();
             }
         } else {
             cellPos = previousCell.getFocusedCellPosition();

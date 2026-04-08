@@ -184,13 +184,13 @@ export class GridBodyCtrl extends BeanStub {
         this.updatePinnedColumnStickyOffsets();
         this.updateScrollableAreaWidth();
         this.updateScrollingClasses();
-        this.updateExtraRowsWidth();
+        this.updateAnchorWidth();
     }
 
     private onGridSizeChanged(): void {
         this.updateScrollableAreaWidth();
         this.updatePinnedColumnStickyOffsets();
-        this.updateExtraRowsWidth();
+        this.updateAnchorWidth();
     }
 
     private updateScrollableAreaWidth(): void {
@@ -252,9 +252,9 @@ export class GridBodyCtrl extends BeanStub {
         this.beans.colViewport.setScrollPosition(this.getCenterWidth(), this.getHorizontalScrollLeft(), afterScroll);
     }
 
-    private updateExtraRowsWidth(): void {
+    private updateAnchorWidth(): void {
         const anchorWidth = this.getViewportWidthWithoutScrollbar();
-        this.eTopExtraRows.style.setProperty('--ag-fw-anchor-width', `${anchorWidth}px`);
+        this.eGridViewport.style.setProperty('--ag-fw-anchor-width', `${anchorWidth}px`);
     }
 
     private setGridRole(): void {

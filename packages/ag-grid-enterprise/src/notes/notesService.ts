@@ -136,7 +136,7 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
 
         const rowCtrl = rowRenderer.getRowCtrlByNode(params.rowNode);
         if (rowCtrl?.isFullWidth()) {
-            rowCtrl.showFullWidthCellNote(column, focusEditor);
+            rowCtrl.showCellNote(column, focusEditor);
             return true;
         }
 

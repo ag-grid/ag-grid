@@ -699,7 +699,7 @@ describe('Focus override callbacks', () => {
 
             const rowCtrl = Object.create(RowCtrl.prototype) as RowCtrl;
             (rowCtrl as any).getRowPosition = jest.fn(() => ({ rowIndex: 3, rowPinned: null }));
-            (rowCtrl as any).getFullWidthNavigationColumn = jest.fn(() => colA);
+            (rowCtrl as any).getNavigationColumn = jest.fn(() => colA);
 
             const findNextCellToFocusOnSpy = jest
                 .spyOn(navigationSvcAny, 'findNextCellToFocusOn')

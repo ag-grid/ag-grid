@@ -10,7 +10,7 @@ describe('NotesService', () => {
     let column: AgColumn;
     let currentNote: CellNote | undefined;
     let cellCtrl: { showCellNote: jest.Mock };
-    let rowCtrl: { isFullWidth: jest.Mock; showFullWidthCellNote: jest.Mock; refreshRow: jest.Mock; rowNode: IRowNode };
+    let rowCtrl: { isFullWidth: jest.Mock; showCellNote: jest.Mock; refreshRow: jest.Mock; rowNode: IRowNode };
 
     beforeEach(() => {
         rowNode = {
@@ -23,7 +23,7 @@ describe('NotesService', () => {
         cellCtrl = { showCellNote: jest.fn() };
         rowCtrl = {
             isFullWidth: jest.fn(() => true),
-            showFullWidthCellNote: jest.fn(),
+            showCellNote: jest.fn(),
             refreshRow: jest.fn(),
             rowNode,
         };
@@ -139,7 +139,7 @@ describe('NotesService', () => {
         (beans.rowRenderer!.getRowCtrlByNode as jest.Mock).mockReturnValue(rowCtrl);
 
         expect(service.showCellNote({ rowNode, column: 'athlete' }, true)).toBe(true);
-        expect(rowCtrl.showFullWidthCellNote).toHaveBeenCalledWith(column, true);
+        expect(rowCtrl.showCellNote).toHaveBeenCalledWith(column, true);
     });
 
     it('does not write notes for suppressed cells via UI', () => {

@@ -256,7 +256,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             cellCtrl.onCellFocused(event);
         }
         for (const rowCtrl of this.getFullWidthRowCtrls()) {
-            rowCtrl.onFullWidthRowFocused(event);
+            rowCtrl.onRowFocused(event);
         }
     }
 

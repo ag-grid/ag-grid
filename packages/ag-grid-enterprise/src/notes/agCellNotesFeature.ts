@@ -4,9 +4,9 @@ import type {
     BeanStub,
     CellCtrl,
     CellNote,
+    FullWidthTarget,
     ICellNotesFeature,
     RowCtrl,
-    RowGui,
 } from 'ag-grid-community';
 
 import { AgNotesPopup } from './agNotesPopup';
@@ -246,7 +246,7 @@ export class AgCellNotesFeature extends BaseNotesFeature {
 }
 
 export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
-    private readonly registeredComponents = new WeakSet<BeanStub>();
+    private readonly registeredTargets = new WeakMap<BeanStub, WeakSet<HTMLElement>>();
 
     constructor(
         beans: BeanCollection,
@@ -265,53 +265,54 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
             return;
         }
 
-        const rowGui = this.ctrl.getGui();
-
-        if (!rowGui) {
-            return;
+        for (const target of this.ctrl.getTargets()) {
+            this.registerTarget(target);
+            const hasNote = !!this.notesSvc.getCellNoteAccess({
+                rowNode: this.ctrl.rowNode,
+                column: target.column,
+            })?.note;
+            target.element.classList.toggle(CSS_HAS_CELL_NOTES, hasNote);
         }
-
-        this.registerGui(rowGui);
-        const position = this.getPositionForElement(rowGui.element);
-        const hasNote = !!position && !!this.notesSvc.getCellNoteAccess(position)?.note;
-        rowGui.rowComp.toggleCss(CSS_HAS_CELL_NOTES, hasNote);
     }
 
-    private registerGui(gui: RowGui): void {
-        const { compBean, element } = gui;
-        if (this.registeredComponents.has(compBean)) {
+    private registerTarget(target: FullWidthTarget): void {
+        const { compBean, element } = target;
+        let registeredElements = this.registeredTargets.get(compBean);
+        if (!registeredElements) {
+            registeredElements = new WeakSet<HTMLElement>();
+            this.registeredTargets.set(compBean, registeredElements);
+        }
+
+        if (registeredElements.has(element)) {
             return;
         }
 
-        this.registeredComponents.add(compBean);
+        registeredElements.add(element);
         compBean.addManagedListeners(element, {
-            pointerenter: (event: PointerEvent) => this.onPointerEnter(this.getTargetForElement(element), event),
+            pointerenter: (event: PointerEvent) => this.onPointerEnter(this.getTargetForElement(event.target), event),
             pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
             contextmenu: () => this.onContextMenu(),
         });
     }
 
-    private getPositionForElement(element: HTMLElement) {
-        const column = this.ctrl.getColumnForFullWidthElement(element);
-        if (!column) {
+    private getTargetForElement(element?: EventTarget | null): NoteTarget | undefined {
+        const target = this.ctrl.getTarget(element);
+        if (!target) {
             return undefined;
         }
 
         return {
             rowNode: this.ctrl.rowNode,
-            column,
+            column: target.column,
+            anchorElement: target.element,
         };
     }
 
-    private getTargetForElement(element: HTMLElement): NoteTarget | undefined {
-        const position = this.getPositionForElement(element);
-        if (!position) {
-            return undefined;
-        }
-
+    private getTargetForFullWidthTarget(target: FullWidthTarget): NoteTarget {
         return {
-            ...position,
-            anchorElement: element,
+            rowNode: this.ctrl.rowNode,
+            column: target.column,
+            anchorElement: target.element,
         };
     }
 
@@ -319,22 +320,19 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
         let matchedTarget: NoteTarget | undefined;
         let firstTarget: NoteTarget | undefined;
 
-        for (const element of this.ctrl.getFullWidthSectionElements()) {
+        for (const target of this.ctrl.getTargets()) {
             if (matchedTarget) {
                 break;
             }
 
-            const target = this.getTargetForElement(element);
-            if (!target) {
-                continue;
-            }
+            const noteTarget = this.getTargetForFullWidthTarget(target);
 
             if (!firstTarget) {
-                firstTarget = target;
+                firstTarget = noteTarget;
             }
 
-            if (!column || target.column === column) {
-                matchedTarget = target;
+            if (!column || noteTarget.column === column) {
+                matchedTarget = noteTarget;
             }
         }
 

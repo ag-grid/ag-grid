@@ -198,7 +198,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         const rowNode = rowCtrl.rowNode;
-        const noteColumn = rowCtrl.findFullWidthInfoForEvent(keyboardEvent)?.column ?? focusedColumn;
+        const noteColumn = rowCtrl.findInfoForEvent(keyboardEvent)?.column ?? focusedColumn;
 
         if (!noteColumn) {
             return;

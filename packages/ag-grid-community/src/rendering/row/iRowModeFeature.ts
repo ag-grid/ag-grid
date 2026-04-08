@@ -1,9 +1,17 @@
+import type { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent } from '../../events';
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer } from '../cellRenderers/iCellRenderer';
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type FullWidthTarget = {
+    compBean: BeanStub;
+    element: HTMLElement;
+    column: AgColumn;
+};
 
 export interface IRowModeFeature {
     initialiseComp(): void;
@@ -18,14 +26,25 @@ export interface IRowModeFeature {
     onColumnMoved(): void;
     onSpannedCellsUpdated(pinned: ColumnPinnedType): void;
 
-    // Optional — only FullWidthRowFeature implements these
+    // Optional Features
     getModeCellRenderer?(): ICellRenderer | null | undefined;
     setupFocus?(): void;
-    onFullWidthRowFocused?(event?: CellFocusedEvent): void;
-    getFullWidthElement?(): HTMLElement | null;
-    getFullWidthNavigationColumn?(): AgColumn;
+    onRowFocused?(event?: CellFocusedEvent): void;
+    getRowContentElement?(): HTMLElement | null;
+    getNavigationColumn?(): AgColumn;
     onKeyboardNavigate?(keyboardEvent: KeyboardEvent): void;
     onTabKeyDown?(keyboardEvent: KeyboardEvent): void;
     onRowMouseDown?(mouseEvent: MouseEvent): void;
     setupDetailRowAutoHeight?(eGui: HTMLElement): void;
+
+    // Target resolution
+    getTargets?(): FullWidthTarget[];
+    getTarget?(element?: EventTarget | null): FullWidthTarget | undefined;
+    findInfoForEvent?(event?: Event): { column: AgColumn } | undefined;
+
+    // Notes integration
+    showCellNote?(column: AgColumn, focusEditor?: boolean): void;
+
+    // CSS classes hook
+    addInitialRowClasses?(classes: string[]): void;
 }
