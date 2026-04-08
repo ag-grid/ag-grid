@@ -61,6 +61,15 @@ export function _getLevenshteinSimilarityDistance(source: string, target: string
     let targetLower = target.toLocaleLowerCase();
     let swapTmp;
 
+    // Substring match: if the input appears verbatim (case-insensitive)
+    // within the target, score based on position. Position 0 (prefix) = 0 (best).
+    if (sourceLength > 0) {
+        const substringPos = targetLower.indexOf(inputLower);
+        if (substringPos >= 0) {
+            return substringPos * 0.01;
+        }
+    }
+
     // Always use the shorter string for columns to reduce space
     if (source.length < target.length) {
         swapTmp = targetLower;

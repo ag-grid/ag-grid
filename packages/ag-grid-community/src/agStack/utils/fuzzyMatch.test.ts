@@ -143,6 +143,34 @@ describe('fuzzyMatch.ts', () => {
             expect(values).toEqual(['abc', 'abd']);
         });
 
+        it('fuzzy search for "duct" ranks substring matches appropriately', () => {
+            // Rich Select scenario: equipment codes with descriptions, searching for 'duct'.
+            // Entries containing the exact substring 'DUCT' should rank above fuzzy matches.
+            const allSuggestions = [
+                'LCDD00 DUST DETECTOR',
+                'PSCI00 CONDUCTIVITY INDICATOR',
+                'ERCD01 RESIDUAL CURRENT DEVICE',
+                'TCID00 INTRUDER DETECTION',
+                'HAHAY00 HYDRAULIC HATCH',
+                'HVAC03 HVAC DUCT',
+                'HVAC07 HVAC DUCT FLOW SWITCH',
+            ];
+            const { values } = _fuzzySuggestions({
+                inputValue: 'duct',
+                allSuggestions,
+                hideIrrelevant: true,
+            });
+            expect(values).toEqual([
+                'PSCI00 CONDUCTIVITY INDICATOR',
+                'HVAC03 HVAC DUCT',
+                'HVAC07 HVAC DUCT FLOW SWITCH',
+                'LCDD00 DUST DETECTOR',
+                'TCID00 INTRUDER DETECTION',
+                'ERCD01 RESIDUAL CURRENT DEVICE',
+                'HAHAY00 HYDRAULIC HATCH',
+            ]);
+        });
+
         it('returns an empty result for an empty suggestion list', () => {
             const { values, indices } = _fuzzySuggestions({ inputValue: 'test', allSuggestions: [] });
             expect(values).toEqual([]);
