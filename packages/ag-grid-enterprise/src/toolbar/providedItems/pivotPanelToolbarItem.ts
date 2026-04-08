@@ -1,5 +1,5 @@
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _warnOnce } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import { PivotDropZonePanel } from '../../rowGrouping/columnDropZones/pivotDropZonePanel';
 
@@ -11,14 +11,6 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
     }
 
     public init(_params: IToolbarItemParams): void {
-        if (this.isStandardPlacementActive()) {
-            _warnOnce(
-                'AG Grid: pivotPanel is configured in both the toolbar and standard placement (pivotPanelShow). Standard placement takes precedence.'
-            );
-            this.setDisplayed(false);
-            return;
-        }
-
         this.panel = this.createManagedBean(new PivotDropZonePanel(true));
         this.getGui().appendChild(this.panel.getGui());
 
@@ -29,6 +21,7 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
         });
 
         this.updateVisibility();
+        this.addManagedPropertyListener('pivotPanelShow', () => this.updateVisibility());
         this.addManagedEventListeners({
             columnPivotModeChanged: () => this.updateVisibility(),
         });
@@ -39,12 +32,15 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
     }
 
     private updateVisibility(): void {
-        const pivotMode = this.beans.colModel.isPivotMode();
-        this.setDisplayed(pivotMode);
-    }
-
-    private isStandardPlacementActive(): boolean {
         const pivotPanelShow = this.gos.get('pivotPanelShow');
-        return pivotPanelShow === 'always' || pivotPanelShow === 'onlyWhenPivoting';
+        if (pivotPanelShow === 'always') {
+            this.setDisplayed(true);
+        } else if (pivotPanelShow === 'onlyWhenPivoting') {
+            const pivotMode = this.beans.colModel.isPivotMode();
+            this.setDisplayed(pivotMode);
+        } else {
+            // 'never' or unset
+            this.setDisplayed(false);
+        }
     }
 }

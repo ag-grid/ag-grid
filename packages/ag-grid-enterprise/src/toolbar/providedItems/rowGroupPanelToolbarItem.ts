@@ -1,5 +1,5 @@
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _warnOnce } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
 
 import { RowGroupDropZonePanel } from '../../rowGrouping/columnDropZones/rowGroupDropZonePanel';
 
@@ -11,17 +11,14 @@ export class RowGroupPanelToolbarItem extends Component implements IToolbarItemC
     }
 
     public init(_params: IToolbarItemParams): void {
-        if (this.isStandardPlacementActive()) {
-            _warnOnce(
-                'AG Grid: rowGroupPanel is configured in both the toolbar and standard placement (rowGroupPanelShow). Standard placement takes precedence.'
-            );
-            this.setDisplayed(false);
-            return;
-        }
-
         this.panel = this.createManagedBean(new RowGroupDropZonePanel(true));
         this.panel.setDisplayed(true);
         this.getGui().appendChild(this.panel.getGui());
+
+        // Keep the inner panel always visible — the wrapper controls visibility
+        this.addManagedListeners(this.panel, {
+            displayChanged: () => this.panel!.setDisplayed(true),
+        });
 
         this.updateVisibility();
         this.addManagedPropertyListener('rowGroupPanelShow', () => this.updateVisibility());
@@ -43,13 +40,8 @@ export class RowGroupPanelToolbarItem extends Component implements IToolbarItemC
             const grouping = (this.beans.rowGroupColsSvc?.columns?.length ?? 0) > 0;
             this.setDisplayed(grouping);
         } else {
-            // 'never' or unset — when in toolbar, always show (user explicitly added it)
-            this.setDisplayed(true);
+            // 'never' or unset
+            this.setDisplayed(false);
         }
-    }
-
-    private isStandardPlacementActive(): boolean {
-        const rowGroupPanelShow = this.gos.get('rowGroupPanelShow');
-        return rowGroupPanelShow === 'always' || rowGroupPanelShow === 'onlyWhenGrouping';
     }
 }
