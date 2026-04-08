@@ -104,6 +104,11 @@
     border-bottom: none;
 }
 
+.ag-toolbar-button-chevron {
+    display: inline-flex;
+    align-items: center;
+}
+
 .ag-toolbar-separator {
     align-self: stretch;
     width: 0;

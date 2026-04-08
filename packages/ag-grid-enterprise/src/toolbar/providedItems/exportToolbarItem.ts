@@ -1,10 +1,23 @@
 import type { IconName, MenuItemDef } from 'ag-grid-community';
-import { _createIconNoSpan, _focusInto } from 'ag-grid-community';
+import { _createIconNoSpan, _focusInto, _setAriaHidden } from 'ag-grid-community';
 
 import { MenuList } from '../../widgets/menuList';
 import { AbstractToolbarItemComp } from './abstractToolbarItemComp';
 
 export class ExportToolbarItem extends AbstractToolbarItemComp {
+    public override postConstruct(): void {
+        super.postConstruct();
+
+        const chevronIcon = _createIconNoSpan('selectOpen', this.beans);
+        if (chevronIcon) {
+            const eChevron = document.createElement('span');
+            eChevron.classList.add('ag-toolbar-button-chevron');
+            _setAriaHidden(eChevron, true);
+            eChevron.appendChild(chevronIcon);
+            this.getGui().appendChild(eChevron);
+        }
+    }
+
     protected getIconName(): IconName {
         return 'save';
     }
