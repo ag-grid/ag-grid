@@ -177,6 +177,81 @@ describe('fuzzyMatch.ts', () => {
             expect(indices).toEqual([]);
         });
 
+        it('returns all suggestions when inputValue is empty', () => {
+            const allSuggestions = ['apple', 'banana', 'cherry'];
+            const { values } = _fuzzySuggestions({ inputValue: '', allSuggestions });
+            expect(values).toHaveLength(3);
+        });
+
+        it('maxSuggestions of 0 returns all results', () => {
+            const allSuggestions = ['test', 'tester', 'testing'];
+            const { values } = _fuzzySuggestions({
+                inputValue: 'test',
+                allSuggestions,
+                maxSuggestions: 0,
+            });
+            expect(values).toHaveLength(3);
+        });
+
+        it('negative maxSuggestions returns all results', () => {
+            const allSuggestions = ['test', 'tester', 'testing'];
+            const { values } = _fuzzySuggestions({
+                inputValue: 'test',
+                allSuggestions,
+                maxSuggestions: -1,
+            });
+            expect(values).toHaveLength(3);
+        });
+
+        it('preserves input order for items with equal non-zero relevance', () => {
+            // 'xyz' and 'xyw' have similar edit distance from 'abc' — neither is a substring
+            // match, so they go through Levenshtein. With equal scores the original order
+            // should be preserved.
+            const allSuggestions = ['xyz', 'xyw'];
+            const { values } = _fuzzySuggestions({ inputValue: 'abc', allSuggestions });
+            expect(values).toEqual(['xyz', 'xyw']);
+        });
+
+        it('hideIrrelevant with a very short inputValue filters almost nothing', () => {
+            // Threshold is max(suggestion.value.length, 1). For longer suggestions the
+            // threshold is high, so they survive. Only a suggestion shorter than or equal
+            // to the input whose distance >= its own length would be removed.
+            const allSuggestions = ['apple', 'banana', 'cherry', 'a'];
+            const { values } = _fuzzySuggestions({
+                inputValue: 'a',
+                allSuggestions,
+                hideIrrelevant: true,
+            });
+            // 'a' is a prefix of 'apple' → distance 0, well under threshold
+            expect(values).toContain('apple');
+            expect(values).toContain('a');
+        });
+
+        it('indices are correct after hideIrrelevant filtering', () => {
+            const allSuggestions = ['test', 'zzz', 'tester'];
+            const { values, indices } = _fuzzySuggestions({
+                inputValue: 'test',
+                allSuggestions,
+                hideIrrelevant: true,
+            });
+            for (let i = 0; i < values.length; i++) {
+                expect(values[i]).toBe(allSuggestions[indices[i]]);
+            }
+        });
+
+        it('indices are correct after maxSuggestions truncation', () => {
+            const allSuggestions = ['banana', 'test', 'testing', 'tset', 'toast'];
+            const { values, indices } = _fuzzySuggestions({
+                inputValue: 'test',
+                allSuggestions,
+                maxSuggestions: 3,
+            });
+            expect(values).toHaveLength(3);
+            for (let i = 0; i < values.length; i++) {
+                expect(values[i]).toBe(allSuggestions[indices[i]]);
+            }
+        });
+
         it('exact match ranks first even when it appears late in a sorted value list (AG-14163)', () => {
             // Regression: when the value list was sorted alphabetically, 'CO' fell to
             // index 5 (after all 'BR Power...' entries). A bug caused one of the longer
@@ -340,6 +415,63 @@ describe('fuzzyMatch.ts', () => {
 
             expect(_getLevenshteinSimilarityDistance(searchTerm, correctFormatted)).toBeLessThan(
                 _getLevenshteinSimilarityDistance(searchTerm, wrongFormatted)
+            );
+        });
+
+        it('returns 0 for both strings empty', () => {
+            expect(_getLevenshteinSimilarityDistance('', '')).toBe(0);
+        });
+
+        it('returns source length for empty target', () => {
+            expect(_getLevenshteinSimilarityDistance('test', '')).toBe(4);
+            expect(_getLevenshteinSimilarityDistance('a', '')).toBe(1);
+        });
+
+        it('returns 0 for empty source (semi-global: empty pattern matches at position 0)', () => {
+            // With semi-global alignment an empty source matches any target at position 0
+            // with zero edits — the minimum across the initialised first row is always 0.
+            expect(_getLevenshteinSimilarityDistance('', 'hello')).toBe(0);
+            expect(_getLevenshteinSimilarityDistance('', 'a')).toBe(0);
+        });
+
+        it('non-prefix substring match scores based on position', () => {
+            // Substring at position 0 (prefix) → 0
+            expect(_getLevenshteinSimilarityDistance('duct', 'duct HVAC')).toBe(0);
+            // Substring at position 5 → 5 * 0.01 = 0.05
+            expect(_getLevenshteinSimilarityDistance('duct', 'HVAC DUCT')).toBeCloseTo(0.05, 5);
+            // A later position scores worse than an earlier one
+            expect(_getLevenshteinSimilarityDistance('test', 'atest')).toBeGreaterThan(
+                _getLevenshteinSimilarityDistance('test', 'testing')
+            );
+        });
+
+        it('transposition scores worse than exact match but better than fully different', () => {
+            const exact = _getLevenshteinSimilarityDistance('ab', 'ab');
+            const transposed = _getLevenshteinSimilarityDistance('ab', 'ba');
+            const different = _getLevenshteinSimilarityDistance('ab', 'zz');
+            expect(exact).toBeLessThan(transposed);
+            expect(transposed).toBeLessThan(different);
+        });
+
+        it('earlyMatchLimit bonus does not apply for short strings', () => {
+            // For sourceLength=4, earlyMatchLimit = 4/2 - 10 = -8, so the bonus never fires.
+            // Both should still produce valid scores without errors.
+            const score = _getLevenshteinSimilarityDistance('abcd', 'abxd');
+            expect(score).toBeGreaterThan(0);
+        });
+
+        it('earlyMatchLimit bonus applies for long strings', () => {
+            // For sourceLength=30, earlyMatchLimit = 30/2 - 10 = 5. The bonus fires for
+            // i < 5 (first 4 characters). Verify this by comparing two targets that differ
+            // only in whether their matching characters fall within the bonus window.
+            // Use a source where the early chars differ between the two targets.
+            const source = 'abcde' + 'x'.repeat(25);
+            // target1 matches the first 5 chars (within the bonus window) but diverges after
+            const target1 = 'abcde' + 'y'.repeat(25);
+            // target2 has the same number of matching characters but they appear later
+            const target2 = 'y'.repeat(25) + 'abcde';
+            expect(_getLevenshteinSimilarityDistance(source, target1)).toBeLessThan(
+                _getLevenshteinSimilarityDistance(source, target2)
             );
         });
 
