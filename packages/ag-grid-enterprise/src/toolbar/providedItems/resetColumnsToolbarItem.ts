@@ -5,7 +5,7 @@ import { AbstractToolbarItemComp } from './abstractToolbarItemComp';
 
 export class ResetColumnsToolbarItem extends AbstractToolbarItemComp {
     protected getIconName(): IconName {
-        return 'columns';
+        return 'minimize';
     }
 
     protected getLocaleKey(): string {

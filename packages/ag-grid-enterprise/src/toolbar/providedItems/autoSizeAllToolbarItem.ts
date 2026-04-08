@@ -4,7 +4,7 @@ import { AbstractToolbarItemComp } from './abstractToolbarItemComp';
 
 export class AutoSizeAllToolbarItem extends AbstractToolbarItemComp {
     protected getIconName(): IconName {
-        return 'columns';
+        return 'maximize';
     }
 
     protected getLocaleKey(): string {
