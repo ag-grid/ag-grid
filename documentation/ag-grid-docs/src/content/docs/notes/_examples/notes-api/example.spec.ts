@@ -1,15 +1,5 @@
 import { expect, test } from '@utils/grid/test-utils';
 
-const eachInteractiveFramework = (testName: string, testBody: Parameters<typeof test.typescript>[1]) => {
-    test.describe(testName, () => {
-        test.typescript('typescript', testBody);
-        test.vanilla('vanilla', testBody);
-        test.reactFunctionalTs('reactFunctionalTs', testBody);
-        test.reactFunctionalTs_Dev('reactFunctionalTs_Dev', testBody);
-        test.vue3('vue3', testBody);
-    });
-};
-
 test.agExample(import.meta, () => {
     test.eachFramework('Pre-seeded note indicator on row 2 athlete', async ({ agIdFor }) => {
         // Row 2 athlete has a pre-seeded note
@@ -18,7 +8,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.cell('1', 'athlete')).not.toHaveClass(/ag-has-cell-notes/);
     });
 
-    eachInteractiveFramework('Click cell loads note into controls', async ({ agIdFor, page }) => {
+    test.eachFramework('Click cell loads note into controls', async ({ agIdFor, page }) => {
         // Click cell with existing note
         await agIdFor.cell('2', 'athlete').click();
 
@@ -29,7 +19,7 @@ test.agExample(import.meta, () => {
         await expect(textarea).toHaveValue('Follow up with the regional team before publishing this profile.');
     });
 
-    eachInteractiveFramework('Save note via API adds indicator', async ({ agIdFor, page }) => {
+    test.eachFramework('Save note via API adds indicator', async ({ agIdFor, page }) => {
         // Click a cell without a note
         const cell = agIdFor.cell('1', 'athlete');
         await cell.click();
@@ -45,7 +35,7 @@ test.agExample(import.meta, () => {
         await expect(page.locator('#selection-status')).toContainText('Saved note');
     });
 
-    eachInteractiveFramework('Remove note via API removes indicator', async ({ agIdFor, page }) => {
+    test.eachFramework('Remove note via API removes indicator', async ({ agIdFor, page }) => {
         // Click cell with existing note
         const cell = agIdFor.cell('2', 'athlete');
         await cell.click();
@@ -60,7 +50,7 @@ test.agExample(import.meta, () => {
         await expect(page.locator('#selection-status')).toContainText('Removed note');
     });
 
-    eachInteractiveFramework('Mutate store directly then refresh syncs grid', async ({ agIdFor, page }) => {
+    test.eachFramework('Mutate store directly then refresh syncs grid', async ({ agIdFor, page }) => {
         // Click a cell without a note
         const cell = agIdFor.cell('4', 'country');
         await cell.click();
