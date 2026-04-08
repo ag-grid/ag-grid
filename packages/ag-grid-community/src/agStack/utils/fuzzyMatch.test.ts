@@ -220,6 +220,78 @@ describe('fuzzyMatch.ts', () => {
             expect(values).toEqual([]);
             expect(indices).toEqual([]);
         });
+
+        it('exact match ranks first even when it appears late in a sorted value list (AG-14163)', () => {
+            // Regression: when the value list was sorted alphabetically, 'CO' fell to
+            // index 5 (after all 'BR Power...' entries). A bug caused one of the longer
+            // 'BR Power...' strings to score better than the exact match 'CO', so 'CO'
+            // was no longer the first highlighted result.
+            const allSuggestions = [
+                'CO',
+                'ETF',
+                'BR Power North East Con',
+                'BR Power South East Con',
+                'BR Power North Con',
+                'BR Power South Con',
+                'BR Power North East I50',
+            ].sort(); // sorts 'CO' to index 5, after all 'BR Power' entries
+
+            const { values } = _fuzzySuggestions({
+                inputValue: 'CO',
+                allSuggestions,
+                hideIrrelevant: true,
+            });
+            expect(values[0]).toBe('CO');
+        });
+
+        it('uppercase input ranks exact match first (AG-14560 TC1)', () => {
+            // Regression: searching 'CO' in uppercase showed 'C3' as the top result
+            // instead of the exact match 'CO'. Lowercase 'co' worked correctly.
+            const allSuggestions = [
+                'CO',
+                'ETF',
+                'C3',
+                'E3',
+                'BR Power North East Con',
+                'BR Power South East Con',
+                'BR Power North Con',
+                'BR Power South Con',
+                'BR Power North East I50',
+            ];
+            const { values: upperValues } = _fuzzySuggestions({
+                inputValue: 'CO',
+                allSuggestions,
+                hideIrrelevant: true,
+            });
+            expect(upperValues[0]).toBe('CO');
+
+            const { values: lowerValues } = _fuzzySuggestions({
+                inputValue: 'co',
+                allSuggestions,
+                hideIrrelevant: true,
+            });
+            expect(lowerValues[0]).toBe('CO');
+        });
+
+        it('uppercase input ranks exact match first (AG-14560 TC2)', () => {
+            // Regression: searching 'TEST' in uppercase showed 'DEF' before 'TEST'.
+            // Lowercase 'test' worked correctly.
+            const allSuggestions = ['TEST', 'ABC', 'DEF', 'GHI'];
+
+            const { values: upperValues } = _fuzzySuggestions({
+                inputValue: 'TEST',
+                allSuggestions,
+                hideIrrelevant: true,
+            });
+            expect(upperValues[0]).toBe('TEST');
+
+            const { values: lowerValues } = _fuzzySuggestions({
+                inputValue: 'test',
+                allSuggestions,
+                hideIrrelevant: true,
+            });
+            expect(lowerValues[0]).toBe('TEST');
+        });
     });
 
     describe('_getLevenshteinSimilarityDistance', () => {
