@@ -132,7 +132,7 @@ class AgToolbar extends Component implements FocusableContainer {
             const rightItems: ToolbarItemDef[] = [];
             let lastAlignment: 'left' | 'right' = 'left';
             for (const item of items) {
-                const alignment = item.key === 'separator' ? lastAlignment : item.alignment ?? 'left';
+                const alignment: 'left' | 'right' = item.key === 'separator' ? lastAlignment : item.alignment ?? 'left';
                 (alignment === 'right' ? rightItems : leftItems).push(item);
                 if (item.key !== 'separator') {
                     lastAlignment = alignment;
