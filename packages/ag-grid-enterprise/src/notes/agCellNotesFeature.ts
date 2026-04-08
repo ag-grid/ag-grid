@@ -1,6 +1,7 @@
 import type {
     AgColumn,
     BeanCollection,
+    BeanStub,
     CellCtrl,
     CellNote,
     ICellNotesFeature,
@@ -245,7 +246,7 @@ export class AgCellNotesFeature extends BaseNotesFeature {
 }
 
 export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
-    private readonly registeredElements = new WeakSet<HTMLElement>();
+    private readonly registeredElements = new WeakSet<BeanStub>();
 
     constructor(
         beans: BeanCollection,
@@ -274,12 +275,13 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
     }
 
     private registerGui(gui: RowGui): void {
-        if (this.registeredElements.has(gui.element)) {
+        const { compBean, element } = gui;
+        if (this.registeredElements.has(compBean)) {
             return;
         }
 
-        this.registeredElements.add(gui.element);
-        gui.compBean.addManagedListeners(gui.element, {
+        this.registeredElements.add(compBean);
+        compBean.addManagedListeners(element, {
             pointerenter: (event: PointerEvent) => this.onPointerEnter(this.getTargetForGui(gui), event),
             pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
             contextmenu: () => this.onContextMenu(),
