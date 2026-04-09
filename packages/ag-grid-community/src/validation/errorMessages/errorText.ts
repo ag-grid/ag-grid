@@ -355,7 +355,7 @@ export const AG_GRID_ERRORS = {
             inputValue: componentName,
             allSuggestions: validComponents,
             hideIrrelevant: true,
-            filterByPercentageOfBestMatch: 0.8,
+            maxSuggestions: 4,
         }).values;
 
         textOutput.push(
@@ -383,7 +383,7 @@ export const AG_GRID_ERRORS = {
             inputValue,
             allSuggestions,
             hideIrrelevant: true,
-            filterByPercentageOfBestMatch: 0.8,
+            maxSuggestions: 4,
         }).values;
         return [
             `Could not find '${inputValue}' aggregate function. It was configured as "aggFunc: '${inputValue}'" but it wasn't found in the list of registered aggregations.`,
