@@ -86,6 +86,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 };
 
+function onWidthSliderChange(value: string) {
+    document.getElementById('myGrid')!.style.maxWidth = value + 'px';
+    document.getElementById('widthValue')!.textContent = value + 'px';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
