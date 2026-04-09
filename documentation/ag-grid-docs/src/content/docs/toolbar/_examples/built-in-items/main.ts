@@ -39,9 +39,9 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi;
+let gridApi: GridApi<IOlympicData>;
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'athlete', minWidth: 200 },
         { field: 'country', minWidth: 200 },
@@ -80,111 +80,13 @@ const gridOptions: GridOptions = {
             { component: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
         ],
     },
-    rowData: [
-        {
-            athlete: 'Michael Phelps',
-            country: 'United States',
-            sport: 'Swimming',
-            year: 2008,
-            gold: 8,
-            silver: 0,
-            bronze: 0,
-            total: 8,
-        },
-        {
-            athlete: 'Natalie Coughlin',
-            country: 'United States',
-            sport: 'Swimming',
-            year: 2008,
-            gold: 1,
-            silver: 2,
-            bronze: 3,
-            total: 6,
-        },
-        {
-            athlete: 'Usain Bolt',
-            country: 'Jamaica',
-            sport: 'Athletics',
-            year: 2008,
-            gold: 3,
-            silver: 0,
-            bronze: 0,
-            total: 3,
-        },
-        {
-            athlete: 'Shelly-Ann Fraser',
-            country: 'Jamaica',
-            sport: 'Athletics',
-            year: 2008,
-            gold: 1,
-            silver: 0,
-            bronze: 0,
-            total: 1,
-        },
-        {
-            athlete: 'Ian Thorpe',
-            country: 'Australia',
-            sport: 'Swimming',
-            year: 2000,
-            gold: 3,
-            silver: 2,
-            bronze: 0,
-            total: 5,
-        },
-        {
-            athlete: 'Cathy Freeman',
-            country: 'Australia',
-            sport: 'Athletics',
-            year: 2000,
-            gold: 1,
-            silver: 0,
-            bronze: 0,
-            total: 1,
-        },
-        {
-            athlete: 'Mo Farah',
-            country: 'Great Britain',
-            sport: 'Athletics',
-            year: 2012,
-            gold: 2,
-            silver: 0,
-            bronze: 0,
-            total: 2,
-        },
-        {
-            athlete: 'Jessica Ennis',
-            country: 'Great Britain',
-            sport: 'Athletics',
-            year: 2012,
-            gold: 1,
-            silver: 0,
-            bronze: 0,
-            total: 1,
-        },
-        {
-            athlete: 'Eliud Kipchoge',
-            country: 'Kenya',
-            sport: 'Athletics',
-            year: 2016,
-            gold: 1,
-            silver: 0,
-            bronze: 0,
-            total: 1,
-        },
-        {
-            athlete: 'Sun Yang',
-            country: 'China',
-            sport: 'Swimming',
-            year: 2012,
-            gold: 2,
-            silver: 1,
-            bronze: 0,
-            total: 3,
-        },
-    ],
 };
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
+
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });
