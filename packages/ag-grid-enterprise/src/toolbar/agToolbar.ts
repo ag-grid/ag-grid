@@ -229,7 +229,10 @@ class AgToolbar extends Component implements FocusableContainer {
 
     private processToolbarItems(existingItemsToReuse: Map<string, IToolbarItemComp>): void {
         const items = this.getValidItems();
-        if (items) {
+        const validItemsProvided = Array.isArray(items) && items.length > 0;
+        this.setDisplayed(validItemsProvided);
+
+        if (validItemsProvided) {
             const leftItems: ToolbarItemDef[] = [];
             const rightItems: ToolbarItemDef[] = [];
             let lastAlignment: 'left' | 'right' = 'left';
@@ -244,8 +247,6 @@ class AgToolbar extends Component implements FocusableContainer {
                 this.createAndRenderComponents(leftItems, this.eToolbarLeft, existingItemsToReuse),
                 this.createAndRenderComponents(rightItems, this.eToolbarRight, existingItemsToReuse),
             ]).then(() => this.initRovingTabindex());
-        } else {
-            this.setDisplayed(false);
         }
     }
 

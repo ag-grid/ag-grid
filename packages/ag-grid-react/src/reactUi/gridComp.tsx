@@ -79,7 +79,7 @@ const GridComp = ({ context }: GridCompProps) => {
                     }
 
                     const name = comp.getFocusableContainerName();
-                    if (name === 'rowGroupToolbar' || name === 'pivotToolbar') {
+                    if (name === 'toolbar' || name === 'rowGroupToolbar' || name === 'pivotToolbar') {
                         beforeGridBody.push(comp);
                         continue;
                     }
@@ -129,17 +129,6 @@ const GridComp = ({ context }: GridCompProps) => {
         } = gridCtrl.getOptionalSelectors();
         const additionalEls: HTMLElement[] = [];
 
-        if (gridHeaderDropZonesSelector) {
-            const headerDropZonesComp = context.createBean(
-                new gridHeaderDropZonesSelector.component()
-            ) as HeaderDropZonesComp;
-            const eGui = headerDropZonesComp.getGui();
-            eRootWrapper.prepend(eGui);
-            additionalEls.push(eGui);
-            beansToDestroy.push(headerDropZonesComp);
-            focusableContainersRef.current.push(...(headerDropZonesComp.getFocusableContainers?.() ?? []));
-        }
-
         if (toolbarSelector) {
             const toolbarComp = context.createBean(new toolbarSelector.component());
             const eGui = toolbarComp.getGui();
@@ -147,6 +136,23 @@ const GridComp = ({ context }: GridCompProps) => {
             additionalEls.push(eGui);
             beansToDestroy.push(toolbarComp);
             focusableContainersRef.current.push(toolbarComp);
+        }
+
+        if (gridHeaderDropZonesSelector) {
+            const headerDropZonesComp = context.createBean(
+                new gridHeaderDropZonesSelector.component()
+            ) as HeaderDropZonesComp;
+            const eGui = headerDropZonesComp.getGui();
+            // Insert after toolbar (if present) or at the start
+            const toolbar = eRootWrapper.querySelector('.ag-toolbar');
+            if (toolbar) {
+                toolbar.insertAdjacentElement('afterend', eGui);
+            } else {
+                eRootWrapper.prepend(eGui);
+            }
+            additionalEls.push(eGui);
+            beansToDestroy.push(headerDropZonesComp);
+            focusableContainersRef.current.push(...(headerDropZonesComp.getFocusableContainers?.() ?? []));
         }
 
         if (sideBarSelector) {
