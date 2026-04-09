@@ -3,20 +3,33 @@ import { ColumnMenuModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
 
-// jsdom has no layout engine, so offsetParent and dimensions are all 0.
-// The column chooser dialog needs these to position itself.
-Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-    get() {
-        return this.parentNode;
-    },
-});
-
 const columnDefs: ColDef[] = [{ field: 'a' }, { field: 'b' }];
 const rowData = [{ a: 1, b: 2 }];
 
 describe('ag-grid popup cleanup on destroy', () => {
     const gridsManager = new TestGridsManager({
         modules: [ColumnMenuModule],
+    });
+
+    // jsdom has no layout engine, so offsetParent and dimensions are all 0.
+    // The column chooser dialog needs these to position itself.
+    const originalOffsetParent = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
+
+    beforeAll(() => {
+        Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+            get() {
+                return this.parentNode;
+            },
+            configurable: true,
+        });
+    });
+
+    afterAll(() => {
+        if (originalOffsetParent) {
+            Object.defineProperty(HTMLElement.prototype, 'offsetParent', originalOffsetParent);
+        } else {
+            delete (HTMLElement.prototype as any).offsetParent;
+        }
     });
 
     afterEach(() => {
