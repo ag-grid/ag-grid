@@ -68,15 +68,16 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     toolbar: {
         items: [
+            'columnChooser',
+            'autoSizeAll',
+            'separator',
             'rowGroupPanel',
             'pivotPanel',
             { component: 'quickFilter', alignment: 'right' },
             { component: 'find', alignment: 'right' },
             'separator',
-            { component: 'columnChooser', alignment: 'right' },
             { component: 'columnsPanel', alignment: 'right' },
             { component: 'filtersPanel', alignment: 'right' },
-            { component: 'autoSizeAll', alignment: 'right' },
             'separator',
             { component: 'export', alignment: 'right' },
             'separator',
