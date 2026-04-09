@@ -792,8 +792,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return allFullWidthRowsRefreshed;
     }
 
-    public showFullWidthCellNote(column: AgColumn, focusEditor = false): void {
-        this.fullWidthNotesFeature?.show({ column, focusEditor });
+    public showFullWidthCellNote(pinned: ColumnPinnedType, focusEditor = false): void {
+        const normalisedPinned = pinned === 'left' || pinned === 'right' ? pinned : undefined;
+        this.fullWidthNotesFeature?.show({ pinned: normalisedPinned, focusEditor });
     }
 
     private addListeners(): void {
@@ -1252,19 +1253,22 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.eventSvc.dispatchEvent(rowEvent);
     }
 
-    public findFullWidthInfoForEvent(event?: Event): { rowGui: RowGui; column: AgColumn } | undefined {
+    public findFullWidthInfoForEvent(
+        event?: Event
+    ): { rowGui: RowGui; column: AgColumn; pinned: ColumnPinnedType } | undefined {
         if (!event) {
             return;
         }
 
         const rowGui = this.findFullWidthRowGui(event.target as HTMLElement);
         const column = this.getColumnForFullWidth(rowGui);
+        const pinned = this.getPinnedForFullWidth(rowGui);
 
         if (!rowGui || !column) {
             return;
         }
 
-        return { rowGui, column };
+        return { rowGui, column, pinned };
     }
 
     private findFullWidthRowGui(target: HTMLElement): RowGui | undefined {
@@ -1283,6 +1287,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             default:
                 return visibleCols.allCols[0];
         }
+    }
+
+    public getPinnedForFullWidth(fullWidthRowGui?: RowGui): ColumnPinnedType {
+        const type = fullWidthRowGui?.containerType;
+        return type === 'left' || type === 'right' ? type : undefined;
     }
 
     private onRowMouseDown(mouseEvent: MouseEvent) {
@@ -1375,7 +1384,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             // these need to be taken out, as part of 'afterAttached' now
             eGridCell: eRow,
             eParentOfValue: eRow,
-            pinned: pinned as any,
+            pinned,
             addRenderedRowListener: this.addEventListener.bind(this) as any, // This is not on the type of ICellRendererParams
             registerRowDragger: (rowDraggerElement, dragStartPixels, value, rowDragEntireRow) =>
                 this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, rowDragEntireRow),

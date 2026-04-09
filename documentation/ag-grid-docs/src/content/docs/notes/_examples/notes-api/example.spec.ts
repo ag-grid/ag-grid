@@ -17,6 +17,7 @@ test.agExample(import.meta, () => {
 
         const textarea = page.locator('#note-text');
         await expect(textarea).toHaveValue('Follow up with the regional team before publishing this profile.');
+        await expect(page.locator('#note-readonly')).toBeChecked();
     });
 
     test.eachFramework('Save note via API adds indicator', async ({ agIdFor, page }) => {
@@ -33,6 +34,24 @@ test.agExample(import.meta, () => {
         // Cell should now have the note indicator
         await expect(cell).toHaveClass(/ag-has-cell-notes/);
         await expect(page.locator('#selection-status')).toContainText('Saved note');
+    });
+
+    test.eachFramework('Save via API can clear read-only on an existing note', async ({ agIdFor, page }) => {
+        const cell = agIdFor.cell('2', 'athlete');
+        await cell.click();
+
+        const readOnlyInput = page.locator('#note-readonly');
+        await expect(readOnlyInput).toBeChecked();
+
+        await readOnlyInput.uncheck();
+        await page.locator('button', { hasText: 'Save via API' }).click();
+        await expect(page.locator('#selection-status')).toContainText('Saved note');
+        await expect(readOnlyInput).not.toBeChecked();
+
+        await agIdFor.cell('1', 'athlete').click();
+        await cell.click();
+        await expect(readOnlyInput).not.toBeChecked();
+        await expect(cell).toHaveClass(/ag-has-cell-notes/);
     });
 
     test.eachFramework('Remove note via API removes indicator', async ({ agIdFor, page }) => {

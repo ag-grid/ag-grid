@@ -24,34 +24,27 @@ interface OlympicWinner extends Partial<IOlympicData> {
     featured?: boolean;
 }
 
-const FULL_WIDTH_NOTE_COLUMN = 'athlete';
-
-const getNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
-
 const noteStore = new Map<string, CellNote>([
     [
-        getNoteKey('2', FULL_WIDTH_NOTE_COLUMN),
+        '2',
         {
-            text: 'This note belongs to a full width row. In this grid, full width notes resolve to the first displayed column.',
-        },
-    ],
-    [
-        getNoteKey('4', 'country'),
-        {
-            text: 'Regular rows still use their actual column id.',
+            text: 'This note belongs to a full width row. The datasource receives location: fullWidthRow instead of a column.',
         },
     ],
 ]);
 
 const notesDataSource: NotesDataSource = {
-    getNote: ({ rowNode, column }) => noteStore.get(getNoteKey(rowNode.id!, column.getColId())),
-    setNote: ({ rowNode, column, note }) => {
-        const key = getNoteKey(rowNode.id!, column.getColId());
+    getNote: (params) => (params.location === 'fullWidthRow' ? noteStore.get(params.rowNode.id!) : undefined),
+    setNote: (params) => {
+        if (params.location !== 'fullWidthRow') {
+            return;
+        }
 
-        if (note === undefined) {
+        const key = params.rowNode.id!;
+        if (params.note === undefined) {
             noteStore.delete(key);
         } else {
-            noteStore.set(key, note);
+            noteStore.set(key, params.note);
         }
     },
 };

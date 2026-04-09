@@ -18,17 +18,17 @@ type OlympicWinner = {
     sport: string;
 };
 
-const getNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
+const getCellNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
 
 const noteStore = new Map<string, CellNote>([
     [
-        getNoteKey('1', 'athlete'),
+        getCellNoteKey('1', 'athlete'),
         {
             text: 'Confirm the athlete biography before the next review.',
         },
     ],
     [
-        getNoteKey('3', 'country'),
+        getCellNoteKey('3', 'country'),
         {
             text: 'Check the latest federation naming guidance for this country.',
         },
@@ -36,14 +36,19 @@ const noteStore = new Map<string, CellNote>([
 ]);
 
 const notesDataSource: NotesDataSource = {
-    getNote: ({ rowNode, column }) => noteStore.get(getNoteKey(rowNode.id!, column.getColId())),
-    setNote: ({ rowNode, column, note }) => {
-        const key = getNoteKey(rowNode.id!, column.getColId());
+    getNote: (params) =>
+        'column' in params ? noteStore.get(getCellNoteKey(params.rowNode.id!, params.column.getColId())) : undefined,
+    setNote: (params) => {
+        if (!('column' in params)) {
+            return;
+        }
 
-        if (note === undefined) {
+        const key = getCellNoteKey(params.rowNode.id!, params.column.getColId());
+
+        if (params.note === undefined) {
             noteStore.delete(key);
         } else {
-            noteStore.set(key, note);
+            noteStore.set(key, params.note);
         }
     },
 };

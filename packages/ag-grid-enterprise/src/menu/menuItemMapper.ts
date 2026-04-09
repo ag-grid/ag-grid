@@ -2,6 +2,7 @@ import type {
     AgColumn,
     ColumnEventType,
     DefaultMenuItem,
+    GetNoteParams,
     IAggFuncService,
     ICellNoteAccess,
     IColsService,
@@ -74,6 +75,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         originalList: (MenuItemDef | DefaultMenuItem)[],
         column: AgColumn | null,
         node: RowNode | null,
+        noteParams: GetNoteParams | undefined,
         sourceElement: () => HTMLElement,
         source: ColumnEventType
     ): (MenuItemDef | 'separator')[] {
@@ -480,6 +482,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         notesSvc,
                         column,
                         node,
+                        noteParams,
                         localeTextFunc,
                     });
 
@@ -508,6 +511,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     subMenu as (DefaultMenuItem | MenuItemDef)[],
                     column,
                     node,
+                    noteParams,
                     sourceElement,
                     source
                 );
@@ -529,15 +533,22 @@ function createCellNoteMenuItems({
     notesSvc,
     column,
     node,
+    noteParams,
     localeTextFunc,
 }: {
     notesSvc: Pick<INotesService, 'hasDataSource' | 'getCellNoteAccess' | 'showCellNote' | 'setCellNote'> | undefined;
     column: AgColumn | null;
     node: RowNode | null;
+    noteParams: GetNoteParams | undefined;
     localeTextFunc: LocaleTextFunc;
 }): MenuItemDef[] {
-    const access: ICellNoteAccess | undefined =
-        notesSvc?.hasDataSource() && column && node ? notesSvc.getCellNoteAccess({ rowNode: node, column }) : undefined;
+    const access: ICellNoteAccess | undefined = notesSvc?.hasDataSource()
+        ? noteParams
+            ? notesSvc.getCellNoteAccess(noteParams)
+            : column && node
+              ? notesSvc.getCellNoteAccess({ rowNode: node, column })
+              : undefined
+        : undefined;
 
     if (!access) {
         return [];
@@ -549,9 +560,7 @@ function createCellNoteMenuItems({
         result.push({
             name: localeTextFunc('addCellNote', 'Add Cell Note'),
             disabled: !access.canCreate,
-            action: access.canCreate
-                ? () => notesSvc!.showCellNote({ rowNode: access.rowNode, column: access.column }, true)
-                : undefined,
+            action: access.canCreate ? () => notesSvc!.showCellNote(access.params, true) : undefined,
         });
 
         return result;
@@ -560,7 +569,7 @@ function createCellNoteMenuItems({
     if (access.canView && (access.isReadOnly || access.isSuppressed)) {
         result.push({
             name: localeTextFunc('viewCellNote', 'View Note'),
-            action: () => notesSvc!.showCellNote({ rowNode: access.rowNode, column: access.column }, true),
+            action: () => notesSvc!.showCellNote(access.params, true),
         });
     }
 
@@ -568,9 +577,7 @@ function createCellNoteMenuItems({
         result.push({
             name: localeTextFunc('editCellNote', 'Edit Note'),
             disabled: !access.canEdit,
-            action: access.canEdit
-                ? () => notesSvc!.showCellNote({ rowNode: access.rowNode, column: access.column }, true)
-                : undefined,
+            action: access.canEdit ? () => notesSvc!.showCellNote(access.params, true) : undefined,
         });
     }
 
@@ -580,8 +587,7 @@ function createCellNoteMenuItems({
         action: access.canDelete
             ? () =>
                   notesSvc!.setCellNote({
-                      rowNode: access.rowNode,
-                      column: access.column,
+                      ...access.params,
                       note: undefined,
                   })
             : undefined,

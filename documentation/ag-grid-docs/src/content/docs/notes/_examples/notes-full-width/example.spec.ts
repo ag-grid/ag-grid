@@ -16,7 +16,7 @@ test.agExample(import.meta, () => {
         const popup = page.locator('.ag-notes-popup');
         await expect(popup).toBeVisible();
         await expect(popup.locator('.ag-text-area-input')).toHaveValue(
-            'This note belongs to a full width row. In this grid, full width notes resolve to the first displayed column.'
+            'This note belongs to a full width row. The datasource receives location: fullWidthRow instead of a column.'
         );
     });
 });

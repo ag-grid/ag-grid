@@ -13,6 +13,7 @@ import { BeanStub } from 'ag-grid-community';
 
 import { AgCellNotesFeature, AgFullWidthRowNotesFeature } from './agCellNotesFeature';
 import type { ICellNotePopupOwner, INotesFeatureSupport, InternalSetNoteParams } from './notesShared';
+import { isFullWidthRowNoteParams } from './notesShared';
 
 export class NotesService extends BeanStub implements INotesService, INotesFeatureSupport, NamedBean {
     public readonly beanName = 'notesSvc' as const;
@@ -66,19 +67,20 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
             return undefined;
         }
 
-        const column = colModel.getCol(params.column);
+        const column = isFullWidthRowNoteParams(params)
+            ? this.getColumnForFullWidth(params.pinned)
+            : colModel.getCol(params.column);
+        const note = notesDataSvc!.getNote(params);
+
         if (!column) {
             return undefined;
         }
 
-        const note = notesDataSvc!.getNote({
-            ...params,
-            column,
-        });
         const isSuppressed = column.isColumnFunc(params.rowNode, column.getColDef().suppressCellNoteActions ?? null);
         const isReadOnly = !!note?.readOnly;
 
         return {
+            params,
             rowNode: params.rowNode,
             column,
             note,
@@ -125,18 +127,21 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         }
 
         const { rowRenderer } = this.beans;
-        const { column } = access;
+        const rowCtrl = rowRenderer.getRowCtrlByNode(params.rowNode);
 
-        const cellCtrl = rowRenderer.getCellCtrls([params.rowNode], [column])[0];
+        if (isFullWidthRowNoteParams(access.params)) {
+            if (rowCtrl?.isFullWidth()) {
+                rowCtrl.showFullWidthCellNote(access.params.pinned, focusEditor);
+                return true;
+            }
+
+            return false;
+        }
+
+        const cellCtrl = rowRenderer.getCellCtrls([params.rowNode], [access.column])[0];
 
         if (cellCtrl) {
             cellCtrl.showCellNote(focusEditor);
-            return true;
-        }
-
-        const rowCtrl = rowRenderer.getRowCtrlByNode(params.rowNode);
-        if (rowCtrl?.isFullWidth()) {
-            rowCtrl.showFullWidthCellNote(column, focusEditor);
             return true;
         }
 
@@ -155,15 +160,15 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
             return;
         }
 
-        const { rowNode, note } = params;
+        const { note } = params;
         const previousNote = (params as InternalSetNoteParams).previousNote ?? access.note;
         const source = (params as InternalSetNoteParams).source ?? 'api';
 
-        if ((!note && !previousNote) || previousNote?.readOnly) {
+        if (!note && !previousNote) {
             return;
         }
 
-        if (source === 'ui' && access.isSuppressed) {
+        if (source === 'ui' && (access.isSuppressed || previousNote?.readOnly)) {
             return;
         }
 
@@ -171,13 +176,17 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
             this.activePopupOwner?.closeNotePopup(false);
         }
 
-        notesDataSvc!.setNote({
-            rowNode,
-            column: access.column,
-            note,
-        });
+        notesDataSvc!.setNote(
+            isFullWidthRowNoteParams(access.params)
+                ? { ...access.params, note }
+                : { rowNode: access.rowNode, column: access.column, note }
+        );
 
-        this.refreshCellNotes({ rowNodes: [params.rowNode], columns: [access.column] });
+        this.refreshCellNotes(
+            isFullWidthRowNoteParams(access.params)
+                ? { rowNodes: [params.rowNode] }
+                : { rowNodes: [params.rowNode], columns: [access.column] }
+        );
     }
 
     public refreshCellNotes(params: RefreshCellNotesParams = {}): void {
@@ -199,6 +208,19 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
                 continue;
             }
             rowCtrl.refreshFullWidth();
+        }
+    }
+
+    private getColumnForFullWidth(pinned?: 'left' | 'right') {
+        const { visibleCols } = this.beans;
+
+        switch (pinned) {
+            case 'left':
+                return visibleCols.leftCols[0];
+            case 'right':
+                return visibleCols.rightCols[0];
+            default:
+                return visibleCols.centerCols[0] ?? visibleCols.allCols[0];
         }
     }
 }

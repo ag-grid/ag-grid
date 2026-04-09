@@ -936,9 +936,13 @@ export type {
     ValueParam,
 } from './interfaces/formulas';
 export type {
+    CellNoteParams,
     CellNote,
+    FullWidthRowNoteParams,
     GetNoteParams,
     NotesDataSource,
+    NotesDataSourceCellNoteParams,
+    NotesDataSourceFullWidthRowNoteParams,
     NotesDataSourceGetNoteParams,
     NotesDataSourceParams,
     NotesDataSourceSetNoteParams,

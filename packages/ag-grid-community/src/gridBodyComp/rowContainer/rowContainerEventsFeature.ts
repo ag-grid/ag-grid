@@ -195,20 +195,32 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         const rowNode = rowCtrl.rowNode;
-        const noteColumn = rowCtrl.findFullWidthInfoForEvent(keyboardEvent)?.column ?? focusedColumn;
+        const fullWidthInfo = rowCtrl.findFullWidthInfoForEvent(keyboardEvent);
+        const noteParams = fullWidthInfo
+            ? {
+                  rowNode,
+                  location: 'fullWidthRow' as const,
+                  pinned:
+                      fullWidthInfo.pinned === 'left' || fullWidthInfo.pinned === 'right'
+                          ? fullWidthInfo.pinned
+                          : undefined,
+              }
+            : focusedColumn
+              ? { rowNode, column: focusedColumn }
+              : undefined;
 
-        if (!noteColumn) {
+        if (!noteParams) {
             return;
         }
 
-        const access = notesSvc.getCellNoteAccess({ rowNode, column: noteColumn });
+        const access = notesSvc.getCellNoteAccess(noteParams);
 
         if (!access) {
             return;
         }
 
         if (!access.isSuppressed || access.canView) {
-            notesSvc.showCellNote({ rowNode: access.rowNode, column: access.column }, true);
+            notesSvc.showCellNote(access.params, true);
             keyboardEvent.preventDefault();
         }
     }

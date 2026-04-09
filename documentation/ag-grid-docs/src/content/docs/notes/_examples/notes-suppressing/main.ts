@@ -18,25 +18,25 @@ type OlympicWinner = {
     sport: string;
 };
 
-const getNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
+const getCellNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
 
 const noteStore = new Map<string, CellNote>([
     [
-        getNoteKey('1', 'athlete'),
+        getCellNoteKey('1', 'athlete'),
         {
             text: 'This cell still allows the full built-in note workflow.',
             updatedAt: '29 Mar 2026, 09:15',
         },
     ],
     [
-        getNoteKey('2', 'year'),
+        getCellNoteKey('2', 'year'),
         {
             text: 'Year suppresses note actions, but existing notes still open on hover.',
             updatedAt: '28 Mar 2026, 11:45',
         },
     ],
     [
-        getNoteKey('5', 'sport'),
+        getCellNoteKey('5', 'sport'),
         {
             text: 'Sport also suppresses note actions for the entire column.',
             updatedAt: '27 Mar 2026, 14:30',
@@ -45,14 +45,19 @@ const noteStore = new Map<string, CellNote>([
 ]);
 
 const notesDataSource: NotesDataSource = {
-    getNote: ({ rowNode, column }) => noteStore.get(getNoteKey(rowNode.id!, column.getColId())),
-    setNote: ({ rowNode, column, note }) => {
-        const key = getNoteKey(rowNode.id!, column.getColId());
+    getNote: (params) =>
+        'column' in params ? noteStore.get(getCellNoteKey(params.rowNode.id!, params.column.getColId())) : undefined,
+    setNote: (params) => {
+        if (!('column' in params)) {
+            return;
+        }
 
-        if (note === undefined) {
+        const key = getCellNoteKey(params.rowNode.id!, params.column.getColId());
+
+        if (params.note === undefined) {
             noteStore.delete(key);
         } else {
-            noteStore.set(key, note);
+            noteStore.set(key, params.note);
         }
     },
 };
