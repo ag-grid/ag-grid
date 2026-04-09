@@ -1,5 +1,5 @@
 import type {
-    CellClickedEvent,
+    CellFocusedEvent,
     CellNote,
     ColDef,
     Column,
@@ -9,13 +9,20 @@ import type {
     IRowNode,
     NotesDataSource,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    RowApiModule,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
 import { ContextMenuModule, NotesModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ContextMenuModule,
     NotesModule,
+    RowApiModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -35,33 +42,38 @@ type SelectedCell = {
     column: Column;
 };
 
-const getNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
 const getDisplayTimestamp = () =>
     new Intl.DateTimeFormat('en-GB', {
         dateStyle: 'medium',
         timeStyle: 'short',
     }).format(new Date());
 
-const noteStore = new Map<string, CellNote>([
-    [
-        getNoteKey('2', 'athlete'),
-        {
+const noteStore: Record<string, Record<string, CellNote>> = {
+    '2': {
+        athlete: {
             text: 'Follow up with the regional team before publishing this profile.',
             author: 'Martha',
+            readOnly: true,
             updatedAt: '29 Mar 2026, 09:15',
         },
-    ],
-]);
+    },
+};
 
 const notesDataSource: NotesDataSource = {
-    getNote: ({ rowNode, column }) => noteStore.get(getNoteKey(rowNode.id!, column.getColId())),
-    setNote: ({ rowNode, column, note }) => {
-        const key = getNoteKey(rowNode.id!, column.getColId());
+    getNote: (params) => ('column' in params ? noteStore[params.rowNode.id!]?.[params.column.getColId()] : undefined),
+    setNote: (params) => {
+        if (!('column' in params)) {
+            return;
+        }
 
-        if (note === undefined) {
-            noteStore.delete(key);
+        const rowId = params.rowNode.id!;
+        const colId = params.column.getColId();
+
+        if (params.note === undefined) {
+            delete noteStore[rowId]?.[colId];
         } else {
-            noteStore.set(key, note);
+            const row = (noteStore[rowId] ??= {});
+            row[colId] = params.note;
         }
     },
 };
@@ -94,10 +106,10 @@ const gridOptions: GridOptions<OlympicWinner> = {
         minWidth: 120,
     },
     notesDataSource,
-    onCellClicked: (event: CellClickedEvent<OlympicWinner>) => {
+    onCellFocused: (event: CellFocusedEvent<OlympicWinner>) => {
         const win = window as any;
         win.selectedCell = {
-            rowNode: event.node,
+            rowNode: gridApi.getDisplayedRowAtIndex(event.rowIndex!),
             column: event.column,
         };
 
@@ -112,8 +124,6 @@ const getReadOnlyInput = () => document.getElementById('note-readonly') as HTMLI
 
 const describeCell = (cell: SelectedCell) =>
     `${cell.rowNode.data?.athlete ?? cell.rowNode.id} / ${cell.column.getColId()}`;
-const areNotesEqual = (left: CellNote | undefined, right: CellNote | undefined) =>
-    JSON.stringify(left ?? null) === JSON.stringify(right ?? null);
 
 const setStatus = (message: string) => {
     getSelectionStatusElement().textContent = message;
@@ -124,7 +134,7 @@ const getSelectedCell = (): SelectedCell | undefined => {
     const selectedCell = win.selectedCell as SelectedCell | undefined;
 
     if (!selectedCell) {
-        setStatus('Click a cell to select it, then use the API controls.');
+        setStatus('No cell selected.');
         return undefined;
     }
 
@@ -142,16 +152,8 @@ const syncNote = (gridApi: GridApi<OlympicWinner>) => {
     getAuthorInput().value = (note?.author ?? getAuthorInput().value) || 'API Demo';
     getReadOnlyInput().checked = !!note?.readOnly;
 
-    setStatus(
-        note
-            ? `Loaded note for ${describeCell(cell)}.`
-            : `No note stored for ${describeCell(cell)}. Type a note and save it via the API.`
-    );
+    setStatus(note ? `Loaded note for ${describeCell(cell)}.` : `No note stored for ${describeCell(cell)}.`);
 };
-
-function loadSelectedNote() {
-    syncNote(gridApi);
-}
 
 function saveSelectedNote() {
     const cell = getSelectedCell();
@@ -159,7 +161,6 @@ function saveSelectedNote() {
         return;
     }
 
-    const previousNote = gridApi.getCellNote(cell);
     const text = getNoteTextArea().value.trim();
     const author = getAuthorInput().value.trim();
     const readOnly = getReadOnlyInput().checked;
@@ -177,13 +178,7 @@ function saveSelectedNote() {
         note: nextNote,
     });
 
-    const updatedNote = gridApi.getCellNote(cell);
     syncNote(gridApi);
-
-    if (previousNote?.readOnly && areNotesEqual(previousNote, updatedNote)) {
-        setStatus(`The existing note for ${describeCell(cell)} is read-only, so gridApi.setCellNote() had no effect.`);
-        return;
-    }
 
     setStatus(
         text
@@ -198,20 +193,11 @@ function removeSelectedNote() {
         return;
     }
 
-    const previousNote = gridApi.getCellNote(cell);
     gridApi.setCellNote({
         ...cell,
         note: undefined,
     });
-    const updatedNote = gridApi.getCellNote(cell);
     syncNote(gridApi);
-
-    if (previousNote?.readOnly && areNotesEqual(previousNote, updatedNote)) {
-        setStatus(
-            `The existing note for ${describeCell(cell)} is read-only, so removing it via gridApi.setCellNote() had no effect.`
-        );
-        return;
-    }
 
     setStatus(`Removed note for ${describeCell(cell)} via gridApi.setCellNote().`);
 }
@@ -222,21 +208,23 @@ function mutateStoreDirectly() {
         return;
     }
 
-    const key = getNoteKey(cell.rowNode.id!, cell.column.getColId());
-    const currentNote = noteStore.get(key);
+    const rowId = cell.rowNode.id!;
+    const colId = cell.column.getColId();
+    const currentNote = noteStore[rowId]?.[colId];
     const author = getAuthorInput().value.trim() || 'External Store';
     const text = getNoteTextArea().value.trim() || currentNote?.text || 'Updated outside the grid';
     const readOnly = getReadOnlyInput().checked;
 
-    noteStore.set(key, {
+    const row = (noteStore[rowId] ??= {});
+    row[colId] = {
         ...(currentNote ?? {}),
         text: `${text} (external update)`,
         author,
         readOnly: readOnly || undefined,
         updatedAt: getDisplayTimestamp(),
-    });
+    };
 
-    setStatus(`Updated the store directly for ${describeCell(cell)}. Call refreshCellNotes() to sync the grid.`);
+    setStatus(`Updated the store directly for ${describeCell(cell)}.`);
 }
 
 function refreshSelectedNotes() {

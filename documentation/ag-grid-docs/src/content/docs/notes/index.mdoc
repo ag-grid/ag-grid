@@ -9,25 +9,26 @@ Notes let users attach comments to individual cells without storing note text in
 
 Notes are enabled by providing a `notesDataSource`. This lets you keep note state in a separate store and persist it independently of the row data.
 
+Right-click a cell or press `Shift + F2` to add a note. Hover a noted cell to view it.
+
 {% gridExampleRunner title="Notes" name="notes" exampleHeight=440 /%}
 
 {% apiDocumentation source="grid-options/properties.json" section="notes" names=["notesDataSource"] /%}
 
 ```{% frameworkTransform=true %}
-const noteStore = new Map();
-const noteKey = (rowId, colId) => `${rowId}::${colId}`;
+const noteStore = {};
 
 const gridOptions = {
     getRowId: (params) => String(params.data.id),
     notesDataSource: {
-        getNote: ({ rowNode, column }) => noteStore.get(noteKey(rowNode.id, column.getColId())),
+        getNote: ({ rowNode, column }) => noteStore[rowNode.id]?.[column.getColId()],
         setNote: ({ rowNode, column, note }) => {
-            const key = noteKey(rowNode.id, column.getColId());
+            const row = (noteStore[rowNode.id] ??= {});
 
             if (note === undefined) {
-                noteStore.delete(key);
+                delete row[column.getColId()];
             } else {
-                noteStore.set(key, note);
+                row[column.getColId()] = note;
             }
         },
     },
@@ -42,7 +43,7 @@ Any note metadata, including `author`, `createdAt`, and `updatedAt`, is rendered
 
 {% gridExampleRunner title="Notes Metadata" name="notes-metadata" exampleHeight=480 /%}
 
-The built-in note editor only updates the note text. If notes created from the built-in UI should also include metadata, stamp it inside `notesDataSource.setNote()`.
+The built-in note editor only updates the note text. If notes created from the built-in UI should also include metadata, stamp it inside `notesDataSource.setNote()`. The example includes an `Authenticated User` input to simulate the current user being stamped into saved notes.
 
 ```{% frameworkTransform=true %}
 const getCurrentUser = () => document.getElementById('current-user').value;
@@ -51,19 +52,20 @@ const getDisplayTimestamp = () => new Date().toLocaleString('en-GB');
 const gridOptions = {
     notesDataSource: {
         setNote: ({ rowNode, column, note }) => {
-            const key = noteKey(rowNode.id, column.getColId());
-            const existingNote = noteStore.get(key);
+            const row = (noteStore[rowNode.id] ??= {});
+            const colId = column.getColId();
+            const existingNote = row[colId];
 
             if (note === undefined) {
-                noteStore.delete(key);
+                delete row[colId];
             } else {
-                noteStore.set(key, {
+                row[colId] = {
                     ...existingNote,
                     ...note,
                     author: getCurrentUser(),
                     createdAt: existingNote?.createdAt ?? getDisplayTimestamp(),
                     updatedAt: getDisplayTimestamp(),
-                });
+                };
             }
         },
     },
@@ -72,7 +74,9 @@ const gridOptions = {
 
 ## Read-Only Notes
 
-Set `CellNote.readOnly = true` to make a note view-only. Read-only notes can still be opened from hover, the context menu, or `Shift + F2`, but they cannot be edited or removed through the built-in UI or the mutating Notes API calls.
+Set `CellNote.readOnly = true` to make a note view-only. Read-only notes can still be opened from hover, the context menu, or `Shift + F2`, but they cannot be edited or removed through the built-in UI. The grid API can still update or remove read-only notes programmatically.
+
+`Athlete` has an editable note. `Country` and `Sport` have **read-only** notes, so they can be viewed but not edited or removed through the built-in UI.
 
 {% gridExampleRunner title="Read-Only Notes" name="notes-read-only" exampleHeight=440 /%}
 
@@ -88,6 +92,8 @@ noteStore.set(noteKey('3', 'country'), {
 ## Suppressing Note Actions
 
 Use `colDef.suppressCellNoteActions` to suppress built-in note actions for a column or specific row. Suppressed cells still allow existing notes to be viewed on hover and through `getCellNote()`, but add/edit/remove actions and note creation shortcuts are blocked.
+
+`Year` and `Sport` suppress built-in note actions. Existing notes on those cells can still be viewed on hover, while other columns keep the standard add, edit, and remove behaviour.
 
 {% gridExampleRunner title="Suppressing Notes" name="notes-suppressing" exampleHeight=440 /%}
 
@@ -107,15 +113,15 @@ Notes also work with full width rows.
 
 {% gridExampleRunner title="Notes with Full Width Rows" name="notes-full-width" exampleHeight=460 /%}
 
-Even though a full width row is not rendered as individual cells, the datasource still receives a `column`. For standard full width rows, AG Grid resolves this to the first displayed column in the grid. In the example below, that column is `athlete`, so the seeded full width note is stored under the `athlete` colId.
+Full width rows use a separate note identity. Instead of receiving a `column`, the datasource receives `location: 'fullWidthRow'` and an optional `pinned` value. This example only stores one note per full width row, so it keys notes by row ID.
 
 ```ts
-noteStore.set(noteKey('2', 'athlete'), {
+noteStore.set('2', {
     text: 'This note belongs to a full width row.',
 });
 ```
 
-If you are using embedded full width rows with pinned sections, the resolved note column comes from the row container being interacted with.
+If you are using embedded full width rows with pinned sections and need separate notes per section, include `pinned` in your store key.
 
 ## Feature Interaction
 
@@ -142,7 +148,7 @@ Use the grid API to read, write, remove and refresh notes programmatically. This
 
 {% gridExampleRunner title="Notes API" name="notes-api" exampleHeight=560 /%}
 
-In the example above, clicking a cell selects it, the toolbar reads the current note with `getCellNote()`, updates or removes the selected note with `setCellNote()`, and calls `refreshCellNotes()` after mutating the backing store directly.
+In the example above, clicking a cell selects it and syncs the toolbar controls automatically. `Save via API` updates the note with `setCellNote()`, including setting or clearing `readOnly`. `Remove via API` clears the note, and `Mutate Store Directly` plus `Refresh Notes` shows how to resync the grid after external store updates.
 
 ### API Reference
 

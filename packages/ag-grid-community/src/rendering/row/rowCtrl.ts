@@ -554,8 +554,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.rowModeFeature.shouldCreateCellSections();
     }
 
-    public showCellNote(column: AgColumn, focusEditor = false): void {
-        this.rowModeFeature.showCellNote?.(column, focusEditor);
+    public showCellNote(pinned?: 'left' | 'right', focusEditor = false): void {
+        this.rowModeFeature.showCellNote?.(pinned, focusEditor);
     }
 
     private addListeners(): void {
@@ -813,7 +813,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.beans.eventSvc.dispatchEvent(rowEvent);
     }
 
-    public findInfoForEvent(event?: Event): { column: AgColumn } | undefined {
+    public findInfoForEvent(event?: Event): { column: AgColumn; pinned: ColumnPinnedType } | undefined {
         return this.rowModeFeature.findInfoForEvent?.(event);
     }
 
@@ -857,6 +857,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
         this.rowModeFeature.setupDetailRowAutoHeight?.(eDetailGui);
+    }
+
+    public refreshFullWidth(): boolean {
+        return this.rowModeFeature.refreshComp?.() ?? true;
     }
 
     private onUiLevelChanged(): void {

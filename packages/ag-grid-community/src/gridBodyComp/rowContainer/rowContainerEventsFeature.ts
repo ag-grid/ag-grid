@@ -6,6 +6,7 @@ import type { EditService } from '../../edit/editService';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getCtrlASelectsRows, _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
+import type { GetNoteParams } from '../../interfaces/notes';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from '../../rendering/renderUtils';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -198,20 +199,33 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         const rowNode = rowCtrl.rowNode;
-        const noteColumn = rowCtrl.findInfoForEvent(keyboardEvent)?.column ?? focusedColumn;
+        const fullWidthInfo = rowCtrl.findInfoForEvent(keyboardEvent);
 
-        if (!noteColumn) {
+        let noteParams: GetNoteParams | undefined;
+
+        if (fullWidthInfo) {
+            const { pinned } = fullWidthInfo;
+            noteParams = {
+                rowNode,
+                location: 'fullWidthRow' as const,
+                pinned: pinned === 'left' || pinned === 'right' ? pinned : undefined,
+            };
+        } else if (focusedColumn) {
+            noteParams = { rowNode, column: focusedColumn };
+        }
+
+        if (!noteParams) {
             return;
         }
 
-        const access = notesSvc.getCellNoteAccess({ rowNode, column: noteColumn });
+        const access = notesSvc.getCellNoteAccess(noteParams);
 
         if (!access) {
             return;
         }
 
         if (!access.isSuppressed || access.canView) {
-            notesSvc.showCellNote({ rowNode: access.rowNode, column: access.column }, true);
+            notesSvc.showCellNote(access.params, true);
             keyboardEvent.preventDefault();
         }
     }

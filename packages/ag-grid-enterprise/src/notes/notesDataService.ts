@@ -8,6 +8,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams } from 'ag-grid-community';
 
+import { isFullWidthRowNoteParams } from './notesShared';
 import { cloneCellNote } from './notesUtils';
 
 export class NotesDataService extends BeanStub implements INotesDataService, NamedBean {
@@ -28,41 +29,35 @@ export class NotesDataService extends BeanStub implements INotesDataService, Nam
     }
 
     public getNote(params: GetNoteParams) {
-        const {
-            beans: { colModel },
-            dataSource,
-        } = this;
-        const column = colModel.getCol(params.column);
+        const { dataSource } = this;
 
+        if (isFullWidthRowNoteParams(params)) {
+            return cloneCellNote(dataSource?.getNote(params));
+        }
+
+        const column = this.beans.colModel.getCol(params.column);
         if (!column) {
             return undefined;
         }
 
-        return cloneCellNote(
-            dataSource?.getNote({
-                ...params,
-                column,
-            })
-        );
+        return cloneCellNote(dataSource?.getNote({ ...params, column }));
     }
 
     public setNote(params: SetNoteParams): void {
-        const {
-            beans: { colModel },
-            dataSource,
-        } = this;
-        const { column: colKey, note } = params;
-        const column = colModel.getCol(colKey);
+        const { dataSource } = this;
+        const note = cloneCellNote(params.note);
 
+        if (isFullWidthRowNoteParams(params)) {
+            dataSource?.setNote({ ...params, note });
+            return;
+        }
+
+        const column = this.beans.colModel.getCol(params.column);
         if (!column) {
             return;
         }
 
-        dataSource?.setNote({
-            ...params,
-            column,
-            note: cloneCellNote(note),
-        });
+        dataSource?.setNote({ ...params, column, note });
     }
 
     private setDataSource(dataSource?: NotesDataSource): void {

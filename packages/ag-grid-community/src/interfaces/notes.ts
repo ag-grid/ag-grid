@@ -15,23 +15,41 @@ export interface CellNote {
     updatedAt?: string;
 }
 
-export interface GetNoteParams {
+export interface CellNoteParams {
     column: ColKey;
     rowNode: IRowNode;
+    location?: 'cell';
 }
 
-export interface SetNoteParams extends GetNoteParams {
+export interface FullWidthRowNoteParams {
+    rowNode: IRowNode;
+    location: 'fullWidthRow';
+    pinned?: 'left' | 'right';
+}
+
+export type GetNoteParams = CellNoteParams | FullWidthRowNoteParams;
+
+export type SetNoteParams = GetNoteParams & {
     note: CellNote | undefined;
-}
+};
 
-export interface NotesDataSourceGetNoteParams {
+export interface NotesDataSourceCellNoteParams {
     column: Column;
     rowNode: IRowNode;
+    location?: 'cell';
 }
 
-export interface NotesDataSourceSetNoteParams extends NotesDataSourceGetNoteParams {
-    note: CellNote | undefined;
+export interface NotesDataSourceFullWidthRowNoteParams {
+    rowNode: IRowNode;
+    location: 'fullWidthRow';
+    pinned?: 'left' | 'right';
 }
+
+export type NotesDataSourceGetNoteParams = NotesDataSourceCellNoteParams | NotesDataSourceFullWidthRowNoteParams;
+
+export type NotesDataSourceSetNoteParams = NotesDataSourceGetNoteParams & {
+    note: CellNote | undefined;
+};
 
 export interface NotesDataSourceParams extends AgGridCommon<any, any> {}
 
@@ -42,9 +60,9 @@ export interface NotesDataSourceParams extends AgGridCommon<any, any> {}
 export interface NotesDataSource {
     /** Initialise the data source so that the user can take a reference to the gridApi if needed. */
     init?(params: NotesDataSourceParams): void;
-    /** Return the note for the given cell. */
+    /** Return the note for the given cell or full width row. */
     getNote(params: NotesDataSourceGetNoteParams): CellNote | undefined;
-    /** Set or clear the note for the given cell. */
+    /** Set or clear the note for the given cell or full width row. */
     setNote(params: NotesDataSourceSetNoteParams): void;
     /** Called by the grid when the data source is being disposed. */
     destroy?(): void;
@@ -57,6 +75,7 @@ export interface RefreshCellNotesParams {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ICellNoteAccess {
+    params: GetNoteParams;
     rowNode: IRowNode;
     column: AgColumn;
     note: CellNote | undefined;
@@ -71,7 +90,7 @@ export interface ICellNoteAccess {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ICellNotesFeature {
     refresh(): void;
-    show(params?: { focusEditor?: boolean; column?: AgColumn }): void;
+    show(params?: { focusEditor?: boolean; pinned?: 'left' | 'right' }): void;
     hide(save?: boolean): void;
     destroy(): void;
 }

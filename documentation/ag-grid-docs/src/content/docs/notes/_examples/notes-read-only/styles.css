@@ -1,14 +1,3 @@
-.example-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    height: 100%;
-}
-
-.example-header {
-    color: var(--ag-secondary-foreground-color);
-}
-
 #myGrid {
-    flex: 1 1 0;
+    height: 100%;
 }

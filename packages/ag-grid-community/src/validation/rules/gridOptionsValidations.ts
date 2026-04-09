@@ -424,6 +424,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        notesDataSource: {
+            validate: ({ getRowId }) => {
+                if (!getRowId) {
+                    return `'getRowId' callback must be provided for Cell Notes to work correctly.`;
+                }
+                return null;
+            },
+        },
         serverSideDatasource: {
             supportedRowModels: ['serverSide'],
         },

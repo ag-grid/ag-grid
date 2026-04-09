@@ -1,16 +1,17 @@
 import type {
-    AgColumn,
     BeanCollection,
     BeanStub,
     CellCtrl,
     CellNote,
     FullWidthTarget,
+    GetNoteParams,
     ICellNotesFeature,
     RowCtrl,
 } from 'ag-grid-community';
 
 import { AgNotesPopup } from './agNotesPopup';
 import type { ICellNotePopupOwner, INotesFeatureSupport, NoteTarget } from './notesShared';
+import { isFullWidthRowNoteParams } from './notesShared';
 
 const CSS_HAS_CELL_NOTES = 'ag-has-cell-notes';
 const NOTE_SHOW_DELAY = 180;
@@ -31,13 +32,13 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
     public refresh(): void {
         this.refreshHasNotesStyling();
 
-        if (this.activeTarget && !this.notesSvc.getCellNoteAccess(this.activeTarget)?.canView) {
+        if (this.activeTarget && !this.notesSvc.getCellNoteAccess(this.activeTarget.noteParams)?.canView) {
             this.closeNotePopup(false);
         }
     }
 
-    public show(params?: { focusEditor?: boolean; column?: AgColumn }): void {
-        const target = this.getTarget(params?.column);
+    public show(params?: { focusEditor?: boolean; pinned?: 'left' | 'right' }): void {
+        const target = this.getTarget(params?.pinned);
         if (!target) {
             return;
         }
@@ -68,7 +69,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
             return;
         }
 
-        const access = target && this.notesSvc.getCellNoteAccess(target);
+        const access = target && this.notesSvc.getCellNoteAccess(target.noteParams);
         this.cancelHide();
 
         if (!target || !access?.canView) {
@@ -109,10 +110,10 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
 
     protected abstract refreshHasNotesStyling(): void;
 
-    protected abstract getTarget(column?: AgColumn): NoteTarget | undefined;
+    protected abstract getTarget(pinned?: 'left' | 'right'): NoteTarget | undefined;
 
     private openPopup(target: NoteTarget, focusEditor = false): void {
-        const access = this.notesSvc.getCellNoteAccess(target);
+        const access = this.notesSvc.getCellNoteAccess(target.noteParams);
         if (!access || (!access.canView && !(focusEditor && access.canCreate))) {
             return;
         }
@@ -165,7 +166,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
             this.beans.focusSvc.setFocusedCell({
                 rowIndex: target.rowNode.rowIndex!,
                 rowPinned: target.rowNode.rowPinned,
-                column: target.column,
+                column: target.focusColumn,
                 forceBrowserFocus: true,
                 preventScrollOnBrowserFocus: true,
                 sourceEvent: closeEvent,
@@ -177,15 +178,15 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
         }
 
         this.notesSvc.setCellNote({
-            ...target,
+            ...target.noteParams,
             note,
-            previousNote: this.notesSvc.getCellNoteAccess(target)?.note,
+            previousNote: this.notesSvc.getCellNoteAccess(target.noteParams)?.note,
             source: 'ui',
         });
     }
 
     private matchesActiveTarget(target: NoteTarget): boolean {
-        return this.activeTarget?.rowNode === target.rowNode && this.activeTarget?.column === target.column;
+        return areSameNoteParams(this.activeTarget?.noteParams, target.noteParams);
     }
 
     private scheduleHide(): void {
@@ -234,12 +235,14 @@ export class AgCellNotesFeature extends BaseNotesFeature {
         return {
             rowNode: this.ctrl.rowNode,
             column: this.ctrl.column,
-        };
+        } satisfies GetNoteParams;
     }
 
-    protected getTarget(_column?: AgColumn): NoteTarget {
+    protected getTarget(): NoteTarget {
         return {
-            ...this.getPosition(),
+            noteParams: this.getPosition(),
+            rowNode: this.ctrl.rowNode,
+            focusColumn: this.ctrl.column,
             anchorElement: this.ctrl.eGui,
         };
     }
@@ -267,10 +270,8 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
 
         for (const target of this.ctrl.getTargets()) {
             this.registerTarget(target);
-            const hasNote = !!this.notesSvc.getCellNoteAccess({
-                rowNode: this.ctrl.rowNode,
-                column: target.column,
-            })?.note;
+            const noteParams = this.getNoteParamsForTarget(target);
+            const hasNote = !!this.notesSvc.getCellNoteAccess(noteParams)?.note;
             target.element.classList.toggle(CSS_HAS_CELL_NOTES, hasNote);
         }
     }
@@ -295,47 +296,74 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
         });
     }
 
+    private getNoteParamsForTarget(target: FullWidthTarget): GetNoteParams {
+        const normalisedPinned = target.pinned === 'left' || target.pinned === 'right' ? target.pinned : undefined;
+        return {
+            rowNode: this.ctrl.rowNode,
+            location: 'fullWidthRow',
+            pinned: normalisedPinned,
+        };
+    }
+
     private getTargetForElement(element?: EventTarget | null): NoteTarget | undefined {
         const target = this.ctrl.getTarget(element);
         if (!target) {
             return undefined;
         }
 
+        return this.getNoteTargetForFullWidthTarget(target);
+    }
+
+    private getNoteTargetForFullWidthTarget(target: FullWidthTarget): NoteTarget {
         return {
+            noteParams: this.getNoteParamsForTarget(target),
             rowNode: this.ctrl.rowNode,
-            column: target.column,
+            focusColumn: target.column,
             anchorElement: target.element,
         };
     }
 
-    private getTargetForFullWidthTarget(target: FullWidthTarget): NoteTarget {
-        return {
-            rowNode: this.ctrl.rowNode,
-            column: target.column,
-            anchorElement: target.element,
-        };
-    }
-
-    protected getTarget(column?: AgColumn): NoteTarget | undefined {
+    protected getTarget(pinned?: 'left' | 'right'): NoteTarget | undefined {
         let matchedTarget: NoteTarget | undefined;
         let firstTarget: NoteTarget | undefined;
 
-        for (const target of this.ctrl.getTargets()) {
+        for (const fullWidthTarget of this.ctrl.getTargets()) {
             if (matchedTarget) {
                 break;
             }
 
-            const noteTarget = this.getTargetForFullWidthTarget(target);
+            const noteTarget = this.getNoteTargetForFullWidthTarget(fullWidthTarget);
 
             if (!firstTarget) {
                 firstTarget = noteTarget;
             }
 
-            if (!column || noteTarget.column === column) {
+            const normalisedPinned =
+                fullWidthTarget.pinned === 'left' || fullWidthTarget.pinned === 'right'
+                    ? fullWidthTarget.pinned
+                    : undefined;
+            if (normalisedPinned === pinned) {
                 matchedTarget = noteTarget;
             }
         }
 
         return matchedTarget ?? firstTarget;
     }
+}
+
+function areSameNoteParams(left?: GetNoteParams, right?: GetNoteParams): boolean {
+    if (!left || !right) {
+        return left === right;
+    }
+
+    if (isFullWidthRowNoteParams(left) || isFullWidthRowNoteParams(right)) {
+        return (
+            isFullWidthRowNoteParams(left) &&
+            isFullWidthRowNoteParams(right) &&
+            left.rowNode === right.rowNode &&
+            left.pinned === right.pinned
+        );
+    }
+
+    return left.rowNode === right.rowNode && left.column === right.column;
 }

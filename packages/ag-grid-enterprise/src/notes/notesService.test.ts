@@ -11,6 +11,7 @@ describe('NotesService', () => {
     let currentNote: CellNote | undefined;
     let cellCtrl: { showCellNote: jest.Mock };
     let rowCtrl: { isFullWidth: jest.Mock; showCellNote: jest.Mock; refreshRow: jest.Mock; rowNode: IRowNode };
+    let fullWidthRowCtrl: { isFullWidth: jest.Mock; showCellNote: jest.Mock };
 
     beforeEach(() => {
         rowNode = {
@@ -26,6 +27,10 @@ describe('NotesService', () => {
             showCellNote: jest.fn(),
             refreshRow: jest.fn(),
             rowNode,
+        };
+        fullWidthRowCtrl = {
+            isFullWidth: jest.fn(() => true),
+            showCellNote: jest.fn(),
         };
 
         column = {
@@ -54,6 +59,12 @@ describe('NotesService', () => {
         beans = {
             colModel: {
                 getCol: jest.fn(() => column),
+            },
+            visibleCols: {
+                centerCols: [column],
+                leftCols: [],
+                rightCols: [],
+                allCols: [column],
             },
             notesDataSvc: {
                 hasDataSource: jest.fn(() => true),
@@ -133,13 +144,31 @@ describe('NotesService', () => {
         expect(cellCtrl.showCellNote).toHaveBeenCalledWith(true);
     });
 
-    it('opens notes through the full width row controller when no cell controller exists', () => {
+    it('resolves full-width note access without a column key', () => {
         currentNote = { text: 'Full width note' };
-        (beans.rowRenderer!.getCellCtrls as jest.Mock).mockReturnValue([]);
-        (beans.rowRenderer!.getRowCtrlByNode as jest.Mock).mockReturnValue(rowCtrl);
 
-        expect(service.showCellNote({ rowNode, column: 'athlete' }, true)).toBe(true);
-        expect(rowCtrl.showCellNote).toHaveBeenCalledWith(column, true);
+        expect(service.getCellNoteAccess({ rowNode, location: 'fullWidthRow' })).toEqual(
+            expect.objectContaining({
+                params: { rowNode, location: 'fullWidthRow' },
+                note: currentNote,
+                column,
+                canView: true,
+            })
+        );
+        expect(beans.notesDataSvc!.getNote).toHaveBeenCalledWith({
+            rowNode,
+            location: 'fullWidthRow',
+        });
+    });
+
+    it('opens full-width notes through the row controller', () => {
+        currentNote = { text: 'Full width note' };
+        (beans.visibleCols as any).leftCols = [column];
+        (beans.rowRenderer!.getRowCtrlByNode as jest.Mock).mockReturnValue(fullWidthRowCtrl);
+
+        expect(service.showCellNote({ rowNode, location: 'fullWidthRow', pinned: 'left' }, true)).toBe(true);
+        expect(fullWidthRowCtrl.showCellNote).toHaveBeenCalledWith('left', true);
+        expect(cellCtrl.showCellNote).not.toHaveBeenCalled();
     });
 
     it('does not write notes for suppressed cells via UI', () => {
@@ -173,13 +202,33 @@ describe('NotesService', () => {
         expect(beans.rowRenderer!.refreshCells).toHaveBeenCalled();
     });
 
-    it('does not update or remove existing read-only notes', () => {
+    it('does not update or remove existing read-only notes through the built-in UI', () => {
         currentNote = { text: 'Locked', readOnly: true };
 
         service.setCellNote({
             rowNode,
             column: 'athlete',
             note: { text: 'Updated' },
+            source: 'ui',
+        });
+        service.setCellNote({
+            rowNode,
+            column: 'athlete',
+            note: undefined,
+            source: 'ui',
+        });
+
+        expect(beans.notesDataSvc!.setNote).not.toHaveBeenCalled();
+        expect(beans.rowRenderer!.refreshCells).not.toHaveBeenCalled();
+    });
+
+    it('allows API updates and removals for existing read-only notes', () => {
+        currentNote = { text: 'Locked', readOnly: true };
+
+        service.setCellNote({
+            rowNode,
+            column: 'athlete',
+            note: { text: 'Updated', readOnly: undefined },
         });
         service.setCellNote({
             rowNode,
@@ -187,8 +236,17 @@ describe('NotesService', () => {
             note: undefined,
         });
 
-        expect(beans.notesDataSvc!.setNote).not.toHaveBeenCalled();
-        expect(beans.rowRenderer!.refreshCells).not.toHaveBeenCalled();
+        expect(beans.notesDataSvc!.setNote).toHaveBeenNthCalledWith(1, {
+            rowNode,
+            column,
+            note: { text: 'Updated', readOnly: undefined },
+        });
+        expect(beans.notesDataSvc!.setNote).toHaveBeenNthCalledWith(2, {
+            rowNode,
+            column,
+            note: undefined,
+        });
+        expect(beans.rowRenderer!.refreshCells).toHaveBeenCalledTimes(2);
     });
 
     it('can create a new read-only note when the cell is not suppressed', () => {

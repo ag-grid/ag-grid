@@ -11,6 +11,7 @@ export type FullWidthTarget = {
     compBean: BeanStub;
     element: HTMLElement;
     column: AgColumn;
+    pinned: ColumnPinnedType;
 };
 
 export interface IRowModeFeature {
@@ -40,10 +41,11 @@ export interface IRowModeFeature {
     // Target resolution
     getTargets?(): FullWidthTarget[];
     getTarget?(element?: EventTarget | null): FullWidthTarget | undefined;
-    findInfoForEvent?(event?: Event): { column: AgColumn } | undefined;
+    findInfoForEvent?(event?: Event): { column: AgColumn; pinned: ColumnPinnedType } | undefined;
+    refreshComp?(): boolean;
 
     // Notes integration
-    showCellNote?(column: AgColumn, focusEditor?: boolean): void;
+    showCellNote?(pinned?: 'left' | 'right', focusEditor?: boolean): void;
 
     // CSS classes hook
     addInitialRowClasses?(classes: string[]): void;

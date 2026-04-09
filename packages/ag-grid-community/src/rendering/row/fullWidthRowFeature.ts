@@ -418,13 +418,25 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
 
         if (!ePinnedLeft && !eCenter && !ePinnedRight) {
             const column = this.getFirstDisplayedColumnForFullWidth();
-            return column ? [{ compBean, element: rowElement, column }] : [];
+            return column ? [{ compBean, element: rowElement, column, pinned: null }] : [];
         }
 
         const targets = new Map<HTMLElement, FullWidthTarget>();
-        this.addFullWidthTarget(targets, ePinnedLeft, compBean, this.getFirstColumnForFullWidthSection('left'));
-        this.addFullWidthTarget(targets, eCenter ?? rowElement, compBean, this.getFirstColumnForFullWidthSection(null));
-        this.addFullWidthTarget(targets, ePinnedRight, compBean, this.getFirstColumnForFullWidthSection('right'));
+        this.addFullWidthTarget(targets, ePinnedLeft, compBean, this.getFirstColumnForFullWidthSection('left'), 'left');
+        this.addFullWidthTarget(
+            targets,
+            eCenter ?? rowElement,
+            compBean,
+            this.getFirstColumnForFullWidthSection(null),
+            null
+        );
+        this.addFullWidthTarget(
+            targets,
+            ePinnedRight,
+            compBean,
+            this.getFirstColumnForFullWidthSection('right'),
+            'right'
+        );
 
         return [...targets.values()];
     }
@@ -444,26 +456,27 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         return targets.find((target) => target.element.contains(node)) ?? targets[0];
     }
 
-    public findInfoForEvent(event?: Event): { column: AgColumn } | undefined {
+    public findInfoForEvent(event?: Event): { column: AgColumn; pinned: ColumnPinnedType } | undefined {
         const target = this.getTarget(event?.target);
         if (!target) {
             return;
         }
 
-        return { column: target.column };
+        return { column: target.column, pinned: target.pinned };
     }
 
     private addFullWidthTarget(
         targets: Map<HTMLElement, FullWidthTarget>,
         element: HTMLElement | undefined,
         compBean: BeanStub,
-        column: AgColumn | undefined
+        column: AgColumn | undefined,
+        pinned: ColumnPinnedType
     ): void {
         if (!element || !column || targets.has(element)) {
             return;
         }
 
-        targets.set(element, { compBean, element, column });
+        targets.set(element, { compBean, element, column, pinned });
     }
 
     private getFirstColumnForFullWidthSection(pinned: ColumnPinnedType): AgColumn | undefined {
@@ -482,8 +495,12 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         return this.beans.visibleCols.allCols[0];
     }
 
-    public showCellNote(column: AgColumn, focusEditor = false): void {
-        this.notesFeature?.show({ column, focusEditor });
+    public showCellNote(pinned?: 'left' | 'right', focusEditor = false): void {
+        this.notesFeature?.show({ pinned, focusEditor });
+    }
+
+    public refreshComp(): boolean {
+        return this.refreshFullWidthComp();
     }
 
     public addInitialRowClasses(classes: string[]): void {
