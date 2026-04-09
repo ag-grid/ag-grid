@@ -384,25 +384,27 @@ class AgToolbar extends Component implements FocusableContainer {
                 };
 
                 if (this.isAlive()) {
-                    const comp = component as unknown as Component;
                     this.toolbarSvc.registerToolbarItem(componentDetail.key, component);
-                    if (comp.isDisplayed()) {
-                        componentDetail.placeholder.replaceWith(comp.getGui());
+                    const comp = component instanceof Component ? component : undefined;
+                    if (!comp || comp.isDisplayed()) {
+                        componentDetail.placeholder.replaceWith(component.getGui());
                     } else {
                         _removeFromParent(componentDetail.placeholder);
                     }
-                    this.addManagedListeners(comp, {
-                        displayChanged: () => {
-                            const gui = comp.getGui();
-                            if (comp.isDisplayed()) {
-                                if (!gui.parentElement) {
-                                    componentDetail.eContainer.appendChild(gui);
+                    if (comp) {
+                        this.addManagedListeners(comp, {
+                            displayChanged: () => {
+                                const gui = comp.getGui();
+                                if (comp.isDisplayed()) {
+                                    if (!gui.parentElement) {
+                                        componentDetail.eContainer.appendChild(gui);
+                                    }
+                                } else {
+                                    _removeFromParent(gui);
                                 }
-                            } else {
-                                _removeFromParent(gui);
-                            }
-                        },
-                    });
+                            },
+                        });
+                    }
                     this.compDestroyFunctions[componentDetail.key] = destroyFunc;
                 } else {
                     _removeFromParent(componentDetail.placeholder);
