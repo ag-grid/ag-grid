@@ -8,6 +8,8 @@ describe('FakeVScrollComp', () => {
         eGui.appendChild(eViewport);
         eViewport.appendChild(eContainer);
 
+        const eSpacer = document.createElement('div');
+
         const fakeComp = {
             gos: {
                 get: (key: string) => (key === 'enableRtl' ? false : undefined),
@@ -27,6 +29,7 @@ describe('FakeVScrollComp', () => {
             },
             enableRtl: false,
             invisibleScrollbar: false,
+            eSpacer,
             eViewport,
             eContainer,
             getGui: () => eGui,
@@ -37,7 +40,7 @@ describe('FakeVScrollComp', () => {
 
         (FakeVScrollComp.prototype as unknown as { setScrollVisible: () => void }).setScrollVisible.call(fakeComp);
 
-        expect(eGui.style.top).toBe('41px');
+        expect(eSpacer.style.height).toBe('41px');
         expect(eGui.style.bottom).toBe('17px');
         expect(eGui.style.right).toBe('');
         expect(eGui.style.left).toBe('');

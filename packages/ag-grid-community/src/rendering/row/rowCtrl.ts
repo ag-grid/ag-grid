@@ -593,6 +593,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             // Manual row pinning (`isRowPinned`) can change pinned row counts without changing a body row's rowIndex.
             // Recompute aria row index whenever pinned rows change so absolute row order stays correct.
             pinnedRowsChanged: this.onPinnedRowsChanged.bind(this),
+            pinnedRowDataChanged: this.onPinnedRowsChanged.bind(this),
             stickyBottomOffsetChanged: this.onStickyBottomOffsetChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             displayedColumnsWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),

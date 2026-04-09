@@ -210,7 +210,7 @@ function getCellOrder(api: GridApi<OrderRow>, rowId: string): { left: string[]; 
 }
 
 function getCellColIds(row: HTMLElement, containerSelector: string): string[] {
-    return Array.from(row.querySelectorAll<HTMLElement>(`${containerSelector} > .ag-cell`))
+    return Array.from(row.querySelectorAll<HTMLElement>(`${containerSelector} .ag-cell`))
         .map((cell) => cell.getAttribute('col-id') ?? '')
         .filter((colId) => !!colId);
 }
