@@ -55,27 +55,22 @@ export default (props: IToolbarItemParams) => {
 
     const toggleMenu = useCallback(() => setIsOpen((prev) => !prev), []);
 
-    const menuStyle: React.CSSProperties = isOpen
-        ? (() => {
-              const rect = buttonRef.current?.getBoundingClientRect();
-              return {
-                  display: 'block',
-                  position: 'fixed' as const,
-                  top: rect ? `${rect.bottom}px` : 0,
-                  right: rect ? `${document.documentElement.clientWidth - rect.right}px` : 0,
-                  zIndex: 10,
-                  minWidth: 180,
-                  padding: '4px 0',
-                  background: 'var(--ag-background-color, #fff)',
-                  border: '1px solid var(--ag-border-color, #ccc)',
-                  borderRadius: 'var(--ag-border-radius, 4px)',
-                  boxShadow: '0 2px 8px rgba(0,0,0,.15)',
-              };
-          })()
-        : { display: 'none' };
+    const menuStyle: React.CSSProperties = {
+        display: isOpen ? 'block' : 'none',
+        position: 'absolute',
+        top: '100%',
+        right: 0,
+        zIndex: 10,
+        minWidth: 180,
+        padding: '4px 0',
+        background: 'var(--ag-background-color, #fff)',
+        border: '1px solid var(--ag-border-color, #ccc)',
+        borderRadius: 'var(--ag-border-radius, 4px)',
+        boxShadow: '0 2px 8px rgba(0,0,0,.15)',
+    };
 
     return (
-        <div className="ag-toolbar-item overflow-menu-wrapper">
+        <div className="ag-toolbar-item overflow-menu-wrapper" style={{ position: 'relative' }}>
             <button
                 ref={buttonRef}
                 className="ag-toolbar-button"
