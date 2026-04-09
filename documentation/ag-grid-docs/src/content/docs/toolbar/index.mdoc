@@ -7,6 +7,8 @@ The Toolbar appears above the grid and provides quick access to common grid acti
 
 Configure the Toolbar with the `toolbar` grid option. The property takes a list of Toolbar Items.
 
+{% gridExampleRunner title="Built-in Items" name="built-in-items" exampleHeight=590 /%}
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     toolbar: {
@@ -20,11 +22,11 @@ const gridOptions = {
             'separator',
             { component: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
         ]
-    }
+    },
+
+    // other grid options ...
 }
 ```
-
-{% gridExampleRunner title="Built-in Items" name="built-in-items" exampleHeight=590 /%}
 
 ## Built-in Items
 
