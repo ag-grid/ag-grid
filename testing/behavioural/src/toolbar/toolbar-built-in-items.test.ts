@@ -179,11 +179,10 @@ describe('Toolbar Built-in Items', () => {
     });
 
     describe('rowGroupPanel', () => {
-        test('renders row group drop zone when rowGroupPanelShow is always', async () => {
+        test('renders row group drop zone when configured in toolbar', async () => {
             const api = gridMgr.createGrid('row-group-panel-render', {
                 columnDefs: [{ field: 'name', enableRowGroup: true }],
                 rowData: [{ name: 'Alice' }],
-                rowGroupPanelShow: 'always',
                 toolbar: {
                     items: ['rowGroupPanel'],
                 },
@@ -197,7 +196,7 @@ describe('Toolbar Built-in Items', () => {
             expect(dropZone).not.toBeNull();
         });
 
-        test('does not render toolbar panel when rowGroupPanelShow is never', async () => {
+        test('renders regardless of rowGroupPanelShow setting', async () => {
             const api = gridMgr.createGrid('row-group-panel-never', {
                 columnDefs: [{ field: 'name', enableRowGroup: true }],
                 rowData: [{ name: 'Alice' }],
@@ -210,35 +209,17 @@ describe('Toolbar Built-in Items', () => {
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const toolbar = gridDiv.querySelector('.ag-toolbar')!;
-            const toolbarPanel = toolbar.querySelector('.ag-toolbar-panel');
-            expect(toolbarPanel).toBeNull();
-        });
-
-        test('does not render toolbar panel by default (rowGroupPanelShow defaults to never)', async () => {
-            const api = gridMgr.createGrid('row-group-panel-default', {
-                columnDefs: [{ field: 'name', enableRowGroup: true }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: {
-                    items: ['rowGroupPanel'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const toolbar = gridDiv.querySelector('.ag-toolbar')!;
-            const toolbarPanel = toolbar.querySelector('.ag-toolbar-panel');
-            expect(toolbarPanel).toBeNull();
+            const toolbarLeft = gridDiv.querySelector('.ag-toolbar-left')!;
+            const dropZone = toolbarLeft.querySelector('.ag-column-drop');
+            expect(dropZone).not.toBeNull();
         });
     });
 
     describe('pivotPanel', () => {
-        test('renders pivot drop zone when pivotPanelShow is always', async () => {
+        test('renders pivot drop zone when configured in toolbar', async () => {
             const api = gridMgr.createGrid('pivot-panel-render', {
                 columnDefs: [{ field: 'name', enablePivot: true }],
                 rowData: [{ name: 'Alice' }],
-                pivotPanelShow: 'always',
                 toolbar: {
                     items: ['pivotPanel'],
                 },
@@ -252,7 +233,7 @@ describe('Toolbar Built-in Items', () => {
             expect(dropZone).not.toBeNull();
         });
 
-        test('does not render toolbar panel when pivotPanelShow is never', async () => {
+        test('renders regardless of pivotPanelShow setting', async () => {
             const api = gridMgr.createGrid('pivot-panel-never', {
                 columnDefs: [{ field: 'name', enablePivot: true }],
                 rowData: [{ name: 'Alice' }],
@@ -265,26 +246,9 @@ describe('Toolbar Built-in Items', () => {
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const toolbar = gridDiv.querySelector('.ag-toolbar')!;
-            const toolbarPanel = toolbar.querySelector('.ag-toolbar-panel');
-            expect(toolbarPanel).toBeNull();
-        });
-
-        test('does not render toolbar panel by default (pivotPanelShow defaults to never)', async () => {
-            const api = gridMgr.createGrid('pivot-panel-default', {
-                columnDefs: [{ field: 'name', enablePivot: true }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: {
-                    items: ['pivotPanel'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const toolbar = gridDiv.querySelector('.ag-toolbar')!;
-            const toolbarPanel = toolbar.querySelector('.ag-toolbar-panel');
-            expect(toolbarPanel).toBeNull();
+            const toolbarLeft = gridDiv.querySelector('.ag-toolbar-left')!;
+            const dropZone = toolbarLeft.querySelector('.ag-column-drop');
+            expect(dropZone).not.toBeNull();
         });
     });
 
@@ -303,7 +267,7 @@ describe('Toolbar Built-in Items', () => {
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
             const input = gridDiv.querySelector<HTMLInputElement>('.ag-toolbar-input-field');
             expect(input).not.toBeNull();
-            expect(input!.placeholder).toBe('Quick Filter');
+            expect(input!.placeholder).toBe('Quick Filter...');
             expect(input!.getAttribute('aria-label')).toBe('Quick Filter');
         });
 
@@ -342,7 +306,7 @@ describe('Toolbar Built-in Items', () => {
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
             const input = gridDiv.querySelector<HTMLInputElement>('.ag-toolbar-input-field');
             expect(input).not.toBeNull();
-            expect(input!.placeholder).toBe('Find');
+            expect(input!.placeholder).toBe('Find...');
             expect(input!.getAttribute('aria-label')).toBe('Find');
         });
 
@@ -552,7 +516,7 @@ describe('Toolbar Built-in Items', () => {
             integrationGridMgr.reset();
         });
 
-        test('rowGroupPanel hidden when rowGroupPanelShow is never with full toolbar config', async () => {
+        test('rowGroupPanel and pivotPanel render independently of rowGroupPanelShow/pivotPanelShow', async () => {
             const api = integrationGridMgr.createGrid('full-toolbar-rowgroup-never', {
                 columnDefs: [
                     { field: 'athlete', minWidth: 200 },
@@ -608,13 +572,12 @@ describe('Toolbar Built-in Items', () => {
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
             const toolbar = gridDiv.querySelector('.ag-toolbar')!;
 
-            // Both rowGroupPanel and pivotPanel should not be in the DOM (both default to 'never')
+            // Both rowGroupPanel and pivotPanel should render regardless of rowGroupPanelShow/pivotPanelShow
             const toolbarPanels = toolbar.querySelectorAll('.ag-toolbar-panel');
-            expect(toolbarPanels).toHaveLength(0);
+            expect(toolbarPanels).toHaveLength(2);
 
-            // No drop zone should exist inside the toolbar
             const dropZones = toolbar.querySelectorAll('.ag-column-drop');
-            expect(dropZones).toHaveLength(0);
+            expect(dropZones).toHaveLength(2);
         });
     });
 });

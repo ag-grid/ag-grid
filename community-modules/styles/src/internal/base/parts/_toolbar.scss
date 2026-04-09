@@ -83,29 +83,48 @@
     }
 
     .ag-toolbar-input {
+        position: relative;
         display: inline-flex;
         align-items: center;
-        gap: calc(var(--ag-spacing) * 0.5);
         min-width: 140px;
     }
 
     .ag-toolbar-input-icon {
+        position: absolute;
         display: inline-flex;
         align-items: center;
         color: var(--ag-text-color);
         opacity: 0.5;
+        pointer-events: none;
+    }
+
+    .ag-ltr .ag-toolbar-input-icon {
+        left: calc(var(--ag-spacing) * 1);
+    }
+
+    .ag-rtl .ag-toolbar-input-icon {
+        right: calc(var(--ag-spacing) * 1);
     }
 
     .ag-toolbar-input-field {
         border: solid var(--ag-border-width) var(--ag-border-color);
         border-radius: var(--ag-border-radius);
-        padding: calc(var(--ag-spacing) * 0.5) calc(var(--ag-spacing) * 1);
         background: transparent;
         color: var(--ag-text-color);
         font-size: var(--ag-font-size);
         line-height: 1.5;
         outline: none;
         width: 100%;
+    }
+
+    .ag-ltr .ag-toolbar-input-field {
+        padding: calc(var(--ag-spacing) * 0.5) calc(var(--ag-spacing) * 1) calc(var(--ag-spacing) * 0.5)
+            calc(var(--ag-spacing) * 1 + 14px + var(--ag-spacing) * 0.5);
+    }
+
+    .ag-rtl .ag-toolbar-input-field {
+        padding: calc(var(--ag-spacing) * 0.5) calc(var(--ag-spacing) * 1 + 14px + var(--ag-spacing) * 0.5)
+            calc(var(--ag-spacing) * 0.5) calc(var(--ag-spacing) * 1);
     }
 
     .ag-toolbar-input-field:focus {

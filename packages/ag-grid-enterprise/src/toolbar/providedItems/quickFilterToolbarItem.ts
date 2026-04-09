@@ -19,7 +19,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         this.eInput = document.createElement('input');
         this.eInput.type = 'text';
         this.eInput.className = 'ag-toolbar-input-field';
-        this.eInput.placeholder = label;
+        this.eInput.placeholder = `${label}...`;
         this.eInput.setAttribute('aria-label', label);
 
         const currentValue = this.gos.get('quickFilterText');
