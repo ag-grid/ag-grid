@@ -32,11 +32,11 @@ export class OverflowMenu implements IToolbarItemComp {
         this.eMenu = document.createElement('div');
         this.eMenu.className = 'overflow-menu';
         this.eMenu.style.cssText =
-            'display:none;position:absolute;top:100%;right:0;z-index:10;min-width:180px;padding:4px 0;background:var(--ag-background-color,#fff);border:1px solid var(--ag-border-color,#ccc);border-radius:var(--ag-border-radius,4px);box-shadow:0 2px 8px rgba(0,0,0,.15);';
-        this.eGui.appendChild(this.eMenu);
+            'display:none;position:fixed;z-index:10;min-width:180px;padding:4px 0;background:var(--ag-background-color,#fff);border:1px solid var(--ag-border-color,#ccc);border-radius:var(--ag-border-radius,4px);box-shadow:0 2px 8px rgba(0,0,0,.15);';
+        document.body.appendChild(this.eMenu);
 
         this.outsideClickListener = (e: MouseEvent) => {
-            if (this.isOpen && !this.eGui.contains(e.target as Node)) {
+            if (this.isOpen && !this.eGui.contains(e.target as Node) && !this.eMenu.contains(e.target as Node)) {
                 this.closeMenu();
             }
         };
@@ -80,6 +80,7 @@ export class OverflowMenu implements IToolbarItemComp {
 
     destroy() {
         document.removeEventListener('click', this.outsideClickListener);
+        this.eMenu.remove();
     }
 
     private buildMenu() {
@@ -113,6 +114,9 @@ export class OverflowMenu implements IToolbarItemComp {
     }
 
     private openMenu() {
+        const rect = this.eButton.getBoundingClientRect();
+        this.eMenu.style.top = `${rect.bottom}px`;
+        this.eMenu.style.right = `${document.documentElement.clientWidth - rect.right}px`;
         this.eMenu.style.display = 'block';
         this.isOpen = true;
     }

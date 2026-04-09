@@ -20,7 +20,7 @@
 }
 
 /* When very narrow: also hide panels */
-@container (max-width: 500px) {
+@container (max-width: 600px) {
     .ag-toolbar-left > .ag-toolbar-panel {
         display: none !important;
     }

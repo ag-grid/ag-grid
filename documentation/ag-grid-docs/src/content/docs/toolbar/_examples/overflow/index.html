@@ -1,1 +1,14 @@
+<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px">
+    <label for="widthSlider">Grid width:</label>
+    <input
+        type="range"
+        id="widthSlider"
+        min="300"
+        max="1400"
+        value="1400"
+        style="flex: 1"
+        oninput="document.getElementById('myGrid').style.maxWidth = this.value + 'px'; document.getElementById('widthValue').textContent = this.value + 'px';"
+    />
+    <span id="widthValue">1400px</span>
+</div>
 <div id="myGrid" style="height: 100%"></div>
