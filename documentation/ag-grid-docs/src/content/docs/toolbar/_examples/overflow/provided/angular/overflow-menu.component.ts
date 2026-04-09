@@ -1,0 +1,92 @@
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+
+import type { IToolbarItemAngularComp } from 'ag-grid-angular';
+import type { IToolbarItemParams } from 'ag-grid-community';
+
+@Component({
+    standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    template: `
+        <div class="ag-toolbar-item overflow-menu-wrapper" style="position: relative">
+            <button class="ag-toolbar-button" title="More actions" aria-label="More actions" (click)="toggleMenu()">
+                ☰
+            </button>
+            <div
+                class="overflow-menu"
+                [style.display]="isOpen ? 'block' : 'none'"
+                style="position:absolute;top:100%;right:0;z-index:10;min-width:180px;padding:4px 0;background:var(--ag-background-color,#fff);border:1px solid var(--ag-border-color,#ccc);border-radius:var(--ag-border-radius,4px);box-shadow:0 2px 8px rgba(0,0,0,.15)"
+            >
+                @for (item of actions; track item.label) {
+                    <div
+                        class="overflow-menu-item"
+                        style="padding:6px 12px;cursor:pointer;white-space:nowrap;font-size:var(--ag-font-size,13px);color:var(--ag-text-color,#333)"
+                        (mouseenter)="$event.target.style.backgroundColor = 'var(--ag-row-hover-color, #f0f0f0)'"
+                        (mouseleave)="$event.target.style.backgroundColor = ''"
+                        (click)="item.action(); closeMenu()"
+                    >
+                        {{ item.label }}
+                    </div>
+                }
+            </div>
+        </div>
+    `,
+})
+export class OverflowMenu implements IToolbarItemAngularComp {
+    private params!: IToolbarItemParams;
+    private cdr = inject(ChangeDetectorRef);
+    private outsideClickListener: any;
+    isOpen = false;
+    actions: { label: string; action: () => void }[] = [];
+
+    agInit(params: IToolbarItemParams): void {
+        this.params = params;
+        this.actions = [
+            { label: 'Export CSV', action: () => params.api.exportDataAsCsv() },
+            { label: 'Export Excel', action: () => params.api.exportDataAsExcel() },
+            { label: 'Auto Size Columns', action: () => params.api.autoSizeAllColumns() },
+            { label: 'Reset Columns', action: () => params.api.resetColumnState() },
+            { label: 'Column Chooser', action: () => params.api.showColumnChooser() },
+            {
+                label: 'Toggle Columns Panel',
+                action: () => {
+                    if (params.api.getOpenedToolPanel() === 'columns') {
+                        params.api.closeToolPanel();
+                    } else {
+                        params.api.openToolPanel('columns');
+                    }
+                },
+            },
+            {
+                label: 'Toggle Filters Panel',
+                action: () => {
+                    if (params.api.getOpenedToolPanel() === 'filters-new') {
+                        params.api.closeToolPanel();
+                    } else {
+                        params.api.openToolPanel('filters-new');
+                    }
+                },
+            },
+        ];
+
+        this.outsideClickListener = (e: MouseEvent) => {
+            if (this.isOpen && !(e.target as HTMLElement).closest('.overflow-menu-wrapper')) {
+                this.closeMenu();
+            }
+        };
+        document.addEventListener('click', this.outsideClickListener);
+    }
+
+    toggleMenu(): void {
+        this.isOpen = !this.isOpen;
+        this.cdr.markForCheck();
+    }
+
+    closeMenu(): void {
+        this.isOpen = false;
+        this.cdr.markForCheck();
+    }
+
+    ngOnDestroy(): void {
+        document.removeEventListener('click', this.outsideClickListener);
+    }
+}

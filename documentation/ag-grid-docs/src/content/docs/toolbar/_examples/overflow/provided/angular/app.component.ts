@@ -1,4 +1,7 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import { Component } from '@angular/core';
+
+import { AgGridAngular } from 'ag-grid-angular';
+import type { ColDef, SideBarDef, Toolbar } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnAutoSizeModule,
@@ -7,7 +10,6 @@ import {
     QuickFilterModule,
     TextFilterModule,
     ValidationModule,
-    createGrid,
 } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -23,7 +25,8 @@ import {
     ToolbarModule,
 } from 'ag-grid-enterprise';
 
-import { OverflowMenu } from './overflowMenu_typescript';
+import { OverflowMenu } from './overflow-menu.component';
+import './styles.css';
 
 ModuleRegistry.registerModules([
     TextFilterModule,
@@ -45,10 +48,42 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi<IOlympicData>;
+@Component({
+    selector: 'my-app',
+    standalone: true,
+    imports: [AgGridAngular],
+    template: `
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px">
+            <label for="widthSlider">Grid width:</label>
+            <input
+                type="range"
+                id="widthSlider"
+                min="30"
+                max="100"
+                [value]="widthValue"
+                style="flex: 1"
+                (input)="onWidthSliderChange($event)"
+            />
+            <span>{{ widthValue }}%</span>
+        </div>
+        <div id="myGrid" [style.max-width]="widthValue + '%'" style="height: calc(100% - 40px)">
+            <ag-grid-angular
+                style="width: 100%; height: 100%"
+                [columnDefs]="columnDefs"
+                [defaultColDef]="defaultColDef"
+                [enableFilterHandlers]="true"
+                [sideBar]="sideBar"
+                [toolbar]="toolbar"
+                [rowData]="rowData"
+            />
+        </div>
+    `,
+})
+export class AppComponent {
+    widthValue = '100';
+    rowData: any[] = [];
 
-const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: [
+    columnDefs: ColDef[] = [
         { field: 'athlete', minWidth: 200 },
         { field: 'country', minWidth: 200 },
         { field: 'sport', minWidth: 200 },
@@ -57,20 +92,22 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'silver', enableValue: true },
         { field: 'bronze', enableValue: true },
         { field: 'total' },
-    ],
-    defaultColDef: {
+    ];
+
+    defaultColDef: ColDef = {
         flex: 1,
         minWidth: 100,
         filter: true,
         enableRowGroup: true,
         enablePivot: true,
-    },
-    enableFilterHandlers: true,
-    sideBar: {
+    };
+
+    sideBar: SideBarDef = {
         toolPanels: ['columns', 'filters-new'],
         defaultToolPanel: '',
-    },
-    toolbar: {
+    };
+
+    toolbar: Toolbar = {
         items: [
             'rowGroupPanel',
             'pivotPanel',
@@ -88,21 +125,15 @@ const gridOptions: GridOptions<IOlympicData> = {
             { component: 'resetColumns', alignment: 'right' },
             { component: OverflowMenu, key: 'overflowMenu', alignment: 'right' },
         ],
-    },
-};
+    };
 
-function onWidthSliderChange(value: string) {
-    const grid = document.getElementById('myGrid');
-    const label = document.getElementById('widthValue');
-    if (grid) grid.style.maxWidth = value + '%';
-    if (label) label.textContent = value + '%';
+    constructor() {
+        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+            .then((response) => response.json())
+            .then((data) => (this.rowData = data));
+    }
+
+    onWidthSliderChange(event: Event): void {
+        this.widthValue = (event.target as HTMLInputElement).value;
+    }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then((response) => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
-});
