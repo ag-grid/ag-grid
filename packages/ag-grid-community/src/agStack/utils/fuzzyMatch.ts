@@ -149,16 +149,5 @@ export function _getLevenshteinSimilarityDistance(source: string, target: string
         currentRow = swapTmp;
     }
 
-    // Use the minimum across the final row (prefix/semi-global alignment).
-    // This prevents long target strings (e.g. "code - description") from being
-    // penalised relative to short ones purely because of description length —
-    // the minimum naturally falls at the position where the input best matches
-    // a prefix of the target, ignoring any trailing characters beyond that point.
-    let minDist = previousRow[0];
-    for (let j = 1; j <= targetLength; j++) {
-        if (previousRow[j] < minDist) {
-            minDist = previousRow[j];
-        }
-    }
-    return minDist / (secondaryScore + 1); // positives divided by positives, ensure no division by zero
+    return previousRow[targetLength] / (secondaryScore + 1); // negatives divided by positives, ensure no division by zero
 }

@@ -17,7 +17,7 @@ describe('fuzzyMatch.ts', () => {
                 allSuggestions: ['taste', 'test', 'tst', 'completely different'],
             });
             // Exact match must come first; completely different must come last
-            expect(values).toEqual(['test', 'taste', 'tst', 'completely different']);
+            expect(values).toEqual(['test', 'tst', 'taste', 'completely different']);
         });
 
         it('indices map each returned value back to its position in allSuggestions', () => {
@@ -167,7 +167,6 @@ describe('fuzzyMatch.ts', () => {
                 'LCDD00 DUST DETECTOR',
                 'TCID00 INTRUDER DETECTION',
                 'ERCD01 RESIDUAL CURRENT DEVICE',
-                'HAHAY00 HYDRAULIC HATCH',
             ]);
         });
 
@@ -344,9 +343,9 @@ describe('fuzzyMatch.ts', () => {
         });
 
         it('should return a max distance for non-matching strings', () => {
-            // 'exerci' (first 6 of 'exercise', after swap) shares no chars with 'banana'
-            // → all 6 cells in the final row equal 6, so minDist = 6, secondaryScore = 0
-            expect(_getLevenshteinSimilarityDistance('banana', 'exercise')).toBe(6);
+            // 'banana' (6) and 'exercise' (8) share no characters — the standard
+            // Levenshtein distance is 8 (6 replacements + 2 deletions), secondaryScore = 0.
+            expect(_getLevenshteinSimilarityDistance('banana', 'exercise')).toBe(8);
         });
 
         it('should handle different case', () => {
@@ -427,11 +426,10 @@ describe('fuzzyMatch.ts', () => {
             expect(_getLevenshteinSimilarityDistance('a', '')).toBe(1);
         });
 
-        it('returns 0 for empty source (semi-global: empty pattern matches at position 0)', () => {
-            // With semi-global alignment an empty source matches any target at position 0
-            // with zero edits — the minimum across the initialised first row is always 0.
-            expect(_getLevenshteinSimilarityDistance('', 'hello')).toBe(0);
-            expect(_getLevenshteinSimilarityDistance('', 'a')).toBe(0);
+        it('returns target length for empty source', () => {
+            // An empty source requires inserting every character of the target.
+            expect(_getLevenshteinSimilarityDistance('', 'hello')).toBe(5);
+            expect(_getLevenshteinSimilarityDistance('', 'a')).toBe(1);
         });
 
         it('non-prefix substring match scores based on position', () => {
