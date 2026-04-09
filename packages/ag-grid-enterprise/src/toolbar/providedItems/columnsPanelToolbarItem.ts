@@ -1,4 +1,5 @@
 import type { IToolbarItemParams, IconName } from 'ag-grid-community';
+import { _warnOnce } from 'ag-grid-community';
 
 import { AbstractToolbarItemComp } from './abstractToolbarItemComp';
 import { hasSideBarPanel } from './sideBarPanelUtils';
@@ -21,6 +22,9 @@ export class ColumnsPanelToolbarItem extends AbstractToolbarItemComp {
     public override init(params: IToolbarItemParams): void {
         super.init(params);
         if (!hasSideBarPanel(this.gos, this.panelId)) {
+            _warnOnce(
+                `toolbar item 'columnsPanel' requires a sidebar with the 'columns' tool panel configured. The item will not be rendered.`
+            );
             this.setDisplayed(false);
         }
     }

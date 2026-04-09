@@ -1,4 +1,5 @@
 import type { IToolbarItemParams, IconName } from 'ag-grid-community';
+import { _warnOnce } from 'ag-grid-community';
 
 import { AbstractToolbarItemComp } from './abstractToolbarItemComp';
 import { hasSideBarPanel } from './sideBarPanelUtils';
@@ -26,6 +27,9 @@ export class FiltersPanelToolbarItem extends AbstractToolbarItemComp {
         if (found) {
             this.panelId = found;
         } else {
+            _warnOnce(
+                `toolbar item 'filtersPanel' requires a sidebar with a filters tool panel configured. The item will not be rendered.`
+            );
             this.setDisplayed(false);
         }
     }

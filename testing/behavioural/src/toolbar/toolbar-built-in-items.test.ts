@@ -179,8 +179,8 @@ describe('Toolbar Built-in Items', () => {
     });
 
     describe('rowGroupPanel', () => {
-        test('renders row group drop zone when rowGroupPanelShow is always', async () => {
-            const api = gridMgr.createGrid('row-group-panel-render', {
+        test('renders in standard location when RowGroupingPanelModule is loaded', async () => {
+            const api = gridMgr.createGrid('row-group-panel-standard', {
                 columnDefs: [{ field: 'name', enableRowGroup: true }],
                 rowData: [{ name: 'Alice' }],
                 rowGroupPanelShow: 'always',
@@ -192,9 +192,15 @@ describe('Toolbar Built-in Items', () => {
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const toolbarLeft = gridDiv.querySelector('.ag-toolbar-left')!;
-            const dropZone = toolbarLeft.querySelector('.ag-column-drop');
-            expect(dropZone).not.toBeNull();
+
+            // Standard drop zone should be rendered
+            const standardDropZone = gridDiv.querySelector('.ag-column-drop-wrapper .ag-column-drop');
+            expect(standardDropZone).not.toBeNull();
+
+            // Toolbar should NOT have the panel (standard takes precedence)
+            const toolbar = gridDiv.querySelector('.ag-toolbar')!;
+            const toolbarPanel = toolbar.querySelector('.ag-toolbar-panel');
+            expect(toolbarPanel).toBeNull();
         });
 
         test('does not render toolbar panel when rowGroupPanelShow is never', async () => {
@@ -234,8 +240,8 @@ describe('Toolbar Built-in Items', () => {
     });
 
     describe('pivotPanel', () => {
-        test('renders pivot drop zone when pivotPanelShow is always', async () => {
-            const api = gridMgr.createGrid('pivot-panel-render', {
+        test('renders in standard location when RowGroupingPanelModule is loaded', async () => {
+            const api = gridMgr.createGrid('pivot-panel-standard', {
                 columnDefs: [{ field: 'name', enablePivot: true }],
                 rowData: [{ name: 'Alice' }],
                 pivotPanelShow: 'always',
@@ -247,9 +253,15 @@ describe('Toolbar Built-in Items', () => {
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const toolbarLeft = gridDiv.querySelector('.ag-toolbar-left')!;
-            const dropZone = toolbarLeft.querySelector('.ag-column-drop');
-            expect(dropZone).not.toBeNull();
+
+            // Standard drop zone should be rendered
+            const standardDropZone = gridDiv.querySelector('.ag-column-drop-wrapper .ag-column-drop');
+            expect(standardDropZone).not.toBeNull();
+
+            // Toolbar should NOT have the panel (standard takes precedence)
+            const toolbar = gridDiv.querySelector('.ag-toolbar')!;
+            const toolbarPanel = toolbar.querySelector('.ag-toolbar-panel');
+            expect(toolbarPanel).toBeNull();
         });
 
         test('does not render toolbar panel when pivotPanelShow is never', async () => {
@@ -479,6 +491,124 @@ describe('Toolbar Built-in Items', () => {
 
             button.click();
             expect(api.getOpenedToolPanel()).toBeNull();
+        });
+    });
+
+    describe('console warnings for missing modules', () => {
+        test('logs warning when columnsPanel is configured without sidebar columns panel', async () => {
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const api = gridMgr.createGrid('columns-panel-warn', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: ['columnsPanel'],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const button = gridDiv.querySelector('.ag-toolbar-button[title="Columns"]');
+            expect(button).toBeNull();
+
+            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('columnsPanel'));
+
+            warnSpy.mockRestore();
+        });
+
+        test('logs warning when filtersPanel is configured without sidebar filters panel', async () => {
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const api = gridMgr.createGrid('filters-panel-warn', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: ['filtersPanel'],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const button = gridDiv.querySelector('.ag-toolbar-button[title="Filters"]');
+            expect(button).toBeNull();
+
+            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('filtersPanel'));
+
+            warnSpy.mockRestore();
+        });
+    });
+
+    describe('dual-location guard for row group and pivot panels', () => {
+        test('rowGroupPanel in toolbar is not rendered when standard drop zone is active', async () => {
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const api = gridMgr.createGrid('row-group-dual-location', {
+                columnDefs: [{ field: 'name', enableRowGroup: true }],
+                rowData: [{ name: 'Alice' }],
+                rowGroupPanelShow: 'always',
+                toolbar: {
+                    items: ['rowGroupPanel', 'autoSizeAll'],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+
+            // Standard drop zone should be rendered
+            const standardDropZone = gridDiv.querySelector('.ag-column-drop-wrapper .ag-column-drop');
+            expect(standardDropZone).not.toBeNull();
+
+            // Toolbar rowGroupPanel should NOT be rendered (standard takes precedence)
+            const toolbar = gridDiv.querySelector('.ag-toolbar')!;
+            const toolbarPanel = toolbar.querySelector('.ag-toolbar-panel');
+            expect(toolbarPanel).toBeNull();
+
+            // Other toolbar items should still render
+            const autoSizeButton = toolbar.querySelector('.ag-toolbar-button[title="Auto Size All"]');
+            expect(autoSizeButton).not.toBeNull();
+
+            // Console warning should be logged
+            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('rowGroupPanel'));
+
+            warnSpy.mockRestore();
+        });
+
+        test('pivotPanel in toolbar is not rendered when standard drop zone is active', async () => {
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const api = gridMgr.createGrid('pivot-dual-location', {
+                columnDefs: [{ field: 'name', enablePivot: true }],
+                rowData: [{ name: 'Alice' }],
+                pivotPanelShow: 'always',
+                toolbar: {
+                    items: ['pivotPanel', 'autoSizeAll'],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+
+            // Standard drop zone should be rendered
+            const standardDropZone = gridDiv.querySelector('.ag-column-drop-wrapper .ag-column-drop');
+            expect(standardDropZone).not.toBeNull();
+
+            // Toolbar pivotPanel should NOT be rendered (standard takes precedence)
+            const toolbar = gridDiv.querySelector('.ag-toolbar')!;
+            const toolbarPanel = toolbar.querySelector('.ag-toolbar-panel');
+            expect(toolbarPanel).toBeNull();
+
+            // Other toolbar items should still render
+            const autoSizeButton = toolbar.querySelector('.ag-toolbar-button[title="Auto Size All"]');
+            expect(autoSizeButton).not.toBeNull();
+
+            // Console warning should be logged
+            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('pivotPanel'));
+
+            warnSpy.mockRestore();
         });
     });
 

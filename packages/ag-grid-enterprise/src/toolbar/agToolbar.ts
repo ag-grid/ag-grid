@@ -19,6 +19,7 @@ import {
     _addGridCommonParams,
     _clearElement,
     _removeFromParent,
+    _warnOnce,
 } from 'ag-grid-community';
 
 import agToolbarCSS from './agToolbar.css';
@@ -118,6 +119,7 @@ class AgToolbar extends Component implements FocusableContainer {
         if (!toolbar) {
             return undefined;
         }
+        const hasStandardDropZones = !!this.beans.registry?.getSelector('AG-GRID-HEADER-DROP-ZONES');
         const seen = new Set<string>();
         return toolbar.items.map(normaliseItem).filter((item) => {
             const key = item.key ?? item.component;
@@ -128,6 +130,13 @@ class AgToolbar extends Component implements FocusableContainer {
                 return false;
             }
             seen.add(key);
+            if (hasStandardDropZones && (key === 'rowGroupPanel' || key === 'pivotPanel')) {
+                _warnOnce(
+                    `toolbar item '${key}' is not rendered because the standard row group/pivot panel placement takes precedence. ` +
+                        `Remove '${key}' from the toolbar items or unregister the RowGroupingPanelModule to use the toolbar placement.`
+                );
+                return false;
+            }
             return true;
         });
     }
