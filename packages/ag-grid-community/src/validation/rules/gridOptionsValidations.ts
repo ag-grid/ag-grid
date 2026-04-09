@@ -268,6 +268,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide', 'serverSide'],
             dependencies: {
                 groupTotalRow: { required: [undefined, 'bottom'] },
+                groupDisplayType: { required: [undefined, 'multipleColumns'] },
                 treeData: {
                     required: [undefined, false],
                     reason: "Tree Data has values at the group level so it doesn't make sense to hide them.",
