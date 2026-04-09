@@ -117,6 +117,15 @@
 .ag-toolbar-separator {
     align-self: stretch;
     width: 0;
-    border-left: solid var(--ag-border-width) var(--ag-border-color);
     margin: 0 calc(var(--ag-spacing) * 1);
+}
+
+:where(.ag-ltr) .ag-toolbar-separator {
+    /* rtl:ignore */
+    border-left: solid var(--ag-border-width) var(--ag-border-color);
+}
+
+:where(.ag-rtl) .ag-toolbar-separator {
+    /* rtl:ignore */
+    border-right: solid var(--ag-border-width) var(--ag-border-color);
 }
