@@ -146,7 +146,7 @@ const GridComp = ({ context }: GridCompProps) => {
             eRootWrapper.prepend(eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(toolbarComp);
-            focusableContainersRef.current.push(toolbarComp as FocusableContainerComp);
+            focusableContainersRef.current.push(toolbarComp);
         }
 
         if (sideBarSelector) {

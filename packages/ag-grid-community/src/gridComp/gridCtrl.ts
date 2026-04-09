@@ -28,7 +28,7 @@ export interface OptionalGridComponents {
     gridHeaderDropZonesSelector?: ComponentSelector<Component>;
     sideBarSelector?: ComponentSelector<Component>;
     statusBarSelector?: ComponentSelector<Component>;
-    toolbarSelector?: ComponentSelector<Component>;
+    toolbarSelector?: ComponentSelector<Component & FocusableContainer>;
     watermarkSelector?: ComponentSelector<Component>;
 }
 
