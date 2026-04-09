@@ -16,7 +16,6 @@ import {
     FiltersToolPanelModule,
     FindModule,
     RowGroupingModule,
-    RowGroupingPanelModule,
     SideBarModule,
     ToolbarModule,
 } from 'ag-grid-enterprise';
@@ -33,7 +32,6 @@ ModuleRegistry.registerModules([
     FiltersToolPanelModule,
     FindModule,
     RowGroupingModule,
-    RowGroupingPanelModule,
     SideBarModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
