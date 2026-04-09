@@ -146,7 +146,7 @@ const GridComp = ({ context }: GridCompProps) => {
             // Insert after toolbar (if present) or at the start
             const toolbar = eRootWrapper.querySelector('.ag-toolbar');
             if (toolbar) {
-                toolbar.insertAdjacentElement('afterend', eGui);
+                toolbar.after(eGui);
             } else {
                 eRootWrapper.prepend(eGui);
             }
