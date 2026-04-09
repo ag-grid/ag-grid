@@ -10,8 +10,9 @@ describe('NotesService', () => {
     let column: AgColumn;
     let currentNote: CellNote | undefined;
     let cellCtrl: { showCellNote: jest.Mock };
-    let rowCtrl: { isFullWidth: jest.Mock; showCellNote: jest.Mock; refreshRow: jest.Mock; rowNode: IRowNode };
-    let fullWidthRowCtrl: { isFullWidth: jest.Mock; showCellNote: jest.Mock };
+    let rowCtrl: { isFullWidth: jest.Mock; refreshRow: jest.Mock; rowNode: IRowNode };
+    let fullWidthNotesFeature: { show: jest.Mock };
+    let fullWidthRowCtrl: { isFullWidth: jest.Mock; getNotesFeature: jest.Mock };
 
     beforeEach(() => {
         rowNode = {
@@ -24,13 +25,13 @@ describe('NotesService', () => {
         cellCtrl = { showCellNote: jest.fn() };
         rowCtrl = {
             isFullWidth: jest.fn(() => true),
-            showCellNote: jest.fn(),
             refreshRow: jest.fn(),
             rowNode,
         };
+        fullWidthNotesFeature = { show: jest.fn() };
         fullWidthRowCtrl = {
             isFullWidth: jest.fn(() => true),
-            showCellNote: jest.fn(),
+            getNotesFeature: jest.fn(() => fullWidthNotesFeature),
         };
 
         column = {
@@ -81,6 +82,7 @@ describe('NotesService', () => {
 
         service = new NotesService();
         (service as any).beans = beans;
+        (service as any).gos = { get: jest.fn(() => false) };
     });
 
     it('resolves access flags for read-only notes', () => {
@@ -161,14 +163,24 @@ describe('NotesService', () => {
         });
     });
 
-    it('opens full-width notes through the row controller', () => {
+    it('opens full-width notes through the notes feature', () => {
         currentNote = { text: 'Full width note' };
         (beans.visibleCols as any).leftCols = [column];
+        ((service as any).gos.get as jest.Mock).mockReturnValue(true);
         (beans.rowRenderer!.getRowCtrlByNode as jest.Mock).mockReturnValue(fullWidthRowCtrl);
 
         expect(service.showCellNote({ rowNode, location: 'fullWidthRow', pinned: 'left' }, true)).toBe(true);
-        expect(fullWidthRowCtrl.showCellNote).toHaveBeenCalledWith('left', true);
+        expect(fullWidthNotesFeature.show).toHaveBeenCalledWith({ pinned: 'left', focusEditor: true });
         expect(cellCtrl.showCellNote).not.toHaveBeenCalled();
+    });
+
+    it('strips pinned from full-width note params when embedFullWidthRows is off', () => {
+        currentNote = { text: 'Full width note' };
+        ((service as any).gos.get as jest.Mock).mockReturnValue(false);
+
+        const access = service.getCellNoteAccess({ rowNode, location: 'fullWidthRow', pinned: 'left' });
+
+        expect(access?.params).toEqual({ rowNode, location: 'fullWidthRow', pinned: undefined });
     });
 
     it('does not write notes for suppressed cells via UI', () => {

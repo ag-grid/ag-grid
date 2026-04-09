@@ -495,8 +495,8 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         return this.beans.visibleCols.allCols[0];
     }
 
-    public showCellNote(pinned?: 'left' | 'right', focusEditor = false): void {
-        this.notesFeature?.show({ pinned, focusEditor });
+    public getNotesFeature() {
+        return this.notesFeature;
     }
 
     public refreshComp(): boolean {

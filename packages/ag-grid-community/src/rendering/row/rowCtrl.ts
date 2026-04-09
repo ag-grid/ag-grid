@@ -554,8 +554,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.rowModeFeature.shouldCreateCellSections();
     }
 
-    public showCellNote(pinned?: 'left' | 'right', focusEditor = false): void {
-        this.rowModeFeature.showCellNote?.(pinned, focusEditor);
+    public getNotesFeature() {
+        return this.rowModeFeature.getNotesFeature?.();
     }
 
     private addListeners(): void {
