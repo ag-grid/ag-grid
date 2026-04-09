@@ -7,7 +7,7 @@
     display: none !important;
 }
 
-/* When narrow: hide right-side toolbar items and show the overflow menu */
+/* When narrow: hide right-side buttons and show the overflow menu */
 @container (max-width: 1200px) {
     .ag-toolbar-right > .ag-toolbar-item:not(.overflow-menu-wrapper),
     .ag-toolbar-right > .ag-toolbar-separator {
@@ -19,8 +19,16 @@
     }
 }
 
-/* When very narrow: also hide panels */
+/* When very narrow: also hide left-side buttons and panels */
 @container (max-width: 600px) {
+    .ag-toolbar-left > .ag-toolbar-item:not(.ag-toolbar-panel),
+    .ag-toolbar-left > .ag-toolbar-separator {
+        display: none !important;
+    }
+}
+
+/* When extremely narrow: hide panels too */
+@container (max-width: 400px) {
     .ag-toolbar-left > .ag-toolbar-panel {
         display: none !important;
     }

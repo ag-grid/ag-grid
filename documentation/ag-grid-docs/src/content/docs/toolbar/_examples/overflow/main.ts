@@ -15,6 +15,8 @@ import {
     ExcelExportModule,
     FiltersToolPanelModule,
     FindModule,
+    NewFiltersToolPanelModule,
+    PivotModule,
     RowGroupingModule,
     RowGroupingPanelModule,
     SideBarModule,
@@ -34,6 +36,8 @@ ModuleRegistry.registerModules([
     ExcelExportModule,
     FiltersToolPanelModule,
     FindModule,
+    NewFiltersToolPanelModule,
+    PivotModule,
     RowGroupingModule,
     RowGroupingPanelModule,
     SideBarModule,
@@ -68,11 +72,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     toolbar: {
         items: [
-            'columnChooser',
-            'autoSizeAll',
-            'separator',
             'rowGroupPanel',
             'pivotPanel',
+            'separator',
+            'columnChooser',
+            'autoSizeAll',
             { component: 'quickFilter', alignment: 'right' },
             { component: 'find', alignment: 'right' },
             'separator',
@@ -88,8 +92,8 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function onWidthSliderChange(value: string) {
-    document.getElementById('myGrid')!.style.maxWidth = value + 'px';
-    document.getElementById('widthValue')!.textContent = value + 'px';
+    document.getElementById('myGrid')!.style.maxWidth = value + '%';
+    document.getElementById('widthValue')!.textContent = value + '%';
 }
 
 document.addEventListener('DOMContentLoaded', () => {

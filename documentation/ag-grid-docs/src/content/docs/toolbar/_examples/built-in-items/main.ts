@@ -9,7 +9,7 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ExcelExportModule, FindModule, ToolbarModule } from 'ag-grid-enterprise';
+import { ColumnMenuModule, ExcelExportModule, FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     TextFilterModule,
@@ -17,6 +17,7 @@ ModuleRegistry.registerModules([
     ColumnAutoSizeModule,
     CsvExportModule,
     QuickFilterModule,
+    ColumnMenuModule,
     ExcelExportModule,
     FindModule,
     ToolbarModule,
