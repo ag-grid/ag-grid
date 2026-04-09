@@ -9,17 +9,7 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import {
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    ExcelExportModule,
-    FiltersToolPanelModule,
-    FindModule,
-    RowGroupingModule,
-    RowGroupingPanelModule,
-    SideBarModule,
-    ToolbarModule,
-} from 'ag-grid-enterprise';
+import { ExcelExportModule, FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     TextFilterModule,
@@ -27,14 +17,8 @@ ModuleRegistry.registerModules([
     ColumnAutoSizeModule,
     CsvExportModule,
     QuickFilterModule,
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
     ExcelExportModule,
-    FiltersToolPanelModule,
     FindModule,
-    RowGroupingModule,
-    RowGroupingPanelModule,
-    SideBarModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -47,32 +31,21 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'country', minWidth: 200 },
         { field: 'sport', minWidth: 200 },
         { field: 'year' },
-        { field: 'gold', enableValue: true },
-        { field: 'silver', enableValue: true },
-        { field: 'bronze', enableValue: true },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
         { field: 'total' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
         filter: true,
-        enableRowGroup: true,
-        enablePivot: true,
-    },
-    enableFilterHandlers: true,
-    sideBar: {
-        toolPanels: ['columns', 'filters-new'],
-        defaultToolPanel: '',
     },
     toolbar: {
         items: [
-            'rowGroupPanel',
-            'pivotPanel',
             { component: 'quickFilter', alignment: 'right' },
             { component: 'find', alignment: 'right' },
             'separator',
-            { component: 'columnsPanel', alignment: 'right' },
-            { component: 'filtersPanel', alignment: 'right' },
             { component: 'autoSizeAll', alignment: 'right' },
             'separator',
             { component: 'export', alignment: 'right' },
