@@ -42,10 +42,10 @@ The following built-in items are available as string shorthands:
 -   `export`: Opens an export submenu with available export options (CSV and/or Excel). Respects `suppressCsvExport` and `suppressExcelExport` grid options.
 -   `filtersPanel`: Toggles the Filters Tool Panel in the sidebar. Requires `SideBarModule` and `FiltersToolPanelModule`. Hidden if the sidebar does not include a filters panel.
 -   `find`: A text input that searches within grid cells using the Find feature. Requires `FindModule`.
--   `pivotPanel`: Embeds the Pivot Panel in the toolbar. Requires `RowGroupingPanelModule`. If `pivotPanelShow` is also set, standard placement takes precedence and a console warning is logged.
+-   `pivotPanel`: Embeds the Pivot Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `pivotPanelShow` grid option — if both are set, both will render.
 -   `quickFilter`: A text input that filters grid rows using the Quick Filter. Requires `QuickFilterModule`.
 -   `resetColumns`: Resets all columns to their default state.
--   `rowGroupPanel`: Embeds the Row Group Panel in the toolbar. Requires `RowGroupingPanelModule`. If `rowGroupPanelShow` is also set, standard placement takes precedence and a console warning is logged.
+-   `rowGroupPanel`: Embeds the Row Group Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `rowGroupPanelShow` grid option — if both are set, both will render.
 
 Built-in items require their corresponding modules to be registered. If a required module is not registered, the item will not render and a console warning will be logged.
 
