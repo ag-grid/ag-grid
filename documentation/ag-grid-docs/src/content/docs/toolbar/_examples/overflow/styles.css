@@ -8,7 +8,7 @@
 }
 
 /* When narrow: hide right-side toolbar items and show the overflow menu */
-@container (max-width: 800px) {
+@container (max-width: 1200px) {
     .ag-toolbar-right > .ag-toolbar-item:not(.overflow-menu-wrapper),
     .ag-toolbar-right > .ag-toolbar-separator {
         display: none !important;
