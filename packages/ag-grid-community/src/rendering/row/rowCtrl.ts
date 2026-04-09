@@ -792,9 +792,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return allFullWidthRowsRefreshed;
     }
 
-    public showFullWidthCellNote(pinned: ColumnPinnedType, focusEditor = false): void {
-        const normalisedPinned = pinned === 'left' || pinned === 'right' ? pinned : undefined;
-        this.fullWidthNotesFeature?.show({ pinned: normalisedPinned, focusEditor });
+    public getNotesFeature() {
+        return this.fullWidthNotesFeature;
     }
 
     private addListeners(): void {

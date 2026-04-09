@@ -67,6 +67,10 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
             return undefined;
         }
 
+        if (isFullWidthRowNoteParams(params) && params.pinned && !this.gos.get('embedFullWidthRows')) {
+            params = { ...params, pinned: undefined };
+        }
+
         const column = isFullWidthRowNoteParams(params)
             ? this.getColumnForFullWidth(params.pinned)
             : colModel.getCol(params.column);
@@ -127,15 +131,17 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         }
 
         const { rowRenderer } = this.beans;
-        const rowCtrl = rowRenderer.getRowCtrlByNode(params.rowNode);
 
         if (isFullWidthRowNoteParams(access.params)) {
-            if (rowCtrl?.isFullWidth()) {
-                rowCtrl.showFullWidthCellNote(access.params.pinned, focusEditor);
-                return true;
+            const rowCtrl = rowRenderer.getRowCtrlByNode(params.rowNode);
+            const feature = rowCtrl?.getNotesFeature();
+
+            if (!feature) {
+                return false;
             }
 
-            return false;
+            feature.show({ pinned: access.params.pinned, focusEditor });
+            return true;
         }
 
         const cellCtrl = rowRenderer.getCellCtrls([params.rowNode], [access.column])[0];
