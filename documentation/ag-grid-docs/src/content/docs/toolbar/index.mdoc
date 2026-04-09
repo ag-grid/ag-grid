@@ -105,8 +105,8 @@ Custom Toolbar Item components implement the `IToolbarItemComp` interface.
 
 ## Overflow Handling
 
-The toolbar does not provide built-in responsive overflow behaviour. Users can implement custom overflow menus using a custom toolbar component.
+The toolbar does not provide built-in responsive overflow behaviour. Users can implement custom overflow menus using a custom toolbar component combined with CSS container queries.
 
-The following example demonstrates an overflow menu pattern where less-used actions are grouped into a "more" dropdown, keeping the toolbar clean at any width.
+The following example demonstrates a responsive overflow pattern. At wide widths, all built-in toolbar items are visible. When the grid becomes narrow, right-side items collapse into a hamburger menu that provides the same actions as a dropdown. At very narrow widths, the panels are also hidden. Resize the example to see the behaviour.
 
 {% gridExampleRunner title="Overflow Menu" name="overflow" /%}

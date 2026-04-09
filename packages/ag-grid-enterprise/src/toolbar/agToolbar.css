@@ -13,9 +13,12 @@
 
 .ag-toolbar-left {
     display: inline-flex;
-    flex: 1;
     align-items: center;
     gap: calc(var(--ag-spacing) * 0.5);
+}
+
+.ag-toolbar-left:has(.ag-toolbar-panel) {
+    flex: 1;
 }
 
 .ag-toolbar-left:empty {

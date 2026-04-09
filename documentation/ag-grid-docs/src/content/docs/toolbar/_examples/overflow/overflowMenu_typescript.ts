@@ -18,12 +18,12 @@ export class OverflowMenu implements IToolbarItemComp {
         this.params = params;
 
         this.eGui = document.createElement('div');
-        this.eGui.className = 'ag-toolbar-item';
+        this.eGui.className = 'ag-toolbar-item overflow-menu-wrapper';
         this.eGui.style.position = 'relative';
 
         this.eButton = document.createElement('button');
         this.eButton.className = 'ag-toolbar-button';
-        this.eButton.textContent = '⋯';
+        this.eButton.textContent = '☰';
         this.eButton.title = 'More actions';
         this.eButton.setAttribute('aria-label', 'More actions');
         this.eButton.addEventListener('click', () => this.toggleMenu());
@@ -32,7 +32,7 @@ export class OverflowMenu implements IToolbarItemComp {
         this.eMenu = document.createElement('div');
         this.eMenu.className = 'overflow-menu';
         this.eMenu.style.cssText =
-            'display:none;position:absolute;top:100%;right:0;z-index:10;min-width:160px;padding:4px 0;background:var(--ag-background-color,#fff);border:1px solid var(--ag-border-color,#ccc);border-radius:var(--ag-border-radius,4px);box-shadow:0 2px 8px rgba(0,0,0,.15);';
+            'display:none;position:absolute;top:100%;right:0;z-index:10;min-width:180px;padding:4px 0;background:var(--ag-background-color,#fff);border:1px solid var(--ag-border-color,#ccc);border-radius:var(--ag-border-radius,4px);box-shadow:0 2px 8px rgba(0,0,0,.15);';
         this.eGui.appendChild(this.eMenu);
 
         this.outsideClickListener = (e: MouseEvent) => {
@@ -43,21 +43,31 @@ export class OverflowMenu implements IToolbarItemComp {
         document.addEventListener('click', this.outsideClickListener);
 
         this.actions = [
+            { label: 'Export CSV', action: () => params.api.exportDataAsCsv() },
+            { label: 'Export Excel', action: () => params.api.exportDataAsExcel() },
+            { label: 'Auto Size Columns', action: () => params.api.autoSizeAllColumns() },
+            { label: 'Reset Columns', action: () => params.api.resetColumnState() },
+            { label: 'Column Chooser', action: () => params.api.showColumnChooser() },
             {
-                label: 'Export CSV',
-                action: () => params.api.exportDataAsCsv(),
+                label: 'Toggle Columns Panel',
+                action: () => {
+                    if (params.api.getOpenedToolPanel() === 'columns') {
+                        params.api.closeToolPanel();
+                    } else {
+                        params.api.openToolPanel('columns');
+                    }
+                },
             },
             {
-                label: 'Export Excel',
-                action: () => params.api.exportDataAsExcel(),
-            },
-            {
-                label: 'Auto Size Columns',
-                action: () => params.api.autoSizeAllColumns(),
-            },
-            {
-                label: 'Reset Columns',
-                action: () => params.api.resetColumnState(),
+                label: 'Toggle Filters Panel',
+                action: () => {
+                    const id = params.api.getOpenedToolPanel() === 'filters-new' ? null : 'filters-new';
+                    if (id) {
+                        params.api.openToolPanel(id);
+                    } else {
+                        params.api.closeToolPanel();
+                    }
+                },
             },
         ];
 

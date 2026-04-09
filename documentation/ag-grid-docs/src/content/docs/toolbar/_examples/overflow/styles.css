@@ -1,0 +1,27 @@
+#myGrid {
+    container-type: inline-size;
+}
+
+/* Hide overflow menu at wide widths */
+.overflow-menu-wrapper {
+    display: none !important;
+}
+
+/* When narrow: hide right-side toolbar items and show the overflow menu */
+@container (max-width: 800px) {
+    .ag-toolbar-right > .ag-toolbar-item:not(.overflow-menu-wrapper),
+    .ag-toolbar-right > .ag-toolbar-separator {
+        display: none !important;
+    }
+
+    .overflow-menu-wrapper {
+        display: inline-flex !important;
+    }
+}
+
+/* When very narrow: also hide panels */
+@container (max-width: 500px) {
+    .ag-toolbar-left > .ag-toolbar-panel {
+        display: none !important;
+    }
+}
