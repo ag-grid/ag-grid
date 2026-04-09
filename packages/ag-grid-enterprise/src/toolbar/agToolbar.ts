@@ -118,7 +118,18 @@ class AgToolbar extends Component implements FocusableContainer {
         if (!toolbar) {
             return undefined;
         }
-        return toolbar.items.map(normaliseItem);
+        const seen = new Set<string>();
+        return toolbar.items.map(normaliseItem).filter((item) => {
+            const key = item.key ?? item.component;
+            if (key === 'separator') {
+                return true;
+            }
+            if (seen.has(key)) {
+                return false;
+            }
+            seen.add(key);
+            return true;
+        });
     }
 
     private resolveDisplay(itemDef: ToolbarItemDef): ToolbarDisplay {
@@ -265,39 +276,45 @@ class AgToolbar extends Component implements FocusableContainer {
             });
         }
 
-        return AgPromise.all(componentDetails.map((details) => details.promise)).then(() => {
-            for (const componentDetail of componentDetails) {
-                componentDetail.promise.then((component: IToolbarItemComp) => {
-                    const destroyFunc = () => {
-                        this.destroyBean(component);
-                    };
+        return AgPromise.all(componentDetails.map((details) => details.promise)).then((components) => {
+            if (!components) {
+                return;
+            }
+            for (let i = 0; i < componentDetails.length; i++) {
+                const componentDetail = componentDetails[i];
+                const component = components[i];
+                if (component == null) {
+                    continue;
+                }
+                const destroyFunc = () => {
+                    this.destroyBean(component);
+                };
 
-                    if (this.isAlive()) {
-                        const comp = component as unknown as Component;
-                        this.toolbarSvc.registerToolbarItem(componentDetail.key, component);
-                        if (comp.isDisplayed()) {
-                            componentDetail.placeholder.replaceWith(comp.getGui());
-                        } else {
-                            _removeFromParent(componentDetail.placeholder);
-                        }
-                        this.addManagedListeners(comp, {
-                            displayChanged: () => {
-                                const gui = comp.getGui();
-                                if (comp.isDisplayed()) {
-                                    if (!gui.parentElement) {
-                                        componentDetail.eContainer.appendChild(gui);
-                                    }
-                                } else {
-                                    _removeFromParent(gui);
-                                }
-                            },
-                        });
-                        this.compDestroyFunctions[componentDetail.key] = destroyFunc;
+                if (this.isAlive()) {
+                    const comp = component as unknown as Component;
+                    this.toolbarSvc.registerToolbarItem(componentDetail.key, component);
+                    if (comp.isDisplayed()) {
+                        componentDetail.placeholder.replaceWith(comp.getGui());
                     } else {
                         _removeFromParent(componentDetail.placeholder);
-                        destroyFunc();
                     }
-                });
+                    this.addManagedListeners(comp, {
+                        displayChanged: () => {
+                            const gui = comp.getGui();
+                            if (comp.isDisplayed()) {
+                                if (!gui.parentElement) {
+                                    componentDetail.eContainer.appendChild(gui);
+                                }
+                            } else {
+                                _removeFromParent(gui);
+                            }
+                        },
+                    });
+                    this.compDestroyFunctions[componentDetail.key] = destroyFunc;
+                } else {
+                    _removeFromParent(componentDetail.placeholder);
+                    destroyFunc();
+                }
             }
         });
     }
