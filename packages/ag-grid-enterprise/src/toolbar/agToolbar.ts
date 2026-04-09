@@ -116,7 +116,7 @@ class AgToolbar extends Component implements FocusableContainer {
 
     private getValidItems(): ToolbarItemDef[] | undefined {
         const toolbar = this.gos.get('toolbar');
-        if (!toolbar) {
+        if (!toolbar?.items) {
             return undefined;
         }
         const hasStandardDropZones = !!this.beans.registry?.getSelector('AG-GRID-HEADER-DROP-ZONES');

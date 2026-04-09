@@ -134,7 +134,7 @@ const GridComp = ({ context }: GridCompProps) => {
                 new gridHeaderDropZonesSelector.component()
             ) as HeaderDropZonesComp;
             const eGui = headerDropZonesComp.getGui();
-            eRootWrapper.insertAdjacentElement('afterbegin', eGui);
+            eRootWrapper.prepend(eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(headerDropZonesComp);
             focusableContainersRef.current.push(...(headerDropZonesComp.getFocusableContainers?.() ?? []));
@@ -143,7 +143,7 @@ const GridComp = ({ context }: GridCompProps) => {
         if (toolbarSelector) {
             const toolbarComp = context.createBean(new toolbarSelector.component());
             const eGui = toolbarComp.getGui();
-            eRootWrapper.insertAdjacentElement('afterbegin', eGui);
+            eRootWrapper.prepend(eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(toolbarComp);
             focusableContainersRef.current.push(toolbarComp as FocusableContainerComp);
