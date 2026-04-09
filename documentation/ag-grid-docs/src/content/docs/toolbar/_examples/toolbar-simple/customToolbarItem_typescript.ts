@@ -5,6 +5,7 @@ export class CustomToolbarItem implements IToolbarItemComp {
     eGui!: HTMLDivElement;
     eButton!: HTMLButtonElement;
     buttonListener: any;
+    active = false;
 
     init(params: IToolbarItemParams) {
         this.params = params;
@@ -14,7 +15,7 @@ export class CustomToolbarItem implements IToolbarItemComp {
 
         this.eButton = document.createElement('button');
         this.eButton.className = 'ag-button ag-standard-button';
-        this.eButton.textContent = 'Log Selected Rows';
+        this.eButton.textContent = 'Analyse by Country';
 
         this.buttonListener = this.onButtonClicked.bind(this);
         this.eButton.addEventListener('click', this.buttonListener);
@@ -31,7 +32,17 @@ export class CustomToolbarItem implements IToolbarItemComp {
     }
 
     onButtonClicked() {
-        const selectedRows = this.params.api.getSelectedRows();
-        console.log('Selected Rows:', selectedRows.length);
+        const { api } = this.params;
+        this.active = !this.active;
+
+        if (this.active) {
+            api.setRowGroupColumns(['country']);
+            api.setFilterModel({ year: { filterType: 'number', type: 'equals', filter: 2008 } });
+            this.eButton.textContent = 'Clear Analysis';
+        } else {
+            api.setRowGroupColumns([]);
+            api.setFilterModel(null);
+            this.eButton.textContent = 'Analyse by Country';
+        }
     }
 }

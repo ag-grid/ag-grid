@@ -2,19 +2,20 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
-    RowSelectionModule,
+    NumberFilterModule,
     TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ToolbarModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { CustomToolbarItem } from './customToolbarItem_typescript';
 
 ModuleRegistry.registerModules([
     TextFilterModule,
-    RowSelectionModule,
+    NumberFilterModule,
     ClientSideRowModelModule,
+    RowGroupingModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -26,7 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'athlete', minWidth: 200 },
         { field: 'country', minWidth: 200 },
         { field: 'sport', minWidth: 200 },
-        { field: 'year' },
+        { field: 'year', filter: 'agNumberColumnFilter' },
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },
@@ -37,9 +38,11 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         filter: true,
     },
-    rowSelection: { mode: 'multiRow' },
+    autoGroupColumnDef: {
+        minWidth: 200,
+    },
     toolbar: {
-        items: [{ component: CustomToolbarItem, key: 'logSelectedRows' }],
+        items: [{ component: CustomToolbarItem, key: 'analyseByCountry' }],
     },
 };
 

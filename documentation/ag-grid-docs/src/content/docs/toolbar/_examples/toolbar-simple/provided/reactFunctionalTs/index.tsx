@@ -1,24 +1,21 @@
 import React, { StrictMode, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, RowSelectionOptions, Toolbar } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
-import { ToolbarModule } from 'ag-grid-enterprise';
+import type { ColDef, Toolbar } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
+import { RowGroupingModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomToolbarItem from './customToolbarItem';
 
 const modules = [
     TextFilterModule,
-    RowSelectionModule,
+    NumberFilterModule,
     ClientSideRowModelModule,
+    RowGroupingModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
-
-const rowSelection: RowSelectionOptions = {
-    mode: 'multiRow',
-};
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -35,7 +32,7 @@ const GridExample = () => {
             { field: 'athlete', minWidth: 200 },
             { field: 'country', minWidth: 200 },
             { field: 'sport', minWidth: 200 },
-            { field: 'year' },
+            { field: 'year', filter: 'agNumberColumnFilter' },
             { field: 'gold' },
             { field: 'silver' },
             { field: 'bronze' },
@@ -51,9 +48,15 @@ const GridExample = () => {
         }),
         []
     );
+    const autoGroupColumnDef = useMemo<ColDef>(
+        () => ({
+            minWidth: 200,
+        }),
+        []
+    );
     const toolbar = useMemo<Toolbar>(
         () => ({
-            items: [{ component: CustomToolbarItem, key: 'logSelectedRows' }],
+            items: [{ component: CustomToolbarItem, key: 'analyseByCountry' }],
         }),
         []
     );
@@ -66,7 +69,7 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        rowSelection={rowSelection}
+                        autoGroupColumnDef={autoGroupColumnDef}
                         toolbar={toolbar}
                     />
                 </div>
