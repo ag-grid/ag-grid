@@ -336,6 +336,18 @@ export const AG_GRID_LOCALE_HR = {
     sortAbsoluteDescending: 'Sortiraj apsolutno silazno',
     sortUnSort: 'Očisti sortiranje',
 
+    // Toolbar
+    toolbarAutoSizeAll: 'Auto Size All',
+    toolbarResetColumns: 'Reset Columns',
+    toolbarColumnChooser: 'Columns',
+    toolbarColumnsPanel: 'Columns',
+    toolbarFiltersPanel: 'Filters',
+    toolbarCsvExport: 'CSV Export',
+    toolbarExcelExport: 'Excel Export',
+    toolbarExport: 'Export',
+    toolbarFind: 'Find',
+    toolbarQuickFilter: 'Quick Filter',
+
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Zbroj',
     first: 'Prvi',

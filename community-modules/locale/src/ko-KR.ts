@@ -335,6 +335,18 @@ export const AG_GRID_LOCALE_KR = {
     sortAbsoluteDescending: '절대 내림차순 정렬',
     sortUnSort: '정렬 해제',
 
+    // Toolbar
+    toolbarAutoSizeAll: 'Auto Size All',
+    toolbarResetColumns: 'Reset Columns',
+    toolbarColumnChooser: 'Columns',
+    toolbarColumnsPanel: 'Columns',
+    toolbarFiltersPanel: 'Filters',
+    toolbarCsvExport: 'CSV Export',
+    toolbarExcelExport: 'Excel Export',
+    toolbarExport: 'Export',
+    toolbarFind: 'Find',
+    toolbarQuickFilter: 'Quick Filter',
+
     // Enterprise Menu Aggregation and Status Bar
     sum: '합계',
     first: '첫 번째',

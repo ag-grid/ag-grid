@@ -338,6 +338,18 @@ export const AG_GRID_LOCALE_FI = {
     sortAbsoluteDescending: 'Lajittele ehdoton laskeva',
     sortUnSort: 'Tyhjennä lajittelu',
 
+    // Toolbar
+    toolbarAutoSizeAll: 'Auto Size All',
+    toolbarResetColumns: 'Reset Columns',
+    toolbarColumnChooser: 'Columns',
+    toolbarColumnsPanel: 'Columns',
+    toolbarFiltersPanel: 'Filters',
+    toolbarCsvExport: 'CSV Export',
+    toolbarExcelExport: 'Excel Export',
+    toolbarExport: 'Export',
+    toolbarFind: 'Find',
+    toolbarQuickFilter: 'Quick Filter',
+
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Summa',
     first: 'Ensimmäinen',

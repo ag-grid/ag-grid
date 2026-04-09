@@ -338,6 +338,18 @@ export const AG_GRID_LOCALE_IT = {
     sortAbsoluteDescending: 'Ordina Assoluto Decrescente',
     sortUnSort: 'Annulla Ordinamento',
 
+    // Toolbar
+    toolbarAutoSizeAll: 'Auto Size All',
+    toolbarResetColumns: 'Reset Columns',
+    toolbarColumnChooser: 'Columns',
+    toolbarColumnsPanel: 'Columns',
+    toolbarFiltersPanel: 'Filters',
+    toolbarCsvExport: 'CSV Export',
+    toolbarExcelExport: 'Excel Export',
+    toolbarExport: 'Export',
+    toolbarFind: 'Find',
+    toolbarQuickFilter: 'Quick Filter',
+
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Somma',
     first: 'Primo',

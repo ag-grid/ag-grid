@@ -60,6 +60,12 @@
         box-shadow: var(--ag-focus-shadow);
     }
 
+    .ag-toolbar-button:disabled {
+        opacity: 0.5;
+        cursor: default;
+        pointer-events: none;
+    }
+
     .ag-toolbar-button-icon {
         display: inline-flex;
         align-items: center;
@@ -109,6 +115,7 @@
     .ag-toolbar-panel .ag-column-drop-horizontal {
         background-color: transparent;
         border-bottom: none;
+        padding: 0;
     }
 
     .ag-toolbar-button-chevron {

@@ -335,6 +335,18 @@ export const AG_GRID_LOCALE_VN = {
     sortAbsoluteDescending: 'Sắp Xếp Giảm Dần Tuyệt Đối',
     sortUnSort: 'Xóa Sắp Xếp',
 
+    // Toolbar
+    toolbarAutoSizeAll: 'Auto Size All',
+    toolbarResetColumns: 'Reset Columns',
+    toolbarColumnChooser: 'Columns',
+    toolbarColumnsPanel: 'Columns',
+    toolbarFiltersPanel: 'Filters',
+    toolbarCsvExport: 'CSV Export',
+    toolbarExcelExport: 'Excel Export',
+    toolbarExport: 'Export',
+    toolbarFind: 'Find',
+    toolbarQuickFilter: 'Quick Filter',
+
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Tổng',
     first: 'Đầu tiên',

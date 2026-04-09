@@ -10,7 +10,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         super({ tag: 'div', cls: 'ag-toolbar-item ag-toolbar-input' });
     }
 
-    public init(_params: IToolbarItemParams): void {
+    public init(params: IToolbarItemParams): void {
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarQuickFilter', 'Quick Filter');
 
@@ -32,9 +32,15 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         });
 
         this.getGui().appendChild(this.eInput);
+        this.updateDisabled(params.disabled);
     }
 
-    public refresh(_params: IToolbarItemParams): boolean {
+    public refresh(params: IToolbarItemParams): boolean {
+        this.updateDisabled(params.disabled);
         return true;
+    }
+
+    private updateDisabled(disabled: boolean): void {
+        this.eInput.disabled = disabled;
     }
 }

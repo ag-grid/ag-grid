@@ -14,11 +14,16 @@ import type {
 import {
     AgPromise,
     Component,
+    KeyCode,
+    ManagedFocusFeature,
     RefPlaceholder,
     _addFocusableContainerListener,
     _addGridCommonParams,
     _clearElement,
+    _focusNextGridCoreContainer,
+    _getActiveDomElement,
     _removeFromParent,
+    _skipFocusableContainerListenerForAgGrid,
 } from 'ag-grid-community';
 
 import agToolbarCSS from './agToolbar.css';
@@ -86,7 +91,7 @@ class AgToolbar extends Component implements FocusableContainer {
     private userCompFactory: UserComponentFactory;
     private toolbarSvc: ToolbarService;
     private updateQueued: boolean = false;
-    private itemsPromise: AgPromise<(void | null)[]> = AgPromise.resolve();
+    private itemsPromise: AgPromise<void> = AgPromise.resolve();
 
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
@@ -104,13 +109,99 @@ class AgToolbar extends Component implements FocusableContainer {
     }
 
     public postConstruct(): void {
+        const eGui = this.getGui();
+
         this.processToolbarItems(new Map());
         this.addManagedPropertyListeners(['toolbar'], this.handleToolbarChanged.bind(this));
-        _addFocusableContainerListener(this.beans, this, this.getGui());
+
+        this.createManagedBean(
+            new ManagedFocusFeature(eGui, {
+                onTabKeyDown: this.onTabKeyDown.bind(this),
+                handleKeyDown: this.handleKeyDown.bind(this),
+            })
+        );
+
+        _addFocusableContainerListener(this.beans, this, eGui);
+
+        this.addManagedElementListeners(eGui, {
+            focusin: (e: FocusEvent) => {
+                const target = e.target as HTMLElement;
+                if (target.matches('.ag-toolbar-button, .ag-toolbar-input-field')) {
+                    eGui.querySelectorAll<HTMLElement>('.ag-toolbar-button, .ag-toolbar-input-field').forEach((el) =>
+                        el.setAttribute('tabindex', '-1')
+                    );
+                    target.setAttribute('tabindex', '0');
+                }
+            },
+        });
     }
 
     public getFocusableContainerName(): 'toolbar' {
         return 'toolbar';
+    }
+
+    private onTabKeyDown(e: KeyboardEvent): void {
+        if (e.defaultPrevented) {
+            return;
+        }
+        const backwards = e.shiftKey;
+        if (_focusNextGridCoreContainer(this.beans, backwards, true)) {
+            e.preventDefault();
+            return;
+        }
+        _skipFocusableContainerListenerForAgGrid(e);
+    }
+
+    private handleKeyDown(e: KeyboardEvent): void {
+        const activeEl = _getActiveDomElement(this.beans) as HTMLElement;
+        const eGui = this.getGui();
+        if (!eGui.contains(activeEl)) {
+            return;
+        }
+
+        const items: HTMLElement[] = Array.from(
+            eGui.querySelectorAll<HTMLElement>(
+                '.ag-toolbar-button:not(:disabled), .ag-toolbar-input-field:not(:disabled)'
+            )
+        );
+        const currentIndex = items.indexOf(activeEl);
+        if (currentIndex === -1) {
+            return;
+        }
+
+        const rtl = this.gos.get('enableRtl');
+        let nextIndex: number | null = null;
+
+        switch (e.key) {
+            case KeyCode.LEFT:
+                nextIndex = rtl ? currentIndex + 1 : currentIndex - 1;
+                break;
+            case KeyCode.RIGHT:
+                nextIndex = rtl ? currentIndex - 1 : currentIndex + 1;
+                break;
+            case KeyCode.PAGE_HOME:
+                nextIndex = 0;
+                break;
+            case KeyCode.PAGE_END:
+                nextIndex = items.length - 1;
+                break;
+        }
+
+        if (nextIndex === null) {
+            return;
+        }
+
+        nextIndex = Math.max(0, Math.min(nextIndex, items.length - 1));
+        if (nextIndex !== currentIndex) {
+            items[nextIndex].focus();
+            e.preventDefault();
+        }
+    }
+
+    private initRovingTabindex(): void {
+        const eGui = this.getGui();
+        const items = eGui.querySelectorAll<HTMLElement>('.ag-toolbar-button, .ag-toolbar-input-field');
+        items.forEach((el, i) => el.setAttribute('tabindex', i === 0 ? '0' : '-1'));
     }
 
     private getValidItems(): ToolbarItemDef[] | undefined {
@@ -152,7 +243,7 @@ class AgToolbar extends Component implements FocusableContainer {
             this.itemsPromise = AgPromise.all([
                 this.createAndRenderComponents(leftItems, this.eToolbarLeft, existingItemsToReuse),
                 this.createAndRenderComponents(rightItems, this.eToolbarRight, existingItemsToReuse),
-            ]);
+            ]).then(() => this.initRovingTabindex());
         } else {
             this.setDisplayed(false);
         }
@@ -185,6 +276,7 @@ class AgToolbar extends Component implements FocusableContainer {
                         ...(itemConfig.toolbarItemParams ?? {}),
                         key,
                         display: this.resolveDisplay(itemConfig),
+                        disabled: itemConfig.disabled ?? false,
                     });
                     const hasRefreshed = existingItem.refresh(newParams);
                     if (hasRefreshed) {
@@ -256,6 +348,7 @@ class AgToolbar extends Component implements FocusableContainer {
                         ...(itemConfig.toolbarItemParams ?? {}),
                         key,
                         display: this.resolveDisplay(itemConfig),
+                        disabled: itemConfig.disabled ?? false,
                     })
                 );
 
