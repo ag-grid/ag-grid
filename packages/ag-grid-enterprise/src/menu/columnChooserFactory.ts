@@ -120,7 +120,12 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
     }
 
     public hideActiveColumnChooser(): void {
-        this.destroyBean(this.activeColumnChooserDialog);
+        this.activeColumnChooserDialog = this.destroyBean(this.activeColumnChooserDialog);
+    }
+
+    public override destroy(): void {
+        this.hideActiveColumnChooser();
+        super.destroy();
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, column?: AgColumn | null): void {
