@@ -37,6 +37,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
 
     public refresh(params: IToolbarItemParams): boolean {
         this.updateDisabled(params.disabled);
+        this.eInput.value = this.gos.get('quickFilterText') ?? '';
         return true;
     }
 

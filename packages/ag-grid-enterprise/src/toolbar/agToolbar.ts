@@ -44,6 +44,8 @@ const BUILT_IN_ITEMS: Record<string, string> = {
     rowGroupPanel: 'agRowGroupPanelToolbarItem',
 };
 
+let customKeyCounter = 0;
+
 function normaliseItem(item: ToolbarItemDef | string): ToolbarItemDef {
     if (typeof item === 'string') {
         const component = BUILT_IN_ITEMS[item] ?? item;
@@ -51,6 +53,10 @@ function normaliseItem(item: ToolbarItemDef | string): ToolbarItemDef {
     }
     if (typeof item.component === 'string' && BUILT_IN_ITEMS[item.component]) {
         return { ...item, key: item.key ?? item.component, component: BUILT_IN_ITEMS[item.component] };
+    }
+    if (item.key == null) {
+        const key = typeof item.component === 'string' ? item.component : `custom-toolbar-item-${customKeyCounter++}`;
+        return { ...item, key };
     }
     return item;
 }
