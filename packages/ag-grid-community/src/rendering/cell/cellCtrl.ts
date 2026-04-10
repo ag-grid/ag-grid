@@ -11,9 +11,16 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { EditService } from '../../edit/editService';
+import { _hasEdits, _hasLeafEdits, _hasPinnedEdits } from '../../edit/styles/style-utils';
 import { _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { AgColumn } from '../../entities/agColumn';
-import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
+import type {
+    CellClassParams,
+    CellClassRules,
+    CellStyle,
+    CheckboxSelectionCallback,
+    ColDef,
+} from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
@@ -29,7 +36,6 @@ import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
-import type { ICellStyleFeature } from '../../interfaces/iCellStyleFeature';
 import type { RefreshCellsParams } from '../../interfaces/iCellsParams';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
@@ -39,7 +45,7 @@ import type { IRowNumbersRowResizeFeature } from '../../interfaces/rowNumbers';
 import type { ILoadingCellRendererParams } from '../../main-umd-noStyles';
 import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
-import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
+import { processClassRules } from '../../styling/stylingUtils';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _isCellFocusSuppressed } from '../../utils/gridFocus';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
@@ -48,8 +54,8 @@ import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
-import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
-import { CellMouseListenerFeature } from './cellMouseListenerFeature';
+import { _isCtrlEnter, _onCellKeyDown, _processCharacter } from './cellKeyboardListenerFeature';
+import { _onCellDoubleClicked, _onCellMouseEvent } from './cellMouseListenerFeature';
 import { CellPositionFeature } from './cellPositionFeature';
 
 const CSS_CELL = 'ag-cell';
@@ -95,6 +101,7 @@ export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CellCtrl extends BeanStub {
+    public declare beans: BeanCollection;
     public readonly instanceId: CellCtrlInstanceId;
 
     public eGui: HTMLElement;
@@ -111,10 +118,14 @@ export class CellCtrl extends BeanStub {
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private notesFeature: ICellNotesFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
-    private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
-    public editStyleFeature: ICellStyleFeature | undefined = undefined;
-    private mouseListener: CellMouseListenerFeature | undefined = undefined;
-    private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
+    public lastIPadMouseClickEvent: number = 0;
+
+    // Inlined CellCustomStyleFeature state
+    private customStyleStaticClasses: string[] = [];
+    private customStyleCellClassRules?: CellClassRules;
+
+    // Whether edit style features are available
+    private hasEditStyles: boolean = false;
 
     public cellPosition: CellPosition;
 
@@ -164,11 +175,7 @@ export class CellCtrl extends BeanStub {
     private addFeatures(): void {
         const { beans } = this;
         this.positionFeature = new CellPositionFeature(this, beans);
-        this.customStyleFeature = beans.cellStyles?.createCellCustomStyleFeature(this);
-        this.editStyleFeature = beans.editSvc?.createCellStyleFeature(this);
-        this.mouseListener = new CellMouseListenerFeature(this, beans, this.column);
-
-        this.keyboardListener = new CellKeyboardListenerFeature(this, beans, this.rowNode, this.rowCtrl);
+        this.hasEditStyles = !!beans.editSvc;
 
         this.enableTooltipFeature();
 
@@ -197,10 +204,6 @@ export class CellCtrl extends BeanStub {
         const context = this.beans.context;
         this.positionFeature = context.destroyBean(this.positionFeature);
         this.editorTooltipFeature = context.destroyBean(this.editorTooltipFeature);
-        this.customStyleFeature = context.destroyBean(this.customStyleFeature);
-        this.editStyleFeature = context.destroyBean(this.editStyleFeature);
-        this.mouseListener = context.destroyBean(this.mouseListener);
-        this.keyboardListener = context.destroyBean(this.keyboardListener);
         this.rangeFeature = context.destroyBean(this.rangeFeature);
         this.rowResizeFeature = context.destroyBean(this.rowResizeFeature);
         this.notesFeature = context.destroyBean(this.notesFeature);
@@ -266,10 +269,11 @@ export class CellCtrl extends BeanStub {
         this.refreshAriaColIndex();
 
         this.positionFeature?.init();
-        this.customStyleFeature?.setComp(comp);
-        this.editStyleFeature?.setComp(comp);
+        this.applyCustomStyleUserStyles();
+        this.applyCustomStyleCellClassRules();
+        this.applyCustomStyleClassesFromColDef();
+        this.applyEditCellStyles();
         this.tooltipFeature?.refreshTooltip();
-        this.keyboardListener?.init();
         this.rangeFeature?.setComp(comp);
         this.rowResizeFeature?.refreshRowResizer();
 
@@ -587,9 +591,6 @@ export class CellCtrl extends BeanStub {
     // + rowRenderer: api softRefreshView() {}
     public refreshCell(params?: RefreshCellsParams & { newData?: boolean }): void {
         const {
-            editStyleFeature,
-            customStyleFeature,
-            rowCtrl: { rowEditStyleFeature },
             beans: { cellFlashSvc, filterManager },
             column,
             comp,
@@ -640,10 +641,10 @@ export class CellCtrl extends BeanStub {
                 cellFlashSvc?.flashCell(this);
             }
 
-            editStyleFeature?.applyCellStyles?.();
-            customStyleFeature?.applyUserStyles();
-            customStyleFeature?.applyClassesFromColDef();
-            rowEditStyleFeature?.applyRowStyles();
+            this.applyEditCellStyles();
+            this.applyCustomStyleUserStyles();
+            this.applyCustomStyleClassesFromColDef();
+            this.rowCtrl.applyRowEditStyles();
 
             this.checkFormulaError();
         }
@@ -653,7 +654,7 @@ export class CellCtrl extends BeanStub {
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
-        customStyleFeature?.applyCellClassRules();
+        this.applyCustomStyleCellClassRules();
     }
 
     public showCellNote(focusEditor = false): void {
@@ -711,15 +712,123 @@ export class CellCtrl extends BeanStub {
     }
 
     public processCharacter(event: KeyboardEvent): void {
-        this.keyboardListener?.processCharacter(event);
+        _processCharacter(this, event);
     }
 
     public onKeyDown(event: KeyboardEvent): void {
-        this.keyboardListener?.onKeyDown(event);
+        _onCellKeyDown(this, event);
+    }
+
+    public isCtrlEnter(e: KeyboardEvent): boolean {
+        return _isCtrlEnter(e);
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        this.mouseListener?.onMouseEvent(eventName, mouseEvent);
+        _onCellMouseEvent(this, eventName, mouseEvent);
+    }
+
+    public onCellDoubleClicked(event: MouseEvent): void {
+        _onCellDoubleClicked(this, event);
+    }
+
+    // ---- Inlined from CellCustomStyleFeature ----
+
+    private applyCustomStyleCellClassRules(): void {
+        if (!this.beans.cellStyles) {
+            return;
+        }
+        const { column, comp } = this;
+        const colDef = column.colDef;
+        const cellClassRules = colDef.cellClassRules;
+        const cellClassParams = this.getCellClassParams(column, colDef);
+
+        processClassRules(
+            this.beans.expressionSvc,
+            cellClassRules === this.customStyleCellClassRules ? undefined : this.customStyleCellClassRules,
+            cellClassRules,
+            cellClassParams,
+            (className) => comp.toggleCss(className, true),
+            (className) => comp.toggleCss(className, false)
+        );
+        this.customStyleCellClassRules = cellClassRules;
+    }
+
+    private applyCustomStyleUserStyles(): void {
+        const { column } = this;
+        const colDef = column.colDef;
+        const cellStyle = colDef.cellStyle;
+
+        if (!cellStyle) {
+            return;
+        }
+
+        let styles: CellStyle | null | undefined;
+
+        if (typeof cellStyle === 'function') {
+            const cellStyleParams = this.getCellClassParams(column, colDef);
+            styles = cellStyle(cellStyleParams);
+        } else {
+            styles = cellStyle;
+        }
+
+        if (styles) {
+            this.comp.setUserStyles(styles);
+        }
+    }
+
+    private applyCustomStyleClassesFromColDef(): void {
+        if (!this.beans.cellStyles) {
+            return;
+        }
+        const { column, comp } = this;
+        const colDef = column.colDef;
+        const cellClassParams = this.getCellClassParams(column, colDef);
+
+        for (const className of this.customStyleStaticClasses) {
+            comp.toggleCss(className, false);
+        }
+
+        const newStaticClasses = this.beans.cellStyles.getStaticCellClasses(colDef, cellClassParams);
+        this.customStyleStaticClasses = newStaticClasses;
+
+        for (const className of newStaticClasses) {
+            comp.toggleCss(className, true);
+        }
+    }
+
+    private getCellClassParams(column: AgColumn, colDef: ColDef): CellClassParams {
+        const { value, rowNode } = this;
+        return _addGridCommonParams(this.beans.gos, {
+            value,
+            data: rowNode.data,
+            node: rowNode,
+            colDef,
+            column,
+            rowIndex: rowNode.rowIndex!,
+        });
+    }
+
+    // ---- Inlined from CellEditStyleFeature ----
+
+    public applyEditCellStyles(): void {
+        if (!this.hasEditStyles) {
+            return;
+        }
+        const { editSvc, beans } = this;
+        if (editSvc?.isBatchEditing() && editSvc.isEditing()) {
+            const state = _hasEdits(beans, this) || _hasLeafEdits(beans, this) || _hasPinnedEdits(beans, this);
+            this.applyBatchingStyle(state);
+        } else {
+            this.applyBatchingStyle(false);
+        }
+
+        const hasErrors = !!beans.editModelSvc?.getCellValidationModel().hasCellValidation(this);
+        this.comp.toggleCss('ag-cell-editing-error', hasErrors);
+    }
+
+    private applyBatchingStyle(newState?: boolean) {
+        this.comp.toggleCss('ag-cell-editing', newState ?? false);
+        this.comp.toggleCss('ag-cell-batch-edit', (newState && this.editSvc?.isBatchEditing()) ?? false);
     }
 
     public getColSpanningList(): AgColumn[] {

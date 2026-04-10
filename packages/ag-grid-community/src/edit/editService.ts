@@ -851,7 +851,7 @@ export class EditService extends BeanStub implements NamedBean {
                 // updated even when their aggregated value hasn't changed (dataNeedsUpdating
                 // is false, so refreshCell alone won't run applyCellStyles).
                 if (!params.force && this.batch) {
-                    cellCtrl.editStyleFeature?.applyCellStyles?.();
+                    cellCtrl.applyEditCellStyles();
                 }
             }
         }
@@ -958,7 +958,7 @@ export class EditService extends BeanStub implements NamedBean {
             cellCtrl.refreshCell(FORCE_REFRESH);
             // refresh the styles directly rather than through refreshRow as that causes the group cell renderer to
             // be recreated and would discard future mouse click events
-            cellCtrl.rowCtrl.rowEditStyleFeature?.applyRowStyles();
+            cellCtrl.rowCtrl.applyRowEditStyles();
         }
 
         let invalid = false;
@@ -1225,7 +1225,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         // Refresh cell styles after updating the edit model so that the ag-cell-editing
         // class and batch-edit styling reflect the new pending value.
-        cellCtrl.editStyleFeature?.applyCellStyles?.();
+        cellCtrl.applyEditCellStyles();
 
         // Fast path for built-in editors: update value in-place without recreating
         if ('agSetEditValue' in editor) {

@@ -11,7 +11,7 @@ import { _isLegacyMenuEnabled } from '../gridOptionsUtils';
 import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
 import type { HeaderGroupComp } from '../headerRendering/cells/columnGroup/headerGroupComp';
 import type { GridHeaderCtrl } from '../headerRendering/gridHeaderCtrl';
-import type { CellMouseListenerFeature } from '../rendering/cell/cellMouseListenerFeature';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { LongTapEvent, TapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 
@@ -54,7 +54,7 @@ export class TouchService extends BeanStub implements NamedBean {
         this.mockContextMenu(ctrl, ctrl.element, listener);
     }
 
-    public handleCellDoubleClick(ctrl: CellMouseListenerFeature, mouseEvent: MouseEvent): boolean {
+    public handleCellDoubleClick(ctrl: CellCtrl, mouseEvent: MouseEvent): boolean {
         const isDoubleClickOnIPad = () => {
             if (!_isIOSUserAgent() || _isEventSupported('dblclick')) {
                 return false;

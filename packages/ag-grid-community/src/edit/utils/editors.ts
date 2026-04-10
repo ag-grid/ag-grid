@@ -746,11 +746,11 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
     }
 
     for (const rowCtrl of rowCtrlSet.values()) {
-        rowCtrl.rowEditStyleFeature?.applyRowStyles();
+        rowCtrl.applyRowEditStyles();
         for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
             cellCtrl.tooltipFeature?.refreshTooltip(true);
             cellCtrl.editorTooltipFeature?.refreshTooltip(true);
-            cellCtrl.editStyleFeature?.applyCellStyles?.();
+            cellCtrl.applyEditCellStyles();
         }
     }
 }

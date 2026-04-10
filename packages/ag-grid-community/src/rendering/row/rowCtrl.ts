@@ -20,6 +20,7 @@ import {
 } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
+import { _hasEdits, _hasLeafEdits, _hasPinnedEdits } from '../../edit/styles/style-utils';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowNode } from '../../entities/rowNode';
@@ -50,7 +51,6 @@ import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColum
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
-import type { IRowStyleFeature } from '../../interfaces/iRowStyleFeature';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { ICellNotesFeature } from '../../interfaces/notes';
 import { calculateRowLevel } from '../../styling/rowStyleService';
@@ -162,7 +162,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     /** sanitised */
     public businessKey: string | null = null;
     private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
-    public rowEditStyleFeature?: IRowStyleFeature;
+    private hasEditStyles: boolean = false;
 
     constructor(
         public readonly rowNode: RowNode,
@@ -189,7 +189,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.setAnimateFlags(animateIn);
         this.rowStyles = this.processStylesFromGridOptions();
 
-        this.rowEditStyleFeature = beans.editSvc?.createRowStyleFeature(this);
+        this.hasEditStyles = !!beans.editSvc;
         this.fullWidthNotesFeature = this.isFullWidth()
             ? beans.notesSvc?.createFullWidthRowNotesFeature(this)
             : undefined;
@@ -389,7 +389,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowDragComps.push(rowDragBean);
         gui.compBean.addDestroyFunc(() => {
             this.rowDragComps = this.rowDragComps.filter((r) => r !== rowDragBean);
-            this.rowEditStyleFeature = this.destroyBean(this.rowEditStyleFeature, this.beans.context);
             this.destroyBean(rowDragBean, this.beans.context);
         });
     }
@@ -854,7 +853,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.addDestroyFunc(() => {
             this.rowDragComps = this.destroyBeans(this.rowDragComps, context);
             this.tooltipFeature = this.destroyBean(this.tooltipFeature, context);
-            this.rowEditStyleFeature = this.destroyBean(this.rowEditStyleFeature, context);
             this.fullWidthNotesFeature?.destroy();
         });
 
@@ -952,8 +950,55 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.setStylesFromGridOptions(true);
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
-        this.rowEditStyleFeature?.applyRowStyles();
+        this.applyRowEditStyles();
         this.postProcessRowDragging();
+    }
+
+    // ---- Inlined from RowEditStyleFeature ----
+
+    public applyRowEditStyles(): void {
+        if (!this.hasEditStyles) {
+            return;
+        }
+        const { beans } = this;
+        const { editModelSvc } = beans;
+
+        let rowNode = this.rowNode;
+        let edits = editModelSvc?.getEditRow(rowNode);
+        const hasErrors = editModelSvc?.getRowValidationModel().hasRowValidation({ rowNode });
+
+        if (!edits && rowNode.pinnedSibling) {
+            rowNode = rowNode.pinnedSibling!;
+            edits = editModelSvc?.getEditRow(rowNode);
+        }
+        if (edits) {
+            const editing = Array.from(edits.keys()).some((column) => {
+                const position = { rowNode, column };
+                return (
+                    _hasEdits(beans, position, true) ||
+                    _hasLeafEdits(beans, position) ||
+                    _hasPinnedEdits(beans, position)
+                );
+            });
+
+            this.applyRowEditStyle(hasErrors, editing);
+            return;
+        }
+
+        this.applyRowEditStyle(hasErrors);
+    }
+
+    private applyRowEditStyle(hasErrors: boolean = false, editing: boolean = false): void {
+        const batchEdit = !!this.beans.editSvc?.isBatchEditing();
+        const fullRow = this.gos.get('editType') === 'fullRow';
+
+        this.forEachGui(undefined, ({ rowComp }) => {
+            rowComp.toggleCss('ag-row-editing', fullRow && editing);
+            rowComp.toggleCss('ag-row-batch-edit', fullRow && editing && batchEdit);
+            rowComp.toggleCss('ag-row-inline-editing', editing);
+            rowComp.toggleCss('ag-row-not-inline-editing', !editing);
+            rowComp.toggleCss('ag-row-editing-invalid', fullRow && editing && hasErrors);
+        });
     }
 
     private onRowNodeHighlightChanged(): void {
