@@ -339,13 +339,9 @@ export const AG_GRID_LOCALE_SE = {
 
     // Toolbar
     toolbarAutoSizeAll: 'Auto Size All',
-    toolbarResetColumns: 'Reset Columns',
     toolbarColumnChooser: 'Columns',
     toolbarColumnsPanel: 'Columns',
     toolbarFiltersPanel: 'Filters',
-    toolbarCsvExport: 'CSV Export',
-    toolbarExcelExport: 'Excel Export',
-    toolbarExport: 'Export',
     toolbarFind: 'Find',
     toolbarQuickFilter: 'Quick Filter',
 

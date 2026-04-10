@@ -8,7 +8,7 @@ export class ExcelExportToolbarItem extends AbstractToolbarItemComp {
     }
 
     protected getLocaleKey(): string {
-        return 'toolbarExcelExport';
+        return 'excelExport';
     }
 
     protected getDefaultLabel(): string {

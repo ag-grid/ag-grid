@@ -9,7 +9,7 @@ export class ResetColumnsToolbarItem extends AbstractToolbarItemComp {
     }
 
     protected getLocaleKey(): string {
-        return 'toolbarResetColumns';
+        return 'resetColumns';
     }
 
     protected getDefaultLabel(): string {

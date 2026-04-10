@@ -8,7 +8,7 @@ export class CsvExportToolbarItem extends AbstractToolbarItemComp {
     }
 
     protected getLocaleKey(): string {
-        return 'toolbarCsvExport';
+        return 'csvExport';
     }
 
     protected getDefaultLabel(): string {
