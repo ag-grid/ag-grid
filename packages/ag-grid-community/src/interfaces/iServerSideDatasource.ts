@@ -48,8 +48,8 @@ export interface IServerSideGetRowsParams<TData = any, TContext = any> extends A
 
     /**
      * A hint indicating the grid does not yet have grand total data cached.
-     * When `true`, the server should include grand total data in the response via `grandTotalRowData`
-     * or as a row in `rowData` whose `getRowId` returns `ROW_ID_GRAND_TOTAL`.
+     * When `true`, the server should include grand total data in the response via `grandTotalData`
+     * or as a row in `rowData` whose `getRowId` returns `'rowGroupFooter_ROOT_NODE_ID'`.
      *
      * This is only a hint — the server may always provide updated grand total data regardless of
      * this flag, and the grid will accept it. Providing grand total data when this is `false`

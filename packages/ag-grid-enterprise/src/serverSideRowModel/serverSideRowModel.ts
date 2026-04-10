@@ -26,8 +26,8 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    ROW_ID_GRAND_TOTAL,
     RowNode,
+    _ROW_ID_GRAND_TOTAL,
     _debounce,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
@@ -659,7 +659,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        if (id === ROW_ID_GRAND_TOTAL) {
+        if (id === _ROW_ID_GRAND_TOTAL) {
             return this.getRootStore()?.getGrandTotalNode();
         }
 

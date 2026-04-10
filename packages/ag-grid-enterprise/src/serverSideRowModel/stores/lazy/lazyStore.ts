@@ -68,7 +68,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private readonly info: any;
 
     /** Raw data for the grand total row, kept even when grandTotalRow option is not set. */
-    public grandTotalRowData: any;
+    public grandTotalData: any;
 
     constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupLevelParams, parentRowNode: RowNode) {
         super();
@@ -104,7 +104,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     public override destroy(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
-        this.grandTotalRowData = undefined;
+        this.grandTotalData = undefined;
         this.destroyGrandTotalRow();
         this.destroyBean(this.cache);
         super.destroy();
@@ -330,12 +330,12 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const grandTotalPosition = this.parentRowNode.level === -1 ? _getGrandTotalRow(this.gos) : undefined;
         let grandTotalNode = this.getGrandTotalNode();
 
-        if (grandTotalPosition && !grandTotalNode && this.grandTotalRowData) {
-            this.cache.createOrUpdateGrandTotalNode(this.grandTotalRowData);
+        if (grandTotalPosition && !grandTotalNode && this.grandTotalData) {
+            this.cache.createOrUpdateGrandTotalNode(this.grandTotalData);
             grandTotalNode = this.getGrandTotalNode();
         }
         // e.g. when cleared via transaction remove or option toggled off
-        if (grandTotalNode && (!grandTotalPosition || !this.grandTotalRowData)) {
+        if (grandTotalNode && (!grandTotalPosition || !this.grandTotalData)) {
             this.destroyGrandTotalRow();
             grandTotalNode = undefined;
         }
@@ -688,7 +688,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      */
     refreshStore(purge: boolean) {
         if (purge) {
-            this.grandTotalRowData = undefined;
+            this.grandTotalData = undefined;
             this.destroyGrandTotalRow();
             this.destroyBean(this.cache);
             this.cache = this.createManagedBean(new LazyCache(this, 1, false, this.storeParams));

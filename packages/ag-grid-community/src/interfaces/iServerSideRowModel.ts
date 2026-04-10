@@ -67,7 +67,7 @@ export interface LoadSuccessParams<TData = any> {
     /**
      * Data for the grand total row. When provided, the grid will display or update the grand total footer row.
      * Set to `null` to remove an existing grand total row. Takes priority over a grand total row found in `rowData`.
-     * `getRowId` must return `ROW_ID_GRAND_TOTAL` (`'rowGroupFooter_ROOT_NODE_ID'`) for this data.
+     * Only the fields you want to display need to be provided; the grid assigns the row ID automatically.
      */
-    grandTotalRowData?: TData | null;
+    grandTotalData?: Partial<TData> | null;
 }
