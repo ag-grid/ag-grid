@@ -120,7 +120,8 @@ export type IconName =
     | 'checkboxIndeterminate' // deprecated v33
     | 'checkboxUnchecked' // deprecated v33
     | 'radioButtonOn' // deprecated v33
-    | 'radioButtonOff'; // deprecated v33
+    | 'radioButtonOff' // deprecated v33
+    | 'search';
 
 export type Icons = { [key: string]: ((...args: any[]) => any) | string };
 

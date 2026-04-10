@@ -40,6 +40,9 @@ export const ToolbarModule: _ModuleWithoutApi = {
         agResetColumnsToolbarItem: ResetColumnsToolbarItem,
         agRowGroupPanelToolbarItem: RowGroupPanelToolbarItem,
     } satisfies Record<ToolbarItemComponentName, any>,
+    icons: {
+        search: 'search',
+    },
     selectors: [AgToolbarSelector],
     dependsOn: [EnterpriseCoreModule, _KeyboardNavigationModule],
 };

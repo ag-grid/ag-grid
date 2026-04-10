@@ -1,7 +1,5 @@
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component } from 'ag-grid-community';
-
-import { createSearchIcon } from './searchIcon';
+import { Component, _createElement, _createIconNoSpan } from 'ag-grid-community';
 
 export class QuickFilterToolbarItem extends Component implements IToolbarItemComp {
     private eInput!: HTMLInputElement;
@@ -14,9 +12,18 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarQuickFilter', 'Quick Filter');
 
-        this.getGui().appendChild(createSearchIcon());
+        const eIcon = _createIconNoSpan('search', this.beans);
+        if (eIcon) {
+            const eIconWrapper = _createElement({
+                tag: 'span',
+                cls: 'ag-toolbar-input-icon',
+                attrs: { 'aria-hidden': 'true' },
+            });
+            eIconWrapper.appendChild(eIcon);
+            this.getGui().appendChild(eIconWrapper);
+        }
 
-        this.eInput = document.createElement('input');
+        this.eInput = _createElement({ tag: 'input' });
         this.eInput.type = 'text';
         this.eInput.className = 'ag-toolbar-input-field';
         this.eInput.placeholder = `${label}...`;
