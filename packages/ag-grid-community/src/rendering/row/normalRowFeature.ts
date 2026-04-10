@@ -1,6 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
-import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../cell/cellCtrl';
@@ -125,12 +124,13 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
     private setCellCtrls(useFlushSync: boolean): void {
         const rowGui = this.rowCtrl.getGui();
-        rowGui?.rowComp.setCellCtrls(this.getCellCtrlsForContainer(rowGui?.containerType ?? 'center'), useFlushSync);
-        this.rowCtrl.refreshPinnedCellGroupWidths();
-    }
 
-    private getCellCtrlsForContainer(_containerType: RowContainerType): CellCtrl[] {
-        return [...this.leftCellCtrls.list, ...this.centerCellCtrls.list, ...this.rightCellCtrls.list];
+        if (!rowGui) {
+            return;
+        }
+
+        rowGui.rowComp.setCellCtrls(this.getAllCellCtrls(), useFlushSync);
+        this.rowCtrl.refreshPinnedCellGroupWidths();
     }
 
     private createAllCellCtrls(): void {
