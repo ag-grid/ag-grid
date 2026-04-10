@@ -1,6 +1,7 @@
 import type { IconName, MenuItemDef } from 'ag-grid-community';
-import { _createIconNoSpan, _focusInto, _setAriaHidden } from 'ag-grid-community';
+import { _createElement, _createIconNoSpan, _focusInto, _setAriaHidden } from 'ag-grid-community';
 
+import { getExportMenuItems } from '../../menu/exportMenuItems';
 import { MenuList } from '../../widgets/menuList';
 import { AbstractToolbarItemComp } from './abstractToolbarItemComp';
 
@@ -10,8 +11,7 @@ export class ExportToolbarItem extends AbstractToolbarItemComp {
 
         const chevronIcon = _createIconNoSpan('selectOpen', this.beans);
         if (chevronIcon) {
-            const eChevron = document.createElement('span');
-            eChevron.classList.add('ag-toolbar-button-chevron');
+            const eChevron = _createElement({ tag: 'span', cls: 'ag-toolbar-button-chevron' });
             _setAriaHidden(eChevron, true);
             eChevron.appendChild(chevronIcon);
             this.getGui().appendChild(eChevron);
@@ -23,7 +23,7 @@ export class ExportToolbarItem extends AbstractToolbarItemComp {
     }
 
     protected getLocaleKey(): string {
-        return 'toolbarExport';
+        return 'export';
     }
 
     protected getDefaultLabel(): string {
@@ -31,7 +31,7 @@ export class ExportToolbarItem extends AbstractToolbarItemComp {
     }
 
     protected onAction(): void {
-        const menuItems = this.getExportMenuItems();
+        const menuItems = getExportMenuItems(this.beans, this.getLocaleTextFunc());
         if (menuItems.length === 0) {
             return;
         }
@@ -39,36 +39,11 @@ export class ExportToolbarItem extends AbstractToolbarItemComp {
         this.showExportMenu(menuItems);
     }
 
-    private getExportMenuItems(): MenuItemDef[] {
-        const { gos, beans } = this;
-        const localeTextFunc = this.getLocaleTextFunc();
-        const items: MenuItemDef[] = [];
-
-        if (!gos.get('suppressCsvExport') && beans.csvCreator) {
-            items.push({
-                name: localeTextFunc('csvExport', 'CSV Export'),
-                icon: _createIconNoSpan('csvExport', beans, null),
-                action: () => beans.gridApi.exportDataAsCsv(),
-            });
-        }
-
-        if (!gos.get('suppressExcelExport') && beans.excelCreator) {
-            items.push({
-                name: localeTextFunc('excelExport', 'Excel Export'),
-                icon: _createIconNoSpan('excelExport', beans, null),
-                action: () => beans.gridApi.exportDataAsExcel(),
-            });
-        }
-
-        return items;
-    }
-
     private showExportMenu(menuItems: MenuItemDef[]): void {
         const eGui = this.getGui();
         const popupSvc = this.beans.popupSvc!;
 
-        const eMenu = document.createElement('div');
-        eMenu.classList.add('ag-menu');
+        const eMenu = _createElement({ tag: 'div', cls: 'ag-menu' });
 
         const menuList = this.createBean(new MenuList());
         eMenu.appendChild(menuList.getGui());
