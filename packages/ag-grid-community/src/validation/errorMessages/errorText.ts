@@ -734,6 +734,10 @@ export const AG_GRID_ERRORS = {
     297: () =>
         '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
     298: () => `Columns Tool Panel 'buttons' requires 'apply' to enable Deferred Updates.` as const,
+    299: () =>
+        `Toolbar item 'columnsPanel' requires a sidebar with the 'columns' tool panel configured. The item will not be rendered.` as const,
+    300: () =>
+        `Toolbar item 'filtersPanel' requires a sidebar with a filters tool panel configured. The item will not be rendered.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

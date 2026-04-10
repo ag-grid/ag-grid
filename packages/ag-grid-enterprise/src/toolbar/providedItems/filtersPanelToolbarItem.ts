@@ -1,5 +1,5 @@
 import type { IToolbarItemParams, IconName } from 'ag-grid-community';
-import { _warnOnce } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
 
 import { AbstractToolbarItemComp } from './abstractToolbarItemComp';
 import { hasSideBarPanel } from './sideBarPanelUtils';
@@ -27,18 +27,17 @@ export class FiltersPanelToolbarItem extends AbstractToolbarItemComp {
         if (found) {
             this.panelId = found;
         } else {
-            _warnOnce(
-                `toolbar item 'filtersPanel' requires a sidebar with a filters tool panel configured. The item will not be rendered.`
-            );
+            _warn(300);
             this.setDisplayed(false);
         }
     }
 
     protected onAction(): void {
-        if (this.beans.gridApi.getOpenedToolPanel() === this.panelId) {
-            this.beans.gridApi.closeToolPanel();
+        const { gridApi } = this.beans;
+        if (gridApi.getOpenedToolPanel() === this.panelId) {
+            gridApi.closeToolPanel();
         } else {
-            this.beans.gridApi.openToolPanel(this.panelId);
+            gridApi.openToolPanel(this.panelId);
         }
     }
 }

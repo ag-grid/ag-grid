@@ -1,4 +1,4 @@
-import type { ElementParams, IToolbarItemComp, IToolbarItemParams, IconName, ToolbarDisplay } from 'ag-grid-community';
+import type { ElementParams, IToolbarItemComp, IToolbarItemParams, IconName } from 'ag-grid-community';
 import { Component, RefPlaceholder, _createIconNoSpan, _setAriaDisabled } from 'ag-grid-community';
 
 const AbstractToolbarItemElement: ElementParams = {
@@ -34,25 +34,15 @@ export abstract class AbstractToolbarItemComp extends Component implements ITool
     }
 
     public init(params: IToolbarItemParams): void {
-        this.updateDisplay(params.display);
-        this.updateDisabled(params.disabled);
+        this.refresh(params);
     }
 
     public refresh(params: IToolbarItemParams): boolean {
-        this.updateDisplay(params.display);
-        this.updateDisabled(params.disabled);
-        return true;
-    }
-
-    private updateDisplay(display: ToolbarDisplay): void {
-        const showLabel = display === 'iconAndLabel';
-        this.eLabel.classList.toggle('ag-hidden', !showLabel);
-    }
-
-    private updateDisabled(disabled: boolean): void {
+        this.eLabel.classList.toggle('ag-hidden', params.display !== 'iconAndLabel');
         const eGui = this.getGui() as HTMLButtonElement;
-        eGui.disabled = disabled;
-        _setAriaDisabled(eGui, disabled);
+        eGui.disabled = params.disabled;
+        _setAriaDisabled(eGui, params.disabled);
+        return true;
     }
 
     protected abstract getIconName(): IconName;

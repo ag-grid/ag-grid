@@ -1,5 +1,5 @@
 import type { IToolbarItemParams, IconName } from 'ag-grid-community';
-import { _warnOnce } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
 
 import { AbstractToolbarItemComp } from './abstractToolbarItemComp';
 import { hasSideBarPanel } from './sideBarPanelUtils';
@@ -22,18 +22,17 @@ export class ColumnsPanelToolbarItem extends AbstractToolbarItemComp {
     public override init(params: IToolbarItemParams): void {
         super.init(params);
         if (!hasSideBarPanel(this.gos, this.panelId)) {
-            _warnOnce(
-                `toolbar item 'columnsPanel' requires a sidebar with the 'columns' tool panel configured. The item will not be rendered.`
-            );
+            _warn(299);
             this.setDisplayed(false);
         }
     }
 
     protected onAction(): void {
-        if (this.beans.gridApi.getOpenedToolPanel() === this.panelId) {
-            this.beans.gridApi.closeToolPanel();
+        const { gridApi } = this.beans;
+        if (gridApi.getOpenedToolPanel() === this.panelId) {
+            gridApi.closeToolPanel();
         } else {
-            this.beans.gridApi.openToolPanel(this.panelId);
+            gridApi.openToolPanel(this.panelId);
         }
     }
 }
