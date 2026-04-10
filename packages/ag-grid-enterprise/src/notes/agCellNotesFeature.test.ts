@@ -5,7 +5,10 @@ import type { INotesFeatureSupport } from './notesShared';
 
 describe('AgCellNotesFeature', () => {
     let beans: BeanCollection;
-    let ctrl: Pick<CellCtrl, 'addManagedElementListeners' | 'column' | 'comp' | 'eGui' | 'isCellNoteHoverSuppressed' | 'rowNode'>;
+    let ctrl: Pick<
+        CellCtrl,
+        'addManagedElementListeners' | 'column' | 'comp' | 'eGui' | 'isCellNoteHoverSuppressed' | 'rowNode'
+    >;
     let listeners: Record<string, (event: PointerEvent) => void>;
     let popup: { hide: jest.Mock; focusEditor: jest.Mock };
     let context: { createBean: jest.Mock; destroyBean: jest.Mock };
@@ -117,7 +120,7 @@ describe('AgCellNotesFeature', () => {
         const feature = new AgCellNotesFeature(beans, ctrl as CellCtrl, notesSvc);
         feature.initialise();
 
-        expect((ctrl.comp.toggleCss as jest.Mock)).toHaveBeenCalledWith('ag-has-cell-notes', false);
+        expect(ctrl.comp.toggleCss as jest.Mock).toHaveBeenCalledWith('ag-has-cell-notes', false);
 
         listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
         jest.advanceTimersByTime(25);
