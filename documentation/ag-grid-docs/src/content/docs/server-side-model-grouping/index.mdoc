@@ -113,21 +113,32 @@ The example below shows a flat grid (no grouping) with the grand total provided 
 
 {% gridExampleRunner title="Grand Total via getRows" name="grand-total-getrows" /%}
 
-Alternatively, if `getRowId` is configured, a row with ID `'rowGroupFooter_ROOT_NODE_ID'` included in `rowData` will also be treated as the grand total (the `grandTotalData` field takes priority).
+Alternatively, if `getRowId` is configured, a row with ID `GRAND_TOTAL_ROW_ID` included in `rowData` will also be treated as the grand total (the `grandTotalData` field takes priority).
 
 ### Updating the Grand Total Row via Transactions
 
 The grand total row can be updated, added, or removed via `applyServerSideTransaction`:
 
--   **Update**: Include the grand total data in the `update` array. The `getRowId` must return `'rowGroupFooter_ROOT_NODE_ID'` for this row.
+-   **Update**: Include the grand total data in the `update` array. The `getRowId` must return `GRAND_TOTAL_ROW_ID` for this row.
 -   **Add**: Include the grand total data in the `add` array. If a grand total already exists, it will be updated.
--   **Remove**: Include a row whose `getRowId` returns `'rowGroupFooter_ROOT_NODE_ID'` in the `remove` array to remove it.
+-   **Remove**: Include a row whose `getRowId` returns `GRAND_TOTAL_ROW_ID` in the `remove` array to remove it.
 
 {% gridExampleRunner title="Grand Total with Transactions" name="grand-total-transactions" /%}
 
-### Accessing the Grand Total Row
+### Accessing Grand Total and Group Total Rows
 
-The grand total row node can be retrieved via `api.getRowNode('rowGroupFooter_ROOT_NODE_ID')`. The node's `data` property holds the current grand total data.
+Both the grand total and individual group total rows can be retrieved by ID using `api.getRowNode()`. Two constants, exported from `ag-grid-community`, define the ID format:
+
+-   `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) — the ID of the grand total row.
+-   `GROUP_TOTAL_ROW_ID_PREFIX` (`'rowGroupFooter_'`) — the prefix for group total row IDs. A group total row ID is `GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id`.
+
+```js
+// Retrieve the grand total row node
+const grandTotalNode = api.getRowNode(GRAND_TOTAL_ROW_ID);
+
+// Retrieve a group total row node (e.g. for group "Ireland")
+const groupTotalNode = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id);
+```
 
 ### Grand Total Row API Reference
 

@@ -5,7 +5,7 @@ import type {
     IServerSideDatasource,
     IServerSideGetRowsParams,
 } from 'ag-grid-community';
-import { ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
@@ -50,7 +50,7 @@ function computeGrandTotal(data: RowData[]): RowData {
         }),
         { gold: 0, silver: 0, bronze: 0 }
     );
-    return { id: 'rowGroupFooter_ROOT_NODE_ID', country: '', sport: '', ...totals };
+    return { id: GRAND_TOTAL_ROW_ID, country: '', sport: '', ...totals };
 }
 
 function getServerSideDatasource(): IServerSideDatasource {
@@ -91,7 +91,7 @@ function updateGrandTotal() {
 
 function removeGrandTotal() {
     gridApi.applyServerSideTransaction({
-        remove: [{ id: 'rowGroupFooter_ROOT_NODE_ID' } as RowData],
+        remove: [{ id: GRAND_TOTAL_ROW_ID } as RowData],
     });
 }
 

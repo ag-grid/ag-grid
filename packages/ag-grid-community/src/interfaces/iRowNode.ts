@@ -239,6 +239,18 @@ interface GroupRowNode<TData = any> {
     sibling: IRowNode<TData>;
 }
 
+/** The row ID of the root node (`'ROOT_NODE_ID'`). Use with `api.getRowNode(ROOT_NODE_ID)`. */
+export const ROOT_NODE_ID = 'ROOT_NODE_ID';
+
+/** Prefix for group total (footer) row IDs (`'rowGroupFooter_'`). A group total row ID is `GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id`. */
+export const GROUP_TOTAL_ROW_ID_PREFIX = 'rowGroupFooter_';
+
+/** Prefix for detail row IDs in master-detail grids (`'detail_'`). A detail row ID is `DETAIL_ROW_ID_PREFIX + masterRowNode.id`. */
+export const DETAIL_ROW_ID_PREFIX = 'detail_';
+
+/** The row ID of the grand total row (`'rowGroupFooter_ROOT_NODE_ID'`). Use with `api.getRowNode(GRAND_TOTAL_ROW_ID)`. */
+export const GRAND_TOTAL_ROW_ID = GROUP_TOTAL_ROW_ID_PREFIX + ROOT_NODE_ID;
+
 export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<TData> {
     /**
      * The primary (canonical) row node, resolving footer and pinned sibling relationships.

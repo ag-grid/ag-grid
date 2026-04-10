@@ -26,8 +26,10 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
+    GRAND_TOTAL_ROW_ID,
+    GROUP_TOTAL_ROW_ID_PREFIX,
+    ROOT_NODE_ID,
     RowNode,
-    _ROW_ID_GRAND_TOTAL,
     _debounce,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
@@ -659,10 +661,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        if (id === _ROW_ID_GRAND_TOTAL) {
+        if (id === GRAND_TOTAL_ROW_ID) {
             return this.getRootStore()?.getGrandTotalNode();
         }
-
         let result: RowNode | undefined;
         this.forEachNode((rowNode) => {
             if (rowNode.id === id) {
@@ -672,6 +673,14 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 result = rowNode.detailNode;
             }
         });
+        if (id === ROOT_NODE_ID) {
+            return this.rootNode;
+        }
+        if (!result && id.startsWith(GROUP_TOTAL_ROW_ID_PREFIX)) {
+            const groupId = id.slice(GROUP_TOTAL_ROW_ID_PREFIX.length);
+            const groupNode = this.getRowNode(groupId);
+            result = groupNode?.sibling?.footer ? groupNode.sibling : undefined;
+        }
         return result;
     }
 

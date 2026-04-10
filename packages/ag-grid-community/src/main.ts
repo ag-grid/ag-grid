@@ -32,6 +32,12 @@ export type {
 export type { SortModelItem } from './interfaces/iSortModelItem';
 
 // IRowNode
+export {
+    DETAIL_ROW_ID_PREFIX,
+    GRAND_TOTAL_ROW_ID,
+    GROUP_TOTAL_ROW_ID_PREFIX,
+    ROOT_NODE_ID,
+} from './interfaces/iRowNode';
 export type {
     AllChildrenCountChangedEvent,
     CellChangedEvent,

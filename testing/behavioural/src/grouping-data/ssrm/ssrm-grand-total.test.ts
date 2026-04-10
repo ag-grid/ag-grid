@@ -1,10 +1,10 @@
 import type { GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
-import { PaginationModule } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, PaginationModule, ROOT_NODE_ID } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, unindentText, waitForEvent, waitForNoLoadingRows } from '../../test-utils';
 
-const GRAND_TOTAL_ID = 'rowGroupFooter_ROOT_NODE_ID';
+const GRAND_TOTAL_ID = GRAND_TOTAL_ROW_ID;
 
 describe('SSRM grand total row', () => {
     const gridManager = new TestGridsManager({
@@ -350,6 +350,10 @@ describe('SSRM grand total row', () => {
         expect(grandTotalNode!.group).toBe(false);
         expect(grandTotalNode!.id).toBe(GRAND_TOTAL_ID);
         expect(grandTotalNode!.data.value).toBe(60);
+
+        const rootNode = api.getRowNode(ROOT_NODE_ID);
+        expect(rootNode?.level).toBe(-1);
+        expect(rootNode?.group).toBe(true);
     });
 
     // --- Grand total does not break pagination / row count ---
@@ -456,6 +460,10 @@ describe('SSRM grand total row', () => {
             ├── GROUP-leafGroup collapsed id:"category:B" ag-Grid-AutoColumn:"B" category:"B" value:30
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " value:60
         `);
+
+        const grandTotalNode = api.getRowNode(GRAND_TOTAL_ID);
+        expect(grandTotalNode?.footer).toBe(true);
+        expect(grandTotalNode?.data?.value).toBe(60);
     });
 
     // --- Pagination tests ---

@@ -11,6 +11,12 @@ import type {
     RefreshModelParams,
 } from '../interfaces/iClientSideRowModel';
 import type { ForEachNodeCallback, RowBounds, RowModelType } from '../interfaces/iRowModel';
+import {
+    DETAIL_ROW_ID_PREFIX,
+    GRAND_TOTAL_ROW_ID,
+    GROUP_TOTAL_ROW_ID_PREFIX,
+    ROOT_NODE_ID,
+} from '../interfaces/iRowNode';
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
@@ -1012,7 +1018,33 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (typeof found === 'object') {
             return found; // we check for typeof object to avoid returning things from Object.prototype
         }
-        return this.beans.groupStage?.getNonLeaf(id);
+        const nonLeaf = this.beans.groupStage?.getNonLeaf(id);
+        if (nonLeaf) {
+            return nonLeaf;
+        }
+        return this.getSpecialRowNode(id);
+    }
+
+    private getSpecialRowNode(id: string): RowNode | undefined {
+        if (id === ROOT_NODE_ID) {
+            return this.rootNode ?? undefined;
+        }
+        if (id === GRAND_TOTAL_ROW_ID) {
+            const sibling = this.rootNode?.sibling;
+            return sibling?.footer ? sibling : undefined;
+        }
+        if (id.startsWith(GROUP_TOTAL_ROW_ID_PREFIX)) {
+            const groupId = id.slice(GROUP_TOTAL_ROW_ID_PREFIX.length);
+            const groupNode = this.getRowNode(groupId);
+            return groupNode?.sibling?.footer ? groupNode.sibling : undefined;
+        }
+        if (id.startsWith(DETAIL_ROW_ID_PREFIX)) {
+            const masterId = id.slice(DETAIL_ROW_ID_PREFIX.length);
+            const masterNode = this.nodeManager?.getRowNode(masterId);
+            if (typeof masterNode === 'object' && masterNode.detailNode?.id === id) {
+                return masterNode.detailNode;
+            }
+        }
     }
 
     public batchUpdateRowData(

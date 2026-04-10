@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, GRAND_TOTAL_ROW_ID, GROUP_TOTAL_ROW_ID_PREFIX } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
@@ -135,6 +135,14 @@ describe('ag-grid grouping display types and footers', () => {
             · │ └─ footer id:rowGroupFooter_row-group-country-Italy-year-2020 ag-Grid-AutoColumn:"Total 2020" gold:4 silver:3
             · └─ footer id:rowGroupFooter_row-group-country-Italy ag-Grid-AutoColumn:"Total Italy" gold:4 silver:3
         `);
+
+        const irelandTotal = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'row-group-country-Ireland');
+        expect(irelandTotal?.footer).toBe(true);
+        expect(irelandTotal?.aggData?.gold).toBe(6);
+
+        const irelandYear2020Total = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'row-group-country-Ireland-year-2020');
+        expect(irelandYear2020Total?.footer).toBe(true);
+        expect(irelandYear2020Total?.aggData?.gold).toBe(3);
     });
 
     test('grouping with grand total row at top', async () => {
@@ -205,6 +213,10 @@ describe('ag-grid grouping display types and footers', () => {
             │ └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:3
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " gold:6
         `);
+
+        const grandTotalNode = api.getRowNode(GRAND_TOTAL_ROW_ID);
+        expect(grandTotalNode?.footer).toBe(true);
+        expect(grandTotalNode?.aggData?.gold).toBe(6);
     });
 
     test('grouping with custom group ordering', async () => {

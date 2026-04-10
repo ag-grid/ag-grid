@@ -28,7 +28,6 @@ export class GridRows<TData = any> {
     public readonly displayedRows: RowNode<TData>[];
     public readonly pinnedTopRows: RowNode<TData>[];
     public readonly pinnedBottomRows: RowNode<TData>[];
-    public readonly rootRowNodes: RowNode<TData>[];
     public readonly rootRowNode: RowNode<TData> | null;
     public readonly rootAllLeafChildren: RowNode<TData>[];
     public readonly errors: GridRowsErrors<TData>;
@@ -78,8 +77,7 @@ export class GridRows<TData = any> {
         const collected = collectGridRows(api, label, options, errors, GridRows);
         this.rowNodes = collected.rowNodes;
         this.displayedRows = collected.displayedRows;
-        this.rootRowNodes = collected.rootRowNodes;
-        this.rootRowNode = collected.rootRowNodes[0] ?? null;
+        this.rootRowNode = collected.rootRowNode;
         this.rootAllLeafChildren = this.rootRowNode?.allLeafChildren ?? [];
         this.pinnedTopRows = collected.pinnedTopRows;
         this.pinnedBottomRows = collected.pinnedBottomRows;
