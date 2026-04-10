@@ -17,7 +17,7 @@
     gap: calc(var(--ag-spacing) * 0.5);
 }
 
-.ag-toolbar-left:has(.ag-toolbar-panel) {
+.ag-toolbar-left:where(:has(.ag-toolbar-panel)) {
     flex: 1;
 }
 

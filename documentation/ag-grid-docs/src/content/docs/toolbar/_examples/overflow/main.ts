@@ -77,30 +77,31 @@ const gridOptions: GridOptions<IOlympicData> = {
             'separator',
             'columnChooser',
             'autoSizeAll',
-            { component: 'quickFilter', alignment: 'right' },
-            { component: 'find', alignment: 'right' },
+            { toolbarItem: 'quickFilter', alignment: 'right' },
+            { toolbarItem: 'find', alignment: 'right' },
             'separator',
-            { component: 'columnsPanel', alignment: 'right' },
-            { component: 'filtersPanel', alignment: 'right' },
+            { toolbarItem: 'columnsPanel', alignment: 'right' },
+            { toolbarItem: 'filtersPanel', alignment: 'right' },
             'separator',
-            { component: 'export', alignment: 'right' },
+            { toolbarItem: 'export', alignment: 'right' },
             'separator',
-            { component: 'resetColumns', alignment: 'right' },
-            { component: OverflowMenu, key: 'overflowMenu', alignment: 'right' },
+            { toolbarItem: 'resetColumns', alignment: 'right' },
+            { toolbarItem: OverflowMenu, key: 'overflowMenu', alignment: 'right' },
         ],
     },
 };
 
-function onWidthSliderChange(value: string) {
-    const grid = document.getElementById('myGrid');
-    const label = document.getElementById('widthValue');
-    if (grid) grid.style.maxWidth = value + '%';
-    if (label) label.textContent = value + '%';
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
+
+    document.getElementById('widthSlider')!.addEventListener('input', (e) => {
+        const value = (e.target as HTMLInputElement).value;
+        const grid = document.getElementById('myGrid');
+        const label = document.getElementById('widthValue');
+        if (grid) grid.style.maxWidth = value + '%';
+        if (label) label.textContent = value + '%';
+    });
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())

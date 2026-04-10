@@ -1,14 +1,6 @@
 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px">
     <label for="widthSlider">Grid width:</label>
-    <input
-        type="range"
-        id="widthSlider"
-        min="30"
-        max="100"
-        value="100"
-        style="flex: 1"
-        oninput="onWidthSliderChange(this.value)"
-    />
+    <input type="range" id="widthSlider" min="30" max="100" value="100" style="flex: 1" />
     <span id="widthValue">100%</span>
 </div>
 <div id="myGrid" style="height: calc(100% - 40px)"></div>

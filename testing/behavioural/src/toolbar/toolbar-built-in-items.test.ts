@@ -464,7 +464,11 @@ describe('Toolbar Built-in Items', () => {
             const button = gridDiv.querySelector('.ag-toolbar-button[title="Columns"]');
             expect(button).toBeNull();
 
-            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('columnsPanel'));
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #299'),
+                expect.stringContaining('columnsPanel'),
+                expect.anything()
+            );
 
             warnSpy.mockRestore();
         });
@@ -486,7 +490,11 @@ describe('Toolbar Built-in Items', () => {
             const button = gridDiv.querySelector('.ag-toolbar-button[title="Filters"]');
             expect(button).toBeNull();
 
-            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('filtersPanel'));
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #300'),
+                expect.stringContaining('filtersPanel'),
+                expect.anything()
+            );
 
             warnSpy.mockRestore();
         });
@@ -553,16 +561,16 @@ describe('Toolbar Built-in Items', () => {
                     items: [
                         'rowGroupPanel',
                         'pivotPanel',
-                        { component: 'quickFilter', alignment: 'right' },
-                        { component: 'find', alignment: 'right' },
+                        { toolbarItem: 'quickFilter', alignment: 'right' },
+                        { toolbarItem: 'find', alignment: 'right' },
                         'separator',
-                        { component: 'columnsPanel', alignment: 'right' },
-                        { component: 'filtersPanel', alignment: 'right' },
-                        { component: 'autoSizeAll', alignment: 'right' },
+                        { toolbarItem: 'columnsPanel', alignment: 'right' },
+                        { toolbarItem: 'filtersPanel', alignment: 'right' },
+                        { toolbarItem: 'autoSizeAll', alignment: 'right' },
                         'separator',
-                        { component: 'export', alignment: 'right' },
+                        { toolbarItem: 'export', alignment: 'right' },
                         'separator',
-                        { component: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
+                        { toolbarItem: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
                     ],
                 },
             });

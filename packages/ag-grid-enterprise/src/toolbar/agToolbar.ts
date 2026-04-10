@@ -7,12 +7,12 @@ import type {
     IToolbarItemComp,
     IToolbarItemParams,
     ToolbarDisplay,
+    ToolbarItemComponentName,
     ToolbarItemDef,
     UserCompDetails,
     UserComponentFactory,
 } from 'ag-grid-community';
 import {
-    AgPromise,
     Component,
     KeyCode,
     ManagedFocusFeature,
@@ -29,7 +29,7 @@ import {
 import agToolbarCSS from './agToolbar.css';
 import type { ToolbarService } from './toolbarService';
 
-const BUILT_IN_ITEMS: Record<string, string> = {
+const BUILT_IN_ITEMS: Record<string, ToolbarItemComponentName> = {
     autoSizeAll: 'agAutoSizeAllToolbarItem',
     columnChooser: 'agColumnChooserToolbarItem',
     columnsPanel: 'agColumnsPanelToolbarItem',
@@ -48,14 +48,15 @@ let customKeyCounter = 0;
 
 function normaliseItem(item: ToolbarItemDef | string): ToolbarItemDef {
     if (typeof item === 'string') {
-        const component = BUILT_IN_ITEMS[item] ?? item;
-        return { component, key: item };
+        const toolbarItem = BUILT_IN_ITEMS[item] ?? item;
+        return { toolbarItem, key: item };
     }
-    if (typeof item.component === 'string' && BUILT_IN_ITEMS[item.component]) {
-        return { ...item, key: item.key ?? item.component, component: BUILT_IN_ITEMS[item.component] };
+    if (typeof item.toolbarItem === 'string' && BUILT_IN_ITEMS[item.toolbarItem]) {
+        return { ...item, key: item.key ?? item.toolbarItem, toolbarItem: BUILT_IN_ITEMS[item.toolbarItem] };
     }
     if (item.key == null) {
-        const key = typeof item.component === 'string' ? item.component : `custom-toolbar-item-${customKeyCounter++}`;
+        const key =
+            typeof item.toolbarItem === 'string' ? item.toolbarItem : `custom-toolbar-item-${customKeyCounter++}`;
         return { ...item, key };
     }
     return item;
@@ -70,7 +71,7 @@ function getToolbarItemCompDetails(
 }
 
 const ToolbarItemComponent: ComponentType = {
-    name: 'component',
+    name: 'toolbarItem',
     optionalMethods: ['refresh'],
 };
 
@@ -97,7 +98,7 @@ class AgToolbar extends Component implements FocusableContainer {
     private userCompFactory: UserComponentFactory;
     private toolbarSvc: ToolbarService;
     private updateQueued: boolean = false;
-    private itemsPromise: AgPromise<void> = AgPromise.resolve();
+    private itemsPromise: Promise<void> = Promise.resolve();
 
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
@@ -129,6 +130,7 @@ class AgToolbar extends Component implements FocusableContainer {
 
         _addFocusableContainerListener(this.beans, this, eGui);
 
+        const tabIndex = String(this.gos.get('tabIndex') ?? 0);
         this.addManagedElementListeners(eGui, {
             focusin: (e: FocusEvent) => {
                 const target = e.target as HTMLElement;
@@ -136,7 +138,7 @@ class AgToolbar extends Component implements FocusableContainer {
                     eGui.querySelectorAll<HTMLElement>('.ag-toolbar-button, .ag-toolbar-input-field').forEach((el) =>
                         el.setAttribute('tabindex', '-1')
                     );
-                    target.setAttribute('tabindex', '0');
+                    target.setAttribute('tabindex', tabIndex);
                 }
             },
         });
@@ -217,7 +219,7 @@ class AgToolbar extends Component implements FocusableContainer {
         }
         const seen = new Set<string>();
         return toolbar.items.map(normaliseItem).filter((item) => {
-            const key = item.key ?? item.component;
+            const key = item.key ?? item.toolbarItem;
             if (key === 'separator') {
                 return true;
             }
@@ -249,7 +251,7 @@ class AgToolbar extends Component implements FocusableContainer {
                     lastAlignment = alignment;
                 }
             }
-            this.itemsPromise = AgPromise.all([
+            this.itemsPromise = Promise.all([
                 this.createAndRenderComponents(leftItems, this.eToolbarLeft, existingItemsToReuse),
                 this.createAndRenderComponents(rightItems, this.eToolbarRight, existingItemsToReuse),
             ]).then(() => this.initRovingTabindex());
@@ -276,7 +278,7 @@ class AgToolbar extends Component implements FocusableContainer {
 
         if (validItemsProvided) {
             for (const itemConfig of items) {
-                const key = itemConfig.key ?? itemConfig.component;
+                const key = itemConfig.key ?? itemConfig.toolbarItem;
                 const existingItem = this.toolbarSvc.getToolbarItem(key);
                 if (existingItem?.refresh) {
                     const newParams: IToolbarItemParams = _addGridCommonParams(this.gos, {
@@ -325,13 +327,8 @@ class AgToolbar extends Component implements FocusableContainer {
         toolbarItems: ToolbarItemDef[],
         eContainer: HTMLElement,
         existingItemsToReuse: Map<string, IToolbarItemComp>
-    ): AgPromise<void> {
-        const componentDetails: {
-            key: string;
-            placeholder: HTMLElement;
-            eContainer: HTMLElement;
-            promise: AgPromise<IToolbarItemComp>;
-        }[] = [];
+    ): Promise<void> {
+        const promises: Promise<void>[] = [];
 
         for (const itemConfig of toolbarItems) {
             if (itemConfig.key === 'separator') {
@@ -342,11 +339,14 @@ class AgToolbar extends Component implements FocusableContainer {
                 continue;
             }
 
-            const key = itemConfig.key || itemConfig.component;
+            const key = itemConfig.key || itemConfig.toolbarItem;
             const existingItem = existingItemsToReuse.get(key);
-            let promise: AgPromise<IToolbarItemComp>;
+
+            const placeholder = document.createElement('div');
+            eContainer.appendChild(placeholder);
+
             if (existingItem) {
-                promise = AgPromise.resolve(existingItem);
+                this.mountComponent(key, existingItem, placeholder, eContainer);
             } else {
                 const compDetails = getToolbarItemCompDetails(
                     this.userCompFactory,
@@ -360,65 +360,66 @@ class AgToolbar extends Component implements FocusableContainer {
                 );
 
                 if (compDetails == null) {
+                    _removeFromParent(placeholder);
                     continue;
                 }
-                promise = compDetails.newAgStackInstance();
+
+                promises.push(
+                    new Promise<void>((resolve) => {
+                        compDetails.newAgStackInstance().then((component) => {
+                            this.mountComponent(key, component, placeholder, eContainer);
+                            resolve();
+                        });
+                    })
+                );
             }
-
-            const placeholder = document.createElement('div');
-            eContainer.appendChild(placeholder);
-
-            componentDetails.push({
-                key,
-                placeholder,
-                eContainer,
-                promise,
-            });
         }
 
-        return AgPromise.all(componentDetails.map((details) => details.promise)).then((components) => {
-            if (!components) {
-                return;
-            }
-            for (let i = 0; i < componentDetails.length; i++) {
-                const componentDetail = componentDetails[i];
-                const component = components[i];
-                if (component == null) {
-                    continue;
-                }
-                const destroyFunc = () => {
-                    this.destroyBean(component);
-                };
+        return promises.length > 0 ? Promise.all(promises).then(() => {}) : Promise.resolve();
+    }
 
-                if (this.isAlive()) {
-                    this.toolbarSvc.registerToolbarItem(componentDetail.key, component);
-                    const comp = component instanceof Component ? component : undefined;
-                    if (!comp || comp.isDisplayed()) {
-                        componentDetail.placeholder.replaceWith(component.getGui());
-                    } else {
-                        _removeFromParent(componentDetail.placeholder);
-                    }
-                    if (comp) {
-                        this.addManagedListeners(comp, {
-                            displayChanged: () => {
-                                const gui = comp.getGui();
-                                if (comp.isDisplayed()) {
-                                    if (!gui.parentElement) {
-                                        componentDetail.eContainer.appendChild(gui);
-                                    }
-                                } else {
-                                    _removeFromParent(gui);
-                                }
-                            },
-                        });
-                    }
-                    this.compDestroyFunctions[componentDetail.key] = destroyFunc;
-                } else {
-                    _removeFromParent(componentDetail.placeholder);
-                    destroyFunc();
-                }
+    private mountComponent(
+        key: string,
+        component: IToolbarItemComp | null,
+        placeholder: HTMLElement,
+        eContainer: HTMLElement
+    ): void {
+        if (component == null) {
+            _removeFromParent(placeholder);
+            return;
+        }
+
+        const destroyFunc = () => {
+            this.destroyBean(component);
+        };
+
+        if (this.isAlive()) {
+            this.toolbarSvc.registerToolbarItem(key, component);
+            const comp = component instanceof Component ? component : undefined;
+            if (!comp || comp.isDisplayed()) {
+                placeholder.replaceWith(component.getGui());
+            } else {
+                _removeFromParent(placeholder);
             }
-        });
+            if (comp) {
+                this.addManagedListeners(comp, {
+                    displayChanged: () => {
+                        const gui = comp.getGui();
+                        if (comp.isDisplayed()) {
+                            if (!gui.parentElement) {
+                                eContainer.appendChild(gui);
+                            }
+                        } else {
+                            _removeFromParent(gui);
+                        }
+                    },
+                });
+            }
+            this.compDestroyFunctions[key] = destroyFunc;
+        } else {
+            _removeFromParent(placeholder);
+            destroyFunc();
+        }
     }
 }
 
