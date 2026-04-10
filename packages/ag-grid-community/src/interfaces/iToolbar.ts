@@ -9,7 +9,7 @@ export type Toolbar = {
 };
 
 export interface ToolbarItemDef {
-    component?: any;
+    toolbarItem?: any;
     alignment?: 'left' | 'right';
     display?: ToolbarDisplay;
     key?: string;

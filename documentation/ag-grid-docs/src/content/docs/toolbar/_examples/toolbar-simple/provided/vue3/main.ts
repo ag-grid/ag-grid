@@ -63,7 +63,7 @@ const VueExample = defineComponent({
         };
 
         const toolbar: Toolbar = {
-            items: [{ component: CustomToolbarItem, key: 'analyseByCountry' }],
+            items: [{ toolbarItem: CustomToolbarItem, key: 'analyseByCountry' }],
         };
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

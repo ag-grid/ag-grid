@@ -42,7 +42,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 200,
     },
     toolbar: {
-        items: [{ component: CustomToolbarItem, key: 'analyseByCountry' }],
+        items: [{ toolbarItem: CustomToolbarItem, key: 'analyseByCountry' }],
     },
 };
 

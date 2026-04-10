@@ -56,7 +56,7 @@ const GridExample = () => {
     );
     const toolbar = useMemo<Toolbar>(
         () => ({
-            items: [{ component: CustomToolbarItem, key: 'analyseByCountry' }],
+            items: [{ toolbarItem: CustomToolbarItem, key: 'analyseByCountry' }],
         }),
         []
     );

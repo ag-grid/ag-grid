@@ -64,7 +64,7 @@ const gridOptions = {
             'autoSizeAll',
             {
                 key: 'myItem',
-                component: CustomToolbarComponent,
+                toolbarItem: CustomToolbarComponent,
                 alignment: 'right',
                 toolbarItemParams: {
                     label: 'Custom Label'
@@ -85,7 +85,7 @@ const gridOptions = {
         display: 'iconAndLabel',
         items: [
             'autoSizeAll',
-            { component: 'csvExport', display: 'icon' }
+            { toolbarItem: 'csvExport', display: 'icon' }
         ]
     }
 }
