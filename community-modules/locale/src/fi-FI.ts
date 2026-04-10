@@ -337,6 +337,7 @@ export const AG_GRID_LOCALE_FI = {
     sortAbsoluteAscending: 'Lajittele ehdoton nouseva',
     sortAbsoluteDescending: 'Lajittele ehdoton laskeva',
     sortUnSort: 'Tyhjennä lajittelu',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Summa',
@@ -759,6 +760,7 @@ export const AG_GRID_LOCALE_FI = {
     ariaLabelAddFilterField: 'Lisää suodatin kenttä',
     ariaLabelFilterCardDelete: 'Poista suodatin',
     ariaLabelFilterCardHasEdits: 'On muutoksia',
+    ariaCellHasNote: 'Tässä solussa on muistiinpano.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ' ',

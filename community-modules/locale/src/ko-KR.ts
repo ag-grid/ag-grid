@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_KR = {
     sortAbsoluteAscending: '절대 오름차순 정렬',
     sortAbsoluteDescending: '절대 내림차순 정렬',
     sortUnSort: '정렬 해제',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '합계',
@@ -756,6 +757,7 @@ export const AG_GRID_LOCALE_KR = {
     ariaLabelAddFilterField: '필터 필드 추가',
     ariaLabelFilterCardDelete: '필터 삭제',
     ariaLabelFilterCardHasEdits: '편집 사항 있음',
+    ariaCellHasNote: '이 셀에 메모가 있습니다.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

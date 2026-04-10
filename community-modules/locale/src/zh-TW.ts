@@ -333,6 +333,7 @@ export const AG_GRID_LOCALE_TW = {
     sortAbsoluteAscending: '絕對遞增排序',
     sortAbsoluteDescending: '絕對遞減排序',
     sortUnSort: '清除排列',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '總和',
@@ -755,6 +756,7 @@ export const AG_GRID_LOCALE_TW = {
     ariaLabelAddFilterField: '新增篩選欄位',
     ariaLabelFilterCardDelete: '刪除篩選器',
     ariaLabelFilterCardHasEdits: '有編輯',
+    ariaCellHasNote: '此儲存格有備註。',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

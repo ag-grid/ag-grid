@@ -339,6 +339,7 @@ export const AG_GRID_LOCALE_GR = {
     sortAbsoluteAscending: '"Απόλυτη αύξουσα ταξινόμηση"',
     sortAbsoluteDescending: '"Απόλυτη φθίνουσα ταξινόμηση"',
     sortUnSort: 'Καθαρισμός Ταξινόμησης',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Άθροισμα',
@@ -762,6 +763,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaLabelAddFilterField: 'Προσθήκη πεδίου φίλτρου',
     ariaLabelFilterCardDelete: 'Διαγραφή φίλτρου',
     ariaLabelFilterCardHasEdits: 'Έχει επεξεργασίες',
+    ariaCellHasNote: 'Αυτό το κελί έχει σημείωση.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

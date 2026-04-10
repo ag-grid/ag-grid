@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_VN = {
     sortAbsoluteAscending: 'Sắp Xếp Tăng Dần Tuyệt Đối',
     sortAbsoluteDescending: 'Sắp Xếp Giảm Dần Tuyệt Đối',
     sortUnSort: 'Xóa Sắp Xếp',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Tổng',
@@ -756,6 +757,7 @@ export const AG_GRID_LOCALE_VN = {
     ariaLabelAddFilterField: 'Thêm Trường Bộ Lọc',
     ariaLabelFilterCardDelete: 'Xóa Bộ Lọc',
     ariaLabelFilterCardHasEdits: 'Có Chỉnh Sửa',
+    ariaCellHasNote: 'Ô này có ghi chú.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

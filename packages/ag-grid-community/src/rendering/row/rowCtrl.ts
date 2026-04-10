@@ -52,7 +52,7 @@ import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { IRowStyleFeature } from '../../interfaces/iRowStyleFeature';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import type { ICellNotesFeature } from '../../interfaces/notes';
+import type { GetNoteParams, ICellNotesFeature } from '../../interfaces/notes';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
@@ -1647,8 +1647,30 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         );
     }
 
-    public announceDescription(): void {
+    public announceDescription(cellCtrl?: CellCtrl): void {
         this.beans.selectionSvc?.announceAriaRowSelection(this.rowNode);
+        this.announceNoteDescription(cellCtrl);
+    }
+
+    private announceNoteDescription(cellCtrl?: CellCtrl): void {
+        const { notesSvc, ariaAnnounce } = this.beans;
+        if (!notesSvc || !ariaAnnounce) {
+            return;
+        }
+
+        const baseParams = { rowNode: this.rowNode };
+        const suffixParams = cellCtrl ? { column: cellCtrl.column } : { location: 'fullWidthRow' };
+        const params = { ...baseParams, ...suffixParams } as GetNoteParams;
+
+        const access = notesSvc.getCellNoteAccess(params);
+
+        if (access?.canView) {
+            const translate = this.getLocaleTextFunc();
+            ariaAnnounce.announceValue(
+                translate('ariaCellHasNote', 'This cell has a note.'),
+                'cellNote'
+            );
+        }
     }
 
     protected addHoverFunctionality(eGui: RowGui): void {

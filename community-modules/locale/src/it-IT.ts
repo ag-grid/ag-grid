@@ -337,6 +337,7 @@ export const AG_GRID_LOCALE_IT = {
     sortAbsoluteAscending: 'Ordina Assoluto Crescente',
     sortAbsoluteDescending: 'Ordina Assoluto Decrescente',
     sortUnSort: 'Annulla Ordinamento',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Somma',
@@ -762,6 +763,7 @@ export const AG_GRID_LOCALE_IT = {
     ariaLabelAddFilterField: 'Aggiungi campo filtro',
     ariaLabelFilterCardDelete: 'Elimina filtro',
     ariaLabelFilterCardHasEdits: 'Ha modifiche',
+    ariaCellHasNote: 'Questa cella ha una nota.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
