@@ -1666,10 +1666,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (access?.canView) {
             const translate = this.getLocaleTextFunc();
-            ariaAnnounce.announceValue(
-                translate('ariaCellHasNote', 'This cell has a note.'),
-                'cellNote'
-            );
+            ariaAnnounce.announceValue(translate('ariaCellHasNote', 'This cell has a note.'), 'cellNote');
         }
     }
 
