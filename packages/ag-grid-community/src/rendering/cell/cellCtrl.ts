@@ -298,15 +298,29 @@ export class CellCtrl extends BeanStub {
     }
 
     private checkFormulaError() {
+        if (!this.beans.formula) {
+            return;
+        }
         this.eGui.classList.toggle('formula-error', this.hasFormulaError());
     }
 
     private hasFormulaError(): boolean {
-        return !!this.beans.formula?.getFormulaError(this.column, this.rowNode);
+        const { formula } = this.beans;
+
+        if (!formula) {
+            return false;
+        }
+
+        return !!formula.getFormulaError(this.column, this.rowNode);
     }
 
     private hasCellValidationError(): boolean {
-        return !!this.beans.editModelSvc?.getCellValidationModel().hasCellValidation(this);
+        const { editModelSvc } = this.beans;
+
+        if (!editModelSvc) {
+            return false;
+        }
+        return editModelSvc.getCellValidationModel().hasCellValidation(this);
     }
 
     private setupAutoHeight(eCellWrapper: HTMLElement | undefined, compBean: BeanStub): void {
