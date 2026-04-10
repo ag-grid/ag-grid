@@ -1,5 +1,5 @@
 import type { GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
-import { ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { ModuleRegistry, ROW_ID_GRAND_TOTAL, ValidationModule, createGrid } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
@@ -40,13 +40,22 @@ function getServerSideDatasource(): IServerSideDatasource {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
             // Compute grand total from all rows
+
+            const initial: Partial<RowData> = {
+                id: ROW_ID_GRAND_TOTAL,
+                gold: 0,
+                silver: 0,
+                bronze: 0,
+            };
+
             const grandTotalData: Partial<RowData> = rowData.reduce(
                 (acc, row) => ({
+                    ...acc,
                     gold: acc.gold! + row.gold,
                     silver: acc.silver! + row.silver,
                     bronze: acc.bronze! + row.bronze,
                 }),
-                { gold: 0, silver: 0, bronze: 0 } as Partial<RowData>
+                initial
             );
 
             setTimeout(() => {
