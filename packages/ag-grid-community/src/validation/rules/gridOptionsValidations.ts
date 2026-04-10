@@ -138,6 +138,8 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     masterDetail: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'MasterDetail',
     notesDataSource: 'Notes',
+    noteShowDelay: 'Notes',
+    noteHideDelay: 'Notes',
     pagination: 'Pagination',
     pinnedBottomRowData: 'PinnedRow',
     pinnedTopRowData: 'PinnedRow',
@@ -428,6 +430,22 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             validate: ({ getRowId }) => {
                 if (!getRowId) {
                     return `'getRowId' callback must be provided for Cell Notes to work correctly.`;
+                }
+                return null;
+            },
+        },
+        noteHideDelay: {
+            validate: (options) => {
+                if (options.noteHideDelay != null && options.noteHideDelay < 0) {
+                    return 'noteHideDelay should not be lower than 0';
+                }
+                return null;
+            },
+        },
+        noteShowDelay: {
+            validate: (options) => {
+                if (options.noteShowDelay != null && options.noteShowDelay < 0) {
+                    return 'noteShowDelay should not be lower than 0';
                 }
                 return null;
             },

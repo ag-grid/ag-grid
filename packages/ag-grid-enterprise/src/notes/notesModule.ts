@@ -11,6 +11,8 @@ import { NotesService } from './notesService';
 /**
  * @feature Notes
  * @gridOption notesDataSource
+ * @gridOption noteShowDelay
+ * @gridOption noteHideDelay
  */
 export const NotesModule: _ModuleWithApi<_NotesGridApi> = {
     moduleName: 'Notes',

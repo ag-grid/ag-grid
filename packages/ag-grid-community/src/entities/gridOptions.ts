@@ -1192,6 +1192,18 @@ export interface GridOptions<TData = any> {
      * @agModule `NotesModule`
      */
     notesDataSource?: NotesDataSource;
+    /**
+     * The delay in milliseconds before a note is shown when hovering a noted cell.
+     * @default 180
+     * @agModule `NotesModule`
+     */
+    noteShowDelay?: number;
+    /**
+     * The delay in milliseconds before a note is hidden after the pointer leaves a noted cell or note popup.
+     * @default 220
+     * @agModule `NotesModule`
+     */
+    noteHideDelay?: number;
 
     /**
      * A map of 'function name' to 'function' for custom functions that are used for formulas.
