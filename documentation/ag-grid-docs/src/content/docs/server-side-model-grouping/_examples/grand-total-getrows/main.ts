@@ -1,5 +1,5 @@
 import type { GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
-import { ModuleRegistry, ROW_ID_GRAND_TOTAL, ValidationModule, createGrid } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
@@ -42,7 +42,7 @@ function getServerSideDatasource(): IServerSideDatasource {
             // Compute grand total from all rows
 
             const initial: Partial<RowData> = {
-                id: ROW_ID_GRAND_TOTAL,
+                id: GRAND_TOTAL_ROW_ID,
                 gold: 0,
                 silver: 0,
                 bronze: 0,
