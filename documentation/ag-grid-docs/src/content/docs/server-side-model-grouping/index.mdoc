@@ -125,6 +125,10 @@ The grand total row can be updated, added, or removed via `applyServerSideTransa
 
 {% gridExampleRunner title="Grand Total with Transactions" name="grand-total-transactions" /%}
 
+### Accessing the Grand Total Row
+
+The grand total row node can be retrieved via `api.getRowNode('rowGroupFooter_ROOT_NODE_ID')`. The node's `data` property holds the current grand total data.
+
 ### Grand Total Row API Reference
 
 {% apiDocumentation source="grid-options/properties.json" section="aggregation" names=["grandTotalRow"] /%}
