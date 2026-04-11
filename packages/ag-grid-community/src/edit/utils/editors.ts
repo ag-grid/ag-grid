@@ -194,6 +194,7 @@ export function _setupEditor(
     onEditorAttachedFuncs.push(() => rangeFeature?.unsetComp());
     comp?.setEditDetails(compDetails, popup, popupLocation, gos.get('reactiveCustomComponents'));
     rowCtrl?.refreshRow({ suppressFlash: true });
+    cellCtrl.refreshCellNoteState();
 
     dispatchEditingStarted(beans, position, event, newValue, silent);
 }

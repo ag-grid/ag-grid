@@ -640,6 +640,18 @@
                 "name": "Notes",
                 "url": "./notes/"
             }
+        },
+        "noteShowDelay": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteHideDelay": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
         }
     },
     "charts": {

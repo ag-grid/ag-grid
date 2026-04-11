@@ -1,10 +1,10 @@
 import type { GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
-import { PaginationModule, ROW_ID_GRAND_TOTAL } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, PaginationModule, ROOT_NODE_ID } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, unindentText, waitForEvent, waitForNoLoadingRows } from '../../test-utils';
 
-const GRAND_TOTAL_ID = ROW_ID_GRAND_TOTAL;
+const GRAND_TOTAL_ID = GRAND_TOTAL_ROW_ID;
 
 describe('SSRM grand total row', () => {
     const gridManager = new TestGridsManager({
@@ -350,6 +350,10 @@ describe('SSRM grand total row', () => {
         expect(grandTotalNode!.group).toBe(false);
         expect(grandTotalNode!.id).toBe(GRAND_TOTAL_ID);
         expect(grandTotalNode!.data.value).toBe(60);
+
+        const rootNode = api.getRowNode(ROOT_NODE_ID);
+        expect(rootNode?.level).toBe(-1);
+        expect(rootNode?.group).toBe(true);
     });
 
     // --- Grand total does not break pagination / row count ---
@@ -456,6 +460,10 @@ describe('SSRM grand total row', () => {
             ├── GROUP-leafGroup collapsed id:"category:B" ag-Grid-AutoColumn:"B" category:"B" value:30
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " value:60
         `);
+
+        const grandTotalNode = api.getRowNode(GRAND_TOTAL_ID);
+        expect(grandTotalNode?.footer).toBe(true);
+        expect(grandTotalNode?.data?.value).toBe(60);
     });
 
     // --- Pagination tests ---
@@ -517,9 +525,9 @@ describe('SSRM grand total row', () => {
         expect(grandTotal!.data.value).toBe(60);
     });
 
-    // --- grandTotalRowData field tests ---
+    // --- grandTotalData field tests ---
 
-    test('grand total via grandTotalRowData field', async () => {
+    test('grand total via grandTotalData field', async () => {
         const api = gridManager.createGrid(null, {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
             rowModelType: 'serverSide',
@@ -531,7 +539,7 @@ describe('SSRM grand total row', () => {
                         params.success({
                             rowData: [...flatRows],
                             rowCount: flatRows.length,
-                            grandTotalRowData: { id: GRAND_TOTAL_ID, value: 60 },
+                            grandTotalData: { id: GRAND_TOTAL_ID, value: 60 },
                         });
                     }, 0);
                 },
@@ -541,7 +549,7 @@ describe('SSRM grand total row', () => {
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
 
-        const gridRows = new GridRows(api, 'via grandTotalRowData field');
+        const gridRows = new GridRows(api, 'via grandTotalData field');
         await gridRows.check(unindentText`
             ROOT id:<no-id>
             ├── LEAF id:1 id:"1" value:10
@@ -551,7 +559,7 @@ describe('SSRM grand total row', () => {
         `);
     });
 
-    test('grandTotalRowData works without ROW_ID_GRAND_TOTAL in the data', async () => {
+    test('grandTotalData works without the grand total ID in the data', async () => {
         const api = gridManager.createGrid(null, {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
             rowModelType: 'serverSide',
@@ -563,8 +571,8 @@ describe('SSRM grand total row', () => {
                         params.success({
                             rowData: [...flatRows],
                             rowCount: flatRows.length,
-                            // Data has a custom ID, not ROW_ID_GRAND_TOTAL — grid assigns the correct ID
-                            grandTotalRowData: { id: 'my-custom-total', value: 60 },
+                            // Data has a custom ID, not 'rowGroupFooter_ROOT_NODE_ID' — grid assigns the correct ID
+                            grandTotalData: { id: 'my-custom-total', value: 60 },
                         });
                     }, 0);
                 },
@@ -574,7 +582,7 @@ describe('SSRM grand total row', () => {
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
 
-        // Node should have ROW_ID_GRAND_TOTAL as ID, not the custom one
+        // Node should have 'rowGroupFooter_ROOT_NODE_ID' as ID, not the custom one
         const grandTotal = api.getRowNode(GRAND_TOTAL_ID);
         expect(grandTotal).toBeDefined();
         expect(grandTotal!.data.value).toBe(60);
@@ -589,7 +597,7 @@ describe('SSRM grand total row', () => {
         `);
     });
 
-    test('grandTotalRowData field takes priority over rowData array', async () => {
+    test('grandTotalData field takes priority over rowData array', async () => {
         const api = gridManager.createGrid(null, {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
             rowModelType: 'serverSide',
@@ -602,8 +610,8 @@ describe('SSRM grand total row', () => {
                             // Grand total in rowData with value 100
                             rowData: [...flatRows, { id: GRAND_TOTAL_ID, value: 100 }],
                             rowCount: flatRows.length,
-                            // grandTotalRowData with value 999 — should take priority
-                            grandTotalRowData: { id: GRAND_TOTAL_ID, value: 999 },
+                            // grandTotalData with value 999 — should take priority
+                            grandTotalData: { id: GRAND_TOTAL_ID, value: 999 },
                         });
                     }, 0);
                 },
@@ -618,7 +626,7 @@ describe('SSRM grand total row', () => {
         expect(grandTotal!.data.value).toBe(999);
     });
 
-    test('grandTotalRowData: undefined does not override in-array grand total', async () => {
+    test('grandTotalData: undefined does not override in-array grand total', async () => {
         const api = gridManager.createGrid(null, {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
             rowModelType: 'serverSide',
@@ -631,7 +639,7 @@ describe('SSRM grand total row', () => {
                             // Grand total in rowData
                             rowData: [...flatRows, { id: GRAND_TOTAL_ID, value: 42 }],
                             rowCount: flatRows.length,
-                            // grandTotalRowData not set (undefined) — should NOT override the array row
+                            // grandTotalData not set (undefined) — should NOT override the array row
                         });
                     }, 0);
                 },
@@ -651,7 +659,7 @@ describe('SSRM grand total row', () => {
         `);
     });
 
-    test('grandTotalRowData: null removes existing grand total', async () => {
+    test('grandTotalData: null removes existing grand total', async () => {
         let callCount = 0;
         const api = gridManager.createGrid(null, {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
@@ -667,14 +675,14 @@ describe('SSRM grand total row', () => {
                             params.success({
                                 rowData: [...flatRows],
                                 rowCount: flatRows.length,
-                                grandTotalRowData: { id: GRAND_TOTAL_ID, value: 60 },
+                                grandTotalData: { id: GRAND_TOTAL_ID, value: 60 },
                             });
                         } else {
                             // Second load: remove grand total
                             params.success({
                                 rowData: [...flatRows],
                                 rowCount: flatRows.length,
-                                grandTotalRowData: null,
+                                grandTotalData: null,
                             });
                         }
                     }, 0);
@@ -716,7 +724,7 @@ describe('SSRM grand total row', () => {
                         params.success({
                             rowData: [...flatRows],
                             rowCount: flatRows.length,
-                            grandTotalRowData: { id: GRAND_TOTAL_ID, value: 60 },
+                            grandTotalData: { id: GRAND_TOTAL_ID, value: 60 },
                         });
                     }, 0);
                 },
@@ -821,7 +829,7 @@ describe('SSRM grand total row', () => {
 
     // --- Without getRowId ---
 
-    test('grand total via grandTotalRowData field without getRowId', async () => {
+    test('grand total via grandTotalData field without getRowId', async () => {
         const api = gridManager.createGrid(null, {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
             rowModelType: 'serverSide',
@@ -833,7 +841,7 @@ describe('SSRM grand total row', () => {
                         params.success({
                             rowData: flatRows.map((r) => ({ ...r })),
                             rowCount: flatRows.length,
-                            grandTotalRowData: { id: GRAND_TOTAL_ID, value: 60 },
+                            grandTotalData: { id: GRAND_TOTAL_ID, value: 60 },
                         });
                     }, 0);
                 },
@@ -843,7 +851,7 @@ describe('SSRM grand total row', () => {
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
 
-        const gridRows = new GridRows(api, 'no getRowId with grandTotalRowData');
+        const gridRows = new GridRows(api, 'no getRowId with grandTotalData');
         await gridRows.check(unindentText`
             ROOT id:<no-id>
             ├── LEAF id:0 id:"1" value:10

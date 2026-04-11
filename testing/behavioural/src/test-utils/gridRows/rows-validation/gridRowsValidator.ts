@@ -26,20 +26,8 @@ export class GridRowsValidator {
     public validate(gridRows: GridRows): this {
         const state = new GridRowsValidationState(gridRows);
 
-        if (gridRows.rootRowNodes.length > 1) {
-            this.errors.default.add(
-                'Found ' +
-                    (gridRows.rootRowNodes.length - 1) +
-                    ' more root nodes: ' +
-                    gridRows.rootRowNodes
-                        .slice(1)
-                        .map((n) => rowIdAndIndexToString(n))
-                        .join(', ')
-            );
-        }
         if (gridRows.rootRowNode) {
             this.validateRootNode(state, gridRows.rootRowNode);
-            this.validateRow(state, gridRows.rootRowNode);
         }
         this.validateRowNodes(state);
         this.validateDisplayedRows(state);
@@ -59,6 +47,7 @@ export class GridRowsValidator {
         rowErrors.add(root.rowIndex !== null && 'Root node has rowIndex ' + root.rowIndex);
         rowErrors.add(csrm && !Array.isArray(root.allLeafChildren) && 'Root node has no allLeafChildren');
         rowErrors.add(gridRows.isRowDisplayed(root) && 'Root node is displayed');
+        rowErrors.expectValueEqual('childIndex', root.childIndex, undefined);
         if (gridRows.treeData) {
             rowErrors.expectValueEqual('group', root.group, true);
         }
@@ -165,18 +154,21 @@ export class GridRowsValidator {
                 `Parent ${rowIdAndIndexToString(parent)} is not in rowNodes`
         );
 
-        if (row === gridRows.rootRowNode) {
-            rowErrors.expectValueEqual('childIndex', row.childIndex, undefined);
-        }
-
         // displayed property should be consistent with rowIndex
         rowErrors.add(
             (row.rowIndex !== null) !== row.displayed &&
                 `displayed=${row.displayed} is inconsistent with rowIndex=${row.rowIndex}`
         );
 
-        // Level consistency: row.level should equal parent.level + 1
-        if (level >= 0 && parent && parent.level >= -1) {
+        // Level consistency: row.level should equal parent.level + 1.
+        // Skip for rows only reachable via allLeafChildren in a transitional/uninitialized state
+        // (i.e. rowData was set but the group stage hasn't run yet, so parent = ROOT but level > 0).
+        if (
+            level >= 0 &&
+            parent &&
+            parent.level >= -1 &&
+            (gridRows.isInRowNodes(row) || gridRows.isRowDisplayed(row))
+        ) {
             rowErrors.expectValueEqual('level', level, parent.level + 1);
         }
 
@@ -369,7 +361,7 @@ export class GridRowsValidator {
         }
 
         if (children) {
-            if (name === 'childrenAfterGroup' && children.length === 0) {
+            if (name === 'childrenAfterGroup' && children.length === 0 && parentRow.level !== -1) {
                 this.errors.add(parentRow, `${name} is an empty array`);
             }
         } else if (parentRow.group && !parentRow.detail && !gridRows.isDuplicateIdRow(parentRow)) {

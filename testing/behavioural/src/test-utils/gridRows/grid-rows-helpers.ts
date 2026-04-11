@@ -1,4 +1,5 @@
 import type { GridApi, IRowNode, RowNode } from 'ag-grid-community';
+import { ROOT_NODE_ID } from 'ag-grid-community';
 
 import type { GridRows } from './gridRows';
 import type { GridRowsOptions } from './gridRowsOptions';
@@ -37,7 +38,7 @@ export function addDiagramToError(
 export interface CollectedRows<TData> {
     rowNodes: RowNode<TData>[];
     displayedRows: RowNode<TData>[];
-    rootRowNodes: RowNode<TData>[];
+    rootRowNode: RowNode<TData> | null;
     pinnedTopRows: RowNode<TData>[];
     pinnedBottomRows: RowNode<TData>[];
     detailGridRows: Map<IRowNode<TData> | GridApi, GridRows<any>>;
@@ -58,19 +59,10 @@ export function collectGridRows<TData>(
 ): CollectedRows<TData> {
     const rowNodes: RowNode<TData>[] = [];
     const displayedRows: RowNode<TData>[] = [];
-    const rootNodesSet = new Set<RowNode<TData>>();
     const detailGridRows = new Map<IRowNode<TData> | GridApi, GridRows<any>>();
-
-    const trackRoot = (row: RowNode<TData>) => {
-        const parent = row.parent;
-        if (parent && !parent.parent) {
-            rootNodesSet.add(parent);
-        }
-    };
 
     api.forEachNode((row: RowNode) => {
         rowNodes.push(row);
-        trackRoot(row);
     });
 
     for (let i = 0, len = api.getDisplayedRowCount(); i < len; ++i) {
@@ -79,7 +71,6 @@ export function collectGridRows<TData>(
             continue;
         }
         displayedRows.push(row);
-        trackRoot(row);
         if (!row.detail) {
             continue;
         }
@@ -101,7 +92,7 @@ export function collectGridRows<TData>(
     return {
         rowNodes,
         displayedRows,
-        rootRowNodes: Array.from(rootNodesSet),
+        rootRowNode: (api.getRowNode(ROOT_NODE_ID) as RowNode<TData> | undefined) ?? null,
         pinnedTopRows: hasPinned ? collectPinnedRows(api.getPinnedTopRowCount(), (i) => api.getPinnedTopRow(i)) : [],
         pinnedBottomRows: hasPinned
             ? collectPinnedRows(api.getPinnedBottomRowCount(), (i) => api.getPinnedBottomRow(i))

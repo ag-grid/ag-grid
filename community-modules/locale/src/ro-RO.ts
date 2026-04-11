@@ -336,6 +336,7 @@ export const AG_GRID_LOCALE_RO = {
     sortAbsoluteAscending: 'Sortează în ordine ascendentă absolută',
     sortAbsoluteDescending: 'Sortează în ordine descendentă absolută',
     sortUnSort: 'Șterge Sortarea',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sumă',
@@ -760,6 +761,7 @@ export const AG_GRID_LOCALE_RO = {
     ariaLabelAddFilterField: 'Adaugă Câmp de Filtrare',
     ariaLabelFilterCardDelete: 'Șterge Filtrul',
     ariaLabelFilterCardHasEdits: 'Are Modificări',
+    ariaCellHasNote: 'Această celulă are o notă.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_NL = {
     sortAbsoluteAscending: 'Sorteren absoluut oplopend',
     sortAbsoluteDescending: 'Sorteren absoluut aflopend',
     sortUnSort: 'Sortering wissen',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Som',
@@ -758,6 +759,7 @@ export const AG_GRID_LOCALE_NL = {
     ariaLabelAddFilterField: 'Filterveld toevoegen',
     ariaLabelFilterCardDelete: 'Filter verwijderen',
     ariaLabelFilterCardHasEdits: 'Heeft wijzigingen',
+    ariaCellHasNote: 'Deze cel heeft een notitie.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

@@ -5,7 +5,7 @@ import type {
     IServerSideDatasource,
     IServerSideGetRowsParams,
 } from 'ag-grid-community';
-import { ModuleRegistry, ROW_ID_GRAND_TOTAL, ValidationModule, createGrid } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
@@ -50,7 +50,7 @@ function computeGrandTotal(data: RowData[]): RowData {
         }),
         { gold: 0, silver: 0, bronze: 0 }
     );
-    return { id: ROW_ID_GRAND_TOTAL, country: '', sport: '', ...totals };
+    return { id: GRAND_TOTAL_ROW_ID, country: '', sport: '', ...totals };
 }
 
 function getServerSideDatasource(): IServerSideDatasource {
@@ -58,11 +58,11 @@ function getServerSideDatasource(): IServerSideDatasource {
         getRows: (params: IServerSideGetRowsParams) => {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
-            // Provide the grand total via the grandTotalRowData field
-            const grandTotalRowData = params.needsGrandTotal ? computeGrandTotal(rowData) : undefined;
+            // Provide the grand total via the grandTotalData field
+            const grandTotalData = params.needsGrandTotal ? computeGrandTotal(rowData) : undefined;
 
             setTimeout(() => {
-                params.success({ rowData: [...rowData], rowCount: rowData.length, grandTotalRowData });
+                params.success({ rowData: [...rowData], rowCount: rowData.length, grandTotalData });
             }, 200);
         },
     };
@@ -91,7 +91,7 @@ function updateGrandTotal() {
 
 function removeGrandTotal() {
     gridApi.applyServerSideTransaction({
-        remove: [{ id: ROW_ID_GRAND_TOTAL } as RowData],
+        remove: [{ id: GRAND_TOTAL_ROW_ID } as RowData],
     });
 }
 

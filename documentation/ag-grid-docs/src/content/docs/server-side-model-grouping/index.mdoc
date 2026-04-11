@@ -107,23 +107,38 @@ To display a grand total row, set the `grandTotalRow` property to `'top'`, `'bot
 
 When `grandTotalRow` is set, the `needsGrandTotal` hint on `getRows` params will be `true` for root-level requests that don't yet have cached grand total data. The server may always provide updated grand total data regardless of this hint.
 
-Set the `grandTotalRowData` field on the `success` callback params to the row data object for the grand total. Set it to `null` to explicitly remove an existing grand total row.
+Set the `grandTotalData` field on the `success` callback params to the grand total data. Set it to `null` to explicitly remove an existing grand total row.
 
-The example below shows a flat grid (no grouping) with the grand total provided via `grandTotalRowData` in the `getRows` response:
+The example below shows a flat grid (no grouping) with the grand total provided via `grandTotalData` in the `getRows` response:
 
 {% gridExampleRunner title="Grand Total via getRows" name="grand-total-getrows" /%}
 
-If `getRowId` is configured, an alternative is to include the grand total row directly in the `rowData` array. The grid will automatically extract any row whose `getRowId` returns `ROW_ID_GRAND_TOTAL` (`'rowGroupFooter_ROOT_NODE_ID'`, exported from `ag-grid-community`) and treat it as the grand total. If both `grandTotalRowData` and a matching row in `rowData` are present, `grandTotalRowData` takes priority.
+Alternatively, if `getRowId` is configured, a row with ID `GRAND_TOTAL_ROW_ID` included in `rowData` will also be treated as the grand total (the `grandTotalData` field takes priority).
 
 ### Updating the Grand Total Row via Transactions
 
 The grand total row can be updated, added, or removed via `applyServerSideTransaction`:
 
--   **Update**: Include the grand total data in the `update` array. The `getRowId` must return `ROW_ID_GRAND_TOTAL` (`'rowGroupFooter_ROOT_NODE_ID'`) for this row.
+-   **Update**: Include the grand total data in the `update` array. The `getRowId` must return `GRAND_TOTAL_ROW_ID` for this row.
 -   **Add**: Include the grand total data in the `add` array. If a grand total already exists, it will be updated.
--   **Remove**: Include a row with `ROW_ID_GRAND_TOTAL` (`'rowGroupFooter_ROOT_NODE_ID'`) in the `remove` array to remove it.
+-   **Remove**: Include a row whose `getRowId` returns `GRAND_TOTAL_ROW_ID` in the `remove` array to remove it.
 
 {% gridExampleRunner title="Grand Total with Transactions" name="grand-total-transactions" /%}
+
+### Accessing Grand Total and Group Total Rows
+
+Both the grand total and individual group total rows can be retrieved by ID using `api.getRowNode()`. Two constants, exported from `ag-grid-community`, define the ID format:
+
+-   `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) — the ID of the grand total row.
+-   `GROUP_TOTAL_ROW_ID_PREFIX` (`'rowGroupFooter_'`) — the prefix for group total row IDs. A group total row ID is `GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id`.
+
+```js
+// Retrieve the grand total row node
+const grandTotalNode = api.getRowNode(GRAND_TOTAL_ROW_ID);
+
+// Retrieve a group total row node (e.g. for group "Ireland")
+const groupTotalNode = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id);
+```
 
 ### Grand Total Row API Reference
 

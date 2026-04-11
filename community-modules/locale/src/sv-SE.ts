@@ -336,6 +336,7 @@ export const AG_GRID_LOCALE_SE = {
     sortAbsoluteAscending: 'Sortera Absolut Stigande',
     sortAbsoluteDescending: 'Sortera Absolut Fallande',
     sortUnSort: 'Rensa Sortering',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Summa',
@@ -759,6 +760,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaLabelAddFilterField: 'Lägg till filterfält',
     ariaLabelFilterCardDelete: 'Radera filter',
     ariaLabelFilterCardHasEdits: 'Har ändringar',
+    ariaCellHasNote: 'Denna cell har en anteckning.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

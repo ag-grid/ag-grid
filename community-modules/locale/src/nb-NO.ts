@@ -335,6 +335,7 @@ export const AG_GRID_LOCALE_NO = {
     sortAbsoluteAscending: 'Sorter absolutt stigende',
     sortAbsoluteDescending: 'Sorter absolutt synkende',
     sortUnSort: 'Fjern Sortering',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
@@ -757,6 +758,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaLabelAddFilterField: 'Legg til filterfelt',
     ariaLabelFilterCardDelete: 'Slett filter',
     ariaLabelFilterCardHasEdits: 'Har endringer',
+    ariaCellHasNote: 'Denne cellen har et notat.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

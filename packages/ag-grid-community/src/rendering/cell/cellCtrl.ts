@@ -298,8 +298,29 @@ export class CellCtrl extends BeanStub {
     }
 
     private checkFormulaError() {
-        const isFormulaError = !!this.beans.formula?.getFormulaError(this.column, this.rowNode);
-        this.eGui.classList.toggle('formula-error', isFormulaError);
+        if (!this.beans.formula) {
+            return;
+        }
+        this.eGui.classList.toggle('formula-error', this.hasFormulaError());
+    }
+
+    private hasFormulaError(): boolean {
+        const { formula } = this.beans;
+
+        if (!formula) {
+            return false;
+        }
+
+        return !!formula.getFormulaError(this.column, this.rowNode);
+    }
+
+    private hasCellValidationError(): boolean {
+        const { editModelSvc } = this.beans;
+
+        if (!editModelSvc) {
+            return false;
+        }
+        return editModelSvc.getCellValidationModel().hasCellValidation(this);
     }
 
     private setupAutoHeight(eCellWrapper: HTMLElement | undefined, compBean: BeanStub): void {
@@ -649,7 +670,7 @@ export class CellCtrl extends BeanStub {
         }
 
         tooltipFeature?.refreshTooltip();
-        this.notesFeature?.refresh();
+        this.refreshCellNoteState();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
@@ -658,6 +679,14 @@ export class CellCtrl extends BeanStub {
 
     public showCellNote(focusEditor = false): void {
         this.notesFeature?.show({ focusEditor });
+    }
+
+    public refreshCellNoteState(): void {
+        this.notesFeature?.refresh();
+    }
+
+    public isCellNoteHoverSuppressed(): boolean {
+        return !!this.editSvc?.isEditing(this) || this.hasFormulaError() || this.hasCellValidationError();
     }
 
     public isCellEditable(): boolean {
@@ -933,7 +962,7 @@ export class CellCtrl extends BeanStub {
         // require event to announce so we only announce
         // a direct user interaction with the cell
         if (cellFocused && event) {
-            this.rowCtrl.announceDescription();
+            this.rowCtrl.announceDescription(this);
         }
     }
 

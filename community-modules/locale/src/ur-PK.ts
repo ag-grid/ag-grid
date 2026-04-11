@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_PK = {
     sortAbsoluteAscending: 'مکمل ابجدی ترتیب میں ترتیب دیں',
     sortAbsoluteDescending: 'مکمل اُتری ابجدی ترتیب میں ترتیب دیں',
     sortUnSort: 'ترتیب مٹائیں',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'مجموعہ',
@@ -756,6 +757,7 @@ export const AG_GRID_LOCALE_PK = {
     ariaLabelAddFilterField: 'فلٹر فیلڈ شامل کریں',
     ariaLabelFilterCardDelete: 'فلٹر حذف کریں',
     ariaLabelFilterCardHasEdits: 'ترمیم شدہ',
+    ariaCellHasNote: 'اس سیل میں ایک نوٹ ہے۔',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

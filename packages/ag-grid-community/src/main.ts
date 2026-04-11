@@ -10,7 +10,6 @@ export { isColumn } from './entities/agColumn';
 export { isColumnGroup } from './entities/agColumnGroup';
 export { isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 
-export { ROW_ID_GRAND_TOTAL } from './entities/rowNode';
 export type {
     AutoSizeStrategy,
     IColumnLimit,
@@ -33,6 +32,12 @@ export type {
 export type { SortModelItem } from './interfaces/iSortModelItem';
 
 // IRowNode
+export {
+    DETAIL_ROW_ID_PREFIX,
+    GRAND_TOTAL_ROW_ID,
+    GROUP_TOTAL_ROW_ID_PREFIX,
+    ROOT_NODE_ID,
+} from './interfaces/iRowNode';
 export type {
     AllChildrenCountChangedEvent,
     CellChangedEvent,

@@ -337,6 +337,7 @@ export const AG_GRID_LOCALE_TR = {
     sortAbsoluteAscending: 'Mutlak Artan Sırala',
     sortAbsoluteDescending: 'Mutlak Azalan Sırala',
     sortUnSort: 'Sıralamayı Temizle',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Toplam',
@@ -761,6 +762,7 @@ export const AG_GRID_LOCALE_TR = {
     ariaLabelAddFilterField: 'Filtre Alanı Ekle',
     ariaLabelFilterCardDelete: 'Filtreyi Sil',
     ariaLabelFilterCardHasEdits: 'Düzenlemeler Var',
+    ariaCellHasNote: 'Bu hücrede bir not var.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

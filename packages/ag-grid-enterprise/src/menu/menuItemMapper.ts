@@ -559,6 +559,7 @@ function createCellNoteMenuItems({
     if (!access.note) {
         result.push({
             name: localeTextFunc('addCellNote', 'Add Cell Note'),
+            shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
             disabled: !access.canCreate,
             action: access.canCreate ? () => notesSvc!.showCellNote(access.params, true) : undefined,
         });
@@ -569,6 +570,7 @@ function createCellNoteMenuItems({
     if (access.canView && (access.isReadOnly || access.isSuppressed)) {
         result.push({
             name: localeTextFunc('viewCellNote', 'View Note'),
+            shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
             action: () => notesSvc!.showCellNote(access.params, true),
         });
     }
@@ -576,6 +578,7 @@ function createCellNoteMenuItems({
     if (!access.isReadOnly && !access.isSuppressed) {
         result.push({
             name: localeTextFunc('editCellNote', 'Edit Note'),
+            shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
             disabled: !access.canEdit,
             action: access.canEdit ? () => notesSvc!.showCellNote(access.params, true) : undefined,
         });

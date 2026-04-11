@@ -10,6 +10,7 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
+    DETAIL_ROW_ID_PREFIX,
     RowNode,
     _exists,
     _getClientSideRowModel,
@@ -147,7 +148,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         detailNode.parent = masterNode;
 
         if (_exists(masterNode.id)) {
-            detailNode.id = 'detail_' + masterNode.id;
+            detailNode.id = DETAIL_ROW_ID_PREFIX + masterNode.id;
         }
 
         detailNode.data = masterNode.data;

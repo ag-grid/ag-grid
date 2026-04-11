@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_SK = {
     sortAbsoluteAscending: 'Zoradiť absolútne vzostupne',
     sortAbsoluteDescending: 'Zoradiť absolútne zostupne',
     sortUnSort: 'Zrušiť zoradenie',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Súčet',
@@ -757,6 +758,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaLabelAddFilterField: 'Pridať pole filtra',
     ariaLabelFilterCardDelete: 'Odstrániť filter',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
+    ariaCellHasNote: 'Táto bunka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

@@ -333,6 +333,7 @@ export const AG_GRID_LOCALE_EG = {
     sortAbsoluteAscending: 'ترتيب تصاعدي مطلق',
     sortAbsoluteDescending: 'ترتيب تنازلي مطلق',
     sortUnSort: 'إلغاء الترتيب',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'المجموع',
@@ -755,6 +756,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaLabelAddFilterField: 'إضافة حقل الفلتر',
     ariaLabelFilterCardDelete: 'حذف الفلتر',
     ariaLabelFilterCardHasEdits: 'يوجد تعديلات',
+    ariaCellHasNote: 'تحتوي هذه الخلية على ملاحظة.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '،',

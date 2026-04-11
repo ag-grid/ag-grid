@@ -1,3 +1,4 @@
+import { DETAIL_ROW_ID_PREFIX, ROOT_NODE_ID } from 'ag-grid-community';
 import { MasterDetailModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, ssrmExpandAndLoadAll } from '../../test-utils';
@@ -113,5 +114,13 @@ describe('ag-grid SSRM treeData with master detail', () => {
             · · ├── LEAF id:E1 ag-Grid-AutoColumn:"E1" id:"E1"
             · · └── LEAF id:E2 ag-Grid-AutoColumn:"E2" id:"E2"
         `);
+
+        const rootNode = api.getRowNode(ROOT_NODE_ID);
+        expect(rootNode?.level).toBe(-1);
+        expect(rootNode?.group).toBe(true);
+
+        const detailNode = api.getRowNode(DETAIL_ROW_ID_PREFIX + 'B');
+        expect(detailNode?.detail).toBe(true);
+        expect(detailNode?.data?.id).toBe('B');
     });
 });

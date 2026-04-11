@@ -9,7 +9,7 @@ Notes let users attach comments to individual cells without storing note text in
 
 Notes are enabled by providing a `notesDataSource`. This lets you keep note state in a separate store and persist it independently of the row data.
 
-Right-click a cell or press `Shift + F2` to add a note. Hover a noted cell to view it.
+Right-click a cell or press `Shift + F2` to add a note. Hover a noted cell to view it. Use `noteShowDelay` and `noteHideDelay` to control how quickly note popups appear and disappear on hover.
 
 {% gridExampleRunner title="Notes" name="notes" exampleHeight=440 /%}
 
@@ -149,6 +149,10 @@ Use the grid API to read, write, remove and refresh notes programmatically. This
 {% gridExampleRunner title="Notes API" name="notes-api" exampleHeight=560 /%}
 
 In the example above, clicking a cell selects it and syncs the toolbar controls automatically. `Save via API` updates the note with `setCellNote()`, including setting or clearing `readOnly`. `Remove via API` clears the note, and `Mutate Store Directly` plus `Refresh Notes` shows how to resync the grid after external store updates.
+
+### Grid Options
+
+{% apiDocumentation source="grid-options/properties.json" section="notes" names=["noteShowDelay", "noteHideDelay"] /%}
 
 ### API Reference
 

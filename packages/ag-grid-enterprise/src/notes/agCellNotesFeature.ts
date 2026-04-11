@@ -14,8 +14,6 @@ import type { ICellNotePopupOwner, INotesFeatureSupport, NoteTarget } from './no
 import { isFullWidthRowNoteParams } from './notesShared';
 
 const CSS_HAS_CELL_NOTES = 'ag-has-cell-notes';
-const NOTE_SHOW_DELAY = 180;
-const NOTE_HIDE_DELAY = 220;
 
 abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwner {
     private popup?: AgNotesPopup;
@@ -90,7 +88,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
             }
 
             this.openPopup(target);
-        }, NOTE_SHOW_DELAY);
+        }, this.beans.gos.get('noteShowDelay'));
     }
 
     protected onPointerLeave(event: PointerEvent): void {
@@ -191,7 +189,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
 
     private scheduleHide(): void {
         this.cancelHide();
-        this.hideTimer = window.setTimeout(() => this.closeNotePopup(), NOTE_HIDE_DELAY);
+        this.hideTimer = window.setTimeout(() => this.closeNotePopup(), this.beans.gos.get('noteHideDelay'));
     }
 
     private cancelHide(): void {
@@ -201,7 +199,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
         }
     }
 
-    private clearShowTimer(): void {
+    protected clearShowTimer(): void {
         if (this.showTimer) {
             window.clearTimeout(this.showTimer);
             this.showTimer = 0;
@@ -218,9 +216,23 @@ export class AgCellNotesFeature extends BaseNotesFeature {
         super(beans, notesSvc);
     }
 
+    public override refresh(): void {
+        if (this.ctrl.isCellNoteHoverSuppressed()) {
+            this.clearShowTimer();
+        }
+
+        super.refresh();
+    }
+
     public initialise(): void {
         this.ctrl.addManagedElementListeners(this.ctrl.eGui, {
-            pointerenter: (event: PointerEvent) => this.onPointerEnter(this.getTarget(), event),
+            pointerenter: (event: PointerEvent) => {
+                if (this.ctrl.isCellNoteHoverSuppressed()) {
+                    return;
+                }
+
+                this.onPointerEnter(this.getTarget(), event);
+            },
             pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
             contextmenu: () => this.onContextMenu(),
         });
@@ -228,7 +240,8 @@ export class AgCellNotesFeature extends BaseNotesFeature {
     }
 
     protected refreshHasNotesStyling(): void {
-        this.ctrl.comp.toggleCss(CSS_HAS_CELL_NOTES, !!this.notesSvc.getCellNoteAccess(this.getPosition())?.note);
+        const hasNote = !!this.notesSvc.getCellNoteAccess(this.getPosition())?.note;
+        this.ctrl.comp.toggleCss(CSS_HAS_CELL_NOTES, hasNote && !this.ctrl.isCellNoteHoverSuppressed());
     }
 
     private getPosition() {

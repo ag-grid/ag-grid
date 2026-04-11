@@ -335,6 +335,7 @@ export const AG_GRID_LOCALE_UA = {
     sortAbsoluteAscending: 'Сортувати за зростанням',
     sortAbsoluteDescending: 'Сортувати за спаданням',
     sortUnSort: 'Очистити Сортування',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Сума',
@@ -758,6 +759,7 @@ export const AG_GRID_LOCALE_UA = {
     ariaLabelAddFilterField: 'Додати поле фільтра',
     ariaLabelFilterCardDelete: 'Видалити фільтр',
     ariaLabelFilterCardHasEdits: 'Є зміни',
+    ariaCellHasNote: 'Ця комірка має нотатку.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ' ',

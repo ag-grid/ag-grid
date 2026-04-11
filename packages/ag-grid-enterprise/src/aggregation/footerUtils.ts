@@ -1,5 +1,5 @@
 import type { BeanCollection, RowNode } from 'ag-grid-community';
-import { _createRowNodeSibling } from 'ag-grid-community';
+import { GROUP_TOTAL_ROW_ID_PREFIX, _createRowNodeSibling } from 'ag-grid-community';
 
 export function _createRowNodeFooter(rowNode: RowNode, beans: BeanCollection, id?: string): RowNode {
     // only create footer node once, otherwise we have daemons and
@@ -19,7 +19,7 @@ export function _createRowNodeFooter(rowNode: RowNode, beans: BeanCollection, id
     // previous information about its position.
     footerNode.oldRowTop = null;
 
-    footerNode.id = id ?? 'rowGroupFooter_' + rowNode.id;
+    footerNode.id = id ?? GROUP_TOTAL_ROW_ID_PREFIX + rowNode.id;
 
     // get both header and footer to reference each other as siblings. this is never undone,
     // only overwritten. so if a group is expanded, then contracted, it will have a ghost

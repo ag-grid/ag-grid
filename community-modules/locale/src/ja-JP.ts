@@ -333,6 +333,7 @@ export const AG_GRID_LOCALE_JP = {
     sortAbsoluteAscending: '絶対昇順に並べ替え',
     sortAbsoluteDescending: '絶対降順に並べ替え',
     sortUnSort: 'ソート解除',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '合計',
@@ -756,6 +757,7 @@ export const AG_GRID_LOCALE_JP = {
     ariaLabelAddFilterField: 'フィルターフィールドを追加',
     ariaLabelFilterCardDelete: 'フィルターを削除',
     ariaLabelFilterCardHasEdits: '編集されています',
+    ariaCellHasNote: 'このセルにはメモがあります。',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '、',

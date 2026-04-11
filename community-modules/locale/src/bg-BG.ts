@@ -336,6 +336,7 @@ export const AG_GRID_LOCALE_BG = {
     sortAbsoluteAscending: 'Абсолютно сортиране възходящо',
     sortAbsoluteDescending: 'Абсолютно сортиране низходящо',
     sortUnSort: 'Изчистване на сортирането',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Сума',
@@ -761,6 +762,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaLabelAddFilterField: 'Добавяне на поле за филтър',
     ariaLabelFilterCardDelete: 'Изтриване на филтър',
     ariaLabelFilterCardHasEdits: 'Има редакции',
+    ariaCellHasNote: 'Тази клетка има бележка.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

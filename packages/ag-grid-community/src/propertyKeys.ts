@@ -152,6 +152,8 @@ export const _NUMBER_GRID_OPTIONS: KeysWithType<number>[] = [
     'tooltipShowDelay',
     'tooltipSwitchShowDelay',
     'tooltipHideDelay',
+    'noteShowDelay',
+    'noteHideDelay',
     'cacheOverflowSize',
     'paginationPageSize',
     'cacheBlockSize',

@@ -53,7 +53,7 @@ describe('Pinned rows', () => {
             assertPinnedRowData(topData, 'top');
             await new GridRows(api, 'pinned top rows').check(`
                 PINNED_TOP id:t-0 athlete:"Top Athlete" sport:"Top Sport" age:11
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
         });
 
@@ -63,7 +63,7 @@ describe('Pinned rows', () => {
             assertPinnedRowData(topData, 'top');
             await new GridRows(api, 'initial').check(`
                 PINNED_TOP id:t-0 athlete:"Top Athlete" sport:"Top Sport" age:11
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
 
             const updatedTopData = [{ athlete: 'Updated Top Athlete', sport: 'Updated Top Sport', age: 33 }];
@@ -71,7 +71,7 @@ describe('Pinned rows', () => {
             assertPinnedRowData(updatedTopData, 'top');
             await new GridRows(api, 'after update').check(`
                 PINNED_TOP id:t-1 athlete:"Updated Top Athlete" sport:"Updated Top Sport" age:33
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
         });
 
@@ -88,7 +88,7 @@ describe('Pinned rows', () => {
             expect(getRowId).toHaveBeenLastCalledWith(expect.objectContaining({ data: topData[0], rowPinned: 'top' }));
             await new GridRows(api, 'initial').check(`
                 PINNED_TOP id:"Top Athlete" athlete:"Top Athlete" sport:"Top Sport" age:11
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
 
             const updatedTopData = [{ athlete: 'Updated Top Athlete', sport: 'Updated Top Sport', age: 33 }];
@@ -100,7 +100,7 @@ describe('Pinned rows', () => {
             );
             await new GridRows(api, 'after update').check(`
                 PINNED_TOP id:"Updated Top Athlete" athlete:"Updated Top Athlete" sport:"Updated Top Sport" age:33
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
         });
 
@@ -120,7 +120,7 @@ describe('Pinned rows', () => {
             );
             await new GridRows(api, 'initial').check(`
                 PINNED_TOP id:3 athlete:"Jake" sport:"Top sport" age:11
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
 
             const updatedTop = [
@@ -137,7 +137,7 @@ describe('Pinned rows', () => {
             await new GridRows(api, 'after update').check(`
                 PINNED_TOP id:3 athlete:"Peter" sport:"Updated top sport" age:12
                 PINNED_TOP id:4 athlete:"Victor" sport:"new sport" age:22
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
         });
 
@@ -157,7 +157,7 @@ describe('Pinned rows', () => {
             );
             await new GridRows(api, 'initial').check(`
                 PINNED_TOP id:3 athlete:"Jake" sport:"Top sport" age:11
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
 
             const updatedTop = [
@@ -174,7 +174,7 @@ describe('Pinned rows', () => {
             await new GridRows(api, 'after reorder').check(`
                 PINNED_TOP id:4 athlete:"Victor" sport:"new sport" age:22
                 PINNED_TOP id:3 athlete:"Peter" sport:"Updated top sport" age:12
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
         });
 
@@ -200,7 +200,7 @@ describe('Pinned rows', () => {
                 PINNED_TOP id:3 athlete:"Jake" sport:"Top sport 0" age:11
                 PINNED_TOP id:4 athlete:"Peter" sport:"Top sport 1" age:12
                 PINNED_TOP id:5 athlete:"Victor" sport:"Top sport 2" age:22
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
 
             const updatedTop = [
@@ -217,7 +217,7 @@ describe('Pinned rows', () => {
             await new GridRows(api, 'after remove and reorder').check(`
                 PINNED_TOP id:5 athlete:"Charles" sport:"new sport 0" age:22
                 PINNED_TOP id:3 athlete:"Jake" sport:"new sport 1" age:14
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
         });
 
@@ -227,13 +227,13 @@ describe('Pinned rows', () => {
             assertPinnedRowData(topData, 'top');
             await new GridRows(api, 'initial').check(`
                 PINNED_TOP id:t-0 athlete:"Top Athlete" sport:"Top Sport" age:11
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
 
             api.setGridOption('pinnedTopRowData', undefined);
             assertPinnedRowData([], 'top');
             await new GridRows(api, 'after clear').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
         });
 
@@ -265,7 +265,7 @@ describe('Pinned rows', () => {
 
             assertPinnedRowData(bottomData, 'bottom');
             await new GridRows(api, 'pinned bottom rows').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
                 PINNED_BOTTOM id:b-0 athlete:"Bottom Athlete" sport:"Bottom Sport" age:22
             `);
         });
@@ -301,7 +301,7 @@ describe('Pinned rows', () => {
 
             assertPinnedRowData(bottomData, 'bottom');
             await new GridRows(api, 'initial').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
                 PINNED_BOTTOM id:b-0 athlete:"Bottom Athlete" sport:"Bottom Sport" age:22
             `);
 
@@ -309,7 +309,7 @@ describe('Pinned rows', () => {
             api.setGridOption('pinnedBottomRowData', updatedBottom);
             assertPinnedRowData(updatedBottom, 'bottom');
             await new GridRows(api, 'after update').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
                 PINNED_BOTTOM id:b-1 athlete:"Updated Bottom Athlete" sport:"Updated Bottom Sport" age:33
             `);
         });
@@ -329,7 +329,7 @@ describe('Pinned rows', () => {
 
             assertPinnedRowData(bottomData, 'bottom');
             await new GridRows(api, 'initial').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
                 PINNED_BOTTOM id:"Bottom Athlete" athlete:"Bottom Athlete" sport:"Bottom Sport" age:22
             `);
 
@@ -341,7 +341,7 @@ describe('Pinned rows', () => {
                 expect.objectContaining({ data: updatedBottom[0], rowPinned: 'bottom' })
             );
             await new GridRows(api, 'after update').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
                 PINNED_BOTTOM id:"Updated Bottom Athlete" athlete:"Updated Bottom Athlete" sport:"Updated Bottom Sport" age:33
             `);
         });
@@ -361,7 +361,7 @@ describe('Pinned rows', () => {
                 expect.objectContaining({ data: pinnedBottomRowData[0], rowPinned: 'bottom' })
             );
             await new GridRows(api, 'initial').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
                 PINNED_BOTTOM id:3 athlete:"Jake" sport:"Top sport" age:11
             `);
 
@@ -377,7 +377,7 @@ describe('Pinned rows', () => {
                 expect.objectContaining({ data: updatedBottom[1], rowPinned: 'bottom' })
             );
             await new GridRows(api, 'after update').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
                 PINNED_BOTTOM id:3 athlete:"Peter" sport:"Updated bottom sport" age:12
                 PINNED_BOTTOM id:4 athlete:"Victor" sport:"new sport" age:22
             `);
@@ -398,7 +398,7 @@ describe('Pinned rows', () => {
                 expect.objectContaining({ data: pinnedBottomRowData[0], rowPinned: 'bottom' })
             );
             await new GridRows(api, 'initial').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
                 PINNED_BOTTOM id:3 athlete:"Jake" sport:"Top sport" age:11
             `);
 
@@ -414,7 +414,7 @@ describe('Pinned rows', () => {
                 expect.objectContaining({ data: updatedBottom[1], rowPinned: 'bottom' })
             );
             await new GridRows(api, 'after reorder').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
                 PINNED_BOTTOM id:4 athlete:"Victor" sport:"new sport" age:22
                 PINNED_BOTTOM id:3 athlete:"Peter" sport:"Updated bottom sport" age:12
             `);
@@ -439,7 +439,7 @@ describe('Pinned rows', () => {
                 expect.objectContaining({ data: pinnedBottomRowData[2], rowPinned: 'bottom' })
             );
             await new GridRows(api, 'initial').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
                 PINNED_BOTTOM id:3 athlete:"Jake" sport:"Bottom sport 0" age:11
                 PINNED_BOTTOM id:4 athlete:"Peter" sport:"Bottom sport 1" age:12
                 PINNED_BOTTOM id:5 athlete:"Victor" sport:"Bottom sport 2" age:22
@@ -457,7 +457,7 @@ describe('Pinned rows', () => {
                 expect.objectContaining({ data: updatedBottom[1], rowPinned: 'bottom' })
             );
             await new GridRows(api, 'after remove and reorder').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
                 PINNED_BOTTOM id:5 athlete:"Charles" sport:"new sport 0" age:22
                 PINNED_BOTTOM id:3 athlete:"Jake" sport:"new sport 1" age:14
             `);
@@ -468,14 +468,14 @@ describe('Pinned rows', () => {
 
             assertPinnedRowData(bottomData, 'bottom');
             await new GridRows(api, 'initial').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
                 PINNED_BOTTOM id:b-0 athlete:"Bottom Athlete" sport:"Bottom Sport" age:22
             `);
 
             api.setGridOption('pinnedBottomRowData', undefined);
             assertPinnedRowData([], 'bottom');
             await new GridRows(api, 'after clear').check(`
-                [no root row]
+                ROOT id:ROOT_NODE_ID
             `);
         });
 

@@ -1,5 +1,5 @@
 import type { GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
-import { ModuleRegistry, ROW_ID_GRAND_TOTAL, ValidationModule, createGrid } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
@@ -40,27 +40,29 @@ function getServerSideDatasource(): IServerSideDatasource {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
             // Compute grand total from all rows
-            const totals = rowData.reduce(
-                (acc, row) => ({
-                    gold: acc.gold + row.gold,
-                    silver: acc.silver + row.silver,
-                    bronze: acc.bronze + row.bronze,
-                }),
-                { gold: 0, silver: 0, bronze: 0 }
-            );
 
-            const grandTotalRowData: RowData = {
-                id: ROW_ID_GRAND_TOTAL,
-                country: '',
-                sport: '',
-                ...totals,
+            const initial: Partial<RowData> = {
+                id: GRAND_TOTAL_ROW_ID,
+                gold: 0,
+                silver: 0,
+                bronze: 0,
             };
+
+            const grandTotalData: Partial<RowData> = rowData.reduce(
+                (acc, row) => ({
+                    ...acc,
+                    gold: acc.gold! + row.gold,
+                    silver: acc.silver! + row.silver,
+                    bronze: acc.bronze! + row.bronze,
+                }),
+                initial
+            );
 
             setTimeout(() => {
                 params.success({
                     rowData: [...rowData],
                     rowCount: rowData.length,
-                    grandTotalRowData,
+                    grandTotalData,
                 });
             }, 200);
         },

@@ -338,6 +338,7 @@ export const AG_GRID_LOCALE_HU = {
     sortAbsoluteAscending: 'Abszolút növekvő sorrendben rendez',
     sortAbsoluteDescending: 'Abszolút csökkenő sorrendben rendez',
     sortUnSort: 'Rendezés törlése',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Összeg',
@@ -762,6 +763,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaLabelAddFilterField: 'Szűrőmező hozzáadása',
     ariaLabelFilterCardDelete: 'Szűrő törlése',
     ariaLabelFilterCardHasEdits: 'Módosításokat tartalmaz',
+    ariaCellHasNote: 'Ez a cella jegyzettel rendelkezik.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

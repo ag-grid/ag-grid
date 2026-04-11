@@ -3,6 +3,7 @@ import {
     AgInputTextAreaSelector,
     BeanStub,
     Component,
+    KeyCode,
     RefPlaceholder,
     _getDocument,
     _setDisplayed,
@@ -161,6 +162,11 @@ export class AgNotesPopup extends BeanStub {
         eGui.setAttribute('aria-label', translate('cellNote', 'Cell Note'));
 
         this.addManagedElementListeners(eGui, {
+            keydown: (event: KeyboardEvent) => {
+                if (event.key === KeyCode.TAB) {
+                    event.preventDefault();
+                }
+            },
             mousedown: (event: MouseEvent) => this.onMouseDown(event),
             pointerenter: () => this.params.onPopupEnter(),
             pointerleave: () => {

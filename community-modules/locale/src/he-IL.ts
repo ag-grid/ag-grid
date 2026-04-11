@@ -333,6 +333,7 @@ export const AG_GRID_LOCALE_IL = {
     sortAbsoluteAscending: 'מיון עולה מוחלט',
     sortAbsoluteDescending: 'מיון יורד מוחלט',
     sortUnSort: 'נקה מיון',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'סכום',
@@ -755,6 +756,7 @@ export const AG_GRID_LOCALE_IL = {
     ariaLabelAddFilterField: 'הוסף שדה סינון',
     ariaLabelFilterCardDelete: 'מחק סינון',
     ariaLabelFilterCardHasEdits: 'יש עריכות',
+    ariaCellHasNote: 'לתא זה יש הערה.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
