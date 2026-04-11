@@ -443,15 +443,32 @@ export function _observeResize(
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _requestAnimationFrame(beans: UtilBeanCollection, callback: any) {
+export function _requestAnimationFrame(beans: UtilBeanCollection, callback: any): number {
     const win = _getWindow(beans);
 
     if (win.requestAnimationFrame) {
-        win.requestAnimationFrame(callback);
+        return win.requestAnimationFrame(callback);
     } else if ((win as any).webkitRequestAnimationFrame) {
-        (win as any).webkitRequestAnimationFrame(callback);
+        return (win as any).webkitRequestAnimationFrame(callback);
     } else {
-        win.setTimeout(callback, 0);
+        return win.setTimeout(callback, 0);
+    }
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _cancelAnimationFrame(beans: UtilBeanCollection, requestId: number | null | undefined): void {
+    if (requestId == null) {
+        return;
+    }
+
+    const win = _getWindow(beans);
+
+    if (win.cancelAnimationFrame) {
+        win.cancelAnimationFrame(requestId);
+    } else if ((win as any).webkitCancelAnimationFrame) {
+        (win as any).webkitCancelAnimationFrame(requestId);
+    } else {
+        win.clearTimeout(requestId);
     }
 }
 

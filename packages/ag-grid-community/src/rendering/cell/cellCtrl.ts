@@ -1,7 +1,12 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
 import { _setAriaColIndex, _setAriaRowIndex } from '../../agStack/utils/aria';
 import { _getActiveDomElement } from '../../agStack/utils/document';
-import { _addOrRemoveAttribute, _placeCaretAtEnd, _requestAnimationFrame } from '../../agStack/utils/dom';
+import {
+    _addOrRemoveAttribute,
+    _cancelAnimationFrame,
+    _placeCaretAtEnd,
+    _requestAnimationFrame,
+} from '../../agStack/utils/dom';
 import { _findFocusableElements } from '../../agStack/utils/focus';
 import { _makeNull } from '../../agStack/utils/generic';
 import { AgPromise } from '../../agStack/utils/promise';
@@ -134,6 +139,7 @@ export class CellCtrl extends BeanStub {
     private focusEventWhileNotReady: CellFocusedEvent | null = null;
     // if cell has been focused, check if it's focused when destroyed
     private hasBeenFocused = false;
+    private rangeHandleRefreshFrameId: number | null = null;
 
     private readonly editSvc?: EditService;
     private readonly hasEdit: boolean = false;
@@ -419,9 +425,11 @@ export class CellCtrl extends BeanStub {
 
         this.customRowDragComp?.refreshVisibility();
 
-        // Don't call expensive _requestAnimationFrame if we don't have to
+        // Don't call expensive _requestAnimationFrame if we don't have to.
+        // If another refresh comes in before the frame runs, cancel the stale callback
+        // so hidden tabs do not accumulate background range refresh work.
         if (!skipRangeHandleRefresh && rangeFeature) {
-            _requestAnimationFrame(beans, () => rangeFeature?.refreshRangeStyleAndHandle());
+            this.scheduleRangeHandleRefresh();
         }
 
         this.rowResizeFeature?.refreshRowResizer();
@@ -1042,6 +1050,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public override destroy(): void {
+        this.clearPendingRangeHandleRefresh();
         this.onCompAttachedFuncs = [];
         this.onEditorAttachedFuncs = [];
 
@@ -1051,6 +1060,23 @@ export class CellCtrl extends BeanStub {
         }
 
         super.destroy();
+    }
+
+    private scheduleRangeHandleRefresh(): void {
+        this.clearPendingRangeHandleRefresh();
+
+        this.rangeHandleRefreshFrameId = _requestAnimationFrame(this.beans, () => {
+            this.rangeHandleRefreshFrameId = null;
+            if (!this.isAlive()) {
+                return;
+            }
+            this.rangeFeature?.refreshRangeStyleAndHandle();
+        });
+    }
+
+    private clearPendingRangeHandleRefresh(): void {
+        _cancelAnimationFrame(this.beans, this.rangeHandleRefreshFrameId);
+        this.rangeHandleRefreshFrameId = null;
     }
 
     public hasBrowserFocus(): boolean {
