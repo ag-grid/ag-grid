@@ -555,6 +555,9 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 continue;
             }
             const { comp } = cell;
+            if (!comp) {
+                continue;
+            }
             comp.toggleCss('ag-selection-fill-top', false);
             comp.toggleCss('ag-selection-fill-right', false);
             comp.toggleCss('ag-selection-fill-bottom', false);
@@ -648,8 +651,11 @@ export class AgFillHandle extends AbstractSelectionHandle {
                     const cell = _getCellByPosition(beans, cellPos);
 
                     if (cell) {
-                        this.markedCells.push(cell);
                         const cellComp = cell.comp;
+                        if (!cellComp) {
+                            continue;
+                        }
+                        this.markedCells.push(cell);
 
                         if (!cellInRange) {
                             cellComp.toggleCss('ag-selection-fill-left', i === 0);
@@ -688,9 +694,13 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 const cell = _getCellByPosition(beans, celPos);
 
                 if (cell) {
+                    const cellComp = cell.comp;
+                    if (!cellComp) {
+                        continue;
+                    }
                     this.markedCells.push(cell);
 
-                    cell.comp.toggleCss('ag-selection-fill-bottom', _isSameRow(row, endPosition));
+                    cellComp.toggleCss('ag-selection-fill-bottom', _isSameRow(row, endPosition));
                 }
             }
             if (isLastRow) {
@@ -724,8 +734,11 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 });
 
                 if (cell) {
-                    this.markedCells.push(cell);
                     const cellComp = cell.comp;
+                    if (!cellComp) {
+                        continue;
+                    }
+                    this.markedCells.push(cell);
 
                     cellComp.toggleCss('ag-selection-fill-top', _isSameRow(row, rangeStartRow));
                     cellComp.toggleCss('ag-selection-fill-bottom', _isSameRow(row, rangeEndRow));
@@ -765,8 +778,12 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 });
 
                 if (cell) {
+                    const cellComp = cell.comp;
+                    if (!cellComp) {
+                        continue;
+                    }
                     this.markedCells.push(cell);
-                    cell.comp.toggleCss('ag-selection-fill-right', column === colsToMark[0]);
+                    cellComp.toggleCss('ag-selection-fill-right', column === colsToMark[0]);
                 }
 
                 row = _getRowBelow(beans, row)!;

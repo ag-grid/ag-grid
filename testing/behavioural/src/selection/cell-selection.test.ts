@@ -12,7 +12,7 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { CellSelectionModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
     GridRows,
@@ -29,7 +29,14 @@ describe('Cell Selection', () => {
     let consoleWarnSpy: MockInstance;
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CellSelectionModule, PaginationModule, PinnedRowModule, TextEditorModule],
+        modules: [
+            ClientSideRowModelModule,
+            CellSelectionModule,
+            PaginationModule,
+            PinnedRowModule,
+            TextEditorModule,
+            RowGroupingModule,
+        ],
     });
 
     async function createGrid(go: GridOptions): Promise<[GridApi, GridActions]> {
@@ -124,6 +131,54 @@ describe('Cell Selection', () => {
             });
 
             expect(sports).toEqual(['football', 'rugby', 'tennis', 'tennis', 'tennis', 'tennis', 'tennis']);
+        });
+
+        test('Fill handle works with custom group display type', async () => {
+            const [api] = await createGrid({
+                columnDefs: [
+                    { field: 'sport', rowGroup: true, hide: true },
+                    { field: 'year', editable: true },
+                    { field: 'amount', editable: true },
+                ],
+                rowData,
+                groupDisplayType: 'custom',
+                groupDefaultExpanded: -1,
+                cellSelection: {
+                    handle: {
+                        mode: 'fill',
+                    },
+                },
+                getRowId(params) {
+                    return params.data?.sport;
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            await asyncSetTimeout(1);
+
+            // Select a leaf cell in the first leaf row
+            const cell = getByTestId(gridDiv, agTestIdFor.cell('football', 'year'));
+
+            const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+            cell.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+
+            await cellSelectionChanged;
+            await asyncSetTimeout(1);
+
+            const fillHandle = getByTestId(gridDiv, agTestIdFor.fillHandle());
+            const fillEnd = waitForEvent('fillEnd', api);
+            await userEvent.dblClick(fillHandle);
+            await fillEnd;
+
+            // Verify fill completed without TypeError and propagated values
+            const years: number[] = [];
+            api.forEachLeafNode((node) => {
+                years.push(api.getCellValue({ rowNode: node, colKey: 'year' }));
+            });
+
+            // All leaf rows in the same group should have the filled value
+            expect(years[0]).toBe(2021);
         });
     });
 
