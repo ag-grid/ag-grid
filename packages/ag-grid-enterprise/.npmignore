@@ -19,6 +19,7 @@ eslint.config.mjs
 gulpfile.js
 knip.json
 vitest.config.ts
+vitest.e2e.config.ts
 vitest.setup.ts
 coverage
 .swcrc

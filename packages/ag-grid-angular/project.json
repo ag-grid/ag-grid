@@ -36,12 +36,8 @@
       }
     },
     "test:e2e": {
-      "executor": "nx:run-script",
-      "dependsOn": ["^build"],
-      "inputs": ["allOutputs"],
-      "options": {
-        "script": "test:e2e"
-      }
+      "executor": "nx:noop",
+      "dependsOn": ["angular-tests:test:e2e"]
     },
     "pack": {
       "executor": "nx:run-commands",

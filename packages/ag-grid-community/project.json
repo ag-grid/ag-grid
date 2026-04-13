@@ -208,7 +208,7 @@
       "dependsOn": ["test:umd:browser", "test:umd"]
     },
     "test:umd": {
-      "command": "npx vitest run --config {projectRoot}/vitest.config.ts --include '{projectRoot}/e2e/**/*.test.ts'",
+      "command": "npx vitest run --config {projectRoot}/vitest.e2e.config.ts",
       "dependsOn": ["build:umd"],
       "configurations": {
         "production": {},

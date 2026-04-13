@@ -17,5 +17,15 @@ export default defineConfig({
     },
     build: {
         minify: false,
+        rollupOptions: {
+            onwarn(warning, warn) {
+                // ant-design-vue@3.2.x (transitive from @mobileaction/action-kit) places
+                // /* #__PURE__ */ annotations in non-standard positions in its ESM build.
+                if (warning.code === 'INVALID_ANNOTATION') {
+                    return;
+                }
+                warn(warning);
+            },
+        },
     },
 });
