@@ -17,6 +17,12 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
         this.addManagedListeners(panel, {
             displayChanged: () => panel.setDisplayed(true),
         });
+
+        // Hide the toolbar item when not in pivot mode
+        this.setDisplayed(this.beans.colModel.isPivotMode());
+        this.addManagedEventListeners({
+            columnPivotModeChanged: () => this.setDisplayed(this.beans.colModel.isPivotMode()),
+        });
     }
 
     public refresh(_params: IToolbarItemParams): boolean {

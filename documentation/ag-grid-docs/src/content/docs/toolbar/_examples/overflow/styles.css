@@ -7,9 +7,13 @@
     overflow: visible;
 }
 
+.ag-toolbar-panel {
+    max-width: 280px;
+}
+
 /* Hide overflow menu at wide widths */
 .overflow-menu-wrapper {
-    display: none !important;
+    display: none;
 }
 
 /* All menu items hidden by default */
@@ -29,18 +33,18 @@
  *  1 Column Chooser   3 Columns Panel   5 Export CSV    7 Reset Columns
  *  2 Auto Size        4 Filters Panel   6 Export Excel
  *
- * Item sizes: button = 44px, input = 186px, separator = 36px, padding = 16px
+ * Collapse order: right-to-left from the rightmost visible item
  */
 
-/* 1200px: show ☰, hide resetColumns(44) + separator(36) */
-@container (max-width: 1200px) {
+/* 950px: show ☰, hide resetColumns(44) + separator(36) */
+@container (max-width: 950px) {
     .overflow-menu-wrapper {
-        display: inline-flex !important;
+        display: inline-flex;
     }
 
     .ag-toolbar-right > :nth-child(11),
     .ag-toolbar-right > :nth-child(12) {
-        display: none !important;
+        display: none;
     }
 
     .overflow-menu-item:nth-child(7) {
@@ -48,52 +52,70 @@
     }
 }
 
-/* 1136px: hide csvExport(44) + excelExport(44) + separator(36) */
-@container (max-width: 1136px) {
-    .ag-toolbar-right > :nth-child(8),
-    .ag-toolbar-right > :nth-child(9),
+/* 930px: hide excelExport(44) */
+@container (max-width: 930px) {
     .ag-toolbar-right > :nth-child(10) {
-        display: none !important;
+        display: none;
     }
 
-    .overflow-menu-item:nth-child(5),
     .overflow-menu-item:nth-child(6) {
         display: block;
     }
 }
 
-/* 1012px: hide columnsPanel(44) + filtersPanel(44) + separator(36) */
-@container (max-width: 1012px) {
-    .ag-toolbar-right > :nth-child(5),
-    .ag-toolbar-right > :nth-child(6),
-    .ag-toolbar-right > :nth-child(7) {
-        display: none !important;
+/* 860px: hide csvExport(44) + separator(36) */
+@container (max-width: 860px) {
+    .ag-toolbar-right > :nth-child(8),
+    .ag-toolbar-right > :nth-child(9) {
+        display: none;
     }
 
-    .overflow-menu-item:nth-child(3),
+    .overflow-menu-item:nth-child(5) {
+        display: block;
+    }
+}
+
+/* 820px: hide filtersPanel(44) */
+@container (max-width: 820px) {
+    .ag-toolbar-right > :nth-child(7) {
+        display: none;
+    }
+
     .overflow-menu-item:nth-child(4) {
         display: block;
     }
 }
 
-/* 955px: hide find(186) (no menu equivalent) */
-@container (max-width: 955px) {
+/* 780px: hide columnsPanel(44) + separator(36) */
+@container (max-width: 780px) {
+    .ag-toolbar-right > :nth-child(5),
+    .ag-toolbar-right > :nth-child(6) {
+        display: none;
+    }
+
+    .overflow-menu-item:nth-child(3) {
+        display: block;
+    }
+}
+
+/* 710px: hide find(186) (no menu equivalent) */
+@container (max-width: 710px) {
     .ag-toolbar-right > :nth-child(4) {
-        display: none !important;
+        display: none;
     }
 }
 
-/* 804px: hide quickFilter(186) (no menu equivalent) */
-@container (max-width: 804px) {
+/* 560px: hide quickFilter(186) (no menu equivalent) */
+@container (max-width: 560px) {
     .ag-toolbar-right > :nth-child(3) {
-        display: none !important;
+        display: none;
     }
 }
 
-/* 638px: hide autoSizeAll */
-@container (max-width: 638px) {
+/* 410px: hide autoSizeAll(44) */
+@container (max-width: 410px) {
     .ag-toolbar-right > :nth-child(2) {
-        display: none !important;
+        display: none;
     }
 
     .overflow-menu-item:nth-child(2) {
@@ -101,10 +123,10 @@
     }
 }
 
-/* 610px: hide columnChooser */
-@container (max-width: 610px) {
+/* 370px: hide columnChooser(44) */
+@container (max-width: 370px) {
     .ag-toolbar-right > :nth-child(1) {
-        display: none !important;
+        display: none;
     }
 
     .overflow-menu-item:nth-child(1) {
@@ -112,17 +134,17 @@
     }
 }
 
-/* 580px: hide pivotPanel + separator (left children: 1=rowGroupPanel, 2=pivotPanel, 3=separator) */
-@container (max-width: 580px) {
+/* 340px: hide pivotPanel + separator (left children: 1=rowGroupPanel, 2=pivotPanel, 3=separator) */
+@container (max-width: 340px) {
     .ag-toolbar-left > :nth-child(2),
     .ag-toolbar-left > :nth-child(3) {
-        display: none !important;
+        display: none;
     }
 }
 
-/* 500px: hide rowGroupPanel */
-@container (max-width: 500px) {
+/* 300px: hide rowGroupPanel */
+@container (max-width: 300px) {
     .ag-toolbar-left > :nth-child(1) {
-        display: none !important;
+        display: none;
     }
 }
