@@ -509,7 +509,6 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
         public override readonly usesAgGridProvider: boolean
     ) {
         super('react');
-        this.usesAgGridProvider = usesAgGridProvider;
     }
 
     private readonly frameworkComponents: any = {

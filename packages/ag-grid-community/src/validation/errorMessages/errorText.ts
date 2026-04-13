@@ -46,10 +46,10 @@ const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean
 
     const moduleList = moduleNames.map((m) => convertToUserModuleName(m, true)).join(', ');
 
-    if (usesAgGridProvider) {
-        return `${moduleRegistrationSnippet(imports, moduleList, true)} \n\nFor more info see: ${baseDocLink}/modules/`;
+    if (!usesAgGridProvider) {
+        imports.unshift("import { ModuleRegistry } from 'ag-grid-community';");
     }
-    return `import { ModuleRegistry } from 'ag-grid-community'; \n${imports.join(' \n')} \n\nModuleRegistry.registerModules([ ${moduleList} ]); \n\nFor more info see: ${baseDocLink}/modules/`;
+    return `${moduleRegistrationSnippet(imports, moduleList, usesAgGridProvider)} \n\nFor more info see: ${baseDocLink}/modules/`;
 };
 
 function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = false) {
