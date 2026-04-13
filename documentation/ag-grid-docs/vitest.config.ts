@@ -31,6 +31,8 @@ export default defineConfig({
             '@ag-grid-types': resolvePath('src/types/ag-grid.d.ts'),
             '@utils': resolvePath('src/utils'),
             '@constants': resolvePath('src/constants.ts'),
+            'ag-grid-community': resolvePath('../../packages/ag-grid-community/src/main.ts'),
+            'ag-grid-enterprise': resolvePath('../../packages/ag-grid-enterprise/src/main.ts'),
             'ag-charts-enterprise': resolvePath('../ag-charts-enterprise/src/main.ts'),
             'ag-charts-community': resolvePath('../ag-charts-community/src/main.ts'),
         },

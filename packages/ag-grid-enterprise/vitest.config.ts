@@ -3,6 +3,11 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
     esbuild: { target: 'esnext' },
+    resolve: {
+        alias: {
+            'ag-grid-community': path.resolve(__dirname, '../ag-grid-community/src/main.ts'),
+        },
+    },
     test: {
         globals: true,
         environment: 'jsdom',
