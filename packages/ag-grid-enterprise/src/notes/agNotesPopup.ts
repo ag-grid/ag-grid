@@ -168,8 +168,12 @@ export class AgNotesPopup extends BeanStub {
                 }
             },
             pointerenter: () => this.params.onPopupEnter(),
-            pointerout: () => {
-                if (!dialog.getGui().contains(_getActiveDomElement(this.beans))) {
+            pointerout: (event: PointerEvent) => {
+                const dialogGui = dialog.getGui();
+                if (
+                    !dialogGui.contains(event.relatedTarget as Element) &&
+                    !dialogGui.contains(_getActiveDomElement(this.beans))
+                ) {
                     this.params.onPopupLeave();
                 }
             },
