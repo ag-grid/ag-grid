@@ -1,5 +1,4 @@
 import { execSync } from 'child_process';
-import fetch from 'node-fetch';
 
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');

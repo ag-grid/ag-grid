@@ -118,6 +118,14 @@ export default [
         },
     },
     {
+        // TypeScript handles undefined-variable checking natively; no-undef
+        // doesn't understand TS namespace types (NodeJS, React, Console, etc.).
+        files: ['**/*.{ts,tsx,cts,mts}'],
+        rules: {
+            'no-undef': 'off',
+        },
+    },
+    {
         // cypress uses a global API based on undefined variables
         files: [
             '**/*.spec.{ts,js}',
@@ -131,7 +139,13 @@ export default [
     },
     {
         // Allow require() in JS/CJS files
-        files: ['**/*.js', '**/*.cjs'],
+        files: [
+            '**/scripts/*.{js,ts}',
+            '**/*.{cts,cjs}',
+            '**/*build.{ts,js}',
+            '**/copySrcFilesForGeneration.js',
+            '**/updateGridAndColumnProperties.js',
+        ],
         rules: {
             '@typescript-eslint/no-require-imports': 'off',
         },

@@ -7,6 +7,7 @@
   },
   "include": [
     "vitest.config.ts",
+    "vitest.e2e.config.ts",
     "vitest.setup.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",

@@ -56,8 +56,10 @@ export interface AgMenuItemLeafDef<TMenuActionParams extends TCommon, TCommon> {
     suppressCloseOnSelect?: boolean;
 }
 
-export interface AgMenuItemDef<TMenuActionParams extends TCommon, TCommon>
-    extends AgMenuItemLeafDef<TMenuActionParams, TCommon> {
+export interface AgMenuItemDef<TMenuActionParams extends TCommon, TCommon> extends AgMenuItemLeafDef<
+    TMenuActionParams,
+    TCommon
+> {
     /**
      * If this item is a sub menu, contains a list of menu item definitions */
     subMenu?: (AgMenuItemDef<TMenuActionParams, TCommon> | string)[];
@@ -112,8 +114,10 @@ interface AgMenuItemComponentParams<TMenuActionParams extends TCommon, TCommon> 
 
 export type AgMenuItemComponentEvent = 'closeMenu' | 'menuItemActivated';
 
-export interface AgMenuItemParams<TMenuActionParams extends TCommon, TCommon>
-    extends AgMenuItemDef<TMenuActionParams, TCommon> {
+export interface AgMenuItemParams<TMenuActionParams extends TCommon, TCommon> extends AgMenuItemDef<
+    TMenuActionParams,
+    TCommon
+> {
     /** Level within the menu tree (starts at 0). */
     level: number;
     /** Returns `true` if another sub menu is open. */

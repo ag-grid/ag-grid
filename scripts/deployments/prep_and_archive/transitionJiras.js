@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 const REVIEWED_ISSUES_FILTER = 11897;
 const PENDING_RC_ISSUES_FILTER = 11896;
 

@@ -34,7 +34,7 @@
     }
   },
   "scripts": {
-    "clean": "rimraf dist lib",
+    "clean": "rm -rf dist lib",
     "dev": "vite",
     "preview": "vite preview",
     "build": "run-p type-check \"build-only {@}\" --",
@@ -48,7 +48,6 @@
   },
   "devDependencies": {
     "vue": "^3.5.13",
-    "replace-in-file": "4.3.1",
     "@tsconfig/node20": "^20.1.4",
     "@vitejs/plugin-vue": "^5.2.0",
     "@vitejs/plugin-vue-jsx": "^4.0.0",

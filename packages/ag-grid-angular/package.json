@@ -3,7 +3,7 @@
   "version": "35.2.1",
   "description": "AG Grid Angular Component",
   "scripts": {
-    "clean": "rimraf dist",
+    "clean": "rm -rf dist",
     "ng": "./node_modules/.bin/ng",
     "start": "./node_modules/.bin/ng serve",
     "build": "./node_modules/.bin/ng build",
@@ -30,7 +30,6 @@
     "@angular/forms": "^18.0.7",
     "@angular/compiler-cli": "^18.0.7",
     "ng-packagr": "^18.0.0",
-    "typescript": "~5.4.5",
-    "rimraf": "3.0.2"
+    "typescript": "~5.4.5"
   }
 }

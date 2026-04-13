@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 const sonarCloudToken = process.argv[2];
 if (!sonarCloudToken) {
     console.error('SonarCloud Auth Token not supplied');

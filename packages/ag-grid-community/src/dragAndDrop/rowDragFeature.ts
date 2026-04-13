@@ -508,7 +508,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const withRowsDrop = rowsDrop?.rootNode === beans.rowModel.rootNode;
         const y = withRowsDrop ? rowsDrop.y : _getNormalisedMousePosition(beans, draggingEvent).y;
         const overNode = withRowsDrop ? rowsDrop.overNode : this.getOverNode(y);
-        const overIndex = withRowsDrop ? rowsDrop.overIndex : overNode?.rowIndex ?? -1;
+        const overIndex = withRowsDrop ? rowsDrop.overIndex : (overNode?.rowIndex ?? -1);
         return {
             api: beans.gridApi,
             context: beans.gridOptions.context,

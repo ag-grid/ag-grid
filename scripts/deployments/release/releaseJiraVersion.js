@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 const JIRA_CREDENTIALS = process.env.JIRA_CREDENTIALS;
 
 if (!JIRA_CREDENTIALS) {

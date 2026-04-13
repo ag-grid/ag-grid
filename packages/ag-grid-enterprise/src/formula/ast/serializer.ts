@@ -33,7 +33,7 @@ export function colIndexFromId(colModel: ColumnModel, cols: AgColumn[], colId: s
 
 export function colIdFromIndex(cols: AgColumn[], idx: number): string | null {
     const col = cols[idx];
-    return col ? col.getId() ?? null : null;
+    return col ? (col.getId() ?? null) : null;
 }
 
 export function rowIndexFromId(beans: BeanCollection, rowId: string): number | null {

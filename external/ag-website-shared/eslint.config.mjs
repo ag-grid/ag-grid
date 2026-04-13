@@ -34,6 +34,14 @@ export default [
         },
     },
     {
+        // TypeScript handles undefined-variable checking natively; no-undef
+        // doesn't understand TS namespace types (NodeJS, Console, etc.).
+        files: ['**/*.{ts,tsx,cts,mts}'],
+        rules: {
+            'no-undef': 'off',
+        },
+    },
+    {
         // cypress uses a global API based on undefined variables
         files: [
             '**/*.spec.{ts,js}',

@@ -5,5 +5,12 @@
     "noImplicitAny": false,
     "types": ["node", "vitest/globals"]
   },
-  "include": ["vitest.config.ts", "src/typings.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts"]
+  "include": [
+    "vitest.config.ts",
+    "vitest.e2e.config.ts",
+    "src/typings.ts",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.d.ts"
+  ]
 }

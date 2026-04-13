@@ -408,7 +408,7 @@ export function _getSuppressMultiRanges(gos: GridOptionsService): boolean {
         return gos.get('suppressMultiRangeSelection');
     }
 
-    return typeof selection !== 'boolean' ? selection?.suppressMultiRanges ?? false : false;
+    return typeof selection !== 'boolean' ? (selection?.suppressMultiRanges ?? false) : false;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -461,7 +461,7 @@ function _getEnableClickSelection(gos: GridOptionsService): NonNullable<RowSelec
     }
 
     return selection.mode === 'singleRow' || selection.mode === 'multiRow'
-        ? selection.enableClickSelection ?? false
+        ? (selection.enableClickSelection ?? false)
         : false;
 }
 
@@ -569,7 +569,7 @@ export function _getCtrlASelectsRows(gos: GridOptionsService): boolean {
     if (typeof rowSelection === 'string') {
         return false;
     }
-    return rowSelection?.mode === 'multiRow' ? rowSelection.ctrlASelectsRows ?? false : false;
+    return rowSelection?.mode === 'multiRow' ? (rowSelection.ctrlASelectsRows ?? false) : false;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
