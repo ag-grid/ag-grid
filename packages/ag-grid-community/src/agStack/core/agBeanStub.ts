@@ -243,7 +243,7 @@ export abstract class AgBeanStub<
     private propertyListenerId = 0;
     // Enable multiple grid properties to be updated together by the user but only trigger shared logic once.
     // Closely related to logic in GridOptionsUtils.ts _processOnChange
-    private lastChangeSetIdLookup: Record<string, number> = {};
+    private readonly lastChangeSetIdLookup: Record<string, number> = {};
     /**
      * Setup managed property listeners for the given set of GridOption properties.
      * The listener will be run if any of the property changes but will only run once if
