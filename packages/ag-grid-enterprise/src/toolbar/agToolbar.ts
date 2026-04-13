@@ -20,10 +20,8 @@ import {
     _addFocusableContainerListener,
     _addGridCommonParams,
     _clearElement,
-    _focusNextGridCoreContainer,
     _getActiveDomElement,
     _removeFromParent,
-    _skipFocusableContainerListenerForAgGrid,
 } from 'ag-grid-community';
 
 import agToolbarCSS from './agToolbar.css';
@@ -129,35 +127,14 @@ class AgToolbar extends Component implements FocusableContainer {
         );
 
         _addFocusableContainerListener(this.beans, this, eGui);
-
-        const tabIndex = String(this.gos.get('tabIndex') ?? 0);
-        this.addManagedElementListeners(eGui, {
-            focusin: (e: FocusEvent) => {
-                const target = e.target as HTMLElement;
-                if (target.matches('.ag-toolbar-button, .ag-toolbar-input-field')) {
-                    eGui.querySelectorAll<HTMLElement>('.ag-toolbar-button, .ag-toolbar-input-field').forEach((el) =>
-                        el.setAttribute('tabindex', '-1')
-                    );
-                    target.setAttribute('tabindex', tabIndex);
-                }
-            },
-        });
     }
 
     public getFocusableContainerName(): 'toolbar' {
         return 'toolbar';
     }
 
-    private onTabKeyDown(e: KeyboardEvent): void {
-        if (e.defaultPrevented) {
-            return;
-        }
-        const backwards = e.shiftKey;
-        if (_focusNextGridCoreContainer(this.beans, backwards, true)) {
-            e.preventDefault();
-            return;
-        }
-        _skipFocusableContainerListenerForAgGrid(e);
+    private onTabKeyDown(_e: KeyboardEvent): void {
+        // Allow native tab order between toolbar items
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
@@ -206,12 +183,6 @@ class AgToolbar extends Component implements FocusableContainer {
         }
     }
 
-    private initRovingTabindex(): void {
-        const eGui = this.getGui();
-        const items = eGui.querySelectorAll<HTMLElement>('.ag-toolbar-button, .ag-toolbar-input-field');
-        items.forEach((el, i) => el.setAttribute('tabindex', i === 0 ? '0' : '-1'));
-    }
-
     private getValidItems(): ToolbarItemDef[] | undefined {
         const toolbar = this.gos.get('toolbar');
         if (!toolbar?.items) {
@@ -254,7 +225,7 @@ class AgToolbar extends Component implements FocusableContainer {
             this.itemsPromise = Promise.all([
                 this.createAndRenderComponents(leftItems, this.eToolbarLeft, existingItemsToReuse),
                 this.createAndRenderComponents(rightItems, this.eToolbarRight, existingItemsToReuse),
-            ]).then(() => this.initRovingTabindex());
+            ]).then(() => {});
         }
     }
 

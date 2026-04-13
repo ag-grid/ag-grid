@@ -25,7 +25,7 @@ export default {
                     :key="item.label"
                     class="overflow-menu-item"
                     role="menuitem"
-                    tabindex="-1"
+
                     style="padding:6px 12px;cursor:pointer;white-space:nowrap;font-size:var(--ag-font-size,13px);color:var(--ag-text-color,#333)"
                     @mouseenter="$event.target.style.backgroundColor = 'var(--ag-row-hover-color, #f0f0f0)'"
                     @mouseleave="$event.target.style.backgroundColor = ''"

@@ -76,7 +76,7 @@ export class OverflowMenu implements IToolbarItemComp {
             const eItem = document.createElement('div');
             eItem.className = 'overflow-menu-item';
             eItem.setAttribute('role', 'menuitem');
-            eItem.setAttribute('tabindex', '-1');
+
             eItem.style.cssText =
                 'padding:6px 12px;cursor:pointer;white-space:nowrap;font-size:var(--ag-font-size,13px);color:var(--ag-text-color,#333);';
             eItem.textContent = item.label;

@@ -156,7 +156,6 @@ export default (props: IToolbarItemParams) => {
                         key={item.label}
                         className="overflow-menu-item"
                         role="menuitem"
-                        tabIndex={-1}
                         style={{
                             padding: '6px 12px',
                             cursor: 'pointer',
