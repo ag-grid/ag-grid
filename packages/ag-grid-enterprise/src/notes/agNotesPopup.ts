@@ -141,6 +141,7 @@ export class AgNotesPopup extends BeanStub {
         const dialog = this.createManagedBean(
             new Dialog({
                 ...DEFAULT_SIZE,
+                modal: true,
                 resizable: true,
                 movable: false,
                 closable: false,
