@@ -12,29 +12,117 @@
     display: none !important;
 }
 
-/* Stage 1: hide right-side items, show overflow menu */
-@container (max-width: 1200px) {
-    .ag-toolbar-right > .ag-toolbar-item:not(.overflow-menu-wrapper),
-    .ag-toolbar-right > .ag-toolbar-separator {
-        display: none !important;
-    }
+/* All menu items hidden by default */
+.overflow-menu-item {
+    display: none;
+}
 
+/*
+ * Right container child indices:
+ *  1  columnChooser     6  columnsPanel    11 separator
+ *  2  autoSizeAll       7  filtersPanel    12 resetColumns
+ *  3  quickFilter       8  separator       13 overflowMenu
+ *  4  find              9  csvExport
+ *  5  separator        10  excelExport
+ *
+ * Menu item indices:
+ *  1 Column Chooser   3 Columns Panel   5 Export CSV    7 Reset Columns
+ *  2 Auto Size        4 Filters Panel   6 Export Excel
+ *
+ * Item sizes: button = 44px, input = 186px, separator = 36px, padding = 16px
+ */
+
+/* 1200px: show ☰, hide resetColumns(44) + separator(36) */
+@container (max-width: 1200px) {
     .overflow-menu-wrapper {
         display: inline-flex !important;
     }
+
+    .ag-toolbar-right > :nth-child(11),
+    .ag-toolbar-right > :nth-child(12) {
+        display: none !important;
+    }
+
+    .overflow-menu-item:nth-child(7) {
+        display: block;
+    }
 }
 
-/* Stage 2: hide left-side buttons, keep panels */
-@container (max-width: 700px) {
-    .ag-toolbar-left > .ag-toolbar-item:not(.ag-toolbar-panel),
-    .ag-toolbar-left > .ag-toolbar-separator {
+/* 1136px: hide csvExport(44) + excelExport(44) + separator(36) */
+@container (max-width: 1136px) {
+    .ag-toolbar-right > :nth-child(8),
+    .ag-toolbar-right > :nth-child(9),
+    .ag-toolbar-right > :nth-child(10) {
+        display: none !important;
+    }
+
+    .overflow-menu-item:nth-child(5),
+    .overflow-menu-item:nth-child(6) {
+        display: block;
+    }
+}
+
+/* 1012px: hide columnsPanel(44) + filtersPanel(44) + separator(36) */
+@container (max-width: 1012px) {
+    .ag-toolbar-right > :nth-child(5),
+    .ag-toolbar-right > :nth-child(6),
+    .ag-toolbar-right > :nth-child(7) {
+        display: none !important;
+    }
+
+    .overflow-menu-item:nth-child(3),
+    .overflow-menu-item:nth-child(4) {
+        display: block;
+    }
+}
+
+/* 955px: hide find(186) (no menu equivalent) */
+@container (max-width: 955px) {
+    .ag-toolbar-right > :nth-child(4) {
         display: none !important;
     }
 }
 
-/* Stage 3: hide panels too */
+/* 804px: hide quickFilter(186) (no menu equivalent) */
+@container (max-width: 804px) {
+    .ag-toolbar-right > :nth-child(3) {
+        display: none !important;
+    }
+}
+
+/* 638px: hide autoSizeAll */
+@container (max-width: 638px) {
+    .ag-toolbar-right > :nth-child(2) {
+        display: none !important;
+    }
+
+    .overflow-menu-item:nth-child(2) {
+        display: block;
+    }
+}
+
+/* 610px: hide columnChooser */
+@container (max-width: 610px) {
+    .ag-toolbar-right > :nth-child(1) {
+        display: none !important;
+    }
+
+    .overflow-menu-item:nth-child(1) {
+        display: block;
+    }
+}
+
+/* 580px: hide pivotPanel + separator (left children: 1=rowGroupPanel, 2=pivotPanel, 3=separator) */
 @container (max-width: 580px) {
-    .ag-toolbar-left > .ag-toolbar-panel {
+    .ag-toolbar-left > :nth-child(2),
+    .ag-toolbar-left > :nth-child(3) {
+        display: none !important;
+    }
+}
+
+/* 500px: hide rowGroupPanel */
+@container (max-width: 500px) {
+    .ag-toolbar-left > :nth-child(1) {
         display: none !important;
     }
 }
