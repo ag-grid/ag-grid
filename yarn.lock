@@ -141,6 +141,14 @@
     "@jridgewell/gen-mapping" "^0.3.5"
     "@jridgewell/trace-mapping" "^0.3.24"
 
+"@analogjs/vite-plugin-angular@^2.4.5":
+  version "2.4.5"
+  resolved "https://registry.ag-grid.com/@analogjs/vite-plugin-angular/-/vite-plugin-angular-2.4.5.tgz#12461dba278ba5b83a80a9cb5c8c7996294da2e6"
+  integrity sha512-nrDV7vqbclBuACykxO5H1TBuG9G1GAT/IW7I8if1oGDHyiNNhjSs/lhxTomJXrgYeJ4SXWBnx+x+8ctb/3tpFg==
+  dependencies:
+    tinyglobby "^0.2.14"
+    ts-morph "^21.0.0"
+
 "@angular-devkit/architect@0.1802.21":
   version "0.1802.21"
   resolved "https://registry.ag-grid.com/@angular-devkit/architect/-/architect-0.1802.21.tgz#70e083e174c7189f341e102a2c55a6edc4db290a"
@@ -1192,6 +1200,13 @@
   resolved "https://registry.ag-grid.com/@babel/plugin-proposal-private-property-in-object/-/plugin-proposal-private-property-in-object-7.21.0-placeholder-for-preset-env.2.tgz#7844f9289546efa9febac2de4cfe358a050bd703"
   integrity sha512-SOSkfJDddaM7mak6cPEpswyTRnuRltl429hMraQEglW+OkovnCzsiszTmsrlY//qLFjCpQDFRvjdm2wA5pPm9w==
 
+"@babel/plugin-proposal-throw-expressions@^7.27.1":
+  version "7.27.1"
+  resolved "https://registry.ag-grid.com/@babel/plugin-proposal-throw-expressions/-/plugin-proposal-throw-expressions-7.27.1.tgz#89593adb9aa76a2acdc0ffa00f3be93c8c334778"
+  integrity sha512-pnGZCFdGiN3vHk54wWIvLJV3MXviRjCkSWhPtCkra6AW3AP3AcrRByT5jOnuk6nwu9VYT/B7ujdaLiBnkmc0hw==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.27.1"
+
 "@babel/plugin-syntax-decorators@^7.28.6":
   version "7.28.6"
   resolved "https://registry.ag-grid.com/@babel/plugin-syntax-decorators/-/plugin-syntax-decorators-7.28.6.tgz#8c3293a0fef033e4c786b35ce1e159fc1d676153"
@@ -1932,7 +1947,7 @@
     "@babel/plugin-transform-react-jsx-development" "^7.27.1"
     "@babel/plugin-transform-react-pure-annotations" "^7.27.1"
 
-"@babel/preset-typescript@^7.21.0", "@babel/preset-typescript@^7.22.5":
+"@babel/preset-typescript@^7.21.0", "@babel/preset-typescript@^7.22.5", "@babel/preset-typescript@^7.27.1":
   version "7.28.5"
   resolved "https://registry.ag-grid.com/@babel/preset-typescript/-/preset-typescript-7.28.5.tgz#540359efa3028236958466342967522fd8f2a60c"
   integrity sha512-+bQy5WOI2V6LJZpPVxY+yp66XdZ2yifu0Mc1aP5CQKgjn4QM5IN2i5fAZ4xKop47pr8rpVhiAeu+nDQa12C8+g==
@@ -1950,7 +1965,7 @@
   dependencies:
     regenerator-runtime "^0.14.0"
 
-"@babel/runtime@^7.10.5", "@babel/runtime@^7.12.5", "@babel/runtime@^7.18.3", "@babel/runtime@^7.20.13", "@babel/runtime@^7.22.6", "@babel/runtime@^7.28.6", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6":
+"@babel/runtime@^7.10.5", "@babel/runtime@^7.12.5", "@babel/runtime@^7.18.3", "@babel/runtime@^7.20.13", "@babel/runtime@^7.22.6", "@babel/runtime@^7.27.1", "@babel/runtime@^7.28.6", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6":
   version "7.29.2"
   resolved "https://registry.ag-grid.com/@babel/runtime/-/runtime-7.29.2.tgz#9a6e2d05f4b6692e1801cd4fb176ad823930ed5e"
   integrity sha512-JiDShH45zKHWyGe4ZNVRrCjBz8Nh9TMmZG1kh4QTK8hCBTWBi8Da+i7s1fJw7/lYpM4ccepSNfqzZ/QvABBi5g==
@@ -6965,6 +6980,16 @@
     javascript-natural-sort "^0.7.1"
     lodash "^4.17.21"
 
+"@ts-morph/common@~0.22.0":
+  version "0.22.0"
+  resolved "https://registry.ag-grid.com/@ts-morph/common/-/common-0.22.0.tgz#8951d451622a26472fbc3a227d6c3a90e687a683"
+  integrity sha512-HqNBuV/oIlMKdkLshXd1zKBqNQCsuPEsgQOkfFQ/eUKjRlwndXW1AjN9LVkBEIukm00gGXSRmfkl0Wv5VXLnlw==
+  dependencies:
+    fast-glob "^3.3.2"
+    minimatch "^9.0.3"
+    mkdirp "^3.0.1"
+    path-browserify "^1.0.1"
+
 "@tsconfig/node10@^1.0.7":
   version "1.0.12"
   resolved "https://registry.ag-grid.com/@tsconfig/node10/-/node10-1.0.12.tgz#be57ceac1e4692b41be9de6be8c32a106636dba4"
@@ -10087,6 +10112,11 @@ co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.ag-grid.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
   integrity sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==
+
+code-block-writer@^12.0.0:
+  version "12.0.0"
+  resolved "https://registry.ag-grid.com/code-block-writer/-/code-block-writer-12.0.0.tgz#4dd58946eb4234105aff7f0035977b2afdc2a770"
+  integrity sha512-q4dMFMlXtKR3XNBHyMHt/3pwYNA69EDk00lloMOaaUMKPUXBw6lpXtbu3MMVG6/uOihGnRDOlkyqsONEUj60+w==
 
 codepage@~1.15.0:
   version "1.15.0"
@@ -16778,6 +16808,11 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.ag-grid.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
+mkdirp@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.ag-grid.com/mkdirp/-/mkdirp-3.0.1.tgz#e44e4c5607fb279c168241713cc6e0fea9adcb50"
+  integrity sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==
+
 mrmime@2.0.0:
   version "2.0.0"
   resolved "https://registry.ag-grid.com/mrmime/-/mrmime-2.0.0.tgz#151082a6e06e59a9a39b46b3e14d5cfe92b3abb4"
@@ -22006,7 +22041,7 @@ tinyexec@^1.0.2:
   resolved "https://registry.ag-grid.com/tinyexec/-/tinyexec-1.1.1.tgz#e1ff45dfa60d1dedb91b734956b78f6c2a3e821b"
   integrity sha512-VKS/ZaQhhkKFMANmAOhhXVoIfBXblQxGX1myCQ2faQrfmobMftXeJPcZGp0gS07ocvGJWDLZGyOZDadDBqYIJg==
 
-tinyglobby@^0.2.10, tinyglobby@^0.2.11, tinyglobby@^0.2.12, tinyglobby@^0.2.13, tinyglobby@^0.2.15:
+tinyglobby@^0.2.10, tinyglobby@^0.2.11, tinyglobby@^0.2.12, tinyglobby@^0.2.13, tinyglobby@^0.2.14, tinyglobby@^0.2.15:
   version "0.2.16"
   resolved "https://registry.ag-grid.com/tinyglobby/-/tinyglobby-0.2.16.tgz#1c3b7eb953fce42b226bc5a1ee06428281aff3d6"
   integrity sha512-pn99VhoACYR8nFHhxqix+uvsbXineAasWm5ojXoN8xEwK5Kd3/TrhNn1wByuD52UxWRLy8pu+kRMniEi6Eq9Zg==
@@ -22155,6 +22190,14 @@ ts-interface-checker@^0.1.9:
   version "0.1.13"
   resolved "https://registry.ag-grid.com/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz#784fd3d679722bc103b1b4b8030bcddb5db2a699"
   integrity sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==
+
+ts-morph@^21.0.0:
+  version "21.0.1"
+  resolved "https://registry.ag-grid.com/ts-morph/-/ts-morph-21.0.1.tgz#712302a0f6e9dbf1aa8d9cf33a4386c4b18c2006"
+  integrity sha512-dbDtVdEAncKctzrVZ+Nr7kHpHkv+0JDJb2MjjpBaj8bFeCkePU9rHfMklmhuLFnpeq/EJZk2IhStY6NzqgjOkg==
+  dependencies:
+    "@ts-morph/common" "~0.22.0"
+    code-block-writer "^12.0.0"
 
 ts-node@10.9.1:
   version "10.9.1"
