@@ -123,7 +123,10 @@
       "**/@vue/**",
       "**/vue",
       "**/vue-template-compiler",
-      "**/vue-class-component"
+      "**/vue-class-component",
+      "ag-grid-angular-tests/@analogjs/vite-plugin-angular",
+      "ag-grid-angular-tests/@analogjs/vitest-angular",
+      "ag-grid-angular-tests/@angular/build"
     ]
   },
   "packageManager": "yarn@1.22.21",
