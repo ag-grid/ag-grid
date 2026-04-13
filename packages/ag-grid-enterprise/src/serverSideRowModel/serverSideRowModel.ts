@@ -661,6 +661,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public getRowNode(id: string): RowNode | undefined {
+        if (typeof id !== 'string') {
+            id = String(id);
+        }
         if (id === GRAND_TOTAL_ROW_ID) {
             return this.getRootStore()?.getGrandTotalNode();
         }
@@ -676,7 +679,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         if (id === ROOT_NODE_ID) {
             return this.rootNode;
         }
-        if (!result && typeof id === 'string' && id.startsWith(GROUP_TOTAL_ROW_ID_PREFIX)) {
+        if (!result && id.startsWith(GROUP_TOTAL_ROW_ID_PREFIX)) {
             const groupId = id.slice(GROUP_TOTAL_ROW_ID_PREFIX.length);
             const groupNode = this.getRowNode(groupId);
             result = groupNode?.sibling?.footer ? groupNode.sibling : undefined;

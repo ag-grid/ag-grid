@@ -134,8 +134,8 @@ describe('Server Side Row Model Transactions', () => {
         const api = gridsManager.createGrid(null, gridOptions);
         await waitForEvent('firstDataRendered', api);
 
-        // Passing a number should not throw
-        expect(() => api.getRowNode(1 as any)).not.toThrow();
-        expect(() => api.getRowNode(999 as any)).not.toThrow();
+        // Passing a number should not throw, and should find the row via toString coercion
+        expect(api.getRowNode(1 as any)).toBeTruthy();
+        expect(api.getRowNode(999 as any)).toBeUndefined();
     });
 });

@@ -386,9 +386,9 @@ describe('ag-grid row data', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
         await asyncSetTimeout(1);
 
-        // Passing a number should not throw
-        expect(() => api.getRowNode(1 as any)).not.toThrow();
-        expect(() => api.getRowNode(999 as any)).not.toThrow();
+        // Passing a number should not throw, and should still find the row via property key coercion
+        expect(api.getRowNode(1 as any)).toBeTruthy();
+        expect(api.getRowNode(999 as any)).toBeUndefined();
     });
 
     describe('onModelUpdated event flags', () => {
