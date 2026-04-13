@@ -33,10 +33,17 @@
  *  1 Column Chooser   3 Columns Panel   5 Export CSV    7 Reset Columns
  *  2 Auto Size        4 Filters Panel   6 Export Excel
  *
- * Collapse order: right-to-left from the rightmost visible item
+ * Collapse order: right-to-left from the rightmost visible item.
+ * Pivot mode (:has two panels) uses higher breakpoints.
  */
 
-/* 950px: show ☰, hide resetColumns(44) + separator(36) */
+/* Helper: detect pivot mode — two adjacent panels in the left container */
+
+/* ==========================================================================
+ * NON-PIVOT MODE (single panel on left)
+ * ========================================================================== */
+
+/* 950px: show ☰, hide resetColumns + separator */
 @container (max-width: 950px) {
     .overflow-menu-wrapper {
         display: inline-flex;
@@ -52,7 +59,7 @@
     }
 }
 
-/* 930px: hide excelExport(44) */
+/* 930px: hide excelExport */
 @container (max-width: 930px) {
     .ag-toolbar-right > :nth-child(10) {
         display: none;
@@ -63,8 +70,8 @@
     }
 }
 
-/* 860px: hide csvExport(44) + separator(36) */
-@container (max-width: 860px) {
+/* 900px: hide csvExport + separator */
+@container (max-width: 900px) {
     .ag-toolbar-right > :nth-child(8),
     .ag-toolbar-right > :nth-child(9) {
         display: none;
@@ -75,7 +82,7 @@
     }
 }
 
-/* 820px: hide filtersPanel(44) */
+/* 820px: hide filtersPanel */
 @container (max-width: 820px) {
     .ag-toolbar-right > :nth-child(7) {
         display: none;
@@ -86,7 +93,7 @@
     }
 }
 
-/* 780px: hide columnsPanel(44) + separator(36) */
+/* 780px: hide columnsPanel + separator */
 @container (max-width: 780px) {
     .ag-toolbar-right > :nth-child(5),
     .ag-toolbar-right > :nth-child(6) {
@@ -98,21 +105,21 @@
     }
 }
 
-/* 710px: hide find(186) (no menu equivalent) */
+/* 710px: hide find (no menu equivalent) */
 @container (max-width: 710px) {
     .ag-toolbar-right > :nth-child(4) {
         display: none;
     }
 }
 
-/* 560px: hide quickFilter(186) (no menu equivalent) */
+/* 560px: hide quickFilter (no menu equivalent) */
 @container (max-width: 560px) {
     .ag-toolbar-right > :nth-child(3) {
         display: none;
     }
 }
 
-/* 410px: hide autoSizeAll(44) */
+/* 410px: hide autoSizeAll */
 @container (max-width: 410px) {
     .ag-toolbar-right > :nth-child(2) {
         display: none;
@@ -123,7 +130,7 @@
     }
 }
 
-/* 370px: hide columnChooser(44) */
+/* 370px: hide columnChooser */
 @container (max-width: 370px) {
     .ag-toolbar-right > :nth-child(1) {
         display: none;
@@ -134,7 +141,7 @@
     }
 }
 
-/* 340px: hide pivotPanel + separator (left children: 1=rowGroupPanel, 2=pivotPanel, 3=separator) */
+/* 340px: hide pivotPanel + separator */
 @container (max-width: 340px) {
     .ag-toolbar-left > :nth-child(2),
     .ag-toolbar-left > :nth-child(3) {
@@ -145,6 +152,116 @@
 /* 300px: hide rowGroupPanel */
 @container (max-width: 300px) {
     .ag-toolbar-left > :nth-child(1) {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+ * PIVOT MODE (two panels on left — higher breakpoints)
+ * Selector: .ag-toolbar-left has two .ag-toolbar-panel children
+ * ========================================================================== */
+
+/* 1730px: show ☰, hide resetColumns + separator */
+@container (max-width: 1730px) {
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .overflow-menu-wrapper {
+        display: inline-flex;
+    }
+
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-right > :nth-child(11),
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-right > :nth-child(12) {
+        display: none;
+    }
+
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .overflow-menu-item:nth-child(7) {
+        display: block;
+    }
+}
+
+/* 1710px: hide excelExport */
+@container (max-width: 1710px) {
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-right > :nth-child(10) {
+        display: none;
+    }
+
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .overflow-menu-item:nth-child(6) {
+        display: block;
+    }
+}
+
+/* 1640px: hide csvExport + separator */
+@container (max-width: 1640px) {
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-right > :nth-child(8),
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-right > :nth-child(9) {
+        display: none;
+    }
+
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .overflow-menu-item:nth-child(5) {
+        display: block;
+    }
+}
+
+/* 1600px: hide filtersPanel */
+@container (max-width: 1600px) {
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-right > :nth-child(7) {
+        display: none;
+    }
+
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .overflow-menu-item:nth-child(4) {
+        display: block;
+    }
+}
+
+/* 1560px: hide columnsPanel + separator */
+@container (max-width: 1560px) {
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-right > :nth-child(5),
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-right > :nth-child(6) {
+        display: none;
+    }
+
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .overflow-menu-item:nth-child(3) {
+        display: block;
+    }
+}
+
+/* 1490px: hide find (no menu equivalent) */
+@container (max-width: 1490px) {
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-right > :nth-child(4) {
+        display: none;
+    }
+}
+
+/* 1340px: hide quickFilter (no menu equivalent) */
+@container (max-width: 1340px) {
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-right > :nth-child(3) {
+        display: none;
+    }
+}
+
+/* 1190px: hide autoSizeAll */
+@container (max-width: 1190px) {
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-right > :nth-child(2) {
+        display: none;
+    }
+
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .overflow-menu-item:nth-child(2) {
+        display: block;
+    }
+}
+
+/* 1150px: hide columnChooser */
+@container (max-width: 1150px) {
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-right > :nth-child(1) {
+        display: none;
+    }
+
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .overflow-menu-item:nth-child(1) {
+        display: block;
+    }
+}
+
+/* 500px: hide rowGroupPanel (pivot panel already hidden by pivotPanelToolbarItem when leaving pivot mode) */
+@container (max-width: 500px) {
+    .ag-toolbar:has(.ag-toolbar-panel + .ag-toolbar-panel) .ag-toolbar-left > :nth-child(1) {
         display: none;
     }
 }
