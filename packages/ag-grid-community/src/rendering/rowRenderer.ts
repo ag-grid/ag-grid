@@ -397,9 +397,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         for (const col of cols) {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
-                for (const cellCtrl of this.getAllCellCtrls()) {
-                    if (cellCtrl.column === col) {
-                        callback(cellCtrl);
+                const skipColSpanSearch = !this.beans.colModel.colSpanActive;
+                for (const rowCtrl of this.getAllRowCtrls()) {
+                    const cellCtr = rowCtrl.getCellCtrl(col, skipColSpanSearch);
+                    if (cellCtr) {
+                        callback(cellCtr);
                     }
                 }
             };

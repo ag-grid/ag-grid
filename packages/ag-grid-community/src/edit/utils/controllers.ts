@@ -56,9 +56,10 @@ export function _getCellCtrl(beans: BeanCollection, inputs: ResolveControllerTyp
     }
 
     const actualColumn = beans.colModel.getCol(colId ?? columnId ?? _getColId(column))!;
+    const skipColSpanSearch = !beans.colModel.colSpanActive;
 
     const rowCtrl = inputs.rowCtrl ?? _getRowCtrl(beans, inputs);
-    const result = rowCtrl?.getCellCtrl(actualColumn) ?? undefined;
+    const result = rowCtrl?.getCellCtrl(actualColumn, skipColSpanSearch) ?? undefined;
 
     if (result) {
         // if we found a cellCtrl, return it

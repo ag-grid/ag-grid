@@ -1963,13 +1963,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public getCellCtrl(column: AgColumn, skipColSpanSearch = false): CellCtrl | null {
-        // first up, check for cell directly linked to this column
-        let res: CellCtrl | null = null;
-        for (const cellCtrl of this.getAllCellCtrls()) {
-            if (cellCtrl.column == column) {
-                res = cellCtrl;
-            }
-        }
+        // first up, check for cell directly linked to this column via map lookup
+        const colInstanceId = column.getInstanceId();
+        const res =
+            this.centerCellCtrls.map[colInstanceId] ??
+            this.leftCellCtrls.map[colInstanceId] ??
+            this.rightCellCtrls.map[colInstanceId] ??
+            null;
 
         if (res != null || skipColSpanSearch) {
             return res;
@@ -1980,13 +1980,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // more expensive, as spanning cols is a
         // infrequently used feature so we don't need to do this most
         // of the time
+        let spanRes: CellCtrl | null = null;
         for (const cellCtrl of this.getAllCellCtrls()) {
             if (cellCtrl?.getColSpanningList().indexOf(column) >= 0) {
-                res = cellCtrl;
+                spanRes = cellCtrl;
             }
         }
 
-        return res;
+        return spanRes;
     }
 
     protected onRowIndexChanged(): void {
