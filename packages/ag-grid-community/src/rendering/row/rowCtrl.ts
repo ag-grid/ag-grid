@@ -1654,7 +1654,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private announceNoteDescription(cellCtrl?: CellCtrl): void {
         const { notesSvc, ariaAnnounce } = this.beans;
-        if (!notesSvc || !ariaAnnounce) {
+        if (!notesSvc || !ariaAnnounce || (!cellCtrl && !this.isFullWidth())) {
             return;
         }
 

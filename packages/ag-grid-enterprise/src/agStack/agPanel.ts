@@ -231,6 +231,10 @@ export class AgPanel<
         return this.positionableFeature.getWidth();
     }
 
+    public get isResizing(): boolean {
+        return this.positionableFeature.isResizing;
+    }
+
     public setWidth(width: number | string): void {
         this.positionableFeature.setWidth(width);
     }
