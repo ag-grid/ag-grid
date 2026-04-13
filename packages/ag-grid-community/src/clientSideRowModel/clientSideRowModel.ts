@@ -1026,6 +1026,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private getSpecialRowNode(id: string): RowNode | undefined {
+        if (typeof id !== 'string') {
+            return undefined;
+        }
         if (id === ROOT_NODE_ID) {
             return this.rootNode ?? undefined;
         }

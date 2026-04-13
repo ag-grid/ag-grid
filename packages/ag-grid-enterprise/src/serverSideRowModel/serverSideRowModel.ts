@@ -676,7 +676,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         if (id === ROOT_NODE_ID) {
             return this.rootNode;
         }
-        if (!result && id.startsWith(GROUP_TOTAL_ROW_ID_PREFIX)) {
+        if (!result && typeof id === 'string' && id.startsWith(GROUP_TOTAL_ROW_ID_PREFIX)) {
             const groupId = id.slice(GROUP_TOTAL_ROW_ID_PREFIX.length);
             const groupNode = this.getRowNode(groupId);
             result = groupNode?.sibling?.footer ? groupNode.sibling : undefined;
