@@ -10,6 +10,7 @@ import { setValidationDocLink } from './validation/logging';
 export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     public readonly renderingEngine: 'vanilla' | 'react' = 'vanilla';
     public readonly batchFrameworkComps: boolean = false;
+    public readonly usesAgGridProvider: boolean = false;
     private readonly baseDocLink: string;
 
     constructor(private readonly frameworkName: 'javascript' | 'angular' | 'react' | 'vue' = 'javascript') {

@@ -177,7 +177,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             }
         };
 
-        const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates);
+        const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates, modulesFromContext.length > 0);
         frameworkOverridesRef.current = frameworkOverrides;
         const renderStatus = new RenderStatusService();
         const gridParams: GridParams = {
@@ -503,8 +503,12 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     private queueUpdates = false;
     public override readonly renderingEngine = 'react';
 
-    constructor(private readonly processQueuedUpdates: () => void) {
+    constructor(
+        private readonly processQueuedUpdates: () => void,
+        public override readonly usesAgGridProvider: boolean
+    ) {
         super('react');
+        this.usesAgGridProvider = usesAgGridProvider;
     }
 
     private readonly frameworkComponents: any = {
