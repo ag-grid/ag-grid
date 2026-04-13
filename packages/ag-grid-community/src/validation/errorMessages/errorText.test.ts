@@ -9,3 +9,35 @@ describe('Validate AG_GRID_ERRORS', () => {
         }
     );
 });
+
+describe('error 260 (missing user component)', () => {
+    test('formats missing component error with usesAgGridProvider', () => {
+        const result = AG_GRID_ERRORS[260]({
+            propName: 'cellEditor',
+            compName: 'agRichSelectCellEditor',
+            gridScoped: false,
+            gridId: 'myGrid',
+            rowModelType: 'clientSide',
+            usesAgGridProvider: true,
+        });
+
+        expect(result).toContain('RichSelectModule');
+        expect(result).toContain('AgGridProvider');
+        expect(result).not.toContain('ModuleRegistry.registerModules');
+    });
+
+    test('formats missing component error without usesAgGridProvider', () => {
+        const result = AG_GRID_ERRORS[260]({
+            propName: 'cellEditor',
+            compName: 'agRichSelectCellEditor',
+            gridScoped: false,
+            gridId: 'myGrid',
+            rowModelType: 'clientSide',
+            usesAgGridProvider: false,
+        });
+
+        expect(result).toContain('RichSelectModule');
+        expect(result).toContain('ModuleRegistry.registerModules');
+        expect(result).not.toContain('AgGridProvider');
+    });
+});

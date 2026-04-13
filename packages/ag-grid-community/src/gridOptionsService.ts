@@ -27,7 +27,7 @@ import type { AnyGridOptions } from './propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 import { _logIfDebug } from './utils/log';
 import type { MissingModuleErrors } from './validation/errorMessages/errorText';
-import { _error } from './validation/logging';
+import { reportMissingModule } from './validation/errorMessages/errorText';
 import { COLUMN_DEFINITION_MOD_VALIDATIONS } from './validation/rules/colDefValidations';
 import { GRID_OPTIONS_MODULES } from './validation/rules/gridOptionsValidations';
 import type { ValidationService } from './validation/validationService';
@@ -333,7 +333,7 @@ export class GridOptionsService
             ? moduleName.some((modName) => this.isModuleRegistered(modName))
             : this.isModuleRegistered(moduleName);
         if (!registered) {
-            _error(200, {
+            reportMissingModule({
                 ...this.getModuleErrorParams(),
                 moduleName,
                 reasonOrId,
@@ -347,12 +347,14 @@ export class GridOptionsService
         gridId: string;
         rowModelType: RowModelType;
         isUmd: boolean;
+        usesAgGridProvider: boolean;
     } {
         return {
             gridId: this.gridId,
             gridScoped: _areModulesGridScoped(),
             rowModelType: this.get('rowModelType'),
             isUmd: _isUmd(),
+            usesAgGridProvider: this.beans.frameworkOverrides.usesAgGridProvider ?? false,
         };
     }
 
