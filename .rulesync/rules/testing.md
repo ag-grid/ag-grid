@@ -1,12 +1,25 @@
 ---
 targets: ['*']
-description: 'Testing strategies, Jest patterns, and verification for AG Grid'
+description: 'Testing strategies, Vitest patterns, and verification for AG Grid'
 globs: ['**/*.test.ts', '**/*.spec.ts', 'testing/**/*']
 ---
 
 # Testing Guide
 
 This guide covers testing strategies and best practices for the AG Grid codebase.
+
+## Test Framework
+
+All tests use **Vitest** as the unified test runner. The monorepo has a vitest workspace (`vitest.workspace.ts`) that defines all test projects:
+
+-   `testing/behavioural` — Primary grid behaviour tests (jsdom environment)
+-   `packages/ag-grid-community` — Community package unit tests
+-   `packages/ag-grid-enterprise` — Enterprise package unit tests (jsdom environment)
+-   `plugins/ag-grid-generate-example-files` — Plugin tests
+-   `plugins/stylelint-plugin-ag` — Stylelint plugin tests
+-   `community-modules/locale` — Locale tests
+-   `documentation/ag-grid-docs` — Documentation tests
+-   `external/ag-website-shared` — Website shared tests
 
 ## Behavioural Tests — Primary Test Suite
 
@@ -45,22 +58,52 @@ packages/ag-grid-community/src/
 
 ## Running Tests
 
-### Behavioural Tests (Vitest) – Primary Test Suite
-
-Behavioural tests in `testing/behavioural/` are the primary test suite for verifying grid behaviour. They use Vitest. Watch mode is disabled by default:
+### All Tests
 
 ```bash
-# Run all behavioural tests
-./behave.sh
-
-# Run specific test file
-./behave.sh "cell-editing-regression"
-
-# Run specific test by name
-./behave.sh "cell-editing-regression" -t "should handle"
+# Run all vitest tests across the entire workspace
+npx vitest run
 
 # Run in watch mode
-./behave.sh --watch
+npx vitest --watch
+
+# Run a single project's tests
+npx vitest run --project ag-behavioural-testing
+npx vitest run --project ag-grid-community
+npx vitest run --project ag-grid-enterprise
+```
+
+### Behavioural Tests — Primary Test Suite
+
+```bash
+# Run specific test file
+npx vitest run "cell-editing-regression"
+
+# Run specific test by name
+npx vitest run "cell-editing-regression" -t "should handle"
+
+# Update GridRows inline snapshots
+UPDATE_GRID_ROWS_SNAPSHOTS=1 npx vitest run
+
+# Update snapshots in matching test files only
+UPDATE_GRID_ROWS_SNAPSHOTS=1 npx vitest run "cell-editing"
+
+# Dry-run: show what would change
+UPDATE_GRID_ROWS_SNAPSHOTS=dry npx vitest run
+```
+
+### Package Tests (via Nx)
+
+```bash
+# Run all tests for a package via Nx
+yarn nx test ag-grid-community
+yarn nx test ag-grid-enterprise
+
+# Run specific test file directly
+npx vitest run --project ag-grid-community src/edit/editApi
+
+# Run specific test by name
+npx vitest run --project ag-grid-community -t "should handle"
 ```
 
 ### Benchmarks
@@ -73,21 +116,6 @@ yarn nx run ag-behavioural-testing:benchmark
 yarn nx run ag-behavioural-testing:benchmark -- src/tree-data/datapath/benchmarks/tree-data-path.bench.ts
 ```
 
-### Unit Tests (Jest)
-
-Unit tests in `packages/` use Jest. Use `--testPathPattern` and `--testNamePattern`:
-
-```bash
-# Run all tests for a package
-yarn nx test ag-grid-community
-
-# Run specific test file
-yarn nx test ag-grid-community --testPathPattern="featureName"
-
-# Run specific test by name
-yarn nx test ag-grid-community --testPathPattern="featureName" --testNamePattern="should handle"
-```
-
 ### E2E Tests
 
 ```bash
@@ -95,11 +123,9 @@ yarn nx test ag-grid-community --testPathPattern="featureName" --testNamePattern
 yarn nx e2e ag-grid-docs
 ```
 
-**Note:** Vitest does not support `--testPathPattern` or `--testNamePattern`. Use positional arguments for file matching and `-t` for test name filtering.
-
 ## Test Patterns
 
-### Jest Unit Tests
+### Unit Tests
 
 Follow the AAA pattern (Arrange, Act, Assert):
 
@@ -113,7 +139,7 @@ describe('FeatureName', () => {
 
     afterEach(() => {
         // Cleanup
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     describe('#methodName', () => {

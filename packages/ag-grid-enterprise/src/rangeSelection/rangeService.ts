@@ -263,7 +263,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         this.lastMouseEvent = mouseEvent;
 
         const isMouseAndStartInPinned = (position: string) =>
-            lastCellHovered && lastCellHovered.rowPinned === position && newestRangeStartCell!.rowPinned === position;
+            lastCellHovered?.rowPinned === position && newestRangeStartCell!.rowPinned === position;
 
         const skipVerticalScroll = isMouseAndStartInPinned('top') || isMouseAndStartInPinned('bottom');
 

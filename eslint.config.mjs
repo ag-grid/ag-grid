@@ -34,6 +34,8 @@ export const sonarjsConfig = [
             'sonarjs/public-static-readonly': 0,
             'sonarjs/no-redundant-optional': 1,
             'sonarjs/no-ignored-exceptions': 0,
+            'sonarjs/null-dereference': 0,
+            'sonarjs/assertions-in-tests': 0,
             'sonarjs/no-alphabetical-sort': 0,
             'sonarjs/no-redundant-boolean': 0,
             'sonarjs/no-async-constructor': 0,
@@ -70,6 +72,13 @@ export default [
     { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
+    {
+        languageOptions: {
+            parserOptions: {
+                tsconfigRootDir: import.meta.dirname,
+            },
+        },
+    },
     { plugins: { 'import-x': eslintImportX, unicorn } },
     {
         ignores: ['node_modules/', 'dist/', '.astro/', '**/env.d.ts', 'coverage', '**/.dependency-cruiser.js'],
@@ -118,6 +127,13 @@ export default [
         ],
         rules: {
             'no-undef': 'off',
+        },
+    },
+    {
+        // Allow require() in JS/CJS files
+        files: ['**/*.js', '**/*.cjs'],
+        rules: {
+            '@typescript-eslint/no-require-imports': 'off',
         },
     },
 ];

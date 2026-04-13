@@ -91,7 +91,8 @@ jobs:
               - 'yarn.lock'
               - 'nx.json'
               - 'tsconfig.*.json'
-              - 'jest.preset.js'
+              - 'vitest.config.ts'
+              - 'vitest.workspace.ts'
             ci:
               - '.github/**'
 
@@ -175,13 +176,10 @@ jobs:
       - name: Calculate Matrix
         id: matrix
         run: |
-          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            count=10
-          else
-            count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
-          fi
-          
-          matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
+          # Vitest file-level sharding: fixed 4 shards + shard 0 for non-test tasks
+          count=4
+
+          matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --ratio 1 --zero ${count} --max 4)
           echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
           echo "test_count=${count}" >> $GITHUB_OUTPUT
           echo "Test matrix determined to be: ${matrix} (test_count=${count})"
@@ -239,10 +237,10 @@ jobs:
         with:
           cache_mode: ro
 
-      - name: nx test
+      - name: vitest (shard ${{ matrix.shard }})
         if: matrix.shard != 0
         id: test
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c=staging --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+        run: npx vitest run --reporter=default --reporter=junit --outputFile=reports/vitest-shard-${{ matrix.shard }}.xml --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
       - name: nx test (non-sharded)
         if: matrix.shard == 0
         id: test-no-shard
@@ -623,7 +621,7 @@ jobs:
                 }
             }
         run: |
-          npx ts-node ./scripts/agBotSlackMessage.ts --auth-token "$SLACK_BOT_OAUTH_TOKEN" \
+          npx tsx ./scripts/agBotSlackMessage.ts --auth-token "$SLACK_BOT_OAUTH_TOKEN" \
             --grid-channel "$CI_GRID_GATE_CHANNEL" \
             --charts-channel "$CHARTS_TEAM_CITY_CHANNEL" \
             --website-status-channel "$WEBSITE_STATUS_CHANNEL" \

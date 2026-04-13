@@ -66,8 +66,9 @@ describe('ag-grid export overlay', () => {
         (global as any).MouseEvent = jest.fn(function (type: string, init?: any) {
             return new Event(type, { bubbles: init?.bubbles, cancelable: init?.cancelable });
         });
-        // Mock CompressionStream to a pass-through TransformStream (if available)
-        (window as any).CompressionStream = jest.fn((_format: string) => {
+        // Mock CompressionStream to a pass-through TransformStream (if available).
+        // Uses a regular function (not arrow) so it can be called with `new`.
+        (window as any).CompressionStream = vi.fn(function CompressionStream(_format: string) {
             if (typeof (global as any).TransformStream === 'function') {
                 return new (global as any).TransformStream({
                     transform(chunk: any, controller: any) {

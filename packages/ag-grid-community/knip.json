@@ -8,6 +8,10 @@
         "./src/utils/debug.ts",
         "./src/main-umd-styles.ts"
     ],
+    "vitest": {
+        "config": ["vitest.config.ts"],
+        "entry": ["src/**/*.test.{ts,tsx}", "src/**/*.spec.{ts,tsx}"]
+    },
     "rules": {
         "unlisted": "off",
         "unresolved": "off",

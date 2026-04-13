@@ -180,7 +180,7 @@ function needsParensInBinary(parentDef: InfixOpDef, child: FormulaNode, side: 'l
     }
 
     const childDef = getDefBySymbol(child.operation, 'infix');
-    if (!childDef || childDef.fixity !== 'infix') {
+    if (childDef?.fixity !== 'infix') {
         // functions or non-infix -> no parens
         return false;
     }

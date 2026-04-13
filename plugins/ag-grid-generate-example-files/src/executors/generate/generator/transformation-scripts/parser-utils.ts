@@ -86,7 +86,7 @@ export function tsCollect(tsTree, tsBindings: ParsedBindings, collectors, recurs
                 let res = false;
                 try {
                     res = c.matches(node);
-                } catch (error) {
+                } catch {
                     return false;
                 }
                 return res;

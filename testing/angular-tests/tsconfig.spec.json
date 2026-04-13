@@ -2,10 +2,16 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "types": ["jest"],
+    "types": [],
     "paths": {
-      "@angular/*": ["./node_modules/@angular/*"]
+      "@angular/*": ["./node_modules/@angular/*"],
+      "ag-grid-angular": ["../../packages/ag-grid-angular/projects/ag-grid-angular/src/public-api.ts"]
     }
   },
-  "include": ["src/**/*.spec.ts", "src/**/*.d.ts", "jest-setup.ts"]
+  "include": [
+    "src/**/*.spec.ts",
+    "src/**/*.ts",
+    "vitest.setup.ts",
+    "../../packages/ag-grid-angular/projects/ag-grid-angular/src/**/*.ts"
+  ]
 }

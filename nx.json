@@ -13,7 +13,7 @@
       "!{projectRoot}/**/test/**",
       "!{projectRoot}/**/__image_snapshots__/**",
       "!{projectRoot}/tsconfig.spec.json",
-      "!{projectRoot}/jest.config.[jt]s"
+      "!{projectRoot}/vitest.config.[jt]s"
     ],
     "buildOutputExcludes": ["!{projectRoot}/dist/**"],
     "production": [
@@ -124,7 +124,7 @@
       "cache": true
     },
     "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json", "{workspaceRoot}/.eslintignore"],
+      "inputs": ["default", "{workspaceRoot}/eslint.config.mjs"],
       "cache": true
     },
     "lint:depcruise": {
@@ -138,7 +138,7 @@
       }
     },
     "test": {
-      "inputs": ["default", "buildOutputExcludes", "^production", "{workspaceRoot}/jest.preset.js"],
+      "inputs": ["default", "buildOutputExcludes", "^production"],
       "outputs": [],
       "cache": true
     },
@@ -163,18 +163,6 @@
     },
     "nx:run-commands": {
       "cache": true
-    },
-    "@nx/jest:jest": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
-      "cache": true,
-      "options": {
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true
-        }
-      }
     }
   },
   "defaultProject": "all",

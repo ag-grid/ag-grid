@@ -196,24 +196,20 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}", "{workspaceRoot}/reports/ag-grid-community.xml"],
-      "parallelism": false,
-      "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts",
-        "testPathIgnorePatterns": ["e2e"]
+      "command": "npx vitest run --project ag-grid-community",
+      "outputs": ["{workspaceRoot}/reports/ag-grid-community.xml"],
+      "configurations": {
+        "ci": {},
+        "watch": {},
+        "update": {}
       }
     },
     "test:e2e": {
       "dependsOn": ["test:umd:browser", "test:umd"]
     },
     "test:umd": {
-      "executor": "@nx/jest:jest",
+      "command": "npx vitest run --config {projectRoot}/vitest.config.ts --include '{projectRoot}/e2e/**/*.test.ts'",
       "dependsOn": ["build:umd"],
-      "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts",
-        "testPathPattern": ["e2e"]
-      },
       "configurations": {
         "production": {},
         "staging": {}

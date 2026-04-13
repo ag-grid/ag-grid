@@ -1321,7 +1321,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         let forceBrowserFocus = mouseEvent.defaultPrevented || _isBrowserSafari();
 
-        if (element && element.contains(target) && _isFocusableFormField(target)) {
+        if (element?.contains(target) && _isFocusableFormField(target)) {
             forceBrowserFocus = false;
         }
 

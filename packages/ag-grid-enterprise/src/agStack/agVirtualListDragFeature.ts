@@ -121,8 +121,7 @@ export class AgVirtualListDragFeature<
         const el = comp!.getGui().parentElement as HTMLElement;
 
         if (
-            this.lastHoveredListItem &&
-            this.lastHoveredListItem.rowIndex === hoveredListItem.rowIndex &&
+            this.lastHoveredListItem?.rowIndex === hoveredListItem.rowIndex &&
             this.lastHoveredListItem.position === hoveredListItem.position
         ) {
             return;

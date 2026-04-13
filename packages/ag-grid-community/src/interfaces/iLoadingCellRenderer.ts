@@ -8,5 +8,6 @@ export interface ILoadingCellRendererParams<TData = any, TValue = any, TContext 
      */
     deferRender?: boolean;
 }
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ILoadingCellRenderer {}
 export interface ILoadingCellRendererComp extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams> {}

@@ -17,9 +17,5 @@
   "bugs": {
     "url": "https://github.com/ag-grid/ag-website-shared/issues"
   },
-  "homepage": "https://github.com/ag-grid/ag-website-shared#readme",
-  "devDependencies": {
-    "tsx": "^4.7.2"
-  },
-  "dependencies": {}
+  "homepage": "https://github.com/ag-grid/ag-website-shared#readme"
 }

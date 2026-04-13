@@ -264,19 +264,22 @@ export abstract class AgBeanStub<
         const eventsKey = events.join('-') + this.propertyListenerId++;
 
         const wrappedListener = (event: AgPropertyValueChangedEvent<TProperties, any>) => {
-            if (event.changeSet) {
+            const changeSet = event.changeSet;
+            if (changeSet) {
+                const id = changeSet.id;
+                const lastChangeSetIdLookup = this.lastChangeSetIdLookup;
                 // ChangeSet is only set when the property change is part of a group of changes from ComponentUtils
                 // Direct api calls should always be run as
-                if (event.changeSet && event.changeSet.id === this.lastChangeSetIdLookup[eventsKey]) {
+                if (id === lastChangeSetIdLookup[eventsKey]) {
                     // Already run the listener for this set of prop changes so don't run again
                     return;
                 }
-                this.lastChangeSetIdLookup[eventsKey] = event.changeSet.id;
+                lastChangeSetIdLookup[eventsKey] = id;
             }
             // Don't expose the underlying event value changes to the group listener.
             const propertiesChangeEvent: AgPropertyChangedEvent<TProperties> = {
                 type: 'propertyChanged',
-                changeSet: event.changeSet,
+                changeSet,
                 source: event.source,
             };
             listener(propertiesChangeEvent);

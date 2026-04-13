@@ -35,7 +35,7 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
             this.focusAfterAttached = true;
             if (eventKey === KeyCode.BACKSPACE || eventKey === KeyCode.DELETE) {
                 startValue = '';
-            } else if (eventKey && eventKey.length === 1) {
+            } else if (eventKey?.length === 1) {
                 startValue = eventKey;
             } else {
                 startValue = this.getStartValue(params);

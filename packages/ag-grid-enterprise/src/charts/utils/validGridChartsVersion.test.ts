@@ -1,5 +1,3 @@
-import { describe, expect, it } from '@jest/globals';
-
 import { gridChartVersion, validGridChartsVersion, validGridChartsVersionErrorMessage } from './validGridChartsVersion';
 
 describe.each([

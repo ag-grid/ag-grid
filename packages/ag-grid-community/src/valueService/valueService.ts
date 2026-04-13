@@ -59,7 +59,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private isSsrm = false;
 
     private executeValueGetter: (
-        // eslint-disable-next-line @typescript-eslint/ban-types
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         valueGetter: string | Function,
         data: any,
         column: AgColumn,
@@ -739,7 +739,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private executeValueGetterWithValueCache(
-        // eslint-disable-next-line @typescript-eslint/ban-types
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         valueGetter: string | Function,
         data: any,
         column: AgColumn,
@@ -760,7 +760,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private executeValueGetterWithoutValueCache(
-        // eslint-disable-next-line @typescript-eslint/ban-types
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         valueGetter: string | Function,
         data: any,
         column: AgColumn,

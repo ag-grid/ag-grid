@@ -1,4 +1,4 @@
-import { Component, viewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, ModuleRegistry } from 'ag-grid-community';
@@ -13,5 +13,5 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 export class App {
     rowData: any[] = [{ name: 'Test Name', number: 42 }];
     columnDefs: ColDef[] = [{ field: 'name' }, { field: 'number' }];
-    public agGrid = viewChild(AgGridAngular);
+    @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
 }

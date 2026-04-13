@@ -5,7 +5,7 @@
   },
   "include": ["src/**/*.ts"],
   "exclude": [
-    "jest.config.ts",
+    "vitest.config.ts",
     "src/main.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.ts",

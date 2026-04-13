@@ -7,5 +7,5 @@
     "rootDirs": ["./src"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["jest.config.ts", "jest.setup.ts", "src/main-test.ts", "**/*.test.ts", "**/test/**"]
+  "exclude": ["vitest.config.ts", "src/main-test.ts", "**/*.test.ts", "**/test/**"]
 }

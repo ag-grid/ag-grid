@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0 successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0 successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -204,7 +204,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0 successfull
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-bar successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-bar successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -410,7 +410,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-bar success
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-doughnut successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-doughnut successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -528,7 +528,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-doughnut su
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-doughnut-callout successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-doughnut-callout successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -648,7 +648,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-doughnut-ca
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-pie successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-pie successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -766,7 +766,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-pie success
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-pie-callout successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-pie-callout successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -886,7 +886,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-pie-callout
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-scatter successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-scatter successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -1047,7 +1047,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-scatter suc
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 23.0.0 successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 23.0.0 successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -1251,7 +1251,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 23.0.0 successfull
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 24.0.0 successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 24.0.0 successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -1479,7 +1479,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 24.0.0 successfull
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0 successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 25.0.0 successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -1723,7 +1723,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0 successfull
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0-line successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 25.0.0-line successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -1975,7 +1975,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0-line succes
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0 successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 26.0.0 successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -2228,7 +2228,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0 successfull
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0-scatter successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 26.0.0-scatter successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -2440,7 +2440,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0-scatter suc
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 26.1.0 successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 26.1.0 successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -2692,7 +2692,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.1.0 successfull
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 26.2.0 successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 26.2.0 successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -3060,7 +3060,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.2.0 successfull
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 27.0.0 successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 27.0.0 successfully 1`] = `
 {
   "cellRange": {
     "columns": [
@@ -3423,7 +3423,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 27.0.0 successfull
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 28.0.0 successfully 1`] = `
+exports[`chartModelMigration > upgradeChartModel > should upgrade 28.0.0 successfully 1`] = `
 {
   "cellRange": {
     "columns": [

@@ -8,7 +8,9 @@ export default [
     },
     {
         rules: {
-            '@typescript-eslint/ban-types': 'error',
+            '@typescript-eslint/no-unsafe-function-type': 'error',
+            '@typescript-eslint/no-wrapper-object-types': 'error',
+            '@typescript-eslint/no-empty-object-type': ['error', { allowInterfaces: 'with-single-extends' }],
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-var-requires': 'error',
             '@typescript-eslint/no-unused-vars': 'error',

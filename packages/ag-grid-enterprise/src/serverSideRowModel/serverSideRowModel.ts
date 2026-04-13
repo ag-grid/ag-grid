@@ -228,10 +228,11 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
             const allColsUnchanged = params.newCols.every((col) => {
                 const equivalentCol = oldColsMap[col.id];
-                if (equivalentCol) {
-                    delete oldColsMap[col.id];
+                if (!equivalentCol) {
+                    return false;
                 }
-                return equivalentCol && equivalentCol.field === col.field && equivalentCol.aggFunc === col.aggFunc;
+                delete oldColsMap[col.id];
+                return equivalentCol.field === col.field && equivalentCol.aggFunc === col.aggFunc;
             });
 
             const missingCols = !params.allowRemovedColumns && !!Object.values(oldColsMap).length;
@@ -672,7 +673,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             if (rowNode.id === id) {
                 result = rowNode;
             }
-            if (rowNode.detailNode && rowNode.detailNode.id === id) {
+            if (rowNode.detailNode?.id === id) {
                 result = rowNode.detailNode;
             }
         });

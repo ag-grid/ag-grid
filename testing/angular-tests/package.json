@@ -3,7 +3,7 @@
   "version": "35.2.1",
   "private": true,
   "scripts": {
-    "test:e2e": "jest --no-cache"
+    "test:e2e": "vitest run"
   },
   "dependencies": {
     "@angular/common": "^21.0.0",
@@ -19,10 +19,6 @@
   },
   "devDependencies": {
     "@angular/compiler-cli": "^21.0.0",
-    "@types/jest": "^29.5.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "jest-preset-angular": "^14.0.0",
     "typescript": "~5.6.2"
   }
 }

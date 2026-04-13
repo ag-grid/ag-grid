@@ -48,7 +48,7 @@ function runCombination(index) {
         console.log(`Results (${results.length}) saved to module-size-results.json`);
 
         // Run the command with no modules to clear the app.tsx file
-        const clearCommand = `ts-node ${updateModulesScript} ${[].join(' ')}`;
+        const clearCommand = `tsx ${updateModulesScript} ${[].join(' ')}`;
         exec(clearCommand, (err, stdout, stderr) => {
             if (err) {
                 console.error(`Error clearing App.tsx}:`, err);
@@ -62,7 +62,7 @@ function runCombination(index) {
     }
 
     const { modules, expectedSize } = moduleCombinationsToProcess[index];
-    const command = `ts-node ${updateModulesScript} ${modules.join(' ')}`;
+    const command = `tsx ${updateModulesScript} ${modules.join(' ')}`;
 
     exec(command, (err, stdout, stderr) => {
         if (err) {

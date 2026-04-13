@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-require-imports */
 const { execSync } = require('child_process');
 
 const LIBRARIES = ['grid', 'charts'];
@@ -15,7 +13,7 @@ let matches;
 let affectedProjectsCmd;
 if (library === 'grid') {
     matches = {
-        'ag-grid-angular': 'angular',
+    'ag-grid-angular': 'angular',
         'ag-grid-react': 'react',
         'ag-grid-vue3': 'vue',
     };

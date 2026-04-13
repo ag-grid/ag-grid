@@ -8,8 +8,16 @@
 
 set -e
 
+# Prefer the local binary (no npm invocation = no npm 11 env-var warnings).
+# Fall back to npx when invoked manually outside of a yarn/npm script context.
+if [[ -x "./node_modules/.bin/patch-package" ]]; then
+    _patch_package() { ./node_modules/.bin/patch-package "$@"; }
+else
+    _patch_package() { npx patch-package "$@"; }
+fi
+
 # First attempt - try applying patches normally
-if npx patch-package; then
+if _patch_package; then
     exit 0
 fi
 
@@ -48,4 +56,4 @@ yarn install --ignore-scripts --check-files
 # Retry patches - this should now succeed
 echo ""
 echo "Retrying patches..."
-npx patch-package
+_patch_package

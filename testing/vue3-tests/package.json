@@ -13,7 +13,7 @@
     "preview": "vite preview --host"
   },
   "dependencies": {
-    "vue": "^3.5.0",
+    "vue": "^3.5.13",
     "vue-router": "^4.5.0",
     "ag-grid-community": "35.2.1",
     "ag-grid-enterprise": "35.2.1",
@@ -23,11 +23,8 @@
   "devDependencies": {
     "@mobileaction/action-kit": "^1.31.3",
     "playwright": "^1.56.0",
-    "@playwright/test": "^1.56.0",
-    "vite": "^6.0.0",
     "@vitejs/plugin-vue": "^5.2.0",
-    "typescript": "~5.6.2",
-    "vue-tsc": "^2.0.0",
+    "vue-tsc": "^2.0.21",
     "npm-run-all": "^4.1.5"
   }
 }

@@ -199,12 +199,8 @@
       "dependsOn": ["test:umd:browser", "test:umd"]
     },
     "test:umd": {
-      "executor": "@nx/jest:jest",
+      "command": "npx vitest run --config {projectRoot}/vitest.config.ts --include '{projectRoot}/e2e/**/*.test.ts'",
       "dependsOn": ["build:umd"],
-      "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts",
-        "testPathPattern": ["e2e"]
-      },
       "configurations": {
         "production": {},
         "staging": {}
@@ -279,13 +275,12 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "dependsOn": ["ag-grid-community:build:package"],
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}", "{workspaceRoot}/reports/ag-grid-enterprise.xml"],
-      "parallelism": false,
-      "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts",
-        "testPathIgnorePatterns": ["e2e"]
+      "command": "npx vitest run --project ag-grid-enterprise",
+      "outputs": ["{workspaceRoot}/reports/ag-grid-enterprise.xml"],
+      "configurations": {
+        "ci": {},
+        "watch": {},
+        "update": {}
       }
     }
   },

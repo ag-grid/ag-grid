@@ -18,7 +18,7 @@ export class LicenseManager {
     private static readonly RELEASE_INFORMATION: string = 'MTc3NTU1MDg5NDgwOQ==';
     // eslint-disable-next-line no-restricted-syntax
     private static licenseKey: string;
-    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line no-restricted-syntax, @typescript-eslint/prefer-readonly
     private static chartsLicenseManager?: ILicenseManager;
     private watermarkMessage: string | undefined = undefined;
 

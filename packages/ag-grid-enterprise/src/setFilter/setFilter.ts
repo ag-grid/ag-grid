@@ -1254,6 +1254,9 @@ class TreeModelWrapper implements VirtualListModel {
         if (oldRow == null && newRow == null) {
             return true;
         }
-        return oldRow != null && newRow != null && oldRow.treeKey === newRow.treeKey && oldRow.depth === newRow.depth;
+        if (oldRow == null || newRow == null) {
+            return false;
+        }
+        return oldRow.treeKey === newRow.treeKey && oldRow.depth === newRow.depth;
     }
 }

@@ -51,7 +51,7 @@ export function _getPageBody(beans: UtilBeanCollection): HTMLElement | ShadowRoo
 
     try {
         rootNode = _getDocument(beans).fullscreenElement as HTMLElement;
-    } catch (e) {
+    } catch {
         // some environments like SalesForce will throw errors
         // simply by trying to read the fullscreenElement property
     } finally {

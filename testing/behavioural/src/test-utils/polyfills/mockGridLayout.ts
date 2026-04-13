@@ -27,6 +27,38 @@ export const mockGridLayout = {
     getBoundingClientRect,
 };
 
+/**
+ * Resolve a CSS var() expression using known grid defaults from mockGridLayout.
+ * jsdom does not resolve CSS custom properties, so we substitute them with the
+ * same default values the grid's theming API would produce.
+ */
+function resolveCssVar(value: string): string {
+    if (!value.startsWith('var(')) {
+        return value;
+    }
+    const match = value.match(/var\((--[\w-]+)/);
+    if (match) {
+        const varName = match[1];
+        const resolved = cssVarValues[varName];
+        if (resolved !== undefined) {
+            return `${resolved}px`;
+        }
+    }
+    // Unknown variable — extract fallback
+    const commaIdx = value.indexOf(',');
+    if (commaIdx < 0) {
+        return value;
+    }
+    return value.slice(commaIdx + 1, -1).trim();
+}
+
+/** Map of AG Grid CSS custom property names → pixel values from mockGridLayout */
+const cssVarValues: Record<string, number> = {
+    '--ag-row-height': mockGridLayout.rowHeight,
+    '--ag-header-height': mockGridLayout.headerHeight,
+    '--ag-list-item-height': 24,
+};
+
 const getElementType = (el: HTMLElement) => {
     if (el === document.body) {
         return 'body';
@@ -173,23 +205,47 @@ function init(): boolean {
     ): CSSStyleDeclaration {
         const style = origGetComputedStyle.call(window, el, pseudoElement);
         if (!pseudoElement && el instanceof HTMLElement) {
-            const rect = el.getBoundingClientRect();
-            // Only override width/height if they are still the jsdom default of '' or '0px'
             const origWidth = style.width;
             const origHeight = style.height;
-            if (rect.width > 0 && (!origWidth || origWidth === '' || origWidth === '0px' || origWidth === '0')) {
+            // jsdom 29 returns raw CSS variable expressions (e.g. "var(--ag-row-height, 15538px)")
+            // instead of resolving them. Extract the fallback value so the grid's measurement
+            // logic sees a real pixel value.
+            const resolvedWidth = resolveCssVar(origWidth);
+            const resolvedHeight = resolveCssVar(origHeight);
+            if (resolvedWidth !== origWidth) {
                 Object.defineProperty(style, 'width', {
-                    value: `${rect.width}px`,
+                    value: resolvedWidth,
                     writable: true,
                     configurable: true,
                 });
+            } else {
+                const rect = el.getBoundingClientRect();
+                if (rect.width > 0 && (!origWidth || origWidth === '' || origWidth === '0px' || origWidth === '0')) {
+                    Object.defineProperty(style, 'width', {
+                        value: `${rect.width}px`,
+                        writable: true,
+                        configurable: true,
+                    });
+                }
             }
-            if (rect.height > 0 && (!origHeight || origHeight === '' || origHeight === '0px' || origHeight === '0')) {
+            if (resolvedHeight !== origHeight) {
                 Object.defineProperty(style, 'height', {
-                    value: `${rect.height}px`,
+                    value: resolvedHeight,
                     writable: true,
                     configurable: true,
                 });
+            } else {
+                const rect = el.getBoundingClientRect();
+                if (
+                    rect.height > 0 &&
+                    (!origHeight || origHeight === '' || origHeight === '0px' || origHeight === '0')
+                ) {
+                    Object.defineProperty(style, 'height', {
+                        value: `${rect.height}px`,
+                        writable: true,
+                        configurable: true,
+                    });
+                }
             }
         }
         return style;

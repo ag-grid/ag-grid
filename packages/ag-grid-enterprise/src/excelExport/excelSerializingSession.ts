@@ -479,7 +479,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         for (const row of worksheet.table.rows) {
             for (const cell of row.cells) {
                 const data = cell.data;
-                if (!data || data.type !== 's') {
+                if (data?.type !== 's') {
                     continue;
                 }
 
@@ -510,7 +510,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             if (this.isNumerical(valueForCell)) {
                 dataType = 'n';
             }
-        } catch (e) {
+        } catch {
             // no need to handle - error thrown to avoid type conversion
         }
         return dataType;

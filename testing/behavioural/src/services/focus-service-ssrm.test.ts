@@ -107,5 +107,5 @@ describe('SSRM focus restoration', () => {
         } finally {
             host.remove();
         }
-    });
+    }, 15000);
 });

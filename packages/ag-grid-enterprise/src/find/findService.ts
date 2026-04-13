@@ -930,9 +930,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
     private getActiveMatchNum(node: IRowNode, column: Column | null): number {
         const activeMatch = this.activeMatch;
-        return activeMatch != null && activeMatch.node === node && activeMatch.column === column
-            ? activeMatch.numInMatch
-            : 0;
+        return activeMatch?.node === node && activeMatch.column === column ? activeMatch.numInMatch : 0;
     }
 
     public override destroy(): void {

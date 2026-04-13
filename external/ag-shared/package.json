@@ -32,13 +32,11 @@
   "keywords": [],
   "author": "AG Grid <info@ag-grid.com>",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "typescript": "^5.4.5",
     "glob": "8.0.3",
     "@nx/devkit": "^18.3.5",
     "@types/yargs": "^17.0.32",
-    "@swc/helpers": "0.5.3",
     "tinypool": "^1.0.2",
     "process": "0.11.10",
     "xml-js": "^1.6.11"

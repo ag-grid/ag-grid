@@ -89,8 +89,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         // for blockLoadDebounceMillis, if the next block to load is the same as the last block to load, ignore
         // otherwise cancel existing timeout and requeue
         const isSameBlock =
-            this.nextBlockToLoad &&
-            this.nextBlockToLoad.cache === nextBlockToLoad.cache &&
+            this.nextBlockToLoad?.cache === nextBlockToLoad.cache &&
             this.nextBlockToLoad.index === nextBlockToLoad.index;
         if (isSameBlock) {
             return;

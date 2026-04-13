@@ -1,5 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface AgChartThemeOverrides {}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface AgChartThemePalette {}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface AgChartThemeDefinition {}
 export type AgChartTheme = string | AgChartThemeDefinition;
 

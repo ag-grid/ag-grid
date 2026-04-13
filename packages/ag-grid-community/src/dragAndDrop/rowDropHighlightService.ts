@@ -33,8 +33,7 @@ export class RowDropHighlightService extends BeanStub implements NamedBean {
     private onModelUpdated(): void {
         const row = this.row;
         const oldDragging = this.dragging;
-        // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-        if (!row || row?.rowIndex === null || this.position === 'none') {
+        if (row?.rowIndex == null || this.position === 'none') {
             this.clear();
         } else {
             this.set(row, this.position);

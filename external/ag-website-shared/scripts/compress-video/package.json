@@ -13,8 +13,7 @@
   "author": "Tak Tran <contact@tutaktran.com>",
   "license": "MIT",
   "devDependencies": {
-    "ffmpeg": "^0.0.4",
-    "tsx": "^4.7.2"
+    "ffmpeg": "^0.0.4"
   },
   "dependencies": {
     "@types/prompts": "^2.4.9",

@@ -130,22 +130,13 @@
         "cwd": "{projectRoot}"
       }
     },
-    "testx": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-      "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts",
-        "passWithNoTests": false
-      },
+    "test": {
+      "command": "npx vitest run --project @ag-grid-community/locale",
       "configurations": {
-        "watch": {
-          "watch": true
-        },
-        "update": {
-          "updateSnapshot": true
-        }
-      },
-      "dependsOn": ["build:test"]
+        "ci": {},
+        "watch": {},
+        "update": {}
+      }
     },
     "pack": {
       "executor": "nx:run-commands",

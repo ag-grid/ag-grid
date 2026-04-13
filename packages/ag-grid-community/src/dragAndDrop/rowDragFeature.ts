@@ -701,8 +701,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
 const rowsDropChanged = (a: RowsDrop | null | undefined, b: RowsDrop): boolean =>
     a !== b &&
-    (!a ||
-        a.sameGrid !== b.sameGrid ||
+    (a?.sameGrid !== !!b.sameGrid ||
         a.allowed !== b.allowed ||
         a.position !== b.position ||
         a.target !== b.target ||

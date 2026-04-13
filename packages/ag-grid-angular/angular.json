@@ -23,14 +23,6 @@
                         }
                     },
                     "defaultConfiguration": "production"
-                },
-                "test": {
-                    "builder": "@angular-devkit/build-angular:karma",
-                    "options": {
-                        "main": "projects/ag-grid-angular/src/test.ts",
-                        "tsConfig": "projects/ag-grid-angular/tsconfig.spec.json",
-                        "karmaConfig": "projects/ag-grid-angular/karma.conf.js"
-                    }
                 }
             }
         }

@@ -8,9 +8,9 @@ import type { ExpressionService } from './expressionService';
 import { ValueService } from './valueService';
 
 let colDef: ColDef;
-let column: jest.Mocked<AgColumn>;
-let gos: jest.Mocked<GridOptionsService>;
-let expressionSvc: jest.Mocked<ExpressionService>;
+let column: vi.Mocked<AgColumn>;
+let gos: vi.Mocked<GridOptionsService>;
+let expressionSvc: vi.Mocked<ExpressionService>;
 let valueSvc: ValueService;
 
 describe('formatValue', () => {

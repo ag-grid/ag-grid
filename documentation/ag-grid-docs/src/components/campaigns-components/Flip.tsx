@@ -17,7 +17,7 @@ const Flip: React.FC<FlipProps> = ({ value }) => {
                 if (root.current) {
                     tick.current = Tick.default.DOM.create(root.current, { value });
                 }
-            } catch (error) {
+            } catch {
                 // Failed to load Tick library
             }
         };

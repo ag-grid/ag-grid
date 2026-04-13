@@ -13,7 +13,7 @@ describe('LicenseManager', () => {
     const warnLog = console.warn;
     const errorLog = console.error;
     beforeEach(() => {
-        console.warn = jest.fn();
+        console.warn = vi.fn();
         // Filter out license banner messages (single string of '*' padding, length 124)
         // while still forwarding any unexpected console.error calls.
         console.error = (...args: unknown[]) => {
@@ -50,7 +50,7 @@ describe('LicenseManager', () => {
         LicenseManager.setLicenseKey('test key 1');
         LicenseManager.setLicenseKey('test key 2');
 
-        expect((console.warn as jest.Mock).mock.calls[0][0]).toContain('AG Grid: warning #291');
+        expect((console.warn as vi.Mock).mock.calls[0][0]).toContain('AG Grid: warning #291');
     });
 
     describe('isWebsiteUrl (via isDisplayWatermark)', () => {

@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const tsNode = require('ts-node');
 const glob = require('glob');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
@@ -12,8 +11,6 @@ const args = yargs(hideBin(process.argv))
     .option('type', { type: 'string', default: 'core' })
     .option('allowed-ext', { array: true, type: 'string' })
     .parse();
-
-tsNode.register();
 
 const targetConfig = process.env.NX_TASK_TARGET_CONFIGURATION || 'development';
 

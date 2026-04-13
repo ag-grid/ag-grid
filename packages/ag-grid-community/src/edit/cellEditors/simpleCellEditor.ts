@@ -44,7 +44,7 @@ export class SimpleCellEditor<
 
             if (eventKey === KeyCode.BACKSPACE || eventKey === KeyCode.DELETE) {
                 startValue = '';
-            } else if (eventKey && eventKey.length === 1) {
+            } else if (eventKey?.length === 1) {
                 if (suppressPreventDefault) {
                     shouldSetStartValue = false;
                 } else {

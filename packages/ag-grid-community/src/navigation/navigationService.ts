@@ -706,7 +706,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             hitEdgeOfGrid = _missing(nextCell);
         }
 
-        if (hitEdgeOfGrid && event && event.key === KeyCode.UP) {
+        if (hitEdgeOfGrid && event?.key === KeyCode.UP) {
             nextCell = {
                 rowIndex: -1,
                 rowPinned: null,

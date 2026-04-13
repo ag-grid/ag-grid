@@ -4,7 +4,14 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default [
-    { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
+    {
+        languageOptions: {
+            globals: { ...globals.browser, ...globals.node },
+            parserOptions: {
+                tsconfigRootDir: import.meta.dirname,
+            },
+        },
+    },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
     // { plugins: { 'import-x': eslintImportX } },
@@ -31,6 +38,13 @@ export default [
                 },
             ],
             'no-undef': 'error',
+        },
+    },
+    {
+        // .cjs files and Node scripts without "type":"module" are CommonJS — require() is valid there
+        files: ['**/*.cjs', 'scripts/**/*.js'],
+        rules: {
+            '@typescript-eslint/no-require-imports': 'off',
         },
     },
     {

@@ -36,7 +36,7 @@ export default defineConfig({
         globals: true,
         environment: 'jsdom',
         setupFiles: [path.resolve(thisDir, 'vitest.setup.ts')],
-        reporters: ['basic'],
+        reporters: ['default'],
         watch: false,
         pool: 'threads',
         root: repoRoot,

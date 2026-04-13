@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import type { AgColumn, BeanCollection, CellNote, ColDef, IRowNode } from 'ag-grid-community';
 
 import { NotesService } from './notesService';
@@ -9,9 +11,9 @@ describe('NotesService', () => {
     let colDef: ColDef;
     let column: AgColumn;
     let currentNote: CellNote | undefined;
-    let cellCtrl: { showCellNote: jest.Mock };
-    let fullWidthNotesFeature: { show: jest.Mock };
-    let fullWidthRowCtrl: { isFullWidth: jest.Mock; getNotesFeature: jest.Mock };
+    let cellCtrl: { showCellNote: ReturnType<typeof vi.fn> };
+    let fullWidthNotesFeature: { show: ReturnType<typeof vi.fn> };
+    let fullWidthRowCtrl: { isFullWidth: ReturnType<typeof vi.fn>; getNotesFeature: ReturnType<typeof vi.fn> };
 
     beforeEach(() => {
         rowNode = {
@@ -21,11 +23,11 @@ describe('NotesService', () => {
 
         colDef = {};
         currentNote = undefined;
-        cellCtrl = { showCellNote: jest.fn() };
-        fullWidthNotesFeature = { show: jest.fn() };
+        cellCtrl = { showCellNote: vi.fn() };
+        fullWidthNotesFeature = { show: vi.fn() };
         fullWidthRowCtrl = {
-            isFullWidth: jest.fn(() => true),
-            getNotesFeature: jest.fn(() => fullWidthNotesFeature),
+            isFullWidth: vi.fn(() => true),
+            getNotesFeature: vi.fn(() => fullWidthNotesFeature),
         };
 
         column = {
@@ -53,7 +55,7 @@ describe('NotesService', () => {
 
         beans = {
             colModel: {
-                getCol: jest.fn(() => column),
+                getCol: vi.fn(() => column),
             },
             visibleCols: {
                 centerCols: [column],
@@ -62,21 +64,21 @@ describe('NotesService', () => {
                 allCols: [column],
             },
             notesDataSvc: {
-                hasDataSource: jest.fn(() => true),
-                getNote: jest.fn(() => currentNote),
-                setNote: jest.fn(),
+                hasDataSource: vi.fn(() => true),
+                getNote: vi.fn(() => currentNote),
+                setNote: vi.fn(),
             },
             rowRenderer: {
-                getCellCtrls: jest.fn(() => [cellCtrl]),
-                getRowCtrlByNode: jest.fn(() => undefined),
-                refreshCells: jest.fn(),
-                getAllRowCtrls: jest.fn(() => []),
+                getCellCtrls: vi.fn(() => [cellCtrl]),
+                getRowCtrlByNode: vi.fn(() => undefined),
+                refreshCells: vi.fn(),
+                getAllRowCtrls: vi.fn(() => []),
             },
         } as unknown as BeanCollection;
 
         service = new NotesService();
         (service as any).beans = beans;
-        (service as any).gos = { get: jest.fn(() => false) };
+        (service as any).gos = { get: vi.fn(() => false) };
     });
 
     it('resolves access flags for read-only notes', () => {
@@ -97,7 +99,7 @@ describe('NotesService', () => {
 
     it('allows suppressed notes to remain viewable', () => {
         currentNote = { text: 'Suppressed note' };
-        colDef.suppressCellNoteActions = true;
+        (colDef as any).suppressCellNoteActions = true;
 
         expect(service.getCellNoteAccess({ rowNode, column: 'athlete' })).toEqual(
             expect.objectContaining({
@@ -111,8 +113,12 @@ describe('NotesService', () => {
     });
 
     it('evaluates suppressCellNoteActions callbacks when resolving access', () => {
-        colDef.suppressCellNoteActions = ({ data, column: callbackColumn, colDef: callbackColDef, node }) =>
-            data === rowNode.data && callbackColumn === column && callbackColDef === colDef && node === rowNode;
+        (colDef as any).suppressCellNoteActions = ({
+            data,
+            column: callbackColumn,
+            colDef: callbackColDef,
+            node,
+        }: any) => data === rowNode.data && callbackColumn === column && callbackColDef === colDef && node === rowNode;
 
         expect(service.getCellNoteAccess({ rowNode, column: 'athlete' })).toEqual(
             expect.objectContaining({
@@ -134,7 +140,7 @@ describe('NotesService', () => {
 
     it('opens suppressed existing notes through the cell controller', () => {
         currentNote = { text: 'Suppressed note' };
-        colDef.suppressCellNoteActions = true;
+        (colDef as any).suppressCellNoteActions = true;
 
         expect(service.showCellNote({ rowNode, column: 'athlete' }, true)).toBe(true);
         expect(cellCtrl.showCellNote).toHaveBeenCalledWith(true);
@@ -151,7 +157,7 @@ describe('NotesService', () => {
                 canView: true,
             })
         );
-        expect(beans.notesDataSvc!.getNote).toHaveBeenCalledWith({
+        expect(vi.mocked(beans.notesDataSvc!.getNote)).toHaveBeenCalledWith({
             rowNode,
             location: 'fullWidthRow',
         });
@@ -160,8 +166,8 @@ describe('NotesService', () => {
     it('opens full-width notes through the notes feature', () => {
         currentNote = { text: 'Full width note' };
         (beans.visibleCols as any).leftCols = [column];
-        (beans.rowRenderer!.getRowCtrlByNode as jest.Mock).mockReturnValue(fullWidthRowCtrl);
-        ((service as any).gos.get as jest.Mock).mockReturnValue(true);
+        vi.mocked(beans.rowRenderer!.getRowCtrlByNode).mockReturnValue(fullWidthRowCtrl as any);
+        vi.mocked((service as any).gos.get).mockReturnValue(true);
 
         expect(service.showCellNote({ rowNode, location: 'fullWidthRow', pinned: 'left' }, true)).toBe(true);
         expect(fullWidthNotesFeature.show).toHaveBeenCalledWith({ pinned: 'left', focusEditor: true });
@@ -170,7 +176,7 @@ describe('NotesService', () => {
 
     it('strips pinned from full-width note params when embedFullWidthRows is off', () => {
         currentNote = { text: 'Full width note' };
-        ((service as any).gos.get as jest.Mock).mockReturnValue(false);
+        vi.mocked((service as any).gos.get).mockReturnValue(false);
 
         const access = service.getCellNoteAccess({ rowNode, location: 'fullWidthRow', pinned: 'left' });
 
@@ -182,7 +188,7 @@ describe('NotesService', () => {
     });
 
     it('does not write notes for suppressed cells via UI', () => {
-        colDef.suppressCellNoteActions = true;
+        (colDef as any).suppressCellNoteActions = true;
 
         service.setCellNote({
             rowNode,
@@ -191,12 +197,12 @@ describe('NotesService', () => {
             source: 'ui',
         } as any);
 
-        expect(beans.notesDataSvc!.setNote).not.toHaveBeenCalled();
-        expect(beans.rowRenderer!.refreshCells).not.toHaveBeenCalled();
+        expect(vi.mocked(beans.notesDataSvc!.setNote)).not.toHaveBeenCalled();
+        expect(vi.mocked(beans.rowRenderer!.refreshCells)).not.toHaveBeenCalled();
     });
 
     it('allows API writes to suppressed cells', () => {
-        colDef.suppressCellNoteActions = true;
+        (colDef as any).suppressCellNoteActions = true;
 
         service.setCellNote({
             rowNode,
@@ -204,12 +210,12 @@ describe('NotesService', () => {
             note: { text: 'API note' },
         });
 
-        expect(beans.notesDataSvc!.setNote).toHaveBeenCalledWith({
+        expect(vi.mocked(beans.notesDataSvc!.setNote)).toHaveBeenCalledWith({
             rowNode,
             column,
             note: { text: 'API note' },
         });
-        expect(beans.rowRenderer!.refreshCells).toHaveBeenCalled();
+        expect(vi.mocked(beans.rowRenderer!.refreshCells)).toHaveBeenCalled();
     });
 
     it('does not update or remove existing read-only notes through the built-in UI', () => {
@@ -228,8 +234,8 @@ describe('NotesService', () => {
             source: 'ui',
         });
 
-        expect(beans.notesDataSvc!.setNote).not.toHaveBeenCalled();
-        expect(beans.rowRenderer!.refreshCells).not.toHaveBeenCalled();
+        expect(vi.mocked(beans.notesDataSvc!.setNote)).not.toHaveBeenCalled();
+        expect(vi.mocked(beans.rowRenderer!.refreshCells)).not.toHaveBeenCalled();
     });
 
     it('allows API updates and removals for existing read-only notes', () => {
@@ -246,17 +252,17 @@ describe('NotesService', () => {
             note: undefined,
         });
 
-        expect(beans.notesDataSvc!.setNote).toHaveBeenNthCalledWith(1, {
+        expect(vi.mocked(beans.notesDataSvc!.setNote)).toHaveBeenNthCalledWith(1, {
             rowNode,
             column,
             note: { text: 'Updated', readOnly: undefined },
         });
-        expect(beans.notesDataSvc!.setNote).toHaveBeenNthCalledWith(2, {
+        expect(vi.mocked(beans.notesDataSvc!.setNote)).toHaveBeenNthCalledWith(2, {
             rowNode,
             column,
             note: undefined,
         });
-        expect(beans.rowRenderer!.refreshCells).toHaveBeenCalledTimes(2);
+        expect(vi.mocked(beans.rowRenderer!.refreshCells)).toHaveBeenCalledTimes(2);
     });
 
     it('can create a new read-only note when the cell is not suppressed', () => {
@@ -268,11 +274,11 @@ describe('NotesService', () => {
             note: readOnlyNote,
         });
 
-        expect(beans.notesDataSvc!.setNote).toHaveBeenCalledWith({
+        expect(vi.mocked(beans.notesDataSvc!.setNote)).toHaveBeenCalledWith({
             rowNode,
             column,
             note: readOnlyNote,
         });
-        expect(beans.rowRenderer!.refreshCells).toHaveBeenCalled();
+        expect(vi.mocked(beans.rowRenderer!.refreshCells)).toHaveBeenCalled();
     });
 });

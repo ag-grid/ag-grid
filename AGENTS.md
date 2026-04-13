@@ -80,6 +80,19 @@ For detailed information about preferred technologies and architectural constrai
 -   JIRA-related branch should be named of the form `ag-12345/${kebabCaseChangeSummary}`
 -   **Language conventions:** UK/British English for documentation text, comments, and JSDocs; US English for API option names
 
+### Code Style (Prettier + ESLint)
+
+The repo enforces style via Prettier and ESLint. Key rules that AI agents commonly violate:
+
+-   **`curly: 'error'`** — Always use braces for `if`/`else`/`for`/`while`, even single-line bodies. Never write `if (x) return;` — always `if (x) { return; }`.
+-   **`no-lonely-if: 'error'`** — Never write `else { if (...) {} }`. Use `else if (...)` instead.
+-   **Single quotes** — Use single quotes for strings (`'hello'` not `"hello"`). Enforced by Prettier.
+-   **Trailing commas** — Use ES5 trailing commas (in arrays, objects, function params). Enforced by Prettier.
+-   **4-space indentation** — Tabs are not used. JSON files (`package.json`, `tsconfig.json`, etc.) use 2-space indentation.
+-   **120-character print width** — Lines should not exceed 120 characters.
+-   **No semicolons omitted** — Always include semicolons.
+-   **Import ordering** — Imports are auto-sorted by `@trivago/prettier-plugin-sort-imports`: ag-grid packages first, then relative imports, separated by a blank line.
+
 ### Essential Commands
 
 -   `yarn install` – install dependencies after cloning or when the Yarn lockfile changes.
@@ -91,16 +104,16 @@ For detailed information about preferred technologies and architectural constrai
 -   `yarn nx build:package <package>` – create ESM/CJS bundles to validate publishable output.
 -   `yarn nx build:umd <package>` – produce UMD bundles for browser distribution smoke-tests.
 -   `yarn nx run-many -t build` – rebuild all packages when changes span the dependency graph.
--   `./behave.sh` – run behavioural tests in `testing/behavioural/` (primary test suite, uses Vitest).
--   `./behave.sh "<file-pattern>"` – run specific behavioural test file.
--   `./behave.sh "<file-pattern>" -t "<test-name>"` – run specific behavioural test by name.
--   `./behave.sh --watch` – run behavioural tests in watch mode.
--   `./behave.sh --update-grid-rows` – update GridRows inline snapshots after diagram format changes.
--   `./behave.sh --update-grid-rows "<pattern>"` – update snapshots in matching test files only.
--   `./behave.sh --update-grid-rows=dry` – dry run, shows what would change without writing files.
--   `yarn nx test <package>` – execute Jest unit tests for the affected package.
--   `yarn nx test <package> --testPathPattern="<file-name>"` - test specific test file
--   `yarn nx test <package> --testPathPattern="<file-name>" --testNamePattern="<test-name>"` - test specific test name in a specific test file
+-   `npx vitest run` – run all Vitest tests across the workspace (behavioural, unit, plugin tests).
+-   `npx vitest run --project <name>` – run tests for a single project (e.g. `ag-behavioural-testing`, `ag-grid-community`).
+-   `npx vitest run "<file-pattern>"` – run tests matching pattern.
+-   `npx vitest run "<file-pattern>" -t "<test-name>"` – run specific test by name.
+-   `npx vitest --watch` – run tests in watch mode.
+-   `UPDATE_GRID_ROWS_SNAPSHOTS=1 npx vitest run` – update GridRows inline snapshots after diagram format changes.
+-   `UPDATE_GRID_ROWS_SNAPSHOTS=1 npx vitest run "<pattern>"` – update snapshots in matching test files only.
+-   `UPDATE_GRID_ROWS_SNAPSHOTS=dry npx vitest run` – dry run, shows what would change without writing files.
+-   `./behave.sh` – convenience wrapper for `npx vitest run` (forwards all arguments).
+-   `yarn nx test <package>` – execute Vitest tests for a specific package via Nx.
 -   `yarn nx e2e <package>` – run Playwright flows when altering website behaviour.
 -   `yarn nx lint <package>` – apply ESLint and custom rules before final review.
 
@@ -152,8 +165,9 @@ For comprehensive testing information, see [Testing Guide](.rulesync/rules/testi
 
 **Behavioural tests are the primary test suite.** When verifying grid changes, run behavioural tests first. Key testing tools:
 
--   **Behavioural tests** (primary): `testing/behavioural/` for grid behaviour verification — use Vitest
--   **Unit tests**: Jest with jsdom environment for package-level tests
+-   **All tests use Vitest** as the unified test runner across the workspace
+-   **Behavioural tests** (primary): `testing/behavioural/` for grid behaviour verification
+-   **Unit tests**: Co-located with source in `packages/` — also Vitest
 -   **E2E tests**: Playwright for website interaction testing
 -   **Accessibility tests**: `testing/accessibility/` for a11y compliance
 -   **Performance tests**: `testing/performance/` for performance regression testing

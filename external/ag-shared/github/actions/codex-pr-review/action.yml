@@ -308,6 +308,13 @@ runs:
               echo "context_file=${context_file}" >> $GITHUB_OUTPUT
               echo "diff_file=${diff_file}" >> $GITHUB_OUTPUT
 
+              # Exclude lockfiles — they are always generated noise, never useful for code review
+              exclude_args=(
+                ":(exclude)yarn.lock"
+                ":(exclude)package-lock.json"
+                ":(exclude)pnpm-lock.yaml"
+              )
+
               PR_REF="origin/pr/${PR_NUMBER}"
               DIFF_BASE="origin/${BASE_REF}...${PR_REF}"
               HEAD_SHA=$(git rev-parse "${PR_REF}")
@@ -322,13 +329,13 @@ runs:
               fi
 
               # Collect diff stats
-              FILES_CHANGED=$(git diff --name-only "${DIFF_BASE}" | wc -l | tr -d ' ')
-              DIFF_STAT=$(git diff --stat "${DIFF_BASE}")
-              LINES_ADDED=$(git diff --numstat "${DIFF_BASE}" | awk '{ s += $1 } END { print s+0 }')
-              LINES_REMOVED=$(git diff --numstat "${DIFF_BASE}" | awk '{ s += $2 } END { print s+0 }')
+              FILES_CHANGED=$(git diff --name-only "${DIFF_BASE}" -- "${exclude_args[@]}" | wc -l | tr -d ' ')
+              DIFF_STAT=$(git diff --stat "${DIFF_BASE}" -- "${exclude_args[@]}")
+              LINES_ADDED=$(git diff --numstat "${DIFF_BASE}" -- "${exclude_args[@]}" | awk '{ s += $1 } END { print s+0 }')
+              LINES_REMOVED=$(git diff --numstat "${DIFF_BASE}" -- "${exclude_args[@]}" | awk '{ s += $2 } END { print s+0 }')
 
               # Write the raw diff to a standalone file (avoids Markdown escaping issues)
-              git diff "${DIFF_BASE}" > "${diff_file}"
+              git diff "${DIFF_BASE}" -- "${exclude_args[@]}" > "${diff_file}"
 
               # Build the context file (metadata only, no embedded diff).
               # Uses printf instead of a heredoc to keep content indented within the

@@ -381,12 +381,12 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
                 }
             }
             const paren = ops[ops.length - 1];
-            if (!paren || paren.kind !== 'parenthesis') {
+            if (paren?.kind !== 'parenthesis') {
                 throw new FormulaParseError(10, i, i + 1);
             }
             // function frame must be just below '('
             const maybeFunction = ops[ops.length - 2];
-            if (!maybeFunction || maybeFunction.kind !== 'function') {
+            if (maybeFunction?.kind !== 'function') {
                 throw new FormulaParseError(11, i, i + 1);
             }
             // Only consume an arg if something was produced since '('
@@ -412,7 +412,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
                 }
             }
             const paren = ops[ops.length - 1];
-            if (!paren || paren.kind !== 'parenthesis') {
+            if (paren?.kind !== 'parenthesis') {
                 throw new FormulaParseError(13, i, i + 1);
             }
             const parenOutLen = paren.outLen;
@@ -439,7 +439,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
             // Reduce while top-of-stack operator outranks incoming
             while (true) {
                 const top = ops[ops.length - 1];
-                if (!top || top.kind !== 'op') {
+                if (top?.kind !== 'op') {
                     break;
                 }
                 if (shouldReduce(top.def, incoming)) {
@@ -513,7 +513,7 @@ function asBool(node: FormulaNode | undefined, def = false): boolean {
 }
 
 function asStringish(node: FormulaNode | undefined): string | null {
-    if (!node || node.type !== 'operand') {
+    if (node?.type !== 'operand') {
         return null;
     }
     const v = node.value;

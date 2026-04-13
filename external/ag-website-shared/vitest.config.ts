@@ -6,17 +6,19 @@ import packageJson from '../../package.json';
 const GRID_PATH_PREFIX = '../../documentation/ag-grid-docs';
 const CHARTS_PATH_PREFIX = '../../packages/ag-charts-website';
 
-function resolvePath(srcPath) {
+function resolvePath(srcPath: string) {
     const pathPrefix = packageJson.name === 'ag-grid' ? GRID_PATH_PREFIX : CHARTS_PATH_PREFIX;
     return path.resolve(__dirname, pathPrefix, srcPath);
 }
 
 export default defineConfig({
-    root: __dirname,
+    root: path.resolve(__dirname, '../..'),
     test: {
+        watch: false,
         globals: true,
         environment: 'node',
-        include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+        dir: __dirname,
+        include: ['src/**/*.test.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
         reporters: ['default'],
         coverage: { reportsDirectory: '../../coverage/ag-website-shared', provider: 'v8' },
     },

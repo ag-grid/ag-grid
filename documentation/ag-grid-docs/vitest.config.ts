@@ -6,14 +6,14 @@ function resolvePath(srcPath: string) {
 }
 
 export default defineConfig({
-    root: __dirname,
+    root: path.resolve(__dirname, '../..'),
     test: {
+        watch: false,
         globals: true,
         environment: 'node',
-        include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-        exclude: [
-            'src/content/**/*', // examples tested via playwright
-        ],
+        dir: __dirname,
+        include: ['src/**/*.test.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+        exclude: ['**/node_modules/**', '**/dist/**', '**/.nx/**'],
         reporters: ['default'],
         coverage: { reportsDirectory: '../../coverage/ag-grid-docs', provider: 'v8' },
     },

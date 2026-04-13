@@ -32,7 +32,7 @@ export class FilterValueService extends BeanStub implements NamedBean {
     }
 
     private executeFilterValueGetter(
-        // eslint-disable-next-line @typescript-eslint/ban-types
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         valueGetter: string | Function,
         data: any,
         column: AgColumn,

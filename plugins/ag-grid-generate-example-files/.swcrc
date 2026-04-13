@@ -20,11 +20,9 @@
     },
     "sourceMaps": "inline",
     "exclude": [
-        "jest.config.ts",
-        ".*\\.spec.tsx?$",
-        ".*\\.test.tsx?$",
-        "./src/jest-setup.ts$",
-        "./**/jest-setup.ts$",
-        ".*.js$"
+        "vitest\\.config\\.ts$",
+        ".*\\.spec\\.tsx?$",
+        ".*\\.test\\.tsx?$",
+        ".*\\.js$"
     ]
 }

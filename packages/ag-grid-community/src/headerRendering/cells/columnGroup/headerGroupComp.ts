@@ -62,6 +62,7 @@ export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridC
     eGridHeader: HTMLElement;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IHeaderGroup {}
 
 export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {}

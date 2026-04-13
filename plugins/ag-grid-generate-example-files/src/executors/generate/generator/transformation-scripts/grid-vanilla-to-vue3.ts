@@ -20,7 +20,7 @@ import {
 } from './parser-utils';
 import { getComponentName, getImport, toConst, toInput, toMemberWithType, toOutput } from './vue-utils';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
 const path = require('path');
 
 function getOnGridReadyCode(bindings: ParsedBindings): string {

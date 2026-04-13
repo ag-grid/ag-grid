@@ -524,8 +524,8 @@ check_postinstall() {
         return 0
     fi
 
-    # Indirect via npm-run-all: postinstall runs postinstall:* and postinstall:patch exists
-    if [[ "$postinstall_script" == *"postinstall:*"* ]]; then
+    # Indirect via npm-run-all glob or explicit call: postinstall invokes postinstall:patch
+    if [[ "$postinstall_script" == *"postinstall:*"* ]] || [[ "$postinstall_script" == *"postinstall:patch"* ]]; then
         # Check for direct patch-package in postinstall:patch
         if [[ "$postinstall_patch_script" == *"patch-package"* ]]; then
             log_success "package.json postinstall:patch includes patch-package"

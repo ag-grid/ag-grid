@@ -8,7 +8,6 @@
   "devDependencies": {
     "ag-grid-community": "35.2.1",
     "playwright": "^1.56.0",
-    "@playwright/test": "^1.56.0",
-    "@types/node": "^24.0.3"
+    "@types/node": "^25.5.0"
   }
 }

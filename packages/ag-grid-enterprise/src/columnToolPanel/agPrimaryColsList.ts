@@ -657,7 +657,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
             const displayName = item.displayName;
 
-            return displayName == null || displayName.toLowerCase().indexOf(this.filterText) !== -1;
+            return displayName?.toLowerCase().indexOf(this.filterText) !== -1;
         };
 
         const recursivelyCheckFilter = (item: ColumnModelItem, parentPasses: boolean): boolean => {

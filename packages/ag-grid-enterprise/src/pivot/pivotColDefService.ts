@@ -268,7 +268,6 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         // don't add pivot totals if there is less than 1 aggFunc or they are not all the same
         if (!aggFuncs || aggFuncs.length < 1 || !this.sameAggFuncs(aggFuncs)) {
-            // console.warn('AG Grid: aborting adding pivot total columns - value columns require same aggFunc');
             return;
         }
 

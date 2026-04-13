@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs behavioural tests directly via Vitest, bypassing Nx.
+# Runs all vitest tests directly, bypassing Nx.
 # All arguments are forwarded to vitest. Watch mode is disabled by default.
 #
 # Usage:
@@ -9,7 +9,7 @@
 #   ./behave.sh -w                        # Run in watch mode
 #   ./behave.sh --watch                   # Run in watch mode
 #   ./behave.sh --update                  # Update vitest snapshots
-#   ./behave.sh --update-grid-rows         # Update GridRows inline snapshots
+#   ./behave.sh --update-grid-rows        # Update GridRows inline snapshots
 #   ./behave.sh --update-grid-rows=dry    # Dry-run: show what would change
 
 set -euo pipefail
@@ -36,6 +36,6 @@ for arg in "$@"; do
     esac
 done
 
-cd "$SCRIPT_DIR/testing/behavioural"
+cd "$SCRIPT_DIR"
 
 exec npx vitest "${args[@]+"${args[@]}"}"

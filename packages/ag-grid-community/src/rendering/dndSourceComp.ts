@@ -52,7 +52,7 @@ export class DndSourceComp extends Component {
 
                 dataTransfer.setData('application/json', jsonData);
                 dataTransfer.setData('text/plain', jsonData);
-            } catch (e) {
+            } catch {
                 // if we cannot convert the data to json, then we do not set the type
             }
         }
