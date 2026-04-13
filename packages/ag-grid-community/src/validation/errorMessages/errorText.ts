@@ -131,6 +131,12 @@ function missingModuleKey(params: MissingModuleParams): string {
     return params.gridScoped ? `${params.gridId}:${base}` : base;
 }
 
+/** Builds a context key from the fields that affect the error message output. */
+function contextKey(params: MissingModuleParams): string {
+    const gridPart = params.gridScoped ? params.gridId : '*';
+    return `${gridPart}|${params.rowModelType}|${params.isUmd ?? false}|${params.usesAgGridProvider ?? false}`;
+}
+
 function flushPendingMissingModules(): void {
     const pending = pendingMissingModules!;
     pendingMissingModules = null;
@@ -139,11 +145,25 @@ function flushPendingMissingModules(): void {
         flushedModuleKeys.add(missingModuleKey(p));
     }
 
-    const entries = pending.map((p) => ({ reasonOrId: p.reasonOrId, moduleName: p.moduleName }));
-    _error(200, {
-        ...pending[0],
-        entries,
-    });
+    // Partition by context so each group gets the correct gridId, rowModelType, isUmd, usesAgGridProvider.
+    const groups = new Map<string, MissingModuleParams[]>();
+    for (const p of pending) {
+        const key = contextKey(p);
+        let group = groups.get(key);
+        if (!group) {
+            group = [];
+            groups.set(key, group);
+        }
+        group.push(p);
+    }
+
+    for (const group of groups.values()) {
+        const entries = group.map((p) => ({ reasonOrId: p.reasonOrId, moduleName: p.moduleName }));
+        _error(200, {
+            ...group[0],
+            entries,
+        });
+    }
 }
 
 /**

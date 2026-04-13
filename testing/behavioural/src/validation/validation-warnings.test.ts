@@ -288,6 +288,38 @@ describe('ag-grid validation warnings', () => {
             );
             expect(secondFlushCalls).toHaveLength(1);
         });
+
+        test('partitions errors by grid context when two grids report in the same debounce window', async () => {
+            // Create two grids simultaneously — both within the 10ms debounce window
+            gridsManager.createGrid('ctxGridA', {
+                gridId: 'ctxGridA',
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ value: 1 }],
+                cellSelection: true,
+            });
+            gridsManager.createGrid('ctxGridB', {
+                gridId: 'ctxGridB',
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ value: 1 }],
+                cellSelection: true,
+            });
+
+            await new Promise<void>((resolve) => setTimeout(resolve, 15));
+
+            const error200Calls = consoleErrorSpy.mock.calls.filter((args) => String(args[0]).includes('error #200'));
+
+            // Should produce two separate errors — one per grid context
+            expect(error200Calls).toHaveLength(2);
+
+            const errorTextA = error200Calls[0].join(' ');
+            const errorTextB = error200Calls[1].join(' ');
+
+            // Each error should reference its own gridId, not the other's
+            expect(errorTextA).toContain('ctxGridA');
+            expect(errorTextA).not.toContain('ctxGridB');
+            expect(errorTextB).toContain('ctxGridB');
+            expect(errorTextB).not.toContain('ctxGridA');
+        });
     });
 
     describe('unsupported row model warnings', () => {
