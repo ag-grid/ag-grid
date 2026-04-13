@@ -74,13 +74,6 @@ export default [
         },
     },
     {
-        ignores: [
-            'webpack.config.js',
-            'jest.*.js',
-            'eslint.config.mjs',
-            'e2e/',
-            'playwright.config.ts',
-            'esbuildBuild.cjs',
-        ],
+        ignores: ['webpack.config.js', 'eslint.config.mjs', 'e2e/', 'playwright.config.ts', 'esbuildBuild.cjs'],
     },
 ];

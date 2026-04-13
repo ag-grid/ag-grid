@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import type { BeanCollection, CellCtrl, ICellNoteAccess } from 'ag-grid-community';
 
 import { AgCellNotesFeature } from './agCellNotesFeature';
@@ -10,8 +12,8 @@ describe('AgCellNotesFeature', () => {
         'addManagedElementListeners' | 'column' | 'comp' | 'eGui' | 'isCellNoteHoverSuppressed' | 'rowNode'
     >;
     let listeners: Record<string, (event: PointerEvent) => void>;
-    let popup: { hide: jest.Mock; focusEditor: jest.Mock };
-    let context: { createBean: jest.Mock; destroyBean: jest.Mock };
+    let popup: { hide: Mock; focusEditor: Mock };
+    let context: { createBean: Mock; destroyBean: Mock };
     let access: ICellNoteAccess;
     let notesSvc: Pick<
         INotesFeatureSupport,
@@ -19,27 +21,28 @@ describe('AgCellNotesFeature', () => {
     >;
 
     beforeEach(() => {
-        jest.useFakeTimers();
+        vi.useFakeTimers();
 
         listeners = {};
         popup = {
-            hide: jest.fn(),
-            focusEditor: jest.fn(),
+            hide: vi.fn(),
+            focusEditor: vi.fn(),
         };
         context = {
-            createBean: jest.fn(() => popup),
-            destroyBean: jest.fn(),
+            createBean: vi.fn(() => popup),
+            destroyBean: vi.fn(),
         };
 
         ctrl = {
             eGui: document.createElement('div'),
             rowNode: { id: '1', rowIndex: 0, rowPinned: null } as unknown as CellCtrl['rowNode'],
             column: { getColId: () => 'athlete' } as unknown as CellCtrl['column'],
-            comp: { toggleCss: jest.fn() } as unknown as CellCtrl['comp'],
-            addManagedElementListeners: jest.fn((_element, managedListeners) => {
+            comp: { toggleCss: vi.fn() } as unknown as CellCtrl['comp'],
+            addManagedElementListeners: vi.fn((_element, managedListeners) => {
                 listeners = managedListeners as typeof listeners;
+                return [];
             }),
-            isCellNoteHoverSuppressed: jest.fn(() => false),
+            isCellNoteHoverSuppressed: vi.fn(() => false),
         };
 
         access = {
@@ -57,7 +60,7 @@ describe('AgCellNotesFeature', () => {
 
         beans = {
             gos: {
-                get: jest.fn((key: string) => {
+                get: vi.fn((key: string) => {
                     switch (key) {
                         case 'noteShowDelay':
                             return 25;
@@ -70,21 +73,21 @@ describe('AgCellNotesFeature', () => {
             },
             context,
             focusSvc: {
-                setFocusedCell: jest.fn(),
+                setFocusedCell: vi.fn(),
             },
         } as unknown as BeanCollection;
 
         notesSvc = {
-            getCellNoteAccess: jest.fn(() => access),
-            getHoverGeneration: jest.fn(() => 0),
-            replaceActivePopupOwner: jest.fn(() => undefined),
-            clearActivePopupOwner: jest.fn(),
-            setCellNote: jest.fn(),
+            getCellNoteAccess: vi.fn(() => access),
+            getHoverGeneration: vi.fn(() => 0),
+            replaceActivePopupOwner: vi.fn(() => undefined),
+            clearActivePopupOwner: vi.fn(),
+            setCellNote: vi.fn(),
         };
     });
 
     afterEach(() => {
-        jest.useRealTimers();
+        vi.useRealTimers();
     });
 
     it('uses noteShowDelay before opening a note on hover', () => {
@@ -93,10 +96,10 @@ describe('AgCellNotesFeature', () => {
 
         listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
 
-        jest.advanceTimersByTime(24);
+        vi.advanceTimersByTime(24);
         expect(context.createBean).not.toHaveBeenCalled();
 
-        jest.advanceTimersByTime(1);
+        vi.advanceTimersByTime(1);
         expect(context.createBean).toHaveBeenCalledTimes(1);
     });
 
@@ -107,23 +110,23 @@ describe('AgCellNotesFeature', () => {
         feature.show({ focusEditor: true });
         listeners.pointerleave?.({ pointerType: 'mouse' } as PointerEvent);
 
-        jest.advanceTimersByTime(39);
+        vi.advanceTimersByTime(39);
         expect(popup.hide).not.toHaveBeenCalled();
 
-        jest.advanceTimersByTime(1);
+        vi.advanceTimersByTime(1);
         expect(popup.hide).toHaveBeenCalledWith(true);
     });
 
     it('suppresses hover opens and hides the earmark when note hover is suppressed', () => {
-        (ctrl.isCellNoteHoverSuppressed as jest.Mock).mockReturnValue(true);
+        (ctrl.isCellNoteHoverSuppressed as Mock).mockReturnValue(true);
 
         const feature = new AgCellNotesFeature(beans, ctrl as CellCtrl, notesSvc);
         feature.initialise();
 
-        expect(ctrl.comp.toggleCss as jest.Mock).toHaveBeenCalledWith('ag-has-cell-notes', false);
+        expect(ctrl.comp.toggleCss as Mock).toHaveBeenCalledWith('ag-has-cell-notes', false);
 
         listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
-        jest.advanceTimersByTime(25);
+        vi.advanceTimersByTime(25);
 
         expect(context.createBean).not.toHaveBeenCalled();
     });
@@ -133,16 +136,16 @@ describe('AgCellNotesFeature', () => {
         feature.initialise();
 
         listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
-        (ctrl.isCellNoteHoverSuppressed as jest.Mock).mockReturnValue(true);
+        (ctrl.isCellNoteHoverSuppressed as Mock).mockReturnValue(true);
 
         feature.refresh();
-        jest.advanceTimersByTime(25);
+        vi.advanceTimersByTime(25);
 
         expect(context.createBean).not.toHaveBeenCalled();
     });
 
     it('still allows explicit note opens when hover is suppressed', () => {
-        (ctrl.isCellNoteHoverSuppressed as jest.Mock).mockReturnValue(true);
+        (ctrl.isCellNoteHoverSuppressed as Mock).mockReturnValue(true);
 
         const feature = new AgCellNotesFeature(beans, ctrl as CellCtrl, notesSvc);
         feature.initialise();

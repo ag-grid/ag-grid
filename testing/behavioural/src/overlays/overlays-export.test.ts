@@ -49,8 +49,8 @@ describe('ag-grid export overlay', () => {
     beforeEach(() => {
         gridsManager.reset();
         // Mock URL.createObjectURL to prevent actual blob URL creation
-        URL.createObjectURL = jest.fn(() => 'blob:mock-url');
-        URL.revokeObjectURL = jest.fn(() => 'blob:mock-url');
+        URL.createObjectURL = vi.fn(() => 'blob:mock-url');
+        URL.revokeObjectURL = vi.fn(() => 'blob:mock-url');
         // Polyfill Blob.arrayBuffer if missing in the test environment
         if (typeof (Blob.prototype as any).arrayBuffer !== 'function') {
             (Blob.prototype as any).arrayBuffer = function () {
@@ -63,7 +63,7 @@ describe('ag-grid export overlay', () => {
             };
         }
         // Mock MouseEvent to handle window parameter
-        (global as any).MouseEvent = jest.fn(function (type: string, init?: any) {
+        (global as any).MouseEvent = vi.fn(function (type: string, init?: any) {
             return new Event(type, { bubbles: init?.bubbles, cancelable: init?.cancelable });
         });
         // Mock CompressionStream to a pass-through TransformStream (if available).

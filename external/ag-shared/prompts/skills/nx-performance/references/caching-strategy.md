@@ -8,7 +8,7 @@ AG product monorepos define reusable `namedInputs` in `nx.json` that every targe
 
 ```
 default                    = {projectRoot}/**/* + sharedGlobals
-├── defaultExcludes        = !tests, !snapshots, !eslint, !jest configs
+├── defaultExcludes        = !tests, !snapshots, !eslint, !vitest configs
 ├── buildOutputExcludes    = !{projectRoot}/dist/**
 └── production             = default + defaultExcludes + buildOutputExcludes
 

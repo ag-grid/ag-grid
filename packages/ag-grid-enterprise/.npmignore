@@ -18,10 +18,8 @@ webpackBuild.sh
 eslint.config.mjs
 gulpfile.js
 knip.json
-jest.config.ts
-jest.setup.ts
-jest.setup.js
-jest.jsdom-env.cjs
+vitest.config.ts
+vitest.setup.ts
 coverage
 .swcrc
 .snyk

@@ -105,9 +105,9 @@ For detailed information about preferred technologies and architectural constrai
 -   `./behave.sh --update-grid-rows` – update GridRows inline snapshots after diagram format changes.
 -   `./behave.sh --update-grid-rows "<pattern>"` – update snapshots in matching test files only.
 -   `./behave.sh --update-grid-rows=dry` – dry run, shows what would change without writing files.
--   `yarn nx test <package>` – execute Jest unit tests for the affected package.
--   `yarn nx test <package> --testPathPattern="<file-name>"` - test specific test file
--   `yarn nx test <package> --testPathPattern="<file-name>" --testNamePattern="<test-name>"` - test specific test name in a specific test file
+-   `yarn nx test <package>` – execute Vitest unit tests for the affected package.
+-   `npx vitest run --project <package> "<file-name>"` - test specific test file
+-   `npx vitest run --project <package> "<file-name>" -t "<test-name>"` - test specific test name in a specific test file
 -   `yarn nx e2e <package>` – run Playwright flows when altering website behaviour.
 -   `yarn nx lint <package>` – apply ESLint and custom rules before final review.
 
@@ -160,7 +160,7 @@ For comprehensive testing information, see [Testing Guide](.rulesync/rules/testi
 **Behavioural tests are the primary test suite.** When verifying grid changes, run behavioural tests first. Key testing tools:
 
 -   **Behavioural tests** (primary): `testing/behavioural/` for grid behaviour verification — use Vitest
--   **Unit tests**: Jest with jsdom environment for package-level tests
+-   **Unit tests**: Vitest with jsdom environment for package-level tests
 -   **E2E tests**: Playwright for website interaction testing
 -   **Accessibility tests**: `testing/accessibility/` for a11y compliance
 -   **Performance tests**: `testing/performance/` for performance regression testing

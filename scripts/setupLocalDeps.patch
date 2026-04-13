@@ -12,4 +12,4 @@ index 1a566f32fc..096f4e6dbc 100644
 +    "moduleResolution": "bundler"
    },
    "include": ["src/**/*.ts"],
-   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts", "src/**/test/**", "src/**/test-utils/**"]
+   "exclude": ["vitest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts", "src/**/test/**", "src/**/test-utils/**"]

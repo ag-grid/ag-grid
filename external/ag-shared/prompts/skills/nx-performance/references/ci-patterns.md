@@ -150,7 +150,7 @@ Visual regression tests generate image snapshots across sharded test runs. A cus
 ## Parallelism control
 
 **Parallel OK:** `build:types`, `build:package`, `lint:eslint`, `generate-example`
-**Serial (parallelism: false):** `benchmark` (GC-sensitive), `test:e2e` (Playwright), `test` (GC-exposed Jest)
+**Serial (parallelism: false):** `benchmark` (GC-sensitive), `test:e2e` (Playwright), `test` (GC-exposed Vitest)
 
 ---
 

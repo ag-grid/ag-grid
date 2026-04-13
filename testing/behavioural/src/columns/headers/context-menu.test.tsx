@@ -33,7 +33,7 @@ describe('React Jsdom Context menu ', () => {
     it.each([true, false])('should trigger context menu action', async (isAsync) => {
         const cellValue = 'cell value';
         const contextOption = 'context option';
-        const contextAction = jest.fn();
+        const contextAction = vi.fn();
         const contextMenuItems = [{ name: contextOption, action: contextAction }];
 
         render(

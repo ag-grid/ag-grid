@@ -18,10 +18,7 @@ webpackBuild.sh
 eslint.config.mjs
 gulpfile.js
 knip.json
-jest.config.ts
-jest.setup.js
-jest.setup.ts
-jest.jsdom-env.cjs
+vitest.config.ts
 scripts
 coverage
 .dependency-cruiser.js

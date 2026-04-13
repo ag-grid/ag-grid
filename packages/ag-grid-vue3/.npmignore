@@ -7,7 +7,8 @@ tests
 cypress.json
 github-banner.png
 github-grid-demo.jpg
-jest.config.js
+vitest.config.ts
+vitest.config.d.ts
 project.json
 tsconfig.json
 tsconfig.lib.json

@@ -95,9 +95,7 @@ export default [
     {
         ignores: [
             'webpack.config.js',
-            'jest.*.js',
             'eslint.config.mjs',
-            'jest.jsdom-env.cjs',
             'test-utils/mock.ts',
             'e2e/',
             'playwright.config.ts',

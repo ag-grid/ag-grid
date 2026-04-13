@@ -1,6 +1,6 @@
 cypress
 dev-server
-jest
+vitest.config.ts
 node_modules
 src
 test-harness
@@ -9,7 +9,6 @@ test-harness
 cypress.json
 github-banner.png
 github-grid-demo.jpg
-jest.config.ts
 project.json
 tsconfig.json
 tsconfig.lib.json

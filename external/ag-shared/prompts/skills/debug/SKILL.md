@@ -130,7 +130,7 @@ that best fits the situation:
 yarn nx test <package> --testPathPattern='<test-file>' --testNamePattern='<test-name>'
 ```
 
-Jest captures `console.log` output in the terminal. If the test does not
+Vitest captures `console.log` output in the terminal. If the test does not
 exist yet, consider writing a minimal reproduction test — it will be useful
 beyond this debugging session.
 

@@ -807,14 +807,14 @@ describe('Cell Editing Regression', () => {
 
         const testACell = async (
             editAction: (api: GridApi, gridDiv: HTMLElement, cell: HTMLElement) => Promise<void>,
-            onCellValueChanged: jest.Mock<any, any, any>,
-            onCellValueChangedColDef?: jest.Mock<any, any, any>,
+            onCellValueChanged: ReturnType<typeof vi.fn>,
+            onCellValueChangedColDef?: ReturnType<typeof vi.fn>,
             extraOptions?: GridOptions
         ): Promise<{
             api: GridApi;
             eventTracker: EditEventTracker;
-            onCellValueChanged: jest.Mock<any, any, any>;
-            onCellValueChangedColDef?: jest.Mock<any, any, any>;
+            onCellValueChanged: ReturnType<typeof vi.fn>;
+            onCellValueChangedColDef?: ReturnType<typeof vi.fn>;
         }> => {
             const api = await gridMgr.createGridAndWait('myGrid', {
                 columnDefs: [
@@ -853,8 +853,8 @@ describe('Cell Editing Regression', () => {
                     await user.keyboard('{Enter}');
                     expect(cell).toHaveTextContent('15');
                 },
-                jest.fn(),
-                jest.fn()
+                vi.fn(),
+                vi.fn()
             );
 
             expect(onCellValueChanged).toHaveBeenCalledTimes(1);
@@ -894,8 +894,8 @@ describe('Cell Editing Regression', () => {
                     await user.click(target);
                     expect(cell).toHaveTextContent('15');
                 },
-                jest.fn(),
-                jest.fn()
+                vi.fn(),
+                vi.fn()
             );
 
             expect(onCellValueChanged).toHaveBeenCalledTimes(1);
@@ -938,8 +938,8 @@ describe('Cell Editing Regression', () => {
 
                     expect(target).toHaveTextContent('A Value');
                 },
-                jest.fn(),
-                jest.fn()
+                vi.fn(),
+                vi.fn()
             );
 
             expect(onCellValueChanged).toHaveBeenCalledTimes(1);
@@ -978,8 +978,8 @@ describe('Cell Editing Regression', () => {
                     expect(api.getCellValue({ rowNode: api.getRowNode('0')!, colKey: 'field' })).toEqual('15');
                     expect(api.getCellValue({ rowNode: api.getRowNode('1')!, colKey: 'field' })).toEqual('15');
                 },
-                jest.fn(),
-                jest.fn(),
+                vi.fn(),
+                vi.fn(),
                 {
                     cellSelection: true,
                 }
@@ -1024,8 +1024,8 @@ describe('Cell Editing Regression', () => {
                     expect(api.getCellValue({ rowNode: api.getRowNode('0')!, colKey: 'field' })).toEqual('A Value');
                     expect(api.getCellValue({ rowNode: api.getRowNode('1')!, colKey: 'field' })).toEqual('A Value');
                 },
-                jest.fn(),
-                jest.fn(),
+                vi.fn(),
+                vi.fn(),
                 {
                     cellSelection: true,
                 }
