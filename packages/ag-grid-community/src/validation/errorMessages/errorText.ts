@@ -10,30 +10,60 @@ import type {
 import type { RowModelType } from '../../interfaces/iRowModel';
 import type { RowNodeEventType, RowPinnedType } from '../../interfaces/iRowNode';
 import { ENTERPRISE_MODULE_NAMES } from '../enterpriseModuleNames';
-import { baseDocLink, getErrorLink } from '../logging';
+import { _error, baseDocLink, getErrorLink } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
 import { USER_COMP_MODULES } from '../rules/userCompValidations';
 
-export const NoModulesRegisteredError = () =>
-    `No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:
-                    
-    import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
-    
-    ModuleRegistry.registerModules([ AllCommunityModule ]);
-    ` as const;
+/** Formats a code snippet showing how to register modules — via AgGridProvider for React, or ModuleRegistry otherwise. */
+const moduleRegistrationSnippet = (imports: string[], moduleList: string, usesAgGridProvider?: boolean): string => {
+    if (usesAgGridProvider) {
+        const allImports = ["import { AgGridProvider, AgGridReact } from 'ag-grid-react';", ...imports];
+        return `${allImports.join(' \n')} \n\nconst modules = [ ${moduleList} ]; \n\nfunction App() { \n    return ( \n        <AgGridProvider modules={modules}> \n            <AgGridReact /* ... props */ /> \n        </AgGridProvider> \n    ); \n}`;
+    }
 
-const moduleImportMsg = (moduleNames: ModuleName[]) => {
-    const imports = moduleNames.map(
-        (moduleName) =>
-            `import { ${convertToUserModuleName(moduleName)} } from '${ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] ? 'ag-grid-enterprise' : 'ag-grid-community'}';`
-    );
+    return `${imports.join(' \n')} \n\nModuleRegistry.registerModules([ ${moduleList} ]);`;
+};
+
+export const NoModulesRegisteredError = (usesAgGridProvider?: boolean) => {
+    const imports = [
+        `import { ${!usesAgGridProvider ? 'ModuleRegistry, ' : ''} AllCommunityModule } from 'ag-grid-community';`,
+    ];
+
+    return `No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:\n\n${moduleRegistrationSnippet(imports, 'AllCommunityModule', usesAgGridProvider)}\n`;
+};
+
+const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean) => {
+    // Group module names by package to produce one import per package
+    const communityNames: string[] = [];
+    const enterpriseNames: string[] = [];
+    for (const m of moduleNames) {
+        const userModName = convertToUserModuleName(m);
+        if (ENTERPRISE_MODULE_NAMES[m as EnterpriseModuleName]) {
+            enterpriseNames.push(userModName);
+        } else {
+            communityNames.push(userModName);
+        }
+    }
+
+    const imports: string[] = [];
+    if (communityNames.length > 0) {
+        const names = usesAgGridProvider ? communityNames : ['ModuleRegistry', ...communityNames];
+        imports.push(`import { ${names.join(', ')} } from 'ag-grid-community';`);
+    } else if (!usesAgGridProvider) {
+        imports.push("import { ModuleRegistry } from 'ag-grid-community';");
+    }
+    if (enterpriseNames.length > 0) {
+        imports.push(`import { ${enterpriseNames.join(', ')} } from 'ag-grid-enterprise';`);
+    }
 
     const includeCharts = moduleNames.some((m) => m === 'IntegratedCharts' || m === 'Sparklines');
     if (includeCharts) {
-        const chartImport = `import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';`;
-        imports.push(chartImport);
+        imports.push("import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';");
     }
-    return `import { ModuleRegistry } from 'ag-grid-community'; \n${imports.join(' \n')} \n\nModuleRegistry.registerModules([ ${moduleNames.map((m) => convertToUserModuleName(m, true)).join(', ')} ]); \n\nFor more info see: ${baseDocLink}/modules/`;
+
+    const moduleList = moduleNames.map((m) => convertToUserModuleName(m, true)).join(', ');
+
+    return `${moduleRegistrationSnippet(imports, moduleList, usesAgGridProvider)} \n\nFor more info see: ${baseDocLink}/modules/`;
 };
 
 function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = false) {
@@ -44,23 +74,26 @@ function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = 
     return `${moduleName}Module`;
 }
 
-function umdMissingModule(
-    reasonOrId: string | keyof MissingModuleErrors,
-    moduleNames: (CommunityModuleName | EnterpriseModuleName)[]
-) {
-    const chartModules = moduleNames.filter((m) => m === 'IntegratedCharts' || m === 'Sparklines');
-
-    let message = '';
-
+/** Classifies a UMD missing-module entry by its root cause: 'charts', 'enterprise', or null (community-only, no message needed). */
+function umdMissingCause(moduleNames: (CommunityModuleName | EnterpriseModuleName)[]): 'charts' | 'enterprise' | null {
+    const hasCharts = moduleNames.some((m) => m === 'IntegratedCharts' || m === 'Sparklines');
     const agChartsDynamic = (globalThis as any)?.agCharts;
 
-    if (!agChartsDynamic && chartModules.length > 0) {
-        message = `Unable to use ${reasonOrId} as either the ag-charts-community or ag-charts-enterprise script needs to be included alongside ag-grid-enterprise.\n`;
-    } else if (moduleNames.some((m) => ENTERPRISE_MODULE_NAMES[m as EnterpriseModuleName])) {
-        message =
-            message + `Unable to use ${reasonOrId} as that requires the ag-grid-enterprise script to be included.\n`;
+    if (!agChartsDynamic && hasCharts) {
+        return 'charts';
     }
-    return message;
+    if (moduleNames.some((m) => ENTERPRISE_MODULE_NAMES[m as EnterpriseModuleName])) {
+        return 'enterprise';
+    }
+    return null;
+}
+
+function formatUmdMessage(cause: 'charts' | 'enterprise', features: string[], scopeSuffix: string): string {
+    const featureList = features.length === 1 ? features[0] : features.join(', ');
+    if (cause === 'charts') {
+        return `Unable to use ${featureList} as either the ag-charts-community or ag-charts-enterprise script needs to be included alongside ag-grid-enterprise.`;
+    }
+    return `Unable to use ${featureList} as the ag-grid-enterprise script needs to be included${scopeSuffix}.`;
 }
 
 export function missingRowModelTypeError({
@@ -73,6 +106,64 @@ export function missingRowModelTypeError({
     return `To use the ${moduleName}Module you must set the gridOption "rowModelType='${rowModelType}'"`;
 }
 
+interface MissingModuleParams {
+    reasonOrId: string | keyof MissingModuleErrors;
+    moduleName: ValidationModuleName | ValidationModuleName[];
+    gridScoped: boolean;
+    gridId: string;
+    rowModelType: RowModelType;
+    additionalText?: string;
+    isUmd?: boolean;
+    usesAgGridProvider?: boolean;
+}
+
+// Debounce state: accumulates missing module reports and flushes them as a single
+// combined console error after a debounce window. The delay allows grid options
+// and column definition validation (which run in separate phases) to be combined
+// into one message. `flushedModuleKeys` prevents duplicate warnings across
+// debounce windows (e.g. React StrictMode double-render).
+let pendingMissingModules: MissingModuleParams[] | null = null;
+const flushedModuleKeys = new Set<string>();
+
+function flushPendingMissingModules(): void {
+    const pending = pendingMissingModules!;
+    pendingMissingModules = null;
+
+    for (const p of pending) {
+        flushedModuleKeys.add(String(p.moduleName));
+    }
+
+    const entries = pending.map((p) => ({ reasonOrId: p.reasonOrId, moduleName: p.moduleName }));
+    _error(200, {
+        ...pending[0],
+        entries,
+    });
+}
+
+/**
+ * Accumulates a missing-module report and defers output. All reports within the
+ * debounce window are combined into a single `_error(200, ...)`.
+ * Reports for modules that have already been flushed are silently skipped.
+ */
+export function reportMissingModule(params: MissingModuleParams): void {
+    const moduleKey = String(params.moduleName);
+    if (flushedModuleKeys.has(moduleKey)) {
+        return;
+    }
+
+    if (!pendingMissingModules) {
+        pendingMissingModules = [];
+        setTimeout(flushPendingMissingModules, 10);
+    }
+
+    if (!pendingMissingModules.some((p) => String(p.moduleName) === moduleKey)) {
+        pendingMissingModules.push(params);
+    }
+}
+
+/** Expose the internal set for testing purposes (mirrors _doOnce._set pattern). */
+reportMissingModule._flushedKeys = flushedModuleKeys;
+
 const missingModule = ({
     reasonOrId,
     moduleName,
@@ -81,34 +172,71 @@ const missingModule = ({
     rowModelType,
     additionalText,
     isUmd,
-}: {
-    reasonOrId: string | keyof MissingModuleErrors;
-    moduleName: ValidationModuleName | ValidationModuleName[];
-    gridScoped: boolean;
-    gridId: string;
-    rowModelType: RowModelType;
-    additionalText?: string;
-    isUmd?: boolean;
+    usesAgGridProvider,
+    entries,
+}: MissingModuleParams & {
+    entries?: {
+        reasonOrId: string | keyof MissingModuleErrors;
+        moduleName: ValidationModuleName | ValidationModuleName[];
+    }[];
 }) => {
-    const resolvedModuleNames = resolveModuleNames(moduleName, rowModelType);
-    const reason = typeof reasonOrId === 'string' ? reasonOrId : MISSING_MODULE_REASONS[reasonOrId];
+    const items = entries ?? [{ reasonOrId, moduleName }];
+    const isBatch = items.length > 1;
+    const allResolvedNames: ModuleName[] = [];
+    const scopeSuffix = gridScoped ? ` for gridId: ${gridId}` : '';
+    const explanations: string[] = [];
 
-    if (isUmd) {
-        return umdMissingModule(reason, resolvedModuleNames);
+    // UMD: group features by cause (enterprise / charts) so we emit one message per cause instead of per feature.
+    const umdGroups: Partial<Record<'charts' | 'enterprise', string[]>> | undefined = isUmd ? {} : undefined;
+
+    for (const entry of items) {
+        const resolved = resolveModuleNames(entry.moduleName, rowModelType);
+        const reason =
+            typeof entry.reasonOrId === 'string' ? entry.reasonOrId : MISSING_MODULE_REASONS[entry.reasonOrId];
+
+        if (umdGroups) {
+            const cause = umdMissingCause(resolved);
+            if (cause) {
+                (umdGroups[cause] ??= []).push(reason);
+            }
+        } else {
+            const userNames = resolved.map((m) => convertToUserModuleName(m));
+            const moduleLabel = resolved.length > 1 ? `one of ${userNames.join(', ')}` : userNames[0];
+            const chartNames = userNames.filter(
+                (_, i) => resolved[i] === 'IntegratedCharts' || resolved[i] === 'Sparklines'
+            );
+            const chartNote =
+                chartNames.length > 0
+                    ? ` ${chartNames.join()} must be initialised with an AG Charts module. One of 'AgChartsCommunityModule' / 'AgChartsEnterpriseModule'.`
+                    : '';
+            const scope = isBatch ? '' : scopeSuffix;
+            explanations.push(`\`${reason}\` requires ${moduleLabel}${scope}.${chartNote}`);
+        }
+
+        for (const name of resolved) {
+            if (!allResolvedNames.includes(name)) {
+                allResolvedNames.push(name);
+            }
+        }
     }
 
-    const chartModules = resolvedModuleNames.filter((m) => m === 'IntegratedCharts' || m === 'Sparklines');
-    const chartImportRequired =
-        chartModules.length > 0
-            ? `${chartModules.map((m) => convertToUserModuleName(m)).join()} must be initialised with an AG Charts module. One of 'AgChartsCommunityModule' / 'AgChartsEnterpriseModule'.`
-            : '';
+    if (umdGroups) {
+        const messages: string[] = [];
+        for (const cause of ['charts', 'enterprise'] as const) {
+            const features = umdGroups[cause];
+            if (features) {
+                messages.push(formatUmdMessage(cause, features, scopeSuffix));
+            }
+        }
+        return messages.join('\n');
+    }
 
-    const explanation = `Unable to use ${reason} as ${resolvedModuleNames.length > 1 ? 'one of ' + resolvedModuleNames.map((m) => convertToUserModuleName(m)).join(', ') : convertToUserModuleName(resolvedModuleNames[0])} is not registered${gridScoped ? ' for gridId: ' + gridId : ''}. ${chartImportRequired} Check if you have registered the module:\n`;
+    const header = isBatch
+        ? `The following modules are not registered${scopeSuffix}:\n${explanations.map((e) => `  - ${e}`).join('\n')}`
+        : explanations[0];
+    const suffix = additionalText ? ` \n\n${additionalText}` : '';
 
-    return (
-        `${explanation}
-${moduleImportMsg(resolvedModuleNames)}` + (additionalText ? ` \n\n${additionalText}` : '')
-    );
+    return `${header}:\n\n${moduleImportMsg(allResolvedNames, usesAgGridProvider)}${suffix}`;
 };
 
 const missingChartsWithModule = (gridModule: 'IntegratedChartsModule' | 'SparklinesModule') => {
@@ -402,8 +530,8 @@ export const AG_GRID_ERRORS = {
     116: () => 'Invalid selection state. The state must conform to `IServerSideSelectionState`.' as const,
     117: () => 'selectAll must be of boolean type.' as const,
     118: () => 'Infinite scrolling must be enabled in order to set the row count.' as const,
-    119: () => 'Unable to instantiate filter',
-    120: () => 'MultiFloatingFilterComp expects MultiFilter as its parent',
+    119: () => 'Unable to instantiate filter' as const,
+    120: () => 'MultiFloatingFilterComp expects MultiFilter as its parent' as const,
     121: () =>
         'a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (see AG Grid docs) or b) to toString() on the object to return a key' as const,
     122: () => 'could not find the document, document is empty' as const,
@@ -642,22 +770,12 @@ export const AG_GRID_ERRORS = {
     260: ({
         propName,
         compName,
-        gridScoped,
-        gridId,
-        rowModelType,
-    }: {
-        propName: string;
-        compName: string;
-        gridScoped: boolean;
-        gridId: string;
-        rowModelType: RowModelType;
-    }) =>
+        ...rest
+    }: { propName: string; compName: string } & Omit<MissingModuleParams, 'reasonOrId' | 'moduleName'>) =>
         missingModule({
+            ...rest,
             reasonOrId: `AG Grid '${propName}' component: ${compName}`,
             moduleName: USER_COMP_MODULES[compName as UserComponentName],
-            gridId,
-            gridScoped,
-            rowModelType,
         }),
     261: () => 'As of v33, `column.isHovered()` is deprecated. Use `api.isColumnHovered(column)` instead.' as const,
     262: () =>

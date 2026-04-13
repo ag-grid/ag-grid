@@ -521,6 +521,7 @@ export { _consoleError, _warnOnce } from './utils/log';
 export { _mergeDeep } from './utils/mergeDeep';
 export { _formatNumberCommas } from './utils/number';
 export { _selectAllCells } from './utils/selection';
+export { reportMissingModule as _reportMissingModule } from './validation/errorMessages/errorText';
 export { _errMsg, _error, _logPreInitWarn, _preInitErrMsg, _warn } from './validation/logging';
 export type { ExpressionService } from './valueService/expressionService';
 export type { ValueCache } from './valueService/valueCache';

@@ -8,6 +8,7 @@ import {
     RowApiModule,
     ValidationModule,
     _doOnce,
+    _reportMissingModule,
     createGrid,
     getGridElement,
 } from 'ag-grid-community';
@@ -99,6 +100,7 @@ export class TestGridsManager {
     public reset(): void {
         this.destroyAllGrids();
         _doOnce._set.clear(); // Clear warnings and doOnce calls
+        _reportMissingModule._flushedKeys.clear(); // Clear missing module dedup state
     }
 
     public createGrid<TData = any>(

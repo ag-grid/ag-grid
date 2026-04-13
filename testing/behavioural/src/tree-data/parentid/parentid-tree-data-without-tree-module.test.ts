@@ -44,6 +44,9 @@ describe('ag-grid parentId tree data without tree module', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
+        // Missing module errors are debounced (10ms) and flushed as a single message
+        await new Promise<void>((resolve) => setTimeout(resolve, 15));
+
         expect(consoleErrorSpy).toHaveBeenCalled();
 
         consoleErrorSpy.mockRestore();

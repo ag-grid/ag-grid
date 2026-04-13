@@ -173,7 +173,7 @@ describe('ag-grid validation warnings', () => {
             consoleErrorSpy.mockRestore();
         });
 
-        test('errors when rowSelection is used on client-side grid but RowSelectionModule is not registered, even when ServerSideRowModelModule is registered', () => {
+        test('errors when rowSelection is used on client-side grid but RowSelectionModule is not registered, even when ServerSideRowModelModule is registered', async () => {
             // Regression: ServerSideRowModelModule internally depends on SharedRowSelectionModule.
             // Before the fix, registering SSRM caused SharedRowSelectionModule to be stored under
             // 'all' row models, suppressing the validation error for client-side grids.
@@ -183,11 +183,78 @@ describe('ag-grid validation warnings', () => {
                 rowSelection: { mode: 'multiRow' },
             });
 
+            // Missing module errors are debounced (10ms) and flushed as a single message
+            await new Promise<void>((resolve) => setTimeout(resolve, 15));
+
             expect(consoleErrorSpy).toHaveBeenCalledWith(
                 expect.stringContaining('error #200'),
                 expect.stringContaining('RowSelectionModule'),
                 expect.any(String)
             );
+        });
+    });
+
+    describe('missing module batching and dedup', () => {
+        let consoleErrorSpy: MockInstance;
+
+        beforeEach(() => {
+            consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        });
+
+        afterEach(() => {
+            gridsManager.reset();
+            consoleErrorSpy.mockRestore();
+        });
+
+        test('combines grid option and colDef missing modules into a single error', async () => {
+            gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'value', enableValue: true }],
+                rowData: [{ value: 1 }],
+                cellSelection: true,
+            });
+
+            await new Promise<void>((resolve) => setTimeout(resolve, 15));
+
+            // Should produce exactly one error #200 call combining both sources
+            const error200Calls = consoleErrorSpy.mock.calls.filter((args) => String(args[0]).includes('error #200'));
+            expect(error200Calls).toHaveLength(1);
+
+            const errorText = error200Calls[0].join(' ');
+            // Grid option module (from cellSelection)
+            expect(errorText).toContain('CellSelectionModule');
+            // ColDef module (from enableValue → SharedAggregation resolves to these)
+            expect(errorText).toContain('RowGroupingModule');
+        });
+
+        test('does not repeat missing module warnings for the same modules on second grid creation', async () => {
+            // Uses columnHoverHighlight to avoid overlap with other tests' flushed keys.
+            // First grid — should produce the warning
+            gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ value: 1 }],
+                columnHoverHighlight: true,
+            });
+
+            await new Promise<void>((resolve) => setTimeout(resolve, 15));
+
+            const firstFlushCalls = consoleErrorSpy.mock.calls.filter((args) => String(args[0]).includes('error #200'));
+            expect(firstFlushCalls).toHaveLength(1);
+
+            consoleErrorSpy.mockClear();
+
+            // Second grid with the same missing module — should be suppressed
+            gridsManager.createGrid('myGrid2', {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ value: 1 }],
+                columnHoverHighlight: true,
+            });
+
+            await new Promise<void>((resolve) => setTimeout(resolve, 150));
+
+            const secondFlushCalls = consoleErrorSpy.mock.calls.filter((args) =>
+                String(args[0]).includes('error #200')
+            );
+            expect(secondFlushCalls).toHaveLength(0);
         });
     });
 

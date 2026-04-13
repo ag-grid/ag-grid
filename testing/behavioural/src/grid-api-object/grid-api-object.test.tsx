@@ -163,7 +163,7 @@ describe('ag-grid overlays state', () => {
         expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
     });
 
-    test('missing module warning', () => {
+    test('missing module warning', async () => {
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
@@ -177,11 +177,16 @@ describe('ag-grid overlays state', () => {
 
         expect(api.exportDataAsExcel()).toBeUndefined();
 
+        // Missing module errors are debounced (10ms) and flushed as a single message
+        await new Promise<void>((resolve) => setTimeout(resolve, 15));
+
         expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
         // expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('exportDataAsExcel'));
         // expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('ExcelExportModule'));
 
         expect(api.exportDataAsExcel()).toBeUndefined();
+        // Missing module errors are deduplicated
+        await new Promise<void>((resolve) => setTimeout(resolve, 15));
         expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
 
         api.destroy();
