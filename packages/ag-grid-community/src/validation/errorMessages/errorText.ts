@@ -125,12 +125,18 @@ interface MissingModuleParams {
 let pendingMissingModules: MissingModuleParams[] | null = null;
 const flushedModuleKeys = new Set<string>();
 
+/** Builds a dedup key that includes gridId when modules are grid-scoped. */
+function missingModuleKey(params: MissingModuleParams): string {
+    const base = String(params.moduleName);
+    return params.gridScoped ? `${params.gridId}:${base}` : base;
+}
+
 function flushPendingMissingModules(): void {
     const pending = pendingMissingModules!;
     pendingMissingModules = null;
 
     for (const p of pending) {
-        flushedModuleKeys.add(String(p.moduleName));
+        flushedModuleKeys.add(missingModuleKey(p));
     }
 
     const entries = pending.map((p) => ({ reasonOrId: p.reasonOrId, moduleName: p.moduleName }));
@@ -146,8 +152,8 @@ function flushPendingMissingModules(): void {
  * Reports for modules that have already been flushed are silently skipped.
  */
 export function reportMissingModule(params: MissingModuleParams): void {
-    const moduleKey = String(params.moduleName);
-    if (flushedModuleKeys.has(moduleKey)) {
+    const key = missingModuleKey(params);
+    if (flushedModuleKeys.has(key)) {
         return;
     }
 
@@ -156,7 +162,7 @@ export function reportMissingModule(params: MissingModuleParams): void {
         setTimeout(flushPendingMissingModules, 10);
     }
 
-    if (!pendingMissingModules.some((p) => String(p.moduleName) === moduleKey)) {
+    if (!pendingMissingModules.some((p) => missingModuleKey(p) === key)) {
         pendingMissingModules.push(params);
     }
 }

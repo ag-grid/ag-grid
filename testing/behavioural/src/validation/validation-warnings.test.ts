@@ -226,10 +226,11 @@ describe('ag-grid validation warnings', () => {
             expect(errorText).toContain('RowGroupingModule');
         });
 
-        test('does not repeat missing module warnings for the same modules on second grid creation', async () => {
+        test('does not repeat missing module warnings for the same grid id', async () => {
             // Uses columnHoverHighlight to avoid overlap with other tests' flushed keys.
-            // First grid — should produce the warning
-            gridsManager.createGrid('myGrid', {
+            // Explicit gridId so destroy + recreate shares the same dedup key.
+            const api = gridsManager.createGrid('myGrid', {
+                gridId: 'dedupGrid',
                 columnDefs: [{ field: 'value' }],
                 rowData: [{ value: 1 }],
                 columnHoverHighlight: true,
@@ -242,8 +243,10 @@ describe('ag-grid validation warnings', () => {
 
             consoleErrorSpy.mockClear();
 
-            // Second grid with the same missing module — should be suppressed
-            gridsManager.createGrid('myGrid2', {
+            // Destroy and recreate with the same gridId — should be suppressed
+            api.destroy();
+            gridsManager.createGrid('myGrid', {
+                gridId: 'dedupGrid',
                 columnDefs: [{ field: 'value' }],
                 rowData: [{ value: 1 }],
                 columnHoverHighlight: true,
@@ -255,6 +258,35 @@ describe('ag-grid validation warnings', () => {
                 String(args[0]).includes('error #200')
             );
             expect(secondFlushCalls).toHaveLength(0);
+        });
+
+        test('warns separately for different grid ids with the same missing module', async () => {
+            gridsManager.createGrid('gridA', {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ value: 1 }],
+                columnHoverHighlight: true,
+            });
+
+            await new Promise<void>((resolve) => setTimeout(resolve, 15));
+
+            const firstFlushCalls = consoleErrorSpy.mock.calls.filter((args) => String(args[0]).includes('error #200'));
+            expect(firstFlushCalls).toHaveLength(1);
+
+            consoleErrorSpy.mockClear();
+
+            // Different gridId with the same missing module — should warn again
+            gridsManager.createGrid('gridB', {
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ value: 1 }],
+                columnHoverHighlight: true,
+            });
+
+            await new Promise<void>((resolve) => setTimeout(resolve, 15));
+
+            const secondFlushCalls = consoleErrorSpy.mock.calls.filter((args) =>
+                String(args[0]).includes('error #200')
+            );
+            expect(secondFlushCalls).toHaveLength(1);
         });
     });
 
