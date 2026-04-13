@@ -44,14 +44,14 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     toolbar: {
         items: [
-            { component: 'quickFilter', alignment: 'right' },
-            { component: 'find', alignment: 'right' },
+            { toolbarItem: 'quickFilter', alignment: 'right' },
+            { toolbarItem: 'find', alignment: 'right' },
             'separator',
-            { component: 'autoSizeAll', alignment: 'right' },
+            { toolbarItem: 'autoSizeAll', alignment: 'right' },
             'separator',
-            { component: 'export', alignment: 'right' },
+            { toolbarItem: 'export', alignment: 'right' },
             'separator',
-            { component: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
+            { toolbarItem: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
         ],
     },
 };
