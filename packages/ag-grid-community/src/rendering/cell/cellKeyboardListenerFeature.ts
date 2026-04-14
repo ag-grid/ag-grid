@@ -215,7 +215,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
             beans: { editSvc, notesSvc },
         } = this;
 
-        if (event.shiftKey && notesSvc?.hasDataSource()) {
+        const editing = editSvc?.isEditing();
+
+        if (event.shiftKey && notesSvc?.hasDataSource() && !editing) {
             const access = notesSvc.getNoteAccess({ rowNode: this.rowNode, column: cellCtrl.column });
 
             if (access) {
@@ -226,8 +228,6 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 }
             }
         }
-
-        const editing = editSvc?.isEditing();
 
         if (editing) {
             // re-run ALL validations, F2 is used to initiate a new edit. If we have one already in progress,
