@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    BeanStub,
     CellCtrl,
     FullWidthTarget,
     GetNoteParams,
@@ -285,8 +284,6 @@ export class AgNotesFeature extends BaseNotesFeature {
 }
 
 export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
-    private readonly registeredTargets = new WeakMap<BeanStub, WeakSet<HTMLElement>>();
-
     constructor(
         beans: BeanCollection,
         private readonly ctrl: RowCtrl,
@@ -296,6 +293,14 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
     }
 
     public initialise(): void {
+        for (const target of this.ctrl.getTargets()) {
+            target.compBean.addManagedListeners(target.element, {
+                pointerenter: (event: PointerEvent) =>
+                    this.onPointerEnter(this.getTargetForElement(event.target), event),
+                pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
+                contextmenu: () => this.onContextMenu(),
+            });
+        }
         this.refresh();
     }
 
@@ -305,31 +310,10 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
         }
 
         for (const target of this.ctrl.getTargets()) {
-            this.registerTarget(target);
             const noteParams = this.getNoteParamsForTarget(target);
             const hasNote = !!this.notesSvc.getNoteAccess(noteParams)?.note;
             target.element.classList.toggle(CSS_HAS_CELL_NOTES, hasNote);
         }
-    }
-
-    private registerTarget(target: FullWidthTarget): void {
-        const { compBean, element } = target;
-        let registeredElements = this.registeredTargets.get(compBean);
-        if (!registeredElements) {
-            registeredElements = new WeakSet<HTMLElement>();
-            this.registeredTargets.set(compBean, registeredElements);
-        }
-
-        if (registeredElements.has(element)) {
-            return;
-        }
-
-        registeredElements.add(element);
-        compBean.addManagedListeners(element, {
-            pointerenter: (event: PointerEvent) => this.onPointerEnter(this.getTargetForElement(event.target), event),
-            pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
-            contextmenu: () => this.onContextMenu(),
-        });
     }
 
     private getNoteParamsForTarget(target: FullWidthTarget): GetNoteParams {
