@@ -52,7 +52,7 @@ import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { IRowStyleFeature } from '../../interfaces/iRowStyleFeature';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import type { GetNoteParams, ICellNotesFeature } from '../../interfaces/notes';
+import type { GetNoteParams, INotesFeature } from '../../interfaces/notes';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
@@ -107,7 +107,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public readonly instanceId: RowCtrlInstanceId;
 
     private tooltipFeature: TooltipFeature | undefined;
-    private readonly fullWidthNotesFeature: ICellNotesFeature | undefined;
+    private readonly fullWidthNotesFeature: INotesFeature | undefined;
+    private readonly guiListenerOwners = new WeakMap<HTMLElement, BeanStub>();
 
     private rowType: RowType;
 
@@ -190,9 +191,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowStyles = this.processStylesFromGridOptions();
 
         this.rowEditStyleFeature = beans.editSvc?.createRowStyleFeature(this);
-        this.fullWidthNotesFeature = this.isFullWidth()
-            ? beans.notesSvc?.createFullWidthRowNotesFeature(this)
-            : undefined;
+        this.fullWidthNotesFeature = this.isFullWidth() ? beans.notesSvc?.createFullWidthNotesFeature(this) : undefined;
 
         this.addListeners();
     }
@@ -1298,6 +1297,19 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return type === 'left' || type === 'right' ? type : undefined;
     }
 
+    public addManagedGuiElementListeners<TEvent extends keyof HTMLElementEventMap>(
+        gui: RowGui,
+        handlers: { [K in TEvent]?: (event: HTMLElementEventMap[K]) => void }
+    ): void {
+        const { compBean, element } = gui;
+        if (this.guiListenerOwners.get(element) === compBean) {
+            return;
+        }
+
+        this.guiListenerOwners.set(element, compBean);
+        compBean.addManagedElementListeners(element, handlers);
+    }
+
     private onRowMouseDown(mouseEvent: MouseEvent) {
         this.lastMouseDownOnDragger = _isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
 
@@ -1662,11 +1674,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const suffixParams = cellCtrl ? { column: cellCtrl.column } : { location: 'fullWidthRow' };
         const params = { ...baseParams, ...suffixParams } as GetNoteParams;
 
-        const access = notesSvc.getCellNoteAccess(params);
+        const access = notesSvc.getNoteAccess(params);
 
         if (access?.canView) {
             const translate = this.getLocaleTextFunc();
-            ariaAnnounce.announceValue(translate('ariaCellHasNote', 'This cell has a note.'), 'cellNote');
+            ariaAnnounce.announceValue(translate('ariaHasNote', 'This cell has a note.'), 'note');
         }
     }
 

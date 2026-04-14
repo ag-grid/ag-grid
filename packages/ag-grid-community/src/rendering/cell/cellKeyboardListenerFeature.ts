@@ -216,11 +216,11 @@ export class CellKeyboardListenerFeature extends BeanStub {
         } = this;
 
         if (event.shiftKey && notesSvc?.hasDataSource()) {
-            const access = notesSvc.getCellNoteAccess({ rowNode: this.rowNode, column: cellCtrl.column });
+            const access = notesSvc.getNoteAccess({ rowNode: this.rowNode, column: cellCtrl.column });
 
             if (access) {
                 if (!access.isSuppressed || access.canView) {
-                    notesSvc.showCellNote(access.params, true);
+                    notesSvc.showNote(access.params, true);
                     event.preventDefault();
                     return;
                 }

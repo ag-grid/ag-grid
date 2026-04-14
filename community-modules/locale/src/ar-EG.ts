@@ -756,7 +756,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaLabelAddFilterField: 'إضافة حقل الفلتر',
     ariaLabelFilterCardDelete: 'حذف الفلتر',
     ariaLabelFilterCardHasEdits: 'يوجد تعديلات',
-    ariaCellHasNote: 'تحتوي هذه الخلية على ملاحظة.',
+    ariaHasNote: 'تحتوي هذه الخلية على ملاحظة.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '،',
@@ -802,13 +802,13 @@ export const AG_GRID_LOCALE_EG = {
     timeFormatHHMMSS: 'ساعة:دقيقة:ثانية',
     timeFormatHHMMSSAmPm: 'ساعة:دقيقة:ثانية ص/م',
 
-    // Cell Notes
-    cellNote: 'ملاحظة الخلية',
-    addCellNote: 'إضافة ملاحظة للخلية',
-    viewCellNote: 'عرض الملاحظة',
-    editCellNote: 'تحرير الملاحظة',
-    deleteCellNote: 'إزالة الملاحظة',
-    cellNotePlaceholder: 'أضف ملاحظة...',
-    cellNoteHint: 'مرر المؤشر للمعاينة. انقر بالداخل للتحرير. اسحب الزاوية لتغيير الحجم. اضغط Esc للإغلاق.',
-    cellNoteReadOnlyHint: 'ملاحظة للقراءة فقط. حدد النص لنسخه. اسحب الزاوية لتغيير الحجم. اضغط Esc للإغلاق.',
+    // Notes
+    note: 'ملاحظة الخلية',
+    addNote: 'إضافة ملاحظة',
+    viewNote: 'عرض الملاحظة',
+    editNote: 'تحرير الملاحظة',
+    deleteNote: 'إزالة الملاحظة',
+    notePlaceholder: 'أضف ملاحظة...',
+    noteHint: 'مرر المؤشر للمعاينة. انقر بالداخل للتحرير. اسحب الزاوية لتغيير الحجم. اضغط Esc للإغلاق.',
+    noteReadOnlyHint: 'ملاحظة للقراءة فقط. حدد النص لنسخه. اسحب الزاوية لتغيير الحجم. اضغط Esc للإغلاق.',
 };

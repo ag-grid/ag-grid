@@ -1,4 +1,4 @@
-import type { AgColumn, BeanCollection, CellNote, ColDef, IRowNode } from 'ag-grid-community';
+import type { AgColumn, BeanCollection, ColDef, IRowNode, Note } from 'ag-grid-community';
 
 import { NotesService } from './notesService';
 
@@ -8,8 +8,8 @@ describe('NotesService', () => {
     let rowNode: IRowNode;
     let colDef: ColDef;
     let column: AgColumn;
-    let currentNote: CellNote | undefined;
-    let cellCtrl: { showCellNote: jest.Mock };
+    let currentNote: Note | undefined;
+    let cellCtrl: { showNote: jest.Mock };
     let fullWidthNotesFeature: { show: jest.Mock };
     let fullWidthRowCtrl: { isFullWidth: jest.Mock; getNotesFeature: jest.Mock };
 
@@ -21,7 +21,7 @@ describe('NotesService', () => {
 
         colDef = {};
         currentNote = undefined;
-        cellCtrl = { showCellNote: jest.fn() };
+        cellCtrl = { showNote: jest.fn() };
         fullWidthNotesFeature = { show: jest.fn() };
         fullWidthRowCtrl = {
             isFullWidth: jest.fn(() => true),
@@ -82,7 +82,7 @@ describe('NotesService', () => {
     it('resolves access flags for read-only notes', () => {
         currentNote = { text: 'Read only', readOnly: true };
 
-        expect(service.getCellNoteAccess({ rowNode, column: 'athlete' })).toEqual(
+        expect(service.getNoteAccess({ rowNode, column: 'athlete' })).toEqual(
             expect.objectContaining({
                 note: currentNote,
                 isReadOnly: true,
@@ -97,9 +97,9 @@ describe('NotesService', () => {
 
     it('allows suppressed notes to remain viewable', () => {
         currentNote = { text: 'Suppressed note' };
-        colDef.suppressCellNoteActions = true;
+        colDef.suppressNoteActions = true;
 
-        expect(service.getCellNoteAccess({ rowNode, column: 'athlete' })).toEqual(
+        expect(service.getNoteAccess({ rowNode, column: 'athlete' })).toEqual(
             expect.objectContaining({
                 canView: true,
                 isSuppressed: true,
@@ -107,14 +107,14 @@ describe('NotesService', () => {
                 canDelete: false,
             })
         );
-        expect(service.getCellNote({ rowNode, column: 'athlete' })).toEqual(currentNote);
+        expect(service.getNote({ rowNode, column: 'athlete' })).toEqual(currentNote);
     });
 
-    it('evaluates suppressCellNoteActions callbacks when resolving access', () => {
-        colDef.suppressCellNoteActions = ({ data, column: callbackColumn, colDef: callbackColDef, node }) =>
+    it('evaluates suppressNoteActions callbacks when resolving access', () => {
+        colDef.suppressNoteActions = ({ data, column: callbackColumn, colDef: callbackColDef, node }) =>
             data === rowNode.data && callbackColumn === column && callbackColDef === colDef && node === rowNode;
 
-        expect(service.getCellNoteAccess({ rowNode, column: 'athlete' })).toEqual(
+        expect(service.getNoteAccess({ rowNode, column: 'athlete' })).toEqual(
             expect.objectContaining({
                 isSuppressed: true,
                 canView: false,
@@ -128,22 +128,22 @@ describe('NotesService', () => {
     it('opens read-only notes through the cell controller', () => {
         currentNote = { text: 'Read only', readOnly: true };
 
-        expect(service.showCellNote({ rowNode, column: 'athlete' }, true)).toBe(true);
-        expect(cellCtrl.showCellNote).toHaveBeenCalledWith(true);
+        expect(service.showNote({ rowNode, column: 'athlete' }, true)).toBe(true);
+        expect(cellCtrl.showNote).toHaveBeenCalledWith(true);
     });
 
     it('opens suppressed existing notes through the cell controller', () => {
         currentNote = { text: 'Suppressed note' };
-        colDef.suppressCellNoteActions = true;
+        colDef.suppressNoteActions = true;
 
-        expect(service.showCellNote({ rowNode, column: 'athlete' }, true)).toBe(true);
-        expect(cellCtrl.showCellNote).toHaveBeenCalledWith(true);
+        expect(service.showNote({ rowNode, column: 'athlete' }, true)).toBe(true);
+        expect(cellCtrl.showNote).toHaveBeenCalledWith(true);
     });
 
     it('resolves full-width note access without a column key', () => {
         currentNote = { text: 'Full width note' };
 
-        expect(service.getCellNoteAccess({ rowNode, location: 'fullWidthRow' })).toEqual(
+        expect(service.getNoteAccess({ rowNode, location: 'fullWidthRow' })).toEqual(
             expect.objectContaining({
                 params: { rowNode, location: 'fullWidthRow' },
                 note: currentNote,
@@ -163,16 +163,16 @@ describe('NotesService', () => {
         (beans.rowRenderer!.getRowCtrlByNode as jest.Mock).mockReturnValue(fullWidthRowCtrl);
         ((service as any).gos.get as jest.Mock).mockReturnValue(true);
 
-        expect(service.showCellNote({ rowNode, location: 'fullWidthRow', pinned: 'left' }, true)).toBe(true);
+        expect(service.showNote({ rowNode, location: 'fullWidthRow', pinned: 'left' }, true)).toBe(true);
         expect(fullWidthNotesFeature.show).toHaveBeenCalledWith({ pinned: 'left', focusEditor: true });
-        expect(cellCtrl.showCellNote).not.toHaveBeenCalled();
+        expect(cellCtrl.showNote).not.toHaveBeenCalled();
     });
 
     it('strips pinned from full-width note params when embedFullWidthRows is off', () => {
         currentNote = { text: 'Full width note' };
         ((service as any).gos.get as jest.Mock).mockReturnValue(false);
 
-        const access = service.getCellNoteAccess({ rowNode, location: 'fullWidthRow', pinned: 'left' });
+        const access = service.getNoteAccess({ rowNode, location: 'fullWidthRow', pinned: 'left' });
 
         expect(access).toEqual(
             expect.objectContaining({
@@ -182,9 +182,9 @@ describe('NotesService', () => {
     });
 
     it('does not write notes for suppressed cells via UI', () => {
-        colDef.suppressCellNoteActions = true;
+        colDef.suppressNoteActions = true;
 
-        service.setCellNote({
+        service.setNote({
             rowNode,
             column: 'athlete',
             note: { text: 'Blocked note' },
@@ -196,9 +196,9 @@ describe('NotesService', () => {
     });
 
     it('allows API writes to suppressed cells', () => {
-        colDef.suppressCellNoteActions = true;
+        colDef.suppressNoteActions = true;
 
-        service.setCellNote({
+        service.setNote({
             rowNode,
             column: 'athlete',
             note: { text: 'API note' },
@@ -215,13 +215,13 @@ describe('NotesService', () => {
     it('does not update or remove existing read-only notes through the built-in UI', () => {
         currentNote = { text: 'Locked', readOnly: true };
 
-        service.setCellNote({
+        service.setNote({
             rowNode,
             column: 'athlete',
             note: { text: 'Updated' },
             source: 'ui',
         });
-        service.setCellNote({
+        service.setNote({
             rowNode,
             column: 'athlete',
             note: undefined,
@@ -235,12 +235,12 @@ describe('NotesService', () => {
     it('allows API updates and removals for existing read-only notes', () => {
         currentNote = { text: 'Locked', readOnly: true };
 
-        service.setCellNote({
+        service.setNote({
             rowNode,
             column: 'athlete',
             note: { text: 'Updated', readOnly: undefined },
         });
-        service.setCellNote({
+        service.setNote({
             rowNode,
             column: 'athlete',
             note: undefined,
@@ -260,9 +260,9 @@ describe('NotesService', () => {
     });
 
     it('can create a new read-only note when the cell is not suppressed', () => {
-        const readOnlyNote = { text: 'Created as read only', readOnly: true } satisfies CellNote;
+        const readOnlyNote = { text: 'Created as read only', readOnly: true } satisfies Note;
 
-        service.setCellNote({
+        service.setNote({
             rowNode,
             column: 'athlete',
             note: readOnlyNote,

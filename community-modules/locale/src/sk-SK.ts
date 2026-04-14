@@ -758,7 +758,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaLabelAddFilterField: 'Pridať pole filtra',
     ariaLabelFilterCardDelete: 'Odstrániť filter',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
-    ariaCellHasNote: 'Táto bunka má poznámku.',
+    ariaHasNote: 'Táto bunka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -804,15 +804,15 @@ export const AG_GRID_LOCALE_SK = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
 
-    // Cell Notes
-    cellNote: 'Poznámka bunky',
-    addCellNote: 'Pridať poznámku bunky',
-    viewCellNote: 'Zobraziť poznámku',
-    editCellNote: 'Upraviť poznámku',
-    deleteCellNote: 'Odstrániť poznámku',
-    cellNotePlaceholder: 'Pridať poznámku...',
-    cellNoteHint:
+    // Notes
+    note: 'Poznámka bunky',
+    addNote: 'Pridať poznámku',
+    viewNote: 'Zobraziť poznámku',
+    editNote: 'Upraviť poznámku',
+    deleteNote: 'Odstrániť poznámku',
+    notePlaceholder: 'Pridať poznámku...',
+    noteHint:
         'Pre náhľad prejdite kurzorom. Kliknite dovnútra pre úpravu. Potiahnutím rohu zmeňte veľkosť. Stlačte Esc pre zatvorenie.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Poznámka iba na čítanie. Označte text na kopírovanie. Potiahnutím rohu zmeňte veľkosť. Stlačte Esc pre zatvorenie.',
 };

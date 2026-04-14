@@ -1,4 +1,4 @@
-import type { CellNote, ColDef, GetRowIdParams, GridOptions, NotesDataSource } from 'ag-grid-community';
+import type { ColDef, GetRowIdParams, GridOptions, Note, NotesDataSource } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ContextMenuModule, NotesModule } from 'ag-grid-enterprise';
 
@@ -18,7 +18,7 @@ type OlympicWinner = {
     sport: string;
 };
 
-const getCellNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
+const getNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
 const getDisplayTimestamp = () =>
     new Intl.DateTimeFormat('en-GB', {
         dateStyle: 'medium',
@@ -29,9 +29,9 @@ const getCurrentUser = () => {
     return user || undefined;
 };
 
-const noteStore = new Map<string, CellNote>([
+const noteStore = new Map<string, Note>([
     [
-        getCellNoteKey('1', 'athlete'),
+        getNoteKey('1', 'athlete'),
         {
             text: 'Confirm the athlete biography before the next review.',
             author: 'AG Grid',
@@ -40,7 +40,7 @@ const noteStore = new Map<string, CellNote>([
         },
     ],
     [
-        getCellNoteKey('3', 'country'),
+        getNoteKey('3', 'country'),
         {
             text: 'Check the latest federation naming guidance for this country.',
             author: 'Chris',
@@ -52,13 +52,13 @@ const noteStore = new Map<string, CellNote>([
 
 const notesDataSource: NotesDataSource = {
     getNote: (params) =>
-        'column' in params ? noteStore.get(getCellNoteKey(params.rowNode.id!, params.column.getColId())) : undefined,
+        'column' in params ? noteStore.get(getNoteKey(params.rowNode.id!, params.column.getColId())) : undefined,
     setNote: (params) => {
         if (!('column' in params)) {
             return;
         }
 
-        const key = getCellNoteKey(params.rowNode.id!, params.column.getColId());
+        const key = getNoteKey(params.rowNode.id!, params.column.getColId());
         const existingNote = noteStore.get(key);
 
         if (params.note === undefined) {

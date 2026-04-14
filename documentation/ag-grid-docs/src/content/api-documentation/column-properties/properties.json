@@ -90,7 +90,7 @@
                 "url": "./context-menu/#configuring-the-context-menu"
             }
         },
-        "suppressCellNoteActions": {},
+        "suppressNoteActions": {},
         "context": {}
     },
     "charts": {

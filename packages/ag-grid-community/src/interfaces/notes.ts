@@ -7,7 +7,7 @@ import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
 import type { IRowNode } from './iRowNode';
 
-export interface CellNote {
+export interface Note {
     text: string;
     readOnly?: boolean;
     author?: string;
@@ -15,7 +15,7 @@ export interface CellNote {
     updatedAt?: string;
 }
 
-export interface CellNoteParams {
+export interface NoteParams {
     column: ColKey;
     rowNode: IRowNode;
     location?: 'cell';
@@ -27,13 +27,13 @@ export interface FullWidthRowNoteParams {
     pinned?: 'left' | 'right';
 }
 
-export type GetNoteParams = CellNoteParams | FullWidthRowNoteParams;
+export type GetNoteParams = NoteParams | FullWidthRowNoteParams;
 
 export type SetNoteParams = GetNoteParams & {
-    note: CellNote | undefined;
+    note: Note | undefined;
 };
 
-export interface NotesDataSourceCellNoteParams {
+export interface NotesDataSourceNoteParams {
     column: Column;
     rowNode: IRowNode;
     location?: 'cell';
@@ -45,40 +45,40 @@ export interface NotesDataSourceFullWidthRowNoteParams {
     pinned?: 'left' | 'right';
 }
 
-export type NotesDataSourceGetNoteParams = NotesDataSourceCellNoteParams | NotesDataSourceFullWidthRowNoteParams;
+export type NotesDataSourceGetNoteParams = NotesDataSourceNoteParams | NotesDataSourceFullWidthRowNoteParams;
 
 export type NotesDataSourceSetNoteParams = NotesDataSourceGetNoteParams & {
-    note: CellNote | undefined;
+    note: Note | undefined;
 };
 
 export interface NotesDataSourceParams extends AgGridCommon<any, any> {}
 
 /**
- * Control where cell notes are stored/retrieved from.
+ * Control where notes are stored/retrieved from.
  * An implementation can store note state separately from the row data, or persist it remotely.
  */
 export interface NotesDataSource {
     /** Initialise the data source so that the user can take a reference to the gridApi if needed. */
     init?(params: NotesDataSourceParams): void;
     /** Return the note for the given cell or full width row. */
-    getNote(params: NotesDataSourceGetNoteParams): CellNote | undefined;
+    getNote(params: NotesDataSourceGetNoteParams): Note | undefined;
     /** Set or clear the note for the given cell or full width row. */
     setNote(params: NotesDataSourceSetNoteParams): void;
     /** Called by the grid when the data source is being disposed. */
     destroy?(): void;
 }
 
-export interface RefreshCellNotesParams {
+export interface RefreshNotesParams {
     rowNodes?: IRowNode[];
     columns?: (string | Column)[];
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface ICellNoteAccess {
+export interface INoteAccess {
     params: GetNoteParams;
     rowNode: IRowNode;
     column: AgColumn;
-    note: CellNote | undefined;
+    note: Note | undefined;
     isReadOnly: boolean;
     isSuppressed: boolean;
     canView: boolean;
@@ -88,7 +88,7 @@ export interface ICellNoteAccess {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface ICellNotesFeature {
+export interface INotesFeature {
     refresh(): void;
     show(params?: { focusEditor?: boolean; pinned?: 'left' | 'right' }): void;
     hide(save?: boolean): void;
@@ -98,7 +98,7 @@ export interface ICellNotesFeature {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface INotesDataService extends Bean {
     hasDataSource(): boolean;
-    getNote(params: GetNoteParams): CellNote | undefined;
+    getNote(params: GetNoteParams): Note | undefined;
     setNote(params: SetNoteParams): void;
 }
 
@@ -106,11 +106,11 @@ export interface INotesDataService extends Bean {
 export interface INotesService extends Bean {
     hasDataSource(): boolean;
     onDataSourceChanged(): void;
-    createCellNotesFeature(ctrl: CellCtrl): ICellNotesFeature | undefined;
-    createFullWidthRowNotesFeature(ctrl: RowCtrl): ICellNotesFeature | undefined;
-    getCellNoteAccess(params: GetNoteParams): ICellNoteAccess | undefined;
-    getCellNote(params: GetNoteParams): CellNote | undefined;
-    showCellNote(params: GetNoteParams, focusEditor?: boolean): boolean;
-    setCellNote(params: SetNoteParams): void;
-    refreshCellNotes(params?: RefreshCellNotesParams): void;
+    createNotesFeature(ctrl: CellCtrl): INotesFeature | undefined;
+    createFullWidthNotesFeature(ctrl: RowCtrl): INotesFeature | undefined;
+    getNoteAccess(params: GetNoteParams): INoteAccess | undefined;
+    getNote(params: GetNoteParams): Note | undefined;
+    showNote(params: GetNoteParams, focusEditor?: boolean): boolean;
+    setNote(params: SetNoteParams): void;
+    refreshNotes(params?: RefreshNotesParams): void;
 }

@@ -1,12 +1,12 @@
 import type {
     CellFocusedEvent,
-    CellNote,
     ColDef,
     Column,
     GetRowIdParams,
     GridApi,
     GridOptions,
     IRowNode,
+    Note,
     NotesDataSource,
 } from 'ag-grid-community';
 import {
@@ -48,7 +48,7 @@ const getDisplayTimestamp = () =>
         timeStyle: 'short',
     }).format(new Date());
 
-const noteStore: Record<string, Record<string, CellNote>> = {
+const noteStore: Record<string, Record<string, Note>> = {
     '2': {
         athlete: {
             text: 'Follow up with the regional team before publishing this profile.',
@@ -147,7 +147,7 @@ const syncNote = (gridApi: GridApi<OlympicWinner>) => {
         return;
     }
 
-    const note = gridApi.getCellNote(cell);
+    const note = gridApi.getNote(cell);
     getNoteTextArea().value = note?.text ?? '';
     getAuthorInput().value = (note?.author ?? getAuthorInput().value) || 'API Demo';
     getReadOnlyInput().checked = !!note?.readOnly;
@@ -173,7 +173,7 @@ function saveSelectedNote() {
           }
         : undefined;
 
-    gridApi.setCellNote({
+    gridApi.setNote({
         ...cell,
         note: nextNote,
     });
@@ -182,8 +182,8 @@ function saveSelectedNote() {
 
     setStatus(
         text
-            ? `Saved note for ${describeCell(cell)} via gridApi.setCellNote().`
-            : `Removed note for ${describeCell(cell)} via gridApi.setCellNote().`
+            ? `Saved note for ${describeCell(cell)} via gridApi.setNote().`
+            : `Removed note for ${describeCell(cell)} via gridApi.setNote().`
     );
 }
 
@@ -193,13 +193,13 @@ function removeSelectedNote() {
         return;
     }
 
-    gridApi.setCellNote({
+    gridApi.setNote({
         ...cell,
         note: undefined,
     });
     syncNote(gridApi);
 
-    setStatus(`Removed note for ${describeCell(cell)} via gridApi.setCellNote().`);
+    setStatus(`Removed note for ${describeCell(cell)} via gridApi.setNote().`);
 }
 
 function mutateStoreDirectly() {
@@ -233,13 +233,13 @@ function refreshSelectedNotes() {
         return;
     }
 
-    gridApi.refreshCellNotes({
+    gridApi.refreshNotes({
         rowNodes: [cell.rowNode],
         columns: [cell.column],
     });
 
     syncNote(gridApi);
-    setStatus(`Refreshed notes for ${describeCell(cell)} via gridApi.refreshCellNotes().`);
+    setStatus(`Refreshed notes for ${describeCell(cell)} via gridApi.refreshNotes().`);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

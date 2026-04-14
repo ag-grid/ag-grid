@@ -763,7 +763,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaLabelAddFilterField: 'Szűrőmező hozzáadása',
     ariaLabelFilterCardDelete: 'Szűrő törlése',
     ariaLabelFilterCardHasEdits: 'Módosításokat tartalmaz',
-    ariaCellHasNote: 'Ez a cella jegyzettel rendelkezik.',
+    ariaHasNote: 'Ez a cella jegyzettel rendelkezik.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -809,15 +809,15 @@ export const AG_GRID_LOCALE_HU = {
     timeFormatHHMMSS: 'ÓÓ:PP:MP',
     timeFormatHHMMSSAmPm: 'ÓÓ:PP:MP DE/DU',
 
-    // Cell Notes
-    cellNote: 'Cella megjegyzés',
-    addCellNote: 'Cella megjegyzés hozzáadása',
-    viewCellNote: 'Megjegyzés megtekintése',
-    editCellNote: 'Megjegyzés szerkesztése',
-    deleteCellNote: 'Megjegyzés eltávolítása',
-    cellNotePlaceholder: 'Megjegyzés hozzáadása...',
-    cellNoteHint:
+    // Notes
+    note: 'Cella megjegyzés',
+    addNote: 'Megjegyzés hozzáadása',
+    viewNote: 'Megjegyzés megtekintése',
+    editNote: 'Megjegyzés szerkesztése',
+    deleteNote: 'Megjegyzés eltávolítása',
+    notePlaceholder: 'Megjegyzés hozzáadása...',
+    noteHint:
         'Vigye fölé az egeret az előnézethez. Kattintson bele a szerkesztéshez. Húzza a sarkát az átméretezéshez. Nyomja meg az Esc billentyűt a bezáráshoz.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Csak olvasható megjegyzés. Jelölje ki a szöveget a másoláshoz. Húzza a sarkát az átméretezéshez. Nyomja meg az Esc billentyűt a bezáráshoz.',
 };

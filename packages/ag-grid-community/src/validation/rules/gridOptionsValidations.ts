@@ -430,7 +430,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         notesDataSource: {
             validate: ({ getRowId }) => {
                 if (!getRowId) {
-                    return `'getRowId' callback must be provided for Cell Notes to work correctly.`;
+                    return `'getRowId' callback must be provided for Notes to work correctly.`;
                 }
                 return null;
             },

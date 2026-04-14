@@ -1,21 +1,12 @@
-import type {
-    BeanCollection,
-    BeanStub,
-    CellCtrl,
-    CellNote,
-    GetNoteParams,
-    ICellNotesFeature,
-    RowCtrl,
-    RowGui,
-} from 'ag-grid-community';
+import type { BeanCollection, CellCtrl, GetNoteParams, INotesFeature, Note, RowCtrl, RowGui } from 'ag-grid-community';
 
 import { AgNotesPopup } from './agNotesPopup';
-import type { ICellNotePopupOwner, INotesFeatureSupport, NoteTarget } from './notesShared';
+import type { INotePopupOwner, INotesFeatureSupport, NoteTarget } from './notesShared';
 import { isFullWidthRowNoteParams } from './notesShared';
 
 const CSS_HAS_CELL_NOTES = 'ag-has-cell-notes';
 
-abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwner {
+abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
     private popup?: AgNotesPopup;
     private activeTarget?: NoteTarget;
     private showTimer = 0;
@@ -34,7 +25,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
             return;
         }
 
-        const { canView, canCreate } = this.notesSvc.getCellNoteAccess(this.activeTarget.noteParams) || {};
+        const { canView, canCreate } = this.notesSvc.getNoteAccess(this.activeTarget.noteParams) || {};
         if (!canView && !canCreate) {
             this.closeNotePopup(false);
         }
@@ -72,7 +63,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
             return;
         }
 
-        const access = target && this.notesSvc.getCellNoteAccess(target.noteParams);
+        const access = target && this.notesSvc.getNoteAccess(target.noteParams);
         this.cancelHide();
 
         if (!target || !access?.canView) {
@@ -116,7 +107,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
     protected abstract getTarget(pinned?: 'left' | 'right'): NoteTarget | undefined;
 
     private openPopup(target: NoteTarget, focusEditor = false): void {
-        const access = this.notesSvc.getCellNoteAccess(target.noteParams);
+        const access = this.notesSvc.getNoteAccess(target.noteParams);
         if (!access || (!access.canView && !(focusEditor && access.canCreate))) {
             return;
         }
@@ -131,7 +122,12 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
             return;
         }
 
-        this.notesSvc.replaceActivePopupOwner(this)?.closeNotePopup();
+        const previousOwner = this.notesSvc.replaceActivePopupOwner(this);
+        if (previousOwner) {
+            previousOwner.closeNotePopup();
+        } else if (this.popup) {
+            this.closeNotePopup();
+        }
 
         const popup = this.beans.context.createBean(
             new AgNotesPopup({
@@ -151,7 +147,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
 
     private onPopupClosed(
         noteChanged: boolean,
-        note: CellNote | undefined,
+        note: Note | undefined,
         closeEvent?: MouseEvent | TouchEvent | KeyboardEvent
     ): void {
         const target = this.activeTarget;
@@ -180,10 +176,10 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
             return;
         }
 
-        this.notesSvc.setCellNote({
+        this.notesSvc.setNote({
             ...target.noteParams,
             note,
-            previousNote: this.notesSvc.getCellNoteAccess(target.noteParams)?.note,
+            previousNote: this.notesSvc.getNoteAccess(target.noteParams)?.note,
             source: 'ui',
         });
     }
@@ -212,7 +208,7 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
     }
 }
 
-export class AgCellNotesFeature extends BaseNotesFeature {
+export class AgNotesFeature extends BaseNotesFeature {
     constructor(
         beans: BeanCollection,
         private readonly ctrl: CellCtrl,
@@ -222,7 +218,7 @@ export class AgCellNotesFeature extends BaseNotesFeature {
     }
 
     public override refresh(): void {
-        if (this.ctrl.isCellNoteHoverSuppressed()) {
+        if (this.ctrl.isNoteHoverSuppressed()) {
             this.clearShowTimer();
         }
 
@@ -232,7 +228,7 @@ export class AgCellNotesFeature extends BaseNotesFeature {
     public initialise(): void {
         this.ctrl.addManagedElementListeners(this.ctrl.eGui, {
             pointerenter: (event: PointerEvent) => {
-                if (this.ctrl.isCellNoteHoverSuppressed()) {
+                if (this.ctrl.isNoteHoverSuppressed()) {
                     return;
                 }
 
@@ -245,8 +241,8 @@ export class AgCellNotesFeature extends BaseNotesFeature {
     }
 
     protected refreshHasNotesStyling(): void {
-        const hasNote = !!this.notesSvc.getCellNoteAccess(this.getPosition())?.note;
-        this.ctrl.comp.toggleCss(CSS_HAS_CELL_NOTES, hasNote && !this.ctrl.isCellNoteHoverSuppressed());
+        const hasNote = !!this.notesSvc.getNoteAccess(this.getPosition())?.note;
+        this.ctrl.comp.toggleCss(CSS_HAS_CELL_NOTES, hasNote && !this.ctrl.isNoteHoverSuppressed());
     }
 
     private getPosition() {
@@ -267,8 +263,6 @@ export class AgCellNotesFeature extends BaseNotesFeature {
 }
 
 export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
-    private readonly registeredGuis = new WeakSet<BeanStub>();
-
     constructor(
         beans: BeanCollection,
         private readonly ctrl: RowCtrl,
@@ -290,19 +284,13 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
             this.registerGui(gui);
 
             const position = this.getPositionForGui(gui);
-            const hasNote = !!position && !!this.notesSvc.getCellNoteAccess(position)?.note;
+            const hasNote = !!position && !!this.notesSvc.getNoteAccess(position)?.note;
             gui.rowComp.toggleCss(CSS_HAS_CELL_NOTES, hasNote);
         });
     }
 
     private registerGui(gui: RowGui): void {
-        const { compBean, element } = gui;
-        if (this.registeredGuis.has(compBean)) {
-            return;
-        }
-
-        this.registeredGuis.add(compBean);
-        compBean.addManagedListeners(element, {
+        this.ctrl.addManagedGuiElementListeners(gui, {
             pointerenter: (event: PointerEvent) => this.onPointerEnter(this.getTargetForGui(gui), event),
             pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
             contextmenu: () => this.onContextMenu(),

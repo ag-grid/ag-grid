@@ -34,12 +34,12 @@ describe('CellCtrl', () => {
     ])('suppresses note hover when the cell has %s', (_reason, params) => {
         const ctrl = createCellCtrl(params);
 
-        expect(ctrl.isCellNoteHoverSuppressed()).toBe(true);
+        expect(ctrl.isNoteHoverSuppressed()).toBe(true);
     });
 
     it('does not suppress note hover when the cell is not editing and has no errors', () => {
         const ctrl = createCellCtrl();
 
-        expect(ctrl.isCellNoteHoverSuppressed()).toBe(false);
+        expect(ctrl.isNoteHoverSuppressed()).toBe(false);
     });
 });

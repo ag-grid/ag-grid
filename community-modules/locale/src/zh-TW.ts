@@ -756,7 +756,7 @@ export const AG_GRID_LOCALE_TW = {
     ariaLabelAddFilterField: '新增篩選欄位',
     ariaLabelFilterCardDelete: '刪除篩選器',
     ariaLabelFilterCardHasEdits: '有編輯',
-    ariaCellHasNote: '此儲存格有備註。',
+    ariaHasNote: '此儲存格有備註。',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -802,13 +802,13 @@ export const AG_GRID_LOCALE_TW = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
 
-    // Cell Notes
-    cellNote: '儲存格備註',
-    addCellNote: '新增儲存格備註',
-    viewCellNote: '檢視備註',
-    editCellNote: '編輯備註',
-    deleteCellNote: '移除備註',
-    cellNotePlaceholder: '新增備註...',
-    cellNoteHint: '滑過即可預覽。按一下內部即可編輯。拖曳角落即可調整大小。按 Esc 關閉。',
-    cellNoteReadOnlyHint: '唯讀備註。選取文字即可複製。拖曳角落即可調整大小。按 Esc 關閉。',
+    // Notes
+    note: '儲存格備註',
+    addNote: '新增備註',
+    viewNote: '檢視備註',
+    editNote: '編輯備註',
+    deleteNote: '移除備註',
+    notePlaceholder: '新增備註...',
+    noteHint: '滑過即可預覽。按一下內部即可編輯。拖曳角落即可調整大小。按 Esc 關閉。',
+    noteReadOnlyHint: '唯讀備註。選取文字即可複製。拖曳角落即可調整大小。按 Esc 關閉。',
 };

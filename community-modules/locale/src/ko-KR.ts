@@ -757,7 +757,7 @@ export const AG_GRID_LOCALE_KR = {
     ariaLabelAddFilterField: '필터 필드 추가',
     ariaLabelFilterCardDelete: '필터 삭제',
     ariaLabelFilterCardHasEdits: '편집 사항 있음',
-    ariaCellHasNote: '이 셀에 메모가 있습니다.',
+    ariaHasNote: '이 셀에 메모가 있습니다.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -803,15 +803,15 @@ export const AG_GRID_LOCALE_KR = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 오전/오후',
 
-    // Cell Notes
-    cellNote: '셀 메모',
-    addCellNote: '셀 메모 추가',
-    viewCellNote: '메모 보기',
-    editCellNote: '메모 편집',
-    deleteCellNote: '메모 제거',
-    cellNotePlaceholder: '메모 추가...',
-    cellNoteHint:
+    // Notes
+    note: '셀 메모',
+    addNote: '메모 추가',
+    viewNote: '메모 보기',
+    editNote: '메모 편집',
+    deleteNote: '메모 제거',
+    notePlaceholder: '메모 추가...',
+    noteHint:
         '미리 보려면 마우스를 올리세요. 편집하려면 안쪽을 클릭하세요. 크기를 조절하려면 모서리를 드래그하세요. 닫으려면 Esc를 누르세요.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         '읽기 전용 메모입니다. 복사하려면 텍스트를 선택하세요. 크기를 조절하려면 모서리를 드래그하세요. 닫으려면 Esc를 누르세요.',
 };
