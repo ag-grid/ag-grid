@@ -13,6 +13,12 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
     private hideTimer = 0;
     private suppressHoverUntilPointerLeave = false;
 
+    // when this feature replaces its own popup (for example switching between embedded full-width
+    // sections), closing the old popup would normally unregister this feature as the active owner. We
+    // need to keep ownership through this close process so NotesService can still close the popup if another
+    // cell or row opens a note next. (This is only relevant for embedded full-width row notes).
+    private preserveActivePopupOwnerOnClose = false;
+
     constructor(
         protected readonly beans: BeanCollection,
         protected readonly notesSvc: INotesFeatureSupport
@@ -123,9 +129,11 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
         }
 
         const previousOwner = this.notesSvc.replaceActivePopupOwner(this);
+
         if (previousOwner) {
             previousOwner.closeNotePopup();
         } else if (this.popup) {
+            this.preserveActivePopupOwnerOnClose = true;
             this.closeNotePopup();
         }
 
@@ -152,10 +160,15 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
     ): void {
         const target = this.activeTarget;
         const popup = this.popup;
+        const preserveActivePopupOwner = this.preserveActivePopupOwnerOnClose;
 
         this.popup = undefined;
         this.activeTarget = undefined;
-        this.notesSvc.clearActivePopupOwner(this);
+        this.preserveActivePopupOwnerOnClose = false;
+
+        if (!preserveActivePopupOwner) {
+            this.notesSvc.clearActivePopupOwner(this);
+        }
 
         if (popup) {
             this.beans.context.destroyBean(popup);
