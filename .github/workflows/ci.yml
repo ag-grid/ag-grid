@@ -204,7 +204,7 @@ jobs:
   fw_pkg_test:
     runs-on: ubuntu-24.04
     name: Framework Package Tests (${{ matrix.framework }})
-    needs: [detect-changes, init]
+    needs: [calc_matrix, init]
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.calc_matrix.outputs.test_pkg_matrix )}}
