@@ -58,7 +58,7 @@ ModuleRegistry.registerModules([
             <input
                 type="range"
                 id="widthSlider"
-                min="30"
+                min="35"
                 max="100"
                 [value]="widthValue"
                 style="flex: 1"
