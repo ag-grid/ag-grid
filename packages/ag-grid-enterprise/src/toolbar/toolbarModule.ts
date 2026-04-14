@@ -16,7 +16,6 @@ import { PivotPanelToolbarItem } from './providedItems/pivotPanelToolbarItem';
 import { QuickFilterToolbarItem } from './providedItems/quickFilterToolbarItem';
 import { ResetColumnsToolbarItem } from './providedItems/resetColumnsToolbarItem';
 import { RowGroupPanelToolbarItem } from './providedItems/rowGroupPanelToolbarItem';
-import { ToolbarService } from './toolbarService';
 
 /**
  * @feature Accessories -> Toolbar
@@ -25,7 +24,6 @@ import { ToolbarService } from './toolbarService';
 export const ToolbarModule: _ModuleWithoutApi = {
     moduleName: 'Toolbar',
     version: VERSION,
-    beans: [ToolbarService],
     userComponents: {
         agAutoSizeAllToolbarItem: AutoSizeAllToolbarItem,
         agColumnChooserToolbarItem: ColumnChooserToolbarItem,

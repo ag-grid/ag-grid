@@ -738,6 +738,10 @@ export const AG_GRID_ERRORS = {
         `Toolbar item 'columnsPanel' requires a sidebar with the 'columns' tool panel configured. The item will not be rendered.` as const,
     300: () =>
         `Toolbar item 'filtersPanel' requires a sidebar with a filters tool panel configured. The item will not be rendered.` as const,
+    301: ({ key }: { key: string }) =>
+        `Toolbar item '${key}' is missing the 'toolbarItem' property and will not be rendered.` as const,
+    302: ({ name, available }: { name: string; available: string }) =>
+        `Unknown toolbar item '${name}'. Available built-in items: ${available}.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

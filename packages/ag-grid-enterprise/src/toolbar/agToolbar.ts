@@ -22,10 +22,10 @@ import {
     _clearElement,
     _getActiveDomElement,
     _removeFromParent,
+    _warn,
 } from 'ag-grid-community';
 
 import agToolbarCSS from './agToolbar.css';
-import type { ToolbarService } from './toolbarService';
 
 const BUILT_IN_ITEMS: Record<string, ToolbarItemComponentName> = {
     autoSizeAll: 'agAutoSizeAllToolbarItem',
@@ -42,10 +42,11 @@ const BUILT_IN_ITEMS: Record<string, ToolbarItemComponentName> = {
     rowGroupPanel: 'agRowGroupPanelToolbarItem',
 };
 
-let customKeyCounter = 0;
-
-function normaliseItem(item: ToolbarItemDef | string): ToolbarItemDef {
+function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): ToolbarItemDef {
     if (typeof item === 'string') {
+        if (item !== 'separator' && !BUILT_IN_ITEMS[item]) {
+            _warn(302, { name: item, available: Object.keys(BUILT_IN_ITEMS).join(', ') });
+        }
         const toolbarItem = BUILT_IN_ITEMS[item] ?? item;
         return { toolbarItem, key: item };
     }
@@ -53,8 +54,7 @@ function normaliseItem(item: ToolbarItemDef | string): ToolbarItemDef {
         return { ...item, key: item.key ?? item.toolbarItem, toolbarItem: BUILT_IN_ITEMS[item.toolbarItem] };
     }
     if (item.key == null) {
-        const key =
-            typeof item.toolbarItem === 'string' ? item.toolbarItem : `custom-toolbar-item-${customKeyCounter++}`;
+        const key = typeof item.toolbarItem === 'string' ? item.toolbarItem : nextKey();
         return { ...item, key };
     }
     return item;
@@ -94,13 +94,13 @@ const AgToolbarElement: ElementParams = {
 
 class AgToolbar extends Component implements FocusableContainer {
     private userCompFactory: UserComponentFactory;
-    private toolbarSvc: ToolbarService;
     private updateQueued: boolean = false;
     private itemsPromise: Promise<void> = Promise.resolve();
+    private toolbarItems: Map<string, IToolbarItemComp> = new Map();
+    private customKeyCounter = 0;
 
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
-        this.toolbarSvc = beans.toolbarSvc as ToolbarService;
     }
 
     private readonly eToolbarLeft: HTMLElement = RefPlaceholder;
@@ -146,7 +146,7 @@ class AgToolbar extends Component implements FocusableContainer {
 
         const items: HTMLElement[] = Array.from(
             eGui.querySelectorAll<HTMLElement>(
-                '.ag-toolbar-button:not(:disabled), .ag-toolbar-input-field:not(:disabled)'
+                'button:not(:disabled), input:not(:disabled), [role="button"]:not([aria-disabled="true"])'
             )
         );
         const currentIndex = items.indexOf(activeEl);
@@ -188,18 +188,21 @@ class AgToolbar extends Component implements FocusableContainer {
         if (!toolbar?.items) {
             return undefined;
         }
+        const nextKey = () => `custom-toolbar-item-${this.customKeyCounter++}`;
         const seen = new Set<string>();
-        return toolbar.items.map(normaliseItem).filter((item) => {
-            const key = item.key ?? item.toolbarItem;
-            if (key === 'separator') {
+        return toolbar.items
+            .map((item) => normaliseItem(item, nextKey))
+            .filter((item) => {
+                const key = item.key ?? item.toolbarItem;
+                if (key === 'separator') {
+                    return true;
+                }
+                if (seen.has(key)) {
+                    return false;
+                }
+                seen.add(key);
                 return true;
-            }
-            if (seen.has(key)) {
-                return false;
-            }
-            seen.add(key);
-            return true;
-        });
+            });
     }
 
     private resolveDisplay(itemDef: ToolbarItemDef): ToolbarDisplay {
@@ -214,6 +217,7 @@ class AgToolbar extends Component implements FocusableContainer {
         if (validItemsProvided) {
             const leftItems: ToolbarItemDef[] = [];
             const rightItems: ToolbarItemDef[] = [];
+            // Separators inherit the alignment of the preceding non-separator item
             let lastAlignment: 'left' | 'right' = 'left';
             for (const item of items) {
                 const alignment: 'left' | 'right' = item.key === 'separator' ? lastAlignment : item.alignment ?? 'left';
@@ -250,7 +254,7 @@ class AgToolbar extends Component implements FocusableContainer {
         if (validItemsProvided) {
             for (const itemConfig of items) {
                 const key = itemConfig.key ?? itemConfig.toolbarItem;
-                const existingItem = this.toolbarSvc.getToolbarItem(key);
+                const existingItem = this.toolbarItems.get(key);
                 if (existingItem?.refresh) {
                     const newParams: IToolbarItemParams = _addGridCommonParams(this.gos, {
                         ...(itemConfig.toolbarItemParams ?? {}),
@@ -279,7 +283,7 @@ class AgToolbar extends Component implements FocusableContainer {
         _clearElement(this.eToolbarRight);
 
         this.destroyComponents();
-        this.toolbarSvc.unregisterAllComponents();
+        this.toolbarItems.clear();
     }
 
     public override destroy(): void {
@@ -311,6 +315,12 @@ class AgToolbar extends Component implements FocusableContainer {
             }
 
             const key = itemConfig.key || itemConfig.toolbarItem;
+
+            if (itemConfig.toolbarItem == null) {
+                _warn(301, { key });
+                continue;
+            }
+
             const existingItem = existingItemsToReuse.get(key);
 
             const placeholder = document.createElement('div');
@@ -365,7 +375,7 @@ class AgToolbar extends Component implements FocusableContainer {
         };
 
         if (this.isAlive()) {
-            this.toolbarSvc.registerToolbarItem(key, component);
+            this.toolbarItems.set(key, component);
             const comp = component instanceof Component ? component : undefined;
             if (!comp || comp.isDisplayed()) {
                 placeholder.replaceWith(component.getGui());
