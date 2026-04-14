@@ -14,13 +14,11 @@ export interface ToolbarItemDef {
     display?: ToolbarDisplay;
     key?: string;
     toolbarItemParams?: any;
-    disabled?: boolean;
 }
 
 export interface IToolbarItemParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     key: string;
     display: ToolbarDisplay;
-    disabled: boolean;
 }
 
 export interface IToolbarItem<TData = any, TContext = any> {

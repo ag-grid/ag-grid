@@ -247,7 +247,6 @@ class AgToolbar extends Component implements FocusableContainer {
                         ...(itemConfig.toolbarItemParams ?? {}),
                         key,
                         display: this.resolveDisplay(itemConfig),
-                        disabled: itemConfig.disabled ?? false,
                     });
                     const hasRefreshed = existingItem.refresh(newParams);
                     if (hasRefreshed) {
@@ -332,7 +331,6 @@ class AgToolbar extends Component implements FocusableContainer {
                         ...(itemConfig.toolbarItemParams ?? {}),
                         key,
                         display: this.resolveDisplay(itemConfig),
-                        disabled: itemConfig.disabled ?? false,
                     })
                 );
 

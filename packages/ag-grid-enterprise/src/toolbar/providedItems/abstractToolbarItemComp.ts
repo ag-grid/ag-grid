@@ -1,5 +1,5 @@
 import type { ElementParams, IToolbarItemComp, IToolbarItemParams, IconName } from 'ag-grid-community';
-import { Component, RefPlaceholder, _createIconNoSpan, _setAriaDisabled } from 'ag-grid-community';
+import { Component, RefPlaceholder, _createIconNoSpan } from 'ag-grid-community';
 
 const AbstractToolbarItemElement: ElementParams = {
     tag: 'button',
@@ -39,9 +39,6 @@ export abstract class AbstractToolbarItemComp extends Component implements ITool
 
     public refresh(params: IToolbarItemParams): boolean {
         this.eLabel.classList.toggle('ag-hidden', params.display !== 'iconAndLabel');
-        const eGui = this.getGui() as HTMLButtonElement;
-        eGui.disabled = params.disabled;
-        _setAriaDisabled(eGui, params.disabled);
         return true;
     }
 
