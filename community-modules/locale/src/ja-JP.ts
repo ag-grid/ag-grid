@@ -757,7 +757,7 @@ export const AG_GRID_LOCALE_JP = {
     ariaLabelAddFilterField: 'フィルターフィールドを追加',
     ariaLabelFilterCardDelete: 'フィルターを削除',
     ariaLabelFilterCardHasEdits: '編集されています',
-    ariaCellHasNote: 'このセルにはメモがあります。',
+    ariaHasNote: 'このセルにはメモがあります。',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '、',
@@ -803,15 +803,15 @@ export const AG_GRID_LOCALE_JP = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 午前/午後',
 
-    // Cell Notes
-    cellNote: 'セルメモ',
-    addCellNote: 'セルメモを追加',
-    viewCellNote: 'メモを表示',
-    editCellNote: 'メモを編集',
-    deleteCellNote: 'メモを削除',
-    cellNotePlaceholder: 'メモを追加...',
-    cellNoteHint:
+    // Notes
+    note: 'セルメモ',
+    addNote: 'メモを追加',
+    viewNote: 'メモを表示',
+    editNote: 'メモを編集',
+    deleteNote: 'メモを削除',
+    notePlaceholder: 'メモを追加...',
+    noteHint:
         'プレビューするにはホバーします。編集するには内側をクリックします。サイズを変更するには角をドラッグします。閉じるにはEscを押します。',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         '読み取り専用のメモです。コピーするにはテキストを選択してください。サイズを変更するには角をドラッグします。閉じるにはEscを押します。',
 };

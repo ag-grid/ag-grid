@@ -3,7 +3,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent } from '../../events';
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
-import type { ICellNotesFeature } from '../../interfaces/notes';
+import type { INotesFeature } from '../../interfaces/notes';
 import type { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer } from '../cellRenderers/iCellRenderer';
 
@@ -46,7 +46,7 @@ export interface IRowModeFeature {
     refreshComp?(): boolean;
 
     // Notes
-    getNotesFeature?(): ICellNotesFeature | undefined;
+    getNotesFeature?(): INotesFeature | undefined;
 
     // CSS classes hook
     addInitialRowClasses?(classes: string[]): void;

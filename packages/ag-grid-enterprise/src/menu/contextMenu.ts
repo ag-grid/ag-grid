@@ -104,7 +104,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         }
 
         if (_exists(node) && column && notesSvc?.hasDataSource()) {
-            defaultMenuOptions.push('cellNote');
+            defaultMenuOptions.push('note');
         }
 
         if (gos.get('enableCharts') && chartSvc) {

@@ -1049,11 +1049,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const suffixParams = cellCtrl ? { column: cellCtrl.column } : { location: 'fullWidthRow' };
         const params = { ...baseParams, ...suffixParams } as GetNoteParams;
 
-        const access = notesSvc.getCellNoteAccess(params);
+        const access = notesSvc.getNoteAccess(params);
 
         if (access?.canView) {
             const translate = this.getLocaleTextFunc();
-            ariaAnnounce.announceValue(translate('ariaCellHasNote', 'This cell has a note.'), 'cellNote');
+            ariaAnnounce.announceValue(translate('ariaHasNote', 'This cell has a note.'), 'note');
         }
     }
 

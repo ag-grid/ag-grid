@@ -1,4 +1,4 @@
-import type { CellNote, ElementParams, GridInputTextArea } from 'ag-grid-community';
+import type { ElementParams, GridInputTextArea, Note } from 'ag-grid-community';
 import {
     AgInputTextAreaSelector,
     BeanStub,
@@ -10,7 +10,7 @@ import {
 } from 'ag-grid-community';
 
 import { Dialog } from '../widgets/dialog';
-import { cloneCellNote } from './notesUtils';
+import { cloneNote } from './notesUtils';
 
 const DEFAULT_SIZE = {
     width: 320,
@@ -40,7 +40,7 @@ class AgNotesPopupContent extends Component {
     private readonly initialText: string;
 
     constructor(
-        private readonly note: CellNote | undefined,
+        private readonly note: Note | undefined,
         private readonly readOnly: boolean
     ) {
         super(NotesPopupContentElement, [AgInputTextAreaSelector]);
@@ -58,16 +58,16 @@ class AgNotesPopupContent extends Component {
 
         this.eFooter.textContent = this.readOnly
             ? translate(
-                  'cellNoteReadOnlyHint',
+                  'noteReadOnlyHint',
                   'Read-only note. Select text to copy. Drag the corner to resize. Press Esc to close.'
               )
             : translate(
-                  'cellNoteHint',
+                  'noteHint',
                   'Hover to preview. Click inside to edit. Drag the corner to resize. Press Esc to close.'
               );
 
         this.eEditor
-            .setInputPlaceholder(this.readOnly ? undefined : translate('cellNotePlaceholder', 'Add a note...'))
+            .setInputPlaceholder(this.readOnly ? undefined : translate('notePlaceholder', 'Add a note...'))
             .setRows(8)
             .setValue(this.note?.text ?? '', true)
             .setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
@@ -86,7 +86,7 @@ class AgNotesPopupContent extends Component {
         inputEl.setSelectionRange(valueLength, valueLength);
     }
 
-    public getEditedNote(): CellNote | undefined {
+    public getEditedNote(): Note | undefined {
         const text = this.eEditor.getValue()?.trim();
         if (!text) {
             return undefined;
@@ -115,13 +115,13 @@ export class AgNotesPopup extends BeanStub {
 
     constructor(
         private readonly params: {
-            note?: CellNote;
+            note?: Note;
             readOnly?: boolean;
             anchorToElement: HTMLElement;
             focusEditor?: boolean;
             onClosed: (
                 noteChanged: boolean,
-                note: CellNote | undefined,
+                note: Note | undefined,
                 closeEvent?: MouseEvent | TouchEvent | KeyboardEvent
             ) => void;
             onPopupEnter: () => void;
@@ -132,7 +132,7 @@ export class AgNotesPopup extends BeanStub {
     }
 
     public postConstruct(): void {
-        const note = cloneCellNote(this.params.note);
+        const note = cloneNote(this.params.note);
         const contentComp = this.createManagedBean(new AgNotesPopupContent(note, !!this.params.readOnly));
         this.contentComp = contentComp;
 
@@ -159,7 +159,7 @@ export class AgNotesPopup extends BeanStub {
         const translate = this.getLocaleTextFunc();
         eGui.classList.add('ag-notes-popup');
         eGui.classList.toggle('ag-notes-popup-read-only', !!this.params.readOnly);
-        eGui.setAttribute('aria-label', translate('cellNote', 'Cell Note'));
+        eGui.setAttribute('aria-label', translate('note', 'Note'));
 
         this.addManagedElementListeners(eGui, {
             keydown: (event: KeyboardEvent) => {

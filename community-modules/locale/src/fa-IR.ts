@@ -759,7 +759,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaLabelAddFilterField: 'افزودن فیلد فیلتر',
     ariaLabelFilterCardDelete: 'حذف فیلتر',
     ariaLabelFilterCardHasEdits: 'دارای ویرایش‌ها',
-    ariaCellHasNote: 'این سلول یک یادداشت دارد.',
+    ariaHasNote: 'این سلول یک یادداشت دارد.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '،',
@@ -805,15 +805,15 @@ export const AG_GRID_LOCALE_IR = {
     timeFormatHHMMSS: 'ساعت:دقیقه:ثانیه',
     timeFormatHHMMSSAmPm: 'ساعت:دقیقه:ثانیه ق.ظ/ب.ظ',
 
-    // Cell Notes
-    cellNote: 'یادداشت سلول',
-    addCellNote: 'افزودن یادداشت سلول',
-    viewCellNote: 'نمایش یادداشت',
-    editCellNote: 'ویرایش یادداشت',
-    deleteCellNote: 'حذف یادداشت',
-    cellNotePlaceholder: 'یک یادداشت اضافه کنید...',
-    cellNoteHint:
+    // Notes
+    note: 'یادداشت سلول',
+    addNote: 'افزودن یادداشت',
+    viewNote: 'نمایش یادداشت',
+    editNote: 'ویرایش یادداشت',
+    deleteNote: 'حذف یادداشت',
+    notePlaceholder: 'یک یادداشت اضافه کنید...',
+    noteHint:
         'برای پیش‌نمایش نشانگر را روی آن ببرید. برای ویرایش داخل آن کلیک کنید. گوشه را بکشید تا اندازه تغییر کند. برای بستن Esc را فشار دهید.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'یادداشت فقط خواندنی. برای کپی کردن متن را انتخاب کنید. گوشه را بکشید تا اندازه تغییر کند. برای بستن Esc را فشار دهید.',
 };

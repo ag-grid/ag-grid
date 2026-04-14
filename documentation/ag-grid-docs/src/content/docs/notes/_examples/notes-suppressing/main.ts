@@ -1,4 +1,4 @@
-import type { CellNote, ColDef, GetRowIdParams, GridOptions, NotesDataSource } from 'ag-grid-community';
+import type { ColDef, GetRowIdParams, GridOptions, Note, NotesDataSource } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ContextMenuModule, NotesModule } from 'ag-grid-enterprise';
 
@@ -18,25 +18,25 @@ type OlympicWinner = {
     sport: string;
 };
 
-const getCellNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
+const getNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
 
-const noteStore = new Map<string, CellNote>([
+const noteStore = new Map<string, Note>([
     [
-        getCellNoteKey('1', 'athlete'),
+        getNoteKey('1', 'athlete'),
         {
             text: 'This cell still allows the full built-in note workflow.',
             updatedAt: '29 Mar 2026, 09:15',
         },
     ],
     [
-        getCellNoteKey('2', 'year'),
+        getNoteKey('2', 'year'),
         {
             text: 'Year suppresses note actions, but existing notes still open on hover.',
             updatedAt: '28 Mar 2026, 11:45',
         },
     ],
     [
-        getCellNoteKey('5', 'sport'),
+        getNoteKey('5', 'sport'),
         {
             text: 'Sport also suppresses note actions for the entire column.',
             updatedAt: '27 Mar 2026, 14:30',
@@ -46,13 +46,13 @@ const noteStore = new Map<string, CellNote>([
 
 const notesDataSource: NotesDataSource = {
     getNote: (params) =>
-        'column' in params ? noteStore.get(getCellNoteKey(params.rowNode.id!, params.column.getColId())) : undefined,
+        'column' in params ? noteStore.get(getNoteKey(params.rowNode.id!, params.column.getColId())) : undefined,
     setNote: (params) => {
         if (!('column' in params)) {
             return;
         }
 
-        const key = getCellNoteKey(params.rowNode.id!, params.column.getColId());
+        const key = getNoteKey(params.rowNode.id!, params.column.getColId());
 
         if (params.note === undefined) {
             noteStore.delete(key);
@@ -66,8 +66,8 @@ const columnDefs: ColDef<OlympicWinner>[] = [
     { field: 'athlete' },
     { field: 'age', maxWidth: 110 },
     { field: 'country' },
-    { field: 'year', maxWidth: 110, suppressCellNoteActions: true },
-    { field: 'sport', suppressCellNoteActions: true },
+    { field: 'year', maxWidth: 110, suppressNoteActions: true },
+    { field: 'sport', suppressNoteActions: true },
 ];
 
 const rowData: OlympicWinner[] = [

@@ -24,34 +24,42 @@ interface OlympicWinner extends Partial<IOlympicData> {
     featured?: boolean;
 }
 
+const getSection = (pinned: 'left' | 'right' | null | undefined) => pinned ?? 'center';
+const getFullWidthNoteKey = (rowId: string, pinned: 'left' | 'right' | null | undefined) =>
+    `${rowId}::${getSection(pinned)}`;
+
 const noteStore = new Map<string, Note>([
     [
-        'cell::1::athlete',
+        getFullWidthNoteKey('2', 'left'),
         {
-            text: 'This note belongs to a regular cell.',
+            text: 'This note belongs to the left embedded full width section.',
         },
     ],
     [
-        'fullWidth::2',
+        getFullWidthNoteKey('2', undefined),
         {
-            text: 'This note belongs to a full width row. The datasource receives location: fullWidthRow instead of a column.',
+            text: 'This note belongs to the centre embedded full width section.',
+        },
+    ],
+    [
+        getFullWidthNoteKey('2', 'right'),
+        {
+            text: 'This note belongs to the right embedded full width section.',
         },
     ],
 ]);
 
-const getNoteKey = (rowId: string, colId: string) => `cell::${rowId}::${colId}`;
-const getFullWidthNoteKey = (rowId: string) => `fullWidth::${rowId}`;
-
 const notesDataSource: NotesDataSource = {
     getNote: (params) =>
         params.location === 'fullWidthRow'
-            ? noteStore.get(getFullWidthNoteKey(params.rowNode.id!))
-            : noteStore.get(getNoteKey(params.rowNode.id!, params.column.getColId())),
+            ? noteStore.get(getFullWidthNoteKey(params.rowNode.id!, params.pinned))
+            : undefined,
     setNote: (params) => {
-        const key =
-            params.location === 'fullWidthRow'
-                ? getFullWidthNoteKey(params.rowNode.id!)
-                : getNoteKey(params.rowNode.id!, params.column.getColId());
+        if (params.location !== 'fullWidthRow') {
+            return;
+        }
+
+        const key = getFullWidthNoteKey(params.rowNode.id!, params.pinned);
         if (params.note === undefined) {
             noteStore.delete(key);
         } else {
@@ -65,9 +73,12 @@ class FullWidthCellRenderer implements ICellRendererComp {
 
     public init(params: ICellRendererParams<OlympicWinner>): void {
         const data = params.data!;
+        const section = getSection(params.pinned);
+
         const eGui = document.createElement('div');
-        eGui.className = 'notes-full-width-row';
+        eGui.className = `notes-full-width-row notes-full-width-row--${section}`;
         eGui.innerHTML = `
+            <div class="notes-full-width-row__badge">${section}</div>
             <div class="notes-full-width-row__title">${data.athlete}</div>
             <div class="notes-full-width-row__details">
                 <span>${data.country}</span>
@@ -88,11 +99,11 @@ class FullWidthCellRenderer implements ICellRendererComp {
 }
 
 const columnDefs: ColDef<OlympicWinner>[] = [
-    { field: 'athlete' },
+    { field: 'athlete', pinned: 'left', width: 235 },
     { field: 'age', maxWidth: 110 },
     { field: 'country' },
     { field: 'year', maxWidth: 110 },
-    { field: 'sport' },
+    { field: 'sport', pinned: 'right', width: 235 },
 ];
 
 const rowData: OlympicWinner[] = [
@@ -151,6 +162,7 @@ const rowData: OlympicWinner[] = [
 const gridOptions: GridOptions<OlympicWinner> = {
     columnDefs,
     rowData,
+    embedFullWidthRows: true,
     getRowId: ({ data }: GetRowIdParams<OlympicWinner>) => data.id,
     defaultColDef: {
         flex: 1,

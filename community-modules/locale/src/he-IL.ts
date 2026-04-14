@@ -756,7 +756,7 @@ export const AG_GRID_LOCALE_IL = {
     ariaLabelAddFilterField: 'הוסף שדה סינון',
     ariaLabelFilterCardDelete: 'מחק סינון',
     ariaLabelFilterCardHasEdits: 'יש עריכות',
-    ariaCellHasNote: 'לתא זה יש הערה.',
+    ariaHasNote: 'לתא זה יש הערה.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -802,14 +802,13 @@ export const AG_GRID_LOCALE_IL = {
     timeFormatHHMMSS: 'שש:דד:שש',
     timeFormatHHMMSSAmPm: 'שש:דד:שש לפנה״צ/אחה״צ',
 
-    // Cell Notes
-    cellNote: 'הערת תא',
-    addCellNote: 'הוסף הערת תא',
-    viewCellNote: 'הצג הערה',
-    editCellNote: 'ערוך הערה',
-    deleteCellNote: 'הסר הערה',
-    cellNotePlaceholder: 'הוסף הערה...',
-    cellNoteHint:
-        'רחף כדי להציג תצוגה מקדימה. לחץ פנימה כדי לערוך. גרור את הפינה כדי לשנות את הגודל. לחץ Esc כדי לסגור.',
-    cellNoteReadOnlyHint: 'הערה לקריאה בלבד. בחר טקסט כדי להעתיק. גרור את הפינה כדי לשנות את הגודל. לחץ Esc כדי לסגור.',
+    // Notes
+    note: 'הערת תא',
+    addNote: 'הוסף הערה',
+    viewNote: 'הצג הערה',
+    editNote: 'ערוך הערה',
+    deleteNote: 'הסר הערה',
+    notePlaceholder: 'הוסף הערה...',
+    noteHint: 'רחף כדי להציג תצוגה מקדימה. לחץ פנימה כדי לערוך. גרור את הפינה כדי לשנות את הגודל. לחץ Esc כדי לסגור.',
+    noteReadOnlyHint: 'הערה לקריאה בלבד. בחר טקסט כדי להעתיק. גרור את הפינה כדי לשנות את הגודל. לחץ Esc כדי לסגור.',
 };

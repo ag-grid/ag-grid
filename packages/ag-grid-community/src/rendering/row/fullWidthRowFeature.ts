@@ -17,7 +17,7 @@ import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import type { ICellNotesFeature } from '../../interfaces/notes';
+import type { INotesFeature } from '../../interfaces/notes';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import type { CellCtrl } from '../cell/cellCtrl';
@@ -28,7 +28,7 @@ import type { RowCtrl } from './rowCtrl';
 
 export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
     private tooltipFeature: TooltipFeature | undefined;
-    private notesFeature: ICellNotesFeature | undefined;
+    private notesFeature: INotesFeature | undefined;
     private focusEventWhileNotReady: CellFocusedEvent | null = null;
 
     public constructor(private readonly rowCtrl: RowCtrl) {
@@ -56,7 +56,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         }
 
         // Create notes feature after component is attached — creation triggers initialise() → refresh()
-        this.notesFeature = this.beans.notesSvc?.createFullWidthRowNotesFeature(this.rowCtrl);
+        this.notesFeature = this.beans.notesSvc?.createFullWidthNotesFeature(this.rowCtrl);
     }
 
     public refreshRow(_params: RefreshRowsParams): void {

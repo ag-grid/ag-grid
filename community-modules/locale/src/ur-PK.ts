@@ -757,7 +757,7 @@ export const AG_GRID_LOCALE_PK = {
     ariaLabelAddFilterField: 'فلٹر فیلڈ شامل کریں',
     ariaLabelFilterCardDelete: 'فلٹر حذف کریں',
     ariaLabelFilterCardHasEdits: 'ترمیم شدہ',
-    ariaCellHasNote: 'اس سیل میں ایک نوٹ ہے۔',
+    ariaHasNote: 'اس سیل میں ایک نوٹ ہے۔',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -803,15 +803,15 @@ export const AG_GRID_LOCALE_PK = {
     timeFormatHHMMSS: 'گگ:مم:سس',
     timeFormatHHMMSSAmPm: 'گگ:مم:سس ص/ش',
 
-    // Cell Notes
-    cellNote: 'سیل نوٹ',
-    addCellNote: 'سیل نوٹ شامل کریں',
-    viewCellNote: 'نوٹ دیکھیں',
-    editCellNote: 'نوٹ میں ترمیم کریں',
-    deleteCellNote: 'نوٹ ہٹائیں',
-    cellNotePlaceholder: 'ایک نوٹ شامل کریں...',
-    cellNoteHint:
+    // Notes
+    note: 'سیل نوٹ',
+    addNote: 'نوٹ شامل کریں',
+    viewNote: 'نوٹ دیکھیں',
+    editNote: 'نوٹ میں ترمیم کریں',
+    deleteNote: 'نوٹ ہٹائیں',
+    notePlaceholder: 'ایک نوٹ شامل کریں...',
+    noteHint:
         'پیش منظر دیکھنے کے لیے ماؤس اوپر لے جائیں۔ ترمیم کے لیے اندر کلک کریں۔ سائز بدلنے کے لیے کونے کو کھینچیں۔ بند کرنے کے لیے Esc دبائیں۔',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'صرف پڑھنے والا نوٹ۔ نقل کرنے کے لیے متن منتخب کریں۔ سائز بدلنے کے لیے کونے کو کھینچیں۔ بند کرنے کے لیے Esc دبائیں۔',
 };

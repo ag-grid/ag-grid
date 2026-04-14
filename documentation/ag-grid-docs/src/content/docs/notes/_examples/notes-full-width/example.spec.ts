@@ -6,6 +6,15 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.notes-full-width-row').nth(1)).toContainText('Allyson Felix');
     });
 
+    test.eachFramework('Hovering a noted regular cell shows the note popup', async ({ page }) => {
+        const athleteCell = page.locator('.ag-cell').filter({ hasText: 'Michael Phelps' }).first();
+        await athleteCell.hover();
+
+        const popup = page.locator('.ag-notes-popup');
+        await expect(popup).toBeVisible();
+        await expect(popup.locator('.ag-text-area-input')).toHaveValue('This note belongs to a regular cell.');
+    });
+
     test.eachFramework('Hovering a noted full width row shows the note popup', async ({ page }) => {
         const fullWidthRow = page
             .locator('.ag-row', { has: page.locator('.notes-full-width-row') })

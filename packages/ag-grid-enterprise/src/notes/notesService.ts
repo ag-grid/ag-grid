@@ -1,24 +1,24 @@
 import type {
     CellCtrl,
-    CellNote,
     GetNoteParams,
-    ICellNoteAccess,
+    INoteAccess,
     INotesService,
     NamedBean,
-    RefreshCellNotesParams,
+    Note,
+    RefreshNotesParams,
     RowCtrl,
     SetNoteParams,
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
-import { AgCellNotesFeature, AgFullWidthRowNotesFeature } from './agCellNotesFeature';
-import type { ICellNotePopupOwner, INotesFeatureSupport, InternalSetNoteParams } from './notesShared';
+import { AgFullWidthRowNotesFeature, AgNotesFeature } from './agNotesFeature';
+import type { INotePopupOwner, INotesFeatureSupport, InternalSetNoteParams } from './notesShared';
 import { isFullWidthRowNoteParams } from './notesShared';
 
 export class NotesService extends BeanStub implements INotesService, INotesFeatureSupport, NamedBean {
     public readonly beanName = 'notesSvc' as const;
 
-    private activePopupOwner?: ICellNotePopupOwner;
+    private activePopupOwner?: INotePopupOwner;
     private hoverGeneration = 0;
 
     public postConstruct(): void {
@@ -40,17 +40,17 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         return this.hoverGeneration;
     }
 
-    public createCellNotesFeature(ctrl: CellCtrl) {
+    public createNotesFeature(ctrl: CellCtrl) {
         if (!this.hasDataSource()) {
             return undefined;
         }
 
-        const feature = new AgCellNotesFeature(this.beans, ctrl, this);
+        const feature = new AgNotesFeature(this.beans, ctrl, this);
         feature.initialise();
         return feature;
     }
 
-    public createFullWidthRowNotesFeature(ctrl: RowCtrl) {
+    public createFullWidthNotesFeature(ctrl: RowCtrl) {
         if (!this.hasDataSource()) {
             return undefined;
         }
@@ -60,7 +60,7 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         return feature;
     }
 
-    public getCellNoteAccess(params: GetNoteParams): ICellNoteAccess | undefined {
+    public getNoteAccess(params: GetNoteParams): INoteAccess | undefined {
         const { colModel, notesDataSvc } = this.beans;
 
         if (!this.hasDataSource()) {
@@ -80,7 +80,7 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
             return undefined;
         }
 
-        const isSuppressed = column.isColumnFunc(params.rowNode, column.getColDef().suppressCellNoteActions ?? null);
+        const isSuppressed = column.isColumnFunc(params.rowNode, column.getColDef().suppressNoteActions ?? null);
         const isReadOnly = !!note?.readOnly;
 
         return {
@@ -97,11 +97,11 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         };
     }
 
-    public getCellNote(params: GetNoteParams): CellNote | undefined {
-        return this.getCellNoteAccess(params)?.note;
+    public getNote(params: GetNoteParams): Note | undefined {
+        return this.getNoteAccess(params)?.note;
     }
 
-    public replaceActivePopupOwner(owner: ICellNotePopupOwner): ICellNotePopupOwner | undefined {
+    public replaceActivePopupOwner(owner: INotePopupOwner): INotePopupOwner | undefined {
         const previousOwner = this.activePopupOwner;
 
         if (previousOwner === owner) {
@@ -112,7 +112,7 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         return previousOwner;
     }
 
-    public clearActivePopupOwner(owner: ICellNotePopupOwner): void {
+    public clearActivePopupOwner(owner: INotePopupOwner): void {
         if (this.activePopupOwner === owner) {
             this.activePopupOwner = undefined;
         }
@@ -123,8 +123,8 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         this.activePopupOwner?.closeNotePopup(save);
     }
 
-    public showCellNote(params: GetNoteParams, focusEditor = false): boolean {
-        const access = this.getCellNoteAccess(params);
+    public showNote(params: GetNoteParams, focusEditor = false): boolean {
+        const access = this.getNoteAccess(params);
 
         if (!access || (!access.canView && !(focusEditor && access.canCreate))) {
             return false;
@@ -147,21 +147,21 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         const cellCtrl = rowRenderer.getCellCtrls([params.rowNode], [access.column])[0];
 
         if (cellCtrl) {
-            cellCtrl.showCellNote(focusEditor);
+            cellCtrl.showNote(focusEditor);
             return true;
         }
 
         return false;
     }
 
-    public setCellNote(params: SetNoteParams | InternalSetNoteParams): void {
+    public setNote(params: SetNoteParams | InternalSetNoteParams): void {
         const { notesDataSvc } = this.beans;
 
         if (!this.hasDataSource()) {
             return;
         }
 
-        const access = this.getCellNoteAccess(params);
+        const access = this.getNoteAccess(params);
         if (!access) {
             return;
         }
@@ -188,14 +188,14 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
                 : { rowNode: access.rowNode, column: access.column, note }
         );
 
-        this.refreshCellNotes(
+        this.refreshNotes(
             isFullWidthRowNoteParams(access.params)
                 ? { rowNodes: [params.rowNode] }
                 : { rowNodes: [params.rowNode], columns: [access.column] }
         );
     }
 
-    public refreshCellNotes(params: RefreshCellNotesParams = {}): void {
+    public refreshNotes(params: RefreshNotesParams = {}): void {
         const { rowRenderer } = this.beans;
         rowRenderer.refreshCells({
             rowNodes: params.rowNodes,

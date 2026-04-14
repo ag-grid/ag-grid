@@ -764,7 +764,7 @@ export const AG_GRID_LOCALE_DE = {
     ariaLabelAddFilterField: 'Filterfeld hinzufügen',
     ariaLabelFilterCardDelete: 'Filter löschen',
     ariaLabelFilterCardHasEdits: 'Hat Änderungen',
-    ariaCellHasNote: 'Diese Zelle hat eine Notiz.',
+    ariaHasNote: 'Diese Zelle hat eine Notiz.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -810,15 +810,15 @@ export const AG_GRID_LOCALE_DE = {
     timeFormatHHMMSS: 'SS:MM:SS',
     timeFormatHHMMSSAmPm: 'SS:MM:SS AM/PM',
 
-    // Cell Notes
-    cellNote: 'Zellnotiz',
-    addCellNote: 'Zellnotiz hinzufügen',
-    viewCellNote: 'Notiz anzeigen',
-    editCellNote: 'Notiz bearbeiten',
-    deleteCellNote: 'Notiz entfernen',
-    cellNotePlaceholder: 'Notiz hinzufügen...',
-    cellNoteHint:
+    // Notes
+    note: 'Zellnotiz',
+    addNote: 'Notiz hinzufügen',
+    viewNote: 'Notiz anzeigen',
+    editNote: 'Notiz bearbeiten',
+    deleteNote: 'Notiz entfernen',
+    notePlaceholder: 'Notiz hinzufügen...',
+    noteHint:
         'Zum Anzeigen mit der Maus darüberfahren. Zum Bearbeiten hineinklicken. Ziehen Sie an der Ecke, um die Größe zu ändern. Drücken Sie Esc zum Schließen.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Schreibgeschützte Notiz. Text zum Kopieren markieren. Ziehen Sie an der Ecke, um die Größe zu ändern. Drücken Sie Esc zum Schließen.',
 };

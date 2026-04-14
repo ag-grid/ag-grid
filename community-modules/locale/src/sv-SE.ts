@@ -760,7 +760,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaLabelAddFilterField: 'Lägg till filterfält',
     ariaLabelFilterCardDelete: 'Radera filter',
     ariaLabelFilterCardHasEdits: 'Har ändringar',
-    ariaCellHasNote: 'Denna cell har en anteckning.',
+    ariaHasNote: 'Denna cell har en anteckning.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -806,15 +806,15 @@ export const AG_GRID_LOCALE_SE = {
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS FM/EM',
 
-    // Cell Notes
-    cellNote: 'Cellanteckning',
-    addCellNote: 'Lägg till cellanteckning',
-    viewCellNote: 'Visa anteckning',
-    editCellNote: 'Redigera anteckning',
-    deleteCellNote: 'Ta bort anteckning',
-    cellNotePlaceholder: 'Lägg till en anteckning...',
-    cellNoteHint:
+    // Notes
+    note: 'Cellanteckning',
+    addNote: 'Lägg till anteckning',
+    viewNote: 'Visa anteckning',
+    editNote: 'Redigera anteckning',
+    deleteNote: 'Ta bort anteckning',
+    notePlaceholder: 'Lägg till en anteckning...',
+    noteHint:
         'Hovra för förhandsvisning. Klicka inuti för att redigera. Dra i hörnet för att ändra storlek. Tryck Esc för att stänga.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Skrivskyddad anteckning. Markera text för att kopiera. Dra i hörnet för att ändra storlek. Tryck Esc för att stänga.',
 };

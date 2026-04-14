@@ -759,7 +759,7 @@ export const AG_GRID_LOCALE_HR = {
     ariaLabelAddFilterField: 'Dodaj polje filtera',
     ariaLabelFilterCardDelete: 'Izbriši filter',
     ariaLabelFilterCardHasEdits: 'Ima izmjene',
-    ariaCellHasNote: 'Ova ćelija ima bilješku.',
+    ariaHasNote: 'Ova ćelija ima bilješku.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -805,15 +805,15 @@ export const AG_GRID_LOCALE_HR = {
     timeFormatHHMMSS: 'SS:MM:VV',
     timeFormatHHMMSSAmPm: 'SS:MM:VV AM/PM',
 
-    // Cell Notes
-    cellNote: 'Napomena ćelije',
-    addCellNote: 'Dodaj napomenu ćelije',
-    viewCellNote: 'Prikaži napomenu',
-    editCellNote: 'Uredi napomenu',
-    deleteCellNote: 'Ukloni napomenu',
-    cellNotePlaceholder: 'Dodaj napomenu...',
-    cellNoteHint:
+    // Notes
+    note: 'Napomena ćelije',
+    addNote: 'Dodaj napomenu',
+    viewNote: 'Prikaži napomenu',
+    editNote: 'Uredi napomenu',
+    deleteNote: 'Ukloni napomenu',
+    notePlaceholder: 'Dodaj napomenu...',
+    noteHint:
         'Zadržite pokazivač za pretpregled. Kliknite unutar za uređivanje. Povucite kut za promjenu veličine. Pritisnite Esc za zatvaranje.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Napomena samo za čitanje. Označite tekst za kopiranje. Povucite kut za promjenu veličine. Pritisnite Esc za zatvaranje.',
 };

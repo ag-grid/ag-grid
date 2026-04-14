@@ -760,7 +760,7 @@ export const AG_GRID_LOCALE_DK = {
     ariaLabelAddFilterField: 'Tilføj filterfelt',
     ariaLabelFilterCardDelete: 'Slet filter',
     ariaLabelFilterCardHasEdits: 'Har redigeringer',
-    ariaCellHasNote: 'Denne celle har en note.',
+    ariaHasNote: 'Denne celle har en note.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -806,15 +806,15 @@ export const AG_GRID_LOCALE_DK = {
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
 
-    // Cell Notes
-    cellNote: 'Cellenote',
-    addCellNote: 'Tilføj cellenote',
-    viewCellNote: 'Vis note',
-    editCellNote: 'Rediger note',
-    deleteCellNote: 'Fjern note',
-    cellNotePlaceholder: 'Tilføj en note...',
-    cellNoteHint:
+    // Notes
+    note: 'Cellenote',
+    addNote: 'Tilføj note',
+    viewNote: 'Vis note',
+    editNote: 'Rediger note',
+    deleteNote: 'Fjern note',
+    notePlaceholder: 'Tilføj en note...',
+    noteHint:
         'Hold musen over for at få vist en forhåndsvisning. Klik indenfor for at redigere. Træk i hjørnet for at ændre størrelsen. Tryk på Esc for at lukke.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Skrivebeskyttet note. Markér tekst for at kopiere. Træk i hjørnet for at ændre størrelsen. Tryk på Esc for at lukke.',
 };

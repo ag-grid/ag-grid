@@ -4,7 +4,7 @@ import { _PopupModule } from 'ag-grid-community';
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import notesCSS from './notes.css';
-import { getCellNote, refreshCellNotes, setCellNote } from './notesApi';
+import { getNote, refreshNotes, setNote } from './notesApi';
 import { NotesDataService } from './notesDataService';
 import { NotesService } from './notesService';
 
@@ -19,9 +19,9 @@ export const NotesModule: _ModuleWithApi<_NotesGridApi> = {
     version: VERSION,
     beans: [NotesDataService, NotesService],
     apiFunctions: {
-        getCellNote,
-        setCellNote,
-        refreshCellNotes,
+        getNote,
+        setNote,
+        refreshNotes,
     },
     dependsOn: [EnterpriseCoreModule, _PopupModule],
     css: [notesCSS],

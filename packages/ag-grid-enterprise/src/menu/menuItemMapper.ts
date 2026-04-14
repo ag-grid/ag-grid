@@ -4,8 +4,8 @@ import type {
     DefaultMenuItem,
     GetNoteParams,
     IAggFuncService,
-    ICellNoteAccess,
     IColsService,
+    INoteAccess,
     INotesService,
     LocaleTextFunc,
     MenuItemDef,
@@ -477,8 +477,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             let result: MenuItemDef | 'separator' | null;
 
             if (typeof menuItemOrString === 'string') {
-                if (menuItemOrString === 'cellNote') {
-                    const cellNoteItems = createCellNoteMenuItems({
+                if (menuItemOrString === 'note') {
+                    const noteItems = createNoteMenuItems({
                         notesSvc,
                         column,
                         node,
@@ -486,8 +486,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         localeTextFunc,
                     });
 
-                    if (cellNoteItems.length) {
-                        resultList.push(...cellNoteItems);
+                    if (noteItems.length) {
+                        resultList.push(...noteItems);
                     }
 
                     continue;
@@ -529,24 +529,24 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     }
 }
 
-function createCellNoteMenuItems({
+function createNoteMenuItems({
     notesSvc,
     column,
     node,
     noteParams,
     localeTextFunc,
 }: {
-    notesSvc: Pick<INotesService, 'hasDataSource' | 'getCellNoteAccess' | 'showCellNote' | 'setCellNote'> | undefined;
+    notesSvc: Pick<INotesService, 'hasDataSource' | 'getNoteAccess' | 'showNote' | 'setNote'> | undefined;
     column: AgColumn | null;
     node: RowNode | null;
     noteParams: GetNoteParams | undefined;
     localeTextFunc: LocaleTextFunc;
 }): MenuItemDef[] {
-    const access: ICellNoteAccess | undefined = notesSvc?.hasDataSource()
+    const access: INoteAccess | undefined = notesSvc?.hasDataSource()
         ? noteParams
-            ? notesSvc.getCellNoteAccess(noteParams)
+            ? notesSvc.getNoteAccess(noteParams)
             : column && node
-              ? notesSvc.getCellNoteAccess({ rowNode: node, column })
+              ? notesSvc.getNoteAccess({ rowNode: node, column })
               : undefined
         : undefined;
 
@@ -558,10 +558,10 @@ function createCellNoteMenuItems({
 
     if (!access.note) {
         result.push({
-            name: localeTextFunc('addCellNote', 'Add Cell Note'),
+            name: localeTextFunc('addNote', 'Add Note'),
             shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
             disabled: !access.canCreate,
-            action: access.canCreate ? () => notesSvc!.showCellNote(access.params, true) : undefined,
+            action: access.canCreate ? () => notesSvc!.showNote(access.params, true) : undefined,
         });
 
         return result;
@@ -569,27 +569,27 @@ function createCellNoteMenuItems({
 
     if (access.canView && (access.isReadOnly || access.isSuppressed)) {
         result.push({
-            name: localeTextFunc('viewCellNote', 'View Note'),
+            name: localeTextFunc('viewNote', 'View Note'),
             shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
-            action: () => notesSvc!.showCellNote(access.params, true),
+            action: () => notesSvc!.showNote(access.params, true),
         });
     }
 
     if (!access.isReadOnly && !access.isSuppressed) {
         result.push({
-            name: localeTextFunc('editCellNote', 'Edit Note'),
+            name: localeTextFunc('editNote', 'Edit Note'),
             shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
             disabled: !access.canEdit,
-            action: access.canEdit ? () => notesSvc!.showCellNote(access.params, true) : undefined,
+            action: access.canEdit ? () => notesSvc!.showNote(access.params, true) : undefined,
         });
     }
 
     result.push({
-        name: localeTextFunc('deleteCellNote', 'Remove Note'),
+        name: localeTextFunc('deleteNote', 'Remove Note'),
         disabled: !access.canDelete,
         action: access.canDelete
             ? () =>
-                  notesSvc!.setCellNote({
+                  notesSvc!.setNote({
                       ...access.params,
                       note: undefined,
                   })

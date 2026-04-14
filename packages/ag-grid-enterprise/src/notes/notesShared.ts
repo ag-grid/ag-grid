@@ -1,10 +1,10 @@
 import type {
     AgColumn,
-    CellNote,
     FullWidthRowNoteParams,
     GetNoteParams,
-    ICellNoteAccess,
+    INoteAccess,
     IRowNode,
+    Note,
     SetNoteParams,
 } from 'ag-grid-community';
 
@@ -16,20 +16,20 @@ export interface NoteTarget {
 }
 
 export type InternalSetNoteParams = SetNoteParams & {
-    previousNote?: CellNote;
+    previousNote?: Note;
     source?: 'ui' | 'api';
 };
 
-export interface ICellNotePopupOwner {
+export interface INotePopupOwner {
     closeNotePopup(save?: boolean): void;
 }
 
 export interface INotesFeatureSupport {
-    getCellNoteAccess(params: GetNoteParams): ICellNoteAccess | undefined;
+    getNoteAccess(params: GetNoteParams): INoteAccess | undefined;
     getHoverGeneration(): number;
-    setCellNote(params: InternalSetNoteParams): void;
-    replaceActivePopupOwner(owner: ICellNotePopupOwner): ICellNotePopupOwner | undefined;
-    clearActivePopupOwner(owner: ICellNotePopupOwner): void;
+    setNote(params: InternalSetNoteParams): void;
+    replaceActivePopupOwner(owner: INotePopupOwner): INotePopupOwner | undefined;
+    clearActivePopupOwner(owner: INotePopupOwner): void;
 }
 
 export function isFullWidthRowNoteParams(params: GetNoteParams): params is FullWidthRowNoteParams {

@@ -1,13 +1,13 @@
-import type { BeanCollection, CellNote, GetNoteParams, RefreshCellNotesParams, SetNoteParams } from 'ag-grid-community';
+import type { BeanCollection, GetNoteParams, Note, RefreshNotesParams, SetNoteParams } from 'ag-grid-community';
 
-export function getCellNote(beans: BeanCollection, params: GetNoteParams): CellNote | undefined {
-    return beans.notesSvc?.getCellNote(params);
+export function getNote(beans: BeanCollection, params: GetNoteParams): Note | undefined {
+    return beans.notesSvc?.getNote(params);
 }
 
-export function setCellNote(beans: BeanCollection, params: SetNoteParams): void {
-    beans.notesSvc?.setCellNote(params);
+export function setNote(beans: BeanCollection, params: SetNoteParams): void {
+    beans.notesSvc?.setNote(params);
 }
 
-export function refreshCellNotes(beans: BeanCollection, params?: RefreshCellNotesParams): void {
-    beans.notesSvc?.refreshCellNotes(params);
+export function refreshNotes(beans: BeanCollection, params?: RefreshNotesParams): void {
+    beans.notesSvc?.refreshNotes(params);
 }

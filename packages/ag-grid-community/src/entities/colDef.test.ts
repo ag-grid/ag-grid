@@ -150,7 +150,7 @@ describe('ColDef.field Types', () => {
         ];
     });
 
-    test('suppressCellNoteActions callback types', () => {
+    test('suppressNoteActions callback types', () => {
         interface RowData {
             athlete: string;
         }
@@ -158,7 +158,7 @@ describe('ColDef.field Types', () => {
         const t: ColDef<RowData>[] = [
             {
                 field: 'athlete',
-                suppressCellNoteActions: ({ data, column, colDef, node }) =>
+                suppressNoteActions: ({ data, column, colDef, node }) =>
                     !!data?.athlete && !!column && !!colDef && !!node,
             },
         ];
