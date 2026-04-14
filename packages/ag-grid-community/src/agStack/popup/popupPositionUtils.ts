@@ -157,7 +157,16 @@ function getGapDirection(targetAnchor: Anchor, refAnchor: Anchor): { dx: number;
 /** Map anchor to horizontal position: -1 = left, 0 = centre, 1 = right */
 function anchorH(anchor: Anchor): number {
     const ch = anchor.length === 2 ? anchor[1] : anchor;
-    return ch === 'l' ? -1 : ch === 'r' ? 1 : 0;
+
+    if (ch === 'l') {
+        return -1;
+    }
+
+    if (ch === 'r') {
+        return 1;
+    }
+
+    return 0;
 }
 
 /** Map anchor to vertical position: -1 = top, 0 = centre, 1 = bottom */
@@ -165,5 +174,14 @@ function anchorV(anchor: Anchor): number {
     if (anchor.length === 1) {
         return 0; // single-char anchors (l, c, r) are vertically centred
     }
-    return anchor[0] === 't' ? -1 : anchor[0] === 'b' ? 1 : 0;
+
+    if (anchor.startsWith('t')) {
+        return -1;
+    }
+
+    if (anchor.startsWith('b')) {
+        return 1;
+    }
+
+    return 0;
 }

@@ -8,7 +8,9 @@ class TestPopupService extends BasePopupService<any, any, any, any, any, any> {
     protected isStopPropagation(): boolean {
         return false;
     }
-    public callPostProcessPopup(): void {}
+    public callPostProcessPopup(): void {
+        // no-op for testing
+    }
 }
 
 function createMockElement(
