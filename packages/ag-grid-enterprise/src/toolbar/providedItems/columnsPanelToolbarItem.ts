@@ -12,7 +12,7 @@ export class ColumnsPanelToolbarItem extends AbstractToolbarItemComp {
     }
 
     protected getLocaleKey(): string {
-        return 'toolbarColumnsPanel';
+        return 'columns';
     }
 
     protected getDefaultLabel(): string {

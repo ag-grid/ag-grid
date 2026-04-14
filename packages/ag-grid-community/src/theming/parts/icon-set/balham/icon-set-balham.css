@@ -169,10 +169,6 @@
     mask-image: url('./balham-svg-icons/save.svg');
 }
 
-.ag-icon-search::before {
-    mask-image: url('./balham-svg-icons/search.svg');
-}
-
 .ag-icon-small-down::before {
     mask-image: url('./balham-svg-icons/small-down.svg');
 }

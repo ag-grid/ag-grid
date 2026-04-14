@@ -170,10 +170,6 @@
     mask-image: url('./alpine-svg-icons/save.svg');
 }
 
-.ag-icon-search::before {
-    mask-image: url('./alpine-svg-icons/search.svg');
-}
-
 .ag-icon-small-down::before {
     mask-image: url('./alpine-svg-icons/small-down.svg');
 }

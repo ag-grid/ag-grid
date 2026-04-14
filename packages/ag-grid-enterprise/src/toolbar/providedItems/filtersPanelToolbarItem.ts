@@ -14,7 +14,7 @@ export class FiltersPanelToolbarItem extends AbstractToolbarItemComp {
     }
 
     protected getLocaleKey(): string {
-        return 'toolbarFiltersPanel';
+        return 'filters';
     }
 
     protected getDefaultLabel(): string {

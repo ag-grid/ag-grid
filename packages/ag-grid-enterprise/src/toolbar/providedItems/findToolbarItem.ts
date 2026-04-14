@@ -12,7 +12,7 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarFind', 'Find');
 
-        const eIcon = _createIconNoSpan('search', this.beans);
+        const eIcon = _createIconNoSpan('filter', this.beans);
         if (eIcon) {
             const eIconWrapper = _createElement({
                 tag: 'span',

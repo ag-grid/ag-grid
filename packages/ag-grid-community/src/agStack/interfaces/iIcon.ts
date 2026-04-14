@@ -68,5 +68,4 @@ export type IconValue =
     | 'chevron-down'
     | 'chevron-left'
     | 'chevron-right'
-    | 'edit'
-    | 'search';
+    | 'edit';

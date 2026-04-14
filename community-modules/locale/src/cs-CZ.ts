@@ -336,10 +336,6 @@ export const AG_GRID_LOCALE_CZ = {
     sortUnSort: 'Zrušit třídění',
 
     // Toolbar
-    toolbarAutoSizeAll: 'Auto Size All',
-    toolbarColumnChooser: 'Columns',
-    toolbarColumnsPanel: 'Columns',
-    toolbarFiltersPanel: 'Filters',
     toolbarFind: 'Find',
     toolbarQuickFilter: 'Quick Filter',
 

@@ -338,10 +338,6 @@ export const AG_GRID_LOCALE_RO = {
     sortUnSort: 'Șterge Sortarea',
 
     // Toolbar
-    toolbarAutoSizeAll: 'Auto Size All',
-    toolbarColumnChooser: 'Columns',
-    toolbarColumnsPanel: 'Columns',
-    toolbarFiltersPanel: 'Filters',
     toolbarFind: 'Find',
     toolbarQuickFilter: 'Quick Filter',
 

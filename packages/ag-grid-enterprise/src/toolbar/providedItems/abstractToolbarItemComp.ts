@@ -1,4 +1,4 @@
-import type { ElementParams, IToolbarItemComp, IToolbarItemParams, IconName } from 'ag-grid-community';
+import type { BeanCollection, ElementParams, IToolbarItemComp, IToolbarItemParams, IconName } from 'ag-grid-community';
 import { Component, RefPlaceholder, _createIconNoSpan } from 'ag-grid-community';
 
 const AbstractToolbarItemElement: ElementParams = {
@@ -10,6 +10,30 @@ const AbstractToolbarItemElement: ElementParams = {
         { tag: 'span', ref: 'eLabel', cls: 'ag-toolbar-button-label' },
     ],
 };
+
+export interface ToolbarButtonConfig {
+    icon: IconName;
+    localeKey: string;
+    defaultLabel: string;
+    onAction: (beans: BeanCollection, eGui: HTMLElement) => void;
+}
+
+export function createToolbarButton(config: ToolbarButtonConfig): new () => AbstractToolbarItemComp {
+    return class extends AbstractToolbarItemComp {
+        protected getIconName(): IconName {
+            return config.icon;
+        }
+        protected getLocaleKey(): string {
+            return config.localeKey;
+        }
+        protected getDefaultLabel(): string {
+            return config.defaultLabel;
+        }
+        protected onAction(): void {
+            config.onAction(this.beans, this.getGui());
+        }
+    };
+}
 
 export abstract class AbstractToolbarItemComp extends Component implements IToolbarItemComp {
     private readonly eIcon: HTMLElement = RefPlaceholder;

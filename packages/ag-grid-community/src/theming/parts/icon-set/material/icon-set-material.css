@@ -170,10 +170,6 @@
     mask-image: url('./material-svg-icons/save.svg');
 }
 
-.ag-icon-search::before {
-    mask-image: url('./material-svg-icons/search.svg');
-}
-
 .ag-icon-small-down::before {
     mask-image: url('./material-svg-icons/small-down.svg');
 }
