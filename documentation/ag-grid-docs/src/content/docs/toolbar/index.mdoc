@@ -7,6 +7,8 @@ The Toolbar appears above the grid and provides quick access to common grid acti
 
 Configure the Toolbar with the `toolbar` grid option. The property takes a list of Toolbar Items.
 
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["toolbar"] /%}
+
 {% gridExampleRunner title="Built-in Items" name="built-in-items" exampleHeight=590 /%}
 
 ```{% frameworkTransform=true %}
@@ -14,7 +16,6 @@ const gridOptions = {
     toolbar: {
         items: [
             { toolbarItem: 'quickFilter', alignment: 'right' },
-            { toolbarItem: 'find', alignment: 'right' },
             'separator',
             { toolbarItem: 'autoSizeAll', alignment: 'right' },
             'separator',
@@ -101,10 +102,12 @@ Custom Toolbar Item components implement the `IToolbarItemComp` interface.
 
 {% gridExampleRunner title="Custom Toolbar Item" name="toolbar-simple" /%}
 
-## Overflow Handling
+## Updating at Runtime
 
-The toolbar does not provide built-in responsive overflow behaviour. Users can implement custom overflow menus using a custom toolbar component combined with CSS container queries.
+Use `setGridOption('toolbar', ...)` to change the toolbar configuration after the grid has been created.
 
-The following example demonstrates a responsive overflow pattern. At wide widths, all built-in toolbar items are visible. When the grid becomes narrow, right-side items collapse into a hamburger menu that provides the same actions as a dropdown. At very narrow widths, the panels are also hidden. Resize the example to see the behaviour.
+{% apiDocumentation source="grid-api/api.json" section="gridOptions" names=["setGridOption"] /%}
 
-{% gridExampleRunner title="Overflow Menu" name="overflow" /%}
+The following example switches between three toolbar configurations using buttons, each showing a different set of toolbar items.
+
+{% gridExampleRunner title="Updating at Runtime" name="grid-options" /%}

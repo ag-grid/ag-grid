@@ -16,7 +16,6 @@ import {
     Component,
     KeyCode,
     ManagedFocusFeature,
-    RefPlaceholder,
     _addFocusableContainerListener,
     _addGridCommonParams,
     _clearElement,
@@ -76,20 +75,7 @@ const ToolbarItemComponent: ComponentType = {
 const AgToolbarElement: ElementParams = {
     tag: 'div',
     cls: 'ag-toolbar',
-    children: [
-        {
-            tag: 'div',
-            ref: 'eToolbarLeft',
-            cls: 'ag-toolbar-left',
-            role: 'toolbar',
-        },
-        {
-            tag: 'div',
-            ref: 'eToolbarRight',
-            cls: 'ag-toolbar-right',
-            role: 'toolbar',
-        },
-    ],
+    role: 'toolbar',
 };
 
 class AgToolbar extends Component implements FocusableContainer {
@@ -102,9 +88,6 @@ class AgToolbar extends Component implements FocusableContainer {
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
     }
-
-    private readonly eToolbarLeft: HTMLElement = RefPlaceholder;
-    private readonly eToolbarRight: HTMLElement = RefPlaceholder;
 
     private compDestroyFunctions: { [key: string]: () => void } = {};
 
@@ -215,21 +198,25 @@ class AgToolbar extends Component implements FocusableContainer {
         this.setDisplayed(validItemsProvided);
 
         if (validItemsProvided) {
+            const eGui = this.getGui();
             const leftItems: ToolbarItemDef[] = [];
             const rightItems: ToolbarItemDef[] = [];
-            // Separators inherit the alignment of the preceding non-separator item
+            // Separators inherit the alignment of the preceding item, unless explicitly set
             let lastAlignment: 'left' | 'right' = 'left';
             for (const item of items) {
-                const alignment: 'left' | 'right' = item.key === 'separator' ? lastAlignment : item.alignment ?? 'left';
+                const isSeparator = item.key === 'separator';
+                const alignment: 'left' | 'right' = item.alignment ?? (isSeparator ? lastAlignment : 'left');
                 (alignment === 'right' ? rightItems : leftItems).push(item);
-                if (item.key !== 'separator') {
+                if (!isSeparator) {
                     lastAlignment = alignment;
                 }
             }
-            this.itemsPromise = Promise.all([
-                this.createAndRenderComponents(leftItems, this.eToolbarLeft, existingItemsToReuse),
-                this.createAndRenderComponents(rightItems, this.eToolbarRight, existingItemsToReuse),
-            ]).then(() => {});
+
+            this.itemsPromise = this.createAndRenderComponents(leftItems, eGui, existingItemsToReuse).then(() => {
+                if (rightItems.length > 0) {
+                    return this.createAndRenderComponents(rightItems, eGui, existingItemsToReuse, true);
+                }
+            });
         }
     }
 
@@ -279,8 +266,7 @@ class AgToolbar extends Component implements FocusableContainer {
     }
 
     private resetToolbar(): void {
-        _clearElement(this.eToolbarLeft);
-        _clearElement(this.eToolbarRight);
+        _clearElement(this.getGui());
 
         this.destroyComponents();
         this.toolbarItems.clear();
@@ -301,14 +287,20 @@ class AgToolbar extends Component implements FocusableContainer {
     private createAndRenderComponents(
         toolbarItems: ToolbarItemDef[],
         eContainer: HTMLElement,
-        existingItemsToReuse: Map<string, IToolbarItemComp>
+        existingItemsToReuse: Map<string, IToolbarItemComp>,
+        pushRight: boolean = false
     ): Promise<void> {
         const promises: Promise<void>[] = [];
+        let firstItem = pushRight;
 
         for (const itemConfig of toolbarItems) {
             if (itemConfig.key === 'separator') {
                 const separator = document.createElement('div');
                 separator.className = 'ag-toolbar-separator';
+                if (firstItem) {
+                    separator.classList.add('ag-toolbar-right-start');
+                    firstItem = false;
+                }
                 separator.setAttribute('role', 'separator');
                 eContainer.appendChild(separator);
                 continue;
@@ -324,6 +316,10 @@ class AgToolbar extends Component implements FocusableContainer {
             const existingItem = existingItemsToReuse.get(key);
 
             const placeholder = document.createElement('div');
+            if (firstItem) {
+                placeholder.classList.add('ag-toolbar-right-start');
+                firstItem = false;
+            }
             eContainer.appendChild(placeholder);
 
             if (existingItem) {
@@ -376,23 +372,18 @@ class AgToolbar extends Component implements FocusableContainer {
 
         if (this.isAlive()) {
             this.toolbarItems.set(key, component);
-            const comp = component instanceof Component ? component : undefined;
-            if (!comp || comp.isDisplayed()) {
-                placeholder.replaceWith(component.getGui());
-            } else {
-                _removeFromParent(placeholder);
+            const gui = component.getGui();
+            if (placeholder.classList.contains('ag-toolbar-right-start')) {
+                gui.classList.add('ag-toolbar-right-start');
             }
+            placeholder.replaceWith(gui);
+            const comp = component instanceof Component ? component : undefined;
             if (comp) {
+                // Toggle display instead of removing from DOM to preserve order
+                gui.style.display = comp.isDisplayed() ? '' : 'none';
                 this.addManagedListeners(comp, {
                     displayChanged: () => {
-                        const gui = comp.getGui();
-                        if (comp.isDisplayed()) {
-                            if (!gui.parentElement) {
-                                eContainer.appendChild(gui);
-                            }
-                        } else {
-                            _removeFromParent(gui);
-                        }
+                        gui.style.display = comp.isDisplayed() ? '' : 'none';
                     },
                 });
             }

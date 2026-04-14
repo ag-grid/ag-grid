@@ -3,7 +3,6 @@
 @mixin output {
     .ag-toolbar {
         display: flex;
-        justify-content: space-between;
         align-items: center;
         gap: calc(var(--ag-spacing) * 2);
         overflow: hidden;
@@ -24,8 +23,8 @@
         flex: 1;
     }
 
-    .ag-toolbar-left:empty {
-        display: none;
+    .ag-toolbar-spacer {
+        flex-grow: 1;
     }
 
     .ag-toolbar-right {

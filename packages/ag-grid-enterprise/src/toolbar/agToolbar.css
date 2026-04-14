@@ -1,8 +1,7 @@
 .ag-toolbar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: calc(var(--ag-spacing) * 2);
+    gap: calc(var(--ag-spacing));
     overflow: hidden;
     border-bottom: var(--ag-header-row-border);
     padding-right: calc(var(--ag-spacing) * 2);
@@ -11,24 +10,12 @@
     line-height: 1.5;
 }
 
-.ag-toolbar-left {
-    display: inline-flex;
-    align-items: center;
-    gap: calc(var(--ag-spacing) * 0.5);
+.ag-toolbar-right-start {
+    margin-inline-start: auto;
 }
 
-.ag-toolbar-left:where(:has(.ag-toolbar-panel)) {
-    flex: 1;
-}
-
-.ag-toolbar-left:empty {
-    display: none;
-}
-
-.ag-toolbar-right {
-    display: inline-flex;
-    align-items: center;
-    gap: calc(var(--ag-spacing) * 0.5);
+.ag-toolbar-right-start {
+    margin-left: auto;
 }
 
 .ag-toolbar-item {
@@ -39,7 +26,7 @@
     display: inline-flex;
     align-items: center;
     gap: calc(var(--ag-spacing) * 1);
-    padding: calc(var(--ag-spacing) * 1) calc(var(--ag-spacing) * 1.5);
+    padding: calc(var(--ag-spacing)) calc(var(--ag-spacing));
     border: 0;
     border-radius: var(--ag-border-radius);
     background: transparent;

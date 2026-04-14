@@ -45,7 +45,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     toolbar: {
         items: [
             { toolbarItem: 'quickFilter', alignment: 'right' },
-            { toolbarItem: 'find', alignment: 'right' },
             'separator',
             { toolbarItem: 'autoSizeAll', alignment: 'right' },
             'separator',
