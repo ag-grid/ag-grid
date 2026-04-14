@@ -117,6 +117,7 @@ jobs:
     outputs:
       nx_base: ${{ steps.setup.outputs.base }}
       build_type: ${{ steps.setup.outputs.type }}
+      snapshot_branch: ${{ steps.snapshot-prepare.outputs.branch }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -135,6 +136,10 @@ jobs:
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: 'rw'
+
+      - name: Prepare Snapshot Branch
+        uses: ./.github/actions/snapshot-prepare
+        id: snapshot-prepare
 
   calc_matrix:
     name: Calculate Github Matrix
