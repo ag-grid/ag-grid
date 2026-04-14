@@ -1,12 +1,14 @@
-import type { ElementParams, GridInputTextArea, Note } from 'ag-grid-community';
+import type { ElementParams, GridInputTextArea, Note, _Alignment } from 'ag-grid-community';
 import {
     AgInputTextAreaSelector,
     BeanStub,
     Component,
     KeyCode,
     RefPlaceholder,
+    _findBestPlacement,
     _getActiveDomElement,
     _setDisplayed,
+    _toRelativeRect,
 } from 'ag-grid-community';
 
 import { Dialog } from '../widgets/dialog';
@@ -208,17 +210,18 @@ export class AgNotesPopup extends BeanStub {
         const anchorRect = this.params.anchorToElement.getBoundingClientRect();
         const parentRect = this.beans.popupSvc!.getParentRect();
 
-        const isRtl = this.gos.get('enableRtl');
-        const xPosition = isRtl
-            ? anchorRect.left - parentRect.left - DEFAULT_SIZE.width
-            : anchorRect.right - parentRect.left;
-        const yPosition = anchorRect.top - parentRect.top;
-        const xPadding = 10 * (isRtl ? 1 : -1);
-        const yPadding = 10;
-        const x = xPosition + xPadding;
-        const y = yPosition + yPadding;
+        const cellRect = _toRelativeRect(anchorRect, parentRect);
+        const parentSize = {
+            width: parentRect.right - parentRect.left,
+            height: parentRect.bottom - parentRect.top,
+        };
 
-        return { x, y };
+        const isRtl = this.gos.get('enableRtl');
+        const placements: _Alignment[] = isRtl
+            ? ['tr-tl', 'tl-tr', 'tc-bc', 'bc-tc']
+            : ['tl-tr', 'tr-tl', 'tc-bc', 'bc-tc'];
+
+        return _findBestPlacement(cellRect, DEFAULT_SIZE, parentSize, placements, 10);
     }
 
     /** Called by Dialog's closedCallback (Escape key, click outside, etc.) */

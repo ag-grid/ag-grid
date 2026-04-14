@@ -487,7 +487,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     });
 
                     if (noteItems.length) {
-                        resultList.push(...noteItems);
+                        resultList.push(MENU_ITEM_SEPARATOR, ...noteItems, MENU_ITEM_SEPARATOR);
                     }
 
                     continue;
