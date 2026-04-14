@@ -26,7 +26,7 @@ export interface ToolbarButtonConfig {
     onInit?: (comp: Component, gos: GridOptionsService, beans: BeanCollection) => void;
 }
 
-export function createToolbarButton(config: ToolbarButtonConfig) {
+export function createToolbarButton(config: ToolbarButtonConfig): new () => IToolbarItemComp {
     class ToolbarButton extends Component implements IToolbarItemComp {
         private readonly eIcon: HTMLElement = RefPlaceholder;
         private readonly eLabel: HTMLElement = RefPlaceholder;

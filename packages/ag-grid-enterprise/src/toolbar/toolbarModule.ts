@@ -12,7 +12,10 @@ import { PivotPanelToolbarItem } from './providedItems/pivotPanelToolbarItem';
 import { QuickFilterToolbarItem } from './providedItems/quickFilterToolbarItem';
 import { RowGroupPanelToolbarItem } from './providedItems/rowGroupPanelToolbarItem';
 
-function hasSideBarPanel(sideBar: boolean | string | string[] | SideBarDef | undefined, panelId: string): boolean {
+function hasSideBarPanel(
+    sideBar: boolean | string | string[] | SideBarDef | null | undefined,
+    panelId: string
+): boolean {
     if (!sideBar) return false;
     if (sideBar === true) return true;
     if (typeof sideBar === 'string') return sideBar === panelId;
