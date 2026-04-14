@@ -34,10 +34,18 @@ function createMockElement(
     }
 
     if (size) {
-        if (size.offsetWidth !== undefined) Object.defineProperty(el, 'offsetWidth', { value: size.offsetWidth });
-        if (size.offsetHeight !== undefined) Object.defineProperty(el, 'offsetHeight', { value: size.offsetHeight });
-        if (size.clientWidth !== undefined) Object.defineProperty(el, 'clientWidth', { value: size.clientWidth });
-        if (size.clientHeight !== undefined) Object.defineProperty(el, 'clientHeight', { value: size.clientHeight });
+        if (size.offsetWidth !== undefined) {
+            Object.defineProperty(el, 'offsetWidth', { value: size.offsetWidth });
+        }
+        if (size.offsetHeight !== undefined) {
+            Object.defineProperty(el, 'offsetHeight', { value: size.offsetHeight });
+        }
+        if (size.clientWidth !== undefined) {
+            Object.defineProperty(el, 'clientWidth', { value: size.clientWidth });
+        }
+        if (size.clientHeight !== undefined) {
+            Object.defineProperty(el, 'clientHeight', { value: size.clientHeight });
+        }
     }
 
     return el;
