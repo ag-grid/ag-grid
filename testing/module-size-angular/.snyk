@@ -2,6 +2,12 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-VITE-15922242:
+        - '@angular-devkit/build-angular@19.2.19 > @angular/build@19.2.19 > vite@6.4.1':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-14T15:40:39.790Z
     SNYK-JS-SERIALIZEJAVASCRIPT-15809196:
         - '@angular-devkit/build-angular@19.2.19 > webpack@5.98.0 > terser-webpack-plugin@5.3.14 > serialize-javascript@6.0.2':
               reason: >-

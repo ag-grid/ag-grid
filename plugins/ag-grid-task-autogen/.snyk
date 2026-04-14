@@ -2,6 +2,18 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-AXIOS-15969258:
+        - nx@20.3.1 > axios@1.13.1:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-14T15:33:08.485Z
+    SNYK-JS-AXIOS-15930944:
+        - nx@20.3.1 > axios@1.13.1:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-14T15:31:10.545Z
     SNYK-JS-AXIOS-15965856:
         - nx@20.3.1 > axios@1.13.1:
               reason: >-

@@ -2,6 +2,35 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+    SNYK-JS-VITE-15922242:
+        - astro@5.16.6 > vite@6.4.1:
+              reason: >-
+                  The website is a static site, so server-side vulns are not relevant
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-14T15:40:05.793Z
+        - '@astrojs/react@4.4.2 > vite@6.4.1':
+              reason: >-
+                  The website is a static site, so server-side vulns are not relevant
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-14T15:40:05.790Z
+    SNYK-JS-DEFU-15914644:
+        - astro@5.16.6 > unstorage@1.17.3 > h3@1.15.5 > defu@6.1.4:
+              reason: >-
+                  The website is a static site, so server-side vulns are not relevant
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-14T15:38:30.264Z
+    SNYK-JS-AXIOS-15969258:
+        - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-14T15:33:08.513Z
+    SNYK-JS-AXIOS-15930944:
+        - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-14T15:31:10.568Z
     SNYK-JS-AXIOS-15965856:
         - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
               reason: >-
