@@ -1,13 +1,42 @@
-import type { IconName, MenuItemDef } from 'ag-grid-community';
-import { _createElement, _createIconNoSpan, _focusInto, _setAriaHidden } from 'ag-grid-community';
+import type { IToolbarItemComp, IToolbarItemParams, MenuItemDef } from 'ag-grid-community';
+import {
+    Component,
+    RefPlaceholder,
+    _createElement,
+    _createIconNoSpan,
+    _focusInto,
+    _setAriaHidden,
+} from 'ag-grid-community';
 
 import { getExportMenuItems } from '../../menu/exportMenuItems';
 import { MenuList } from '../../widgets/menuList';
-import { AbstractToolbarItemComp } from './abstractToolbarItemComp';
 
-export class ExportToolbarItem extends AbstractToolbarItemComp {
-    public override postConstruct(): void {
-        super.postConstruct();
+export class ExportToolbarItem extends Component implements IToolbarItemComp {
+    private readonly eIcon: HTMLElement = RefPlaceholder;
+    private readonly eLabel: HTMLElement = RefPlaceholder;
+
+    constructor() {
+        super({
+            tag: 'button',
+            cls: 'ag-toolbar-item ag-toolbar-button',
+            attrs: { type: 'button' },
+            children: [
+                { tag: 'span', ref: 'eIcon', cls: 'ag-toolbar-button-icon', attrs: { 'aria-hidden': 'true' } },
+                { tag: 'span', ref: 'eLabel', cls: 'ag-toolbar-button-label' },
+            ],
+        });
+    }
+
+    public postConstruct(): void {
+        const icon = _createIconNoSpan('save', this.beans);
+        if (icon) {
+            this.eIcon.appendChild(icon);
+        }
+
+        const label = this.getLocaleTextFunc()('export', 'Export');
+        this.eLabel.textContent = label;
+        this.getGui().setAttribute('aria-label', label);
+        this.getGui().setAttribute('title', label);
 
         const chevronIcon = _createIconNoSpan('selectOpen', this.beans);
         if (chevronIcon) {
@@ -16,21 +45,20 @@ export class ExportToolbarItem extends AbstractToolbarItemComp {
             eChevron.appendChild(chevronIcon);
             this.getGui().appendChild(eChevron);
         }
+
+        this.addManagedElementListeners(this.getGui(), { click: () => this.onAction() });
     }
 
-    protected getIconName(): IconName {
-        return 'save';
+    public init(params: IToolbarItemParams): void {
+        this.refresh(params);
     }
 
-    protected getLocaleKey(): string {
-        return 'export';
+    public refresh(params: IToolbarItemParams): boolean {
+        this.eLabel.classList.toggle('ag-hidden', params.display !== 'iconAndLabel');
+        return true;
     }
 
-    protected getDefaultLabel(): string {
-        return 'Export';
-    }
-
-    protected onAction(): void {
+    private onAction(): void {
         const menuItems = getExportMenuItems(this.beans, this.getLocaleTextFunc());
         if (menuItems.length === 0) {
             return;
