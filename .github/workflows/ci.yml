@@ -204,6 +204,8 @@ jobs:
   fw_pkg_test:
     runs-on: ubuntu-24.04
     name: Framework Package Tests (${{ matrix.framework }})
+    permissions:
+      contents: write
     needs: [calc_matrix, init]
     strategy:
       fail-fast: false
