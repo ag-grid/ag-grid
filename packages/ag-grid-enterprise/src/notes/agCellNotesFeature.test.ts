@@ -150,4 +150,23 @@ describe('AgCellNotesFeature', () => {
 
         expect(context.createBean).toHaveBeenCalledTimes(1);
     });
+
+    it('does not discard a draft note during refresh while the cell is still creatable', () => {
+        const feature = new AgCellNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        feature.initialise();
+        feature.show({ focusEditor: true });
+
+        access = {
+            ...access,
+            note: undefined,
+            canView: false,
+            canCreate: true,
+            canEdit: false,
+            canDelete: false,
+        };
+
+        feature.refresh();
+
+        expect(popup.hide).not.toHaveBeenCalled();
+    });
 });

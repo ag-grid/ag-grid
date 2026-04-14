@@ -30,7 +30,12 @@ abstract class BaseNotesFeature implements ICellNotesFeature, ICellNotePopupOwne
     public refresh(): void {
         this.refreshHasNotesStyling();
 
-        if (this.activeTarget && !this.notesSvc.getCellNoteAccess(this.activeTarget.noteParams)?.canView) {
+        if (!this.activeTarget) {
+            return;
+        }
+
+        const { canView, canCreate } = this.notesSvc.getCellNoteAccess(this.activeTarget.noteParams) || {};
+        if (!canView && !canCreate) {
             this.closeNotePopup(false);
         }
     }

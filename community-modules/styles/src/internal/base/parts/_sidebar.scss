@@ -41,7 +41,8 @@
         padding-top: calc(var(--ag-grid-size) * 4);
         width: calc(var(--ag-icon-size) + 4px);
         position: relative;
-        overflow: hidden;
+        overflow: hidden auto;
+        scrollbar-width: thin;
     }
 
     button.ag-side-button-button {

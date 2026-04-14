@@ -661,6 +661,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public getRowNode(id: string): RowNode | undefined {
+        if (typeof id !== 'string') {
+            id = String(id);
+        }
         if (id === GRAND_TOTAL_ROW_ID) {
             return this.getRootStore()?.getGrandTotalNode();
         }

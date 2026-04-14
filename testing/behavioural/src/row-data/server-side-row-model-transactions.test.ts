@@ -114,4 +114,28 @@ describe('Server Side Row Model Transactions', () => {
         expect(farRow).toBeTruthy();
         expect((farRow as any).__needsRefreshWhenVisible).toBe(true);
     });
+
+    test('getRowNode does not throw when passed a numeric id', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'value' }],
+            rowModelType: 'serverSide' as const,
+            getRowId: (params: any) => String(params.data.id),
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    const rowData = [
+                        { id: 1, value: 'a' },
+                        { id: 2, value: 'b' },
+                    ];
+                    params.success({ rowData, rowCount: rowData.length });
+                },
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitForEvent('firstDataRendered', api);
+
+        // Passing a number should not throw, and should find the row via toString coercion
+        expect(api.getRowNode(1 as any)).toBeTruthy();
+        expect(api.getRowNode(999 as any)).toBeUndefined();
+    });
 });

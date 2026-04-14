@@ -5,7 +5,7 @@ import {
     Component,
     KeyCode,
     RefPlaceholder,
-    _getDocument,
+    _getActiveDomElement,
     _setDisplayed,
 } from 'ag-grid-community';
 
@@ -112,7 +112,6 @@ export class AgNotesPopup extends BeanStub {
     private contentComp?: AgNotesPopupContent;
     private saveOnClose = true;
     private closed = false;
-    private isResizing = false;
 
     constructor(
         private readonly params: {
@@ -142,6 +141,7 @@ export class AgNotesPopup extends BeanStub {
         const dialog = this.createManagedBean(
             new Dialog({
                 ...DEFAULT_SIZE,
+                modal: true,
                 resizable: true,
                 movable: false,
                 closable: false,
@@ -167,16 +167,27 @@ export class AgNotesPopup extends BeanStub {
                     event.preventDefault();
                 }
             },
-            mousedown: (event: MouseEvent) => this.onMouseDown(event),
             pointerenter: () => this.params.onPopupEnter(),
-            pointerleave: () => {
-                if (!this.isResizing) {
+            pointerout: (event: PointerEvent) => {
+                const dialogGui = dialog.getGui();
+                if (
+                    !dialogGui.contains(event.relatedTarget as Element) &&
+                    !dialogGui.contains(_getActiveDomElement(this.beans))
+                ) {
                     this.params.onPopupLeave();
                 }
             },
-        });
-        this.addManagedElementListeners(_getDocument(this.beans), {
-            mouseup: () => this.onMouseUp(),
+            focusout: (event: FocusEvent) => {
+                if (dialog.isResizing) {
+                    return;
+                }
+
+                if (dialog.getGui().contains(event.relatedTarget as Element)) {
+                    return;
+                }
+
+                this.params.onPopupLeave();
+            },
         });
 
         if (this.params.focusEditor) {
@@ -218,28 +229,6 @@ export class AgNotesPopup extends BeanStub {
 
         this.closed = true;
         this.notifyClosed(event);
-    }
-
-    private onMouseDown(event: MouseEvent): void {
-        const target = event.target;
-        if (!(target instanceof Element) || !target.closest('.ag-resizer')) {
-            return;
-        }
-
-        this.isResizing = true;
-        this.params.onPopupEnter();
-    }
-
-    private onMouseUp(): void {
-        if (!this.isResizing) {
-            return;
-        }
-
-        this.isResizing = false;
-
-        if (!this.dialog?.getGui().matches(':hover')) {
-            this.params.onPopupLeave();
-        }
     }
 
     public override destroy(): void {
