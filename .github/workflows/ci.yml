@@ -23,11 +23,6 @@ on:
         type: boolean
         default: false
         required: true
-      run_bundle_tests:
-        description: 'Force run package tests'
-        type: boolean
-        default: false
-        required: true
       nx_command:
         type: 'choice'
         required: true
@@ -441,7 +436,7 @@ jobs:
         if: matrix.framework != 'none'
         uses: ./.github/actions/snapshot-branch
         with:
-          path: tests/*-package-tests/e2e/*-snapshots/
+          path: testing/*-package-tests/e2e/*-snapshots/
           source_branch: ${{ github.head_ref || 'latest' }}
           branch: ${{ needs.init.outputs.snapshot_branch }}
           type: ${{ matrix.framework }}-package-tests:test:package
