@@ -6,8 +6,8 @@ test.agExample(import.meta, () => {
 
         const toolbarItems = page.locator('.ag-toolbar-item');
 
-        // Initial state is Full (8 items)
-        await expect(toolbarItems).toHaveCount(8);
+        // Initial state is Full (7 items)
+        await expect(toolbarItems).toHaveCount(7);
 
         // Compact (6 items)
         await page.locator('button', { hasText: 'Compact' }).click();
@@ -19,6 +19,6 @@ test.agExample(import.meta, () => {
 
         // Back to Full
         await page.locator('button', { hasText: 'Full' }).click();
-        await expect(toolbarItems).toHaveCount(8);
+        await expect(toolbarItems).toHaveCount(7);
     });
 });
