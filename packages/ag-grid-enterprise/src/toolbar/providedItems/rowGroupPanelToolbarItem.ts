@@ -1,5 +1,5 @@
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component } from 'ag-grid-community';
+import { Component, _warn } from 'ag-grid-community';
 
 import { RowGroupDropZonePanel } from '../../rowGrouping/columnDropZones/rowGroupDropZonePanel';
 
@@ -9,6 +9,12 @@ export class RowGroupPanelToolbarItem extends Component implements IToolbarItemC
     }
 
     public init(_params: IToolbarItemParams): void {
+        if (!this.gos.isModuleRegistered('RowGrouping')) {
+            _warn(303, { itemName: 'rowGroupPanel', moduleName: 'RowGrouping' });
+            this.setDisplayed(false);
+            return;
+        }
+
         const panel = this.createManagedBean(new RowGroupDropZonePanel(true));
         this.getGui().appendChild(panel.getGui());
 

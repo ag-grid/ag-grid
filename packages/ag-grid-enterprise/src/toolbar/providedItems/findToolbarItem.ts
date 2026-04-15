@@ -1,5 +1,5 @@
 import type { FindChangedEvent, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _createElement, _createIconNoSpan } from 'ag-grid-community';
+import { Component, _createElement, _createIconNoSpan, _warn } from 'ag-grid-community';
 
 export class FindToolbarItem extends Component implements IToolbarItemComp {
     private eInput!: HTMLInputElement;
@@ -12,6 +12,12 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
     }
 
     public init(_params: IToolbarItemParams): void {
+        if (!this.gos.isModuleRegistered('Find')) {
+            _warn(303, { itemName: 'find', moduleName: 'Find' });
+            this.setDisplayed(false);
+            return;
+        }
+
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarFind', 'Find');
         const eGui = this.getGui();

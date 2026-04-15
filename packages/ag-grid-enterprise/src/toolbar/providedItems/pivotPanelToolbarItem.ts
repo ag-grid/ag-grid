@@ -1,5 +1,5 @@
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component } from 'ag-grid-community';
+import { Component, _warn } from 'ag-grid-community';
 
 import { PivotDropZonePanel } from '../../rowGrouping/columnDropZones/pivotDropZonePanel';
 
@@ -9,6 +9,12 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
     }
 
     public init(_params: IToolbarItemParams): void {
+        if (!this.beans.pivotColDefSvc) {
+            _warn(303, { itemName: 'pivotPanel', moduleName: 'Pivot' });
+            this.setDisplayed(false);
+            return;
+        }
+
         const panel = this.createManagedBean(new PivotDropZonePanel(true));
         this.getGui().appendChild(panel.getGui());
 

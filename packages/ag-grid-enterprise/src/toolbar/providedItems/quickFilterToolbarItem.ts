@@ -1,5 +1,5 @@
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _createElement, _createIconNoSpan } from 'ag-grid-community';
+import { Component, _createElement, _createIconNoSpan, _warn } from 'ag-grid-community';
 
 export class QuickFilterToolbarItem extends Component implements IToolbarItemComp {
     private eInput!: HTMLInputElement;
@@ -9,6 +9,12 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
     }
 
     public init(_params: IToolbarItemParams): void {
+        if (!this.gos.isModuleRegistered('QuickFilter')) {
+            _warn(303, { itemName: 'quickFilter', moduleName: 'QuickFilter' });
+            this.setDisplayed(false);
+            return;
+        }
+
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarQuickFilter', 'Quick Filter');
 

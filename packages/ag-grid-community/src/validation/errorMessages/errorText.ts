@@ -742,6 +742,8 @@ export const AG_GRID_ERRORS = {
         `Toolbar item '${key}' is missing the 'toolbarItem' property and will not be rendered.` as const,
     302: ({ name, available }: { name: string; available: string }) =>
         `Unknown toolbar item '${name}'. Available built-in items: ${available}.` as const,
+    303: ({ itemName, moduleName }: { itemName: string; moduleName: string }) =>
+        `Toolbar item '${itemName}' requires the ${moduleName}Module to be registered. The item will not be rendered.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
