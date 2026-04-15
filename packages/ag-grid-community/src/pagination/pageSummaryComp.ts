@@ -177,7 +177,7 @@ export class PageSummaryComp extends Component {
         const onLastPage = currentPage === totalPages - 1;
 
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
-        this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === totalPages - 1;
+        this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || onLastPage;
 
         this.toggleButtonDisabled(this.btNext, this.nextButtonDisabled);
         this.toggleButtonDisabled(this.btLast, this.lastButtonDisabled);

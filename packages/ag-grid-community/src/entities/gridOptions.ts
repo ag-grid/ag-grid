@@ -1088,7 +1088,6 @@ export interface GridOptions<TData = any> {
      * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
      * Set to `false` to hide the page size selector.
      * @default true
-     * @initial
      * @agModule `PaginationModule`
      */
     paginationPageSizeSelector?: number[] | boolean;

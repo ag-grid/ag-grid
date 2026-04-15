@@ -23,6 +23,15 @@ function getPagingPanel(api: ReturnType<typeof createPaginationGrid>): HTMLEleme
     return getGridElement(api)!.querySelector('.ag-paging-panel');
 }
 
+function getButtonIconName(panel: HTMLElement, ariaLabel: string): string | undefined {
+    const btn = panel.querySelector<HTMLElement>(`[aria-label="${ariaLabel}"]`);
+    const icon = btn?.querySelector<HTMLElement>('.ag-icon');
+    // Icon class is "ag-icon ag-icon-{name}", extract the name
+    return Array.from(icon?.classList ?? [])
+        .find((cls) => cls.startsWith('ag-icon-'))
+        ?.replace('ag-icon-', '');
+}
+
 function getChildElements(panel: HTMLElement): Element[] {
     return Array.from(panel.children).filter((el) => !el.classList.contains('ag-tab-guard'));
 }
@@ -105,6 +114,24 @@ describe('paginationPanels', () => {
             for (const id of pageIds) {
                 expect(id).toMatch(new RegExp(`^${panelId}-`));
             }
+        });
+
+        test('LTR: navigation buttons use correct icon direction', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            expect(getButtonIconName(panel, 'First Page')).toBe('first');
+            expect(getButtonIconName(panel, 'Previous Page')).toBe('previous');
+            expect(getButtonIconName(panel, 'Next Page')).toBe('next');
+            expect(getButtonIconName(panel, 'Last Page')).toBe('last');
+        });
+
+        test('RTL: navigation buttons swap icon direction', () => {
+            const api = createPaginationGrid(gridsManager, { enableRtl: true });
+            const panel = getPagingPanel(api)!;
+            expect(getButtonIconName(panel, 'First Page')).toBe('last');
+            expect(getButtonIconName(panel, 'Previous Page')).toBe('next');
+            expect(getButtonIconName(panel, 'Next Page')).toBe('previous');
+            expect(getButtonIconName(panel, 'Last Page')).toBe('first');
         });
 
         test('page summary displays correct values', () => {
@@ -200,6 +227,13 @@ describe('paginationPanels', () => {
             const children = getChildElements(panel);
             expect(children).toHaveLength(1);
             expect(children[0].classList.contains('ag-paging-page-summary-panel')).toBe(true);
+        });
+
+        test('empty array hides the pagination panel entirely', () => {
+            const api = createPaginationGrid(gridsManager, { paginationPanels: [] });
+            const panel = getPagingPanel(api)!;
+            expect(panel).toHaveClass('ag-hidden');
+            expect(getChildElements(panel)).toHaveLength(0);
         });
     });
 
