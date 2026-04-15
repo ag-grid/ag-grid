@@ -18,7 +18,7 @@ const ToolbarButtonElement: ElementParams = {
     ],
 };
 
-export interface ToolbarButtonConfig {
+interface ToolbarButtonConfig {
     icon: IconName;
     localeKey: string;
     defaultLabel: string;
