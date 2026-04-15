@@ -126,9 +126,14 @@ class AgToolbar extends Component implements FocusableContainer {
             return;
         }
 
-        // Don't intercept arrow keys in text inputs — allow normal caret navigation
+        // Don't intercept navigation keys in text inputs — allow normal caret navigation
         if (activeEl instanceof HTMLInputElement && (activeEl.type === 'text' || activeEl.type === 'search')) {
-            if (e.key === KeyCode.LEFT || e.key === KeyCode.RIGHT) {
+            if (
+                e.key === KeyCode.LEFT ||
+                e.key === KeyCode.RIGHT ||
+                e.key === KeyCode.PAGE_HOME ||
+                e.key === KeyCode.PAGE_END
+            ) {
                 return;
             }
         }
