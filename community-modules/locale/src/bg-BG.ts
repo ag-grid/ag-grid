@@ -762,7 +762,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaLabelAddFilterField: 'Добавяне на поле за филтър',
     ariaLabelFilterCardDelete: 'Изтриване на филтър',
     ariaLabelFilterCardHasEdits: 'Има редакции',
-    ariaCellHasNote: 'Тази клетка има бележка.',
+    ariaHasNote: 'Тази клетка има бележка.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -808,15 +808,15 @@ export const AG_GRID_LOCALE_BG = {
     timeFormatHHMMSS: 'ЧЧ:ММ:СС',
     timeFormatHHMMSSAmPm: 'ЧЧ:ММ:СС AM/PM',
 
-    // Cell Notes
-    cellNote: 'Бележка за клетка',
-    addCellNote: 'Добавяне на бележка към клетка',
-    viewCellNote: 'Преглед на бележката',
-    editCellNote: 'Редактиране на бележката',
-    deleteCellNote: 'Премахване на бележката',
-    cellNotePlaceholder: 'Добавете бележка...',
-    cellNoteHint:
+    // Notes
+    note: 'Бележка за клетка',
+    addNote: 'Добавяне на бележка',
+    viewNote: 'Преглед на бележката',
+    editNote: 'Редактиране на бележката',
+    deleteNote: 'Премахване на бележката',
+    notePlaceholder: 'Добавете бележка...',
+    noteHint:
         'Задръжте курсора за преглед. Щракнете вътре, за да редактирате. Плъзнете ъгъла, за да преоразмерите. Натиснете Esc, за да затворите.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Бележка само за четене. Изберете текста, за да го копирате. Плъзнете ъгъла, за да преоразмерите. Натиснете Esc, за да затворите.',
 };

@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-angular",
-  "version": "35.2.1",
+  "version": "35.2.1-beta.20260414.1034",
   "description": "AG Grid Angular Component",
   "license": "MIT",
   "peerDependencies": {
@@ -8,7 +8,7 @@
     "@angular/core": ">= 18.0.0"
   },
   "dependencies": {
-    "ag-grid-community": "35.2.1",
+    "ag-grid-community": "35.2.1-beta.20260414.1034",
     "tslib": "^2.3.0"
   },
   "repository": {

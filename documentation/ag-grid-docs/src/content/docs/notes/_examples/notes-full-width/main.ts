@@ -1,11 +1,11 @@
 import type {
-    CellNote,
     ColDef,
     GetRowIdParams,
     GridOptions,
     ICellRendererComp,
     ICellRendererParams,
     IsFullWidthRowParams,
+    Note,
     NotesDataSource,
     RowHeightParams,
 } from 'ag-grid-community';
@@ -24,23 +24,34 @@ interface OlympicWinner extends Partial<IOlympicData> {
     featured?: boolean;
 }
 
-const noteStore = new Map<string, CellNote>([
+const noteStore = new Map<string, Note>([
     [
-        '2',
+        'cell::1::athlete',
+        {
+            text: 'This note belongs to a regular cell.',
+        },
+    ],
+    [
+        'fullWidth::2',
         {
             text: 'This note belongs to a full width row. The datasource receives location: fullWidthRow instead of a column.',
         },
     ],
 ]);
 
-const notesDataSource: NotesDataSource = {
-    getNote: (params) => (params.location === 'fullWidthRow' ? noteStore.get(params.rowNode.id!) : undefined),
-    setNote: (params) => {
-        if (params.location !== 'fullWidthRow') {
-            return;
-        }
+const getNoteKey = (rowId: string, colId: string) => `cell::${rowId}::${colId}`;
+const getFullWidthNoteKey = (rowId: string) => `fullWidth::${rowId}`;
 
-        const key = params.rowNode.id!;
+const notesDataSource: NotesDataSource = {
+    getNote: (params) =>
+        params.location === 'fullWidthRow'
+            ? noteStore.get(getFullWidthNoteKey(params.rowNode.id!))
+            : noteStore.get(getNoteKey(params.rowNode.id!, params.column.getColId())),
+    setNote: (params) => {
+        const key =
+            params.location === 'fullWidthRow'
+                ? getFullWidthNoteKey(params.rowNode.id!)
+                : getNoteKey(params.rowNode.id!, params.column.getColId());
         if (params.note === undefined) {
             noteStore.delete(key);
         } else {

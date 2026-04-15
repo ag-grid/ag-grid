@@ -65,7 +65,7 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { IStatusPanel } from '../interfaces/iStatusPanel';
 import type { IToolPanel } from '../interfaces/iToolPanel';
 import type { DetailGridInfo } from '../interfaces/masterDetail';
-import type { CellNote, GetNoteParams, RefreshCellNotesParams, SetNoteParams } from '../interfaces/notes';
+import type { GetNoteParams, Note, RefreshNotesParams, SetNoteParams } from '../interfaces/notes';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
@@ -1171,20 +1171,20 @@ export interface _NotesGridApi {
      * Return the current note for a cell.
      * @agModule `NotesModule`
      */
-    getCellNote(params: GetNoteParams): CellNote | undefined;
+    getNote(params: GetNoteParams): Note | undefined;
 
     /**
      * Set or remove the note for a cell.
      * Pass `note: undefined` to remove the note.
      * @agModule `NotesModule`
      */
-    setCellNote(params: SetNoteParams): void;
+    setNote(params: SetNoteParams): void;
 
     /**
      * Refresh note presence for the currently rendered cells.
      * @agModule `NotesModule`
      */
-    refreshCellNotes(params?: RefreshCellNotesParams): void;
+    refreshNotes(params?: RefreshNotesParams): void;
 }
 
 export interface _StateGridApi {

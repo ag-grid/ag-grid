@@ -1,16 +1,18 @@
-import type { CellNote, ElementParams, GridInputTextArea } from 'ag-grid-community';
+import type { ElementParams, GridInputTextArea, Note, _Alignment } from 'ag-grid-community';
 import {
     AgInputTextAreaSelector,
     BeanStub,
     Component,
     KeyCode,
     RefPlaceholder,
-    _getDocument,
+    _findBestPlacement,
+    _getActiveDomElement,
     _setDisplayed,
+    _toRelativeRect,
 } from 'ag-grid-community';
 
 import { Dialog } from '../widgets/dialog';
-import { cloneCellNote } from './notesUtils';
+import { cloneNote } from './notesUtils';
 
 const DEFAULT_SIZE = {
     width: 320,
@@ -40,7 +42,7 @@ class AgNotesPopupContent extends Component {
     private readonly initialText: string;
 
     constructor(
-        private readonly note: CellNote | undefined,
+        private readonly note: Note | undefined,
         private readonly readOnly: boolean
     ) {
         super(NotesPopupContentElement, [AgInputTextAreaSelector]);
@@ -58,16 +60,16 @@ class AgNotesPopupContent extends Component {
 
         this.eFooter.textContent = this.readOnly
             ? translate(
-                  'cellNoteReadOnlyHint',
+                  'noteReadOnlyHint',
                   'Read-only note. Select text to copy. Drag the corner to resize. Press Esc to close.'
               )
             : translate(
-                  'cellNoteHint',
+                  'noteHint',
                   'Hover to preview. Click inside to edit. Drag the corner to resize. Press Esc to close.'
               );
 
         this.eEditor
-            .setInputPlaceholder(this.readOnly ? undefined : translate('cellNotePlaceholder', 'Add a note...'))
+            .setInputPlaceholder(this.readOnly ? undefined : translate('notePlaceholder', 'Add a note...'))
             .setRows(8)
             .setValue(this.note?.text ?? '', true)
             .setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
@@ -86,7 +88,7 @@ class AgNotesPopupContent extends Component {
         inputEl.setSelectionRange(valueLength, valueLength);
     }
 
-    public getEditedNote(): CellNote | undefined {
+    public getEditedNote(): Note | undefined {
         const text = this.eEditor.getValue()?.trim();
         if (!text) {
             return undefined;
@@ -112,17 +114,16 @@ export class AgNotesPopup extends BeanStub {
     private contentComp?: AgNotesPopupContent;
     private saveOnClose = true;
     private closed = false;
-    private isResizing = false;
 
     constructor(
         private readonly params: {
-            note?: CellNote;
+            note?: Note;
             readOnly?: boolean;
             anchorToElement: HTMLElement;
             focusEditor?: boolean;
             onClosed: (
                 noteChanged: boolean,
-                note: CellNote | undefined,
+                note: Note | undefined,
                 closeEvent?: MouseEvent | TouchEvent | KeyboardEvent
             ) => void;
             onPopupEnter: () => void;
@@ -133,7 +134,7 @@ export class AgNotesPopup extends BeanStub {
     }
 
     public postConstruct(): void {
-        const note = cloneCellNote(this.params.note);
+        const note = cloneNote(this.params.note);
         const contentComp = this.createManagedBean(new AgNotesPopupContent(note, !!this.params.readOnly));
         this.contentComp = contentComp;
 
@@ -142,6 +143,7 @@ export class AgNotesPopup extends BeanStub {
         const dialog = this.createManagedBean(
             new Dialog({
                 ...DEFAULT_SIZE,
+                modal: true,
                 resizable: true,
                 movable: false,
                 closable: false,
@@ -159,7 +161,7 @@ export class AgNotesPopup extends BeanStub {
         const translate = this.getLocaleTextFunc();
         eGui.classList.add('ag-notes-popup');
         eGui.classList.toggle('ag-notes-popup-read-only', !!this.params.readOnly);
-        eGui.setAttribute('aria-label', translate('cellNote', 'Cell Note'));
+        eGui.setAttribute('aria-label', translate('note', 'Note'));
 
         this.addManagedElementListeners(eGui, {
             keydown: (event: KeyboardEvent) => {
@@ -167,16 +169,27 @@ export class AgNotesPopup extends BeanStub {
                     event.preventDefault();
                 }
             },
-            mousedown: (event: MouseEvent) => this.onMouseDown(event),
             pointerenter: () => this.params.onPopupEnter(),
-            pointerleave: () => {
-                if (!this.isResizing) {
+            pointerout: (event: PointerEvent) => {
+                const dialogGui = dialog.getGui();
+                if (
+                    !dialogGui.contains(event.relatedTarget as Element) &&
+                    !dialogGui.contains(_getActiveDomElement(this.beans))
+                ) {
                     this.params.onPopupLeave();
                 }
             },
-        });
-        this.addManagedElementListeners(_getDocument(this.beans), {
-            mouseup: () => this.onMouseUp(),
+            focusout: (event: FocusEvent) => {
+                if (dialog.isResizing) {
+                    return;
+                }
+
+                if (dialog.getGui().contains(event.relatedTarget as Element)) {
+                    return;
+                }
+
+                this.params.onPopupLeave();
+            },
         });
 
         if (this.params.focusEditor) {
@@ -197,17 +210,18 @@ export class AgNotesPopup extends BeanStub {
         const anchorRect = this.params.anchorToElement.getBoundingClientRect();
         const parentRect = this.beans.popupSvc!.getParentRect();
 
-        const isRtl = this.gos.get('enableRtl');
-        const xPosition = isRtl
-            ? anchorRect.left - parentRect.left - DEFAULT_SIZE.width
-            : anchorRect.right - parentRect.left;
-        const yPosition = anchorRect.top - parentRect.top;
-        const xPadding = 10 * (isRtl ? 1 : -1);
-        const yPadding = 10;
-        const x = xPosition + xPadding;
-        const y = yPosition + yPadding;
+        const cellRect = _toRelativeRect(anchorRect, parentRect);
+        const parentSize = {
+            width: parentRect.right - parentRect.left,
+            height: parentRect.bottom - parentRect.top,
+        };
 
-        return { x, y };
+        const isRtl = this.gos.get('enableRtl');
+        const placements: _Alignment[] = isRtl
+            ? ['tr-tl', 'tl-tr', 'tc-bc', 'bc-tc']
+            : ['tl-tr', 'tr-tl', 'tc-bc', 'bc-tc'];
+
+        return _findBestPlacement(cellRect, DEFAULT_SIZE, parentSize, placements, 10);
     }
 
     /** Called by Dialog's closedCallback (Escape key, click outside, etc.) */
@@ -218,28 +232,6 @@ export class AgNotesPopup extends BeanStub {
 
         this.closed = true;
         this.notifyClosed(event);
-    }
-
-    private onMouseDown(event: MouseEvent): void {
-        const target = event.target;
-        if (!(target instanceof Element) || !target.closest('.ag-resizer')) {
-            return;
-        }
-
-        this.isResizing = true;
-        this.params.onPopupEnter();
-    }
-
-    private onMouseUp(): void {
-        if (!this.isResizing) {
-            return;
-        }
-
-        this.isResizing = false;
-
-        if (!this.dialog?.getGui().matches(':hover')) {
-            this.params.onPopupLeave();
-        }
     }
 
     public override destroy(): void {

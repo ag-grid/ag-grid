@@ -759,7 +759,7 @@ export const AG_GRID_LOCALE_NL = {
     ariaLabelAddFilterField: 'Filterveld toevoegen',
     ariaLabelFilterCardDelete: 'Filter verwijderen',
     ariaLabelFilterCardHasEdits: 'Heeft wijzigingen',
-    ariaCellHasNote: 'Deze cel heeft een notitie.',
+    ariaHasNote: 'Deze cel heeft een notitie.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -805,15 +805,15 @@ export const AG_GRID_LOCALE_NL = {
     timeFormatHHMMSS: 'UU:MM:SS',
     timeFormatHHMMSSAmPm: 'UU:MM:SS AM/PM',
 
-    // Cell Notes
-    cellNote: 'Celnotitie',
-    addCellNote: 'Celnotitie toevoegen',
-    viewCellNote: 'Notitie bekijken',
-    editCellNote: 'Notitie bewerken',
-    deleteCellNote: 'Notitie verwijderen',
-    cellNotePlaceholder: 'Een notitie toevoegen...',
-    cellNoteHint:
+    // Notes
+    note: 'Celnotitie',
+    addNote: 'Notitie toevoegen',
+    viewNote: 'Notitie bekijken',
+    editNote: 'Notitie bewerken',
+    deleteNote: 'Notitie verwijderen',
+    notePlaceholder: 'Een notitie toevoegen...',
+    noteHint:
         'Beweeg erover om een voorbeeld te zien. Klik binnenin om te bewerken. Sleep de hoek om het formaat aan te passen. Druk op Esc om te sluiten.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Alleen-lezen-notitie. Selecteer tekst om te kopiëren. Sleep de hoek om het formaat aan te passen. Druk op Esc om te sluiten.',
 };

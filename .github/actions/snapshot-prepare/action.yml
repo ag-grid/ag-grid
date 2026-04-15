@@ -1,0 +1,23 @@
+name: snapshot-prepare
+
+outputs:
+    branch:
+        description: 'Branch name to use for snapshots.'
+        value: ${{ steps.branch.outputs.branch }}
+
+runs:
+    using: 'composite'
+    steps:
+        - name: Calculate snapshot branch name + cleanup previous runs
+          id: branch
+          shell: bash
+          run: |
+              set -eux
+
+              branch="gha/snapshots-${{github.head_ref || github.run_id}}"
+
+              if (git ls-remote --exit-code --heads origin "${branch}" >/dev/null) ; then
+                  git push -d origin "${branch}"
+              fi
+
+              echo "branch=${branch}" >> $GITHUB_OUTPUT

@@ -689,8 +689,8 @@ export type {
     SpanRowsParams,
     SuppressHeaderKeyboardEventFunc,
     SuppressHeaderKeyboardEventParams,
-    SuppressCellNoteActionsCallback,
-    SuppressCellNoteActionsCallbackParams,
+    SuppressNoteActionsCallback,
+    SuppressNoteActionsCallbackParams,
     SuppressKeyboardEventFunc,
     SuppressKeyboardEventParams,
     SuppressNavigableCallback,
@@ -941,17 +941,17 @@ export type {
     ValueParam,
 } from './interfaces/formulas';
 export type {
-    CellNoteParams,
-    CellNote,
+    NoteParams,
+    Note,
     FullWidthRowNoteParams,
     GetNoteParams,
     NotesDataSource,
-    NotesDataSourceCellNoteParams,
+    NotesDataSourceNoteParams,
     NotesDataSourceFullWidthRowNoteParams,
     NotesDataSourceGetNoteParams,
     NotesDataSourceParams,
     NotesDataSourceSetNoteParams,
-    RefreshCellNotesParams,
+    RefreshNotesParams,
     SetNoteParams,
 } from './interfaces/notes';
 

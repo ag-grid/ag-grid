@@ -761,7 +761,7 @@ export const AG_GRID_LOCALE_RO = {
     ariaLabelAddFilterField: 'Adaugă Câmp de Filtrare',
     ariaLabelFilterCardDelete: 'Șterge Filtrul',
     ariaLabelFilterCardHasEdits: 'Are Modificări',
-    ariaCellHasNote: 'Această celulă are o notă.',
+    ariaHasNote: 'Această celulă are o notă.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -807,15 +807,15 @@ export const AG_GRID_LOCALE_RO = {
     timeFormatHHMMSS: 'OO:MM:SS',
     timeFormatHHMMSSAmPm: 'OO:MM:SS AM/PM',
 
-    // Cell Notes
-    cellNote: 'Notă celulă',
-    addCellNote: 'Adaugă notă la celulă',
-    viewCellNote: 'Vizualizează nota',
-    editCellNote: 'Editează nota',
-    deleteCellNote: 'Elimină nota',
-    cellNotePlaceholder: 'Adaugă o notă...',
-    cellNoteHint:
+    // Notes
+    note: 'Notă celulă',
+    addNote: 'Adaugă notă',
+    viewNote: 'Vizualizează nota',
+    editNote: 'Editează nota',
+    deleteNote: 'Elimină nota',
+    notePlaceholder: 'Adaugă o notă...',
+    noteHint:
         'Treceți cu cursorul pentru previzualizare. Faceți clic în interior pentru a edita. Trageți de colț pentru a redimensiona. Apăsați Esc pentru a închide.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Notă doar pentru citire. Selectați textul pentru a-l copia. Trageți de colț pentru a redimensiona. Apăsați Esc pentru a închide.',
 };

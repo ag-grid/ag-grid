@@ -1367,19 +1367,19 @@
                 "url": "./notes/"
             }
         },
-        "getCellNote": {
+        "getNote": {
             "more": {
                 "name": "Notes API",
                 "url": "./notes/#api-reference"
             }
         },
-        "setCellNote": {
+        "setNote": {
             "more": {
                 "name": "Notes API",
                 "url": "./notes/#api-reference"
             }
         },
-        "refreshCellNotes": {
+        "refreshNotes": {
             "more": {
                 "name": "Notes API",
                 "url": "./notes/#api-reference"

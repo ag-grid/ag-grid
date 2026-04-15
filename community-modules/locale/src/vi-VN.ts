@@ -757,7 +757,7 @@ export const AG_GRID_LOCALE_VN = {
     ariaLabelAddFilterField: 'Thêm Trường Bộ Lọc',
     ariaLabelFilterCardDelete: 'Xóa Bộ Lọc',
     ariaLabelFilterCardHasEdits: 'Có Chỉnh Sửa',
-    ariaCellHasNote: 'Ô này có ghi chú.',
+    ariaHasNote: 'Ô này có ghi chú.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -803,15 +803,14 @@ export const AG_GRID_LOCALE_VN = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS SA/CH',
 
-    // Cell Notes
-    cellNote: 'Ghi chú ô',
-    addCellNote: 'Thêm ghi chú ô',
-    viewCellNote: 'Xem ghi chú',
-    editCellNote: 'Chỉnh sửa ghi chú',
-    deleteCellNote: 'Xóa ghi chú',
-    cellNotePlaceholder: 'Thêm ghi chú...',
-    cellNoteHint:
+    // Notes
+    note: 'Ghi chú ô',
+    addNote: 'Thêm ghi chú',
+    viewNote: 'Xem ghi chú',
+    editNote: 'Chỉnh sửa ghi chú',
+    deleteNote: 'Xóa ghi chú',
+    notePlaceholder: 'Thêm ghi chú...',
+    noteHint:
         'Di chuột để xem trước. Nhấp vào bên trong để chỉnh sửa. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
-    cellNoteReadOnlyHint:
-        'Ghi chú chỉ đọc. Chọn văn bản để sao chép. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
+    noteReadOnlyHint: 'Ghi chú chỉ đọc. Chọn văn bản để sao chép. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
 };

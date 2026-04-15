@@ -760,7 +760,7 @@ export const AG_GRID_LOCALE_FI = {
     ariaLabelAddFilterField: 'Lisää suodatin kenttä',
     ariaLabelFilterCardDelete: 'Poista suodatin',
     ariaLabelFilterCardHasEdits: 'On muutoksia',
-    ariaCellHasNote: 'Tässä solussa on muistiinpano.',
+    ariaHasNote: 'Tässä solussa on muistiinpano.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ' ',
@@ -806,15 +806,15 @@ export const AG_GRID_LOCALE_FI = {
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
 
-    // Cell Notes
-    cellNote: 'Solumuistio',
-    addCellNote: 'Lisää solumuistio',
-    viewCellNote: 'Näytä muistiinpano',
-    editCellNote: 'Muokkaa muistiinpanoa',
-    deleteCellNote: 'Poista muistiinpano',
-    cellNotePlaceholder: 'Lisää muistiinpano...',
-    cellNoteHint:
+    // Notes
+    note: 'Solumuistio',
+    addNote: 'Lisää muistiinpano',
+    viewNote: 'Näytä muistiinpano',
+    editNote: 'Muokkaa muistiinpanoa',
+    deleteNote: 'Poista muistiinpano',
+    notePlaceholder: 'Lisää muistiinpano...',
+    noteHint:
         'Näytä esikatselu viemällä osoitin päälle. Muokkaa napsauttamalla sisälle. Muuta kokoa vetämällä kulmasta. Sulje painamalla Esc.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Vain luku -muistiinpano. Valitse teksti kopioidaksesi sen. Muuta kokoa vetämällä kulmasta. Sulje painamalla Esc.',
 };

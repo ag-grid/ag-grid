@@ -262,9 +262,9 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         resetQuickFilter: 0,
     }),
     ...mod<_NotesGridApi>('Notes', {
-        getCellNote: 0,
-        setCellNote: 0,
-        refreshCellNotes: 0,
+        getNote: 0,
+        setNote: 0,
+        refreshNotes: 0,
     }),
     ...mod<_FindApi<any>>('Find', {
         findGetActiveMatch: 0,

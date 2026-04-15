@@ -73,6 +73,12 @@ export type {
 export type { ITooltipFeature as _ITooltipFeature, TooltipCtrl as _TooltipCtrl } from './agStack/interfaces/iTooltip';
 export { AgPopupComponent } from './agStack/popup/agPopupComponent';
 export { BasePopupService as _BasePopupService } from './agStack/popup/basePopupService';
+export {
+    computeAlignedPosition as _computeAlignedPosition,
+    findBestPlacement as _findBestPlacement,
+    toRelativeRect as _toRelativeRect,
+} from './agStack/popup/popupPositionUtils';
+export type { Alignment as _Alignment, Anchor as _Anchor } from './agStack/popup/popupPositionUtils';
 export { AgPositionableFeature as _AgPositionableFeature } from './agStack/rendering/agPositionableFeature';
 export type {
     PositionableOptions,
@@ -206,7 +212,7 @@ export type {
     _SideBarGridApi,
     _StatusBarGridApi,
 } from './api/gridApi';
-export type { ICellNoteAccess, ICellNotesFeature, INotesDataService, INotesService } from './interfaces/notes';
+export type { INoteAccess, INotesFeature, INotesDataService, INotesService } from './interfaces/notes';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';

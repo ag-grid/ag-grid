@@ -762,7 +762,7 @@ export const AG_GRID_LOCALE_TR = {
     ariaLabelAddFilterField: 'Filtre Alanı Ekle',
     ariaLabelFilterCardDelete: 'Filtreyi Sil',
     ariaLabelFilterCardHasEdits: 'Düzenlemeler Var',
-    ariaCellHasNote: 'Bu hücrede bir not var.',
+    ariaHasNote: 'Bu hücrede bir not var.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -808,15 +808,15 @@ export const AG_GRID_LOCALE_TR = {
     timeFormatHHMMSS: 'SS:DD:SN',
     timeFormatHHMMSSAmPm: 'SS:DD:SN ÖÖ/ÖS',
 
-    // Cell Notes
-    cellNote: 'Hücre notu',
-    addCellNote: 'Hücre notu ekle',
-    viewCellNote: 'Notu görüntüle',
-    editCellNote: 'Notu düzenle',
-    deleteCellNote: 'Notu kaldır',
-    cellNotePlaceholder: 'Bir not ekle...',
-    cellNoteHint:
+    // Notes
+    note: 'Hücre notu',
+    addNote: 'Not ekle',
+    viewNote: 'Notu görüntüle',
+    editNote: 'Notu düzenle',
+    deleteNote: 'Notu kaldır',
+    notePlaceholder: 'Bir not ekle...',
+    noteHint:
         'Önizleme için üzerine gelin. Düzenlemek için içine tıklayın. Yeniden boyutlandırmak için köşeyi sürükleyin. Kapatmak için Esc tuşuna basın.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Salt okunur not. Kopyalamak için metni seçin. Yeniden boyutlandırmak için köşeyi sürükleyin. Kapatmak için Esc tuşuna basın.',
 };

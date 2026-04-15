@@ -1,6 +1,6 @@
-import type { CellNote } from 'ag-grid-community';
+import type { Note } from 'ag-grid-community';
 
-export function cloneCellNote(note?: CellNote): CellNote | undefined {
+export function cloneNote(note?: Note): Note | undefined {
     if (!note || typeof note.text !== 'string' || !note.text.trim()) {
         return undefined;
     }

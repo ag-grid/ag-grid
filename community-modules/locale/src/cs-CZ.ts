@@ -757,7 +757,7 @@ export const AG_GRID_LOCALE_CZ = {
     ariaLabelAddFilterField: 'Přidat filtr',
     ariaLabelFilterCardDelete: 'Smazat filtr',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
-    ariaCellHasNote: 'Tato buňka má poznámku.',
+    ariaHasNote: 'Tato buňka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '‚',
@@ -803,15 +803,15 @@ export const AG_GRID_LOCALE_CZ = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
 
-    // Cell Notes
-    cellNote: 'Poznámka buňky',
-    addCellNote: 'Přidat poznámku buňky',
-    viewCellNote: 'Zobrazit poznámku',
-    editCellNote: 'Upravit poznámku',
-    deleteCellNote: 'Odstranit poznámku',
-    cellNotePlaceholder: 'Přidat poznámku...',
-    cellNoteHint:
+    // Notes
+    note: 'Poznámka buňky',
+    addNote: 'Přidat poznámku',
+    viewNote: 'Zobrazit poznámku',
+    editNote: 'Upravit poznámku',
+    deleteNote: 'Odstranit poznámku',
+    notePlaceholder: 'Přidat poznámku...',
+    noteHint:
         'Najeďte pro náhled. Klikněte dovnitř pro úpravu. Přetažením rohu změňte velikost. Stiskněte Esc pro zavření.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Poznámka jen pro čtení. Označte text pro kopírování. Přetažením rohu změňte velikost. Stiskněte Esc pro zavření.',
 };

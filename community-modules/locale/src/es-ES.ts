@@ -762,7 +762,7 @@ export const AG_GRID_LOCALE_ES = {
     ariaLabelAddFilterField: 'Agregar campo de filtro',
     ariaLabelFilterCardDelete: 'Eliminar filtro',
     ariaLabelFilterCardHasEdits: 'Tiene ediciones',
-    ariaCellHasNote: 'Esta celda tiene una nota.',
+    ariaHasNote: 'Esta celda tiene una nota.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -808,15 +808,15 @@ export const AG_GRID_LOCALE_ES = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS a. m./p. m.',
 
-    // Cell Notes
-    cellNote: 'Nota de celda',
-    addCellNote: 'Añadir nota de celda',
-    viewCellNote: 'Ver nota',
-    editCellNote: 'Editar nota',
-    deleteCellNote: 'Eliminar nota',
-    cellNotePlaceholder: 'Añadir una nota...',
-    cellNoteHint:
+    // Notes
+    note: 'Nota de celda',
+    addNote: 'Añadir nota',
+    viewNote: 'Ver nota',
+    editNote: 'Editar nota',
+    deleteNote: 'Eliminar nota',
+    notePlaceholder: 'Añadir una nota...',
+    noteHint:
         'Pase el cursor para previsualizar. Haga clic dentro para editar. Arrastre la esquina para cambiar el tamaño. Pulse Esc para cerrar.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Nota de solo lectura. Seleccione el texto para copiarlo. Arrastre la esquina para cambiar el tamaño. Pulse Esc para cerrar.',
 };

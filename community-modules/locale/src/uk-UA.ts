@@ -759,7 +759,7 @@ export const AG_GRID_LOCALE_UA = {
     ariaLabelAddFilterField: 'Додати поле фільтра',
     ariaLabelFilterCardDelete: 'Видалити фільтр',
     ariaLabelFilterCardHasEdits: 'Є зміни',
-    ariaCellHasNote: 'Ця комірка має нотатку.',
+    ariaHasNote: 'Ця комірка має нотатку.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ' ',
@@ -805,15 +805,15 @@ export const AG_GRID_LOCALE_UA = {
     timeFormatHHMMSS: 'ГГ:ХХ:СС',
     timeFormatHHMMSSAmPm: 'ГГ:ХХ:СС AM/PM',
 
-    // Cell Notes
-    cellNote: 'Нотатка комірки',
-    addCellNote: 'Додати нотатку комірки',
-    viewCellNote: 'Переглянути нотатку',
-    editCellNote: 'Редагувати нотатку',
-    deleteCellNote: 'Видалити нотатку',
-    cellNotePlaceholder: 'Додати нотатку...',
-    cellNoteHint:
+    // Notes
+    note: 'Нотатка комірки',
+    addNote: 'Додати нотатку',
+    viewNote: 'Переглянути нотатку',
+    editNote: 'Редагувати нотатку',
+    deleteNote: 'Видалити нотатку',
+    notePlaceholder: 'Додати нотатку...',
+    noteHint:
         'Наведіть курсор для попереднього перегляду. Клацніть усередині, щоб редагувати. Перетягніть кут, щоб змінити розмір. Натисніть Esc, щоб закрити.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Нотатка лише для читання. Виділіть текст, щоб скопіювати. Перетягніть кут, щоб змінити розмір. Натисніть Esc, щоб закрити.',
 };

@@ -215,14 +215,14 @@ export class RowContainerEventsFeature extends BeanStub {
             return;
         }
 
-        const access = notesSvc.getCellNoteAccess(noteParams);
+        const access = notesSvc.getNoteAccess(noteParams);
 
         if (!access) {
             return;
         }
 
         if (!access.isSuppressed || access.canView) {
-            notesSvc.showCellNote(access.params, true);
+            notesSvc.showNote(access.params, true);
             keyboardEvent.preventDefault();
         }
     }

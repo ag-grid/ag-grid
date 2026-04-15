@@ -765,7 +765,7 @@ export const AG_GRID_LOCALE_EN = {
     ariaLabelAddFilterField: 'Add Filter Field',
     ariaLabelFilterCardDelete: 'Delete Filter',
     ariaLabelFilterCardHasEdits: 'Has Edits',
-    ariaCellHasNote: 'This cell has a note.',
+    ariaHasNote: 'This cell has a note.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -811,13 +811,13 @@ export const AG_GRID_LOCALE_EN = {
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
 
-    // Cell Notes
-    cellNote: 'Cell Note',
-    addCellNote: 'Add Cell Note',
-    viewCellNote: 'View Note',
-    editCellNote: 'Edit Note',
-    deleteCellNote: 'Remove Note',
-    cellNotePlaceholder: 'Add a note...',
-    cellNoteHint: 'Hover to preview. Click inside to edit. Drag the corner to resize. Press Esc to close.',
-    cellNoteReadOnlyHint: 'Read-only note. Select text to copy. Drag the corner to resize. Press Esc to close.',
+    // Notes
+    note: 'Note',
+    addNote: 'Add Note',
+    viewNote: 'View Note',
+    editNote: 'Edit Note',
+    deleteNote: 'Remove Note',
+    notePlaceholder: 'Add a note...',
+    noteHint: 'Hover to preview. Click inside to edit. Drag the corner to resize. Press Esc to close.',
+    noteReadOnlyHint: 'Read-only note. Select text to copy. Drag the corner to resize. Press Esc to close.',
 };

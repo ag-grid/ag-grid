@@ -763,7 +763,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaLabelAddFilterField: 'Προσθήκη πεδίου φίλτρου',
     ariaLabelFilterCardDelete: 'Διαγραφή φίλτρου',
     ariaLabelFilterCardHasEdits: 'Έχει επεξεργασίες',
-    ariaCellHasNote: 'Αυτό το κελί έχει σημείωση.',
+    ariaHasNote: 'Αυτό το κελί έχει σημείωση.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -809,15 +809,15 @@ export const AG_GRID_LOCALE_GR = {
     timeFormatHHMMSS: 'ΩΩ:ΛΛ:ΔΔ',
     timeFormatHHMMSSAmPm: 'ΩΩ:ΛΛ:ΔΔ ΠΜ/ΜΜ',
 
-    // Cell Notes
-    cellNote: 'Σημείωση κελιού',
-    addCellNote: 'Προσθήκη σημείωσης κελιού',
-    viewCellNote: 'Προβολή σημείωσης',
-    editCellNote: 'Επεξεργασία σημείωσης',
-    deleteCellNote: 'Αφαίρεση σημείωσης',
-    cellNotePlaceholder: 'Προσθέστε μια σημείωση...',
-    cellNoteHint:
+    // Notes
+    note: 'Σημείωση κελιού',
+    addNote: 'Προσθήκη σημείωσης',
+    viewNote: 'Προβολή σημείωσης',
+    editNote: 'Επεξεργασία σημείωσης',
+    deleteNote: 'Αφαίρεση σημείωσης',
+    notePlaceholder: 'Προσθέστε μια σημείωση...',
+    noteHint:
         'Τοποθετήστε τον δείκτη για προεπισκόπηση. Κάντε κλικ μέσα για επεξεργασία. Σύρετε τη γωνία για αλλαγή μεγέθους. Πατήστε Esc για κλείσιμο.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Σημείωση μόνο για ανάγνωση. Επιλέξτε κείμενο για αντιγραφή. Σύρετε τη γωνία για αλλαγή μεγέθους. Πατήστε Esc για κλείσιμο.',
 };

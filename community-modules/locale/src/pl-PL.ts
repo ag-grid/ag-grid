@@ -762,7 +762,7 @@ export const AG_GRID_LOCALE_PL = {
     ariaLabelAddFilterField: 'Dodaj pole filtru',
     ariaLabelFilterCardDelete: 'Usuń filtr',
     ariaLabelFilterCardHasEdits: 'Ma edycje',
-    ariaCellHasNote: 'Ta komórka ma notatkę.',
+    ariaHasNote: 'Ta komórka ma notatkę.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -808,15 +808,15 @@ export const AG_GRID_LOCALE_PL = {
     timeFormatHHMMSS: 'GG:MM:SS',
     timeFormatHHMMSSAmPm: 'GG:MM:SS AM/PM',
 
-    // Cell Notes
-    cellNote: 'Notatka komórki',
-    addCellNote: 'Dodaj notatkę do komórki',
-    viewCellNote: 'Wyświetl notatkę',
-    editCellNote: 'Edytuj notatkę',
-    deleteCellNote: 'Usuń notatkę',
-    cellNotePlaceholder: 'Dodaj notatkę...',
-    cellNoteHint:
+    // Notes
+    note: 'Notatka komórki',
+    addNote: 'Dodaj notatkę',
+    viewNote: 'Wyświetl notatkę',
+    editNote: 'Edytuj notatkę',
+    deleteNote: 'Usuń notatkę',
+    notePlaceholder: 'Dodaj notatkę...',
+    noteHint:
         'Najedź, aby wyświetlić podgląd. Kliknij wewnątrz, aby edytować. Przeciągnij róg, aby zmienić rozmiar. Naciśnij Esc, aby zamknąć.',
-    cellNoteReadOnlyHint:
+    noteReadOnlyHint:
         'Notatka tylko do odczytu. Zaznacz tekst, aby go skopiować. Przeciągnij róg, aby zmienić rozmiar. Naciśnij Esc, aby zamknąć.',
 };
