@@ -2,7 +2,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import type { NumberFilterModel, SetFilterModel } from 'ag-grid-community';
 
-import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
+import { GridRows, TestGridsManager } from '../../test-utils';
 import {
     EDIT_MODES,
     asyncSetTimeout,

@@ -7,7 +7,7 @@
  * - Auto-generated columns are correctly added/removed
  * - Validators catch no errors after heavy mutations
  */
-import type { ColDef, ColGroupDef, Column } from 'ag-grid-community';
+import type { ColDef, Column } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 

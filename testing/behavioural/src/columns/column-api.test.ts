@@ -13,7 +13,7 @@
  * - Column moving API
  * - Auto-generated columns (selection, auto-group, row numbers)
  */
-import type { ColDef, ColGroupDef, Column, ColumnState } from 'ag-grid-community';
+import type { ColDef, Column, ColumnState } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 

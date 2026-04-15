@@ -287,6 +287,45 @@ export class GridColumnsValidator {
                 `getColumnGroupPaddingInfo().numberOfParents is ${paddingInfo.numberOfParents} but getParent() is not a padding group.`
             );
         }
+
+        // ── isPinnedLeft / isPinnedRight consistency ────────────────────────
+        if (col.isPinnedLeft() !== (normalizedPinned === 'left')) {
+            colErrors.add(`isPinnedLeft() is ${col.isPinnedLeft()} but pinned is "${String(pinned)}".`);
+        }
+        if (col.isPinnedRight() !== (normalizedPinned === 'right')) {
+            colErrors.add(`isPinnedRight() is ${col.isPinnedRight()} but pinned is "${String(pinned)}".`);
+        }
+
+        // ── Permission flags: UI vs API behavior ────────────────────────────
+        // isAllowPivot/isAllowRowGroup/isAllowValue control UI drag-and-drop zones.
+        // Columns CAN be active via colDef (rowGroup:true) even without enableRowGroup.
+        // But if enablePivot/enableRowGroup/enableValue was EXPLICITLY set to true,
+        // then the corresponding active flag must be consistent.
+        const colDef2 = col.getColDef();
+        if (colDef2.enablePivot === true && !col.isAllowPivot()) {
+            colErrors.add('colDef.enablePivot is true but isAllowPivot() returns false.');
+        }
+        if (colDef2.enableRowGroup === true && !col.isAllowRowGroup()) {
+            colErrors.add('colDef.enableRowGroup is true but isAllowRowGroup() returns false.');
+        }
+        if (colDef2.enableValue === true && !col.isAllowValue()) {
+            colErrors.add('colDef.enableValue is true but isAllowValue() returns false.');
+        }
+
+        // ── getUserProvidedColDef consistency ────────────────────────────────
+        // When getUserProvidedColDef() is non-null, the colDef should be a superset of it
+        // (merged with defaults). We validate that the reference exists for columns
+        // that have explicit field or colId in their colDef.
+        const userColDef = col.getUserProvidedColDef();
+        if (userColDef) {
+            // The merged colDef should have the same field and colId as the user-provided one
+            const mergedColDef = col.getColDef();
+            if (userColDef.field && mergedColDef.field !== userColDef.field) {
+                colErrors.add(
+                    `getUserProvidedColDef().field is "${userColDef.field}" but getColDef().field is "${mergedColDef.field}".`
+                );
+            }
+        }
     }
 
     // ── Tree structure validation ───────────────────────────────────────────

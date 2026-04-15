@@ -10,7 +10,7 @@
  * - defaultColDef and defaultColGroupDef
  * - Column types
  */
-import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 

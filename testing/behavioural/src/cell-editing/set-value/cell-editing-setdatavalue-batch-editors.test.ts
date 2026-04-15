@@ -18,7 +18,7 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 /**
  * Tests for setDataValue('edit') behaviour — verifying that pushing a value via the 'edit'

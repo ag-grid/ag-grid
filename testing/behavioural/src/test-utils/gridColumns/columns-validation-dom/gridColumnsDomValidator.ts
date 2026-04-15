@@ -284,6 +284,19 @@ export class GridColumnsDomValidator {
             // ── ag-column-menu-visible CSS class ────────────────────────────
             const isMenuVisible = col.isMenuVisible();
             this.checkCssClass(colErrors, headerCell, 'ag-column-menu-visible', isMenuVisible, 'menu visible');
+
+            // ── ag-header-cell-auto-height CSS class ────────────────────────
+            const isAutoHeaderHeight = col.isAutoHeaderHeight();
+            this.checkCssClass(
+                colErrors,
+                headerCell,
+                'ag-header-cell-auto-height',
+                isAutoHeaderHeight,
+                'auto header height'
+            );
+
+            // Note: tabindex is managed dynamically by the header focus service
+            // and may not always be present, so we don't validate it.
         }
     }
 
