@@ -142,7 +142,7 @@ class AgToolbar extends Component implements FocusableContainer {
             eGui.querySelectorAll<HTMLElement>(
                 'button:not(:disabled), input:not(:disabled), [role="button"]:not([aria-disabled="true"])'
             )
-        );
+        ).filter((el) => el.offsetParent !== null);
         const currentIndex = items.indexOf(activeEl);
         if (currentIndex === -1) {
             return;
