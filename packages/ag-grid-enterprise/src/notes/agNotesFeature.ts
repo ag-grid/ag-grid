@@ -100,6 +100,11 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
 
         this.suppressHoverUntilPointerLeave = false;
         this.clearShowTimer();
+
+        if (this.popup?.hasFocus()) {
+            return;
+        }
+
         this.scheduleHide();
     }
 

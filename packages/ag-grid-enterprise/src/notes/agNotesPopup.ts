@@ -170,25 +170,13 @@ export class AgNotesPopup extends BeanStub {
                 }
             },
             pointerenter: () => this.params.onPopupEnter(),
-            pointerout: (event: PointerEvent) => {
-                const dialogGui = dialog.getGui();
-                if (
-                    !dialogGui.contains(event.relatedTarget as Element) &&
-                    !dialogGui.contains(_getActiveDomElement(this.beans))
-                ) {
-                    this.params.onPopupLeave();
-                }
-            },
+            pointerout: (event: PointerEvent) => this.onPotentialLeave(event.relatedTarget, true),
             focusout: (event: FocusEvent) => {
                 if (dialog.isResizing) {
                     return;
                 }
 
-                if (dialog.getGui().contains(event.relatedTarget as Element)) {
-                    return;
-                }
-
-                this.params.onPopupLeave();
+                this.onPotentialLeave(event.relatedTarget, false);
             },
         });
 
@@ -204,6 +192,27 @@ export class AgNotesPopup extends BeanStub {
 
     public focusEditor(): void {
         this.contentComp?.focusEditor();
+    }
+
+    public hasFocus(): boolean {
+        return !!this.dialog?.getGui().contains(_getActiveDomElement(this.beans));
+    }
+
+    private onPotentialLeave(relatedTarget: EventTarget | null, keepOpenWhileFocused: boolean): void {
+        const eGui = this.dialog?.getGui();
+        if (!eGui) {
+            return;
+        }
+
+        if (relatedTarget && eGui.contains(relatedTarget as Element)) {
+            return;
+        }
+
+        if (keepOpenWhileFocused && this.hasFocus()) {
+            return;
+        }
+
+        this.params.onPopupLeave();
     }
 
     private computeInitialPosition(): { x: number; y: number } {

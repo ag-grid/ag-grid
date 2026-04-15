@@ -14,7 +14,7 @@ describe('AgNotesFeature', () => {
         'addManagedElementListeners' | 'column' | 'comp' | 'eGui' | 'isNoteHoverSuppressed' | 'rowNode'
     >;
     let listeners: Record<string, (event: PointerEvent) => void>;
-    let popup: { hide: jest.Mock; focusEditor: jest.Mock };
+    let popup: { hide: jest.Mock; focusEditor: jest.Mock; hasFocus: jest.Mock };
     let context: { createBean: jest.Mock; destroyBean: jest.Mock };
     let access: INoteAccess;
     let notesSvc: Pick<
@@ -29,6 +29,7 @@ describe('AgNotesFeature', () => {
         popup = {
             hide: jest.fn(),
             focusEditor: jest.fn(),
+            hasFocus: jest.fn(() => false),
         };
         context = {
             createBean: jest.fn(() => popup),
@@ -116,7 +117,7 @@ describe('AgNotesFeature', () => {
         const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
         feature.initialise();
 
-        feature.show({ focusEditor: true });
+        feature.show();
         listeners.pointerleave?.({ pointerType: 'mouse' } as PointerEvent);
 
         jest.advanceTimersByTime(39);
@@ -124,6 +125,19 @@ describe('AgNotesFeature', () => {
 
         jest.advanceTimersByTime(1);
         expect(popup.hide).toHaveBeenCalledWith(true);
+    });
+
+    it('does not hide an open note when leaving the owner cell while the popup is focused', () => {
+        popup.hasFocus.mockReturnValue(true);
+
+        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        feature.initialise();
+
+        feature.show({ focusEditor: true });
+        listeners.pointerleave?.({ pointerType: 'mouse' } as PointerEvent);
+
+        jest.advanceTimersByTime(40);
+        expect(popup.hide).not.toHaveBeenCalled();
     });
 
     it('suppresses hover opens and hides the earmark when note hover is suppressed', () => {
@@ -192,6 +206,7 @@ describe('AgNotesFeature', () => {
                     popupComp.params.onClosed(false, undefined);
                 }),
                 focusEditor: jest.fn(),
+                hasFocus: jest.fn(() => false),
             };
             createdPopups.push(createdPopup);
             return createdPopup;
