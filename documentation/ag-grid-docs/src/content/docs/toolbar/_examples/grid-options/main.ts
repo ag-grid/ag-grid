@@ -105,20 +105,16 @@ const gridOptions: GridOptions<IOlympicData> = {
     toolbar: fullToolbar,
 };
 
-function setToolbar(toolbar: Toolbar) {
-    gridApi.setGridOption('toolbar', toolbar);
-}
-
 function setFullToolbar() {
-    setToolbar(fullToolbar);
+    gridApi.setGridOption('toolbar', fullToolbar);
 }
 
 function setCompactToolbar() {
-    setToolbar(compactToolbar);
+    gridApi.setGridOption('toolbar', compactToolbar);
 }
 
 function setMinimalToolbar() {
-    setToolbar(minimalToolbar);
+    gridApi.setGridOption('toolbar', minimalToolbar);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
