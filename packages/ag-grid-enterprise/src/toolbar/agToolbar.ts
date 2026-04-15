@@ -126,6 +126,13 @@ class AgToolbar extends Component implements FocusableContainer {
             return;
         }
 
+        // Don't intercept arrow keys in text inputs — allow normal caret navigation
+        if (activeEl instanceof HTMLInputElement && (activeEl.type === 'text' || activeEl.type === 'search')) {
+            if (e.key === KeyCode.LEFT || e.key === KeyCode.RIGHT) {
+                return;
+            }
+        }
+
         const items: HTMLElement[] = Array.from(
             eGui.querySelectorAll<HTMLElement>(
                 'button:not(:disabled), input:not(:disabled), [role="button"]:not([aria-disabled="true"])'
@@ -326,7 +333,11 @@ class AgToolbar extends Component implements FocusableContainer {
             if (existingItem) {
                 this.mountComponent(key, existingItem, placeholder);
             } else {
-                const compDetails = getToolbarItemCompDetails(this.userCompFactory, itemConfig, this.createItemParams(itemConfig, key));
+                const compDetails = getToolbarItemCompDetails(
+                    this.userCompFactory,
+                    itemConfig,
+                    this.createItemParams(itemConfig, key)
+                );
 
                 if (compDetails == null) {
                     _removeFromParent(placeholder);
@@ -344,11 +355,7 @@ class AgToolbar extends Component implements FocusableContainer {
         return promises.length > 0 ? Promise.all(promises).then(() => {}) : Promise.resolve();
     }
 
-    private mountComponent(
-        key: string,
-        component: IToolbarItemComp | null,
-        placeholder: HTMLElement
-    ): void {
+    private mountComponent(key: string, component: IToolbarItemComp | null, placeholder: HTMLElement): void {
         if (component == null) {
             _removeFromParent(placeholder);
             return;

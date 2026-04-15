@@ -127,6 +127,9 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
     }
 
     public refresh(_params: IToolbarItemParams): boolean {
+        if (!this.eInput) {
+            return false;
+        }
         this.eInput.value = this.gos.get('findSearchValue') ?? '';
         this.syncMatchState();
         return true;

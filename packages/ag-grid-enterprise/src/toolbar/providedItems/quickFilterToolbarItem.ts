@@ -48,6 +48,9 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
     }
 
     public refresh(_params: IToolbarItemParams): boolean {
+        if (!this.eInput) {
+            return false;
+        }
         this.eInput.value = this.gos.get('quickFilterText') ?? '';
         return true;
     }
