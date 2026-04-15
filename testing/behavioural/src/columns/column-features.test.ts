@@ -366,19 +366,22 @@ describe('Column Features', () => {
     });
 
     describe('lockVisible', () => {
-        test('lockVisible prevents hiding column', async () => {
+        test('lockVisible does not prevent API-based hiding (only prevents UI hiding)', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a', lockVisible: true }, { colId: 'b' }],
             });
 
-            // Try to hide locked column
+            // lockVisible only prevents hiding via UI (tool panel, menu) — API can still hide
             api.setColumnsVisible(['a'], false);
 
-            // Column a should still be visible due to lockVisible
-            await new GridColumns(api, 'lockVisible respected').checkColumns(`
+            // Column a IS hidden because lockVisible doesn't block the API
+            await new GridColumns(api, 'a hidden via API despite lockVisible').checkColumns(`
                 CENTER
                 └── b width:200
             `);
+
+            // But the colDef still has lockVisible set
+            expect(api.getColumn('a')!.getColDef().lockVisible).toBe(true);
         });
     });
 

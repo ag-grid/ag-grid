@@ -458,7 +458,7 @@ describe('Column Model', () => {
             `);
         });
 
-        test('lockPinned prevents unpinning via API', async () => {
+        test('lockPinned does not prevent API-based unpinning (only prevents UI unpinning)', async () => {
             const columnDefs: ColDef[] = [
                 { colId: 'locked', pinned: 'left', lockPinned: true },
                 { colId: 'unlocked', pinned: 'left' },
@@ -467,16 +467,19 @@ describe('Column Model', () => {
 
             const api = gridsManager.createGrid('myGrid', { columnDefs });
 
-            // Attempt to unpin both via API — lockPinned prevents API-based unpinning
+            // lockPinned only prevents unpinning via UI (drag, menu) — API can still unpin
             api.setColumnsPinned(['locked', 'unlocked'], null);
 
-            // Check where columns ended up after the API call
-            await new GridColumns(api, 'lockPinned respected').checkColumns(`
+            // Both columns are unpinned because lockPinned doesn't block the API
+            await new GridColumns(api, 'both unpinned via API').checkColumns(`
                 CENTER
                 ├── locked width:200
                 ├── unlocked width:200
                 └── center width:200
             `);
+
+            // But the colDef still has lockPinned set
+            expect(api.getColumn('locked')!.getColDef().lockPinned).toBe(true);
         });
     });
 

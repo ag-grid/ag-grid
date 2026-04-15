@@ -2,6 +2,8 @@
  * Tests for custom header components and renderers to verify
  * they integrate correctly with the column model and DOM validation.
  */
+import { vitest } from 'vitest';
+
 import type { ColDef, IHeaderComp, IHeaderGroupComp, IHeaderParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
