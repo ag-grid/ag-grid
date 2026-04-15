@@ -24,16 +24,3 @@ export function getExcelExportMenuItem(beans: BeanCollection, localeTextFunc: Lo
         action: () => gridApi.exportDataAsExcel(),
     };
 }
-
-export function getExportMenuItems(beans: BeanCollection, localeTextFunc: LocaleTextFunc): MenuItemDef[] {
-    const items: MenuItemDef[] = [];
-    const csv = getCsvExportMenuItem(beans, localeTextFunc);
-    if (csv) {
-        items.push(csv);
-    }
-    const excel = getExcelExportMenuItem(beans, localeTextFunc);
-    if (excel) {
-        items.push(excel);
-    }
-    return items;
-}
