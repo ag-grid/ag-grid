@@ -282,17 +282,6 @@ export class GridRows<TData = any> {
         throw lastError;
     }
 
-    /**
-     * Convenience method to check columns alongside rows. Creates a GridColumns instance and delegates.
-     * @see GridColumns.checkColumns for full documentation.
-     */
-    public async checkColumns(diagramSnapshot: string | 'empty' | boolean | undefined): Promise<this> {
-        const { GridColumns } = await import('../gridColumns/gridColumns');
-        const gridColumns = new GridColumns(this.api, this.label);
-        await gridColumns.checkColumns(diagramSnapshot);
-        return this;
-    }
-
     /** Attempts snapshot check without throwing. Returns the error if failed, null if passed. */
     #tryCheck(diagramSnapshot: string | 'empty'): any {
         if (this.errors.totalErrorsCount > 0) {

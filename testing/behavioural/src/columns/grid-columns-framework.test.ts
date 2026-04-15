@@ -387,26 +387,6 @@ describe('GridColumns Framework', () => {
         });
     });
 
-    describe('GridRows.checkColumns integration', () => {
-        test('checkColumns can be called on GridRows', async () => {
-            const { GridRows } = await import('../test-utils');
-
-            const columnDefs: ColDef[] = [{ colId: 'a' }, { colId: 'b' }];
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs,
-                rowData: [{ a: 1, b: 2 }],
-            });
-
-            // Use checkColumns via GridRows
-            const gridRows = new GridRows(api, 'integration');
-            await gridRows.checkColumns(`
-                CENTER
-                ├── a width:200
-                └── b width:200
-            `);
-        });
-    });
-
     describe('validator catches errors', () => {
         test('validator runs without errors on valid grid', async () => {
             const columnDefs: ColDef[] = [
