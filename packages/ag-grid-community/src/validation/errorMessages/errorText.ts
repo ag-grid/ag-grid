@@ -26,7 +26,7 @@ const moduleRegistrationSnippet = (imports: string[], moduleList: string, usesAg
 
 export const NoModulesRegisteredError = (usesAgGridProvider?: boolean) => {
     const imports = [
-        `import { ${!usesAgGridProvider ? 'ModuleRegistry, ' : ''} AllCommunityModule } from 'ag-grid-community';`,
+        `import { ${usesAgGridProvider ? '' : 'ModuleRegistry, '}AllCommunityModule } from 'ag-grid-community';`,
     ];
 
     return `No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:\n\n${moduleRegistrationSnippet(imports, 'AllCommunityModule', usesAgGridProvider)}\n`;
