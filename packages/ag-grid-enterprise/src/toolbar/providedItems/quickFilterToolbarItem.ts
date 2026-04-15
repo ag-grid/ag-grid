@@ -8,7 +8,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         super({ tag: 'div', cls: 'ag-toolbar-item ag-toolbar-input' });
     }
 
-    public init(params: IToolbarItemParams): void {
+    public init(_params: IToolbarItemParams): void {
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarQuickFilter', 'Quick Filter');
 

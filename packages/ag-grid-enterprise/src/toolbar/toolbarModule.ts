@@ -16,10 +16,18 @@ function hasSideBarPanel(
     sideBar: boolean | string | string[] | SideBarDef | null | undefined,
     panelId: string
 ): boolean {
-    if (!sideBar) return false;
-    if (sideBar === true) return true;
-    if (typeof sideBar === 'string') return sideBar === panelId;
-    if (Array.isArray(sideBar)) return sideBar.includes(panelId);
+    if (!sideBar) {
+        return false;
+    }
+    if (sideBar === true) {
+        return true;
+    }
+    if (typeof sideBar === 'string') {
+        return sideBar === panelId;
+    }
+    if (Array.isArray(sideBar)) {
+        return sideBar.includes(panelId);
+    }
     return !!(sideBar as SideBarDef).toolPanels?.some((p) => (typeof p === 'string' ? p : p.id) === panelId);
 }
 
@@ -79,7 +87,9 @@ const FiltersPanelToolbarItem = createToolbarButton({
     onAction: (beans, _eGui, gos) => {
         const { gridApi } = beans;
         const panelId = ['filters', 'filters-new'].find((id) => hasSideBarPanel(gos.get('sideBar'), id));
-        if (!panelId) return;
+        if (!panelId) {
+            return;
+        }
         if (gridApi.getOpenedToolPanel() === panelId) {
             gridApi.closeToolPanel();
         } else {

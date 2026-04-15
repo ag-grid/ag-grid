@@ -8,7 +8,7 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         super({ tag: 'div', cls: 'ag-toolbar-item ag-toolbar-input' });
     }
 
-    public init(params: IToolbarItemParams): void {
+    public init(_params: IToolbarItemParams): void {
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarFind', 'Find');
 

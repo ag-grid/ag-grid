@@ -82,7 +82,7 @@ class AgToolbar extends Component implements FocusableContainer {
     private userCompFactory: UserComponentFactory;
     private updateQueued: boolean = false;
     private itemsPromise: Promise<void> = Promise.resolve();
-    private toolbarItems: Map<string, IToolbarItemComp> = new Map();
+    private readonly toolbarItems: Map<string, IToolbarItemComp> = new Map();
     private customKeyCounter = 0;
 
     public wireBeans(beans: BeanCollection) {
@@ -357,7 +357,7 @@ class AgToolbar extends Component implements FocusableContainer {
         key: string,
         component: IToolbarItemComp | null,
         placeholder: HTMLElement,
-        eContainer: HTMLElement
+        _eContainer: HTMLElement
     ): void {
         if (component == null) {
             _removeFromParent(placeholder);

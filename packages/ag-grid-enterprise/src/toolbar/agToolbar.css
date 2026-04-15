@@ -14,10 +14,6 @@
     margin-inline-start: auto;
 }
 
-.ag-toolbar-right-start {
-    margin-left: auto;
-}
-
 .ag-toolbar-item {
     display: inline-flex;
 }
@@ -26,7 +22,7 @@
     display: inline-flex;
     align-items: center;
     gap: calc(var(--ag-spacing) * 1);
-    padding: calc(var(--ag-spacing)) calc(var(--ag-spacing));
+    padding: calc(var(--ag-spacing));
     border: 0;
     border-radius: var(--ag-border-radius);
     background: transparent;
