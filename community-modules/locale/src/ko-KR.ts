@@ -339,7 +339,7 @@ export const AG_GRID_LOCALE_KR = {
     toolbarFind: 'Find',
     toolbarFindPreviousMatch: 'Previous Match',
     toolbarFindNextMatch: 'Next Match',
-    toolbarQuickFilter: 'Quick Filter',
+    toolbarQuickFilter: 'Filter',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '합계',
