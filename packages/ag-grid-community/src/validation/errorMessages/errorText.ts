@@ -18,10 +18,22 @@ import { USER_COMP_MODULES } from '../rules/userCompValidations';
 const moduleRegistrationSnippet = (imports: string[], moduleList: string, usesAgGridProvider?: boolean): string => {
     if (usesAgGridProvider) {
         const allImports = ["import { AgGridProvider, AgGridReact } from 'ag-grid-react';", ...imports];
-        return `${allImports.join(' \n')} \n\nconst modules = [ ${moduleList} ]; \n\nfunction App() { \n    return ( \n        <AgGridProvider modules={modules}> \n            <AgGridReact /* ... props */ /> \n        </AgGridProvider> \n    ); \n}`;
+        return `${allImports.join(' \n')}
+
+const modules = [ ${moduleList} ];
+
+function App() {
+    return (
+        <AgGridProvider modules={modules}>
+            <AgGridReact /* ... props */ />
+        </AgGridProvider>
+    );
+}`;
     }
 
-    return `${imports.join(' \n')} \n\nModuleRegistry.registerModules([ ${moduleList} ]);`;
+    return `${imports.join(' \n')}
+
+ModuleRegistry.registerModules([ ${moduleList} ]);`;
 };
 
 export const NoModulesRegisteredError = (usesAgGridProvider?: boolean) => {
@@ -29,7 +41,10 @@ export const NoModulesRegisteredError = (usesAgGridProvider?: boolean) => {
         `import { ${usesAgGridProvider ? '' : 'ModuleRegistry, '}AllCommunityModule } from 'ag-grid-community';`,
     ];
 
-    return `No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:\n\n${moduleRegistrationSnippet(imports, 'AllCommunityModule', usesAgGridProvider)}\n`;
+    return `No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:
+
+${moduleRegistrationSnippet(imports, 'AllCommunityModule', usesAgGridProvider)}
+`;
 };
 
 const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean) => {
@@ -49,7 +64,9 @@ const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean
     if (!usesAgGridProvider) {
         imports.unshift("import { ModuleRegistry } from 'ag-grid-community';");
     }
-    return `${moduleRegistrationSnippet(imports, moduleList, usesAgGridProvider)} \n\nFor more info see: ${baseDocLink}/modules/`;
+    return `${moduleRegistrationSnippet(imports, moduleList, usesAgGridProvider)}
+
+For more info see: ${baseDocLink}/modules/`;
 };
 
 function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = false) {
