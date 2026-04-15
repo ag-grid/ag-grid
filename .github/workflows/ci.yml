@@ -413,6 +413,7 @@ jobs:
     permissions:
       contents: write
     needs: [calc_matrix, init]
+    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release') || inputs.run_package_tests
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.calc_matrix.outputs.test_pkg_matrix )}}
