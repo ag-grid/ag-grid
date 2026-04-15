@@ -439,7 +439,7 @@ jobs:
       - name: nx package:test
         id: package-test
         if: matrix.framework != 'none'
-        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
+        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests --configuration=update
 
       - name: Snapshot Branch
         if: matrix.framework != 'none'
