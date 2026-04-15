@@ -4,7 +4,7 @@ const { execSync } = require('child_process');
 
 const LIBRARIES = ['grid', 'charts'];
 const library = process.env.AG_LIBRARY;
-const nxCommandType = 'run-many';//process.env.NX_COMMAND_TYPE || 'affected';
+const nxCommandType = process.env.NX_COMMAND_TYPE || 'affected';
 
 if (!LIBRARIES.includes(library)) {
     console.error(`AG_LIBRARY environment variable is not set. Valid values are: ${LIBRARIES.join(', ')}`);
