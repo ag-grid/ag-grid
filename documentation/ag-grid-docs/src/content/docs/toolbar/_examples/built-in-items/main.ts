@@ -55,8 +55,12 @@ const gridOptions: GridOptions<IOlympicData> = {
                     label: 'Export',
                     icon: 'save',
                     menuItems: [
-                        { name: 'CSV Export', action: (params) => params.api.exportDataAsCsv() },
-                        { name: 'Excel Export', action: (params) => params.api.exportDataAsExcel() },
+                        { name: 'CSV Export', icon: 'csvExport', action: (params) => params.api.exportDataAsCsv() },
+                        {
+                            name: 'Excel Export',
+                            icon: 'excelExport',
+                            action: (params) => params.api.exportDataAsExcel(),
+                        },
                     ] as MenuItemDef[],
                 },
             },

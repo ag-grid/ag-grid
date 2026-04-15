@@ -128,6 +128,72 @@ describe('Toolbar Built-in Items', () => {
             expect(button!.getAttribute('aria-label')).toBe('Export');
         });
 
+        test('renders icon name strings as icon elements in menu items', async () => {
+            const api = gridMgr.createGrid('menu-icons', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: [
+                        {
+                            toolbarItem: 'menu',
+                            toolbarItemParams: {
+                                label: 'Export',
+                                icon: 'save',
+                                menuItems: [
+                                    { name: 'CSV Export', icon: 'csvExport' },
+                                    { name: 'Excel Export', icon: 'excelExport' },
+                                ],
+                            },
+                        },
+                    ],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const button = getToolbarButton(gridDiv, 'Export')!;
+            button.click();
+
+            const menuOptions = gridDiv.querySelectorAll('.ag-popup .ag-menu-option');
+            expect(menuOptions).toHaveLength(2);
+
+            const firstIcon = menuOptions[0].querySelector('.ag-menu-option-icon .ag-icon');
+            expect(firstIcon).not.toBeNull();
+
+            const secondIcon = menuOptions[1].querySelector('.ag-menu-option-icon .ag-icon');
+            expect(secondIcon).not.toBeNull();
+        });
+
+        test('renders HTML strings as innerHTML in menu item icons', async () => {
+            const api = gridMgr.createGrid('menu-html-icons', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: [
+                        {
+                            toolbarItem: 'menu',
+                            toolbarItemParams: {
+                                label: 'Actions',
+                                menuItems: [{ name: 'Custom', icon: '<span class="custom-icon">X</span>' }],
+                            },
+                        },
+                    ],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const button = getToolbarButton(gridDiv, 'Actions')!;
+            button.click();
+
+            const iconWrapper = gridDiv.querySelector('.ag-popup .ag-menu-option-icon');
+            expect(iconWrapper).not.toBeNull();
+            expect(iconWrapper!.querySelector('.custom-icon')).not.toBeNull();
+            expect(iconWrapper!.querySelector('.custom-icon')!.textContent).toBe('X');
+        });
+
         test('opens popup menu with custom items when clicked', async () => {
             const api = gridMgr.createGrid('menu-click', {
                 columnDefs: [{ field: 'name' }],
@@ -285,8 +351,8 @@ describe('Toolbar Built-in Items', () => {
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
             const input = gridDiv.querySelector<HTMLInputElement>('.ag-toolbar-input-field');
             expect(input).not.toBeNull();
-            expect(input!.placeholder).toBe('Quick Filter...');
-            expect(input!.getAttribute('aria-label')).toBe('Quick Filter');
+            expect(input!.placeholder).toBe('Filter...');
+            expect(input!.getAttribute('aria-label')).toBe('Filter');
         });
 
         test('sets quickFilterText on input', async () => {
