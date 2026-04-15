@@ -144,6 +144,10 @@
         align-items: center;
     }
 
+    .ag-toolbar-right-start {
+        margin-inline-start: auto;
+    }
+
     .ag-toolbar-separator {
         align-self: stretch;
         width: 0;
