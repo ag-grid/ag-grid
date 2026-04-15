@@ -186,27 +186,12 @@ describe('paginationPanels', () => {
             expect(panel.querySelector('.ag-paging-page-summary-panel')).toBeNull();
         });
 
-        test('panel is hidden when paginationPanels: ["pageSize"] and paginationAutoPageSize: true', () => {
-            const api = createPaginationGrid(gridsManager, {
-                paginationPanels: ['pageSize'],
-                paginationAutoPageSize: true,
-            });
-            const panel = getPagingPanel(api)!;
-            expect(panel).toHaveClass('ag-hidden');
-        });
-
         test('pageSize and pageSummary present when paginationPanels: ["pageSize", "pageSummary"]', () => {
             const api = createPaginationGrid(gridsManager, { paginationPanels: ['pageSize', 'pageSummary'] });
             const panel = getPagingPanel(api)!;
             expect(panel.querySelector('.ag-paging-page-size')).toBeTruthy();
             expect(panel.querySelector('.ag-paging-page-summary-panel')).toBeTruthy();
             expect(panel.querySelector('.ag-paging-row-summary-panel')).toBeNull();
-        });
-
-        test('panel is hidden when paginationPanels is empty array', () => {
-            const api = createPaginationGrid(gridsManager, { paginationPanels: [] });
-            const panel = getPagingPanel(api)!;
-            expect(panel).toHaveClass('ag-hidden');
         });
 
         test('hidden components leave no residual DOM elements', () => {
@@ -364,31 +349,6 @@ describe('paginationPanels', () => {
 
                 expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
             });
-
-            test('panel hides when paginationPageSizeSelector set to false and only pageSize panel configured', () => {
-                const api = createPaginationGrid(gridsManager, {
-                    paginationPanels: ['pageSize'],
-                });
-                const panel = getPagingPanel(api)!;
-                expect(panel).not.toHaveClass('ag-hidden');
-
-                api.setGridOption('paginationPageSizeSelector', false);
-
-                expect(panel).toHaveClass('ag-hidden');
-            });
-
-            test('panel shows when paginationPageSizeSelector restored and only pageSize panel configured', () => {
-                const api = createPaginationGrid(gridsManager, {
-                    paginationPanels: ['pageSize'],
-                    paginationPageSizeSelector: false,
-                });
-                const panel = getPagingPanel(api)!;
-                expect(panel).toHaveClass('ag-hidden');
-
-                api.setGridOption('paginationPageSizeSelector', [10, 20, 50]);
-
-                expect(panel).not.toHaveClass('ag-hidden');
-            });
         });
 
         describe('paginationAutoPageSize', () => {
@@ -402,20 +362,6 @@ describe('paginationPanels', () => {
 
                 api.setGridOption('paginationAutoPageSize', false);
 
-                expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
-            });
-
-            test('panel becomes visible when paginationAutoPageSize changes from true to false (pageSize-only panel)', () => {
-                const api = createPaginationGrid(gridsManager, {
-                    paginationAutoPageSize: true,
-                    paginationPanels: ['pageSize'],
-                });
-                const panel = getPagingPanel(api)!;
-                expect(panel).toHaveClass('ag-hidden');
-
-                api.setGridOption('paginationAutoPageSize', false);
-
-                expect(panel).not.toHaveClass('ag-hidden');
                 expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
             });
 

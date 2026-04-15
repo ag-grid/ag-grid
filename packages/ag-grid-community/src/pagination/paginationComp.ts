@@ -8,7 +8,6 @@ import { PageSummaryComp } from './pageSummaryComp';
 import paginationCompCSS from './paginationComp.css';
 import { RowSummaryComp } from './rowSummaryComp';
 
-const VALID_PANEL_NAMES = new Set<PaginationPanel>(['pageSize', 'rowSummary', 'pageSummary']);
 const DEFAULT_PANELS: readonly PaginationPanel[] = ['pageSize', 'rowSummary', 'pageSummary'];
 
 class PaginationComp extends TabGuardComp implements FocusableContainer {
@@ -70,22 +69,11 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         return 'pagination';
     }
 
-    private shouldShowPageSizeComp(): boolean {
-        return !this.gos.get('paginationAutoPageSize') && this.gos.get('paginationPageSizeSelector') !== false;
-    }
-
-    private hasVisibleComponents(): boolean {
-        if (this.rowSummaryComp || this.pageSummaryComp) {
-            return true;
-        }
-        return !!this.pageSizeComp && this.shouldShowPageSizeComp();
-    }
-
     private buildComponents(idPrefix: string): void {
         const panels = this.gos.get('paginationPanels') ?? DEFAULT_PANELS;
         const seen = new Set<string>();
         for (const panelName of panels) {
-            if (seen.has(panelName) || !VALID_PANEL_NAMES.has(panelName)) {
+            if (seen.has(panelName)) {
                 continue;
             }
             seen.add(panelName);
@@ -105,8 +93,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
 
     private onPaginationChanged(): void {
         const isPaging = this.gos.get('pagination');
-        const paginationPanelEnabled =
-            isPaging && !this.gos.get('suppressPaginationPanel') && this.hasVisibleComponents();
+        const paginationPanelEnabled = isPaging && !this.gos.get('suppressPaginationPanel');
         this.setDisplayed(paginationPanelEnabled);
     }
 
