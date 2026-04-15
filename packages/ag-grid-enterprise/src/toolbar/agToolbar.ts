@@ -293,12 +293,9 @@ class AgToolbar extends Component implements FocusableContainer {
         this.compDestroyFunctions.clear();
     }
 
-    private createSeparator(isRightStart: boolean): HTMLElement {
+    private createSeparator(): HTMLElement {
         const separator = document.createElement('div');
         separator.className = 'ag-toolbar-separator';
-        if (isRightStart) {
-            separator.classList.add('ag-toolbar-right-start');
-        }
         separator.setAttribute('role', 'separator');
         return separator;
     }
@@ -310,12 +307,16 @@ class AgToolbar extends Component implements FocusableContainer {
         pushRight: boolean = false
     ): Promise<void> {
         const promises: Promise<void>[] = [];
-        let firstItem = pushRight;
+
+        if (pushRight) {
+            const spacer = document.createElement('div');
+            spacer.className = 'ag-toolbar-right-start';
+            eContainer.appendChild(spacer);
+        }
 
         for (const itemConfig of toolbarItems) {
             if (itemConfig.key === 'separator') {
-                eContainer.appendChild(this.createSeparator(firstItem));
-                firstItem = false;
+                eContainer.appendChild(this.createSeparator());
                 continue;
             }
 
@@ -329,10 +330,6 @@ class AgToolbar extends Component implements FocusableContainer {
             const existingItem = existingItemsToReuse.get(key);
 
             const placeholder = document.createElement('div');
-            if (firstItem) {
-                placeholder.classList.add('ag-toolbar-right-start');
-                firstItem = false;
-            }
             eContainer.appendChild(placeholder);
 
             if (existingItem) {
@@ -373,7 +370,6 @@ class AgToolbar extends Component implements FocusableContainer {
         if (this.isAlive()) {
             this.toolbarItems.set(key, component);
             const gui = component.getGui();
-            gui.classList.toggle('ag-toolbar-right-start', placeholder.classList.contains('ag-toolbar-right-start'));
             placeholder.replaceWith(gui);
             const comp = component instanceof Component ? component : undefined;
             if (comp) {
@@ -381,44 +377,14 @@ class AgToolbar extends Component implements FocusableContainer {
                 gui.style.display = comp.isDisplayed() ? '' : 'none';
                 this.addManagedListeners(comp, {
                     displayChanged: () => {
-                        const visible = comp.isDisplayed();
-                        gui.style.display = visible ? '' : 'none';
-                        this.reassignRightStartAnchor(gui, visible);
+                        gui.style.display = comp.isDisplayed() ? '' : 'none';
                     },
                 });
-                if (!comp.isDisplayed()) {
-                    this.reassignRightStartAnchor(gui, false);
-                }
             }
             this.compDestroyFunctions.set(key, destroyFunc);
         } else {
             _removeFromParent(placeholder);
             destroyFunc();
-        }
-    }
-
-    /** Move the right-start anchor to the first visible right-aligned item */
-    private reassignRightStartAnchor(gui: HTMLElement, nowVisible: boolean): void {
-        const cls = 'ag-toolbar-right-start';
-        if (!nowVisible && gui.classList.contains(cls)) {
-            gui.classList.remove(cls);
-            let next = gui.nextElementSibling as HTMLElement | null;
-            while (next) {
-                if (next.style.display !== 'none') {
-                    next.classList.add(cls);
-                    return;
-                }
-                next = next.nextElementSibling as HTMLElement | null;
-            }
-        } else if (nowVisible && !gui.classList.contains(cls)) {
-            let prev = gui.previousElementSibling as HTMLElement | null;
-            while (prev) {
-                if (prev.classList.contains(cls)) {
-                    return; // another visible item already anchors
-                }
-                prev = prev.previousElementSibling as HTMLElement | null;
-            }
-            gui.classList.add(cls);
         }
     }
 }
