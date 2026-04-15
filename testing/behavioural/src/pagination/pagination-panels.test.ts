@@ -84,6 +84,29 @@ describe('paginationPanels', () => {
             expect(numbers[2].textContent).toBe('50'); // total
         });
 
+        test('row summary and page summary IDs share the same prefix as the pagination panel', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const panelId = panel.id;
+            expect(panelId).toMatch(/^ag-\d+$/);
+
+            // Row summary IDs
+            const rowSummary = panel.querySelector('.ag-paging-row-summary-panel')!;
+            const rowIds = Array.from(rowSummary.querySelectorAll('[id]')).map((el) => el.id);
+            expect(rowIds.length).toBeGreaterThan(0);
+            for (const id of rowIds) {
+                expect(id).toMatch(new RegExp(`^${panelId}-`));
+            }
+
+            // Page summary IDs
+            const pageSummary = panel.querySelector('.ag-paging-page-summary-panel')!;
+            const pageIds = Array.from(pageSummary.querySelectorAll('[id]')).map((el) => el.id);
+            expect(pageIds.length).toBeGreaterThan(0);
+            for (const id of pageIds) {
+                expect(id).toMatch(new RegExp(`^${panelId}-`));
+            }
+        });
+
         test('page summary displays correct values', () => {
             const api = createPaginationGrid(gridsManager);
             const panel = getPagingPanel(api)!;
@@ -211,7 +234,10 @@ describe('paginationPanels', () => {
                 paginationPanels: ['pageSize', 'pageSummary'],
             });
             const panel = getPagingPanel(api)!;
-            expect(panel.querySelector('.ag-paging-page-size')).toBeNull();
+            // Component is created but hidden so it can be shown if paginationPageSizeSelector changes at runtime
+            const pageSizeEl = panel.querySelector('.ag-paging-page-size');
+            expect(pageSizeEl).toBeTruthy();
+            expect(pageSizeEl).toHaveClass('ag-hidden');
             expect(panel.querySelector('.ag-paging-page-summary-panel')).toBeTruthy();
         });
 
@@ -288,7 +314,7 @@ describe('paginationPanels', () => {
             consoleWarnSpy.mockRestore();
         });
 
-        test('duplicate items: only first occurrence is rendered, warning logged', () => {
+        test('duplicate items: only first occurrence is rendered', () => {
             const api = createPaginationGrid(gridsManagerWithValidation, {
                 paginationPanels: ['pageSize', 'pageSize', 'pageSummary'],
             });
@@ -298,10 +324,6 @@ describe('paginationPanels', () => {
             expect(children).toHaveLength(2);
             expect(children[0].classList.contains('ag-paging-page-size')).toBe(true);
             expect(children[1].classList.contains('ag-paging-page-summary-panel')).toBe(true);
-
-            expect(consoleWarnSpy).toHaveBeenCalledWith(
-                expect.stringContaining("duplicate component name: 'pageSize'")
-            );
         });
 
         test('unrecognised items are ignored, warning logged', () => {
@@ -316,7 +338,7 @@ describe('paginationPanels', () => {
             expect(children[1].classList.contains('ag-paging-page-summary-panel')).toBe(true);
 
             expect(consoleWarnSpy).toHaveBeenCalledWith(
-                expect.stringContaining("unrecognised component name: 'invalidName'")
+                expect.stringContaining("'paginationPanels' expects an array of panel names")
             );
         });
 

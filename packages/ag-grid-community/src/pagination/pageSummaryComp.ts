@@ -12,11 +12,6 @@ export class PageSummaryComp extends Component {
     private rowModel: IRowModel;
     private pagination: PaginationService;
 
-    public wireBeans(beans: BeanCollection): void {
-        this.rowModel = beans.rowModel;
-        this.pagination = beans.pagination!;
-    }
-
     private readonly btFirst: HTMLElement = RefPlaceholder;
     private readonly btPrevious: HTMLElement = RefPlaceholder;
     private readonly btNext: HTMLElement = RefPlaceholder;
@@ -29,10 +24,21 @@ export class PageSummaryComp extends Component {
     private lastButtonDisabled = false;
 
     private lastAriaStatus = '';
+    private readonly idPrefix: string;
+
+    constructor(idPrefix: string) {
+        super();
+        this.idPrefix = idPrefix;
+    }
+
+    public wireBeans(beans: BeanCollection): void {
+        this.rowModel = beans.rowModel;
+        this.pagination = beans.pagination!;
+    }
 
     public postConstruct(): void {
         const isRtl = this.gos.get('enableRtl');
-        const idPrefix = `ag-${this.getCompId()}`;
+        const idPrefix = this.idPrefix;
         const localeTextFunc = this.getLocaleTextFunc();
 
         this.setTemplate({

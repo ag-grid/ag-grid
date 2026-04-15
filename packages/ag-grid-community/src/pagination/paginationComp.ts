@@ -1,5 +1,3 @@
-import type { IAriaAnnouncementService } from '../agStack/interfaces/iAriaAnnouncementService';
-import type { BeanCollection } from '../context/context';
 import type { PaginationPanel } from '../entities/gridOptions';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';
@@ -14,12 +12,6 @@ const VALID_PANEL_NAMES = new Set<PaginationPanel>(['pageSize', 'rowSummary', 'p
 const DEFAULT_PANELS: readonly PaginationPanel[] = ['pageSize', 'rowSummary', 'pageSummary'];
 
 class PaginationComp extends TabGuardComp implements FocusableContainer {
-    private ariaAnnounce: IAriaAnnouncementService;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.ariaAnnounce = beans.ariaAnnounce;
-    }
-
     private pageSizeComp: PageSizeSelectorComp | undefined;
     private rowSummaryComp: RowSummaryComp | undefined;
     private pageSummaryComp: PageSummaryComp | undefined;
@@ -35,10 +27,12 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     }
 
     public postConstruct(): void {
+        const idPrefix = `ag-${this.getCompId()}`;
+
         this.setTemplate({
             tag: 'div',
             cls: 'ag-paging-panel ag-unselectable',
-            attrs: { id: `ag-${this.getCompId()}` },
+            attrs: { id: idPrefix },
         });
 
         this.initialiseTabGuard({
@@ -53,7 +47,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
             forceFocusOutWhenTabGuardsAreEmpty: true,
         });
 
-        this.buildComponents();
+        this.buildComponents(idPrefix);
 
         this.addManagedPropertyListeners(['pagination', 'suppressPaginationPanel'], () => this.onPaginationChanged());
         this.addManagedPropertyListeners(
@@ -79,7 +73,6 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     private getEffectivePanels(): PaginationPanel[] {
         const configured = this.gos.get('paginationPanels');
         const panels = configured ?? DEFAULT_PANELS;
-        // Silently deduplicate and drop unrecognised names (warnings already emitted by gridOptionsValidations.ts)
         const seen = new Set<string>();
         return panels.filter((name): name is PaginationPanel => {
             if (!VALID_PANEL_NAMES.has(name) || seen.has(name)) {
@@ -91,7 +84,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     }
 
     private shouldShowPageSizeComp(): boolean {
-        return !this.gos.get('paginationAutoPageSize');
+        return !this.gos.get('paginationAutoPageSize') && this.gos.get('paginationPageSizeSelector') !== false;
     }
 
     private hasVisibleComponents(): boolean {
@@ -101,23 +94,19 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         return !!this.pageSizeComp && this.shouldShowPageSizeComp();
     }
 
-    private buildComponents(): void {
+    private buildComponents(idPrefix: string): void {
         for (const panelName of this.getEffectivePanels()) {
             if (panelName === 'pageSize') {
-                // paginationPageSizeSelector is @initial — if false at init, never create the component
-                if (this.gos.get('paginationPageSizeSelector') === false) {
-                    continue;
-                }
                 this.pageSizeComp = this.createManagedBean(new PageSizeSelectorComp());
                 const show = this.shouldShowPageSizeComp();
                 this.pageSizeComp.toggleSelectDisplay(show);
                 this.pageSizeComp.setDisplayed(show);
                 this.appendChild(this.pageSizeComp);
             } else if (panelName === 'rowSummary') {
-                this.rowSummaryComp = this.createManagedBean(new RowSummaryComp());
+                this.rowSummaryComp = this.createManagedBean(new RowSummaryComp(idPrefix));
                 this.appendChild(this.rowSummaryComp);
             } else if (panelName === 'pageSummary') {
-                this.pageSummaryComp = this.createManagedBean(new PageSummaryComp());
+                this.pageSummaryComp = this.createManagedBean(new PageSummaryComp(idPrefix));
                 this.appendChild(this.pageSummaryComp);
             }
         }
@@ -140,21 +129,22 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     }
 
     private announceAriaStatus(): void {
-        if (this.gos.get('suppressPaginationPanel')) {
+        const { ariaAnnounce, gos } = this.beans;
+        if (gos.get('suppressPaginationPanel')) {
             return;
         }
         if (this.rowSummaryComp) {
             const ariaRowStatus = this.rowSummaryComp.getAriaStatus();
             if (ariaRowStatus !== this.ariaRowStatus) {
                 this.ariaRowStatus = ariaRowStatus;
-                this.ariaAnnounce?.announceValue(ariaRowStatus, 'paginationRow');
+                ariaAnnounce?.announceValue(ariaRowStatus, 'paginationRow');
             }
         }
         if (this.pageSummaryComp) {
             const ariaPageStatus = this.pageSummaryComp.getAriaStatus();
             if (ariaPageStatus !== this.ariaPageStatus) {
                 this.ariaPageStatus = ariaPageStatus;
-                this.ariaAnnounce?.announceValue(ariaPageStatus, 'paginationPage');
+                ariaAnnounce?.announceValue(ariaPageStatus, 'paginationPage');
             }
         }
     }

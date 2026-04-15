@@ -1,18 +1,11 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import type { BeanCollection } from '../context/context';
-import type { IRowModel } from '../interfaces/iRowModel';
 import { Component } from '../widgets/component';
 import type { PaginationService } from './paginationService';
 import { _formatPaginationNumber } from './paginationUtils';
 
 export class RowSummaryComp extends Component {
-    private rowModel: IRowModel;
     private pagination: PaginationService;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.rowModel = beans.rowModel;
-        this.pagination = beans.pagination!;
-    }
 
     private readonly lbFirstRowOnPage: HTMLElement = RefPlaceholder;
     private readonly lbLastRowOnPage: HTMLElement = RefPlaceholder;
@@ -20,8 +13,19 @@ export class RowSummaryComp extends Component {
 
     private lastAriaStatus = '';
 
+    private readonly idPrefix: string;
+
+    constructor(idPrefix: string) {
+        super();
+        this.idPrefix = idPrefix;
+    }
+
+    public wireBeans(beans: BeanCollection): void {
+        this.pagination = beans.pagination!;
+    }
+
     public postConstruct(): void {
-        const idPrefix = `ag-${this.getCompId()}`;
+        const idPrefix = this.idPrefix;
         const localeTextFunc = this.getLocaleTextFunc();
 
         this.setTemplate({
@@ -56,11 +60,11 @@ export class RowSummaryComp extends Component {
     }
 
     private isZeroPages(): boolean {
-        return this.rowModel.isLastRowIndexKnown() && this.pagination.getTotalPages() === 0;
+        return this.beans.rowModel.isLastRowIndexKnown() && this.pagination.getTotalPages() === 0;
     }
 
     private update(): void {
-        const lastPageFound = this.rowModel.isLastRowIndexKnown();
+        const lastPageFound = this.beans.rowModel.isLastRowIndexKnown();
         const masterRowCount = this.pagination.getMasterRowCount();
         const rowCount = lastPageFound ? masterRowCount : null;
         const currentPage = this.pagination.getCurrentPage();

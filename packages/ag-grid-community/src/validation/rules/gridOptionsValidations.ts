@@ -1,5 +1,5 @@
 import { _getSortDefFromInput } from '../../entities/agColumn';
-import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
+import type { DomLayoutType, GridOptions, PaginationPanel } from '../../entities/gridOptions';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
@@ -370,7 +370,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         paginationPanels: {
             validate: ({ paginationPanels }) => {
-                const validNames = new Set(['pageSize', 'rowSummary', 'pageSummary']);
+                const validNames = new Set<PaginationPanel>(['pageSize', 'rowSummary', 'pageSummary']);
                 if (
                     paginationPanels != null &&
                     (!Array.isArray(paginationPanels) || paginationPanels.some((p) => !validNames.has(p)))
