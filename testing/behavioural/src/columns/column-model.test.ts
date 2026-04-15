@@ -1,12 +1,12 @@
 import type { ColDef, ColGroupDef } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridColumns, TestGridsManager } from '../test-utils';
 
 describe('Column Model', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, TextEditorModule],
     });
 
     afterEach(() => {
@@ -178,7 +178,12 @@ describe('Column Model', () => {
 
             // Flex columns get calculated widths; use true to print since exact
             // widths depend on the container size in the test environment
-            await new GridColumns(api, 'flex columns').checkColumns(true);
+            await new GridColumns(api, 'flex columns').checkColumns(`
+                CENTER
+                ├── a width:200 flex:1
+                ├── b width:200 flex:2
+                └── c width:100
+            `);
         });
     });
 

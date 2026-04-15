@@ -5,14 +5,14 @@
 import { vitest } from 'vitest';
 
 import type { ColDef, IHeaderComp, IHeaderGroupComp, IHeaderParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
+import { ClientSideRowModelModule, TooltipModule, getGridElement } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridColumns, TestGridsManager } from '../test-utils';
 
 describe('Column Custom Renderers', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, TooltipModule],
     });
 
     afterEach(() => {

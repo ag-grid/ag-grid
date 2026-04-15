@@ -553,7 +553,13 @@ describe('Column Groups', () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs });
 
             // With showPaddingGroups, the auto-created padding group is visible
-            await new GridColumns(api, 'with padding groups', { showPaddingGroups: true }).checkColumns(true);
+            await new GridColumns(api, 'with padding groups', { showPaddingGroups: true }).checkColumns(`
+                CENTER
+                ├─┬ GROUP padding
+                │ └── standalone width:200
+                └─┬ "Grouped" GROUP
+                  └── g1 width:200
+            `);
         });
     });
 
@@ -599,7 +605,17 @@ describe('Column Groups', () => {
             // When a group's children span multiple pinned sections, the group
             // is replicated in each section. Use true to print the diagram since
             // the exact format depends on how the grid handles group splitting.
-            await new GridColumns(api, 'split across sections').checkColumns(true);
+            await new GridColumns(api, 'split across sections').checkColumns(`
+                LEFT
+                └─┬ "Split Group" GROUP
+                  └── left1 width:200
+                CENTER
+                └─┬ "Split Group" GROUP
+                  └── center1 width:200
+                RIGHT
+                └─┬ "Split Group" GROUP
+                  └── right1 width:200
+            `);
         });
 
         test('groups in all three sections', async () => {

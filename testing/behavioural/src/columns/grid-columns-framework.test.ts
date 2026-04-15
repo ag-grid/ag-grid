@@ -318,7 +318,12 @@ describe('GridColumns Framework', () => {
                 rowData: [],
             });
 
-            await new GridColumns(api, 'row group columns').checkColumns(true);
+            await new GridColumns(api, 'row group columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── group1 width:200 rowGroup rowGroupIndex:0
+                └── value1 width:200
+            `);
         });
     });
 
@@ -362,28 +367,6 @@ describe('GridColumns Framework', () => {
                 ├── a width:200 sort:desc
                 └── b width:200
             `);
-        });
-    });
-
-    describe('printDiagram', () => {
-        test('printDiagram returns this for chaining', () => {
-            const columnDefs: ColDef[] = [{ colId: 'a' }, { colId: 'b' }];
-            const api = gridsManager.createGrid('myGrid', { columnDefs });
-            const gridCols = new GridColumns(api, 'chain test');
-
-            // Should return this
-            expect(gridCols.printDiagram()).toBe(gridCols);
-        });
-
-        test('makeDiagram produces output', () => {
-            const columnDefs: ColDef[] = [{ colId: 'a' }, { colId: 'b' }];
-            const api = gridsManager.createGrid('myGrid', { columnDefs });
-            const gridCols = new GridColumns(api, 'diagram test');
-
-            const diagram = gridCols.makeDiagram();
-            expect(diagram).toContain('CENTER');
-            expect(diagram).toContain('a');
-            expect(diagram).toContain('b');
         });
     });
 

@@ -11,14 +11,14 @@
  * - Column types
  */
 import type { ColDef } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { AlignedGridsModule, CellStyleModule, ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridColumns, TestGridsManager } from '../test-utils';
 
 describe('Column Features', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, AlignedGridsModule, CellStyleModule, TextEditorModule],
     });
 
     afterEach(() => {
@@ -266,16 +266,18 @@ describe('Column Features', () => {
     });
 
     describe('aligned grids column sync', () => {
-        test('column visibility syncs between aligned grids', async () => {
+        test('column changes sync between aligned grids', async () => {
             const columnDefs: ColDef[] = [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }];
 
+            // Both grids reference each other for bidirectional sync
             const api1 = gridsManager.createGrid('grid1', { columnDefs });
-            const api2 = gridsManager.createGrid('grid2', {
-                columnDefs,
-                alignedGrids: [{ api: api1 }],
-            });
+            const api2 = gridsManager.createGrid('grid2', { columnDefs });
 
-            // Both grids should have same columns
+            // Set up bidirectional alignment after both grids are created
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            api2.setGridOption('alignedGrids', [{ api: api1 }]);
+
+            // Both grids should have same columns initially
             await new GridColumns(api1, 'grid1 initial').checkColumns(`
                 CENTER
                 ├── a width:200
@@ -289,16 +291,21 @@ describe('Column Features', () => {
                 └── c width:200
             `);
 
-            // Hide column in grid1
+            // Hide column in grid1 — grid2 should sync
             api1.setColumnsVisible(['b'], false);
 
-            // Grid2 should sync (if aligned)
             await new GridColumns(api1, 'grid1 after hide').checkColumns(`
                 CENTER
                 ├── a width:200
                 └── c width:200
             `);
-            await new GridColumns(api2, 'grid2 after sync').checkColumns(false);
+
+            // Grid2 should mirror grid1's change via aligned grid sync
+            await new GridColumns(api2, 'grid2 after sync').checkColumns(`
+                CENTER
+                ├── a width:200
+                └── c width:200
+            `);
         });
     });
 
