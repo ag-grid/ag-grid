@@ -72,10 +72,10 @@ const CsvExportToolbarItem = createToolbarButton({
     defaultLabel: 'CSV Export',
     onAction: (beans) => beans.gridApi.exportDataAsCsv(),
     onInit: (comp, gos) => {
-        if (!gos.isModuleRegistered('CsvExport') || gos.get('suppressCsvExport')) {
-            if (!gos.isModuleRegistered('CsvExport')) {
-                _warn(303, { itemName: 'csvExport', moduleName: 'CsvExport' });
-            }
+        if (!gos.isModuleRegistered('CsvExport')) {
+            _warn(303, { itemName: 'csvExport', moduleName: 'CsvExport' });
+            comp.setDisplayed(false);
+        } else if (gos.get('suppressCsvExport')) {
             comp.setDisplayed(false);
         }
     },
@@ -87,10 +87,10 @@ const ExcelExportToolbarItem = createToolbarButton({
     defaultLabel: 'Excel Export',
     onAction: (beans) => beans.gridApi.exportDataAsExcel(),
     onInit: (comp, gos) => {
-        if (!gos.isModuleRegistered('ExcelExport') || gos.get('suppressExcelExport')) {
-            if (!gos.isModuleRegistered('ExcelExport')) {
-                _warn(303, { itemName: 'excelExport', moduleName: 'ExcelExport' });
-            }
+        if (!gos.isModuleRegistered('ExcelExport')) {
+            _warn(303, { itemName: 'excelExport', moduleName: 'ExcelExport' });
+            comp.setDisplayed(false);
+        } else if (gos.get('suppressExcelExport')) {
             comp.setDisplayed(false);
         }
     },

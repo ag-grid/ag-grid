@@ -1,4 +1,4 @@
-import type { IToolbarItemComp, IToolbarItemParams, MenuItemDef } from 'ag-grid-community';
+import type { IToolbarItemComp, IToolbarItemParams, IconName, MenuItemDef } from 'ag-grid-community';
 import {
     Component,
     RefPlaceholder,
@@ -15,6 +15,7 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private menuItems: (MenuItemDef | string)[] = [];
     private label: string = '';
+    private iconName: IconName = 'menu';
 
     constructor() {
         super({
@@ -37,8 +38,9 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
 
         this.menuItems = menuItems ?? [];
         this.label = label ?? this.getLocaleTextFunc()('toolbarMenu', 'Menu');
+        this.iconName = icon ?? 'menu';
 
-        const iconEl = _createIconNoSpan(icon ?? 'menu', this.beans);
+        const iconEl = _createIconNoSpan(this.iconName, this.beans);
         if (iconEl) {
             this.eIcon.appendChild(iconEl);
         }
@@ -59,10 +61,24 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
     }
 
     public refresh(params: IToolbarItemParams): boolean {
-        const { menuItems } = params as any;
+        const { icon, label, menuItems } = params as any;
+
+        // Icon changes require DOM reconstruction — force recreation
+        if (icon != null && icon !== this.iconName) {
+            return false;
+        }
+
         if (menuItems != null) {
             this.menuItems = menuItems;
         }
+
+        if (label != null && label !== this.label) {
+            this.label = label;
+            this.eLabel.textContent = this.label;
+            this.getGui().setAttribute('aria-label', this.label);
+            this.getGui().setAttribute('title', this.label);
+        }
+
         this.eLabel.classList.toggle('ag-hidden', params.display !== 'iconAndLabel');
         return true;
     }

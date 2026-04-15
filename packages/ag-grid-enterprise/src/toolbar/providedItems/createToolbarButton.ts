@@ -53,8 +53,8 @@ class ToolbarButton extends Component implements IToolbarItemComp {
     }
 
     public init(params: IToolbarItemParams): void {
-        this.refresh(params);
         this.config.onInit?.(this, this.gos, this.beans);
+        this.refresh(params);
     }
 
     public refresh(params: IToolbarItemParams): boolean {

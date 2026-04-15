@@ -343,6 +343,7 @@ export const AG_GRID_LOCALE_PL = {
     toolbarFindPreviousMatch: 'Previous Match',
     toolbarFindNextMatch: 'Next Match',
     toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Suma',
