@@ -11,6 +11,10 @@ Notes are enabled by providing a `notesDataSource`. This lets you keep note stat
 
 Right-click a cell or press `Shift + F2` to add a note. Hover a noted cell to view it. Use `noteShowDelay` and `noteHideDelay` to control how quickly note popups appear and disappear on hover.
 
+{% note %}
+Notes are **not** displayed for the cell currently being edited. Hovering that cell or pressing `Shift + F2` for it has no effect until editing is complete. Notes for other cells continue to work normally.
+{% /note %}
+
 {% gridExampleRunner title="Notes" name="notes" exampleHeight=440 /%}
 
 {% apiDocumentation source="grid-options/properties.json" section="notes" names=["notesDataSource"] /%}
@@ -128,10 +132,6 @@ If you are using embedded full width rows with pinned sections and need separate
 When `embedFullWidthRows=true`, the datasource still receives `location: 'fullWidthRow'`, but `pinned` identifies whether the note belongs to the left, centre, or right rendered section.
 
 {% gridExampleRunner title="Notes with Embedded Full Width Rows" name="notes-full-width-embedded" exampleHeight=460 /%}
-
-```ts
-const getFullWidthNoteKey = (rowId, pinned) => `${rowId}::${pinned ?? 'center'}`;
-```
 
 ## Feature Interaction
 
