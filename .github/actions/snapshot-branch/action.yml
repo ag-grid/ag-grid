@@ -28,7 +28,7 @@ runs:
           run: |
               set -eux
 
-              git add ${{ inputs.path }}
+              git add "${{ inputs.path }}"
               git status
               if [[ $(git diff --cached --name-only | wc -l) -gt 0 ]] ; then
                   echo "Stashing changes."
@@ -46,20 +46,20 @@ runs:
           run: |
               set -eux
 
-              git fetch origin ${{inputs.source_branch}}
-              git switch ${{inputs.source_branch}}
+              git fetch origin "${{inputs.source_branch}}"
+              git switch "${{inputs.source_branch}}"
 
-              git checkout -b ${{inputs.branch}}
+              git checkout -b "${{inputs.branch}}"
 
               git stash pop
-              git add ${{ inputs.path }}
+              git add "${{ inputs.path }}"
               # Based on https://github.com/actions/checkout?tab=readme-ov-file#push-a-commit-using-the-built-in-token
               git config user.name "github-actions[bot]"
               git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
               git commit -m "Update ${{ inputs.type }} snapshots."
 
-              while ! (git push origin HEAD:${{inputs.branch}}) ; do
-                  git pull origin ${{inputs.branch}} --rebase --autostash
+              while ! (git push origin "HEAD:${{inputs.branch}}") ; do
+                  git pull origin "${{inputs.branch}}" --rebase --autostash
               done
 
         - name: Fail PR checks if updates needed

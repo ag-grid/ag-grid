@@ -14,10 +14,10 @@ runs:
           run: |
               set -eux
 
-              branch=gha/snapshots-${{github.head_ref || github.run_id}}
+              branch="gha/snapshots-${{github.head_ref || github.run_id}}"
 
-              if (git ls-remote --exit-code --heads origin ${branch} >/dev/null) ; then
-                  git push -d origin ${branch}
+              if (git ls-remote --exit-code --heads origin "${branch}" >/dev/null) ; then
+                  git push -d origin "${branch}"
               fi
 
               echo "branch=${branch}" >> $GITHUB_OUTPUT
