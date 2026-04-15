@@ -114,6 +114,8 @@ jobs:
     name: Initialise Workflow
     needs: detect-changes
     if: github.event.pull_request.draft == false && needs.detect-changes.outputs.run_full_ci == 'true'
+    permissions:
+      contents: write
     outputs:
       nx_base: ${{ steps.setup.outputs.base }}
       build_type: ${{ steps.setup.outputs.type }}
