@@ -116,8 +116,13 @@ const FiltersPanelToolbarItem = createToolbarButton({
         }
     },
     onInit: (comp, gos) => {
-        if (!gos.isModuleRegistered('SideBar') || !gos.isModuleRegistered('FiltersToolPanel')) {
-            _warn(303, { itemName: 'filtersPanel', moduleName: 'SideBar and FiltersToolPanel' });
+        const hasFilterModule =
+            gos.isModuleRegistered('FiltersToolPanel') || gos.isModuleRegistered('NewFiltersToolPanel');
+        if (!gos.isModuleRegistered('SideBar') || !hasFilterModule) {
+            _warn(303, {
+                itemName: 'filtersPanel',
+                moduleName: 'SideBar and FiltersToolPanel/NewFiltersToolPanel',
+            });
             comp.setDisplayed(false);
         } else if (!['filters', 'filters-new'].some((id) => hasSideBarPanel(gos.get('sideBar'), id))) {
             _warn(300);
