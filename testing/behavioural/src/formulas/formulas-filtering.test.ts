@@ -10,7 +10,14 @@ import {
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { SetFilter } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, waitForEvent } from '../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    waitForEvent,
+} from '../test-utils';
 
 describe('ag-grid formulas filtering', () => {
     const gridsManager = new TestGridsManager({
@@ -148,6 +155,8 @@ describe('ag-grid formulas filtering', () => {
         const editingStopped = waitForEvent('cellEditingStopped', api);
         api.stopEditing(true);
         await editingStopped;
+
+        await asyncSetTimeout(10);
 
         await new GridColumns(api, 'columns').checkColumns(`
             LEFT

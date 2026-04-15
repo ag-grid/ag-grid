@@ -113,7 +113,7 @@ describe('ag-grid formulas general behaviour', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             LEFT
-            └── ag-Grid-RowNumbersColumn width:102
+            └── ag-Grid-RowNumbersColumn width:60
             CENTER
             └── value "Value" width:200
         `);

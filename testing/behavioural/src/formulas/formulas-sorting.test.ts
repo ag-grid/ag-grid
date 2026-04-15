@@ -101,7 +101,7 @@ describe('ag-grid formulas sorting', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             LEFT
-            └── ag-Grid-RowNumbersColumn width:102
+            └── ag-Grid-RowNumbersColumn width:60
             CENTER
             ├── A width:200 sort:desc filter
             └── B width:200

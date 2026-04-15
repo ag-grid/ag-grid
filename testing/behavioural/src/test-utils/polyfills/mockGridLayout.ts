@@ -122,8 +122,15 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
             break;
 
         case 'default': {
-            width = 100;
-            height = 20;
+            // For position:fixed elements (auto-width measurement containers),
+            // return 0 so auto-sizing falls back to minWidth. Otherwise, return a default.
+            if (this.style?.position === 'fixed') {
+                width = 0;
+                height = 0;
+            } else {
+                width = 100;
+                height = 20;
+            }
             break;
         }
     }
