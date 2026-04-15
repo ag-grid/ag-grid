@@ -9,7 +9,7 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
     }
 
     public init(_params: IToolbarItemParams): void {
-        if (!this.beans.pivotColDefSvc) {
+        if (!this.gos.isModuleRegistered('Pivot')) {
             _warn(303, { itemName: 'pivotPanel', moduleName: 'Pivot' });
             this.setDisplayed(false);
             return;
