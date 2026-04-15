@@ -16,7 +16,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         }
 
         const localeTextFunc = this.getLocaleTextFunc();
-        const label = localeTextFunc('toolbarQuickFilter', 'Quick Filter');
+        const label = localeTextFunc('toolbarQuickFilter', 'Filter');
 
         const eIcon = _createIconNoSpan('filter', this.beans);
         if (eIcon) {
