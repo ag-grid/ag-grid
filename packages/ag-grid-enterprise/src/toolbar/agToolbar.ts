@@ -43,9 +43,6 @@ const BUILT_IN_ITEMS: Record<string, ToolbarItemComponentName> = {
 
 function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): ToolbarItemDef {
     if (typeof item === 'string') {
-        if (item !== 'separator' && !BUILT_IN_ITEMS[item]) {
-            _warn(302, { name: item, available: Object.keys(BUILT_IN_ITEMS).join(', ') });
-        }
         const toolbarItem = BUILT_IN_ITEMS[item] ?? item;
         return { toolbarItem, key: item };
     }
