@@ -2,7 +2,7 @@ import type { IAggFuncParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping aggregation', () => {
     const gridsManager = new TestGridsManager({
@@ -110,6 +110,15 @@ describe('ag-grid grouping aggregation', () => {
             · ├── LEAF id:9 country:"United Kingdom" sport:"Athletics" gold:5 silver:3
             · └─ footer id:"rowGroupFooter_row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom" gold:9 silver:{"count":2,"value":3.5}
         `);
+
+        await new GridColumns(api, 'after update').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── sport "Sport" width:200
+            ├── gold "Gold" width:200 aggFunc:sum
+            └── silver "Silver" width:200 aggFunc:avg
+        `);
     });
 
     test('suppressAggregateAtRootLevel vs alwaysAggregateAtRootLevel', async () => {
@@ -163,6 +172,17 @@ describe('ag-grid grouping aggregation', () => {
             │ └── LEAF id:2 category:"A" value:200
             └─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B" value:150
             · └── LEAF id:3 category:"B" value:150
+        `);
+
+        await new GridColumns(api1, 'alwaysAggregateAtRootLevel=false').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Category" width:200
+            └── value "Value" width:200 aggFunc:sum
+        `);
+        await new GridColumns(api2, 'alwaysAggregateAtRootLevel=true').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Category" width:200
+            └── value "Value" width:200 aggFunc:sum
         `);
     });
 
@@ -271,6 +291,13 @@ describe('ag-grid grouping aggregation', () => {
             └─┬ LEAF_GROUP id:row-group-category-C ag-Grid-AutoColumn:"C"
             · ├── LEAF id:4 category:"C" scores:"Avg: 70,74,78" metadata:"Min Priority: -"
             · └─ footer id:rowGroupFooter_row-group-category-C ag-Grid-AutoColumn:"Total C" scores:"Avg: 74" metadata:"Min Priority: 2"
+        `);
+
+        await new GridColumns(api, 'after transaction').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Category" width:200
+            ├── scores "Scores" width:200 aggFunc:custom
+            └── metadata "Metadata" width:200 aggFunc:custom
         `);
     });
 

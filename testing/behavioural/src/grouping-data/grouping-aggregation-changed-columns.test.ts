@@ -2,6 +2,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -85,6 +86,13 @@ describe('ag-grid grouping aggregation with aggregateOnlyChangedColumns', () => 
                 · ├── LEAF id:3 country:"Italy" gold:30 silver:30
                 · └── LEAF id:4 country:"Italy" gold:4 silver:4
             `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Country" width:200
+                ├── gold "Gold" width:200 aggFunc:sum
+                └── silver "Silver" width:200 aggFunc:sum
+            `);
         }
     );
 
@@ -167,6 +175,13 @@ describe('ag-grid grouping aggregation with aggregateOnlyChangedColumns', () => 
                 · │ └── LEAF id:6 country:"Italy" sport:"Football" gold:6 silver:60
                 · └─┬ LEAF_GROUP id:row-group-country-Italy-sport-Tennis ag-Grid-AutoColumn:"Tennis" gold:5 silver:50
                 · · └── LEAF id:5 country:"Italy" sport:"Tennis" gold:5 silver:50
+            `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── gold "Gold" width:200 aggFunc:sum
+                └── silver "Silver" width:200 aggFunc:sum
             `);
         }
     );

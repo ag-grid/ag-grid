@@ -1666,7 +1666,9 @@ describe('deferred column tool panel pivot mode', () => {
 
         // Click the Country pill in the row group drop zone to change sort direction
         const countryPill = Array.from(
-            toolPanel.rowGroupDropZonePanel.getGui().querySelectorAll<HTMLElement>('.ag-column-drop-cell')
+            (toolPanel.rowGroupDropZonePanel.getGui() as HTMLElement).querySelectorAll<HTMLElement>(
+                '.ag-column-drop-cell'
+            )
         ).find((el) => el.textContent?.includes('Country'));
         expect(countryPill).toBeTruthy();
         countryPill!.click();

@@ -2,6 +2,7 @@ import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community'
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -150,6 +151,14 @@ describe('ag-grid parentId tree aggregation', () => {
             │ │ └── 8 LEAF id:8 ag-Grid-AutoColumn:"8" name:"Claude Elwood Shannon" x:10
             │ └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" name:"A. Church" x:1
             └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" name:"E. Dijkstra" x:12
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "x" width:200
+            ├── name "Name" width:200
+            └── x "X" width:200 aggFunc:sum
         `);
     });
 
@@ -384,6 +393,14 @@ describe('ag-grid parentId tree aggregation', () => {
                 · │ · · └─┬ 6 GROUP id:6 ag-Grid-AutoColumn:"6" x:2 y:{"count":1,"value":7}
                 · │ · · · └── 11 LEAF id:11 ag-Grid-AutoColumn:"11" x:2 y:7
                 · └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" x:2 y:3
+            `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50
+                ├── ag-Grid-AutoColumn "Path" width:200
+                ├── x "X" width:200 aggFunc:sum
+                └── y "Y" width:200 aggFunc:avg
             `);
         }
     );

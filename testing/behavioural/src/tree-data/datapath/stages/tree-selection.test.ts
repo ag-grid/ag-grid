@@ -2,7 +2,13 @@ import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from '
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridActions } from '../../../selection/utils';
-import { GridRows, TestGridsManager, assertSelectedRowElementsById, cachedJSONObjects } from '../../../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    assertSelectedRowElementsById,
+    cachedJSONObjects,
+} from '../../../test-utils';
 
 describe('ag-grid tree selection', () => {
     const gridsManager = new TestGridsManager({
@@ -120,9 +126,16 @@ describe('ag-grid tree selection', () => {
             · └─┬ X GROUP selected id:3 ag-Grid-AutoColumn:"X" name:"A. Church"
             · · └── G LEAF id:7 ag-Grid-AutoColumn:"G" name:"Brian Kernighan"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Hierarchy" width:200
+            └── name "Name" width:200 filter
+        `);
     });
 
-    test('parent with unselectable children is selectable when groupSelects: "descendants" and isRowSelectable: true for parent', () => {
+    test('parent with unselectable children is selectable when groupSelects: "descendants" and isRowSelectable: true for parent', async () => {
         const rowData = cachedJSONObjects.array([
             { id: '1', name: 'John Von Neumann', orgHierarchy: ['A'] },
             { id: '2', name: 'Alan Turing', orgHierarchy: ['A', 'B'] },
@@ -166,6 +179,13 @@ describe('ag-grid tree selection', () => {
         actions.toggleCheckboxById('2');
         assertSelectedRowElementsById([], api);
         expect(api.getRowNode('2')?.selectable).toBe(false);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Hierarchy" width:200
+            └── name "Name" width:200
+        `);
     });
 
     test('parent with unselectable children is selectable when groupSelects: "filteredDescendants" and isRowSelectable: true for parent', () => {

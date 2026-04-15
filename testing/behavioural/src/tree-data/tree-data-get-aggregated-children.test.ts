@@ -2,7 +2,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('IRowNode.getAggregatedChildren() with tree data', () => {
     const gridsManager = new TestGridsManager({
@@ -73,6 +73,13 @@ describe('IRowNode.getAggregatedChildren() with tree data', () => {
         const workChildren = workNode!.getAggregatedChildren(sizeCol);
         expect(workChildren.length).toBe(2);
         expect(workChildren.map((n) => n.data?.name).sort()).toEqual(['data.xlsx', 'report.pdf']);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "File" width:200
+            ├── name "Name" width:200
+            └── size "Size" width:200 aggFunc:sum
+        `);
     });
 
     test('tree data with filtering respects filter state', async () => {
@@ -130,6 +137,13 @@ describe('IRowNode.getAggregatedChildren() with tree data', () => {
         children = folderNode!.getAggregatedChildren(null);
         expect(children.length).toBe(2);
         expect(children.map((n) => n.data?.name).sort()).toEqual(['file1.txt', 'file2.txt']);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "File" width:200
+            ├── name "Name" width:200 filter
+            └── size "Size" width:200 aggFunc:sum
+        `);
     });
 
     test('recursive returns all leaf descendants through nested folders', async () => {

@@ -5,6 +5,7 @@ import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-e
 
 import {
     EditEventTracker,
+    GridColumns,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -77,6 +78,12 @@ describe('Clipboard Paste Behaviour: paste into range / multi-range', () => {
         `);
 
         expect(eventTracker.counts.cellValueChanged).toBe(2);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
     });
 
     test('paste multi-value clipboard into multi-column range', async () => {
@@ -101,6 +108,12 @@ describe('Clipboard Paste Behaviour: paste into range / multi-range', () => {
             ├── LEAF id:ROW_1 a:"X0" b:"Y0"
             ├── LEAF id:ROW_2 a:"X1" b:"Y1"
             └── LEAF id:ROW_3 a:"a3" b:"b3"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
         `);
     });
 

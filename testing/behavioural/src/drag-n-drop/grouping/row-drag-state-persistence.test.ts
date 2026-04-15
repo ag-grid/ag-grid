@@ -17,7 +17,7 @@ import {
     SideBarModule,
 } from 'ag-grid-enterprise';
 
-import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridColumns, GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 interface AthleteRow {
     id: string;
@@ -225,6 +225,13 @@ describe('row drag state persistence', () => {
             · └─┬ filler id:row-group-region-EU-country-DE ag-Grid-AutoColumn:"DE"
             · · └─┬ LEAF_GROUP id:row-group-region-EU-country-DE-year-2012 ag-Grid-AutoColumn:2012
             · · · └── LEAF id:r-ger-12 region:"EU" country:"DE" year:2012 name:"Paul"
+        `);
+
+        await new GridColumns(reloadApi, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Hierarchy" width:220 flex:1
+            └── name "Name" width:200 flex:1
         `);
     });
 });

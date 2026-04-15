@@ -2,6 +2,7 @@ import { ClientSideRowModelModule, NumberFilterModule, RowSelectionModule } from
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -218,6 +219,15 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 │ └─ footer id:rowGroupFooter_8 ag-Grid-AutoColumn:"Total 8" n:"J" x:20 y:4
                 └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:36
           `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50
+                ├── ag-Grid-AutoColumn "Parent" width:200
+                ├── n "N" width:200
+                ├── x "X" width:200 aggFunc:sum
+                └── y "Y" width:200 filter
+            `);
         }
     );
 
@@ -319,6 +329,14 @@ describe('ag-grid parentId tree aggregation and filter', () => {
             · └─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" n:"H" y:17
             · · ├── 9 LEAF id:9 ag-Grid-AutoColumn:"9" n:"I" y:8
             · · └── 10 LEAF id:10 ag-Grid-AutoColumn:"10" n:"J" y:9
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Parent" width:200
+            ├── n "N" width:200
+            └── y "Y" width:200 aggFunc:sum filter
         `);
     });
 });

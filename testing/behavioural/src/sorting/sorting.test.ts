@@ -3,7 +3,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Sorting', () => {
     const gridMgr = new TestGridsManager({
@@ -46,6 +46,12 @@ describe('Sorting', () => {
             ├── LEAF id:cmp-u-2 primary:"ay" secondary:"a"
             └── LEAF id:cmp-u-1 primary:"ax" secondary:"b"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── primary "Primary" width:200 sort:asc
+            └── secondary "Secondary" width:200 sort:asc
+        `);
     });
 
     beforeAll(() => setupAgTestIds());
@@ -86,6 +92,14 @@ describe('Sorting', () => {
         await asyncSetTimeout(1);
 
         expect(listener).not.toHaveBeenCalled();
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── sport "Sport" width:200
+            ├── year "Year" width:200
+            ├── amount "Amount" width:200
+            └── day "Day" width:200
+        `);
     });
 
     test('GridRows snapshot changes after column sort', async () => {

@@ -1,0 +1,107 @@
+import type { Column, ColumnGroup, GridApi } from 'ag-grid-community';
+
+/**
+ * Formats a leaf column for the diagram.
+ * Format: `colId "HeaderName" [properties...]`
+ * HeaderName is omitted when it equals colId.
+ */
+export function columnDiagram(col: Column, api: GridApi, isHidden: boolean): string {
+    const colId = col.getColId();
+    const headerName = api.getDisplayNameForColumn(col, 'header') ?? '';
+    const parts: string[] = [colId];
+
+    // Show header name if different from colId
+    if (headerName && headerName !== colId) {
+        parts.push(JSON.stringify(headerName));
+    }
+
+    // Width — always show
+    parts.push('width:' + col.getActualWidth());
+
+    // Flex
+    const flex = col.getFlex();
+    if (flex != null && flex > 0) {
+        parts.push('flex:' + flex);
+    }
+
+    // Sort
+    const sort = col.getSort();
+    if (sort) {
+        parts.push('sort:' + sort);
+        const sortIndex = col.getSortIndex();
+        if (sortIndex != null && sortIndex >= 0) {
+            parts.push('sortIndex:' + sortIndex);
+        }
+    }
+
+    // Row group
+    if (col.isRowGroupActive()) {
+        parts.push('rowGroup');
+        const colDef = col.getColDef();
+        if (colDef.rowGroupIndex != null && colDef.rowGroupIndex >= 0) {
+            parts.push('rowGroupIndex:' + colDef.rowGroupIndex);
+        }
+    }
+
+    // Pivot
+    if (col.isPivotActive()) {
+        parts.push('pivot');
+        const colDef = col.getColDef();
+        if (colDef.pivotIndex != null && colDef.pivotIndex >= 0) {
+            parts.push('pivotIndex:' + colDef.pivotIndex);
+        }
+    }
+
+    // Aggregation
+    const aggFunc = col.getAggFunc();
+    if (aggFunc != null) {
+        parts.push('aggFunc:' + (typeof aggFunc === 'string' ? aggFunc : 'custom'));
+    }
+
+    // Filter active
+    if (col.isFilterActive()) {
+        parts.push('filter');
+    }
+
+    // columnGroupShow
+    const columnGroupShow = col.getColumnGroupShow();
+    if (columnGroupShow) {
+        parts.push('columnGroupShow:' + columnGroupShow);
+    }
+
+    // Hidden (child of collapsed group)
+    if (isHidden) {
+        parts.push('hidden');
+    }
+
+    // Editable
+    const colDef = col.getColDef();
+    if (colDef.editable === true) {
+        parts.push('editable');
+    }
+
+    return parts.join(' ');
+}
+
+/**
+ * Formats a column group for the diagram.
+ * Format: `"HeaderName" GROUP [open|closed]`
+ */
+export function columnGroupDiagram(group: ColumnGroup, api: GridApi): string {
+    const headerName = api.getDisplayNameForColumnGroup(group, 'header') ?? '';
+    const parts: string[] = [];
+
+    if (headerName) {
+        parts.push(JSON.stringify(headerName));
+    }
+
+    parts.push('GROUP');
+
+    if (group.isPadding()) {
+        parts.push('padding');
+    } else if (group.isExpandable()) {
+        parts.push(group.isExpanded() ? 'open' : 'closed');
+    }
+
+    return parts.join(' ');
+}

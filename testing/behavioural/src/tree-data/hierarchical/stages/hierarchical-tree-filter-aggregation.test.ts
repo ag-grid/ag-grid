@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, NumberFilterModule, RowSelectionModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid hierarchical tree aggregation and filter', () => {
     const gridsManager = new TestGridsManager({
@@ -338,6 +338,15 @@ describe('ag-grid hierarchical tree aggregation and filter', () => {
             │ ├── 9 LEAF id:9 ag-Grid-AutoColumn:"9" n:"K" x:20 y:0
             │ └─ footer id:rowGroupFooter_8 ag-Grid-AutoColumn:"Total 8" n:"J" x:20 y:4
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:36
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Path" width:200
+            ├── n "N" width:200
+            ├── x "X" width:200 aggFunc:sum
+            └── y "Y" width:200 filter
         `);
     });
 });

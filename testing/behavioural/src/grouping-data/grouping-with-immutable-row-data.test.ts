@@ -2,7 +2,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid grouping with transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -233,6 +233,12 @@ describe('ag-grid grouping with transactions', () => {
 
         gridRows = new GridRows(api, 'clear');
         await gridRows.check('empty');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── name "Name" width:200
+        `);
     });
 
     test('can change an entire group', async () => {
@@ -368,6 +374,12 @@ describe('ag-grid grouping with transactions', () => {
 
         gridRows = new GridRows(api, 'clear');
         await gridRows.check('empty');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── name "Name" width:200
+        `);
     });
 
     test('expanded state is preserved correctly', async () => {

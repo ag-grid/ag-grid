@@ -2,6 +2,7 @@ import { ClientSideRowModelModule, NumberFilterModule, RowSelectionModule } from
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -209,6 +210,14 @@ describe('ag-grid tree aggregation and filter', () => {
                 │ ├── K LEAF id:9 ag-Grid-AutoColumn:"K" x:20 y:0
                 │ └─ footer id:rowGroupFooter_8 ag-Grid-AutoColumn:"Total J" x:20 y:4
                 └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:36
+            `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50
+                ├── ag-Grid-AutoColumn "Path" width:200
+                ├── x "X" width:200 aggFunc:sum
+                └── y "Y" width:200 filter
             `);
         }
     );

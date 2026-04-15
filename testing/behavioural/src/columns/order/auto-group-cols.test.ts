@@ -1,8 +1,8 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import type { ColDef, ColGroupDef, RowGroupingDisplayType } from 'ag-grid-community';
+import type { ColDef, ColGroupDef } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../../test-utils';
+import { GridColumns, TestGridsManager } from '../../test-utils';
 import {
     GROUP_AUTO_COLUMN_ID,
     getAutoGroupColumnIds,
@@ -20,7 +20,7 @@ describe('Auto Group Column Order', () => {
     });
 
     describe('groupDisplayType=groupRows', () => {
-        test('omits row group column when colDef.rowGroup=true', () => {
+        test('omits row group column when colDef.rowGroup=true', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 { colId: 'a', rowGroup: true },
                 { colId: 'b' },
@@ -37,217 +37,777 @@ describe('Auto Group Column Order', () => {
             expect(getColumnOrderFromState(gridApi)).toEqual(expected);
             expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
             expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── a width:200 rowGroup
+                ├── b width:200
+                ├── c width:200
+                ├── d width:200
+                ├── e width:200 aggFunc:sum
+                ├── f width:200 aggFunc:sum
+                └── g width:200 aggFunc:sum
+            `);
         });
     });
 
-    describe.each(['singleColumn', 'multipleColumns'])(
-        'groupDisplayType=%s',
-        (groupDisplayType: RowGroupingDisplayType) => {
-            test('omits row group column when no grouping', () => {
-                const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b' }];
+    describe('groupDisplayType=singleColumn', () => {
+        const groupDisplayType = 'singleColumn' as const;
 
-                const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+        test('omits row group column when no grouping', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b' }];
 
-                const expected = ['a', 'b'];
-                expect(getColumnOrderFromState(gridApi)).toEqual(expected);
-                expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
-                expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
-            });
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
 
-            test.each([true, false])('orders row group column(s) first when enableRtl=%s', (enableRtl: boolean) => {
+            const expected = ['a', 'b'];
+            expect(getColumnOrderFromState(gridApi)).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
+        test('orders row group column(s) first when enableRtl=true', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c', rowGroup: true },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, enableRtl: true });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            const expected = [...groupColIds, 'a', 'b', 'c'];
+            expect(getColumnOrderFromState(gridApi)).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── a width:200 rowGroup
+                ├── b width:200
+                └── c width:200 rowGroup
+            `);
+        });
+
+        test('orders row group column(s) first when enableRtl=false', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c', rowGroup: true },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, enableRtl: false });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            const expected = [...groupColIds, 'a', 'b', 'c'];
+            expect(getColumnOrderFromState(gridApi)).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── a width:200 rowGroup
+                ├── b width:200
+                └── c width:200 rowGroup
+            `);
+        });
+
+        test('orders row group column(s) by rowGroupIndex (lowest first) when enableRtl=true', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroupIndex: 1 },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c', rowGroupIndex: 0 },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, enableRtl: true });
+
+            const groupColIds = [GROUP_AUTO_COLUMN_ID];
+            const expected = [...groupColIds, 'a', 'b', 'c'];
+            expect(getColumnOrderFromState(gridApi)).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── a width:200 rowGroup rowGroupIndex:1
+                ├── b width:200 rowGroup
+                └── c width:200 rowGroup rowGroupIndex:0
+            `);
+        });
+
+        test('orders row group column(s) by rowGroupIndex (lowest first) when enableRtl=false', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroupIndex: 1 },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c', rowGroupIndex: 0 },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, enableRtl: false });
+
+            const groupColIds = [GROUP_AUTO_COLUMN_ID];
+            const expected = [...groupColIds, 'a', 'b', 'c'];
+            expect(getColumnOrderFromState(gridApi)).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── a width:200 rowGroup rowGroupIndex:1
+                ├── b width:200 rowGroup
+                └── c width:200 rowGroup rowGroupIndex:0
+            `);
+        });
+
+        test('lockPosition columns appear before auto column', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', lockPosition: 'right' },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c', lockPosition: 'left' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            const expected = ['c', ...groupColIds, 'b', 'a'];
+            expect(getColumnOrderFromState(gridApi)).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── c width:200
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── b width:200 rowGroup
+                └── a width:200
+            `);
+        });
+
+        test('lockPosition=left columns appear after lockPosition auto column', async () => {
+            const defaultColDef = { lockPosition: 'left' as const };
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a' },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, defaultColDef, groupDisplayType });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            const expected = [...groupColIds, 'a', 'b', 'c'];
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+        });
+
+        test('lockPosition=right columns appear after lockPosition auto column', async () => {
+            const defaultColDef = { lockPosition: 'right' as const };
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a' },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, defaultColDef, groupDisplayType });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            const expected = [...groupColIds, 'a', 'b', 'c'];
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+        });
+
+        describe('pinned=left', () => {
+            test('row group columns can be pinned', async () => {
+                const autoGroupColumnDef = { pinned: 'left' as const };
                 const columnDefs: (ColDef | ColGroupDef)[] = [
                     { colId: 'a', rowGroup: true },
                     { colId: 'b' },
                     { colId: 'c', rowGroup: true },
                 ];
 
-                const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, enableRtl });
-
-                const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
-                const expected = [...groupColIds, 'a', 'b', 'c'];
-                expect(getColumnOrderFromState(gridApi)).toEqual(expected);
-                expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
-                expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
-            });
-
-            test.each([true, false])(
-                'orders row group column(s) by rowGroupIndex (lowest first) when enableRtl=%s',
-                (enableRtl: boolean) => {
-                    const columnDefs: (ColDef | ColGroupDef)[] = [
-                        { colId: 'a', rowGroupIndex: 1 },
-                        { colId: 'b', rowGroup: true },
-                        { colId: 'c', rowGroupIndex: 0 },
-                    ];
-
-                    const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, enableRtl });
-
-                    let groupColIds = [GROUP_AUTO_COLUMN_ID];
-                    if (groupDisplayType === 'multipleColumns') {
-                        groupColIds = [
-                            `${GROUP_AUTO_COLUMN_ID}-c`,
-                            `${GROUP_AUTO_COLUMN_ID}-a`,
-                            `${GROUP_AUTO_COLUMN_ID}-b`,
-                        ];
-                    }
-                    const expected = [...groupColIds, 'a', 'b', 'c'];
-                    expect(getColumnOrderFromState(gridApi)).toEqual(expected);
-                    expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
-                    expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
-                }
-            );
-
-            test('lockPosition columns appear before auto column', () => {
-                const columnDefs: (ColDef | ColGroupDef)[] = [
-                    { colId: 'a', lockPosition: 'right' },
-                    { colId: 'b', rowGroup: true },
-                    { colId: 'c', lockPosition: 'left' },
-                ];
-
-                const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
-
-                const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
-                const expected = ['c', ...groupColIds, 'b', 'a'];
-                expect(getColumnOrderFromState(gridApi)).toEqual(expected);
-                expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
-                expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
-            });
-
-            test.each(['left', 'right'] as const)(
-                'lockPosition columns appear after lockPosition auto column',
-                (lockPosition) => {
-                    const defaultColDef = { lockPosition };
-                    const columnDefs: (ColDef | ColGroupDef)[] = [
-                        { colId: 'a' },
-                        { colId: 'b', rowGroup: true },
-                        { colId: 'c' },
-                    ];
-
-                    const gridApi = gridsManager.createGrid('myGrid', { columnDefs, defaultColDef, groupDisplayType });
-
-                    const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
-                    const expected = [...groupColIds, 'a', 'b', 'c'];
-                    expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
-                }
-            );
-
-            describe.each(['left', 'right'] as const)('pinned=%s', (pinned) => {
-                test('row group columns can be pinned', () => {
-                    const autoGroupColumnDef = { pinned };
-                    const columnDefs: (ColDef | ColGroupDef)[] = [
-                        { colId: 'a', rowGroup: true },
-                        { colId: 'b' },
-                        { colId: 'c', rowGroup: true },
-                    ];
-
-                    const gridApi = gridsManager.createGrid('myGrid', {
-                        columnDefs,
-                        groupDisplayType,
-                        autoGroupColumnDef,
-                    });
-
-                    const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
-                    expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', 'c']);
-                    expect(getColumnOrder(gridApi, pinned)).toEqual(groupColIds);
+                const gridApi = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    groupDisplayType,
+                    autoGroupColumnDef,
                 });
 
-                test('row group columns are always first pinned columns', () => {
-                    const autoGroupColumnDef = { pinned };
-                    const columnDefs: (ColDef | ColGroupDef)[] = [
-                        { colId: 'a', pinned, rowGroup: true },
-                        { colId: 'b', pinned },
-                        { colId: 'c', pinned, rowGroup: true },
-                    ];
+                const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+                expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', 'c']);
+                expect(getColumnOrder(gridApi, 'left')).toEqual(groupColIds);
 
-                    const gridApi = gridsManager.createGrid('myGrid', {
-                        columnDefs,
-                        groupDisplayType,
-                        autoGroupColumnDef,
-                    });
-
-                    const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
-                    expect(getColumnOrder(gridApi, pinned)).toEqual([...groupColIds, 'a', 'b', 'c']);
-                });
+                await new GridColumns(gridApi, 'columns').checkColumns(`
+                    LEFT
+                    └── ag-Grid-AutoColumn "Group" width:200
+                    CENTER
+                    ├── a width:200 rowGroup
+                    ├── b width:200
+                    └── c width:200 rowGroup
+                `);
             });
 
-            test.each([true, false] as const)(
-                'maintainColumnOrder=%s inserts new auto cols at head',
-                (maintainColumnOrder) => {
-                    const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }];
-
-                    const gridApi = gridsManager.createGrid('myGrid', {
-                        columnDefs,
-                        groupDisplayType,
-                        maintainColumnOrder,
-                    });
-
-                    const columnDefsNew: (ColDef | ColGroupDef)[] = [
-                        { colId: 'a' },
-                        { colId: 'b' },
-                        { colId: 'c' },
-                        { colId: 'z', rowGroup: true },
-                    ];
-                    // reorder cols
-                    gridApi.setGridOption('columnDefs', columnDefsNew);
-                    const groupColIds = getAutoGroupColumnIds(columnDefsNew, groupDisplayType);
-                    expect(getColumnOrder(gridApi, 'center')).toEqual([...groupColIds, 'a', 'b', 'c', 'z']);
-                }
-            );
-
-            test('maintainColumnOrder=false resets group column to head when no new cols/change to grouping', () => {
+            test('row group columns are always first pinned columns', async () => {
+                const autoGroupColumnDef = { pinned: 'left' as const };
                 const columnDefs: (ColDef | ColGroupDef)[] = [
-                    { colId: 'a', rowGroup: true },
-                    { colId: 'b' },
-                    { colId: 'c' },
+                    { colId: 'a', pinned: 'left', rowGroup: true },
+                    { colId: 'b', pinned: 'left' },
+                    { colId: 'c', pinned: 'left', rowGroup: true },
                 ];
 
                 const gridApi = gridsManager.createGrid('myGrid', {
                     columnDefs,
                     groupDisplayType,
-                    maintainColumnOrder: false,
+                    autoGroupColumnDef,
                 });
 
-                gridApi.moveColumns(['a'], 0);
-
-                // reorder cols
-                gridApi.setGridOption('columnDefs', columnDefs);
                 const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
-                expect(getColumnOrder(gridApi, 'center')).toEqual([...groupColIds, 'a', 'b', 'c']);
-            });
+                expect(getColumnOrder(gridApi, 'left')).toEqual([...groupColIds, 'a', 'b', 'c']);
 
-            test('maintainColumnOrder=true preserves group column position when no new cols/change to grouping', () => {
+                await new GridColumns(gridApi, 'columns').checkColumns(`
+                    LEFT
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── a width:200 rowGroup
+                    ├── b width:200
+                    └── c width:200 rowGroup
+                `);
+            });
+        });
+
+        describe('pinned=right', () => {
+            test('row group columns can be pinned', async () => {
+                const autoGroupColumnDef = { pinned: 'right' as const };
                 const columnDefs: (ColDef | ColGroupDef)[] = [
                     { colId: 'a', rowGroup: true },
                     { colId: 'b' },
-                    { colId: 'c' },
+                    { colId: 'c', rowGroup: true },
                 ];
 
                 const gridApi = gridsManager.createGrid('myGrid', {
                     columnDefs,
                     groupDisplayType,
-                    maintainColumnOrder: true,
+                    autoGroupColumnDef,
                 });
 
-                gridApi.moveColumns(['a'], 0);
-
-                // reorder cols
-                gridApi.setGridOption('columnDefs', columnDefs);
                 const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
-                expect(getColumnOrder(gridApi, 'center')).toEqual(['a', ...groupColIds, 'b', 'c']);
+                expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', 'c']);
+                expect(getColumnOrder(gridApi, 'right')).toEqual(groupColIds);
+
+                await new GridColumns(gridApi, 'columns').checkColumns(`
+                    CENTER
+                    ├── a width:200 rowGroup
+                    ├── b width:200
+                    └── c width:200 rowGroup
+                    RIGHT
+                    └── ag-Grid-AutoColumn "Group" width:200
+                `);
             });
 
-            test('auto columns can be positioned using gridApi.moveColumns', () => {
+            test('row group columns are always first pinned columns', async () => {
+                const autoGroupColumnDef = { pinned: 'right' as const };
                 const columnDefs: (ColDef | ColGroupDef)[] = [
-                    { colId: 'a', rowGroup: true },
-                    { colId: 'b', rowGroup: true },
-                    { colId: 'c' },
+                    { colId: 'a', pinned: 'right', rowGroup: true },
+                    { colId: 'b', pinned: 'right' },
+                    { colId: 'c', pinned: 'right', rowGroup: true },
                 ];
 
-                const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
-                const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
-                gridApi.moveColumns(groupColIds, 2);
+                const gridApi = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    groupDisplayType,
+                    autoGroupColumnDef,
+                });
 
-                expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', ...groupColIds, 'c']);
+                const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+                expect(getColumnOrder(gridApi, 'right')).toEqual([...groupColIds, 'a', 'b', 'c']);
+
+                await new GridColumns(gridApi, 'columns').checkColumns(`
+                    RIGHT
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── a width:200 rowGroup
+                    ├── b width:200
+                    └── c width:200 rowGroup
+                `);
             });
-        }
-    );
+        });
+
+        test('maintainColumnOrder=true inserts new auto cols at head', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                maintainColumnOrder: true,
+            });
+
+            const columnDefsNew: (ColDef | ColGroupDef)[] = [
+                { colId: 'a' },
+                { colId: 'b' },
+                { colId: 'c' },
+                { colId: 'z', rowGroup: true },
+            ];
+            gridApi.setGridOption('columnDefs', columnDefsNew);
+            const groupColIds = getAutoGroupColumnIds(columnDefsNew, groupDisplayType);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([...groupColIds, 'a', 'b', 'c', 'z']);
+        });
+
+        test('maintainColumnOrder=false inserts new auto cols at head', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                maintainColumnOrder: false,
+            });
+
+            const columnDefsNew: (ColDef | ColGroupDef)[] = [
+                { colId: 'a' },
+                { colId: 'b' },
+                { colId: 'c' },
+                { colId: 'z', rowGroup: true },
+            ];
+            gridApi.setGridOption('columnDefs', columnDefsNew);
+            const groupColIds = getAutoGroupColumnIds(columnDefsNew, groupDisplayType);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([...groupColIds, 'a', 'b', 'c', 'z']);
+        });
+
+        test('maintainColumnOrder=false resets group column to head when no new cols/change to grouping', () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                maintainColumnOrder: false,
+            });
+
+            gridApi.moveColumns(['a'], 0);
+            gridApi.setGridOption('columnDefs', columnDefs);
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([...groupColIds, 'a', 'b', 'c']);
+        });
+
+        test('maintainColumnOrder=true preserves group column position when no new cols/change to grouping', () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                maintainColumnOrder: true,
+            });
+
+            gridApi.moveColumns(['a'], 0);
+            gridApi.setGridOption('columnDefs', columnDefs);
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(['a', ...groupColIds, 'b', 'c']);
+        });
+
+        test('auto columns can be positioned using gridApi.moveColumns', () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            gridApi.moveColumns(groupColIds, 2);
+
+            expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', ...groupColIds, 'c']);
+        });
+    });
+
+    describe('groupDisplayType=multipleColumns', () => {
+        const groupDisplayType = 'multipleColumns' as const;
+
+        test('omits row group column when no grouping', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b' }];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+
+            const expected = ['a', 'b'];
+            expect(getColumnOrderFromState(gridApi)).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
+        test('orders row group column(s) first when enableRtl=true', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c', rowGroup: true },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, enableRtl: true });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            const expected = [...groupColIds, 'a', 'b', 'c'];
+            expect(getColumnOrderFromState(gridApi)).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-a width:200
+                ├── ag-Grid-AutoColumn-c width:200
+                ├── a width:200 rowGroup
+                ├── b width:200
+                └── c width:200 rowGroup
+            `);
+        });
+
+        test('orders row group column(s) first when enableRtl=false', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c', rowGroup: true },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, enableRtl: false });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            const expected = [...groupColIds, 'a', 'b', 'c'];
+            expect(getColumnOrderFromState(gridApi)).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-a width:200
+                ├── ag-Grid-AutoColumn-c width:200
+                ├── a width:200 rowGroup
+                ├── b width:200
+                └── c width:200 rowGroup
+            `);
+        });
+
+        test('orders row group column(s) by rowGroupIndex (lowest first) when enableRtl=true', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroupIndex: 1 },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c', rowGroupIndex: 0 },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, enableRtl: true });
+
+            const groupColIds = [`${GROUP_AUTO_COLUMN_ID}-c`, `${GROUP_AUTO_COLUMN_ID}-a`, `${GROUP_AUTO_COLUMN_ID}-b`];
+            const expected = [...groupColIds, 'a', 'b', 'c'];
+            expect(getColumnOrderFromState(gridApi)).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-c width:200
+                ├── ag-Grid-AutoColumn-a width:200
+                ├── ag-Grid-AutoColumn-b width:200
+                ├── a width:200 rowGroup rowGroupIndex:1
+                ├── b width:200 rowGroup
+                └── c width:200 rowGroup rowGroupIndex:0
+            `);
+        });
+
+        test('orders row group column(s) by rowGroupIndex (lowest first) when enableRtl=false', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroupIndex: 1 },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c', rowGroupIndex: 0 },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, enableRtl: false });
+
+            const groupColIds = [`${GROUP_AUTO_COLUMN_ID}-c`, `${GROUP_AUTO_COLUMN_ID}-a`, `${GROUP_AUTO_COLUMN_ID}-b`];
+            const expected = [...groupColIds, 'a', 'b', 'c'];
+            expect(getColumnOrderFromState(gridApi)).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-c width:200
+                ├── ag-Grid-AutoColumn-a width:200
+                ├── ag-Grid-AutoColumn-b width:200
+                ├── a width:200 rowGroup rowGroupIndex:1
+                ├── b width:200 rowGroup
+                └── c width:200 rowGroup rowGroupIndex:0
+            `);
+        });
+
+        test('lockPosition columns appear before auto column', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', lockPosition: 'right' },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c', lockPosition: 'left' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            const expected = ['c', ...groupColIds, 'b', 'a'];
+            expect(getColumnOrderFromState(gridApi)).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── c width:200
+                ├── ag-Grid-AutoColumn-b width:200
+                ├── b width:200 rowGroup
+                └── a width:200
+            `);
+        });
+
+        test('lockPosition=left columns appear after lockPosition auto column', async () => {
+            const defaultColDef = { lockPosition: 'left' as const };
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a' },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, defaultColDef, groupDisplayType });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            const expected = [...groupColIds, 'a', 'b', 'c'];
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+        });
+
+        test('lockPosition=right columns appear after lockPosition auto column', async () => {
+            const defaultColDef = { lockPosition: 'right' as const };
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a' },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, defaultColDef, groupDisplayType });
+
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            const expected = [...groupColIds, 'a', 'b', 'c'];
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+        });
+
+        describe('pinned=left', () => {
+            test('row group columns can be pinned', async () => {
+                const autoGroupColumnDef = { pinned: 'left' as const };
+                const columnDefs: (ColDef | ColGroupDef)[] = [
+                    { colId: 'a', rowGroup: true },
+                    { colId: 'b' },
+                    { colId: 'c', rowGroup: true },
+                ];
+
+                const gridApi = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    groupDisplayType,
+                    autoGroupColumnDef,
+                });
+
+                const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+                expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', 'c']);
+                expect(getColumnOrder(gridApi, 'left')).toEqual(groupColIds);
+
+                await new GridColumns(gridApi, 'columns').checkColumns(`
+                    LEFT
+                    ├── ag-Grid-AutoColumn-a width:200
+                    └── ag-Grid-AutoColumn-c width:200
+                    CENTER
+                    ├── a width:200 rowGroup
+                    ├── b width:200
+                    └── c width:200 rowGroup
+                `);
+            });
+
+            test('row group columns are always first pinned columns', async () => {
+                const autoGroupColumnDef = { pinned: 'left' as const };
+                const columnDefs: (ColDef | ColGroupDef)[] = [
+                    { colId: 'a', pinned: 'left', rowGroup: true },
+                    { colId: 'b', pinned: 'left' },
+                    { colId: 'c', pinned: 'left', rowGroup: true },
+                ];
+
+                const gridApi = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    groupDisplayType,
+                    autoGroupColumnDef,
+                });
+
+                const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+                expect(getColumnOrder(gridApi, 'left')).toEqual([...groupColIds, 'a', 'b', 'c']);
+
+                await new GridColumns(gridApi, 'columns').checkColumns(`
+                    LEFT
+                    ├── ag-Grid-AutoColumn-a width:200
+                    ├── ag-Grid-AutoColumn-c width:200
+                    ├── a width:200 rowGroup
+                    ├── b width:200
+                    └── c width:200 rowGroup
+                `);
+            });
+        });
+
+        describe('pinned=right', () => {
+            test('row group columns can be pinned', async () => {
+                const autoGroupColumnDef = { pinned: 'right' as const };
+                const columnDefs: (ColDef | ColGroupDef)[] = [
+                    { colId: 'a', rowGroup: true },
+                    { colId: 'b' },
+                    { colId: 'c', rowGroup: true },
+                ];
+
+                const gridApi = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    groupDisplayType,
+                    autoGroupColumnDef,
+                });
+
+                const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+                expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', 'c']);
+                expect(getColumnOrder(gridApi, 'right')).toEqual(groupColIds);
+
+                await new GridColumns(gridApi, 'columns').checkColumns(`
+                    CENTER
+                    ├── a width:200 rowGroup
+                    ├── b width:200
+                    └── c width:200 rowGroup
+                    RIGHT
+                    ├── ag-Grid-AutoColumn-a width:200
+                    └── ag-Grid-AutoColumn-c width:200
+                `);
+            });
+
+            test('row group columns are always first pinned columns', async () => {
+                const autoGroupColumnDef = { pinned: 'right' as const };
+                const columnDefs: (ColDef | ColGroupDef)[] = [
+                    { colId: 'a', pinned: 'right', rowGroup: true },
+                    { colId: 'b', pinned: 'right' },
+                    { colId: 'c', pinned: 'right', rowGroup: true },
+                ];
+
+                const gridApi = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    groupDisplayType,
+                    autoGroupColumnDef,
+                });
+
+                const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+                expect(getColumnOrder(gridApi, 'right')).toEqual([...groupColIds, 'a', 'b', 'c']);
+
+                await new GridColumns(gridApi, 'columns').checkColumns(`
+                    RIGHT
+                    ├── ag-Grid-AutoColumn-a width:200
+                    ├── ag-Grid-AutoColumn-c width:200
+                    ├── a width:200 rowGroup
+                    ├── b width:200
+                    └── c width:200 rowGroup
+                `);
+            });
+        });
+
+        test('maintainColumnOrder=true inserts new auto cols at head', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                maintainColumnOrder: true,
+            });
+
+            const columnDefsNew: (ColDef | ColGroupDef)[] = [
+                { colId: 'a' },
+                { colId: 'b' },
+                { colId: 'c' },
+                { colId: 'z', rowGroup: true },
+            ];
+            gridApi.setGridOption('columnDefs', columnDefsNew);
+            const groupColIds = getAutoGroupColumnIds(columnDefsNew, groupDisplayType);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([...groupColIds, 'a', 'b', 'c', 'z']);
+        });
+
+        test('maintainColumnOrder=false inserts new auto cols at head', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                maintainColumnOrder: false,
+            });
+
+            const columnDefsNew: (ColDef | ColGroupDef)[] = [
+                { colId: 'a' },
+                { colId: 'b' },
+                { colId: 'c' },
+                { colId: 'z', rowGroup: true },
+            ];
+            gridApi.setGridOption('columnDefs', columnDefsNew);
+            const groupColIds = getAutoGroupColumnIds(columnDefsNew, groupDisplayType);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([...groupColIds, 'a', 'b', 'c', 'z']);
+        });
+
+        test('maintainColumnOrder=false resets group column to head when no new cols/change to grouping', () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                maintainColumnOrder: false,
+            });
+
+            gridApi.moveColumns(['a'], 0);
+            gridApi.setGridOption('columnDefs', columnDefs);
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            expect(getColumnOrder(gridApi, 'center')).toEqual([...groupColIds, 'a', 'b', 'c']);
+        });
+
+        test('maintainColumnOrder=true preserves group column position when no new cols/change to grouping', () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b' },
+                { colId: 'c' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType,
+                maintainColumnOrder: true,
+            });
+
+            gridApi.moveColumns(['a'], 0);
+            gridApi.setGridOption('columnDefs', columnDefs);
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(['a', ...groupColIds, 'b', 'c']);
+        });
+
+        test('auto columns can be positioned using gridApi.moveColumns', () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b', rowGroup: true },
+                { colId: 'c' },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
+            const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+            gridApi.moveColumns(groupColIds, 2);
+
+            expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', ...groupColIds, 'c']);
+        });
+    });
 });

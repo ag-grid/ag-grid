@@ -10,7 +10,7 @@ import {
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { SetFilter } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, waitForEvent } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, waitForEvent } from '../test-utils';
 
 describe('ag-grid formulas filtering', () => {
     const gridsManager = new TestGridsManager({
@@ -89,6 +89,15 @@ describe('ag-grid formulas filtering', () => {
             ├── LEAF id:4 row-number:"4" A:45 B:90 name:"Alice"
             └── LEAF id:5 row-number:"5" A:50 B:100 name:"Jack"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60
+            CENTER
+            ├── A width:200
+            ├── B width:200 filter
+            └── name "Name" width:200
+        `);
     });
 
     test('TC1-2 Set filter retains formula in editor after filtering', async () => {
@@ -139,6 +148,17 @@ describe('ag-grid formulas filtering', () => {
         const editingStopped = waitForEvent('cellEditingStopped', api);
         api.stopEditing(true);
         await editingStopped;
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60
+            CENTER
+            ├── athlete "Athlete" width:200 filter editable
+            ├── age "Age" width:200 editable
+            ├── country "Country" width:200 editable
+            ├── year "Year" width:200 editable
+            └── total "Total" width:200 editable
+        `);
     });
 
     test('TC2 Reference to filtered row', async () => {

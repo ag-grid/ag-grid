@@ -7,6 +7,7 @@ import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
 import {
     DragEventDispatcher,
+    GridColumns,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -113,6 +114,12 @@ describe('Cell Editing: batch clear bugs', () => {
             ├── LEAF ⏳ id:ROW_0 a:⏳null "A0" b:"B0"
             └── LEAF id:ROW_1 a:"A1" b:"B1"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
     });
 
     /**
@@ -210,6 +217,11 @@ describe('Cell Editing: batch clear bugs', () => {
             ├── LEAF id:ROW_0 a:"A0"
             ├── LEAF id:ROW_1 a:"A1"
             └── LEAF id:ROW_2 a:"A2"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── a "A" width:200 editable
         `);
     });
 

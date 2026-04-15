@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, NumberFilterModule, QuickFilterModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid filterAggregatesStage', () => {
     const gridsManager = new TestGridsManager({
@@ -88,6 +88,12 @@ describe('ag-grid filterAggregatesStage', () => {
             └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" gold:1
             · └── LEAF id:4 country:"France" gold:1
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            └── gold "Gold" width:200 aggFunc:sum
+        `);
     });
 
     test('groupAggFiltering callback controls which rows are tested by the filter', async () => {
@@ -156,6 +162,12 @@ describe('ag-grid filterAggregatesStage', () => {
             │ └── LEAF id:3 country:"Italy" gold:5
             └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" gold:1
             · └── LEAF id:4 country:"France" gold:1
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            └── gold "Gold" width:200 aggFunc:sum
         `);
     });
 

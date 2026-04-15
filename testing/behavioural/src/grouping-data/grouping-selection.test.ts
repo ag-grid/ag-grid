@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping selection', () => {
     const gridsManager = new TestGridsManager({
@@ -121,6 +121,14 @@ describe('ag-grid grouping selection', () => {
             └─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany"
             · └── LEAF selected id:9 country:"Germany" athlete:"Hans Mueller" sport:"Football"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── athlete "Athlete" width:200
+            └── sport "Sport" width:200
+        `);
     });
 
     test('group selection checkbox behavior', async () => {
@@ -184,6 +192,14 @@ describe('ag-grid grouping selection', () => {
             │ └── LEAF selected id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
             └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             · └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── athlete "Athlete" width:200
+            └── sport "Sport" width:200
         `);
     });
 

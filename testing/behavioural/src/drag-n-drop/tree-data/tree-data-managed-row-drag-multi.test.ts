@@ -4,7 +4,14 @@ import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-
 import type { GridOptions, IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout, getRowHtmlElement } from '../../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    RowDragDispatcher,
+    TestGridsManager,
+    asyncSetTimeout,
+    getRowHtmlElement,
+} from '../../test-utils';
 
 describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppressMoveWhenRowDragging) => {
     const gridsManager = new TestGridsManager({
@@ -109,6 +116,13 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
             · ├── beta LEAF selected id:beta ag-Grid-AutoColumn:"Beta" type:"folder"
             · └── archive-reports LEAF id:archive-reports ag-Grid-AutoColumn:"Reports" type:"folder"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Name" width:200
+            └── type "Type" width:200
+        `);
     });
 
     test('rowDragInsertDelay nudger expands collapsed parents before dropping', async () => {
@@ -206,6 +220,12 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
             · └─┬ root-ops GROUP id:root-ops ag-Grid-AutoColumn:"Operations" type:"folder"
             · · ├── root-plan-tasks LEAF id:root-plan-tasks ag-Grid-AutoColumn:"Tasks" type:"file"
             · · └── root-ops-logs LEAF id:root-ops-logs ag-Grid-AutoColumn:"Logs" type:"file"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Name" width:200
+            └── type "Type" width:200
         `);
     });
 

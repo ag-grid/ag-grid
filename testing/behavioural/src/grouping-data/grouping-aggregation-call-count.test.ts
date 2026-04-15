@@ -2,7 +2,7 @@ import type { IAggFuncParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid aggregation call count with aggregateOnlyChangedColumns', () => {
     const gridsManager = new TestGridsManager({
@@ -108,6 +108,16 @@ describe('ag-grid aggregation call count with aggregateOnlyChangedColumns', () =
 
         // 4 value columns × 12 group nodes = 48 aggregation calls
         expect(aggCallCount).toBe(48);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── a "A" width:200 aggFunc:custom
+            ├── b "B" width:200 aggFunc:custom
+            ├── c "C" width:200 aggFunc:custom
+            ├── d "D" width:200 aggFunc:custom
+            └── total "Total" width:200
+        `);
     });
 
     test('after single cell edit, only the affected column and path are re-aggregated', async () => {
@@ -161,6 +171,16 @@ describe('ag-grid aggregation call count with aggregateOnlyChangedColumns', () =
         // and only for the affected path: Group A1 and Top = 2 calls
         expect(aggCallLog).toEqual(['c', 'c']);
         expect(aggCallCount).toBe(2);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── a "A" width:200 aggFunc:custom
+            ├── b "B" width:200 aggFunc:custom
+            ├── c "C" width:200 aggFunc:custom
+            ├── d "D" width:200 aggFunc:custom
+            └── total "Total" width:200
+        `);
     });
 });
 

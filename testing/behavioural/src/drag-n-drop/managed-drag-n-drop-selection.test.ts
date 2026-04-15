@@ -3,6 +3,7 @@ import type { GridOptions } from 'ag-grid-community';
 
 import {
     DRAG_NO_MOVE_INTERACTION_CASES,
+    GridColumns,
     GridRows,
     RowDragDispatcher,
     TestGridsManager,
@@ -74,6 +75,12 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
             ├── LEAF selected id:3 value:"C"
             └── LEAF selected id:4 value:"D"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            └── value "Value" width:200
+        `);
     });
 
     test('dragging non-contiguous selection keeps gaps intact', async () => {
@@ -129,6 +136,12 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
             ├── LEAF selected id:1 value:"A"
             ├── LEAF selected id:3 value:"C"
             └── LEAF selected id:5 value:"E"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            └── value "Value" width:200
         `);
     });
 });

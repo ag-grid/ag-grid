@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid hierarchical tree aggregation', () => {
     const gridsManager = new TestGridsManager({
@@ -514,6 +514,14 @@ describe('ag-grid hierarchical tree aggregation', () => {
             · └─┬ W GROUP id:W ag-Grid-AutoColumn:"W" x:200 y:{"count":1,"value":200}
             · · └── G LEAF id:G ag-Grid-AutoColumn:"G" x:200 y:200
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Path" width:200
+            ├── x "X" width:200 aggFunc:sum
+            └── y "Y" width:200 aggFunc:avg
+        `);
     });
 
     test('tree aggregation with alwaysAggregateAtRootLevel=true', async () => {
@@ -652,6 +660,14 @@ describe('ag-grid hierarchical tree aggregation', () => {
             · └─┬ C GROUP id:C ag-Grid-AutoColumn:"C" x:102 y:104
             · · ├── F LEAF id:F ag-Grid-AutoColumn:"F" x:100 y:100
             · · └── G LEAF id:G ag-Grid-AutoColumn:"G" x:2 y:4
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Path" width:200
+            ├── x "X" width:200 aggFunc:sum
+            └── y "Y" width:200 aggFunc:sum
         `);
     });
 });

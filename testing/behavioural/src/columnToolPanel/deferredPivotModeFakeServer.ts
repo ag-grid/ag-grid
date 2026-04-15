@@ -39,7 +39,7 @@ export function createServerSideDatasource(server: {
                 } else {
                     params.fail();
                 }
-            }, Math.random() * 1000);
+            }, 0);
         },
     };
 }

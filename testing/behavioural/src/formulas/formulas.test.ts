@@ -5,7 +5,7 @@ import type { GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 const rowNumberRefreshBufferMs = 25;
 
@@ -110,6 +110,13 @@ describe('ag-grid formulas general behaviour', () => {
             ├── LEAF id:"absolute-col-$a2" row-number:"12" value:50
             └── LEAF id:"absolute-both-$a$2" row-number:"13" value:50
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:102
+            CENTER
+            └── value "Value" width:200
+        `);
     });
 
     test('arithmetic and comparison operators produce expected results', async () => {
@@ -166,6 +173,27 @@ describe('ag-grid formulas general behaviour', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:ops row-number:"1" A:5 B:2 C:"Hi" add:7 subtract:3 multiply:10 divide:2.5 exponent:25 concat:"Hi there" equal:false notEqual:true greaterThan:true lessThan:false greaterThanOrEqual:true lessThanOrEqual:false
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60
+            CENTER
+            ├── A width:200
+            ├── B width:200
+            ├── C width:200
+            ├── add "Add" width:200
+            ├── subtract "Subtract" width:200
+            ├── multiply "Multiply" width:200
+            ├── divide "Divide" width:200
+            ├── exponent "Exponent" width:200
+            ├── concat "Concat" width:200
+            ├── equal "Equal" width:200
+            ├── notEqual "Not Equal" width:200
+            ├── greaterThan "Greater Than" width:200
+            ├── lessThan "Less Than" width:200
+            ├── greaterThanOrEqual "Greater Than Or Equal" width:200
+            └── lessThanOrEqual "Less Than Or Equal" width:200
         `);
     });
 

@@ -2,6 +2,7 @@ import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community'
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -143,6 +144,14 @@ describe('ag-grid tree aggregation', () => {
             │ │ └── H LEAF id:8 ag-Grid-AutoColumn:"H" name:"Claude Elwood Shannon" x:10
             │ └── C LEAF id:3 ag-Grid-AutoColumn:"C" name:"A. Church" x:1
             └── J LEAF id:9 ag-Grid-AutoColumn:"J" name:"E. Dijkstra" x:2
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Path" width:200
+            ├── name "Name" width:200
+            └── x "X" width:200 aggFunc:sum
         `);
     });
 
@@ -365,6 +374,14 @@ describe('ag-grid tree aggregation', () => {
                 · └─┬ W GROUP id:7 ag-Grid-AutoColumn:"W" x:200 y:{"count":1,"value":200}
                 · · └── W LEAF id:5 ag-Grid-AutoColumn:"W" x:200 y:200
             `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50
+                ├── ag-Grid-AutoColumn "Path" width:200
+                ├── x "X" width:200 aggFunc:sum
+                └── y "Y" width:200 aggFunc:avg
+            `);
         }
     );
 
@@ -479,6 +496,14 @@ describe('ag-grid tree aggregation', () => {
                 · └─┬ C filler id:row-group-0-A-1-C ag-Grid-AutoColumn:"C" x:102 y:104
                 · · ├── F LEAF id:4 ag-Grid-AutoColumn:"F" x:100 y:100
                 · · └── G LEAF id:5 ag-Grid-AutoColumn:"G" x:2 y:4
+            `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50
+                ├── ag-Grid-AutoColumn "Path" width:200
+                ├── x "X" width:200 aggFunc:sum
+                └── y "Y" width:200 aggFunc:sum
             `);
         }
     );

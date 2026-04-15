@@ -1,7 +1,7 @@
 import type { RowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('RowNode.expanded getter without expansionSvc', () => {
     const gridsManager = new TestGridsManager({
@@ -26,6 +26,11 @@ describe('RowNode.expanded getter without expansionSvc', () => {
         expect(rootNode.level).toBe(-1);
         expect(rootNode._expanded).toBe(true);
         expect(rootNode.expanded).toBe(true);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
     });
 
     test('leaf nodes expanded returns false without expansionSvc', async () => {
@@ -42,5 +47,10 @@ describe('RowNode.expanded getter without expansionSvc', () => {
         expect((leafNode as RowNode)._expanded).toBeUndefined();
         // Without expansionSvc, the getter falls back to `_expanded as boolean` which is undefined (falsy)
         expect(leafNode.expanded).toEqual(false);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── name "Name" width:200
+        `);
     });
 });

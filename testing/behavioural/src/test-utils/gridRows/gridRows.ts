@@ -247,7 +247,7 @@ export class GridRows<TData = any> {
             }
             const diagram = this.makeDiagram(false);
             if (unindentText(diagram) !== unindentText(diagramSnapshot)) {
-                recordSnapshotMismatch(this.check, diagram, this.label);
+                recordSnapshotMismatch(this.check, diagram, this.label, 'check');
             }
             return this;
         }
@@ -280,6 +280,17 @@ export class GridRows<TData = any> {
         addDiagramToError(lastError, attempt.makeDiagram(false), this.label);
         Error.captureStackTrace(lastError, this.check);
         throw lastError;
+    }
+
+    /**
+     * Convenience method to check columns alongside rows. Creates a GridColumns instance and delegates.
+     * @see GridColumns.checkColumns for full documentation.
+     */
+    public async checkColumns(diagramSnapshot: string | 'empty' | boolean | undefined): Promise<this> {
+        const { GridColumns } = await import('../gridColumns/gridColumns');
+        const gridColumns = new GridColumns(this.api, this.label);
+        await gridColumns.checkColumns(diagramSnapshot);
+        return this;
     }
 
     /** Attempts snapshot check without throwing. Returns the error if failed, null if passed. */

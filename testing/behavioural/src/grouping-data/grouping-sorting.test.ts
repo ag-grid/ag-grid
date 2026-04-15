@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('ag-grid grouping sorting', () => {
     const gridsManager = new TestGridsManager({
@@ -100,6 +100,14 @@ describe('ag-grid grouping sorting', () => {
             · ├── LEAF id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:4
             · └── LEAF id:5 country:"Italy" athlete:"Luigi Verdi" sport:"Football" gold:5
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200 sort:desc
+            └── gold "Gold" width:200 sort:asc
+        `);
     });
 
     test('grouping with sort and filter combined', async () => {
@@ -188,6 +196,14 @@ describe('ag-grid grouping sorting', () => {
             │ └── LEAF id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:4
             └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └── LEAF id:6 country:"France" athlete:"Jean Dupont" sport:"Soccer" gold:1
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── athlete "Athlete" width:200 sort:asc
+            ├── sport "Sport" width:200
+            └── gold "Gold" width:200 sort:desc
         `);
     });
 

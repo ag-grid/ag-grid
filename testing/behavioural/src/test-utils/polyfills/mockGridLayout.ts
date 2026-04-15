@@ -128,6 +128,18 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
         }
     }
 
+    // If the element has an explicit style.width or style.height set by the grid,
+    // use those values instead of the mock defaults. This ensures that auto-sizing
+    // code reads the actual column/row dimensions rather than generic mock values.
+    const styleWidth = parseFloat(this.style?.width);
+    if (!isNaN(styleWidth) && styleWidth > 0) {
+        width = styleWidth;
+    }
+    const styleHeight = parseFloat(this.style?.height);
+    if (!isNaN(styleHeight) && styleHeight > 0) {
+        height = styleHeight;
+    }
+
     const offsetParent = this.offsetParent ?? this.parentElement;
     if (offsetParent !== this && offsetParent?.getBoundingClientRect) {
         const parentRect = offsetParent.getBoundingClientRect();

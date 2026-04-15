@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid hierarchical tree selection', () => {
     const gridsManager = new TestGridsManager({
@@ -166,6 +166,14 @@ describe('ag-grid hierarchical tree selection', () => {
             └─┬ 1 GROUP selected id:1 ag-Grid-AutoColumn:"1" k:"A" name:"John Von Neumann"
             · └─┬ 3 GROUP selected id:3 ag-Grid-AutoColumn:"3" k:"X" name:"A. Church"
             · · └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" k:"G" name:"Brian Kernighan"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Hierarchy" width:200
+            ├── k "K" width:200
+            └── name "Name" width:200 filter
         `);
     });
 });

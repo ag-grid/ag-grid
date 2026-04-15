@@ -12,6 +12,7 @@ import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
     DRAG_NO_MOVE_INTERACTION_CASES,
+    GridColumns,
     GridRows,
     RowDragDispatcher,
     TestGridsManager,
@@ -141,6 +142,12 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         expect(secondEvent.column.getColId()).toBe('group');
         expect(secondEvent.oldValue).toBe('A');
         expect(secondEvent.newValue).toBe('B');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── value "Value" width:200
+        `);
     });
 
     test('moving a multi-row selection updates every row that moved', async () => {
@@ -206,6 +213,13 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         expect(api.getRowNode('1')?.data.group).toBe('B');
         expect(api.getRowNode('2')?.data.group).toBe('B');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── value "Value" width:200
+        `);
     });
 
     test('multi-row drag between nested groups moves two selected row to the target group', async () => {

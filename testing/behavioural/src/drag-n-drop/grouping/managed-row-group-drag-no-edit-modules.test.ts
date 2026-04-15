@@ -12,7 +12,7 @@ import {
 import type { GridOptions } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, RowDragDispatcher, TestGridsManager } from '../../test-utils';
+import { GridColumns, GridRows, RowDragDispatcher, TestGridsManager } from '../../test-utils';
 
 describe('managed row drag without edit modules', () => {
     const gridsManager = new TestGridsManager({
@@ -86,5 +86,11 @@ describe('managed row drag without edit modules', () => {
         `);
 
         expect(api.getRowNode('2')?.data.group).toBe('B');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── value "Value" width:200
+        `);
     });
 });

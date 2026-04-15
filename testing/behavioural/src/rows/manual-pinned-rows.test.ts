@@ -2,7 +2,7 @@ import { ClientSideRowModelModule, PaginationModule, PinnedRowModule } from 'ag-
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 function assertPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>, ids: any[]): void {
     const pinnedNodes: RowNode[] = [];
@@ -93,6 +93,11 @@ describe('Manual pinned rows', () => {
         `);
 
         assertPinnedRows(api, 'top', ['t-top-0-rugby']);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── sport "Sport" width:200
+        `);
     });
 
     test('Setting `grandTotalRow` to pinned value does not reset pinned row state', async () => {
@@ -128,6 +133,11 @@ describe('Manual pinned rows', () => {
         await asyncSetTimeout(10);
 
         assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID', 't-top-0-rugby']);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── sport "Sport" width:200
+        `);
     });
 
     test('Setting `grandTotalRow` to pinned value when pagination is enabled works', async () => {
