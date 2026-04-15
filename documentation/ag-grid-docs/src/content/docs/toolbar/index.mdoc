@@ -15,6 +15,8 @@ Configure the Toolbar with the `toolbar` grid option. The property takes a list 
 const gridOptions = {
     toolbar: {
         items: [
+            { toolbarItem: 'find', alignment: 'right' },
+            'separator',
             { toolbarItem: 'quickFilter', alignment: 'right' },
             'separator',
             { toolbarItem: 'autoSizeAll', alignment: 'right' },
@@ -40,7 +42,7 @@ The following built-in items are available as string shorthands:
 -   `excelExport`: Exports grid data as Excel. Requires `ExcelExportModule`.
 -   `export`: Opens an export submenu with available export options (CSV and/or Excel). Respects `suppressCsvExport` and `suppressExcelExport` grid options.
 -   `filtersPanel`: Toggles the Filters Tool Panel in the sidebar. Requires `SideBarModule` and `FiltersToolPanelModule`. Hidden if the sidebar does not include a filters panel.
--   `find`: A text input that searches within grid cells using the Find feature. Requires `FindModule`.
+-   `find`: A text input that searches within grid cells using the Find feature. Displays the current match count and provides Previous/Next navigation buttons. Use Enter to navigate to the next match and Shift+Enter for the previous match. Requires `FindModule`.
 -   `pivotPanel`: Embeds the Pivot Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `pivotPanelShow` grid option — if both are set, both will render.
 -   `quickFilter`: A text input that filters grid rows using the Quick Filter. Requires `QuickFilterModule`.
 -   `resetColumns`: Resets all columns to their default state.

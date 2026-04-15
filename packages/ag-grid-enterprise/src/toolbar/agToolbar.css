@@ -145,3 +145,20 @@
     /* rtl:ignore */
     border-right: solid var(--ag-border-width) var(--ag-border-color);
 }
+
+.ag-toolbar-find {
+    gap: calc(var(--ag-spacing) * 0.5);
+}
+
+.ag-toolbar-find-match-count {
+    white-space: nowrap;
+    font-size: var(--ag-font-size);
+    color: var(--ag-text-color);
+    opacity: 0.7;
+    user-select: none;
+}
+
+.ag-toolbar-find-button {
+    flex-shrink: 0;
+    padding: calc(var(--ag-spacing) * 0.5);
+}

@@ -339,6 +339,8 @@ export const AG_GRID_LOCALE_BG = {
 
     // Toolbar
     toolbarFind: 'Find',
+    toolbarFindPreviousMatch: 'Previous Match',
+    toolbarFindNextMatch: 'Next Match',
     toolbarQuickFilter: 'Quick Filter',
 
     // Enterprise Menu Aggregation and Status Bar

@@ -338,6 +338,8 @@ export const AG_GRID_LOCALE_HR = {
 
     // Toolbar
     toolbarFind: 'Find',
+    toolbarFindPreviousMatch: 'Previous Match',
+    toolbarFindNextMatch: 'Next Match',
     toolbarQuickFilter: 'Quick Filter',
 
     // Enterprise Menu Aggregation and Status Bar
