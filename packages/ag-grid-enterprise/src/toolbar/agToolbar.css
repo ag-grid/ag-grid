@@ -148,6 +148,31 @@
 
 .ag-toolbar-find {
     gap: calc(var(--ag-spacing) * 0.5);
+    border: solid var(--ag-border-width) var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
+}
+
+.ag-toolbar-find:focus-within {
+    box-shadow: var(--ag-focus-shadow);
+}
+
+.ag-toolbar-find .ag-toolbar-input-field {
+    border: 0;
+    border-radius: 0;
+}
+
+.ag-toolbar-find .ag-toolbar-input-field:focus {
+    box-shadow: none;
+}
+
+:where(.ag-ltr) .ag-toolbar-find .ag-toolbar-input-field {
+    /* rtl:ignore */
+    padding-right: 0;
+}
+
+:where(.ag-rtl) .ag-toolbar-find .ag-toolbar-input-field {
+    /* rtl:ignore */
+    padding-left: 0;
 }
 
 .ag-toolbar-find-match-count {

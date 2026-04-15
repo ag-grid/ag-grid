@@ -157,4 +157,44 @@
     .ag-rtl .ag-toolbar-separator {
         border-right: solid var(--ag-border-width) var(--ag-border-color);
     }
+
+    .ag-toolbar-find {
+        gap: calc(var(--ag-spacing) * 0.5);
+        border: solid var(--ag-border-width) var(--ag-border-color);
+        border-radius: var(--ag-border-radius);
+    }
+
+    .ag-toolbar-find:focus-within {
+        box-shadow: var(--ag-focus-shadow);
+    }
+
+    .ag-toolbar-find .ag-toolbar-input-field {
+        border: 0;
+        border-radius: 0;
+    }
+
+    .ag-toolbar-find .ag-toolbar-input-field:focus {
+        box-shadow: none;
+    }
+
+    .ag-ltr .ag-toolbar-find .ag-toolbar-input-field {
+        padding-right: 0;
+    }
+
+    .ag-rtl .ag-toolbar-find .ag-toolbar-input-field {
+        padding-left: 0;
+    }
+
+    .ag-toolbar-find-match-count {
+        white-space: nowrap;
+        font-size: var(--ag-font-size);
+        color: var(--ag-text-color);
+        opacity: 0.7;
+        user-select: none;
+    }
+
+    .ag-toolbar-find-button {
+        flex-shrink: 0;
+        padding: calc(var(--ag-spacing) * 0.5);
+    }
 }
