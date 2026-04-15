@@ -369,31 +369,15 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             },
         },
         paginationPanels: {
-            validate: (options) => {
-                const panels = options.paginationPanels;
-                if (panels == null) {
-                    return null;
-                }
-                if (!Array.isArray(panels)) {
-                    return `'paginationPanels' must be an array of component names ('pageSize', 'rowSummary', 'pageSummary').`;
-                }
+            validate: ({ paginationPanels }) => {
                 const validNames = new Set(['pageSize', 'rowSummary', 'pageSummary']);
-                const seen = new Set<string>();
-                const warnings: string[] = [];
-                for (const item of panels) {
-                    if (!validNames.has(item as string)) {
-                        warnings.push(
-                            `'paginationPanels' contains an unrecognised component name: '${item}'. Valid values are 'pageSize', 'rowSummary', 'pageSummary'.`
-                        );
-                    } else if (seen.has(item as string)) {
-                        warnings.push(
-                            `'paginationPanels' contains a duplicate component name: '${item}'. The first occurrence will be used.`
-                        );
-                    } else {
-                        seen.add(item as string);
-                    }
+                if (
+                    paginationPanels != null &&
+                    (!Array.isArray(paginationPanels) || paginationPanels.some((p) => !validNames.has(p)))
+                ) {
+                    return "'paginationPanels' expects an array of panel names: 'pageSize', 'rowSummary', 'pageSummary'.";
                 }
-                return warnings.length > 0 ? warnings.join('\n') : null;
+                return null;
             },
         },
         pivotMode: {

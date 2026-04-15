@@ -1,5 +1,6 @@
 import type { IAriaAnnouncementService } from '../agStack/interfaces/iAriaAnnouncementService';
 import type { BeanCollection } from '../context/context';
+import type { PaginationPanel } from '../entities/gridOptions';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';
 import type { Component, ComponentSelector } from '../widgets/component';
@@ -9,9 +10,8 @@ import { PageSummaryComp } from './pageSummaryComp';
 import paginationCompCSS from './paginationComp.css';
 import { RowSummaryComp } from './rowSummaryComp';
 
-type PaginationPanelName = 'pageSize' | 'rowSummary' | 'pageSummary';
-const VALID_PANEL_NAMES = new Set<string>(['pageSize', 'rowSummary', 'pageSummary']);
-const DEFAULT_PANELS: readonly PaginationPanelName[] = ['pageSize', 'rowSummary', 'pageSummary'];
+const VALID_PANEL_NAMES = new Set<PaginationPanel>(['pageSize', 'rowSummary', 'pageSummary']);
+const DEFAULT_PANELS: readonly PaginationPanel[] = ['pageSize', 'rowSummary', 'pageSummary'];
 
 class PaginationComp extends TabGuardComp implements FocusableContainer {
     private ariaAnnounce: IAriaAnnouncementService;
@@ -76,12 +76,12 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         return 'pagination';
     }
 
-    private getEffectivePanels(): PaginationPanelName[] {
+    private getEffectivePanels(): PaginationPanel[] {
         const configured = this.gos.get('paginationPanels');
         const panels = configured ?? DEFAULT_PANELS;
         // Silently deduplicate and drop unrecognised names (warnings already emitted by gridOptionsValidations.ts)
         const seen = new Set<string>();
-        return panels.filter((name): name is PaginationPanelName => {
+        return panels.filter((name): name is PaginationPanel => {
             if (!VALID_PANEL_NAMES.has(name) || seen.has(name)) {
                 return false;
             }
@@ -95,7 +95,9 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     }
 
     private hasVisibleComponents(): boolean {
-        if (this.rowSummaryComp || this.pageSummaryComp) return true;
+        if (this.rowSummaryComp || this.pageSummaryComp) {
+            return true;
+        }
         return !!this.pageSizeComp && this.shouldShowPageSizeComp();
     }
 
@@ -103,7 +105,9 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         for (const panelName of this.getEffectivePanels()) {
             if (panelName === 'pageSize') {
                 // paginationPageSizeSelector is @initial — if false at init, never create the component
-                if (this.gos.get('paginationPageSizeSelector') === false) continue;
+                if (this.gos.get('paginationPageSizeSelector') === false) {
+                    continue;
+                }
                 this.pageSizeComp = this.createManagedBean(new PageSizeSelectorComp());
                 const show = this.shouldShowPageSizeComp();
                 this.pageSizeComp.toggleSelectDisplay(show);

@@ -778,6 +778,7 @@ export type {
     LocaleText,
     MasterSelectionMode,
     MultiRowSelectionOptions,
+    PaginationPanel,
     PivotColumnGroupTotals,
     PivotRowTotals,
     ProcessPivotResultColDef,

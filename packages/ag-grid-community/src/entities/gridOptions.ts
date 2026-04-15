@@ -1122,7 +1122,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `PaginationModule`
      */
-    paginationPanels?: ('pageSize' | 'rowSummary' | 'pageSummary')[];
+    paginationPanels?: PaginationPanel[];
 
     // *** Pivot and Aggregation *** //
     /**
@@ -3317,6 +3317,8 @@ export type AgPublicEventHandlerType = `on${Capitalize<AgPublicEventType>}` & ke
 
 export type ProcessPivotResultColDef<TData = any, TValue = any> = (colDef: ColDef<TData, TValue>) => void;
 export type ProcessPivotResultColGroupDef<TData = any> = (colDef: ColGroupDef<TData>) => void;
+
+export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary';
 
 export type PivotColumnGroupTotals = 'before' | 'after';
 export type PivotRowTotals = 'before' | 'after';
