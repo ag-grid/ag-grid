@@ -44,6 +44,13 @@ const ColumnChooserToolbarItem = createToolbarButton({
     defaultLabel: 'Choose Columns',
     onAction: (beans, eGui) =>
         (beans.colChooserFactory as ColumnChooserFactory | undefined)?.showColumnChooser({ eventSource: eGui }),
+    onInit: (comp, gos) => {
+        if (!gos.isModuleRegistered('ColumnMenu')) {
+            _warn(303, { itemName: 'columnChooser', moduleName: 'ColumnMenu' });
+        }
+        comp.setDisplayed(gos.isModuleRegistered('ColumnMenu'));
+    },
+    shouldDisplay: (gos) => gos.isModuleRegistered('ColumnMenu'),
 });
 
 function canShowColumnsPanel(gos: GridOptionsService): boolean {
