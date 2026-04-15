@@ -106,13 +106,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         const gridOptions: GridOptions = {
             themeStyleContainer: this.environment.eStyleContainer,
             ...params.detailGridOptions,
-            // 'legacy' mode is used as a performance optimisation here. In
-            // legacy mode the grid does not install a theme, it expects a
-            // parent element to have a theme set as a class beginning
-            // `ag-theme-`. Since we're inside a master grid, we are re-using
-            // its theme and avoiding doing work (both in JS and in the CSS
-            // engine) for each detail grid.
-            theme: 'legacy',
+            theme: masterTheme,
         };
 
         const autoHeight = gos.get('detailRowAutoHeight');

@@ -338,6 +338,7 @@ export const AG_GRID_LOCALE_DE = {
     sortAbsoluteAscending: 'Absolut aufsteigend sortieren',
     sortAbsoluteDescending: 'Absolut absteigend sortieren',
     sortUnSort: 'Sortierung aufheben',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Summe',
@@ -763,6 +764,7 @@ export const AG_GRID_LOCALE_DE = {
     ariaLabelAddFilterField: 'Filterfeld hinzufügen',
     ariaLabelFilterCardDelete: 'Filter löschen',
     ariaLabelFilterCardHasEdits: 'Hat Änderungen',
+    ariaHasNote: 'Diese Zelle hat eine Notiz.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -807,4 +809,16 @@ export const AG_GRID_LOCALE_DE = {
     timeFormatSpacesDDMMMMYYYY: 'TT MMMM JJJJ',
     timeFormatHHMMSS: 'SS:MM:SS',
     timeFormatHHMMSSAmPm: 'SS:MM:SS AM/PM',
+
+    // Notes
+    note: 'Zellnotiz',
+    addNote: 'Notiz hinzufügen',
+    viewNote: 'Notiz anzeigen',
+    editNote: 'Notiz bearbeiten',
+    deleteNote: 'Notiz entfernen',
+    notePlaceholder: 'Notiz hinzufügen...',
+    noteHint:
+        'Zum Anzeigen mit der Maus darüberfahren. Zum Bearbeiten hineinklicken. Ziehen Sie an der Ecke, um die Größe zu ändern. Drücken Sie Esc zum Schließen.',
+    noteReadOnlyHint:
+        'Schreibgeschützte Notiz. Text zum Kopieren markieren. Ziehen Sie an der Ecke, um die Größe zu ändern. Drücken Sie Esc zum Schließen.',
 };

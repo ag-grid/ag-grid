@@ -307,6 +307,10 @@
         color: var(--ag-alpine-active-color);
     }
 
+    .ag-has-cell-notes::after {
+        border-color: transparent var(--ag-alpine-active-color) transparent transparent;
+    }
+
     .ag-advanced-filter-builder-item-button-disabled,
     .ag-disabled,
     .ag-column-select-column-group-readonly,

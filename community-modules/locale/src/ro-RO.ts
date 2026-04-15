@@ -336,6 +336,7 @@ export const AG_GRID_LOCALE_RO = {
     sortAbsoluteAscending: 'Sortează în ordine ascendentă absolută',
     sortAbsoluteDescending: 'Sortează în ordine descendentă absolută',
     sortUnSort: 'Șterge Sortarea',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sumă',
@@ -760,6 +761,7 @@ export const AG_GRID_LOCALE_RO = {
     ariaLabelAddFilterField: 'Adaugă Câmp de Filtrare',
     ariaLabelFilterCardDelete: 'Șterge Filtrul',
     ariaLabelFilterCardHasEdits: 'Are Modificări',
+    ariaHasNote: 'Această celulă are o notă.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -804,4 +806,16 @@ export const AG_GRID_LOCALE_RO = {
     timeFormatSpacesDDMMMMYYYY: 'ZZ LLLL AAAA',
     timeFormatHHMMSS: 'OO:MM:SS',
     timeFormatHHMMSSAmPm: 'OO:MM:SS AM/PM',
+
+    // Notes
+    note: 'Notă celulă',
+    addNote: 'Adaugă notă',
+    viewNote: 'Vizualizează nota',
+    editNote: 'Editează nota',
+    deleteNote: 'Elimină nota',
+    notePlaceholder: 'Adaugă o notă...',
+    noteHint:
+        'Treceți cu cursorul pentru previzualizare. Faceți clic în interior pentru a edita. Trageți de colț pentru a redimensiona. Apăsați Esc pentru a închide.',
+    noteReadOnlyHint:
+        'Notă doar pentru citire. Selectați textul pentru a-l copia. Trageți de colț pentru a redimensiona. Apăsați Esc pentru a închide.',
 };

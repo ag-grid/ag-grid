@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_PK = {
     sortAbsoluteAscending: 'مکمل ابجدی ترتیب میں ترتیب دیں',
     sortAbsoluteDescending: 'مکمل اُتری ابجدی ترتیب میں ترتیب دیں',
     sortUnSort: 'ترتیب مٹائیں',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'مجموعہ',
@@ -756,6 +757,7 @@ export const AG_GRID_LOCALE_PK = {
     ariaLabelAddFilterField: 'فلٹر فیلڈ شامل کریں',
     ariaLabelFilterCardDelete: 'فلٹر حذف کریں',
     ariaLabelFilterCardHasEdits: 'ترمیم شدہ',
+    ariaHasNote: 'اس سیل میں ایک نوٹ ہے۔',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -800,4 +802,16 @@ export const AG_GRID_LOCALE_PK = {
     timeFormatSpacesDDMMMMYYYY: 'دد مممم سسسس',
     timeFormatHHMMSS: 'گگ:مم:سس',
     timeFormatHHMMSSAmPm: 'گگ:مم:سس ص/ش',
+
+    // Notes
+    note: 'سیل نوٹ',
+    addNote: 'نوٹ شامل کریں',
+    viewNote: 'نوٹ دیکھیں',
+    editNote: 'نوٹ میں ترمیم کریں',
+    deleteNote: 'نوٹ ہٹائیں',
+    notePlaceholder: 'ایک نوٹ شامل کریں...',
+    noteHint:
+        'پیش منظر دیکھنے کے لیے ماؤس اوپر لے جائیں۔ ترمیم کے لیے اندر کلک کریں۔ سائز بدلنے کے لیے کونے کو کھینچیں۔ بند کرنے کے لیے Esc دبائیں۔',
+    noteReadOnlyHint:
+        'صرف پڑھنے والا نوٹ۔ نقل کرنے کے لیے متن منتخب کریں۔ سائز بدلنے کے لیے کونے کو کھینچیں۔ بند کرنے کے لیے Esc دبائیں۔',
 };

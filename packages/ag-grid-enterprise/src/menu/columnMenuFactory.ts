@@ -34,6 +34,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             menuItems,
             column ?? null,
             null,
+            undefined,
             sourceElement,
             'columnMenu'
         );

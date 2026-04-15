@@ -50,6 +50,7 @@ export class AgInputTextArea<
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const AgInputTextAreaSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-INPUT-TEXT-AREA',
     component: AgInputTextArea,

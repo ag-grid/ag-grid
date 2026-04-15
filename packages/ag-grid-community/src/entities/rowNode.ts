@@ -139,12 +139,14 @@ export class RowNode<TData = any>
 
     /** @inheritDoc */
     public get primaryRow(): RowNode<TData> {
-        let node: RowNode = this.footer && this.sibling ? this.sibling : this;
-        const { pinnedSibling } = node;
-        if (pinnedSibling && node.rowPinned) {
-            node = pinnedSibling;
-            if (node.footer && node.sibling) {
-                node = node.sibling;
+        let node = (this.footer && this.sibling) || this;
+        if (node.rowPinned) {
+            const pinnedSibling = node.pinnedSibling;
+            if (pinnedSibling) {
+                node = pinnedSibling;
+                if (node.footer) {
+                    node = node.sibling ?? node;
+                }
             }
         }
         return node as RowNode<TData>;

@@ -333,6 +333,7 @@ export const AG_GRID_LOCALE_JP = {
     sortAbsoluteAscending: '絶対昇順に並べ替え',
     sortAbsoluteDescending: '絶対降順に並べ替え',
     sortUnSort: 'ソート解除',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '合計',
@@ -756,6 +757,7 @@ export const AG_GRID_LOCALE_JP = {
     ariaLabelAddFilterField: 'フィルターフィールドを追加',
     ariaLabelFilterCardDelete: 'フィルターを削除',
     ariaLabelFilterCardHasEdits: '編集されています',
+    ariaHasNote: 'このセルにはメモがあります。',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '、',
@@ -800,4 +802,16 @@ export const AG_GRID_LOCALE_JP = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 午前/午後',
+
+    // Notes
+    note: 'セルメモ',
+    addNote: 'メモを追加',
+    viewNote: 'メモを表示',
+    editNote: 'メモを編集',
+    deleteNote: 'メモを削除',
+    notePlaceholder: 'メモを追加...',
+    noteHint:
+        'プレビューするにはホバーします。編集するには内側をクリックします。サイズを変更するには角をドラッグします。閉じるにはEscを押します。',
+    noteReadOnlyHint:
+        '読み取り専用のメモです。コピーするにはテキストを選択してください。サイズを変更するには角をドラッグします。閉じるにはEscを押します。',
 };

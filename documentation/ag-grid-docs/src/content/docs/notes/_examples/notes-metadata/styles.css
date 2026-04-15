@@ -1,0 +1,33 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+}
+
+.example-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.example-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.example-field input {
+    padding: 0 0.25rem;
+    width: 140px;
+}
+
+.example-header {
+    flex: 1 1 320px;
+    color: var(--ag-secondary-foreground-color);
+}
+
+#myGrid {
+    flex: 1 1 0;
+}

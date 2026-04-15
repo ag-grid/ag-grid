@@ -1,0 +1,47 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+}
+
+.toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toolbar-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.toolbar-row button {
+    margin-bottom: 0 !important;
+}
+
+.toolbar-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.toolbar-field input[type='text'] {
+    padding: 0 0.25rem;
+    width: 140px;
+}
+
+#selection-status {
+    color: var(--ag-secondary-foreground-color);
+}
+
+#note-text {
+    min-height: 72px;
+    resize: vertical;
+}
+
+#myGrid {
+    flex: 1 1 0;
+}

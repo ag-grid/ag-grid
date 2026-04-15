@@ -76,6 +76,8 @@
     background-color: var(--ag-side-button-bar-background-color);
     position: relative;
     padding-top: var(--ag-side-button-bar-top-padding);
+    overflow: hidden auto;
+    scrollbar-width: thin;
 }
 
 .ag-side-button {

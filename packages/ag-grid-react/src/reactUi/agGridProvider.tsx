@@ -18,7 +18,8 @@ export interface AgGridProviderProps {
     children: React.ReactNode;
 }
 
-export const ModulesContext = React.createContext<Module[]>([]);
+/** Defaults to null (no AgGridProvider in the tree). When an AgGridProvider is present, it provides Module[] (possibly empty). */
+export const ModulesContext = React.createContext<Module[] | null>(null);
 export const LicenseContext = React.createContext<string | undefined>(undefined);
 
 /**
@@ -29,7 +30,8 @@ export const LicenseContext = React.createContext<string | undefined>(undefined)
  * This is an alternative to providing modules globally via `ModuleRegistry.registerModules()` and setting the license key via `LicenseManager.setLicenseKey()`.
  */
 export function AgGridProvider({ modules, licenseKey, children }: Readonly<AgGridProviderProps>) {
-    const parentModules = useContext(ModulesContext);
+    const parentModulesRaw = useContext(ModulesContext);
+    const parentModules = parentModulesRaw ?? [];
     const parentLicenseKey = useContext(LicenseContext);
 
     const modulesRef = useRef<Module[]>(modules);

@@ -339,6 +339,7 @@ export const AG_GRID_LOCALE_FR = {
     sortAbsoluteAscending: 'Trier par ordre croissant absolu',
     sortAbsoluteDescending: 'Trier par ordre décroissant absolu',
     sortUnSort: 'Effacer le tri',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Somme',
@@ -765,6 +766,7 @@ export const AG_GRID_LOCALE_FR = {
     ariaLabelAddFilterField: 'Ajouter un champ de filtre',
     ariaLabelFilterCardDelete: 'Supprimer le filtre',
     ariaLabelFilterCardHasEdits: 'A des modifications',
+    ariaHasNote: 'Cette cellule a une note.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -809,4 +811,16 @@ export const AG_GRID_LOCALE_FR = {
     timeFormatSpacesDDMMMMYYYY: 'JJ MMMM AAAA',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Notes
+    note: 'Note de cellule',
+    addNote: 'Ajouter une note',
+    viewNote: 'Afficher la note',
+    editNote: 'Modifier la note',
+    deleteNote: 'Supprimer la note',
+    notePlaceholder: 'Ajouter une note...',
+    noteHint:
+        "Survolez pour prévisualiser. Cliquez à l'intérieur pour modifier. Faites glisser le coin pour redimensionner. Appuyez sur Échap pour fermer.",
+    noteReadOnlyHint:
+        'Note en lecture seule. Sélectionnez le texte pour le copier. Faites glisser le coin pour redimensionner. Appuyez sur Échap pour fermer.',
 };

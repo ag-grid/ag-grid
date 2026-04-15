@@ -330,7 +330,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
 
     const autoCols = autoColSvc?.getColumns() ?? [];
     const selectionCols = selectionColSvc?.getColumns() ?? [];
-    const orderedCols = [...selectionCols, ...autoCols, ...primaryCols];
+    const orderedCols = [...selectionCols, ...autoCols, ...primaryColumns];
     const orderedColState = orderedCols.map((col) => ({ colId: col.colId }));
 
     // apply the new order when all the cols have been created & are available

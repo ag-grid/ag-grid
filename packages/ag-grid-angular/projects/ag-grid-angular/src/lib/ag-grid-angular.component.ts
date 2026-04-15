@@ -157,6 +157,7 @@ import type {
     NavigateToNextCell,
     NavigateToNextHeader,
     NewColumnsLoadedEvent,
+    NotesDataSource,
     OverlaySelectorFunc,
     OverlayType,
     PaginationChangedEvent,
@@ -1179,6 +1180,21 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `FormulaModule`
      */
     @Input() public formulaDataSource: FormulaDataSource | undefined = undefined;
+    /** Provide a data source to control where notes are stored and retrieved.
+     * Can be updated to enable, disable, or replace Notes at runtime.
+     * @agModule `NotesModule`
+     */
+    @Input() public notesDataSource: NotesDataSource | undefined = undefined;
+    /** The delay in milliseconds before a note is shown when hovering a noted cell.
+     * @default 180
+     * @agModule `NotesModule`
+     */
+    @Input() public noteShowDelay: number | undefined = undefined;
+    /** The delay in milliseconds before a note is hidden after the pointer leaves a noted cell or note popup.
+     * @default 220
+     * @agModule `NotesModule`
+     */
+    @Input() public noteHideDelay: number | undefined = undefined;
     /** A map of 'function name' to 'function' for custom functions that are used for formulas.
      * @initial
      * @agModule `FormulaModule`

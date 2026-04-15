@@ -2,6 +2,7 @@ import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
 
@@ -153,6 +154,40 @@ describe('ag-grid validation warnings', () => {
             api.updateGridOptions({ suppressLoadingOverlay: true } as GridOptions);
 
             expect(deprecationWarnings()).toHaveLength(1);
+        });
+    });
+
+    describe('module validation with mixed row model registrations', () => {
+        const mixedModulesGridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, ServerSideRowModelModule, ValidationModule],
+        });
+        let consoleErrorSpy: MockInstance;
+
+        beforeEach(() => {
+            consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+            mixedModulesGridsManager.reset();
+        });
+
+        afterEach(() => {
+            mixedModulesGridsManager.reset();
+            consoleErrorSpy.mockRestore();
+        });
+
+        test('errors when rowSelection is used on client-side grid but RowSelectionModule is not registered, even when ServerSideRowModelModule is registered', () => {
+            // Regression: ServerSideRowModelModule internally depends on SharedRowSelectionModule.
+            // Before the fix, registering SSRM caused SharedRowSelectionModule to be stored under
+            // 'all' row models, suppressing the validation error for client-side grids.
+            mixedModulesGridsManager.createGrid('myGrid', {
+                columnDefs: [],
+                rowData: [],
+                rowSelection: { mode: 'multiRow' },
+            });
+
+            expect(consoleErrorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('error #200'),
+                expect.stringContaining('RowSelectionModule'),
+                expect.any(String)
+            );
         });
     });
 

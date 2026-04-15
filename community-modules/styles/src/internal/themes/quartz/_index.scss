@@ -698,6 +698,10 @@
     .ag-pill .ag-pill-button:hover {
         color: var(--ag-active-color);
     }
+
+    .ag-has-cell-notes::after {
+        border-color: transparent var(--ag-active-color) transparent transparent;
+    }
 }
 
 .ag-theme-quartz-dark {

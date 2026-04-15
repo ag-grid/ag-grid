@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_VN = {
     sortAbsoluteAscending: 'Sắp Xếp Tăng Dần Tuyệt Đối',
     sortAbsoluteDescending: 'Sắp Xếp Giảm Dần Tuyệt Đối',
     sortUnSort: 'Xóa Sắp Xếp',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Tổng',
@@ -756,6 +757,7 @@ export const AG_GRID_LOCALE_VN = {
     ariaLabelAddFilterField: 'Thêm Trường Bộ Lọc',
     ariaLabelFilterCardDelete: 'Xóa Bộ Lọc',
     ariaLabelFilterCardHasEdits: 'Có Chỉnh Sửa',
+    ariaHasNote: 'Ô này có ghi chú.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -800,4 +802,15 @@ export const AG_GRID_LOCALE_VN = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS SA/CH',
+
+    // Notes
+    note: 'Ghi chú ô',
+    addNote: 'Thêm ghi chú',
+    viewNote: 'Xem ghi chú',
+    editNote: 'Chỉnh sửa ghi chú',
+    deleteNote: 'Xóa ghi chú',
+    notePlaceholder: 'Thêm ghi chú...',
+    noteHint:
+        'Di chuột để xem trước. Nhấp vào bên trong để chỉnh sửa. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
+    noteReadOnlyHint: 'Ghi chú chỉ đọc. Chọn văn bản để sao chép. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
 };

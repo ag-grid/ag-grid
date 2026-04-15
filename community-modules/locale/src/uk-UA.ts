@@ -335,6 +335,7 @@ export const AG_GRID_LOCALE_UA = {
     sortAbsoluteAscending: 'Сортувати за зростанням',
     sortAbsoluteDescending: 'Сортувати за спаданням',
     sortUnSort: 'Очистити Сортування',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Сума',
@@ -758,6 +759,7 @@ export const AG_GRID_LOCALE_UA = {
     ariaLabelAddFilterField: 'Додати поле фільтра',
     ariaLabelFilterCardDelete: 'Видалити фільтр',
     ariaLabelFilterCardHasEdits: 'Є зміни',
+    ariaHasNote: 'Ця комірка має нотатку.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ' ',
@@ -802,4 +804,16 @@ export const AG_GRID_LOCALE_UA = {
     timeFormatSpacesDDMMMMYYYY: 'ДД ММММ РРРР',
     timeFormatHHMMSS: 'ГГ:ХХ:СС',
     timeFormatHHMMSSAmPm: 'ГГ:ХХ:СС AM/PM',
+
+    // Notes
+    note: 'Нотатка комірки',
+    addNote: 'Додати нотатку',
+    viewNote: 'Переглянути нотатку',
+    editNote: 'Редагувати нотатку',
+    deleteNote: 'Видалити нотатку',
+    notePlaceholder: 'Додати нотатку...',
+    noteHint:
+        'Наведіть курсор для попереднього перегляду. Клацніть усередині, щоб редагувати. Перетягніть кут, щоб змінити розмір. Натисніть Esc, щоб закрити.',
+    noteReadOnlyHint:
+        'Нотатка лише для читання. Виділіть текст, щоб скопіювати. Перетягніть кут, щоб змінити розмір. Натисніть Esc, щоб закрити.',
 };

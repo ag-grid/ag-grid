@@ -335,6 +335,7 @@ export const AG_GRID_LOCALE_NO = {
     sortAbsoluteAscending: 'Sorter absolutt stigende',
     sortAbsoluteDescending: 'Sorter absolutt synkende',
     sortUnSort: 'Fjern Sortering',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
@@ -757,6 +758,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaLabelAddFilterField: 'Legg til filterfelt',
     ariaLabelFilterCardDelete: 'Slett filter',
     ariaLabelFilterCardHasEdits: 'Har endringer',
+    ariaHasNote: 'Denne cellen har et notat.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -801,4 +803,16 @@ export const AG_GRID_LOCALE_NO = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM ÅÅÅÅ',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
+
+    // Notes
+    note: 'Cellenotat',
+    addNote: 'Legg til notat',
+    viewNote: 'Vis notat',
+    editNote: 'Rediger notat',
+    deleteNote: 'Fjern notat',
+    notePlaceholder: 'Legg til et notat...',
+    noteHint:
+        'Hold markøren over for forhåndsvisning. Klikk inni for å redigere. Dra i hjørnet for å endre størrelse. Trykk Esc for å lukke.',
+    noteReadOnlyHint:
+        'Skrivebeskyttet notat. Merk teksten for å kopiere. Dra i hjørnet for å endre størrelse. Trykk Esc for å lukke.',
 };

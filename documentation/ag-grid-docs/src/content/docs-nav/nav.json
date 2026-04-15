@@ -764,6 +764,12 @@
                         },
                         {
                             "type": "item",
+                            "title": "Notes",
+                            "path": "notes",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
                             "title": "Styling Cells",
                             "path": "cell-styles"
                         },

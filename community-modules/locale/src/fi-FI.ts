@@ -337,6 +337,7 @@ export const AG_GRID_LOCALE_FI = {
     sortAbsoluteAscending: 'Lajittele ehdoton nouseva',
     sortAbsoluteDescending: 'Lajittele ehdoton laskeva',
     sortUnSort: 'Tyhjennä lajittelu',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Summa',
@@ -759,6 +760,7 @@ export const AG_GRID_LOCALE_FI = {
     ariaLabelAddFilterField: 'Lisää suodatin kenttä',
     ariaLabelFilterCardDelete: 'Poista suodatin',
     ariaLabelFilterCardHasEdits: 'On muutoksia',
+    ariaHasNote: 'Tässä solussa on muistiinpano.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ' ',
@@ -803,4 +805,16 @@ export const AG_GRID_LOCALE_FI = {
     timeFormatSpacesDDMMMMYYYY: 'PP KKKK VVVV',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
+
+    // Notes
+    note: 'Solumuistio',
+    addNote: 'Lisää muistiinpano',
+    viewNote: 'Näytä muistiinpano',
+    editNote: 'Muokkaa muistiinpanoa',
+    deleteNote: 'Poista muistiinpano',
+    notePlaceholder: 'Lisää muistiinpano...',
+    noteHint:
+        'Näytä esikatselu viemällä osoitin päälle. Muokkaa napsauttamalla sisälle. Muuta kokoa vetämällä kulmasta. Sulje painamalla Esc.',
+    noteReadOnlyHint:
+        'Vain luku -muistiinpano. Valitse teksti kopioidaksesi sen. Muuta kokoa vetämällä kulmasta. Sulje painamalla Esc.',
 };

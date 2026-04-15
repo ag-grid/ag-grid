@@ -23,11 +23,6 @@ on:
         type: boolean
         default: false
         required: true
-      run_bundle_tests:
-        description: 'Force run package tests'
-        type: boolean
-        default: false
-        required: true
       nx_command:
         type: 'choice'
         required: true
@@ -119,9 +114,12 @@ jobs:
     name: Initialise Workflow
     needs: detect-changes
     if: github.event.pull_request.draft == false && needs.detect-changes.outputs.run_full_ci == 'true'
+    permissions:
+      contents: write
     outputs:
       nx_base: ${{ steps.setup.outputs.base }}
       build_type: ${{ steps.setup.outputs.type }}
+      snapshot_branch: ${{ steps.snapshot-prepare.outputs.branch }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -140,6 +138,10 @@ jobs:
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: 'rw'
+
+      - name: Prepare Snapshot Branch
+        uses: ./.github/actions/snapshot-prepare
+        id: snapshot-prepare
 
   calc_matrix:
     name: Calculate Github Matrix
@@ -176,18 +178,18 @@ jobs:
         id: matrix
         run: |
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            count=10
+          count=10
           else
             count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
           fi
-          
+
           matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
           echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
           echo "test_count=${count}" >> $GITHUB_OUTPUT
           echo "Test matrix determined to be: ${matrix} (test_count=${count})"
           
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            e2e_count=10
+          e2e_count=10
           else
             e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
           fi
@@ -407,36 +409,46 @@ jobs:
           path: |
             reports/
 
-  # Uncomment to add package tests back in
-  # fw_pkg_test:
-  #   runs-on: ubuntu-24.04
-  #   name: Framework Package Tests (${{ matrix.framework }})
-  #   needs: calc_matrix
-  #   strategy:
-  #     fail-fast: false
-  #     matrix: ${{ fromJson(needs.calc_matrix.outputs.test_pkg_matrix )}}
-  #   if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release') || inputs.run_package_tests
-  #   env:
-  #     NX_BASE: ${{ needs.init.outputs.nx_base }}
-  #   steps:
-  #     - name: Checkout
-  #       id: checkout
-  #       if: matrix.framework != 'none'
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 1
+  fw_pkg_test:
+    runs-on: ubuntu-24.04
+    name: Framework Package Tests (${{ matrix.framework }})
+    permissions:
+      contents: write
+    needs: [calc_matrix, init]
+    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release') || inputs.run_package_tests
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_pkg_matrix )}}
+    env:
+      NX_BASE: ${{ needs.init.outputs.nx_base }}
+    steps:
+      - name: Checkout
+        id: checkout
+        if: matrix.framework != 'none'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-  #     - name: Setup
-  #       id: setup
-  #       if: matrix.framework != 'none'
-  #       uses: ./.github/actions/setup-nx
-  #       with:
-  #         cache_mode: ro
+      - name: Setup
+        id: setup
+        if: matrix.framework != 'none'
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
 
-  #     - name: nx package:test
-  #       id: package-test
-  #       if: matrix.framework != 'none'
-  #       run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
+      - name: nx package:test
+        id: package-test
+        if: matrix.framework != 'none'
+        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
+
+      - name: Snapshot Branch
+        if: matrix.framework != 'none'
+        uses: ./.github/actions/snapshot-branch
+        with:
+          path: testing/*-package-tests/e2e/*-snapshots/
+          source_branch: ${{ github.head_ref || 'latest' }}
+          branch: ${{ needs.init.outputs.snapshot_branch }}
+          type: ${{ matrix.framework }}-package-tests:test:package
 
   report:
     runs-on: ubuntu-24.04

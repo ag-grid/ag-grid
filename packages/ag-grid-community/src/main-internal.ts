@@ -73,6 +73,12 @@ export type {
 export type { ITooltipFeature as _ITooltipFeature, TooltipCtrl as _TooltipCtrl } from './agStack/interfaces/iTooltip';
 export { AgPopupComponent } from './agStack/popup/agPopupComponent';
 export { BasePopupService as _BasePopupService } from './agStack/popup/basePopupService';
+export {
+    computeAlignedPosition as _computeAlignedPosition,
+    findBestPlacement as _findBestPlacement,
+    toRelativeRect as _toRelativeRect,
+} from './agStack/popup/popupPositionUtils';
+export type { Alignment as _Alignment, Anchor as _Anchor } from './agStack/popup/popupPositionUtils';
 export { AgPositionableFeature as _AgPositionableFeature } from './agStack/rendering/agPositionableFeature';
 export type {
     PositionableOptions,
@@ -198,6 +204,7 @@ export type {
     _GridChartsGridApi,
     _InfiniteRowModelGridApi,
     _MasterDetailGridApi,
+    _NotesGridApi,
     _PinnedRowGridApi,
     _PivotGridApi,
     _RowGroupingGridApi,
@@ -205,6 +212,7 @@ export type {
     _SideBarGridApi,
     _StatusBarGridApi,
 } from './api/gridApi';
+export type { INoteAccess, INotesFeature, INotesDataService, INotesService } from './interfaces/notes';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';
@@ -482,7 +490,7 @@ export {
     _suppressCellMouseEvent,
 } from './rendering/renderUtils';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
-export type { IRowComp, RowCtrl } from './rendering/row/rowCtrl';
+export type { IRowComp, RowCtrl, RowGui } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
 export { BaseSelectionService } from './selection/baseSelectionService';
 export type { RowRangeSelectionContext } from './selection/rowRangeSelectionContext';
@@ -552,7 +560,7 @@ export type {
 export { AgInputDateField } from './agStack/widgets/agInputDateField';
 export { AgInputNumberField, AgInputNumberFieldSelector } from './agStack/widgets/agInputNumberField';
 export type { AgInputNumberFieldParams } from './agStack/widgets/agInputNumberField';
-export { AgInputTextArea } from './agStack/widgets/agInputTextArea';
+export { AgInputTextArea, AgInputTextAreaSelector } from './agStack/widgets/agInputTextArea';
 export { AgInputTextField, AgInputTextFieldSelector } from './agStack/widgets/agInputTextField';
 export type { AgInputTextFieldParams } from './agStack/widgets/agInputTextField';
 export type { ListOption } from './agStack/widgets/agList';
