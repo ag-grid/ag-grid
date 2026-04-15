@@ -37,13 +37,15 @@ ModuleRegistry.registerModules([ ${moduleList} ]);`;
 };
 
 export const NoModulesRegisteredError = (usesAgGridProvider?: boolean) => {
+    // For React users without AgGridProvider (false), guide them toward AgGridProvider
+    const showAgGridProvider = usesAgGridProvider !== undefined;
     const imports = [
-        `import { ${usesAgGridProvider ? '' : 'ModuleRegistry, '}AllCommunityModule } from 'ag-grid-community';`,
+        `import { ${showAgGridProvider ? '' : 'ModuleRegistry, '}AllCommunityModule } from 'ag-grid-community';`,
     ];
 
     return `No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:
 
-${moduleRegistrationSnippet(imports, 'AllCommunityModule', usesAgGridProvider)}
+${moduleRegistrationSnippet(imports, 'AllCommunityModule', showAgGridProvider)}
 `;
 };
 
