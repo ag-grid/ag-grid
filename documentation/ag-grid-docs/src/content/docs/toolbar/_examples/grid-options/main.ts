@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, Toolbar } from 'ag-grid-community';
+import type { GridApi, GridOptions, MenuItemDef, Toolbar } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnAutoSizeModule,
@@ -37,6 +37,11 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
+const exportMenuItems: MenuItemDef[] = [
+    { name: 'CSV Export', action: (params) => params.api.exportDataAsCsv() },
+    { name: 'Excel Export', action: (params) => params.api.exportDataAsExcel() },
+];
+
 const fullToolbar: Toolbar = {
     items: [
         { toolbarItem: 'quickFilter', alignment: 'right' },
@@ -47,8 +52,11 @@ const fullToolbar: Toolbar = {
         { toolbarItem: 'columnsPanel', alignment: 'right' },
         { toolbarItem: 'filtersPanel', alignment: 'right' },
         'separator',
-        { toolbarItem: 'csvExport', alignment: 'right' },
-        { toolbarItem: 'excelExport', alignment: 'right' },
+        {
+            toolbarItem: 'menu',
+            alignment: 'right',
+            toolbarItemParams: { label: 'Export', icon: 'save', menuItems: exportMenuItems },
+        },
         'separator',
         { toolbarItem: 'resetColumns', alignment: 'right' },
     ],
@@ -62,7 +70,11 @@ const compactToolbar: Toolbar = {
         { toolbarItem: 'columnsPanel', alignment: 'right' },
         { toolbarItem: 'filtersPanel', alignment: 'right' },
         'separator',
-        { toolbarItem: 'export', alignment: 'right' },
+        {
+            toolbarItem: 'menu',
+            alignment: 'right',
+            toolbarItemParams: { label: 'Export', icon: 'save', menuItems: exportMenuItems },
+        },
         'separator',
         { toolbarItem: 'resetColumns', alignment: 'right' },
     ],
@@ -73,7 +85,11 @@ const minimalToolbar: Toolbar = {
         { toolbarItem: 'autoSizeAll', alignment: 'right' },
         { toolbarItem: 'resetColumns', alignment: 'right' },
         'separator',
-        { toolbarItem: 'export', alignment: 'right' },
+        {
+            toolbarItem: 'menu',
+            alignment: 'right',
+            toolbarItemParams: { label: 'Export', icon: 'save', menuItems: exportMenuItems },
+        },
     ],
 };
 

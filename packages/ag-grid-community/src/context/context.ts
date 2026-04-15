@@ -174,12 +174,12 @@ export type ToolbarItemComponentName =
     | 'agColumnsPanelToolbarItem'
     | 'agCsvExportToolbarItem'
     | 'agExcelExportToolbarItem'
-    | 'agExportToolbarItem'
     | 'agFiltersPanelToolbarItem'
     | 'agFindToolbarItem'
     | 'agPivotPanelToolbarItem'
     | 'agQuickFilterToolbarItem'
     | 'agResetColumnsToolbarItem'
+    | 'agMenuToolbarItem'
     | 'agRowGroupPanelToolbarItem';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

@@ -21,7 +21,18 @@ const gridOptions = {
             'separator',
             { toolbarItem: 'autoSizeAll', alignment: 'right' },
             'separator',
-            { toolbarItem: 'export', alignment: 'right' },
+            {
+                toolbarItem: 'menu',
+                alignment: 'right',
+                toolbarItemParams: {
+                    label: 'Export',
+                    icon: 'save',
+                    menuItems: [
+                        { name: 'CSV Export', action: (params) => params.api.exportDataAsCsv() },
+                        { name: 'Excel Export', action: (params) => params.api.exportDataAsExcel() },
+                    ],
+                },
+            },
             'separator',
             { toolbarItem: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
         ]
@@ -40,9 +51,9 @@ The following built-in items are available as string shorthands:
 -   `columnsPanel`: Toggles the Columns Tool Panel in the sidebar. Requires `SideBarModule` and `ColumnsToolPanelModule`. Hidden if the sidebar does not include a columns panel.
 -   `csvExport`: Exports grid data as CSV. Requires `CsvExportModule`.
 -   `excelExport`: Exports grid data as Excel. Requires `ExcelExportModule`.
--   `export`: Opens an export submenu with available export options (CSV and/or Excel). Respects `suppressCsvExport` and `suppressExcelExport` grid options.
 -   `filtersPanel`: Toggles the Filters Tool Panel in the sidebar. Requires `SideBarModule` and `FiltersToolPanelModule`. Hidden if the sidebar does not include a filters panel.
 -   `find`: A text input that searches within grid cells using the Find feature. Displays the current match count and provides Previous/Next navigation buttons. Use Enter to navigate to the next match and Shift+Enter for the previous match. Requires `FindModule`.
+-   `menu`: A dropdown menu button with custom items. Requires `toolbarItemParams` with a `menuItems` array of `MenuItemDef`. Optionally set `label` (defaults to `'Menu'`) and `icon` (defaults to `'menu'`).
 -   `pivotPanel`: Embeds the Pivot Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `pivotPanelShow` grid option — if both are set, both will render.
 -   `quickFilter`: A text input that filters grid rows using the Quick Filter. Requires `QuickFilterModule`.
 -   `resetColumns`: Resets all columns to their default state.
@@ -91,6 +102,42 @@ const gridOptions = {
             { toolbarItem: 'csvExport', display: 'icon' }
         ]
     }
+}
+```
+
+### Menu Items
+
+The `menu` toolbar item renders a dropdown button that shows a list of custom menu items when clicked. Menu items use the same `MenuItemDef` interface as the [Context Menu](/context-menu/).
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: [
+            {
+                toolbarItem: 'menu',
+                alignment: 'right',
+                toolbarItemParams: {
+                    label: 'Actions',
+                    icon: 'menu',
+                    menuItems: [
+                        {
+                            name: 'Alert',
+                            icon: '<span class="ag-icon ag-icon-info"></span>',
+                            action: () => window.alert('Hello!'),
+                        },
+                        'separator',
+                        {
+                            name: 'Export',
+                            subMenu: [
+                                { name: 'CSV Export', action: (params) => params.api.exportDataAsCsv() },
+                                { name: 'Excel Export', action: (params) => params.api.exportDataAsExcel() },
+                            ],
+                        },
+                    ],
+                },
+            },
+        ],
+    },
 }
 ```
 

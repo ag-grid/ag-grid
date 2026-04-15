@@ -6,8 +6,8 @@ import type { ColumnChooserFactory } from '../menu/columnChooserFactory';
 import { VERSION } from '../version';
 import { AgToolbarSelector } from './agToolbar';
 import { createToolbarButton } from './providedItems/createToolbarButton';
-import { ExportToolbarItem } from './providedItems/exportToolbarItem';
 import { FindToolbarItem } from './providedItems/findToolbarItem';
+import { MenuToolbarItem } from './providedItems/menuToolbarItem';
 import { PivotPanelToolbarItem } from './providedItems/pivotPanelToolbarItem';
 import { QuickFilterToolbarItem } from './providedItems/quickFilterToolbarItem';
 import { RowGroupPanelToolbarItem } from './providedItems/rowGroupPanelToolbarItem';
@@ -71,6 +71,12 @@ const CsvExportToolbarItem = createToolbarButton({
     localeKey: 'csvExport',
     defaultLabel: 'CSV Export',
     onAction: (beans) => beans.gridApi.exportDataAsCsv(),
+    onInit: (comp, gos) => {
+        if (!gos.isModuleRegistered('CsvExport')) {
+            _warn(303, { itemName: 'csvExport', moduleName: 'CsvExport' });
+            comp.setDisplayed(false);
+        }
+    },
 });
 
 const ExcelExportToolbarItem = createToolbarButton({
@@ -78,6 +84,12 @@ const ExcelExportToolbarItem = createToolbarButton({
     localeKey: 'excelExport',
     defaultLabel: 'Excel Export',
     onAction: (beans) => beans.gridApi.exportDataAsExcel(),
+    onInit: (comp, gos) => {
+        if (!gos.isModuleRegistered('ExcelExport')) {
+            _warn(303, { itemName: 'excelExport', moduleName: 'ExcelExport' });
+            comp.setDisplayed(false);
+        }
+    },
 });
 
 const FiltersPanelToolbarItem = createToolbarButton({
@@ -124,8 +136,8 @@ export const ToolbarModule: _ModuleWithoutApi = {
         agColumnsPanelToolbarItem: ColumnsPanelToolbarItem,
         agCsvExportToolbarItem: CsvExportToolbarItem,
         agExcelExportToolbarItem: ExcelExportToolbarItem,
-        agExportToolbarItem: ExportToolbarItem,
         agFiltersPanelToolbarItem: FiltersPanelToolbarItem,
+        agMenuToolbarItem: MenuToolbarItem,
         agFindToolbarItem: FindToolbarItem,
         agPivotPanelToolbarItem: PivotPanelToolbarItem,
         agQuickFilterToolbarItem: QuickFilterToolbarItem,

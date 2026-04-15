@@ -25,6 +25,7 @@ describe('Toolbar Built-in Items', () => {
             ColumnsToolPanelModule,
             FiltersToolPanelModule,
             FindModule,
+            PivotModule,
             QuickFilterModule,
             RowGroupingModule,
             RowGroupingPanelModule,
@@ -100,13 +101,22 @@ describe('Toolbar Built-in Items', () => {
         });
     });
 
-    describe('export', () => {
-        test('renders button with correct label and title', async () => {
-            const api = gridMgr.createGrid('export-render', {
+    describe('menu', () => {
+        test('renders button with custom label and title', async () => {
+            const api = gridMgr.createGrid('menu-render', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
                 toolbar: {
-                    items: ['export'],
+                    items: [
+                        {
+                            toolbarItem: 'menu',
+                            toolbarItemParams: {
+                                label: 'Export',
+                                icon: 'save',
+                                menuItems: [{ name: 'CSV Export' }, { name: 'Excel Export' }],
+                            },
+                        },
+                    ],
                 },
             });
 
@@ -118,24 +128,32 @@ describe('Toolbar Built-in Items', () => {
             expect(button!.getAttribute('aria-label')).toBe('Export');
         });
 
-        test('opens popup menu with export options when clicked', async () => {
-            const api = gridMgr.createGrid('export-menu', {
+        test('opens popup menu with custom items when clicked', async () => {
+            const api = gridMgr.createGrid('menu-click', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
                 toolbar: {
-                    items: ['export'],
+                    items: [
+                        {
+                            toolbarItem: 'menu',
+                            toolbarItemParams: {
+                                label: 'Actions',
+                                menuItems: [{ name: 'Action A' }, { name: 'Action B' }],
+                            },
+                        },
+                    ],
                 },
             });
 
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Export')!;
+            const button = getToolbarButton(gridDiv, 'Actions')!;
             button.click();
 
             const popupParent = gridDiv.querySelector('.ag-popup');
             const menuItems = popupParent?.querySelectorAll('.ag-menu-option') ?? [];
-            expect(menuItems.length).toBeGreaterThanOrEqual(1);
+            expect(menuItems).toHaveLength(2);
         });
     });
 
@@ -504,6 +522,166 @@ describe('Toolbar Built-in Items', () => {
         });
     });
 
+    describe('console warnings for missing feature modules', () => {
+        const minimalGridMgr = new TestGridsManager({
+            modules: [ClientSideRowModelModule, ToolbarModule],
+        });
+
+        afterEach(() => {
+            minimalGridMgr.reset();
+        });
+
+        test('hides csvExport and logs warning when CsvExportModule is not registered', async () => {
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const api = minimalGridMgr.createGrid('csv-export-no-module', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['csvExport'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const button = gridDiv.querySelector<HTMLElement>('.ag-toolbar-button[title="CSV Export"]');
+            expect(button).not.toBeNull();
+            expect(button!.style.display).toBe('none');
+
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #303'),
+                expect.stringContaining('csvExport'),
+                expect.anything()
+            );
+
+            warnSpy.mockRestore();
+        });
+
+        test('hides excelExport and logs warning when ExcelExportModule is not registered', async () => {
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const api = minimalGridMgr.createGrid('excel-export-no-module', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['excelExport'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const button = gridDiv.querySelector<HTMLElement>('.ag-toolbar-button[title="Excel Export"]');
+            expect(button).not.toBeNull();
+            expect(button!.style.display).toBe('none');
+
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #303'),
+                expect.stringContaining('excelExport'),
+                expect.anything()
+            );
+
+            warnSpy.mockRestore();
+        });
+
+        test('hides quickFilter and logs warning when QuickFilterModule is not registered', async () => {
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const api = minimalGridMgr.createGrid('quick-filter-no-module', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['quickFilter'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const item = gridDiv.querySelector<HTMLElement>('.ag-toolbar-input');
+            expect(item).not.toBeNull();
+            expect(item!.style.display).toBe('none');
+
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #303'),
+                expect.stringContaining('quickFilter'),
+                expect.anything()
+            );
+
+            warnSpy.mockRestore();
+        });
+
+        test('hides find and logs warning when FindModule is not registered', async () => {
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const api = minimalGridMgr.createGrid('find-no-module', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['find'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const item = gridDiv.querySelector<HTMLElement>('.ag-toolbar-find');
+            expect(item).not.toBeNull();
+            expect(item!.style.display).toBe('none');
+
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #303'),
+                expect.stringContaining('find'),
+                expect.anything()
+            );
+
+            warnSpy.mockRestore();
+        });
+
+        test('hides rowGroupPanel and logs warning when RowGroupingModule is not registered', async () => {
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const api = minimalGridMgr.createGrid('row-group-panel-no-module', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['rowGroupPanel'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const item = gridDiv.querySelector<HTMLElement>('.ag-toolbar-panel');
+            expect(item).not.toBeNull();
+            expect(item!.style.display).toBe('none');
+
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #303'),
+                expect.stringContaining('rowGroupPanel'),
+                expect.anything()
+            );
+
+            warnSpy.mockRestore();
+        });
+
+        test('hides pivotPanel and logs warning when PivotModule is not registered', async () => {
+            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const api = minimalGridMgr.createGrid('pivot-panel-no-module', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['pivotPanel'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const item = gridDiv.querySelector<HTMLElement>('.ag-toolbar-panel');
+            expect(item).not.toBeNull();
+            expect(item!.style.display).toBe('none');
+
+            expect(warnSpy).toHaveBeenCalledWith(
+                expect.stringContaining('warning #303'),
+                expect.stringContaining('pivotPanel'),
+                expect.anything()
+            );
+
+            warnSpy.mockRestore();
+        });
+    });
+
     describe('rowGroupPanelShow/pivotPanelShow integration', () => {
         const integrationGridMgr = new TestGridsManager({
             modules: [
@@ -572,7 +750,7 @@ describe('Toolbar Built-in Items', () => {
                         { toolbarItem: 'filtersPanel', alignment: 'right' },
                         { toolbarItem: 'autoSizeAll', alignment: 'right' },
                         'separator',
-                        { toolbarItem: 'export', alignment: 'right' },
+                        { toolbarItem: 'csvExport', alignment: 'right' },
                         'separator',
                         { toolbarItem: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
                     ],
