@@ -99,15 +99,8 @@ export class AgMenuItemRenderer<
             if (_isNodeOrElement(icon)) {
                 iconWrapper.appendChild(icon);
             } else if (typeof icon === 'string') {
-                if (icon.trimStart().charAt(0) === '<') {
-                    // eslint-disable-next-line no-restricted-properties -- no other way to parse custom HTML strings from the user
-                    iconWrapper.innerHTML = icon;
-                } else {
-                    const iconEl = this.beans.iconSvc.createIconNoSpan(icon as any);
-                    if (iconEl) {
-                        iconWrapper.appendChild(iconEl);
-                    }
-                }
+                // eslint-disable-next-line no-restricted-properties -- no other way to parse custom HTML strings from the user
+                iconWrapper.innerHTML = icon;
             } else {
                 this.callbacks?.warnNoIcon?.();
             }

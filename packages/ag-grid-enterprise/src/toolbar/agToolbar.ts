@@ -188,7 +188,7 @@ class AgToolbar extends Component implements FocusableContainer {
             .map((item) => normaliseItem(item, nextKey))
             .filter((item) => {
                 const key = item.key ?? item.toolbarItem;
-                if (key === 'separator') {
+                if (item.toolbarItem === 'separator') {
                     return true;
                 }
                 if (seen.has(key)) {
@@ -223,7 +223,7 @@ class AgToolbar extends Component implements FocusableContainer {
             // Separators inherit the alignment of the preceding item, unless explicitly set
             let lastAlignment: 'left' | 'right' = 'left';
             for (const item of items) {
-                const isSeparator = item.key === 'separator';
+                const isSeparator = item.toolbarItem === 'separator';
                 const alignment: 'left' | 'right' = item.alignment ?? (isSeparator ? lastAlignment : 'left');
                 (alignment === 'right' ? rightItems : leftItems).push(item);
                 if (!isSeparator) {
@@ -315,7 +315,7 @@ class AgToolbar extends Component implements FocusableContainer {
         }
 
         for (const itemConfig of toolbarItems) {
-            if (itemConfig.key === 'separator') {
+            if (itemConfig.toolbarItem === 'separator') {
                 eContainer.appendChild(this.createSeparator());
                 continue;
             }
