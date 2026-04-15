@@ -381,14 +381,44 @@ class AgToolbar extends Component implements FocusableContainer {
                 gui.style.display = comp.isDisplayed() ? '' : 'none';
                 this.addManagedListeners(comp, {
                     displayChanged: () => {
-                        gui.style.display = comp.isDisplayed() ? '' : 'none';
+                        const visible = comp.isDisplayed();
+                        gui.style.display = visible ? '' : 'none';
+                        this.reassignRightStartAnchor(gui, visible);
                     },
                 });
+                if (!comp.isDisplayed()) {
+                    this.reassignRightStartAnchor(gui, false);
+                }
             }
             this.compDestroyFunctions.set(key, destroyFunc);
         } else {
             _removeFromParent(placeholder);
             destroyFunc();
+        }
+    }
+
+    /** Move the right-start anchor to the first visible right-aligned item */
+    private reassignRightStartAnchor(gui: HTMLElement, nowVisible: boolean): void {
+        const cls = 'ag-toolbar-right-start';
+        if (!nowVisible && gui.classList.contains(cls)) {
+            gui.classList.remove(cls);
+            let next = gui.nextElementSibling as HTMLElement | null;
+            while (next) {
+                if (next.style.display !== 'none') {
+                    next.classList.add(cls);
+                    return;
+                }
+                next = next.nextElementSibling as HTMLElement | null;
+            }
+        } else if (nowVisible && !gui.classList.contains(cls)) {
+            let prev = gui.previousElementSibling as HTMLElement | null;
+            while (prev) {
+                if (prev.classList.contains(cls)) {
+                    return; // another visible item already anchors
+                }
+                prev = prev.previousElementSibling as HTMLElement | null;
+            }
+            gui.classList.add(cls);
         }
     }
 }
