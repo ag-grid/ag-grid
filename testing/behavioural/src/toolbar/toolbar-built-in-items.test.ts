@@ -54,9 +54,9 @@ describe('Toolbar Built-in Items', () => {
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Auto Size All');
+            const button = getToolbarButton(gridDiv, 'Autosize All Columns');
             expect(button).not.toBeNull();
-            expect(button!.getAttribute('aria-label')).toBe('Auto Size All');
+            expect(button!.getAttribute('aria-label')).toBe('Autosize All Columns');
         });
 
         test('calls autoSizeAllColumns when clicked', async () => {
@@ -73,7 +73,7 @@ describe('Toolbar Built-in Items', () => {
             const spy = vitest.spyOn(api, 'autoSizeAllColumns');
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Auto Size All')!;
+            const button = getToolbarButton(gridDiv, 'Autosize All Columns')!;
             button.click();
 
             expect(spy).toHaveBeenCalledTimes(1);
@@ -93,8 +93,8 @@ describe('Toolbar Built-in Items', () => {
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const leftContainer = gridDiv.querySelector('.ag-toolbar-left')!;
-            const separators = leftContainer.querySelectorAll('.ag-toolbar-separator');
+            const toolbar = gridDiv.querySelector('.ag-toolbar')!;
+            const separators = toolbar.querySelectorAll('.ag-toolbar-separator');
             expect(separators).toHaveLength(1);
             expect(separators[0].getAttribute('role')).toBe('separator');
         });
@@ -191,7 +191,7 @@ describe('Toolbar Built-in Items', () => {
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const toolbarLeft = gridDiv.querySelector('.ag-toolbar-left')!;
+            const toolbarLeft = gridDiv.querySelector('.ag-toolbar')!;
             const dropZone = toolbarLeft.querySelector('.ag-column-drop');
             expect(dropZone).not.toBeNull();
         });
@@ -209,7 +209,7 @@ describe('Toolbar Built-in Items', () => {
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const toolbarLeft = gridDiv.querySelector('.ag-toolbar-left')!;
+            const toolbarLeft = gridDiv.querySelector('.ag-toolbar')!;
             const dropZone = toolbarLeft.querySelector('.ag-column-drop');
             expect(dropZone).not.toBeNull();
         });
@@ -228,7 +228,7 @@ describe('Toolbar Built-in Items', () => {
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const toolbarLeft = gridDiv.querySelector('.ag-toolbar-left')!;
+            const toolbarLeft = gridDiv.querySelector('.ag-toolbar')!;
             const dropZone = toolbarLeft.querySelector('.ag-column-drop');
             expect(dropZone).not.toBeNull();
         });
@@ -246,7 +246,7 @@ describe('Toolbar Built-in Items', () => {
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const toolbarLeft = gridDiv.querySelector('.ag-toolbar-left')!;
+            const toolbarLeft = gridDiv.querySelector('.ag-toolbar')!;
             const dropZone = toolbarLeft.querySelector('.ag-column-drop');
             expect(dropZone).not.toBeNull();
         });
@@ -362,7 +362,8 @@ describe('Toolbar Built-in Items', () => {
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
             const button = getToolbarButton(gridDiv, 'Columns');
-            expect(button).toBeNull();
+            expect(button).not.toBeNull();
+            expect(button!.style.display).toBe('none');
         });
 
         test('toggles columns tool panel on click', async () => {
@@ -420,7 +421,8 @@ describe('Toolbar Built-in Items', () => {
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
             const button = getToolbarButton(gridDiv, 'Filters');
-            expect(button).toBeNull();
+            expect(button).not.toBeNull();
+            expect(button!.style.display).toBe('none');
         });
 
         test('toggles filters tool panel on click', async () => {
@@ -461,8 +463,9 @@ describe('Toolbar Built-in Items', () => {
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = gridDiv.querySelector('.ag-toolbar-button[title="Columns"]');
-            expect(button).toBeNull();
+            const button = gridDiv.querySelector<HTMLElement>('.ag-toolbar-button[title="Columns"]');
+            expect(button).not.toBeNull();
+            expect(button!.style.display).toBe('none');
 
             expect(warnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #299'),
@@ -487,8 +490,9 @@ describe('Toolbar Built-in Items', () => {
             await waitForEvent('firstDataRendered', api);
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = gridDiv.querySelector('.ag-toolbar-button[title="Filters"]');
-            expect(button).toBeNull();
+            const button = gridDiv.querySelector<HTMLElement>('.ag-toolbar-button[title="Filters"]');
+            expect(button).not.toBeNull();
+            expect(button!.style.display).toBe('none');
 
             expect(warnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #300'),

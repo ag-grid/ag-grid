@@ -109,10 +109,17 @@ function setToolbar(toolbar: Toolbar) {
     gridApi.setGridOption('toolbar', toolbar);
 }
 
-// Invoked from buttons in index.html
-(window as any).setFullToolbar = () => setToolbar(fullToolbar);
-(window as any).setCompactToolbar = () => setToolbar(compactToolbar);
-(window as any).setMinimalToolbar = () => setToolbar(minimalToolbar);
+function setFullToolbar() {
+    setToolbar(fullToolbar);
+}
+
+function setCompactToolbar() {
+    setToolbar(compactToolbar);
+}
+
+function setMinimalToolbar() {
+    setToolbar(minimalToolbar);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

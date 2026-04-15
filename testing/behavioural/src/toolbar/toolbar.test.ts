@@ -53,8 +53,8 @@ describe('Toolbar', () => {
         await waitForEvent('firstDataRendered', api);
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
-        expect(gridDiv.querySelector('.ag-toolbar-left')).not.toBeNull();
-        expect(gridDiv.querySelector('.ag-toolbar-right')).not.toBeNull();
+        const toolbar = gridDiv.querySelector('.ag-toolbar');
+        expect(toolbar).not.toBeNull();
     });
 
     test('toolbar is positioned above header drop zones', async () => {
