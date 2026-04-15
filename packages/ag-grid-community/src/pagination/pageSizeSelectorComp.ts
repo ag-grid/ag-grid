@@ -1,15 +1,15 @@
-import { _areEqual } from '../../agStack/utils/array';
-import { _clearElement } from '../../agStack/utils/dom';
-import type { ListOption } from '../../agStack/widgets/agList';
-import { AgSelect } from '../../agStack/widgets/agSelect';
-import type { BeanCollection } from '../../context/context';
-import type { PaginationChangedEvent } from '../../events';
-import type { WithoutGridCommon } from '../../interfaces/iCommon';
-import type { ElementParams } from '../../utils/element';
-import { _warn } from '../../validation/logging';
-import { Component } from '../../widgets/component';
-import type { GridSelect } from '../../widgets/gridWidgetTypes';
-import type { PaginationService } from '../paginationService';
+import { _areEqual } from '../agStack/utils/array';
+import { _clearElement } from '../agStack/utils/dom';
+import type { ListOption } from '../agStack/widgets/agList';
+import { AgSelect } from '../agStack/widgets/agSelect';
+import type { BeanCollection } from '../context/context';
+import type { PaginationChangedEvent } from '../events';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ElementParams } from '../utils/element';
+import { _warn } from '../validation/logging';
+import { Component } from '../widgets/component';
+import type { GridSelect } from '../widgets/gridWidgetTypes';
+import type { PaginationService } from './paginationService';
 
 const paginationPageSizeSelector = 'paginationPageSizeSelector';
 const PageSizeSelectorCompElement: ElementParams = { tag: 'span', cls: 'ag-paging-page-size' };
@@ -126,6 +126,12 @@ export class PageSizeSelectorComp extends Component {
             !this.gos.get('paginationAutoPageSize') &&
             this.gos.get(paginationPageSizeSelector) !== false
         );
+    }
+
+    public updateVisibility(): void {
+        const show = this.shouldShowPageSizeSelector();
+        this.toggleSelectDisplay(show);
+        this.setDisplayed(show);
     }
 
     private reloadPageSizesSelector(): void {

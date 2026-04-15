@@ -256,45 +256,182 @@ describe('paginationPanels', () => {
     });
 
     describe('runtime option changes', () => {
-        test('page size selector appears when paginationAutoPageSize changes from true to false', () => {
-            const api = createPaginationGrid(gridsManager, {
-                paginationAutoPageSize: true,
-                paginationPanels: ['pageSize', 'pageSummary'],
+        describe('pagination', () => {
+            test('panel hides when pagination changes from true to false', () => {
+                const api = createPaginationGrid(gridsManager);
+                const panel = getPagingPanel(api)!;
+                expect(panel).not.toHaveClass('ag-hidden');
+
+                api.setGridOption('pagination', false);
+
+                expect(panel).toHaveClass('ag-hidden');
             });
-            const panel = getPagingPanel(api)!;
-            expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
 
-            api.setGridOption('paginationAutoPageSize', false);
+            test('panel shows when pagination changes from false to true', () => {
+                const api = createPaginationGrid(gridsManager, { pagination: false });
+                const panel = getPagingPanel(api)!;
+                expect(panel).toHaveClass('ag-hidden');
 
-            expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
+                api.setGridOption('pagination', true);
+
+                expect(panel).not.toHaveClass('ag-hidden');
+            });
+
+            test('row summary updates after pagination is re-enabled', () => {
+                const api = createPaginationGrid(gridsManager);
+                const panel = getPagingPanel(api)!;
+
+                api.setGridOption('pagination', false);
+                api.setGridOption('pagination', true);
+
+                const numbers = panel.querySelectorAll('.ag-paging-row-summary-panel-number');
+                expect(numbers[0].textContent).toBe('1');
+                expect(numbers[2].textContent).toBe('50');
+            });
+
+            test('page navigation works after pagination is re-enabled', () => {
+                const api = createPaginationGrid(gridsManager);
+                const panel = getPagingPanel(api)!;
+
+                api.setGridOption('pagination', false);
+                api.setGridOption('pagination', true);
+
+                const nextBtn = panel.querySelector<HTMLElement>('[aria-label="Next Page"]')!;
+                nextBtn.click();
+                expect(api.paginationGetCurrentPage()).toBe(1);
+            });
         });
 
-        test('panel becomes visible when paginationAutoPageSize changes from true to false (pageSize-only panel)', () => {
-            const api = createPaginationGrid(gridsManager, {
-                paginationAutoPageSize: true,
-                paginationPanels: ['pageSize'],
+        describe('suppressPaginationPanel', () => {
+            test('panel hides when suppressPaginationPanel changes from false to true', () => {
+                const api = createPaginationGrid(gridsManager);
+                const panel = getPagingPanel(api)!;
+                expect(panel).not.toHaveClass('ag-hidden');
+
+                api.setGridOption('suppressPaginationPanel', true);
+
+                expect(panel).toHaveClass('ag-hidden');
             });
-            const panel = getPagingPanel(api)!;
-            expect(panel).toHaveClass('ag-hidden');
 
-            api.setGridOption('paginationAutoPageSize', false);
+            test('panel shows when suppressPaginationPanel changes from true to false', () => {
+                const api = createPaginationGrid(gridsManager, { suppressPaginationPanel: true });
+                const panel = getPagingPanel(api)!;
+                expect(panel).toHaveClass('ag-hidden');
 
-            expect(panel).not.toHaveClass('ag-hidden');
-            expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
+                api.setGridOption('suppressPaginationPanel', false);
+
+                expect(panel).not.toHaveClass('ag-hidden');
+            });
+
+            test('page size selector is hidden while panel is suppressed', () => {
+                const api = createPaginationGrid(gridsManager);
+                const panel = getPagingPanel(api)!;
+
+                api.setGridOption('suppressPaginationPanel', true);
+
+                expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
+            });
+
+            test('page size selector restores when panel is unsuppressed', () => {
+                const api = createPaginationGrid(gridsManager);
+                const panel = getPagingPanel(api)!;
+
+                api.setGridOption('suppressPaginationPanel', true);
+                api.setGridOption('suppressPaginationPanel', false);
+
+                expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
+            });
         });
 
-        test('page size selector hides when paginationAutoPageSize changes from false to true', () => {
-            const api = createPaginationGrid(gridsManager, {
-                paginationPanels: ['pageSize', 'pageSummary'],
+        describe('paginationPageSizeSelector', () => {
+            test('page size selector hides when paginationPageSizeSelector changes to false', () => {
+                const api = createPaginationGrid(gridsManager);
+                const panel = getPagingPanel(api)!;
+
+                api.setGridOption('paginationPageSizeSelector', false);
+
+                expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
+                // Other components keep the panel visible
+                expect(panel).not.toHaveClass('ag-hidden');
             });
-            const panel = getPagingPanel(api)!;
-            expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
 
-            api.setGridOption('paginationAutoPageSize', true);
+            test('page size selector shows when paginationPageSizeSelector changes from false to array', () => {
+                const api = createPaginationGrid(gridsManager, { paginationPageSizeSelector: false });
+                const panel = getPagingPanel(api)!;
+                expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
 
-            expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
-            // pageSummary keeps the panel visible
-            expect(panel).not.toHaveClass('ag-hidden');
+                api.setGridOption('paginationPageSizeSelector', [10, 20, 50]);
+
+                expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
+            });
+
+            test('panel hides when paginationPageSizeSelector set to false and only pageSize panel configured', () => {
+                const api = createPaginationGrid(gridsManager, {
+                    paginationPanels: ['pageSize'],
+                });
+                const panel = getPagingPanel(api)!;
+                expect(panel).not.toHaveClass('ag-hidden');
+
+                api.setGridOption('paginationPageSizeSelector', false);
+
+                expect(panel).toHaveClass('ag-hidden');
+            });
+
+            test('panel shows when paginationPageSizeSelector restored and only pageSize panel configured', () => {
+                const api = createPaginationGrid(gridsManager, {
+                    paginationPanels: ['pageSize'],
+                    paginationPageSizeSelector: false,
+                });
+                const panel = getPagingPanel(api)!;
+                expect(panel).toHaveClass('ag-hidden');
+
+                api.setGridOption('paginationPageSizeSelector', [10, 20, 50]);
+
+                expect(panel).not.toHaveClass('ag-hidden');
+            });
+        });
+
+        describe('paginationAutoPageSize', () => {
+            test('page size selector appears when paginationAutoPageSize changes from true to false', () => {
+                const api = createPaginationGrid(gridsManager, {
+                    paginationAutoPageSize: true,
+                    paginationPanels: ['pageSize', 'pageSummary'],
+                });
+                const panel = getPagingPanel(api)!;
+                expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
+
+                api.setGridOption('paginationAutoPageSize', false);
+
+                expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
+            });
+
+            test('panel becomes visible when paginationAutoPageSize changes from true to false (pageSize-only panel)', () => {
+                const api = createPaginationGrid(gridsManager, {
+                    paginationAutoPageSize: true,
+                    paginationPanels: ['pageSize'],
+                });
+                const panel = getPagingPanel(api)!;
+                expect(panel).toHaveClass('ag-hidden');
+
+                api.setGridOption('paginationAutoPageSize', false);
+
+                expect(panel).not.toHaveClass('ag-hidden');
+                expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
+            });
+
+            test('page size selector hides when paginationAutoPageSize changes from false to true', () => {
+                const api = createPaginationGrid(gridsManager, {
+                    paginationPanels: ['pageSize', 'pageSummary'],
+                });
+                const panel = getPagingPanel(api)!;
+                expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).not.toHaveClass('ag-hidden');
+
+                api.setGridOption('paginationAutoPageSize', true);
+
+                expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
+                // pageSummary keeps the panel visible
+                expect(panel).not.toHaveClass('ag-hidden');
+            });
         });
     });
 

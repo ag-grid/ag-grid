@@ -1,7 +1,5 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
 import type { GridOptionsService } from '../gridOptionsService';
-import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _formatNumberCommas } from '../utils/number';
 
 export function _formatPaginationNumber(
@@ -11,8 +9,7 @@ export function _formatPaginationNumber(
 ): string {
     const userFunc = gos.getCallback('paginationNumberFormatter');
     if (userFunc) {
-        const params: WithoutGridCommon<PaginationNumberFormatterParams> = { value };
-        return userFunc(params);
+        return userFunc({ value });
     }
     return _formatNumberCommas(value, getLocaleTextFunc);
 }

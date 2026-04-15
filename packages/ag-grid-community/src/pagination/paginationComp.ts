@@ -3,7 +3,7 @@ import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
-import { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
+import { PageSizeSelectorComp } from './pageSizeSelectorComp';
 import { PageSummaryComp } from './pageSummaryComp';
 import paginationCompCSS from './paginationComp.css';
 import { RowSummaryComp } from './rowSummaryComp';
@@ -70,19 +70,6 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         return 'pagination';
     }
 
-    private getEffectivePanels(): PaginationPanel[] {
-        const configured = this.gos.get('paginationPanels');
-        const panels = configured ?? DEFAULT_PANELS;
-        const seen = new Set<string>();
-        return panels.filter((name): name is PaginationPanel => {
-            if (!VALID_PANEL_NAMES.has(name) || seen.has(name)) {
-                return false;
-            }
-            seen.add(name);
-            return true;
-        });
-    }
-
     private shouldShowPageSizeComp(): boolean {
         return !this.gos.get('paginationAutoPageSize') && this.gos.get('paginationPageSizeSelector') !== false;
     }
@@ -95,12 +82,16 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     }
 
     private buildComponents(idPrefix: string): void {
-        for (const panelName of this.getEffectivePanels()) {
+        const panels = this.gos.get('paginationPanels') ?? DEFAULT_PANELS;
+        const seen = new Set<string>();
+        for (const panelName of panels) {
+            if (seen.has(panelName) || !VALID_PANEL_NAMES.has(panelName)) {
+                continue;
+            }
+            seen.add(panelName);
             if (panelName === 'pageSize') {
                 this.pageSizeComp = this.createManagedBean(new PageSizeSelectorComp());
-                const show = this.shouldShowPageSizeComp();
-                this.pageSizeComp.toggleSelectDisplay(show);
-                this.pageSizeComp.setDisplayed(show);
+                this.pageSizeComp.updateVisibility();
                 this.appendChild(this.pageSizeComp);
             } else if (panelName === 'rowSummary') {
                 this.rowSummaryComp = this.createManagedBean(new RowSummaryComp(idPrefix));
@@ -120,11 +111,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     }
 
     private onPageSizeRelatedOptionsChange(): void {
-        if (this.pageSizeComp) {
-            const show = this.shouldShowPageSizeComp();
-            this.pageSizeComp.toggleSelectDisplay(show);
-            this.pageSizeComp.setDisplayed(show);
-        }
+        this.pageSizeComp?.updateVisibility();
         this.onPaginationChanged();
     }
 
@@ -133,15 +120,16 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         if (gos.get('suppressPaginationPanel')) {
             return;
         }
-        if (this.rowSummaryComp) {
-            const ariaRowStatus = this.rowSummaryComp.getAriaStatus();
+        const { rowSummaryComp, pageSummaryComp } = this;
+        if (rowSummaryComp) {
+            const ariaRowStatus = rowSummaryComp.getAriaStatus();
             if (ariaRowStatus !== this.ariaRowStatus) {
                 this.ariaRowStatus = ariaRowStatus;
                 ariaAnnounce?.announceValue(ariaRowStatus, 'paginationRow');
             }
         }
-        if (this.pageSummaryComp) {
-            const ariaPageStatus = this.pageSummaryComp.getAriaStatus();
+        if (pageSummaryComp) {
+            const ariaPageStatus = pageSummaryComp.getAriaStatus();
             if (ariaPageStatus !== this.ariaPageStatus) {
                 this.ariaPageStatus = ariaPageStatus;
                 ariaAnnounce?.announceValue(ariaPageStatus, 'paginationPage');
