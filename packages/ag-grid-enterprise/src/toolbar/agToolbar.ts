@@ -83,13 +83,12 @@ class AgToolbar extends Component implements FocusableContainer {
     private updateQueued: boolean = false;
     private itemsPromise: Promise<void> = Promise.resolve();
     private readonly toolbarItems: Map<string, IToolbarItemComp> = new Map();
+    private readonly compDestroyFunctions: Map<string, () => void> = new Map();
     private customKeyCounter = 0;
 
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
     }
-
-    private compDestroyFunctions: { [key: string]: () => void } = {};
 
     constructor() {
         super(AgToolbarElement);
@@ -192,6 +191,14 @@ class AgToolbar extends Component implements FocusableContainer {
         return itemDef.display ?? this.gos.get('toolbar')?.display ?? 'icon';
     }
 
+    private createItemParams(itemConfig: ToolbarItemDef, key: string): IToolbarItemParams {
+        return _addGridCommonParams(this.gos, {
+            ...(itemConfig.toolbarItemParams ?? {}),
+            key,
+            display: this.resolveDisplay(itemConfig),
+        });
+    }
+
     private processToolbarItems(existingItemsToReuse: Map<string, IToolbarItemComp>): void {
         const items = this.getValidItems();
         const validItemsProvided = Array.isArray(items) && items.length > 0;
@@ -233,25 +240,18 @@ class AgToolbar extends Component implements FocusableContainer {
 
     private updateToolbar(): void {
         const items = this.getValidItems();
-        const validItemsProvided = Array.isArray(items) && items.length > 0;
-        this.setDisplayed(validItemsProvided);
-
         const existingItemsToReuse: Map<string, IToolbarItemComp> = new Map();
 
-        if (validItemsProvided) {
+        if (Array.isArray(items) && items.length > 0) {
             for (const itemConfig of items) {
                 const key = itemConfig.key ?? itemConfig.toolbarItem;
                 const existingItem = this.toolbarItems.get(key);
                 if (existingItem?.refresh) {
-                    const newParams: IToolbarItemParams = _addGridCommonParams(this.gos, {
-                        ...(itemConfig.toolbarItemParams ?? {}),
-                        key,
-                        display: this.resolveDisplay(itemConfig),
-                    });
+                    const newParams = this.createItemParams(itemConfig, key);
                     const hasRefreshed = existingItem.refresh(newParams);
                     if (hasRefreshed) {
                         existingItemsToReuse.set(key, existingItem);
-                        delete this.compDestroyFunctions[key];
+                        this.compDestroyFunctions.delete(key);
                         _removeFromParent(existingItem.getGui());
                     }
                 }
@@ -259,9 +259,7 @@ class AgToolbar extends Component implements FocusableContainer {
         }
 
         this.resetToolbar();
-        if (validItemsProvided) {
-            this.processToolbarItems(existingItemsToReuse);
-        }
+        this.processToolbarItems(existingItemsToReuse);
     }
 
     private resetToolbar(): void {
@@ -277,10 +275,20 @@ class AgToolbar extends Component implements FocusableContainer {
     }
 
     private destroyComponents(): void {
-        for (const func of Object.values(this.compDestroyFunctions)) {
+        for (const func of this.compDestroyFunctions.values()) {
             func();
         }
-        this.compDestroyFunctions = {};
+        this.compDestroyFunctions.clear();
+    }
+
+    private createSeparator(isRightStart: boolean): HTMLElement {
+        const separator = document.createElement('div');
+        separator.className = 'ag-toolbar-separator';
+        if (isRightStart) {
+            separator.classList.add('ag-toolbar-right-start');
+        }
+        separator.setAttribute('role', 'separator');
+        return separator;
     }
 
     private createAndRenderComponents(
@@ -294,14 +302,8 @@ class AgToolbar extends Component implements FocusableContainer {
 
         for (const itemConfig of toolbarItems) {
             if (itemConfig.key === 'separator') {
-                const separator = document.createElement('div');
-                separator.className = 'ag-toolbar-separator';
-                if (firstItem) {
-                    separator.classList.add('ag-toolbar-right-start');
-                    firstItem = false;
-                }
-                separator.setAttribute('role', 'separator');
-                eContainer.appendChild(separator);
+                eContainer.appendChild(this.createSeparator(firstItem));
+                firstItem = false;
                 continue;
             }
 
@@ -322,17 +324,9 @@ class AgToolbar extends Component implements FocusableContainer {
             eContainer.appendChild(placeholder);
 
             if (existingItem) {
-                this.mountComponent(key, existingItem, placeholder, eContainer);
+                this.mountComponent(key, existingItem, placeholder);
             } else {
-                const compDetails = getToolbarItemCompDetails(
-                    this.userCompFactory,
-                    itemConfig,
-                    _addGridCommonParams(this.gos, {
-                        ...(itemConfig.toolbarItemParams ?? {}),
-                        key,
-                        display: this.resolveDisplay(itemConfig),
-                    })
-                );
+                const compDetails = getToolbarItemCompDetails(this.userCompFactory, itemConfig, this.createItemParams(itemConfig, key));
 
                 if (compDetails == null) {
                     _removeFromParent(placeholder);
@@ -340,11 +334,8 @@ class AgToolbar extends Component implements FocusableContainer {
                 }
 
                 promises.push(
-                    new Promise<void>((resolve) => {
-                        compDetails.newAgStackInstance().then((component) => {
-                            this.mountComponent(key, component, placeholder, eContainer);
-                            resolve();
-                        });
+                    Promise.resolve(compDetails.newAgStackInstance()).then((component) => {
+                        this.mountComponent(key, component, placeholder);
                     })
                 );
             }
@@ -356,8 +347,7 @@ class AgToolbar extends Component implements FocusableContainer {
     private mountComponent(
         key: string,
         component: IToolbarItemComp | null,
-        placeholder: HTMLElement,
-        _eContainer: HTMLElement
+        placeholder: HTMLElement
     ): void {
         if (component == null) {
             _removeFromParent(placeholder);
@@ -383,7 +373,7 @@ class AgToolbar extends Component implements FocusableContainer {
                     },
                 });
             }
-            this.compDestroyFunctions[key] = destroyFunc;
+            this.compDestroyFunctions.set(key, destroyFunc);
         } else {
             _removeFromParent(placeholder);
             destroyFunc();

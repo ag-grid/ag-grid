@@ -1,5 +1,62 @@
-import type { FindChangedEvent, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    FindChangedEvent,
+    IToolbarItemComp,
+    IToolbarItemParams,
+    IconName,
+} from 'ag-grid-community';
 import { Component, _createElement, _createIconNoSpan, _warn } from 'ag-grid-community';
+
+function createSearchIcon(beans: BeanCollection): HTMLElement | undefined {
+    const eIcon = _createIconNoSpan('filter', beans);
+    if (!eIcon) {
+        return undefined;
+    }
+
+    const eIconWrapper = _createElement({
+        tag: 'span',
+        cls: 'ag-toolbar-input-icon',
+        attrs: { 'aria-hidden': 'true' },
+    });
+    eIconWrapper.appendChild(eIcon);
+    return eIconWrapper;
+}
+
+function createSearchInput(beans: BeanCollection, label: string): HTMLInputElement {
+    const eInput = _createElement({ tag: 'input' }) as HTMLInputElement;
+    eInput.type = 'text';
+    eInput.className = 'ag-toolbar-input-field';
+    eInput.placeholder = `${label}...`;
+    eInput.setAttribute('aria-label', label);
+
+    const currentValue = beans.gos.get('findSearchValue');
+    if (currentValue) {
+        eInput.value = currentValue;
+    }
+
+    return eInput;
+}
+
+function createMatchCount(): HTMLSpanElement {
+    const eMatchCount = _createElement({ tag: 'span' }) as HTMLSpanElement;
+    eMatchCount.className = 'ag-toolbar-find-match-count ag-hidden';
+    eMatchCount.setAttribute('aria-live', 'polite');
+    return eMatchCount;
+}
+
+function createNavButton(beans: BeanCollection, iconName: IconName, label: string): HTMLButtonElement {
+    const eButton = _createElement({ tag: 'button' }) as HTMLButtonElement;
+    eButton.type = 'button';
+    eButton.className = 'ag-toolbar-button ag-toolbar-find-button';
+    eButton.disabled = true;
+    eButton.setAttribute('aria-label', label);
+    eButton.setAttribute('title', label);
+    const eIcon = _createIconNoSpan(iconName, beans);
+    if (eIcon) {
+        eButton.appendChild(eIcon);
+    }
+    return eButton;
+}
 
 export class FindToolbarItem extends Component implements IToolbarItemComp {
     private eInput!: HTMLInputElement;
@@ -22,27 +79,26 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         const label = localeTextFunc('toolbarFind', 'Find');
         const eGui = this.getGui();
 
-        const eIcon = _createIconNoSpan('filter', this.beans);
-        if (eIcon) {
-            const eIconWrapper = _createElement({
-                tag: 'span',
-                cls: 'ag-toolbar-input-icon',
-                attrs: { 'aria-hidden': 'true' },
-            });
-            eIconWrapper.appendChild(eIcon);
-            eGui.appendChild(eIconWrapper);
+        const eSearchIcon = createSearchIcon(this.beans);
+        if (eSearchIcon) {
+            eGui.appendChild(eSearchIcon);
         }
 
-        this.eInput = _createElement({ tag: 'input' });
-        this.eInput.type = 'text';
-        this.eInput.className = 'ag-toolbar-input-field';
-        this.eInput.placeholder = `${label}...`;
-        this.eInput.setAttribute('aria-label', label);
+        this.eInput = createSearchInput(this.beans, label);
+        eGui.appendChild(this.eInput);
 
-        const currentValue = this.gos.get('findSearchValue');
-        if (currentValue) {
-            this.eInput.value = currentValue;
-        }
+        this.eMatchCount = createMatchCount();
+        eGui.appendChild(this.eMatchCount);
+
+        this.ePrevButton = createNavButton(
+            this.beans,
+            'previous',
+            localeTextFunc('toolbarFindPreviousMatch', 'Previous Match')
+        );
+        eGui.appendChild(this.ePrevButton);
+
+        this.eNextButton = createNavButton(this.beans, 'next', localeTextFunc('toolbarFindNextMatch', 'Next Match'));
+        eGui.appendChild(this.eNextButton);
 
         this.addManagedElementListeners(this.eInput, {
             input: () => this.beans.gridApi.setGridOption('findSearchValue', this.eInput.value),
@@ -57,42 +113,6 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
                 }
             },
         });
-
-        eGui.appendChild(this.eInput);
-
-        // Match count label
-        this.eMatchCount = _createElement({ tag: 'span' }) as HTMLSpanElement;
-        this.eMatchCount.className = 'ag-toolbar-find-match-count ag-hidden';
-        this.eMatchCount.setAttribute('aria-live', 'polite');
-        eGui.appendChild(this.eMatchCount);
-
-        // Previous match button
-        const prevLabel = localeTextFunc('toolbarFindPreviousMatch', 'Previous Match');
-        this.ePrevButton = _createElement({ tag: 'button' }) as HTMLButtonElement;
-        this.ePrevButton.type = 'button';
-        this.ePrevButton.className = 'ag-toolbar-button ag-toolbar-find-button';
-        this.ePrevButton.disabled = true;
-        this.ePrevButton.setAttribute('aria-label', prevLabel);
-        this.ePrevButton.setAttribute('title', prevLabel);
-        const ePrevIcon = _createIconNoSpan('previous', this.beans);
-        if (ePrevIcon) {
-            this.ePrevButton.appendChild(ePrevIcon);
-        }
-        eGui.appendChild(this.ePrevButton);
-
-        // Next match button
-        const nextLabel = localeTextFunc('toolbarFindNextMatch', 'Next Match');
-        this.eNextButton = _createElement({ tag: 'button' }) as HTMLButtonElement;
-        this.eNextButton.type = 'button';
-        this.eNextButton.className = 'ag-toolbar-button ag-toolbar-find-button';
-        this.eNextButton.disabled = true;
-        this.eNextButton.setAttribute('aria-label', nextLabel);
-        this.eNextButton.setAttribute('title', nextLabel);
-        const eNextIcon = _createIconNoSpan('next', this.beans);
-        if (eNextIcon) {
-            this.eNextButton.appendChild(eNextIcon);
-        }
-        eGui.appendChild(this.eNextButton);
 
         this.addManagedElementListeners(this.ePrevButton, {
             click: () => this.beans.gridApi.findPrevious(),

@@ -26,40 +26,45 @@ interface ToolbarButtonConfig {
     onInit?: (comp: Component, gos: GridOptionsService, beans: BeanCollection) => void;
 }
 
-export function createToolbarButton(config: ToolbarButtonConfig): new () => IToolbarItemComp {
-    class ToolbarButton extends Component implements IToolbarItemComp {
-        private readonly eIcon: HTMLElement = RefPlaceholder;
-        private readonly eLabel: HTMLElement = RefPlaceholder;
+class ToolbarButton extends Component implements IToolbarItemComp {
+    private readonly eIcon: HTMLElement = RefPlaceholder;
+    private readonly eLabel: HTMLElement = RefPlaceholder;
+    protected config!: ToolbarButtonConfig;
 
-        constructor() {
-            super(ToolbarButtonElement);
-        }
-
-        public postConstruct(): void {
-            const icon = _createIconNoSpan(config.icon, this.beans);
-            if (icon) {
-                this.eIcon.appendChild(icon);
-            }
-
-            const label = this.getLocaleTextFunc()(config.localeKey, config.defaultLabel);
-            this.eLabel.textContent = label;
-            this.getGui().setAttribute('aria-label', label);
-            this.getGui().setAttribute('title', label);
-
-            this.addManagedElementListeners(this.getGui(), {
-                click: () => config.onAction(this.beans, this.getGui(), this.gos),
-            });
-        }
-
-        public init(params: IToolbarItemParams): void {
-            this.refresh(params);
-            config.onInit?.(this, this.gos, this.beans);
-        }
-
-        public refresh(params: IToolbarItemParams): boolean {
-            this.eLabel.classList.toggle('ag-hidden', params.display !== 'iconAndLabel');
-            return true;
-        }
+    constructor() {
+        super(ToolbarButtonElement);
     }
-    return ToolbarButton;
+
+    public postConstruct(): void {
+        const { config } = this;
+        const icon = _createIconNoSpan(config.icon, this.beans);
+        if (icon) {
+            this.eIcon.appendChild(icon);
+        }
+
+        const label = this.getLocaleTextFunc()(config.localeKey, config.defaultLabel);
+        this.eLabel.textContent = label;
+        this.getGui().setAttribute('aria-label', label);
+        this.getGui().setAttribute('title', label);
+
+        this.addManagedElementListeners(this.getGui(), {
+            click: () => config.onAction(this.beans, this.getGui(), this.gos),
+        });
+    }
+
+    public init(params: IToolbarItemParams): void {
+        this.refresh(params);
+        this.config.onInit?.(this, this.gos, this.beans);
+    }
+
+    public refresh(params: IToolbarItemParams): boolean {
+        this.eLabel.classList.toggle('ag-hidden', params.display !== 'iconAndLabel');
+        return true;
+    }
+}
+
+export function createToolbarButton(config: ToolbarButtonConfig): new () => IToolbarItemComp {
+    return class extends ToolbarButton {
+        override config = config;
+    };
 }
