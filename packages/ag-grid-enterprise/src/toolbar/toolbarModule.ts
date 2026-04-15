@@ -59,7 +59,10 @@ const ColumnsPanelToolbarItem = createToolbarButton({
         }
     },
     onInit: (comp, gos) => {
-        if (!hasSideBarPanel(gos.get('sideBar'), 'columns')) {
+        if (!gos.isModuleRegistered('SideBar') || !gos.isModuleRegistered('ColumnsToolPanel')) {
+            _warn(303, { itemName: 'columnsPanel', moduleName: 'SideBar and ColumnsToolPanel' });
+            comp.setDisplayed(false);
+        } else if (!hasSideBarPanel(gos.get('sideBar'), 'columns')) {
             _warn(299);
             comp.setDisplayed(false);
         }
@@ -113,7 +116,10 @@ const FiltersPanelToolbarItem = createToolbarButton({
         }
     },
     onInit: (comp, gos) => {
-        if (!['filters', 'filters-new'].some((id) => hasSideBarPanel(gos.get('sideBar'), id))) {
+        if (!gos.isModuleRegistered('SideBar') || !gos.isModuleRegistered('FiltersToolPanel')) {
+            _warn(303, { itemName: 'filtersPanel', moduleName: 'SideBar and FiltersToolPanel' });
+            comp.setDisplayed(false);
+        } else if (!['filters', 'filters-new'].some((id) => hasSideBarPanel(gos.get('sideBar'), id))) {
             _warn(300);
             comp.setDisplayed(false);
         }

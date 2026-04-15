@@ -99,7 +99,7 @@ export class AgMenuItemRenderer<
             if (_isNodeOrElement(icon)) {
                 iconWrapper.appendChild(icon);
             } else if (typeof icon === 'string') {
-                if (icon.charAt(0) === '<') {
+                if (icon.trimStart().charAt(0) === '<') {
                     // eslint-disable-next-line no-restricted-properties -- no other way to parse custom HTML strings from the user
                     iconWrapper.innerHTML = icon;
                 } else {
