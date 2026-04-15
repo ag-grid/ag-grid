@@ -24,6 +24,8 @@ interface ToolbarButtonConfig {
     defaultLabel: string;
     onAction: (beans: BeanCollection, eGui: HTMLElement, gos: GridOptionsService) => void;
     onInit?: (comp: Component, gos: GridOptionsService, beans: BeanCollection) => void;
+    /** Re-evaluated on refresh to update visibility after runtime option changes */
+    shouldDisplay?: (gos: GridOptionsService, beans: BeanCollection) => boolean;
 }
 
 class ToolbarButton extends Component implements IToolbarItemComp {
@@ -59,6 +61,9 @@ class ToolbarButton extends Component implements IToolbarItemComp {
 
     public refresh(params: IToolbarItemParams): boolean {
         this.eLabel.classList.toggle('ag-hidden', params.display !== 'iconAndLabel');
+        if (this.config.shouldDisplay) {
+            this.setDisplayed(this.config.shouldDisplay(this.gos, this.beans));
+        }
         return true;
     }
 }

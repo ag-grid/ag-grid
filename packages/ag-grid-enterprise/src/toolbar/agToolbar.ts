@@ -333,7 +333,10 @@ class AgToolbar extends Component implements FocusableContainer {
             eContainer.appendChild(placeholder);
 
             if (existingItem) {
-                this.mountComponent(key, existingItem, placeholder);
+                // Reused item already has a display listener — just re-insert into DOM
+                placeholder.replaceWith(existingItem.getGui());
+                this.toolbarItems.set(key, existingItem);
+                this.compDestroyFunctions.set(key, () => this.destroyBean(existingItem));
             } else {
                 const compDetails = getToolbarItemCompDetails(
                     this.userCompFactory,

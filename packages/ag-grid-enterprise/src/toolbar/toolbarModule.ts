@@ -1,4 +1,4 @@
-import type { SideBarDef, ToolbarItemComponentName, _ModuleWithoutApi } from 'ag-grid-community';
+import type { GridOptionsService, SideBarDef, ToolbarItemComponentName, _ModuleWithoutApi } from 'ag-grid-community';
 import { _KeyboardNavigationModule, _resetColumnState, _warn } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -46,6 +46,14 @@ const ColumnChooserToolbarItem = createToolbarButton({
         (beans.colChooserFactory as ColumnChooserFactory | undefined)?.showColumnChooser({ eventSource: eGui }),
 });
 
+function canShowColumnsPanel(gos: GridOptionsService): boolean {
+    return (
+        gos.isModuleRegistered('SideBar') &&
+        gos.isModuleRegistered('ColumnsToolPanel') &&
+        hasSideBarPanel(gos.get('sideBar'), 'columns')
+    );
+}
+
 const ColumnsPanelToolbarItem = createToolbarButton({
     icon: 'columnsToolPanel',
     localeKey: 'columns',
@@ -61,12 +69,12 @@ const ColumnsPanelToolbarItem = createToolbarButton({
     onInit: (comp, gos) => {
         if (!gos.isModuleRegistered('SideBar') || !gos.isModuleRegistered('ColumnsToolPanel')) {
             _warn(303, { itemName: 'columnsPanel', moduleName: 'SideBar and ColumnsToolPanel' });
-            comp.setDisplayed(false);
         } else if (!hasSideBarPanel(gos.get('sideBar'), 'columns')) {
             _warn(299);
-            comp.setDisplayed(false);
         }
+        comp.setDisplayed(canShowColumnsPanel(gos));
     },
+    shouldDisplay: (gos) => canShowColumnsPanel(gos),
 });
 
 const CsvExportToolbarItem = createToolbarButton({
@@ -77,11 +85,10 @@ const CsvExportToolbarItem = createToolbarButton({
     onInit: (comp, gos) => {
         if (!gos.isModuleRegistered('CsvExport')) {
             _warn(303, { itemName: 'csvExport', moduleName: 'CsvExport' });
-            comp.setDisplayed(false);
-        } else if (gos.get('suppressCsvExport')) {
-            comp.setDisplayed(false);
         }
+        comp.setDisplayed(gos.isModuleRegistered('CsvExport') && !gos.get('suppressCsvExport'));
     },
+    shouldDisplay: (gos) => gos.isModuleRegistered('CsvExport') && !gos.get('suppressCsvExport'),
 });
 
 const ExcelExportToolbarItem = createToolbarButton({
@@ -92,12 +99,20 @@ const ExcelExportToolbarItem = createToolbarButton({
     onInit: (comp, gos) => {
         if (!gos.isModuleRegistered('ExcelExport')) {
             _warn(303, { itemName: 'excelExport', moduleName: 'ExcelExport' });
-            comp.setDisplayed(false);
-        } else if (gos.get('suppressExcelExport')) {
-            comp.setDisplayed(false);
         }
+        comp.setDisplayed(gos.isModuleRegistered('ExcelExport') && !gos.get('suppressExcelExport'));
     },
+    shouldDisplay: (gos) => gos.isModuleRegistered('ExcelExport') && !gos.get('suppressExcelExport'),
 });
+
+function canShowFiltersPanel(gos: GridOptionsService): boolean {
+    const hasFilterModule = gos.isModuleRegistered('FiltersToolPanel') || gos.isModuleRegistered('NewFiltersToolPanel');
+    return (
+        gos.isModuleRegistered('SideBar') &&
+        hasFilterModule &&
+        ['filters', 'filters-new'].some((id) => hasSideBarPanel(gos.get('sideBar'), id))
+    );
+}
 
 const FiltersPanelToolbarItem = createToolbarButton({
     icon: 'filtersToolPanel',
@@ -123,12 +138,12 @@ const FiltersPanelToolbarItem = createToolbarButton({
                 itemName: 'filtersPanel',
                 moduleName: 'SideBar and FiltersToolPanel/NewFiltersToolPanel',
             });
-            comp.setDisplayed(false);
         } else if (!['filters', 'filters-new'].some((id) => hasSideBarPanel(gos.get('sideBar'), id))) {
             _warn(300);
-            comp.setDisplayed(false);
         }
+        comp.setDisplayed(canShowFiltersPanel(gos));
     },
+    shouldDisplay: (gos) => canShowFiltersPanel(gos),
 });
 
 const ResetColumnsToolbarItem = createToolbarButton({
