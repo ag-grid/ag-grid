@@ -371,9 +371,7 @@ class AgToolbar extends Component implements FocusableContainer {
         if (this.isAlive()) {
             this.toolbarItems.set(key, component);
             const gui = component.getGui();
-            if (placeholder.classList.contains('ag-toolbar-right-start')) {
-                gui.classList.add('ag-toolbar-right-start');
-            }
+            gui.classList.toggle('ag-toolbar-right-start', placeholder.classList.contains('ag-toolbar-right-start'));
             placeholder.replaceWith(gui);
             const comp = component instanceof Component ? component : undefined;
             if (comp) {
