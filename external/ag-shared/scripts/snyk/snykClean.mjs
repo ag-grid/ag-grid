@@ -60,8 +60,9 @@ function parseYarnLock(lockfilePath) {
 // ---------------------------------------------------------------------------
 
 const IGNORED_DIRS = new Set(['node_modules', '.git', '.claude', 'dist', '.nx']);
+const IGNORED_RELATIVE_DIRS = ['external/ag-shared'];
 
-function getSnykFiles(dir, found = []) {
+function getSnykFiles(dir, found = [], ignoredAbsoluteDirs = new Set()) {
     let entries;
     try {
         entries = readdirSync(dir, { withFileTypes: true });
@@ -71,8 +72,9 @@ function getSnykFiles(dir, found = []) {
     for (const entry of entries) {
         if (IGNORED_DIRS.has(entry.name)) continue;
         const full = resolve(dir, entry.name);
+        if (ignoredAbsoluteDirs.has(full)) continue;
         if (entry.isDirectory()) {
-            getSnykFiles(full, found);
+            getSnykFiles(full, found, ignoredAbsoluteDirs);
         } else if (entry.name === '.snyk') {
             found.push(full);
         }
@@ -304,8 +306,9 @@ function main() {
     const yarnLockPackages = parseYarnLock(yarnLockPath);
     console.log(`Parsed yarn.lock: ${yarnLockPackages.size} resolved packages`);
 
-    // Find all .snyk files
-    const snykFiles = getSnykFiles(rootDir);
+    // Find all .snyk files, skipping ignored relative directories (managed separately)
+    const ignoredAbsoluteDirs = new Set(IGNORED_RELATIVE_DIRS.map((d) => resolve(rootDir, d)));
+    const snykFiles = getSnykFiles(rootDir, [], ignoredAbsoluteDirs);
     console.log(`Scanning ${snykFiles.length} .snyk files...\n`);
 
     let totalRemoved = 0;
