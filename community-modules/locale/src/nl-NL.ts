@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_NL = {
 
     // Filter Buttons
     applyFilter: 'Toepassen',
+    applyColumnToolPanel: 'Toepassen',
     resetFilter: 'Resetten',
     clearFilter: 'Wissen',
     cancelFilter: 'Annuleren',
+    cancelColumnToolPanel: 'Annuleren',
 
     // Filter Titles
     textFilter: 'Tekstfilter',
@@ -333,6 +335,7 @@ export const AG_GRID_LOCALE_NL = {
     sortAbsoluteAscending: 'Sorteren absoluut oplopend',
     sortAbsoluteDescending: 'Sorteren absoluut aflopend',
     sortUnSort: 'Sortering wissen',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Som',
@@ -681,7 +684,7 @@ export const AG_GRID_LOCALE_NL = {
     ariaFilterColumn: 'Druk op CTRL ENTER om te filteren',
     ariaRowDeselect: 'Druk op SPATIE om deze rij te deselecteren',
     ariaHeaderSelection: 'Kolom met Hoofdselectie',
-    ariaSelectAllCells: 'Druk op Spatiebalk of Enter om alle cellen te selecteren',
+    ariaSelectAllCells: 'Druk op Spatie of Enter om alle cellen te selecteren',
     ariaSelectAllRowCells: 'Druk op Enter om alle cellen in deze rij te selecteren',
     ariaColumnCellSelection: 'Druk op Enter om de selectie van alle zichtbare cellen in deze kolom te wisselen',
     ariaColumnGroupCellSelection:
@@ -757,6 +760,7 @@ export const AG_GRID_LOCALE_NL = {
     ariaLabelAddFilterField: 'Filterveld toevoegen',
     ariaLabelFilterCardDelete: 'Filter verwijderen',
     ariaLabelFilterCardHasEdits: 'Heeft wijzigingen',
+    ariaHasNote: 'Deze cel heeft een notitie.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -801,4 +805,16 @@ export const AG_GRID_LOCALE_NL = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM JJJJ',
     timeFormatHHMMSS: 'UU:MM:SS',
     timeFormatHHMMSSAmPm: 'UU:MM:SS AM/PM',
+
+    // Notes
+    note: 'Celnotitie',
+    addNote: 'Notitie toevoegen',
+    viewNote: 'Notitie bekijken',
+    editNote: 'Notitie bewerken',
+    deleteNote: 'Notitie verwijderen',
+    notePlaceholder: 'Een notitie toevoegen...',
+    noteHint:
+        'Beweeg erover om een voorbeeld te zien. Klik binnenin om te bewerken. Sleep de hoek om het formaat aan te passen. Druk op Esc om te sluiten.',
+    noteReadOnlyHint:
+        'Alleen-lezen-notitie. Selecteer tekst om te kopiëren. Sleep de hoek om het formaat aan te passen. Druk op Esc om te sluiten.',
 };

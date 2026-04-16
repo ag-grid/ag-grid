@@ -2,7 +2,7 @@ import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import type { ColDef } from 'ag-grid-community';
+import type { CellValueChangedEvent, ColDef, NewValueParams } from 'ag-grid-community';
 import {
     CheckboxEditorModule,
     DateEditorModule,
@@ -16,7 +16,14 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 
-import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from '../test-utils';
 
 /** Asserts the value of a form control, handling number/date/checkbox inputs correctly. */
 function expectInputValue(input: HTMLInputElement, expected: unknown): void {
@@ -128,6 +135,16 @@ describe('Cell Editing Start', () => {
             // as it might not be available for all cell editors, use testing-library
             const inputElement = await waitForInput(gridDiv, cell, { popup });
             expectInputValue(inputElement, expected);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── number "Number" width:200 editable
+                ├── string1 "String1" width:200 editable
+                ├── string2 "String2" width:200 editable
+                ├── date "Date" width:200 editable
+                ├── dateStr "Date Str" width:200 editable
+                └── boolean "Boolean" width:200 editable
+            `);
         });
     });
 
@@ -163,6 +180,16 @@ describe('Cell Editing Start', () => {
 
             expect(inputElement.selectionStart).toEqual(selectionStart);
             expect(inputElement.selectionEnd).toEqual(selectionEnd);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── number "Number" width:200 editable
+                ├── string1 "String1" width:200 editable
+                ├── string2 "String2" width:200 editable
+                ├── date "Date" width:200 editable
+                ├── dateStr "Date Str" width:200 editable
+                └── boolean "Boolean" width:200 editable
+            `);
         });
     });
 
@@ -690,5 +717,98 @@ describe('Cell Editing Start', () => {
         await asyncSetTimeout(1);
 
         expect(valueGetterCallCount).toBeGreaterThan(initialCallCount);
+    });
+
+    test('cellValueChanged newRawValue is the raw edit value, newValue is the resolved value via valueGetter', async () => {
+        const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'newRawValue'>[] = [];
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    field: 'a',
+                    editable: true,
+                    valueGetter: (params) => (params.data?.a != null ? `prefix_${params.data.a}` : null),
+                    valueSetter: (params) => {
+                        params.data.a = params.newValue;
+                        return true;
+                    },
+                },
+            ],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
+            onCellValueChanged: ({ oldValue, newValue, newRawValue }) => {
+                cellValueChangedEvents.push({ oldValue, newValue, newRawValue });
+            },
+        });
+
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+        rowNode.setDataValue('a', 'changed');
+        await asyncSetTimeout(1);
+
+        expect(cellValueChangedEvents).toHaveLength(1);
+        expect(cellValueChangedEvents[0]).toEqual({
+            oldValue: 'prefix_initial',
+            newValue: 'prefix_changed',
+            newRawValue: 'changed',
+        });
+    });
+
+    test('cellValueChanged newRawValue equals newValue when no valueGetter is configured', async () => {
+        const cellValueChangedEvents: Pick<CellValueChangedEvent, 'oldValue' | 'newValue' | 'newRawValue'>[] = [];
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'a', editable: true }],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
+            onCellValueChanged: ({ oldValue, newValue, newRawValue }) => {
+                cellValueChangedEvents.push({ oldValue, newValue, newRawValue });
+            },
+        });
+
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+        rowNode.setDataValue('a', 'changed');
+        await asyncSetTimeout(1);
+
+        expect(cellValueChangedEvents).toHaveLength(1);
+        expect(cellValueChangedEvents[0]).toEqual({
+            oldValue: 'initial',
+            newValue: 'changed',
+            newRawValue: 'changed',
+        });
+    });
+
+    test('colDef onCellValueChanged receives newRawValue and source', async () => {
+        const colDefEvents: Pick<NewValueParams, 'oldValue' | 'newValue' | 'newRawValue' | 'source'>[] = [];
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    field: 'a',
+                    editable: true,
+                    valueGetter: (params) => (params.data?.a != null ? `prefix_${params.data.a}` : null),
+                    valueSetter: (params) => {
+                        params.data.a = params.newValue;
+                        return true;
+                    },
+                    onCellValueChanged: ({ oldValue, newValue, newRawValue, source }) => {
+                        colDefEvents.push({ oldValue, newValue, newRawValue, source });
+                    },
+                },
+            ],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+        rowNode.setDataValue('a', 'changed');
+        await asyncSetTimeout(1);
+
+        expect(colDefEvents).toHaveLength(1);
+        expect(colDefEvents[0]).toEqual({
+            oldValue: 'prefix_initial',
+            newValue: 'prefix_changed',
+            newRawValue: 'changed',
+            source: undefined,
+        });
     });
 });

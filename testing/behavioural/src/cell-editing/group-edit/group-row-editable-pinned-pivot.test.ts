@@ -1,9 +1,9 @@
 import type { GridOptions, IRowNode, RowNode, RowPinnedType } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberEditorModule, PinnedRowModule, UndoRedoEditModule } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../test-utils';
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-test-utils';
 
 interface PivotRowData {
@@ -22,6 +22,7 @@ interface PivotRowData {
 describe('editing with pinned pivot rows', () => {
     const gridsManager = new TestGridsManager({
         modules: [
+            RowGroupingEditModule,
             NumberEditorModule,
             ClientSideRowModelModule,
             RowGroupingModule,
@@ -153,6 +154,15 @@ describe('editing with pinned pivot rows', () => {
                     ├── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
                     └── LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
                 `);
+
+                await new GridColumns(api, 'columns').checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├─┬ "2020" GROUP
+                    │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open editable
+                    └─┬ "2021" GROUP
+                      └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open editable
+                `);
             });
 
             test('editing pinned pivot group row updates source aggregation', async () => {
@@ -196,6 +206,15 @@ describe('editing with pinned pivot rows', () => {
                     ├── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
                     └── LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
                     PINNED_BOTTOM id:b-bottom-row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2021_sales:3600
+                `);
+
+                await new GridColumns(api, 'columns').checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├─┬ "2020" GROUP
+                    │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open editable
+                    └─┬ "2021" GROUP
+                      └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open editable
                 `);
             });
 
@@ -265,6 +284,15 @@ describe('editing with pinned pivot rows', () => {
                     ├── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:4400
                     └── LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
                     PINNED_BOTTOM id:b-bottom-row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:4400
+                `);
+
+                await new GridColumns(api, 'columns').checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├─┬ "2020" GROUP
+                    │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open editable
+                    └─┬ "2021" GROUP
+                      └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open editable
                 `);
             });
         });

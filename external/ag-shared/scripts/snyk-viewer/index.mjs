@@ -8,6 +8,9 @@ import { exec, spawn } from 'child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+/** Directory names to skip when recursively searching for .snyk files. */
+const IGNORED_DIRS = new Set(['node_modules', '.git', '.claude']);
+
 function parseArgs(args) {
     const result = { port: 3456, file: null, open: false, name: null };
     for (let i = 0; i < args.length; i++) {
@@ -49,7 +52,7 @@ function getSnykFiles(dir, found = []) {
         return found;
     }
     for (const entry of entries) {
-        if (entry.name === 'node_modules' || entry.name === '.git') continue;
+        if (IGNORED_DIRS.has(entry.name)) continue;
         const full = resolve(dir, entry.name);
         if (entry.isDirectory()) {
             getSnykFiles(full, found);

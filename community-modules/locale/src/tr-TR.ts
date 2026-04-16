@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_TR = {
 
     // Filter Buttons
     applyFilter: 'Uygula',
+    applyColumnToolPanel: 'Uygula',
     resetFilter: 'Sıfırla',
     clearFilter: 'Temizle',
     cancelFilter: 'İptal',
+    cancelColumnToolPanel: 'İptal',
 
     // Filter Titles
     textFilter: 'Metin Filtresi',
@@ -336,6 +338,7 @@ export const AG_GRID_LOCALE_TR = {
     sortAbsoluteAscending: 'Mutlak Artan Sırala',
     sortAbsoluteDescending: 'Mutlak Azalan Sırala',
     sortUnSort: 'Sıralamayı Temizle',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Toplam',
@@ -760,6 +763,7 @@ export const AG_GRID_LOCALE_TR = {
     ariaLabelAddFilterField: 'Filtre Alanı Ekle',
     ariaLabelFilterCardDelete: 'Filtreyi Sil',
     ariaLabelFilterCardHasEdits: 'Düzenlemeler Var',
+    ariaHasNote: 'Bu hücrede bir not var.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -804,4 +808,16 @@ export const AG_GRID_LOCALE_TR = {
     timeFormatSpacesDDMMMMYYYY: 'GG AAAA YYYY',
     timeFormatHHMMSS: 'SS:DD:SN',
     timeFormatHHMMSSAmPm: 'SS:DD:SN ÖÖ/ÖS',
+
+    // Notes
+    note: 'Hücre notu',
+    addNote: 'Not ekle',
+    viewNote: 'Notu görüntüle',
+    editNote: 'Notu düzenle',
+    deleteNote: 'Notu kaldır',
+    notePlaceholder: 'Bir not ekle...',
+    noteHint:
+        'Önizleme için üzerine gelin. Düzenlemek için içine tıklayın. Yeniden boyutlandırmak için köşeyi sürükleyin. Kapatmak için Esc tuşuna basın.',
+    noteReadOnlyHint:
+        'Salt okunur not. Kopyalamak için metni seçin. Yeniden boyutlandırmak için köşeyi sürükleyin. Kapatmak için Esc tuşuna basın.',
 };

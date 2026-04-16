@@ -2,7 +2,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
 
 describe('grouping leaf ordering', () => {
     const gridsManager = new TestGridsManager({
@@ -71,6 +71,14 @@ describe('grouping leaf ordering', () => {
             · ├── LEAF id:C id:"C" make:"Porsche" model:"Boxster"
             · └── LEAF id:D id:"D" make:"Ford2" model:"Boxster"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── id "Id" width:200 flex:1
+            ├── make "Make" width:200 flex:1
+            ├── model "Model" width:200 flex:1
+            └── group "Group" width:200 flex:1 rowGroup
+        `);
     });
 
     test('full row reorders honor new rowData both before and after refresh', async () => {
@@ -121,6 +129,14 @@ describe('grouping leaf ordering', () => {
             └─┬ LEAF_GROUP id:row-group-group-New
             · ├── LEAF id:B id:"B" make:"Ford" model:"Mondeo" group:"New"
             · └── LEAF id:A id:"A" make:"Toyota" model:"Celica" group:"New"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── id "Id" width:200 flex:1
+            ├── make "Make" width:200 flex:1
+            ├── model "Model" width:200 flex:1
+            └── group "Group" width:200 flex:1 rowGroup
         `);
     });
 });

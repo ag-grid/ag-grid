@@ -3,6 +3,7 @@ targets: ['*']
 name: sync-ag-shared
 description: 'Sync ag-shared subrepo changes across ag-charts, ag-grid, and ag-studio repos'
 invocable: user-only
+context: fork
 ---
 
 # Sync ag-shared Subrepo Across AG Repos
@@ -23,7 +24,7 @@ If the user provides a command option of `help`:
 -   `git subrepo` must be installed (`git subrepo --version`).
 -   **Use `yarn subrepo` for push and pull** (never raw `git subrepo push`/`pull`). The wrapper handles edge cases like stale parent references. Other subrepo commands (e.g. `git subrepo status`, `git subrepo clean`) use `git subrepo` directly.
 -   **Never edit `external/ag-shared/.gitrepo` manually.** Only subrepo commands should modify this file.
--   Must be on a **feature branch** (not `latest`, `main`, or `master`).
+-   Should be on a **feature branch**. If on `latest`/`main`/`master`, the skill will offer to create one.
 -   Working tree must be **clean** (`git status --porcelain` is empty).
 -   The current repo must have `external/ag-shared/.gitrepo`.
 
@@ -54,11 +55,17 @@ SOURCE_REPO=$(basename "$SOURCE_ROOT")
 
 Validate:
 
--   `SOURCE_BRANCH` is not `latest`, `main`, or `master`.
 -   `git status --porcelain` is empty.
 -   `external/ag-shared/.gitrepo` exists.
 
-If any validation fails, report the issue and **STOP**.
+**If on `latest`, `main`, or `master`:** offer to create and switch to a `sync-ag-shared` feature branch. If the user confirms:
+
+```bash
+git checkout -b sync-ag-shared
+SOURCE_BRANCH="sync-ag-shared"
+```
+
+If the user declines or any other validation fails, report the issue and **STOP**.
 
 ### 1b. Discover Destination Repos
 
@@ -87,27 +94,57 @@ If any destination has uncommitted changes, default to stashing all changes and 
 
 ## STEP 2: Analyse Source Changes
 
-Use a sub-agent (Task tool, `subagent_type: Explore`) to analyse changes on the source branch:
+### 2a. Determine the Last Sync Point
+
+The correct baseline for detecting unsynced changes is the `parent` commit in `.gitrepo` — this records the host-repo commit at the time of the last `subrepo push` or `pull`. Changes committed to `external/ag-shared/` after this commit (whether on `latest` or a feature branch) have not yet been synced.
 
 ```bash
-# Changes inside ag-shared
-git diff latest...HEAD -- external/ag-shared/
+# Extract the parent commit from .gitrepo
+SYNC_PARENT=$(git config -f external/ag-shared/.gitrepo subrepo.parent)
+```
 
-# Changes outside ag-shared
-git diff latest...HEAD -- ':!external/ag-shared/'
+### 2b. Analyse Changes
 
-# Commit log
-git log --oneline latest...HEAD
+Use a sub-agent (Task tool, `subagent_type: Explore`) to analyse changes since the last sync:
+
+```bash
+# Changes inside ag-shared since last sync
+git diff "${SYNC_PARENT}"..HEAD -- external/ag-shared/
+
+# Commit log for ag-shared changes since last sync
+git log --oneline "${SYNC_PARENT}"..HEAD -- external/ag-shared/
+
+# Companion changes outside ag-shared that relate to ag-shared (since last sync)
+# These are source-repo-specific config/linkage changes that destinations will
+# need their own equivalent of (e.g. .rulesync/ symlinks, .claude/settings.json,
+# setup-prompts output).
+git diff "${SYNC_PARENT}"..HEAD -- .rulesync/ .claude/settings.json .claude/settings.local.json
+
+# Full branch commit log (for context)
+git log --oneline "${SYNC_PARENT}"..HEAD
 ```
 
 The sub-agent should produce:
 
-1.  **Change summary** — what files changed in `external/ag-shared/` and why.
-2.  **Companion change predictions** — based on the ag-shared changes, what companion changes are likely needed in each destination repo. For example:
+1.  **ag-shared change summary** — what files changed in `external/ag-shared/` and why.
+2.  **Source companion changes** — what changed in `.rulesync/`, `.claude/settings.json`, or other ag-shared-related files outside `external/ag-shared/`. These represent configuration/linkage changes the source repo already applied that destinations will need their own equivalent of. Cross-reference with `external/ag-shared/docs/SYNC-LOG.md` entries to identify any migration actions that may have been applied in the source but not yet logged or propagated.
+3.  **Companion change predictions** — based on the ag-shared changes AND the source companion changes, what companion changes are likely needed in each destination repo. For example:
     -   New/renamed skills may need symlink updates in `.rulesync/`.
     -   Changed rule globs may need `.claude/settings.json` updates.
     -   Script changes may need `package.json` or CI updates.
     -   Setup-prompts changes need `setup-prompts.sh` re-run in each repo.
+
+### No Changes Detected (Force Sync)
+
+If `git diff "${SYNC_PARENT}"..HEAD -- external/ag-shared/` shows no changes (i.e., `external/ag-shared/` has not changed since the last subrepo push/pull):
+
+1.  Inform the user that no ag-shared changes were found since the last sync (show the `SYNC_PARENT` commit hash and date for context).
+2.  Use `AskUserQuestion` to ask whether they want to proceed with a **force sync** — this will `yarn subrepo push ag-shared` to push the current `external/ag-shared/` state to the ag-shared remote, then pull it into all destination repos. This is useful when:
+    -   The ag-shared remote is out of sync with the consuming repos.
+    -   A previous sync was incomplete or failed partway through.
+    -   Destination repos missed a previous sync.
+3.  If the user confirms, continue to Step 3 with an empty change summary. The plan should note this is a **force sync** with no new changes since last sync.
+4.  If the user declines, **STOP**.
 
 ## STEP 3: Present Plan and Confirm
 
@@ -120,13 +157,13 @@ Display to the user:
 **Destinations:** <list of destination repos>
 
 ### Changes in ag-shared
-<summary from step 2>
+<ag-shared change summary from step 2>
 
-### Changes outside ag-shared
-<summary from step 2>
+### Source Companion Changes
+<source companion changes from step 2 — .rulesync/, .claude/settings.json, etc.>
 
-### Predicted Companion Changes
-<per-destination predictions from step 2>
+### Predicted Companion Changes per Destination
+<per-destination predictions from step 2, informed by both ag-shared changes and source companion changes>
 
 ### Steps
 1. Push ag-shared from <SOURCE_REPO>
@@ -135,6 +172,7 @@ Display to the user:
 4. Apply companion changes in each destination
 5. Verify all repos
 6. Push branches and create cross-linked PRs (reuse existing source PR if one exists)
+7. Post-sync housekeeping (README updates, migration verification, user summary)
 ```
 
 Use `AskUserQuestion` to confirm before proceeding. The user may want to adjust the plan or skip certain destinations.
@@ -214,7 +252,7 @@ Common companion tasks:
 -   Update `.rulesync/` symlinks if skills/rules were added, renamed, or removed.
 -   Update product-specific configurations if ag-shared scripts changed.
 -   Run verification: `./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh`.
--   **Run `npx nx format` (or equivalent formatter) before committing** to avoid CI formatting check failures.
+-   **Run `npx nx format --sort-root-tsconfig-paths=false` (or equivalent formatter) before committing** to avoid CI formatting check failures.
 
 ### Iterative Push/Pull (if needed)
 
@@ -336,6 +374,42 @@ Output a summary:
 
 All repos verified. Working trees clean.
 ```
+
+## STEP 9: Post-Sync Housekeeping
+
+After all repos are synced, PRs created, and verification passed, complete these final tasks.
+
+### 9a. Update `.rulesync/README.md`
+
+Each repo's `.rulesync/README.md` is a crib-sheet of available agentic tools. Update it in every repo (source + destinations) to reflect the sync:
+
+-   Add new skills to the Skills Reference table (alphabetical, with provenance emoji).
+-   Add new skills to the relevant section tables (Everyday Development, Testing, Planning, etc.).
+-   Remove deleted agents/skills/commands from all tables.
+-   Ensure provenance emojis are correct (🔵 for shared, 🟢 for local).
+
+### 9b. Verify SYNC-LOG Migration Actions
+
+Cross-check every migration action in `external/ag-shared/docs/SYNC-LOG.md` against each destination repo:
+
+-   Verify broken symlinks are removed.
+-   Verify new skill/rule/command symlinks are created.
+-   Verify slim pointer rules replaced monolithic versions (if applicable).
+-   Run `find .rulesync/ -type l -exec test ! -e {} \; -print` to detect broken symlinks.
+-   Note: some actions may be repo-specific (🟠 Private skills) — skip those for repos that don't use them.
+
+### 9c. Write User Summary
+
+Output a concise summary of what changed for users of the agentic tooling:
+
+-   New skills/commands/capabilities added.
+-   Removed or replaced items.
+-   Performance improvements (e.g. context optimisation).
+-   Any breaking changes to existing workflows.
+
+### 9d. Commit and Push
+
+Commit the README and any other post-sync changes in each repo, then push to the existing PR branches.
 
 ## Error Handling
 

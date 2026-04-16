@@ -2,7 +2,7 @@ import type { ColDef, ColGroupDef } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../../test-utils';
+import { GridColumns, TestGridsManager } from '../../test-utils';
 import { getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
 
 describe('Column Order', () => {
@@ -14,7 +14,7 @@ describe('Column Order', () => {
         gridsManager.reset();
     });
 
-    test('basic columns ordered as provided', () => {
+    test('basic columns ordered as provided', async () => {
         const columnDefs: (ColDef | ColGroupDef)[] = [
             { colId: 'g' },
             { colId: 'f' },
@@ -32,9 +32,20 @@ describe('Column Order', () => {
         expect(getColumnOrder(gridApi, 'center')).toEqual(['g', 'f', 'e', 'd', 'c', 'b', 'a']);
         expect(getColumnOrder(gridApi, 'left')).toEqual([]);
         expect(getColumnOrder(gridApi, 'right')).toEqual([]);
+
+        await new GridColumns(gridApi, 'columns').checkColumns(`
+            CENTER
+            ├── g width:200
+            ├── f width:200
+            ├── e width:200
+            ├── d width:200
+            ├── c width:200
+            ├── b width:200
+            └── a width:200
+        `);
     });
 
-    test('basic columns groups ordered as provided', () => {
+    test('basic columns groups ordered as provided', async () => {
         const columnDefs: (ColDef | ColGroupDef)[] = [
             {
                 children: [
@@ -60,9 +71,22 @@ describe('Column Order', () => {
         expect(getColumnOrder(gridApi, 'center')).toEqual(['g', 'f', 'e', 'd', 'c', 'b', 'a']);
         expect(getColumnOrder(gridApi, 'left')).toEqual([]);
         expect(getColumnOrder(gridApi, 'right')).toEqual([]);
+
+        await new GridColumns(gridApi, 'columns').checkColumns(`
+            CENTER
+            ├─┬ GROUP
+            │ ├── g width:200
+            │ └── f width:200
+            ├── e width:200
+            ├── d width:200
+            ├─┬ GROUP
+            │ ├── c width:200
+            │ └── b width:200
+            └── a width:200
+        `);
     });
 
-    test('gridApi.moveColumns moves array of columns', () => {
+    test('gridApi.moveColumns moves array of columns', async () => {
         const columnDefs: (ColDef | ColGroupDef)[] = [
             { colId: 'g' },
             { colId: 'f' },
@@ -84,6 +108,17 @@ describe('Column Order', () => {
         expect(getColumnOrderFromState(gridApi)).toEqual(['a', 'b', 'c', 'g', 'f', 'e', 'd']);
         expect(getColumnOrder(gridApi, 'all')).toEqual(['a', 'b', 'c', 'g', 'f', 'e', 'd']);
         expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', 'c', 'g', 'f', 'e', 'd']);
+
+        await new GridColumns(gridApi, 'columns').checkColumns(`
+            CENTER
+            ├── a width:200
+            ├── b width:200
+            ├── c width:200
+            ├── g width:200
+            ├── f width:200
+            ├── e width:200
+            └── d width:200
+        `);
     });
 
     describe('when overwriting colDefs', () => {

@@ -16,7 +16,7 @@ Alternatively all Grid [callbacks](./grid-options/) and [events](./grid-events/)
 
 ```js
 const gridOptions: GridOptions = {
-    onGridReady: (event: GridReadyEvent) {
+    onGridReady: (event: GridReadyEvent) => {
         // use api from event
         event.api.ensureIndexVisible(10);
     }

@@ -181,17 +181,24 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         valueExtractor: (cellValueChange: CellValueChange) => any,
         source: string
     ) {
-        for (const cellValueChange of action.cellValueChanges) {
-            const { rowIndex, rowPinned, columnId } = cellValueChange;
-            const rowPosition: RowPosition = { rowIndex, rowPinned };
-            const currentRow = _getRowNode(this.beans, rowPosition);
+        const { changeDetectionSvc } = this.beans;
+        changeDetectionSvc?.beginDeferred();
+        try {
+            for (const cellValueChange of action.cellValueChanges) {
+                const { rowIndex, rowPinned, columnId } = cellValueChange;
+                const rowPosition: RowPosition = { rowIndex, rowPinned };
+                const currentRow = _getRowNode(this.beans, rowPosition);
 
-            // checks if the row has been filtered out
-            if (!currentRow!.displayed) {
-                continue;
+                // Skip rows that can't be located (e.g. pivot leaf rows with null rowIndex)
+                // or that have been filtered out of the display.
+                if (!currentRow?.displayed) {
+                    continue;
+                }
+
+                currentRow.setDataValue(columnId, valueExtractor(cellValueChange), source);
             }
-
-            currentRow!.setDataValue(columnId, valueExtractor(cellValueChange), source);
+        } finally {
+            changeDetectionSvc?.endDeferred();
         }
     }
 

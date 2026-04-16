@@ -34,7 +34,6 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 | Skill | 🟢 `dev-server`       | `/dev-server`                      | Start dev server, check build status               |
 | Skill | 🔵 `git-conventions`  | `/git-conventions`                 | Branch, commit, and PR naming conventions          |
 | Skill | 🟢 `technology-stack` | `/technology-stack`                | Architecture constraints and zero-dependency rules |
-| Agent | 🔵 `code-reviewer`    | Auto (after edits)                 | Quality, security, and maintainability review      |
 
 ## Testing and Quality
 
@@ -46,18 +45,30 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 | Command | 🟢 `/manual-test`       | `/manual-test <url>`         | Create a manual test project from a docs example or plunker URL |
 | Agent   | 🔵 `playwright-expert`  | Auto                         | Playwright test architecture and debugging                      |
 
+## Documentation and Examples
+
+| Type  | Name               | Invoke           | What it does                                             |
+| ----- | ------------------ | ---------------- | -------------------------------------------------------- |
+| Skill | 🔵 `example`       | `/example`       | AG Charts/Grid/Studio example conventions and patterns   |
+| Skill | 🔵 `website-astro` | `/website-astro` | Astro page patterns, content collections, and components |
+| Skill | 🔵 `website-css`   | `/website-css`   | CSS architecture, design tokens, and styling patterns    |
+
 ## Planning and Analysis
 
-| Type  | Name                            | Invoke                               | What it does                                     |
-| ----- | ------------------------------- | ------------------------------------ | ------------------------------------------------ |
-| Skill | 🔵 `plan-review`                | `/plan-review` (user)                | Review plans for completeness and correctness    |
-| Skill | 🔵 `plan-implementation-review` | `/plan-implementation-review` (user) | Review plan execution, identify delivery gaps    |
-| Agent | 🔵 `nx-expert`                  | Auto                                 | Nx monorepo configuration and build optimisation |
+| Type  | Name                            | Invoke                               | What it does                                         |
+| ----- | ------------------------------- | ------------------------------------ | ---------------------------------------------------- |
+| Skill | 🔵 `jira`                       | `/jira`                              | Create, estimate, or analyse JIRA tickets            |
+| Skill | 🔵 `nx-performance`             | `/nx-performance`                    | Nx monorepo performance diagnostics and optimization |
+| Skill | 🔵 `plan-implementation-review` | `/plan-implementation-review` (user) | Review plan execution, identify delivery gaps        |
+| Skill | 🔵 `plan-review`                | `/plan-review` (user)                | Review plans for completeness and correctness        |
+| Agent | 🔵 `nx-expert`                  | Auto                                 | Nx monorepo configuration and build optimisation     |
 
 ## Prompt Hygiene
 
 | Type  | Name                  | Invoke                     | What it does                                     |
 | ----- | --------------------- | -------------------------- | ------------------------------------------------ |
+| Skill | 🔵 `reflect`          | `/reflect` (user)          | Self-reflection and meta-cognitive analysis      |
+| Skill | 🔵 `rulesync`         | `/rulesync`                | Configure AI/agentic tooling via `.rulesync/`    |
 | Skill | 🔵 `validate-prompts` | `/validate-prompts` (user) | Validate prompt file references for path hygiene |
 
 ## Memory
@@ -76,12 +87,13 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 
 ## Git and Branch Management
 
-| Type  | Name                    | Invoke                       | What it does                             |
-| ----- | ----------------------- | ---------------------------- | ---------------------------------------- |
-| Skill | 🔵 `sync-ag-shared`     | `/sync-ag-shared` (user)     | Sync ag-shared subrepo across AG repos   |
-| Skill | 🔵 `git-worktree-clean` | `/git-worktree-clean` (user) | Hard-reset worktree to `origin/latest`   |
-| Skill | 🔵 `git-split`          | `/git-split` (user)          | Split large files preserving git history |
-| Skill | 🔵 `pr-split`           | `/pr-split` (user)           | Split a branch into stacked PRs          |
+| Type  | Name                    | Invoke                       | What it does                                 |
+| ----- | ----------------------- | ---------------------------- | -------------------------------------------- |
+| Skill | 🔵 `sync-ag-shared`     | `/sync-ag-shared` (user)     | Sync ag-shared subrepo across AG repos       |
+| Skill | 🔵 `git-worktree-clean` | `/git-worktree-clean` (user) | Hard-reset worktree to `origin/latest`       |
+| Skill | 🔵 `git-split`          | `/git-split` (user)          | Split large files preserving git history     |
+| Skill | 🔵 `pr-split`           | `/pr-split` (user)           | Split a branch into stacked PRs              |
+| Skill | 🔵 `ag-shared-sync-log` | `/ag-shared-sync-log` (user) | Generate migration log for ag-shared changes |
 
 ---
 
@@ -123,24 +135,32 @@ Skills load on-demand when invoked. All skills are invoked via `/skill-name`. Al
 
 | Skill                           | Description                                                 |
 | ------------------------------- | ----------------------------------------------------------- |
+| 🔵 `ag-shared-sync-log`         | Generate migration log entries for ag-shared changes        |
 | 🔵 `batch-lint-cleanup`         | Auto-fix ESLint violations by rule                          |
 | 🔵 `code-cleanup`               | Remove bloat, duplication; improve clarity                  |
 | 🔵 `code-fixup`                 | Fix build and lint errors across a package                  |
 | 🟢 `dev-server`                 | Start dev server, check build status                        |
+| 🔵 `example`                    | AG Charts/Grid/Studio example conventions and patterns      |
 | 🔵 `git-bisect`                 | Find the commit that introduced a regression                |
 | 🔵 `git-conventions`            | Branch, commit, and PR naming conventions                   |
 | 🔵 `git-split`                  | Split large files preserving git history                    |
 | 🔵 `git-worktree-clean`         | Hard-reset worktree to `origin/latest`                      |
+| 🔵 `jira`                       | Create, estimate, or analyse JIRA tickets                   |
+| 🔵 `nx-performance`             | Nx monorepo performance diagnostics and optimization        |
 | 🔵 `plan-implementation-review` | Review plan execution, identify delivery gaps               |
 | 🔵 `plan-review`                | Review plans for completeness and correctness               |
 | 🔵 `pr-create`                  | Commit, push, and open a PR                                 |
 | 🔵 `pr-review`                  | Review a PR (Markdown default, JSON with `--json`)          |
 | 🔵 `pr-split`                   | Split a branch into stacked PRs                             |
 | 🔵 `recall`                     | Load branch context, browse project memories                |
+| 🔵 `reflect`                    | Self-reflection and meta-cognitive analysis                 |
 | 🔵 `remember`                   | Save branch context or project learnings as memory          |
+| 🔵 `rulesync`                   | Configure AI/agentic tooling via `.rulesync/`               |
 | 🔵 `sync-ag-shared`             | Sync ag-shared subrepo changes across AG repos              |
 | 🟢 `technology-stack`           | Architecture constraints and zero-dependency requirements   |
 | 🔵 `validate-prompts`           | Validate prompt file references for consistency and hygiene |
+| 🔵 `website-astro`              | Astro page patterns, content collections, and components    |
+| 🔵 `website-css`                | CSS architecture, design tokens, and styling patterns       |
 
 ---
 
@@ -148,8 +168,7 @@ Skills load on-demand when invoked. All skills are invoked via `/skill-name`. Al
 
 Sub-agents are spawned automatically when the AI determines a task matches their speciality. They cannot be invoked directly.
 
-| Agent                  | Description                                             |
-| ---------------------- | ------------------------------------------------------- |
-| 🔵 `code-reviewer`     | Reviews code for quality, security, and maintainability |
-| 🔵 `nx-expert`         | Nx monorepo configuration and build optimisation        |
-| 🔵 `playwright-expert` | Playwright E2E test architecture and debugging          |
+| Agent                  | Description                                      |
+| ---------------------- | ------------------------------------------------ |
+| 🔵 `nx-expert`         | Nx monorepo configuration and build optimisation |
+| 🔵 `playwright-expert` | Playwright E2E test architecture and debugging   |

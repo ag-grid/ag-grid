@@ -37,6 +37,10 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
     // if pivoting, these are the generated columns as a result of the pivot
     private pivotResultCols: _ColumnCollections | null;
 
+    // Cached aggregation-ordered list: regular columns first, total columns after.
+    // Lazily computed on first access, invalidated when pivot result columns change.
+    private aggOrderedList: AgColumn[] | null | undefined;
+
     // Saved when pivot is disabled, available to re-use when pivot is restored
     private previousPivotResultCols: (AgColumn | AgProvidedColumnGroup)[] | null;
 
@@ -84,7 +88,47 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         return this.colModel.getColFromCollection(key, this.pivotResultCols);
     }
 
+    public getAggregationOrderedList(): AgColumn[] | null {
+        let result = this.aggOrderedList;
+        if (result !== undefined) {
+            return result;
+        }
+        const list = this.pivotResultCols?.list;
+        if (!list || list.length === 0) {
+            this.aggOrderedList = null;
+            return null;
+        }
+        // Partition: regular columns first (no pivotTotalColumnIds), totals appended after.
+        // Aggregation requires this order because total columns read from already-computed regular results.
+        let hasAnyTotals = false;
+        for (let i = 0; i < list.length; ++i) {
+            if (list[i].getColDef().pivotTotalColumnIds != null) {
+                hasAnyTotals = true;
+                break;
+            }
+        }
+        if (!hasAnyTotals) {
+            // No totals — the list is already in the right order.
+            result = list;
+        } else {
+            const regular: AgColumn[] = [];
+            const totals: AgColumn[] = [];
+            for (let i = 0; i < list.length; ++i) {
+                const col = list[i];
+                if (col.getColDef().pivotTotalColumnIds != null) {
+                    totals.push(col);
+                } else {
+                    regular.push(col);
+                }
+            }
+            result = regular.concat(totals);
+        }
+        this.aggOrderedList = result;
+        return result;
+    }
+
     public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
+        this.aggOrderedList = undefined; // Invalidate cached aggregation order
         if (!this.colModel.ready) {
             return;
         }

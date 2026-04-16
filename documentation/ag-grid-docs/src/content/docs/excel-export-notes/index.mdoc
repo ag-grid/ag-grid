@@ -1,0 +1,55 @@
+---
+title: "Excel Export - Notes"
+enterprise: true
+---
+
+Excel notes/comments can be added to exported cells using a callback, exported automatically from the [Notes](./notes/) feature, or attached to custom content rows.
+
+## Adding Notes to Cells
+
+Use `processNoteCallback` to inject notes during export. The callback is invoked for each exported cell and receives the cell value, column, and row node. Return an `ExcelNote` object to attach a note, `undefined` to keep the default behaviour, or `null` to suppress the note for the current cell.
+
+If a note does not specify an `author`, the Excel document `author` is used. When the document author is not provided, the exporter falls back to `AG Grid`.
+
+{% gridExampleRunner title="Excel Export - Basic Notes" name="excel-export-notes-basic" exampleHeight=560 /%}
+
+## Exporting Grid Notes
+
+When the [Notes](./notes/) feature is enabled and `notesDataSource` is configured, cell notes are exported automatically as Excel notes/comments. No callback is needed.
+
+{% gridExampleRunner title="Excel Export - Grid Notes" name="excel-export-grid-notes" exampleHeight=560 /%}
+
+### Suppressing Grid Notes
+
+Set `suppressGridNotesExport` to `true` to prevent grid notes from being included in the export. The grid still displays notes, but the exported file will not contain them. Callback-based note injection via `processNoteCallback` still works when this is set.
+
+{% gridExampleRunner title="Excel Export - Suppress Grid Notes" name="excel-export-suppress-grid-notes" exampleHeight=560 /%}
+
+## Hiding Author
+
+By default, the author name is prepended as bold text in the Excel note body (matching Excel's native behaviour). Set `suppressPrependAuthorToNotes` to `true` to export only the note text. The author is still stored in the Excel workbook's note metadata.
+
+{% gridExampleRunner title="Excel Export - Hide Author" name="excel-export-hide-author" exampleHeight=560 /%}
+
+## Customising Exported Notes
+
+When both the Notes feature and `processNoteCallback` are used together, the callback receives `params.gridNote` (the original grid note) and `params.defaultNote` (the auto-derived Excel note). This allows you to:
+
+-   enhance the default note text with extra metadata
+-   override or preserve the note author
+-   inject export-only notes for cells that do not have a grid note
+-   suppress the note for a specific cell by returning `null`
+
+Use `ExcelCell.note` on `prependContent`, `appendContent`, or `getCustomContentBelowRow` to attach notes to custom content rows outside the grid body.
+
+{% gridExampleRunner title="Excel Export - Customising Notes" name="excel-export-notes-customisation" exampleHeight=560 /%}
+
+## API
+
+### ExcelNote
+
+{% interfaceDocumentation interfaceName="ExcelNote" overrideSrc="excel-export-api/excel-api.json" /%}
+
+### ProcessNoteForExportParams
+
+{% interfaceDocumentation interfaceName="ProcessNoteForExportParams" overrideSrc="excel-export-api/excel-api.json" /%}

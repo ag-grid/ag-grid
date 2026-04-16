@@ -5,6 +5,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -87,6 +88,12 @@ describe('ag-grid tree data', () => {
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(true);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Organisation Hierarchy" width:200
+            └── groupType "Group Type" width:200
+        `);
     });
 
     test('ag-grid tree data', async () => {
@@ -142,6 +149,12 @@ describe('ag-grid tree data', () => {
 
         const rowsSnapshot = getRowsSnapshot(rows);
         expect(rowsSnapshot).toMatchObject(simpleHierarchyRowsSnapshot());
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Organisation Hierarchy" width:200
+            └── groupType "Group Type" width:200
+        `);
     });
 
     test('ag-grid tree data with inverted order', async () => {
@@ -454,9 +467,9 @@ function hierarchyWithInvertedOrderRowSnapshot(): RowSnapshot[] {
             allChildrenCount: null,
             allLeafChildren: null,
             childIndex: 0,
-            childrenAfterFilter: [],
-            childrenAfterGroup: [],
-            childrenAfterSort: [],
+            childrenAfterFilter: null,
+            childrenAfterGroup: null,
+            childrenAfterSort: null,
             detail: undefined,
             displayed: true,
             expanded: false,
@@ -538,9 +551,9 @@ function hierarchyWithInvertedOrderRowSnapshot(): RowSnapshot[] {
             allChildrenCount: null,
             allLeafChildren: null,
             childIndex: 0,
-            childrenAfterFilter: [],
-            childrenAfterGroup: [],
-            childrenAfterSort: [],
+            childrenAfterFilter: null,
+            childrenAfterGroup: null,
+            childrenAfterSort: null,
             detail: undefined,
             displayed: true,
             expanded: false,

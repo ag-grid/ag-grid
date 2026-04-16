@@ -1,10 +1,18 @@
 {
     "mcpServers": {
+        "atlassian": {
+            "type": "http",
+            "url": "https://mcp.atlassian.com/v1/mcp"
+        },
         "sequential-thinking": {
             "type": "stdio",
             "command": "yarn",
             "args": ["run", "--silent", "mcp-server-sequential-thinking"],
             "env": {}
+        },
+        "excalidraw": {
+            "type": "http",
+            "url": "https://mcp.excalidraw.com"
         }
     }
 }

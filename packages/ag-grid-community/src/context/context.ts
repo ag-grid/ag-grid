@@ -5,6 +5,8 @@ import type { ClassImp, IContext } from '../agStack/interfaces/iContext';
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
+import type { FilterStage } from '../clientSideRowModel/filterStage';
+import type { SortStage } from '../clientSideRowModel/sortStage';
 import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import type { ColumnAnimationService } from '../columnMove/columnAnimationService';
 import type { ColumnMoveService } from '../columnMove/columnMoveService';
@@ -52,14 +54,20 @@ import type { IFormulaDataService, IFormulaInputManagerService, IFormulaService 
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
+import type { IAggregatedChildrenSvc } from '../interfaces/iAggregatedChildrenSvc';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
+import type { IColumnStateUpdateStrategy } from '../interfaces/iColumnStateUpdateStrategy';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
-import type { IExpansionService } from '../interfaces/iExpansionService';
+import type {
+    IExpansionService,
+    RowGroupBulkExpansionState,
+    RowGroupExpansionState,
+} from '../interfaces/iExpansionService';
 import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
@@ -74,6 +82,7 @@ import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
+import type { IRowGroupingEditValueSvc } from '../interfaces/iRowGroupingEditValueSvc';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type {
     IRowNodeAggregationStage,
@@ -93,8 +102,10 @@ import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { ITestIdService } from '../interfaces/iTestIdService';
 import type { IWatermark } from '../interfaces/iWatermark';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
+import type { INotesDataService, INotesService } from '../interfaces/notes';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { IRowNumbersService } from '../interfaces/rowNumbers';
+import type { IChangedPathFactory } from '../main-internal';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
 import type { IconService } from '../misc/iconService';
@@ -334,16 +345,19 @@ interface CoreBeanCollection
     pageBounds: PageBoundsService;
     apiFunctionSvc: ApiFunctionService;
     gridDestroySvc: GridDestroyService;
-    expansionSvc?: IExpansionService;
+    expansionSvc?: IExpansionService<RowGroupExpansionState | RowGroupBulkExpansionState>;
     sideBar?: ISideBarService;
     ssrmTxnManager?: IServerSideTransactionManager;
     aggFuncSvc?: IAggFuncService;
     advancedFilter: IAdvancedFilterService;
-    filterStage?: IRowNodeFilterStage;
-    sortStage?: IRowNodeSortStage;
+    filterStage?: FilterStage;
+    sortStage?: SortStage;
+    groupFilterStage?: IRowNodeFilterStage;
+    groupSortStage?: IRowNodeSortStage;
     flattenStage?: IRowNodeFlattenStage;
     groupStage?: IRowNodeGroupStage;
     aggStage?: IRowNodeAggregationStage;
+    aggChildrenSvc?: IAggregatedChildrenSvc;
     pivotStage?: IRowNodePivotStage;
     filterAggStage?: IRowNodeFilterAggregateStage;
     rowNodeSorter?: RowNodeSorter;
@@ -354,6 +368,7 @@ interface CoreBeanCollection
     rowDropHighlightSvc?: RowDropHighlightService;
     rowDragSvc?: RowDragService;
     groupEditSvc?: IGroupEditService;
+    rowGroupingEditValueSvc?: IRowGroupingEditValueSvc;
     stickyRowSvc?: IStickyRowService;
     filterValueSvc?: FilterValueService;
     cellFlashSvc?: CellFlashService;
@@ -375,12 +390,16 @@ interface CoreBeanCollection
     colDelayRenderSvc?: ColumnDelayRenderService;
     gridSerializer?: GridSerializer;
     licenseManager?: IWatermark;
+    changedPathFactory?: IChangedPathFactory;
     changeDetectionSvc?: ChangeDetectionService;
     iconSvc: IconService;
     groupHierarchyColSvc?: IGroupHierarchyColService;
     formulaDataSvc?: IFormulaDataService;
     formula?: IFormulaService;
     formulaInputManager?: IFormulaInputManagerService;
+    notesDataSvc?: INotesDataService;
+    notesSvc?: INotesService;
+    columnStateUpdateStrategy: IColumnStateUpdateStrategy;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_IR = {
 
     // Filter Buttons
     applyFilter: 'اعمال',
+    applyColumnToolPanel: 'اعمال',
     resetFilter: 'بازنشانی',
     clearFilter: 'پاک کردن',
     cancelFilter: 'لغو',
+    cancelColumnToolPanel: 'لغو',
 
     // Filter Titles
     textFilter: 'فیلتر متنی',
@@ -333,6 +335,7 @@ export const AG_GRID_LOCALE_IR = {
     sortAbsoluteAscending: 'مرتب‌سازی مطلق به صورت صعودی',
     sortAbsoluteDescending: 'مرتب‌سازی مطلق به صورت نزولی',
     sortUnSort: 'پاک کردن مرتب‌سازی',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'جمع',
@@ -681,7 +684,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaFilterColumn: 'CTRL+ENTER را فشار دهید تا فیلتر را باز کنید',
     ariaRowDeselect: 'SPACE را فشار دهید تا این سطر از انتخاب خارج شود',
     ariaHeaderSelection: 'ستون با انتخاب سرصفحه',
-    ariaSelectAllCells: 'برای انتخاب تمام سلول‌ها کلید فاصله یا Enter را فشار دهید',
+    ariaSelectAllCells: 'فشار دادن Space یا Enter برای انتخاب تمام سلول‌ها',
     ariaSelectAllRowCells: 'برای انتخاب تمام سلول‌های این ردیف، کلید Enter را فشار دهید',
     ariaColumnCellSelection: 'برای تغییر انتخاب همه سلول‌های قابل مشاهده در این ستون، کلید Enter را فشار دهید',
     ariaColumnGroupCellSelection:
@@ -757,6 +760,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaLabelAddFilterField: 'افزودن فیلد فیلتر',
     ariaLabelFilterCardDelete: 'حذف فیلتر',
     ariaLabelFilterCardHasEdits: 'دارای ویرایش‌ها',
+    ariaHasNote: 'این سلول یک یادداشت دارد.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '،',
@@ -801,4 +805,16 @@ export const AG_GRID_LOCALE_IR = {
     timeFormatSpacesDDMMMMYYYY: 'روز ماه سال',
     timeFormatHHMMSS: 'ساعت:دقیقه:ثانیه',
     timeFormatHHMMSSAmPm: 'ساعت:دقیقه:ثانیه ق.ظ/ب.ظ',
+
+    // Notes
+    note: 'یادداشت سلول',
+    addNote: 'افزودن یادداشت',
+    viewNote: 'نمایش یادداشت',
+    editNote: 'ویرایش یادداشت',
+    deleteNote: 'حذف یادداشت',
+    notePlaceholder: 'یک یادداشت اضافه کنید...',
+    noteHint:
+        'برای پیش‌نمایش نشانگر را روی آن ببرید. برای ویرایش داخل آن کلیک کنید. گوشه را بکشید تا اندازه تغییر کند. برای بستن Esc را فشار دهید.',
+    noteReadOnlyHint:
+        'یادداشت فقط خواندنی. برای کپی کردن متن را انتخاب کنید. گوشه را بکشید تا اندازه تغییر کند. برای بستن Esc را فشار دهید.',
 };

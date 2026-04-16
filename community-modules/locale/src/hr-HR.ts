@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_HR = {
 
     // Filter Buttons
     applyFilter: 'Primijeni',
+    applyColumnToolPanel: 'Primijeni',
     resetFilter: 'Poništi',
     clearFilter: 'Očisti',
     cancelFilter: 'Odustani',
+    cancelColumnToolPanel: 'Odustani',
 
     // Filter Titles
     textFilter: 'Tekstualni filter',
@@ -334,6 +336,7 @@ export const AG_GRID_LOCALE_HR = {
     sortAbsoluteAscending: 'Sortiraj apsolutno uzlazno',
     sortAbsoluteDescending: 'Sortiraj apsolutno silazno',
     sortUnSort: 'Očisti sortiranje',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Zbroj',
@@ -682,7 +685,7 @@ export const AG_GRID_LOCALE_HR = {
     ariaFilterColumn: 'Pritisnite CTRL ENTER za otvaranje filtera',
     ariaRowDeselect: 'Pritisnite SPACE za poništavanje odabira ovog retka',
     ariaHeaderSelection: 'Stupac s odabirom zaglavlja',
-    ariaSelectAllCells: 'Pritisnite razmaknicu ili Enter za odabir svih ćelija',
+    ariaSelectAllCells: 'Pritisnite Space ili Enter za odabir svih ćelija',
     ariaSelectAllRowCells: 'Pritisnite Enter za odabir svih ćelija u ovom retku',
     ariaColumnCellSelection: 'Pritisnite Enter za prebacivanje odabira svih vidljivih ćelija u ovom stupcu',
     ariaColumnGroupCellSelection: 'Pritisnite Enter za prebacivanje odabira svih vidljivih ćelija u ovoj grupi stupaca',
@@ -757,6 +760,7 @@ export const AG_GRID_LOCALE_HR = {
     ariaLabelAddFilterField: 'Dodaj polje filtera',
     ariaLabelFilterCardDelete: 'Izbriši filter',
     ariaLabelFilterCardHasEdits: 'Ima izmjene',
+    ariaHasNote: 'Ova ćelija ima bilješku.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -801,4 +805,16 @@ export const AG_GRID_LOCALE_HR = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM GGGG',
     timeFormatHHMMSS: 'SS:MM:VV',
     timeFormatHHMMSSAmPm: 'SS:MM:VV AM/PM',
+
+    // Notes
+    note: 'Napomena ćelije',
+    addNote: 'Dodaj napomenu',
+    viewNote: 'Prikaži napomenu',
+    editNote: 'Uredi napomenu',
+    deleteNote: 'Ukloni napomenu',
+    notePlaceholder: 'Dodaj napomenu...',
+    noteHint:
+        'Zadržite pokazivač za pretpregled. Kliknite unutar za uređivanje. Povucite kut za promjenu veličine. Pritisnite Esc za zatvaranje.',
+    noteReadOnlyHint:
+        'Napomena samo za čitanje. Označite tekst za kopiranje. Povucite kut za promjenu veličine. Pritisnite Esc za zatvaranje.',
 };

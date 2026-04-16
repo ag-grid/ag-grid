@@ -113,18 +113,7 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
                 />
             )
         }
-        {
-            isProduction && (
-                <Fragment>
-                    <Plausible domain="ag-grid.com" />
-
-                    <script async type="text/javascript" src="https://secure.inventiveinspired7.com/js/792251.js" />
-                    <noscript>
-                        <img alt="" src="https://secure.inventiveinspired7.com/792251.png" style="display:none;" />
-                    </noscript>
-                </Fragment>
-            )
-        }
+        {isProduction && <Plausible domain="ag-grid.com" />}
 
         {isStaging && <Plausible domain="grid-staging.ag-grid.com" />}
 

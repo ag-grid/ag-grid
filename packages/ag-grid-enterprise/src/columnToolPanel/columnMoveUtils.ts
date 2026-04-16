@@ -10,6 +10,8 @@ import { isProvidedColumnGroup } from 'ag-grid-community';
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
+import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
+import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
 export const getCurrentColumnsBeingMoved = (column: AgColumn | AgProvidedColumnGroup | null): AgColumn[] => {
     if (isProvidedColumnGroup(column)) {
@@ -19,16 +21,15 @@ export const getCurrentColumnsBeingMoved = (column: AgColumn | AgProvidedColumnG
 };
 
 const getMoveTargetIndex = (
-    beans: BeanCollection,
     currentColumns: AgColumn[] | null,
     lastHoveredColumn: AgColumn,
-    isBefore: boolean
+    isBefore: boolean,
+    allColumns: AgColumn[]
 ): number | null => {
     if (!lastHoveredColumn || !currentColumns) {
         return null;
     }
 
-    const allColumns = beans.colModel.getCols();
     const targetColumnIndex = allColumns.indexOf(lastHoveredColumn);
     const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
     const diff = getMoveDiff(allColumns, currentColumns, adjustedTarget);
@@ -52,8 +53,14 @@ const getMoveDiff = (allColumns: AgColumn[], currentColumns: AgColumn[] | null, 
     return 0;
 };
 
-export const isMoveBlocked = (gos: GridOptionsService, beans: BeanCollection, currentColumns: AgColumn[]): boolean => {
-    const preventMoving = gos.get('suppressMovableColumns') || beans.colModel.isPivotMode();
+export const isMoveBlocked = (
+    gos: GridOptionsService,
+    beans: BeanCollection,
+    currentColumns: AgColumn[],
+    params: ColumnStateUpdateParams
+): boolean => {
+    const deferMode = isDeferredMode(params);
+    const preventMoving = gos.get('suppressMovableColumns') || beans.columnStateUpdateStrategy.getPivotMode(deferMode);
 
     if (preventMoving) {
         return true;
@@ -67,7 +74,8 @@ export const isMoveBlocked = (gos: GridOptionsService, beans: BeanCollection, cu
 export const moveItem = (
     beans: BeanCollection,
     currentColumns: AgColumn[],
-    lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
+    lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null,
+    params: ColumnStateUpdateParams
 ): void => {
     if (!lastHoveredListItem) {
         return;
@@ -90,10 +98,15 @@ export const moveItem = (
         return;
     }
 
-    const targetIndex: number | null = getMoveTargetIndex(beans, currentColumns, lastHoveredColumn, isBefore);
+    const deferMode = isDeferredMode(params);
+    const allColumns = deferMode
+        ? beans.columnStateUpdateStrategy.getPrimaryColumns(deferMode)
+        : beans.colModel.getCols();
+    const targetIndex: number | null = getMoveTargetIndex(currentColumns, lastHoveredColumn, isBefore, allColumns);
 
     if (targetIndex != null) {
-        beans.colMoves?.moveColumns(currentColumns, targetIndex, 'toolPanelUi');
+        beans.columnStateUpdateStrategy.moveColumns(deferMode, currentColumns, targetIndex, 'toolPanelUi');
+        refreshDeferredToolPanelUi(beans, params);
     }
 };
 

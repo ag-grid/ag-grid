@@ -34,6 +34,7 @@ import type { RefreshCellsParams } from '../../interfaces/iCellsParams';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import type { INotesFeature } from '../../interfaces/notes';
 import type { IRowNumbersRowResizeFeature } from '../../interfaces/rowNumbers';
 import type { ILoadingCellRendererParams } from '../../main-umd-noStyles';
 import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
@@ -108,6 +109,7 @@ export class CellCtrl extends BeanStub {
 
     public rangeFeature: ICellRangeFeature | undefined = undefined;
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
+    private notesFeature: INotesFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
     public editStyleFeature: ICellStyleFeature | undefined = undefined;
@@ -179,6 +181,8 @@ export class CellCtrl extends BeanStub {
         if (isRowNumberCol(this.column)) {
             this.rowResizeFeature = this.beans.rowNumbersSvc!.createRowNumbersRowResizerFeature(this);
         }
+
+        this.notesFeature = this.beans.notesSvc?.createNotesFeature(this);
     }
 
     public isCellSpanning(): boolean {
@@ -199,6 +203,7 @@ export class CellCtrl extends BeanStub {
         this.keyboardListener = context.destroyBean(this.keyboardListener);
         this.rangeFeature = context.destroyBean(this.rangeFeature);
         this.rowResizeFeature = context.destroyBean(this.rowResizeFeature);
+        this.notesFeature = context.destroyBean(this.notesFeature);
 
         this.disableTooltipFeature();
     }
@@ -293,8 +298,29 @@ export class CellCtrl extends BeanStub {
     }
 
     private checkFormulaError() {
-        const isFormulaError = !!this.beans.formula?.getFormulaError(this.column, this.rowNode);
-        this.eGui.classList.toggle('formula-error', isFormulaError);
+        if (!this.beans.formula) {
+            return;
+        }
+        this.eGui.classList.toggle('formula-error', this.hasFormulaError());
+    }
+
+    private hasFormulaError(): boolean {
+        const { formula } = this.beans;
+
+        if (!formula) {
+            return false;
+        }
+
+        return !!formula.getFormulaError(this.column, this.rowNode);
+    }
+
+    private hasCellValidationError(): boolean {
+        const { editModelSvc } = this.beans;
+
+        if (!editModelSvc) {
+            return false;
+        }
+        return editModelSvc.getCellValidationModel().hasCellValidation(this);
     }
 
     private setupAutoHeight(eCellWrapper: HTMLElement | undefined, compBean: BeanStub): void {
@@ -552,9 +578,8 @@ export class CellCtrl extends BeanStub {
 
     public onCellChanged(event: CellChangedEvent): void {
         const eventImpactsThisCell = event.column === this.column;
-
         if (eventImpactsThisCell) {
-            this.refreshCell({});
+            this.refreshCell();
         }
     }
 
@@ -581,7 +606,7 @@ export class CellCtrl extends BeanStub {
     // + rowCtrl: event dataChanged {suppressFlash: !update, newData: !update}
     // + rowCtrl: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
-    public refreshCell({ force, suppressFlash, newData }: RefreshCellsParams & { newData?: boolean } = {}): void {
+    public refreshCell(params?: RefreshCellsParams & { newData?: boolean }): void {
         const {
             editStyleFeature,
             customStyleFeature,
@@ -605,7 +630,9 @@ export class CellCtrl extends BeanStub {
         // best always refresh and take the performance hit rather than never refresh and users complaining in support
         // that cells are not updating.
         const noValueProvided = field == null && valueGetter == null && showRowGroup == null;
-        const forceRefresh = force || noValueProvided || newData;
+
+        const newData = params?.newData ?? false;
+        const forceRefresh = noValueProvided || (params && (params.force || newData));
 
         const isCellCompReady = !!comp;
         // Only worth comparing values if the cellComp is ready
@@ -628,7 +655,7 @@ export class CellCtrl extends BeanStub {
             // be to busy. see comment in FilterManager with regards processingFilterChange
             const processingFilterChange = filterManager?.isSuppressFlashingCellsBecauseFiltering();
 
-            const flashCell = !suppressFlash && !processingFilterChange && enableCellChangeFlash;
+            const flashCell = !params?.suppressFlash && !processingFilterChange && enableCellChangeFlash;
 
             if (flashCell) {
                 cellFlashSvc?.flashCell(this);
@@ -643,10 +670,23 @@ export class CellCtrl extends BeanStub {
         }
 
         tooltipFeature?.refreshTooltip();
+        this.refreshNoteState();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
         customStyleFeature?.applyCellClassRules();
+    }
+
+    public showNote(focusEditor = false): void {
+        this.notesFeature?.show({ focusEditor });
+    }
+
+    public refreshNoteState(): void {
+        this.notesFeature?.refresh();
+    }
+
+    public isNoteHoverSuppressed(): boolean {
+        return !!this.editSvc?.isEditing(this) || this.hasFormulaError() || this.hasCellValidationError();
     }
 
     public isCellEditable(): boolean {
@@ -922,7 +962,7 @@ export class CellCtrl extends BeanStub {
         // require event to announce so we only announce
         // a direct user interaction with the cell
         if (cellFocused && event) {
-            this.rowCtrl.announceDescription();
+            this.rowCtrl.announceDescription(this);
         }
     }
 

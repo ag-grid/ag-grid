@@ -25,12 +25,14 @@ const MIN_DELTA_SORT_ROWS = 4;
  *
  * Time complexity: O(t log t + n) where t = touched rows, n = total rows
  * This is faster than full sort O(n log n) when t << n
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const doDeltaSort = (
     rowNodeSorter: RowNodeSorter,
     rowNode: RowNode,
     changedRowNodes: ChangedRowNodes,
-    changedPath: ChangedPath,
+    changedPath: ChangedPath | undefined,
     sortOptions: SortOption[]
 ): RowNode[] => {
     const oldSortedRows = rowNode.childrenAfterSort;
@@ -51,7 +53,6 @@ export const doDeltaSort = (
     }
 
     if (!oldSortedRows || unsortedRowsLen <= MIN_DELTA_SORT_ROWS) {
-        // No previous sort, or just too few elements, do full sort
         return rowNodeSorter.doFullSortInPlace(unsortedRows.slice(), sortOptions);
     }
 
@@ -63,7 +64,7 @@ export const doDeltaSort = (
     const touchedRows: RowNode[] = [];
     for (let i = 0; i < unsortedRowsLen; ++i) {
         const node = unsortedRows[i];
-        if (updates.has(node) || adds.has(node) || !changedPath.canSkip(node)) {
+        if (updates.has(node) || adds.has(node) || changedPath?.hasRow(node)) {
             indexByNode.set(node, ~i); // Bitwise NOT for touched (negative)
             touchedRows.push(node);
         } else {

@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_HU = {
 
     // Filter Buttons
     applyFilter: 'Alkalmaz',
+    applyColumnToolPanel: 'Alkalmaz',
     resetFilter: 'Visszaállítás',
     clearFilter: 'Törlés',
     cancelFilter: 'Mégse',
+    cancelColumnToolPanel: 'Mégse',
 
     // Filter Titles
     textFilter: 'Szövegszűrő',
@@ -337,6 +339,7 @@ export const AG_GRID_LOCALE_HU = {
     sortAbsoluteAscending: 'Abszolút növekvő sorrendben rendez',
     sortAbsoluteDescending: 'Abszolút csökkenő sorrendben rendez',
     sortUnSort: 'Rendezés törlése',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Összeg',
@@ -685,7 +688,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaFilterColumn: 'Nyomja meg a CTRL + ENTER billentyűket a szűrő megnyitásához',
     ariaRowDeselect: 'Nyomja le a SPACE billentyűt ezen sor kiválasztásának megszüntetéséhez',
     ariaHeaderSelection: 'Oszlop fejléc kiválasztásával',
-    ariaSelectAllCells: 'Nyomja meg a szóközt vagy az Entert az összes cella kiválasztásához',
+    ariaSelectAllCells: 'Nyomja meg a Space vagy az Enter gombot az összes cella kijelöléséhez',
     ariaSelectAllRowCells: 'Nyomja meg az Entert az összes cella kijelöléséhez ebben a sorban',
     ariaColumnCellSelection: 'Nyomja meg az Entert az oszlop összes látható cellájának kijelölésének váltásához',
     ariaColumnGroupCellSelection:
@@ -761,6 +764,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaLabelAddFilterField: 'Szűrőmező hozzáadása',
     ariaLabelFilterCardDelete: 'Szűrő törlése',
     ariaLabelFilterCardHasEdits: 'Módosításokat tartalmaz',
+    ariaHasNote: 'Ez a cella jegyzettel rendelkezik.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -805,4 +809,16 @@ export const AG_GRID_LOCALE_HU = {
     timeFormatSpacesDDMMMMYYYY: 'NN MMMM ÉÉÉÉ',
     timeFormatHHMMSS: 'ÓÓ:PP:MP',
     timeFormatHHMMSSAmPm: 'ÓÓ:PP:MP DE/DU',
+
+    // Notes
+    note: 'Cella megjegyzés',
+    addNote: 'Megjegyzés hozzáadása',
+    viewNote: 'Megjegyzés megtekintése',
+    editNote: 'Megjegyzés szerkesztése',
+    deleteNote: 'Megjegyzés eltávolítása',
+    notePlaceholder: 'Megjegyzés hozzáadása...',
+    noteHint:
+        'Vigye fölé az egeret az előnézethez. Kattintson bele a szerkesztéshez. Húzza a sarkát az átméretezéshez. Nyomja meg az Esc billentyűt a bezáráshoz.',
+    noteReadOnlyHint:
+        'Csak olvasható megjegyzés. Jelölje ki a szöveget a másoláshoz. Húzza a sarkát az átméretezéshez. Nyomja meg az Esc billentyűt a bezáráshoz.',
 };

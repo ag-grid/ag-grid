@@ -71,6 +71,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     scrollbarWidth: true,
     icons: true,
     suppressRowTransform: true,
+    suppressContentVisibilityAuto: true,
     gridId: true,
     enableGroupEdit: true,
     initialState: true,

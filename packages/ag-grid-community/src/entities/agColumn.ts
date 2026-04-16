@@ -856,8 +856,13 @@ export function _normalizeSortType(sortTypeLike?: unknown): SortType {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getDisplaySortForColumn(column: AgColumn, beans: BeanCollection) {
-    const sortDef = beans.sortSvc!.getDisplaySortForColumn(column);
+export function _getDisplaySortForColumn(
+    column: AgColumn,
+    beans: BeanCollection,
+    getSortDefOverride?: () => SortDef | null | undefined
+) {
+    const overrideSortDef = getSortDefOverride?.();
+    const sortDef = overrideSortDef ?? beans.sortSvc!.getDisplaySortForColumn(column);
     const type = _normalizeSortType(sortDef?.type);
     const direction = _normalizeSortDirection(sortDef?.direction);
     const allowedSortTypes = column.getAvailableSortTypes();

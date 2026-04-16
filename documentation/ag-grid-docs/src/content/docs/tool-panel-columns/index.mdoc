@@ -79,9 +79,9 @@ The example below demonstrates the suppress options / methods described above. N
 -   The following sections are not present in the tool panel: Row Groups, Values, Column Labels, Pivot Mode, Side Buttons, Column Filter, Select / Unselect All, Expand / Collapse All.
 -   The date column is hidden from the tool panel using: `colDef.suppressColumnsToolPanel=true`.
 -   Clicking **Show Pivot Mode Section** invokes `setPivotModeSectionVisible(true)` on the Columns Tool Panel instance.
--   Clicking **Show Row Groups Section** invokes `showRowGroupsSection(true)` on the Columns Tool Panel instance.
--   Clicking **Show Values Section** invokes `showValuesSection(true)` on the Columns Tool Panel instance.
--   Clicking **Show Pivot Section** invokes `showPivotSection(true)` on the Columns Tool Panel instance.
+-   Clicking **Show Row Groups Section** invokes `setRowGroupsSectionVisible(true)` on the Columns Tool Panel instance.
+-   Clicking **Show Values Section** invokes `setValuesSectionVisible(true)` on the Columns Tool Panel instance.
+-   Clicking **Show Pivot Section** invokes `setPivotSectionVisible(true)` on the Columns Tool Panel instance.
 
 {% gridExampleRunner title="Section Visibility" name="section-visibility"  exampleHeight=630 /%}
 
@@ -196,7 +196,7 @@ columnsToolPanel.collapseColumnGroups();
 columnsToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
 
 // collapses the 'Competition' column group in the Columns Tool Panel
-columnsToolPanel.collapseFilters(['age', 'sport']);
+columnsToolPanel.collapseColumnGroups(['competitionGroupId']);
 ```
 
 Notice in the snippet above that it's possible to target individual column groups by supplying `groupId`s.
@@ -210,6 +210,46 @@ The example below demonstrates these methods in action. Note the following:
 -   Clicking **Collapse Competition** collapses only the 'Competition' column group using `collapseColumnGroups(['competitionGroupId'])`.
 
 {% gridExampleRunner title="Expand / Collapse Column Groups" name="expand-collapse"  exampleHeight=640 /%}
+
+## Deferred Updates
+
+You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed. This allows multiple configuration changes to be made and applied in a single update, avoiding unnecessary intermediate recomputations or requests.
+
+Deferred Updates are enabled by including the **Apply** button in `toolPanelParams.buttons`.
+
+Note that in the example below:
+
+-   Changes made in the Columns Tool Panel are staged as pending changes.
+-   **Apply** commits all pending changes in a single operation.
+-   **Cancel** discards all pending changes and restores the last applied state.
+
+{% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode-csrm"  exampleHeight=830 /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    buttons: ['cancel', 'apply'],
+                },
+            },
+        ],
+        defaultToolPanel: 'columns',
+    },
+};
+```
+
+{% note %}
+Changes made outside the Columns Tool Panel — such as dragging columns into the Row Group or Pivot Panels, using the Column Menu, or calling the Grid / Column API — are applied immediately and clear any pending changes. Column pinning, resizing, and group expansion do not clear pending changes.
+{% /note %}
+
+When using the [Server-Side Row Model](./server-side-model/), Deferred Updates can be used to batch multiple configuration changes into a single server request. See [Batching Data Requests](./server-side-model-grouping/#batching-data-requests) for an SSRM-specific example.
 
 ## Custom Column Layout
 

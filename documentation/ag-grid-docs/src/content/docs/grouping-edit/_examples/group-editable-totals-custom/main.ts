@@ -7,7 +7,7 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
+import { RowGroupingEditModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
@@ -23,6 +23,7 @@ interface SalesRecord {
 
 ModuleRegistry.registerModules([
     RowGroupingModule,
+    RowGroupingEditModule,
     ClientSideRowModelModule,
     NumberFilterModule,
     SetFilterModule,

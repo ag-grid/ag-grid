@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_BG = {
 
     // Filter Buttons
     applyFilter: 'Приложи',
+    applyColumnToolPanel: 'Приложи',
     resetFilter: 'Нулиране',
     clearFilter: 'Изчисти',
     cancelFilter: 'Отказ',
+    cancelColumnToolPanel: 'Отказ',
 
     // Filter Titles
     textFilter: 'Филтър за текст',
@@ -335,6 +337,7 @@ export const AG_GRID_LOCALE_BG = {
     sortAbsoluteAscending: 'Абсолютно сортиране възходящо',
     sortAbsoluteDescending: 'Абсолютно сортиране низходящо',
     sortUnSort: 'Изчистване на сортирането',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Сума',
@@ -683,7 +686,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaFilterColumn: 'Натиснете CTRL + ENTER, за да отворите филтъра',
     ariaRowDeselect: 'Натиснете SPACE, за да отмаркирате този ред',
     ariaHeaderSelection: 'Колона с избор на заглавие',
-    ariaSelectAllCells: 'Натиснете интервал или Enter, за да изберете всички клетки',
+    ariaSelectAllCells: 'Натиснете Space или Enter, за да изберете всички клетки.',
     ariaSelectAllRowCells: 'Натиснете Enter, за да изберете всички клетки в този ред',
     ariaColumnCellSelection: 'Натиснете Enter, за да превключите избора на всички видими клетки в тази колона',
     ariaColumnGroupCellSelection:
@@ -760,6 +763,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaLabelAddFilterField: 'Добавяне на поле за филтър',
     ariaLabelFilterCardDelete: 'Изтриване на филтър',
     ariaLabelFilterCardHasEdits: 'Има редакции',
+    ariaHasNote: 'Тази клетка има бележка.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -804,4 +808,16 @@ export const AG_GRID_LOCALE_BG = {
     timeFormatSpacesDDMMMMYYYY: 'ДД ММММ ГГГГ',
     timeFormatHHMMSS: 'ЧЧ:ММ:СС',
     timeFormatHHMMSSAmPm: 'ЧЧ:ММ:СС AM/PM',
+
+    // Notes
+    note: 'Бележка за клетка',
+    addNote: 'Добавяне на бележка',
+    viewNote: 'Преглед на бележката',
+    editNote: 'Редактиране на бележката',
+    deleteNote: 'Премахване на бележката',
+    notePlaceholder: 'Добавете бележка...',
+    noteHint:
+        'Задръжте курсора за преглед. Щракнете вътре, за да редактирате. Плъзнете ъгъла, за да преоразмерите. Натиснете Esc, за да затворите.',
+    noteReadOnlyHint:
+        'Бележка само за четене. Изберете текста, за да го копирате. Плъзнете ъгъла, за да преоразмерите. Натиснете Esc, за да затворите.',
 };

@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_SE = {
 
     // Filter Buttons
     applyFilter: 'Verkställ',
+    applyColumnToolPanel: 'Verkställ',
     resetFilter: 'Återställ',
     clearFilter: 'Rensa',
     cancelFilter: 'Avbryt',
+    cancelColumnToolPanel: 'Avbryt',
 
     // Filter Titles
     textFilter: 'Textfilter',
@@ -335,6 +337,7 @@ export const AG_GRID_LOCALE_SE = {
     sortAbsoluteAscending: 'Sortera Absolut Stigande',
     sortAbsoluteDescending: 'Sortera Absolut Fallande',
     sortUnSort: 'Rensa Sortering',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Summa',
@@ -682,7 +685,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaFilterColumn: 'Tryck CTRL ENTER för att öppna filter',
     ariaRowDeselect: 'Tryck SPACE för att avmarkera denna rad',
     ariaHeaderSelection: 'Kolumn med rubrikval',
-    ariaSelectAllCells: 'Tryck på mellanslag eller Enter för att markera alla celler',
+    ariaSelectAllCells: 'Tryck på Mellanslag eller Enter för att markera alla celler',
     ariaSelectAllRowCells: 'Tryck på Enter för att markera alla celler i den här raden',
     ariaColumnCellSelection: 'Tryck på Enter för att växla markeringen av alla synliga celler i den här kolumnen',
     ariaColumnGroupCellSelection:
@@ -758,6 +761,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaLabelAddFilterField: 'Lägg till filterfält',
     ariaLabelFilterCardDelete: 'Radera filter',
     ariaLabelFilterCardHasEdits: 'Har ändringar',
+    ariaHasNote: 'Denna cell har en anteckning.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -802,4 +806,16 @@ export const AG_GRID_LOCALE_SE = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM ÅÅÅÅ',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS FM/EM',
+
+    // Notes
+    note: 'Cellanteckning',
+    addNote: 'Lägg till anteckning',
+    viewNote: 'Visa anteckning',
+    editNote: 'Redigera anteckning',
+    deleteNote: 'Ta bort anteckning',
+    notePlaceholder: 'Lägg till en anteckning...',
+    noteHint:
+        'Hovra för förhandsvisning. Klicka inuti för att redigera. Dra i hörnet för att ändra storlek. Tryck Esc för att stänga.',
+    noteReadOnlyHint:
+        'Skrivskyddad anteckning. Markera text för att kopiera. Dra i hörnet för att ändra storlek. Tryck Esc för att stänga.',
 };

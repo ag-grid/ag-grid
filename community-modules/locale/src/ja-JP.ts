@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_JP = {
 
     // Filter Buttons
     applyFilter: '適用',
+    applyColumnToolPanel: '適用',
     resetFilter: 'リセット',
     clearFilter: 'クリア',
     cancelFilter: 'キャンセル',
+    cancelColumnToolPanel: 'キャンセル',
 
     // Filter Titles
     textFilter: 'テキストフィルター',
@@ -259,7 +261,7 @@ export const AG_GRID_LOCALE_JP = {
     formulaServiceCircularReference: '循環参照です。',
     formulaServiceExpectedParsableFormula: '解析可能な数式が必要です。',
     formulaServiceInternalSchedulingError: '内部スケジューリングエラー。',
-    tooltipValidationErrorSeparator: '. ',
+    tooltipValidationErrorSeparator: '。 ',
 
     // Side Bar
     columns: '列',
@@ -332,6 +334,7 @@ export const AG_GRID_LOCALE_JP = {
     sortAbsoluteAscending: '絶対昇順に並べ替え',
     sortAbsoluteDescending: '絶対降順に並べ替え',
     sortUnSort: 'ソート解除',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '合計',
@@ -680,7 +683,7 @@ export const AG_GRID_LOCALE_JP = {
     ariaFilterColumn: 'フィルターを開くにはCTRL+ENTERを押してください',
     ariaRowDeselect: 'この行の選択を解除するにはSPACEを押してください',
     ariaHeaderSelection: 'ヘッダー選択付きの列',
-    ariaSelectAllCells: 'すべてのセルを選択するにはスペースキーまたはEnterキーを押してください',
+    ariaSelectAllCells: 'スペースキーまたはエンターキーを押してすべてのセルを選択します',
     ariaSelectAllRowCells: 'この行のすべてのセルを選択するにはEnterキーを押してください',
     ariaColumnCellSelection: 'この列のすべての表示セルの選択を切り替えるにはEnterキーを押してください',
     ariaColumnGroupCellSelection: 'この列グループのすべての表示セルの選択を切り替えるにはEnterキーを押してください',
@@ -755,6 +758,7 @@ export const AG_GRID_LOCALE_JP = {
     ariaLabelAddFilterField: 'フィルターフィールドを追加',
     ariaLabelFilterCardDelete: 'フィルターを削除',
     ariaLabelFilterCardHasEdits: '編集されています',
+    ariaHasNote: 'このセルにはメモがあります。',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '、',
@@ -799,4 +803,16 @@ export const AG_GRID_LOCALE_JP = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 午前/午後',
+
+    // Notes
+    note: 'セルメモ',
+    addNote: 'メモを追加',
+    viewNote: 'メモを表示',
+    editNote: 'メモを編集',
+    deleteNote: 'メモを削除',
+    notePlaceholder: 'メモを追加...',
+    noteHint:
+        'プレビューするにはホバーします。編集するには内側をクリックします。サイズを変更するには角をドラッグします。閉じるにはEscを押します。',
+    noteReadOnlyHint:
+        '読み取り専用のメモです。コピーするにはテキストを選択してください。サイズを変更するには角をドラッグします。閉じるにはEscを押します。',
 };

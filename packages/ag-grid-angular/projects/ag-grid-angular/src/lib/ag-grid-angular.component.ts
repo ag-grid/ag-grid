@@ -107,6 +107,7 @@ import type {
     FormulaDataSource,
     FormulaFuncs,
     FullWidthCellKeyDownEvent,
+    FullWidthNotesDataSource,
     GetBusinessKeyForNode,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -157,6 +158,7 @@ import type {
     NavigateToNextCell,
     NavigateToNextHeader,
     NewColumnsLoadedEvent,
+    NotesDataSource,
     OverlaySelectorFunc,
     OverlayType,
     PaginationChangedEvent,
@@ -166,7 +168,9 @@ import type {
     PdfExportParams,
     PinnedRowDataChangedEvent,
     PinnedRowsChangedEvent,
+    PivotColumnGroupTotals,
     PivotMaxColumnsExceededEvent,
+    PivotRowTotals,
     PostProcessPopup,
     PostSortRows,
     ProcessCellForClipboard,
@@ -1153,11 +1157,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.
      * @agModule `PivotModule`
      */
-    @Input() public pivotColumnGroupTotals: 'before' | 'after' | undefined = undefined;
+    @Input() public pivotColumnGroupTotals: PivotColumnGroupTotals | undefined = undefined;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.
      * @agModule `PivotModule`
      */
-    @Input() public pivotRowTotals: 'before' | 'after' | undefined = undefined;
+    @Input() public pivotRowTotals: PivotRowTotals | undefined = undefined;
     /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column.
      * @default false
      * @initial
@@ -1186,6 +1190,21 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `FormulaModule`
      */
     @Input() public formulaDataSource: FormulaDataSource | undefined = undefined;
+    /** Provide a data source to control where notes are stored and retrieved.
+     * Can be updated to enable, disable, or replace Notes at runtime.
+     * @agModule `NotesModule`
+     */
+    @Input() public notesDataSource: NotesDataSource | FullWidthNotesDataSource | undefined = undefined;
+    /** The delay in milliseconds before a note is shown when hovering a noted cell.
+     * @default 180
+     * @agModule `NotesModule`
+     */
+    @Input() public noteShowDelay: number | undefined = undefined;
+    /** The delay in milliseconds before a note is hidden after the pointer leaves a noted cell or note popup.
+     * @default 220
+     * @agModule `NotesModule`
+     */
+    @Input() public noteHideDelay: number | undefined = undefined;
     /** A map of 'function name' to 'function' for custom functions that are used for formulas.
      * @initial
      * @agModule `FormulaModule`
@@ -1279,10 +1298,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowDragModule`
      */
     @Input({ transform: booleanAttribute }) public rowDragManaged: boolean | undefined = undefined;
-    /** When `true`, managed row dragging updates grouped column values so rows can move between groups. When `false`,
-     * managed dragging only reorders rows inside their existing group.
+    /** When `true`, the grid re-evaluates the grouping hierarchy after editing a grouped column value,
+     * moving the row to the correct group instantly. Also enables managed row dragging to update
+     * grouped column values so rows can move between groups.
      * @default false
-     * @agModule `RowDragModule`
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public refreshAfterGroupEdit: boolean | undefined = undefined;
     /** Used if rowDragManaged is enabled and treeData is enabled,
@@ -1813,6 +1833,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressRowTransform: boolean | undefined = undefined;
+    /** Set to `true` to suppress `content-visibility: auto` on the grid wrapper element. This degrades performance by causing the browser to render grids even when they are off screen, but may be necessary if your application depends on receiving resize events from hidden grids.
+     * @default false
+     * @initial
+     */
+    @Input({ transform: booleanAttribute }) public suppressContentVisibilityAuto: boolean | undefined = undefined;
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
      * @default false
      * @agModule `ColumnHoverModule`

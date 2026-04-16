@@ -13,8 +13,7 @@ interface IData {
 
 suite('flat grid sorting', () => {
     const gridsManager = new TestGridsManager({
-        includeDefaultModules: false,
-        mockGridLayout: false,
+        benchmark: true,
         modules: [ClientSideRowModelModule, ColumnApiModule],
     });
 
@@ -36,9 +35,6 @@ suite('flat grid sorting', () => {
                 deltaSort: true,
                 rowData: baseRowData,
                 getRowId: ({ data }) => data.id,
-                ensureDomOrder: false,
-                suppressRowVirtualisation: false,
-                suppressColumnVirtualisation: false,
             });
 
             apiNoDelta ??= gridsManager.createGrid('G-no-delta', {
@@ -46,9 +42,6 @@ suite('flat grid sorting', () => {
                 deltaSort: false,
                 rowData: baseRowData,
                 getRowId: ({ data }) => data.id,
-                ensureDomOrder: false,
-                suppressRowVirtualisation: false,
-                suppressColumnVirtualisation: false,
             });
         },
         teardown: () => {

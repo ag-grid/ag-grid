@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_CN = {
 
     // Filter Buttons
     applyFilter: '应用',
+    applyColumnToolPanel: '应用',
     resetFilter: '重置',
     clearFilter: '清除',
     cancelFilter: '取消',
+    cancelColumnToolPanel: '取消',
 
     // Filter Titles
     textFilter: '文本过滤器',
@@ -259,7 +261,7 @@ export const AG_GRID_LOCALE_CN = {
     formulaServiceCircularReference: '循环引用。',
     formulaServiceExpectedParsableFormula: '期望可解析的公式。',
     formulaServiceInternalSchedulingError: '内部调度错误。',
-    tooltipValidationErrorSeparator: '. ',
+    tooltipValidationErrorSeparator: '。',
 
     // Side Bar
     columns: '列',
@@ -332,6 +334,7 @@ export const AG_GRID_LOCALE_CN = {
     sortAbsoluteAscending: '绝对升序排序',
     sortAbsoluteDescending: '绝对降序排序',
     sortUnSort: '清除排序',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '总和',
@@ -679,7 +682,7 @@ export const AG_GRID_LOCALE_CN = {
     ariaFilterColumn: '按 CTRL ENTER 打开过滤器',
     ariaRowDeselect: '按 SPACE 取消选择此行',
     ariaHeaderSelection: '具有标题选择的列',
-    ariaSelectAllCells: '按空格键或 Enter 键选择所有单元格',
+    ariaSelectAllCells: '按空格键或回车键选择所有单元格',
     ariaSelectAllRowCells: '按 Enter 键选择此行中的所有单元格',
     ariaColumnCellSelection: '按 Enter 键切换此列中所有可见单元格的选择',
     ariaColumnGroupCellSelection: '按 Enter 键切换此列组中所有可见单元格的选择',
@@ -754,6 +757,7 @@ export const AG_GRID_LOCALE_CN = {
     ariaLabelAddFilterField: '添加过滤字段',
     ariaLabelFilterCardDelete: '删除过滤器',
     ariaLabelFilterCardHasEdits: '有编辑',
+    ariaHasNote: '此单元格有备注。',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -798,4 +802,14 @@ export const AG_GRID_LOCALE_CN = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
+
+    // Notes
+    note: '单元格备注',
+    addNote: '添加备注',
+    viewNote: '查看备注',
+    editNote: '编辑备注',
+    deleteNote: '删除备注',
+    notePlaceholder: '添加备注...',
+    noteHint: '悬停以预览。点击内部即可编辑。拖动角落可调整大小。按 Esc 关闭。',
+    noteReadOnlyHint: '只读备注。选择文本即可复制。拖动角落可调整大小。按 Esc 关闭。',
 };

@@ -426,7 +426,9 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             });
 
         filterRoot
-            .querySelectorAll(`${filterClass} .ag-input-field:not(.ag-hidden) input[type="date"]`)
+            .querySelectorAll(
+                `${filterClass} .ag-input-field:not(.ag-hidden) input[type="date"], ${filterClass} .ag-input-field:not(.ag-hidden) input[type="datetime-local"]`
+            )
             .forEach((dateInput, i, array) => {
                 const setIndex = array.length > 1;
                 const filterSpec = setIndex ? { ...(spec as ColumnFilterSpec), index: i } : spec;

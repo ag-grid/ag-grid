@@ -133,6 +133,11 @@ export const FRAMEWORK_REDIRECT_PATH = 'data-grid';
  */
 export const CHARTS_ROBOTS_DISALLOW_JSON_URL = import.meta.env?.CHARTS_ROBOTS_DISALLOW_JSON_URL;
 
+/**
+ * Studio robots disallow json url for merging with grid
+ */
+export const STUDIO_ROBOTS_DISALLOW_JSON_URL = import.meta.env?.STUDIO_ROBOTS_DISALLOW_JSON_URL;
+
 export const PRODUCTION_CHARTS_SITE_URL = 'https://www.ag-grid.com/charts';
 export const LEGACY_CHARTS_SITE_URL = 'https://charts.ag-grid.com';
 

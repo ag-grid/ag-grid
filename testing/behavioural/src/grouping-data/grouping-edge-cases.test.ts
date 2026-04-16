@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, test } from 'vitest';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping edge cases', () => {
     const gridsManager = new TestGridsManager({
@@ -49,6 +49,13 @@ describe('ag-grid grouping edge cases', () => {
             ├── LEAF id:4 ag-Grid-AutoColumn-country:"Italy" ag-Grid-AutoColumn-city:"Rome" country:"Italy" city:"Rome" sport:"Soccer"
             └── LEAF id:5 ag-Grid-AutoColumn-city:"Milan" country:"Italy" city:"Milan" sport:"Football"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-country "Location" width:200
+            ├── ag-Grid-AutoColumn-city "Location" width:200
+            └── sport "Sport" width:200
+        `);
     });
 
     test('groupHideParentOfSingleChild - remove groups with single children', async () => {
@@ -80,6 +87,12 @@ describe('ag-grid grouping edge cases', () => {
             │ └── LEAF id:2 department:"Engineering" team:"Backend" name:"Bob"
             ├── LEAF id:3 department:"Marketing" team:"Digital" name:"Charlie"
             └── LEAF id:4 department:"Sales" team:"Enterprise" name:"Diana"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Organization" width:200
+            └── name "Name" width:200
         `);
     });
 

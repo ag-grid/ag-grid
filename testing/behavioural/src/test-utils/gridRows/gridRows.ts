@@ -28,7 +28,6 @@ export class GridRows<TData = any> {
     public readonly displayedRows: RowNode<TData>[];
     public readonly pinnedTopRows: RowNode<TData>[];
     public readonly pinnedBottomRows: RowNode<TData>[];
-    public readonly rootRowNodes: RowNode<TData>[];
     public readonly rootRowNode: RowNode<TData> | null;
     public readonly rootAllLeafChildren: RowNode<TData>[];
     public readonly errors: GridRowsErrors<TData>;
@@ -78,8 +77,7 @@ export class GridRows<TData = any> {
         const collected = collectGridRows(api, label, options, errors, GridRows);
         this.rowNodes = collected.rowNodes;
         this.displayedRows = collected.displayedRows;
-        this.rootRowNodes = collected.rootRowNodes;
-        this.rootRowNode = collected.rootRowNodes[0] ?? null;
+        this.rootRowNode = collected.rootRowNode;
         this.rootAllLeafChildren = this.rootRowNode?.allLeafChildren ?? [];
         this.pinnedTopRows = collected.pinnedTopRows;
         this.pinnedBottomRows = collected.pinnedBottomRows;
@@ -249,7 +247,7 @@ export class GridRows<TData = any> {
             }
             const diagram = this.makeDiagram(false);
             if (unindentText(diagram) !== unindentText(diagramSnapshot)) {
-                recordSnapshotMismatch(this.check, diagram, this.label);
+                recordSnapshotMismatch(this.check, diagram, this.label, 'check');
             }
             return this;
         }
@@ -265,19 +263,18 @@ export class GridRows<TData = any> {
             attempt.loadErrors();
             lastError = attempt.#tryCheck(diagramSnapshot);
             if (!lastError) {
+                if (i > 0) {
+                    console.error(
+                        `GridRows flaky check detected for "${this.label}" — passed only after retrying with delays. ` +
+                            `Add \`await asyncSetTimeout(N)\` before this check to avoid intermittent failures.`
+                    );
+                }
                 return this;
             }
             if (i < retryDelays.length) {
                 await asyncSetTimeout(retryDelays[i]);
                 attempt = new GridRows<TData>(this.api, this.label, this.options);
             }
-        }
-
-        if (attempt !== this) {
-            console.error(
-                `GridRows flaky check detected for "${this.label}" — passed only after retrying with delays. ` +
-                    `Add \`await asyncSetTimeout(N)\` before this check to avoid intermittent failures.`
-            );
         }
 
         addDiagramToError(lastError, attempt.makeDiagram(false), this.label);

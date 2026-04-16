@@ -12,6 +12,7 @@ import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
     DRAG_NO_MOVE_INTERACTION_CASES,
+    GridColumns,
     GridRows,
     RowDragDispatcher,
     TestGridsManager,
@@ -141,6 +142,12 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         expect(secondEvent.column.getColId()).toBe('group');
         expect(secondEvent.oldValue).toBe('A');
         expect(secondEvent.newValue).toBe('B');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── value "Value" width:200
+        `);
     });
 
     test('moving a multi-row selection updates every row that moved', async () => {
@@ -206,6 +213,13 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         expect(api.getRowNode('1')?.data.group).toBe('B');
         expect(api.getRowNode('2')?.data.group).toBe('B');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── value "Value" width:200
+        `);
     });
 
     test('multi-row drag between nested groups moves two selected row to the target group', async () => {
@@ -386,21 +400,37 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         await asyncSetTimeout(0);
 
         gridRows = new GridRows(api, 'after move');
-        await gridRows.check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
-            │ └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
-            │ · └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
-            └─┬ filler id:row-group-level1-Gamma ag-Grid-AutoColumn:"Gamma"
-            · ├─┬ LEAF_GROUP id:row-group-level1-Gamma-level2-Five ag-Grid-AutoColumn:"Five"
-            · │ └── LEAF id:c1 level1:"Gamma" level2:"Five" value:"Gamma-1"
-            · ├─┬ LEAF_GROUP id:row-group-level1-Gamma-level2-One ag-Grid-AutoColumn:"One"
-            · │ └── LEAF selected id:a1 level1:"Gamma" level2:"One" value:"Alpha-1"
-            · ├─┬ LEAF_GROUP id:row-group-level1-Gamma-level2-Two ag-Grid-AutoColumn:"Two"
-            · │ └── LEAF id:a2 level1:"Gamma" level2:"Two" value:"Alpha-2"
-            · └─┬ LEAF_GROUP id:row-group-level1-Gamma-level2-Four ag-Grid-AutoColumn:"Four"
-            · · └── LEAF selected id:b2 level1:"Gamma" level2:"Four" value:"Beta-2"
-        `);
+        if (noMove) {
+            await gridRows.check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+                │ └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+                │ · └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+                └─┬ filler id:row-group-level1-Gamma ag-Grid-AutoColumn:"Gamma"
+                · ├─┬ LEAF_GROUP id:row-group-level1-Gamma-level2-Five ag-Grid-AutoColumn:"Five"
+                · │ └── LEAF id:c1 level1:"Gamma" level2:"Five" value:"Gamma-1"
+                · ├─┬ LEAF_GROUP id:row-group-level1-Gamma-level2-One ag-Grid-AutoColumn:"One"
+                · │ └── LEAF selected id:a1 level1:"Gamma" level2:"One" value:"Alpha-1"
+                · ├─┬ LEAF_GROUP id:row-group-level1-Gamma-level2-Two ag-Grid-AutoColumn:"Two"
+                · │ └── LEAF id:a2 level1:"Gamma" level2:"Two" value:"Alpha-2"
+                · └─┬ LEAF_GROUP id:row-group-level1-Gamma-level2-Four ag-Grid-AutoColumn:"Four"
+                · · └── LEAF selected id:b2 level1:"Gamma" level2:"Four" value:"Beta-2"
+            `);
+        } else {
+            await gridRows.check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+                │ └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+                │ · └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+                └─┬ filler id:row-group-level1-Gamma ag-Grid-AutoColumn:"Gamma"
+                · ├─┬ LEAF_GROUP id:row-group-level1-Gamma-level2-Five ag-Grid-AutoColumn:"Five"
+                · │ └── LEAF id:c1 level1:"Gamma" level2:"Five" value:"Gamma-1"
+                · └─┬ LEAF_GROUP id:row-group-level1-Gamma-level2-Four ag-Grid-AutoColumn:"Four"
+                · · ├── LEAF selected id:a1 level1:"Gamma" level2:"Four" value:"Alpha-1"
+                · · ├── LEAF id:a2 level1:"Gamma" level2:"Four" value:"Alpha-2"
+                · · └── LEAF selected id:b2 level1:"Gamma" level2:"Four" value:"Beta-2"
+            `);
+        }
 
         expect(api.getRowNode('a1')?.data.level1).toBe('Gamma');
         expect(api.getRowNode('a2')?.data.level1).toBe('Gamma');

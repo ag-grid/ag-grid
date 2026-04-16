@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_VN = {
 
     // Filter Buttons
     applyFilter: 'Áp dụng',
+    applyColumnToolPanel: 'Áp dụng',
     resetFilter: 'Đặt lại',
     clearFilter: 'Xóa',
     cancelFilter: 'Hủy',
+    cancelColumnToolPanel: 'Hủy',
 
     // Filter Titles
     textFilter: 'Bộ lọc văn bản',
@@ -333,6 +335,7 @@ export const AG_GRID_LOCALE_VN = {
     sortAbsoluteAscending: 'Sắp Xếp Tăng Dần Tuyệt Đối',
     sortAbsoluteDescending: 'Sắp Xếp Giảm Dần Tuyệt Đối',
     sortUnSort: 'Xóa Sắp Xếp',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Tổng',
@@ -680,7 +683,7 @@ export const AG_GRID_LOCALE_VN = {
     ariaFilterColumn: 'Nhấn CTRL ENTER để mở bộ lọc',
     ariaRowDeselect: 'Nhấn SPACE để bỏ chọn hàng này',
     ariaHeaderSelection: 'Cột với lựa chọn tiêu đề',
-    ariaSelectAllCells: 'Nhấn phím Space hoặc Enter để chọn tất cả các ô',
+    ariaSelectAllCells: 'Nhấn Space hoặc Enter để chọn tất cả các ô',
     ariaSelectAllRowCells: 'Nhấn Enter để chọn tất cả các ô trên hàng này',
     ariaColumnCellSelection: 'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong cột này',
     ariaColumnGroupCellSelection: 'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong nhóm cột này',
@@ -755,6 +758,7 @@ export const AG_GRID_LOCALE_VN = {
     ariaLabelAddFilterField: 'Thêm Trường Bộ Lọc',
     ariaLabelFilterCardDelete: 'Xóa Bộ Lọc',
     ariaLabelFilterCardHasEdits: 'Có Chỉnh Sửa',
+    ariaHasNote: 'Ô này có ghi chú.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -799,4 +803,15 @@ export const AG_GRID_LOCALE_VN = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS SA/CH',
+
+    // Notes
+    note: 'Ghi chú ô',
+    addNote: 'Thêm ghi chú',
+    viewNote: 'Xem ghi chú',
+    editNote: 'Chỉnh sửa ghi chú',
+    deleteNote: 'Xóa ghi chú',
+    notePlaceholder: 'Thêm ghi chú...',
+    noteHint:
+        'Di chuột để xem trước. Nhấp vào bên trong để chỉnh sửa. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
+    noteReadOnlyHint: 'Ghi chú chỉ đọc. Chọn văn bản để sao chép. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
 };

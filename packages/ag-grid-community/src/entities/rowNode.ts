@@ -72,7 +72,7 @@ export class RowNode<TData = any>
     /** When using group rows, contains the value without casting to string */
     public groupValue: any;
 
-    /** If using row grouping and aggregation, contains the aggregation data. */
+    /** If using row grouping and aggregation, contains the aggregation data. Created via `Object.create(null)` to avoid prototype conflicts. */
     public aggData: any;
 
     /**
@@ -137,6 +137,21 @@ export class RowNode<TData = any>
      */
     public pinnedSibling?: RowNode<TData>;
 
+    /** @inheritDoc */
+    public get primaryRow(): RowNode<TData> {
+        let node = (this.footer && this.sibling) || this;
+        if (node.rowPinned) {
+            const pinnedSibling = node.pinnedSibling;
+            if (pinnedSibling) {
+                node = pinnedSibling;
+                if (node.footer) {
+                    node = node.sibling ?? node;
+                }
+            }
+        }
+        return node as RowNode<TData>;
+    }
+
     /** When true, this row sticks to the top */
     public sticky: boolean;
 
@@ -197,19 +212,19 @@ export class RowNode<TData = any>
      * Children of this group. If multi levels of grouping, shows only immediate children.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
      */
-    public childrenAfterGroup: RowNode<TData>[] | null;
+    public childrenAfterGroup: RowNode<TData>[] | null = null;
 
     /** Filtered children of this group. */
-    public childrenAfterFilter: RowNode<TData>[] | null;
+    public childrenAfterFilter: RowNode<TData>[] | null = null;
 
     /** Aggregated and re-filtered children of this group. */
-    public childrenAfterAggFilter: RowNode<TData>[] | null;
+    public childrenAfterAggFilter: RowNode<TData>[] | null = null;
 
     /** Sorted children of this group. */
-    public childrenAfterSort: RowNode<TData>[] | null;
+    public childrenAfterSort: RowNode<TData>[] | null = null;
 
     /** Number of children and grand children. */
-    public allChildrenCount: number | null;
+    public allChildrenCount: number | null = null;
 
     /** Children mapped by the pivot columns or group key */
     public childrenMapped: { [key: string]: any } | null = null;
@@ -231,8 +246,23 @@ export class RowNode<TData = any>
     /** Server Side Row Model Only - the children are in an infinite cache. */
     public childStore: IServerSideStore | null;
 
-    /** `true` if group is expanded, otherwise `false`. */
-    public expanded: boolean;
+    /**
+     * Backing field for `expanded` property.
+     * - `true`/`false`: explicit expansion state.
+     * - `null`: triggers lazy evaluation — in CSRM, SSRM, getter resolves the default on first access and caches it.
+     * - `undefined`: uninitialized, means false.
+     */
+    public _expanded: boolean | null | undefined = undefined;
+
+    /** `true` if group or master row is expanded. */
+    public get expanded(): boolean {
+        const expansionSvc = this.beans.expansionSvc;
+        return expansionSvc ? expansionSvc.isExpanded(this) : this.level === -1 ? true : !!this._expanded;
+    }
+
+    public set expanded(value: boolean) {
+        this._expanded = value;
+    }
 
     /** If using footers, reference to the footer node for this group. */
     public sibling: RowNode;
@@ -510,12 +540,10 @@ export class RowNode<TData = any>
      *
      * The `eventSource` parameter controls how the value is written:
      *
-     * | `eventSource` | Active Editor        | Pending Batch        | Committed Data                 |
-     * | ------------- | -------------------- | -------------------- | ------------------------------ |
-     * | (default)     | Closed               | Written              | Written if no batch            |
-     * | `'edit'`      | Written              | Written if no editor | Written if no editor, no batch |
-     * | `'batch'`     | Left open            | Written              | Written if no batch            |
-     * | `'data'`      | Left open            | —                    | Always written                 |
+     * - `(default)` — Closes the active editor, writes to the pending batch if batching, otherwise writes to committed data.
+     * - `'edit'` — Writes directly into the active editor if present (via `refresh()` or recreation); falls back to pending batch or committed data.
+     * - `'batch'` — Leaves the active editor open, writes to the pending batch if batching, otherwise writes to committed data.
+     * - `'data'` — Leaves the active editor open, skips the pending batch, always writes to committed data.
      *
      * With `'edit'`, the active editor receives the new value via `refresh()` if implemented;
      * otherwise the editor is recreated with focus preserved.
@@ -537,15 +565,10 @@ export class RowNode<TData = any>
             return false; // column not found
         }
 
-        // For leaf (non-group) rows with pivot result columns, resolve to the underlying value column.
-        // Pivot columns don't map to real data fields on leaf rows — only the source value column does.
-        // This allows groupRowValueSetter to cascade edits using the same column reference for both
-        // group and leaf rows.
-        if (!this.group) {
-            const colDef = column.getColDef();
-            if (colDef.pivotValueColumn) {
-                column = colDef.pivotValueColumn as AgColumn;
-            }
+        // Resolve pivot result columns to their underlying value column for non-group, non-pinned rows.
+        const pivotValueColumn = column.colDef.pivotValueColumn;
+        if (!this.group && !this.rowPinned && pivotValueColumn) {
+            column = pivotValueColumn as AgColumn;
         }
 
         const oldValue = valueSvc.getValueForDisplay({ column, node: this, from: 'data' }).value;
@@ -726,12 +749,12 @@ export class RowNode<TData = any>
         callback(this);
     }
 
-    public getAggregatedChildren(colKey: ColKey | null | undefined): RowNode<TData>[] {
+    public getAggregatedChildren(colKey: ColKey | null | undefined, recursive?: boolean): RowNode<TData>[] {
         const beans = this.beans;
         // Use getCol() instead of fallback to getColDefCol() because we need just pivot result columns for performance.
         // getCol() searches in cols (which includes pivot result columns), whereas getColDefCol()
         // only searches in colDefCols (user-defined columns, excluding generated pivot columns).
-        return beans.aggStage?.getAggregatedChildren(this, beans.colModel.getCol(colKey)) ?? [];
+        return beans.aggChildrenSvc?.getAggregatedChildren(this, beans.colModel.getCol(colKey), recursive) ?? [];
     }
 
     public dispatchRowEvent<T extends RowNodeEventType>(type: T): void {

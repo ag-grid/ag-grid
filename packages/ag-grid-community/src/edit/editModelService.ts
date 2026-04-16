@@ -92,9 +92,10 @@ export class EditModelService extends BeanStub implements NamedBean {
         const data: any = { ...rowNode.data };
 
         const applyEdits = (edits: EditRow, data: any) =>
-            edits.forEach(({ pendingValue }, column) => {
-                if (pendingValue !== UNEDITED) {
-                    data[column.getColId()] = pendingValue;
+            edits.forEach(({ editorValue, pendingValue }, column) => {
+                const value = editorValue === undefined ? pendingValue : editorValue;
+                if (value !== UNEDITED) {
+                    data[column.getColId()] = value;
                 }
             });
 

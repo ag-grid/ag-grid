@@ -154,6 +154,16 @@ export interface CoreParams extends SharedThemeParams {
     filterPanelApplyButtonBackgroundColor: ColorValue;
 
     /**
+     * Color of Columns Tool Panel apply button
+     */
+    columnPanelApplyButtonColor: ColorValue;
+
+    /**
+     * Background color of Columns Tool Panel apply button
+     */
+    columnPanelApplyButtonBackgroundColor: ColorValue;
+
+    /**
      * Color of text and UI elements that should stand out less than the default in new Filters Tool Panel
      */
     filterPanelCardSubtleColor: ColorValue;
@@ -586,6 +596,11 @@ export interface CoreParams extends SharedThemeParams {
     valueChangeValueHighlightBackgroundColor: ColorValue;
 
     /**
+     * Background color of the outermost container around the grid.
+     */
+    wrapperBackgroundColor: ColorValue;
+
+    /**
      * Borders around the outside of the grid
      */
     wrapperBorder: BorderValue;
@@ -689,6 +704,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     },
     dataBackgroundColor: backgroundColor,
     oddRowBackgroundColor: { ref: 'dataBackgroundColor' },
+    wrapperBackgroundColor: backgroundColor,
     wrapperBorderRadius: 8,
     cellHorizontalPadding: {
         calc: 'spacing * 2 * cellHorizontalPaddingScale',
@@ -768,6 +784,8 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     advancedFilterBuilderValuePillColor: '#85c0e4',
     filterPanelApplyButtonColor: backgroundColor,
     filterPanelApplyButtonBackgroundColor: accentColor,
+    columnPanelApplyButtonColor: backgroundColor,
+    columnPanelApplyButtonBackgroundColor: accentColor,
     filterPanelCardSubtleColor: {
         ref: 'textColor',
         mix: 0.7,

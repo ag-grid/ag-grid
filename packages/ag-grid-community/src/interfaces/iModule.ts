@@ -78,10 +78,12 @@ type InternalModuleName =
     | 'Aria'
     | 'AutoWidth'
     | 'CellRendererFunction'
+    | 'ChangedPath'
     | 'ChangeDetection'
     | 'CheckboxCellRenderer'
-    | 'ClientSideRowModelFilter'
-    | 'ClientSideRowModelHierarchy'
+    | 'CsrmFilter'
+    | 'CsrmHierarchy'
+    | 'CsrmGroupStages'
     | 'ColumnDelayRender'
     | 'ColumnFilter'
     | 'ColumnFlex'
@@ -116,6 +118,7 @@ type InternalModuleName =
     | 'Popup'
     | 'QuickFilterCore'
     | 'SharedAggregation'
+    | 'SharedColumnStateUpdateStrategy'
     | 'SharedDragAndDrop'
     | 'SharedExport'
     | 'SharedMasterDetail'
@@ -213,7 +216,9 @@ export type EnterpriseModuleName =
     | 'StatusBar'
     | 'TreeData'
     | 'ViewportRowModel'
-    | 'Formula';
+    | 'Formula'
+    | 'Notes'
+    | 'RowGroupingEdit';
 
 /** The names of all publicly available AG Grid modules */
 export type AgModuleName =
@@ -237,6 +242,7 @@ export type AgModuleName =
     | 'EventApiModule'
     | 'ExternalFilterModule'
     | 'GridStateModule'
+    | 'RowGroupingEditModule'
     | 'HighlightChangesModule'
     | 'InfiniteRowModelModule'
     | 'LargeTextEditorModule'
@@ -296,7 +302,8 @@ export type AgModuleName =
     | 'StatusBarModule'
     | 'TreeDataModule'
     | 'ViewportRowModelModule'
-    | 'FormulaModule';
+    | 'FormulaModule'
+    | 'NotesModule';
 
 // Types to ensure that our AgModuleName type with Module suffix is equivalent to the internal module names based on Community and Enterprise module names
 type AgModuleNameInternal = `${CommunityModuleName | EnterpriseModuleName}Module`;
@@ -343,7 +350,8 @@ export type ResolvableModuleName = Extract<
     | 'ColumnGroup'
     | 'Overlay'
     | 'PinnedColumn'
-    | 'ClientSideRowModelHierarchy'
+    | 'CsrmHierarchy'
+    | 'CsrmGroupStages'
     | 'SkeletonCellRenderer'
     | 'CheckboxCellRenderer'
     | 'SharedTreeData'

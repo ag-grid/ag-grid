@@ -236,6 +236,17 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
 
         res = _addColumnDefaultAndTypes(this.beans, res, colId, true);
 
+        // TODO: Remove this guard when we properly implement editing of auto group column.
+        // Auto group columns should not inherit groupRowEditable or groupRowValueSetter from
+        // defaultColDef — group row editing of the auto group column is not yet fully supported.
+        // Only honour these properties if the user explicitly set them on autoGroupColumnDef.
+        if (autoGroupColumnDef?.groupRowEditable == null) {
+            res.groupRowEditable = undefined;
+        }
+        if (autoGroupColumnDef?.groupRowValueSetter == null) {
+            res.groupRowValueSetter = undefined;
+        }
+
         // For tree data the filter is always allowed
         if (!this.gos.get('treeData')) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter

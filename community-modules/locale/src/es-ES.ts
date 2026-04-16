@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_ES = {
 
     // Filter Buttons
     applyFilter: 'Aplicar',
+    applyColumnToolPanel: 'Aplicar',
     resetFilter: 'Reiniciar',
     clearFilter: 'Borrar',
     cancelFilter: 'Cancelar',
+    cancelColumnToolPanel: 'Cancelar',
 
     // Filter Titles
     textFilter: 'Filtro de Texto',
@@ -336,6 +338,7 @@ export const AG_GRID_LOCALE_ES = {
     sortAbsoluteAscending: 'Ordenar absolutamente ascendente',
     sortAbsoluteDescending: 'Ordenar absolutamente descendente',
     sortUnSort: 'Limpiar Orden',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Suma',
@@ -683,7 +686,7 @@ export const AG_GRID_LOCALE_ES = {
     ariaFilterColumn: 'Presiona CTRL ENTER para abrir el filtro',
     ariaRowDeselect: 'Presiona SPACE para anular la selección de esta fila',
     ariaHeaderSelection: 'Columna con selección de encabezado',
-    ariaSelectAllCells: 'Presione espacio o Enter para seleccionar todas las celdas',
+    ariaSelectAllCells: 'Presiona Espacio o Enter para seleccionar todas las celdas',
     ariaSelectAllRowCells: 'Presione Enter para seleccionar todas las celdas de esta fila',
     ariaColumnCellSelection: 'Presione Enter para alternar la selección de todas las celdas visibles en esta columna',
     ariaColumnGroupCellSelection:
@@ -760,6 +763,7 @@ export const AG_GRID_LOCALE_ES = {
     ariaLabelAddFilterField: 'Agregar campo de filtro',
     ariaLabelFilterCardDelete: 'Eliminar filtro',
     ariaLabelFilterCardHasEdits: 'Tiene ediciones',
+    ariaHasNote: 'Esta celda tiene una nota.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -804,4 +808,16 @@ export const AG_GRID_LOCALE_ES = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM AAAA',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS a. m./p. m.',
+
+    // Notes
+    note: 'Nota de celda',
+    addNote: 'Añadir nota',
+    viewNote: 'Ver nota',
+    editNote: 'Editar nota',
+    deleteNote: 'Eliminar nota',
+    notePlaceholder: 'Añadir una nota...',
+    noteHint:
+        'Pase el cursor para previsualizar. Haga clic dentro para editar. Arrastre la esquina para cambiar el tamaño. Pulse Esc para cerrar.',
+    noteReadOnlyHint:
+        'Nota de solo lectura. Seleccione el texto para copiarlo. Arrastre la esquina para cambiar el tamaño. Pulse Esc para cerrar.',
 };

@@ -4,7 +4,14 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    cachedJSONObjects,
+    setRowDataChecked,
+} from '../../test-utils';
 
 describe('ag-grid hierarchical tree data', () => {
     const gridsManager = new TestGridsManager({
@@ -66,6 +73,12 @@ describe('ag-grid hierarchical tree data', () => {
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(true);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Organisation Hierarchy" width:200
+            └── x "X" width:200
+        `);
     });
 
     test('ag-grid hierarchical tree data (without id)', async () => {
@@ -95,6 +108,12 @@ describe('ag-grid hierarchical tree data', () => {
             · └─┬ 5 GROUP id:5 ag-Grid-AutoColumn:"5" x:"F"
             · · └─┬ 6 GROUP id:6 ag-Grid-AutoColumn:"6" x:"G"
             · · · └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" x:"H"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── x "X" width:200
         `);
     });
 

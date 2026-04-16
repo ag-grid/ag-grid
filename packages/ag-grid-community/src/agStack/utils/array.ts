@@ -1,9 +1,3 @@
-/**
- * An array that is always empty and that cannot be modified
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export const _EmptyArray = Object.freeze([]) as unknown as any[];
-
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _last<T>(arr: readonly T[]): T;
 export function _last<T extends Node>(arr: NodeListOf<T>): T;

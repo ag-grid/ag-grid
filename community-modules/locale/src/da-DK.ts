@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_DK = {
 
     // Filter Buttons
     applyFilter: 'Anvend',
+    applyColumnToolPanel: 'Anvend',
     resetFilter: 'Nulstil',
     clearFilter: 'Ryd',
     cancelFilter: 'Annuller',
+    cancelColumnToolPanel: 'Annuller',
 
     // Filter Titles
     textFilter: 'Tekstfilter',
@@ -335,6 +337,7 @@ export const AG_GRID_LOCALE_DK = {
     sortAbsoluteAscending: 'Sorter Absolut Stigende',
     sortAbsoluteDescending: 'Sorter Absolut Faldende',
     sortUnSort: 'Ryd Sortering',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
@@ -683,7 +686,7 @@ export const AG_GRID_LOCALE_DK = {
     ariaFilterColumn: 'Tryk på CTRL ENTER for at åbne filter',
     ariaRowDeselect: 'Tryk på MELLEMRUM for at fravælge denne række',
     ariaHeaderSelection: 'Kolonne med hovedvalg',
-    ariaSelectAllCells: 'Tryk på mellemrumstasten eller Enter for at vælge alle celler',
+    ariaSelectAllCells: 'Tryk på Mellemrum eller Enter for at vælge alle celler',
     ariaSelectAllRowCells: 'Tryk på Enter for at vælge alle celler i denne række',
     ariaColumnCellSelection: 'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonne',
     ariaColumnGroupCellSelection: 'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonnegruppe',
@@ -758,6 +761,7 @@ export const AG_GRID_LOCALE_DK = {
     ariaLabelAddFilterField: 'Tilføj filterfelt',
     ariaLabelFilterCardDelete: 'Slet filter',
     ariaLabelFilterCardHasEdits: 'Har redigeringer',
+    ariaHasNote: 'Denne celle har en note.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -802,4 +806,16 @@ export const AG_GRID_LOCALE_DK = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM ÅÅÅÅ',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
+
+    // Notes
+    note: 'Cellenote',
+    addNote: 'Tilføj note',
+    viewNote: 'Vis note',
+    editNote: 'Rediger note',
+    deleteNote: 'Fjern note',
+    notePlaceholder: 'Tilføj en note...',
+    noteHint:
+        'Hold musen over for at få vist en forhåndsvisning. Klik indenfor for at redigere. Træk i hjørnet for at ændre størrelsen. Tryk på Esc for at lukke.',
+    noteReadOnlyHint:
+        'Skrivebeskyttet note. Markér tekst for at kopiere. Træk i hjørnet for at ændre størrelsen. Tryk på Esc for at lukke.',
 };

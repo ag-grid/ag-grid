@@ -58,7 +58,7 @@ const gridOptions = {
 The example below demonstrates a grid with many column group header levels. Note the following:
 
 -   The API is used to open and close groups. To do this, you will need to provide your groups with an ID during the definition, or look up the groups ID via the API (as an ID is generated if you don't provide one).
--   The `colDef.openByDefault` property is set on the E and F groups, resulting in these groups appearing as open by default.
+-   The `colGroupDef.openByDefault` property is set on the E and F groups, resulting in these groups appearing as open by default.
 -   `defaultColGroupDef` and `defaultColDef` are used to apply a class to some of the headers. Using this technique, you can apply style to any of the header sections.
 
 {% gridExampleRunner title="Advanced Grouping" name="advanced-grouping"  exampleHeight=680 /%}
@@ -109,7 +109,7 @@ const gridOptions = {
     columnDefs: [
         // the CSS class name supplied to 'headerClass' will get applied to the header group
         { headerName: 'Athlete Details', headerClass: 'my-css-class', children: [] },
-        { headerName: 'Medal Details', headerStyle: { backgroundColor: 'green', children: [] } }
+        { headerName: 'Medal Details', headerStyle: { backgroundColor: 'green' }, children: [] }
     ]
 }
 ```
@@ -128,7 +128,7 @@ The labels in the grouping headers are positioned with `display: flex`. To make 
 
 When Column Groups are too wide, the **Header Label** is always visible while scrolling the grid horizontally. To suppress this behaviour, set the column group property `suppressStickyLabel=true`. The example below demonstrates the following:
 
--   Both 'Athlete Details' and 'Sport Results' have `suppressStickyLabel=true`.
+-   Both 'Athlete Details' and 'Sports Results' have `suppressStickyLabel=true`.
 -   If you scroll the grid horizontally, the header label will not remain visible as the column is partially scrolled out of view.
 
 {% gridExampleRunner title="Sticky Label" name="suppress-sticky-label"  exampleHeight=560 /%}

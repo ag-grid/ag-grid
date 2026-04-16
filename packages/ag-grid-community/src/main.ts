@@ -9,6 +9,7 @@ export {
 export { isColumn } from './entities/agColumn';
 export { isColumnGroup } from './entities/agColumnGroup';
 export { isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
+
 export type {
     AutoSizeStrategy,
     IColumnLimit,
@@ -31,6 +32,12 @@ export type {
 export type { SortModelItem } from './interfaces/iSortModelItem';
 
 // IRowNode
+export {
+    DETAIL_ROW_ID_PREFIX,
+    GRAND_TOTAL_ROW_ID,
+    GROUP_TOTAL_ROW_ID_PREFIX,
+    ROOT_NODE_ID,
+} from './interfaces/iRowNode';
 export type {
     AllChildrenCountChangedEvent,
     CellChangedEvent,
@@ -108,10 +115,12 @@ export type {
     ExcelImage,
     ExcelImagePosition,
     ExcelInterior,
+    ExcelNote,
     ExcelNumberFormat,
     ExcelOOXMLDataType,
     ExcelOOXMLTemplate,
     ExcelProtection,
+    ProcessNoteForExportParams,
     ExcelRelationship,
     ExcelRow,
     ExcelSheetMargin,
@@ -437,6 +446,7 @@ export type {
 } from './interfaces/iNewFiltersToolPanel';
 export type {
     BaseToolPanelParams,
+    ColumnToolPanelAction,
     IToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
@@ -699,6 +709,8 @@ export type {
     SpanRowsParams,
     SuppressHeaderKeyboardEventFunc,
     SuppressHeaderKeyboardEventParams,
+    SuppressNoteActionsCallback,
+    SuppressNoteActionsCallbackParams,
     SuppressKeyboardEventFunc,
     SuppressKeyboardEventParams,
     SuppressNavigableCallback,
@@ -717,9 +729,16 @@ export type {
     ValueSetterFunc,
     ValueSetterParams,
     GroupRowEditableCallback,
+    DistributionGetValueParams,
+    DistributionSetValueParams,
     GroupRowEditableCallbackParams,
     GroupRowValueSetterParams,
     GroupRowValueSetterFunc,
+    GroupRowValueSetterDistribution,
+    GroupRowValueSetterDistributionEntry,
+    GroupRowValueSetterDistributionOptions,
+    GroupRowValueSetterDistributionRecord,
+    GroupRowValueSetterOptions,
 } from './entities/colDef';
 export type {
     BaseCellDataType,
@@ -779,6 +798,8 @@ export type {
     LocaleText,
     MasterSelectionMode,
     MultiRowSelectionOptions,
+    PivotColumnGroupTotals,
+    PivotRowTotals,
     ProcessPivotResultColDef,
     ProcessPivotResultColGroupDef,
     RangeHandleOptions,
@@ -939,6 +960,23 @@ export type {
     SetFormulaParams,
     ValueParam,
 } from './interfaces/formulas';
+export type {
+    FullWidthNotesDataSource,
+    NoteParams,
+    Note,
+    FullWidthRowNoteParams,
+    GetNoteParams,
+    NotesDataSource,
+    FullWidthNotesDataSourceGetNoteParams,
+    FullWidthNotesDataSourceSetNoteParams,
+    NotesDataSourceNoteParams,
+    NotesDataSourceFullWidthRowNoteParams,
+    NotesDataSourceGetNoteParams,
+    NotesDataSourceParams,
+    NotesDataSourceSetNoteParams,
+    RefreshNotesParams,
+    SetNoteParams,
+} from './interfaces/notes';
 
 // Public AG Grid Modules and ModuleRegistry
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';

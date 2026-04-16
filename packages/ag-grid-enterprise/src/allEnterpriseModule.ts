@@ -16,10 +16,12 @@ import { FormulaModule } from './formula/formulaModule';
 import { MasterDetailModule } from './masterDetail/masterDetailModule';
 import { ColumnMenuModule, ContextMenuModule } from './menu/menuModule';
 import { MultiFilterModule } from './multiFilter/multiFilterModule';
+import { NotesModule } from './notes/notesModule';
 import { PdfExportModule } from './pdfExport/pdfExportModule';
 import { PivotModule } from './pivot/pivotModule';
 import { CellSelectionModule } from './rangeSelection/rangeSelectionModule';
 import { RichSelectModule } from './richSelect/richSelectModule';
+import { RowGroupingEditModule } from './rowGrouping/rowGroupingEditModule';
 import { GroupFilterModule, RowGroupingModule, RowGroupingPanelModule } from './rowGrouping/rowGroupingModule';
 import { RowNumbersModule } from './rowNumbers/rowNumbersModule';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from './serverSideRowModel/serverSideRowModelModule';
@@ -53,6 +55,7 @@ const dependsOn = [
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
     FormulaModule,
+    NotesModule,
     SetFilterModule,
     MultiFilterModule,
     AdvancedFilterModule,
@@ -63,6 +66,7 @@ const dependsOn = [
     TreeDataModule,
     FindModule,
     BatchEditModule,
+    RowGroupingEditModule,
     AiToolkitModule,
 ];
 const moduleName: ModuleName = 'AllEnterprise';

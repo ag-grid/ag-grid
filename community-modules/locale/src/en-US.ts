@@ -65,9 +65,11 @@ export const AG_GRID_LOCALE_EN = {
 
     // Filter Buttons
     applyFilter: 'Apply',
+    applyColumnToolPanel: 'Apply',
     resetFilter: 'Reset',
     clearFilter: 'Clear',
     cancelFilter: 'Cancel',
+    cancelColumnToolPanel: 'Cancel',
 
     // Filter Titles
     textFilter: 'Text Filter',
@@ -324,6 +326,7 @@ export const AG_GRID_LOCALE_EN = {
     sortAbsoluteAscending: 'Sort Absolute Ascending',
     sortAbsoluteDescending: 'Sort Absolute Descending',
     sortUnSort: 'Clear Sort',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
@@ -763,6 +766,7 @@ export const AG_GRID_LOCALE_EN = {
     ariaLabelAddFilterField: 'Add Filter Field',
     ariaLabelFilterCardDelete: 'Delete Filter',
     ariaLabelFilterCardHasEdits: 'Has Edits',
+    ariaHasNote: 'This cell has a note.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -807,4 +811,14 @@ export const AG_GRID_LOCALE_EN = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Notes
+    note: 'Note',
+    addNote: 'Add Note',
+    viewNote: 'View Note',
+    editNote: 'Edit Note',
+    deleteNote: 'Remove Note',
+    notePlaceholder: 'Add a note...',
+    noteHint: 'Hover to preview. Click inside to edit. Drag the corner to resize. Press Esc to close.',
+    noteReadOnlyHint: 'Read-only note. Select text to copy. Drag the corner to resize. Press Esc to close.',
 };

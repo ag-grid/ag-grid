@@ -135,10 +135,10 @@ export class SortService extends BeanStub implements NamedBean {
         return clearedColumns;
     }
 
-    private getNextSortDirection(column: AgColumn): SortDef {
+    public getNextSortDirection(column: AgColumn, currentSort?: SortDef | SortDirection | null): SortDef {
         const sortingOrder = column.getSortingOrder();
 
-        const currentSortDef = column.getSortDef();
+        const currentSortDef = currentSort === undefined ? column.getSortDef() : _getSortDefFromInput(currentSort);
         const currentIndex = sortingOrder.findIndex((e) => _areSortDefsEqual(e, currentSortDef));
 
         let nextIndex = currentIndex + 1;

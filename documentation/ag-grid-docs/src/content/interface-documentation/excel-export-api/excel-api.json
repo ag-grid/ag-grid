@@ -10,8 +10,22 @@
         "customMetadata": {
             "description": "Custom metadata to be written to in the exported file. Values are serialised as strings."
         },
+        "suppressGridNotesExport": {
+            "description": "Set to `true` to suppress automatic export of cell notes from `notesDataSource`. See [Notes](./excel-export-notes/)."
+        },
         "fileName": {
             "default": "export.xlsx"
+        },
+        "processNoteCallback": {
+            "description": "A callback invoked for each exported cell, allowing Excel notes/comments to be customised, injected, or suppressed. See [Notes](./excel-export-notes/)."
+        },
+        "suppressPrependAuthorToNotes": {
+            "description": "Set to `true` to suppress prepending the author name as bold text in the exported Excel note body. The note author is still stored in the exported Excel note metadata. See [Notes](./excel-export-notes/)."
+        }
+    },
+    "ExcelCell": {
+        "note": {
+            "description": "Optional note/comment to export for this cell. This can be used with custom content rows as well as grid body cells."
         }
     },
     "ExcelExportMultipleSheetParams": {
@@ -20,6 +34,20 @@
                 "name": "Multiple Sheets",
                 "url": "./excel-export-multiple-sheets/"
             }
+        }
+    },
+    "ExcelNote": {
+        "meta": {
+            "page": {
+                "name": "Notes",
+                "url": "./excel-export-notes/"
+            }
+        },
+        "text": {
+            "isRequired": true
+        },
+        "author": {
+            "description": "Optional author name displayed in the exported Excel note. When omitted, the document `author` is used."
         }
     },
     "ExcelData": {
@@ -78,6 +106,14 @@
     "ExcelStyle": {
         "id": {
             "isRequired": true
+        }
+    },
+    "ProcessNoteForExportParams": {
+        "meta": {
+            "page": {
+                "name": "Notes",
+                "url": "./excel-export-notes/"
+            }
         }
     },
     "ExcelSheetProtection": {

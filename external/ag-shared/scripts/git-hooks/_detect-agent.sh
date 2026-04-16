@@ -32,12 +32,6 @@ detect_agent() {
         return 0
     fi
 
-    # Amazon Q
-    if [[ -n "${PROCESS_LAUNCHED_BY_Q:-}" ]] || [[ -n "${QTERM_SESSION_ID:-}" ]]; then
-        echo "Amazon Q"
-        return 0
-    fi
-
     # Windsurf
     if [[ "${TERM_PROGRAM:-}" == "windsurf" ]]; then
         echo "Windsurf"

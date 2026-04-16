@@ -3,13 +3,12 @@
         "codeSrc": "grid-api.AUTO.json",
         "validate": true,
         "undocumentedProperties": {
-            "sortChanged": "TODO: undocumented property, to resolve in AG-16879",
-            "flushAllAnimationFrames": "TODO: undocumented property, to resolve in AG-16879",
-            "getColumnDef": "TODO: undocumented property, to resolve in AG-16879",
-            "filterChanged": "TODO: undocumented property, to resolve in AG-16879",
-            "getInfiniteRowCount": "TODO: undocumented property, to resolve in AG-16879",
-            "flushServerSideAsyncTransactions": "TODO: undocumented property, to resolve in AG-16879",
-            "dispatchEvent": "TODO: undocumented property, to resolve in AG-16879"
+            "flushAllAnimationFrames": "Not recommended for users so not documented",
+            "flushServerSideAsyncTransactions": "Not recommended for users to not documented",
+            "dispatchEvent": "This is for internal use, purposefully undocumented",
+            "sortChanged": "Bug in the undocumentedProperties check, this is not an api method",
+            "filterChanged": "Bug in the undocumentedProperties check, this is not an api method",
+            "getColumnDef": "Duplicate, users can just use getColumnDefs."
         }
     },
     "gridOptions": {
@@ -633,7 +632,7 @@
         },
         "getStructuredSchema": {
             "more": {
-                "name": "CSV Export",
+                "name": "AI Toolkit",
                 "url": "./ai-toolkit/"
             }
         }
@@ -674,8 +673,24 @@
             "displayName": "Row Expand and Collapse",
             "description": "See [Row Grouping](./grouping-opening-groups/), [Master Detail](./master-detail/) or [Tree Data](./tree-data-opening-groups/) for more information"
         },
-        "expandAll": {},
-        "collapseAll": {},
+        "expandAll": {
+            "more": {
+                "name": "Expanding Groups",
+                "url": "./grouping-opening-groups/#api"
+            }
+        },
+        "collapseAll": {
+            "more": {
+                "name": "Expanding Groups",
+                "url": "./grouping-opening-groups/#api"
+            }
+        },
+        "resetRowGroupExpansion": {
+            "more": {
+                "name": "Reset Group Expansion",
+                "url": "./grouping-opening-groups/#reset-group-expansion"
+            }
+        },
         "setRowNodeExpanded": {
             "more": {
                 "name": "Expand to a Row",
@@ -1353,6 +1368,33 @@
             "more": {
                 "name": "Content to Search",
                 "url": "./find/#content-to-search"
+            }
+        }
+    },
+    "notes": {
+        "meta": {
+            "displayName": "Notes",
+            "page": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "getNote": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#api-reference"
+            }
+        },
+        "setNote": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#api-reference"
+            }
+        },
+        "refreshNotes": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#api-reference"
             }
         }
     }

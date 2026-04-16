@@ -339,7 +339,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         }
 
         e.preventDefault();
-        this.handleFocusAllCellsFromHeader();
+        this.selectAllCellsFromHeader();
     }
 
     private onHeaderClick(_e: MouseEvent): void {
@@ -350,11 +350,15 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         ) {
             return;
         }
-        this.handleFocusAllCellsFromHeader();
+        this.focusAllCellsFromHeaderClick();
     }
 
-    private handleFocusAllCellsFromHeader(): void {
+    private selectAllCellsFromHeader(): void {
         _selectAllCells(this.beans);
+    }
+
+    private focusAllCellsFromHeaderClick(): void {
+        this.selectAllCellsFromHeader();
         this.focusFirstRenderedCellAtRowPosition();
     }
 

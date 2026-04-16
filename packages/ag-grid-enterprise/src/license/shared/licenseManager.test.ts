@@ -11,15 +11,31 @@ function createMockDocument(hostname: string, pathname = '/'): Document {
 
 describe('LicenseManager', () => {
     const warnLog = console.warn;
+    const errorLog = console.error;
     beforeEach(() => {
         console.warn = jest.fn();
+        // Filter out license banner messages (single string of '*' padding, length 124)
+        // while still forwarding any unexpected console.error calls.
+        console.error = (...args: unknown[]) => {
+            if (
+                args.length === 1 &&
+                typeof args[0] === 'string' &&
+                args[0].startsWith('*') &&
+                args[0].endsWith('*') &&
+                args[0].length === 124
+            ) {
+                return;
+            }
+            errorLog.apply(console, args);
+        };
     });
     afterAll(() => {
         console.warn = warnLog;
+        console.error = errorLog;
     });
 
     test('empty key no message', () => {
-        LicenseManager.setLicenseKey(null);
+        LicenseManager.setLicenseKey(null as any);
 
         expect(console.warn).not.toHaveBeenCalled();
     });
@@ -34,7 +50,7 @@ describe('LicenseManager', () => {
         LicenseManager.setLicenseKey('test key 1');
         LicenseManager.setLicenseKey('test key 2');
 
-        expect(console.warn.mock.calls[0][0]).toContain('AG Grid: warning #291');
+        expect((console.warn as jest.Mock).mock.calls[0][0]).toContain('AG Grid: warning #291');
     });
 
     describe('isWebsiteUrl (via isDisplayWatermark)', () => {

@@ -3,9 +3,11 @@ import { _ColumnFilterModule, _PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { AggregationModule, SharedAggregationModule } from '../aggregation/aggregationModule';
+import { SharedColumnStateUpdateStrategyModule } from '../columnToolPanel/updates/columnStateUpdateStrategyModule';
 import { GroupHierarchyModule } from '../groupHierarchy/groupHierarchyModule';
 import {
-    ClientSideRowModelHierarchyModule,
+    CsrmGroupStagesModule,
+    CsrmHierarchyModule,
     GroupColumnModule,
     GroupEditModule,
     StickyRowModule,
@@ -56,7 +58,13 @@ export const RowGroupingModule: _ModuleWithoutApi = {
     version: VERSION,
     dynamicBeans: { groupStrategy: GroupStrategy },
     rowModels: ['clientSide'],
-    dependsOn: [SharedRowGroupingModule, AggregationModule, ClientSideRowModelHierarchyModule, GroupEditModule],
+    dependsOn: [
+        SharedRowGroupingModule,
+        AggregationModule,
+        CsrmHierarchyModule,
+        CsrmGroupStagesModule,
+        GroupEditModule,
+    ],
 };
 
 /**
@@ -76,7 +84,7 @@ export const RowGroupingPanelModule: _ModuleWithoutApi = {
         // version of panelDelimiter used in RTL mode
         panelDelimiterRtl: 'small-left',
     },
-    dependsOn: [EnterpriseCoreModule, _PopupModule],
+    dependsOn: [SharedColumnStateUpdateStrategyModule, _PopupModule],
 };
 
 /**

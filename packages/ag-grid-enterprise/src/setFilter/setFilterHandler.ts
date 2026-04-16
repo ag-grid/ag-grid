@@ -23,7 +23,7 @@ import {
     _toStringOrNull,
 } from 'ag-grid-community';
 
-import { ClientSideValuesExtractor } from './clientSideValueExtractor';
+import { CsrmValuesExtractor } from './csrmValueExtractor';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';
 import { processDataPath, translateForSetFilter } from './setFilterUtils';
 import SetFilterModelValuesType, { SetValueModel } from './setValueModel';
@@ -51,7 +51,6 @@ export class SetFilterHandler<TValue = string>
     private caseSensitive: boolean = false;
     public valueFormatter?: (params: ValueFormatterParams) => string;
     private noValueFormatterSupplied = false;
-    private useValueFormatterFromColumn = false;
 
     public init(params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
         this.updateParams(params);
@@ -60,9 +59,9 @@ export class SetFilterHandler<TValue = string>
         const createKey = this.createKey;
         const caseFormat = this.caseFormat.bind(this);
         const { gos, beans } = this;
-        const clientSideValuesExtractor = _isClientSideRowModel(gos, beans.rowModel)
+        const csrmValuesExtractor = _isClientSideRowModel(gos, beans.rowModel)
             ? this.createManagedBean(
-                  new ClientSideValuesExtractor<TValue>(
+                  new CsrmValuesExtractor<TValue>(
                       createKey,
                       caseFormat,
                       params.getValue,
@@ -72,7 +71,7 @@ export class SetFilterHandler<TValue = string>
               )
             : undefined;
         const valueModel = this.createManagedBean(
-            new SetValueModel(clientSideValuesExtractor, caseFormat, createKey, isTreeDataOrGrouping, {
+            new SetValueModel(csrmValuesExtractor, caseFormat, createKey, isTreeDataOrGrouping, {
                 handlerParams: params,
                 usingComplexObjects: !!(params.filterParams.keyCreator ?? params.colDef.keyCreator),
             })
@@ -107,7 +106,7 @@ export class SetFilterHandler<TValue = string>
         this.params = params;
         const {
             colDef,
-            filterParams: { caseSensitive, treeList, keyCreator },
+            filterParams: { caseSensitive, treeList, keyCreator, valueFormatter },
         } = params;
         this.caseSensitive = !!caseSensitive;
         const isGroupCol = !!colDef.showRowGroup;
@@ -115,7 +114,7 @@ export class SetFilterHandler<TValue = string>
         this.groupingTreeList = !!this.beans.rowGroupColsSvc?.columns.length && !!treeList && isGroupCol;
         const resolvedKeyCreator = keyCreator ?? colDef.keyCreator;
         this.createKey = this.generateCreateKey(resolvedKeyCreator, this.isTreeDataOrGrouping());
-        this.setValueFormatter(resolvedKeyCreator, params);
+        this.setValueFormatter(valueFormatter, resolvedKeyCreator, !!treeList, !!colDef.refData);
     }
 
     public doesFilterPass(params: DoesFilterPassParams<any, SetFilterModel>): boolean {
@@ -151,12 +150,9 @@ export class SetFilterHandler<TValue = string>
 
     private getFormattedValue(key: string | null): string | null {
         let value: TValue | string | null = this.valueModel.getValueForFormatter(key);
-        if (this.isTreeDataOrGrouping() && Array.isArray(value)) {
-            const shouldUseLast = this.noValueFormatterSupplied || this.useValueFormatterFromColumn;
-            if (shouldUseLast) {
-                // essentially get back the cell value
-                value = _last(value) as string;
-            }
+        if (this.noValueFormatterSupplied && this.isTreeDataOrGrouping() && Array.isArray(value)) {
+            // essentially get back the cell value
+            value = _last(value) as string;
         }
 
         const formattedValue = this.beans.valueSvc.formatValue(
@@ -164,7 +160,7 @@ export class SetFilterHandler<TValue = string>
             null,
             value,
             this.valueFormatter,
-            this.useValueFormatterFromColumn
+            false
         );
 
         return (
@@ -405,36 +401,24 @@ export class SetFilterHandler<TValue = string>
     }
 
     private setValueFormatter(
+        providedValueFormatter: ((params: ValueFormatterParams) => string) | undefined,
         keyCreator: ((params: KeyCreatorParams<any, any>) => string) | undefined,
-        params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>
+        treeList: boolean,
+        isRefData: boolean
     ) {
-        const {
-            colDef: { refData, valueFormatter },
-            filterParams: { treeList, valueFormatter: providedValueFormatter },
-        } = params;
-        const hasKeyCreatorButNoFormatterNorTreeList =
-            keyCreator && !(providedValueFormatter || treeList || valueFormatter);
-        if (hasKeyCreatorButNoFormatterNorTreeList) {
-            _error(249);
-            this.valueFormatter = undefined;
+        let valueFormatter = providedValueFormatter;
+        if (!valueFormatter) {
+            if (keyCreator && !treeList) {
+                _error(249);
+                return;
+            }
             this.noValueFormatterSupplied = true;
-            this.useValueFormatterFromColumn = false;
-            return;
-        }
-
-        let resolvedFormatter = providedValueFormatter;
-        if (!resolvedFormatter && !valueFormatter && !refData) {
             // ref data is handled by ValueService
-            resolvedFormatter = (params) => _toStringOrNull(params.value)!;
+            if (!isRefData) {
+                valueFormatter = (params) => _toStringOrNull(params.value)!;
+            }
         }
-
-        this.valueFormatter = resolvedFormatter;
-        this.noValueFormatterSupplied = !providedValueFormatter && !valueFormatter;
-        this.useValueFormatterFromColumn = !providedValueFormatter && !!valueFormatter;
-    }
-
-    public shouldUseValueFormatterFromColumn(): boolean {
-        return this.useValueFormatterFromColumn && !this.valueFormatter;
+        this.valueFormatter = valueFormatter;
     }
 
     public getCrossFilterModel(

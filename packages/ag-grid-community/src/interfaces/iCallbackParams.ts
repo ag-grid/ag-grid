@@ -7,6 +7,7 @@ import type { FocusableContainerName } from './iFocusableContainer';
 import type { HeaderPosition } from './iHeaderPosition';
 import type { IRowNode, RowPinnedType } from './iRowNode';
 import type { DefaultMenuItem } from './menuItem';
+import type { GetNoteParams } from './notes';
 import type { ServerSideTransaction } from './serverSideTransaction';
 
 export interface GetContextMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -151,10 +152,10 @@ export interface TabToNextGridContainerParams<TData = any, TContext = any> exten
     /** True if the Shift key is also down. */
     backwards: boolean;
     /** The container that currently has focus. */
-    fromContainer: GridContainerName;
+    previousContainer: GridContainerName;
     /** The container the grid would normally focus next. */
-    toContainer: GridContainerName;
-    /** The target the grid would normally focus when moving to `toContainer`, or `null` if it can't be represented. */
+    nextContainer: GridContainerName;
+    /** The target the grid would normally focus when moving to `nextContainer`, or `null` if it can't be represented. */
     defaultTarget: TabToNextGridContainerTarget | null;
 }
 
@@ -365,6 +366,8 @@ export interface IMenuActionParams<TData = any, TContext = any> extends AgGridCo
     node: IRowNode<TData> | null;
     /** The value, if a cell was clicked, otherwise null.  */
     value: any;
+    /** The note params for the cell or full width row that was clicked, if notes are enabled. */
+    noteParams?: GetNoteParams;
 }
 
 export type GetBusinessKeyForNode<TData = any> = (node: IRowNode<TData>) => string;

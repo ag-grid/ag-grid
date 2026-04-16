@@ -16,6 +16,8 @@
 
         --ag-background-color: #fff;
 
+        --ag-wrapper-background-color: var(--ag-background-color);
+
         --ag-header-background-color: transparent;
 
         --ag-tooltip-background-color: transparent;
@@ -242,6 +244,9 @@
 
         --ag-filter-panel-apply-button-color: var(--ag-foreground-color);
         --ag-filter-panel-apply-button-background-color: var(--ag-background-color);
+
+        --ag-column-panel-apply-button-color: var(--ag-foreground-color);
+        --ag-column-panel-apply-button-background-color: var(--ag-background-color);
         --ag-filter-panel-card-subtle-color: var(--ag-foreground-color);
         --ag-filter-panel-card-subtle-hover-color: var(--ag-foreground-color);
 

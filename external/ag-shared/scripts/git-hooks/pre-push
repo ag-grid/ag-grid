@@ -55,6 +55,13 @@ if [[ -z "$PROTECTED_BRANCH" ]]; then
     exit $?
 fi
 
+# Allow git-subrepo push operations — these are intentional pushes to the
+# subrepo's upstream branch and should not be blocked.
+if [[ -n "${GIT_SUBREPO_RUNNING:-}" && "${GIT_SUBREPO_COMMAND:-}" == "push" ]]; then
+    printf '%s\n' "${STDIN_LINES[@]}" | run_hook_chain "pre-push" "$@"
+    exit $?
+fi
+
 # On/targeting a protected branch — check for a known AI agent first
 if AGENT_NAME=$(detect_agent); then
     agent_block_message "$AGENT_NAME" "push" "$PROTECTED_BRANCH"

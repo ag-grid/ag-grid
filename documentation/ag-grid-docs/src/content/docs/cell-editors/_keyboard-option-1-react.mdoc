@@ -12,7 +12,7 @@ const KEY_PAGE_END = 'End';
 
 const MyCellEditor = ({ value, onValueChange }) => {
     const onKeyDown = (event) => {
-        const key = { event };
+        const key = event.key;
 
         const isNavigationKey = key === KEY_LEFT ||
             key === KEY_RIGHT ||

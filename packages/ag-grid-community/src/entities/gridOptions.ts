@@ -190,6 +190,7 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
+import type { FullWidthNotesDataSource, NotesDataSource } from '../interfaces/notes';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
 import type { OverlaySelectorFunc, OverlayType } from '../rendering/overlays/overlayComponent';
 import type { Icons } from '../utils/icon';
@@ -1155,12 +1156,12 @@ export interface GridOptions<TData = any> {
      * When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.
      * @agModule `PivotModule`
      */
-    pivotColumnGroupTotals?: 'before' | 'after';
+    pivotColumnGroupTotals?: PivotColumnGroupTotals;
     /**
      * When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.
      * @agModule `PivotModule`
      */
-    pivotRowTotals?: 'before' | 'after';
+    pivotRowTotals?: PivotRowTotals;
     /**
      * If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column.
      * @default false
@@ -1195,6 +1196,25 @@ export interface GridOptions<TData = any> {
      * @agModule `FormulaModule`
      */
     formulaDataSource?: FormulaDataSource;
+
+    /**
+     * Provide a data source to control where notes are stored and retrieved.
+     * Can be updated to enable, disable, or replace Notes at runtime.
+     * @agModule `NotesModule`
+     */
+    notesDataSource?: NotesDataSource | FullWidthNotesDataSource;
+    /**
+     * The delay in milliseconds before a note is shown when hovering a noted cell.
+     * @default 180
+     * @agModule `NotesModule`
+     */
+    noteShowDelay?: number;
+    /**
+     * The delay in milliseconds before a note is hidden after the pointer leaves a noted cell or note popup.
+     * @default 220
+     * @agModule `NotesModule`
+     */
+    noteHideDelay?: number;
 
     /**
      * A map of 'function name' to 'function' for custom functions that are used for formulas.
@@ -1315,10 +1335,11 @@ export interface GridOptions<TData = any> {
      */
     rowDragManaged?: boolean;
     /**
-     * When `true`, managed row dragging updates grouped column values so rows can move between groups. When `false`,
-     * managed dragging only reorders rows inside their existing group.
+     * When `true`, the grid re-evaluates the grouping hierarchy after editing a grouped column value,
+     * moving the row to the correct group instantly. Also enables managed row dragging to update
+     * grouped column values so rows can move between groups.
      * @default false
-     * @agModule `RowDragModule`
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     refreshAfterGroupEdit?: boolean;
     /**
@@ -1995,6 +2016,12 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     suppressRowTransform?: boolean;
+    /**
+     * Set to `true` to suppress `content-visibility: auto` on the grid wrapper element. This degrades performance by causing the browser to render grids even when they are off screen, but may be necessary if your application depends on receiving resize events from hidden grids.
+     * @default false
+     * @initial
+     */
+    suppressContentVisibilityAuto?: boolean;
     /**
      * Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
      * @default false
@@ -3291,3 +3318,6 @@ export type AgPublicEventHandlerType = `on${Capitalize<AgPublicEventType>}` & ke
 
 export type ProcessPivotResultColDef<TData = any, TValue = any> = (colDef: ColDef<TData, TValue>) => void;
 export type ProcessPivotResultColGroupDef<TData = any> = (colDef: ColGroupDef<TData>) => void;
+
+export type PivotColumnGroupTotals = 'before' | 'after';
+export type PivotRowTotals = 'before' | 'after';

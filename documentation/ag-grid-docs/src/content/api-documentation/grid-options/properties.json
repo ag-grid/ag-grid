@@ -639,6 +639,33 @@
             }
         }
     },
+    "notes": {
+        "meta": {
+            "displayName": "Notes",
+            "page": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "notesDataSource": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteShowDelay": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteHideDelay": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        }
+    },
     "charts": {
         "meta": {
             "displayName": "Integrated Charts",
@@ -1012,7 +1039,7 @@
         "tabToNextGridContainer": {
             "more": {
                 "name": "Custom Navigation",
-                "url": "./keyboard-navigation/#custom-navigation"
+                "url": "./keyboard-navigation/#custom-tabbing-between-grid-containers"
             }
         }
     },
@@ -1290,7 +1317,8 @@
                 "url": "./row-spanning/"
             }
         },
-        "suppressRowTransform": {}
+        "suppressRowTransform": {},
+        "suppressContentVisibilityAuto": {}
     },
     "rowDragging": {
         "meta": {
@@ -1743,8 +1771,18 @@
                 "url": "./server-side-model-pivoting/#supplying-pivot-result-fields-simple"
             }
         },
-        "serverSideSortAllLevels": {},
-        "serverSideEnableClientSideSort": {},
+        "serverSideSortAllLevels": {
+            "more": {
+                "name": "Sorting All Levels",
+                "url": "./server-side-model-sorting/#sorting-all-levels"
+            }
+        },
+        "serverSideEnableClientSideSort": {
+            "more": {
+                "name": "Client-side Sorting",
+                "url": "./server-side-model-sorting/#client-side-sorting"
+            }
+        },
         "serverSideOnlyRefreshFilteredGroups": {
             "more": {
                 "name": "Filters",

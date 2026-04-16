@@ -171,6 +171,7 @@ export type DefaultMenuItem =
     | 'copyWithGroupHeaders'
     | 'cut'
     | 'paste'
+    | 'note'
     | 'export'
     | 'csvExport'
     | 'excelExport'

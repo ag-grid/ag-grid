@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_SK = {
 
     // Filter Buttons
     applyFilter: 'Použiť',
+    applyColumnToolPanel: 'Použiť',
     resetFilter: 'Resetovať',
     clearFilter: 'Vyčistiť',
     cancelFilter: 'Zrušiť',
+    cancelColumnToolPanel: 'Zrušiť',
 
     // Filter Titles
     textFilter: 'Textový filter',
@@ -333,6 +335,7 @@ export const AG_GRID_LOCALE_SK = {
     sortAbsoluteAscending: 'Zoradiť absolútne vzostupne',
     sortAbsoluteDescending: 'Zoradiť absolútne zostupne',
     sortUnSort: 'Zrušiť zoradenie',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Súčet',
@@ -680,7 +683,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaFilterColumn: 'Stlačte CTRL ENTER na otvorenie filtra',
     ariaRowDeselect: 'Stlačte SPACE na zrušenie výberu tohto riadku',
     ariaHeaderSelection: 'Stĺpec s výberom hlavičky',
-    ariaSelectAllCells: 'Stlačte medzerník alebo Enter pre výber všetkých buniek',
+    ariaSelectAllCells: 'Stlačte Medzerník alebo Enter na výber všetkých buniek',
     ariaSelectAllRowCells: 'Stlačte Enter pre výber všetkých buniek v tomto riadku',
     ariaColumnCellSelection: 'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tomto stĺpci',
     ariaColumnGroupCellSelection:
@@ -756,6 +759,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaLabelAddFilterField: 'Pridať pole filtra',
     ariaLabelFilterCardDelete: 'Odstrániť filter',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
+    ariaHasNote: 'Táto bunka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -800,4 +804,16 @@ export const AG_GRID_LOCALE_SK = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM RRRR',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Notes
+    note: 'Poznámka bunky',
+    addNote: 'Pridať poznámku',
+    viewNote: 'Zobraziť poznámku',
+    editNote: 'Upraviť poznámku',
+    deleteNote: 'Odstrániť poznámku',
+    notePlaceholder: 'Pridať poznámku...',
+    noteHint:
+        'Pre náhľad prejdite kurzorom. Kliknite dovnútra pre úpravu. Potiahnutím rohu zmeňte veľkosť. Stlačte Esc pre zatvorenie.',
+    noteReadOnlyHint:
+        'Poznámka iba na čítanie. Označte text na kopírovanie. Potiahnutím rohu zmeňte veľkosť. Stlačte Esc pre zatvorenie.',
 };

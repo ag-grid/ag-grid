@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     ClientSideRowModelStage,
     GridOptions,
     IClientSideRowModel,
@@ -10,7 +11,10 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
+import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { IRowGroupingStrategy } from './rowHierarchyUtils';
+
+type GroupStrategyType = 'tree' | 'group' | 'none';
 
 export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeGroupStage {
     beanName = 'groupStage' as const;
@@ -28,16 +32,23 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
     ];
 
     public treeData: boolean = false;
+    public grouping: boolean = false;
+    private gosTreeData: boolean = false;
+    private pivotMode: boolean = false;
     private hasTreeData: boolean = false;
+    private hasRowGrouping: boolean = false;
     private needReset: boolean = false;
     private nested: boolean = false;
     private strategy: IRowGroupingStrategy<TData> | null | undefined = undefined;
+    private strategyType: GroupStrategyType | undefined = undefined;
+    private columnsInvalidated: boolean = false;
 
     public postConstruct(): void {
         const gos = this.gos;
+        this.hasRowGrouping = gos.isModuleRegistered('RowGrouping');
         if (gos.isModuleRegistered('TreeData')) {
             this.hasTreeData = true;
-            this.treeData = gos.get('treeData');
+            this.gosTreeData = gos.get('treeData');
         }
         this.addManagedEventListeners({
             showRowGroupColsSetChanged: () => this.strategy?.onShowRowGroupColsSetChanged(),
@@ -45,6 +56,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
     }
 
     public invalidateGroupCols(): void {
+        this.columnsInvalidated = true;
         this.strategy?.invalidateGroupCols?.();
     }
 
@@ -65,13 +77,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
         const gos = this.gos;
         const oldNestedDataGetter = this.strategy?.nestedDataGetter;
         if (changedProps.has('treeData')) {
-            const value = gos.get('treeData') && this.hasTreeData;
-            if (this.treeData !== value) {
-                this.beans.rowDragSvc?.cancelRowDrag();
-                this.treeData = value;
-                this.needReset = true;
-                this.strategy = this.destroyBean(this.strategy);
-            }
+            this.gosTreeData = gos.get('treeData') && this.hasTreeData;
+            this.columnsInvalidated = true;
         }
         this.strategy?.onPropChange?.(changedProps);
         return this.getNestedDataGetter() !== oldNestedDataGetter;
@@ -98,7 +105,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
 
     public execute(params: RefreshModelParams<TData>): boolean | undefined {
         const beans = this.beans;
-        const rootNode = beans.rowModel.rootNode;
+        const rowModel: IClientSideRowModel = beans.rowModel as IClientSideRowModel;
+        const rootNode = rowModel.rootNode;
         if (!rootNode) {
             return false;
         }
@@ -110,9 +118,24 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
             this.needReset = false;
             beans.rowDragSvc?.cancelRowDrag();
             params.animate = false; // resetting grouping / treeData, so no animation
-            resetGrouping(rootNode, !nested);
+            resetGrouping(rootNode, !nested, beans);
         }
-        return strategy ? strategy.execute(rootNode, params) || needReset : undefined;
+        if (!strategy) {
+            rowModel.hierarchical = false; // flat grid.
+            return undefined;
+        }
+
+        // Set rowModel.hierarchical to true early so code called during strategy.execute()
+        // (e.g. updateSelectableAfterGrouping) sees the correct value.
+        rowModel.hierarchical = true;
+
+        // Create changedPath for hierarchical grids before the strategy runs (it reads changedPath).
+        // Flat grids skip changedPath — all pipeline stages have flat fast paths.
+        beans.changedPathFactory?.ensureRowsPath(params, rootNode);
+
+        const executeResult = strategy.execute(rootNode, params);
+
+        return executeResult || needReset;
     }
 
     public loadLeafs(node: RowNode): RowNode[] | null {
@@ -132,13 +155,50 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
         this.strategy?.clearNonLeafs();
     }
 
+    private getWantedStrategyType(): GroupStrategyType {
+        if (this.isAlive()) {
+            if (this.gosTreeData) {
+                return 'tree';
+            }
+            if (this.hasRowGrouping && (this.beans.rowGroupColsSvc?.columns?.length || this.pivotMode)) {
+                return 'group';
+            }
+        }
+        return 'none';
+    }
+
     private getStrategy(): IRowGroupingStrategy<TData> | null {
         let strategy = this.strategy;
-        if (strategy !== undefined && this.isAlive()) {
+        const pivotMode = this.beans.colModel.isPivotMode();
+        if (pivotMode !== this.pivotMode) {
+            this.pivotMode = pivotMode;
+            this.columnsInvalidated = true;
+        }
+        if (strategy !== undefined && !this.columnsInvalidated && this.isAlive()) {
             return strategy;
         }
-        strategy =
-            this.beans.registry.createDynamicBean(this.treeData ? 'treeGroupStrategy' : 'groupStrategy', false) ?? null;
+        this.columnsInvalidated = false;
+        const wantedType = this.getWantedStrategyType();
+        if (wantedType === this.strategyType) {
+            if (strategy !== undefined) {
+                return strategy;
+            }
+            this.strategy = null;
+            return null;
+        }
+        if (strategy) {
+            this.strategy = this.destroyBean(strategy);
+            this.needReset = true;
+        }
+        this.strategyType = wantedType;
+        this.treeData = wantedType === 'tree';
+        this.grouping = wantedType === 'group';
+        if (wantedType === 'none') {
+            this.strategy = null;
+            return null;
+        }
+        const beanName = wantedType === 'tree' ? 'treeGroupStrategy' : 'groupStrategy';
+        strategy = this.beans.registry.createDynamicBean(beanName, false) ?? null;
         this.strategy = strategy && this.createBean(strategy);
         return strategy;
     }
@@ -197,13 +257,14 @@ const loadRealLeafs = (node: RowNode): RowNode[] | null => {
     return leafs;
 };
 
-const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolean): void => {
+const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolean, beans: BeanCollection): void => {
     const allLeafs = rootNode._leafs!;
     const rootSibling = rootNode.sibling;
     rootNode.treeNodeFlags = 0;
     rootNode.childrenAfterGroup = allLeafs;
     rootNode.childrenMapped = null;
     rootNode._groupData = undefined;
+    rootNode.aggData = null;
     if (rootSibling) {
         rootSibling.childrenAfterGroup = rootNode.childrenAfterGroup;
         rootSibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
@@ -211,6 +272,7 @@ const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolea
         rootSibling.childrenAfterSort = rootNode.childrenAfterSort;
         rootSibling.childrenMapped = null;
         rootSibling._groupData = undefined;
+        rootSibling.aggData = null;
     }
     for (let i = 0, allLeafsLen = allLeafs.length ?? 0; i < allLeafsLen; ++i) {
         const row = allLeafs[i];
@@ -224,8 +286,7 @@ const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolea
         if (canResetTreeNode) {
             row.treeParent = null;
         }
-        row.group = false;
-        row.updateHasChildren();
+        setRowNodeGroup(row, beans, false);
     }
     rootNode.updateHasChildren();
 };

@@ -20,8 +20,8 @@ export function validateRowClasses(
 
     const classList = el.classList;
 
-    // ag-row-level-N
-    const level = row.level ?? 0;
+    // ag-row-level-N — use the same calculation as the grid (calculateRowLevel in rowStyleService.ts)
+    const level = row.group ? row.level ?? 0 : row.parent ? row.parent.level + 1 : 0;
     const expectedLevelClass = `ag-row-level-${level}`;
     rowErrors.add(
         !classList.contains(expectedLevelClass) && `HTML element should have class ${expectedLevelClass} but does not`

@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_IL = {
 
     // Filter Buttons
     applyFilter: 'החל',
+    applyColumnToolPanel: 'החל',
     resetFilter: 'אפס',
     clearFilter: 'נקה',
     cancelFilter: 'בטל',
+    cancelColumnToolPanel: 'בטל',
 
     // Filter Titles
     textFilter: 'מסנן טקסט',
@@ -332,6 +334,7 @@ export const AG_GRID_LOCALE_IL = {
     sortAbsoluteAscending: 'מיון עולה מוחלט',
     sortAbsoluteDescending: 'מיון יורד מוחלט',
     sortUnSort: 'נקה מיון',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'סכום',
@@ -679,7 +682,7 @@ export const AG_GRID_LOCALE_IL = {
     ariaFilterColumn: 'לחץ CTRL ENTER כדי לפתוח סינון',
     ariaRowDeselect: 'לחץ על SPACE כדי לבטל את בחירת שורה זו',
     ariaHeaderSelection: 'עמודה עם בחירת כותרת',
-    ariaSelectAllCells: 'לחץ על מקש רווח או Enter כדי לבחור בכל התאים',
+    ariaSelectAllCells: 'לחץ על מקש הרווח או על Enter כדי לבחור את כל התאים',
     ariaSelectAllRowCells: 'לחץ על Enter כדי לבחור את כל התאים בשורה זו',
     ariaColumnCellSelection: 'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בעמודה זו',
     ariaColumnGroupCellSelection: 'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בקבוצת עמודות זו',
@@ -754,6 +757,7 @@ export const AG_GRID_LOCALE_IL = {
     ariaLabelAddFilterField: 'הוסף שדה סינון',
     ariaLabelFilterCardDelete: 'מחק סינון',
     ariaLabelFilterCardHasEdits: 'יש עריכות',
+    ariaHasNote: 'לתא זה יש הערה.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -798,4 +802,14 @@ export const AG_GRID_LOCALE_IL = {
     timeFormatSpacesDDMMMMYYYY: 'יי חחחח שששש',
     timeFormatHHMMSS: 'שש:דד:שש',
     timeFormatHHMMSSAmPm: 'שש:דד:שש לפנה״צ/אחה״צ',
+
+    // Notes
+    note: 'הערת תא',
+    addNote: 'הוסף הערה',
+    viewNote: 'הצג הערה',
+    editNote: 'ערוך הערה',
+    deleteNote: 'הסר הערה',
+    notePlaceholder: 'הוסף הערה...',
+    noteHint: 'רחף כדי להציג תצוגה מקדימה. לחץ פנימה כדי לערוך. גרור את הפינה כדי לשנות את הגודל. לחץ Esc כדי לסגור.',
+    noteReadOnlyHint: 'הערה לקריאה בלבד. בחר טקסט כדי להעתיק. גרור את הפינה כדי לשנות את הגודל. לחץ Esc כדי לסגור.',
 };

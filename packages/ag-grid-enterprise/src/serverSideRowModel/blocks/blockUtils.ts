@@ -135,10 +135,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
         const getGroupIncludeFooter = _getGroupTotalRowCallback(this.beans.gos);
         const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
         if (doesRowShowFooter) {
-            _createRowNodeFooter(rowNode, this.beans);
-            if (rowNode.sibling) {
-                rowNode.sibling.uiLevel = rowNode.uiLevel + 1;
-            }
+            const footerNode = _createRowNodeFooter(rowNode, this.beans);
+            footerNode.uiLevel = rowNode.uiLevel + 1;
         }
     }
 
@@ -404,11 +402,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     public checkOpenByDefault(rowNode: RowNode): void {
         const expanded = !!this.expansionSvc?.isNodeExpanded(rowNode);
-        const oldExpanded = rowNode.expanded;
+        const oldExpanded = rowNode._expanded;
         if (!!oldExpanded !== expanded) {
             rowNode.setExpanded(expanded);
         } else if (oldExpanded === undefined) {
-            rowNode.expanded = expanded; // Initial state, don't fire event
+            rowNode._expanded = expanded; // Initial state, don't fire event
         }
     }
 }

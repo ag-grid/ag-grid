@@ -18,6 +18,7 @@ import type { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/exc
 import { getExcelColumnName } from '../../assets/excelUtils';
 import type { ExcelGridSerializingParams } from '../../excelSerializingSession';
 import {
+    XLSX_WORKSHEET_COMMENTS,
     XLSX_WORKSHEET_DATA_TABLES,
     XLSX_WORKSHEET_HEADER_FOOTER_IMAGES,
     XLSX_WORKSHEET_IMAGES,
@@ -286,6 +287,34 @@ const addColumns = (columns: ExcelColumn[]) => {
     };
 };
 
+const registerSheetComments = (currentSheet: number, rows: ExcelRow[]) => {
+    const comments = [];
+
+    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+        const cells = rows[rowIndex].cells;
+
+        for (let cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+            const cell = cells[cellIndex];
+
+            if (!cell.note || !cell.ref) {
+                continue;
+            }
+
+            comments.push({
+                ref: cell.ref,
+                text: cell.note.text,
+                author: cell.note.author,
+            });
+        }
+    }
+
+    if (comments.length) {
+        XLSX_WORKSHEET_COMMENTS.set(currentSheet, comments);
+    } else {
+        XLSX_WORKSHEET_COMMENTS.delete(currentSheet);
+    }
+};
+
 const addSheetData = (rows: ExcelRow[], sheetNumber: number) => {
     return (params: ComposedWorksheetParams) => {
         if (rows.length) {
@@ -493,6 +522,23 @@ const addDrawingRel = (currentSheet: number) => {
     };
 };
 
+const addLegacyDrawingRel = (currentSheet: number) => {
+    return (params: ComposedWorksheetParams) => {
+        if (XLSX_WORKSHEET_COMMENTS.get(currentSheet)?.length) {
+            params.children.push({
+                name: 'legacyDrawing',
+                properties: {
+                    rawMap: {
+                        'r:id': `rId${++params.rIdCounter}`,
+                    },
+                },
+            });
+        }
+
+        return params;
+    };
+};
+
 const addVmlDrawingRel = (currentSheet: number) => {
     return (params: ComposedWorksheetParams) => {
         if (XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.get(currentSheet)) {
@@ -617,6 +663,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const mergedCells = columns?.length
             ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline)
             : [];
+        registerSheetComments(currentSheet, rows);
 
         const worksheetExcelTables = XLSX_WORKSHEET_DATA_TABLES.get(currentSheet);
 
@@ -632,6 +679,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addPageSetup(pageSetup),
             addHeaderFooter(headerFooterConfig),
             addDrawingRel(currentSheet),
+            addLegacyDrawingRel(currentSheet),
             addVmlDrawingRel(currentSheet),
             addExcelTableRel(worksheetExcelTables),
         ].reduce((composed, f) => f(composed), { children: [], rIdCounter: 0 });

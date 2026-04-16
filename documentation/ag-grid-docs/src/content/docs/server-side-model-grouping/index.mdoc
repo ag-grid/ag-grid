@@ -91,13 +91,58 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
 
 ## Group Total Rows
 
-To enable [Group Total Rows](./aggregation-total-rows/), set the `groupTotalRow` property to 'top' or 'bottom'. Note that the grand total row is not supported by the SSRM.
+To enable [Group Total Rows](./aggregation-total-rows/), set the `groupTotalRow` property to 'top' or 'bottom'.
 
 {% gridExampleRunner title="Group Totals" name="group-footer" /%}
 
 Group total rows can also be used with `groupDisplayType='multipleColumns'`, as demonstrated in the example below.
 
 {% gridExampleRunner title="Multiple Group Columns and Footers" name="group-footer-multiple-cols" /%}
+
+## Grand Total Row
+
+To display a grand total row, set the `grandTotalRow` property to `'top'`, `'bottom'`, `'pinnedTop'`, or `'pinnedBottom'`. This works on flat grids without any row grouping.
+
+### Providing Grand Total Data
+
+When `grandTotalRow` is set, the `needsGrandTotal` hint on `getRows` params will be `true` for root-level requests that don't yet have cached grand total data. The server may always provide updated grand total data regardless of this hint.
+
+Set the `grandTotalData` field on the `success` callback params to the grand total data. Set it to `null` to explicitly remove an existing grand total row.
+
+The example below shows a flat grid (no grouping) with the grand total provided via `grandTotalData` in the `getRows` response:
+
+{% gridExampleRunner title="Grand Total via getRows" name="grand-total-getrows" /%}
+
+Alternatively, if `getRowId` is configured, a row with ID `GRAND_TOTAL_ROW_ID` included in `rowData` will also be treated as the grand total (the `grandTotalData` field takes priority).
+
+### Updating the Grand Total Row via Transactions
+
+The grand total row can be updated, added, or removed via `applyServerSideTransaction`:
+
+-   **Update**: Include the grand total data in the `update` array. The `getRowId` must return `GRAND_TOTAL_ROW_ID` for this row.
+-   **Add**: Include the grand total data in the `add` array. If a grand total already exists, it will be updated.
+-   **Remove**: Include a row whose `getRowId` returns `GRAND_TOTAL_ROW_ID` in the `remove` array to remove it.
+
+{% gridExampleRunner title="Grand Total with Transactions" name="grand-total-transactions" /%}
+
+### Accessing Grand Total and Group Total Rows
+
+Both the grand total and individual group total rows can be retrieved by ID using `api.getRowNode()`. Two constants, exported from `ag-grid-community`, define the ID format:
+
+-   `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) — the ID of the grand total row.
+-   `GROUP_TOTAL_ROW_ID_PREFIX` (`'rowGroupFooter_'`) — the prefix for group total row IDs. A group total row ID is `GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id`.
+
+```js
+// Retrieve the grand total row node
+const grandTotalNode = api.getRowNode(GRAND_TOTAL_ROW_ID);
+
+// Retrieve a group total row node (e.g. for group "Ireland")
+const groupTotalNode = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id);
+```
+
+### Grand Total Row API Reference
+
+{% apiDocumentation source="grid-options/properties.json" section="aggregation" names=["grandTotalRow"] /%}
 
 ## Hide Open Parents
 
@@ -189,12 +234,6 @@ const rowData = {
         code: 'IRE'
     },
 
-    // year field is complex object
-    year: {
-        name: '2012',
-        shortName: "'12"
-    },
-
     // other fields as normal
     ...
 }
@@ -215,3 +254,41 @@ In the example below, note the following:
 -   The example enables `serverSideOnlyRefreshFilteredGroups`, note that if you apply a filter to `Year` with the value `1900`, no leaf rows exist in any group.
 
 {% gridExampleRunner title="Filtering" name="filtering"  exampleHeight=590 /%}
+
+## Batching Data Requests
+
+You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed. This allows multiple configuration changes to be made and applied in a single update, avoiding unnecessary intermediate recomputations or requests.
+
+Deferred Updates are enabled by including the **Apply** button in `toolPanelParams.buttons`.
+
+Note that in the example below:
+
+-   Changes made in the Columns Tool Panel are staged as pending changes.
+-   **Apply** commits all pending changes in a single operation.
+-   **Cancel** discards all pending changes and restores the last applied state.
+
+{% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode"  exampleHeight=830 /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    buttons: ['cancel', 'apply'],
+                },
+            },
+        ],
+        defaultToolPanel: 'columns',
+    },
+};
+```
+
+{% note %}
+Changes made outside the Columns Tool Panel — such as dragging columns into the Row Group or Pivot Panels, using the Column Menu, or calling the Grid / Column API — are applied immediately and clear any pending changes. Column pinning, resizing, and group expansion do not clear pending changes.
+{% /note %}

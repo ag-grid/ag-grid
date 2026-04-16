@@ -26,6 +26,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     RichSelect: 1,
     RowNumbers: 1,
     RowGrouping: 1,
+    RowGroupingEdit: 1,
     RowGroupingPanel: 1,
     ServerSideRowModelApi: 1,
     ServerSideRowModel: 1,
@@ -36,4 +37,5 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     TreeData: 1,
     ViewportRowModel: 1,
     Formula: 1,
+    Notes: 1,
 };

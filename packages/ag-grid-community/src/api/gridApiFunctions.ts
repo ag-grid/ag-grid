@@ -32,6 +32,7 @@ import type {
     _InfiniteRowModelGridApi,
     _KeyboardNavigationGridApi,
     _MasterDetailGridApi,
+    _NotesGridApi,
     _OverlayGridApi,
     _PaginationGridApi,
     _PdfExportGridApi,
@@ -261,6 +262,11 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getQuickFilter: 0,
         resetQuickFilter: 0,
     }),
+    ...mod<_NotesGridApi>('Notes', {
+        getNote: 0,
+        setNote: 0,
+        refreshNotes: 0,
+    }),
     ...mod<_FindApi<any>>('Find', {
         findGetActiveMatch: 0,
         findGetTotalMatches: 0,
@@ -288,6 +294,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     ...mod<_CsrmSsrmSharedGridApi>('CsrmSsrmSharedApi', {
         expandAll: 0,
         collapseAll: 0,
+        resetRowGroupExpansion: 0,
     }),
     ...mod<_SsrmInfiniteSharedGridApi>('SsrmInfiniteSharedApi', {
         setRowCount: 0,

@@ -15,6 +15,12 @@
 
     function stripVer(dep) { return dep.replace(/@[^@]*$/, ''); }
 
+    function npmLink(pkg) {
+        const name = esc(pkg.replace(/@[\d][^@]*$/, ''));
+        if (!name) return '';
+        return `<a class="npm-link" href="https://www.npmjs.com/package/${name}" target="_blank" rel="noopener" title="View on npm" onclick="event.stopPropagation()"><img class="npm-icon" src="https://static-production.npmjs.com/58a19602036db1daee0d7863c94673a4.png" alt="npm"><!-- npm --></a>`;
+    }
+
     function pathKey(fromArr) { return fromArr.slice(1).map(stripVer).join('>'); }
 
     function projectName(project) {
@@ -112,7 +118,7 @@
     window.SnykUtils = {
         esc, sevClass, stripVer, pathKey, projectName, getSnykFilePath,
         getNearIgnoredPath, semverMajor, sameMajorFixVersion, upgradeTarget,
-        depCrumbsHtml, depPathHtml, fixHtml, cveHtml,
+        depCrumbsHtml, depPathHtml, fixHtml, cveHtml, npmLink,
     };
 
     // ════════════════════════════════════════════
@@ -319,7 +325,7 @@
                     <div class="vuln-main">
                         <div class="vuln-title">${esc(vuln.title)}</div>
                         <div class="vuln-meta">
-                            <span>${esc(vuln.name || vuln.packageName)}@${esc(vuln.version)}</span>
+                            <span>${npmLink(vuln.name || vuln.packageName)}${esc(vuln.name || vuln.packageName)}@${esc(vuln.version)}</span>
                             ${cves.length ? `<span>${cveHtml(vuln)}</span>` : ''}
                             ${nearIgnoredCount ? `<span class="near-ignored-row-badge">≈ .snyk match</span>` : ''}
                         </div>
@@ -418,7 +424,7 @@
             function renderPkgSection(filter) {
                 return sorted.filter(([, g]) => filter(g).length).map(([pkg, g]) => {
                     const es = filter(g);
-                    return `<div class="group-header">${esc(pkg)} (${es.length} vuln${es.length !== 1 ? 's' : ''})</div>${renderVulnGroups(es, pkg)}`;
+                    return `<div class="group-header">${npmLink(pkg)}${esc(pkg)} (${es.length} vuln${es.length !== 1 ? 's' : ''})</div>${renderVulnGroups(es, pkg)}`;
                 }).join('');
             }
             return twoSectionHtml(sorted.flatMap(([, g]) => g.near), renderPkgSection(g => g.near), renderPkgSection(g => g.other));
@@ -458,7 +464,7 @@
                 const expires = reasons.map(r => r.expires).filter(Boolean)[0];
                 const expiryStr = expires ? ` · Expires ${new Date(expires).toLocaleDateString()}` : '';
                 return `<div class="ignored-row">
-                    <div><strong>${esc(ign.id)}</strong> · <span style="color:var(--c-text-muted)">${esc(ign.title || '')}</span> · <span style="font-size:11px">${esc(ign.name || ign.packageName || '')}@${esc(ign.version || '')}</span></div>
+                    <div><strong>${esc(ign.id)}</strong> · <span style="color:var(--c-text-muted)">${esc(ign.title || '')}</span> · <span style="font-size:11px">${npmLink(ign.name || ign.packageName || '')}${esc(ign.name || ign.packageName || '')}@${esc(ign.version || '')}</span></div>
                     <div class="project-name" style="font-size:11px;margin-top:3px">${esc(projectName(project))}</div>
                     ${reasonText ? `<div class="ignored-reason">${esc(reasonText)}${expiryStr}</div>` : ''}
                 </div>`;

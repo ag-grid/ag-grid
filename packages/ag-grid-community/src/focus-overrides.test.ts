@@ -784,8 +784,8 @@ describe('Focus override callbacks', () => {
             expect(result).toBe(false);
             expect(tabToNextGridContainer).toHaveBeenCalledWith({
                 backwards: false,
-                fromContainer: 'gridBody',
-                toContainer: 'pagination',
+                previousContainer: 'gridBody',
+                nextContainer: 'pagination',
                 defaultTarget: 'pagination',
             });
         });
@@ -820,8 +820,8 @@ describe('Focus override callbacks', () => {
             expect(result).toBe(false);
             expect(tabToNextGridContainer).toHaveBeenCalledWith({
                 backwards: false,
-                fromContainer: 'pagination',
-                toContainer: 'external',
+                previousContainer: 'pagination',
+                nextContainer: 'external',
                 defaultTarget: null,
             });
         });
@@ -844,8 +844,8 @@ describe('Focus override callbacks', () => {
             expect(result).toBe(false);
             expect(tabToNextGridContainer).toHaveBeenCalledWith({
                 backwards: false,
-                fromContainer: 'external',
-                toContainer: 'gridBody',
+                previousContainer: 'external',
+                nextContainer: 'gridBody',
                 defaultTarget: null,
             });
         });
@@ -870,8 +870,8 @@ describe('Focus override callbacks', () => {
             expect(result).toBe(false);
             expect(tabToNextGridContainer).toHaveBeenCalledWith({
                 backwards: false,
-                fromContainer: 'gridBody',
-                toContainer: 'pagination',
+                previousContainer: 'gridBody',
+                nextContainer: 'pagination',
                 defaultTarget: 'pagination',
             });
         });
@@ -895,8 +895,8 @@ describe('Focus override callbacks', () => {
             expect(result).toBe(false);
             expect(tabToNextGridContainer).toHaveBeenCalledWith({
                 backwards: false,
-                fromContainer: 'gridBody',
-                toContainer: 'gridBody',
+                previousContainer: 'gridBody',
+                nextContainer: 'gridBody',
                 defaultTarget: targetCell,
             });
         });
@@ -1234,8 +1234,8 @@ describe('Focus override callbacks', () => {
             expect(result).toBe(false);
             expect(tabToNextGridContainer).toHaveBeenCalledWith({
                 backwards: true,
-                fromContainer: 'external',
-                toContainer: 'pagination',
+                previousContainer: 'external',
+                nextContainer: 'pagination',
                 defaultTarget: 'pagination',
             });
         });
@@ -1389,10 +1389,22 @@ describe('Focus override callbacks', () => {
 
             headerCtrlAny.onTabKeyDown(event);
 
-            expect(event.defaultPrevented).toBe(true);
+            expect(event.defaultPrevented).toBe(false);
             expect(gridCtrl.focusNextInnerContainer).toHaveBeenCalledTimes(1);
             expect(gridCtrl.focusNextInnerContainer).toHaveBeenCalledWith(true);
             expect(gridCtrl.forceFocusOutOfContainer).toHaveBeenCalledWith(true);
+        });
+
+        test('tab from header: unresolved movement forces focus out without preventing default', () => {
+            gridCtrl.focusNextInnerContainer.mockReturnValue(undefined);
+            const event = createTabEvent(false);
+
+            headerCtrlAny.onTabKeyDown(event);
+
+            expect(event.defaultPrevented).toBe(false);
+            expect(gridCtrl.focusNextInnerContainer).toHaveBeenCalledTimes(1);
+            expect(gridCtrl.focusNextInnerContainer).toHaveBeenCalledWith(false);
+            expect(gridCtrl.forceFocusOutOfContainer).toHaveBeenCalledWith(false);
         });
 
         test('shift-tab from header: successful first move does not trigger fallback call', () => {

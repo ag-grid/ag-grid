@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_HK = {
 
     // Filter Buttons
     applyFilter: '應用',
+    applyColumnToolPanel: '應用',
     resetFilter: '重置',
     clearFilter: '清除',
     cancelFilter: '取消',
+    cancelColumnToolPanel: '取消',
 
     // Filter Titles
     textFilter: '文本篩選',
@@ -332,6 +334,7 @@ export const AG_GRID_LOCALE_HK = {
     sortAbsoluteAscending: '絕對升序排序',
     sortAbsoluteDescending: '絕對降序排序',
     sortUnSort: '清除排序',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '總和',
@@ -679,7 +682,7 @@ export const AG_GRID_LOCALE_HK = {
     ariaFilterColumn: '按 CTRL ENTER 打開篩選器',
     ariaRowDeselect: '按 SPACE 取消選擇此行',
     ariaHeaderSelection: '帶有標題選擇的欄',
-    ariaSelectAllCells: '按空格鍵或 Enter 鍵以選擇所有單元格',
+    ariaSelectAllCells: '按空格鍵或輸入鍵以選擇所有單元格',
     ariaSelectAllRowCells: '按 Enter 鍵以選擇此行中的所有單元格',
     ariaColumnCellSelection: '按 Enter 鍵切換此欄中所有可見單元格的選取',
     ariaColumnGroupCellSelection: '按 Enter 鍵切換此欄群組中所有可見單元格的選取',
@@ -754,6 +757,7 @@ export const AG_GRID_LOCALE_HK = {
     ariaLabelAddFilterField: '新增篩選字段',
     ariaLabelFilterCardDelete: '刪除篩選',
     ariaLabelFilterCardHasEdits: '已有編輯',
+    ariaHasNote: '此儲存格有備註。',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -798,4 +802,14 @@ export const AG_GRID_LOCALE_HK = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
+
+    // Notes
+    note: '儲存格備註',
+    addNote: '新增備註',
+    viewNote: '檢視備註',
+    editNote: '編輯備註',
+    deleteNote: '移除備註',
+    notePlaceholder: '新增備註...',
+    noteHint: '滑過即可預覽。按一下內部即可編輯。拖曳角落即可調整大小。按 Esc 關閉。',
+    noteReadOnlyHint: '唯讀備註。選取文字即可複製。拖曳角落即可調整大小。按 Esc 關閉。',
 };

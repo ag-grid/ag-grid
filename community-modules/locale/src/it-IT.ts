@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_IT = {
 
     // Filter Buttons
     applyFilter: 'Applica',
+    applyColumnToolPanel: 'Applica',
     resetFilter: 'Reimposta',
     clearFilter: 'Pulisci',
     cancelFilter: 'Annulla',
+    cancelColumnToolPanel: 'Annulla',
 
     // Filter Titles
     textFilter: 'Filtro di testo',
@@ -336,6 +338,7 @@ export const AG_GRID_LOCALE_IT = {
     sortAbsoluteAscending: 'Ordina Assoluto Crescente',
     sortAbsoluteDescending: 'Ordina Assoluto Decrescente',
     sortUnSort: 'Annulla Ordinamento',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Somma',
@@ -684,7 +687,7 @@ export const AG_GRID_LOCALE_IT = {
     ariaFilterColumn: 'Premi CTRL INVIO per aprire il filtro',
     ariaRowDeselect: 'Premi SPAZIO per deselezionare questa riga',
     ariaHeaderSelection: 'Colonna con selezione intestazione',
-    ariaSelectAllCells: 'Premi Spazio o Enter per selezionare tutte le celle',
+    ariaSelectAllCells: 'Premi Barra Spaziatrice o Invio per selezionare tutte le celle',
     ariaSelectAllRowCells: 'Premi Enter per selezionare tutte le celle di questa riga',
     ariaColumnCellSelection:
         'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questa colonna',
@@ -761,6 +764,7 @@ export const AG_GRID_LOCALE_IT = {
     ariaLabelAddFilterField: 'Aggiungi campo filtro',
     ariaLabelFilterCardDelete: 'Elimina filtro',
     ariaLabelFilterCardHasEdits: 'Ha modifiche',
+    ariaHasNote: 'Questa cella ha una nota.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -805,4 +809,16 @@ export const AG_GRID_LOCALE_IT = {
     timeFormatSpacesDDMMMMYYYY: 'GG MMMM AAAA',
     timeFormatHHMMSS: 'OO:MM:SS',
     timeFormatHHMMSSAmPm: 'OO:MM:SS AM/PM',
+
+    // Notes
+    note: 'Nota della cella',
+    addNote: 'Aggiungi nota',
+    viewNote: 'Visualizza nota',
+    editNote: 'Modifica nota',
+    deleteNote: 'Rimuovi nota',
+    notePlaceholder: 'Aggiungi una nota...',
+    noteHint:
+        "Passa il mouse per l'anteprima. Fai clic all'interno per modificare. Trascina l'angolo per ridimensionare. Premi Esc per chiudere.",
+    noteReadOnlyHint:
+        "Nota di sola lettura. Seleziona il testo per copiarlo. Trascina l'angolo per ridimensionare. Premi Esc per chiudere.",
 };

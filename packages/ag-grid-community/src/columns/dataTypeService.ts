@@ -490,9 +490,13 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return dataTypeMatcher(value);
     }
 
-    public validateColDef(colDef: ColDef): void {
-        const warning = (property: 'Formatter' | 'Parser') => _warn(48, { property });
+    public validateColDef(colDef: ColDef, userColDef?: ColDef, defaultColDef?: ColDef, colId?: string): void {
         if (colDef.cellDataType === 'object') {
+            const wasInferred = (colDef?: ColDef) => {
+                return colDef?.cellDataType == null || colDef?.cellDataType === true;
+            };
+            const inferred = wasInferred(userColDef) && wasInferred(defaultColDef);
+            const warning = (property: 'Formatter' | 'Parser') => _warn(48, { property, inferred, colId });
             const { object } = this.dataTypeDefinitions;
             if (colDef.valueFormatter === object.groupSafeValueFormatter && !this.hasObjectValueFormatter) {
                 warning('Formatter');

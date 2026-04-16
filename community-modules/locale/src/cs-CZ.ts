@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_CZ = {
 
     // Filter Buttons
     applyFilter: 'Použít',
+    applyColumnToolPanel: 'Použít',
     resetFilter: 'Obnovit',
     clearFilter: 'Vymazat',
     cancelFilter: 'Zrušit',
+    cancelColumnToolPanel: 'Zrušit',
 
     // Filter Titles
     textFilter: 'Textový filtr',
@@ -333,6 +335,7 @@ export const AG_GRID_LOCALE_CZ = {
     sortAbsoluteAscending: 'Řadit absolutně vzestupně',
     sortAbsoluteDescending: 'Řadit absolutně sestupně',
     sortUnSort: 'Zrušit třídění',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Součet',
@@ -680,7 +683,7 @@ export const AG_GRID_LOCALE_CZ = {
     ariaFilterColumn: 'Stiskněte CTRL ENTER pro otevření filtru',
     ariaRowDeselect: 'Stiskněte SPACE pro zrušení výběru tohoto řádku',
     ariaHeaderSelection: 'Sloupec s výběrem záhlaví',
-    ariaSelectAllCells: 'Stiskněte mezerník nebo Enter pro výběr všech buněk',
+    ariaSelectAllCells: 'Stiskněte Mezerník nebo Enter pro výběr všech buněk',
     ariaSelectAllRowCells: 'Stiskněte Enter pro výběr všech buněk v tomto řádku',
     ariaColumnCellSelection: 'Stiskněte Enter pro přepnutí výběru všech viditelných buněk v tomto sloupci',
     ariaColumnGroupCellSelection: 'Stiskněte Enter pro přepnutí výběru všech viditelných buněk v této skupině sloupců',
@@ -755,6 +758,7 @@ export const AG_GRID_LOCALE_CZ = {
     ariaLabelAddFilterField: 'Přidat filtr',
     ariaLabelFilterCardDelete: 'Smazat filtr',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
+    ariaHasNote: 'Tato buňka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '‚',
@@ -799,4 +803,16 @@ export const AG_GRID_LOCALE_CZ = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM RRRR',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Notes
+    note: 'Poznámka buňky',
+    addNote: 'Přidat poznámku',
+    viewNote: 'Zobrazit poznámku',
+    editNote: 'Upravit poznámku',
+    deleteNote: 'Odstranit poznámku',
+    notePlaceholder: 'Přidat poznámku...',
+    noteHint:
+        'Najeďte pro náhled. Klikněte dovnitř pro úpravu. Přetažením rohu změňte velikost. Stiskněte Esc pro zavření.',
+    noteReadOnlyHint:
+        'Poznámka jen pro čtení. Označte text pro kopírování. Přetažením rohu změňte velikost. Stiskněte Esc pro zavření.',
 };

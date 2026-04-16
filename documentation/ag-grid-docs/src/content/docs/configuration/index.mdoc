@@ -19,7 +19,7 @@ const gridOptions = {
 }
 ```
 
-Columns can be also be configured under [Column Groups](./column-groups/), which present the columns under shared headers. These can be configured by adding a level of nesting to the column definition.
+Columns can also be configured under [Column Groups](./column-groups/), which present the columns under shared headers. These can be configured by adding a level of nesting to the column definition.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -38,7 +38,7 @@ const gridOptions = {
 
 ## Referencing Columns
 
-Columns can be updated via the `colDefs` grid option when a sufficient ID has been provided, or manipulated via the API with a Column Object.
+Columns can be updated via the `columnDefs` grid option when a sufficient ID has been provided, or manipulated via the API with a Column Object.
 
 ### Column IDs
 
@@ -55,7 +55,7 @@ In the example below, the column IDs are logged to the dev console. Note the fol
 {% gridExampleRunner title="Column IDs" name="column-ids" exampleHeight=300 /%}
 
 {% warning %}
-Column Ids should be unique across the grid. Where the provided `colId` or `field` are not unique, the grid will append `_n` where necessary (`n` being the first positive number that allows uniqueness). It is not recommend to rely on IDs generated with this behaviour.
+Column Ids should be unique across the grid. Where the provided `colId` or `field` are not unique, the grid will append `_n` where necessary (`n` being the first positive number that allows uniqueness). It is not recommended to rely on IDs generated with this behaviour.
 {% /warning %}
 
 ### Column Objects

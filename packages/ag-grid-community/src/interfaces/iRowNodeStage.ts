@@ -1,45 +1,39 @@
 import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
-import type { AgColumn } from '../entities/agColumn';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ClientSideRowModelStage, RefreshModelParams } from './iClientSideRowModel';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeStage<TData = any> {
     readonly step: ClientSideRowModelStage;
-    readonly refreshProps: (keyof GridOptions<TData>)[];
+    readonly refreshProps: (keyof GridOptions<TData>)[] | null;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeSortStage<TData = any> extends IRowNodeStage<TData> {
-    execute(changedPath: ChangedPath, changedRowNodes: ChangedRowNodes<TData> | undefined): void;
+    execute(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes<TData> | undefined): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeFilterStage<TData = any> extends IRowNodeStage<TData> {
-    execute(changedPath: ChangedPath): void;
+    execute(changedPath: ChangedPath | undefined): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodePivotStage<TData = any> extends IRowNodeStage<TData> {
-    execute(changedPath: ChangedPath): void;
+    /** Returns `true` if the changedPath should be deactivated (e.g. pivot columns changed). */
+    execute(changedPath: ChangedPath | undefined, changedProps: Set<keyof GridOptions> | undefined): boolean;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeAggregationStage<TData = any> extends IRowNodeStage<TData> {
-    execute(changedPath: ChangedPath): void;
-
-    /**
-     * Returns the immediate children that contribute to the aggregation of a group RowNode.
-     * For pivot columns on leaf groups, only children matching the pivot keys are returned.
-     */
-    getAggregatedChildren(
-        rowNode: RowNode<TData> | null | undefined,
-        col: AgColumn | null | undefined
-    ): RowNode<TData>[];
+    execute(changedPath: ChangedPath | undefined): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeFilterAggregateStage<TData = any> extends IRowNodeStage<TData> {
-    execute(changedPath: ChangedPath): void;
+    execute(changedPath: ChangedPath | undefined): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -53,6 +47,7 @@ export type NestedDataGetter<TData = any> = (data: TData) => TData[] | null | un
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeGroupStage<TData = any> extends IRowNodeStage<TData> {
     readonly treeData: boolean;
+    readonly grouping: boolean;
 
     execute(params: RefreshModelParams<TData>): boolean | undefined;
 

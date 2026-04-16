@@ -4,6 +4,8 @@ import type { UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
 export class WaterfallChartProxy extends CartesianChartProxy<'waterfall'> {
+    protected override isSingleSeries: boolean = true;
+
     protected override getAxes(
         params: UpdateParams,
         commonChartOptions: AgCartesianChartOptions

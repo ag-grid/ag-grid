@@ -124,6 +124,12 @@
                     "name": "Find",
                     "path": "find",
                     "isEnterprise": true
+                },
+                {
+                    "moduleName": "NotesModule",
+                    "name": "Notes",
+                    "path": "notes",
+                    "isEnterprise": true
                 }
             ]
         },
@@ -300,6 +306,12 @@
                     "moduleName": "GroupFilterModule",
                     "path": "grouping-single-group-column/#inherit-row-grouped-columns-filters",
                     "name": "Group Filter",
+                    "isEnterprise": true
+                },
+                {
+                    "moduleName": "RowGroupingEditModule",
+                    "name": "Editing and Updating Group Row Cells",
+                    "path": "grouping-edit",
                     "isEnterprise": true
                 }
             ]

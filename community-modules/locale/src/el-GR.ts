@@ -74,9 +74,11 @@ export const AG_GRID_LOCALE_GR = {
 
     // Filter Buttons
     applyFilter: 'Εφαρμογή',
+    applyColumnToolPanel: 'Εφαρμογή',
     resetFilter: 'Επαναφορά',
     clearFilter: 'Εκκαθάριση',
     cancelFilter: 'Ακύρωση',
+    cancelColumnToolPanel: 'Ακύρωση',
 
     // Filter Titles
     textFilter: 'Φίλτρο Κειμένου',
@@ -338,6 +340,7 @@ export const AG_GRID_LOCALE_GR = {
     sortAbsoluteAscending: '"Απόλυτη αύξουσα ταξινόμηση"',
     sortAbsoluteDescending: '"Απόλυτη φθίνουσα ταξινόμηση"',
     sortUnSort: 'Καθαρισμός Ταξινόμησης',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Άθροισμα',
@@ -686,7 +689,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaFilterColumn: 'Πατήστε CTRL ENTER για άνοιγμα φίλτρου',
     ariaRowDeselect: 'Πατήστε SPACE για αποεπιλογή αυτής της γραμμής',
     ariaHeaderSelection: 'Στήλη με Επιλογή Κεφαλίδων',
-    ariaSelectAllCells: 'Πατήστε Space ή Enter για επιλογή όλων των κελιών',
+    ariaSelectAllCells: 'Πατήστε το Space ή το Enter για να επιλέξετε όλα τα κελιά',
     ariaSelectAllRowCells: 'Πατήστε Enter για επιλογή όλων των κελιών σε αυτή τη γραμμή',
     ariaColumnCellSelection: 'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή τη στήλη',
     ariaColumnGroupCellSelection: 'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή την ομάδα στηλών',
@@ -761,6 +764,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaLabelAddFilterField: 'Προσθήκη πεδίου φίλτρου',
     ariaLabelFilterCardDelete: 'Διαγραφή φίλτρου',
     ariaLabelFilterCardHasEdits: 'Έχει επεξεργασίες',
+    ariaHasNote: 'Αυτό το κελί έχει σημείωση.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -805,4 +809,16 @@ export const AG_GRID_LOCALE_GR = {
     timeFormatSpacesDDMMMMYYYY: 'ΗΗ ΜΜΜΜ ΕΕΕΕ',
     timeFormatHHMMSS: 'ΩΩ:ΛΛ:ΔΔ',
     timeFormatHHMMSSAmPm: 'ΩΩ:ΛΛ:ΔΔ ΠΜ/ΜΜ',
+
+    // Notes
+    note: 'Σημείωση κελιού',
+    addNote: 'Προσθήκη σημείωσης',
+    viewNote: 'Προβολή σημείωσης',
+    editNote: 'Επεξεργασία σημείωσης',
+    deleteNote: 'Αφαίρεση σημείωσης',
+    notePlaceholder: 'Προσθέστε μια σημείωση...',
+    noteHint:
+        'Τοποθετήστε τον δείκτη για προεπισκόπηση. Κάντε κλικ μέσα για επεξεργασία. Σύρετε τη γωνία για αλλαγή μεγέθους. Πατήστε Esc για κλείσιμο.',
+    noteReadOnlyHint:
+        'Σημείωση μόνο για ανάγνωση. Επιλέξτε κείμενο για αντιγραφή. Σύρετε τη γωνία για αλλαγή μεγέθους. Πατήστε Esc για κλείσιμο.',
 };

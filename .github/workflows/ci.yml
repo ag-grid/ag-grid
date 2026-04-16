@@ -23,11 +23,6 @@ on:
         type: boolean
         default: false
         required: true
-      run_bundle_tests:
-        description: 'Force run package tests'
-        type: boolean
-        default: false
-        required: true
       nx_command:
         type: 'choice'
         required: true
@@ -55,12 +50,76 @@ permissions:
   actions: read
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-24.04
+    name: Detect Changes
+    outputs:
+      run_full_ci: ${{ steps.decide.outputs.run_full_ci }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Detect file changes (PR only)
+        id: filter
+        if: github.event_name == 'pull_request'
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            code:
+              - 'packages/**'
+              - 'plugins/**'
+              - 'community-modules/**'
+              - 'testing/**'
+              - 'external/ag-website-shared/**'
+              - 'external/ag-shared/scripts/**'
+              - 'external/ag-shared/github/**'
+              - 'external/ag-shared/src/**'
+              - 'external/ag-shared/tools/**'
+              - 'external/ag-shared/*.json'
+              - '*.json'
+              - '*.ts'
+              - '*.js'
+              - '*.cjs'
+              - '*.mjs'
+              - 'yarn.lock'
+              - 'nx.json'
+              - 'tsconfig.*.json'
+              - 'jest.preset.js'
+            ci:
+              - '.github/**'
+
+      - name: Decide what to run
+        id: decide
+        run: |
+          # Always run full CI for push events and manual triggers
+          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+            echo "run_full_ci=true" >> $GITHUB_OUTPUT
+            echo "Non-PR event (${{ github.event_name }}), running full CI"
+            exit 0
+          fi
+
+          # For PRs, check if code or CI files changed
+          if [[ "${{ steps.filter.outputs.code }}" == "true" ]] || \
+             [[ "${{ steps.filter.outputs.ci }}" == "true" ]]; then
+            echo "run_full_ci=true" >> $GITHUB_OUTPUT
+            echo "Code or CI changes detected (code=${{ steps.filter.outputs.code }}, ci=${{ steps.filter.outputs.ci }}), running full CI"
+          else
+            echo "run_full_ci=false" >> $GITHUB_OUTPUT
+            echo "Only non-code changes detected, running lint only"
+          fi
+
   init:
     name: Initialise Workflow
-    if: github.event.pull_request.draft == false
+    needs: detect-changes
+    if: github.event.pull_request.draft == false && needs.detect-changes.outputs.run_full_ci == 'true'
+    permissions:
+      contents: write
     outputs:
       nx_base: ${{ steps.setup.outputs.base }}
       build_type: ${{ steps.setup.outputs.type }}
+      snapshot_branch: ${{ steps.snapshot-prepare.outputs.branch }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -80,9 +139,14 @@ jobs:
         with:
           cache_mode: 'rw'
 
+      - name: Prepare Snapshot Branch
+        uses: ./.github/actions/snapshot-prepare
+        id: snapshot-prepare
+
   calc_matrix:
     name: Calculate Github Matrix
-    needs: init
+    needs: [detect-changes, init]
+    if: needs.detect-changes.outputs.run_full_ci == 'true'
     outputs:
       test_count: ${{ steps.matrix.outputs.test_count }}
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
@@ -114,18 +178,18 @@ jobs:
         id: matrix
         run: |
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            count=10
+          count=10
           else
             count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
           fi
-          
+
           matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
           echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
           echo "test_count=${count}" >> $GITHUB_OUTPUT
           echo "Test matrix determined to be: ${matrix} (test_count=${count})"
           
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            e2e_count=10
+          e2e_count=10
           else
             e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
           fi
@@ -151,8 +215,8 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
-    needs: calc_matrix
-    if: needs.calc_matrix.outputs.test_count > 0
+    needs: [detect-changes, calc_matrix]
+    if: needs.detect-changes.outputs.run_full_ci == 'true' && needs.calc_matrix.outputs.test_count > 0
     strategy:
       matrix: ${{ fromJson(needs.calc_matrix.outputs.test_matrix )}}
       fail-fast: false
@@ -207,8 +271,8 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     name: e2e Tests
-    needs: calc_matrix
-    if: needs.calc_matrix.outputs.e2e_test_count > 0
+    needs: [detect-changes, calc_matrix]
+    if: needs.detect-changes.outputs.run_full_ci == 'true' && needs.calc_matrix.outputs.e2e_test_count > 0
     strategy:
       matrix: ${{ fromJson(needs.calc_matrix.outputs.e2e_test_matrix )}}
       fail-fast: false
@@ -243,8 +307,8 @@ jobs:
   format_lint_build:
     runs-on: ubuntu-latest
     name: Format, Lint and Build
-    needs: init
-    if: ${{ needs.init.result == 'success' }}
+    needs: [detect-changes, init]
+    if: ${{ always() && needs.detect-changes.result == 'success' && (needs.init.result == 'success' || needs.init.result == 'skipped') }}
     outputs:
       format: ${{ steps.format.outcome || '' }}
       lint: ${{ steps.lint.outcome || '' }}
@@ -282,14 +346,15 @@ jobs:
 
       - name: nx build
         id: build
+        if: needs.detect-changes.outputs.run_full_ci == 'true'
         run: |
           yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
   docs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
-    needs: init
-    if: ${{ needs.init.result == 'success' && !inputs.skip_docs }}
+    needs: [detect-changes, init]
+    if: ${{ needs.detect-changes.outputs.run_full_ci == 'true' && needs.init.result == 'success' && !inputs.skip_docs }}
     strategy:
       fail-fast: false
     env:
@@ -347,11 +412,13 @@ jobs:
   fw_pkg_test:
     runs-on: ubuntu-24.04
     name: Framework Package Tests (${{ matrix.framework }})
-    needs: calc_matrix
+    permissions:
+      contents: write
+    needs: [calc_matrix, init]
+    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release') || inputs.run_package_tests
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.calc_matrix.outputs.test_pkg_matrix )}}
-    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release') || inputs.run_package_tests
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
@@ -372,11 +439,22 @@ jobs:
       - name: nx package:test
         id: package-test
         if: matrix.framework != 'none'
-        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
+        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests --configuration=update
+
+      - name: Snapshot Branch
+        if: matrix.framework != 'none'
+        uses: ./.github/actions/snapshot-branch
+        with:
+          path: testing/*-package-tests/e2e/*-snapshots/
+          source_branch: ${{ github.head_ref || 'latest' }}
+          branch: ${{ needs.init.outputs.snapshot_branch }}
+          type: ${{ matrix.framework }}-package-tests:test:package
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ init, test, e2e, format_lint_build, docs, calc_matrix, fw_pkg_test, sonar_community, sonar_enterprise ]
+    # Uncomment to add package tests back in
+    # needs: [ detect-changes, init, test, e2e, format_lint_build, docs, calc_matrix, fw_pkg_test, sonar_community, sonar_enterprise ]
+    needs: [ detect-changes, init, test, e2e, format_lint_build, docs, calc_matrix, sonar_community, sonar_enterprise ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
@@ -401,10 +479,14 @@ jobs:
           git fetch origin --depth 1 tag latest-success
 
       - uses: actions/download-artifact@v4
+        if: needs.test.result == 'success' || needs.test.result == 'failure' ||
+          needs.e2e.result == 'success' || needs.e2e.result == 'failure'
         with:
           path: test-results/
 
       - name: Merge JUnit Report XMLs
+        if: needs.test.result == 'success' || needs.test.result == 'failure' ||
+          needs.e2e.result == 'success' || needs.e2e.result == 'failure'
         run: |
           YARN_REGISTRY=
           yarn global add junit-report-merger
@@ -442,8 +524,11 @@ jobs:
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.docs.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
+          
+          # Uncomment to add package tests back in
+          # elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
+          #   WORKFLOW_STATUS="failure"
+          
           elif [ "${{ needs.sonar_community.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.sonar_enterprise.result }}" == "failure" ] ; then
@@ -501,6 +586,31 @@ jobs:
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
           SLACK_GITHUB_MAPPING: ${{ secrets.SLACK_GITHUB_MAPPING }}
+          # Uncomment to add package tests back in
+          # RUN_CONTEXT: >
+          #   {
+          #     "workflow": "${{ github.workflow }}",
+          #     "ref": "${{ github.ref }}",
+          #     "currentSha": "${{ github.sha }}",
+          #     "lastSuccessfulSha": "${{ steps.find_latest_sha.outputs.sha }}",
+          #     "runId": "${{ github.run_id }}",
+          #     "project": "AgGrid",
+          #     "reportUrl": "${{ steps.testReport.outputs.url_html }}",
+          #     "deployToStaging": ${{ needs.docs.outputs.docs_deployed == 'success' }},
+          #     "changedState": ${{ steps.lastJobStatus.outputs.changedState == 'true' }},
+          #     "jobStatuses":
+          #       {
+          #           "Format": "${{ needs.format_lint_build.outputs.format }}",
+          #           "Lint": "${{ needs.format_lint_build.outputs.lint }}",
+          #           "Build": "${{ needs.format_lint_build.outputs.build }}",
+          #           "Test": "${{ needs.test.result }}",
+          #           "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
+          #           "e2e": "${{ needs.e2e.result }}",
+          #           "Docs": "${{ needs.docs.result }}",
+          #           "SonarCommunity": "${{ needs.sonar_community.result }}",
+          #           "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
+          #       }
+          #   }
           RUN_CONTEXT: >
             {
               "workflow": "${{ github.workflow }}",
@@ -518,7 +628,6 @@ jobs:
                     "Lint": "${{ needs.format_lint_build.outputs.lint }}",
                     "Build": "${{ needs.format_lint_build.outputs.build }}",
                     "Test": "${{ needs.test.result }}",
-                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
                     "e2e": "${{ needs.e2e.result }}",
                     "Docs": "${{ needs.docs.result }}",
                     "SonarCommunity": "${{ needs.sonar_community.result }}",

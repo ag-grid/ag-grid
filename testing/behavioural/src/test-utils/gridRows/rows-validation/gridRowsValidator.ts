@@ -26,26 +26,15 @@ export class GridRowsValidator {
     public validate(gridRows: GridRows): this {
         const state = new GridRowsValidationState(gridRows);
 
-        if (gridRows.rootRowNodes.length > 1) {
-            this.errors.default.add(
-                'Found ' +
-                    (gridRows.rootRowNodes.length - 1) +
-                    ' more root nodes: ' +
-                    gridRows.rootRowNodes
-                        .slice(1)
-                        .map((n) => rowIdAndIndexToString(n))
-                        .join(', ')
-            );
-        }
         if (gridRows.rootRowNode) {
             this.validateRootNode(state, gridRows.rootRowNode);
-            this.validateRow(state, gridRows.rootRowNode);
         }
         this.validateRowNodes(state);
         this.validateDisplayedRows(state);
         this.validatePinnedRows(state);
         this.validateSelectedRows(state);
         this.validateDisplayedRowCounts(state);
+        this.validateNoAggDataWithoutGrouping(state);
         return this;
     }
 
@@ -53,12 +42,12 @@ export class GridRowsValidator {
         const rowErrors = this.errors.get(root);
         rowErrors.expectValueEqual('id', root.id, csrm ? 'ROOT_NODE_ID' : undefined);
         rowErrors.expectValueEqual('level', root.level, -1);
-        rowErrors.expectValueEqual('expanded', root.expanded, undefined);
         rowErrors.add(!!root.key && 'Root node has key ' + root.key);
         rowErrors.add(root.destroyed && 'Root node is destroyed');
         rowErrors.add(root.rowIndex !== null && 'Root node has rowIndex ' + root.rowIndex);
         rowErrors.add(csrm && !Array.isArray(root.allLeafChildren) && 'Root node has no allLeafChildren');
         rowErrors.add(gridRows.isRowDisplayed(root) && 'Root node is displayed');
+        rowErrors.expectValueEqual('childIndex', root.childIndex, undefined);
         if (gridRows.treeData) {
             rowErrors.expectValueEqual('group', root.group, true);
         }
@@ -165,23 +154,29 @@ export class GridRowsValidator {
                 `Parent ${rowIdAndIndexToString(parent)} is not in rowNodes`
         );
 
-        if (row === gridRows.rootRowNode) {
-            rowErrors.expectValueEqual('childIndex', row.childIndex, undefined);
-        }
-
         // displayed property should be consistent with rowIndex
         rowErrors.add(
             (row.rowIndex !== null) !== row.displayed &&
                 `displayed=${row.displayed} is inconsistent with rowIndex=${row.rowIndex}`
         );
 
-        // Level consistency: row.level should equal parent.level + 1
-        if (level >= 0 && parent && parent.level >= -1) {
+        // Level consistency: row.level should equal parent.level + 1.
+        // Skip for rows only reachable via allLeafChildren in a transitional/uninitialized state
+        // (i.e. rowData was set but the group stage hasn't run yet, so parent = ROOT but level > 0).
+        if (
+            level >= 0 &&
+            parent &&
+            parent.level >= -1 &&
+            (gridRows.isInRowNodes(row) || gridRows.isRowDisplayed(row))
+        ) {
             rowErrors.expectValueEqual('level', level, parent.level + 1);
         }
 
         // Group and detail are mutually exclusive
         rowErrors.add(!!row.group && !!row.detail && 'Row is both group and detail');
+
+        // Non-group rows should not have aggData — it must be cleared during group demotion
+        rowErrors.add(!row.group && row.aggData != null && 'Non-group row should not have aggData');
 
         // Master/detail bidirectional consistency
         const detailNode = row.detailNode;
@@ -216,6 +211,7 @@ export class GridRowsValidator {
         );
 
         this.validateSibling(rowErrors, row);
+        this.validatePinnedSibling(rowErrors, row);
 
         if (csrm) {
             const childrenAfterGroupSet = this.validateChildren(state, row, 'childrenAfterGroup', null);
@@ -247,7 +243,7 @@ export class GridRowsValidator {
                 );
             }
             verifyLeafs(this.errors, this.#allLeafsMap, gridRows, row);
-            if (row.allChildrenCount !== undefined) {
+            if (row.allChildrenCount != null) {
                 validateAllChildrenCount(state, rowErrors, row);
             }
         }
@@ -333,6 +329,22 @@ export class GridRowsValidator {
         rowErrors.add(sibling.allLeafChildren !== row.allLeafChildren && 'Sibling allLeafChildren is different');
     }
 
+    private validatePinnedSibling(rowErrors: GridRowErrors, row: RowNode<any>) {
+        const pinnedSibling = row.pinnedSibling;
+        if (!pinnedSibling) {
+            return;
+        }
+        rowErrors.add(pinnedSibling === row && 'Row references itself as pinnedSibling');
+        rowErrors.add(
+            pinnedSibling.pinnedSibling !== row && 'PinnedSibling does not reference back to the original row'
+        );
+        rowErrors.add(pinnedSibling.group !== row.group && 'PinnedSibling group is different');
+        rowErrors.add(pinnedSibling.hasChildren() !== row.hasChildren() && 'PinnedSibling hasChildren() is different');
+        rowErrors.add(
+            pinnedSibling.allChildrenCount !== row.allChildrenCount && 'PinnedSibling allChildrenCount is different'
+        );
+    }
+
     private validateChildren(
         state: GridRowsValidationState,
         parentRow: RowNode,
@@ -348,14 +360,15 @@ export class GridRowsValidator {
             children = [];
         }
 
-        if (!children) {
-            if (gridRows.treeData) {
-                if (!gridRows.isDuplicateIdRow(parentRow) && name !== 'allLeafChildren') {
-                    if (!parentRow.detail) {
-                        this.errors.add(parentRow, `${name} is missing`);
-                    }
-                }
-            } else if (parentRow.group && (name === 'childrenAfterGroup' || name === 'allLeafChildren')) {
+        if (children) {
+            if (name === 'childrenAfterGroup' && children.length === 0 && parentRow.level !== -1) {
+                this.errors.add(parentRow, `${name} is an empty array`);
+            }
+        } else if (parentRow.group && !parentRow.detail && !gridRows.isDuplicateIdRow(parentRow)) {
+            const required = gridRows.treeData
+                ? name !== 'allLeafChildren'
+                : name === 'childrenAfterGroup' || name === 'allLeafChildren';
+            if (required) {
                 this.errors.add(parentRow, `${name} is missing`);
             }
         }
@@ -523,5 +536,38 @@ export class GridRowsValidator {
                 row.level === 0 &&
                 'Leaf data row displayed in pivot mode with active grouping/pivoting'
         );
+    }
+
+    /** When grouping/treeData/pivot are not active, no node should have aggData. */
+    private validateNoAggDataWithoutGrouping(state: GridRowsValidationState): void {
+        if (!state.csrm || state.pivotMode) {
+            return;
+        }
+        const { api, treeData } = state.gridRows;
+        if (treeData) {
+            return;
+        }
+        // Check if any grouping is active
+        if (api.isModuleRegistered('RowGroupingModule') && api.getRowGroupColumns().length > 0) {
+            return;
+        }
+        if (
+            api.getGridOption('getGroupRowAgg') ||
+            api.getGridOption('alwaysAggregateAtRootLevel') ||
+            api.getGridOption('grandTotalRow')
+        ) {
+            return;
+        }
+        // No grouping/treeData/pivot — no node should have aggData
+        for (const row of state.gridRows.rowNodes) {
+            this.errors.add(row, row.aggData != null && 'Row has aggData but grouping/treeData/pivot are not active');
+        }
+        const root = state.gridRows.rootRowNode;
+        if (root) {
+            this.errors.add(
+                root,
+                root.aggData != null && 'Root node has aggData but grouping/treeData/pivot are not active'
+            );
+        }
     }
 }

@@ -282,16 +282,19 @@ export function lookupCustomChartTheme(chartProxyParams: ChartProxyParams, name:
 }
 
 export function getSeriesHighlight(
-    crossFiltering: boolean
+    crossFiltering: boolean,
+    isSingleSeries?: boolean
 ): AgMultiSeriesHighlightOptions<AgBaseHighlightStyleOptions> {
     const highlight: AgMultiSeriesHighlightOptions<AgBaseHighlightStyleOptions> = {
-        unhighlightedSeries: {
-            opacity: 1,
-        },
         highlightedItem: {
             strokeWidth: 2,
         },
     };
+    if (!isSingleSeries) {
+        highlight.unhighlightedSeries = {
+            opacity: 1,
+        };
+    }
     if (!crossFiltering) {
         highlight.unhighlightedItem = {
             opacity: 1,

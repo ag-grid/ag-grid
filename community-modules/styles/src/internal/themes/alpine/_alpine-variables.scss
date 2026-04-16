@@ -51,6 +51,9 @@
     --ag-menu-background-color: var(--ag-header-background-color);
     --ag-filter-panel-apply-button-color: var(--ag-background-color);
     --ag-filter-panel-apply-button-background-color: var(--ag-alpine-active-color);
+
+    --ag-column-panel-apply-button-color: var(--ag-background-color);
+    --ag-column-panel-apply-button-background-color: var(--ag-alpine-active-color);
     --ag-column-drag-indicator-color: var(--ag-alpine-active-color);
 
     // derived and blended colours (these are static versions of the dynamic colour blends
@@ -133,6 +136,7 @@
     --ag-find-match-color: var(--ag-background-color);
     --ag-find-active-match-color: var(--ag-background-color);
     --ag-filter-panel-apply-button-color: var(--ag-foreground-color);
+    --ag-column-panel-apply-button-color: var(--ag-foreground-color);
 
     --ag-row-loading-skeleton-effect-color: #{color.change(#cacbcc, $alpha: 0.4)};
 

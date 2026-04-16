@@ -1,0 +1,26 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.controls > button {
+    font-weight: 600;
+}
+
+.grid-wrapper {
+    display: flex;
+    flex: 1 1 0;
+}
+
+.grid-wrapper > div {
+    width: 100%;
+    height: 100%;
+}

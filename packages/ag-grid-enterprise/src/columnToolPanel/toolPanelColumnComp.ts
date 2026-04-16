@@ -25,8 +25,10 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
-import { createPivotState, setAllColumns, updateColumns } from './modelItemUtils';
+import type { ToolPanelColumnCompParams } from './columnToolPanel';
+import { createPivotStateForToolPanel, setAllColumns, updateColumns } from './modelItemUtils';
 import { ToolPanelContextMenu } from './toolPanelContextMenu';
+import { isDeferredMode } from './toolPanelDeferredUiUtils';
 
 const ToolPanelColumnElement: ElementParams = {
     tag: 'div',
@@ -51,7 +53,8 @@ export class ToolPanelColumnComp extends Component {
         public modelItem: ColumnModelItem,
         private readonly allowDragging: boolean,
         private readonly groupsExist: boolean,
-        private readonly focusWrapper: HTMLElement
+        private readonly focusWrapper: HTMLElement,
+        private readonly params: ToolPanelColumnCompParams
     ) {
         super();
         const { column, depth, displayName } = modelItem;
@@ -159,7 +162,7 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper));
+        const contextMenu = this.createBean(new ToolPanelContextMenu(column, e, this.focusWrapper, this.params));
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {
                 this.destroyBean(contextMenu);
@@ -203,7 +206,7 @@ export class ToolPanelColumnComp extends Component {
             return;
         }
 
-        setAllColumns(this.beans, [this.column], nextState, 'toolPanelUi');
+        setAllColumns(this.beans, [this.column], nextState, 'toolPanelUi', this.params);
     }
 
     private refreshAriaLabel(): void {
@@ -228,12 +231,16 @@ export class ToolPanelColumnComp extends Component {
         const beans = this.beans;
         const { gos, eventSvc, dragAndDrop } = beans;
 
+        if (isDeferredMode(this.params)) {
+            eDragHandle.setAttribute('data-column-tool-panel-deferred', '');
+        }
+
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
         const dragSource: GridDragSource = {
             type: DragSourceType.ToolPanel,
             eElement: eDragHandle,
             dragItemName: this.displayName,
-            getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),
+            getDefaultIconName: () => (hideColumnOnExit && !isDeferredMode(this.params) ? 'hide' : 'notAllowed'),
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
                 hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
@@ -248,19 +255,20 @@ export class ToolPanelColumnComp extends Component {
                 });
             },
             onGridEnter: (dragItem: DragItem | null) => {
-                if (hideColumnOnExit) {
+                if (hideColumnOnExit && !isDeferredMode(this.params)) {
                     // when dragged into the grid, restore the state that was active pre-drag
                     updateColumns(beans, {
                         columns: [this.column],
                         visibleState: dragItem?.visibleState,
                         pivotState: dragItem?.pivotState,
                         eventType: 'toolPanelUi',
+                        buttons: this.params.buttons,
                     });
                 }
             },
             onGridExit: () => {
-                if (hideColumnOnExit) {
-                    // when dragged outside of the grid, mimic what happens when checkbox is disabled
+                if (hideColumnOnExit && !isDeferredMode(this.params)) {
+                    // when dragged outside of the grid, copy what happens when checkbox is disabled
                     // this handles the behaviour for pivot which is different to just hiding a column.
                     this.onChangeCommon(false);
                 }
@@ -274,7 +282,10 @@ export class ToolPanelColumnComp extends Component {
     private createDragItem() {
         const colId = this.column.getColId();
         const visibleState = { [colId]: this.column.isVisible() };
-        const pivotState = { [colId]: createPivotState(this.column) };
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
+        const pivotState = {
+            [colId]: createPivotStateForToolPanel(this.column, updateStrategy, isDeferredMode(this.params)),
+        };
         return {
             columns: [this.column],
             visibleState,
@@ -284,14 +295,18 @@ export class ToolPanelColumnComp extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        const isPivotMode = this.beans.colModel.isPivotMode();
+        const updateStrategy = this.beans.columnStateUpdateStrategy;
+        const isPivotMode = updateStrategy.getPivotMode(isDeferredMode(this.params));
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
-            const anyFunctionActive = this.column.isAnyFunctionActive();
+            const anyFunctionActive = updateStrategy.isColumnSelectedInPivotModeToolPanel(
+                isDeferredMode(this.params),
+                this.column
+            );
             this.cbSelect.setValue(anyFunctionActive);
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
-            this.cbSelect.setValue(this.column.isVisible());
+            this.cbSelect.setValue(updateStrategy.isColumnVisibleInToolPanel(isDeferredMode(this.params), this.column));
         }
 
         let canBeToggled = true;

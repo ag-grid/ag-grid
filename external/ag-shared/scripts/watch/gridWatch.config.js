@@ -32,18 +32,18 @@ function getProjectBuildTargets(project) {
         buildTargets.push(['ag-grid-docs', ['generate-examples']]);
     } else {
         if (PACKAGE_PROJECTS.includes(project)) {
-            // Rebuild doc references first so the dev server gets updated API docs.
-            buildTargets.push(['ag-grid-docs', ['generate-doc-references']]);
-
-            // Fast UMD build first — no deps, reloadable → triggers browser refresh ASAP
+            // Fast UMD + package builds first — reloadable → triggers browser refresh ASAP.
+            // Uses build:umd:watch and build:package:watch which have dependsOn: [] and
+            // skipTypeCheck: true, avoiding the slow ^build:types dependency chain (~5s).
             buildTargets.push(
-                ['ag-grid-community', ['build:umd:watch'], 'watch'],
-                ['ag-grid-enterprise', ['build:umd:watch'], 'watch']
+                ['ag-grid-community', ['build:umd:watch', 'build:package:watch'], 'watch'],
+                ['ag-grid-enterprise', ['build:umd:watch', 'build:package:watch'], 'watch']
             );
-            // Types + package after — non-reloadable, runs in background for IDE support
+            // Doc references + types run after — browser already has updated code
+            buildTargets.push(['ag-grid-docs', ['generate-doc-references']]);
             buildTargets.push(
-                ['ag-grid-community', ['build:types', 'build:package'], 'watch'],
-                ['ag-grid-enterprise', ['build:types', 'build:package'], 'watch']
+                ['ag-grid-community', ['build:types'], 'watch'],
+                ['ag-grid-enterprise', ['build:types'], 'watch']
             );
 
             // Generate framework properties after the core library is built.
@@ -56,15 +56,15 @@ function getProjectBuildTargets(project) {
         } else if (project.startsWith('@ag-grid')) {
             // For locale and styles packages: build the package first, then fan-out.
             buildTargets.push([project, ['build'], 'watch']);
-            // Fast UMD build — reloadable → triggers browser refresh ASAP
+            // Fast UMD + package builds — reloadable → triggers browser refresh ASAP
             buildTargets.push(
-                ['ag-grid-community', ['build:umd:watch'], 'watch'],
-                ['ag-grid-enterprise', ['build:umd:watch'], 'watch']
+                ['ag-grid-community', ['build:umd:watch', 'build:package:watch'], 'watch'],
+                ['ag-grid-enterprise', ['build:umd:watch', 'build:package:watch'], 'watch']
             );
-            // Types + package after — non-reloadable, runs in background
+            // Types run after — non-reloadable, runs in background
             buildTargets.push(
-                ['ag-grid-community', ['build:types', 'build:package'], 'watch'],
-                ['ag-grid-enterprise', ['build:types', 'build:package'], 'watch']
+                ['ag-grid-community', ['build:types'], 'watch'],
+                ['ag-grid-enterprise', ['build:types'], 'watch']
             );
         }
 
@@ -86,7 +86,7 @@ module.exports = {
     ignoredProjects: getIgnoredProjects(),
     // Targets whose completion can trigger a browser reload (via ag-build-queue.empty).
     // The reload fires only when the last reloadable target in the current queue finishes.
-    devServerReloadTargets: ['generate', 'generate-doc-references', 'build', 'build:umd:watch', 'build:package', 'generate-examples'],
+    devServerReloadTargets: ['generate', 'build', 'build:umd:watch', 'build:package:watch', 'generate-examples'],
     getProjectBuildTargets,
     externalBuildTriggers,
 };

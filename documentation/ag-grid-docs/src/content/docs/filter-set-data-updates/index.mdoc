@@ -82,7 +82,7 @@ The following example demonstrates these rules. Try the following:
 
 ## Setting New Data
 
-When `api.setGridOption('rowData', data)` is called existing filter selections are kept when new rows are added. However it is possible to clear filter selections using: `api.setFilterModel([])`.
+When `api.setGridOption('rowData', data)` is called existing filter selections are kept when new rows are added. However it is possible to clear filter selections using: `api.setFilterModel(null)`.
 
 The following example demonstrates how `api.setGridOption('rowData', data)` affects filter selections. Try the following:
 
@@ -90,7 +90,7 @@ The following example demonstrates how `api.setGridOption('rowData', data)` affe
 
 -   Notice 'A' remains deselected after new data is supplied to the grid.
 
--   Clicking **Reset** invokes `api.setGridOption('rowData', origData)` to restore the original data but also clears any selections using `api.setFilterModel([])`.
+-   Clicking **Reset** invokes `api.setGridOption('rowData', origData)` to restore the original data but also clears any selections using `api.setFilterModel(null)`.
 
 -   Apply the filters so only 'B' is selected and click **Apply Data Update 1**. Notice how 'B' is no longer a filter value and therefore no longer in the filter list.
     Click **Apply Data Update 2** and notice how 'B' returns to the filter list but remains unselected.

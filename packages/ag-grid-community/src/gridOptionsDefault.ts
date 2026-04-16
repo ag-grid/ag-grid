@@ -14,6 +14,8 @@ export const GRID_OPTION_DEFAULTS = {
     tooltipShowDelay: 2000,
     tooltipSwitchShowDelay: 200,
     tooltipHideDelay: 10000,
+    noteShowDelay: 180,
+    noteHideDelay: 220,
     tooltipMouseTrack: false,
     tooltipShowMode: 'standard',
     tooltipInteraction: false,

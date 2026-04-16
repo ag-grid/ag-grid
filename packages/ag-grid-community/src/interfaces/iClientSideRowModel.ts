@@ -33,6 +33,7 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     /** The root row containing all the rows */
     readonly rootNode: RowNode | null;
     readonly rowCountReady: boolean;
+    hierarchical: boolean;
 
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
 
@@ -53,7 +54,7 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
         callback?: (res: RowNodeTransaction<TData>) => void
     ): void;
     flushAsyncTransactions(): void;
-    doAggregate(changedPath: ChangedPath): void;
+    doAggregate(changedPath: ChangedPath | undefined): void;
     getTopLevelNodes(): RowNode[] | null;
     getFormulaRow(index: number): RowNode;
 

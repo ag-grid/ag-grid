@@ -35,6 +35,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             enableRowGroup: true,
             enablePivot: true,
             groupHierarchy: ['year', 'week'],
+            minWidth: 120,
         },
         { field: 'country' },
         { field: 'sport' },
@@ -45,7 +46,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
     autoGroupColumnDef: {
-        minWidth: 200,
+        minWidth: 225,
     },
     sideBar: 'columns',
     rowGroupPanelShow: 'always',

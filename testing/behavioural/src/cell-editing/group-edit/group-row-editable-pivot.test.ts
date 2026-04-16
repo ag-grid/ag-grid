@@ -1,9 +1,9 @@
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../test-utils';
-import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { EditEventTracker, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import type {
     GroupRowEditableCallback,
     GroupRowValueSetterCallback,
@@ -14,6 +14,7 @@ import { EDIT_MODES, callsForRowNode, cascadeGroupRowValueSetter, editCell } fro
 describe('groupRowEditable with pivot mode', () => {
     const gridsManager = new TestGridsManager({
         modules: [
+            RowGroupingEditModule,
             TextEditorModule,
             NumberEditorModule,
             ClientSideRowModelModule,
@@ -135,6 +136,15 @@ describe('groupRowEditable with pivot mode', () => {
                 ├── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
                 └── LEAF_GROUP collapsed id:row-group-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:900
             `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open editable
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open editable
+            `);
         });
 
         test('pivot cell edits in leaf group refresh aggregations correctly', async () => {
@@ -223,6 +233,15 @@ describe('groupRowEditable with pivot mode', () => {
 
             expect(eventTracker.counts.cellValueChanged).toBeGreaterThan(0);
             eventTracker.destroy();
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├─┬ "2020" GROUP
+                │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open editable
+                └─┬ "2021" GROUP
+                  └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open editable
+            `);
         });
     });
 

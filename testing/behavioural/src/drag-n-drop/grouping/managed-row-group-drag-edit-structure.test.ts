@@ -12,6 +12,7 @@ import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
     DRAG_NO_MOVE_INTERACTION_CASES,
+    GridColumns,
     GridRows,
     RowDragDispatcher,
     TestGridsManager,
@@ -103,6 +104,12 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(api.getRowNode('b1')?.data.level2).toBe('B');
         expect(api.getRowNode('b2')?.data.level1).toBe('Beta');
         expect(api.getRowNode('b2')?.data.level2).toBe('B');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Levels" width:200
+            └── value "Value" width:200
+        `);
     });
 
     test('reordering root level groups is allowed', async () => {
@@ -171,6 +178,12 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
             · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
             · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Levels" width:200
+            └── value "Value" width:200
+        `);
     });
 
     test('dragging a level 1 group into a different level 2 group updates all descendants', async () => {
@@ -220,21 +233,39 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         await asyncSetTimeout(0);
 
         gridRows = new GridRows(api, 'after move');
-        await gridRows.check(`
-            ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
-            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
-            · │ ├── LEAF id:a1 level1:"Beta" level2:"Three" value:"Alpha-1"
-            · │ ├── LEAF id:a2 level1:"Beta" level2:"Three" value:"Alpha-2"
-            · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
-            · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
-        `);
+        if (noMove) {
+            await gridRows.check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+                · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+                · │ ├── LEAF id:a1 level1:"Beta" level2:"Three" value:"Alpha-1"
+                · │ ├── LEAF id:a2 level1:"Beta" level2:"Three" value:"Alpha-2"
+                · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+                · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
+                · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
+            `);
 
-        expect(api.getRowNode('a1')?.data.level1).toBe('Beta');
-        expect(api.getRowNode('a1')?.data.level2).toBe('Three');
-        expect(api.getRowNode('a2')?.data.level1).toBe('Beta');
-        expect(api.getRowNode('a2')?.data.level2).toBe('Three');
+            expect(api.getRowNode('a1')?.data.level1).toBe('Beta');
+            expect(api.getRowNode('a1')?.data.level2).toBe('Three');
+            expect(api.getRowNode('a2')?.data.level1).toBe('Beta');
+            expect(api.getRowNode('a2')?.data.level2).toBe('Three');
+        } else {
+            await gridRows.check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+                · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+                · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+                · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
+                · · ├── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
+                · · ├── LEAF id:a1 level1:"Beta" level2:"Four" value:"Alpha-1"
+                · · └── LEAF id:a2 level1:"Beta" level2:"Four" value:"Alpha-2"
+            `);
+
+            expect(api.getRowNode('a1')?.data.level1).toBe('Beta');
+            expect(api.getRowNode('a1')?.data.level2).toBe('Four');
+            expect(api.getRowNode('a2')?.data.level1).toBe('Beta');
+            expect(api.getRowNode('a2')?.data.level2).toBe('Four');
+        }
     });
 
     test('dragging a group onto its parent does nothing', async () => {
@@ -593,7 +624,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
             expect(api.getRowNode('row-group-country-China')?.expanded).toBe(true);
         });
         await waitFor(() => {
-            expect(getChinaLeafOrder()).toEqual(['Sun']);
+            expect(getChinaLeafOrder()).toEqual(noMove ? ['Sun'] : ['Martin', 'Sun']);
         });
 
         await dispatcher.move('Sun', { yOffsetPercent: 0.1 });

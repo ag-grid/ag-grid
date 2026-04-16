@@ -482,6 +482,51 @@ describe('Cell Editing Regression', () => {
         `);
     });
 
+    // AG-16998 - rich select editor throws error when cellRenderer is a function
+    test('rich select editor opens without error when cellRenderer is a function', async () => {
+        // virtualList doesn't add option elements if the offsetHeight is 0, so we need to fake it
+        fakeElementAttribute('offsetHeight', 100, '.ag-virtual-list-viewport');
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    editable: true,
+                    cellEditor: 'agRichSelectCellEditor',
+                    cellEditorParams: {
+                        values: ['Alpha', 'Beta', 'Gamma'],
+                        cellRenderer: (params: { value: string }) => `<b>${params.value}</b>`,
+                    },
+                },
+            ],
+            rowData: [{ value: 'Alpha' }],
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'value'));
+        await userEvent.dblClick(cell);
+        await asyncSetTimeout(1);
+
+        // Editor popup should open without error
+        await waitForPopup(gridDiv);
+
+        // Display field (selected value area) should contain the rendered output for 'Alpha'
+        const displayField = gridDiv.querySelector('.ag-picker-field-display');
+        await waitFor(() => expect(displayField?.querySelector('b')).toHaveTextContent('Alpha'));
+
+        // Each list row should render its value via the function renderer
+        const listRows = await waitFor(() => {
+            const rows = gridDiv.querySelectorAll('.ag-rich-select-row');
+            expect(rows).toHaveLength(3);
+            return rows;
+        });
+        expect(listRows[0].querySelector('b')).toHaveTextContent('Alpha');
+        expect(listRows[1].querySelector('b')).toHaveTextContent('Beta');
+        expect(listRows[2].querySelector('b')).toHaveTextContent('Gamma');
+    });
+
     // AG-15794 - onCellEditRequest source
     test('onCellEditRequest should have source=edit', async () => {
         // virtualList doesn't add option elements if the offsetHeight is 0, so we need to fake it

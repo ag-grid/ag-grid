@@ -1,6 +1,6 @@
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, RowApiModule, TextFilterModule } from 'ag-grid-community';
 import type { GridOptions, ModelUpdatedEvent } from 'ag-grid-community';
 
 import {
@@ -15,7 +15,7 @@ import {
 
 describe('ag-grid row data', () => {
     const gridsManager = new TestGridsManager({
-        modules: [TextFilterModule, NumberFilterModule, ClientSideRowModelModule],
+        modules: [TextFilterModule, NumberFilterModule, ClientSideRowModelModule, RowApiModule],
     });
     let consoleWarnSpy: MockInstance | undefined;
     let consoleErrorSpy: MockInstance | undefined;
@@ -371,6 +371,24 @@ describe('ag-grid row data', () => {
             ├── LEAF id:2 value:2 value_1:2
             └── LEAF id:3 value:3 value_1:3
         `);
+    });
+
+    test('getRowNode does not throw when passed a numeric id', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'value' }],
+            rowData: [
+                { id: 1, value: 'a' },
+                { id: 2, value: 'b' },
+            ],
+            getRowId: (params) => String(params.data.id),
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+        await asyncSetTimeout(1);
+
+        // Passing a number should not throw, and should still find the row via property key coercion
+        expect(api.getRowNode(1 as any)).toBeTruthy();
+        expect(api.getRowNode(999 as any)).toBeUndefined();
     });
 
     describe('onModelUpdated event flags', () => {

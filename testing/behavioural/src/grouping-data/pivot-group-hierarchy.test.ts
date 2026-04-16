@@ -2,7 +2,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 describe('pivot with groupHierarchy (date-time)', () => {
     // Tests ported from e2e: documentation/ag-grid-docs/src/content/docs/pivoting-column-groups/_examples/pivoting-date-time/example.spec.ts
@@ -125,6 +125,33 @@ describe('pivot with groupHierarchy (date-time)', () => {
             ├── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA"
             └── LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "2000" GROUP closed
+            │ ├─┬ "10" GROUP closed hidden
+            │ │ ├─┬ "2000-10-15" GROUP hidden
+            │ │ │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2000-10-2000-10-15_total "Total" width:200 columnGroupShow:open hidden
+            │ │ ├─┬ "2000-10-20" GROUP hidden
+            │ │ │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2000-10-2000-10-20_total "Total" width:200 columnGroupShow:open hidden
+            │ │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2000-10_total "Total" width:200 columnGroupShow:closed hidden
+            │ ├─┬ "11" GROUP closed hidden
+            │ │ ├─┬ "2000-11-05" GROUP hidden
+            │ │ │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2000-11-2000-11-05_total "Total" width:200 columnGroupShow:open hidden
+            │ │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2000-11_total "Total" width:200 columnGroupShow:closed hidden
+            │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2000_total "Total" width:200 columnGroupShow:closed
+            └─┬ "2001" GROUP closed
+              ├─┬ "1" GROUP closed hidden
+              │ ├─┬ "2001-01-10" GROUP hidden
+              │ │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2001-1-2001-01-10_total "Total" width:200 columnGroupShow:open hidden
+              │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2001-1_total "Total" width:200 columnGroupShow:closed hidden
+              ├─┬ "6" GROUP closed hidden
+              │ ├─┬ "2001-06-15" GROUP hidden
+              │ │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2001-6-2001-06-15_total "Total" width:200 columnGroupShow:open hidden
+              │ └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2001-6_total "Total" width:200 columnGroupShow:closed hidden
+              └── pivot_ag-Grid-HierarchyColumn-date-year-ag-Grid-HierarchyColumn-date-month-date_2001_total "Total" width:200 columnGroupShow:closed
+        `);
     });
 
     test('setPivotColumns toggles pivot result columns', async () => {
@@ -167,6 +194,12 @@ describe('pivot with groupHierarchy (date-time)', () => {
         // Pivot result columns should be cleared (returns null or empty array)
         const clearedPivotResultCols = api.getPivotResultColumns();
         expect(clearedPivotResultCols == null || clearedPivotResultCols.length === 0).toBe(true);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── total "Total" width:200 aggFunc:sum
+        `);
     });
 
     test('pivotIndex auto-pivots column with groupHierarchy', async () => {

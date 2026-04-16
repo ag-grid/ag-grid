@@ -1,7 +1,7 @@
 ---
 targets: ['*']
 name: batch-plunkers
-description: 'Create a batch of Plunkers with one sub-agent per Plunker'
+description: 'Create multiple Plunkers in parallel using sub-agents — one sub-agent per Plunker. Use this skill when the user asks to create multiple plunkers, batch create plunkers, create plunkers for all examples or acceptance criteria, build several plunker demos at once, or generate a set of plunks from a JIRA ticket. Also trigger when the user provides a spec table of plunker assignments, says "create N plunkers", asks for "plunkers for each AC", or wants to batch create shareable demos or repros. Each sub-agent follows the /plunker skill workflow while the main thread orchestrates and collects results.'
 context: fork
 ---
 
@@ -51,7 +51,7 @@ Wait for user confirmation. Do NOT launch sub-agents until confirmed.
 
 ### 2a. Read the Product Guide
 
-Read all `*-guide.md` files in the sibling plunker skill directory (`../plunker/`). These contain the product-specific file templates, CDN URLs, styling requirements, and common issues. The guide content will be included in each sub-agent prompt.
+Read all `*-guide.md` files in the sibling plunker skill directory (`../plunker/`). These contain the product-specific file templates, CDN URLs, styling requirements, and common issues. Also read `.rulesync/skills/example/ag-charts/chart-construction.md` and `.rulesync/skills/example/ag-charts/enterprise-features.md` for chart construction patterns and enterprise/community feature matrix. The guide content will be included in each sub-agent prompt.
 
 ### 2b. Determine CDN and Resolve Enterprise/Community Per-Assignment
 
@@ -62,14 +62,20 @@ Ask the user which CDN to use (staging vs versioned). Then resolve enterprise vs
 
 Record the resolved CDN URL for each assignment so sub-agents don't waste time discovering this themselves.
 
-### 2c. Launch Sub-Agents
+### 2c. Pre-flight Permission Check
+
+Before launching sub-agents, verify Bash and Write tools are available by running a trivial command (e.g., `echo "permission check"`). Sub-agents running in the background cannot prompt the user for tool approval — they silently fail.
+
+**If Bash or Write is denied:** Skip sub-agents entirely. Instead, create all plunkers sequentially in the main thread — create temp dirs, write files, copy CSS, and upload via `plnkr.sh` directly. Still follow Steps 2a–2b for context and CDN resolution, and Steps 3–4 for output and JIRA posting.
+
+### 2d. Launch Sub-Agents
 
 Launch one `general-purpose` Task sub-agent per assignment, **all in a single message** so they run concurrently. Use `run_in_background: true` on each.
 
 Each sub-agent prompt **MUST** include:
 
 1. The assignment text and plunker number
-2. **The full product guide content inline** (from Step 2a) — paste the entire guide text into the prompt so the sub-agent has it immediately without needing to read files
+2. **The full product guide content AND example skill content inline** (from Step 2a) — paste the plunker guide, chart-construction.md, and enterprise-features.md text into the prompt so the sub-agent has it immediately without needing to read files
 3. The **resolved CDN URL** for this specific assignment (enterprise or community, from Step 2b)
 4. Any feature context from the JIRA ticket
 5. The exact upload command with the absolute path to `plnkr.sh`
@@ -90,7 +96,7 @@ Create a Plunker for the following assignment:
 ## Instructions
 
 1. Create a working directory: `PLNKR_DIR=$(mktemp -d /tmp/plnkr-batch-{PLUNKER_NUMBER}-XXXXXX)`
-2. If the assignment involves non-trivial APIs, verify them against `packages/ag-charts-types/src` before writing files
+2. **MANDATORY: Verify ALL API options** against `packages/ag-charts-types/src` before writing files. Grep for every option name, confirm nesting and value shapes. If not found in types, search for a working example in `packages/ag-charts-website/src/content/docs/*/_examples/`. Training data is unreliable — do NOT guess option names or structures
 3. Write all files per the product guide below (index.html, main.js, ag-example-styles.css, package.json, and optionally data.js)
 4. Upload: `bash "{ABSOLUTE_PATH_TO_PLNKR_SH}" upload "$PLNKR_DIR" --title "{TITLE}" --tags "ag-charts,qa"`
 5. Report the URL= line from the upload output
@@ -100,6 +106,14 @@ Create a Plunker for the following assignment:
 ## Product Guide
 
 {GUIDE_CONTENT}
+
+## Chart Construction Patterns
+
+{CHART_CONSTRUCTION_CONTENT}
+
+## Enterprise Features
+
+{ENTERPRISE_FEATURES_CONTENT}
 ````
 
 Wait for **all** sub-agents to complete before proceeding to Step 3.
@@ -117,6 +131,60 @@ Present results as a markdown table:
 ```
 
 If any failed, suggest re-running with just the failed assignments by providing the exact `/batch-plunkers` invocation or spec table.
+
+**JIRA note:** If the user asks to post results to JIRA (now or later), always use `contentFormat: "adf"` — JIRA's markdown renderer does not reliably produce clickable links. See Step 4 for the required ADF structure.
+
+## STEP 3.5: Clean Up Background Tasks
+
+After collecting all results, mark every background task as completed using `TaskUpdate` (set `status: "completed"`) for each task ID. This prevents stale pending tasks from polluting the task list in subsequent conversations.
+
+## STEP 4 (Optional): Post Results to JIRA
+
+If the input was a JIRA ticket (Mode A), offer to post the results as a comment on the source ticket.
+
+**⚠️ This step applies whether you used sub-agents or created plunkers manually in the main thread. Always follow the ADF structure below when posting to JIRA — there is no shortcut.**
+
+**⚠️ The Atlassian MCP has no delete-comment tool. Get the format right on the first attempt — re-posting creates duplicates that must be cleaned up manually.**
+
+Use `contentFormat: "adf"` with `mcp__atlassian__addCommentToJiraIssue`. JIRA's markdown renderer does not reliably auto-link URLs, so you must use ADF with explicit link marks to guarantee clickable links. Never use markdown format or tables for this comment — ADF bullet lists are the only format that reliably renders clickable URLs in JIRA.
+
+Format as an ADF `bulletList` where each `listItem` contains a `paragraph` with: title text — ACs — then a clickable URL using an ADF `link` mark.
+
+**Full ADF structure:**
+
+```json
+{
+  "version": 1,
+  "type": "doc",
+  "content": [
+    {
+      "type": "paragraph",
+      "content": [
+        {"type": "text", "text": "QA Plunkers for ... (staging CDN):", "marks": [{"type": "strong"}]}
+      ]
+    },
+    {
+      "type": "bulletList",
+      "content": [
+        {
+          "type": "listItem",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {"type": "text", "text": "#1 — AC 8.1.1: Title here — "},
+                {"type": "text", "text": "https://plnkr.co/edit/abc123", "marks": [{"type": "link", "attrs": {"href": "https://plnkr.co/edit/abc123"}}]}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+Each URL **must** be wrapped in an ADF link mark — without it, URLs appear as plain text in JIRA and are not clickable.
 
 ## Notes
 

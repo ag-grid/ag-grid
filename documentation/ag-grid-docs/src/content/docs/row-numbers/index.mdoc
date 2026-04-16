@@ -68,6 +68,12 @@ const gridOptions = {
 The Row Resizer feature does not work when columns are configured with [Auto Row Height](./row-height/#auto-row-height).
 {% /note %}
 
+### Row Resize Events
+
+The following events are fired when a row resize operation starts and ends.
+
+{% apiDocumentation source="grid-events/events.json" section="rowEvents" names=["rowResizeStarted", "rowResizeEnded"] /%}
+
 ## Value Export
 
 By default, when working with exporters such as [CSV Export](./csv-export/) or [Excel Export](./excel-export/), the value of the Row Numbers column is not exported.
