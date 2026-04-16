@@ -149,31 +149,33 @@ export class GridColumnsDomValidator {
             }
 
             // ── aria-sort attribute ─────────────────────────────────────────
+            // The grid sets aria-sort only when the column is sortable (headerCellCtrl.refreshAriaSort).
+            // When !sortable, aria-sort is removed from DOM regardless of model sort state.
             const sort = col.getSort();
             const isSortable = col.isSortable();
             const ariaSort = headerCell.getAttribute('aria-sort');
 
-            if (isSortable && sort === 'asc') {
-                if (ariaSort !== 'ascending') {
-                    colErrors.add(`Sort is "asc" but aria-sort is "${ariaSort ?? 'null'}", expected "ascending".`);
-                }
-            } else if (isSortable && sort === 'desc') {
-                if (ariaSort !== 'descending') {
-                    colErrors.add(`Sort is "desc" but aria-sort is "${ariaSort ?? 'null'}", expected "descending".`);
-                }
-            } else if (isSortable && !sort) {
-                // Sortable but no sort — aria-sort should be "none" or absent
-                if (ariaSort != null && ariaSort !== 'none') {
+            if (isSortable) {
+                // Sortable column — aria-sort should reflect the current sort state
+                if (sort === 'asc' && ariaSort !== 'ascending') {
                     colErrors.add(
-                        `Column is sortable but not sorted, aria-sort should be "none" or absent, got "${ariaSort}".`
+                        `Sortable column with sort "asc" has aria-sort="${ariaSort ?? 'null'}", expected "ascending".`
+                    );
+                } else if (sort === 'desc' && ariaSort !== 'descending') {
+                    colErrors.add(
+                        `Sortable column with sort "desc" has aria-sort="${ariaSort ?? 'null'}", expected "descending".`
+                    );
+                } else if (!sort && ariaSort != null && ariaSort !== 'none') {
+                    colErrors.add(
+                        `Sortable column with no sort has aria-sort="${ariaSort}", expected "none" or absent.`
                     );
                 }
-            } else if (!isSortable) {
-                // Non-sortable columns should NOT have aria-sort attribute at all
-                // (sort state may exist from colDef but DOM shouldn't expose it)
+            } else {
+                // Non-sortable column — aria-sort should be absent or "none"
+                // (the grid removes it via _removeAriaSort in refreshAriaSort when !sortable)
                 if (ariaSort != null && ariaSort !== 'none') {
                     colErrors.add(
-                        `Column is not sortable but has aria-sort="${ariaSort}" (should be absent or "none").`
+                        `Non-sortable column has aria-sort="${ariaSort}", expected absent or "none" (grid removes aria-sort when !sortable).`
                     );
                 }
             }

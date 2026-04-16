@@ -363,28 +363,8 @@ describe('Column API', () => {
             expect(success).toBe(false);
         });
 
-        test('resetColumnState restores original state', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [
-                    { colId: 'a', width: 100 },
-                    { colId: 'b', width: 200 },
-                ],
-            });
-
-            // Modify state
-            api.applyColumnState({
-                state: [{ colId: 'a', sort: 'asc', pinned: 'left', width: 300 }],
-            });
-
-            // Reset
-            api.resetColumnState();
-
-            await new GridColumns(api, 'reset').checkColumns(`
-                CENTER
-                ├── a width:100
-                └── b width:200
-            `);
-        });
+        // Note: resetColumnState is tested more thoroughly in column-model.test.ts
+        // with sort+pin+width modifications
 
         test('applyColumnState with applyOrder reorders columns', async () => {
             const api = gridsManager.createGrid('myGrid', {

@@ -834,21 +834,23 @@ describe('Column Edge Cases', () => {
     });
 
     describe('selection column edge cases', () => {
-        test('selection column hidden when only visible column with row numbers', async () => {
+        test('selection column auto-hidden when all user columns are hidden', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'a', hide: true }],
                 rowData: [{ a: 1 }],
                 rowSelection: { mode: 'multiRow', checkboxes: true },
             });
 
-            // When all user columns are hidden, the selection column should also be hidden
-            // (the grid hides it automatically to avoid showing only a checkbox column)
+            // The grid should auto-hide the selection column when it would be the only visible column
+            // (selectionColService.refreshVisibility hides it to avoid showing only a checkbox)
             const displayed = api.getAllDisplayedColumns();
-            expect(displayed.every((c: Column) => c.getColId() === 'ag-Grid-SelectionColumn' || !c.isVisible())).toBe(
-                true
-            );
+            const displayedIds = displayed.map((c: Column) => c.getColId());
 
-            await new GridColumns(api, 'only selection visible').checkColumns(false);
+            // Selection column should NOT be displayed when all user columns are hidden
+            expect(displayedIds).not.toContain('ag-Grid-SelectionColumn');
+            expect(displayed.length).toBe(0);
+
+            await new GridColumns(api, 'all hidden incl selection').checkColumns('empty');
         });
 
         test('checkboxLocation=autoGroupColumn disables separate selection column', async () => {
