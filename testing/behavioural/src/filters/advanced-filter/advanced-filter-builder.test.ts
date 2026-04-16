@@ -12,6 +12,8 @@ import { TestGridsManager, asyncSetTimeout } from '../../test-utils';
 // NOTE: originals must be captured INSIDE beforeAll (after mockGridLayout.init() has run via
 // TestGridsManager constructor) so we wrap the mock, not the native jsdom function.
 const origOffsetParentDesc = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
+const origOffsetHeightDesc = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
+const origClientHeightDesc = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'clientHeight');
 let savedGetBoundingClientRect: typeof Element.prototype.getBoundingClientRect;
 beforeAll(() => {
     // Capture the mock layout's getBoundingClientRect (set during TestGridsManager construction)
@@ -68,6 +70,12 @@ afterAll(() => {
             configurable: true,
             value: savedGetBoundingClientRect,
         });
+    }
+    if (origOffsetHeightDesc) {
+        Object.defineProperty(HTMLElement.prototype, 'offsetHeight', origOffsetHeightDesc);
+    }
+    if (origClientHeightDesc) {
+        Object.defineProperty(HTMLElement.prototype, 'clientHeight', origClientHeightDesc);
     }
 });
 

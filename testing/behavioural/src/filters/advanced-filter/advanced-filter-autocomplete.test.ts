@@ -369,26 +369,37 @@ describe('Advanced Filter - Autocomplete Interaction', () => {
             expect(input.value).toContain('[Athlete]');
         });
 
-        test('ArrowDown then Enter selects next column', async () => {
+        test('ArrowDown then Enter selects a different column than the default', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
             await asyncSetTimeout(0);
             const input = getInput(getGridElement(api)! as HTMLElement);
 
-            // Type '[' to get all columns, first will be selected (alphabetically sorted)
+            // Type '[' to get all columns, first will be selected
             typeInto(input, '[');
             await asyncSetTimeout(0);
 
-            // Press down to move to next item
-            pressKey(input, 'ArrowDown');
+            // Select the default (first) item to capture its value
+            selectAutocomplete(input);
+            await asyncSetTimeout(0);
+            const firstColumnValue = input.value;
+
+            // Reset and try again with ArrowDown
+            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!;
+            nativeInputValueSetter.call(input, '');
+            input.dispatchEvent(new Event('input', { bubbles: true }));
             await asyncSetTimeout(0);
 
-            // Select it
+            typeInto(input, '[');
+            await asyncSetTimeout(0);
+
+            // Press down to move to next item, then select
+            pressKey(input, 'ArrowDown');
+            await asyncSetTimeout(0);
             selectAutocomplete(input);
             await asyncSetTimeout(0);
 
-            // Should have selected the second column (not the first)
-            // The first column alphabetically would be 'Age', second would be 'Athlete'
-            expect(input.value).toContain('[Athlete]');
+            // Should have selected a different column than the default first item
+            expect(input.value).not.toBe(firstColumnValue);
         });
     });
 

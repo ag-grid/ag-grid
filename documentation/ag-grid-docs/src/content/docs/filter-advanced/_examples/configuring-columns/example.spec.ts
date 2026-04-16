@@ -39,7 +39,8 @@ test.agExample(import.meta, () => {
 
         // Now type '[S' again — Sport should appear in suggestions
         await filterInput.fill('[Sport');
-        // If Sport is found, the autocomplete should show it
         await expect(autocompleteList).toBeVisible();
+        const sportOptionAfter = autocompleteList.getByText('Sport', { exact: true });
+        await expect(sportOptionAfter).toBeVisible();
     });
 });
