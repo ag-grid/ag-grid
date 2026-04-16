@@ -24,6 +24,7 @@ This guide covers code quality practices, including avoiding code bloat, comment
 -   **Remove obvious comments**: Don't restate what the code clearly shows
 -   **Trust good naming**: Well-named variables and methods reduce need for comments
 -   **Examples in JSDoc**: Complex methods benefit from usage examples in documentation
+-   **Accurate `@returns`**: Document all return paths, including early exits and optimisation short-circuits. If a method can return the input reference unchanged, say so explicitly.
 
 ## Code Review Guidelines
 
@@ -46,6 +47,7 @@ This guide covers code quality practices, including avoiding code bloat, comment
 -   **File organisation**: Group by feature or domain, not by type. A new feature's implementation, types, and tests should be co-located.
 -   **Minimal public surface**: Export only what consumers need. Keep helpers and internal state private.
 -   **Prefer pure functions**: Where practical, write functions that take inputs and return outputs without mutating shared state. This makes code easier to test and reason about.
+-   **Name callbacks in hot paths**: Use named function expressions (e.g. `function copyPreserved(src, dest) { ... }`) instead of anonymous arrows in performance-sensitive code. Named functions appear in flame graphs and profiling tools; anonymous ones don't.
 
 ## Import Hygiene
 
