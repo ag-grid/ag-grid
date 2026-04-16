@@ -107,6 +107,7 @@ import type {
     FormulaDataSource,
     FormulaFuncs,
     FullWidthCellKeyDownEvent,
+    FullWidthNotesDataSource,
     GetBusinessKeyForNode,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -1184,7 +1185,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Can be updated to enable, disable, or replace Notes at runtime.
      * @agModule `NotesModule`
      */
-    @Input() public notesDataSource: NotesDataSource | undefined = undefined;
+    @Input() public notesDataSource: NotesDataSource | FullWidthNotesDataSource | undefined = undefined;
     /** The delay in milliseconds before a note is shown when hovering a noted cell.
      * @default 180
      * @agModule `NotesModule`

@@ -1,12 +1,14 @@
 import type {
     ColDef,
+    FullWidthNotesDataSource,
+    FullWidthNotesDataSourceGetNoteParams,
+    FullWidthNotesDataSourceSetNoteParams,
     GetRowIdParams,
     GridOptions,
     ICellRendererComp,
     ICellRendererParams,
     IsFullWidthRowParams,
     Note,
-    NotesDataSource,
     RowHeightParams,
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
@@ -49,12 +51,13 @@ const noteStore = new Map<string, Note>([
     ],
 ]);
 
-const notesDataSource: NotesDataSource = {
-    getNote: (params) =>
+const notesDataSource: FullWidthNotesDataSource = {
+    supportsFullWidthRows: true,
+    getNote: (params: FullWidthNotesDataSourceGetNoteParams) =>
         params.location === 'fullWidthRow'
             ? noteStore.get(getFullWidthNoteKey(params.rowNode.id!, params.pinned))
             : undefined,
-    setNote: (params) => {
+    setNote: (params: FullWidthNotesDataSourceSetNoteParams) => {
         if (params.location !== 'fullWidthRow') {
             return;
         }

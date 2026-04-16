@@ -5,7 +5,7 @@ import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from '
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid grouping with pivot', () => {
     const gridsManager = new TestGridsManager({
@@ -63,6 +63,17 @@ describe('ag-grid grouping with pivot', () => {
             ├── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2020_profit:400 pivot_year_2021_sales:2200 pivot_year_2021_profit:450
             └── LEAF_GROUP collapsed id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" pivot_year_2020_sales:1500 pivot_year_2020_profit:300 pivot_year_2021_sales:null pivot_year_2021_profit:null
         `);
+
+        await new GridColumns(api, 'basic pivot').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "2020" GROUP
+            │ ├── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+            │ └── pivot_year_2020_profit "Profit" width:200 columnGroupShow:open
+            └─┬ "2021" GROUP
+              ├── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
+              └── pivot_year_2021_profit "Profit" width:200 columnGroupShow:open
+        `);
     });
 
     test('multiple grouping levels with pivot', async () => {
@@ -106,6 +117,15 @@ describe('ag-grid grouping with pivot', () => {
             └─┬ filler id:row-group-region-Americas ag-Grid-AutoColumn:"Americas" pivot_year_2020_sales:2800 pivot_year_2021_sales:2200
             · ├── LEAF_GROUP collapsed id:row-group-region-Americas-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2020_sales:2000 pivot_year_2021_sales:2200
             · └── LEAF_GROUP collapsed id:row-group-region-Americas-country-Canada ag-Grid-AutoColumn:"Canada" pivot_year_2020_sales:800 pivot_year_2021_sales:null
+        `);
+
+        await new GridColumns(api, 'multiple levels with pivot').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "2020" GROUP
+            │ └── pivot_year_2020_sales "Sales" width:200 columnGroupShow:open
+            └─┬ "2021" GROUP
+              └── pivot_year_2021_sales "Sales" width:200 columnGroupShow:open
         `);
     });
 
@@ -151,7 +171,22 @@ describe('ag-grid grouping with pivot', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID pivot_year-quarter_2020-Q1_sales:3000 pivot_year-quarter_2020-Q2_sales:3200 pivot_year-quarter_2020_sales:6200 pivot_year-quarter_2021-Q1_sales:3400 pivot_year-quarter_2021_sales:3400 
             ├── LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" pivot_year-quarter_2020-Q1_sales:1000 pivot_year-quarter_2020-Q2_sales:1100 pivot_year-quarter_2020_sales:2100 pivot_year-quarter_2021-Q1_sales:1200 pivot_year-quarter_2021_sales:1200 
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year-quarter_2020-Q1_sales:2000 pivot_year-quarter_2020-Q2_sales:2100 pivot_year-quarter_2020_sales:4100 pivot_year-quarter_2021-Q1_sales:2200 pivot_year-quarter_2021_sales:2200 
+            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year-quarter_2020-Q1_sales:2000 pivot_year-quarter_2020-Q2_sales:2100 pivot_year-quarter_2020_sales:4100 pivot_year-quarter_2021-Q1_sales:2200 pivot_year-quarter_2021_sales:2200
+        `);
+
+        await new GridColumns(api, 'multiple pivot columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "2020" GROUP closed
+            │ ├─┬ "Q1" GROUP hidden
+            │ │ └── pivot_year-quarter_2020-Q1_sales "Sales" width:200 columnGroupShow:open hidden
+            │ ├─┬ "Q2" GROUP hidden
+            │ │ └── pivot_year-quarter_2020-Q2_sales "Sales" width:200 columnGroupShow:open hidden
+            │ └── pivot_year-quarter_2020_sales "Sales" width:200 columnGroupShow:closed
+            └─┬ "2021" GROUP closed
+              ├─┬ "Q1" GROUP hidden
+              │ └── pivot_year-quarter_2021-Q1_sales "Sales" width:200 columnGroupShow:open hidden
+              └── pivot_year-quarter_2021_sales "Sales" width:200 columnGroupShow:closed
         `);
     });
 

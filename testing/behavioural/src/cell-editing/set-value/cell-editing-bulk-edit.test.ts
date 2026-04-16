@@ -5,7 +5,14 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
-import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from '../../test-utils';
 
 describe('Cell Editing: bulk edit', () => {
     const gridMgr = new TestGridsManager({
@@ -131,6 +138,12 @@ describe('Cell Editing: bulk edit', () => {
         expect(api.getDisplayedRowAtIndex(1)?.data?.b).toBe('Bulk Value');
         expect(valueSetterTargets).toEqual(['ROW_0:a', 'ROW_0:b', 'ROW_1:a', 'ROW_1:b']);
         expect(valueSetterCalls).toBe(4);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
     });
 
     test('bulk edit skips non-editable cells', async () => {
@@ -211,6 +224,12 @@ describe('Cell Editing: bulk edit', () => {
 
         expect(valueSetterTargets).toEqual(['ROW_0:a', 'ROW_0:b', 'ROW_1:a']);
         expect(valueSetterCalls).toBe(3);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200
+        `);
     });
 
     test('bulk edit with single cell range updates only that cell', async () => {

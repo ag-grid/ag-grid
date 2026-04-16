@@ -2,6 +2,7 @@ import { CellStyleModule, ClientSideRowModelModule, NumberFilterModule, TextFilt
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -157,6 +158,12 @@ describe('ag-grid tree filter sort', () => {
             · │ ├── D LEAF id:4 ag-Grid-AutoColumn:"D" name:"Donald Knuth"
             · │ └── E LEAF id:5 ag-Grid-AutoColumn:"E" name:"Grace Hopper"
             · └── C LEAF id:3 ag-Grid-AutoColumn:"C" name:"A. Church"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Hierarchy" width:200
+            └── name "Name" width:200
         `);
     });
 
@@ -360,6 +367,13 @@ describe('ag-grid tree filter sort', () => {
             · │ └── G LEAF id:6 ag-Grid-AutoColumn:"G" value:10 x:0
             · └─┬ B GROUP id:2 ag-Grid-AutoColumn:"B" value:17 x:1
             · · └── E LEAF id:5 ag-Grid-AutoColumn:"E" value:11 x:0
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Hierarchy" width:200
+            ├── value "Value" width:200
+            └── x "X" width:200 sort:asc filter
         `);
     });
 

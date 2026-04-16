@@ -2,7 +2,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, GridStateModule, RowSelectionModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('ag-grid grouping simple data', () => {
     const gridsManager = new TestGridsManager({
@@ -54,6 +54,12 @@ describe('ag-grid grouping simple data', () => {
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-1-bob ag-Grid-AutoColumn:"bob"
             · └── LEAF id:0 1:"bob"
+        `);
+
+        await new GridColumns(api, 'column A (2)').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── 1 "A" width:200 rowGroup
         `);
     });
 
@@ -117,6 +123,11 @@ describe('ag-grid grouping simple data', () => {
             expandedRowGroupIds: ['row-group-country-Ireland'],
             collapsedRowGroupIds: [],
         });
+
+        await new GridColumns(api, 'after adding year as group column').checkColumns(`
+            CENTER
+            └── ag-Grid-AutoColumn "Group" width:200
+        `);
     });
 
     test('expanding groups then removing the deepest group column preserves expansion state', async () => {
@@ -183,6 +194,11 @@ describe('ag-grid grouping simple data', () => {
             expandedRowGroupIds: ['row-group-country-Ireland'],
             collapsedRowGroupIds: [],
         });
+
+        await new GridColumns(api, 'after removing year group column').checkColumns(`
+            CENTER
+            └── ag-Grid-AutoColumn "Group" width:200
+        `);
     });
 
     test('removing the top group column resets all expansion to default', async () => {

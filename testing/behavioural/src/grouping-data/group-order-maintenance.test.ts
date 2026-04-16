@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('group order maintenance', () => {
     const gridsManager = new TestGridsManager({
@@ -50,6 +50,12 @@ describe('group order maintenance', () => {
             └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └── LEAF id:4 country:"France" athlete:"F1"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            └── athlete "Athlete" width:200
+        `);
     });
 
     test('updating a row without changing group does not change group order (groupMaintainOrder=true)', async () => {
@@ -94,6 +100,12 @@ describe('group order maintenance', () => {
             │ └── LEAF id:3 country:"Italy" athlete:"It1"
             └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └── LEAF id:4 country:"France" athlete:"F1"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            └── athlete "Athlete" width:200
         `);
     });
 

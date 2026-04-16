@@ -1,3 +1,4 @@
+import { GridColumns } from '../../../test-utils';
 import {
     EDIT_MODES,
     GridRows,
@@ -45,6 +46,12 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
             · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
             · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:avg editable
+        `);
     });
 
     test('min: suppressed by default — no children are modified', async () => {
@@ -56,6 +63,12 @@ describe.each(EDIT_MODES)('distributeGroupValue aggFunc strategies (%s)', (editM
 
         expect(api.getRowNode('us-nyc')?.data?.amount).toBe(70);
         expect(api.getRowNode('us-la')?.data?.amount).toBe(30);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:min editable
+        `);
     });
 
     test('max: suppressed by default — no children are modified', async () => {

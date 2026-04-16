@@ -4,7 +4,14 @@ import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-
 import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout, getRowHtmlElement } from '../../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    RowDragDispatcher,
+    TestGridsManager,
+    asyncSetTimeout,
+    getRowHtmlElement,
+} from '../../test-utils';
 
 describe.each([false, true])('tree data drag basics (suppress move %s)', (suppressMoveWhenRowDragging) => {
     const gridsManager = new TestGridsManager({
@@ -103,6 +110,12 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
             · └── archive-old LEAF id:archive-old ag-Grid-AutoColumn:"Old" type:"file"
         `);
         expect(api.getRowNode('docs-drafts')?.parent?.id).toBe('archive');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Name" width:200
+            └── type "Type" width:200
+        `);
     });
 
     test('dragging a parent node moves its subtree when managed', async () => {
@@ -162,6 +175,12 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
             · └── archive-report LEAF id:archive-report ag-Grid-AutoColumn:"Report" type:"file"
         `);
         expect(finalRows.getById('plans')?.parent?.id).toBe('archive');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Name" width:200
+            └── type "Type" width:200
+        `);
     });
 
     test('allows dropping a nested group between shallower nodes', async () => {

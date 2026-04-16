@@ -4,7 +4,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, GROUP_HIERARCHY_COLUMN_ID_PREFIX } from 'ag-grid-community';
 import { ColumnsToolPanelModule, FiltersToolPanelModule, RowGroupingModule, SideBarModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 interface CustomCellDataRow {
     id: string;
@@ -248,6 +248,17 @@ describe('grouping providing custom cell data types', () => {
             ├── LEAF id:2 ag-Grid-HierarchyColumn-date-year:"2008" ag-Grid-HierarchyColumn-date-month:"8" athlete:"Athlete B" countryObject:"GB" sportObject:"Cycling" date:"25/08/2008" total:2
             ├── LEAF id:3 ag-Grid-HierarchyColumn-date-year:"2008" ag-Grid-HierarchyColumn-date-month:"9" athlete:"Athlete C" countryObject:"BR" sportObject:"Running" date:"01/09/2008" total:3
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-HierarchyColumn-date-year:null ag-Grid-HierarchyColumn-date-month:null total:9
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-HierarchyColumn-date-year "Date (Year)" width:200
+            ├── ag-Grid-HierarchyColumn-date-month "Date (Month)" width:200
+            ├── athlete "Athlete" width:200
+            ├── countryObject "Country" width:200
+            ├── sportObject "Sport" width:200
+            ├── date "Date" width:200
+            └── total "Total" width:200 aggFunc:sum
         `);
     });
 });

@@ -1,5 +1,6 @@
 import type { GroupRowEditableCallback } from 'ag-grid-community';
 
+import { GridColumns } from '../../../test-utils';
 import {
     EDIT_MODES,
     GridRows,
@@ -114,6 +115,12 @@ describe.each(EDIT_MODES)('default distributeGroupValue when groupRowEditable is
                 · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
             `);
         }
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
+        `);
     });
 
     test('editing a leaf group directly distributes to its children', async () => {
@@ -188,6 +195,12 @@ describe.each(EDIT_MODES)('default distributeGroupValue when groupRowEditable is
             · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:60
             · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
             · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
         `);
     });
 

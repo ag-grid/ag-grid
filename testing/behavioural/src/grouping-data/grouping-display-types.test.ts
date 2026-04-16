@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, GRAND_TOTAL_ROW_ID, GROUP_TOTAL_ROW_ID_PREFIX } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping display types and footers', () => {
     const gridsManager = new TestGridsManager({
@@ -52,6 +52,13 @@ describe('ag-grid grouping display types and footers', () => {
             └─┬ LEAF_GROUP id:row-group-country-France gold:1
             · └── LEAF id:4 country:"France" athlete:"Jean Dupont" sport:"Tennis" gold:1
         `);
+
+        await new GridColumns(api, 'group rows display').checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── gold "Gold" width:200 aggFunc:sum
+        `);
     });
 
     test('grouping with custom display type', async () => {
@@ -90,6 +97,13 @@ describe('ag-grid grouping display types and footers', () => {
             │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer" gold:2
             └─┬ LEAF_GROUP id:row-group-country-Italy gold:3
             · └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:3
+        `);
+
+        await new GridColumns(api, 'custom display type').checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── gold "Gold" width:200 aggFunc:sum
         `);
     });
 
@@ -143,6 +157,15 @@ describe('ag-grid grouping display types and footers', () => {
         const irelandYear2020Total = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'row-group-country-Ireland-year-2020');
         expect(irelandYear2020Total?.footer).toBe(true);
         expect(irelandYear2020Total?.aggData?.gold).toBe(3);
+
+        await new GridColumns(api, 'with group total rows').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country/Year" width:200
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            ├── gold "Gold" width:200 aggFunc:sum
+            └── silver "Silver" width:200 aggFunc:sum
+        `);
     });
 
     test('grouping with grand total row at top', async () => {

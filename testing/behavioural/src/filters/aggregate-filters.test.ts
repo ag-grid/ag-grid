@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('Aggregate Filters', () => {
     const gridsManager = new TestGridsManager({
@@ -74,6 +74,12 @@ describe('Aggregate Filters', () => {
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP collapsed id:"row-group-athlete-Michael Phelps" ag-Grid-AutoColumn:"Michael Phelps" gold:8
             · └── LEAF hidden id:0 athlete:"Michael Phelps" gold:8
+        `);
+
+        await new GridColumns(api, 'columns after pivot toggle').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── gold "Gold" width:200 aggFunc:sum filter
         `);
     });
 });

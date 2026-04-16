@@ -5,7 +5,14 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, UndoRedoEditModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from '../../test-utils';
 
 describe('Cell Editing: undo/redo', () => {
     const gridMgr = new TestGridsManager({
@@ -109,6 +116,11 @@ describe('Cell Editing: undo/redo', () => {
         expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Updated Value');
         expect(valueSetterCalls).toBe(3);
         expect(valueSetterTargets).toEqual(['ROW_0', 'ROW_0', 'ROW_0']);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── field "Field" width:200 editable
+        `);
     });
 
     test.each([false, true])(
@@ -201,6 +213,12 @@ describe('Cell Editing: undo/redo', () => {
                 redoStarted: 1,
                 redoEnded: 1,
             });
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `);
         }
     );
 
