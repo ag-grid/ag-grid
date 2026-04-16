@@ -136,11 +136,22 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
     }
 
     private onFindChanged(event: FindChangedEvent): void {
-        const { activeMatch, totalMatches, findSearchValue } = event;
+        this.updateMatchDisplay(event.findSearchValue, event.activeMatch?.numOverall ?? 0, event.totalMatches);
+    }
+
+    private syncMatchState(): void {
+        const findSvc = this.beans.findSvc;
+        const findSearchValue = this.gos.get('findSearchValue');
+        const activeIndex = findSvc?.activeMatch?.numOverall ?? 0;
+        const totalMatches = findSvc?.totalMatches ?? 0;
+        this.updateMatchDisplay(findSearchValue, activeIndex, totalMatches);
+    }
+
+    private updateMatchDisplay(findSearchValue: string | undefined, activeIndex: number, totalMatches: number): void {
         const hasSearch = !!findSearchValue?.length;
 
         if (hasSearch) {
-            this.eMatchCount.textContent = `${activeMatch?.numOverall ?? 0}/${totalMatches}`;
+            this.eMatchCount.textContent = `${activeIndex}/${totalMatches}`;
             this.eMatchCount.classList.remove('ag-hidden');
         } else {
             this.eMatchCount.textContent = '';
@@ -150,23 +161,5 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         const hasMatches = totalMatches > 0;
         this.ePrevButton.disabled = !hasMatches;
         this.eNextButton.disabled = !hasMatches;
-    }
-
-    private syncMatchState(): void {
-        const findSvc = this.beans.findSvc;
-        const findSearchValue = this.gos.get('findSearchValue');
-        const hasSearch = !!findSearchValue?.length;
-
-        if (hasSearch && findSvc) {
-            this.eMatchCount.textContent = `${findSvc.activeMatch?.numOverall ?? 0}/${findSvc.totalMatches}`;
-            this.eMatchCount.classList.remove('ag-hidden');
-            this.ePrevButton.disabled = findSvc.totalMatches === 0;
-            this.eNextButton.disabled = findSvc.totalMatches === 0;
-        } else {
-            this.eMatchCount.textContent = '';
-            this.eMatchCount.classList.add('ag-hidden');
-            this.ePrevButton.disabled = true;
-            this.eNextButton.disabled = true;
-        }
     }
 }

@@ -81,7 +81,7 @@ class AgToolbar extends Component implements FocusableContainer {
     private itemsPromise: Promise<void> = Promise.resolve();
     private readonly toolbarItems: Map<string, IToolbarItemComp> = new Map();
     private readonly compDestroyFunctions: Map<string, () => void> = new Map();
-    private customKeyCounter = 0;
+    private customKeyCounter: number = 0;
 
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
@@ -179,6 +179,8 @@ class AgToolbar extends Component implements FocusableContainer {
         if (!toolbar?.items) {
             return undefined;
         }
+        // Reset counter so keyless custom items get stable positional keys across updates
+        this.customKeyCounter = 0;
         const nextKey = () => `custom-toolbar-item-${this.customKeyCounter++}`;
         const seen = new Set<string>();
         return toolbar.items
@@ -317,7 +319,7 @@ class AgToolbar extends Component implements FocusableContainer {
                 continue;
             }
 
-            const key = itemConfig.key || itemConfig.toolbarItem;
+            const key = itemConfig.key ?? itemConfig.toolbarItem;
 
             if (itemConfig.toolbarItem == null) {
                 _warn(301, { key });

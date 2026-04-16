@@ -97,12 +97,15 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
     }
 
     private showMenu(menuItems: (MenuItemDef | string)[]): void {
-        const eGui = this.getGui();
-        const popupSvc = this.beans.popupSvc!;
+        const { popupSvc } = this.beans;
+        if (!popupSvc) {
+            return;
+        }
 
+        const eGui = this.getGui();
         const eMenu = _createElement({ tag: 'div', cls: 'ag-menu' });
 
-        const menuList = this.createBean(new MenuList());
+        const menuList = this.createManagedBean(new MenuList());
         eMenu.appendChild(menuList.getGui());
         menuList.addMenuItems(menuItems);
 
@@ -119,8 +122,9 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
             afterGuiAttached: () => _focusInto(menuList.getGui()),
             ariaLabel: this.label,
             closedCallback: () => {
-                this.destroyBean(menuList);
-                eGui.focus();
+                if (this.isAlive()) {
+                    eGui.focus();
+                }
             },
         });
 
