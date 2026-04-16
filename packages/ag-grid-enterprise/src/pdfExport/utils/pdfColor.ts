@@ -164,32 +164,6 @@ export function resolveOptionalColor(
 }
 
 /**
- * Resolve a required colour with a string fallback.
- * @param value - Optional colour string.
- * @param fallback - Fallback colour string.
- * @param blendWith - Optional background colour used for alpha blending.
- * @returns Resolved RGB colour, or `undefined` when unresolved/transparent.
- */
-export function resolveColor(value: string | undefined, fallback: string, blendWith?: PdfRgb): PdfRgb | undefined {
-    if (value) {
-        const parsed = parseColor(value);
-        if (parsed === null) {
-            return undefined;
-        }
-        if (parsed && parsed.a > 0) {
-            return blendWith && parsed.a < 1 ? blendColors(parsed, blendWith) : stripAlpha(parsed);
-        }
-    }
-
-    const parsedFallback = parseColor(fallback);
-    if (!parsedFallback || parsedFallback === null || parsedFallback.a <= 0) {
-        return undefined;
-    }
-
-    return blendWith && parsedFallback.a < 1 ? blendColors(parsedFallback, blendWith) : stripAlpha(parsedFallback);
-}
-
-/**
  * Format an RGB colour as PDF colour operands.
  * @param color - RGB colour.
  * @returns Space-separated decimal RGB values in 0..1 range.
@@ -213,6 +187,32 @@ export function isTransparentColorValue(value: string): boolean {
     }
 
     return !!parsed && parsed.a <= 0;
+}
+
+/**
+ * Resolve a required colour with a string fallback.
+ * @param value - Optional colour string.
+ * @param fallback - Fallback colour string.
+ * @param blendWith - Optional background colour used for alpha blending.
+ * @returns Resolved RGB colour, or `undefined` when unresolved/transparent.
+ */
+function resolveColor(value: string | undefined, fallback: string, blendWith?: PdfRgb): PdfRgb | undefined {
+    if (value) {
+        const parsed = parseColor(value);
+        if (parsed === null) {
+            return undefined;
+        }
+        if (parsed && parsed.a > 0) {
+            return blendWith && parsed.a < 1 ? blendColors(parsed, blendWith) : stripAlpha(parsed);
+        }
+    }
+
+    const parsedFallback = parseColor(fallback);
+    if (!parsedFallback || parsedFallback === null || parsedFallback.a <= 0) {
+        return undefined;
+    }
+
+    return blendWith && parsedFallback.a < 1 ? blendColors(parsedFallback, blendWith) : stripAlpha(parsedFallback);
 }
 
 /**

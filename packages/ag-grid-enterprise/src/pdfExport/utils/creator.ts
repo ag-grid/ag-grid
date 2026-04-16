@@ -158,12 +158,32 @@ export function getThemePdfStyles(eRootDiv: HTMLElement | undefined): PdfExportS
 }
 
 /**
+ * Resolve a theme-aware colour value.
+ * @param value - Raw colour value.
+ * @param eRootDiv - Grid root element used for CSS variable resolution.
+ * @returns Resolved colour string, or `undefined`.
+ */
+export function resolveThemeColorValue(
+    value: string | undefined,
+    eRootDiv: HTMLElement | undefined
+): string | undefined {
+    return resolveCssColorValue(value, (rawValue) => {
+        if (!rawValue) {
+            return undefined;
+        }
+
+        const resolved = resolveCssColor(rawValue, eRootDiv);
+        return resolved || undefined;
+    });
+}
+
+/**
  * Resolve an arbitrary CSS colour string to a computed colour.
  * @param value - Raw CSS colour value.
  * @param eRootDiv - Grid root element used as the probe container.
  * @returns Computed colour string, empty string when invalid.
  */
-export function resolveCssColor(value: string, eRootDiv: HTMLElement | undefined): string {
+function resolveCssColor(value: string, eRootDiv: HTMLElement | undefined): string {
     if (typeof document === 'undefined') {
         return value;
     }
@@ -191,33 +211,13 @@ export function resolveCssColor(value: string, eRootDiv: HTMLElement | undefined
 }
 
 /**
- * Resolve a theme-aware colour value.
- * @param value - Raw colour value.
- * @param eRootDiv - Grid root element used for CSS variable resolution.
- * @returns Resolved colour string, or `undefined`.
- */
-export function resolveThemeColorValue(
-    value: string | undefined,
-    eRootDiv: HTMLElement | undefined
-): string | undefined {
-    return resolveCssColorValue(value, (rawValue) => {
-        if (!rawValue) {
-            return undefined;
-        }
-
-        const resolved = resolveCssColor(rawValue, eRootDiv);
-        return resolved || undefined;
-    });
-}
-
-/**
  * Read a computed colour from a descendant element.
  * @param eRootDiv - Grid root element.
  * @param selector - Descendant selector to probe.
  * @param property - Colour property name.
  * @returns Resolved colour string, or `undefined` when missing/transparent.
  */
-export function getElementStyleColor(
+function getElementStyleColor(
     eRootDiv: HTMLElement | undefined,
     selector: string,
     property: 'backgroundColor' | 'color'

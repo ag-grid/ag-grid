@@ -13,18 +13,6 @@ const DEFAULT_TITLE_ALIGNMENT: PdfTextAlignment = 'center';
 const DEFAULT_CELL_ALIGNMENT: PdfTextAlignment = 'left';
 const DEFAULT_CELL_MARGIN: ResolvedMargin = { top: 0, right: 0, bottom: 0, left: 0 };
 
-export type LayoutOptions = {
-    columnCount: number;
-    columnWidths: number[];
-    margin: ResolvedMargin;
-    drawCellBorders: boolean;
-    fontSize: number;
-    headerFontSize: number;
-    cellPadding: number;
-    rowHeight?: number;
-    headerRowHeight?: number;
-};
-
 type ResolvedCellStyle = {
     fontSize: number;
     fontFamily: PdfFontFamily;
@@ -37,15 +25,27 @@ type ResolvedCellStyle = {
     borderWidth: number;
 };
 
-export type ResolvedDocumentTitle = {
+type ResolvedDocumentTitle = {
     text: string;
     style: ResolvedCellStyle;
 };
 
-export type RowRenderData = {
+type RowRenderData = {
     defaultCellStyle: ResolvedCellStyle;
     cellStyles: ResolvedCellStyle[];
     rowHeight: number;
+};
+
+export type LayoutOptions = {
+    columnCount: number;
+    columnWidths: number[];
+    margin: ResolvedMargin;
+    drawCellBorders: boolean;
+    fontSize: number;
+    headerFontSize: number;
+    cellPadding: number;
+    rowHeight?: number;
+    headerRowHeight?: number;
 };
 
 /**
@@ -298,98 +298,6 @@ export function renderRow(
 }
 
 /**
- * Build title style defaults and resolve colours/borders.
- * @param style - Optional title-specific style.
- * @param params - Export params.
- * @param styleColors - Resolved document colours.
- * @param headerFont - Default header font family.
- * @param defaultHeaderFontSize - Default header font size.
- * @returns Fully resolved title style.
- */
-function resolveTitleStyle(
-    style: PdfCellStyle | undefined,
-    params: PdfExportParams,
-    styleColors: PdfStyleColors,
-    headerFont: PdfFontFamily,
-    defaultHeaderFontSize: number
-): ResolvedCellStyle {
-    const headerFontSize = params.headerFontSize ?? defaultHeaderFontSize;
-    const fontSize = style?.fontSize ?? Math.max(headerFontSize + 4, 14);
-    const fontFamily = style?.fontFamily ?? headerFont;
-    const alignment = style?.alignment ?? DEFAULT_TITLE_ALIGNMENT;
-    const padding = resolveBoxSpacing(style?.padding, DEFAULT_TITLE_PADDING);
-    const margin = resolveBoxSpacing(style?.margin, DEFAULT_TITLE_MARGIN);
-
-    const blendWith = styleColors.pageBackground ?? styleColors.dataBackground;
-    const fallbackTextColor = styleColors.headerText ?? styleColors.foreground ?? { r: 0, g: 0, b: 0 };
-    const textColor = resolveOptionalColor(style?.color, fallbackTextColor, blendWith) ?? fallbackTextColor;
-    const backgroundColor = resolveOptionalColor(style?.backgroundColor, undefined, blendWith);
-    const borderColor = resolveOptionalColor(style?.borderColor, undefined, blendWith);
-    const borderWidth = resolveBorderWidth(style?.borderWidth, borderColor);
-
-    return {
-        fontSize,
-        fontFamily,
-        alignment,
-        padding,
-        margin,
-        textColor,
-        backgroundColor,
-        borderColor,
-        borderWidth,
-    };
-}
-
-/**
- * Resolve a final table-cell style from style overrides and row defaults.
- * @param style - Optional cell/row override style.
- * @param layout - Layout options.
- * @param fontFamily - Default font family for the row.
- * @param rowStyles - Row-level default colours.
- * @param styleColors - Resolved document colours.
- * @param defaultFontSize - Default font size for the row.
- * @returns Fully resolved table cell style.
- */
-function resolveTableCellStyle(
-    style: PdfCellStyle | undefined,
-    layout: LayoutOptions,
-    fontFamily: PdfFontFamily,
-    rowStyles: PdfRowStyles,
-    styleColors: PdfStyleColors,
-    defaultFontSize: number
-): ResolvedCellStyle {
-    const padding = resolveBoxSpacing(style?.padding, {
-        top: layout.cellPadding,
-        right: layout.cellPadding,
-        bottom: layout.cellPadding,
-        left: layout.cellPadding,
-    });
-    const resolvedFontSize = style?.fontSize ?? defaultFontSize;
-    const resolvedFontFamily = style?.fontFamily ?? fontFamily;
-    const alignment = style?.alignment ?? DEFAULT_CELL_ALIGNMENT;
-
-    const blendWith = rowStyles.background ?? styleColors.dataBackground ?? styleColors.pageBackground;
-    const fallbackTextColor = rowStyles.text ?? styleColors.foreground ?? { r: 0, g: 0, b: 0 };
-    const textColor = resolveOptionalColor(style?.color, fallbackTextColor, blendWith) ?? fallbackTextColor;
-    const backgroundColor =
-        resolveOptionalColor(style?.backgroundColor, rowStyles.background, blendWith) ?? rowStyles.background;
-    const borderColor = resolveOptionalColor(style?.borderColor, rowStyles.border, blendWith) ?? rowStyles.border;
-    const borderWidth = resolveBorderWidth(style?.borderWidth, borderColor);
-
-    return {
-        fontSize: resolvedFontSize,
-        fontFamily: resolvedFontFamily,
-        alignment,
-        padding,
-        margin: DEFAULT_CELL_MARGIN,
-        textColor,
-        backgroundColor,
-        borderColor,
-        borderWidth,
-    };
-}
-
-/**
  * Pre-resolve row styles and dimensions for rendering.
  * @param row - Row to resolve.
  * @param layout - Layout options.
@@ -585,6 +493,98 @@ function getCustomRowHeight(cellStyles: ResolvedCellStyle[], layout: LayoutOptio
     });
 
     return maxHeight;
+}
+
+/**
+ * Build title style defaults and resolve colours/borders.
+ * @param style - Optional title-specific style.
+ * @param params - Export params.
+ * @param styleColors - Resolved document colours.
+ * @param headerFont - Default header font family.
+ * @param defaultHeaderFontSize - Default header font size.
+ * @returns Fully resolved title style.
+ */
+function resolveTitleStyle(
+    style: PdfCellStyle | undefined,
+    params: PdfExportParams,
+    styleColors: PdfStyleColors,
+    headerFont: PdfFontFamily,
+    defaultHeaderFontSize: number
+): ResolvedCellStyle {
+    const headerFontSize = params.headerFontSize ?? defaultHeaderFontSize;
+    const fontSize = style?.fontSize ?? Math.max(headerFontSize + 4, 14);
+    const fontFamily = style?.fontFamily ?? headerFont;
+    const alignment = style?.alignment ?? DEFAULT_TITLE_ALIGNMENT;
+    const padding = resolveBoxSpacing(style?.padding, DEFAULT_TITLE_PADDING);
+    const margin = resolveBoxSpacing(style?.margin, DEFAULT_TITLE_MARGIN);
+
+    const blendWith = styleColors.pageBackground ?? styleColors.dataBackground;
+    const fallbackTextColor = styleColors.headerText ?? styleColors.foreground ?? { r: 0, g: 0, b: 0 };
+    const textColor = resolveOptionalColor(style?.color, fallbackTextColor, blendWith) ?? fallbackTextColor;
+    const backgroundColor = resolveOptionalColor(style?.backgroundColor, undefined, blendWith);
+    const borderColor = resolveOptionalColor(style?.borderColor, undefined, blendWith);
+    const borderWidth = resolveBorderWidth(style?.borderWidth, borderColor);
+
+    return {
+        fontSize,
+        fontFamily,
+        alignment,
+        padding,
+        margin,
+        textColor,
+        backgroundColor,
+        borderColor,
+        borderWidth,
+    };
+}
+
+/**
+ * Resolve a final table-cell style from style overrides and row defaults.
+ * @param style - Optional cell/row override style.
+ * @param layout - Layout options.
+ * @param fontFamily - Default font family for the row.
+ * @param rowStyles - Row-level default colours.
+ * @param styleColors - Resolved document colours.
+ * @param defaultFontSize - Default font size for the row.
+ * @returns Fully resolved table cell style.
+ */
+function resolveTableCellStyle(
+    style: PdfCellStyle | undefined,
+    layout: LayoutOptions,
+    fontFamily: PdfFontFamily,
+    rowStyles: PdfRowStyles,
+    styleColors: PdfStyleColors,
+    defaultFontSize: number
+): ResolvedCellStyle {
+    const padding = resolveBoxSpacing(style?.padding, {
+        top: layout.cellPadding,
+        right: layout.cellPadding,
+        bottom: layout.cellPadding,
+        left: layout.cellPadding,
+    });
+    const resolvedFontSize = style?.fontSize ?? defaultFontSize;
+    const resolvedFontFamily = style?.fontFamily ?? fontFamily;
+    const alignment = style?.alignment ?? DEFAULT_CELL_ALIGNMENT;
+
+    const blendWith = rowStyles.background ?? styleColors.dataBackground ?? styleColors.pageBackground;
+    const fallbackTextColor = rowStyles.text ?? styleColors.foreground ?? { r: 0, g: 0, b: 0 };
+    const textColor = resolveOptionalColor(style?.color, fallbackTextColor, blendWith) ?? fallbackTextColor;
+    const backgroundColor =
+        resolveOptionalColor(style?.backgroundColor, rowStyles.background, blendWith) ?? rowStyles.background;
+    const borderColor = resolveOptionalColor(style?.borderColor, rowStyles.border, blendWith) ?? rowStyles.border;
+    const borderWidth = resolveBorderWidth(style?.borderWidth, borderColor);
+
+    return {
+        fontSize: resolvedFontSize,
+        fontFamily: resolvedFontFamily,
+        alignment,
+        padding,
+        margin: DEFAULT_CELL_MARGIN,
+        textColor,
+        backgroundColor,
+        borderColor,
+        borderWidth,
+    };
 }
 
 /**
