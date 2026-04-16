@@ -148,7 +148,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             batchEditingStopped: refreshAndKeepActiveDebounced,
         });
         const rowSpanSvc = this.beans.rowSpanSvc;
-        if (rowSpanSvc) {
+        if (rowSpanSvc?.active) {
             this.addManagedListeners(rowSpanSvc, { spannedCellsUpdated: refreshAndKeepActiveDebounced });
         }
 
