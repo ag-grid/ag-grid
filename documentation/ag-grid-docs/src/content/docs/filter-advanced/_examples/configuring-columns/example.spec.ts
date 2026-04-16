@@ -24,11 +24,10 @@ test.agExample(import.meta, () => {
         // Type '[S' to search for Sport column — should not appear (hidden columns excluded by default)
         await filterInput.fill('[S');
         const autocompleteList = page.locator('.ag-autocomplete-list-popup');
-        if (await autocompleteList.isVisible()) {
-            // Sport should NOT be in the suggestions (Silver is, but not Sport)
-            const sportOption = autocompleteList.getByText('Sport', { exact: true });
-            await expect(sportOption).not.toBeVisible();
-        }
+        await expect(autocompleteList).toBeVisible();
+        // Sport should NOT be in the suggestions (Silver is, but not Sport)
+        const sportOption = autocompleteList.getByText('Sport', { exact: true });
+        await expect(sportOption).not.toBeVisible();
 
         // Clear the input and press Escape to close any autocomplete
         await filterInput.fill('');
