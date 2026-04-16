@@ -78,7 +78,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
             └── value "Value" width:200
         `);
     });
@@ -140,7 +140,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
             └── value "Value" width:200
         `);
     });

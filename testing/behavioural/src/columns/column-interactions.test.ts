@@ -101,7 +101,7 @@ describe('Column Interactions', () => {
             // Should remain unsorted
             await new GridColumns(api, 'still unsorted').checkColumns(`
                 CENTER
-                ├── name "Name" width:200
+                ├── name "Name" width:200 !sortable
                 └── value "Value" width:200
             `);
         });

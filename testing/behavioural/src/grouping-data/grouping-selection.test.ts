@@ -124,7 +124,7 @@ describe('ag-grid grouping selection', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
             ├── ag-Grid-AutoColumn "Country" width:200
             ├── athlete "Athlete" width:200
             └── sport "Sport" width:200
@@ -196,7 +196,7 @@ describe('ag-grid grouping selection', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
             ├── ag-Grid-AutoColumn "Country" width:200
             ├── athlete "Athlete" width:200
             └── sport "Sport" width:200

@@ -124,7 +124,7 @@ describe('ag-grid parentId tree selection', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
             ├── ag-Grid-AutoColumn "Hierarchy" width:200
             └── name "Name" width:200 filter
         `);

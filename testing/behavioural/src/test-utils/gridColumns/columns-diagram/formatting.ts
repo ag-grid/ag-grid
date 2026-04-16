@@ -4,6 +4,13 @@ import type { Column, ColumnGroup, GridApi } from 'ag-grid-community';
  * Formats a leaf column for the diagram.
  * Format: `colId "HeaderName" [properties...]`
  * HeaderName is omitted when it equals colId.
+ *
+ * Properties shown (when non-default):
+ *   width:N, flex:N,
+ *   sort:asc|desc, sortIndex:N,
+ *   rowGroup, rowGroupIndex:N, pivot, pivotIndex:N, aggFunc:name,
+ *   filter, columnGroupShow:open|closed, hidden,
+ *   editable, !resizable, !sortable, suppressMovable, lockPosition:left|right
  */
 export function columnDiagram(col: Column, api: GridApi, isHidden: boolean): string {
     const colId = col.getColId();
@@ -74,10 +81,35 @@ export function columnDiagram(col: Column, api: GridApi, isHidden: boolean): str
         parts.push('hidden');
     }
 
-    // Editable
     const colDef = col.getColDef();
+
+    // Editable
     if (colDef.editable === true) {
         parts.push('editable');
+    }
+
+    // Not resizable (show only when explicitly disabled — default is true)
+    if (colDef.resizable === false) {
+        parts.push('!resizable');
+    }
+
+    // Not sortable (show only when explicitly disabled)
+    if (colDef.sortable === false) {
+        parts.push('!sortable');
+    }
+
+    // Suppress movable
+    if (colDef.suppressMovable === true) {
+        parts.push('suppressMovable');
+    }
+
+    // Lock position
+    if (colDef.lockPosition === 'left') {
+        parts.push('lockPosition:left');
+    } else if (colDef.lockPosition === 'right') {
+        parts.push('lockPosition:right');
+    } else if (colDef.lockPosition === true) {
+        parts.push('lockPosition');
     }
 
     return parts.join(' ');
@@ -85,7 +117,7 @@ export function columnDiagram(col: Column, api: GridApi, isHidden: boolean): str
 
 /**
  * Formats a column group for the diagram.
- * Format: `"HeaderName" GROUP [open|closed]`
+ * Format: `"HeaderName" GROUP [open|closed] [marryChildren]`
  */
 export function columnGroupDiagram(group: ColumnGroup, api: GridApi): string {
     const headerName = api.getDisplayNameForColumnGroup(group, 'header') ?? '';
@@ -101,6 +133,12 @@ export function columnGroupDiagram(group: ColumnGroup, api: GridApi): string {
         parts.push('padding');
     } else if (group.isExpandable()) {
         parts.push(group.isExpanded() ? 'open' : 'closed');
+    }
+
+    // Show marryChildren flag
+    const colGroupDef = group.getColGroupDef();
+    if (colGroupDef?.marryChildren) {
+        parts.push('marryChildren');
     }
 
     return parts.join(' ');

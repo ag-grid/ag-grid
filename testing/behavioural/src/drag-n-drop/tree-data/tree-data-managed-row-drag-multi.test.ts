@@ -119,7 +119,7 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
             ├── ag-Grid-AutoColumn "Name" width:200
             └── type "Type" width:200
         `);

@@ -340,7 +340,7 @@ describe('Column Features', () => {
             // Column structure should be normal
             await new GridColumns(api, 'with suppressMovable').checkColumns(`
                 CENTER
-                ├── fixed width:200
+                ├── fixed width:200 suppressMovable
                 └── movable width:200
             `);
         });
@@ -352,7 +352,7 @@ describe('Column Features', () => {
 
             await new GridColumns(api, 'lockPosition left').checkColumns(`
                 CENTER
-                ├── locked width:200
+                ├── locked width:200 lockPosition:left
                 ├── a width:200
                 └── b width:200
             `);
@@ -367,7 +367,7 @@ describe('Column Features', () => {
                 CENTER
                 ├── a width:200
                 ├── b width:200
-                └── locked width:200
+                └── locked width:200 lockPosition:right
             `);
         });
     });

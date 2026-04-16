@@ -781,4 +781,222 @@ describe('Column Mutations', () => {
             await new GridColumns(api, 'columns').checkColumns(false);
         });
     });
+
+    describe('column tree building edge cases', () => {
+        test('empty columnDefs creates empty column set', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [],
+            });
+
+            expect(api.getAllGridColumns().length).toBe(0);
+            expect(api.getAllDisplayedColumns().length).toBe(0);
+            await new GridColumns(api, 'empty').checkColumns('empty');
+        });
+
+        test('setColumnDefs with empty array clears all columns', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            });
+
+            await new GridColumns(api, 'initial').checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
+
+            api.setGridOption('columnDefs', []);
+
+            expect(api.getAllGridColumns().length).toBe(0);
+            await new GridColumns(api, 'cleared').checkColumns('empty');
+        });
+
+        test('column tree depth is consistent across sections', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        headerName: 'Group',
+                        children: [{ colId: 'a', pinned: 'left' }, { colId: 'b' }],
+                    },
+                    { colId: 'c', pinned: 'right' },
+                ],
+            });
+
+            // Tree balancing should ensure all columns are at same depth
+            await new GridColumns(api, 'balanced tree').checkColumns(`
+                LEFT
+                └─┬ "Group" GROUP
+                  └── a width:200
+                CENTER
+                └─┬ "Group" GROUP
+                  └── b width:200
+                RIGHT
+                └── c width:200
+            `);
+        });
+
+        test('column map is rebuilt after setColumnDefs', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            });
+
+            // Column map should have entries for a and b
+            expect(api.getColumn('a')).not.toBeNull();
+            expect(api.getColumn('b')).not.toBeNull();
+
+            // Replace columns
+            api.setGridOption('columnDefs', [{ colId: 'x' }, { colId: 'y' }]);
+
+            // Map should now have x and y, not a and b
+            expect(api.getColumn('x')).not.toBeNull();
+            expect(api.getColumn('y')).not.toBeNull();
+            expect(api.getColumn('a')).toBeNull();
+            expect(api.getColumn('b')).toBeNull();
+
+            await new GridColumns(api, 'rebuilt map').checkColumns(`
+                CENTER
+                ├── x width:200
+                └── y width:200
+            `);
+        });
+
+        test('getAllGridColumns returns colsList + auto columns in correct order', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'group', rowGroup: true }, { colId: 'a' }, { colId: 'b' }],
+                rowData: [],
+            });
+
+            const allGrid = api.getAllGridColumns();
+            const colIds = allGrid.map((c: any) => c.getColId());
+
+            // Auto-group column should be first, then user columns
+            expect(colIds[0]).toBe('ag-Grid-AutoColumn');
+            expect(colIds).toContain('group');
+            expect(colIds).toContain('a');
+            expect(colIds).toContain('b');
+
+            await new GridColumns(api, 'columns').checkColumns(false);
+        });
+
+        test('getColumns returns colDefList (user columns only)', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'group', rowGroup: true }, { colId: 'value' }],
+                rowData: [],
+            });
+
+            const cols = api.getColumns();
+            const colIds = cols!.map((c: any) => c.getColId());
+
+            // Only user-defined columns, no auto-group
+            expect(colIds).toEqual(['group', 'value']);
+            expect(colIds).not.toContain('ag-Grid-AutoColumn');
+        });
+
+        test('auto columns appear when row grouping is added via setColumnDefs', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                rowData: [],
+            });
+
+            // No auto-group initially
+            const allBefore = api.getAllGridColumns().map((c: any) => c.getColId());
+            expect(allBefore).not.toContain('ag-Grid-AutoColumn');
+
+            // Add row grouping via new columnDefs — auto-group column should appear
+            api.setGridOption('columnDefs', [{ colId: 'a', rowGroup: true }, { colId: 'b' }]);
+
+            const allAfter = api.getAllGridColumns().map((c: any) => c.getColId());
+            expect(allAfter).toContain('ag-Grid-AutoColumn');
+
+            await new GridColumns(api, 'with auto group').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── a width:200 rowGroup
+                └── b width:200
+            `);
+        });
+
+        test('auto columns removed when row grouping is cleared via removeRowGroupColumns', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', rowGroup: true, enableRowGroup: true }, { colId: 'b' }],
+                rowData: [],
+            });
+
+            // Auto-group present
+            expect(api.getAllGridColumns().map((c: any) => c.getColId())).toContain('ag-Grid-AutoColumn');
+
+            // Remove row grouping via API
+            api.removeRowGroupColumns(['a']);
+
+            // Auto-group should be gone
+            const allFinal = api.getAllGridColumns().map((c: any) => c.getColId());
+            expect(allFinal).not.toContain('ag-Grid-AutoColumn');
+
+            await new GridColumns(api, 'no auto group').checkColumns(`
+                CENTER
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
+        test('column order restored via restoreColOrder preserves user reordering', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                maintainColumnOrder: true,
+            });
+
+            // Reorder: c, a, b
+            api.moveColumns(['c'], 0);
+
+            expect(api.getAllDisplayedColumns().map((c: any) => c.getColId())).toEqual(['c', 'a', 'b']);
+
+            // Update colDefs — order should be preserved
+            api.setGridOption('columnDefs', [
+                { colId: 'a', headerName: 'A2' },
+                { colId: 'b', headerName: 'B2' },
+                { colId: 'c', headerName: 'C2' },
+            ]);
+
+            expect(api.getAllDisplayedColumns().map((c: any) => c.getColId())).toEqual(['c', 'a', 'b']);
+
+            await new GridColumns(api, 'order preserved').checkColumns(`
+                CENTER
+                ├── c "C2" width:200
+                ├── a "A2" width:200
+                └── b "B2" width:200
+            `);
+        });
+
+        test('locked columns are placed correctly after refreshCols', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', lockPosition: 'left' },
+                    { colId: 'b' },
+                    { colId: 'c', lockPosition: 'right' },
+                ],
+            });
+
+            await new GridColumns(api, 'locked positions').checkColumns(`
+                CENTER
+                ├── a width:200 lockPosition:left
+                ├── b width:200
+                └── c width:200 lockPosition:right
+            `);
+
+            // Add a new column — locked positions should be maintained
+            api.setGridOption('columnDefs', [
+                { colId: 'a', lockPosition: 'left' },
+                { colId: 'new' },
+                { colId: 'b' },
+                { colId: 'c', lockPosition: 'right' },
+            ]);
+
+            await new GridColumns(api, 'after adding column').checkColumns(`
+                CENTER
+                ├── a width:200 lockPosition:left
+                ├── new width:200
+                ├── b width:200
+                └── c width:200 lockPosition:right
+            `);
+        });
+    });
 });

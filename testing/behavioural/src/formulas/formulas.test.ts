@@ -113,7 +113,7 @@ describe('ag-grid formulas general behaviour', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             LEFT
-            └── ag-Grid-RowNumbersColumn width:60
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
             CENTER
             └── value "Value" width:200
         `);
@@ -177,7 +177,7 @@ describe('ag-grid formulas general behaviour', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             LEFT
-            └── ag-Grid-RowNumbersColumn width:60
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
             CENTER
             ├── A width:200
             ├── B width:200

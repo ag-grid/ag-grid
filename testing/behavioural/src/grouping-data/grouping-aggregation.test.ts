@@ -113,7 +113,7 @@ describe('ag-grid grouping aggregation', () => {
 
         await new GridColumns(api, 'after update').checkColumns(`
             CENTER
-            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
             ├── ag-Grid-AutoColumn "Country" width:200
             ├── sport "Sport" width:200
             ├── gold "Gold" width:200 aggFunc:sum

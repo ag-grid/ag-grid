@@ -172,6 +172,94 @@ describe('Column API', () => {
             const autoCol = api.getColumn('ag-Grid-AutoColumn');
             expect(autoCol).not.toBeNull();
         });
+
+        test('finds column by Column object reference', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            });
+
+            const colA = api.getColumn('a')!;
+            // Finding by the column object itself should return the same instance
+            const found = api.getColumn(colA);
+            expect(found).toBe(colA);
+        });
+    });
+
+    describe('getColumnDef', () => {
+        test('returns colDef for regular columns', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', headerName: 'Alpha' }],
+            });
+
+            const def = api.getColumnDef('a');
+            expect(def).not.toBeNull();
+            expect(def?.colId).toBe('a');
+            expect(def?.headerName).toBe('Alpha');
+        });
+
+        test('returns colDef for auto-group columns', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'group', rowGroup: true }, { colId: 'value' }],
+                rowData: [],
+            });
+
+            // Auto-group column should have a colDef accessible via getColumnDef
+            const autoGroupDef = api.getColumnDef('ag-Grid-AutoColumn');
+            expect(autoGroupDef).not.toBeNull();
+        });
+
+        test('returns null for non-existent column', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }],
+            });
+
+            expect(api.getColumnDef('nonexistent')).toBeNull();
+        });
+    });
+
+    describe('getColumns', () => {
+        test('returns all primary columns (from columnDefs)', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            });
+
+            const cols = api.getColumns();
+            expect(cols).not.toBeNull();
+            expect(cols!.length).toBe(2);
+            expect(cols!.map((c: any) => c.getColId())).toEqual(['a', 'b']);
+        });
+
+        test('does not include auto-generated columns', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'group', rowGroup: true }, { colId: 'value' }],
+                rowData: [],
+            });
+
+            const cols = api.getColumns();
+            // getColumns() returns colDefCols — user-defined columns only
+            const colIds = cols!.map((c: any) => c.getColId());
+            expect(colIds).toContain('group');
+            expect(colIds).toContain('value');
+            // Auto-group column should NOT be in getColumns() — it's in getAllGridColumns()
+            expect(colIds).not.toContain('ag-Grid-AutoColumn');
+        });
+    });
+
+    describe('getAllGridColumns vs getColumns', () => {
+        test('getAllGridColumns includes auto columns, getColumns does not', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'group', rowGroup: true }, { colId: 'value' }],
+                rowData: [],
+            });
+
+            const allGrid = api.getAllGridColumns();
+            const cols = api.getColumns();
+
+            // getAllGridColumns includes auto-group, getColumns does not
+            expect(allGrid.length).toBeGreaterThan(cols!.length);
+            expect(allGrid.map((c: any) => c.getColId())).toContain('ag-Grid-AutoColumn');
+            expect(cols!.map((c: any) => c.getColId())).not.toContain('ag-Grid-AutoColumn');
+        });
     });
 
     describe('getColumnDefs', () => {
@@ -611,6 +699,259 @@ describe('Column API', () => {
                 └── a "Updated A" width:200 sort:asc
                 CENTER
                 └── b "Updated B" width:200
+            `);
+        });
+    });
+
+    describe('column ordering during modifications', () => {
+        test('column order preserved after hide/show cycle', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+            });
+
+            // Reorder
+            api.moveColumns(['c'], 0);
+            expect(api.getAllDisplayedColumns().map((c: Column) => c.getColId())).toEqual(['c', 'a', 'b']);
+
+            // Hide and show b
+            api.setColumnsVisible(['b'], false);
+            api.setColumnsVisible(['b'], true);
+
+            // Order should be preserved
+            expect(api.getAllDisplayedColumns().map((c: Column) => c.getColId())).toEqual(['c', 'a', 'b']);
+
+            await new GridColumns(api, 'order preserved after hide/show').checkColumns(`
+                CENTER
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
+        test('column order preserved after pin/unpin cycle', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+            });
+
+            api.moveColumns(['c'], 0);
+
+            // Pin and unpin a
+            api.setColumnsPinned(['a'], 'left');
+            api.setColumnsPinned(['a'], null);
+
+            // Within center, order should be: c, a, b (a returns to its relative position)
+            await new GridColumns(api, 'order after pin/unpin').checkColumns(`
+                CENTER
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
+        test('pivot mode preserves column order when toggling', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'country', rowGroup: true },
+                    { colId: 'sport', pivot: true },
+                    { colId: 'gold', aggFunc: 'sum' },
+                    { colId: 'silver', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { country: 'USA', sport: 'Swimming', gold: 3, silver: 1 },
+                    { country: 'UK', sport: 'Running', gold: 2, silver: 4 },
+                ],
+            });
+
+            // Capture non-pivot column order
+            const orderBefore = api.getAllDisplayedColumns().map((c: Column) => c.getColId());
+
+            await new GridColumns(api, 'before pivot').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── country width:200 rowGroup
+                ├── sport width:200 pivot
+                ├── gold width:200 aggFunc:sum
+                └── silver width:200 aggFunc:sum
+            `);
+
+            // Enable pivot
+            api.setGridOption('pivotMode', true);
+
+            await new GridColumns(api, 'in pivot mode').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └─┬ GROUP
+                  ├── pivot_sport__gold width:200 columnGroupShow:open
+                  └── pivot_sport__silver width:200 columnGroupShow:open
+            `);
+
+            // Disable pivot
+            api.setGridOption('pivotMode', false);
+
+            // Column order should be the same as before pivot
+            const orderAfter = api.getAllDisplayedColumns().map((c: Column) => c.getColId());
+            expect(orderAfter).toEqual(orderBefore);
+
+            await new GridColumns(api, 'after pivot off').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── country width:200 rowGroup
+                ├── sport width:200 pivot
+                ├── gold width:200 aggFunc:sum
+                └── silver width:200 aggFunc:sum
+            `);
+        });
+
+        test('adding columns to existing grid maintains prior column order', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                maintainColumnOrder: true,
+            });
+
+            // User reorders: b, c, a
+            api.moveColumns(['b'], 0);
+
+            expect(api.getAllDisplayedColumns().map((c: Column) => c.getColId())).toEqual(['b', 'a', 'c']);
+
+            // Add new column d — should appear after existing columns
+            api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }, { colId: 'd' }]);
+
+            // b, a, c order should be preserved, d added at end
+            const order = api.getAllDisplayedColumns().map((c: Column) => c.getColId());
+            expect(order).toEqual(['b', 'a', 'c', 'd']);
+
+            await new GridColumns(api, 'new column added').checkColumns(`
+                CENTER
+                ├── b width:200
+                ├── a width:200
+                ├── c width:200
+                └── d width:200
+            `);
+        });
+
+        test('removing column preserves remaining column order', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }, { colId: 'd' }],
+                maintainColumnOrder: true,
+            });
+
+            // Reorder: d, a, b, c
+            api.moveColumns(['d'], 0);
+
+            // Remove b
+            api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'c' }, { colId: 'd' }]);
+
+            // d, a, c order should be preserved (b removed)
+            const order = api.getAllDisplayedColumns().map((c: Column) => c.getColId());
+            expect(order).toEqual(['d', 'a', 'c']);
+
+            await new GridColumns(api, 'b removed, order preserved').checkColumns(`
+                CENTER
+                ├── d width:200
+                ├── a width:200
+                └── c width:200
+            `);
+        });
+
+        test('column order in getAllGridColumns includes auto-group at head', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', rowGroup: true }, { colId: 'b' }, { colId: 'c' }],
+                rowData: [],
+            });
+
+            const allGrid = api.getAllGridColumns().map((c: Column) => c.getColId());
+
+            // Auto-group should be first
+            expect(allGrid[0]).toBe('ag-Grid-AutoColumn');
+            // Then user columns in definition order
+            expect(allGrid.slice(1)).toEqual(['a', 'b', 'c']);
+
+            await new GridColumns(api, 'auto-group at head').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── a width:200 rowGroup
+                ├── b width:200
+                └── c width:200
+            `);
+        });
+
+        test('maintainColumnOrder with multiple new sibling columns', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ headerName: 'G1', children: [{ colId: 'a' }, { colId: 'b' }] }, { colId: 'c' }],
+                maintainColumnOrder: true,
+            });
+
+            // Add new siblings d and e in the same group as a and b
+            api.setGridOption('columnDefs', [
+                { headerName: 'G1', children: [{ colId: 'a' }, { colId: 'b' }, { colId: 'd' }, { colId: 'e' }] },
+                { colId: 'c' },
+            ]);
+
+            // New siblings should be inserted near their group peers
+            await new GridColumns(api, 'siblings added').checkColumns(`
+                CENTER
+                ├─┬ "G1" GROUP
+                │ ├── a width:200
+                │ ├── b width:200
+                │ ├── d width:200
+                │ └── e width:200
+                └── c width:200
+            `);
+        });
+
+        test('maintainColumnOrder=false resets order on every setColumnDefs', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                maintainColumnOrder: false,
+            });
+
+            api.moveColumns(['c'], 0);
+            expect(api.getAllDisplayedColumns().map((c: Column) => c.getColId())).toEqual(['c', 'a', 'b']);
+
+            // setColumnDefs should reset to definition order
+            api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }]);
+
+            expect(api.getAllDisplayedColumns().map((c: Column) => c.getColId())).toEqual(['a', 'b', 'c']);
+
+            await new GridColumns(api, 'order reset').checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── b width:200
+                └── c width:200
+            `);
+        });
+
+        test('pivot result columns replace primary columns in display order', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'country', rowGroup: true },
+                    { colId: 'sport', pivot: true },
+                    { colId: 'gold', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { country: 'USA', sport: 'Swimming', gold: 3 },
+                    { country: 'USA', sport: 'Running', gold: 2 },
+                ],
+                pivotMode: true,
+            });
+
+            // In pivot mode, primary columns are replaced by pivot result columns
+            const displayed = api.getAllDisplayedColumns().map((c: Column) => c.getColId());
+
+            // Should have auto-group column and pivot result columns
+            expect(displayed.some((id) => id.startsWith('ag-Grid-AutoColumn'))).toBe(true);
+            expect(displayed.some((id) => id.startsWith('pivot_'))).toBe(true);
+
+            // Primary columns (country, sport, gold) should NOT be directly displayed
+            expect(displayed).not.toContain('country');
+            expect(displayed).not.toContain('sport');
+            expect(displayed).not.toContain('gold');
+
+            await new GridColumns(api, 'pivot columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └─┬ GROUP
+                  └── pivot_sport__gold width:200 columnGroupShow:open
             `);
         });
     });

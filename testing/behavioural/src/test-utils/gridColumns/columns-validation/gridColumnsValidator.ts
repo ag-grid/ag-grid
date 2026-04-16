@@ -14,8 +14,10 @@ export class GridColumnsValidator {
         const { api, leftCols, centerCols, rightCols, allDisplayedCols, leftTree, centerTree, rightTree } = gridColumns;
         const isRtl = api.getGridOption?.('enableRtl') ?? false;
 
-        // ── Global: allDisplayedColumns matches left + center + right ────────
-        const expectedAll = [...leftCols, ...centerCols, ...rightCols];
+        // ── Global: allDisplayedColumns matches left + center + right (or right + center + left in RTL) ──
+        const expectedAll = isRtl
+            ? [...rightCols, ...centerCols, ...leftCols]
+            : [...leftCols, ...centerCols, ...rightCols];
         if (allDisplayedCols.length !== expectedAll.length) {
             this.errors.default.add(
                 `getAllDisplayedColumns() returned ${allDisplayedCols.length} columns, but left(${leftCols.length}) + center(${centerCols.length}) + right(${rightCols.length}) = ${expectedAll.length}.`
@@ -325,6 +327,38 @@ export class GridColumnsValidator {
                     `getUserProvidedColDef().field is "${userColDef.field}" but getColDef().field is "${mergedColDef.field}".`
                 );
             }
+        }
+
+        // ── isSortable consistency with colDef ──────────────────────────────
+        // When sortable is explicitly set on colDef, isSortable() should match
+        const sortableColDef = col.getColDef().sortable;
+        if (sortableColDef === false && col.isSortable()) {
+            colErrors.add('colDef.sortable is false but isSortable() returns true.');
+        }
+
+        // ── isMoving should be false at rest ────────────────────────────────
+        // During tests, columns should not be in moving state unless mid-drag
+        if (col.isMoving()) {
+            colErrors.add('Column isMoving() is true at validation time (should be false at rest).');
+        }
+
+        // ── isAutoHeight consistency ────────────────────────────────────────
+        const autoHeight = col.getColDef().autoHeight;
+        if (autoHeight === true && !col.isAutoHeight()) {
+            colErrors.add('colDef.autoHeight is true but isAutoHeight() returns false.');
+        }
+
+        // ── getColumnGroupShow consistency with colDef ──────────────────────
+        const cgs = col.getColumnGroupShow();
+        const cgsDef = col.getColDef().columnGroupShow;
+        if (cgsDef && cgs !== cgsDef) {
+            colErrors.add(`colDef.columnGroupShow is "${cgsDef}" but getColumnGroupShow() returns "${cgs}".`);
+        }
+
+        // ── isResizable consistency ──────────────────────────────────────────
+        const resizableColDef = col.getColDef().resizable;
+        if (resizableColDef === false && col.isResizable()) {
+            colErrors.add('colDef.resizable is false but isResizable() returns true.');
         }
     }
 

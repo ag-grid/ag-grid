@@ -389,7 +389,7 @@ describe('Column Groups', () => {
 
             await new GridColumns(api, 'marryChildren group').checkColumns(`
                 CENTER
-                ├─┬ "Married" GROUP
+                ├─┬ "Married" GROUP marryChildren
                 │ ├── m1 width:200
                 │ ├── m2 width:200
                 │ └── m3 width:200
@@ -412,7 +412,7 @@ describe('Column Groups', () => {
 
             await new GridColumns(api, 'married expandable').checkColumns(`
                 CENTER
-                └─┬ "Married Expandable" GROUP open
+                └─┬ "Married Expandable" GROUP open marryChildren
                   ├── always width:200
                   └── detail width:200 columnGroupShow:open
             `);

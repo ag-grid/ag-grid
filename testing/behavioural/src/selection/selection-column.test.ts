@@ -81,7 +81,7 @@ describe('Row Selection Grid Options', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             LEFT
-            └── ag-Grid-SelectionColumn width:50 sort:asc sortIndex:0
+            └── ag-Grid-SelectionColumn width:50 sort:asc sortIndex:0 !resizable suppressMovable lockPosition:left
             CENTER
             └── sport "Sport" width:200 sort:asc sortIndex:1
         `);
@@ -113,7 +113,7 @@ describe('Row Selection Grid Options', () => {
             CENTER
             └── sport "Sport" width:200
             RIGHT
-            └── ag-Grid-SelectionColumn width:200
+            └── ag-Grid-SelectionColumn width:200 !resizable !sortable suppressMovable lockPosition:left
         `);
     });
 });

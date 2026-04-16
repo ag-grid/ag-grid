@@ -184,10 +184,10 @@ describe('Auto Group Column Order', () => {
 
             await new GridColumns(gridApi, 'columns').checkColumns(`
                 CENTER
-                ├── c width:200
+                ├── c width:200 lockPosition:left
                 ├── ag-Grid-AutoColumn "Group" width:200
                 ├── b width:200 rowGroup
-                └── a width:200
+                └── a width:200 lockPosition:right
             `);
         });
 
@@ -565,10 +565,10 @@ describe('Auto Group Column Order', () => {
 
             await new GridColumns(gridApi, 'columns').checkColumns(`
                 CENTER
-                ├── c width:200
+                ├── c width:200 lockPosition:left
                 ├── ag-Grid-AutoColumn-b width:200
                 ├── b width:200 rowGroup
-                └── a width:200
+                └── a width:200 lockPosition:right
             `);
         });
 

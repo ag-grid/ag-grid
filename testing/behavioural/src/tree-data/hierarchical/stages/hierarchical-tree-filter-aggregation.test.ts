@@ -342,7 +342,7 @@ describe('ag-grid hierarchical tree aggregation and filter', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── ag-Grid-SelectionColumn width:50
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
             ├── ag-Grid-AutoColumn "Path" width:200
             ├── n "N" width:200
             ├── x "X" width:200 aggFunc:sum

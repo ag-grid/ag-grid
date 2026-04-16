@@ -99,7 +99,7 @@ describe('ag-grid formulas filtering', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             LEFT
-            └── ag-Grid-RowNumbersColumn width:60
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
             CENTER
             ├── A width:200
             ├── B width:200 filter
@@ -160,7 +160,7 @@ describe('ag-grid formulas filtering', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             LEFT
-            └── ag-Grid-RowNumbersColumn width:60
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
             CENTER
             ├── athlete "Athlete" width:200 filter editable
             ├── age "Age" width:200 editable

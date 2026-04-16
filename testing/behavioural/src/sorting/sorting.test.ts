@@ -95,7 +95,7 @@ describe('Sorting', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── sport "Sport" width:200
+            ├── sport "Sport" width:200 !sortable
             ├── year "Year" width:200
             ├── amount "Amount" width:200
             └── day "Day" width:200

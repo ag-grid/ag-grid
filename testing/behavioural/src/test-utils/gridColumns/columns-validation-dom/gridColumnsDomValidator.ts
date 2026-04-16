@@ -150,14 +150,31 @@ export class GridColumnsDomValidator {
 
             // ── aria-sort attribute ─────────────────────────────────────────
             const sort = col.getSort();
+            const isSortable = col.isSortable();
             const ariaSort = headerCell.getAttribute('aria-sort');
-            if (sort === 'asc') {
+
+            if (isSortable && sort === 'asc') {
                 if (ariaSort !== 'ascending') {
                     colErrors.add(`Sort is "asc" but aria-sort is "${ariaSort ?? 'null'}", expected "ascending".`);
                 }
-            } else if (sort === 'desc') {
+            } else if (isSortable && sort === 'desc') {
                 if (ariaSort !== 'descending') {
                     colErrors.add(`Sort is "desc" but aria-sort is "${ariaSort ?? 'null'}", expected "descending".`);
+                }
+            } else if (isSortable && !sort) {
+                // Sortable but no sort — aria-sort should be "none" or absent
+                if (ariaSort != null && ariaSort !== 'none') {
+                    colErrors.add(
+                        `Column is sortable but not sorted, aria-sort should be "none" or absent, got "${ariaSort}".`
+                    );
+                }
+            } else if (!isSortable) {
+                // Non-sortable columns should NOT have aria-sort attribute at all
+                // (sort state may exist from colDef but DOM shouldn't expose it)
+                if (ariaSort != null && ariaSort !== 'none') {
+                    colErrors.add(
+                        `Column is not sortable but has aria-sort="${ariaSort}" (should be absent or "none").`
+                    );
                 }
             }
 
@@ -176,7 +193,6 @@ export class GridColumnsDomValidator {
             }
 
             // ── ag-header-cell-sortable CSS class ───────────────────────────
-            const isSortable = col.isSortable();
             const hasSortableClass = headerCell.classList.contains('ag-header-cell-sortable');
             if (isSortable && !hasSortableClass) {
                 colErrors.add('Column is sortable but ag-header-cell-sortable class is missing.');
