@@ -492,8 +492,6 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     }
 
     private mapSharedStrings(worksheet: ExcelWorksheet): void {
-        let emptyStringPosition: string | undefined;
-
         for (const row of worksheet.table.rows) {
             for (const cell of row.cells) {
                 const data = cell.data;
@@ -503,13 +501,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
                 const value = data.value;
 
-                if (value == null) {
-                    continue;
-                }
-
-                if (value === '') {
-                    emptyStringPosition ??= this.workbook.getStringPosition('').toString();
-                    data.value = emptyStringPosition;
+                if (value == null || value === '') {
                     continue;
                 }
 
@@ -600,7 +592,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         }
         const processedType = this.getTypeFromStyle(actualStyle, value) || type;
 
-        const { value: processedValue, escaped } = this.getCellValue(processedType, value);
+        const { type: processedCellType, value: processedValue, escaped } = this.getCellValue(processedType, value);
         const styles: string[] = [];
 
         if (actualStyle) {
@@ -616,7 +608,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return {
             styleId,
             data: {
-                type: processedType,
+                type: processedCellType,
                 value: processedValue,
             },
             note: note?.text ? note : undefined,
@@ -630,12 +622,16 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         numOfCells: number,
         note?: ExcelNote
     ): ExcelCell {
+        const actualStyle = this.getStyleById(styleId);
         const valueToUse = value == null ? '' : value;
+        const processedType = this.getTypeFromStyle(actualStyle, valueToUse) || type;
+        const { type: processedCellType, value: processedValue } = this.getCellValue(processedType, valueToUse);
+
         return {
-            styleId: this.getStyleById(styleId) ? styleId! : undefined,
+            styleId: actualStyle ? styleId! : undefined,
             data: {
-                type: type,
-                value: type === 's' ? String(valueToUse) : value,
+                type: processedCellType,
+                value: processedValue,
             },
             mergeAcross: numOfCells,
             note: note?.text ? note : undefined,
@@ -709,11 +705,18 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         });
     }
 
-    private getCellValue(type: ExcelOOXMLDataType, value: string | null): { value: string | null; escaped?: boolean } {
+    private getCellValue(
+        type: ExcelOOXMLDataType,
+        value: string | null
+    ): {
+        type: ExcelOOXMLDataType;
+        value: string | null;
+        escaped?: boolean;
+    } {
         let escaped = false;
 
-        if (value == null || (type === 's' && value === '')) {
-            return { value: '', escaped: false };
+        if (value == null || value === '' || type === 'empty') {
+            return { type: 'empty', value: null, escaped: false };
         }
 
         if (type === 's') {
@@ -722,6 +725,10 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             if (value[0] === "'") {
                 escaped = true;
                 value = value.slice(1);
+
+                if (value === '') {
+                    return { type: 'empty', value: null, escaped: false };
+                }
             }
         } else if (type === 'f') {
             value = this.addXlfnPrefix(value).slice(1);
@@ -729,13 +736,13 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             const numberValue = Number(value);
 
             if (isNaN(numberValue)) {
-                value = '';
-            } else if (value !== '') {
+                return { type: 'empty', value: null, escaped: false };
+            } else {
                 value = numberValue.toString();
             }
         }
 
-        return { value, escaped };
+        return { type, value, escaped };
     }
 
     private addXlfnPrefix(value: string): string {
