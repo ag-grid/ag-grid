@@ -743,6 +743,204 @@ describe('Column Mutations', () => {
                 └── c width:200
             `);
         });
+
+        test('deep nesting: new column finds sibling by walking up parent chain', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        headerName: 'Outer',
+                        children: [
+                            {
+                                headerName: 'Inner',
+                                children: [{ colId: 'a' }, { colId: 'b' }],
+                            },
+                        ],
+                    },
+                    { colId: 'c' },
+                ],
+                maintainColumnOrder: true,
+            });
+
+            await new GridColumns(api, 'initial deep').checkColumns(`
+                CENTER
+                ├─┬ "Outer" GROUP
+                │ └─┬ "Inner" GROUP
+                │   ├── a width:200
+                │   └── b width:200
+                └── c width:200
+            `);
+
+            // Add d in a new nested sub-group alongside Inner
+            api.setGridOption('columnDefs', [
+                {
+                    headerName: 'Outer',
+                    children: [
+                        { headerName: 'Inner', children: [{ colId: 'a' }, { colId: 'b' }] },
+                        { headerName: 'Inner2', children: [{ colId: 'd' }] },
+                    ],
+                },
+                { colId: 'c' },
+            ]);
+
+            // d should be inserted near siblings a/b (its parent's siblings in Outer)
+            await new GridColumns(api, 'deep sibling found').checkColumns(`
+                CENTER
+                ├─┬ "Outer" GROUP
+                │ ├─┬ "Inner" GROUP
+                │ │ ├── a width:200
+                │ │ └── b width:200
+                │ └─┬ "Inner2" GROUP
+                │   └── d width:200
+                └── c width:200
+            `);
+        });
+
+        test('new columns in multiple different groups simultaneously', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { headerName: 'G1', children: [{ colId: 'a' }] },
+                    { headerName: 'G2', children: [{ colId: 'b' }] },
+                    { colId: 'c' },
+                ],
+                maintainColumnOrder: true,
+            });
+
+            await new GridColumns(api, 'initial two groups').checkColumns(`
+                CENTER
+                ├─┬ "G1" GROUP
+                │ └── a width:200
+                ├─┬ "G2" GROUP
+                │ └── b width:200
+                └── c width:200
+            `);
+
+            // Add new columns to both groups at once
+            api.setGridOption('columnDefs', [
+                { headerName: 'G1', children: [{ colId: 'a' }, { colId: 'x' }] },
+                { headerName: 'G2', children: [{ colId: 'b' }, { colId: 'y' }] },
+                { colId: 'c' },
+            ]);
+
+            // x should be near a, y should be near b
+            await new GridColumns(api, 'both groups got new cols').checkColumns(`
+                CENTER
+                ├─┬ "G1" GROUP
+                │ ├── a width:200
+                │ └── x width:200
+                ├─┬ "G2" GROUP
+                │ ├── b width:200
+                │ └── y width:200
+                └── c width:200
+            `);
+        });
+
+        test('user reorder + group insertion: new column placed near reordered siblings', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { headerName: 'G', children: [{ colId: 'a' }, { colId: 'b' }] },
+                    { colId: 'c' },
+                    { colId: 'd' },
+                ],
+                maintainColumnOrder: true,
+            });
+
+            // User moves d before the group
+            api.moveColumns(['d'], 0);
+
+            const order = api.getAllDisplayedColumns().map((c: Column) => c.getColId());
+            expect(order).toEqual(['d', 'a', 'b', 'c']);
+
+            // Add new column e in group G alongside a and b
+            api.setGridOption('columnDefs', [
+                { headerName: 'G', children: [{ colId: 'a' }, { colId: 'b' }, { colId: 'e' }] },
+                { colId: 'c' },
+                { colId: 'd' },
+            ]);
+
+            // d should stay first (user reorder preserved), e near a/b
+            await new GridColumns(api, 'reorder + group insert').checkColumns(`
+                CENTER
+                ├── d width:200
+                ├─┬ "G" GROUP
+                │ ├── a width:200
+                │ ├── b width:200
+                │ └── e width:200
+                └── c width:200
+            `);
+        });
+
+        test('new column with no relatives in list appends at end', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                maintainColumnOrder: true,
+            });
+
+            // Add new column c with no group relationship to a or b
+            api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }]);
+
+            await new GridColumns(api, 'no sibling appended').checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── b width:200
+                └── c width:200
+            `);
+
+            // Add another ungrouped column d
+            api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }, { colId: 'd' }]);
+
+            await new GridColumns(api, 'another no sibling appended').checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── b width:200
+                ├── c width:200
+                └── d width:200
+            `);
+        });
+
+        test('new column in group where all siblings were removed finds grandparent', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        headerName: 'Outer',
+                        children: [{ headerName: 'Inner', children: [{ colId: 'a' }, { colId: 'b' }] }, { colId: 'c' }],
+                    },
+                    { colId: 'd' },
+                ],
+                maintainColumnOrder: true,
+            });
+
+            await new GridColumns(api, 'initial nested').checkColumns(`
+                CENTER
+                ├─┬ "Outer" GROUP
+                │ ├─┬ "Inner" GROUP
+                │ │ ├── a width:200
+                │ │ └── b width:200
+                │ └── c width:200
+                └── d width:200
+            `);
+
+            // Replace Inner's children entirely — x and y are new, a and b removed.
+            // x/y have no direct siblings in the list, but their grandparent Outer has c.
+            api.setGridOption('columnDefs', [
+                {
+                    headerName: 'Outer',
+                    children: [{ headerName: 'Inner', children: [{ colId: 'x' }, { colId: 'y' }] }, { colId: 'c' }],
+                },
+                { colId: 'd' },
+            ]);
+
+            // x and y are inserted after c (the rightmost grandparent sibling),
+            // so c appears before the Inner group in display order
+            await new GridColumns(api, 'grandparent sibling found').checkColumns(`
+                CENTER
+                ├─┬ "Outer" GROUP
+                │ ├── c width:200
+                │ └─┬ "Inner" GROUP
+                │   ├── x width:200
+                │   └── y width:200
+                └── d width:200
+            `);
+        });
     });
 
     describe('defaultColDef mutations', () => {
