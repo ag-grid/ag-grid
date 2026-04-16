@@ -29,14 +29,14 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             imageTypesObject[_normaliseImageExtension(v.type)] = true;
         });
 
-        const imageDocs = new Array(sheetsWithImages).fill(undefined).map((v, i) => ({
+        const imageDocs = new Array(sheetsWithImages).fill(undefined).map((_v, i) => ({
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.drawing+xml',
             PartName: `/xl/drawings/drawing${i + 1}.xml`,
         }));
 
         const tableDocs: { name: string; ContentType: string; PartName: string }[] = [];
-        const commentDocs = new Array(sheetsWithComments).fill(undefined).map((v, i) => ({
+        const commentDocs = new Array(sheetsWithComments).fill(undefined).map((_v, i) => ({
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml',
             PartName: `/xl/comments${i + 1}.xml`,
