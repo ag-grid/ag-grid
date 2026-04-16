@@ -45,6 +45,7 @@ function _insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
 
     dest.splice(toIndex, 0, ...src);
 }
+
 const PillDropZonePanelElement: ElementParams = { tag: 'div', cls: 'ag-unselectable', role: 'presentation' };
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {
     private state: PillState = 'notDragging';
@@ -169,7 +170,9 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             return;
         }
         const target = e.target as HTMLElement | null;
-        target?.scrollIntoView();
+        if (target) {
+            _scrollContainerHorizontallyToShowChild(root, target);
+        }
     }
 
     private onKeyDown(e: KeyboardEvent) {
@@ -194,11 +197,12 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         if (e.shiftKey) {
             this.moveFocusedItem(isPrevious);
         } else {
-            const el = _findNextFocusableElement(this.beans, this.getFocusableElement(), false, isPrevious);
+            const root = this.getFocusableElement();
+            const el = _findNextFocusableElement(this.beans, root, false, isPrevious);
 
             if (el) {
                 el.focus();
-                el.scrollIntoView();
+                _scrollContainerHorizontallyToShowChild(root, el);
             }
         }
     }
@@ -677,5 +681,19 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             this.addElementClasses(icon, 'cell-separator');
             eParent.appendChild(icon);
         }
+    }
+}
+
+// Like Element.scrollIntoView, but only scrolls the container not the page
+function _scrollContainerHorizontallyToShowChild(container: HTMLElement, target: HTMLElement): void {
+    if (target === _findFocusableElements(container, null, true)[0]) {
+        container.scrollLeft = 0;
+    }
+    const c = container.getBoundingClientRect();
+    const t = target.getBoundingClientRect();
+    if (t.left < c.left) {
+        container.scrollLeft -= c.left - t.left;
+    } else if (t.right > c.right) {
+        container.scrollLeft += t.right - c.right;
     }
 }
