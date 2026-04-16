@@ -300,7 +300,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         const cellPosition: CellPosition = {
             rowIndex: node.rowIndex!,
             rowPinned: node.rowPinned,
-            column: (lastFocusedCell?.column as AgColumn) ?? this.getFullWidthColumn(),
+            column: (lastFocusedCell?.column as AgColumn) ?? this.getNavigationColumn(),
         };
 
         navigation?.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
@@ -339,11 +339,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
     }
 
     public getNavigationColumn(): AgColumn {
-        return this.getFullWidthColumn();
-    }
-
-    private getFullWidthColumn(): AgColumn {
-        return this.beans.visibleCols.centerCols[0];
+        return this.getDefaultTarget()?.column ?? this.getFirstDisplayedColumnForFullWidth()!;
     }
 
     public onRowMouseDown(mouseEvent: MouseEvent): void {
@@ -363,7 +359,10 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         if (!element.contains(target)) {
             return;
         }
-        const column = this.getFullWidthColumn();
+        const column = this.getTarget(target)?.column;
+        if (!column) {
+            return;
+        }
         const node = rowCtrl.rowNode;
 
         let forceBrowserFocus = mouseEvent.defaultPrevented || _isBrowserSafari();
@@ -456,6 +455,10 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         return targets.find((target) => target.element.contains(node)) ?? targets[0];
     }
 
+    private getDefaultTarget(): FullWidthTarget | undefined {
+        return this.getTargets()[0];
+    }
+
     public findInfoForEvent(event?: Event): { column: AgColumn; pinned: ColumnPinnedType } | undefined {
         const target = this.getTarget(event?.target);
         if (!target) {
@@ -497,10 +500,6 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
 
     public getNotesFeature() {
         return this.notesFeature;
-    }
-
-    public refreshComp(): boolean {
-        return this.refreshFullWidthComp();
     }
 
     public addInitialRowClasses(classes: string[]): void {

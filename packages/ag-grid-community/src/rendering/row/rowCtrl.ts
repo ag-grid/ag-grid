@@ -866,10 +866,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowModeFeature.setupDetailRowAutoHeight?.(eDetailGui);
     }
 
-    public refreshFullWidth(): boolean {
-        return this.rowModeFeature.refreshComp?.() ?? true;
-    }
-
     private onUiLevelChanged(): void {
         const newLevel = calculateRowLevel(this.rowNode);
         if (this.rowLevel != newLevel) {

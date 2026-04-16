@@ -43,7 +43,6 @@ export interface IRowModeFeature {
     getTargets?(): FullWidthTarget[];
     getTarget?(element?: EventTarget | null): FullWidthTarget | undefined;
     findInfoForEvent?(event?: Event): { column: AgColumn; pinned: ColumnPinnedType } | undefined;
-    refreshComp?(): boolean;
 
     // Notes
     getNotesFeature?(): INotesFeature | undefined;
