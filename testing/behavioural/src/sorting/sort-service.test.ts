@@ -99,6 +99,11 @@ describe('SortService', () => {
                 ├── LEAF id:3 a:"m"
                 └── LEAF id:2 a:"a"
             `);
+
+            await new GridColumns(api, 'desc col state').checkColumns(`
+                CENTER
+                └── a "A" width:200 sort:desc
+            `);
         });
 
         test('clearing sort returns to insertion order', async () => {
@@ -120,7 +125,14 @@ describe('SortService', () => {
             api.applyColumnState({ state: [{ colId: 'a', sort: null }] });
             expect(getSortModel(api)).toEqual([]);
 
-            await new GridColumns(api, 'cleared').checkColumns(`
+            await new GridRows(api, 'back to insertion order').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 a:"z"
+                ├── LEAF id:2 a:"a"
+                └── LEAF id:3 a:"m"
+            `);
+
+            await new GridColumns(api, 'sort cleared').checkColumns(`
                 CENTER
                 └── a "A" width:200
             `);
@@ -209,6 +221,12 @@ describe('SortService', () => {
                 ├── LEAF id:1 a:"x" b:"b"
                 └── LEAF id:2 a:"x" b:"a"
             `);
+
+            await new GridColumns(api, 'b flipped to desc').checkColumns(`
+                CENTER
+                ├── a "A" width:200 sort:asc sortIndex:0
+                └── b "B" width:200 sort:desc sortIndex:1
+            `);
         });
     });
 
@@ -240,6 +258,13 @@ describe('SortService', () => {
                 ├── LEAF id:2 a:"a" b:"x" c:1
                 ├── LEAF id:3 a:"m" b:"a" c:9
                 └── LEAF id:1 a:"z" b:"m" c:5
+            `);
+
+            await new GridColumns(api, 'sort preserved after col add').checkColumns(`
+                CENTER
+                ├── a "A" width:200 sort:asc
+                ├── b "B" width:200
+                └── c "C" width:200
             `);
         });
 
@@ -278,6 +303,12 @@ describe('SortService', () => {
                 ├── LEAF id:1 a:"z" b:"m"
                 ├── LEAF id:3 a:"m" b:"a"
                 └── LEAF id:2 a:"a" b:"x"
+            `);
+
+            await new GridColumns(api, 'initial sort col state').checkColumns(`
+                CENTER
+                ├── a "A" width:200 sort:desc
+                └── b "B" width:200
             `);
         });
 
@@ -326,6 +357,11 @@ describe('SortService', () => {
                 ├── LEAF id:3 a:"m" b:"a"
                 └── LEAF id:1 a:"z" b:"m"
             `);
+
+            await new GridColumns(api, 'hidden col retains sort').checkColumns(`
+                CENTER
+                └── b "B" width:200
+            `);
         });
 
         test('showing a hidden sorted column preserves sort', async () => {
@@ -342,6 +378,12 @@ describe('SortService', () => {
 
             api.setColumnsVisible(['a'], true);
             expect(getSortModel(api)).toEqual([{ colId: 'a', sort: 'asc' }]);
+
+            await new GridColumns(api, 'shown col keeps sort').checkColumns(`
+                CENTER
+                ├── a "A" width:200 sort:asc
+                └── b "B" width:200
+            `);
         });
     });
 
@@ -579,6 +621,12 @@ describe('SortService', () => {
                 { colId: 'a', sort: 'asc' },
                 { colId: 'b', sort: 'desc' },
             ]);
+
+            await new GridColumns(api, 'alwaysMultiSort cols').checkColumns(`
+                CENTER
+                ├── a "A" width:200 sort:asc sortIndex:0
+                └── b "B" width:200 sort:desc sortIndex:1
+            `);
         });
     });
 
@@ -675,6 +723,12 @@ describe('SortService', () => {
                 ├── LEAF id:3 a:"m" b:"a"
                 └── LEAF id:1 a:"z" b:"m"
             `);
+
+            await new GridColumns(api, 'suppressMultiSort cols').checkColumns(`
+                CENTER
+                ├── a "A" width:200 sort:asc sortIndex:0
+                └── b "B" width:200 sort:desc sortIndex:1
+            `);
         });
     });
 
@@ -731,6 +785,11 @@ describe('SortService', () => {
                 ├── LEAF id:3 a:"m"
                 └── LEAF id:2 a:"a"
             `);
+
+            await new GridColumns(api, 'defaultColDef sort').checkColumns(`
+                CENTER
+                └── a "A" width:200 sort:desc
+            `);
         });
 
         test('colDef.sort overrides defaultColDef.sort', async () => {
@@ -750,6 +809,12 @@ describe('SortService', () => {
                 ├── LEAF id:2 a:"a" b:"x"
                 ├── LEAF id:3 a:"m" b:"a"
                 └── LEAF id:1 a:"z" b:"m"
+            `);
+
+            await new GridColumns(api, 'override + default cols').checkColumns(`
+                CENTER
+                ├── a "A" width:200 sort:asc
+                └── b "B" width:200 sort:desc
             `);
         });
     });
@@ -781,6 +846,11 @@ describe('SortService', () => {
                 ├── LEAF id:1 a:"b"
                 ├── LEAF id:3 a:"c"
                 └── LEAF id:2 a:"z"
+            `);
+
+            await new GridColumns(api, 'sort unchanged after update').checkColumns(`
+                CENTER
+                └── a "A" width:200 sort:asc
             `);
         });
 
