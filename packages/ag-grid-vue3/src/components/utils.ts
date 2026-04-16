@@ -28,6 +28,7 @@ import type {
     FocusGridInnerElement,
     FormulaDataSource,
     FormulaFuncs,
+    FullWidthNotesDataSource,
     GetBusinessKeyForNode,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -1008,7 +1009,7 @@ export interface Props<TData> {
          * Can be updated to enable, disable, or replace Notes at runtime.
          * @agModule `NotesModule`
          */
-    notesDataSource?: NotesDataSource,
+    notesDataSource?: NotesDataSource | FullWidthNotesDataSource,
     /** The delay in milliseconds before a note is shown when hovering a noted cell.
          * @default 180
          * @agModule `NotesModule`

@@ -941,11 +941,14 @@ export type {
     ValueParam,
 } from './interfaces/formulas';
 export type {
+    FullWidthNotesDataSource,
     NoteParams,
     Note,
     FullWidthRowNoteParams,
     GetNoteParams,
     NotesDataSource,
+    FullWidthNotesDataSourceGetNoteParams,
+    FullWidthNotesDataSourceSetNoteParams,
     NotesDataSourceNoteParams,
     NotesDataSourceFullWidthRowNoteParams,
     NotesDataSourceGetNoteParams,

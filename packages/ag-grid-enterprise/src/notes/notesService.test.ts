@@ -63,6 +63,7 @@ describe('NotesService', () => {
             },
             notesDataSvc: {
                 hasDataSource: jest.fn(() => true),
+                supportsFullWidthRows: jest.fn(() => true),
                 getNote: jest.fn(() => currentNote),
                 setNote: jest.fn(),
             },
@@ -179,6 +180,13 @@ describe('NotesService', () => {
                 params: { rowNode, location: 'fullWidthRow', pinned: undefined },
             })
         );
+    });
+
+    it('does not expose full-width notes when the datasource does not support them', () => {
+        (beans.notesDataSvc!.supportsFullWidthRows as jest.Mock).mockReturnValue(false);
+
+        expect(service.getNoteAccess({ rowNode, location: 'fullWidthRow' })).toBeUndefined();
+        expect(service.showNote({ rowNode, location: 'fullWidthRow' }, true)).toBe(false);
     });
 
     it('does not write notes for suppressed cells via UI', () => {

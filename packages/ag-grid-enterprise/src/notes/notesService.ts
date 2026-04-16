@@ -51,7 +51,7 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
     }
 
     public createFullWidthNotesFeature(ctrl: RowCtrl) {
-        if (!this.hasDataSource()) {
+        if (!this.hasDataSource() || !this.beans.notesDataSvc?.supportsFullWidthRows()) {
             return undefined;
         }
 
@@ -64,6 +64,10 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         const { colModel, notesDataSvc } = this.beans;
 
         if (!this.hasDataSource()) {
+            return undefined;
+        }
+
+        if (isFullWidthRowNoteParams(params) && !notesDataSvc!.supportsFullWidthRows()) {
             return undefined;
         }
 

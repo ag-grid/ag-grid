@@ -117,7 +117,7 @@ Notes also work with full width rows.
 
 {% gridExampleRunner title="Notes with Full Width Rows" name="notes-full-width" exampleHeight=460 /%}
 
-This example includes both regular notes on cells and notes on full width rows in the same datasource. Full width rows use a separate note identity. Instead of receiving a `column`, the datasource receives `location: 'fullWidthRow'` and an optional `pinned` value when in `embedFullWidthRows` mode.
+This example includes both regular notes on cells and notes on full width rows in the same datasource. Full width rows use a separate note identity. Instead of receiving a `column`, the datasource receives `location: 'fullWidthRow'` and an optional `pinned` value when in `embedFullWidthRows` mode. Use `FullWidthNotesDataSource` when your datasource needs to support both shapes.
 
 ```ts
 noteStore.set('2', {
@@ -171,6 +171,10 @@ In the example above, clicking a cell selects it and syncs the toolbar controls 
 ### NotesDataSource
 
 {% interfaceDocumentation interfaceName="NotesDataSource" /%}
+
+### FullWidthNotesDataSource
+
+{% interfaceDocumentation interfaceName="FullWidthNotesDataSource" /%}
 
 ### Note
 
