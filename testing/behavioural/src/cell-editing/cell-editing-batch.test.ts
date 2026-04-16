@@ -12,7 +12,7 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 describe('Cell Editing Batch', () => {
     const gridMgr = new TestGridsManager({
@@ -133,6 +133,11 @@ describe('Cell Editing Batch', () => {
             ├── LEAF id:0 number:100
             └── LEAF id:1
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── number "Number" width:200 editable
+        `);
     });
 
     test('commit keeps edited value when focus leaves grid', async () => {
@@ -183,6 +188,11 @@ describe('Cell Editing Batch', () => {
         `);
 
         commitButton.remove();
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── number "Number" width:200 editable
+        `);
     });
 
     test('valueGetter sees committed data during batch edit, updates after commit', async () => {

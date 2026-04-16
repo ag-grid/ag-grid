@@ -7,6 +7,7 @@ import type {
     ExcelColumn,
     ExcelExportParams,
     ExcelImage,
+    ExcelNote,
     ExcelOOXMLDataType,
     ExcelRow,
     ExcelStyle,
@@ -14,6 +15,9 @@ import type {
     ExcelWorksheetConfigParams,
     GridSerializingParams,
     IFormulaService,
+    INotesService,
+    Note,
+    ProcessNoteForExportParams,
     RowAccumulator,
     RowHeightCallbackParams,
     RowNode,
@@ -54,6 +58,7 @@ export interface ExcelGridSerializingParams extends ExcelWorksheetConfigParams, 
     frozenColumnCount?: number;
     workbook: Workbook;
     headerRowCount?: number;
+    notesSvc?: INotesService;
     pivotModeActive?: boolean;
 }
 
@@ -61,6 +66,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     private readonly config: ExcelGridSerializingParams & ExcelExportParams;
     private readonly stylesByIds: { [key: string]: ExcelStyle };
     private readonly formulaSvc?: IFormulaService;
+    private readonly notesSvc?: INotesService;
 
     private mixedStyles: { [key: string]: ExcelMixedStyle } = {};
     private mixedStyleCounter: number = 0;
@@ -79,6 +85,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     constructor(config: ExcelGridSerializingParams) {
         super(config);
         this.formulaSvc = config.formulaSvc;
+        this.notesSvc = config.notesSvc;
         this.config = Object.assign({}, config);
         this.workbook = config.workbook;
 
@@ -118,7 +125,9 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                         return this.createCell(
                             excelStyleId,
                             this.getDataTypeForValue(image.value),
-                            image.value == null ? '' : image.value
+                            image.value == null ? '' : image.value,
+                            undefined,
+                            cell.note
                         );
                     }
 
@@ -126,10 +135,10 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                     const type = this.getDataTypeForValue(value);
 
                     if (cell.mergeAcross) {
-                        return this.createMergedCell(excelStyleId, type, value, cell.mergeAcross);
+                        return this.createMergedCell(excelStyleId, type, value, cell.mergeAcross, cell.note);
                     }
 
-                    return this.createCell(excelStyleId, type, value);
+                    return this.createCell(excelStyleId, type, value, undefined, cell.note);
                 }),
                 outlineLevel,
             };
@@ -401,13 +410,20 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             const excelStyleId: string | null = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);
             const addedImage = this.addImage(rowIndex, column, valueForCellString);
+            const note = this.resolveBodyCellNote({
+                accumulatedRowIndex: rowIndex,
+                column,
+                node,
+            });
 
             if (addedImage) {
                 currentCells.push(
                     this.createCell(
                         excelStyleId,
                         this.getDataTypeForValue(addedImage.value),
-                        addedImage.value == null ? '' : addedImage.value
+                        addedImage.value == null ? '' : addedImage.value,
+                        undefined,
+                        note
                     )
                 );
             } else if (colSpan > 1) {
@@ -417,7 +433,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                         excelStyleId,
                         this.getDataTypeForValue(rawValueForCell),
                         valueForCellString,
-                        colSpan - 1
+                        colSpan - 1,
+                        note
                     )
                 );
             } else {
@@ -432,7 +449,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                               useRefFormat: false,
                           })
                         : valueForCellString,
-                    valueFormatted
+                    valueFormatted,
+                    note
                 );
 
                 currentCells.push(cell);
@@ -573,7 +591,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         styleId: string | null | undefined,
         type: ExcelOOXMLDataType,
         value: string,
-        valueFormatted?: string | null
+        valueFormatted?: string | null,
+        note?: ExcelNote
     ): ExcelCell {
         const actualStyle: ExcelStyle | null = this.getStyleById(styleId);
         if (!actualStyle?.dataType && type === 's' && valueFormatted != null) {
@@ -600,6 +619,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 type: processedType,
                 value: processedValue,
             },
+            note: note?.text ? note : undefined,
         };
     }
 
@@ -607,7 +627,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         styleId: string | null,
         type: ExcelOOXMLDataType,
         value: string,
-        numOfCells: number
+        numOfCells: number,
+        note?: ExcelNote
     ): ExcelCell {
         const valueToUse = value == null ? '' : value;
         return {
@@ -617,7 +638,75 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 value: type === 's' ? String(valueToUse) : value,
             },
             mergeAcross: numOfCells,
+            note: note?.text ? note : undefined,
         };
+    }
+
+    private resolveBodyCellNote(params: {
+        accumulatedRowIndex: number;
+        column: AgColumn;
+        node: RowNode;
+    }): ExcelNote | undefined {
+        const { processNoteCallback, suppressGridNotesExport } = this.config;
+        const shouldAutoExportGridNotes = !suppressGridNotesExport && !!this.notesSvc?.hasDataSource();
+        const shouldFetchGridNote = !!this.notesSvc && (shouldAutoExportGridNotes || !!processNoteCallback);
+
+        const gridNote = shouldFetchGridNote
+            ? this.notesSvc?.getNote({ rowNode: params.node, column: params.column, location: 'cell' })
+            : undefined;
+
+        let defaultNote: ExcelNote | undefined;
+        if (shouldAutoExportGridNotes && gridNote?.text != null && gridNote.text !== '') {
+            defaultNote = { text: gridNote.text, author: gridNote.author };
+        }
+
+        if (!processNoteCallback) {
+            return defaultNote;
+        }
+
+        const callbackResult = processNoteCallback(this.getCellNoteExportParams(params, gridNote, defaultNote));
+
+        if (callbackResult === undefined) {
+            return defaultNote;
+        }
+
+        if (callbackResult?.text == null || callbackResult.text === '') {
+            return undefined;
+        }
+
+        return { text: callbackResult.text, author: callbackResult.author };
+    }
+
+    private getCellNoteExportParams(
+        params: {
+            accumulatedRowIndex: number;
+            column: AgColumn;
+            node: RowNode;
+        },
+        gridNote: Note | undefined,
+        defaultNote: ExcelNote | undefined
+    ): ProcessNoteForExportParams {
+        const { column, node, accumulatedRowIndex } = params;
+        const value = this.valueSvc.getValueForDisplay({ column, node, from: this.valueFrom }).value;
+
+        return _addGridCommonParams(this.gos, {
+            accumulatedRowIndex,
+            column,
+            node,
+            value,
+            type: 'excel',
+            parseValue: (valueToParse: string) =>
+                this.valueSvc.parseValue(
+                    column,
+                    node,
+                    valueToParse,
+                    this.valueSvc.getValue(column, node, this.valueFrom)
+                ),
+            formatValue: (valueToFormat: any) =>
+                this.valueSvc.formatValue(column, node, valueToFormat) ?? valueToFormat,
+            gridNote,
+            defaultNote,
+        });
     }
 
     private getCellValue(type: ExcelOOXMLDataType, value: string | null): { value: string | null; escaped?: boolean } {

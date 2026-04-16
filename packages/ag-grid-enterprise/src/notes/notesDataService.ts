@@ -1,4 +1,5 @@
 import type {
+    FullWidthNotesDataSource,
     GetNoteParams,
     INotesDataService,
     NamedBean,
@@ -14,7 +15,7 @@ import { cloneNote } from './notesUtils';
 export class NotesDataService extends BeanStub implements INotesDataService, NamedBean {
     public readonly beanName = 'notesDataSvc' as const;
 
-    private dataSource?: NotesDataSource;
+    private dataSource?: NotesDataSource | FullWidthNotesDataSource;
 
     public postConstruct(): void {
         this.setDataSource(this.gos.get('notesDataSource'));
@@ -28,11 +29,15 @@ export class NotesDataService extends BeanStub implements INotesDataService, Nam
         return !!this.dataSource;
     }
 
+    public supportsFullWidthRows(): boolean {
+        return this.isFullWidthDataSource(this.dataSource);
+    }
+
     public getNote(params: GetNoteParams) {
         const { dataSource } = this;
 
         if (isFullWidthRowNoteParams(params)) {
-            return cloneNote(dataSource?.getNote(params));
+            return cloneNote(this.isFullWidthDataSource(dataSource) ? dataSource.getNote(params) : undefined);
         }
 
         const column = this.beans.colModel.getCol(params.column);
@@ -48,7 +53,9 @@ export class NotesDataService extends BeanStub implements INotesDataService, Nam
         const note = cloneNote(params.note);
 
         if (isFullWidthRowNoteParams(params)) {
-            dataSource?.setNote({ ...params, note });
+            if (this.isFullWidthDataSource(dataSource)) {
+                dataSource.setNote({ ...params, note });
+            }
             return;
         }
 
@@ -60,7 +67,7 @@ export class NotesDataService extends BeanStub implements INotesDataService, Nam
         dataSource?.setNote({ ...params, column, note });
     }
 
-    private setDataSource(dataSource?: NotesDataSource): void {
+    private setDataSource(dataSource?: NotesDataSource | FullWidthNotesDataSource): void {
         if (this.dataSource === dataSource) {
             return;
         }
@@ -72,6 +79,12 @@ export class NotesDataService extends BeanStub implements INotesDataService, Nam
 
     private createInitParams(): NotesDataSourceParams {
         return _addGridCommonParams(this.gos, {});
+    }
+
+    private isFullWidthDataSource(
+        dataSource?: NotesDataSource | FullWidthNotesDataSource
+    ): dataSource is FullWidthNotesDataSource {
+        return !!dataSource && 'supportsFullWidthRows' in dataSource && dataSource.supportsFullWidthRows === true;
     }
 
     public override destroy(): void {

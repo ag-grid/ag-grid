@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path';
 import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 import { VERSION } from '../version';
 
 describe('Pinned rows', () => {
@@ -54,6 +54,13 @@ describe('Pinned rows', () => {
             await new GridRows(api, 'pinned top rows').check(`
                 PINNED_TOP id:t-0 athlete:"Top Athlete" sport:"Top Sport" age:11
                 ROOT id:ROOT_NODE_ID
+            `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── athlete "Athlete" width:200
+                ├── sport "Sport" width:200
+                └── age "Age" width:200
             `);
         });
 

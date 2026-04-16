@@ -135,6 +135,10 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         this.refreshGui();
         _setAriaLabel(this.ePillDropList, this.getAriaLabel());
+
+        this.addManagedElementListeners(this.getFocusableElement(), {
+            focusin: this.onFocusIn.bind(this),
+        });
     }
 
     private onTabKeyDown(e: KeyboardEvent): void {
@@ -153,8 +157,19 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const shouldAllowDefaultTab = len === 1 || (isFirstFocused && shiftKey) || (isLastFocused && !shiftKey);
 
         if (!shouldAllowDefaultTab) {
-            focusableElements[shiftKey ? 0 : len - 1].focus();
+            // We want tab to jump out of the container, not select the next item, so focus the last item
+            focusableElements[shiftKey ? 0 : len - 1].focus({ preventScroll: true });
         }
+    }
+
+    private onFocusIn(e: FocusEvent): void {
+        const root = this.getFocusableElement();
+        if (root.contains(e.relatedTarget as Node | null)) {
+            // don't scroll when we focus the last item item in order to tab out of the container
+            return;
+        }
+        const target = e.target as HTMLElement | null;
+        target?.scrollIntoView();
     }
 
     private onKeyDown(e: KeyboardEvent) {
@@ -183,6 +198,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
             if (el) {
                 el.focus();
+                el.scrollIntoView();
             }
         }
     }

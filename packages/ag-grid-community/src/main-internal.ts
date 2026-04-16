@@ -73,6 +73,12 @@ export type {
 export type { ITooltipFeature as _ITooltipFeature, TooltipCtrl as _TooltipCtrl } from './agStack/interfaces/iTooltip';
 export { AgPopupComponent } from './agStack/popup/agPopupComponent';
 export { BasePopupService as _BasePopupService } from './agStack/popup/basePopupService';
+export {
+    computeAlignedPosition as _computeAlignedPosition,
+    findBestPlacement as _findBestPlacement,
+    toRelativeRect as _toRelativeRect,
+} from './agStack/popup/popupPositionUtils';
+export type { Alignment as _Alignment, Anchor as _Anchor } from './agStack/popup/popupPositionUtils';
 export { AgPositionableFeature as _AgPositionableFeature } from './agStack/rendering/agPositionableFeature';
 export type {
     PositionableOptions,

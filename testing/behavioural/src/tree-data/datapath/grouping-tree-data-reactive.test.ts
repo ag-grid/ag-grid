@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, getRowsSnapshot } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, getRowsSnapshot } from '../../test-utils';
 
 describe('ag-grid grouping treeData is reactive', () => {
     const gridsManager = new TestGridsManager({
@@ -241,5 +241,13 @@ describe('ag-grid grouping treeData is reactive', () => {
 
             expect(treeSnapshot).toMatchObject(expectedTreeSnapshot);
         }
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "group column" width:200
+            ├── groupType "Group Type" width:200
+            ├── g "G" width:200 rowGroup
+            └── v "V" width:200
+        `);
     });
 });

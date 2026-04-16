@@ -247,7 +247,7 @@ export class GridRows<TData = any> {
             }
             const diagram = this.makeDiagram(false);
             if (unindentText(diagram) !== unindentText(diagramSnapshot)) {
-                recordSnapshotMismatch(this.check, diagram, this.label);
+                recordSnapshotMismatch(this.check, diagram, this.label, 'check');
             }
             return this;
         }

@@ -189,7 +189,7 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
-import type { NotesDataSource } from '../interfaces/notes';
+import type { FullWidthNotesDataSource, NotesDataSource } from '../interfaces/notes';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
 import type { OverlaySelectorFunc, OverlayType } from '../rendering/overlays/overlayComponent';
 import type { Icons } from '../utils/icon';
@@ -1191,7 +1191,7 @@ export interface GridOptions<TData = any> {
      * Can be updated to enable, disable, or replace Notes at runtime.
      * @agModule `NotesModule`
      */
-    notesDataSource?: NotesDataSource;
+    notesDataSource?: NotesDataSource | FullWidthNotesDataSource;
     /**
      * The delay in milliseconds before a note is shown when hovering a noted cell.
      * @default 180

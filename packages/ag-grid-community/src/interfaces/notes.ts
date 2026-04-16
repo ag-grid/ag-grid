@@ -45,27 +45,50 @@ export interface NotesDataSourceFullWidthRowNoteParams {
     pinned?: 'left' | 'right';
 }
 
-export type NotesDataSourceGetNoteParams = NotesDataSourceNoteParams | NotesDataSourceFullWidthRowNoteParams;
+export type NotesDataSourceGetNoteParams = NotesDataSourceNoteParams;
 
-export type NotesDataSourceSetNoteParams = NotesDataSourceGetNoteParams & {
+export interface NotesDataSourceSetNoteParams extends NotesDataSourceNoteParams {
     note: Note | undefined;
-};
+}
+
+export type FullWidthNotesDataSourceGetNoteParams = NotesDataSourceNoteParams | NotesDataSourceFullWidthRowNoteParams;
+
+export type FullWidthNotesDataSourceSetNoteParams =
+    | NotesDataSourceSetNoteParams
+    | (NotesDataSourceFullWidthRowNoteParams & {
+          note: Note | undefined;
+      });
 
 export interface NotesDataSourceParams extends AgGridCommon<any, any> {}
+
+interface BaseNotesDataSource {
+    /** Initialise the data source so that the user can take a reference to the gridApi if needed. */
+    init?(params: NotesDataSourceParams): void;
+    /** Called by the grid when the data source is being disposed. */
+    destroy?(): void;
+}
 
 /**
  * Control where notes are stored/retrieved from.
  * An implementation can store note state separately from the row data, or persist it remotely.
  */
-export interface NotesDataSource {
-    /** Initialise the data source so that the user can take a reference to the gridApi if needed. */
-    init?(params: NotesDataSourceParams): void;
-    /** Return the note for the given cell or full width row. */
+export interface NotesDataSource extends BaseNotesDataSource {
+    /** Return the note for the given cell. */
     getNote(params: NotesDataSourceGetNoteParams): Note | undefined;
-    /** Set or clear the note for the given cell or full width row. */
+    /** Set or clear the note for the given cell. */
     setNote(params: NotesDataSourceSetNoteParams): void;
-    /** Called by the grid when the data source is being disposed. */
-    destroy?(): void;
+}
+
+/**
+ * Control where notes are stored/retrieved from for both cells and full width rows.
+ */
+export interface FullWidthNotesDataSource extends BaseNotesDataSource {
+    /** Enables full width row notes for this datasource. */
+    supportsFullWidthRows: true;
+    /** Return the note for the given cell or full width row. */
+    getNote(params: FullWidthNotesDataSourceGetNoteParams): Note | undefined;
+    /** Set or clear the note for the given cell or full width row. */
+    setNote(params: FullWidthNotesDataSourceSetNoteParams): void;
 }
 
 export interface RefreshNotesParams {
@@ -98,6 +121,7 @@ export interface INotesFeature {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface INotesDataService extends Bean {
     hasDataSource(): boolean;
+    supportsFullWidthRows(): boolean;
     getNote(params: GetNoteParams): Note | undefined;
     setNote(params: SetNoteParams): void;
 }

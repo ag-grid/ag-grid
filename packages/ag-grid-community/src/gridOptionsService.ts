@@ -347,12 +347,14 @@ export class GridOptionsService
         gridId: string;
         rowModelType: RowModelType;
         isUmd: boolean;
+        usesAgGridProvider: boolean;
     } {
         return {
             gridId: this.gridId,
             gridScoped: _areModulesGridScoped(),
             rowModelType: this.get('rowModelType'),
             isUmd: _isUmd(),
+            usesAgGridProvider: this.beans.frameworkOverrides.usesAgGridProvider ?? false,
         };
     }
 

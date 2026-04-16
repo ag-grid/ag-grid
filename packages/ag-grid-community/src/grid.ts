@@ -135,7 +135,12 @@ export class GridCoreCreator {
 
         const registeredModules = this.getRegisteredModules(params, gridId, gridOptions.rowModelType);
 
-        const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
+        const beanClasses = this.createBeansList(
+            gridOptions.rowModelType,
+            registeredModules,
+            gridId,
+            params?.frameworkOverrides?.usesAgGridProvider
+        );
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
 
         if (!beanClasses) {
@@ -247,7 +252,8 @@ export class GridCoreCreator {
     private createBeansList(
         userProvidedRowModelType: RowModelType | undefined,
         registeredModules: Module[],
-        gridId: string
+        gridId: string,
+        usesAgGridProvider?: boolean
     ): SingletonBean[] | undefined {
         // assert that the relevant module has been loaded
         const rowModelModuleNames: Record<RowModelType, CommunityModuleName | EnterpriseModuleName> = {
@@ -266,7 +272,7 @@ export class GridCoreCreator {
         }
 
         if (!_hasUserRegistered()) {
-            _logPreInitErr(272, undefined, NoModulesRegisteredError());
+            _logPreInitErr(272, undefined, NoModulesRegisteredError(usesAgGridProvider));
             return;
         }
 

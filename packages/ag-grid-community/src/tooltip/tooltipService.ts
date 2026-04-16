@@ -213,6 +213,10 @@ export class TooltipService extends BeanStub implements NamedBean {
             ctrl.destroyBean(existingTooltipFeature);
         }
 
+        if (!ctrl.isAlive()) {
+            return;
+        }
+
         const gos = this.gos;
         const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(gos);
         const { column, eGui } = ctrl;
@@ -259,6 +263,9 @@ export class TooltipService extends BeanStub implements NamedBean {
     ): TooltipFeature | undefined {
         if (existingTooltipFeature) {
             ctrl.destroyBean(existingTooltipFeature);
+        }
+        if (!ctrl.isAlive()) {
+            return;
         }
         const gos = this.gos;
         const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(gos);

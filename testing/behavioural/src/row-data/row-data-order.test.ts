@@ -4,6 +4,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions, RowDataTransaction } from 'ag-grid-community';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -85,6 +86,11 @@ describe('ag-grid rows-ordering', () => {
             ├── LEAF id:2 x:4
             ├── LEAF id:3 x:7
             └── LEAF id:4 x:5
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── x "X" width:200
         `);
     });
 
@@ -200,6 +206,11 @@ describe('ag-grid rows-ordering', () => {
             ├── LEAF id:10 x:10
             ├── LEAF id:9 x:9
             └── LEAF id:8 x:80
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── x "X" width:200
         `);
     });
 

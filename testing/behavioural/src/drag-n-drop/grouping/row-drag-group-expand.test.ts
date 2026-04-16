@@ -2,7 +2,14 @@ import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
 import type { GridOptions, RowNode } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout, getRowHtmlElement } from '../../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    RowDragDispatcher,
+    TestGridsManager,
+    asyncSetTimeout,
+    getRowHtmlElement,
+} from '../../test-utils';
 
 const gridsManager = new TestGridsManager({
     modules: [ClientSideRowModelModule, RowDragModule, RowGroupingModule],
@@ -113,6 +120,12 @@ describe('row drag nudger group expansion', () => {
             · ├── LEAF id:2 group:"B" value:"A2"
             · └── LEAF id:3 group:"B" value:"B1"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── value "Value" width:200
+        `);
     });
 
     test('unmanaged row data still auto-expands collapsed groups after the insert delay', async () => {
@@ -182,6 +195,12 @@ describe('row drag nudger group expansion', () => {
             │ └── LEAF id:2 group:"A" value:"A2"
             └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
             · └── LEAF id:3 group:"B" value:"B1"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── value "Value" width:200
         `);
     });
 });

@@ -1,7 +1,7 @@
 import { CellStyleModule, ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../../test-utils';
 
 describe('ag-grid hierarchical tree filter sort', () => {
     const gridsManager = new TestGridsManager({
@@ -202,6 +202,13 @@ describe('ag-grid hierarchical tree filter sort', () => {
             · │ ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" k:"D" name:"Donald Knuth"
             · │ └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" k:"E" name:"Grace Hopper"
             · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" k:"C" name:"A. Church"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Hierarchy" width:200
+            ├── k "K" width:200
+            └── name "Name" width:200
         `);
     });
 
@@ -468,6 +475,14 @@ describe('ag-grid hierarchical tree filter sort', () => {
             · │ └── 8 LEAF id:8 ag-Grid-AutoColumn:"8" k:"G" value:10 x:0
             · └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" k:"B" value:17 x:1
             · · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" k:"E" value:11 x:0
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Hierarchy" width:200
+            ├── k "K" width:200
+            ├── value "Value" width:200
+            └── x "X" width:200 sort:asc filter
         `);
     });
 

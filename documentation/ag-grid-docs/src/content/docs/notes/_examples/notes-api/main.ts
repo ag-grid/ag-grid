@@ -8,6 +8,8 @@ import type {
     IRowNode,
     Note,
     NotesDataSource,
+    NotesDataSourceGetNoteParams,
+    NotesDataSourceSetNoteParams,
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -60,12 +62,8 @@ const noteStore: Record<string, Record<string, Note>> = {
 };
 
 const notesDataSource: NotesDataSource = {
-    getNote: (params) => ('column' in params ? noteStore[params.rowNode.id!]?.[params.column.getColId()] : undefined),
-    setNote: (params) => {
-        if (!('column' in params)) {
-            return;
-        }
-
+    getNote: (params: NotesDataSourceGetNoteParams) => noteStore[params.rowNode.id!]?.[params.column.getColId()],
+    setNote: (params: NotesDataSourceSetNoteParams) => {
         const rowId = params.rowNode.id!;
         const colId = params.column.getColId();
 

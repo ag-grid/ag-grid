@@ -36,7 +36,8 @@ const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
     }
 };
 
-const shouldDisplayCell = (cell: ExcelCell) => cell.data?.value !== '' || cell.styleId !== undefined;
+const shouldDisplayCell = (cell: ExcelCell) =>
+    cell.data?.value !== '' || cell.styleId !== undefined || cell.note !== undefined;
 
 const rowFactory: ExcelOOXMLTemplate = {
     getTemplate(config: ExcelRow, idx: number, currentSheet: number) {

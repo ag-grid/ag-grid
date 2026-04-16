@@ -2,6 +2,7 @@ import type { ExcelOOXMLTemplate, XmlElement } from 'ag-grid-community';
 
 import {
     XLSX_WORKBOOK_IMAGE_IDS,
+    XLSX_WORKSHEET_COMMENTS,
     XLSX_WORKSHEET_DATA_TABLES,
     XLSX_WORKSHEET_HEADER_FOOTER_IMAGES,
     XLSX_WORKSHEET_IMAGES,
@@ -13,7 +14,7 @@ export const _normaliseImageExtension = (ext: 'jpg' | 'png' | 'gif'): ImageExten
 
 const contentTypesFactory: ExcelOOXMLTemplate = {
     getTemplate({ sheetLen, hasCustomProperties }: { sheetLen: number; hasCustomProperties?: boolean }) {
-        const worksheets = new Array(sheetLen).fill(undefined).map((v, i) => ({
+        const worksheets = new Array(sheetLen).fill(undefined).map((_v, i) => ({
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml',
             PartName: `/xl/worksheets/sheet${i + 1}.xml`,
@@ -21,19 +22,25 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
 
         const sheetsWithImages = XLSX_WORKSHEET_IMAGES.size;
         const headerFooterImages = XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.size;
+        const sheetsWithComments = XLSX_WORKSHEET_COMMENTS.size;
         const imageTypesObject: { [key in ImageExtension]?: boolean } = {};
 
         XLSX_WORKBOOK_IMAGE_IDS.forEach((v) => {
             imageTypesObject[_normaliseImageExtension(v.type)] = true;
         });
 
-        const imageDocs = new Array(sheetsWithImages).fill(undefined).map((v, i) => ({
+        const imageDocs = new Array(sheetsWithImages).fill(undefined).map((_v, i) => ({
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.drawing+xml',
             PartName: `/xl/drawings/drawing${i + 1}.xml`,
         }));
 
         const tableDocs: { name: string; ContentType: string; PartName: string }[] = [];
+        const commentDocs = new Array(sheetsWithComments).fill(undefined).map((_v, i) => ({
+            name: 'Override',
+            ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml',
+            PartName: `/xl/comments${i + 1}.xml`,
+        }));
 
         XLSX_WORKSHEET_DATA_TABLES.forEach(({ name }) => {
             tableDocs.push({
@@ -59,7 +66,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             Extension: ext,
         }));
 
-        if (headerFooterImages) {
+        if (headerFooterImages || sheetsWithComments) {
             imageTypes.push({
                 name: 'Default',
                 Extension: 'vml',
@@ -101,6 +108,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
                 PartName: '/xl/sharedStrings.xml',
             },
             ...imageDocs,
+            ...commentDocs,
             ...tableDocs,
             {
                 name: 'Override',

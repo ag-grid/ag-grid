@@ -27,6 +27,7 @@ import {
 import { _isElementInEventPath } from '../utils/event';
 import { _exists } from '../utils/generic';
 import { AgPromise, _wrapInterval } from '../utils/promise';
+import { computeAlignedPosition, toRelativeRect } from './popupPositionUtils';
 
 interface AgPopup {
     element: HTMLElement;
@@ -123,27 +124,26 @@ export abstract class BasePopupService<
         this.setAlignedTo(eventSource, ePopup);
 
         const updatePosition = () => {
-            let x = sourceRect.left - parentRect.left;
-            if (alignSide === 'right') {
-                x -= ePopup.offsetWidth - sourceRect.width;
-            }
-
-            let y;
+            const relativeRect = toRelativeRect(sourceRect, parentRect);
+            const targetSize = { width: ePopup.offsetWidth, height: ePopup.offsetHeight };
+            const right = alignSide === 'right';
 
             if (position === 'over') {
-                y = sourceRect.top - parentRect.top;
                 this.setAlignedStyles(ePopup, 'over');
-            } else {
-                this.setAlignedStyles(ePopup, 'under');
-                const alignSide = this.shouldRenderUnderOrAbove(ePopup, sourceRect, parentRect, params.nudgeY || 0);
-                if (alignSide === 'under') {
-                    y = sourceRect.top - parentRect.top + sourceRect.height;
-                } else {
-                    y = sourceRect.top - ePopup.offsetHeight - (nudgeY || 0) * 2 - parentRect.top;
-                }
+                return computeAlignedPosition(relativeRect, targetSize, right ? 'tr-tr' : 'tl-tl');
             }
 
-            return { x, y };
+            this.setAlignedStyles(ePopup, 'under');
+            const side = this.shouldRenderUnderOrAbove(ePopup, sourceRect, parentRect, params.nudgeY || 0);
+
+            if (side === 'under') {
+                return computeAlignedPosition(relativeRect, targetSize, right ? 'tr-br' : 'tl-bl');
+            }
+
+            // above: compensate for nudgeY which positionPopup will add positively
+            const pos = computeAlignedPosition(relativeRect, targetSize, right ? 'br-tr' : 'bl-tl');
+            pos.y -= (nudgeY || 0) * 2;
+            return pos;
         };
 
         this.positionPopup({
@@ -168,7 +168,8 @@ export abstract class BasePopupService<
         let minWidthSet = false;
 
         const updatePosition = () => {
-            const y = this.keepXYWithinBounds(ePopup, sourceRect.top - parentRect.top, Direction.Vertical);
+            const relativeRect = toRelativeRect(sourceRect, parentRect);
+            const y = this.keepXYWithinBounds(ePopup, relativeRect.top, Direction.Vertical);
 
             const minWidth = ePopup.clientWidth > 0 ? ePopup.clientWidth : 200;
             if (!minWidthSet) {
@@ -177,16 +178,18 @@ export abstract class BasePopupService<
             }
             const widthOfParent = parentRect.right - parentRect.left;
             const maxX = widthOfParent - minWidth;
+            const targetSize = { width: minWidth, height: ePopup.offsetHeight };
 
-            // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
-            // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
-            // we try place it first to the left, and then if not to the right.
+            // the x position depends on RTL/LTR. For LTR, try right first then fall back to left.
+            // For RTL, try left first then fall back to right.
+            const rightX = computeAlignedPosition(relativeRect, targetSize, 'tl-tr').x - 2;
+            const leftX = computeAlignedPosition(relativeRect, targetSize, 'tr-tl').x;
+
             let x: number;
             if (this.gos.get('enableRtl')) {
-                // for RTL, try left first
-                x = xLeftPosition();
+                x = leftX;
                 if (x < 0) {
-                    x = xRightPosition();
+                    x = rightX;
                     this.setAlignedStyles(ePopup, 'left');
                 }
                 if (x > maxX) {
@@ -194,10 +197,9 @@ export abstract class BasePopupService<
                     this.setAlignedStyles(ePopup, 'right');
                 }
             } else {
-                // for LTR, try right first
-                x = xRightPosition();
+                x = rightX;
                 if (x > maxX) {
-                    x = xLeftPosition();
+                    x = leftX;
                     this.setAlignedStyles(ePopup, 'right');
                 }
                 if (x < 0) {
@@ -206,14 +208,6 @@ export abstract class BasePopupService<
                 }
             }
             return { x, y };
-
-            function xRightPosition(): number {
-                return sourceRect.right - parentRect.left - 2;
-            }
-
-            function xLeftPosition(): number {
-                return sourceRect.left - parentRect.left - minWidth;
-            }
         };
 
         this.positionPopup({

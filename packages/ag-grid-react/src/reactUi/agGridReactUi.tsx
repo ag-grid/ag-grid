@@ -85,6 +85,7 @@ const deprecatedReactCompProps = new Set(Object.keys(deprecatedProps));
 export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
     const modulesFromContext = useContext(ModulesContext);
     const licenseKeyFromContext = useContext(LicenseContext);
+    const usesAgGridProvider = modulesFromContext !== null;
 
     const apiRef = useRef<GridApi<TData>>();
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -177,7 +178,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             }
         };
 
-        const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates);
+        const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates, usesAgGridProvider);
         frameworkOverridesRef.current = frameworkOverrides;
         const renderStatus = new RenderStatusService();
         const gridParams: GridParams = {
@@ -503,7 +504,10 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     private queueUpdates = false;
     public override readonly renderingEngine = 'react';
 
-    constructor(private readonly processQueuedUpdates: () => void) {
+    constructor(
+        private readonly processQueuedUpdates: () => void,
+        public override readonly usesAgGridProvider: boolean
+    ) {
         super('react');
     }
 

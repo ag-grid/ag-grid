@@ -4,7 +4,14 @@ import { userEvent } from '@testing-library/user-event';
 
 import { RenderApiModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 
-import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from '../../test-utils';
 
 describe('Cell Editing: setDataValue', () => {
     const gridMgr = new TestGridsManager({
@@ -81,6 +88,11 @@ describe('Cell Editing: setDataValue', () => {
 
                 expect(valueSetterTargets).toEqual(['ROW_0']);
                 expect(valueSetterCalls).toBe(1);
+
+                await new GridColumns(api, 'columns').checkColumns(`
+                    CENTER
+                    └── field "Field" width:200 editable
+                `);
             }
         );
 
@@ -111,9 +123,9 @@ describe('Cell Editing: setDataValue', () => {
 
                 const beforeRows = new GridRows(api, `before ${source ?? 'default'} setDataValue`);
                 await beforeRows.check(`
-                ROOT id:ROOT_NODE_ID
-                └── LEAF id:ROW_0 field:"Initial Value"
-            `);
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:ROW_0 field:"Initial Value"
+                `);
 
                 const rowNode = api.getDisplayedRowAtIndex(0);
                 rowNode?.setDataValue('field', `${source ?? 'default'}-value`, source);
@@ -146,6 +158,11 @@ describe('Cell Editing: setDataValue', () => {
                 });
                 expect(valueSetterTargets).toEqual(['ROW_0']);
                 expect(valueSetterCalls).toBe(1);
+
+                await new GridColumns(api, 'columns').checkColumns(`
+                    CENTER
+                    └── field "Field" width:200 editable
+                `);
             }
         );
     });

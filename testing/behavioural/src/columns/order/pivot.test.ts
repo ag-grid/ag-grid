@@ -2,7 +2,7 @@ import type { ColDef, ColGroupDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { PivotModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, applyTransactionChecked } from '../../test-utils';
+import { GridColumns, TestGridsManager, applyTransactionChecked } from '../../test-utils';
 import { getAutoGroupColumnIds, getColumnOrder } from '../column-test-utils';
 
 describe('pivotMode=true', () => {
@@ -15,7 +15,7 @@ describe('pivotMode=true', () => {
     });
 
     describe('without a pivoted column', () => {
-        test('hides primary cols that do not have aggregations', () => {
+        test('hides primary cols that do not have aggregations', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }];
 
             const gridApi = gridsManager.createGrid('myGrid', { columnDefs, pivotMode: true });
@@ -23,9 +23,11 @@ describe('pivotMode=true', () => {
             const expected = [];
             expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
             expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns('empty');
         });
 
-        test('displays aggFunc primary columns when no pivot columns', () => {
+        test('displays aggFunc primary columns when no pivot columns', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a', aggFunc: 'sum' }];
 
             const gridApi = gridsManager.createGrid('myGrid', { columnDefs, pivotMode: true });
@@ -33,23 +35,79 @@ describe('pivotMode=true', () => {
             const expected = ['a'];
             expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
             expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                └── a width:200 aggFunc:sum
+            `);
         });
 
-        test.each(['singleColumn', 'multipleColumns', 'groupRows'] as const)(
-            'groupDisplayType=%s displays auto column(s)',
-            (groupDisplayType) => {
-                const columnDefs: (ColDef | ColGroupDef)[] = [
-                    { colId: 'a', rowGroup: true },
-                    { colId: 'b', rowGroup: true },
-                ];
+        test('groupDisplayType=singleColumn displays auto column(s)', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b', rowGroup: true },
+            ];
 
-                const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, pivotMode: true });
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType: 'singleColumn',
+                pivotMode: true,
+            });
 
-                const expected = getAutoGroupColumnIds(columnDefs, groupDisplayType, true);
-                expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
-                expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
-            }
-        );
+            const expected = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                └── ag-Grid-AutoColumn "Group" width:200
+            `);
+        });
+
+        test('groupDisplayType=multipleColumns displays auto column(s)', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b', rowGroup: true },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType: 'multipleColumns',
+                pivotMode: true,
+            });
+
+            const expected = getAutoGroupColumnIds(columnDefs, 'multipleColumns', true);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-a width:200
+                └── ag-Grid-AutoColumn-b width:200
+            `);
+        });
+
+        test('groupDisplayType=groupRows displays auto column(s)', async () => {
+            const columnDefs: (ColDef | ColGroupDef)[] = [
+                { colId: 'a', rowGroup: true },
+                { colId: 'b', rowGroup: true },
+            ];
+
+            const gridApi = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                groupDisplayType: 'groupRows',
+                pivotMode: true,
+            });
+
+            const expected = getAutoGroupColumnIds(columnDefs, 'groupRows', true);
+            expect(getColumnOrder(gridApi, 'all')).toEqual(expected);
+            expect(getColumnOrder(gridApi, 'center')).toEqual(expected);
+
+            await new GridColumns(gridApi, 'columns').checkColumns(`
+                CENTER
+                └── ag-Grid-AutoColumn "Group" width:200
+            `);
+        });
     });
 
     describe('with a pivoted column', () => {

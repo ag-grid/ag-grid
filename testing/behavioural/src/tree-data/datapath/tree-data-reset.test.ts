@@ -4,7 +4,7 @@ import type { MockInstance } from 'vitest';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
 
@@ -71,6 +71,11 @@ describe('ag-grid tree data reset', () => {
             └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
             · └── B LEAF id:1 ag-Grid-AutoColumn:"B"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── ag-Grid-AutoColumn "Organisation Hierarchy" width:200
+        `);
     });
 
     test('tree data async loading', async () => {
@@ -105,6 +110,11 @@ describe('ag-grid tree data reset', () => {
             ROOT id:ROOT_NODE_ID
             └─┬ C filler id:row-group-0-C ag-Grid-AutoColumn:"C"
             · └── D LEAF id:2 ag-Grid-AutoColumn:"D"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── ag-Grid-AutoColumn "Organisation Hierarchy" width:200
         `);
     });
 

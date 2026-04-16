@@ -4,7 +4,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid master detail', () => {
     const gridsManager = new TestGridsManager({
@@ -42,6 +42,11 @@ describe('ag-grid master detail', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └── master collapsed id:0 k:"1"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── k "K" width:200
         `);
     });
 
@@ -85,6 +90,11 @@ describe('ag-grid master detail', () => {
             · · └─┬ ROOT id:ROOT_NODE_ID
             · · · ├── LEAF id:0 x:"x"
             · · · └── LEAF id:1 x:"y"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── k "K" width:200
         `);
     });
 

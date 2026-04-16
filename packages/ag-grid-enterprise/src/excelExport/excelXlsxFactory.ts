@@ -15,6 +15,7 @@ import { _escapeString, _warn } from 'ag-grid-community';
 
 import type {
     ExcelCalculatedImage,
+    ExcelComment,
     ExcelDataTable,
     ExcelHeaderFooterCalculatedImage,
     ExcelHeaderFooterPosition,
@@ -22,10 +23,12 @@ import type {
 } from './assets/excelInterfaces';
 import { createXmlPart, setExcelImageTotalHeight, setExcelImageTotalWidth } from './assets/excelUtils';
 import type { ExcelGridSerializingParams } from './excelSerializingSession';
+import commentsFactory from './files/ooxml/comments';
 import contentTypesFactory, { _normaliseImageExtension } from './files/ooxml/contentTypes';
 import coreFactory from './files/ooxml/core';
 import customPropertiesFactory from './files/ooxml/customProperties';
 import drawingFactory from './files/ooxml/drawing';
+import noteVmlDrawingFactory from './files/ooxml/noteVmlDrawing';
 import relationshipsFactory from './files/ooxml/relationships';
 import sharedStringsFactory from './files/ooxml/sharedStrings';
 import stylesheetFactory, { registerStyles } from './files/ooxml/styles/stylesheet';
@@ -62,6 +65,8 @@ export const XLSX_WORKBOOK_IMAGE_IDS: ImageIdMap = new Map();
 export const XLSX_WORKSHEET_IMAGE_IDS: Map<number, ImageIdMap> = new Map();
 /** Maps all sheet tables to unique Ids */
 export const XLSX_WORKSHEET_DATA_TABLES: Map<number, ExcelDataTable> = new Map();
+/** Maps sheets to Excel notes/comments */
+export const XLSX_WORKSHEET_COMMENTS: Map<number, ExcelComment[]> = new Map();
 /** Default name to be used for tables when no name is provided */
 const DEFAULT_TABLE_DISPLAY_NAME = 'AG-GRID-TABLE';
 
@@ -300,6 +305,7 @@ export function resetXlsxFactory(): void {
     XLSX_WORKBOOK_IMAGE_IDS.clear();
     XLSX_WORKSHEET_IMAGE_IDS.clear();
     XLSX_WORKSHEET_DATA_TABLES.clear();
+    XLSX_WORKSHEET_COMMENTS.clear();
 
     XLSX_SHEET_NAMES = [];
     XLSX_SHEET_DATA = [];
@@ -399,6 +405,14 @@ export function createXlsxDrawing(sheetIndex: number) {
     return createXmlPart(drawingFactory.getTemplate({ sheetIndex }));
 }
 
+export function createXlsxComments(sheetIndex: number, author: string, suppressPrependAuthorToNotes?: boolean) {
+    const comments = XLSX_WORKSHEET_COMMENTS.get(sheetIndex) || [];
+    const defaultAuthor = author || 'AG Grid';
+    const prependAuthor = !suppressPrependAuthorToNotes;
+
+    return createXmlPart(commentsFactory.getTemplate({ comments, defaultAuthor, prependAuthor }));
+}
+
 export function createXlsxDrawingRel(sheetIndex: number) {
     const worksheetImageIds = XLSX_WORKSHEET_IMAGE_IDS.get(sheetIndex) || [];
     const XMLArr: ExcelRelationship[] = [];
@@ -418,6 +432,10 @@ export function createXlsxDrawingRel(sheetIndex: number) {
 
 export function createXlsxVmlDrawing(sheetIndex: number) {
     return createXmlPart(vmlDrawingFactory.getTemplate({ sheetIndex }), true);
+}
+
+export function createXlsxNoteVmlDrawing(sheetIndex: number) {
+    return createXmlPart(noteVmlDrawingFactory.getTemplate({ sheetIndex }), true);
 }
 
 export function createXlsxVmlDrawingRel(sheetIndex: number) {
@@ -446,14 +464,24 @@ export function createXlsxVmlDrawingRel(sheetIndex: number) {
 
 export function createXlsxRelationships({
     drawingIndex,
-    vmlDrawingIndex,
+    noteVmlDrawingIndex,
+    headerFooterVmlDrawingIndex,
+    commentsIndex,
     tableName,
 }: {
     drawingIndex?: number;
-    vmlDrawingIndex?: number;
+    noteVmlDrawingIndex?: number;
+    headerFooterVmlDrawingIndex?: number;
+    commentsIndex?: number;
     tableName?: string;
 } = {}) {
-    if (drawingIndex === undefined && vmlDrawingIndex === undefined && tableName === undefined) {
+    if (
+        drawingIndex === undefined &&
+        noteVmlDrawingIndex === undefined &&
+        headerFooterVmlDrawingIndex === undefined &&
+        commentsIndex === undefined &&
+        tableName === undefined
+    ) {
         return '';
     }
 
@@ -466,11 +494,19 @@ export function createXlsxRelationships({
         });
     }
 
-    if (vmlDrawingIndex != null) {
+    if (noteVmlDrawingIndex != null) {
         config.push({
             Id: `rId${config.length + 1}`,
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing',
-            Target: `../drawings/vmlDrawing${vmlDrawingIndex + 1}.vml`,
+            Target: `../drawings/vmlDrawing${noteVmlDrawingIndex + 1}.vml`,
+        });
+    }
+
+    if (headerFooterVmlDrawingIndex != null) {
+        config.push({
+            Id: `rId${config.length + 1}`,
+            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/vmlDrawing',
+            Target: `../drawings/vmlDrawing${headerFooterVmlDrawingIndex + 1}.vml`,
         });
     }
 
@@ -479,6 +515,14 @@ export function createXlsxRelationships({
             Id: `rId${config.length + 1}`,
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/table',
             Target: `../tables/${tableName}.xml`,
+        });
+    }
+
+    if (commentsIndex != null) {
+        config.push({
+            Id: `rId${config.length + 1}`,
+            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments',
+            Target: `../comments${commentsIndex + 1}.xml`,
         });
     }
 
@@ -572,6 +616,7 @@ const reorderSheetState = (order: number[]) => {
     reorderSheetSpecificMap(XLSX_WORKSHEET_IMAGES, order);
     reorderSheetSpecificMap(XLSX_WORKSHEET_HEADER_FOOTER_IMAGES, order);
     reorderSheetSpecificMap(XLSX_WORKSHEET_DATA_TABLES, order);
+    reorderSheetSpecificMap(XLSX_WORKSHEET_COMMENTS, order);
     reorderSheetSpecificMap(XLSX_WORKSHEET_IMAGE_IDS, order);
 
     XLSX_IMAGES.forEach((sheetImages) => {

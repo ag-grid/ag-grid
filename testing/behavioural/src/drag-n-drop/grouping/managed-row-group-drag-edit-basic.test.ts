@@ -11,7 +11,14 @@ import {
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout, getRowHtmlElement } from '../../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    RowDragDispatcher,
+    TestGridsManager,
+    asyncSetTimeout,
+    getRowHtmlElement,
+} from '../../test-utils';
 
 const createGridManager = () =>
     new TestGridsManager({
@@ -150,6 +157,12 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
         `);
 
         expect(api.getRowNode('2')?.data.group).toBe('C');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── value "Value" width:200
+        `);
     });
 
     test('dragging a year group across multiple sibling years ends in the hovered year even after touching others', async () => {
@@ -448,6 +461,12 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
             · └── LEAF id:3 group:"B" value:"B1"
         `);
         expect(api.getRowNode('2')?.data.group).toBe('B');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── value "Value" width:200
+        `);
     });
 
     test('rowDragInsertDelay does not promote leaf targets in row grouping', async () => {

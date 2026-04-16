@@ -1,3 +1,4 @@
+import { GridColumns } from '../../../test-utils';
 import { GridRows, asyncSetTimeout, createRowData, distributeGroupValue, gridsManager } from './distribute-test-utils';
 
 afterEach(() => {
@@ -48,6 +49,12 @@ describe('distributeGroupValue integer distribution via closure', () => {
             · · ├── LEAF id:a2 region:"R" country:"C" amount:3
             · · └── LEAF id:a3 region:"R" country:"C" amount:3
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
+        `);
     });
 
     test('percentage mode with integer distribution rounds and spreads remainder', async () => {
@@ -96,6 +103,12 @@ describe('distributeGroupValue integer distribution via closure', () => {
             · · ├── LEAF id:a1 region:"R" country:"C" amount:17
             · · ├── LEAF id:a2 region:"R" country:"C" amount:33
             · · └── LEAF id:a3 region:"R" country:"C" amount:50
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
         `);
     });
 });

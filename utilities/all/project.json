@@ -248,10 +248,16 @@
         "cwd": "{workspaceRoot}"
       }
     },
+    "snyk:clean": {
+      "command": "node ./external/ag-shared/scripts/snyk/snykClean.mjs",
+      "options": {
+        "cwd": "{workspaceRoot}"
+      }
+    },
     "snyk:test:json": {
       "command": "mkdir -p tmp && { npx snyk test --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=high --exclude=.nx,project.json,dist,.claude --remote-repo-url=https://github.com/ag-grid/ag-grid --json > tmp/snyk.json; code=$?; [ $code -le 1 ]; }",
       "cache": true,
-      "inputs": ["{workspaceRoot}/yarn.lock"],
+      "inputs": ["{workspaceRoot}/yarn.lock", "{workspaceRoot}/**/.snyk"],
       "outputs": ["{workspaceRoot}/tmp/snyk.json"],
       "options": {
         "cwd": "{workspaceRoot}"
