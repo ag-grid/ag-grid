@@ -17,7 +17,7 @@ import type {
     IFormulaService,
     INotesService,
     Note,
-    ProcessCellForExportNoteParams,
+    ProcessNoteForExportParams,
     RowAccumulator,
     RowHeightCallbackParams,
     RowNode,
@@ -647,9 +647,9 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         column: AgColumn;
         node: RowNode;
     }): ExcelNote | undefined {
-        const { processCellNoteCallback, suppressGridNotesExport } = this.config;
+        const { processNoteCallback, suppressGridNotesExport } = this.config;
         const shouldAutoExportGridNotes = !suppressGridNotesExport && !!this.notesSvc?.hasDataSource();
-        const shouldFetchGridNote = !!this.notesSvc && (shouldAutoExportGridNotes || !!processCellNoteCallback);
+        const shouldFetchGridNote = !!this.notesSvc && (shouldAutoExportGridNotes || !!processNoteCallback);
 
         const gridNote = shouldFetchGridNote
             ? this.notesSvc?.getNote({ rowNode: params.node, column: params.column, location: 'cell' })
@@ -660,11 +660,11 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             defaultNote = { text: gridNote.text, author: gridNote.author };
         }
 
-        if (!processCellNoteCallback) {
+        if (!processNoteCallback) {
             return defaultNote;
         }
 
-        const callbackResult = processCellNoteCallback(this.getCellNoteExportParams(params, gridNote, defaultNote));
+        const callbackResult = processNoteCallback(this.getCellNoteExportParams(params, gridNote, defaultNote));
 
         if (callbackResult === undefined) {
             return defaultNote;
@@ -685,7 +685,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         },
         gridNote: Note | undefined,
         defaultNote: ExcelNote | undefined
-    ): ProcessCellForExportNoteParams {
+    ): ProcessNoteForExportParams {
         const { column, node, accumulatedRowIndex } = params;
         const value = this.valueSvc.getValueForDisplay({ column, node, from: this.valueFrom }).value;
 

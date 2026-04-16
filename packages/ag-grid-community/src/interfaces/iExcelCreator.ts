@@ -586,20 +586,20 @@ export interface ExcelWorksheetConfigParams {
     ) => { image: ExcelImage; value?: string } | undefined;
     /**
      * Set to `true` to suppress exporting cell notes from the grid `notesDataSource`.
-     * Callback-based note injection via `processCellNoteCallback` still works when this is set.
+     * Callback-based note injection via `processNoteCallback` still works when this is set.
      * @default false
      */
     suppressGridNotesExport?: boolean;
     /**
-     * Allows customising, suppressing, or injecting Excel notes/comments for exported body cells.
+     * Allows customising, suppressing, or injecting Excel notes/comments for exported cells.
      *
      * Return `undefined` to keep the default behaviour, `null` to suppress the note for the current cell,
      * or an `ExcelNote` to export a custom note.
      */
-    processCellNoteCallback?: (params: ProcessCellForExportNoteParams) => ExcelNote | null | undefined;
+    processNoteCallback?: (params: ProcessNoteForExportParams) => ExcelNote | null | undefined;
 }
 
-export interface ProcessCellForExportNoteParams<TData = any, TContext = any>
+export interface ProcessNoteForExportParams<TData = any, TContext = any>
     extends ProcessCellForExportParams<TData, TContext> {
     /**
      * The grid note resolved for the current cell, when the Notes feature is available.

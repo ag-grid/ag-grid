@@ -16,8 +16,8 @@
         "fileName": {
             "default": "export.xlsx"
         },
-        "processCellNoteCallback": {
-            "description": "A callback invoked for each exported body cell, allowing Excel notes/comments to be customised, injected, or suppressed. See [Notes](./excel-export-notes/)."
+        "processNoteCallback": {
+            "description": "A callback invoked for each exported cell, allowing Excel notes/comments to be customised, injected, or suppressed. See [Notes](./excel-export-notes/)."
         },
         "suppressPrependAuthorToNotes": {
             "description": "Set to `true` to suppress prepending the author name as bold text in the exported Excel note body. The note author is still stored in the exported Excel note metadata. See [Notes](./excel-export-notes/)."
@@ -108,7 +108,7 @@
             "isRequired": true
         }
     },
-    "ProcessCellForExportNoteParams": {
+    "ProcessNoteForExportParams": {
         "meta": {
             "page": {
                 "name": "Notes",

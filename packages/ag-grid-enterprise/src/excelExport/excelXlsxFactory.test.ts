@@ -234,13 +234,13 @@ describe('excelXlsxFactory Workbook', () => {
         expect(createXlsxComments(0, 'Workbook Author')).toContain('<author>Chris</author>');
     });
 
-    it('allows processCellNoteCallback to override or suppress notes', () => {
+    it('allows processNoteCallback to override or suppress notes', () => {
         const workbook = new Workbook();
         const session = new ExcelSerializingSession(
             stubParams(
                 {
                     notesSvc: noteServiceStub({ text: 'Grid note', author: 'Chris' }),
-                    processCellNoteCallback: (params) => {
+                    processNoteCallback: (params) => {
                         if (params.accumulatedRowIndex === 2) {
                             return null;
                         }
@@ -283,7 +283,7 @@ describe('excelXlsxFactory Workbook', () => {
             stubParams(
                 {
                     suppressGridNotesExport: true,
-                    processCellNoteCallback: () => ({
+                    processNoteCallback: () => ({
                         text: 'Injected during export',
                     }),
                 },

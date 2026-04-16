@@ -43,7 +43,7 @@ const gridOptions: GridOptions<OlympicWinner> = {
     },
     defaultExcelExportParams: {
         author: 'Export Bot',
-        processCellNoteCallback: (params) => {
+        processNoteCallback: (params) => {
             if (params.column.getColId() === 'gold' && Number(params.value) >= 5) {
                 return {
                     text: `Outstanding medal count (${params.value} gold). Flag for performance review.`,

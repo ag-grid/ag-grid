@@ -1,4 +1,13 @@
-import type { ColDef, GetRowIdParams, GridApi, GridOptions, Note, NotesDataSource } from 'ag-grid-community';
+import type {
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+    Note,
+    NotesDataSource,
+    NotesDataSourceGetNoteParams,
+    NotesDataSourceSetNoteParams,
+} from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ContextMenuModule, ExcelExportModule, NotesModule } from 'ag-grid-enterprise';
 
@@ -40,13 +49,9 @@ const noteStore = new Map<string, Note>([
 ]);
 
 const notesDataSource: NotesDataSource = {
-    getNote: (params) =>
-        'column' in params ? noteStore.get(getNoteKey(params.rowNode.id!, params.column.getColId())) : undefined,
-    setNote: (params) => {
-        if (!('column' in params)) {
-            return;
-        }
-
+    getNote: (params: NotesDataSourceGetNoteParams) =>
+        noteStore.get(getNoteKey(params.rowNode.id!, params.column.getColId())),
+    setNote: (params: NotesDataSourceSetNoteParams) => {
         const key = getNoteKey(params.rowNode.id!, params.column.getColId());
 
         if (params.note === undefined) {

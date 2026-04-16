@@ -120,7 +120,7 @@ export type {
     ExcelOOXMLDataType,
     ExcelOOXMLTemplate,
     ExcelProtection,
-    ProcessCellForExportNoteParams,
+    ProcessNoteForExportParams,
     ExcelRelationship,
     ExcelRow,
     ExcelSheetMargin,

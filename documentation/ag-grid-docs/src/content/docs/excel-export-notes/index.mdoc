@@ -7,7 +7,7 @@ Excel notes/comments can be added to exported cells using a callback, exported a
 
 ## Adding Notes to Cells
 
-Use `processCellNoteCallback` to inject notes during export. The callback is invoked for each exported body cell and receives the cell value, column, and row node. Return an `ExcelNote` object to attach a note, `undefined` to keep the default behaviour, or `null` to suppress the note for the current cell.
+Use `processNoteCallback` to inject notes during export. The callback is invoked for each exported cell and receives the cell value, column, and row node. Return an `ExcelNote` object to attach a note, `undefined` to keep the default behaviour, or `null` to suppress the note for the current cell.
 
 If a note does not specify an `author`, the Excel document `author` is used. When the document author is not provided, the exporter falls back to `AG Grid`.
 
@@ -21,7 +21,7 @@ When the [Notes](./notes/) feature is enabled and `notesDataSource` is configure
 
 ### Suppressing Grid Notes
 
-Set `suppressGridNotesExport` to `true` to prevent grid notes from being included in the export. The grid still displays notes, but the exported file will not contain them. Callback-based note injection via `processCellNoteCallback` still works when this is set.
+Set `suppressGridNotesExport` to `true` to prevent grid notes from being included in the export. The grid still displays notes, but the exported file will not contain them. Callback-based note injection via `processNoteCallback` still works when this is set.
 
 {% gridExampleRunner title="Excel Export - Suppress Grid Notes" name="excel-export-suppress-grid-notes" exampleHeight=560 /%}
 
@@ -33,7 +33,7 @@ By default, the author name is prepended as bold text in the Excel note body (ma
 
 ## Customising Exported Notes
 
-When both the Notes feature and `processCellNoteCallback` are used together, the callback receives `params.gridNote` (the original grid note) and `params.defaultNote` (the auto-derived Excel note). This allows you to:
+When both the Notes feature and `processNoteCallback` are used together, the callback receives `params.gridNote` (the original grid note) and `params.defaultNote` (the auto-derived Excel note). This allows you to:
 
 -   enhance the default note text with extra metadata
 -   override or preserve the note author
@@ -50,6 +50,6 @@ Use `ExcelCell.note` on `prependContent`, `appendContent`, or `getCustomContentB
 
 {% interfaceDocumentation interfaceName="ExcelNote" overrideSrc="excel-export-api/excel-api.json" /%}
 
-### ProcessCellForExportNoteParams
+### ProcessNoteForExportParams
 
-{% interfaceDocumentation interfaceName="ProcessCellForExportNoteParams" overrideSrc="excel-export-api/excel-api.json" /%}
+{% interfaceDocumentation interfaceName="ProcessNoteForExportParams" overrideSrc="excel-export-api/excel-api.json" /%}
