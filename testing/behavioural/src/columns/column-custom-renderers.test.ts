@@ -4,7 +4,7 @@
  */
 import { vitest } from 'vitest';
 
-import type { ColDef, IHeaderComp, IHeaderGroupComp, IHeaderParams } from 'ag-grid-community';
+import type { ColDef, IHeaderComp, IHeaderGroupComp, IHeaderGroupParams, IHeaderParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, TooltipModule, getGridElement } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -235,6 +235,73 @@ describe('Column Custom Renderers', () => {
                 ├── a width:200
                 └── b width:200
             `);
+        });
+
+        test('AG-17086 setTooltip does not throw after HeaderCellCtrl is destroyed', async () => {
+            let capturedSetTooltip: IHeaderParams['setTooltip'] | null = null;
+
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        colId: 'a',
+                        headerTooltip: 'Tooltip A',
+                        headerComponent: class implements IHeaderComp {
+                            private eGui!: HTMLDivElement;
+                            init(params: IHeaderParams): void {
+                                capturedSetTooltip = params.setTooltip;
+                                this.eGui = document.createElement('div');
+                                this.eGui.textContent = params.displayName;
+                            }
+                            getGui(): HTMLElement {
+                                return this.eGui;
+                            }
+                        },
+                    },
+                    { colId: 'b' },
+                ],
+                rowData: [{ a: 1, b: 2 }],
+            });
+
+            expect(capturedSetTooltip).not.toBeNull();
+
+            // Remove the column, which destroys its HeaderCellCtrl and nullifies this.column
+            api.setGridOption('columnDefs', [{ colId: 'b' }]);
+
+            // Calling setTooltip after destruction should be a no-op, not a crash
+            expect(() => capturedSetTooltip!('late tooltip', () => true)).not.toThrow();
+        });
+
+        test('AG-17086 setTooltip does not throw after HeaderGroupCellCtrl is destroyed', async () => {
+            let capturedSetTooltip: IHeaderGroupParams['setTooltip'] | null = null;
+
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        headerName: 'Group',
+                        headerGroupComponent: class implements IHeaderGroupComp {
+                            private eGui!: HTMLDivElement;
+                            init(params: IHeaderGroupParams): void {
+                                capturedSetTooltip = params.setTooltip;
+                                this.eGui = document.createElement('div');
+                                this.eGui.textContent = params.displayName;
+                            }
+                            getGui(): HTMLElement {
+                                return this.eGui;
+                            }
+                        },
+                        children: [{ colId: 'a' }, { colId: 'b' }],
+                    },
+                ],
+                rowData: [{ a: 1, b: 2 }],
+            });
+
+            expect(capturedSetTooltip).not.toBeNull();
+
+            // Replace columns, destroying the group header and its controller
+            api.setGridOption('columnDefs', [{ colId: 'c' }]);
+
+            // Calling setTooltip after destruction should be a no-op, not a crash
+            expect(() => capturedSetTooltip!('late tooltip', () => true)).not.toThrow();
         });
     });
 
