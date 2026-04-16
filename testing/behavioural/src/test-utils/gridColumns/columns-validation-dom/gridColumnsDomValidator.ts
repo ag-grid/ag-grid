@@ -170,14 +170,12 @@ export class GridColumnsDomValidator {
                         `Sortable column with no sort has aria-sort="${ariaSort}", expected "none" or absent.`
                     );
                 }
-            } else {
+            } else if (ariaSort != null && ariaSort !== 'none') {
                 // Non-sortable column — aria-sort should be absent or "none"
                 // (the grid removes it via _removeAriaSort in refreshAriaSort when !sortable)
-                if (ariaSort != null && ariaSort !== 'none') {
-                    colErrors.add(
-                        `Non-sortable column has aria-sort="${ariaSort}", expected absent or "none" (grid removes aria-sort when !sortable).`
-                    );
-                }
+                colErrors.add(
+                    `Non-sortable column has aria-sort="${ariaSort}", expected absent or "none" (grid removes aria-sort when !sortable).`
+                );
             }
 
             // Note: ag-header-cell-sorted-asc/desc CSS classes depend on the SortIndicatorComp
