@@ -18,37 +18,56 @@ function parseArgs(argv) {
 // yarn.lock v1 parser — returns Set<"name@version">
 // ---------------------------------------------------------------------------
 
+// Extract all package names from a single yarn.lock specifier.
+// Handles npm protocol aliases: "alias@npm:realpackage@constraint"
+// e.g. "string-width-cjs@npm:string-width@^4.2.0" → ["string-width-cjs", "string-width"]
+function extractNamesFromSpec(spec) {
+    const npmAliasMatch = spec.match(/^(@?[^@]+)@npm:(@?[^@]+)@/);
+    if (npmAliasMatch) {
+        return [npmAliasMatch[1], npmAliasMatch[2]];
+    }
+    const lastAt = spec.lastIndexOf('@');
+    if (lastAt > 0) {
+        return [spec.slice(0, lastAt)];
+    }
+    return [];
+}
+
 function parseYarnLock(lockfilePath) {
     const content = readFileSync(lockfilePath, 'utf8');
     const resolved = new Set();
-    let currentName = null;
+    let currentNames = [];
 
     for (const line of content.split('\n')) {
         // Header lines come in two forms:
         //   Quoted:   "@babel/core@^7.11.6", "@babel/core@^7.23.0":
         //   Unquoted: jest@29.7.0, jest@^29.5.0, jest@^29.7.0:
-        // Both end with ":"
+        // Both end with ":" and may contain multiple comma-separated specifiers.
         if ((line.startsWith('"') || (line.match(/^\S/) && line.endsWith(':'))) && !line.startsWith('#') && !line.startsWith(' ')) {
-            // Extract the first specifier to get the package name.
-            let firstSpec;
-            if (line.startsWith('"')) {
-                firstSpec = line.match(/^"([^"]+)"/)?.[1];
-            } else {
-                // Unquoted: take everything before the first comma or colon
-                firstSpec = line.match(/^([^,: ]+)/)?.[1];
+            currentNames = [];
+
+            // Strip trailing colon and extract all specifiers.
+            const header = line.replace(/:$/, '');
+
+            // Collect quoted specifiers first, then any unquoted remainders.
+            const specs = [];
+            const quotedRegex = /"([^"]+)"/g;
+            let match;
+            while ((match = quotedRegex.exec(header)) !== null) {
+                specs.push(match[1]);
             }
-            if (firstSpec) {
-                const lastAt = firstSpec.lastIndexOf('@');
-                if (lastAt > 0) {
-                    currentName = firstSpec.slice(0, lastAt);
-                } else {
-                    currentName = null;
-                }
+            const unquoted = header.replace(/"[^"]+"/g, '').split(',').map((s) => s.trim()).filter(Boolean);
+            specs.push(...unquoted);
+
+            for (const spec of specs) {
+                currentNames.push(...extractNamesFromSpec(spec));
             }
-        } else if (currentName && line.match(/^\s+version "(.+)"$/)) {
+        } else if (currentNames.length > 0 && line.match(/^\s+version "(.+)"$/)) {
             const version = line.match(/^\s+version "(.+)"$/)[1];
-            resolved.add(`${currentName}@${version}`);
-            currentName = null;
+            for (const name of currentNames) {
+                resolved.add(`${name}@${version}`);
+            }
+            currentNames = [];
         }
     }
 
@@ -60,8 +79,9 @@ function parseYarnLock(lockfilePath) {
 // ---------------------------------------------------------------------------
 
 const IGNORED_DIRS = new Set(['node_modules', '.git', '.claude', 'dist', '.nx']);
+const IGNORED_RELATIVE_DIRS = ['external/ag-shared'];
 
-function getSnykFiles(dir, found = []) {
+function getSnykFiles(dir, found = [], ignoredAbsoluteDirs = new Set()) {
     let entries;
     try {
         entries = readdirSync(dir, { withFileTypes: true });
@@ -71,8 +91,9 @@ function getSnykFiles(dir, found = []) {
     for (const entry of entries) {
         if (IGNORED_DIRS.has(entry.name)) continue;
         const full = resolve(dir, entry.name);
+        if (ignoredAbsoluteDirs.has(full)) continue;
         if (entry.isDirectory()) {
-            getSnykFiles(full, found);
+            getSnykFiles(full, found, ignoredAbsoluteDirs);
         } else if (entry.name === '.snyk') {
             found.push(full);
         }
@@ -87,12 +108,28 @@ function getSnykFiles(dir, found = []) {
 
 function parseSnykIgnorePaths(content) {
     const result = {};
+    let inIgnoreSection = false;
     let currentId = null;
     let currentPath = null;
     let blockReasonLines = null;
     let blockReasonIndent = 0;
 
     for (const line of content.split('\n')) {
+        // Track top-level YAML section changes (e.g. "ignore:", "patch:", "version:").
+        // Top-level keys start at column 0 with a letter and are not comments.
+        if (/^[a-zA-Z]/.test(line) && !line.startsWith('#')) {
+            if (blockReasonLines?.length && currentPath) {
+                currentPath.reason = blockReasonLines.join(' ');
+            }
+            inIgnoreSection = line.startsWith('ignore:');
+            currentId = null;
+            currentPath = null;
+            blockReasonLines = null;
+            continue;
+        }
+
+        if (!inIgnoreSection) continue;
+
         if (blockReasonLines !== null) {
             const trimmed = line.trim();
             if (!trimmed) continue;
@@ -144,6 +181,7 @@ function parseSnykIgnorePaths(content) {
 function findEntryLineRanges(lines) {
     const entries = [];
     const vulnIdLines = []; // { vulnId, lineIndex }
+    let inIgnoreSection = false;
     let currentVulnId = null;
     let currentVulnIdLine = -1;
     let currentEntry = null;
@@ -151,6 +189,23 @@ function findEntryLineRanges(lines) {
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
+
+        // Track top-level YAML section changes.
+        if (/^[a-zA-Z]/.test(line) && !line.startsWith('#')) {
+            if (currentEntry) {
+                currentEntry.endLine = i - 1;
+                while (currentEntry.endLine > currentEntry.startLine && !lines[currentEntry.endLine].trim()) {
+                    currentEntry.endLine--;
+                }
+                entries.push(currentEntry);
+                currentEntry = null;
+            }
+            inIgnoreSection = line.startsWith('ignore:');
+            currentVulnId = null;
+            continue;
+        }
+
+        if (!inIgnoreSection) continue;
 
         // Vuln ID line
         const idMatch = line.match(/^\s{2,6}(SNYK-\S+|CVE-\d+-\d+|GHSA-\S+):\s*$/);
@@ -304,8 +359,9 @@ function main() {
     const yarnLockPackages = parseYarnLock(yarnLockPath);
     console.log(`Parsed yarn.lock: ${yarnLockPackages.size} resolved packages`);
 
-    // Find all .snyk files
-    const snykFiles = getSnykFiles(rootDir);
+    // Find all .snyk files, skipping ignored relative directories (managed separately)
+    const ignoredAbsoluteDirs = new Set(IGNORED_RELATIVE_DIRS.map((d) => resolve(rootDir, d)));
+    const snykFiles = getSnykFiles(rootDir, [], ignoredAbsoluteDirs);
     console.log(`Scanning ${snykFiles.length} .snyk files...\n`);
 
     let totalRemoved = 0;

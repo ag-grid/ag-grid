@@ -1,6 +1,6 @@
 ---
 targets: ['*']
-name: debug
+name: debug-trace
 description: >-
   Hypothesis-driven debugging with transient console log instrumentation.
   Use when isolating the root cause of a bug, unexpected behaviour, or

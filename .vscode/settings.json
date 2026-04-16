@@ -4,10 +4,16 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "files.associations": {
-    "*.mdoc": "markdown"
+    "*.mdoc": "markdown",
+    "*.snyk": "yaml"
   },
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "yaml.format.singleQuote": true,
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.tabSize": 4
   },
   "search.exclude": {
     "**/vitest.config.js.timestamp*": true,

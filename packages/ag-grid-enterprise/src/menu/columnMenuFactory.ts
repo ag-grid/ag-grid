@@ -11,7 +11,7 @@ import {
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
 import type { MenuItemMapper } from './menuItemMapper';
-import { MENU_ITEM_SEPARATOR, _removeRepeatsFromArray } from './menuItemMapper';
+import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuItemMapper';
 
 export class ColumnMenuFactory extends BeanStub implements NamedBean {
     beanName = 'colMenuFactory' as const;
@@ -75,9 +75,9 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             }
         }
 
-        // GUI looks weird when two separators are side by side. this can happen accidentally
-        // if we remove items from the menu then two separators can edit up adjacent.
-        _removeRepeatsFromArray(result, MENU_ITEM_SEPARATOR);
+        // normalise separators after item removal so we don't leave duplicates,
+        // or separators stranded at the start or end of the menu.
+        _normaliseSeparators(result, MENU_ITEM_SEPARATOR);
 
         return result;
     }

@@ -30,19 +30,30 @@ import { validateMenuItem } from './menuItemValidations';
 
 export const MENU_ITEM_SEPARATOR = 'separator';
 
-export function _removeRepeatsFromArray<T>(array: T[], object: T) {
-    if (!array) {
+export function _normaliseSeparators<T>(array: T[], separator: T) {
+    if (!array?.length) {
         return;
     }
 
-    for (let index = array.length - 2; index >= 0; index--) {
-        const thisOneMatches = array[index] === object;
-        const nextOneMatches = array[index + 1] === object;
+    let writeIndex = 0;
+    let lastItemWasSeparator = true;
 
-        if (thisOneMatches && nextOneMatches) {
-            array.splice(index + 1, 1);
+    for (const item of array) {
+        const isSeparator = item === separator;
+
+        if (isSeparator && lastItemWasSeparator) {
+            continue;
         }
+
+        array[writeIndex++] = item;
+        lastItemWasSeparator = isSeparator;
     }
+
+    if (writeIndex > 0 && array[writeIndex - 1] === separator) {
+        writeIndex--;
+    }
+
+    array.length = writeIndex;
 }
 
 const SORT_MENU_ITEM_TO_MENU_ACTION_PARAMS: Record<
@@ -523,7 +534,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         }
 
         // items could have been removed due to missing modules
-        _removeRepeatsFromArray(resultList, MENU_ITEM_SEPARATOR);
+        _normaliseSeparators(resultList, MENU_ITEM_SEPARATOR);
 
         return resultList;
     }

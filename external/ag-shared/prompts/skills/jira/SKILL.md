@@ -62,6 +62,16 @@ Based on user intent, read the corresponding workflow file (in the `workflows/` 
 
 Read the workflow file, then follow its instructions.
 
+## Critical: Pre-Creation Checklist
+
+Before making ANY `createJiraIssue` API call, you MUST have read:
+
+1. The **product file** (e.g., `products/charts.md`) — for component name, summary prefix, and version conventions.
+2. The **workflow file** (e.g., `workflows/create.md`) — for the creation steps and completion checklist.
+3. The **template file** (e.g., `templates/bug.md`) — for the exact description format.
+
+Do not rely on training data or prior knowledge for JIRA field values or description format. The templates and workflows are the source of truth.
+
 ## Shared Reference
 
 ### Atlassian Cloud ID

@@ -249,6 +249,7 @@
       }
     },
     "snyk:clean": {
+      "cache": false,
       "command": "node ./external/ag-shared/scripts/snyk/snykClean.mjs",
       "options": {
         "cwd": "{workspaceRoot}"

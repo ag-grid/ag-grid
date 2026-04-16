@@ -3,6 +3,11 @@ version: v1.25.1
 
 ignore:
     SNYK-JS-BRACEEXPANSION-15789759:
+        - '@nx/devkit@18.3.5 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2 > brace-expansion@2.0.2':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-15T15:27:57.667Z
         - glob@8.0.3 > minimatch@5.1.6 > brace-expansion@2.0.2:
               reason: >-
                   Used in build & dev - not included in final production build
@@ -14,6 +19,11 @@ ignore:
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-27T11:48:29.073Z
     SNYK-JS-MINIMATCH-15353389:
+        - '@nx/devkit@18.3.5 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-15T15:25:15.522Z
         - '@nx/devkit@18.3.5 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
               reason: >-
                   Used in build & dev - not included in final production build
@@ -25,6 +35,11 @@ ignore:
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-02T10:13:56.772Z
     SNYK-JS-MINIMATCH-15309438:
+        - '@nx/devkit@18.3.5 > tmp@0.2.1 > rimraf@3.0.2 > glob@7.2.3 > minimatch@3.1.2':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-15T15:24:37.723Z
         - glob@8.0.3 > minimatch@5.1.6:
               reason: >-
                   Used in dev - ReDOS attack would only affect developer machines
