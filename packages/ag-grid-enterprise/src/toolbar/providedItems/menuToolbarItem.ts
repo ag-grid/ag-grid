@@ -10,6 +10,12 @@ import {
 
 import { MenuList } from '../../widgets/menuList';
 
+interface MenuToolbarItemParams extends IToolbarItemParams {
+    icon?: IconName;
+    label?: string;
+    menuItems?: (MenuItemDef | string)[];
+}
+
 export class MenuToolbarItem extends Component implements IToolbarItemComp {
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
@@ -34,7 +40,7 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
     }
 
     public init(params: IToolbarItemParams): void {
-        const { icon, label, menuItems } = params as any;
+        const { icon, label, menuItems } = params as MenuToolbarItemParams;
 
         this.menuItems = menuItems ?? [];
         this.label = label ?? this.getLocaleTextFunc()('toolbarMenu', 'Menu');
@@ -61,7 +67,7 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
     }
 
     public refresh(params: IToolbarItemParams): boolean {
-        const { icon, label, menuItems } = params as any;
+        const { icon, label, menuItems } = params as MenuToolbarItemParams;
 
         // Icon changes require DOM reconstruction — force recreation
         if (icon != null && icon !== this.iconName) {
