@@ -244,14 +244,14 @@ describe('popupPositionUtils', () => {
         });
 
         it('uses mirrored placements when RTL mirroring is enabled', () => {
-            const cellRect = { top: 200, left: 300, right: 400, bottom: 240 };
+            const cellRect = { top: 200, left: 500, right: 600, bottom: 240 };
 
             const pos = findBestPlacement(cellRect, targetSize, parentSize, ['tl-tr', 'tr-tl'], {
                 gap: 10,
                 enableRtl: true,
             });
 
-            expect(pos.x).toBe(300 - 320 - 10);
+            expect(pos.x).toBe(500 - 320 - 10);
         });
     });
 });
