@@ -28,6 +28,13 @@ export abstract class BaseExpansionService extends BeanStub {
             return;
         }
 
+        // Collapsing a sticky row: scroll so the row lands at the pixel it occupied
+        // while sticky, otherwise the viewport keeps its old scrollTop and the user
+        // loses sight of the group they just collapsed.
+        if (!expanded && rowNode.sticky) {
+            this.beans.ctrlsSvc.getScrollFeature().setVerticalScrollPosition(rowNode.rowTop! - rowNode.stickyRowTop);
+        }
+
         rowNode._expanded = expanded;
 
         rowNode.dispatchRowEvent('expandedChanged');
