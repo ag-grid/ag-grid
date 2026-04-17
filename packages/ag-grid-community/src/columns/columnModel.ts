@@ -1,4 +1,3 @@
-import { _areEqual } from '../agStack/utils/array';
 import { placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -144,8 +143,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const oldTree = this.colDefTree;
         const newTree = _createColumnTree(beans, this.colDefs, true, oldTree, source);
 
-        _destroyColumnTree(beans, oldTree, newTree.columnTree);
-
         this.colDefTree = newTree.columnTree;
         this.colDefTreeDepth = newTree.treeDepth;
 
@@ -153,6 +150,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         groupHierarchyColSvc?.createColumns(this.colDefList);
         this.mergeHierarchyColumns(groupHierarchyColSvc?.columns);
+
+        _destroyColumnTree(beans, oldTree, this.colDefTree);
 
         rebuildColMap(this.colDefColsMap, this.colDefList);
 
@@ -402,7 +401,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     ): boolean {
         const colGroupSvc = this.beans.colGroupSvc;
         const treeDepth = colGroupSvc?.findDepth(sourceTree) ?? 0;
-        this.colsTreeDepth = treeDepth;
 
         const rnBalanced = rnCol ? colGroupSvc?.balanceTreeForAutoCols([rnCol], treeDepth) : undefined;
         const selBalanced =
@@ -410,29 +408,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const autoBalanced =
             autoList && autoList.length > 0 ? colGroupSvc?.balanceTreeForAutoCols(autoList, treeDepth) : undefined;
 
-        const rnLen = rnBalanced?.length ?? 0;
-        const selLen = selBalanced?.length ?? 0;
-        const autoLen = autoBalanced?.length ?? 0;
-        const srcLen = sourceTree.length;
-
-        const tree = new Array<AgColumn | AgProvidedColumnGroup>(rnLen + selLen + autoLen + srcLen);
-        let pos = 0;
-        for (let i = 0; i < rnLen; ++i) {
-            tree[pos++] = rnBalanced![i];
-        }
-        for (let i = 0; i < selLen; ++i) {
-            tree[pos++] = selBalanced![i];
-        }
-        for (let i = 0; i < autoLen; ++i) {
-            tree[pos++] = autoBalanced![i];
-        }
-        for (let i = 0; i < srcLen; ++i) {
-            tree[pos++] = sourceTree[i];
-        }
-        if (_areEqual(this.colsTree, tree)) {
+        // Compare element-by-element against the existing tree before allocating a new array.
+        // In the stable case (most refreshes) this avoids the allocation and copy entirely.
+        if (
+            this.colsTreeDepth === treeDepth &&
+            colsTreeEquals(this.colsTree, rnBalanced, selBalanced, autoBalanced, sourceTree)
+        ) {
             return false;
         }
-        this.colsTree = tree;
+
+        this.colsTree = buildColsTree(rnBalanced, selBalanced, autoBalanced, sourceTree);
+        this.colsTreeDepth = treeDepth;
         return true;
     }
 
@@ -760,6 +746,74 @@ function findSiblingInsertPosition(col: AgColumn, posMap: Map<AgColumn, number>)
 
 /** Clears and repopulates a multi-key lookup Map from a column list.
  *  Each column is indexed by: colId string, AgColumn instance, ColDef, and userProvidedColDef. */
+/** Checks whether `existing` equals the concatenation of the given segments, element-by-element,
+ *  without allocating. Any undefined segment is treated as empty. */
+const colsTreeEquals = (
+    existing: (AgColumn | AgProvidedColumnGroup)[],
+    rn: (AgColumn | AgProvidedColumnGroup)[] | undefined,
+    sel: (AgColumn | AgProvidedColumnGroup)[] | undefined,
+    auto: (AgColumn | AgProvidedColumnGroup)[] | undefined,
+    src: (AgColumn | AgProvidedColumnGroup)[]
+): boolean => {
+    const rnLen = rn?.length ?? 0;
+    const selLen = sel?.length ?? 0;
+    const autoLen = auto?.length ?? 0;
+    const srcLen = src.length;
+    if (existing.length !== rnLen + selLen + autoLen + srcLen) {
+        return false;
+    }
+    let pos = 0;
+    for (let i = 0; i < rnLen; ++i) {
+        if (existing[pos++] !== rn![i]) {
+            return false;
+        }
+    }
+    for (let i = 0; i < selLen; ++i) {
+        if (existing[pos++] !== sel![i]) {
+            return false;
+        }
+    }
+    for (let i = 0; i < autoLen; ++i) {
+        if (existing[pos++] !== auto![i]) {
+            return false;
+        }
+    }
+    for (let i = 0; i < srcLen; ++i) {
+        if (existing[pos++] !== src[i]) {
+            return false;
+        }
+    }
+    return true;
+};
+
+/** Allocates a new array containing the concatenation of the given segments in order. */
+const buildColsTree = (
+    rn: (AgColumn | AgProvidedColumnGroup)[] | undefined,
+    sel: (AgColumn | AgProvidedColumnGroup)[] | undefined,
+    auto: (AgColumn | AgProvidedColumnGroup)[] | undefined,
+    src: (AgColumn | AgProvidedColumnGroup)[]
+): (AgColumn | AgProvidedColumnGroup)[] => {
+    const rnLen = rn?.length ?? 0;
+    const selLen = sel?.length ?? 0;
+    const autoLen = auto?.length ?? 0;
+    const srcLen = src.length;
+    const tree = new Array<AgColumn | AgProvidedColumnGroup>(rnLen + selLen + autoLen + srcLen);
+    let pos = 0;
+    for (let i = 0; i < rnLen; ++i) {
+        tree[pos++] = rn![i];
+    }
+    for (let i = 0; i < selLen; ++i) {
+        tree[pos++] = sel![i];
+    }
+    for (let i = 0; i < autoLen; ++i) {
+        tree[pos++] = auto![i];
+    }
+    for (let i = 0; i < srcLen; ++i) {
+        tree[pos++] = src[i];
+    }
+    return tree;
+};
+
 const rebuildColMap = (map: Map<ColKey | null | undefined, AgColumn>, list: AgColumn[]): void => {
     map.clear();
     for (let i = 0, len = list.length; i < len; ++i) {

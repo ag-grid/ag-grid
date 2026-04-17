@@ -164,5 +164,20 @@ describe('Column lookup', () => {
             // Ensure it's a clone, not the same reference
             expect(params).not.toBe((api.getColumn('x') as any)?.getColDef().cellEditorParams);
         });
+
+        test('does not pollute Object.prototype when colDef contains __proto__ payload', () => {
+            const pollutionPayload = JSON.parse('{"__proto__":{"polluted":"yes"}}');
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'x', cellEditorParams: pollutionPayload }],
+            });
+
+            // Exporting the colDefs exercises cloneColDef on the payload.
+            const defs = api.getColumnDefs()!;
+            expect(defs).toBeDefined();
+
+            // The clone must not have polluted Object.prototype or a fresh object's prototype.
+            expect(({} as any).polluted).toBeUndefined();
+            expect((Object.prototype as any).polluted).toBeUndefined();
+        });
     });
 });

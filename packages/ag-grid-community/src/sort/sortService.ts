@@ -155,16 +155,18 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     public isSortActive(): boolean {
-        return (this.cachedSortActive ??= this.loadSortActive());
+        return this.cachedSortActive ?? this.loadSortActive();
     }
 
     private loadSortActive(): boolean {
         const allCols = this.beans.colModel.getAllCols();
         for (let i = 0, len = allCols.length; i < len; ++i) {
             if (allCols[i].getSortDef()) {
+                this.cachedSortActive = true;
                 return true;
             }
         }
+        this.cachedSortActive = false;
         return false;
     }
 
@@ -191,7 +193,7 @@ export class SortService extends BeanStub implements NamedBean {
                     // 'undefined' marks the sortDef as implicitly modified (initial),
                     // enabling the groupMaintainOrder feature.
                     // Fresh object per column — setSortDef stores by reference.
-                    col.setSortDef(_getSortDefFromInput(undefined), true);
+                    col.setSortDef(_getSortDefFromInput(), true);
                     col.dispatchColEvent('sortChanged', source);
                 }
                 col.dispatchStateUpdatedEvent('sort');
@@ -212,7 +214,7 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     private ensureSortCache(): SortCacheData {
-        return (this.sortCache ??= this.loadSortCache());
+        return this.sortCache ?? this.loadSortCache();
     }
 
     private loadSortCache(): SortCacheData {
@@ -268,7 +270,7 @@ export class SortService extends BeanStub implements NamedBean {
         if (isSortLinked) {
             // Build ordered list with row group cols interleaved after their display group col
             const ordered: AgColumn[] = [];
-            const rgCols = sortedRowGroupCols!;
+            const rgCols = sortedRowGroupCols;
             const rgLen = rgCols.length;
             for (let i = 0, len = allSortedCols.length; i < len; ++i) {
                 const col = allSortedCols[i];
@@ -290,7 +292,9 @@ export class SortService extends BeanStub implements NamedBean {
             sortedCols = allSortedCols;
         }
 
-        return { indexMap, sortedCols, sortModel: null, sortOptions: null };
+        const cache: SortCacheData = { indexMap, sortedCols, sortModel: null, sortOptions: null };
+        this.sortCache = cache;
+        return cache;
     }
 
     public getColumnsWithSortingOrdered(): AgColumn[] {
@@ -300,12 +304,12 @@ export class SortService extends BeanStub implements NamedBean {
     // used by server side row models, to send sort to server
     public getSortModel(): SortModelItem[] {
         const cache = this.ensureSortCache();
-        return (cache.sortModel ??= buildSortModel(cache.sortedCols));
+        return cache.sortModel ?? loadSortModel(cache);
     }
 
     public getSortOptions(): SortOption[] {
         const cache = this.ensureSortCache();
-        return (cache.sortOptions ??= buildSortOptions(cache.sortedCols));
+        return cache.sortOptions ?? loadSortOptions(cache);
     }
 
     public canColumnDisplayMixedSort(column: AgColumn): boolean {
@@ -428,7 +432,8 @@ const compareBySortIndex = (a: AgColumn, b: AgColumn): number =>
     // null/undefined -> 0x7fffffff so missing indices sort last; equal sentinels → 0 (stable)
     (a.sortIndex ?? 0x7fffffff) - (b.sortIndex ?? 0x7fffffff);
 
-const buildSortModel = (cols: AgColumn[]): SortModelItem[] => {
+const loadSortModel = (cache: SortCacheData): SortModelItem[] => {
+    const cols = cache.sortedCols;
     const result: SortModelItem[] = [];
     for (let i = 0, len = cols.length; i < len; ++i) {
         const col = cols[i];
@@ -438,10 +443,12 @@ const buildSortModel = (cols: AgColumn[]): SortModelItem[] => {
             result.push({ sort, type: _normalizeSortType(def.type), colId: col.colId });
         }
     }
+    cache.sortModel = result;
     return result;
 };
 
-const buildSortOptions = (cols: AgColumn[]): SortOption[] => {
+const loadSortOptions = (cache: SortCacheData): SortOption[] => {
+    const cols = cache.sortedCols;
     const result: SortOption[] = [];
     for (let i = 0, len = cols.length; i < len; ++i) {
         const column = cols[i];
@@ -451,5 +458,6 @@ const buildSortOptions = (cols: AgColumn[]): SortOption[] => {
             result.push({ sort, type: _normalizeSortType(def.type), column });
         }
     }
+    cache.sortOptions = result;
     return result;
 };

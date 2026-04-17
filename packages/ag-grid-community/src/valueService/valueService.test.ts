@@ -18,6 +18,7 @@ describe('formatValue', () => {
         colDef = {};
         column = mock<AgColumn>('getColDef');
         column.getColDef.mockReturnValue(colDef);
+        (column as any).colDef = colDef;
 
         gos = mock<GridOptionsService>('get', 'addCommon');
         gos.addCommon.mockImplementation((params) => params as any);
@@ -110,5 +111,105 @@ describe('formatValue', () => {
         const formattedValue = valueSvc.formatValue(column, null, value);
 
         expect(formattedValue).toBe('1, 2, 3');
+    });
+});
+
+describe('resolveSsrmGroupValue — footer field fallback', () => {
+    // Helpers used by multi-auto-col SSRM footer scenarios.
+    const makeColumn = (colId: string, colDef: ColDef) => {
+        const col = mock<AgColumn>('getColDef');
+        (col as any).colId = colId;
+        (col as any).colDef = colDef;
+        (col as any).fieldContainsDots = false;
+        col.getColDef.mockReturnValue(colDef);
+        return col;
+    };
+
+    const makeSsrmSvc = () => {
+        const svc = new ValueService();
+        (svc as any).isSsrm = true;
+        (svc as any).beans = {};
+        (svc as any).rowGroupColsSvc = { getColumnIndex: () => null };
+        return svc;
+    };
+
+    it('extracts footer value from data when showRowGroup matches rowNode.field (multi-auto-col)', () => {
+        const autoColDef: ColDef = { showRowGroup: 'country' };
+        const column = makeColumn('ag-Grid-AutoColumn-country', autoColDef);
+        const svc = makeSsrmSvc();
+
+        const footerNode: any = {
+            footer: true,
+            field: 'country',
+            level: 0,
+            data: { country: 'Ireland' },
+            groupData: null,
+            aggData: null,
+        };
+
+        const value = (svc as any).resolveSsrmGroupValue(column, autoColDef, footerNode, false);
+        expect(value).toBe('Ireland');
+    });
+
+    it('still returns null for shallower multi-auto-col when not a footer', () => {
+        // Non-footer rows retain the retro-compat behaviour: deeper columns are null at
+        // shallower group levels to keep cells blank.
+        const autoColDef: ColDef = { showRowGroup: 'year' };
+        const column = makeColumn('ag-Grid-AutoColumn-year', autoColDef);
+        const svc = makeSsrmSvc();
+        (svc as any).rowGroupColsSvc = {
+            // 'year' is at index 1, row is at level 0 → null
+            getColumnIndex: (key: string) => (key === 'year' ? 1 : null),
+        };
+
+        const groupNode: any = {
+            footer: false,
+            field: 'country',
+            level: 0,
+            data: { country: 'Ireland' },
+            groupData: null,
+            aggData: null,
+        };
+
+        const value = (svc as any).resolveSsrmGroupValue(column, autoColDef, groupNode, false);
+        expect(value).toBeNull();
+    });
+
+    it('extracts footer value for single-auto-col (showRowGroup === true)', () => {
+        // Single-auto-col path: unchanged behaviour preserved by the refactor.
+        const autoColDef: ColDef = { showRowGroup: true };
+        const column = makeColumn('ag-Grid-AutoColumn', autoColDef);
+        const svc = makeSsrmSvc();
+
+        const footerNode: any = {
+            footer: true,
+            field: 'country',
+            level: 0,
+            data: { country: 'Ireland' },
+            groupData: null,
+            aggData: null,
+        };
+
+        const value = (svc as any).resolveSsrmGroupValue(column, autoColDef, footerNode, false);
+        expect(value).toBe('Ireland');
+    });
+
+    it('prefers groupData over footer field fallback when both are present', () => {
+        // groupData lookup must win: the footer-field fallback only fires when groupData misses.
+        const autoColDef: ColDef = { showRowGroup: 'country' };
+        const column = makeColumn('ag-Grid-AutoColumn-country', autoColDef);
+        const svc = makeSsrmSvc();
+
+        const footerNode: any = {
+            footer: true,
+            field: 'country',
+            level: 0,
+            data: { country: 'Ireland' },
+            groupData: { 'ag-Grid-AutoColumn-country': 'FromGroupData' },
+            aggData: null,
+        };
+
+        const value = (svc as any).resolveSsrmGroupValue(column, autoColDef, footerNode, false);
+        expect(value).toBe('FromGroupData');
     });
 });

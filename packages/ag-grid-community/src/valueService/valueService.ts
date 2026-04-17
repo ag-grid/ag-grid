@@ -438,16 +438,20 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
 
-        // For multiple auto cols (showRowGroup: string), don't fall through to valueGetter/field.
-        // If the row's group level is shallower than the column's associated row group, return null
-        // for retro-compatibility; otherwise return undefined.
         const showRowGroup = colDef.showRowGroup;
+        const data = rowNode.data;
+
+        // For multiple auto cols (showRowGroup: string): don't fall through to valueGetter/field,
+        // but still extract the footer group value when the row's field matches this column.
         if (typeof showRowGroup === 'string') {
+            if (data && rowNode.footer && rowNode.field === showRowGroup) {
+                return column.fieldContainsDots ? _getValueUsingDotNotation(data, showRowGroup) : data[showRowGroup];
+            }
+            // If the row's group level is shallower than the column's associated row group, return null
+            // for retro-compatibility; otherwise return undefined.
             const colRowGroupIndex = this.rowGroupColsSvc?.getColumnIndex(showRowGroup);
             return colRowGroupIndex != null && colRowGroupIndex > rowNode.level ? null : undefined;
         }
-
-        const data = rowNode.data;
 
         const valueGetter = colDef.valueGetter;
         if (valueGetter) {

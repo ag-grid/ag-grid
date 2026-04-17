@@ -297,4 +297,50 @@ describe('pivot with groupHierarchy (date-time)', () => {
             └── LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
         `);
     });
+
+    test('re-setting identical columnDefs does not leave destroyed hierarchy columns', async () => {
+        const api = createPivotDateTimeGrid();
+        api.setPivotColumns(['date']);
+        await asyncSetTimeout(0);
+
+        const firstRun = api.getPivotResultColumns();
+        expect(firstRun).not.toBeNull();
+        expect(firstRun!.length).toBeGreaterThan(0);
+
+        // Capture hierarchy column instances before the rebuild. These are the beans at risk
+        // of being destroyed and re-exposed via the ID-equal early-return.
+        const hierarchyColsBefore = api
+            .getColumns()!
+            .filter((c) => c.getColId().startsWith('ag-Grid-HierarchyColumn-date'));
+        expect(hierarchyColsBefore.length).toBeGreaterThan(0);
+
+        // Re-apply the same columnDefs. This rebuilds the colDefTree, which on the buggy
+        // path destroyed the hierarchy beans before keeping them via the ID-equal early-return.
+        api.setGridOption('columnDefs', [
+            { field: 'athlete' },
+            { field: 'country', rowGroup: true },
+            { field: 'sport' },
+            {
+                field: 'date',
+                enablePivot: true,
+                groupHierarchy: ['year', 'month'],
+            },
+            { field: 'total', aggFunc: 'sum' },
+        ]);
+        await asyncSetTimeout(0);
+
+        const hierarchyColsAfter = api
+            .getColumns()!
+            .filter((c) => c.getColId().startsWith('ag-Grid-HierarchyColumn-date'));
+        expect(hierarchyColsAfter.length).toBeGreaterThan(0);
+        for (const col of hierarchyColsAfter) {
+            expect((col as any).isAlive()).toBe(true);
+        }
+
+        await new GridRows(api, 'hierarchy columns after re-setting identical defs', getGridRowsOptions()).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA"
+            └── LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+        `);
+    });
 });
