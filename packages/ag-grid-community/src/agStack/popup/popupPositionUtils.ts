@@ -195,7 +195,7 @@ function normaliseFindBestPlacementOptions(
 
 function mirrorAlignment(alignment: Alignment): Alignment {
     const [targetAnchor, referenceAnchor] = alignment.split('-') as [Anchor, Anchor];
-    return `${mirrorAnchor(targetAnchor)}-${mirrorAnchor(referenceAnchor)}` as Alignment;
+    return `${mirrorAnchor(targetAnchor)}-${mirrorAnchor(referenceAnchor)}`;
 }
 
 function mirrorAnchor(anchor: Anchor): Anchor {
