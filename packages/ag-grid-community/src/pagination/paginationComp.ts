@@ -11,15 +11,20 @@ import { RowSummaryComp } from './rowSummaryComp';
 
 const DEFAULT_PANELS: readonly PaginationPanel[] = ['pageSize', 'rowSummary', 'pageSummary'];
 
+type AriaAnnounceKey = 'paginationRow' | 'paginationPage';
+
 class PaginationComp extends TabGuardComp implements FocusableContainer {
     private pageSizeComp: PageSizeSelectorComp | undefined;
     private rowSummaryComp: RowSummaryComp | undefined;
     private pageSummaryComp: PageSummaryComp | undefined;
+    private hasVisiblePanel = false;
 
     private allowFocusInnerElement = false;
 
-    private ariaRowStatus: string = '';
-    private ariaPageStatus: string = '';
+    private readonly lastAriaAnnounced: Record<AriaAnnounceKey, string> = {
+        paginationRow: '',
+        paginationPage: '',
+    };
 
     constructor() {
         super();
@@ -91,6 +96,14 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
                 this.appendChild(this.pageSummaryComp);
             }
         }
+        this.updateHasVisiblePanel();
+    }
+
+    private updateHasVisiblePanel(): void {
+        this.hasVisiblePanel =
+            this.rowSummaryComp != null ||
+            this.pageSummaryComp != null ||
+            this.pageSizeComp?.shouldShowPageSizeSelector() === true;
     }
 
     private rebuildComponents(idPrefix: string): void {
@@ -108,36 +121,32 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     }
 
     private onPaginationChanged(): void {
-        const isPaging = this.gos.get('pagination');
-        const hasComponents = this.pageSizeComp != null || this.rowSummaryComp != null || this.pageSummaryComp != null;
-        const paginationPanelEnabled = isPaging && !this.gos.get('suppressPaginationPanel') && hasComponents;
-        this.setDisplayed(paginationPanelEnabled);
+        const visible = this.hasVisiblePanel && this.gos.get('pagination') && !this.gos.get('suppressPaginationPanel');
+        this.setDisplayed(visible);
     }
 
     private onPageSizeRelatedOptionsChange(): void {
         this.pageSizeComp?.updateVisibility();
+        this.updateHasVisiblePanel();
         this.onPaginationChanged();
     }
 
     private announceAriaStatus(): void {
-        const { ariaAnnounce, gos } = this.beans;
-        if (gos.get('suppressPaginationPanel')) {
+        if (this.gos.get('suppressPaginationPanel')) {
             return;
         }
-        const { rowSummaryComp, pageSummaryComp } = this;
-        if (rowSummaryComp) {
-            const ariaRowStatus = rowSummaryComp.getAriaStatus();
-            if (ariaRowStatus !== this.ariaRowStatus) {
-                this.ariaRowStatus = ariaRowStatus;
-                ariaAnnounce?.announceValue(ariaRowStatus, 'paginationRow');
-            }
+        this.announceIfChanged(this.rowSummaryComp, 'paginationRow');
+        this.announceIfChanged(this.pageSummaryComp, 'paginationPage');
+    }
+
+    private announceIfChanged(comp: { getAriaStatus(): string } | undefined, key: AriaAnnounceKey): void {
+        if (!comp) {
+            return;
         }
-        if (pageSummaryComp) {
-            const ariaPageStatus = pageSummaryComp.getAriaStatus();
-            if (ariaPageStatus !== this.ariaPageStatus) {
-                this.ariaPageStatus = ariaPageStatus;
-                ariaAnnounce?.announceValue(ariaPageStatus, 'paginationPage');
-            }
+        const status = comp.getAriaStatus();
+        if (status !== this.lastAriaAnnounced[key]) {
+            this.lastAriaAnnounced[key] = status;
+            this.beans.ariaAnnounce?.announceValue(status, key);
         }
     }
 }

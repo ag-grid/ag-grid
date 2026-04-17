@@ -120,12 +120,7 @@ export class PageSizeSelectorComp extends Component {
     }
 
     public shouldShowPageSizeSelector(): boolean {
-        return (
-            this.gos.get('pagination') &&
-            !this.gos.get('suppressPaginationPanel') &&
-            !this.gos.get('paginationAutoPageSize') &&
-            this.gos.get(paginationPageSizeSelector) !== false
-        );
+        return !this.gos.get('paginationAutoPageSize') && this.gos.get(paginationPageSizeSelector) !== false;
     }
 
     public updateVisibility(): void {

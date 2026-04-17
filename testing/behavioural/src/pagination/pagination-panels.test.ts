@@ -271,6 +271,37 @@ describe('paginationPanels', () => {
             expect(pageSizeEl).toHaveClass('ag-hidden');
             expect(panel.querySelector('.ag-paging-page-summary-panel')).toBeTruthy();
         });
+
+        test('panel hides when only pageSize is configured and paginationPageSizeSelector is false', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSizeSelector: false,
+                paginationPanels: ['pageSize'],
+            });
+            const panel = getPagingPanel(api)!;
+            expect(panel).toHaveClass('ag-hidden');
+        });
+
+        test('panel hides when only pageSize is configured and paginationAutoPageSize is true', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationAutoPageSize: true,
+                paginationPanels: ['pageSize'],
+            });
+            const panel = getPagingPanel(api)!;
+            expect(panel).toHaveClass('ag-hidden');
+        });
+
+        test('panel becomes visible when paginationPageSizeSelector flips back to an array', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPageSizeSelector: false,
+                paginationPanels: ['pageSize'],
+            });
+            const panel = getPagingPanel(api)!;
+            expect(panel).toHaveClass('ag-hidden');
+
+            api.setGridOption('paginationPageSizeSelector', [10, 20, 50]);
+
+            expect(panel).not.toHaveClass('ag-hidden');
+        });
     });
 
     describe('runtime option changes', () => {
@@ -341,16 +372,9 @@ describe('paginationPanels', () => {
                 expect(panel).not.toHaveClass('ag-hidden');
             });
 
-            test('page size selector is hidden while panel is suppressed', () => {
-                const api = createPaginationGrid(gridsManager);
-                const panel = getPagingPanel(api)!;
-
-                api.setGridOption('suppressPaginationPanel', true);
-
-                expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
-            });
-
-            test('page size selector restores when panel is unsuppressed', () => {
+            test('page size selector remains visible after panel is unsuppressed', () => {
+                // suppressPaginationPanel hides the parent panel; the child's own visibility is
+                // governed by paginationPageSizeSelector/paginationAutoPageSize only.
                 const api = createPaginationGrid(gridsManager);
                 const panel = getPagingPanel(api)!;
 
