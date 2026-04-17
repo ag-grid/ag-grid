@@ -60,7 +60,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
             () => this.onPageSizeRelatedOptionsChange()
         );
         this.addManagedPropertyListener('paginationPanels', () => this.rebuildComponents(idPrefix));
-        this.addManagedEventListeners({ paginationChanged: () => this.announceAriaStatus() });
+        this.addManagedEventListeners({ paginationChanged: () => this.onPaginationEvent() });
 
         _addFocusableContainerListener(this.beans, this, this.getGui());
 
@@ -131,8 +131,14 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         this.onPaginationChanged();
     }
 
+    private onPaginationEvent(): void {
+        this.rowSummaryComp?.refresh();
+        this.pageSummaryComp?.refresh();
+        this.announceAriaStatus();
+    }
+
     private announceAriaStatus(): void {
-        if (this.gos.get('suppressPaginationPanel')) {
+        if (!this.gos.get('pagination') || this.gos.get('suppressPaginationPanel')) {
             return;
         }
         this.announceIfChanged(this.rowSummaryComp, 'paginationRow');

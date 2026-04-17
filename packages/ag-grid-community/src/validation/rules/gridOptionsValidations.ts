@@ -375,7 +375,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     paginationPanels != null &&
                     (!Array.isArray(paginationPanels) || paginationPanels.some((p) => !validNames.has(p)))
                 ) {
-                    return "'paginationPanels' expects an array of panel names: 'pageSize', 'rowSummary', 'pageSummary'.";
+                    return "'paginationPanels' expects an array of panel names: ['pageSize', 'rowSummary', 'pageSummary']";
                 }
                 return null;
             },

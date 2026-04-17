@@ -55,15 +55,14 @@ export class RowSummaryComp extends Component {
             ],
         });
 
-        this.addManagedEventListeners({ paginationChanged: () => this.update() });
-        this.update();
+        this.refresh();
     }
 
     private isZeroPages(): boolean {
         return this.beans.rowModel.isLastRowIndexKnown() && this.pagination.getTotalPages() === 0;
     }
 
-    private update(): void {
+    public refresh(): void {
         const lastPageFound = this.beans.rowModel.isLastRowIndexKnown();
         const masterRowCount = this.pagination.getMasterRowCount();
         const rowCount = lastPageFound ? masterRowCount : null;

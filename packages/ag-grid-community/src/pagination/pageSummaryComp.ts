@@ -131,8 +131,7 @@ export class PageSummaryComp extends Component {
             });
         }
 
-        this.addManagedEventListeners({ paginationChanged: () => this.update() });
-        this.update();
+        this.refresh();
     }
 
     private onBtFirst(): void {
@@ -159,7 +158,7 @@ export class PageSummaryComp extends Component {
         }
     }
 
-    private update(): void {
+    public refresh(): void {
         this.enableOrDisableButtons();
         this.updateLabels();
     }
