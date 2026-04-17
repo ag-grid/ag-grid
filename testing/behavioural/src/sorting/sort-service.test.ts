@@ -512,6 +512,52 @@ describe('SortService', () => {
             const aState = state.find((s) => s.colId === 'a');
             expect(aState?.sort).toBe('asc');
         });
+
+        test('multi-sort display ordinals are sequential in coupled mode (regression)', async () => {
+            // Two row-group cols with sort, each reflected through its own auto-group display col.
+            // The sort indicator UI must show ordinals "1" and "2" (sequential display indices),
+            // not "1" and "3" — which would happen if the index map used raw array positions
+            // from the interleaved sortedCols list instead of counting display cols only.
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    { colId: 'a', field: 'a', rowGroup: true, sort: 'asc', sortIndex: 0 },
+                    { colId: 'b', field: 'b', rowGroup: true, sort: 'asc', sortIndex: 1 },
+                    { colId: 'c', field: 'c' },
+                ],
+                rowData: [
+                    { id: '1', a: 'x', b: 'p', c: 1 },
+                    { id: '2', a: 'y', b: 'q', c: 2 },
+                ],
+                groupDisplayType: 'multipleColumns',
+                getRowId: (p) => p.data.id,
+            });
+
+            // Read the sort-order indicator text from the rendered headers. `_setDisplayed` toggles
+            // the ag-hidden class when showing/hiding; visible order elements hold the 1-based text.
+            const headerRoot = TestGridsManager.getHTMLElement(api);
+            const orderEls = Array.from(
+                headerRoot?.querySelectorAll('.ag-header-cell .ag-sort-order') ?? []
+            ) as HTMLElement[];
+            const visibleOrders = orderEls
+                .filter((el) => !el.classList.contains('ag-hidden'))
+                .map((el) => el.textContent ?? '');
+
+            // Two display cols (a, b) each linked to their source row-group col. Each pair shares
+            // an ordinal: display-a + source-a = "1", display-b + source-b = "2". Pre-fix bug
+            // would have produced "1" and "3" (array positions in the interleaved sortedCols list)
+            // instead of "1" and "2".
+            expect(visibleOrders.sort()).toEqual(['1', '1', '2', '2']);
+
+            // Also exercise the DOM validator so its aria-sort check runs against coupled-mode display cols.
+            await new GridColumns(api, 'multi-sort coupled').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn-a "A" width:200
+                ├── ag-Grid-AutoColumn-b "B" width:200
+                ├── a "A" width:200 sort:asc sortIndex:0 rowGroup
+                ├── b "B" width:200 sort:asc sortIndex:1 rowGroup
+                └── c "C" width:200
+            `);
+        });
     });
 
     describe('sort with data changes', () => {

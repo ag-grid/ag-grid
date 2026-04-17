@@ -151,31 +151,40 @@ export class GridColumnsDomValidator {
             // ── aria-sort attribute ─────────────────────────────────────────
             // The grid sets aria-sort only when the column is sortable (headerCellCtrl.refreshAriaSort).
             // When !sortable, aria-sort is removed from DOM regardless of model sort state.
+            // Skip showRowGroup display cols in coupled mode: their aria-sort reflects the sort of
+            // the linked source row-group col via getDisplaySortForColumn, not col.getSort().
+            // (coupled = no custom autoGroupColumnDef comparator AND not treeData; matches _isColumnsSortingCoupledToGroup)
+            const isCoupled =
+                !gridColumns.api.getGridOption('autoGroupColumnDef')?.comparator &&
+                !gridColumns.api.getGridOption('treeData');
+            const isCoupledShowRowGroup = !!col.getColDef().showRowGroup && isCoupled;
             const sort = col.getSort();
             const isSortable = col.isSortable();
             const ariaSort = headerCell.getAttribute('aria-sort');
 
-            if (isSortable) {
-                // Sortable column — aria-sort should reflect the current sort state
-                if (sort === 'asc' && ariaSort !== 'ascending') {
+            if (!isCoupledShowRowGroup) {
+                if (isSortable) {
+                    // Sortable column — aria-sort should reflect the current sort state
+                    if (sort === 'asc' && ariaSort !== 'ascending') {
+                        colErrors.add(
+                            `Sortable column with sort "asc" has aria-sort="${ariaSort ?? 'null'}", expected "ascending".`
+                        );
+                    } else if (sort === 'desc' && ariaSort !== 'descending') {
+                        colErrors.add(
+                            `Sortable column with sort "desc" has aria-sort="${ariaSort ?? 'null'}", expected "descending".`
+                        );
+                    } else if (!sort && ariaSort != null && ariaSort !== 'none') {
+                        colErrors.add(
+                            `Sortable column with no sort has aria-sort="${ariaSort}", expected "none" or absent.`
+                        );
+                    }
+                } else if (ariaSort != null && ariaSort !== 'none') {
+                    // Non-sortable column — aria-sort should be absent or "none"
+                    // (the grid removes it via _removeAriaSort in refreshAriaSort when !sortable)
                     colErrors.add(
-                        `Sortable column with sort "asc" has aria-sort="${ariaSort ?? 'null'}", expected "ascending".`
-                    );
-                } else if (sort === 'desc' && ariaSort !== 'descending') {
-                    colErrors.add(
-                        `Sortable column with sort "desc" has aria-sort="${ariaSort ?? 'null'}", expected "descending".`
-                    );
-                } else if (!sort && ariaSort != null && ariaSort !== 'none') {
-                    colErrors.add(
-                        `Sortable column with no sort has aria-sort="${ariaSort}", expected "none" or absent.`
+                        `Non-sortable column has aria-sort="${ariaSort}", expected absent or "none" (grid removes aria-sort when !sortable).`
                     );
                 }
-            } else if (ariaSort != null && ariaSort !== 'none') {
-                // Non-sortable column — aria-sort should be absent or "none"
-                // (the grid removes it via _removeAriaSort in refreshAriaSort when !sortable)
-                colErrors.add(
-                    `Non-sortable column has aria-sort="${ariaSort}", expected absent or "none" (grid removes aria-sort when !sortable).`
-                );
             }
 
             // Note: ag-header-cell-sorted-asc/desc CSS classes depend on the SortIndicatorComp

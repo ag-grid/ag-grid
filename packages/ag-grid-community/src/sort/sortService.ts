@@ -104,9 +104,9 @@ export class SortService extends BeanStub implements NamedBean {
             const rowGroupColumns = showRowGroupCols?.getSourceColumnsForGroupColumn?.(column);
             if (rowGroupColumns) {
                 for (let i = 0, len = rowGroupColumns.length; i < len; ++i) {
-                    const rgCol = rowGroupColumns[i];
-                    if (rgCol.isSortable()) {
-                        columnsToUpdate.push(rgCol);
+                    const rowGroupCol = rowGroupColumns[i];
+                    if (rowGroupCol.isSortable()) {
+                        columnsToUpdate.push(rowGroupCol);
                     }
                 }
             }
@@ -254,8 +254,9 @@ export class SortService extends BeanStub implements NamedBean {
         return map;
     }
 
-    /** Linked row-group cols share their parent display col's index, so we map back
-     *  through showRowGroupCols rather than using raw array positions. */
+    /** Builds a column → display-index map. In linked-group mode, row-group cols share their
+     *  parent display col's index (so the indicator UI shows the same ordinal for both). The
+     *  index counts display cols only, not their interleaved row-group children. */
     private buildSortedColsIndexMap(sortedCols: AgColumn[]): Map<AgColumn, number> {
         const map = new Map<AgColumn, number>();
         const showRowGroupCols = this.beans.showRowGroupCols;
@@ -265,10 +266,11 @@ export class SortService extends BeanStub implements NamedBean {
             const col = sortedCols[i];
             const reflected = isCoupled ? showRowGroupCols?.getShowRowGroupCol(col.colId) : undefined;
             if (reflected && reflected !== col) {
+                // Row-group child of the most recently seen display col — share its index.
                 map.set(col, displayIdx);
             } else {
-                displayIdx = i;
-                map.set(col, displayIdx);
+                // Display col (or non-linked col) — advance to the next display index.
+                map.set(col, ++displayIdx);
             }
         }
         return map;
@@ -277,6 +279,7 @@ export class SortService extends BeanStub implements NamedBean {
     private computeSortedCols(): AgColumn[] {
         const { gos, colModel, showRowGroupCols, rowGroupColsSvc } = this.beans;
         const isCoupled = _isColumnsSortingCoupledToGroup(gos);
+        const linkedMode = isCoupled && rowGroupColsSvc !== undefined;
 
         const allSortedCols: AgColumn[] = [];
         const allCols = colModel.getAllCols();
@@ -301,34 +304,40 @@ export class SortService extends BeanStub implements NamedBean {
             }
         }
 
-        allSortedCols.sort(compareBySortIndex);
+        // Single-element sort is a no-op; skip the function call overhead.
+        if (allSortedCols.length > 1) {
+            allSortedCols.sort(compareBySortIndex);
+        }
 
-        // Linked-group mode: build displayCol → [rgCol, ...] for the interleave below.
-        let groupToRgCols: Map<AgColumn, AgColumn[]> | undefined;
-        if (isCoupled && rowGroupColsSvc) {
-            const rgColumns = rowGroupColsSvc.columns;
-            for (let i = 0, len = rgColumns.length; i < len; ++i) {
-                const rgCol = rgColumns[i];
-                if (!rgCol.getSortDef()) {
-                    continue;
-                }
-                const displayCol = showRowGroupCols!.getShowRowGroupCol(rgCol.colId);
-                if (!displayCol) {
-                    continue;
-                }
-                if (!groupToRgCols) {
-                    groupToRgCols = new Map();
-                }
-                const existing = groupToRgCols.get(displayCol);
+        if (!linkedMode) {
+            return allSortedCols;
+        }
+
+        // Linked-group mode: build displayCol → [rowGroupCol, ...] for the interleave below.
+        let rowGroupColsByDisplayCol: Map<AgColumn, AgColumn[]> | undefined;
+        const rowGroupColumns = rowGroupColsSvc.columns;
+        for (let i = 0, len = rowGroupColumns.length; i < len; ++i) {
+            const rowGroupCol = rowGroupColumns[i];
+            if (!rowGroupCol.getSortDef()) {
+                continue;
+            }
+            const displayCol = showRowGroupCols!.getShowRowGroupCol(rowGroupCol.colId);
+            if (!displayCol) {
+                continue;
+            }
+            if (rowGroupColsByDisplayCol) {
+                const existing = rowGroupColsByDisplayCol.get(displayCol);
                 if (existing) {
-                    existing.push(rgCol);
+                    existing.push(rowGroupCol);
                 } else {
-                    groupToRgCols.set(displayCol, [rgCol]);
+                    rowGroupColsByDisplayCol.set(displayCol, [rowGroupCol]);
                 }
+            } else {
+                rowGroupColsByDisplayCol = new Map<AgColumn, AgColumn[]>().set(displayCol, [rowGroupCol]);
             }
         }
 
-        if (!groupToRgCols) {
+        if (!rowGroupColsByDisplayCol) {
             return allSortedCols;
         }
 
@@ -342,10 +351,10 @@ export class SortService extends BeanStub implements NamedBean {
             }
             seen.add(mapped);
             sortedCols.push(mapped);
-            const rgCols = groupToRgCols.get(mapped);
-            if (rgCols) {
-                for (let j = 0, rgLen = rgCols.length; j < rgLen; ++j) {
-                    sortedCols.push(rgCols[j]);
+            const rowGroupCols = rowGroupColsByDisplayCol.get(mapped);
+            if (rowGroupCols) {
+                for (let j = 0, len = rowGroupCols.length; j < len; ++j) {
+                    sortedCols.push(rowGroupCols[j]);
                 }
             }
         }
@@ -481,7 +490,8 @@ export class SortService extends BeanStub implements NamedBean {
         const previous = column.getSortDef();
         if (!_areSortDefsEqual(previous, sort)) {
             // Presence flip changes membership → invalidateAll. Direction/type-only → derived only.
-            if (!previous !== !sort) {
+            const presenceFlipped = !!previous !== !!sort;
+            if (presenceFlipped) {
                 this.invalidateAll();
             } else {
                 this.invalidateDerived();

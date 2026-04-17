@@ -936,7 +936,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
     private getValueCallback(node: IRowNode, field: string): any {
         const otherColumn = this.colModel.getColDefOrCol(field);
-        return otherColumn != null ? this.getValue(otherColumn, node, 'data') : null;
+        return otherColumn ? this.getValue(otherColumn, node, 'data') : null;
     }
 
     /** Used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col. */
