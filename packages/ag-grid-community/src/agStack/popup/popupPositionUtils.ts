@@ -3,6 +3,12 @@ export type Anchor = 'tl' | 'tc' | 'tr' | 'l' | 'c' | 'r' | 'bl' | 'bc' | 'br';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type Alignment = `${Anchor}-${Anchor}`;
 
+interface FindBestPlacementOptions {
+    gap?: number;
+    enableRtl?: boolean;
+    mirrorPlacementsInRtl?: boolean;
+}
+
 interface Rect {
     top: number;
     left: number;
@@ -75,13 +81,15 @@ export function findBestPlacement(
     targetSize: Size,
     parentSize: Size,
     placements: Alignment[],
-    gap = 0
+    gapOrOptions: number | FindBestPlacementOptions = 0
 ): { x: number; y: number } {
+    const { gap, enableRtl, mirrorPlacementsInRtl } = normaliseFindBestPlacementOptions(gapOrOptions);
+    const effectivePlacements = getEffectivePlacements(placements, enableRtl, mirrorPlacementsInRtl);
     const { width, height } = targetSize;
     const maxX = Math.max(parentSize.width - width, 0);
     const maxY = Math.max(parentSize.height - height, 0);
 
-    for (const alignment of placements) {
+    for (const alignment of effectivePlacements) {
         const pos = computeAlignedPosition(referenceRect, targetSize, alignment, gap);
         const clampedX = Math.min(Math.max(pos.x, 0), maxX);
         const clampedY = Math.min(Math.max(pos.y, 0), maxY);
@@ -98,11 +106,24 @@ export function findBestPlacement(
     }
 
     // Fallback to first placement, clamped to parent bounds
-    const fallback = computeAlignedPosition(referenceRect, targetSize, placements[0], gap);
+    const fallback = computeAlignedPosition(referenceRect, targetSize, effectivePlacements[0], gap);
     return {
         x: Math.min(Math.max(fallback.x, 0), maxX),
         y: Math.min(Math.max(fallback.y, 0), maxY),
     };
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function getEffectivePlacements(
+    placements: Alignment[],
+    enableRtl = false,
+    mirrorPlacementsInRtl = true
+): Alignment[] {
+    if (!enableRtl || !mirrorPlacementsInRtl) {
+        return placements;
+    }
+
+    return placements.map(mirrorAlignment);
 }
 
 /** Resolve an anchor to absolute coordinates on a rect. */
@@ -152,6 +173,48 @@ function getGapDirection(targetAnchor: Anchor, refAnchor: Anchor): { dx: number;
         dx: Math.sign(rh - th),
         dy: Math.sign(rv - tv),
     };
+}
+
+function normaliseFindBestPlacementOptions(
+    gapOrOptions: number | FindBestPlacementOptions
+): Required<FindBestPlacementOptions> {
+    if (typeof gapOrOptions === 'number') {
+        return {
+            gap: gapOrOptions,
+            enableRtl: false,
+            mirrorPlacementsInRtl: true,
+        };
+    }
+
+    return {
+        gap: gapOrOptions.gap ?? 0,
+        enableRtl: gapOrOptions.enableRtl ?? false,
+        mirrorPlacementsInRtl: gapOrOptions.mirrorPlacementsInRtl ?? true,
+    };
+}
+
+function mirrorAlignment(alignment: Alignment): Alignment {
+    const [targetAnchor, referenceAnchor] = alignment.split('-') as [Anchor, Anchor];
+    return `${mirrorAnchor(targetAnchor)}-${mirrorAnchor(referenceAnchor)}` as Alignment;
+}
+
+function mirrorAnchor(anchor: Anchor): Anchor {
+    switch (anchor) {
+        case 'tl':
+            return 'tr';
+        case 'tr':
+            return 'tl';
+        case 'l':
+            return 'r';
+        case 'r':
+            return 'l';
+        case 'bl':
+            return 'br';
+        case 'br':
+            return 'bl';
+        default:
+            return anchor;
+    }
 }
 
 /** Map anchor to horizontal position: -1 = left, 0 = centre, 1 = right */

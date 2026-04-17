@@ -147,6 +147,7 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
                 note: access.note ?? { text: '' },
                 readOnly: access.canView && !access.canEdit,
                 anchorToElement: target.anchorElement,
+                placementMode: isFullWidthRowNoteParams(target.noteParams) ? 'fullWidthRow' : 'cell',
                 focusEditor,
                 onClosed: (noteChanged, note, closeEvent) => this.onPopupClosed(noteChanged, note, closeEvent),
                 onPopupEnter: () => this.cancelHide(),

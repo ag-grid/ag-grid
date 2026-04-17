@@ -28,4 +28,22 @@ test.agExample(import.meta, () => {
             'This note belongs to a full width row. The datasource receives location: fullWidthRow instead of a column.'
         );
     });
+
+    test.eachFramework('Full width row notes open right-aligned instead of centred', async ({ page }) => {
+        const fullWidthRow = page
+            .locator('.ag-row', { has: page.locator('.notes-full-width-row') })
+            .filter({ hasText: 'Usain Bolt' })
+            .first();
+        await fullWidthRow.hover();
+
+        const popup = page.locator('.ag-notes-popup');
+        await expect(popup).toBeVisible();
+
+        const rowBox = await fullWidthRow.boundingBox();
+        const popupBox = await popup.boundingBox();
+
+        expect(rowBox).toBeTruthy();
+        expect(popupBox).toBeTruthy();
+        expect(Math.abs(rowBox!.x + rowBox!.width - (popupBox!.x + popupBox!.width))).toBeLessThanOrEqual(2);
+    });
 });

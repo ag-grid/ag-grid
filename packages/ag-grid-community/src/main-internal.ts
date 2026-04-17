@@ -76,6 +76,7 @@ export { BasePopupService as _BasePopupService } from './agStack/popup/basePopup
 export {
     computeAlignedPosition as _computeAlignedPosition,
     findBestPlacement as _findBestPlacement,
+    getEffectivePlacements as _getEffectivePlacements,
     toRelativeRect as _toRelativeRect,
 } from './agStack/popup/popupPositionUtils';
 export type { Alignment as _Alignment, Anchor as _Anchor } from './agStack/popup/popupPositionUtils';
