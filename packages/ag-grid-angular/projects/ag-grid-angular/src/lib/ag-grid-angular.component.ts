@@ -1127,7 +1127,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Components render in the order they appear in the array. Omitted components are hidden.
      * An empty array hides the pagination panel entirely.
      * When not set, all three components render in the default order: `pageSize`, `rowSummary`, `pageSummary`.
-     * @initial
      * @agModule `PaginationModule`
      */
     @Input() public paginationPanels: PaginationPanel[] | undefined = undefined;

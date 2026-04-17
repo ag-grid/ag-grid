@@ -1,8 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ValidationModule, getGridElement } from 'ag-grid-community';
-import { PaginationModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, PaginationModule, ValidationModule, getGridElement } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
 
@@ -411,6 +410,65 @@ describe('paginationPanels', () => {
                 expect(panel.querySelector<HTMLElement>('.ag-paging-page-size')).toHaveClass('ag-hidden');
                 // pageSummary keeps the panel visible
                 expect(panel).not.toHaveClass('ag-hidden');
+            });
+        });
+
+        describe('paginationPanels', () => {
+            test('reorders components when paginationPanels changes', () => {
+                const api = createPaginationGrid(gridsManager);
+                const panel = getPagingPanel(api)!;
+                let children = getChildElements(panel);
+                expect(children[0].classList.contains('ag-paging-page-size')).toBe(true);
+                expect(children[2].classList.contains('ag-paging-page-summary-panel')).toBe(true);
+
+                api.setGridOption('paginationPanels', ['pageSummary', 'rowSummary', 'pageSize']);
+
+                children = getChildElements(panel);
+                expect(children[0].classList.contains('ag-paging-page-summary-panel')).toBe(true);
+                expect(children[1].classList.contains('ag-paging-row-summary-panel')).toBe(true);
+                expect(children[2].classList.contains('ag-paging-page-size')).toBe(true);
+            });
+
+            test('hides components when removed from paginationPanels', () => {
+                const api = createPaginationGrid(gridsManager);
+                const panel = getPagingPanel(api)!;
+                expect(panel.querySelector('.ag-paging-page-size')).toBeTruthy();
+                expect(panel.querySelector('.ag-paging-row-summary-panel')).toBeTruthy();
+
+                api.setGridOption('paginationPanels', ['pageSummary']);
+
+                expect(panel.querySelector('.ag-paging-page-size')).toBeNull();
+                expect(panel.querySelector('.ag-paging-row-summary-panel')).toBeNull();
+                expect(panel.querySelector('.ag-paging-page-summary-panel')).toBeTruthy();
+            });
+
+            test('empty array hides panel; non-empty array restores it', () => {
+                const api = createPaginationGrid(gridsManager);
+                const panel = getPagingPanel(api)!;
+                expect(panel).not.toHaveClass('ag-hidden');
+
+                api.setGridOption('paginationPanels', []);
+                expect(panel).toHaveClass('ag-hidden');
+                expect(getChildElements(panel)).toHaveLength(0);
+
+                api.setGridOption('paginationPanels', ['pageSummary']);
+                expect(panel).not.toHaveClass('ag-hidden');
+                expect(panel.querySelector('.ag-paging-page-summary-panel')).toBeTruthy();
+            });
+
+            test('navigation still works after rebuild', () => {
+                const api = createPaginationGrid(gridsManager);
+                const panel = getPagingPanel(api)!;
+
+                api.setGridOption('paginationPanels', ['pageSummary', 'rowSummary']);
+
+                const nextBtn = panel.querySelector<HTMLElement>('[aria-label="Next Page"]')!;
+                nextBtn.click();
+                expect(api.paginationGetCurrentPage()).toBe(1);
+
+                const numbers = panel.querySelectorAll('.ag-paging-row-summary-panel-number');
+                expect(numbers[0].textContent).toBe('11');
+                expect(numbers[1].textContent).toBe('20');
             });
         });
     });

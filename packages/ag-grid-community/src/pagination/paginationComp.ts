@@ -1,3 +1,4 @@
+import { _removeFromParent } from '../agStack/utils/dom';
 import type { PaginationPanel } from '../entities/gridOptions';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';
@@ -53,6 +54,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
             ['paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'],
             () => this.onPageSizeRelatedOptionsChange()
         );
+        this.addManagedPropertyListener('paginationPanels', () => this.rebuildComponents(idPrefix));
         this.addManagedEventListeners({ paginationChanged: () => this.announceAriaStatus() });
 
         _addFocusableContainerListener(this.beans, this, this.getGui());
@@ -89,6 +91,20 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
                 this.appendChild(this.pageSummaryComp);
             }
         }
+    }
+
+    private rebuildComponents(idPrefix: string): void {
+        for (const comp of [this.pageSizeComp, this.rowSummaryComp, this.pageSummaryComp]) {
+            if (comp) {
+                _removeFromParent(comp.getGui());
+            }
+        }
+        this.pageSizeComp = this.destroyBean(this.pageSizeComp);
+        this.rowSummaryComp = this.destroyBean(this.rowSummaryComp);
+        this.pageSummaryComp = this.destroyBean(this.pageSummaryComp);
+        this.buildComponents(idPrefix);
+        this.onPaginationChanged();
+        this.announceAriaStatus();
     }
 
     private onPaginationChanged(): void {
