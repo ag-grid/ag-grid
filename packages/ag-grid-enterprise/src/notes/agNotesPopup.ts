@@ -7,8 +7,10 @@ import {
     RefPlaceholder,
     _computeAlignedPosition,
     _findBestPlacement,
+    _fitsWithinBounds,
     _getActiveDomElement,
     _getEffectivePlacements,
+    _getRectSize,
     _setDisplayed,
     _toRelativeRect,
 } from 'ag-grid-community';
@@ -27,6 +29,16 @@ const CELL_PLACEMENTS: _Alignment[] = ['tl-tr', 'bl-tr', 'tr-tl', 'br-tl', 'tr-b
 const FULL_WIDTH_ROW_PLACEMENTS: _Alignment[] = ['tl-tr', 'tr-br', 'br-tr'];
 
 type NotesPopupPlacementMode = 'cell' | 'fullWidthRow';
+type BoundsRect = Pick<DOMRectReadOnly, 'top' | 'left' | 'right' | 'bottom'>;
+type PopupSize = Pick<DOMRectReadOnly, 'width' | 'height'>;
+
+interface NotesPopupPositionParams {
+    anchorRect: BoundsRect;
+    parentRect: BoundsRect;
+    popupSize: PopupSize;
+    placementMode: NotesPopupPlacementMode;
+    enableRtl: boolean;
+}
 
 const NotesPopupContentElement: ElementParams = {
     tag: 'div',
@@ -258,40 +270,28 @@ export class AgNotesPopup extends BeanStub {
     }
 }
 
-export function findNotesPopupPosition(params: {
-    anchorRect: { top: number; left: number; right: number; bottom: number };
-    parentRect: { top: number; left: number; right: number; bottom: number };
-    popupSize: { width: number; height: number };
-    placementMode: NotesPopupPlacementMode;
-    enableRtl: boolean;
-}): { x: number; y: number } {
-    const referenceRect = _toRelativeRect(params.anchorRect, params.parentRect);
-    const parentSize = {
-        width: params.parentRect.right - params.parentRect.left,
-        height: params.parentRect.bottom - params.parentRect.top,
-    };
-    const basePlacements = getNotesPopupPlacements(params.placementMode);
-    const placements = _getEffectivePlacements(basePlacements, params.enableRtl);
+export function findNotesPopupPosition(params: NotesPopupPositionParams): { x: number; y: number } {
+    const { anchorRect, parentRect, popupSize, placementMode, enableRtl } = params;
+    const referenceRect = _toRelativeRect(anchorRect, parentRect);
+    const parentSize = _getRectSize(parentRect);
+    const basePlacements = getNotesPopupPlacements(placementMode);
+    const placements = _getEffectivePlacements(basePlacements, enableRtl);
 
     for (const alignment of placements) {
-        const position = _computeAlignedPosition(referenceRect, params.popupSize, alignment, 0);
+        const position = _computeAlignedPosition(referenceRect, popupSize, alignment, 0);
 
-        if (
-            position.x >= 0 &&
-            position.y >= 0 &&
-            position.x + params.popupSize.width <= parentSize.width &&
-            position.y + params.popupSize.height <= parentSize.height
-        ) {
+        if (_fitsWithinBounds(position, popupSize, parentSize)) {
             return position;
         }
     }
 
-    return _findBestPlacement(referenceRect, params.popupSize, parentSize, basePlacements, {
+    return _findBestPlacement(referenceRect, popupSize, parentSize, basePlacements, {
         gap: 0,
-        enableRtl: params.enableRtl,
+        enableRtl,
     });
 }
 
-export function getNotesPopupPlacements(mode: NotesPopupPlacementMode): _Alignment[] {
-    return mode === 'fullWidthRow' ? FULL_WIDTH_ROW_PLACEMENTS : CELL_PLACEMENTS;
+export function getNotesPopupPlacements(mode: NotesPopupPlacementMode, enableRtl?: boolean): _Alignment[] {
+    const placements = mode === 'fullWidthRow' ? FULL_WIDTH_ROW_PLACEMENTS : CELL_PLACEMENTS;
+    return _getEffectivePlacements(placements, enableRtl);
 }

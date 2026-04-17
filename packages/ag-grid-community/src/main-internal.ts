@@ -77,6 +77,8 @@ export {
     computeAlignedPosition as _computeAlignedPosition,
     findBestPlacement as _findBestPlacement,
     getEffectivePlacements as _getEffectivePlacements,
+    getRectSize as _getRectSize,
+    fitsWithinBounds as _fitsWithinBounds,
     toRelativeRect as _toRelativeRect,
 } from './agStack/popup/popupPositionUtils';
 export type { Alignment as _Alignment, Anchor as _Anchor } from './agStack/popup/popupPositionUtils';

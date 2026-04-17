@@ -9,6 +9,15 @@ interface FindBestPlacementOptions {
     mirrorPlacementsInRtl?: boolean;
 }
 
+const MIRRORED_ANCHORS: Partial<Record<Anchor, Anchor>> = {
+    tl: 'tr',
+    tr: 'tl',
+    l: 'r',
+    r: 'l',
+    bl: 'br',
+    br: 'bl',
+} as const;
+
 interface Rect {
     top: number;
     left: number;
@@ -19,6 +28,24 @@ interface Rect {
 interface Size {
     width: number;
     height: number;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function getRectSize(rect: Pick<Rect, 'top' | 'left' | 'right' | 'bottom'>): Size {
+    return {
+        width: rect.right - rect.left,
+        height: rect.bottom - rect.top,
+    };
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function fitsWithinBounds(position: { x: number; y: number }, targetSize: Size, boundsSize: Size): boolean {
+    return (
+        position.x >= 0 &&
+        position.y >= 0 &&
+        position.x + targetSize.width <= boundsSize.width &&
+        position.y + targetSize.height <= boundsSize.height
+    );
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -199,22 +226,7 @@ function mirrorAlignment(alignment: Alignment): Alignment {
 }
 
 function mirrorAnchor(anchor: Anchor): Anchor {
-    switch (anchor) {
-        case 'tl':
-            return 'tr';
-        case 'tr':
-            return 'tl';
-        case 'l':
-            return 'r';
-        case 'r':
-            return 'l';
-        case 'bl':
-            return 'br';
-        case 'br':
-            return 'bl';
-        default:
-            return anchor;
-    }
+    return MIRRORED_ANCHORS[anchor] ?? anchor;
 }
 
 /** Map anchor to horizontal position: -1 = left, 0 = centre, 1 = right */

@@ -1,5 +1,3 @@
-import { _getEffectivePlacements } from 'ag-grid-community';
-
 import { findNotesPopupPosition, getNotesPopupPlacements } from './agNotesPopup';
 
 describe('AgNotesPopup positioning', () => {
@@ -11,14 +9,7 @@ describe('AgNotesPopup positioning', () => {
     });
 
     it('mirrors the horizontal placements in RTL', () => {
-        expect(_getEffectivePlacements(getNotesPopupPlacements('cell'), true)).toEqual([
-            'tr-tl',
-            'br-tl',
-            'tl-tr',
-            'bl-tr',
-            'tl-bl',
-            'bl-tl',
-        ]);
+        expect(getNotesPopupPlacements('cell', true)).toEqual(['tr-tl', 'br-tl', 'tl-tr', 'bl-tr', 'tl-bl', 'bl-tl']);
     });
 
     it('opens flush to the right edge of a normal cell when there is room', () => {
