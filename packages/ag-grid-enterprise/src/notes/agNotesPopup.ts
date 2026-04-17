@@ -7,8 +7,8 @@ import {
     RefPlaceholder,
     _computeAlignedPosition,
     _findBestPlacement,
-    _getEffectivePlacements,
     _getActiveDomElement,
+    _getEffectivePlacements,
     _setDisplayed,
     _toRelativeRect,
 } from 'ag-grid-community';

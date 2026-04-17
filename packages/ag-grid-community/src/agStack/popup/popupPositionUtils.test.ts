@@ -1,5 +1,10 @@
 import type { Alignment } from './popupPositionUtils';
-import { computeAlignedPosition, findBestPlacement, getEffectivePlacements, toRelativeRect } from './popupPositionUtils';
+import {
+    computeAlignedPosition,
+    findBestPlacement,
+    getEffectivePlacements,
+    toRelativeRect,
+} from './popupPositionUtils';
 
 describe('popupPositionUtils', () => {
     describe('toRelativeRect', () => {
