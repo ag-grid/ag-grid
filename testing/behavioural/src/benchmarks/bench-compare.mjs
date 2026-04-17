@@ -43,7 +43,7 @@
  *   node bench-compare.mjs test --runs 5 --filter "getvalue"
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -90,20 +90,32 @@ let outputDir = join(__dirname, 'tmp');
 let reuse = false;
 let targetDir = '';
 
+/** Read the value for a `--flag <value>` pair, erroring if the value is missing. */
+function takeValue(flag, rawArgs, i) {
+    const value = rawArgs[i + 1];
+    if (value === undefined || value.startsWith('-')) {
+        console.error(`${flag} requires a value`);
+        process.exit(1);
+    }
+    return value;
+}
+
 for (let i = 1; i < args.length; i++) {
     switch (args[i]) {
-        case '--runs':
-            runs = parseInt(args[++i], 10);
+        case '--runs': {
+            const raw = takeValue('--runs', args, i++);
+            runs = parseInt(raw, 10);
             if (isNaN(runs) || runs < 1) {
                 console.error('--runs must be a positive integer');
                 process.exit(1);
             }
             break;
+        }
         case '--filter':
-            filter = args[++i];
+            filter = takeValue('--filter', args, i++);
             break;
         case '--output':
-            outputDir = resolve(args[++i]);
+            outputDir = resolve(takeValue('--output', args, i++));
             break;
         case '--reuse':
             reuse = true;
@@ -142,10 +154,8 @@ function runBenchmarks(projectDir, outputFile) {
         return false;
     }
 
-    const EXCLUDED_BENCHES = EXCLUDED_BENCH_FILES;
-
     const benchArgs = ['--node-options=--expose-gc', 'vitest', 'bench', '--outputJson', outputFile];
-    for (const ex of EXCLUDED_BENCHES) {
+    for (const ex of EXCLUDED_BENCH_FILES) {
         benchArgs.push('--exclude', `**/${ex}*`);
     }
     if (filter) {
@@ -210,18 +220,33 @@ if (command === 'base' || command === 'test') {
 
 console.log('=== Comparing results... ===\n');
 
+/**
+ * Load all `${prefix}-run-<n>.json` files from the output directory, regardless of --runs.
+ * Finding files on disk (rather than iterating 1..runs) ensures that if the user ran N runs
+ * on a previous invocation and M < N on this one, every saved run still participates in the
+ * comparison. Aborts if any discovered file fails to parse.
+ */
 function loadRuns(prefix) {
+    const pattern = new RegExp(`^${prefix}-run-(\\d+)\\.json$`);
+    const entries = readdirSync(outputDir)
+        .map((name) => {
+            const match = pattern.exec(name);
+            return match ? { name, index: parseInt(match[1], 10) } : null;
+        })
+        .filter((x) => x !== null)
+        .sort((a, b) => a.index - b.index);
+
     const results = [];
-    for (let i = 1; i <= runs; i++) {
-        const path = join(outputDir, `${prefix}-run-${i}.json`);
-        if (!existsSync(path)) {
-            continue;
-        }
+    for (const { name } of entries) {
+        const path = join(outputDir, name);
+        let parsed;
         try {
-            results.push(JSON.parse(readFileSync(path, 'utf-8')));
-        } catch {
-            console.error(`Warning: could not parse ${path}`);
+            parsed = JSON.parse(readFileSync(path, 'utf-8'));
+        } catch (err) {
+            console.error(`Error: failed to parse ${path}: ${err.message}`);
+            process.exit(1);
         }
+        results.push(parsed);
     }
     return results;
 }
@@ -230,18 +255,36 @@ function isExcluded(filepath) {
     return EXCLUDED_BENCH_FILES.some((ex) => filepath.includes(ex));
 }
 
+/**
+ * Extract a file-unique identifier from a filepath. Uses the path relative to the first
+ * `src/` segment so keys are stable across base/test checkouts that live in different
+ * absolute directories. Falls back to the basename when `src/` is absent.
+ */
+function fileIdentity(filepath) {
+    const srcIndex = filepath.lastIndexOf('/src/');
+    if (srcIndex !== -1) {
+        return filepath.slice(srcIndex + 1); // keep the leading 'src/...'
+    }
+    const slash = filepath.lastIndexOf('/');
+    return slash === -1 ? filepath : filepath.slice(slash + 1);
+}
+
 function extractBenchmarks(runData) {
     const map = new Map();
     for (const file of runData.files) {
         if (isExcluded(file.filepath)) {
             continue;
         }
+        const fileId = fileIdentity(file.filepath);
         for (const group of file.groups) {
             for (const bench of group.benchmarks) {
-                const key = `${group.fullName} > ${bench.name}`;
+                // Include fileId in the key — two files can legitimately share
+                // suite/bench names, and without it one would silently overwrite the other.
+                const key = `${fileId} :: ${group.fullName} > ${bench.name}`;
                 map.set(key, {
                     name: bench.name,
                     group: group.fullName,
+                    file: fileId,
                     hz: bench.hz,
                     mean: bench.mean,
                     min: bench.min,
@@ -291,7 +334,7 @@ function aggregateRuns(allRuns) {
         for (const [key, data] of benchmarks) {
             let bucket = samplesByKey.get(key);
             if (!bucket) {
-                bucket = { name: data.name, group: data.group, hz: [], rme: [], sampleCount: 0 };
+                bucket = { name: data.name, group: data.group, file: data.file, hz: [], rme: [], sampleCount: 0 };
                 samplesByKey.set(key, bucket);
             }
             bucket.hz.push(data.hz);
@@ -315,6 +358,7 @@ function aggregateRuns(allRuns) {
         result.set(key, {
             name: bucket.name,
             group: bucket.group,
+            file: bucket.file,
             hz: medianHz,
             rme,
             sampleCount: bucket.sampleCount,
@@ -440,6 +484,9 @@ function fmtHz(hz) {
 
 /** Format speedup as "1.23x faster" / "1.10x slower" / "unchanged". */
 function fmtSpeedup(c) {
+    if (!(c.baseHz > 0) || !(c.testHz > 0)) {
+        return 'n/a';
+    }
     const ratio = c.testHz / c.baseHz;
     if (ratio >= 1.005) {
         return `${ratio.toFixed(2)}x faster`;
@@ -537,8 +584,10 @@ if (notable.length > 0) {
             `  ${arrow} ${result.padStart(16)}  ${c.name}  (${fmtHz(c.baseHz)} → ${fmtHz(c.testHz)} ops/s)${suffix}`
         );
     }
+    const notableNoisy = notable.filter(isNoisy).length;
+    if (notableNoisy > 0) {
+        console.log(`  ${notableNoisy} of ${notable.length} notable change(s) are within noise.`);
+    }
 } else {
     console.log('  No notable changes detected.');
 }
-const noiseCount = comparisons.filter((c) => c.deltaConservative === 0).length;
-console.log(`  ${noiseCount} benchmark(s) within noise.`);
