@@ -23,7 +23,7 @@ export class PageSummaryComp extends Component {
     private nextButtonDisabled = false;
     private lastButtonDisabled = false;
 
-    private lastAriaStatus = '';
+    public ariaStatus = '';
     private readonly idPrefix: string;
 
     constructor(idPrefix: string) {
@@ -37,7 +37,6 @@ export class PageSummaryComp extends Component {
     }
 
     public postConstruct(): void {
-        const isRtl = this.gos.get('enableRtl');
         const idPrefix = this.idPrefix;
         const localeTextFunc = this.getLocaleTextFunc();
 
@@ -105,7 +104,8 @@ export class PageSummaryComp extends Component {
             ],
         });
 
-        const { btFirst, btPrevious, btNext, btLast, beans } = this;
+        const { gos, btFirst, btPrevious, btNext, btLast, beans } = this;
+        const isRtl = gos.get('enableRtl');
 
         btFirst.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'last' : 'first', beans)!);
         btPrevious.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'next' : 'previous', beans)!);
@@ -188,9 +188,10 @@ export class PageSummaryComp extends Component {
     }
 
     private updateLabels(): void {
-        const lastPageFound = this.rowModel.isLastRowIndexKnown();
-        const totalPages = this.pagination.getTotalPages();
-        const currentPage = this.pagination.getCurrentPage();
+        const { rowModel, pagination } = this;
+        const lastPageFound = rowModel.isLastRowIndexKnown();
+        const totalPages = pagination.getTotalPages();
+        const currentPage = pagination.getCurrentPage();
         const localeTextFunc = this.getLocaleTextFunc();
 
         const pagesExist = totalPages > 0;
@@ -207,11 +208,7 @@ export class PageSummaryComp extends Component {
 
         const strPage = localeTextFunc('page', 'Page');
         const strOf = localeTextFunc('of', 'of');
-        this.lastAriaStatus = `${strPage} ${lbCurrent} ${strOf} ${lbTotal}`;
-    }
-
-    public getAriaStatus(): string {
-        return this.lastAriaStatus;
+        this.ariaStatus = `${strPage} ${lbCurrent} ${strOf} ${lbTotal}`;
     }
 
     private formatNumber(value: number): string {

@@ -11,7 +11,7 @@ export class RowSummaryComp extends Component {
     private readonly lbLastRowOnPage: HTMLElement = RefPlaceholder;
     private readonly lbRecordCount: HTMLElement = RefPlaceholder;
 
-    private lastAriaStatus = '';
+    public ariaStatus = '';
 
     private readonly idPrefix: string;
 
@@ -63,11 +63,16 @@ export class RowSummaryComp extends Component {
     }
 
     public refresh(): void {
-        const lastPageFound = this.beans.rowModel.isLastRowIndexKnown();
-        const masterRowCount = this.pagination.getMasterRowCount();
+        const {
+            pagination,
+            beans: { rowModel },
+            gos,
+        } = this;
+        const lastPageFound = rowModel.isLastRowIndexKnown();
+        const masterRowCount = pagination.getMasterRowCount();
         const rowCount = lastPageFound ? masterRowCount : null;
-        const currentPage = this.pagination.getCurrentPage();
-        const pageSize = this.pagination.getPageSize();
+        const currentPage = pagination.getCurrentPage();
+        const pageSize = pagination.getPageSize();
         const localeTextFunc = this.getLocaleTextFunc();
 
         let startRow: number;
@@ -86,20 +91,22 @@ export class RowSummaryComp extends Component {
         const theoreticalEndRow = startRow + pageSize - 1;
         const isLoadingPageSize = !lastPageFound && masterRowCount < theoreticalEndRow;
 
-        const lbFirstRowOnPage = this.formatNumber(startRow);
+        const formatNumber = (value: number) => _formatPaginationNumber(value, gos, this.getLocaleTextFunc.bind(this));
+
+        const lbFirstRowOnPage = formatNumber(startRow);
         this.lbFirstRowOnPage.textContent = lbFirstRowOnPage;
 
         let lbLastRowOnPage: string;
         if (isLoadingPageSize) {
             lbLastRowOnPage = localeTextFunc('pageLastRowUnknown', '?');
         } else {
-            lbLastRowOnPage = this.formatNumber(endRow);
+            lbLastRowOnPage = formatNumber(endRow);
         }
         this.lbLastRowOnPage.textContent = lbLastRowOnPage;
 
         let lbRecordCount: string;
         if (lastPageFound) {
-            lbRecordCount = this.formatNumber(rowCount!);
+            lbRecordCount = formatNumber(rowCount!);
         } else {
             lbRecordCount = localeTextFunc('more', 'more');
         }
@@ -107,14 +114,6 @@ export class RowSummaryComp extends Component {
 
         const strTo = localeTextFunc('to', 'to');
         const strOf = localeTextFunc('of', 'of');
-        this.lastAriaStatus = `${lbFirstRowOnPage} ${strTo} ${lbLastRowOnPage} ${strOf} ${lbRecordCount}`;
-    }
-
-    public getAriaStatus(): string {
-        return this.lastAriaStatus;
-    }
-
-    private formatNumber(value: number): string {
-        return _formatPaginationNumber(value, this.gos, this.getLocaleTextFunc.bind(this));
+        this.ariaStatus = `${lbFirstRowOnPage} ${strTo} ${lbLastRowOnPage} ${strOf} ${lbRecordCount}`;
     }
 }

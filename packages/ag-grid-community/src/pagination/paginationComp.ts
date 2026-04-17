@@ -145,11 +145,11 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         this.announceIfChanged(this.pageSummaryComp, 'paginationPage');
     }
 
-    private announceIfChanged(comp: { getAriaStatus(): string } | undefined, key: AriaAnnounceKey): void {
+    private announceIfChanged(comp: { readonly ariaStatus: string } | undefined, key: AriaAnnounceKey): void {
         if (!comp) {
             return;
         }
-        const status = comp.getAriaStatus();
+        const status = comp.ariaStatus;
         if (status !== this.lastAriaAnnounced[key]) {
             this.lastAriaAnnounced[key] = status;
             this.beans.ariaAnnounce?.announceValue(status, key);
