@@ -3,7 +3,7 @@ import { bench, describe } from 'vitest';
 import type { AgColumn, ColDef, IRowNode } from 'ag-grid-community';
 import { CellApiModule, ClientSideRowModelModule, ColumnApiModule, RowApiModule } from 'ag-grid-community';
 
-import { SimplePRNG, TestGridsManager } from '../../test-utils';
+import { SimplePRNG, TestGridsManager } from '../test-utils';
 
 describe('getValue profiling', () => {
     const rowCount = 2000;
@@ -40,6 +40,7 @@ describe('getValue profiling', () => {
 
     const firstField = 'col_0';
     const lastField = `col_${colCount - 1}`;
+    const firstCol = api.getColumn(firstField)! as AgColumn;
     const lastCol = api.getColumn(lastField)! as AgColumn;
 
     bench(`getDataValue by string (first col)`, () => {
@@ -54,13 +55,19 @@ describe('getValue profiling', () => {
         }
     });
 
+    bench(`getDataValue by Column object (first col)`, () => {
+        for (let i = 0; i < rowCount; ++i) {
+            rowNodes[i].getDataValue(firstCol);
+        }
+    });
+
     bench(`getDataValue by Column object (last of ${colCount} cols)`, () => {
         for (let i = 0; i < rowCount; ++i) {
             rowNodes[i].getDataValue(lastCol);
         }
     });
 
-    bench(`getCellValue`, () => {
+    bench(`getCellValue by string (last of ${colCount} cols)`, () => {
         for (let i = 0; i < rowCount; ++i) {
             api.getCellValue({ rowNode: rowNodes[i], colKey: lastField, useFormatter: false });
         }

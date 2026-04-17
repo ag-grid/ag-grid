@@ -4,7 +4,7 @@ import { bench, suite } from 'vitest';
 import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
 
-import { SimplePRNG, TestGridsManager } from '../../test-utils';
+import { SimplePRNG, TestGridsManager } from '../test-utils';
 
 /**
  * Benchmarks the delta-sorting example scenario:
@@ -20,7 +20,7 @@ interface IData {
     sort2: number;
 }
 
-const ROW_COUNT = 100_000;
+const ROW_COUNT = 50_000;
 
 function buildRowData(count: number, prng: SimplePRNG): IData[] {
     const result = new Array<IData>(count);
@@ -35,18 +35,33 @@ function buildRowData(count: number, prng: SimplePRNG): IData[] {
     return result;
 }
 
-suite('delta sort transactions (100k rows, multi-column sort)', () => {
+// Pre-generate all data so the measured loop does zero allocation or PRNG work.
+const PREBUILT_COUNT = 500;
+const txnPrng = new SimplePRNG(0xde17a50);
+const baseRowData = buildRowData(ROW_COUNT, txnPrng);
+const prebuiltTransactions: { update: IData[] }[] = [];
+for (let i = 0; i < PREBUILT_COUNT; i++) {
+    prebuiltTransactions.push({
+        update: [
+            {
+                id: txnPrng.nextInt(0, ROW_COUNT - 1),
+                sort: txnPrng.nextInt(2000, 2002),
+                sort1: txnPrng.nextInt(2000, 2002),
+                sort2: txnPrng.nextInt(2000, 102000),
+            },
+        ],
+    });
+}
+
+suite(`delta sort transactions (${ROW_COUNT / 1000}k rows, multi-column sort)`, () => {
     const gridsManager = new TestGridsManager({
         benchmark: true,
         modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, ColumnApiModule],
     });
 
-    const prng = new SimplePRNG(0xde17a50);
-    const baseRowData = buildRowData(ROW_COUNT, prng);
-
     let deltaSortApi!: GridApi<IData>;
     let fullSortApi!: GridApi<IData>;
-    let nextId = ROW_COUNT;
+    let idx = 0;
 
     const gridOptions = {
         columnDefs: [
@@ -61,8 +76,10 @@ suite('delta sort transactions (100k rows, multi-column sort)', () => {
 
     const benchOptions: BenchOptions = {
         throws: true,
+        time: 3000,
+        warmupIterations: 25,
         setup: () => {
-            nextId = ROW_COUNT;
+            idx = 0;
             deltaSortApi ??= gridsManager.createGrid('delta', {
                 ...gridOptions,
                 deltaSort: true,
@@ -82,53 +99,17 @@ suite('delta sort transactions (100k rows, multi-column sort)', () => {
     };
 
     bench(
-        'applyTransaction (deltaSort: true) - 1 add + 1 update',
+        'applyTransaction (deltaSort: true) - 1 update',
         () => {
-            const id = nextId++;
-            deltaSortApi.applyTransaction({
-                add: [
-                    {
-                        id,
-                        sort: prng.nextInt(2000, 2002),
-                        sort1: prng.nextInt(2000, 2002),
-                        sort2: prng.nextInt(2000, 102000),
-                    },
-                ],
-                update: [
-                    {
-                        id: 1,
-                        sort: prng.nextInt(2000, 2002),
-                        sort1: prng.nextInt(2000, 2002),
-                        sort2: prng.nextInt(2000, 102000),
-                    },
-                ],
-            });
+            deltaSortApi.applyTransaction(prebuiltTransactions[idx++ % PREBUILT_COUNT]);
         },
         benchOptions
     );
 
     bench(
-        'applyTransaction (deltaSort: false) - 1 add + 1 update',
+        'applyTransaction (deltaSort: false) - 1 update',
         () => {
-            const id = nextId++;
-            fullSortApi.applyTransaction({
-                add: [
-                    {
-                        id,
-                        sort: prng.nextInt(2000, 2002),
-                        sort1: prng.nextInt(2000, 2002),
-                        sort2: prng.nextInt(2000, 102000),
-                    },
-                ],
-                update: [
-                    {
-                        id: 1,
-                        sort: prng.nextInt(2000, 2002),
-                        sort1: prng.nextInt(2000, 2002),
-                        sort2: prng.nextInt(2000, 102000),
-                    },
-                ],
-            });
+            fullSortApi.applyTransaction(prebuiltTransactions[idx++ % PREBUILT_COUNT]);
         },
         benchOptions
     );

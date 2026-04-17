@@ -16,7 +16,7 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { SimplePRNG, TestGridsManager } from '../../test-utils';
+import { SimplePRNG, TestGridsManager } from '../test-utils';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -223,23 +223,45 @@ const desc = `pivot aggregation — ${ROW_COUNT} rows, ${resultCols} result cols
 suite(desc, () => {
     let gridId = 0;
 
-    const benchMode = (name: string, fn: (api: GridApi) => void, initialData: PivotRow[]) => {
+    const benchAlternating = (
+        name: string,
+        forwardFn: (api: GridApi) => void,
+        reverseFn: (api: GridApi) => void,
+        initialData: PivotRow[]
+    ) => {
         const id = `P${++gridId}`;
         const gridsManager = new TestGridsManager({ benchmark: true, modules });
         let api!: GridApi;
+        let forward = true;
 
-        bench(name, () => fn(api), {
-            throws: true,
-            setup: () => {
-                gridsManager.reset();
-                api = gridsManager.createGrid(id, { ...gridOptions, rowData: initialData });
+        bench(
+            name,
+            () => {
+                if (forward) {
+                    forwardFn(api);
+                } else {
+                    reverseFn(api);
+                }
+                forward = !forward;
             },
-        });
+            {
+                throws: true,
+                setup: () => {
+                    gridsManager.reset();
+                    api = gridsManager.createGrid(id, { ...gridOptions, rowData: initialData });
+                    forward = true;
+                },
+            }
+        );
     };
 
     // Full refresh: clear then reload
-    benchMode(
+    benchAlternating(
         'full refresh',
+        (api) => {
+            api.setGridOption('rowData', []);
+            api.setGridOption('rowData', dataA);
+        },
         (api) => {
             api.setGridOption('rowData', []);
             api.setGridOption('rowData', dataA);
@@ -248,22 +270,18 @@ suite(desc, () => {
     );
 
     // Immutable update: 5% of rows changed, alternating A → B → A → B
-    benchMode(
+    benchAlternating(
         `immutable update (${updateCount} rows)`,
-        (api) => {
-            api.setGridOption('rowData', immutableB);
-            api.setGridOption('rowData', immutableA);
-        },
+        (api) => api.setGridOption('rowData', immutableB),
+        (api) => api.setGridOption('rowData', immutableA),
         immutableA
     );
 
     // Transaction update: same 5% forward then reverse
-    benchMode(
+    benchAlternating(
         `transaction update (${updateCount} rows)`,
-        (api) => {
-            api.applyTransaction({ update: edits.forward });
-            api.applyTransaction({ update: edits.reverse });
-        },
+        (api) => api.applyTransaction({ update: edits.forward }),
+        (api) => api.applyTransaction({ update: edits.reverse }),
         dataA
     );
 });
@@ -288,23 +306,45 @@ const descComparator = `pivot aggregation with pivotComparator — ${ROW_COUNT} 
 suite(descComparator, () => {
     let gridId = 0;
 
-    const benchMode = (name: string, fn: (api: GridApi) => void, initialData: PivotRow[]) => {
+    const benchAlternating = (
+        name: string,
+        forwardFn: (api: GridApi) => void,
+        reverseFn: (api: GridApi) => void,
+        initialData: PivotRow[]
+    ) => {
         const id = `PC${++gridId}`;
         const gridsManager = new TestGridsManager({ benchmark: true, modules });
         let api!: GridApi;
+        let forward = true;
 
-        bench(name, () => fn(api), {
-            throws: true,
-            setup: () => {
-                gridsManager.reset();
-                api = gridsManager.createGrid(id, { ...gridOptionsWithComparator, rowData: initialData });
+        bench(
+            name,
+            () => {
+                if (forward) {
+                    forwardFn(api);
+                } else {
+                    reverseFn(api);
+                }
+                forward = !forward;
             },
-        });
+            {
+                throws: true,
+                setup: () => {
+                    gridsManager.reset();
+                    api = gridsManager.createGrid(id, { ...gridOptionsWithComparator, rowData: initialData });
+                    forward = true;
+                },
+            }
+        );
     };
 
     // Full refresh: cold path — pivot col defs rebuilt regardless, comparator overhead is minimal
-    benchMode(
+    benchAlternating(
         'full refresh',
+        (api) => {
+            api.setGridOption('rowData', []);
+            api.setGridOption('rowData', dataA);
+        },
         (api) => {
             api.setGridOption('rowData', []);
             api.setGridOption('rowData', dataA);
@@ -313,22 +353,18 @@ suite(descComparator, () => {
     );
 
     // Immutable update: computePivotOrder runs on each iteration to detect comparator output changes
-    benchMode(
+    benchAlternating(
         `immutable update (${updateCount} rows)`,
-        (api) => {
-            api.setGridOption('rowData', immutableB);
-            api.setGridOption('rowData', immutableA);
-        },
+        (api) => api.setGridOption('rowData', immutableB),
+        (api) => api.setGridOption('rowData', immutableA),
         immutableA
     );
 
     // Transaction update: hot path — computePivotOrder traverses uniqueValues on every transaction
-    benchMode(
+    benchAlternating(
         `transaction update (${updateCount} rows)`,
-        (api) => {
-            api.applyTransaction({ update: edits.forward });
-            api.applyTransaction({ update: edits.reverse });
-        },
+        (api) => api.applyTransaction({ update: edits.forward }),
+        (api) => api.applyTransaction({ update: edits.reverse }),
         dataA
     );
 });
@@ -356,25 +392,42 @@ for (const withComparator of [false, true] as const) {
 
     suite(hcDesc, () => {
         let gridId = 0;
-        const benchMode = (name: string, fn: (api: GridApi) => void, initialData: HighCardinalityRow[]) => {
+        const benchAlternating = (
+            name: string,
+            forwardFn: (api: GridApi) => void,
+            reverseFn: (api: GridApi) => void,
+            initialData: HighCardinalityRow[]
+        ) => {
             const id = `HC${withComparator ? 'C' : 'B'}${++gridId}`;
             const gridsManager = new TestGridsManager({ benchmark: true, modules });
             let api!: GridApi;
-            bench(name, () => fn(api), {
-                throws: true,
-                setup: () => {
-                    gridsManager.reset();
-                    api = gridsManager.createGrid(id, { ...hcOptions, rowData: initialData });
+            let forward = true;
+
+            bench(
+                name,
+                () => {
+                    if (forward) {
+                        forwardFn(api);
+                    } else {
+                        reverseFn(api);
+                    }
+                    forward = !forward;
                 },
-            });
+                {
+                    throws: true,
+                    setup: () => {
+                        gridsManager.reset();
+                        api = gridsManager.createGrid(id, { ...hcOptions, rowData: initialData });
+                        forward = true;
+                    },
+                }
+            );
         };
 
-        benchMode(
+        benchAlternating(
             `transaction update (${updateCount} rows)`,
-            (api) => {
-                api.applyTransaction({ update: highCardinalityEdits.forward });
-                api.applyTransaction({ update: highCardinalityEdits.reverse });
-            },
+            (api) => api.applyTransaction({ update: highCardinalityEdits.forward }),
+            (api) => api.applyTransaction({ update: highCardinalityEdits.reverse }),
             highCardinalityData
         );
     });

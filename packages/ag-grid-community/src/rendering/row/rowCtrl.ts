@@ -621,7 +621,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             },
         });
 
-        if (rowSpanSvc) {
+        if (rowSpanSvc?.active) {
             // when spans change, need to verify that cells are correctly skipped/rendered
             this.addManagedListeners(rowSpanSvc, {
                 spannedCellsUpdated: ({ pinned }) => {

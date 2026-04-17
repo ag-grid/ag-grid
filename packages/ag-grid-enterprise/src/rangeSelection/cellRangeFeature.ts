@@ -8,7 +8,14 @@ import type {
     ICellRangeFeature,
     IRangeService,
 } from 'ag-grid-community';
-import { CellRangeType, _isSameRow, _last, _missing, _setAriaSelected } from 'ag-grid-community';
+import {
+    CellRangeType,
+    _isSameRow,
+    _last,
+    _missing,
+    _requestAnimationFrame,
+    _setAriaSelected,
+} from 'ag-grid-community';
 
 import { SelectionHandleType } from './abstractSelectionHandle';
 import type { AgFillHandle } from './agFillHandle';
@@ -56,6 +63,7 @@ export class CellRangeFeature implements ICellRangeFeature {
     private handleColorClass: string | null = null;
 
     private selectionHandle: AgFillHandle | AgRangeHandle | null | undefined;
+    private refreshScheduled = false;
 
     constructor(
         private readonly beans: BeanCollection,
@@ -222,7 +230,7 @@ export class CellRangeFeature implements ICellRangeFeature {
         return { top, right, bottom, left };
     }
 
-    public refreshRangeStyleAndHandle(): void {
+    private refreshRangeStyleAndHandle(): void {
         const { context } = this.beans;
         if (context.isDestroyed()) {
             return;
@@ -242,6 +250,17 @@ export class CellRangeFeature implements ICellRangeFeature {
 
         this.refreshHandleColor(rangeForHandle);
         this.cellComp.toggleCss(CSS_CELL_RANGE_HANDLE, !!this.selectionHandle);
+    }
+
+    public scheduleRefreshRangeStyleAndHandle(): void {
+        if (this.refreshScheduled) {
+            return;
+        }
+        this.refreshScheduled = true;
+        _requestAnimationFrame(this.beans, () => {
+            this.refreshScheduled = false;
+            this.refreshRangeStyleAndHandle();
+        });
     }
 
     private styleCellForRangeType(): void {
@@ -361,24 +380,24 @@ export class CellRangeFeature implements ICellRangeFeature {
     }
 
     private addSelectionHandle(cellRange: CellRange) {
-        const { beans } = this;
-        const isRangeSelectionEnabledWhileEditing = beans.editSvc?.isRangeSelectionEnabledWhileEditing();
+        const { editSvc, gos, context, registry } = this.beans;
+        const isRangeSelectionEnabledWhileEditing = editSvc?.isRangeSelectionEnabledWhileEditing();
         const cellRangeType = cellRange.type;
         const selectionHandleFill =
-            !isRangeSelectionEnabledWhileEditing && _isFillHandleEnabled(beans.gos) && _missing(cellRangeType);
+            !isRangeSelectionEnabledWhileEditing && _isFillHandleEnabled(gos) && _missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
-            this.selectionHandle = beans.context.destroyBean(this.selectionHandle);
+            this.selectionHandle = context.destroyBean(this.selectionHandle);
         }
 
         if (!this.selectionHandle) {
-            const selectionHandle = beans.registry.createDynamicBean<AgFillHandle | AgRangeHandle>(
+            const selectionHandle = registry.createDynamicBean<AgFillHandle | AgRangeHandle>(
                 type === SelectionHandleType.FILL ? 'fillHandle' : 'rangeHandle',
                 false
             );
             if (selectionHandle) {
-                this.selectionHandle = beans.context.createBean(selectionHandle);
+                this.selectionHandle = context.createBean(selectionHandle);
             }
         }
 

@@ -60,13 +60,13 @@ Dynamic strings with `${}` interpolation are skipped with a warning.
 To execute benchmarks:
 
 ```sh
-nx run ag-behavioural-testing:benchmark
+./benches.sh
 ```
 
-To execute benchmarks on a single file:
+To execute benchmarks on a single file (any positional arg is forwarded to `vitest bench`):
 
 ```sh
-nx run ag-behavioural-testing:benchmark -- src/tree-data/datapath/benchmarks/tree-data-path.bench.ts
+./benches.sh "tree-data-path"
 ```
 
 ## References:

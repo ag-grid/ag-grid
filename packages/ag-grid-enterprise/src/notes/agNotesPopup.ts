@@ -5,8 +5,12 @@ import {
     Component,
     KeyCode,
     RefPlaceholder,
+    _computeAlignedPosition,
     _findBestPlacement,
+    _fitsWithinBounds,
     _getActiveDomElement,
+    _getEffectivePlacements,
+    _getRectSize,
     _setDisplayed,
     _toRelativeRect,
 } from 'ag-grid-community';
@@ -20,6 +24,21 @@ const DEFAULT_SIZE = {
     minWidth: 240,
     minHeight: 180,
 };
+
+const CELL_PLACEMENTS: _Alignment[] = ['tl-tr', 'bl-tr', 'tr-tl', 'br-tl', 'tr-br', 'br-tr'];
+const FULL_WIDTH_ROW_PLACEMENTS: _Alignment[] = ['tl-tr', 'tr-br', 'br-tr'];
+
+type NotesPopupPlacementMode = 'cell' | 'fullWidthRow';
+type BoundsRect = Pick<DOMRectReadOnly, 'top' | 'left' | 'right' | 'bottom'>;
+type PopupSize = Pick<DOMRectReadOnly, 'width' | 'height'>;
+
+interface NotesPopupPositionParams {
+    anchorRect: BoundsRect;
+    parentRect: BoundsRect;
+    popupSize: PopupSize;
+    placementMode: NotesPopupPlacementMode;
+    enableRtl: boolean;
+}
 
 const NotesPopupContentElement: ElementParams = {
     tag: 'div',
@@ -120,6 +139,7 @@ export class AgNotesPopup extends BeanStub {
             note?: Note;
             readOnly?: boolean;
             anchorToElement: HTMLElement;
+            placementMode: NotesPopupPlacementMode;
             focusEditor?: boolean;
             onClosed: (
                 noteChanged: boolean,
@@ -216,21 +236,13 @@ export class AgNotesPopup extends BeanStub {
     }
 
     private computeInitialPosition(): { x: number; y: number } {
-        const anchorRect = this.params.anchorToElement.getBoundingClientRect();
-        const parentRect = this.beans.popupSvc!.getParentRect();
-
-        const cellRect = _toRelativeRect(anchorRect, parentRect);
-        const parentSize = {
-            width: parentRect.right - parentRect.left,
-            height: parentRect.bottom - parentRect.top,
-        };
-
-        const isRtl = this.gos.get('enableRtl');
-        const placements: _Alignment[] = isRtl
-            ? ['tr-tl', 'tl-tr', 'tc-bc', 'bc-tc']
-            : ['tl-tr', 'tr-tl', 'tc-bc', 'bc-tc'];
-
-        return _findBestPlacement(cellRect, DEFAULT_SIZE, parentSize, placements, 10);
+        return findNotesPopupPosition({
+            anchorRect: this.params.anchorToElement.getBoundingClientRect(),
+            parentRect: this.beans.popupSvc!.getParentRect(),
+            popupSize: DEFAULT_SIZE,
+            placementMode: this.params.placementMode,
+            enableRtl: this.gos.get('enableRtl'),
+        });
     }
 
     /** Called by Dialog's closedCallback (Escape key, click outside, etc.) */
@@ -256,4 +268,30 @@ export class AgNotesPopup extends BeanStub {
         const editedNote = noteChanged ? this.contentComp?.getEditedNote() : undefined;
         this.params.onClosed(noteChanged, editedNote, closeEvent);
     }
+}
+
+export function findNotesPopupPosition(params: NotesPopupPositionParams): { x: number; y: number } {
+    const { anchorRect, parentRect, popupSize, placementMode, enableRtl } = params;
+    const referenceRect = _toRelativeRect(anchorRect, parentRect);
+    const parentSize = _getRectSize(parentRect);
+    const basePlacements = getNotesPopupPlacements(placementMode);
+    const placements = _getEffectivePlacements(basePlacements, enableRtl);
+
+    for (const alignment of placements) {
+        const position = _computeAlignedPosition(referenceRect, popupSize, alignment, 0);
+
+        if (_fitsWithinBounds(position, popupSize, parentSize)) {
+            return position;
+        }
+    }
+
+    return _findBestPlacement(referenceRect, popupSize, parentSize, basePlacements, {
+        gap: 0,
+        enableRtl,
+    });
+}
+
+export function getNotesPopupPlacements(mode: NotesPopupPlacementMode, enableRtl?: boolean): _Alignment[] {
+    const placements = mode === 'fullWidthRow' ? FULL_WIDTH_ROW_PLACEMENTS : CELL_PLACEMENTS;
+    return _getEffectivePlacements(placements, enableRtl);
 }

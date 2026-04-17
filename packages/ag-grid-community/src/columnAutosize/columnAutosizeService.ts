@@ -17,6 +17,7 @@ import type {
     SizeColumnsToContentColumnLimits,
     SizeColumnsToContentStrategy,
 } from '../interfaces/autoSize';
+import { MIN_CENTER_VIEWPORT_WIDTH } from '../pinnedColumns/pinnedColumnService';
 import { _warn } from '../validation/logging';
 import { TouchListener } from '../widgets/touchListener';
 
@@ -312,7 +313,14 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        const availableWidth = getAvailableWidth(this.beans);
+        let availableWidth = getAvailableWidth(this.beans);
+
+        // When all visible columns are pinned, cap the available width so the pinned sections
+        // don't fill the entire viewport. Without this, the processUnpinnedColumns callback is triggered
+        // and would asynchronously unpin columns — visually reversing their order.
+        if (availableWidth > 0 && this.beans.visibleCols.centerCols.length === 0) {
+            availableWidth = Math.max(availableWidth - MIN_CENTER_VIEWPORT_WIDTH, 0);
+        }
 
         if (availableWidth > 0) {
             this.sizeColumnsToFit(availableWidth, 'sizeColumnsToFit', false, params);

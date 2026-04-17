@@ -67,10 +67,10 @@ Behavioural tests in `testing/behavioural/` are the primary test suite for verif
 
 ```bash
 # Run all benchmarks
-yarn nx run ag-behavioural-testing:benchmark
+./benches.sh
 
-# Run specific benchmark file
-yarn nx run ag-behavioural-testing:benchmark -- src/tree-data/datapath/benchmarks/tree-data-path.bench.ts
+# Run specific benchmark file (any positional arg is forwarded to `vitest bench`)
+./benches.sh "tree-data-path"
 ```
 
 ### Unit Tests (Jest)

@@ -5,7 +5,7 @@ import type { ColDef, GridOptions, Module, Params } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, NumberFilterModule, TextEditorModule } from 'ag-grid-community';
 import { AllEnterpriseModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../../test-utils';
+import { TestGridsManager } from '../test-utils';
 
 suite('render cells with different module sets', () => {
     const rowData = buildRandomData(100);

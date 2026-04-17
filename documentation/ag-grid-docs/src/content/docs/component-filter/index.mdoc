@@ -225,6 +225,10 @@ The grid-provided handlers are:
 -   `'agBigIntColumnFilterHandler'` - [BigInt Filter](./filter-bigint/) handler.
 -   `'agDateColumnFilterHandler'` - [Date Filter](./filter-date/) handler.
 
+{% note %}
+[Set Filter](./filter-set/) and [Multi Filter](./filter-multi/) are not supported when using custom filters with grid-provided filter logic.
+{% /note %}
+
 The example below demonstrates using the Number Filter handler with a custom filter component:
 
 {% gridExampleRunner title="Use Grid Handlers" name="use-grid-handlers" /%}

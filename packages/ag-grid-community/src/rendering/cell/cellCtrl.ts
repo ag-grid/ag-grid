@@ -1,7 +1,7 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
 import { _setAriaColIndex, _setAriaRowIndex } from '../../agStack/utils/aria';
 import { _getActiveDomElement } from '../../agStack/utils/document';
-import { _addOrRemoveAttribute, _placeCaretAtEnd, _requestAnimationFrame } from '../../agStack/utils/dom';
+import { _addOrRemoveAttribute, _placeCaretAtEnd } from '../../agStack/utils/dom';
 import { _findFocusableElements } from '../../agStack/utils/focus';
 import { _makeNull } from '../../agStack/utils/generic';
 import { AgPromise } from '../../agStack/utils/promise';
@@ -419,9 +419,9 @@ export class CellCtrl extends BeanStub {
 
         this.customRowDragComp?.refreshVisibility();
 
-        // Don't call expensive _requestAnimationFrame if we don't have to
         if (!skipRangeHandleRefresh && rangeFeature) {
-            _requestAnimationFrame(beans, () => rangeFeature?.refreshRangeStyleAndHandle());
+            // Don't call expensive _requestAnimationFrame if we don't have to
+            rangeFeature.scheduleRefreshRangeStyleAndHandle();
         }
 
         this.rowResizeFeature?.refreshRowResizer();

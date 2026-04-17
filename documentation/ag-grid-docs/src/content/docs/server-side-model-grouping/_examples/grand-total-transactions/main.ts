@@ -26,11 +26,11 @@ interface RowData {
 const countries = ['Ireland', 'Spain', 'UK', 'France', 'Germany', 'Italy', 'Portugal', 'Sweden', 'Norway', 'Denmark'];
 const sports = ['Swimming', 'Running', 'Cycling', 'Gymnastics', 'Rowing', 'Boxing'];
 
-const rowData: RowData[] = [];
+const medalData: RowData[] = [];
 let nextId = 1;
 for (const country of countries) {
     for (const sport of sports) {
-        rowData.push({
+        medalData.push({
             id: String(nextId++),
             country,
             sport,
@@ -59,10 +59,10 @@ function getServerSideDatasource(): IServerSideDatasource {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
             // Provide the grand total via the grandTotalData field
-            const grandTotalData = params.needsGrandTotal ? computeGrandTotal(rowData) : undefined;
+            const grandTotalData = params.needsGrandTotal ? computeGrandTotal(medalData) : undefined;
 
             setTimeout(() => {
-                params.success({ rowData: [...rowData], rowCount: rowData.length, grandTotalData });
+                params.success({ rowData: [...medalData], rowCount: medalData.length, grandTotalData });
             }, 200);
         },
     };
@@ -84,7 +84,7 @@ const gridOptions: GridOptions<RowData> = {
 
 function updateGrandTotal() {
     // Recompute grand total and update via transaction
-    const total = computeGrandTotal(rowData);
+    const total = computeGrandTotal(medalData);
     total.gold += 10; // Simulate updated values
     gridApi.applyServerSideTransaction({ update: [total] });
 }
@@ -97,7 +97,7 @@ function removeGrandTotal() {
 
 function addGrandTotal() {
     gridApi.applyServerSideTransaction({
-        add: [computeGrandTotal(rowData)],
+        add: [computeGrandTotal(medalData)],
     });
 }
 
