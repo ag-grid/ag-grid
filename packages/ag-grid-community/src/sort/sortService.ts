@@ -38,6 +38,7 @@ export class SortService extends BeanStub implements NamedBean {
         const invalidate = () => this.invalidateSortCache();
         this.addManagedEventListeners({
             gridColumnsChanged: invalidate,
+            newColumnsLoaded: invalidate,
             columnRowGroupChanged: invalidate,
             columnPivotModeChanged: invalidate,
             columnValueChanged: () => {

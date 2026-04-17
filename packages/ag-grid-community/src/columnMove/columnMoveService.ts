@@ -63,7 +63,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         }
 
         if (this.doesMovePassRules(movedColumns, toIndex)) {
-            colModel.colsList = reorderColumns(colModel.colsList, movedColumns, toIndex);
+            colModel.setColsList(reorderColumns(colModel.colsList, movedColumns, toIndex));
             visibleCols.refresh(source);
             eventSvc.dispatchEvent({
                 type: 'columnMoved',

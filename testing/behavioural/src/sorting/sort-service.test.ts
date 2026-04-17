@@ -331,6 +331,42 @@ describe('SortService', () => {
                 └── LEAF id:1 a:"z" b:"m"
             `);
         });
+
+        test('sort cache is invalidated after reapplying identical columnDefs', async () => {
+            // Regression guard: SortService caches sortedCols (an AgColumn[]). If setGridOption
+            // produces a display tree that compares equal to the previous one, gridColumnsChanged
+            // may not fire even though service-managed columns can be rebuilt. The service must
+            // listen to newColumnsLoaded as a defensive net so the cache is rebuilt against
+            // live column instances every time columnDefs flow through the grid.
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                ],
+                rowData,
+                getRowId: (p) => p.data.id,
+            });
+
+            api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+            // Warm the cache by reading getSortModel (builds sortCache.sortedCols).
+            expect(getSortModel(api)).toEqual([{ colId: 'a', sort: 'asc' }]);
+
+            // Re-apply the same columnDefs structure. The tree is identical by content, so
+            // gridColumnsChanged may short-circuit; newColumnsLoaded should still fire.
+            api.setGridOption('columnDefs', [
+                { colId: 'a', field: 'a' },
+                { colId: 'b', field: 'b' },
+            ]);
+
+            // Sort state and row order must still be correct after the reapply.
+            expect(getSortModel(api)).toEqual([{ colId: 'a', sort: 'asc' }]);
+            await new GridRows(api, 'sort survives identical columnDefs reapply').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:2 a:"a" b:"x"
+                ├── LEAF id:3 a:"m" b:"a"
+                └── LEAF id:1 a:"z" b:"m"
+            `);
+        });
     });
 
     describe('sort with visibility changes', () => {

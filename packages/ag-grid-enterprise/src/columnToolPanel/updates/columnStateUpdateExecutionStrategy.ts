@@ -795,10 +795,10 @@ function syncPrimaryColDefOrder(beans: BeanStub['beans'], orderedPrimaryColumns:
     }
 
     const orderedSet = new Set(orderedPrimaryColumns);
-    beans.colModel.colDefList = [
+    beans.colModel.replaceColDefList([
         ...orderedPrimaryColumns,
         ...colDefList.filter((col) => isPrimaryColDefColumn(col) && !orderedSet.has(col)),
-    ];
+    ]);
 }
 
 function getPrimaryColumnIds(beans: BeanStub['beans']): string[] {

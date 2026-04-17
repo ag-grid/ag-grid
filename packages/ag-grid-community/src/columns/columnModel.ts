@@ -25,17 +25,10 @@ import {
 export class ColumnModel extends BeanStub implements NamedBean {
     beanName = 'colModel' as const;
 
-    /** Display columns: the flattened ordered list used by rendering, sorting, and filtering.
-     *  Built from [colDefCols OR pivotResultCols] + autoGroupCols + selectionCols.
-     *
-     *  Written externally by:
-     *  - columnMoveService.ts — reorders after column drag/drop
-     *  - columnStateUtils.ts — reorders when applying column state
-     *  External writes only reorder; column instances stay the same, so colsMap remains valid. */
+    /** Display columns: the flattened ordered list used by rendering, sorting, and filtering. */
     public colsList: AgColumn[] = [];
 
-    /** Leaf columns from colDefTree. Eagerly populated when tree changes.
-     *  External code (column tool panel) may reassign to reorder. */
+    /** Leaf columns from colDefTree. */
     public colDefList: AgColumn[] = [];
 
     /** Whether createColsFromColDefs has completed at least once. Guards all entry points. */
@@ -198,9 +191,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return;
         }
 
-        // Save current column order before rebuilding
+        // Save order under the OLD mode, restore under the NEW mode — preserves each order
+        // bucket independently so toggling pivot doesn't clobber the non-pivot order.
+        const wasShowingPivotResult = this.showingPivotResult;
         const prevColsList = this.colsList;
-        if (this.showingPivotResult) {
+        if (wasShowingPivotResult) {
             this.lastPivotOrder = prevColsList.length > 0 ? prevColsList : null;
         } else {
             this.lastOrder = prevColsList.length > 0 ? prevColsList : null;
@@ -211,7 +206,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // Pick source columns (pivot results or user-defined)
         const pivotResultColSvc = beans.pivotResultCols;
         const pivotList = pivotResultColSvc?.pivotCols;
-        this.showingPivotResult = pivotList != null;
+        const showingPivotResult = pivotList != null;
+        // Local pivot-mode change detection — keeps getAllCols cache coherent without relying on external invalidation.
+        const pivotChanged = wasShowingPivotResult !== showingPivotResult;
+        this.showingPivotResult = showingPivotResult;
 
         const sourceList = pivotList ?? this.colDefList;
 
@@ -224,9 +222,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const autoList = beans.autoColSvc?.columns;
         const selList = beans.selectionColSvc?.columns;
         const rnCol = beans.rowNumbersSvc?.column ?? undefined;
-        const lastOrder = this.showingPivotResult ? this.lastPivotOrder : this.lastOrder;
-        const maintainOrder =
-            lastOrder && (!newColDefs || _shouldMaintainColumnOrder(this.gos, this.showingPivotResult));
+        const lastOrder = showingPivotResult ? this.lastPivotOrder : this.lastOrder;
+        const maintainOrder = lastOrder && (!newColDefs || _shouldMaintainColumnOrder(this.gos, showingPivotResult));
         const list = maintainOrder
             ? this.buildDisplayListMaintainOrder(sourceList, lastOrder, autoList, selList, rnCol)
             : this.buildDisplayListNatural(sourceList, autoList, selList, rnCol);
@@ -236,7 +233,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.colsList = list;
 
-        if (newColDefs || autoChanged || selChanged || rnChanged) {
+        if (newColDefs || autoChanged || selChanged || rnChanged || pivotChanged) {
             this.cachedAllCols = null;
         }
 
@@ -299,13 +296,18 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         // Resolve lastOrder to current instances — services may have recreated columns.
+        // `inOrder` also deduplicates against duplicate colIds in lastOrder.
         const inOrder = new Set<string>();
         const preserved: AgColumn[] = [];
         for (let i = 0, len = lastOrder.length; i < len; ++i) {
-            const current = colById.get(lastOrder[i].colId);
+            const colId = lastOrder[i].colId;
+            if (inOrder.has(colId)) {
+                continue;
+            }
+            const current = colById.get(colId);
             if (current) {
                 preserved.push(current);
-                inOrder.add(current.colId);
+                inOrder.add(colId);
             }
         }
 
@@ -572,6 +574,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.cachedAllCols = null;
     }
 
+    public setColsList(value: AgColumn[]): void {
+        this.colsList = value;
+    }
+
+    /** Replace `colDefList`. Use this (not a direct assignment) when the column set changes,
+     *  so `colDefColsMap` lookups reflect the new membership. */
+    public replaceColDefList(newList: AgColumn[]): void {
+        this.colDefList = newList;
+        rebuildColMap(this.colDefColsMap, newList);
+    }
+
     /** All columns from all sources. Cached; invalidated by refreshCols and invalidateAllColsCache. */
     public getAllCols(): AgColumn[] {
         return this.cachedAllCols ?? this.loadAllCols();
@@ -744,8 +757,6 @@ function findSiblingInsertPosition(col: AgColumn, posMap: Map<AgColumn, number>)
     return -1;
 }
 
-/** Clears and repopulates a multi-key lookup Map from a column list.
- *  Each column is indexed by: colId string, AgColumn instance, ColDef, and userProvidedColDef. */
 /** Checks whether `existing` equals the concatenation of the given segments, element-by-element,
  *  without allocating. Any undefined segment is treated as empty. */
 const colsTreeEquals = (
@@ -814,6 +825,9 @@ const buildColsTree = (
     return tree;
 };
 
+/** Rebuilds the multi-key lookup map.
+ *  NOTE: if two columns share a ColDef or userProvidedColDef reference (unsupported: each
+ *  column should have its own colDef), the map keeps the last-indexed column for that key. */
 const rebuildColMap = (map: Map<ColKey | null | undefined, AgColumn>, list: AgColumn[]): void => {
     map.clear();
     for (let i = 0, len = list.length; i < len; ++i) {

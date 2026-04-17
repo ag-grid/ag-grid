@@ -577,7 +577,7 @@ function orderLiveColsLikeState(params: ApplyColumnStateParams, colModel: Column
     if (colsList) {
         const sorted = sortColsLikeKeys(colsList, colIds, colModel, gos);
         if (sorted) {
-            colModel.colsList = sorted;
+            colModel.setColsList(sorted);
         }
     }
 }

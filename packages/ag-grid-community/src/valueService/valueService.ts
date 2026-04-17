@@ -423,12 +423,8 @@ export class ValueService extends BeanStub implements NamedBean {
         if (groupData && colId in groupData) {
             return groupData[colId];
         }
-        if (ignoreAggData) {
-            // SSRM agg data comes from the data attribute, so ignore that instead
-            if (colDef.aggFunc) {
-                return undefined;
-            }
-        } else {
+
+        if (!ignoreAggData) {
             const aggData = rowNode.aggData;
             if (aggData) {
                 const aggValue = aggData[colId];
@@ -455,12 +451,13 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const valueGetter = colDef.valueGetter;
         if (valueGetter) {
-            return this.executeValueGetter(valueGetter, data, column, rowNode);
+            if (!ignoreAggData || !colDef.aggFunc) {
+                return this.executeValueGetter(valueGetter, data, column, rowNode);
+            }
         }
 
         if (data) {
-            // SSRM group footers: the SSRM row won't have groupData, need to extract
-            // the group value from the data using the row field (guarded by showRowGroup === true).
+            // SSRM group footer: SSRM rows have no groupData, so extract from data[field].
             if (showRowGroup === true && rowNode.footer) {
                 const rowField = rowNode.field;
                 if (rowField) {
@@ -470,7 +467,9 @@ export class ValueService extends BeanStub implements NamedBean {
 
             const field = colDef.field;
             if (field) {
-                return column.fieldContainsDots ? _getValueUsingDotNotation(data, field) : data[field];
+                if (!ignoreAggData || !colDef.aggFunc) {
+                    return column.fieldContainsDots ? _getValueUsingDotNotation(data, field) : data[field];
+                }
             }
         }
 
