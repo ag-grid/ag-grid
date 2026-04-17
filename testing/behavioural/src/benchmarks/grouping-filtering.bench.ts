@@ -5,7 +5,7 @@ import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { SimplePRNG, TestGridsManager } from '../../test-utils';
+import { SimplePRNG, TestGridsManager } from '../test-utils';
 
 interface IData {
     id: string;
@@ -52,21 +52,27 @@ suite('hierarchical grid filtering (3-level grouping)', () => {
         },
     };
 
+    const filterAAA = { name: { filterType: 'text', type: 'contains', filter: 'aaa' } };
+
     let filterOn = false;
     bench(
         `toggle text filter on/off ${rowCount} rows (3-level grouping)`,
         () => {
             filterOn = !filterOn;
-            api.setFilterModel(filterOn ? { name: { filterType: 'text', type: 'contains', filter: 'aaa' } } : null);
+            api.setFilterModel(filterOn ? filterAAA : null);
         },
         benchOptions
     );
+
+    const filterBB = { name: { filterType: 'text', type: 'contains', filter: 'bb' } };
 
     let useUpdated = false;
     bench(
         `immutable data update with active filter ${rowCount} rows (3-level grouping)`,
         () => {
-            api.setFilterModel({ name: { filterType: 'text', type: 'contains', filter: 'bb' } });
+            if (!useUpdated) {
+                api.setFilterModel(filterBB);
+            }
             useUpdated = !useUpdated;
             api.setGridOption('rowData', useUpdated ? updatedRowData : rowData);
         },

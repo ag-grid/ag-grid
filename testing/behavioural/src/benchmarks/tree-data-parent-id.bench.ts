@@ -5,7 +5,7 @@ import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { SimplePRNG, TestGridsManager } from '../../../test-utils';
+import { SimplePRNG, TestGridsManager } from '../test-utils';
 
 suite('treeData with parentId', () => {
     const gridsManager = new TestGridsManager({
@@ -46,11 +46,12 @@ suite('treeData with parentId', () => {
         benchOptions
     );
 
+    let updateForward = true;
     bench(
         'update rowData ' + rowData1.length + ' rows',
         () => {
-            api.setGridOption('rowData', rowData);
-            api.setGridOption('rowData', rowData1);
+            api.setGridOption('rowData', updateForward ? rowData1 : rowData);
+            updateForward = !updateForward;
         },
         benchOptions
     );

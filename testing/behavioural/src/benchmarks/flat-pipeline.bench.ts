@@ -1,10 +1,10 @@
 import type { BenchOptions } from 'vitest';
 import { bench, suite } from 'vitest';
 
-import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
+import type { ApplyColumnStateParams, GridApi } from 'ag-grid-community';
+import { ClientSideRowModelModule, ColumnApiModule, TextFilterModule } from 'ag-grid-community';
 
-import { SimplePRNG, TestGridsManager } from '../../test-utils';
+import { SimplePRNG, TestGridsManager } from '../test-utils';
 
 interface IData {
     id: string;
@@ -12,10 +12,10 @@ interface IData {
     value: number;
 }
 
-suite('flat grid filtering', () => {
+suite('flat grid full pipeline (filter + sort + map)', () => {
     const gridsManager = new TestGridsManager({
         benchmark: true,
-        modules: [ClientSideRowModelModule, TextFilterModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, TextFilterModule],
     });
 
     let api!: GridApi<IData>;
@@ -39,23 +39,30 @@ suite('flat grid filtering', () => {
         },
     };
 
-    let filterOn = false;
+    const sortAsc: ApplyColumnStateParams = { state: [{ colId: 'name', sort: 'asc' }] };
+    const noSort: ApplyColumnStateParams = { state: [{ colId: 'name', sort: null }] };
+    const filterAA = { name: { filterType: 'text', type: 'contains', filter: 'aa' } };
+
     bench(
-        `toggle text filter on/off ${rowCount} rows`,
+        `filter + sort ${rowCount} rows`,
         () => {
-            filterOn = !filterOn;
-            api.setFilterModel(filterOn ? { name: { filterType: 'text', type: 'contains', filter: 'aaa' } } : null);
+            // Remove then apply — every iteration does the same work
+            api.setFilterModel(null);
+            api.applyColumnState(noSort);
+            api.setFilterModel(filterAA);
+            api.applyColumnState(sortAsc);
         },
         benchOptions
     );
 
-    let useUpdated = false;
     bench(
-        `immutable data update with active filter ${rowCount} rows`,
+        `immutable update with filter + sort active ${rowCount} rows`,
         () => {
-            api.setFilterModel({ name: { filterType: 'text', type: 'contains', filter: 'bb' } });
-            useUpdated = !useUpdated;
-            api.setGridOption('rowData', useUpdated ? updatedRowData : rowData);
+            // Ensure filter+sort active, then swap data
+            api.setFilterModel(filterAA);
+            api.applyColumnState(sortAsc);
+            api.setGridOption('rowData', updatedRowData);
+            api.setGridOption('rowData', rowData);
         },
         benchOptions
     );

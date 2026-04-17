@@ -4,7 +4,7 @@ import { bench, suite } from 'vitest';
 import type { ApplyColumnStateParams, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
 
-import { SimplePRNG, TestGridsManager } from '../../test-utils';
+import { SimplePRNG, TestGridsManager } from '../test-utils';
 
 interface IData {
     name: string;
@@ -53,15 +53,17 @@ suite('flat grid sorting', () => {
 
     const columnStateSortNameAsc: ApplyColumnStateParams = { state: [{ colId: 'name', sort: 'asc' }] };
     const columnStateSortNameDesc: ApplyColumnStateParams = { state: [{ colId: 'name', sort: 'desc' }] };
-    const columnStateNoSort: ApplyColumnStateParams = { state: [{ colId: 'name', sort: null }] };
 
-    let ascending = true;
+    let sortForward = true;
     bench(
         'sort ' + rowCount + ' rows',
         () => {
-            api.applyColumnState(ascending ? columnStateSortNameAsc : columnStateSortNameDesc);
-            api.applyColumnState(columnStateNoSort);
-            ascending = !ascending;
+            if (sortForward) {
+                api.applyColumnState(columnStateSortNameAsc);
+            } else {
+                api.applyColumnState(columnStateSortNameDesc);
+            }
+            sortForward = !sortForward;
         },
         benchOptions
     );

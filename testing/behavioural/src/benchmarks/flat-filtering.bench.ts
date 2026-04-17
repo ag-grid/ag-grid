@@ -1,10 +1,10 @@
 import type { BenchOptions } from 'vitest';
 import { bench, suite } from 'vitest';
 
-import type { ApplyColumnStateParams, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, TextFilterModule } from 'ag-grid-community';
+import type { GridApi } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 
-import { SimplePRNG, TestGridsManager } from '../../test-utils';
+import { SimplePRNG, TestGridsManager } from '../test-utils';
 
 interface IData {
     id: string;
@@ -12,10 +12,10 @@ interface IData {
     value: number;
 }
 
-suite('flat grid full pipeline (filter + sort + map)', () => {
+suite('flat grid filtering', () => {
     const gridsManager = new TestGridsManager({
         benchmark: true,
-        modules: [ClientSideRowModelModule, ColumnApiModule, TextFilterModule],
+        modules: [ClientSideRowModelModule, TextFilterModule],
     });
 
     let api!: GridApi<IData>;
@@ -39,33 +39,29 @@ suite('flat grid full pipeline (filter + sort + map)', () => {
         },
     };
 
-    const sortAsc: ApplyColumnStateParams = { state: [{ colId: 'name', sort: 'asc' }] };
-    const sortDesc: ApplyColumnStateParams = { state: [{ colId: 'name', sort: 'desc' }] };
-    const noSort: ApplyColumnStateParams = { state: [{ colId: 'name', sort: null }] };
+    const filterAAA = { name: { filterType: 'text', type: 'contains', filter: 'aaa' } };
 
-    let ascending = true;
+    let filterOn = false;
     bench(
-        `filter + sort ${rowCount} rows`,
+        `toggle text filter on/off ${rowCount} rows`,
         () => {
-            api.setFilterModel({ name: { filterType: 'text', type: 'contains', filter: 'aa' } });
-            api.applyColumnState(ascending ? sortAsc : sortDesc);
-            api.setFilterModel(null);
-            api.applyColumnState(noSort);
-            ascending = !ascending;
+            filterOn = !filterOn;
+            api.setFilterModel(filterOn ? filterAAA : null);
         },
         benchOptions
     );
 
+    const filterBB = { name: { filterType: 'text', type: 'contains', filter: 'bb' } };
+
     let useUpdated = false;
     bench(
-        `immutable update with filter + sort active ${rowCount} rows`,
+        `immutable data update with active filter ${rowCount} rows`,
         () => {
-            api.setFilterModel({ name: { filterType: 'text', type: 'contains', filter: 'bb' } });
-            api.applyColumnState(sortAsc);
+            if (!useUpdated) {
+                api.setFilterModel(filterBB);
+            }
             useUpdated = !useUpdated;
             api.setGridOption('rowData', useUpdated ? updatedRowData : rowData);
-            api.setFilterModel(null);
-            api.applyColumnState(noSort);
         },
         benchOptions
     );

@@ -20,17 +20,20 @@ Performance benchmarks help detect regressions and validate optimizations.
 ## Running Benchmarks
 
 ```bash
-# Run behavioural benchmarks
-yarn nx benchmark ag-behavioural-testing
+# Run all behavioural benchmarks
+./benches.sh
 
-# Run specific benchmark file
-yarn nx benchmark ag-behavioural-testing -- src/tree-data/datapath/benchmarks/tree-data-path.bench.ts
+# Run specific benchmark file (any positional arg is forwarded to `vitest bench`)
+./benches.sh "tree-data-path"
+
+# Run a specific benchmark by name within matching files
+./benches.sh "tree-data-path" -t "flattening"
 
 # Watch mode for development
-yarn nx benchmark ag-behavioural-testing --configuration=watch
+./benches.sh --watch
 
-# Update benchmark baselines
-yarn nx benchmark ag-behavioural-testing --configuration=update
+# Update benchmark snapshots
+./benches.sh --update
 ```
 
 ## Key Performance Areas
@@ -61,14 +64,6 @@ When creating new benchmarks:
 3. Measure both time and memory
 4. Document expected baseline values
 5. Run multiple iterations for accuracy
-
-## Debugging Performance
-
-For watch mode during development:
-
-```bash
-yarn nx benchmark ag-behavioural-testing --configuration=watch
-```
 
 ## Best Practices
 

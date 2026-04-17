@@ -5,38 +5,30 @@ import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { SimplePRNG, TestGridsManager } from '../../test-utils';
+import { SimplePRNG, TestGridsManager } from '../test-utils';
 
-const DATA_SIZES = [20000];
-const COLUMN_COUNTS = [5];
-
-suite('sorting', () => {
+suite('row grouping', () => {
     const gridsManager = new TestGridsManager({
         benchmark: true,
         modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, RowGroupingModule],
     });
 
-    let api!: GridApi<RowData>;
+    let api!: GridApi<GroupingData>;
 
-    let rowData: RowData[];
-    let rowData1: RowData[];
+    const rowData = buildRandomGroupingData(20000);
+    const rowData1 = buildUpdatedRowData(rowData);
 
-    const benchOptions = (rowCount: number, sortCount: number): BenchOptions => ({
+    const benchOptions: BenchOptions = {
         throws: true,
         setup: () => {
-            rowData = buildRandomRowData(rowCount);
-            rowData1 = buildUpdatedRowData(rowData);
-
             api ??= gridsManager.createGrid('G', {
                 columnDefs: [
-                    { field: 'group1', sort: 'asc', rowGroup: true },
-                    { field: 'group2', sort: 'asc', rowGroup: true },
-                    { field: 'group3', sort: 'asc', rowGroup: true },
-                    { field: 'group4', sort: 'asc', rowGroup: true },
-                    { field: 'group5', sort: 'asc', rowGroup: true },
+                    { field: 'group1', rowGroup: true, hide: true },
+                    { field: 'group2', rowGroup: true, hide: true },
+                    { field: 'group3', rowGroup: true, hide: true },
                     { field: 'value', aggFunc: 'sum' },
                     { field: 'count', aggFunc: 'count' },
-                ].map((colDef, index) => ({ ...colDef, sort: index < sortCount && index < 5 ? 'asc' : undefined })),
+                ],
                 autoGroupColumnDef: { headerName: 'Group' },
                 rowData: [],
                 groupDefaultExpanded: -1,
@@ -48,64 +40,51 @@ suite('sorting', () => {
             gridsManager.reset();
             api = undefined!;
         },
-    });
+    };
 
-    DATA_SIZES.forEach((dataSize) => {
-        COLUMN_COUNTS.forEach((columnCount) => {
-            bench(
-                `sorting from scratch ${dataSize} rows (${columnCount} sorts)`,
-                () => {
-                    api.setGridOption('rowData', []);
-                    api.setGridOption('rowData', rowData);
-                },
-                benchOptions(dataSize, columnCount)
-            );
-        });
-    });
+    bench(
+        'grouping from scratch ' + rowData.length + ' rows',
+        () => {
+            api.setGridOption('rowData', []);
+            api.setGridOption('rowData', rowData);
+        },
+        benchOptions
+    );
 
-    DATA_SIZES.forEach((dataSize) => {
-        COLUMN_COUNTS.forEach((columnCount) => {
-            bench(
-                `update sorting rowData ${dataSize} rows (${columnCount} sorts)`,
-                () => {
-                    api.setGridOption('rowData', rowData);
-                    api.setGridOption('rowData', rowData1);
-                },
-                benchOptions(dataSize, columnCount)
-            );
-        });
-    });
+    let updateForward = true;
+    bench(
+        'update grouping rowData ' + rowData1.length + ' rows',
+        () => {
+            api.setGridOption('rowData', updateForward ? rowData1 : rowData);
+            updateForward = !updateForward;
+        },
+        benchOptions
+    );
 });
 
-interface RowData {
+interface GroupingData {
     id: string;
     group1: string;
     group2: string;
     group3: string;
-    group4: string;
-    group5: string;
     value: number;
     count: number;
 }
 
 /** Generate random ag-grid grouping data */
-function buildRandomRowData(numberOfRows: number, prng = new SimplePRNG(0x13d24a75)): RowData[] {
-    const rows: RowData[] = [];
+function buildRandomGroupingData(numberOfRows: number, prng = new SimplePRNG(0x13d24a75)): GroupingData[] {
+    const rows: GroupingData[] = [];
 
     const group1Options = ['Department A', 'Department B', 'Department C', 'Department D', 'Department E'];
     const group2Options = ['Team 1', 'Team 2', 'Team 3', 'Team 4', 'Team 5', 'Team 6'];
     const group3Options = ['Project Alpha', 'Project Beta', 'Project Gamma', 'Project Delta', 'Project Epsilon'];
-    const group4Options = ['North', 'South', 'East', 'West', 'Central'];
-    const group5Options = ['Group A', 'Group B', 'Group C', 'Group D', 'Group E'];
 
     for (let i = 0; i < numberOfRows; i++) {
-        const row: RowData = {
+        const row: GroupingData = {
             id: i.toString(),
             group1: prng.pick(group1Options)!,
             group2: prng.pick(group2Options)!,
             group3: prng.pick(group3Options)!,
-            group4: prng.pick(group4Options)!,
-            group5: prng.pick(group5Options)!,
             value: prng.nextFloat(1, 1000),
             count: prng.nextInt(1, 100),
         };
@@ -116,7 +95,7 @@ function buildRandomRowData(numberOfRows: number, prng = new SimplePRNG(0x13d24a
 }
 
 /** This adds some delete, add, update operations that affect the grouping structure */
-function buildUpdatedRowData(rows: RowData[], prng = new SimplePRNG(0x3d24a75)) {
+function buildUpdatedRowData(rows: GroupingData[], prng = new SimplePRNG(0x3d24a75)) {
     rows = rows.slice();
     prng.shuffle(rows);
 
@@ -130,8 +109,6 @@ function buildUpdatedRowData(rows: RowData[], prng = new SimplePRNG(0x3d24a75)) 
     const group1Options = ['Department A', 'Department B', 'Department C', 'Department D', 'Department E'];
     const group2Options = ['Team 1', 'Team 2', 'Team 3', 'Team 4', 'Team 5', 'Team 6'];
     const group3Options = ['Project Alpha', 'Project Beta', 'Project Gamma', 'Project Delta', 'Project Epsilon'];
-    const group4Options = ['North', 'South', 'East', 'West', 'Central'];
-    const group5Options = ['Group A', 'Group B', 'Group C', 'Group D', 'Group E'];
 
     const maxMove = Math.floor(rowCount * 0.18);
     for (let i = 0; i < maxMove; i++) {
@@ -144,21 +121,17 @@ function buildUpdatedRowData(rows: RowData[], prng = new SimplePRNG(0x3d24a75)) 
             group1: prng.pick(group1Options)!,
             group2: prng.pick(group2Options)!,
             group3: prng.pick(group3Options)!,
-            group4: prng.pick(group4Options)!,
-            group5: prng.pick(group5Options)!,
             value: rowToMove.value * prng.nextFloat(0.8, 1.2), // Slight value variation
         };
     }
 
     const maxAdds = Math.floor(rowCount * 0.13);
     for (let i = 0; i < maxAdds; i++) {
-        const newRow: RowData = {
-            id: (rows.length + i).toString(),
+        const newRow: GroupingData = {
+            id: `new-${rows.length + i}`,
             group1: prng.pick(group1Options)!,
             group2: prng.pick(group2Options)!,
             group3: prng.pick(group3Options)!,
-            group4: prng.pick(group4Options)!,
-            group5: prng.pick(group5Options)!,
             value: prng.nextFloat(1, 1000),
             count: prng.nextInt(1, 100),
         };

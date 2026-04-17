@@ -1,0 +1,502 @@
+#!/usr/bin/env node
+/**
+ * bench-compare.mjs — Compare benchmark performance between two project directories.
+ *
+ * Setup:
+ *   Clone two sibling checkouts of the monorepo next to each other:
+ *     <parent>/ag-grid    — the "test" working copy (your branch with changes)
+ *     <parent>/ag-grid2   — the "base" reference copy (typically `latest`)
+ *   where <parent> is the folder containing this monorepo root.
+ *   Run `yarn install` in both before the first benchmark.
+ *
+ * Usage:
+ *   node bench-compare.mjs base [dir] [options]    Run benchmarks for the base project
+ *   node bench-compare.mjs test [dir] [options]    Run benchmarks for the test project
+ *   node bench-compare.mjs compare [options]       Compare saved results and generate report
+ *
+ * Defaults:
+ *   base dir: <parent>/ag-grid2
+ *   test dir: <parent>/ag-grid
+ *   results:  ./tmp/   (relative to this script)
+ *
+ * Options:
+ *   --runs <n>        Number of runs (default: 2)
+ *   --filter <glob>   Filter benchmark files (forwarded to vitest bench)
+ *   --output <path>   Output directory for results (default: ./tmp)
+ *   --reuse           Skip runs where output file already exists
+ *
+ * Files written to the output directory:
+ *   base-run-<n>.json         Raw vitest bench output for base run <n> (one file per run,
+ *                             consumed later by `compare`). Kept between runs — use --reuse to
+ *                             skip re-running if the file exists.
+ *   test-run-<n>.json         Same, for the test side.
+ *   bench-compare-result.json Machine-readable comparison: per-benchmark ops/sec, rme, delta
+ *                             with confidence interval, and unmatched benchmarks.
+ *   bench-compare-result.md   Human-readable report with a Notable Changes table, detailed
+ *                             per-group tables, and a list of unmatched benchmarks.
+ *
+ * Examples:
+ *   node bench-compare.mjs base                    # Run base benchmarks in <parent>/ag-grid2
+ *   node bench-compare.mjs test                    # Run test benchmarks in <parent>/ag-grid
+ *   node bench-compare.mjs base ~/other-grid       # Run base benchmarks in custom dir
+ *   node bench-compare.mjs compare                 # Generate comparison report
+ *   node bench-compare.mjs test --runs 5 --filter "getvalue"
+ */
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// This script lives at <monorepo>/testing/behavioural/src/benchmarks. The parent of the monorepo
+// is four directories up from here, and contains the two sibling checkouts.
+const MONOREPO_ROOT = resolve(__dirname, '..', '..', '..', '..');
+const SIBLING_PARENT = resolve(MONOREPO_ROOT, '..');
+
+// ── Parse arguments ──
+
+const args = process.argv.slice(2);
+const command = args[0];
+
+if (!command || command === '--help' || command === '-h') {
+    console.log(`Usage:
+  node bench-compare.mjs base [dir] [options]   Run base benchmarks
+  node bench-compare.mjs test [dir] [options]   Run test benchmarks
+  node bench-compare.mjs compare [options]       Compare results
+
+Options:
+  --runs <n>        Number of runs (default: 2)
+  --filter <glob>   Filter benchmark files
+  --output <path>   Results directory (default: ./tmp)
+  --reuse           Skip runs where output file exists
+
+Files written to the output directory:
+  base-run-<n>.json            Raw vitest output for base run <n> (one per run).
+  test-run-<n>.json            Raw vitest output for test run <n> (one per run).
+  bench-compare-result.json    Structured comparison (all benchmarks, both sides, deltas).
+  bench-compare-result.md      Human-readable report (notable changes + detailed tables).`);
+    process.exit(command ? 0 : 1);
+}
+
+if (!['base', 'test', 'compare'].includes(command)) {
+    console.error(`Unknown command: ${command}. Use 'base', 'test', or 'compare'.`);
+    process.exit(1);
+}
+
+let runs = 2;
+let filter = '';
+let outputDir = join(__dirname, 'tmp');
+let reuse = false;
+let targetDir = '';
+
+for (let i = 1; i < args.length; i++) {
+    switch (args[i]) {
+        case '--runs':
+            runs = parseInt(args[++i], 10);
+            if (isNaN(runs) || runs < 1) {
+                console.error('--runs must be a positive integer');
+                process.exit(1);
+            }
+            break;
+        case '--filter':
+            filter = args[++i];
+            break;
+        case '--output':
+            outputDir = resolve(args[++i]);
+            break;
+        case '--reuse':
+            reuse = true;
+            break;
+        default:
+            if (args[i].startsWith('-')) {
+                console.error(`Unknown option: ${args[i]}`);
+                process.exit(1);
+            }
+            if (!targetDir) {
+                targetDir = resolve(args[i]);
+            }
+            break;
+    }
+}
+
+// Benchmarks to exclude — these depend on jsdom/DOM rendering and produce
+// unreliable results that vary between environments.
+const EXCLUDED_BENCH_FILES = ['modules.bench'];
+
+// Resolve target directory defaults — sibling checkouts next to the monorepo root.
+if (!targetDir && (command === 'base' || command === 'test')) {
+    targetDir = command === 'base' ? resolve(SIBLING_PARENT, 'ag-grid2') : resolve(SIBLING_PARENT, 'ag-grid');
+}
+
+mkdirSync(outputDir, { recursive: true });
+
+// ── Benchmark runner ──
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function runBenchmarks(projectDir, outputFile) {
+    const behaviouralDir = join(projectDir, 'testing', 'behavioural');
+    if (!existsSync(behaviouralDir)) {
+        console.error(`Error: ${behaviouralDir} does not exist.`);
+        return false;
+    }
+
+    const EXCLUDED_BENCHES = EXCLUDED_BENCH_FILES;
+
+    const benchArgs = ['--node-options=--expose-gc', 'vitest', 'bench', '--outputJson', outputFile];
+    for (const ex of EXCLUDED_BENCHES) {
+        benchArgs.push('--exclude', `**/${ex}*`);
+    }
+    if (filter) {
+        benchArgs.push(filter);
+    }
+
+    console.log(`  Dir: ${projectDir}`);
+    console.log(`  Running: npx ${benchArgs.join(' ')}\n`);
+
+    const result = spawnSync('npx', benchArgs, {
+        cwd: behaviouralDir,
+        stdio: 'inherit',
+        env: { ...process.env, NX_DAEMON: 'false', BENCH_COMPARE: '1' },
+    });
+
+    if (result.status !== 0) {
+        console.error(`\n  Benchmark failed (exit ${result.status})`);
+        return false;
+    }
+    return true;
+}
+
+// ── Run phase (base or test) ──
+
+if (command === 'base' || command === 'test') {
+    const label = command;
+    console.log(`=== Running ${label} benchmarks ===`);
+    console.log(`Directory:  ${targetDir}`);
+    console.log(`Runs:       ${runs}`);
+    console.log(`Output:     ${outputDir}`);
+    if (filter) {
+        console.log(`Filter:     ${filter}`);
+    }
+    console.log('');
+
+    for (let i = 1; i <= runs; i++) {
+        const outFile = join(outputDir, `${label}-run-${i}.json`);
+
+        if (reuse && existsSync(outFile)) {
+            console.log(`  Reusing ${label} run ${i}/${runs}`);
+            continue;
+        }
+
+        if (i > 1) {
+            console.log('--- Cooldown (3s) ---');
+            await sleep(3000);
+        }
+
+        console.log(`--- ${label} run ${i}/${runs} ---`);
+        if (!runBenchmarks(targetDir, outFile)) {
+            console.error(`${label} benchmark failed at run ${i}, aborting.`);
+            process.exit(1);
+        }
+        console.log('');
+    }
+
+    console.log(`\n=== ${label} benchmarks complete (${runs} runs saved to ${outputDir}) ===`);
+    process.exit(0);
+}
+
+// ── Compare phase ──
+
+console.log('=== Comparing results... ===\n');
+
+function loadRuns(prefix) {
+    const results = [];
+    for (let i = 1; i <= runs; i++) {
+        const path = join(outputDir, `${prefix}-run-${i}.json`);
+        if (!existsSync(path)) {
+            continue;
+        }
+        try {
+            results.push(JSON.parse(readFileSync(path, 'utf-8')));
+        } catch {
+            console.error(`Warning: could not parse ${path}`);
+        }
+    }
+    return results;
+}
+
+function isExcluded(filepath) {
+    return EXCLUDED_BENCH_FILES.some((ex) => filepath.includes(ex));
+}
+
+function extractBenchmarks(runData) {
+    const map = new Map();
+    for (const file of runData.files) {
+        if (isExcluded(file.filepath)) {
+            continue;
+        }
+        for (const group of file.groups) {
+            for (const bench of group.benchmarks) {
+                const key = `${group.fullName} > ${bench.name}`;
+                map.set(key, {
+                    name: bench.name,
+                    group: group.fullName,
+                    hz: bench.hz,
+                    mean: bench.mean,
+                    min: bench.min,
+                    rme: bench.rme,
+                    sd: bench.sd,
+                    sampleCount: bench.sampleCount,
+                });
+            }
+        }
+    }
+    return map;
+}
+
+/** For each benchmark, pick the run with the lowest rme (least noise). */
+function aggregateRuns(allRuns) {
+    const best = new Map();
+
+    for (const runData of allRuns) {
+        const benchmarks = extractBenchmarks(runData);
+        for (const [key, data] of benchmarks) {
+            const prev = best.get(key);
+            if (!prev || data.rme < prev.rme) {
+                best.set(key, data);
+            }
+        }
+    }
+
+    const result = new Map();
+    for (const [key, data] of best) {
+        result.set(key, {
+            name: data.name,
+            group: data.group,
+            hz: data.hz,
+            rme: data.rme,
+            sampleCount: data.sampleCount,
+            runCount: allRuns.length,
+        });
+    }
+    return result;
+}
+
+const baseRuns = loadRuns('base');
+const testRuns = loadRuns('test');
+
+if (baseRuns.length === 0) {
+    console.error('Error: No base benchmark data found. Run "node bench-compare.mjs base" first.');
+    process.exit(1);
+}
+if (testRuns.length === 0) {
+    console.error('Error: No test benchmark data found. Run "node bench-compare.mjs test" first.');
+    process.exit(1);
+}
+
+const baseAgg = aggregateRuns(baseRuns);
+const testAgg = aggregateRuns(testRuns);
+
+// Report unmatched benchmarks
+const baseOnly = [...baseAgg.keys()].filter((k) => !testAgg.has(k));
+const testOnly = [...testAgg.keys()].filter((k) => !baseAgg.has(k));
+if (baseOnly.length > 0) {
+    console.log(`Note: ${baseOnly.length} benchmark(s) only in base (removed or renamed?):`);
+    for (const k of baseOnly) {
+        console.log(`  - ${baseAgg.get(k).name}`);
+    }
+}
+if (testOnly.length > 0) {
+    console.log(`Note: ${testOnly.length} benchmark(s) only in test (added or renamed?):`);
+    for (const k of testOnly) {
+        console.log(`  - ${testAgg.get(k).name}`);
+    }
+}
+
+// Build comparison using within-run rme for confidence intervals
+const comparisons = [];
+for (const [key, base] of baseAgg) {
+    const test = testAgg.get(key);
+    if (!test) {
+        continue;
+    }
+
+    const delta = ((test.hz - base.hz) / base.hz) * 100;
+
+    // Combined margin of error from both sides' rme (propagated in quadrature)
+    const combinedRme = Math.sqrt(base.rme ** 2 + test.rme ** 2);
+    const deltaLo = round(delta - combinedRme, 1);
+    const deltaHi = round(delta + combinedRme, 1);
+
+    comparisons.push({
+        key,
+        name: base.name,
+        group: base.group,
+        baseHz: round(base.hz, 4),
+        baseRme: round(base.rme, 2),
+        baseSamples: base.sampleCount,
+        testHz: round(test.hz, 4),
+        testRme: round(test.rme, 2),
+        testSamples: test.sampleCount,
+        delta: round(delta, 2),
+        deltaLo,
+        deltaHi,
+        deltaConservative: deltaLo > 0 ? deltaLo : deltaHi < 0 ? deltaHi : 0,
+        combinedRme: round(combinedRme, 2),
+    });
+}
+
+function round(v, decimals) {
+    const f = 10 ** decimals;
+    return Math.round(v * f) / f;
+}
+
+// Sort by conservative delta magnitude
+comparisons.sort((a, b) => {
+    const ac = Math.abs(a.deltaConservative);
+    const bc = Math.abs(b.deltaConservative);
+    if (ac !== bc) {
+        return bc - ac;
+    }
+    return Math.abs(b.delta) - Math.abs(a.delta);
+});
+
+// ── Output ──
+
+const jsonPath = join(outputDir, 'bench-compare-result.json');
+const mdPath = join(outputDir, 'bench-compare-result.md');
+
+writeFileSync(
+    jsonPath,
+    JSON.stringify(
+        {
+            baseRuns: baseRuns.length,
+            testRuns: testRuns.length,
+            benchmarks: comparisons,
+            baseOnly: baseOnly.map((k) => baseAgg.get(k).name),
+            testOnly: testOnly.map((k) => testAgg.get(k).name),
+        },
+        null,
+        2
+    )
+);
+
+// ── Markdown ──
+
+function fmtHz(hz) {
+    if (hz >= 10000) {
+        return hz.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    if (hz >= 100) {
+        return hz.toFixed(1);
+    }
+    if (hz >= 10) {
+        return hz.toFixed(2);
+    }
+    return hz.toFixed(3);
+}
+
+/** Format speedup as "1.23x faster" / "1.10x slower" / "unchanged". */
+function fmtSpeedup(c) {
+    const ratio = c.testHz / c.baseHz;
+    if (ratio >= 1.005) {
+        return `${ratio.toFixed(2)}x faster`;
+    }
+    if (ratio <= 0.995) {
+        return `${(1 / ratio).toFixed(2)}x slower`;
+    }
+    return 'unchanged';
+}
+
+/** A result is "noisy" when the delta is within the combined margin of error. */
+function isNoisy(c) {
+    return c.deltaConservative === 0;
+}
+
+let md = `# Benchmark Comparison\n\n`;
+md += `${runs} run(s) per side, best rme selected.\n\n`;
+
+const notable = comparisons.filter((c) => Math.abs(c.delta) > 3);
+if (notable.length > 0) {
+    md += `## Notable Changes\n\n`;
+    md += `| Benchmark | base (ops/s) | test (ops/s) | Result |\n`;
+    md += `|-----------|-------------|-------------|--------|\n`;
+    for (const c of notable) {
+        const result = fmtSpeedup(c);
+        const cell = isNoisy(c) ? `${result} <sub>noisy</sub>` : `**${result}**`;
+        md += `| ${c.name} | ${fmtHz(c.baseHz)} | ${fmtHz(c.testHz)} | ${cell} |\n`;
+    }
+    md += `\n`;
+} else {
+    md += `## No notable changes detected.\n\n`;
+}
+
+const byGroup = new Map();
+for (const c of comparisons) {
+    if (!byGroup.has(c.group)) {
+        byGroup.set(c.group, []);
+    }
+    byGroup.get(c.group).push(c);
+}
+
+md += `## Detailed Results\n\n`;
+md += `rme = relative margin of error (lower = more precise).\n\n`;
+
+for (const [group, items] of byGroup) {
+    const shortGroup = group.includes(' > ') ? group.split(' > ').pop() : group;
+    md += `### ${shortGroup}\n\n`;
+    md += `| Benchmark | base ops/s (rme) | test ops/s (rme) | Result |\n`;
+    md += `|-----------|-----------------|-----------------|--------|\n`;
+    for (const c of items) {
+        const result = fmtSpeedup(c);
+        const cell = isNoisy(c) ? `${result} <sub>noisy</sub>` : `**${result}**`;
+        md += `| ${c.name} | ${fmtHz(c.baseHz)} (±${c.baseRme.toFixed(1)}%) | ${fmtHz(c.testHz)} (±${c.testRme.toFixed(1)}%) | ${cell} |\n`;
+    }
+    md += `\n`;
+}
+
+if (baseOnly.length > 0 || testOnly.length > 0) {
+    md += `## Unmatched Benchmarks\n\n`;
+    if (baseOnly.length > 0) {
+        md += `**Only in base** (removed or renamed?):\n`;
+        for (const k of baseOnly) {
+            md += `- ${baseAgg.get(k).name}\n`;
+        }
+        md += `\n`;
+    }
+    if (testOnly.length > 0) {
+        md += `**Only in test** (added or renamed?):\n`;
+        for (const k of testOnly) {
+            md += `- ${testAgg.get(k).name}\n`;
+        }
+        md += `\n`;
+    }
+}
+
+md += `---\n\n`;
+md += `*Generated by bench-compare.mjs — ${runs} runs, best rme, ${new Date().toISOString().slice(0, 19).replace('T', ' ')}*\n`;
+
+writeFileSync(mdPath, md);
+
+// ── Console summary ──
+
+console.log('Results written to:');
+console.log(`  ${jsonPath}`);
+console.log(`  ${mdPath}`);
+console.log(`\n=== Summary (${runs} runs, best rme selected) ===`);
+
+if (notable.length > 0) {
+    for (const c of notable) {
+        const arrow = c.delta > 0 ? '↑' : '↓';
+        const result = fmtSpeedup(c);
+        const suffix = isNoisy(c) ? '  (noisy)' : '';
+        console.log(
+            `  ${arrow} ${result.padStart(16)}  ${c.name}  (${fmtHz(c.baseHz)} → ${fmtHz(c.testHz)} ops/s)${suffix}`
+        );
+    }
+} else {
+    console.log('  No notable changes detected.');
+}
+const noiseCount = comparisons.filter((c) => c.deltaConservative === 0).length;
+console.log(`  ${noiseCount} benchmark(s) within noise.`);

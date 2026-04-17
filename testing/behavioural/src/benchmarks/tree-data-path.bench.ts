@@ -5,7 +5,7 @@ import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { SimplePRNG, TestGridsManager } from '../../../test-utils';
+import { SimplePRNG, TestGridsManager } from '../test-utils';
 
 suite('treeData with getDataPath', () => {
     const gridsManager = new TestGridsManager({
@@ -15,7 +15,7 @@ suite('treeData with getDataPath', () => {
 
     let api!: GridApi<TreeDataPathData>;
 
-    const rowData = buildRandomTreeDataPath(20000);
+    const rowData = buildRandomTreeDataPath(15000);
     const rowData1 = buildUpdatedRowData(rowData);
 
     const benchOptions: BenchOptions = {
@@ -46,11 +46,12 @@ suite('treeData with getDataPath', () => {
         benchOptions
     );
 
+    let updateForward = true;
     bench(
         'update rowData ' + rowData1.length + ' rows',
         () => {
-            api.setGridOption('rowData', rowData);
-            api.setGridOption('rowData', rowData1);
+            api.setGridOption('rowData', updateForward ? rowData1 : rowData);
+            updateForward = !updateForward;
         },
         benchOptions
     );
@@ -145,7 +146,7 @@ function buildUpdatedRowData(rows: TreeDataPathData[], prng = new SimplePRNG(0x3
 
         const path = rows[newParentRow].path;
         const newRow: TreeDataPathData = {
-            id: rows.length.toString(),
+            id: `new-${rows.length + i}`,
             path: [...path, prng.nextString(12) + '+'],
         };
         rows.push(newRow);

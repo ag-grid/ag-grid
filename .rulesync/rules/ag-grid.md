@@ -105,6 +105,10 @@ For detailed information about preferred technologies and architectural constrai
 -   `./behave.sh --update-grid-rows` – update GridRows inline snapshots after diagram format changes.
 -   `./behave.sh --update-grid-rows "<pattern>"` – update snapshots in matching test files only.
 -   `./behave.sh --update-grid-rows=dry` – dry run, shows what would change without writing files.
+-   `./benches.sh` – run behavioural benchmarks via `vitest bench` (non-watch by default).
+-   `./benches.sh "<file-pattern>"` – run benchmarks matching a file pattern.
+-   `./benches.sh "<file-pattern>" -t "<bench-name>"` – run a specific benchmark by name.
+-   `./benches.sh --watch` – run benchmarks in watch mode.
 -   `yarn nx test <package>` – execute Jest unit tests for the affected package.
 -   `yarn nx test <package> --testPathPattern="<file-name>"` - test specific test file
 -   `yarn nx test <package> --testPathPattern="<file-name>" --testNamePattern="<test-name>"` - test specific test name in a specific test file

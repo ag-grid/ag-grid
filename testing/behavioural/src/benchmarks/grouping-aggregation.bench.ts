@@ -16,7 +16,7 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { SimplePRNG, TestGridsManager } from '../../test-utils';
+import { SimplePRNG, TestGridsManager } from '../test-utils';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -24,10 +24,6 @@ const ROW_COUNT = 5_000;
 const VALUE_COL_COUNT = 50;
 const UPDATE_FRACTION = 0.05; // 5% of rows changed per update
 const CHANGED_COL_COUNT = 5; // columns changed in "partial col" benchmarks
-
-// Bench tuning: more warmup + longer measurement = more samples, less noise
-const BENCH_TIME = 3000; // ms to measure (default 1000)
-const BENCH_WARMUP_ITERATIONS = 10; // warmup iterations (default 5)
 
 // ── Data generation ─────────────────────────────────────────────────────────
 
@@ -154,29 +150,51 @@ const desc = `grouping aggregation — ${ROW_COUNT} rows, ${VALUE_COL_COUNT} val
 suite(desc, () => {
     let gridId = 0;
 
-    // Helper to create a bench for a given mode
-    const benchMode = (name: string, cellsPath: boolean, fn: (api: GridApi) => void, initialData: AggRow[]) => {
+    // Helper: alternating bench — each iteration applies one direction, alternating forward/reverse.
+    // This halves per-iteration cost vs round-trip, doubling sample count for the same measurement time.
+    const benchAlternating = (
+        name: string,
+        cellsPath: boolean,
+        forwardFn: (api: GridApi) => void,
+        reverseFn: (api: GridApi) => void,
+        initialData: AggRow[]
+    ) => {
         const id = `G${++gridId}`;
         const gridsManager = new TestGridsManager({ benchmark: true, modules });
         let api!: GridApi;
+        let forward = true;
 
-        bench(name, () => fn(api), {
-            throws: true,
-            time: BENCH_TIME,
-            warmupIterations: BENCH_WARMUP_ITERATIONS,
-            setup: () => {
-                gridsManager.reset();
-                api = gridsManager.createGrid(id, { ...makeGridOptions(cellsPath), rowData: initialData });
+        bench(
+            name,
+            () => {
+                if (forward) {
+                    forwardFn(api);
+                } else {
+                    reverseFn(api);
+                }
+                forward = !forward;
             },
-        });
+            {
+                throws: true,
+                setup: () => {
+                    gridsManager.reset();
+                    api = gridsManager.createGrid(id, { ...makeGridOptions(cellsPath), rowData: initialData });
+                    forward = true;
+                },
+            }
+        );
     };
 
     // Full refresh: clear then reload
     for (const cellsPath of [false, true]) {
         const tag = cellsPath ? 'CellsPath' : 'RowsPath';
-        benchMode(
+        benchAlternating(
             `full refresh — ${tag}`,
             cellsPath,
+            (api) => {
+                api.setGridOption('rowData', []);
+                api.setGridOption('rowData', dataA);
+            },
             (api) => {
                 api.setGridOption('rowData', []);
                 api.setGridOption('rowData', dataA);
@@ -188,13 +206,11 @@ suite(desc, () => {
     // Immutable update: all value columns changed
     for (const cellsPath of [false, true]) {
         const tag = cellsPath ? 'CellsPath' : 'RowsPath';
-        benchMode(
+        benchAlternating(
             `immutable (all ${VALUE_COL_COUNT} cols) — ${tag}`,
             cellsPath,
-            (api) => {
-                api.setGridOption('rowData', immAllB);
-                api.setGridOption('rowData', immAllA);
-            },
+            (api) => api.setGridOption('rowData', immAllB),
+            (api) => api.setGridOption('rowData', immAllA),
             immAllA
         );
     }
@@ -202,13 +218,11 @@ suite(desc, () => {
     // Immutable update: only CHANGED_COL_COUNT columns changed
     for (const cellsPath of [false, true]) {
         const tag = cellsPath ? 'CellsPath' : 'RowsPath';
-        benchMode(
+        benchAlternating(
             `immutable (${CHANGED_COL_COUNT}/${VALUE_COL_COUNT} cols) — ${tag}`,
             cellsPath,
-            (api) => {
-                api.setGridOption('rowData', immPartialB);
-                api.setGridOption('rowData', immPartialA);
-            },
+            (api) => api.setGridOption('rowData', immPartialB),
+            (api) => api.setGridOption('rowData', immPartialA),
             immPartialA
         );
     }
@@ -216,13 +230,11 @@ suite(desc, () => {
     // Transaction update: all value columns changed
     for (const cellsPath of [false, true]) {
         const tag = cellsPath ? 'CellsPath' : 'RowsPath';
-        benchMode(
+        benchAlternating(
             `transaction (all ${VALUE_COL_COUNT} cols) — ${tag}`,
             cellsPath,
-            (api) => {
-                api.applyTransaction({ update: editsAll.forward });
-                api.applyTransaction({ update: editsAll.reverse });
-            },
+            (api) => api.applyTransaction({ update: editsAll.forward }),
+            (api) => api.applyTransaction({ update: editsAll.reverse }),
             dataA
         );
     }
@@ -230,13 +242,11 @@ suite(desc, () => {
     // Transaction update: only CHANGED_COL_COUNT columns changed
     for (const cellsPath of [false, true]) {
         const tag = cellsPath ? 'CellsPath' : 'RowsPath';
-        benchMode(
+        benchAlternating(
             `transaction (${CHANGED_COL_COUNT}/${VALUE_COL_COUNT} cols) — ${tag}`,
             cellsPath,
-            (api) => {
-                api.applyTransaction({ update: editsPartial.forward });
-                api.applyTransaction({ update: editsPartial.reverse });
-            },
+            (api) => api.applyTransaction({ update: editsPartial.forward }),
+            (api) => api.applyTransaction({ update: editsPartial.reverse }),
             dataA
         );
     }
