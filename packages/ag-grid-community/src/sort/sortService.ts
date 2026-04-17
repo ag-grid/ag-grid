@@ -136,13 +136,12 @@ export class SortService extends BeanStub implements NamedBean {
         // Cached list reflects OLD sortIndex — exactly what we need to drive the reassignment.
         const allSortedCols = this.cachedSortedCols ?? this.computeSortedCols();
 
+        // Match baseline: unconditionally assign null + dispatch for every col.
         const allCols = colModel.getAllCols();
         for (let i = 0, len = allCols.length; i < len; ++i) {
             const col = allCols[i];
-            if (col.sortIndex !== null) {
-                col.sortIndex = null;
-                col.dispatchStateUpdatedEvent('sortIndex');
-            }
+            col.sortIndex = null;
+            col.dispatchStateUpdatedEvent('sortIndex');
         }
 
         const lastHasSort = lastSortIndexCol.getSortDef();
