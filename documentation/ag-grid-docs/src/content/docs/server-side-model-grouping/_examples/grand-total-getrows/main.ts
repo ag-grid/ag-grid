@@ -19,11 +19,11 @@ interface RowData {
 const countries = ['Ireland', 'Spain', 'UK', 'France', 'Germany', 'Italy', 'Portugal', 'Sweden', 'Norway', 'Denmark'];
 const sports = ['Swimming', 'Running', 'Cycling', 'Gymnastics', 'Rowing', 'Boxing'];
 
-const rowData: RowData[] = [];
+const medalData: RowData[] = [];
 let nextId = 1;
 for (const country of countries) {
     for (const sport of sports) {
-        rowData.push({
+        medalData.push({
             id: String(nextId++),
             country,
             sport,
@@ -48,7 +48,7 @@ function getServerSideDatasource(): IServerSideDatasource {
                 bronze: 0,
             };
 
-            const grandTotalData: Partial<RowData> = rowData.reduce(
+            const grandTotalData: Partial<RowData> = medalData.reduce(
                 (acc, row) => ({
                     ...acc,
                     gold: acc.gold! + row.gold,
@@ -60,8 +60,8 @@ function getServerSideDatasource(): IServerSideDatasource {
 
             setTimeout(() => {
                 params.success({
-                    rowData: [...rowData],
-                    rowCount: rowData.length,
+                    rowData: [...medalData],
+                    rowCount: medalData.length,
                     grandTotalData,
                 });
             }, 200);
