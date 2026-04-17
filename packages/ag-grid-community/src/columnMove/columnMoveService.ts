@@ -25,12 +25,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     beanName = 'colMoves' as const;
 
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
-        const gridColumns = this.beans.colModel.colsList;
-        if (!gridColumns) {
-            return;
-        }
-
-        const column = gridColumns[fromIndex];
+        const column = this.beans.colModel.colsList[fromIndex];
         this.moveColumns([column], toIndex, source);
     }
 
@@ -42,10 +37,6 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     ): void {
         const { colModel, colAnimation, visibleCols, eventSvc } = this.beans;
         const gridColumns = colModel.colsList;
-        if (!gridColumns) {
-            return;
-        }
-
         if (toIndex > gridColumns.length - columnsToMoveKeys.length) {
             // Trying to insert in invalid position
             _warn(30, { toIndex });

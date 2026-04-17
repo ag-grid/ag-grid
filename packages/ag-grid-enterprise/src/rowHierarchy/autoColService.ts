@@ -78,6 +78,8 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
                         col.setColDef(newDef.getColDef(), null, source);
                     }
                 }
+                // Destroy the freshly-created beans rather than leaking them.
+                beans.context.destroyBeans(list);
                 return false;
             }
 
@@ -323,10 +325,5 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         if (changed) {
             visibleCols.refresh('api');
         }
-    }
-
-    public override destroy(): void {
-        this.beans.context.destroyBeans(this.columns);
-        super.destroy();
     }
 }

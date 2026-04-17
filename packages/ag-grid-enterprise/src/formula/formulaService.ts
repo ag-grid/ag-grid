@@ -167,7 +167,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         // already calls `refreshAll` when treeData is updated
         this.addManagedPropertyListeners(['masterDetail', 'enableCellExpressions'], (e) => {
             const { colModel } = this.beans;
-            const formulaColumnsPresent = colModel.colsList?.some((col) => col.isAllowFormula());
+            const formulaColumnsPresent = colModel.colsList.some((col) => col.isAllowFormula());
             if (formulaColumnsPresent) {
                 colModel.refreshAll(_convertColumnEventSourceType(e.source));
             }

@@ -30,6 +30,8 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
         const list = this.createGroupHierarchyColumns(sourceCols, newSourceColumnMap, newInverseColumnMap);
         if (_areColIdsEqual(list, this.columns)) {
+            // Hierarchy is unchanged — destroy the freshly-created beans rather than leaking them.
+            this.beans.context.destroyBeans(list);
             return;
         }
 

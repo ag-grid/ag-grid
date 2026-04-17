@@ -2,8 +2,12 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 
-/** Deep clones plain object properties of a definition. Functions, arrays, and class instances are kept by reference. */
-function cloneColDef<T>(object: T): T {
+/** Deep clones plain object properties of a definition. Functions, arrays, and class instances are kept by reference.
+ *  Returns `undefined` if the input is null/undefined. */
+function cloneColDef<T>(object: T | null | undefined): T | undefined {
+    if (object == null) {
+        return undefined;
+    }
     const obj = object as any;
     const res: any = {};
     for (const key of Object.keys(obj)) {
@@ -69,7 +73,8 @@ export const exportColumnDefs = (beans: BeanCollection): (ColDef | ColGroupDef)[
 
     for (let c = 0, cLen = cols.length; c < cLen; ++c) {
         const col = cols[c];
-        const d = cloneColDef(col.colDef);
+        // col.colDef is always defined for a real column, so the clone is non-undefined.
+        const d = cloneColDef(col.colDef)!;
         d.colId = col.colId;
         d.width = col.getActualWidth();
         d.rowGroup = col.isRowGroupActive();

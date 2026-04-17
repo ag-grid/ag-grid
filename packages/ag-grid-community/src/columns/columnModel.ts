@@ -91,8 +91,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public override destroy(): void {
-        _destroyColumnTree(this.beans, this.colDefTree);
-        _destroyColumnTree(this.beans, this.colsTree);
+        // Single owner of all column beans at teardown — leaf services defer here. Two trees
+        // overlap in non-pivot mode; isAlive() guard inside _destroyColumnTree dedupes.
+        _destroyColumnTree(this.colsTree);
+        _destroyColumnTree(this.colDefTree);
         super.destroy();
     }
 
@@ -144,7 +146,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         groupHierarchyColSvc?.createColumns(this.colDefList);
         this.mergeHierarchyColumns(groupHierarchyColSvc?.columns);
 
-        _destroyColumnTree(beans, oldTree, this.colDefTree);
+        _destroyColumnTree(oldTree, this.colDefTree);
 
         rebuildColMap(this.colDefColsMap, this.colDefList);
 
@@ -574,12 +576,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.cachedAllCols = null;
     }
 
+    /** Reorders `colsList` only — does NOT update `colsTree`, `cachedAllCols`, or dispatch
+     *  `gridColumnsChanged`. Callers must invoke `refreshCols()` (or equivalent) afterwards
+     *  to bring the tree back in sync. Used by reorder paths that call `refreshCols` next. */
     public setColsList(value: AgColumn[]): void {
         this.colsList = value;
     }
 
-    /** Replace `colDefList`. Use this (not a direct assignment) when the column set changes,
-     *  so `colDefColsMap` lookups reflect the new membership. */
+    /** Replaces `colDefList` order/contents and rebuilds `colDefColsMap`. Does NOT reorder
+     *  `colDefTree` — when called for reorder-only updates, tree-iterating consumers
+     *  (`_getColumnsFromTree`, group walks) will see the prior order until the tree is
+     *  rebuilt. Membership changes still propagate via `refreshCols`. */
     public replaceColDefList(newList: AgColumn[]): void {
         this.colDefList = newList;
         rebuildColMap(this.colDefColsMap, newList);

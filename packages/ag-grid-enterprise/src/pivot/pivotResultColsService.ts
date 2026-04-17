@@ -49,7 +49,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
     }
 
     public override destroy(): void {
-        _destroyColumnTree(this.beans, this.pivotTree);
+        _destroyColumnTree(this.previousPivotTree);
         this.pivotTree = null;
         this.cachedPivotCols = null;
         this.previousPivotTree = null;
@@ -117,7 +117,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
                 this.pivotTree || this.previousPivotTree || undefined,
                 source
             );
-            _destroyColumnTree(beans, this.pivotTree, treeResult.columnTree);
+            _destroyColumnTree(this.pivotTree, treeResult.columnTree);
 
             this.pivotTree = treeResult.columnTree;
             this.pivotTreeDepth = treeResult.treeDepth;

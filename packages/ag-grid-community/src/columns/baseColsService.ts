@@ -80,7 +80,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         source: ColumnEventType
     ): void {
         const gridColumns = this.colModel.colsList;
-        if (!gridColumns || gridColumns.length === 0) {
+        if (gridColumns.length === 0) {
             return;
         }
 

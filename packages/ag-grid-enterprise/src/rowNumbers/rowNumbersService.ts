@@ -504,9 +504,9 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     public override destroy(): void {
-        this.beans.context.destroyBean(this.column);
-        this.column = null;
-        (this.rowNumberOverrides as any) = null;
+        this.rowNumberOverrides = null!;
         super.destroy();
+
+        // Leaf is destroyed via ColumnModel.destroy walking colsTree. Single ownership at teardown.
     }
 }

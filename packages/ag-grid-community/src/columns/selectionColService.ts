@@ -142,11 +142,6 @@ export class SelectionColService extends BeanStub implements NamedBean {
         }
     }
 
-    public override destroy(): void {
-        this.beans.context.destroyBeans(this.columns);
-        super.destroy();
-    }
-
     /**
      * Refreshes visibility of the selection column based on which columns are currently visible.
      * Called by the VisibleColsService with the columns that are currently visible in left/center/right

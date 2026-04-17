@@ -1,13 +1,11 @@
 import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
 import { _exists } from '../agStack/utils/generic';
-import type { BeanCollection } from '../context/context';
 import { _getSortDefFromInput, _isSortDefValid, _isSortDirectionValid, isColumn } from '../entities/agColumn';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
-import type { ColumnInstanceId } from '../interfaces/iColumn';
 import { depthFirstOriginalTreeSearch } from './columnFactoryUtils';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
 
@@ -41,35 +39,38 @@ export function getWidthOfColsInList(columnList: AgColumn[]) {
     return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ *  Destroys nodes in `oldTree` that are NOT in `newTree`. Used for column-set transitions. */
 export function _destroyColumnTree(
-    beans: BeanCollection,
     oldTree: (AgColumn | AgProvidedColumnGroup)[] | null | undefined,
     newTree?: (AgColumn | AgProvidedColumnGroup)[] | null
 ): void {
     if (!oldTree) {
         return;
     }
-
-    const oldObjects = new Map<ColumnInstanceId, AgColumn | AgProvidedColumnGroup>();
-
-    // add in all old columns to be destroyed
-    depthFirstOriginalTreeSearch(null, oldTree, (child) => {
-        oldObjects.set(child.getInstanceId(), child);
+    if (!newTree) {
+        // Walk post-order, destroy each live node in place. isAlive() doubles as the dedup
+        // guard for nodes reachable via multiple paths.
+        depthFirstOriginalTreeSearch(null, oldTree, destroyIfAlive);
+        return;
+    }
+    // Build a keep-set from newTree, then post-order destroy oldTree skipping any keep-set hits.
+    const keep = new Set<AgColumn | AgProvidedColumnGroup>();
+    depthFirstOriginalTreeSearch(null, newTree, (node) => {
+        keep.add(node);
     });
-
-    // however we don't destroy anything in the new tree. if destroying the grid, there is no new tree
-    if (newTree) {
-        depthFirstOriginalTreeSearch(null, newTree, (child) => {
-            oldObjects.delete(child.getInstanceId());
-        });
-    }
-
-    // what's left can be destroyed
-    if (oldObjects.size > 0) {
-        beans.context.destroyBeans(Array.from(oldObjects.values()));
-    }
+    depthFirstOriginalTreeSearch(null, oldTree, (node) => {
+        if (!keep.has(node)) {
+            destroyIfAlive(node);
+        }
+    });
 }
+
+const destroyIfAlive = (node: AgColumn | AgProvidedColumnGroup): void => {
+    if (node.isAlive()) {
+        node.destroy();
+    }
+};
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function isColumnGroupAutoCol(col: AgColumn): boolean {
