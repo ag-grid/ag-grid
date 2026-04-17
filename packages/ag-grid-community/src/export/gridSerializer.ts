@@ -78,7 +78,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         const isClipboardExport = params.rowPositions != null;
         const isExplicitExportSelection = isClipboardExport || !!params.onlySelected;
         const hideOpenParents = this.gos.get('groupHideOpenParents') && !isExplicitExportSelection;
-        const isLeafNode = this.colModel.isPivotMode() ? node.leafGroup : !node.group;
+        const isLeafNode = this.colModel.pivotMode ? node.leafGroup : !node.group;
         const isFooter = !!node.footer;
         const shouldSkipCurrentGroup =
             node.allChildrenCount === 1 &&
@@ -239,7 +239,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     .sort((a, b) => a.rowIndex - b.rowIndex)
                     .map((position) => rowModel.getRow(position.rowIndex))
                     .forEach(processRow);
-            } else if (this.colModel.isPivotMode()) {
+            } else if (this.colModel.pivotMode) {
                 if (usingCsrm) {
                     rowModel.forEachPivotNode(processRow, true, exportedRows === 'filteredAndSorted');
                 } else if (usingSsrm) {
@@ -341,7 +341,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     }): AgColumn[] {
         const { allColumns = false, skipRowGroups = false, exportRowNumbers = false, columnKeys } = params;
         const { colModel, gos, visibleCols } = this;
-        const isPivotMode = colModel.isPivotMode();
+        const isPivotMode = colModel.pivotMode;
 
         const filterSpecialColumns = (col: AgColumn) => {
             if (isColumnSelectionCol(col)) {
@@ -352,7 +352,14 @@ export class GridSerializer extends BeanStub implements NamedBean {
         };
 
         if (columnKeys?.length) {
-            return colModel.getColsForKeys(columnKeys).filter(filterSpecialColumns);
+            const result: AgColumn[] = [];
+            for (let i = 0, len = columnKeys.length; i < len; ++i) {
+                const col = colModel.getCol(columnKeys[i]);
+                if (col && filterSpecialColumns(col)) {
+                    result.push(col);
+                }
+            }
+            return result;
         }
 
         const isTreeData = gos.get('treeData');
@@ -360,7 +367,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         let columnsToExport: AgColumn[] = [];
 
         if (allColumns && !isPivotMode) {
-            columnsToExport = colModel.getCols();
+            columnsToExport = colModel.colsList;
         } else {
             columnsToExport = visibleCols.allCols;
         }

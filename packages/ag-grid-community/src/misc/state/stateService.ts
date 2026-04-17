@@ -380,7 +380,7 @@ export class StateService extends BeanStub implements NamedBean {
         columnOrder?: ColumnOrderState;
     } {
         const beans = this.beans;
-        return convertColumnState(_getColumnState(beans), beans.colModel.isPivotMode());
+        return convertColumnState(_getColumnState(beans), beans.colModel.pivotMode);
     }
 
     private setColumnState(
@@ -533,7 +533,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         const beans = this.beans;
         const { pivotResultCols, colGroupSvc } = beans;
-        if (!pivotResultCols?.isPivotResultColsPresent()) {
+        if (!pivotResultCols?.pivotCols) {
             return;
         }
 
@@ -754,7 +754,7 @@ export class StateService extends BeanStub implements NamedBean {
         }
         const { colId, rowIndex, rowPinned } = focusedCellState;
         focusSvc.setFocusedCell({
-            column: colModel.getCol(colId),
+            column: colModel.getCol(colId) ?? null,
             rowIndex,
             rowPinned,
             forceBrowserFocus: true,

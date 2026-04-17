@@ -393,7 +393,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private refreshListenersToColumnsForCellComps(): void {
         this.removeGridColumnListeners();
 
-        const cols = this.colModel.getCols();
+        const cols = this.colModel.colsList;
 
         for (const col of cols) {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
@@ -979,7 +979,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (_exists(columns)) {
             colIdsMap = {};
             columns.forEach((colKey: string | AgColumn) => {
-                const column: AgColumn | null = this.colModel.getCol(colKey);
+                const column: AgColumn | undefined = this.colModel.getCol(colKey);
                 if (_exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }

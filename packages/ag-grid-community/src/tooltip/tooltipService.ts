@@ -1,7 +1,7 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
 import { _isElementOverflowingCallback } from '../agStack/utils/dom';
 import { _exists } from '../agStack/utils/generic';
-import { _getValueUsingField } from '../agStack/utils/value';
+import { _getValueUsingDotNotation } from '../agStack/utils/value';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -170,7 +170,9 @@ const resolveCellTooltip = ({
     // 4) column tooltip field/valueGetter is the final fallback.
     if (colDef.tooltipField && _exists(data)) {
         return {
-            value: _getValueUsingField(data, colDef.tooltipField, column.isTooltipFieldContainsDots()),
+            value: column.isTooltipFieldContainsDots()
+                ? _getValueUsingDotNotation(data, colDef.tooltipField)
+                : data[colDef.tooltipField],
             location: 'cell',
             shouldDisplay: shouldDisplayColumnTooltip,
         };

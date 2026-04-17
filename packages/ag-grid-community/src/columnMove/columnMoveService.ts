@@ -1,5 +1,5 @@
 import type { HorizontalDirection } from '../agStack/constants/direction';
-import { _last, _moveInArray, _removeFromArray } from '../agStack/utils/array';
+import { _last, _removeFromArray } from '../agStack/utils/array';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridDragSource } from '../dragAndDrop/dragAndDropService';
@@ -25,7 +25,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     beanName = 'colMoves' as const;
 
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
-        const gridColumns = this.beans.colModel.getCols();
+        const gridColumns = this.beans.colModel.colsList;
         if (!gridColumns) {
             return;
         }
@@ -41,7 +41,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         finished: boolean = true
     ): void {
         const { colModel, colAnimation, visibleCols, eventSvc } = this.beans;
-        const gridColumns = colModel.getCols();
+        const gridColumns = colModel.colsList;
         if (!gridColumns) {
             return;
         }
@@ -54,10 +54,16 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
         colAnimation?.start();
         // we want to pull all the columns out first and put them into an ordered list
-        const movedColumns = colModel.getColsForKeys(columnsToMoveKeys);
+        const movedColumns: AgColumn[] = [];
+        for (let i = 0, len = columnsToMoveKeys.length; i < len; ++i) {
+            const col = colModel.getCol(columnsToMoveKeys[i]);
+            if (col) {
+                movedColumns.push(col);
+            }
+        }
 
         if (this.doesMovePassRules(movedColumns, toIndex)) {
-            _moveInArray(colModel.getCols(), movedColumns, toIndex);
+            colModel.colsList = reorderColumns(colModel.colsList, movedColumns, toIndex);
             visibleCols.refresh(source);
             eventSvc.dispatchEvent({
                 type: 'columnMoved',
@@ -80,7 +86,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
     public doesOrderPassRules(gridOrder: AgColumn[]) {
         const { colModel, gos } = this.beans;
-        if (!doesMovePassMarryChildren(gridOrder, colModel.getColTree())) {
+        if (!doesMovePassMarryChildren(gridOrder, colModel.colsTree)) {
             return false;
         }
 
@@ -119,10 +125,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     }
 
     public getProposedColumnOrder(columnsToMove: AgColumn[], toIndex: number): AgColumn[] {
-        const gridColumns = this.beans.colModel.getCols();
-        const proposedColumnOrder = gridColumns.slice();
-        _moveInArray(proposedColumnOrder, columnsToMove, toIndex);
-        return proposedColumnOrder;
+        return reorderColumns(this.beans.colModel.colsList, columnsToMove, toIndex);
     }
 
     public createBodyDropTarget(pinned: ColumnPinnedType, dropContainer: HTMLElement): BodyDropTarget {
@@ -317,4 +320,20 @@ function createDragItemForGroup(columnGroup: AgColumnGroup, allCols: AgColumn[])
         visibleState: visibleState,
         containerType: columnsInSplit[0]?.pinned,
     };
+}
+
+/** Returns a new array with `toMove` columns removed from their current positions
+ *  and re-inserted at `toIndex` (index in the filtered array, i.e. after removal). O(n). */
+function reorderColumns(array: AgColumn[], toMove: AgColumn[], toIndex: number): AgColumn[] {
+    const moveSet = new Set(toMove);
+    // Build the array without the moved columns
+    const without: AgColumn[] = [];
+    for (let i = 0, len = array.length; i < len; ++i) {
+        if (!moveSet.has(array[i])) {
+            without.push(array[i]);
+        }
+    }
+    // Splice moved columns in at the target position
+    without.splice(toIndex, 0, ...toMove);
+    return without;
 }

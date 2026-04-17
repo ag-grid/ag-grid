@@ -1416,7 +1416,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         });
     }
 
-    private getColumnFromModel(col: string | AgColumn): AgColumn | null {
+    private getColumnFromModel(col: string | AgColumn): AgColumn | undefined {
         return typeof col === 'string' ? this.colModel.getCol(col) : col;
     }
 

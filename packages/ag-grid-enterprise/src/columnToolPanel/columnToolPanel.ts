@@ -280,18 +280,14 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             rowGroupColIds: getColIds(beans.rowGroupColsSvc?.columns),
             valueColIds: getColIds(beans.valueColsSvc?.columns),
             pivotColIds: getColIds(beans.pivotColsSvc?.columns),
-            pivotMode: beans.colModel.isPivotMode(),
-            columnOrder: beans.colModel.getCols().map((c) => c.getColId()),
-            visibleColIds: beans.colModel
-                .getCols()
-                .filter((c) => c.isVisible())
-                .map((c) => c.getColId()),
-            sortState: beans.colModel
-                .getCols()
+            pivotMode: beans.colModel.pivotMode,
+            columnOrder: beans.colModel.colsList.map((c) => c.getColId()),
+            visibleColIds: beans.colModel.colsList.filter((c) => c.isVisible()).map((c) => c.getColId()),
+            sortState: beans.colModel.colsList
                 .filter((c) => c.getSort())
                 .map((c) => `${c.getColId()}:${c.getSort()}:${c.getSortIndex()}`),
             aggFuncState: (beans.valueColsSvc?.columns ?? []).map((c) => c.getAggFunc()),
-            widthState: beans.colModel.getCols().map((c) => `${c.getColId()}:${c.getActualWidth()}`),
+            widthState: beans.colModel.colsList.map((c) => `${c.getColId()}:${c.getActualWidth()}`),
         };
     }
 

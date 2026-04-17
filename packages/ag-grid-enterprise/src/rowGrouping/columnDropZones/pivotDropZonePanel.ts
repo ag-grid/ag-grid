@@ -48,7 +48,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
 
     private checkVisibility(): void {
         const colModel = this.beans.colModel;
-        const pivotMode = colModel.isPivotMode();
+        const pivotMode = colModel.pivotMode;
 
         if (this.horizontal) {
             // what we do for horizontal (ie the pivot panel at the top) depends

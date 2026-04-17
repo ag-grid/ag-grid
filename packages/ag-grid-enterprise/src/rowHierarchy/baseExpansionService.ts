@@ -63,7 +63,7 @@ export abstract class BaseExpansionService extends BeanStub {
             return false;
         }
 
-        if (this.beans.colModel.isPivotMode()) {
+        if (this.beans.colModel.pivotMode) {
             // master detail and leaf groups aren't expandable in pivot mode.
             return rowNode.hasChildren() && !rowNode.leafGroup;
         }

@@ -30,7 +30,7 @@ const purgeCells = ({ editModelSvc }: BeanCollection, rowNodes: Set<IRowNode>, c
 };
 
 export const _refreshEditCells = (beans: BeanCollection) => () => {
-    const columns = new Set<Column>(beans.colModel.getCols());
+    const columns = new Set<Column>(beans.colModel.colsList);
     const updates = beans.editModelSvc!.getEditMap(true);
     const rowNodes = new Set(updates.keys());
 

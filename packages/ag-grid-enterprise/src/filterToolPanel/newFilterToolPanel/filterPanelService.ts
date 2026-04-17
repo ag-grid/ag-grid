@@ -105,7 +105,7 @@ export class FilterPanelService
     public getAvailable(): { id: string; name: string }[] {
         const beans = this.beans;
         const availableFilters: { id: string; name: string }[] = [];
-        for (const column of beans.colModel.getColDefCols() ?? []) {
+        for (const column of beans.colModel.colDefList) {
             const id = column.getColId();
             if (column.isFilterAllowed() && !column.colDef.suppressFiltersToolPanel && !this.states.get(id)) {
                 availableFilters.push({

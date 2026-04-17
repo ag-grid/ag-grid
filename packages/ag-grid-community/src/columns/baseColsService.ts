@@ -16,7 +16,7 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyColService';
 import type { ColumnChangedEventType } from './columnApi';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
-import type { ColumnModel, Maybe } from './columnModel';
+import type { ColumnModel } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
 import type { VisibleColsService } from './visibleColsService';
 
@@ -79,7 +79,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         columnCallback: ColumnProcessor,
         source: ColumnEventType
     ): void {
-        const gridColumns = this.colModel.getCols();
+        const gridColumns = this.colModel.colsList;
         if (!gridColumns || gridColumns.length === 0) {
             return;
         }
@@ -117,7 +117,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
         this.updateIndexMap();
 
-        const primaryCols = this.colModel.getColDefCols();
+        const primaryCols = this.colModel.colDefList;
 
         for (const column of primaryCols ?? []) {
             const added = masterList.indexOf(column) >= 0;
@@ -134,7 +134,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     }
 
     private updateColList(
-        keys: Maybe<ColKey>[] = [],
+        keys: (ColKey | null | undefined)[] = [],
         masterList: AgColumn[],
         actionIsAdd: boolean,
         autoGroupsNeedBuilding: boolean,
@@ -209,7 +209,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         const { setFlagFunc, getIndexFunc, getInitialIndexFunc, getValueFunc, getInitialValueFunc } =
             this.columnExtractors;
 
-        const primaryCols = this.colModel.getColDefCols();
+        const primaryCols = this.colModel.colDefList;
 
         // go though all cols.
         // if value, change
@@ -341,7 +341,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     ): { [colId: string]: ColumnState } {
         const colList = this.columns;
 
-        const primaryCols = this.colModel.getColDefCols();
+        const primaryCols = this.colModel.colDefList;
         if (!colList.length || !primaryCols) {
             return columnStateAccumulator;
         }

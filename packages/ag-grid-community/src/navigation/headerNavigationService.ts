@@ -77,14 +77,14 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         colKey: string | Column | ColumnGroup,
         floatingFilter: boolean
     ): HeaderPosition | null {
-        let column: AgColumn | AgColumnGroup | null;
+        let column: AgColumn | AgColumnGroup | undefined;
 
         const { colModel, colGroupSvc, ctrlsSvc } = this.beans;
 
         if (typeof colKey === 'string') {
             column = colModel.getCol(colKey);
             if (!column) {
-                column = colGroupSvc?.getColumnGroup(colKey) ?? null;
+                column = colGroupSvc?.getColumnGroup(colKey);
             }
         } else {
             column = colKey as AgColumn | AgColumnGroup;

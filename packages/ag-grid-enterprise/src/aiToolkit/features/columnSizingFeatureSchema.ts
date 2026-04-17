@@ -3,7 +3,7 @@ import type { BeanCollection } from 'ag-grid-community';
 import { s } from '../schemaBuilder';
 
 export const buildColumnSizingFeatureSchema = (beans: BeanCollection) => {
-    const columns = beans.colModel.getCols();
+    const columns = beans.colModel.colsList;
     const resizableColumns = columns.filter((col) => col.isResizable());
 
     if (resizableColumns.length === 0) {

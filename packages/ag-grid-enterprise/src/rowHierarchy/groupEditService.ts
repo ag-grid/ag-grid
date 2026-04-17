@@ -48,7 +48,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         if (!this.gos.get('refreshAfterGroupEdit')) {
             return false;
         }
-        return !!this.beans.rowGroupColsSvc?.columns?.length && !this.beans.colModel.isPivotMode();
+        return !!this.beans.rowGroupColsSvc?.columns?.length && !this.beans.colModel.pivotMode;
     }
 
     private initDraggingGroups(rowsDrop: _RowsDrop): void {

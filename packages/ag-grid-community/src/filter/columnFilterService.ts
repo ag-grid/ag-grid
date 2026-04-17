@@ -243,7 +243,7 @@ export class ColumnFilterService
 
             // at this point, processedFields contains data for which we don't have a filter working yet
             modelKeys.forEach((colId) => {
-                const column = colModel.getColDefCol(colId) || colModel.getCol(colId);
+                const column = colModel.getColDefOrCol(colId);
 
                 if (!column) {
                     _warn(62, { colId });
@@ -413,7 +413,7 @@ export class ColumnFilterService
 
         const addFilter = (column: AgColumn, filterActive: boolean, doesFilterPassWrapper: DoesFilterPassWrapper) => {
             if (filterActive) {
-                if (isAggFilter(column, colModel.isPivotMode(), colModel.isPivotActive(), groupFilterEnabled)) {
+                if (isAggFilter(column, colModel.pivotMode, colModel.isPivotActive(), groupFilterEnabled)) {
                     activeAggregateFilters.push(doesFilterPassWrapper);
                 } else {
                     activeColumnFilters.push(doesFilterPassWrapper);
@@ -1118,7 +1118,7 @@ export class ColumnFilterService
         const { colModel, filterManager, groupFilter } = this.beans;
 
         this.allColumnFilters.forEach((wrapper, colId) => {
-            let currentColumn: AgColumn | null;
+            let currentColumn: AgColumn | undefined;
             if (wrapper.column.isPrimary()) {
                 currentColumn = colModel.getColDefCol(colId);
             } else {
@@ -1518,7 +1518,7 @@ export class ColumnFilterService
     }
 
     public hasFloatingFilters(): boolean {
-        const gridColumns = this.beans.colModel.getCols();
+        const gridColumns = this.beans.colModel.colsList;
         return gridColumns.some((col) => col.getColDef().floatingFilter);
     }
 
@@ -1875,7 +1875,7 @@ export class ColumnFilterService
     private onPivotModeChanged(event: AgPropertyValueChangedEvent<GridOptionsWithDefaults, 'pivotMode'>): void {
         const { colModel, pivotColsSvc } = this.beans;
         const groupFilterEnabled = !!_getGroupAggFiltering(this.gos);
-        // Can't rely on `colModel.isPivotMode()` because this event hasn't reached to colModel yet
+        // Can't rely on `colModel.pivotMode` because this event hasn't reached to colModel yet
         const isPivotMode = event.currentValue;
 
         const from = isPivotMode ? this.activeColumnFilters : this.activeAggregateFilters;
@@ -1884,7 +1884,7 @@ export class ColumnFilterService
         const moved: DoesFilterPassWrapper[] = [];
 
         for (const filter of from) {
-            const column = colModel.getColById(filter.colId);
+            const column = colModel.getCol(filter.colId);
             // Can't rely on `colModel.isPivotActive()` because this event hasn't reached to colModel yet
             const isPivotActive = isPivotMode && !!pivotColsSvc?.columns.length;
             // Our condition is isPivotMode === isAggFilter because:

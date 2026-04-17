@@ -33,7 +33,7 @@ const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: Structur
         return;
     }
 
-    const columns = colModel.getCols();
+    const columns = colModel.colsList;
     const filterableColumns = columns.filter((col) => col.isFilterAllowed());
 
     if (filterableColumns.length === 0) {

@@ -122,7 +122,7 @@ function getLeafPathTrees(columns: AgColumn[]): AbstractColDef[] {
 }
 
 function getGridPrimaryColumns(colModel: ColumnModel): AgColumn[] {
-    return colModel.getCols().filter((column) => {
+    return colModel.colsList.filter((column) => {
         const colDef = column.getColDef();
         return column.isPrimary() && !colDef.showRowGroup;
     });

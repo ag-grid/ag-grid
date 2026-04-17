@@ -101,7 +101,7 @@ export const moveItem = (
     const deferMode = isDeferredMode(params);
     const allColumns = deferMode
         ? beans.columnStateUpdateStrategy.getPrimaryColumns(deferMode)
-        : beans.colModel.getCols();
+        : beans.colModel.colsList;
     const targetIndex: number | null = getMoveTargetIndex(currentColumns, lastHoveredColumn, isBefore, allColumns);
 
     if (targetIndex != null) {

@@ -185,7 +185,7 @@ export class SynchronousColumnStateUpdateStrategy implements ColumnStateConcrete
 
     public setPivotMode(pivotMode: boolean, eventType: ColumnEventType): void {
         const { colModel, gos, ctrlsSvc } = this.beans;
-        if (pivotMode === colModel.isPivotMode()) {
+        if (pivotMode === colModel.pivotMode) {
             return;
         }
 
@@ -195,7 +195,7 @@ export class SynchronousColumnStateUpdateStrategy implements ColumnStateConcrete
         }
 
         if (!pivotMode) {
-            const cols = this.beans.colModel.getColDefCols() ?? [];
+            const cols = this.beans.colModel.colDefList;
             _applyColumnState(
                 this.beans,
                 {
@@ -230,7 +230,7 @@ export class SynchronousColumnStateUpdateStrategy implements ColumnStateConcrete
     }
 
     public getPivotMode(): boolean {
-        return this.beans.colModel.isPivotMode();
+        return this.beans.colModel.pivotMode;
     }
 
     public getSortDef(column: AgColumn): SortDef | null {
@@ -284,7 +284,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         if (pivot && !_areEqual(pivot.colIds, getColIds(beans.pivotColsSvc?.columns))) {
             return true;
         }
-        if (pivotMode && pivotMode.pivotMode !== beans.colModel.isPivotMode()) {
+        if (pivotMode && pivotMode.pivotMode !== beans.colModel.pivotMode) {
             return true;
         }
 
@@ -344,10 +344,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                     const orderedColumns = operation.colIds
                         .map((colId) => beans.colModel.getColDefCol(colId))
                         .filter((column): column is AgColumn => !!column && isPrimaryColDefColumn(column));
-                    if (!beans.colModel.isPivotMode()) {
+                    if (!beans.colModel.pivotMode) {
                         for (let i = 0; i < orderedColumns.length; i++) {
                             const column = orderedColumns[i];
-                            const allColumns = beans.colModel.getCols();
+                            const allColumns = beans.colModel.colsList;
                             const nonPrimaryPrefix = allColumns.findIndex((col) => isPrimaryColDefColumn(col));
                             const targetIndex = (nonPrimaryPrefix >= 0 ? nonPrimaryPrefix : 0) + i;
                             if (allColumns[targetIndex] !== column) {
@@ -373,7 +373,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                 }
                 case 'pivotMode': {
                     const { colModel, ctrlsSvc, gos, stateSvc } = beans;
-                    if (operation.pivotMode !== colModel.isPivotMode()) {
+                    if (operation.pivotMode !== colModel.pivotMode) {
                         const currentPivotColIds = beans.pivotColsSvc?.columns.map((col) => col.getColId()) ?? [];
                         if (currentPivotColIds.length > 0) {
                             this.lastPivotColIds = currentPivotColIds;
@@ -394,7 +394,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                         );
 
                         if (!operation.pivotMode) {
-                            const cols = beans.colModel.getColDefCols() ?? [];
+                            const cols = beans.colModel.colDefList;
                             _applyColumnState(
                                 beans,
                                 {
@@ -677,7 +677,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
     }
 
     public getPivotMode(): boolean {
-        return this.state.pivotMode?.pivotMode ?? this.beans.colModel.isPivotMode();
+        return this.state.pivotMode?.pivotMode ?? this.beans.colModel.pivotMode;
     }
 
     public getSortDef(column: AgColumn): SortDef | null {
@@ -781,24 +781,23 @@ function getDraftFunctionColumnIds(
 }
 
 function syncPrimaryColDefOrderFromCurrentColumns(beans: BeanStub['beans']): void {
-    const orderedPrimaryColumns = beans.colModel
-        .getCols()
+    const orderedPrimaryColumns = beans.colModel.colsList
         .filter((column) => isPrimaryColDefColumn(column))
-        .map((column) => beans.colModel.getColDefCol(column.getColId()))
+        .map((column) => beans.colModel.getColDefCol(column))
         .filter((column): column is AgColumn => !!column);
     syncPrimaryColDefOrder(beans, orderedPrimaryColumns);
 }
 
 function syncPrimaryColDefOrder(beans: BeanStub['beans'], orderedPrimaryColumns: AgColumn[]): void {
-    const colDefCols = getMutablePrimaryColDefCollection(beans);
-    if (!colDefCols) {
+    const colDefList = beans.colModel.colDefList;
+    if (colDefList.length === 0) {
         return;
     }
 
     const orderedSet = new Set(orderedPrimaryColumns);
-    colDefCols.list = [
+    beans.colModel.colDefList = [
         ...orderedPrimaryColumns,
-        ...colDefCols.list.filter((col) => isPrimaryColDefColumn(col) && !orderedSet.has(col)),
+        ...colDefList.filter((col) => isPrimaryColDefColumn(col) && !orderedSet.has(col)),
     ];
 }
 
@@ -807,20 +806,7 @@ function getPrimaryColumnIds(beans: BeanStub['beans']): string[] {
 }
 
 function getPrimaryColumns(beans: BeanStub['beans']): AgColumn[] {
-    return (beans.colModel.getColDefCols() ?? beans.colModel.getCols()).filter((column) =>
-        isPrimaryColDefColumn(column)
-    );
-}
-
-function getMutablePrimaryColDefCollection(beans: BeanStub['beans']): { list: AgColumn[] } | undefined {
-    const colDefCols = beans.colModel.colDefCols;
-    const colDefList = colDefCols?.list;
-
-    if (!Array.isArray(colDefList)) {
-        return undefined;
-    }
-
-    return colDefCols as { list: AgColumn[] };
+    return beans.colModel.colDefList.filter((column) => isPrimaryColDefColumn(column));
 }
 
 function isPrimaryColDefColumn(column: AgColumn): boolean {

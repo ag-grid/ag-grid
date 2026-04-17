@@ -1,5 +1,4 @@
 import type { ColumnChangedEventType } from '../columns/columnApi';
-import type { Maybe } from '../columns/columnModel';
 import type { ColumnState, ColumnStateParams } from '../columns/columnStateUtils';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ColKey, IAggFunc } from '../entities/colDef';
@@ -34,8 +33,8 @@ export interface IColsService {
     columnExtractors?: ColumnExtractors;
 
     setColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void;
-    addColumns(keys: Maybe<ColKey>[] | undefined, source: ColumnEventType): void;
-    removeColumns(keys: Maybe<ColKey>[] | undefined, source: ColumnEventType): void;
+    addColumns(keys: (ColKey | null | undefined)[] | undefined, source: ColumnEventType): void;
+    removeColumns(keys: (ColKey | null | undefined)[] | undefined, source: ColumnEventType): void;
     getColumnIndex(colId: string): number | undefined;
     extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void;
     syncColumnWithState(

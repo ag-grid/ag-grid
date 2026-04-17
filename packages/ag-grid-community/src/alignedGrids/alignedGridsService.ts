@@ -192,7 +192,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         // the column in the event is from the master grid. need to
         // look up the equivalent from this (other) grid
         const masterColumn = colEvent.column;
-        let otherColumn: AgColumn | null = null;
+        let otherColumn: AgColumn | undefined;
 
         const beans = this.beans;
         const { colResize, ctrlsSvc, colModel } = beans;

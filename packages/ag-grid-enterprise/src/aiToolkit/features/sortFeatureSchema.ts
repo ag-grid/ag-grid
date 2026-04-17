@@ -8,7 +8,7 @@ export const buildSortFeatureSchema = (beans: BeanCollection) => {
         return;
     }
 
-    const columns = beans.colModel.getCols();
+    const columns = beans.colModel.colsList;
     const sortableColumns = columns.filter((col) => col.isSortable());
 
     if (sortableColumns.length === 0) {

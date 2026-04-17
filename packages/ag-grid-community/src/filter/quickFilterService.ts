@@ -54,14 +54,13 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
     public refreshCols(): void {
         const { autoColSvc, colModel, gos, pivotResultCols } = this.beans;
-        const pivotMode = colModel.isPivotMode();
-        const groupAutoCols = autoColSvc?.getColumns();
-        const providedCols = colModel.getColDefCols();
+        const pivotMode = colModel.pivotMode;
+        const groupAutoCols = autoColSvc?.columns;
+        const providedCols = colModel.colDefList;
 
         let columnsForQuickFilter =
-            (pivotMode && !gos.get('applyQuickFilterBeforePivotOrAgg')
-                ? pivotResultCols?.getPivotResultCols()?.list
-                : providedCols) ?? [];
+            (pivotMode && !gos.get('applyQuickFilterBeforePivotOrAgg') ? pivotResultCols?.pivotCols : providedCols) ??
+            [];
         if (groupAutoCols) {
             columnsForQuickFilter = columnsForQuickFilter.concat(groupAutoCols);
         }

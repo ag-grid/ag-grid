@@ -66,7 +66,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         this.aggregationColumnsHashLastTime = null;
         this.pivotOrderLastTime = [];
         this.uniqueValues = new Map();
-        if (this.pivotResultCols.isPivotResultColsPresent()) {
+        if (this.pivotResultCols.pivotCols) {
             this.pivotResultCols.setPivotResultCols(null, 'rowModelUpdated');
             return true; // columns changed, deactivate changedPath
         }

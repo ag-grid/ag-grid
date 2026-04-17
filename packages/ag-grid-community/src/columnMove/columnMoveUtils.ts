@@ -5,26 +5,47 @@ import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { GridOptionsService } from '../gridOptionsService';
 
 export function placeLockedColumns(cols: AgColumn[], gos: GridOptionsService): AgColumn[] {
-    const left: AgColumn[] = [];
+    // Quick check: if no columns have lockPosition, return the input directly
+    let hasLocked = false;
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        if (cols[i].getColDef().lockPosition) {
+            hasLocked = true;
+            break;
+        }
+    }
+    if (!hasLocked) {
+        return cols;
+    }
+
+    const isRtl = gos.get('enableRtl');
+    // Single pass: partition into head/normal/tail, then concatenate in-place
+    const head: AgColumn[] = [];
     const normal: AgColumn[] = [];
-    const right: AgColumn[] = [];
-    cols.forEach((col: AgColumn) => {
+    const tail: AgColumn[] = [];
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        const col = cols[i];
         const position = col.getColDef().lockPosition;
         if (position === 'right') {
-            right.push(col);
+            (isRtl ? head : tail).push(col);
         } else if (position === 'left' || position === true) {
-            left.push(col);
+            (isRtl ? tail : head).push(col);
         } else {
             normal.push(col);
         }
-    });
-
-    const isRtl = gos.get('enableRtl');
-    if (isRtl) {
-        return [...right, ...normal, ...left];
     }
 
-    return [...left, ...normal, ...right];
+    const result = new Array<AgColumn>(head.length + normal.length + tail.length);
+    let pos = 0;
+    for (let i = 0, len = head.length; i < len; ++i) {
+        result[pos++] = head[i];
+    }
+    for (let i = 0, len = normal.length; i < len; ++i) {
+        result[pos++] = normal[i];
+    }
+    for (let i = 0, len = tail.length; i < len; ++i) {
+        result[pos++] = tail[i];
+    }
+    return result;
 }
 
 export function doesMovePassMarryChildren(

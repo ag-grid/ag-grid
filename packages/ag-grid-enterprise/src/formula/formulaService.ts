@@ -5,7 +5,6 @@ import type {
     IFormulaService,
     NamedBean,
     RowNode,
-    _ColumnCollections,
 } from 'ag-grid-community';
 import { BeanStub, _convertColumnEventSourceType, _isExpressionString, _warn } from 'ag-grid-community';
 
@@ -107,8 +106,8 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     public active = false;
 
-    public setFormulasActive(cols: _ColumnCollections): void {
-        const formulaColumnsPresent = cols.list.some((col) => col.isAllowFormula());
+    public setFormulasActive(cols: AgColumn[]): void {
+        const formulaColumnsPresent = cols.some((col) => col.isAllowFormula());
         const active = formulaColumnsPresent && this.checkForIncompatibleServices(cols);
 
         if (active !== this.active) {
@@ -117,7 +116,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
     }
 
-    private checkForIncompatibleServices(cols: _ColumnCollections): boolean {
+    private checkForIncompatibleServices(cols: AgColumn[]): boolean {
         if (this.gos.get('masterDetail')) {
             _warn(295, { blockedService: 'Master Detail' });
             return false;
@@ -133,7 +132,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return false;
         }
 
-        return cols.list.every((col) => {
+        return cols.every((col) => {
             if (col.isAllowPivot() || col.isPivotActive()) {
                 _warn(295, { blockedService: 'Column Pivoting' });
                 return false;
@@ -168,7 +167,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         // already calls `refreshAll` when treeData is updated
         this.addManagedPropertyListeners(['masterDetail', 'enableCellExpressions'], (e) => {
             const { colModel } = this.beans;
-            const formulaColumnsPresent = colModel.cols?.list.some((col) => col.isAllowFormula());
+            const formulaColumnsPresent = colModel.colsList?.some((col) => col.isAllowFormula());
             if (formulaColumnsPresent) {
                 colModel.refreshAll(_convertColumnEventSourceType(e.source));
             }
@@ -248,7 +247,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
         const alphabet = 'abcdefghijklmnopqrstuvwxyz';
         const base = alphabet.length;
-        const list = this.beans.colModel.getCols();
+        const list = this.beans.colModel.colsList;
         const map = new Map<string, AgColumn>();
 
         let idx = 0;

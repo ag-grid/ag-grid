@@ -30,7 +30,7 @@ export class ChartColumnService extends BeanStub {
         });
     }
 
-    public getColumn(colId: string): AgColumn | null {
+    public getColumn(colId: string): AgColumn | undefined {
         return this.colModel.getColDefCol(colId);
     }
 
@@ -55,7 +55,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public isPivotMode(): boolean {
-        return this.colModel.isPivotMode();
+        return this.colModel.pivotMode;
     }
 
     public isPivotActive(): boolean {
@@ -63,7 +63,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getChartColumns(): { dimensionCols: Set<AgColumn>; valueCols: Set<AgColumn> } {
-        const gridCols = this.colModel.getCols();
+        const gridCols = this.colModel.colsList;
 
         const dimensionCols = new Set<AgColumn>();
         const valueCols = new Set<AgColumn>();

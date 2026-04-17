@@ -2,30 +2,24 @@ import { _removeFromArray } from '../agStack/utils/array';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
-import type { ColDef, ColKey } from '../entities/colDef';
+import type { ColDef } from '../entities/colDef';
 import type { GridOptions, SelectionColumnDef } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyValueChangedEvent } from '../gridOptionsService';
 import { _getCheckboxLocation, _getCheckboxes, _getHeaderCheckbox, _isRowSelection } from '../gridOptionsUtils';
-import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
-import type { ColumnCollections } from './columnModel';
 import { _applyColumnState } from './columnStateUtils';
 import {
     ROW_NUMBERS_COLUMN_ID,
     SELECTION_COLUMN_ID,
     _areColIdsEqual,
-    _columnsMatch,
     _convertColumnEventSourceType,
-    _destroyColumnTree,
     _getColumnStateFromColDef,
-    _updateColsMap,
-    isColumnSelectionCol,
 } from './columnUtils';
 
-export class SelectionColService extends BeanStub implements NamedBean, IColumnCollectionService {
+export class SelectionColService extends BeanStub implements NamedBean {
     beanName = 'selectionColSvc' as const;
 
-    public columns: ColumnCollections | null;
+    public columns: AgColumn[] = [];
 
     public postConstruct(): void {
         this.addManagedPropertyListener('rowSelection', (event) => {
@@ -39,76 +33,26 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         this.addManagedPropertyListener('selectionColumnDef', this.updateColumns.bind(this));
     }
 
-    public addColumns(cols: ColumnCollections): void {
-        const selectionCols = this.columns;
-        if (selectionCols == null) {
-            return;
-        }
-        cols.list = selectionCols.list.concat(cols.list);
-        cols.tree = selectionCols.tree.concat(cols.tree);
-        _updateColsMap(cols);
-    }
-
-    public createColumns(
-        cols: ColumnCollections,
-        updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
-    ): void {
-        const destroyCollection = () => {
-            _destroyColumnTree(this.beans, this.columns?.tree);
-            this.columns = null;
-        };
-
-        const newTreeDepth = cols.treeDepth;
-        const oldTreeDepth = this.columns?.treeDepth ?? -1;
-        const treeDepthSame = oldTreeDepth == newTreeDepth;
-
+    public createColumns(): boolean {
         const list = this.generateSelectionCols();
-        const areSame = _areColIdsEqual(list, this.columns?.list ?? []);
-
-        if (areSame && treeDepthSame) {
-            return;
+        if (_areColIdsEqual(list, this.columns)) {
+            return false;
         }
 
-        destroyCollection();
-        const { colGroupSvc } = this.beans;
-        const treeDepth = colGroupSvc?.findDepth(cols.tree) ?? 0;
-        const tree = colGroupSvc?.balanceTreeForAutoCols(list, treeDepth) ?? [];
-        this.columns = {
-            list,
-            tree,
-            treeDepth,
-            map: {},
-        };
-
-        const putSelectionColsFirstInList = (cols?: AgColumn[] | null): AgColumn[] | null => {
-            if (!cols) {
-                return null;
-            }
-            // we use colId, and not instance, to remove old selectionCols
-            const colsFiltered = cols.filter((col) => !isColumnSelectionCol(col));
-            return [...list, ...colsFiltered];
-        };
-
-        updateOrders(putSelectionColsFirstInList);
+        this.beans.context.destroyBeans(this.columns);
+        this.columns = list;
+        return true;
     }
 
     public updateColumns(event: PropertyValueChangedEvent<'selectionColumnDef'>): void {
         const source = _convertColumnEventSourceType(event.source);
         const { beans } = this;
-        for (const col of this.columns?.list ?? []) {
+        for (const col of this.columns) {
             const colDef = this.createSelectionColDef(event.currentValue);
             col.setColDef(colDef, null, source);
 
             _applyColumnState(beans, { state: [_getColumnStateFromColDef(colDef, col.colId)] }, source);
         }
-    }
-
-    public getColumn(key: ColKey): AgColumn | null {
-        return this.columns?.list.find((col) => _columnsMatch(col, key)) ?? null;
-    }
-
-    public getColumns(): AgColumn[] | null {
-        return this.columns?.list ?? null;
     }
 
     public isSelectionColumnEnabled(): boolean {
@@ -118,7 +62,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
             return false;
         }
 
-        const hasAutoCols = (beans.autoColSvc?.getColumns()?.length ?? 0) > 0;
+        const hasAutoCols = !!beans.autoColSvc?.columns.length;
 
         if (rowSelection.checkboxLocation === 'autoGroupColumn' && hasAutoCols) {
             return false;
@@ -199,7 +143,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
     }
 
     public override destroy(): void {
-        _destroyColumnTree(this.beans, this.columns?.tree);
+        this.beans.context.destroyBeans(this.columns);
         super.destroy();
     }
 
@@ -217,7 +161,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
      */
     public refreshVisibility(leftCols: AgColumn[], centerCols: AgColumn[], rightCols: AgColumn[]): void {
         // columns list will only be populated if selection column is enabled
-        if (!this.columns?.list.length) {
+        if (!this.columns.length) {
             return;
         }
 
@@ -227,7 +171,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         }
 
         // There's only one selection column
-        const column = this.columns.list[0];
+        const column = this.columns[0];
 
         // If it's deliberately hidden, we needn't do anything
         if (!column.isVisible()) {
@@ -252,7 +196,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
             }
         };
 
-        const rowNumbersCol = this.beans.rowNumbersSvc?.getColumn(ROW_NUMBERS_COLUMN_ID);
+        const rowNumbersCol = this.beans.colModel.getCol(ROW_NUMBERS_COLUMN_ID);
 
         // two conditions for which we hide selection column:
         //   1. Only selection column and row numbers column are visible

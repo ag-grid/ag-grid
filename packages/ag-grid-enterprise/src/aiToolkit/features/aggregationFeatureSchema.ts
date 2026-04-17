@@ -8,7 +8,7 @@ export const buildAggregationFeatureSchema = (beans: BeanCollection) => {
         return;
     }
 
-    const columns = beans.colModel.getCols();
+    const columns = beans.colModel.colsList;
     const aggregatableColumns = columns.filter((col) => col.isAllowValue() && aggFuncSvc.getFuncNames(col).length > 0);
 
     if (aggregatableColumns.length === 0) {

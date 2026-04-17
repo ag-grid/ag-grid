@@ -89,7 +89,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
         eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 
         const isFilterGroupPresent = (col: AgColumn) => col.getOriginalParent() && col.isFilterAllowed();
-        const filterGroupsPresent = this.beans.colModel.getCols().some(isFilterGroupPresent);
+        const filterGroupsPresent = this.beans.colModel.colsList.some(isFilterGroupPresent);
 
         _setDisplayed(eFilterTextField.getGui(), showFilterSearch);
         _setDisplayed(this.eExpand, showExpand && filterGroupsPresent);

@@ -1,7 +1,7 @@
 import type { BeanCollection, ColDef, ColGroupDef, ColKey, Column } from 'ag-grid-community';
 
 export function isPivotMode(beans: BeanCollection): boolean {
-    return beans.colModel.isPivotMode();
+    return beans.colModel.pivotMode;
 }
 
 export function getPivotResultColumn<TValue = any, TData = any>(
@@ -49,6 +49,5 @@ export function setPivotResultColumns(beans: BeanCollection, colDefs: (ColDef | 
 }
 
 export function getPivotResultColumns(beans: BeanCollection): Column[] | null {
-    const pivotResultCols = beans.pivotResultCols?.getPivotResultCols();
-    return pivotResultCols ? pivotResultCols.list : null;
+    return beans.pivotResultCols?.pivotCols ?? null;
 }

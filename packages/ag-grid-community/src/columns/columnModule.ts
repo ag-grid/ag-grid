@@ -25,7 +25,6 @@ import {
     setColumnsPinned,
     setColumnsVisible,
 } from './columnApi';
-import { ColumnDefFactory } from './columnDefFactory';
 import { ColumnFlexService } from './columnFlexService';
 import { DataTypeService } from './dataTypeService';
 
@@ -54,7 +53,6 @@ export const ColumnFlexModule: _ModuleWithoutApi = {
 export const ColumnApiModule: _ModuleWithApi<_ColumnGridApi<any>> = {
     moduleName: 'ColumnApi',
     version: VERSION,
-    beans: [ColumnDefFactory],
     apiFunctions: {
         getColumnDef,
         getDisplayNameForColumn,

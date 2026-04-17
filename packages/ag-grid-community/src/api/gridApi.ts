@@ -670,7 +670,8 @@ export interface _ColumnGridApi<TData> {
     getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined;
 
     /**
-     * Returns the column definition with the given `colKey`, which can either be the `colId` (a string) or the column instance.
+     * Returns the column definition for the given key. Searches user-defined columns first, then all display columns
+     * (including auto-group, selection, and pivot result columns). The key can be a `colId` string or a column instance.
      * @agModule `ColumnApiModule`
      */
     getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null;
@@ -682,7 +683,8 @@ export interface _ColumnGridApi<TData> {
     getDisplayNameForColumn(column: Column, location: HeaderLocation): string;
 
     /**
-     * Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object).
+     * Returns the column for the given `colKey`, which can be the `colId` (a string), the `colDef` (an object), or a column instance.
+     * Searches user-defined columns first, then all display columns (including auto-group, selection, and pivot result columns).
      * @agModule `ColumnApiModule`
      */
     getColumn<TValue = any>(key: ColKey<TData, TValue>): Column<TValue> | null;

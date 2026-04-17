@@ -1,8 +1,8 @@
+import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { CellPosition } from './iCellPosition';
-import type { IColumnCollectionService } from './iColumnCollectionService';
 
 export interface RowNumbersOptions
     extends Pick<
@@ -61,7 +61,11 @@ export interface RowNumbersOptions
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface IRowNumbersService extends IColumnCollectionService {
+export interface IRowNumbersService {
+    /** The single row-numbers column, or null when row numbers are disabled. */
+    column: AgColumn | null;
+
+    createColumn(sourceCols: AgColumn[]): boolean;
     setupForHeader(comp: HeaderComp): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
     handleKeyDownOnCell(cell: CellPosition, event: KeyboardEvent): boolean;

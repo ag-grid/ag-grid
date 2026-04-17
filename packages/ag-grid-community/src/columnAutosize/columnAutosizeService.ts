@@ -1,7 +1,7 @@
 import { _removeFromArray } from '../agStack/utils/array';
 import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
-import { _columnsMatch, getWidthOfColsInList, isRowNumberCol, isSpecialCol } from '../columns/columnUtils';
+import { getWidthOfColsInList, isRowNumberCol, isSpecialCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -216,9 +216,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private autoSizeColumnGroupsByColumns(keys: ColKey[], source: ColumnEventType, stopAtGroup?: AgColumnGroup): void {
         const { colModel, ctrlsSvc } = this.beans;
         const columnGroups = new Set<AgColumnGroup>();
-        const columns = colModel.getColsForKeys(keys);
 
-        for (const col of columns) {
+        for (let k = 0, kLen = keys.length; k < kLen; ++k) {
+            const col = colModel.getCol(keys[k]);
+            if (!col) {
+                continue;
+            }
             let parent = col.getParent();
             while (parent && parent != stopAtGroup) {
                 if (!parent.isPadding()) {
@@ -620,4 +623,8 @@ function setWidthAnimation({ ctrlsSvc, gos }: BeanCollection, enable: boolean): 
     } else {
         classList.remove(WIDTH_ANIMATION_CLASS);
     }
+}
+
+function _columnsMatch(column: AgColumn, key: ColKey): boolean {
+    return column === key || column.colId == key || column.getColDef() === key;
 }

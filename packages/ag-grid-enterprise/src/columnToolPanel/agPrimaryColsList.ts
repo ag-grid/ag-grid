@@ -261,7 +261,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const expandedStates = this.getExpandedStates();
 
-        const pivotModeActive = this.colModel.isPivotMode();
+        const pivotModeActive = this.colModel.pivotMode;
         const deferApply = isDeferredMode(params);
         const hasDeferredColumnOrder =
             deferApply && this.beans.columnStateUpdateStrategy.hasDeferredColumnOrder(deferApply);
@@ -369,8 +369,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private buildTreeFromProvidedColumnDefs(): void {
         const colModel = this.colModel;
         // add column / group comps to tool panel
-        this.buildListModel(colModel.getColDefColTree());
-        this.groupsExist = !!colModel.colDefCols?.treeDepth;
+        this.buildListModel(colModel.colDefTree);
+        this.groupsExist = !!colModel.colDefTreeDepth;
     }
 
     private buildListModel(columnTree: (AgColumn | AgProvidedColumnGroup)[]): void {

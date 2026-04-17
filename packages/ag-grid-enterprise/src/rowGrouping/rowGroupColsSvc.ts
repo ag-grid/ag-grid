@@ -7,7 +7,12 @@ import type {
     IColsService,
     NamedBean,
 } from 'ag-grid-community';
-import { BaseColsService, _removeFromArray, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
+import {
+    BaseColsService,
+    GROUP_HIERARCHY_COLUMN_ID_PREFIX,
+    _removeFromArray,
+    _shouldUpdateColVisibilityAfterGroup,
+} from 'ag-grid-community';
 
 export class RowGroupColsSvc extends BaseColsService implements NamedBean, IColsService {
     beanName = 'rowGroupColsSvc' as const;
@@ -101,7 +106,7 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
         // If this column is a virtual column inserted by the groupHierarchyColSvc, by default we shouldn't make
         // it visible when being grouped or ungrouped -- these are virtual columns, not user data columns, so they
         // should only be made visible if the user explicitly wants to see them
-        const isGroupHierarchyCol = this.beans.groupHierarchyColSvc?.getColumn(column);
+        const isGroupHierarchyCol = column.colId.startsWith(GROUP_HIERARCHY_COLUMN_ID_PREFIX);
         if (_shouldUpdateColVisibilityAfterGroup(this.gos, active) && !isGroupHierarchyCol) {
             this.colModel.setColsVisible([column], !active, source);
         }

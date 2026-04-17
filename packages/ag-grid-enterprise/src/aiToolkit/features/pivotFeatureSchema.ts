@@ -3,7 +3,7 @@ import type { BeanCollection } from 'ag-grid-community';
 import { s } from '../schemaBuilder';
 
 export const buildPivotFeatureSchema = (beans: BeanCollection) => {
-    const columns = beans.colModel.getCols();
+    const columns = beans.colModel.colsList;
     const pivotableColumnIds = columns.filter((col) => col.isAllowPivot()).map((col) => col.getColId());
 
     if (pivotableColumnIds.length === 0) {

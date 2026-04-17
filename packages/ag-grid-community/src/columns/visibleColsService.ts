@@ -97,7 +97,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     private getHeaderRowCount(): number {
         if (!this.gos.get('hidePaddedHeaderRows')) {
-            return this.beans.colModel.cols!.treeDepth;
+            return this.beans.colModel.colsTreeDepth;
         }
 
         let headerGroupRowCount = 0;
@@ -174,7 +174,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             firstRight = rightCols ? rightCols[0] : null;
         }
 
-        for (const col of colModel.getCols()) {
+        for (const col of colModel.colsList) {
             col.setLastLeftPinned(col === lastLeft, source);
             col.setFirstRightPinned(col === firstRight, source);
         }
@@ -183,9 +183,21 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private buildTrees(colModel: ColumnModel, columnGroupSvc: ColumnGroupService | undefined) {
         const cols = colModel.getColsToShow();
 
-        const leftCols = cols.filter((col) => col.getPinned() == 'left');
-        const rightCols = cols.filter((col) => col.getPinned() == 'right');
-        const centerCols = cols.filter((col) => col.getPinned() != 'left' && col.getPinned() != 'right');
+        // Single-pass partition instead of 3 separate filter passes
+        const leftCols: AgColumn[] = [];
+        const rightCols: AgColumn[] = [];
+        const centerCols: AgColumn[] = [];
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const col = cols[i];
+            const pinned = col.getPinned();
+            if (pinned === 'left') {
+                leftCols.push(col);
+            } else if (pinned === 'right') {
+                rightCols.push(col);
+            } else {
+                centerCols.push(col);
+            }
+        }
 
         const idCreator = new GroupInstanceIdCreator();
 
@@ -223,7 +235,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     private joinColsAriaOrder(colModel: ColumnModel): void {
-        const allColumns = colModel.getCols();
+        const allColumns = colModel.colsList;
         const pinnedLeft: AgColumn[] = [];
         const center: AgColumn[] = [];
         const pinnedRight: AgColumn[] = [];
@@ -268,13 +280,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     private setLeftValuesOfCols(source: ColumnEventType): void {
         const { colModel } = this.beans;
-        const primaryCols = colModel.getColDefCols();
+        const primaryCols = colModel.colDefList;
         if (!primaryCols) {
             return;
         }
 
         // go through each list of displayed columns
-        const allColumns = colModel.getCols().slice(0);
+        const allColumns = colModel.colsList.slice(0);
 
         const doingRtl = this.gos.get('enableRtl');
 

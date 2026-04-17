@@ -140,7 +140,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     private initRefresh(params: RefreshModelParams): 'skip' | 'refresh' | 'groupColsChanged' {
         const { rowGroupColsSvc, colModel, gos } = this.beans;
 
-        this.pivotMode = colModel.isPivotMode();
+        this.pivotMode = colModel.pivotMode;
         this.groupEmpty = this.pivotMode || !gos.get('groupAllowUnbalanced');
         const cols = rowGroupColsSvc?.columns;
         const groupCols = this.groupCols;

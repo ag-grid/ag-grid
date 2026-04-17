@@ -28,7 +28,7 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
         let showRowGroupColsCount = 0;
         let showRowGroupColsSetChanged = false;
 
-        const cols = colModel.getCols();
+        const cols = colModel.colsList;
         for (let colIdx = 0, colsLen = cols.length; colIdx < colsLen; ++colIdx) {
             const col = cols[colIdx];
             const colDef = col.getColDef();

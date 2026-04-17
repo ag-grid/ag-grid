@@ -130,7 +130,7 @@ export function getBestColumnMoveIndexFromXPosition(
     // could themselves be part of 'married children' groups, which means we need to maintain the order within
     // the moving list.
     const allMovingColumnsOrdered = allMovingColumns.slice();
-    sortColsLikeCols(colModel.getCols(), allMovingColumnsOrdered);
+    sortColsLikeCols(colModel.colsList, allMovingColumnsOrdered);
 
     const validMoves = calculateValidMoves({
         movingCols: allMovingColumnsOrdered,
@@ -187,7 +187,7 @@ export function getBestColumnMoveIndexFromXPosition(
     }
 
     const toIndex = lowestFragMove.move;
-    if (toIndex > colModel.getCols().length - allMovingColumnsOrdered.length) {
+    if (toIndex > colModel.colsList.length - allMovingColumnsOrdered.length) {
         return;
     }
 
@@ -212,7 +212,7 @@ export function attemptMoveColumns(
 // returns the index of the first column in the list ONLY if the cols are all beside
 // each other. if the cols are not beside each other, then returns null
 function calculateOldIndex(movingCols: AgColumn[], colModel: ColumnModel): number | null {
-    const gridCols: AgColumn[] = colModel.getCols();
+    const gridCols: AgColumn[] = colModel.colsList;
     const indexes = movingCols.map((col) => gridCols.indexOf(col)).sort((a, b) => a - b);
     const firstIndex = indexes[0];
     const lastIndex = _last(indexes);
@@ -279,7 +279,7 @@ function calculateValidMoves(params: {
     const allDisplayedCols = getDisplayedColumns(visibleCols, pinned);
     // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
     // so the result we return has to be and index location for this list
-    const allGridCols = colModel.getCols();
+    const allGridCols = colModel.colsList;
 
     const movingDisplayedCols = allDisplayedCols.filter((col) => movingCols.includes(col));
     const otherDisplayedCols = allDisplayedCols.filter((col) => !movingCols.includes(col));

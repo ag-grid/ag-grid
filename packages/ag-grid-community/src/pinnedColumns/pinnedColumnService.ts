@@ -95,7 +95,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
     public setColsPinned(keys: ColKey[], pinned: ColumnPinnedType, source: ColumnEventType): void {
         const { colModel, colAnimation, visibleCols, gos } = this.beans;
-        if (!colModel.cols) {
+        if (!colModel.colsList) {
             return;
         }
         if (!keys?.length) {

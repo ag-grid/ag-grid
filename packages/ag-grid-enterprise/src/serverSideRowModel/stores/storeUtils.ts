@@ -77,7 +77,7 @@ export class StoreUtils extends BeanStub implements NamedBean {
             return true;
         }
 
-        const allCols = this.colModel.getCols();
+        const allCols = this.colModel.colsList;
         const affectedGroupCols = allCols
             // find all impacted cols which also a group display column
             .filter((col) => col.getColDef().showRowGroup && params.changedColumns.includes(col.getId()))

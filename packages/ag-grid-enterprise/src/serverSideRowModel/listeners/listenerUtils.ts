@@ -25,12 +25,12 @@ export class ListenerUtils extends BeanStub implements NamedBean {
     }
 
     public isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
-        const pivotResultCols = this.pivotResultCols?.getPivotResultCols();
+        const pivotResultCols = this.pivotResultCols?.pivotCols;
         if (!pivotResultCols) {
             return false;
         }
 
-        const secondaryColIds = pivotResultCols.list.map((col) => col.getColId());
+        const secondaryColIds = pivotResultCols.map((col) => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
             if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {

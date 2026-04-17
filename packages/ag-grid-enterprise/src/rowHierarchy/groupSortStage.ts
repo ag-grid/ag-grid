@@ -38,10 +38,10 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             gos.get('deltaSort');
 
         const groupMaintainOrder = gos.get('groupMaintainOrder');
-        const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());
         const groupCols = rowGroupColsSvc?.columns;
+        const groupColumnsPresent = !!groupCols?.length;
 
-        const isPivotMode = colModel.isPivotMode();
+        const isPivotMode = colModel.pivotMode;
         const postSortFunc = gos.getCallback('postSortRows');
 
         let hasAnyFirstChildChanged = false;

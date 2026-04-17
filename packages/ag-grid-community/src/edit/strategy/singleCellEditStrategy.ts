@@ -116,14 +116,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         const { colModel, editSvc } = this.beans;
         const { rowIndex, column, rowPinned } = event;
         const rowNode = _getRowNode(this.beans, { rowIndex: rowIndex!, rowPinned });
-        const curColId = _getColId(column);
-        const curCol = colModel.getCol(curColId);
+        const curCol = colModel.getCol(column);
 
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
         if (previous) {
             const prevColId = _getColId(previous.column);
 
-            if (previous?.rowIndex === rowIndex && prevColId === curColId && previous?.rowPinned === rowPinned) {
+            if (previous?.rowIndex === rowIndex && prevColId === curCol?.colId && previous?.rowPinned === rowPinned) {
                 return;
             }
         }

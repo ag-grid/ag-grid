@@ -1,14 +1,6 @@
-export function _getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
-    if (!field || !data) {
-        return;
-    }
-
-    // if no '.', then it's not a deep value
-    if (!fieldContainsDots) {
-        return data[field];
-    }
-
-    // otherwise it is a deep value, so need to dig for it
+/** Reads a value from a nested object using a dot-notation field path (e.g. 'address.city').
+ *  Only call this when the field contains dots — for simple fields, use `data[field]` directly. */
+export function _getValueUsingDotNotation(data: any, field: string): any {
     const fields = field.split('.');
     let currentObject = data;
 

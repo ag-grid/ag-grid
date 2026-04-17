@@ -40,7 +40,7 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
             return result; // destroyed
         }
 
-        const skipLeafNodes = beans.colModel.isPivotMode();
+        const skipLeafNodes = beans.colModel.pivotMode;
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are
 

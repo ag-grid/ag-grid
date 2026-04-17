@@ -11,7 +11,7 @@ import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
 const isOperationNode = (n: FormulaNode): n is FormulaOperation => n.type === 'operation';
 
 function colLabelFromId(beans: BeanCollection, colId: string): string | null {
-    const col = beans.colModel.getColById(colId);
+    const col = beans.colModel.getCol(colId);
     if (col) {
         return beans.formula?.getColRef(col) ?? null;
     }
@@ -22,7 +22,7 @@ function colIdFromLabel(beans: BeanCollection, label: string): string | null {
 }
 
 export function colIndexFromId(colModel: ColumnModel, cols: AgColumn[], colId: string): number | null {
-    const col = colModel.getColById(colId);
+    const col = colModel.getCol(colId);
 
     if (!col) {
         return null;

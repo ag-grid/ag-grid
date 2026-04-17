@@ -84,7 +84,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     }): { value: any; valueFormatted?: string | null } {
         const { column, node, currentColumnIndex, accumulatedRowIndex, type, useRawFormula } = params;
         const isFullWidthGroup =
-            currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.isPivotMode());
+            currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.pivotMode);
         if (
             this.processRowGroupCallback &&
             (this.gos.get('treeData') || node.group) &&

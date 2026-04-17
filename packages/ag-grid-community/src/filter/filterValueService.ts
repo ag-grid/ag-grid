@@ -39,13 +39,16 @@ export class FilterValueService extends BeanStub implements NamedBean {
         node: IRowNode,
         colDef: ColDef
     ): any {
-        const { expressionSvc, valueSvc } = this.beans;
+        const { expressionSvc, valueSvc, colModel } = this.beans;
         const params: ValueGetterParams = _addGridCommonParams(this.gos, {
             data,
             node,
             column,
             colDef,
-            getValue: valueSvc.getValueCallback.bind(valueSvc, node),
+            getValue: (field) => {
+                const col = colModel.getColDefOrCol(field);
+                return col ? valueSvc.getValue(col, node, 'data') : null;
+            },
         });
 
         if (typeof valueGetter === 'function') {

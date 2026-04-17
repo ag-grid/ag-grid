@@ -224,19 +224,16 @@ export {
     _updateColumnState,
 } from './columns/columnFactoryUtils';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
-export type { ColumnCollections as _ColumnCollections } from './columns/columnModel';
 export type { ColumnModel } from './columns/columnModel';
 export type { ColumnNameService } from './columns/columnNameService';
 export { _applyColumnState, _getColumnState, _resetColumnState } from './columns/columnStateUtils';
 export {
     _areColIdsEqual,
-    _columnsMatch,
     _convertColumnEventSourceType,
     _destroyColumnTree,
     _getColumnsFromTree,
     _getColumnStateFromColDef,
     _getSortDefFromColDef,
-    _updateColsMap,
     isColumnGroupAutoCol,
     isColumnSelectionCol,
     isRowNumberCol,
@@ -425,7 +422,7 @@ export type { IAggregatedChildrenSvc as _IAggregatedChildrenSvc } from './interf
 export type { ICellRangeFeature } from './interfaces/iCellRangeFeature';
 export type { IClipboardService } from './interfaces/iClipboardService';
 export type { IColsService } from './interfaces/iColsService';
-export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
+export type { IAutoColService } from './interfaces/IAutoColService';
 export type { IColumnStateUpdateStrategy } from './interfaces/iColumnStateUpdateStrategy';
 export type { IEventService } from './interfaces/iEventService';
 export type { IExpansionService } from './interfaces/iExpansionService';

@@ -4,6 +4,7 @@ import type { ColDef, ColGroupDef, ColKey, HeaderLocation } from '../entities/co
 import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
 import { _applyColumnState, _getColumnState, _resetColumnState } from './columnStateUtils';
 import type { ApplyColumnStateParams, ColumnState } from './columnStateUtils';
+import { exportColumnDefs } from './exportColumnDefs';
 
 export type ColumnChangedEventType = 'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged';
 
@@ -11,15 +12,11 @@ export function getColumnDef<TValue = any, TData = any>(
     beans: BeanCollection,
     key: string | Column<TValue>
 ): ColDef<TData, TValue> | null {
-    const column = beans.colModel.getColDefCol(key);
-    if (column) {
-        return column.getColDef();
-    }
-    return null;
+    return beans.colModel.getColDefOrCol(key)?.colDef ?? null;
 }
 
-export function getColumnDefs<TData = any>(beans: BeanCollection): (ColDef<TData> | ColGroupDef<TData>)[] | undefined {
-    return beans.colModel.getColumnDefs(true);
+export function getColumnDefs(beans: BeanCollection): (ColDef | ColGroupDef)[] | undefined {
+    return exportColumnDefs(beans);
 }
 
 export function getDisplayNameForColumn(beans: BeanCollection, column: Column, location: HeaderLocation): string {
@@ -30,11 +27,12 @@ export function getColumn<TValue = any, TData = any>(
     beans: BeanCollection,
     key: ColKey<TData, TValue>
 ): Column<TValue> | null {
-    return beans.colModel.getColDefCol(key);
+    return beans.colModel.getColDefOrCol(key) ?? null;
 }
 
 export function getColumns(beans: BeanCollection): Column[] | null {
-    return beans.colModel.getColDefCols();
+    const cm = beans.colModel;
+    return cm.ready ? cm.colDefList : null;
 }
 
 export function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams): boolean {
@@ -78,7 +76,7 @@ export function setColumnsPinned(beans: BeanCollection, keys: ColKey[], pinned: 
 }
 
 export function getAllGridColumns(beans: BeanCollection): Column[] {
-    return beans.colModel.getCols();
+    return beans.colModel.colsList;
 }
 
 export function getDisplayedLeftColumns(beans: BeanCollection): Column[] {

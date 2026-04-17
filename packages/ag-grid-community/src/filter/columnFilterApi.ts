@@ -91,7 +91,7 @@ export function doFilterAction(beans: BeanCollection, params: FilterActionParams
     }
     const { colId, action } = params;
     if (colId) {
-        const column = colModel.getColById(colId);
+        const column = colModel.getCol(colId);
         if (column) {
             colFilter?.updateModel(column, action);
         }

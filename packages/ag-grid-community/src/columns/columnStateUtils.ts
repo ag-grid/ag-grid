@@ -26,7 +26,7 @@ import {
     dispatchColumnVisibleEvent,
 } from './columnEventUtils';
 import { updateSomeColumnState } from './columnFactoryUtils';
-import type { ColumnCollections, ColumnModel } from './columnModel';
+import type { ColumnModel } from './columnModel';
 import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree, getValueFactory, isColumnSelectionCol } from './columnUtils';
 
 export interface ColumnStateParams {
@@ -91,8 +91,8 @@ export function _applyColumnState(
         gos,
     } = beans;
 
-    const providedCols = colModel.getColDefCols() ?? [];
-    const selectionCols = selectionColSvc?.getColumns();
+    const providedCols = colModel.colDefList;
+    const selectionCols = selectionColSvc?.columns;
     if (!providedCols.length && !selectionCols?.length) {
         return false;
     }
@@ -237,19 +237,13 @@ export function _applyColumnState(
             columns.forEach(applyDefaultsFunc);
         };
 
+        const getColById = (colId: string) => colModel.getCol(colId) ?? null;
+
         // sync newly created auto group columns with ColumnState
-        syncColStates(
-            (colId: string) => autoColSvc?.getColumn(colId) ?? null,
-            autoColStates,
-            autoColSvc?.getColumns()?.slice()
-        );
+        syncColStates(getColById, autoColStates, autoColSvc?.columns.slice());
 
         // sync selection columns with ColumnState
-        syncColStates(
-            (colId: string) => selectionColSvc?.getColumn(colId) ?? null,
-            selectionColStates,
-            selectionColSvc?.getColumns()?.slice()
-        );
+        syncColStates(getColById, selectionColStates, selectionColSvc?.columns.slice());
 
         orderLiveColsLikeState(params, colModel, gos);
         visibleCols.refresh(source);
@@ -264,14 +258,16 @@ export function _applyColumnState(
 
     colAnimation?.start();
 
-    let { unmatchedAndAutoStates, unmatchedCount } = applyStates(params.state || [], providedCols, (id) =>
-        colModel.getColDefCol(id)
+    let { unmatchedAndAutoStates, unmatchedCount } = applyStates(
+        params.state || [],
+        providedCols,
+        (id) => colModel.getColDefCol(id) ?? null
     );
 
     // If there are still states left over, see if we can apply them to newly generated
     // pivot result cols or auto cols. Also if defaults exist, ensure they are applied to pivot resul cols
     if (unmatchedAndAutoStates.length > 0 || _exists(params.defaultState)) {
-        const pivotResultColsList = pivotResultCols?.getPivotResultCols()?.list ?? [];
+        const pivotResultColsList = pivotResultCols?.pivotCols ?? [];
         unmatchedCount = applyStates(
             unmatchedAndAutoStates,
             pivotResultColsList,
@@ -287,7 +283,7 @@ export function _applyColumnState(
 export function _resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
     const { colModel, autoColSvc, selectionColSvc, eventSvc, gos } = beans;
 
-    const primaryCols = colModel.getColDefCols();
+    const primaryCols = colModel.colDefList;
     if (!primaryCols?.length) {
         return;
     }
@@ -297,7 +293,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
     // As a work around, developers should just put lockPosition columns first in their colDef list.
 
     // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
-    const primaryColumnTree = colModel.getColDefColTree();
+    const primaryColumnTree = colModel.colDefTree;
     const primaryColumns = _getColumnsFromTree(primaryColumnTree);
     const columnStates: ColumnState[] = [];
 
@@ -321,15 +317,15 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         columnStates.push(stateItem);
     };
 
-    autoColSvc?.getColumns()?.forEach(addColState);
-    selectionColSvc?.getColumns()?.forEach(addColState);
+    autoColSvc?.columns.forEach(addColState);
+    selectionColSvc?.columns.forEach(addColState);
     primaryColumns?.forEach(addColState);
 
     // apply state before ordering, as changes in row grouping will introduce new columns
     _applyColumnState(beans, { state: columnStates }, source);
 
-    const autoCols = autoColSvc?.getColumns() ?? [];
-    const selectionCols = selectionColSvc?.getColumns() ?? [];
+    const autoCols = autoColSvc?.columns ?? [];
+    const selectionCols = selectionColSvc?.columns ?? [];
     const orderedCols = [...selectionCols, ...autoCols, ...primaryColumns];
     const orderedColState = orderedCols.map((col) => ({ colId: col.colId }));
 
@@ -398,12 +394,14 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         const getChangedColumns = (changedPredicate: (cs: ColumnState, c: AgColumn) => boolean): AgColumn[] => {
             const changedColumns: AgColumn[] = [];
 
-            colModel.forAllCols((column) => {
+            const allCols = colModel.getAllCols();
+            for (let i = 0, len = allCols.length; i < len; ++i) {
+                const column = allCols[i];
                 const colStateBefore = columnStateBeforeMap[column.getColId()];
                 if (colStateBefore && changedPredicate(colStateBefore, column)) {
                     changedColumns.push(column);
                 }
-            });
+            }
 
             return changedColumns;
         };
@@ -466,7 +464,7 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getColumnState(beans: BeanCollection): ColumnState[] {
     const { colModel, rowGroupColsSvc, pivotColsSvc } = beans;
-    const primaryCols = colModel.getColDefCols();
+    const primaryCols = colModel.colDefList;
 
     if (_missing(primaryCols) || !colModel.isAlive()) {
         return [];
@@ -499,12 +497,13 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
             flex: column.getFlex() ?? null,
         });
     };
-    colModel.forAllCols((col) => createStateItemFromColumn(col));
+    const allCols = colModel.getAllCols();
+    for (let i = 0, len = allCols.length; i < len; ++i) {
+        createStateItemFromColumn(allCols[i]);
+    }
 
     // for fast looking, store the index of each column
-    const colIdToGridIndexMap = new Map<string, number>(
-        colModel.getCols().map((col, index) => [col.getColId(), index])
-    );
+    const colIdToGridIndexMap = new Map<string, number>(colModel.colsList.map((col, index) => [col.getColId(), index]));
 
     res.sort((itemA: any, itemB: any) => {
         const posA = colIdToGridIndexMap.has(itemA.colId) ? colIdToGridIndexMap.get(itemA.colId) : -1;
@@ -574,67 +573,59 @@ function orderLiveColsLikeState(params: ApplyColumnStateParams, colModel: Column
             colIds.push(item.colId);
         }
     }
-    sortColsLikeKeys(colModel.cols, colIds, colModel, gos);
+    const colsList = colModel.colsList;
+    if (colsList) {
+        const sorted = sortColsLikeKeys(colsList, colIds, colModel, gos);
+        if (sorted) {
+            colModel.colsList = sorted;
+        }
+    }
 }
 
 function sortColsLikeKeys(
-    cols: ColumnCollections | undefined,
+    colsList: AgColumn[],
     colIds: string[],
     colModel: ColumnModel,
     gos: GridOptionsService
-): void {
-    if (cols == null) {
-        return;
-    }
-
+): AgColumn[] | undefined {
     let newOrder: AgColumn[] = [];
-    const processedColIds: { [id: string]: boolean } = {};
+    const processedColIds = new Set<string>();
 
     for (const colId of colIds) {
-        if (processedColIds[colId]) {
+        if (processedColIds.has(colId)) {
             continue;
         }
-        const col = cols.map[colId];
+        const col = colModel.getCol(colId);
         if (col) {
             newOrder.push(col);
-            processedColIds[colId] = true;
+            processedColIds.add(colId);
         }
     }
 
     // add in all other columns
     let autoGroupInsertIndex = 0;
-    for (const col of cols.list) {
-        const colId = col.getColId();
-        const alreadyProcessed = processedColIds[colId] != null;
-        if (alreadyProcessed) {
+    for (let i = 0, len = colsList.length; i < len; ++i) {
+        const col = colsList[i];
+        const colId = col.colId;
+        if (processedColIds.has(colId)) {
             continue;
         }
 
-        const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
-        if (isAutoGroupCol) {
-            // auto group columns, if missing from state list, are added to the start.
-            // it's common to have autoGroup missing, as grouping could be on by default
-            // on a column, but the user could of since removed the grouping via the UI.
-            // if we don't inc the insert index, autoGroups will be inserted in reverse order
+        if (colId.startsWith(GROUP_AUTO_COLUMN_ID)) {
             newOrder.splice(autoGroupInsertIndex++, 0, col);
         } else {
-            // normal columns, if missing from state list, are added at the end
             newOrder.push(col);
         }
     }
 
-    // this is already done in updateCols, however we changed the order above (to match the order of the state
-    // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
-    // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
-    // is less sexy for the code here, but it keeps consistency.
     newOrder = placeLockedColumns(newOrder, gos);
 
-    if (!doesMovePassMarryChildren(newOrder, colModel.getColTree())) {
+    if (!doesMovePassMarryChildren(newOrder, colModel.colsTree)) {
         _warn(39);
-        return;
+        return undefined;
     }
 
-    cols.list = newOrder;
+    return newOrder;
 }
 
 function normaliseColumnMovedEventForColumnState(

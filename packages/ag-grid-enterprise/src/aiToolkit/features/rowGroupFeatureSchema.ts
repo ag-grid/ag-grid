@@ -3,7 +3,7 @@ import type { BeanCollection } from 'ag-grid-community';
 import { s } from '../schemaBuilder';
 
 export const buildRowGroupFeatureSchema = (beans: BeanCollection) => {
-    const columns = beans.colModel.getCols();
+    const columns = beans.colModel.colsList;
     const groupableColumns = columns.filter((col) => col.isAllowRowGroup());
 
     if (groupableColumns.length === 0) {

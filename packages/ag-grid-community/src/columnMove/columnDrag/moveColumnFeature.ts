@@ -328,9 +328,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private highlightHoveredColumn(movingColumns: AgColumn[], mouseX: number) {
         const { gos, colModel } = this.beans;
         const isRtl = gos.get('enableRtl');
-        const consideredColumns = colModel
-            .getCols()
-            .filter((col) => col.isVisible() && col.getPinned() === this.pinned);
+        const consideredColumns = colModel.colsList.filter((col) => col.isVisible() && col.getPinned() === this.pinned);
 
         let start: number | null = null;
         let width: number | null = null;

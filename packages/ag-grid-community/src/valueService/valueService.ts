@@ -1,6 +1,6 @@
 import { _exists, _missing } from '../agStack/utils/generic';
 import { _isExpressionString } from '../agStack/utils/string';
-import { _getValueUsingField } from '../agStack/utils/value';
+import { _getValueUsingDotNotation } from '../agStack/utils/value';
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
 import type { NamedBean } from '../context/bean';
@@ -26,6 +26,9 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
 import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
+
+type ResolveLeafFn = (column: AgColumn, colDef: ColDef, rowNode: IRowNode) => any;
+type ResolveGroupFn = (column: AgColumn, colDef: ColDef, rowNode: IRowNode, ignoreAggData: boolean) => any;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ValueService extends BeanStub implements NamedBean {
@@ -58,6 +61,12 @@ export class ValueService extends BeanStub implements NamedBean {
 
     private isSsrm = false;
 
+    /** The group value resolver, depends on treeData, csrm, ssrm */
+    private resolveGroup: ResolveGroupFn;
+
+    /** The non-group value resolver, depends on treeData, csrm, ssrm */
+    private resolveLeaf: ResolveLeafFn;
+
     private executeValueGetter: (
         // eslint-disable-next-line @typescript-eslint/ban-types
         valueGetter: string | Function,
@@ -79,7 +88,9 @@ export class ValueService extends BeanStub implements NamedBean {
             : this.executeValueGetterWithoutValueCache.bind(this);
         this.isSsrm = _isServerSideRowModel(gos);
         this.cellExpressions = gos.get('enableCellExpressions');
-        this.isTreeData = gos.get('treeData');
+        const isTreeData = gos.get('treeData');
+        this.isTreeData = isTreeData;
+        this.bindResolvers(isTreeData);
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
@@ -88,7 +99,21 @@ export class ValueService extends BeanStub implements NamedBean {
         this.eventSvc.addListener('cellValueChanged', listener, true);
         this.addDestroyFunc(() => this.eventSvc.removeListener('cellValueChanged', listener, true));
 
-        this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
+        this.addManagedPropertyListener('treeData', (propChange) => {
+            const value = propChange.currentValue;
+            this.isTreeData = value;
+            this.bindResolvers(value);
+        });
+    }
+
+    private bindResolvers(isTreeData: boolean): void {
+        if (isTreeData) {
+            this.resolveLeaf = this.resolveTreeLeafValue;
+            this.resolveGroup = this.resolveTreeGroupValue;
+        } else {
+            this.resolveLeaf = this.resolveValue;
+            this.resolveGroup = this.isSsrm ? this.resolveSsrmGroupValue : this.resolveCsrmGroupValue;
+        }
     }
 
     /**
@@ -166,8 +191,10 @@ export class ValueService extends BeanStub implements NamedBean {
         };
     }
 
-    // PERFORMANCE CRITICAL — called for every cell during filtering, rendering, and export.
-    // Any change here can have a large impact. Run the getValue benchmark to verify.
+    /**
+     * PERFORMANCE CRITICAL — called for every cell during filtering, rendering, and export.
+     * Any change here can have a large impact. Run the getValue benchmark to verify.
+     */
     public getValue(
         column: AgColumn,
         rowNode: IRowNode | null | undefined,
@@ -184,48 +211,41 @@ export class ValueService extends BeanStub implements NamedBean {
             return;
         }
 
-        const colDef = column.colDef;
-        const isGroup = rowNode.group;
+        const isGroup = !!rowNode.group;
+        let colDef = column.colDef;
 
         // Resolve pivot result columns to their underlying value column for non-group, non-pinned rows.
-        if (!isGroup && !rowNode.rowPinned) {
+        if (!isGroup) {
             const pivotValueColumn = colDef.pivotValueColumn;
-            if (pivotValueColumn) {
+            if (pivotValueColumn && !rowNode.rowPinned) {
                 column = pivotValueColumn as AgColumn;
+                colDef = column.colDef;
             }
         }
 
-        // Check for edit/pending values if not requesting committed data
-        const pending = this.editSvc?.getPendingEditValue(rowNode, column, from);
-        if (pending !== undefined) {
-            return pending;
-        }
-
-        let result = this.resolveValue(column, rowNode, ignoreAggData, isGroup);
-
-        if (result === undefined) {
-            // For showRowGroup columns on group rows, if no value was resolved and the row's
-            // group level is shallower than the column's associated row group, return null for
-            // retro-compatibility (previously getValue returned null early in this case).
-            // This guard applies to group rows only — leaf rows always return undefined here.
-            if (isGroup) {
-                const rowGroupColId = colDef.showRowGroup;
-                if (typeof rowGroupColId === 'string') {
-                    const colRowGroupIndex = this.rowGroupColsSvc?.getColumnIndex(rowGroupColId);
-                    if (colRowGroupIndex != null && colRowGroupIndex > rowNode.level) {
-                        return null;
-                    }
-                }
+        // Check for edit/pending values if not requesting committed data.
+        // editSvc is only present when the editing module is registered.
+        const editSvc = this.editSvc;
+        if (editSvc) {
+            const pending = editSvc.getPendingEditValue(rowNode, column, from);
+            if (pending !== undefined) {
+                return pending;
             }
-            return undefined;
         }
+
+        const result = isGroup
+            ? this.resolveGroup(column, colDef, rowNode, ignoreAggData)
+            : this.resolveLeaf(column, colDef, rowNode);
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (this.cellExpressions && _isExpressionString(result)) {
-            const cellValueGetter = result.substring(1);
-            result = this.executeValueGetter(cellValueGetter, rowNode.data, column, rowNode);
-        }
+        return this.cellExpressions ? this.resolveCellExpression(result, column, rowNode) : result;
+    }
 
+    /** Evaluates the result as a cell expression if it is one, otherwise returns the result unchanged. */
+    private resolveCellExpression(result: any, column: AgColumn, rowNode: IRowNode): any {
+        if (_isExpressionString(result)) {
+            return this.executeValueGetter(result.substring(1), rowNode.data, column, rowNode);
+        }
         return result;
     }
 
@@ -246,81 +266,208 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
         // When in pivot mode, leafGroups cannot be expanded
-        if (node.leafGroup && this.colModel.isPivotMode()) {
+        if (node.leafGroup && this.colModel.pivotMode) {
             return false;
         }
         // node.expanded (getter with side effects) evaluated last
         return !!node.expanded;
     }
 
-    private resolveValue(
-        column: AgColumn,
-        rowNode: IRowNode,
-        ignoreAggData: boolean,
-        isGroup: boolean | undefined
-    ): any {
-        const colDef = column.colDef;
-        const colId = column.colId;
+    /**
+     * PERFORMANCE CRITICAL — leaf rows in tree-data grids.
+     * Formulas are incompatible with tree data — skip the formula datasource check entirely.
+     */
+    private resolveTreeLeafValue(column: AgColumn, colDef: ColDef, rowNode: IRowNode): any {
+        const data = rowNode.data;
+        const valueGetter = colDef.valueGetter;
+        if (valueGetter) {
+            return this.executeValueGetter(valueGetter, data, column, rowNode);
+        }
+        const field = colDef.field;
+        if (field && data) {
+            return column.fieldContainsDots ? _getValueUsingDotNotation(data, field) : data[field];
+        }
+        const groupData = rowNode.groupData;
+        if (groupData) {
+            const colId = column.colId;
+            if (colId in groupData) {
+                return groupData[colId];
+            }
+        }
+        return undefined;
+    }
 
+    /** PERFORMANCE CRITICAL — group rows in tree-data grids. */
+    private resolveTreeGroupValue(column: AgColumn, colDef: ColDef, rowNode: IRowNode, ignoreAggData: boolean): any {
+        const colId = column.colId;
+        if (!ignoreAggData) {
+            const aggData = rowNode.aggData;
+            if (aggData) {
+                const aggValue = aggData[colId];
+                if (aggValue !== undefined) {
+                    return aggValue;
+                }
+            }
+        }
+
+        const data = rowNode.data;
+        const valueGetter = colDef.valueGetter;
+        if (valueGetter) {
+            return this.executeValueGetter(valueGetter, data, column, rowNode);
+        }
+        const field = colDef.field;
+        if (field && data) {
+            return column.fieldContainsDots ? _getValueUsingDotNotation(data, field) : data[field];
+        }
+        const groupData = rowNode.groupData;
+        if (groupData && colId in groupData) {
+            return groupData[colId];
+        }
+
+        // For showRowGroup columns on group rows with no resolved value, if the row's group level
+        // is shallower than the column's associated row group, return null for retro-compatibility.
+        const rowGroupColId = colDef.showRowGroup;
+        if (typeof rowGroupColId === 'string') {
+            const colRowGroupIndex = this.rowGroupColsSvc?.getColumnIndex(rowGroupColId);
+            if (colRowGroupIndex != null && colRowGroupIndex > rowNode.level) {
+                return null;
+            }
+        }
+        return undefined;
+    }
+
+    /**
+     * PERFORMANCE CRITICAL — hot path for leaf rows in non-tree grids.
+     * No aggData, no groupData, no showRowGroup, no SSRM footer — those only apply to group rows.
+     */
+    private resolveValue(column: AgColumn, colDef: ColDef, rowNode: IRowNode): any {
         // Formula datasource is skipped for group rows — formulas and row grouping are not supported together.
-        const formulaDataSvc = !isGroup && this.formulaDataSvc;
-        if (formulaDataSvc && formulaDataSvc.hasDataSource() && colDef.allowFormula === true) {
+        const formulaDataSvc = this.formulaDataSvc;
+        if (formulaDataSvc && colDef.allowFormula === true && formulaDataSvc.hasDataSource()) {
             const formula = formulaDataSvc.getFormula({ column, rowNode });
             if (_isExpressionString(formula)) {
                 return formula;
             }
         }
 
-        // Only group rows have aggData — skip for leaf rows
-        const aggData = isGroup && !ignoreAggData ? rowNode.aggData : undefined;
-        const isTreeData = this.isTreeData;
-        if (isTreeData && aggData?.[colId] !== undefined) {
-            return aggData[colId];
-        }
-
         const data = rowNode.data;
-        const field = colDef.field;
-        const valueGetter = colDef.valueGetter;
 
-        if (isTreeData) {
-            if (valueGetter) {
-                return this.executeValueGetter(valueGetter, data, column, rowNode);
-            }
-            if (field && data) {
-                return _getValueUsingField(data, field, column.isFieldContainsDots());
+        const valueGetter = colDef.valueGetter;
+        if (valueGetter) {
+            return this.executeValueGetter(valueGetter, data, column, rowNode);
+        }
+
+        if (data) {
+            const field = colDef.field;
+            if (field) {
+                return column.fieldContainsDots ? _getValueUsingDotNotation(data, field) : data[field];
             }
         }
 
+        return undefined;
+    }
+
+    /**
+     * PERFORMANCE CRITICAL — group rows in non-tree CSRM grids.
+     * SSRM-specific branches (ignoreAggData+aggFunc guard, group-footer data[field])
+     * are dead for CSRM and omitted.
+     */
+    private resolveCsrmGroupValue(column: AgColumn, colDef: ColDef, rowNode: IRowNode, ignoreAggData: boolean): any {
+        const colId = column.colId;
         const groupData = rowNode.groupData;
         if (groupData && colId in groupData) {
             return groupData[colId];
         }
-        if (aggData?.[colId] !== undefined) {
-            return aggData[colId];
+        if (!ignoreAggData) {
+            const aggData = rowNode.aggData;
+            if (aggData) {
+                const aggValue = aggData[colId];
+                if (aggValue !== undefined) {
+                    return aggValue;
+                }
+            }
         }
 
-        // don't retrieve group values from field or valueGetter for multiple auto cols
+        // For multiple auto cols (showRowGroup: string), don't fall through to valueGetter/field.
+        // If the row's group level is shallower than the column's associated row group, return null
+        // for retro-compatibility; otherwise return undefined.
         const rowGroupColId = colDef.showRowGroup;
-        const allowUserValuesForCell = typeof rowGroupColId !== 'string' || !isGroup;
-
-        // SSRM agg data comes from the data attribute, so ignore that instead
-        const isSsrm = this.isSsrm;
-        const ignoreSsrmAggData = isSsrm && ignoreAggData && !!colDef.aggFunc;
-
-        if (valueGetter && !ignoreSsrmAggData) {
-            return allowUserValuesForCell ? this.executeValueGetter(valueGetter, data, column, rowNode) : undefined;
+        if (typeof rowGroupColId === 'string') {
+            const colRowGroupIndex = this.rowGroupColsSvc?.getColumnIndex(rowGroupColId);
+            return colRowGroupIndex != null && colRowGroupIndex > rowNode.level ? null : undefined;
         }
 
-        const ssrmFooterGroupCol =
-            isSsrm && rowNode.footer && rowNode.field && (rowGroupColId === true || rowGroupColId === rowNode.field);
-        if (ssrmFooterGroupCol) {
-            // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
-            // the group value from the data using the row field
-            return _getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
+        const valueGetter = colDef.valueGetter;
+        if (valueGetter) {
+            return this.executeValueGetter(valueGetter, rowNode.data, column, rowNode);
         }
 
-        if (field && data && !ignoreSsrmAggData) {
-            return allowUserValuesForCell ? _getValueUsingField(data, field, column.isFieldContainsDots()) : undefined;
+        const field = colDef.field;
+        if (field) {
+            const data = rowNode.data;
+            if (data) {
+                return column.fieldContainsDots ? _getValueUsingDotNotation(data, field) : data[field];
+            }
+        }
+
+        return undefined;
+    }
+
+    /**
+     * PERFORMANCE CRITICAL — group rows in non-tree SSRM grids.
+     * SSRM is known statically — inlines the isSsrm=true branches without reading the field.
+     */
+    private resolveSsrmGroupValue(column: AgColumn, colDef: ColDef, rowNode: IRowNode, ignoreAggData: boolean): any {
+        const colId = column.colId;
+        const groupData = rowNode.groupData;
+        if (groupData && colId in groupData) {
+            return groupData[colId];
+        }
+        if (ignoreAggData) {
+            // SSRM agg data comes from the data attribute, so ignore that instead
+            if (colDef.aggFunc) {
+                return undefined;
+            }
+        } else {
+            const aggData = rowNode.aggData;
+            if (aggData) {
+                const aggValue = aggData[colId];
+                if (aggValue !== undefined) {
+                    return aggValue;
+                }
+            }
+        }
+
+        // For multiple auto cols (showRowGroup: string), don't fall through to valueGetter/field.
+        // If the row's group level is shallower than the column's associated row group, return null
+        // for retro-compatibility; otherwise return undefined.
+        const showRowGroup = colDef.showRowGroup;
+        if (typeof showRowGroup === 'string') {
+            const colRowGroupIndex = this.rowGroupColsSvc?.getColumnIndex(showRowGroup);
+            return colRowGroupIndex != null && colRowGroupIndex > rowNode.level ? null : undefined;
+        }
+
+        const data = rowNode.data;
+
+        const valueGetter = colDef.valueGetter;
+        if (valueGetter) {
+            return this.executeValueGetter(valueGetter, data, column, rowNode);
+        }
+
+        if (data) {
+            // SSRM group footers: the SSRM row won't have groupData, need to extract
+            // the group value from the data using the row field (guarded by showRowGroup === true).
+            if (showRowGroup === true && rowNode.footer) {
+                const rowField = rowNode.field;
+                if (rowField) {
+                    return column.fieldContainsDots ? _getValueUsingDotNotation(data, rowField) : data[rowField];
+                }
+            }
+
+            const field = colDef.field;
+            if (field) {
+                return column.fieldContainsDots ? _getValueUsingDotNotation(data, field) : data[field];
+            }
         }
 
         return undefined;
@@ -332,7 +479,7 @@ export class ValueService extends BeanStub implements NamedBean {
         newValue: TValueNew,
         oldValue: TValueOld
     ): TValue {
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         // we do not allow parsing of formulas
         if (colDef.allowFormula && this.beans.formula?.isFormula(newValue)) {
@@ -359,7 +506,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     public getDeleteValue(column: AgColumn, rowNode: IRowNode): any {
-        if (_exists(column.getColDef().valueParser)) {
+        if (_exists(column.colDef.valueParser)) {
             return (
                 this.parseValue(
                     column,
@@ -383,7 +530,7 @@ export class ValueService extends BeanStub implements NamedBean {
         let result: string | null = null;
         let formatter: ((value: any) => string) | string | undefined;
 
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         if (suppliedFormatter) {
             // use supplied formatter if provided, e.g. set filter items can have their own value formatters
@@ -428,7 +575,7 @@ export class ValueService extends BeanStub implements NamedBean {
      * @returns `true` if the value has been updated, otherwise `false`.
      */
     public setValue(rowNode: IRowNode, column: AgColumn, newValue: any, eventSource?: string): boolean {
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         if (!rowNode.data && this.canCreateRowNodeData(rowNode, colDef)) {
             rowNode.data = {}; // enableGroupEdit allows editing group rows without data.
@@ -625,7 +772,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
             // Store the computed value into rowData for consumers that do not understand formulas.
             const computedValue = formulaSvc?.resolveValue(column, rowNode as RowNode);
-            const colDef = column.getColDef();
+            const colDef = column.colDef;
             if (_exists(colDef.valueSetter) || !_missing(colDef.field)) {
                 const computedParams: ValueSetterParams = { ...setterParams, newValue: computedValue };
                 this.computeValueChange({
@@ -667,7 +814,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return this.expressionSvc?.evaluate(valueSetter, setterParams);
         }
 
-        return !!rowData && this.setValueUsingField(rowData, field, newValue, column.isFieldContainsDots());
+        return !!rowData && this.setValueUsingField(rowData, field, newValue, column.fieldContainsDots);
     }
 
     private dispatchCellValueChangedEvent(
@@ -745,7 +892,7 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn,
         rowNode: IRowNode
     ): any {
-        const colId = column.getColId();
+        const colId = column.colId;
 
         const valueFromCache = this.valueCache!.getValue(rowNode as RowNode, colId);
         if (valueFromCache !== undefined) {
@@ -770,7 +917,7 @@ export class ValueService extends BeanStub implements NamedBean {
             data: data,
             node: rowNode,
             column: column,
-            colDef: column.getColDef(),
+            colDef: column.colDef,
             getValue: (field) => this.getValueCallback(rowNode, field),
         });
 
@@ -784,17 +931,12 @@ export class ValueService extends BeanStub implements NamedBean {
         return result;
     }
 
-    public getValueCallback(node: IRowNode, field: string | AgColumn): any {
-        const otherColumn = this.colModel.getColDefCol(field);
-
-        if (otherColumn) {
-            return this.getValue(otherColumn, node, 'data');
-        }
-
-        return null;
+    private getValueCallback(node: IRowNode, field: string): any {
+        const otherColumn = this.colModel.getColDefOrCol(field);
+        return otherColumn != null ? this.getValue(otherColumn, node, 'data') : null;
     }
 
-    // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
+    /** Used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col. */
     public getKeyForNode(col: AgColumn, rowNode: IRowNode): any {
         // Use 'data' - grouping keys should be based on committed data, not pending edits.
         // Row structure should remain stable during editing; rows only move groups when edits are committed.

@@ -336,7 +336,7 @@ describe('deferred column tool panel pivot mode', () => {
     }
 
     function getPrimaryColumnOrder(toolPanel: any): string[] {
-        return toolPanel.beans.colModel.getColDefCols().map((col: any) => col.getColId());
+        return toolPanel.beans.colModel.colDefList.map((col: any) => col.getColId());
     }
 
     function getDisplayedPrimaryColumnOrder(toolPanel: any): string[] {

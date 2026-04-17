@@ -96,7 +96,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             this.onColumnsChangedPending = true;
             return;
         }
-        const pivotModeActive = this.colModel.isPivotMode();
+        const pivotModeActive = this.colModel.pivotMode;
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         if (shouldSyncColumnLayoutWithGrid) {
             this.syncFilterLayout();
@@ -112,7 +112,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     private buildTreeFromProvidedColumnDefs(): void {
-        const columnTree = this.colModel.getColDefColTree();
+        const columnTree = this.colModel.colDefTree;
         this.recreateFilters(columnTree);
     }
 

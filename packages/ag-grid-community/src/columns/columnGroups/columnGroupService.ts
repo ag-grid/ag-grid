@@ -33,7 +33,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
     public getColumnGroupState(): { groupId: string; open: boolean }[] {
         const columnGroupState: { groupId: string; open: boolean }[] = [];
-        const gridBalancedTree = this.beans.colModel.getColTree();
+        const gridBalancedTree = this.beans.colModel.colsTree;
 
         depthFirstOriginalTreeSearch(null, gridBalancedTree, (node) => {
             if (isProvidedColumnGroup(node)) {
@@ -48,7 +48,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
     }
 
     public resetColumnGroupState(source: ColumnEventType): void {
-        const primaryColumnTree = this.beans.colModel.getColDefColTree();
+        const primaryColumnTree = this.beans.colModel.colDefTree;
         if (!primaryColumnTree) {
             return;
         }
@@ -74,7 +74,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         source: ColumnEventType
     ): void {
         const { colModel, colAnimation, visibleCols, eventSvc } = this.beans;
-        const gridBalancedTree = colModel.getColTree();
+        const gridBalancedTree = colModel.colsTree;
         if (!gridBalancedTree.length) {
             return;
         }
@@ -131,7 +131,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
     public getProvidedColGroup(key: string): AgProvidedColumnGroup | null {
         let res: AgProvidedColumnGroup | null = null;
 
-        depthFirstOriginalTreeSearch(null, this.beans.colModel.getColTree(), (node) => {
+        depthFirstOriginalTreeSearch(null, this.beans.colModel.colsTree, (node) => {
             if (isProvidedColumnGroup(node)) {
                 if (node.getId() === key) {
                     res = node;
@@ -197,9 +197,9 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
     // returns the group with matching colId and instanceId. If instanceId is missing,
     // matches only on the colId.
-    public getColumnGroup(colId: string | AgColumnGroup, partId?: number): AgColumnGroup | null {
+    public getColumnGroup(colId: string | AgColumnGroup, partId?: number): AgColumnGroup | undefined {
         if (!colId) {
-            return null;
+            return undefined;
         }
         if (isColumnGroup(colId)) {
             return colId;
@@ -207,7 +207,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
         const allColumnGroups = this.beans.visibleCols.getAllTrees();
         const checkPartId = typeof partId === 'number';
-        let result: AgColumnGroup | null = null;
+        let result: AgColumnGroup | undefined;
 
         depthFirstAllColumnTreeSearch(allColumnGroups, false, (child) => {
             if (isColumnGroup(child)) {

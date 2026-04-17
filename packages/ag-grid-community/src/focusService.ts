@@ -132,7 +132,7 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         const col = this.focusedCell.column;
-        const colFromColumnModel = this.colModel.getCol(col.getId());
+        const colFromColumnModel = this.colModel.getCol(col);
 
         if (col !== colFromColumnModel) {
             this.clearFocusedCell();

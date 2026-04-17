@@ -1,5 +1,4 @@
 import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
-import { _areEqual } from '../agStack/utils/array';
 import { _exists } from '../agStack/utils/generic';
 import type { BeanCollection } from '../context/context';
 import { _getSortDefFromInput, _isSortDefValid, _isSortDirectionValid, isColumn } from '../entities/agColumn';
@@ -10,7 +9,6 @@ import type { ColDef, ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
 import { depthFirstOriginalTreeSearch } from './columnFactoryUtils';
-import type { ColumnCollections } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
@@ -49,27 +47,28 @@ export function _destroyColumnTree(
     oldTree: (AgColumn | AgProvidedColumnGroup)[] | null | undefined,
     newTree?: (AgColumn | AgProvidedColumnGroup)[] | null
 ): void {
-    const oldObjectsById: { [id: ColumnInstanceId]: (AgColumn | AgProvidedColumnGroup) | null } = {};
-
     if (!oldTree) {
         return;
     }
 
+    const oldObjects = new Map<ColumnInstanceId, AgColumn | AgProvidedColumnGroup>();
+
     // add in all old columns to be destroyed
     depthFirstOriginalTreeSearch(null, oldTree, (child) => {
-        oldObjectsById[child.getInstanceId()] = child;
+        oldObjects.set(child.getInstanceId(), child);
     });
 
     // however we don't destroy anything in the new tree. if destroying the grid, there is no new tree
     if (newTree) {
         depthFirstOriginalTreeSearch(null, newTree, (child) => {
-            oldObjectsById[child.getInstanceId()] = null;
+            oldObjects.delete(child.getInstanceId());
         });
     }
 
     // what's left can be destroyed
-    const colsToDestroy = Object.values(oldObjectsById).filter((item) => item != null);
-    beans.context.destroyBeans(colsToDestroy);
+    if (oldObjects.size > 0) {
+        beans.context.destroyBeans(Array.from(oldObjects.values()));
+    }
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -96,38 +95,36 @@ export function isSpecialCol(col: ColKey): boolean {
 }
 
 export function convertColumnTypes(type: string | string[]): string[] {
-    let typeKeys: string[] = [];
-
-    if (type instanceof Array) {
-        typeKeys = type;
-    } else if (typeof type === 'string') {
-        typeKeys = type.split(',');
+    if (Array.isArray(type)) {
+        return type;
     }
-    return typeKeys;
+    return typeof type === 'string' ? type.split(',') : [];
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _areColIdsEqual(colsA: AgColumn[] | null, colsB: AgColumn[] | null): boolean {
-    return _areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _updateColsMap(cols: ColumnCollections): void {
-    cols.map = {};
-    for (const col of cols.list) {
-        cols.map[col.getId()] = col;
+    if (colsA === colsB) {
+        return true;
     }
+    if (colsA == null || colsB == null) {
+        return false;
+    }
+    const len = colsA.length;
+    if (len !== colsB.length) {
+        return false;
+    }
+    for (let i = 0; i < len; ++i) {
+        if (colsA[i].colId !== colsB[i].colId) {
+            return false;
+        }
+    }
+    return true;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _convertColumnEventSourceType(source: AgPropertyChangedSource): ColumnEventType {
     // unfortunately they do not match so need to perform conversion
     return source === 'optionsUpdated' ? 'gridOptionsChanged' : source;
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _columnsMatch(column: AgColumn, key: ColKey): boolean {
-    return column === key || column.colId == key || column.getColDef() === key;
 }
 
 export const getValueFactory =

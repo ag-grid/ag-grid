@@ -26,7 +26,7 @@ const StructuredSchemaBuilderMap: Record<
 } as const;
 
 export function getStructuredSchema(beans: BeanCollection, params?: StructuredSchemaParams): JSONSchema | undefined {
-    const allColumnIds = beans.colModel.getCols().map((col) => col.getColId());
+    const allColumnIds = beans.colModel.colsList.map((col) => col.getColId());
 
     const features: Record<string, SchemaBuilder> = {};
 

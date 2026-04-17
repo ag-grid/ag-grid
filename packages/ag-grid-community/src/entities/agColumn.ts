@@ -109,7 +109,7 @@ export class AgColumn<TValue = any>
 
     private readonly colEventSvc: LocalEventService<ColumnEventName> = new LocalEventService();
 
-    private fieldContainsDots: boolean;
+    public fieldContainsDots: boolean;
     private tooltipFieldContainsDots: boolean;
     public tooltipEnabled = false;
 

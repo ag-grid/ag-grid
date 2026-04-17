@@ -370,7 +370,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         const fullWidthCellRendererParams = gos.get('fullWidthCellRendererParams');
         const groupRowRendererParams = gos.get('groupRowRendererParams');
         const flattenDetails = _getFlattenDetails(gos);
-        const pivotMode = colModel.isPivotMode();
+        const pivotMode = colModel.pivotMode;
 
         let containerNumMatches = 0;
         let matches: Matches;

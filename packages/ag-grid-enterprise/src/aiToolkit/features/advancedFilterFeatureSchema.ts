@@ -8,7 +8,7 @@ export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc }: Bean
         return;
     }
 
-    const columns = colModel.getCols();
+    const columns = colModel.colsList;
 
     const dataTypes: Record<BaseCellDataType, string[]> = {
         boolean: [],
