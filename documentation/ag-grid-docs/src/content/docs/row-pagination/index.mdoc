@@ -21,7 +21,7 @@ The height of the pagination panel defaults to the grid row height. Use the `pag
 
 The pagination panel can be styled with CSS, use the class `ag-paging-panel` to target the pagination panel. Use browser developer tools to find class names for specific elements within the pagination panel.
 
-## Customising the Pagination Panel Layout
+## Pagination Panel Layout
 
 The pagination panel is composed of three built-in components that can be individually reordered or hidden via the `paginationPanels` grid option:
 
@@ -29,18 +29,17 @@ The pagination panel is composed of three built-in components that can be indivi
 -   `rowSummary` — the row range summary (e.g. `1 to 10 of 50`).
 -   `pageSummary` — the current page indicator and navigation buttons (first, previous, next, last).
 
-When `paginationPanels` is not set, all three components render in the default order: `['pageSize', 'rowSummary', 'pageSummary']`.
+The default order is: `['pageSize', 'rowSummary', 'pageSummary']`.
+
+See [Example: Customising Pagination](#example-customising-pagination) for a live demonstration of reordering the pagination panels.
 
 ```js
 // Render the page navigation first, then the row summary, then the page size selector
-gridOptions = {
-    paginationPanels: ['pageSummary', 'rowSummary', 'pageSize'],
-};
-
+const paginationPanels = ['pageSummary', 'rowSummary', 'pageSize'];
 ```
 
 {% note %}
-When a component is omitted from `paginationPanels`, its accessibility announcements are also omitted. If screen-reader support is required for row or page status, keep `rowSummary` and `pageSummary` in the configuration.
+When a panel is omitted from `paginationPanels`, its accessibility announcements are also omitted.
 {% /note %}
 
 ## Number Formats
@@ -68,7 +67,7 @@ In this example the default pagination settings are changed. Note the following:
 
 -   `paginationPageSizeSelector` is set to `[200, 500, 1000]`
 -   `paginationPageSize` is set to `500`
--   `paginationPanels` is set to `['pageSummary', 'rowSummary', 'pageSize']` to reorder the pagination controls, placing the page navigation first. See [Customising the Pagination Panel Layout](#customising-the-pagination-panel-layout).
+-   `paginationPanels` is set to `['pageSummary', 'rowSummary', 'pageSize']` to reorder the pagination controls, placing the page navigation first.
 -   The numbers in the pagination panel are formatted differently using the grid callback `paginationNumberFormatter` and putting the numbers into square brackets i.e. \[x].
 -   `api.paginationGoToPage(4)` is called to go to page 4 (0 based, so the 5th page)
 
