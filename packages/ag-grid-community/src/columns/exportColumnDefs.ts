@@ -85,6 +85,9 @@ export const exportColumnDefs = (beans: BeanCollection): (ColDef | ColGroupDef)[
         let addToResult = true;
         let childDef: ColDef | ColGroupDef = d;
         let pointer = col.getOriginalParent();
+        // Guard against cycles in the user-provided group hierarchy — if getOriginalParent()
+        // ever returns the same node twice in a row, bail out rather than spin forever.
+        let lastPointer: typeof pointer = null;
         while (pointer) {
             if (pointer.isPadding()) {
                 pointer = pointer.getOriginalParent();
@@ -105,7 +108,11 @@ export const exportColumnDefs = (beans: BeanCollection): (ColDef | ColGroupDef)[
             gd.children = [childDef];
             groupDefs.set(groupId, gd);
             childDef = gd;
+            lastPointer = pointer;
             pointer = pointer.getOriginalParent();
+            if (pointer === lastPointer) {
+                break;
+            }
         }
         if (addToResult) {
             res.push(childDef);

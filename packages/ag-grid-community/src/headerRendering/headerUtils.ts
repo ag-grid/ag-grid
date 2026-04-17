@@ -6,7 +6,9 @@ import type { HeaderRowCtrl } from './row/headerRowCtrl';
 // + gridPanel -> for resizing the body and setting top margin
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function getHeaderRowCount(colModel: ColumnModel): number {
-    if (!colModel.colsList) {
+    // Return -1 until the column model has been populated — matches the historical contract
+    // so callers can distinguish "no columns yet" from "zero header rows".
+    if (!colModel.ready) {
         return -1;
     }
 

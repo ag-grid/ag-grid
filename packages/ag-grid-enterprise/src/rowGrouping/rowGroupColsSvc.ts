@@ -105,7 +105,11 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
 
         // If this column is a virtual column inserted by the groupHierarchyColSvc, by default we shouldn't make
         // it visible when being grouped or ungrouped -- these are virtual columns, not user data columns, so they
-        // should only be made visible if the user explicitly wants to see them
+        // should only be made visible if the user explicitly wants to see them.
+        //
+        // Prefix match is fine: GROUP_HIERARCHY_COLUMN_ID_PREFIX is a reserved internal marker. A user-defined
+        // column sharing this prefix would already be treated as a virtual hierarchy column elsewhere in the grid,
+        // so collapsing both cases under one check preserves existing behaviour without needing a service lookup.
         const isGroupHierarchyCol = column.colId.startsWith(GROUP_HIERARCHY_COLUMN_ID_PREFIX);
         if (_shouldUpdateColVisibilityAfterGroup(this.gos, active) && !isGroupHierarchyCol) {
             this.colModel.setColsVisible([column], !active, source);
