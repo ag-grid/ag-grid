@@ -43,7 +43,7 @@
  *   node bench-compare.mjs test --runs 5 --filter "getvalue"
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -191,8 +191,13 @@ if (command === 'base' || command === 'test') {
     }
     console.log('');
 
+    // Track the exact run filenames that belong to this cohort. Compare will only load these
+    // files — any higher-index stale files from a previous invocation with more runs are ignored.
+    const cohortFiles = [];
     for (let i = 1; i <= runs; i++) {
-        const outFile = join(outputDir, `${label}-run-${i}.json`);
+        const fileName = `${label}-run-${i}.json`;
+        const outFile = join(outputDir, fileName);
+        cohortFiles.push(fileName);
 
         if (reuse && existsSync(outFile)) {
             console.log(`  Reusing ${label} run ${i}/${runs}`);
@@ -213,9 +218,10 @@ if (command === 'base' || command === 'test') {
     }
 
     // Write a sidecar metadata file describing this invocation. The `compare` phase reads
-    // both sides' metadata and refuses to compare if they were produced with incompatible
-    // settings (different filter, different exclude list). This prevents silently mixing
-    // a filtered base run with an unfiltered test run, which would skew the medians.
+    // both sides' metadata to (a) refuse to compare if they were produced with incompatible
+    // settings (different filter, different exclude list), and (b) load only the exact run
+    // files listed in `runFiles`, ignoring any stale higher-index files from previous runs
+    // with a larger --runs value.
     const metaPath = join(outputDir, `${label}-meta.json`);
     writeFileSync(
         metaPath,
@@ -225,6 +231,7 @@ if (command === 'base' || command === 'test') {
                 filter,
                 excludedFiles: EXCLUDED_BENCH_FILES,
                 runsRequested: runs,
+                runFiles: cohortFiles,
                 targetDir,
                 timestamp: new Date().toISOString(),
             },
@@ -242,24 +249,29 @@ if (command === 'base' || command === 'test') {
 console.log('=== Comparing results... ===\n');
 
 /**
- * Load all `${prefix}-run-<n>.json` files from the output directory, regardless of --runs.
- * Finding files on disk (rather than iterating 1..runs) ensures that if the user ran N runs
- * on a previous invocation and M < N on this one, every saved run still participates in the
- * comparison. Aborts if any discovered file fails to parse.
+ * Load exactly the run files declared in the side's metadata (`runFiles`). Files outside this
+ * list — e.g. stale higher-index files from a previous invocation with a larger --runs value —
+ * are ignored so stale data cannot silently contaminate the aggregation.
+ * Aborts if any declared file is missing or fails to parse.
  */
-function loadRuns(prefix) {
-    const pattern = new RegExp(`^${prefix}-run-(\\d+)\\.json$`);
-    const entries = readdirSync(outputDir)
-        .map((name) => {
-            const match = pattern.exec(name);
-            return match ? { name, index: parseInt(match[1], 10) } : null;
-        })
-        .filter((x) => x !== null)
-        .sort((a, b) => a.index - b.index);
+function loadRuns(label, meta) {
+    const fileNames = meta.runFiles;
+    if (!Array.isArray(fileNames) || fileNames.length === 0) {
+        console.error(
+            `Error: ${label}-meta.json is missing runFiles. Re-run "node bench-compare.mjs ${label}" to regenerate.`
+        );
+        process.exit(1);
+    }
 
     const results = [];
-    for (const { name } of entries) {
+    for (const name of fileNames) {
         const path = join(outputDir, name);
+        if (!existsSync(path)) {
+            console.error(
+                `Error: declared run file ${path} is missing. Re-run "node bench-compare.mjs ${label}" to regenerate.`
+            );
+            process.exit(1);
+        }
         let parsed;
         try {
             parsed = JSON.parse(readFileSync(path, 'utf-8'));
@@ -434,17 +446,8 @@ if (baseExcl !== testExcl) {
     process.exit(1);
 }
 
-const baseRuns = loadRuns('base');
-const testRuns = loadRuns('test');
-
-if (baseRuns.length === 0) {
-    console.error('Error: No base benchmark data found. Run "node bench-compare.mjs base" first.');
-    process.exit(1);
-}
-if (testRuns.length === 0) {
-    console.error('Error: No test benchmark data found. Run "node bench-compare.mjs test" first.');
-    process.exit(1);
-}
+const baseRuns = loadRuns('base', baseMeta);
+const testRuns = loadRuns('test', testMeta);
 
 const baseAgg = aggregateRuns(baseRuns);
 const testAgg = aggregateRuns(testRuns);
@@ -467,9 +470,26 @@ if (testOnly.length > 0) {
 
 // Build comparison using within-run rme for confidence intervals
 const comparisons = [];
+const invalidComparisons = [];
 for (const [key, base] of baseAgg) {
     const test = testAgg.get(key);
     if (!test) {
+        continue;
+    }
+
+    // Guard against zero / non-finite baseline (or test) hz — would yield Infinity/NaN in the
+    // delta and contaminate the report. We surface these as a separate "invalid" list instead.
+    const baseHzValid = Number.isFinite(base.hz) && base.hz > 0;
+    const testHzValid = Number.isFinite(test.hz) && test.hz >= 0;
+    if (!baseHzValid || !testHzValid) {
+        invalidComparisons.push({
+            key,
+            name: base.name,
+            group: base.group,
+            baseHz: base.hz,
+            testHz: test.hz,
+            reason: !baseHzValid ? 'invalid base hz' : 'invalid test hz',
+        });
         continue;
     }
 
@@ -496,6 +516,15 @@ for (const [key, base] of baseAgg) {
         deltaConservative: deltaLo > 0 ? deltaLo : deltaHi < 0 ? deltaHi : 0,
         combinedRme: round(combinedRme, 2),
     });
+}
+
+if (invalidComparisons.length > 0) {
+    console.log(
+        `Note: ${invalidComparisons.length} benchmark(s) skipped due to invalid hz (non-finite or non-positive base):`
+    );
+    for (const c of invalidComparisons) {
+        console.log(`  - ${c.name}: ${c.reason} (base=${c.baseHz}, test=${c.testHz})`);
+    }
 }
 
 function round(v, decimals) {
@@ -527,6 +556,7 @@ writeFileSync(
             benchmarks: comparisons,
             baseOnly: baseOnly.map((k) => baseAgg.get(k).name),
             testOnly: testOnly.map((k) => testAgg.get(k).name),
+            invalid: invalidComparisons,
         },
         null,
         2
@@ -633,6 +663,16 @@ if (baseOnly.length > 0 || testOnly.length > 0) {
         }
         md += `\n`;
     }
+}
+
+if (invalidComparisons.length > 0) {
+    md += `## Skipped (invalid hz)\n\n`;
+    md += `These benchmarks were excluded from the comparison because the base or test had a `;
+    md += `non-positive or non-finite hz value.\n\n`;
+    for (const c of invalidComparisons) {
+        md += `- ${c.name}: ${c.reason} (base=${c.baseHz}, test=${c.testHz})\n`;
+    }
+    md += `\n`;
 }
 
 md += `---\n\n`;
