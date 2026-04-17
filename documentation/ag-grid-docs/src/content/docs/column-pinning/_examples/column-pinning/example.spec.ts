@@ -66,7 +66,7 @@ test.agExample(import.meta, () => {
         test.use({ agModules: ['ColumnAutoSize'] });
 
         test.vanilla(
-            'sizeColumnsToFit should not reverse pinned left column order when hidden column exists',
+            'sizeColumnsToFit should not unpin left-pinned columns when no center columns exist',
             async ({ page, remoteGrid }) => {
                 const remoteApi = remoteGrid(page, '1');
 
@@ -77,24 +77,78 @@ test.agExample(import.meta, () => {
                 ]);
                 await waitForGridContent(page);
 
-                // Verify initial pinned left header order
                 const headersBefore = await getPinnedHeaderColIds(page, '.ag-pinned-left-header');
                 expect(headersBefore).toEqual(['athlete', 'age']);
 
-                // Call sizeColumnsToFit and wait for any async layout changes
                 await remoteApi.sizeColumnsToFit({});
                 await page.waitForTimeout(600);
 
-                // Verify pinned left header order is preserved
                 const headersAfter = await getPinnedHeaderColIds(page, '.ag-pinned-left-header');
                 expect(headersAfter).toEqual(['athlete', 'age']);
 
-                // Verify both columns are still pinned left
-                const pinnedState = (await remoteApi.getColumnState()) as any[];
-                const athleteState = pinnedState.find((s) => s.colId === 'athlete');
-                const ageState = pinnedState.find((s) => s.colId === 'age');
-                expect(athleteState.pinned).toBe('left');
-                expect(ageState.pinned).toBe('left');
+                const state = (await remoteApi.getColumnState()) as any[];
+                expect(state.find((s) => s.colId === 'athlete').pinned).toBe('left');
+                expect(state.find((s) => s.colId === 'age').pinned).toBe('left');
+            }
+        );
+
+        test.vanilla(
+            'sizeColumnsToFit should not unpin right-pinned columns when no center columns exist',
+            async ({ page, remoteGrid }) => {
+                const remoteApi = remoteGrid(page, '1');
+
+                await remoteApi.setGridOption('columnDefs', [
+                    { field: 'gold', pinned: 'right' },
+                    { field: 'silver', pinned: 'right' },
+                    { colId: 'bronze', field: 'bronze', hide: true },
+                ]);
+                await waitForGridContent(page);
+
+                const headersBefore = await getPinnedHeaderColIds(page, '.ag-pinned-right-header');
+                expect(headersBefore).toEqual(['gold', 'silver']);
+
+                await remoteApi.sizeColumnsToFit({});
+                await page.waitForTimeout(600);
+
+                const headersAfter = await getPinnedHeaderColIds(page, '.ag-pinned-right-header');
+                expect(headersAfter).toEqual(['gold', 'silver']);
+
+                const state = (await remoteApi.getColumnState()) as any[];
+                expect(state.find((s) => s.colId === 'gold').pinned).toBe('right');
+                expect(state.find((s) => s.colId === 'silver').pinned).toBe('right');
+            }
+        );
+
+        test.vanilla(
+            'sizeColumnsToFit should not unpin mixed left+right columns when no center columns exist',
+            async ({ page, remoteGrid }) => {
+                const remoteApi = remoteGrid(page, '1');
+
+                await remoteApi.setGridOption('columnDefs', [
+                    { field: 'athlete', pinned: 'left' },
+                    { field: 'age', pinned: 'left' },
+                    { field: 'gold', pinned: 'right' },
+                    { colId: 'country', field: 'country', hide: true },
+                ]);
+                await waitForGridContent(page);
+
+                const leftBefore = await getPinnedHeaderColIds(page, '.ag-pinned-left-header');
+                expect(leftBefore).toEqual(['athlete', 'age']);
+                const rightBefore = await getPinnedHeaderColIds(page, '.ag-pinned-right-header');
+                expect(rightBefore).toEqual(['gold']);
+
+                await remoteApi.sizeColumnsToFit({});
+                await page.waitForTimeout(600);
+
+                const leftAfter = await getPinnedHeaderColIds(page, '.ag-pinned-left-header');
+                expect(leftAfter).toEqual(['athlete', 'age']);
+                const rightAfter = await getPinnedHeaderColIds(page, '.ag-pinned-right-header');
+                expect(rightAfter).toEqual(['gold']);
+
+                const state = (await remoteApi.getColumnState()) as any[];
+                expect(state.find((s) => s.colId === 'athlete').pinned).toBe('left');
+                expect(state.find((s) => s.colId === 'age').pinned).toBe('left');
+                expect(state.find((s) => s.colId === 'gold').pinned).toBe('right');
             }
         );
     });
