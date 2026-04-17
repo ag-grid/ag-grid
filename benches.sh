@@ -8,7 +8,6 @@
 #   ./benches.sh "file-pattern" -t "name"  # Run specific benchmark by name
 #   ./benches.sh -w                        # Run in watch mode
 #   ./benches.sh --watch                   # Run in watch mode
-#   ./benches.sh --update                  # Update vitest snapshots
 
 set -euo pipefail
 
