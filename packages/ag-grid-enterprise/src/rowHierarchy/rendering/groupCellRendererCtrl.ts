@@ -625,6 +625,10 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         }
     }
 
+    /**
+     * Called when expand or contract is attempted to update the node state
+     * @param e originating event
+     */
     private onExpandOrContract(e: MouseEvent | KeyboardEvent): void {
         if (!this.isExpandable()) {
             return;
