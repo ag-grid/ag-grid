@@ -18,18 +18,8 @@ const gridOptions = {
             'find',
             { toolbarItem: 'autoSizeAll', alignment: 'right' },
             'separator',
-            {
-                toolbarItem: 'menu',
-                alignment: 'right',
-                toolbarItemParams: {
-                    label: 'Export',
-                    icon: 'save',
-                    menuItems: [
-                        { name: 'CSV Export', action: (params) => params.api.exportDataAsCsv() },
-                        { name: 'Excel Export', action: (params) => params.api.exportDataAsExcel() },
-                    ],
-                },
-            },
+            { toolbarItem: 'csvExport', alignment: 'right' },
+            { toolbarItem: 'excelExport', alignment: 'right' },
             'separator',
             { toolbarItem: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
         ]
@@ -50,7 +40,6 @@ The following built-in items are available as string shorthands:
 -   `excelExport`: Exports grid data as Excel. Requires `ExcelExportModule`.
 -   `filtersPanel`: Toggles the Filters Tool Panel in the sidebar. Requires `SideBarModule` and `FiltersToolPanelModule`. Hidden if the sidebar does not include a filters panel.
 -   `find`: A text input that searches within grid cells using the Find feature. Displays the current match count and provides Previous/Next navigation buttons. Use Enter to navigate to the next match and Shift+Enter for the previous match. Requires `FindModule`.
--   `menu`: A dropdown menu button with custom items. Requires `toolbarItemParams` with a `menuItems` array of `MenuItemDef`. Optionally set `label` (defaults to `'Menu'`) and `icon` (defaults to `'menu'`).
 -   `pivotPanel`: Embeds the Pivot Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `pivotPanelShow` grid option — if both are set, both will render.
 -   `rowGroupPanel`: Embeds the Row Group Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `rowGroupPanelShow` grid option — if both are set, both will render.
 -   `quickFilter`: A text input that filters grid rows using the Quick Filter. Requires `QuickFilterModule`.
@@ -102,49 +91,9 @@ const gridOptions = {
 }
 ```
 
-### Menu Items
-
-The `menu` toolbar item renders a dropdown button that shows a list of custom menu items when clicked. Menu items use the same `MenuItemDef` interface as the [Context Menu](./context-menu/).
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    toolbar: {
-        items: [
-            {
-                toolbarItem: 'menu',
-                alignment: 'right',
-                toolbarItemParams: {
-                    label: 'Actions',
-                    icon: 'menu',
-                    menuItems: [
-                        {
-                            name: 'Alert',
-                            icon: '<span class="ag-icon ag-icon-info"></span>',
-                            action: () => window.alert('Hello!'),
-                        },
-                        'separator',
-                        {
-                            name: 'Export',
-                            subMenu: [
-                                { name: 'CSV Export', action: (params) => params.api.exportDataAsCsv() },
-                                { name: 'Excel Export', action: (params) => params.api.exportDataAsExcel() },
-                            ],
-                        },
-                    ],
-                },
-            },
-        ],
-    },
-}
-```
-
 ## Custom Components
 
 Custom Toolbar Item components implement the `IToolbarItemComp` interface.
-
-{% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="IToolbarItemParams" /%}
-{% /if %}
 
 {% gridExampleRunner title="Custom Toolbar Item" name="toolbar-simple" /%}
 
@@ -157,3 +106,12 @@ Use `setGridOption('toolbar', ...)` to change the toolbar configuration after th
 The following example switches between three toolbar configurations using buttons, each showing a different set of toolbar items.
 
 {% gridExampleRunner title="Updating at Runtime" name="grid-options" /%}
+
+## API Reference
+
+{% if isFramework("javascript", "angular", "vue") %}
+
+### IToolbarItemParams
+
+{% interfaceDocumentation interfaceName="IToolbarItemParams" /%}
+{% /if %}
