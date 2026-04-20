@@ -200,6 +200,91 @@ describe('Toolbar Built-in Items', () => {
         });
     });
 
+    describe('action button', () => {
+        test('renders a button with icon and tooltip from label', async () => {
+            const api = gridMgr.createGrid('action-button-render', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: [
+                        {
+                            key: 'autoSizeAll',
+                            label: 'Auto Size All',
+                            icon: 'maximize',
+                            action: () => {},
+                        },
+                    ],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const button = gridDiv.querySelector<HTMLButtonElement>('.ag-toolbar-button');
+            expect(button).not.toBeNull();
+            expect(button!.getAttribute('title')).toBe('Auto Size All');
+            expect(button!.getAttribute('aria-label')).toBe('Auto Size All');
+            expect(button!.querySelector('.ag-icon')).not.toBeNull();
+            expect(button!.querySelector<HTMLElement>('.ag-toolbar-button-label')!.style.display).toBe('none');
+        });
+
+        test('shows label text when display is iconAndLabel', async () => {
+            const api = gridMgr.createGrid('action-button-icon-and-label', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    display: 'iconAndLabel',
+                    items: [
+                        {
+                            key: 'autoSizeAll',
+                            label: 'Auto Size All',
+                            icon: 'maximize',
+                            action: () => {},
+                        },
+                    ],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const label = gridDiv.querySelector<HTMLElement>('.ag-toolbar-button-label')!;
+            expect(label.style.display).not.toBe('none');
+            expect(label.textContent).toBe('Auto Size All');
+        });
+
+        test('invokes action with grid api, context and key on click', async () => {
+            const action = vitest.fn();
+            const api = gridMgr.createGrid('action-button-click', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                context: { userContext: 'hello' },
+                toolbar: {
+                    items: [
+                        {
+                            key: 'autoSizeAll',
+                            label: 'Auto Size All',
+                            icon: 'maximize',
+                            action,
+                        },
+                    ],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const button = gridDiv.querySelector<HTMLButtonElement>('.ag-toolbar-button')!;
+            button.click();
+
+            expect(action).toHaveBeenCalledTimes(1);
+            const [params] = action.mock.calls[0];
+            expect(params.api).toBe(api);
+            expect(params.context).toEqual({ userContext: 'hello' });
+            expect(params.key).toBe('autoSizeAll');
+        });
+    });
+
     describe('console warnings for missing feature modules', () => {
         const minimalGridMgr = new TestGridsManager({
             modules: [ClientSideRowModelModule, ToolbarModule],
@@ -226,7 +311,7 @@ describe('Toolbar Built-in Items', () => {
             expect(item!.style.display).toBe('none');
 
             expect(warnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #303'),
+                expect.stringContaining('warning #302'),
                 expect.stringContaining('quickFilter'),
                 expect.anything()
             );
@@ -251,7 +336,7 @@ describe('Toolbar Built-in Items', () => {
             expect(item!.style.display).toBe('none');
 
             expect(warnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #303'),
+                expect.stringContaining('warning #302'),
                 expect.stringContaining('find'),
                 expect.anything()
             );
@@ -276,7 +361,7 @@ describe('Toolbar Built-in Items', () => {
             expect(item!.style.display).toBe('none');
 
             expect(warnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #303'),
+                expect.stringContaining('warning #302'),
                 expect.stringContaining('rowGroupPanel'),
                 expect.anything()
             );
@@ -301,7 +386,7 @@ describe('Toolbar Built-in Items', () => {
             expect(item!.style.display).toBe('none');
 
             expect(warnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #303'),
+                expect.stringContaining('warning #302'),
                 expect.stringContaining('pivotPanel'),
                 expect.anything()
             );
