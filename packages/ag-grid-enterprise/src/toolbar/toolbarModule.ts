@@ -27,7 +27,7 @@ function hasSideBarPanel(
     if (Array.isArray(sideBar)) {
         return sideBar.includes(panelId);
     }
-    return !!(sideBar as SideBarDef).toolPanels?.some((p) => (typeof p === 'string' ? p : p.id) === panelId);
+    return !!sideBar.toolPanels?.some((p) => (typeof p === 'string' ? p : p.id) === panelId);
 }
 
 const AutoSizeAllToolbarItem = createToolbarButton({
@@ -42,7 +42,7 @@ const ColumnChooserToolbarItem = createToolbarButton({
     localeKey: 'columnChooser',
     defaultLabel: 'Choose Columns',
     onAction: (beans, eGui) =>
-        (beans.colChooserFactory as ColumnChooserFactory | undefined)?.showColumnChooser({ eventSource: eGui }),
+        (beans.colChooserFactory as ColumnChooserFactory)?.showColumnChooser({ eventSource: eGui }),
     onInit: (comp, gos) => {
         const hasColumnMenu = gos.isModuleRegistered('ColumnMenu');
         if (!hasColumnMenu) {
