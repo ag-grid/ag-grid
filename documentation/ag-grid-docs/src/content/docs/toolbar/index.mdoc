@@ -3,7 +3,7 @@ title: "Quick Access Toolbar"
 enterprise: true
 ---
 
-The Toolbar appears above the grid and provides quick access to common grid actions. It supports built-in items, custom components, and configurable ordering and alignment.
+The Toolbar appears above the grid and provides quick access to common grid actions.
 
 Configure the Toolbar with the `toolbar` grid option. The property takes a list of Toolbar Items.
 
@@ -14,19 +14,18 @@ Configure the Toolbar with the `toolbar` grid option. The property takes a list 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     toolbar: {
+        alignment: 'right',
         items: [
-            'rowGroupPanel',
-            { toolbarItem: 'find', alignment: 'right' },
+            { toolbarItem: 'rowGroupPanel', alignment: 'left' },
+            'find',
             {
                 key: 'autoSizeAll',
-                alignment: 'right',
                 label: 'Auto Size All',
                 icon: 'maximize',
                 action: (params) => params.api.autoSizeAllColumns(),
             },
             {
                 key: 'resetColumns',
-                alignment: 'right',
                 label: 'Reset Columns',
                 icon: 'minimize',
                 action: (params) => params.api.resetColumnState(),
@@ -42,51 +41,27 @@ const gridOptions = {
 
 The following built-in items are available as string shorthands:
 
--   `find`: A text input that searches within grid cells using the Find feature. Displays the current match count and provides Previous/Next navigation buttons. Use Enter to navigate to the next match and Shift+Enter for the previous match. Requires `FindModule`.
--   `pivotPanel`: Embeds the Pivot Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `pivotPanelShow` grid option — if both are set, both will render.
--   `rowGroupPanel`: Embeds the Row Group Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `rowGroupPanelShow` grid option — if both are set, both will render.
--   `quickFilter`: A text input that filters grid rows using the Quick Filter. Requires `QuickFilterModule`.
+-   `find`: A text input that searches within grid cells using the [Find](./find/) feature. Requires `FindModule`.
+-   `pivotPanel`: Embeds the [Pivot Panel](./pivoting/) in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `pivotPanelShow` grid option — if both are set, both will render.
+-   `rowGroupPanel`: Embeds the [Row Group Panel](./grouping-group-panel/) in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `rowGroupPanelShow` grid option — if both are set, both will render.
+-   `quickFilter`: A text input that filters grid rows using the [Quick Filter](./filter-quick/). Requires `QuickFilterModule`.
 
 Built-in items require their corresponding modules to be registered. If a required module is not registered, the item will not render and a console warning will be logged.
 
 To add buttons that trigger grid actions — such as auto-sizing columns, opening the column chooser, toggling a tool panel, exporting data, or resetting column state — define an [Action Button](#action-buttons). For more complex controls, provide a [Custom Component](#custom-components).
 
-## Action Buttons
-
-Provide `label`, `icon` and `action` on a toolbar item to render a button without writing a component. The `action` callback is invoked on click and receives the grid `api`, `context` and the item `key`.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    toolbar: {
-        items: [
-            {
-                key: 'autoSizeAll',
-                label: 'Auto Size All',
-                icon: 'maximize',
-                action: (params) => params.api.autoSizeAllColumns(),
-            },
-            {
-                key: 'excelExport',
-                label: 'Excel Export',
-                icon: 'excelExport',
-                action: (params) => params.api.exportDataAsExcel(),
-            },
-        ],
-    },
-}
-```
-
-The button respects the toolbar-level and per-item `display` mode. In `'icon'` mode only the icon is rendered and `label` is used for the tooltip and `aria-label`; in `'iconAndLabel'` mode the label is rendered next to the icon.
-
 ## Configuration
 
-Items are rendered in the order they are defined.
+Each entry in `items` is either a built-in string shorthand or an item object. Items are rendered in the order they are defined.
 
-The `alignment` property can be `left` or `right`. When not set on an item, it falls back to the toolbar-level `alignment`, which itself defaults to `left` in LTR and `right` in RTL.
+An item object supports the following properties:
 
-The `key` uniquely identifies a Toolbar Item.
-
-Additional props are passed to Toolbar Items using `toolbarItemParams`.
+-   `key`: a unique identifier for the item.
+-   `alignment`: `'left'` or `'right'`. See [Default Alignment](#default-alignment).
+-   `display`: `'icon'` or `'iconAndLabel'`. See [Display Mode](#display-mode).
+-   `toolbarItem`: a built-in item name or a reference to a [Custom Component](#custom-components).
+-   `toolbarItemParams`: additional props forwarded to the component.
+-   `label`, `icon`, `action`: shorthand for rendering an [Action Button](#action-buttons) without a component.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -108,7 +83,7 @@ const gridOptions = {
 
 ### Default Alignment
 
-Set `alignment` at the toolbar level to change the default for every item that does not specify its own alignment. When omitted, items default to `left` in LTR and `right` in RTL.
+When an item does not specify its own `alignment`, it falls back to the toolbar-level `alignment`, which itself defaults to `left` in LTR and `right` in RTL. Set `alignment` at the toolbar level to change the default for every item that does not override it.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -124,7 +99,7 @@ const gridOptions = {
 
 ### Display Mode
 
-Items can be displayed as icons only (default) or icons with labels. Set the `display` property at the toolbar level or per item. Item-level settings take precedence.
+Items can be displayed as icons only (default) or icons with labels. Set `display` at the toolbar level to change the default, or per-item to override it.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -140,11 +115,76 @@ const gridOptions = {
 
 ## Custom Components
 
-In addition to the built-in items, the Toolbar can render Custom Components. Use a Custom Component when the built-in items do not cover your use case, for example to trigger grid actions (auto-sizing, exporting, resetting columns), open tool panels, or reflect external state.
+The Toolbar accepts two kinds of user-defined items: [Action Buttons](#action-buttons) — a declarative shorthand for rendering a button — and Custom Components that can render anything.
 
-The example below demonstrates a reusable Custom Toolbar Item that renders a button and invokes a user-supplied `onClick` handler with the grid `api`. The same component is instantiated multiple times with different `toolbarItemParams` to drive common grid actions such as auto-sizing columns, opening tool panels, exporting data, and resetting column state.
+### Action Buttons
+
+Set `label`, `icon` and `action` on an item to render a button inline, without writing a component. The `action` callback fires on click and receives the grid `api`, `context`, and the item `key`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: [
+            {
+                key: 'autoSizeAll',
+                label: 'Auto Size All',
+                icon: 'maximize',
+                action: (params) => params.api.autoSizeAllColumns(),
+            },
+            {
+                key: 'excelExport',
+                label: 'Excel Export',
+                icon: 'excel',
+                action: (params) => params.api.exportDataAsExcel(),
+            },
+        ],
+    },
+}
+```
+
+Buttons respect the current [Display Mode](#display-mode): in `'icon'` mode the `label` is used as the tooltip and `aria-label`; in `'iconAndLabel'` mode the label renders next to the icon.
+
+### Custom Component
+
+For anything beyond a button — custom markup, external state, or composed controls — set `toolbarItem` to a component reference. The grid instantiates the component once per item; each instance receives the standard `IToolbarItemParams` merged with whatever is passed via `toolbarItemParams`.
+
+The example below defines a single `CustomToolbarButton` component and reuses it across the toolbar with different params to open tool panels, export data, auto-size columns, and reset column state.
 
 {% gridExampleRunner title="Custom Toolbar Item" name="toolbar-simple" /%}
+
+The `toolbarItem` property accepts the following values:
+
+{% if isFramework("javascript") %}
+
+1. `String`: the name of a registered Toolbar Item Component — see [Registering Custom Components](./components/#registering-custom-components).
+2. `Class`: a direct reference to a Toolbar Item Component.
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+1. `String`: the name of a registered Toolbar Item Component — see [Registering Custom Components](./components/#registering-custom-components).
+2. `Class`: a direct reference to a Toolbar Item Component.
+
+{% /if %}
+
+{% if isFramework("vue") %}
+
+1. `String`: the name of a registered Toolbar Item Component — see [Registering Custom Components](./components/#registering-custom-components).
+
+{% /if %}
+
+{% if isFramework("react") %}
+
+1. `String`: the name of a registered Toolbar Item Component — see [Registering Custom Components](./components/#registering-custom-components).
+2. `Component`: a direct reference to a Toolbar Item Component.
+
+{% /if %}
+
+{% partial file="./_configure-javascript.mdoc" /%}
+{% partial file="./_configure-angular.mdoc" /%}
+{% partial file="./_configure-react.mdoc" /%}
+{% partial file="./_configure-vue.mdoc" /%}
 
 {% partial file="./_component-interface-javascript.mdoc" /%}
 {% partial file="./_component-interface-angular.mdoc" /%}
@@ -152,44 +192,6 @@ The example below demonstrates a reusable Custom Toolbar Item that renders a but
 {% partial file="./_component-interface-vue.mdoc" /%}
 
 {% interfaceDocumentation interfaceName="IToolbarItemParams" /%}
-
-### Providing Custom Components
-
-A Custom Toolbar Item is set via the `toolbarItem` property of a Toolbar Item definition and can be any of the following types:
-
-{% if isFramework("javascript") %}
-
-1. `String`: The name of a registered Toolbar Item Component, see [Registering Custom Components](./components/#registering-custom-components).
-1. `Class`: Direct reference to a Toolbar Item Component.
-
-{% /if %}
-
-{% if isFramework("angular") %}
-
-1. `String`: The name of a registered Toolbar Item Component, see [Registering Custom Components](./components/#registering-custom-components).
-1. `Class`: Direct reference to a Toolbar Item Component.
-
-{% /if %}
-
-{% if isFramework("vue") %}
-
-1. `String`: The name of a registered Toolbar Item Component, see [Registering Custom Components](./components/#registering-custom-components).
-
-{% /if %}
-
-{% if isFramework("react") %}
-
-1. `String`: The name of a registered Toolbar Item Component, see [Registering Custom Components](./components/#registering-custom-components).
-1. `Component`: Direct reference to a Toolbar Item Component.
-
-{% /if %}
-
-Additional props passed to the component via `toolbarItemParams` are merged with the params defined in `IToolbarItemParams`.
-
-{% partial file="./_configure-javascript.mdoc" /%}
-{% partial file="./_configure-angular.mdoc" /%}
-{% partial file="./_configure-react.mdoc" /%}
-{% partial file="./_configure-vue.mdoc" /%}
 
 ## Updating at Runtime
 

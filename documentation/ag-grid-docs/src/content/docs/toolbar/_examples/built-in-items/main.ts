@@ -1,6 +1,7 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     ModuleRegistry,
     NumberFilterModule,
@@ -16,6 +17,7 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     FindModule,
     RowGroupingModule,
@@ -44,13 +46,13 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     autoGroupColumnDef: { minWidth: 200 },
     toolbar: {
+        alignment: 'right',
         items: [
-            'rowGroupPanel',
-            { toolbarItem: 'find', alignment: 'right' },
+            { toolbarItem: 'rowGroupPanel', alignment: 'left' },
+            'find',
             {
                 toolbarItem: CustomToolbarButton,
                 key: 'autoSizeAll',
-                alignment: 'right',
                 toolbarItemParams: {
                     label: 'Auto Size All',
                     icon: 'maximize',
@@ -60,7 +62,6 @@ const gridOptions: GridOptions<IOlympicData> = {
             {
                 toolbarItem: CustomToolbarButton,
                 key: 'resetColumns',
-                alignment: 'right',
                 toolbarItemParams: {
                     label: 'Reset Columns',
                     icon: 'minimize',

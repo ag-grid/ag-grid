@@ -225,7 +225,7 @@ describe('Toolbar Built-in Items', () => {
             expect(button!.getAttribute('title')).toBe('Auto Size All');
             expect(button!.getAttribute('aria-label')).toBe('Auto Size All');
             expect(button!.querySelector('.ag-icon')).not.toBeNull();
-            expect(button!.querySelector<HTMLElement>('.ag-toolbar-button-label')!.style.display).toBe('none');
+            expect(button!.querySelector('.ag-toolbar-button-label')!.classList.contains('ag-hidden')).toBe(true);
         });
 
         test('shows label text when display is iconAndLabel', async () => {
@@ -249,7 +249,7 @@ describe('Toolbar Built-in Items', () => {
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
             const label = gridDiv.querySelector<HTMLElement>('.ag-toolbar-button-label')!;
-            expect(label.style.display).not.toBe('none');
+            expect(label.classList.contains('ag-hidden')).toBe(false);
             expect(label.textContent).toBe('Auto Size All');
         });
 

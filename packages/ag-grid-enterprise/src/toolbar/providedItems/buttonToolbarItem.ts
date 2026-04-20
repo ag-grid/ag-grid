@@ -7,7 +7,7 @@ import type {
 } from 'ag-grid-community';
 import { Component, RefPlaceholder, _addGridCommonParams, _createIconNoSpan, _setDisplayed } from 'ag-grid-community';
 
-export interface ButtonToolbarItemParams extends IToolbarItemParams {
+interface ButtonToolbarItemParams extends IToolbarItemParams {
     label?: string;
     icon?: IconName;
     action?: (params: ToolbarItemActionParams) => void;

@@ -1,6 +1,7 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     CsvExportModule,
     ModuleRegistry,
@@ -22,6 +23,7 @@ import { CustomToolbarButton } from './customToolbarItem_typescript';
 ModuleRegistry.registerModules([
     TextFilterModule,
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     ColumnMenuModule,
     ColumnsToolPanelModule,

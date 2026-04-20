@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import type { ColDef, GridApi, Toolbar } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     NumberFilterModule,
     TextFilterModule,
@@ -18,6 +19,7 @@ const modules = [
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     FindModule,
     RowGroupingModule,
@@ -61,13 +63,13 @@ const GridExample = () => {
     const autoGroupColumnDef = useMemo<ColDef>(() => ({ minWidth: 200 }), []);
     const toolbar = useMemo<Toolbar>(
         () => ({
+            alignment: 'right',
             items: [
-                'rowGroupPanel',
-                { toolbarItem: 'find', alignment: 'right' },
+                { toolbarItem: 'rowGroupPanel', alignment: 'left' },
+                'find',
                 {
                     toolbarItem: CustomToolbarButton,
                     key: 'autoSizeAll',
-                    alignment: 'right',
                     toolbarItemParams: {
                         label: 'Auto Size All',
                         icon: 'maximize',
@@ -77,7 +79,6 @@ const GridExample = () => {
                 {
                     toolbarItem: CustomToolbarButton,
                     key: 'resetColumns',
-                    alignment: 'right',
                     toolbarItemParams: {
                         label: 'Reset Columns',
                         icon: 'minimize',

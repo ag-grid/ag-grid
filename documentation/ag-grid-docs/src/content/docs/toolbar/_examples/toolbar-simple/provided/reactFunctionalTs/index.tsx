@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import type { ColDef, GridApi, Toolbar } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     CsvExportModule,
     TextFilterModule,
@@ -24,6 +25,7 @@ import CustomToolbarButton from './customToolbarItem';
 const modules = [
     TextFilterModule,
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     ColumnMenuModule,
     ColumnsToolPanelModule,
