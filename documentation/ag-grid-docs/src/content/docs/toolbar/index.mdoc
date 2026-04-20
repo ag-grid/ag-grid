@@ -18,24 +18,18 @@ const gridOptions = {
             'rowGroupPanel',
             { toolbarItem: 'find', alignment: 'right' },
             {
-                toolbarItem: CustomToolbarButton,
                 key: 'autoSizeAll',
                 alignment: 'right',
-                toolbarItemParams: {
-                    label: 'Auto Size All',
-                    icon: 'maximize',
-                    onClick: (api) => api.autoSizeAllColumns(),
-                },
+                label: 'Auto Size All',
+                icon: 'maximize',
+                action: (params) => params.api.autoSizeAllColumns(),
             },
             {
-                toolbarItem: CustomToolbarButton,
                 key: 'resetColumns',
                 alignment: 'right',
-                toolbarItemParams: {
-                    label: 'Reset Columns',
-                    icon: 'minimize',
-                    onClick: (api) => api.resetColumnState(),
-                },
+                label: 'Reset Columns',
+                icon: 'minimize',
+                action: (params) => params.api.resetColumnState(),
             },
         ]
     },
@@ -55,7 +49,34 @@ The following built-in items are available as string shorthands:
 
 Built-in items require their corresponding modules to be registered. If a required module is not registered, the item will not render and a console warning will be logged.
 
-To add buttons that trigger grid actions — such as auto-sizing columns, opening the column chooser, toggling a tool panel, exporting data, or resetting column state — provide a [Custom Component](#custom-components).
+To add buttons that trigger grid actions — such as auto-sizing columns, opening the column chooser, toggling a tool panel, exporting data, or resetting column state — define an [Action Button](#action-buttons). For more complex controls, provide a [Custom Component](#custom-components).
+
+## Action Buttons
+
+Provide `label`, `icon` and `action` on a toolbar item to render a button without writing a component. The `action` callback is invoked on click and receives the grid `api`, `context` and the item `key`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: [
+            {
+                key: 'autoSizeAll',
+                label: 'Auto Size All',
+                icon: 'maximize',
+                action: (params) => params.api.autoSizeAllColumns(),
+            },
+            {
+                key: 'excelExport',
+                label: 'Excel Export',
+                icon: 'excelExport',
+                action: (params) => params.api.exportDataAsExcel(),
+            },
+        ],
+    },
+}
+```
+
+The button respects the toolbar-level and per-item `display` mode. In `'icon'` mode only the icon is rendered and `label` is used for the tooltip and `aria-label`; in `'iconAndLabel'` mode the label is rendered next to the icon.
 
 ## Configuration
 

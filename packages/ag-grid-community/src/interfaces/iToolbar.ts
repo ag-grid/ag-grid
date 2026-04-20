@@ -1,4 +1,5 @@
 import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { IconName } from '../utils/icon';
 import type { AgGridCommon } from './iCommon';
 
 export type ToolbarDisplay = 'icon' | 'iconAndLabel';
@@ -9,12 +10,28 @@ export type Toolbar = {
     items: (ToolbarItemDef | string)[];
 };
 
-export interface ToolbarItemDef {
+export interface ToolbarItemActionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The toolbar item `key` identifying which item triggered the action. */
+    key: string;
+}
+
+export interface ToolbarItemDef<TData = any, TContext = any> {
+    /**
+     * Provide a custom component for the toolbar item.
+     * If omitted, the grid renders a default button using `label`, `icon` and `action`.
+     */
     toolbarItem?: any;
     alignment?: 'left' | 'right';
     display?: ToolbarDisplay;
     key?: string;
+    /** Parameters to be passed to the custom component specified in `toolbarItem`. */
     toolbarItemParams?: any;
+    /** Text used for the button tooltip and, when `display` is `'iconAndLabel'`, for the button label. */
+    label?: string;
+    /** Icon displayed on the default button. */
+    icon?: IconName;
+    /** Function invoked when the default button is clicked. */
+    action?: (params: ToolbarItemActionParams<TData, TContext>) => void;
 }
 
 export interface IToolbarItemParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

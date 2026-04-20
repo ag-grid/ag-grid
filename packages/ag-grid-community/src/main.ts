@@ -411,6 +411,7 @@ export type {
     IToolbarItemParams,
     Toolbar,
     ToolbarDisplay,
+    ToolbarItemActionParams,
     ToolbarItemDef,
 } from './interfaces/iToolbar';
 

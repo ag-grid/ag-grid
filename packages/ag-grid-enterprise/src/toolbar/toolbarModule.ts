@@ -4,6 +4,7 @@ import { _KeyboardNavigationModule } from 'ag-grid-community';
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import { AgToolbarSelector } from './agToolbar';
+import { ButtonToolbarItem } from './providedItems/buttonToolbarItem';
 import { FindToolbarItem } from './providedItems/findToolbarItem';
 import { PivotPanelToolbarItem } from './providedItems/pivotPanelToolbarItem';
 import { QuickFilterToolbarItem } from './providedItems/quickFilterToolbarItem';
@@ -17,6 +18,7 @@ export const ToolbarModule: _ModuleWithoutApi = {
     moduleName: 'Toolbar',
     version: VERSION,
     userComponents: {
+        agButtonToolbarItem: ButtonToolbarItem,
         agFindToolbarItem: FindToolbarItem,
         agPivotPanelToolbarItem: PivotPanelToolbarItem,
         agQuickFilterToolbarItem: QuickFilterToolbarItem,

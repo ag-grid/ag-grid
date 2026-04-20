@@ -41,14 +41,34 @@ function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): To
         const toolbarItem = BUILT_IN_ITEMS[item] ?? item;
         return { toolbarItem, key: item };
     }
-    if (typeof item.toolbarItem === 'string' && BUILT_IN_ITEMS[item.toolbarItem]) {
-        return { ...item, key: item.key ?? item.toolbarItem, toolbarItem: BUILT_IN_ITEMS[item.toolbarItem] };
+    let normalised = item;
+    if (typeof normalised.toolbarItem === 'string' && BUILT_IN_ITEMS[normalised.toolbarItem]) {
+        normalised = {
+            ...normalised,
+            key: normalised.key ?? normalised.toolbarItem,
+            toolbarItem: BUILT_IN_ITEMS[normalised.toolbarItem],
+        };
     }
-    if (item.key == null) {
-        const key = typeof item.toolbarItem === 'string' ? item.toolbarItem : nextKey();
-        return { ...item, key };
+    if (
+        normalised.toolbarItem == null &&
+        (normalised.action != null || normalised.label != null || normalised.icon != null)
+    ) {
+        normalised = {
+            ...normalised,
+            toolbarItem: 'agButtonToolbarItem',
+            toolbarItemParams: {
+                ...(normalised.toolbarItemParams ?? {}),
+                label: normalised.label,
+                icon: normalised.icon,
+                action: normalised.action,
+            },
+        };
     }
-    return item;
+    if (normalised.key == null) {
+        const key = typeof normalised.toolbarItem === 'string' ? normalised.toolbarItem : nextKey();
+        normalised = { ...normalised, key };
+    }
+    return normalised;
 }
 
 function getToolbarItemCompDetails(
