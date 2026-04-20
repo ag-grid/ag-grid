@@ -1,7 +1,9 @@
 import type { FindChangedEvent, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _createElement, _setDisabled, _setDisplayed, _warn } from 'ag-grid-community';
+import { Component, _createElement, _debounce, _setDisabled, _setDisplayed, _warn } from 'ag-grid-community';
 
 import { createToolbarIconButton, createToolbarInput } from './toolbarItemUtils';
+
+const INPUT_DEBOUNCE_MS = 300;
 
 function createMatchCount(): HTMLSpanElement {
     const eMatchCount = _createElement<HTMLSpanElement>({
@@ -64,11 +66,17 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         });
         eGui.appendChild(this.eNextButton);
 
+        const flushFindSearchValue = () =>
+            this.gos.updateGridOptions({ options: { findSearchValue: this.eInput.value } });
+        const updateFindSearchValueDebounced = _debounce(this, flushFindSearchValue, INPUT_DEBOUNCE_MS);
+
         this.addManagedElementListeners(this.eInput, {
-            input: () => this.gos.updateGridOptions({ options: { findSearchValue: this.eInput.value } }),
+            input: () => updateFindSearchValueDebounced(),
             keydown: (e: KeyboardEvent) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
+                    // Flush pending debounced update so navigation uses the latest typed value.
+                    flushFindSearchValue();
                     if (e.shiftKey) {
                         this.beans.findSvc?.previous();
                     } else {

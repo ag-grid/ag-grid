@@ -1,7 +1,9 @@
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _warn } from 'ag-grid-community';
+import { Component, _debounce, _warn } from 'ag-grid-community';
 
 import { createToolbarInput } from './toolbarItemUtils';
+
+const INPUT_DEBOUNCE_MS = 300;
 
 export class QuickFilterToolbarItem extends Component implements IToolbarItemComp {
     private eInput!: HTMLInputElement;
@@ -36,8 +38,14 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         this.eInput = eInput;
         eGui.appendChild(this.eInput);
 
+        const updateQuickFilterText = _debounce(
+            this,
+            () => this.gos.updateGridOptions({ options: { quickFilterText: this.eInput.value } }),
+            INPUT_DEBOUNCE_MS
+        );
+
         this.addManagedElementListeners(this.eInput, {
-            input: () => this.gos.updateGridOptions({ options: { quickFilterText: this.eInput.value } }),
+            input: () => updateQuickFilterText(),
         });
     }
 
