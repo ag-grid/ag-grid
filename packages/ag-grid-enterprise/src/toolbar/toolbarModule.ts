@@ -44,20 +44,19 @@ const ColumnChooserToolbarItem = createToolbarButton({
     onAction: (beans, eGui) =>
         (beans.colChooserFactory as ColumnChooserFactory | undefined)?.showColumnChooser({ eventSource: eGui }),
     onInit: (comp, gos) => {
-        if (!gos.isModuleRegistered('ColumnMenu')) {
+        const hasColumnMenu = gos.isModuleRegistered('ColumnMenu');
+        if (!hasColumnMenu) {
             _warn(302, { itemName: 'columnChooser', moduleName: 'ColumnMenu', ...gos.getModuleErrorParams() });
         }
-        comp.setDisplayed(gos.isModuleRegistered('ColumnMenu'));
+        comp.setDisplayed(hasColumnMenu);
     },
     shouldDisplay: (gos) => gos.isModuleRegistered('ColumnMenu'),
 });
 
 function canShowColumnsPanel(gos: GridOptionsService): boolean {
-    return (
-        gos.isModuleRegistered('SideBar') &&
-        gos.isModuleRegistered('ColumnsToolPanel') &&
-        hasSideBarPanel(gos.get('sideBar'), 'columns')
-    );
+    const hasSideBar = gos.isModuleRegistered('SideBar');
+    const hasColumnsToolPanel = gos.isModuleRegistered('ColumnsToolPanel');
+    return hasSideBar && hasColumnsToolPanel && hasSideBarPanel(gos.get('sideBar'), 'columns');
 }
 
 const ColumnsPanelToolbarItem = createToolbarButton({
@@ -76,7 +75,9 @@ const ColumnsPanelToolbarItem = createToolbarButton({
         }
     },
     onInit: (comp, gos) => {
-        if (!gos.isModuleRegistered('SideBar') || !gos.isModuleRegistered('ColumnsToolPanel')) {
+        const hasSideBar = gos.isModuleRegistered('SideBar');
+        const hasColumnsToolPanel = gos.isModuleRegistered('ColumnsToolPanel');
+        if (!hasSideBar || !hasColumnsToolPanel) {
             _warn(302, {
                 itemName: 'columnsPanel',
                 moduleName: ['SideBar', 'ColumnsToolPanel'],
@@ -96,10 +97,11 @@ const CsvExportToolbarItem = createToolbarButton({
     defaultLabel: 'CSV Export',
     onAction: (beans) => beans.csvCreator?.exportDataAsCsv(),
     onInit: (comp, gos) => {
-        if (!gos.isModuleRegistered('CsvExport')) {
+        const hasCsvExport = gos.isModuleRegistered('CsvExport');
+        if (!hasCsvExport) {
             _warn(302, { itemName: 'csvExport', moduleName: 'CsvExport', ...gos.getModuleErrorParams() });
         }
-        comp.setDisplayed(gos.isModuleRegistered('CsvExport') && !gos.get('suppressCsvExport'));
+        comp.setDisplayed(hasCsvExport && !gos.get('suppressCsvExport'));
     },
     shouldDisplay: (gos) => gos.isModuleRegistered('CsvExport') && !gos.get('suppressCsvExport'),
 });
@@ -110,18 +112,22 @@ const ExcelExportToolbarItem = createToolbarButton({
     defaultLabel: 'Excel Export',
     onAction: (beans) => beans.excelCreator?.exportDataAsExcel(),
     onInit: (comp, gos) => {
-        if (!gos.isModuleRegistered('ExcelExport')) {
+        const hasExcelExport = gos.isModuleRegistered('ExcelExport');
+        if (!hasExcelExport) {
             _warn(302, { itemName: 'excelExport', moduleName: 'ExcelExport', ...gos.getModuleErrorParams() });
         }
-        comp.setDisplayed(gos.isModuleRegistered('ExcelExport') && !gos.get('suppressExcelExport'));
+        comp.setDisplayed(hasExcelExport && !gos.get('suppressExcelExport'));
     },
     shouldDisplay: (gos) => gos.isModuleRegistered('ExcelExport') && !gos.get('suppressExcelExport'),
 });
 
 function canShowFiltersPanel(gos: GridOptionsService): boolean {
-    const hasFilterModule = gos.isModuleRegistered('FiltersToolPanel') || gos.isModuleRegistered('NewFiltersToolPanel');
+    const hasSideBar = gos.isModuleRegistered('SideBar');
+    const hasFiltersToolPanel = gos.isModuleRegistered('FiltersToolPanel');
+    const hasNewFiltersToolPanel = gos.isModuleRegistered('NewFiltersToolPanel');
+    const hasFilterModule = hasFiltersToolPanel || hasNewFiltersToolPanel;
     return (
-        gos.isModuleRegistered('SideBar') &&
+        hasSideBar &&
         hasFilterModule &&
         ['filters', 'filters-new'].some((id) => hasSideBarPanel(gos.get('sideBar'), id))
     );
@@ -147,9 +153,11 @@ const FiltersPanelToolbarItem = createToolbarButton({
         }
     },
     onInit: (comp, gos) => {
-        const hasFilterModule =
-            gos.isModuleRegistered('FiltersToolPanel') || gos.isModuleRegistered('NewFiltersToolPanel');
-        if (!gos.isModuleRegistered('SideBar') || !hasFilterModule) {
+        const hasSideBar = gos.isModuleRegistered('SideBar');
+        const hasFiltersToolPanel = gos.isModuleRegistered('FiltersToolPanel');
+        const hasNewFiltersToolPanel = gos.isModuleRegistered('NewFiltersToolPanel');
+        const hasFilterModule = hasFiltersToolPanel || hasNewFiltersToolPanel;
+        if (!hasSideBar || !hasFilterModule) {
             _warn(302, {
                 itemName: 'filtersPanel',
                 moduleName: ['SideBar', 'FiltersToolPanel', 'NewFiltersToolPanel'],
