@@ -28,7 +28,7 @@ describe('Toolbar', () => {
         expect(toolbar).not.toBeNull();
     });
 
-    test('hides toolbar when toolbar option is not provided', async () => {
+    test('does not render toolbar when toolbar option is not provided', async () => {
         const api = gridMgr.createGrid('toolbar-hidden', {
             columnDefs: [{ field: 'name' }],
             rowData: [{ name: 'Alice' }],
@@ -38,7 +38,7 @@ describe('Toolbar', () => {
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar');
-        expect(toolbar?.classList.contains('ag-hidden')).toBe(true);
+        expect(toolbar).toBeNull();
     });
 
     test('renders left and right containers', async () => {
