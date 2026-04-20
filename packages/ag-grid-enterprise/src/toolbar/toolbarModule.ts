@@ -34,7 +34,7 @@ const AutoSizeAllToolbarItem = createToolbarButton({
     icon: 'maximize',
     localeKey: 'autosizeAllColumns',
     defaultLabel: 'Autosize All Columns',
-    onAction: (beans) => beans.gridApi.autoSizeAllColumns(),
+    onAction: (beans) => beans.colAutosize?.autoSizeAllColumns({ source: 'api' }),
 });
 
 const ColumnChooserToolbarItem = createToolbarButton({
@@ -65,11 +65,14 @@ const ColumnsPanelToolbarItem = createToolbarButton({
     localeKey: 'columns',
     defaultLabel: 'Columns',
     onAction: (beans) => {
-        const { gridApi } = beans;
-        if (gridApi.getOpenedToolPanel() === 'columns') {
-            gridApi.closeToolPanel();
+        const sideBarComp = beans.sideBar?.comp;
+        if (!sideBarComp) {
+            return;
+        }
+        if (sideBarComp.openedItem() === 'columns') {
+            sideBarComp.close('api');
         } else {
-            gridApi.openToolPanel('columns');
+            sideBarComp.openToolPanel('columns', 'api');
         }
     },
     onInit: (comp, gos) => {
@@ -91,7 +94,7 @@ const CsvExportToolbarItem = createToolbarButton({
     icon: 'csvExport',
     localeKey: 'csvExport',
     defaultLabel: 'CSV Export',
-    onAction: (beans) => beans.gridApi.exportDataAsCsv(),
+    onAction: (beans) => beans.csvCreator?.exportDataAsCsv(),
     onInit: (comp, gos) => {
         if (!gos.isModuleRegistered('CsvExport')) {
             _warn(302, { itemName: 'csvExport', moduleName: 'CsvExport', ...gos.getModuleErrorParams() });
@@ -105,7 +108,7 @@ const ExcelExportToolbarItem = createToolbarButton({
     icon: 'excelExport',
     localeKey: 'excelExport',
     defaultLabel: 'Excel Export',
-    onAction: (beans) => beans.gridApi.exportDataAsExcel(),
+    onAction: (beans) => beans.excelCreator?.exportDataAsExcel(),
     onInit: (comp, gos) => {
         if (!gos.isModuleRegistered('ExcelExport')) {
             _warn(302, { itemName: 'excelExport', moduleName: 'ExcelExport', ...gos.getModuleErrorParams() });
@@ -129,15 +132,18 @@ const FiltersPanelToolbarItem = createToolbarButton({
     localeKey: 'filters',
     defaultLabel: 'Filters',
     onAction: (beans, _eGui, gos) => {
-        const { gridApi } = beans;
+        const sideBarComp = beans.sideBar?.comp;
+        if (!sideBarComp) {
+            return;
+        }
         const panelId = ['filters', 'filters-new'].find((id) => hasSideBarPanel(gos.get('sideBar'), id));
         if (!panelId) {
             return;
         }
-        if (gridApi.getOpenedToolPanel() === panelId) {
-            gridApi.closeToolPanel();
+        if (sideBarComp.openedItem() === panelId) {
+            sideBarComp.close('api');
         } else {
-            gridApi.openToolPanel(panelId);
+            sideBarComp.openToolPanel(panelId, 'api');
         }
     },
     onInit: (comp, gos) => {
