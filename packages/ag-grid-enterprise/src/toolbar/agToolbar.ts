@@ -19,6 +19,7 @@ import {
     _addFocusableContainerListener,
     _addGridCommonParams,
     _clearElement,
+    _createElement,
     _getActiveDomElement,
     _removeFromParent,
     _warn,
@@ -297,10 +298,11 @@ class AgToolbar extends Component implements FocusableContainer {
     }
 
     private createSeparator(): HTMLElement {
-        const separator = document.createElement('div');
-        separator.className = 'ag-toolbar-separator';
-        separator.setAttribute('role', 'separator');
-        return separator;
+        return _createElement({
+            tag: 'div',
+            cls: 'ag-toolbar-separator',
+            attrs: { role: 'separator' },
+        });
     }
 
     private createAndRenderComponents(
@@ -312,9 +314,7 @@ class AgToolbar extends Component implements FocusableContainer {
         const promises: Promise<void>[] = [];
 
         if (pushRight) {
-            const spacer = document.createElement('div');
-            spacer.className = 'ag-toolbar-right-start';
-            eContainer.appendChild(spacer);
+            eContainer.appendChild(_createElement({ tag: 'div', cls: 'ag-toolbar-right-start' }));
         }
 
         for (const itemConfig of toolbarItems) {
@@ -332,7 +332,7 @@ class AgToolbar extends Component implements FocusableContainer {
 
             const existingItem = existingItemsToReuse.get(key);
 
-            const placeholder = document.createElement('div');
+            const placeholder = _createElement({ tag: 'div' });
             eContainer.appendChild(placeholder);
 
             if (existingItem) {

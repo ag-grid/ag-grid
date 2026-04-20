@@ -34,11 +34,15 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
             eGui.appendChild(eIconWrapper);
         }
 
-        this.eInput = _createElement({ tag: 'input' });
-        this.eInput.type = 'text';
-        this.eInput.className = 'ag-toolbar-input-field';
-        this.eInput.placeholder = `${label}...`;
-        this.eInput.setAttribute('aria-label', label);
+        this.eInput = _createElement<HTMLInputElement>({
+            tag: 'input',
+            cls: 'ag-toolbar-input-field',
+            attrs: {
+                type: 'text',
+                placeholder: `${label}...`,
+                'aria-label': label,
+            },
+        });
 
         const currentValue = this.gos.get('quickFilterText');
         if (currentValue) {
@@ -46,7 +50,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         }
 
         this.addManagedElementListeners(this.eInput, {
-            input: () => this.beans.gridApi.setGridOption('quickFilterText', this.eInput.value),
+            input: () => this.gos.updateGridOptions({ options: { quickFilterText: this.eInput.value } }),
         });
 
         eGui.appendChild(this.eInput);

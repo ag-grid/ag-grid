@@ -5,7 +5,7 @@ import type {
     IToolbarItemParams,
     IconName,
 } from 'ag-grid-community';
-import { Component, _createElement, _createIconNoSpan, _warn } from 'ag-grid-community';
+import { Component, _createElement, _createIconNoSpan, _setDisabled, _setDisplayed, _warn } from 'ag-grid-community';
 
 function createSearchIcon(beans: BeanCollection): HTMLElement | undefined {
     const eIcon = _createIconNoSpan('filter', beans);
@@ -23,11 +23,15 @@ function createSearchIcon(beans: BeanCollection): HTMLElement | undefined {
 }
 
 function createSearchInput(beans: BeanCollection, label: string): HTMLInputElement {
-    const eInput = _createElement({ tag: 'input' }) as HTMLInputElement;
-    eInput.type = 'text';
-    eInput.className = 'ag-toolbar-input-field';
-    eInput.placeholder = `${label}...`;
-    eInput.setAttribute('aria-label', label);
+    const eInput = _createElement<HTMLInputElement>({
+        tag: 'input',
+        cls: 'ag-toolbar-input-field',
+        attrs: {
+            type: 'text',
+            placeholder: `${label}...`,
+            'aria-label': label,
+        },
+    });
 
     const currentValue = beans.gos.get('findSearchValue');
     if (currentValue) {
@@ -38,19 +42,26 @@ function createSearchInput(beans: BeanCollection, label: string): HTMLInputEleme
 }
 
 function createMatchCount(): HTMLSpanElement {
-    const eMatchCount = _createElement({ tag: 'span' }) as HTMLSpanElement;
-    eMatchCount.className = 'ag-toolbar-find-match-count ag-hidden';
-    eMatchCount.setAttribute('aria-live', 'polite');
+    const eMatchCount = _createElement<HTMLSpanElement>({
+        tag: 'span',
+        cls: 'ag-toolbar-find-match-count',
+        attrs: { 'aria-live': 'polite' },
+    });
+    _setDisplayed(eMatchCount, false);
     return eMatchCount;
 }
 
 function createNavButton(beans: BeanCollection, iconName: IconName, label: string): HTMLButtonElement {
-    const eButton = _createElement({ tag: 'button' }) as HTMLButtonElement;
-    eButton.type = 'button';
-    eButton.className = 'ag-toolbar-button ag-toolbar-find-button';
-    eButton.disabled = true;
-    eButton.setAttribute('aria-label', label);
-    eButton.setAttribute('title', label);
+    const eButton = _createElement<HTMLButtonElement>({
+        tag: 'button',
+        cls: 'ag-toolbar-button ag-toolbar-find-button',
+        attrs: {
+            type: 'button',
+            'aria-label': label,
+            title: label,
+        },
+    });
+    _setDisabled(eButton, true);
     const eIcon = _createIconNoSpan(iconName, beans);
     if (eIcon) {
         eButton.appendChild(eIcon);
@@ -101,24 +112,24 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         eGui.appendChild(this.eNextButton);
 
         this.addManagedElementListeners(this.eInput, {
-            input: () => this.beans.gridApi.setGridOption('findSearchValue', this.eInput.value),
+            input: () => this.gos.updateGridOptions({ options: { findSearchValue: this.eInput.value } }),
             keydown: (e: KeyboardEvent) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     if (e.shiftKey) {
-                        this.beans.gridApi.findPrevious();
+                        this.beans.findSvc?.previous();
                     } else {
-                        this.beans.gridApi.findNext();
+                        this.beans.findSvc?.next();
                     }
                 }
             },
         });
 
         this.addManagedElementListeners(this.ePrevButton, {
-            click: () => this.beans.gridApi.findPrevious(),
+            click: () => this.beans.findSvc?.previous(),
         });
         this.addManagedElementListeners(this.eNextButton, {
-            click: () => this.beans.gridApi.findNext(),
+            click: () => this.beans.findSvc?.next(),
         });
 
         this.addManagedEventListeners({
@@ -150,16 +161,11 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
     private updateMatchDisplay(findSearchValue: string | undefined, activeIndex: number, totalMatches: number): void {
         const hasSearch = !!findSearchValue?.length;
 
-        if (hasSearch) {
-            this.eMatchCount.textContent = `${activeIndex}/${totalMatches}`;
-            this.eMatchCount.classList.remove('ag-hidden');
-        } else {
-            this.eMatchCount.textContent = '';
-            this.eMatchCount.classList.add('ag-hidden');
-        }
+        this.eMatchCount.textContent = hasSearch ? `${activeIndex}/${totalMatches}` : '';
+        _setDisplayed(this.eMatchCount, hasSearch);
 
         const hasMatches = totalMatches > 0;
-        this.ePrevButton.disabled = !hasMatches;
-        this.eNextButton.disabled = !hasMatches;
+        _setDisabled(this.ePrevButton, !hasMatches);
+        _setDisabled(this.eNextButton, !hasMatches);
     }
 }
