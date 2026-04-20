@@ -1,4 +1,5 @@
 import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { ToolbarItemComponentName } from '../context/context';
 import type { IconName } from '../utils/icon';
 import type { AgGridCommon } from './iCommon';
 
@@ -7,8 +8,23 @@ export type ToolbarDisplay = 'icon' | 'iconAndLabel';
 export type Toolbar = {
     display?: ToolbarDisplay;
     alignment?: 'left' | 'right';
-    items: (ToolbarItemDef | string)[];
+    items: (ToolbarItemDef | ToolbarItemShorthand)[];
 };
+
+/**
+ * Shorthand string identifiers that can be used in `Toolbar.items` or `ToolbarItemDef.toolbarItem`.
+ * Includes the provided toolbar item components, `'separator'`, and the built-in shorthand keys
+ * (`'find'`, `'pivotPanel'`, `'quickFilter'`, `'rowGroupPanel'`).
+ */
+export type ToolbarItemShorthand =
+    | ToolbarItemComponentName
+    | 'separator'
+    | 'find'
+    | 'pivotPanel'
+    | 'quickFilter'
+    | 'rowGroupPanel'
+    // Preserve the literal-union autocomplete while still allowing arbitrary registered component names
+    | (string & {});
 
 export interface ToolbarItemActionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The toolbar item `key` identifying which item triggered the action. */

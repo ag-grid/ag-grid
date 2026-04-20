@@ -413,6 +413,7 @@ export type {
     ToolbarDisplay,
     ToolbarItemActionParams,
     ToolbarItemDef,
+    ToolbarItemShorthand,
 } from './interfaces/iToolbar';
 
 // Tool Panel

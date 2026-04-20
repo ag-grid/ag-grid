@@ -184,7 +184,8 @@ class AgToolbar extends Component implements FocusableContainer {
                 acc.push(normalised);
                 return acc;
             }
-            const key = normalised.key ?? normalised.toolbarItem;
+            // normaliseItem guarantees `key` is set for non-separator items
+            const key = normalised.key!;
             if (!seen.has(key)) {
                 seen.add(key);
                 acc.push(normalised);
@@ -279,7 +280,8 @@ class AgToolbar extends Component implements FocusableContainer {
                 continue;
             }
 
-            const key = itemConfig.key ?? itemConfig.toolbarItem;
+            // normaliseItem guarantees `key` is set for non-separator items
+            const key = itemConfig.key!;
 
             if (itemConfig.toolbarItem == null) {
                 _warn(301, { key });
