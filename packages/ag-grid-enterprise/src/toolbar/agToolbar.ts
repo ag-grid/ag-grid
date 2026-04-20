@@ -297,8 +297,9 @@ class AgToolbar extends Component implements FocusableContainer {
             return;
         }
 
-        // Placeholder was discarded by a rebuild or destroy — clean up the orphan component
-        if (!this.isAlive() || !placeholder.isConnected) {
+        // Placeholder was discarded by a rebuild or destroy — clean up the orphan component.
+        // Don't rely on isConnected: on initial render the grid is not yet in the document.
+        if (!this.isAlive() || placeholder.parentNode !== this.getGui()) {
             _removeFromParent(placeholder);
             this.destroyBean(component);
             return;
