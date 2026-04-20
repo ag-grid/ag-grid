@@ -1,14 +1,10 @@
-import { ClientSideRowModelModule, ColumnAutoSizeModule, CsvExportModule, QuickFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import {
-    ColumnsToolPanelModule,
     ContextMenuModule,
-    ExcelExportModule,
-    FiltersToolPanelModule,
     FindModule,
     PivotModule,
     RowGroupingModule,
     RowGroupingPanelModule,
-    SideBarModule,
     ToolbarModule,
 } from 'ag-grid-enterprise';
 
@@ -18,18 +14,12 @@ describe('Toolbar Built-in Items', () => {
     const gridMgr = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
-            ColumnAutoSizeModule,
             ContextMenuModule,
-            CsvExportModule,
-            ExcelExportModule,
-            ColumnsToolPanelModule,
-            FiltersToolPanelModule,
             FindModule,
             PivotModule,
             QuickFilterModule,
             RowGroupingModule,
             RowGroupingPanelModule,
-            SideBarModule,
             ToolbarModule,
         ],
     });
@@ -38,56 +28,13 @@ describe('Toolbar Built-in Items', () => {
         gridMgr.reset();
     });
 
-    function getToolbarButton(gridDiv: HTMLElement, label: string): HTMLButtonElement | null {
-        return gridDiv.querySelector<HTMLButtonElement>(`.ag-toolbar-button[title="${label}"]`);
-    }
-
-    describe('autoSizeAll', () => {
-        test('renders button with correct label and title', async () => {
-            const api = gridMgr.createGrid('auto-size-all-render', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: {
-                    items: ['autoSizeAll'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Autosize All Columns');
-            expect(button).not.toBeNull();
-            expect(button!.getAttribute('aria-label')).toBe('Autosize All Columns');
-        });
-
-        test('calls autoSizeAllColumns when clicked', async () => {
-            const api = gridMgr.createGrid('auto-size-all-click', {
-                columnDefs: [{ field: 'name' }, { field: 'age' }],
-                rowData: [{ name: 'Alice', age: 30 }],
-                toolbar: {
-                    items: ['autoSizeAll'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const spy = vitest.spyOn(api, 'autoSizeAllColumns');
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Autosize All Columns')!;
-            button.click();
-
-            expect(spy).toHaveBeenCalledTimes(1);
-        });
-    });
-
     describe('separator', () => {
         test('renders separator elements between items', async () => {
             const api = gridMgr.createGrid('separator-render', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
                 toolbar: {
-                    items: ['autoSizeAll', 'separator', 'resetColumns'],
+                    items: ['find', 'separator', 'quickFilter'],
                 },
             });
 
@@ -98,45 +45,6 @@ describe('Toolbar Built-in Items', () => {
             const separators = toolbar.querySelectorAll('.ag-toolbar-separator');
             expect(separators).toHaveLength(1);
             expect(separators[0].getAttribute('role')).toBe('separator');
-        });
-    });
-
-    describe('excelExport', () => {
-        test('renders button with correct label and title', async () => {
-            const api = gridMgr.createGrid('excel-export-render', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: {
-                    items: ['excelExport'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Excel Export');
-            expect(button).not.toBeNull();
-            expect(button!.getAttribute('aria-label')).toBe('Excel Export');
-        });
-
-        test('calls exportDataAsExcel when clicked', async () => {
-            const api = gridMgr.createGrid('excel-export-click', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: {
-                    items: ['excelExport'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const spy = vitest.spyOn(api, 'exportDataAsExcel').mockImplementation(() => {});
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Excel Export')!;
-            button.click();
-
-            expect(spy).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -292,180 +200,6 @@ describe('Toolbar Built-in Items', () => {
         });
     });
 
-    describe('columnsPanel', () => {
-        test('renders button when sidebar has columns panel', async () => {
-            const api = gridMgr.createGrid('columns-panel-render', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                sideBar: { toolPanels: ['columns'], defaultToolPanel: '' },
-                toolbar: {
-                    items: ['columnsPanel'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Columns');
-            expect(button).not.toBeNull();
-            expect(button!.getAttribute('aria-label')).toBe('Columns');
-        });
-
-        test('hides button when sidebar does not have columns panel', async () => {
-            const api = gridMgr.createGrid('columns-panel-no-sidebar', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: {
-                    items: ['columnsPanel'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Columns');
-            expect(button).not.toBeNull();
-            expect(button!.style.display).toBe('none');
-        });
-
-        test('toggles columns tool panel on click', async () => {
-            const api = gridMgr.createGrid('columns-panel-toggle', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                sideBar: { toolPanels: ['columns'], defaultToolPanel: '' },
-                toolbar: {
-                    items: ['columnsPanel'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Columns')!;
-
-            button.click();
-            expect(api.getOpenedToolPanel()).toBe('columns');
-
-            button.click();
-            expect(api.getOpenedToolPanel()).toBeNull();
-        });
-    });
-
-    describe('filtersPanel', () => {
-        test('renders button when sidebar has filters panel', async () => {
-            const api = gridMgr.createGrid('filters-panel-render', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                sideBar: { toolPanels: ['filters'], defaultToolPanel: '' },
-                toolbar: {
-                    items: ['filtersPanel'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Filters');
-            expect(button).not.toBeNull();
-            expect(button!.getAttribute('aria-label')).toBe('Filters');
-        });
-
-        test('hides button when sidebar does not have filters panel', async () => {
-            const api = gridMgr.createGrid('filters-panel-no-sidebar', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: {
-                    items: ['filtersPanel'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Filters');
-            expect(button).not.toBeNull();
-            expect(button!.style.display).toBe('none');
-        });
-
-        test('toggles filters tool panel on click', async () => {
-            const api = gridMgr.createGrid('filters-panel-toggle', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                sideBar: { toolPanels: ['filters'], defaultToolPanel: '' },
-                toolbar: {
-                    items: ['filtersPanel'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = getToolbarButton(gridDiv, 'Filters')!;
-
-            button.click();
-            expect(api.getOpenedToolPanel()).toBe('filters');
-
-            button.click();
-            expect(api.getOpenedToolPanel()).toBeNull();
-        });
-    });
-
-    describe('console warnings for missing modules', () => {
-        test('logs warning when columnsPanel is configured without sidebar columns panel', async () => {
-            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
-
-            const api = gridMgr.createGrid('columns-panel-warn', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: {
-                    items: ['columnsPanel'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = gridDiv.querySelector<HTMLElement>('.ag-toolbar-button[title="Columns"]');
-            expect(button).not.toBeNull();
-            expect(button!.style.display).toBe('none');
-
-            expect(warnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #299'),
-                expect.stringContaining('columnsPanel'),
-                expect.anything()
-            );
-
-            warnSpy.mockRestore();
-        });
-
-        test('logs warning when filtersPanel is configured without sidebar filters panel', async () => {
-            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
-
-            const api = gridMgr.createGrid('filters-panel-warn', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: {
-                    items: ['filtersPanel'],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = gridDiv.querySelector<HTMLElement>('.ag-toolbar-button[title="Filters"]');
-            expect(button).not.toBeNull();
-            expect(button!.style.display).toBe('none');
-
-            expect(warnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #300'),
-                expect.stringContaining('filtersPanel'),
-                expect.anything()
-            );
-
-            warnSpy.mockRestore();
-        });
-    });
-
     describe('console warnings for missing feature modules', () => {
         const minimalGridMgr = new TestGridsManager({
             modules: [ClientSideRowModelModule, ToolbarModule],
@@ -473,56 +207,6 @@ describe('Toolbar Built-in Items', () => {
 
         afterEach(() => {
             minimalGridMgr.reset();
-        });
-
-        test('hides csvExport and logs warning when CsvExportModule is not registered', async () => {
-            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
-
-            const api = minimalGridMgr.createGrid('csv-export-no-module', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: { items: ['csvExport'] },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = gridDiv.querySelector<HTMLElement>('.ag-toolbar-button[title="CSV Export"]');
-            expect(button).not.toBeNull();
-            expect(button!.style.display).toBe('none');
-
-            expect(warnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #303'),
-                expect.stringContaining('csvExport'),
-                expect.anything()
-            );
-
-            warnSpy.mockRestore();
-        });
-
-        test('hides excelExport and logs warning when ExcelExportModule is not registered', async () => {
-            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
-
-            const api = minimalGridMgr.createGrid('excel-export-no-module', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: { items: ['excelExport'] },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            const gridDiv = TestGridsManager.getHTMLElement(api)!;
-            const button = gridDiv.querySelector<HTMLElement>('.ag-toolbar-button[title="Excel Export"]');
-            expect(button).not.toBeNull();
-            expect(button!.style.display).toBe('none');
-
-            expect(warnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #303'),
-                expect.stringContaining('excelExport'),
-                expect.anything()
-            );
-
-            warnSpy.mockRestore();
         });
 
         test('hides quickFilter and logs warning when QuickFilterModule is not registered', async () => {
@@ -630,18 +314,12 @@ describe('Toolbar Built-in Items', () => {
         const integrationGridMgr = new TestGridsManager({
             modules: [
                 ClientSideRowModelModule,
-                ColumnAutoSizeModule,
                 ContextMenuModule,
-                CsvExportModule,
-                ExcelExportModule,
-                ColumnsToolPanelModule,
-                FiltersToolPanelModule,
                 FindModule,
                 PivotModule,
                 QuickFilterModule,
                 RowGroupingModule,
                 RowGroupingPanelModule,
-                SideBarModule,
                 ToolbarModule,
             ],
         });
@@ -682,21 +360,12 @@ describe('Toolbar Built-in Items', () => {
                     },
                 ],
                 rowGroupPanelShow: 'never',
-                sideBar: { toolPanels: ['columns'] },
                 toolbar: {
                     items: [
                         'rowGroupPanel',
                         'pivotPanel',
                         { toolbarItem: 'quickFilter', alignment: 'right' },
                         { toolbarItem: 'find', alignment: 'right' },
-                        'separator',
-                        { toolbarItem: 'columnsPanel', alignment: 'right' },
-                        { toolbarItem: 'filtersPanel', alignment: 'right' },
-                        { toolbarItem: 'autoSizeAll', alignment: 'right' },
-                        'separator',
-                        { toolbarItem: 'csvExport', alignment: 'right' },
-                        'separator',
-                        { toolbarItem: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
                     ],
                 },
             });

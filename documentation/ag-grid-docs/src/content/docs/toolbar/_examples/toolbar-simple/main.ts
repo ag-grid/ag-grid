@@ -1,21 +1,34 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    ColumnAutoSizeModule,
+    CsvExportModule,
     ModuleRegistry,
-    NumberFilterModule,
     TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { RowGroupingModule, ToolbarModule } from 'ag-grid-enterprise';
+import {
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    ExcelExportModule,
+    FiltersToolPanelModule,
+    SideBarModule,
+    ToolbarModule,
+} from 'ag-grid-enterprise';
 
-import { CustomToolbarItem } from './customToolbarItem_typescript';
+import { CustomToolbarButton } from './customToolbarItem_typescript';
 
 ModuleRegistry.registerModules([
     TextFilterModule,
-    NumberFilterModule,
     ClientSideRowModelModule,
-    RowGroupingModule,
+    ColumnAutoSizeModule,
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    CsvExportModule,
+    ExcelExportModule,
+    FiltersToolPanelModule,
+    SideBarModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -27,7 +40,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'athlete', minWidth: 200 },
         { field: 'country', minWidth: 200 },
         { field: 'sport', minWidth: 200 },
-        { field: 'year', filter: 'agNumberColumnFilter' },
+        { field: 'year' },
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },
@@ -38,11 +51,71 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         filter: true,
     },
-    autoGroupColumnDef: {
-        minWidth: 200,
-    },
+    sideBar: { toolPanels: ['columns', 'filters'], defaultToolPanel: '' },
     toolbar: {
-        items: [{ toolbarItem: CustomToolbarItem, key: 'analyseByCountry' }],
+        items: [
+            {
+                toolbarItem: CustomToolbarButton,
+                key: 'autoSizeAll',
+                toolbarItemParams: {
+                    label: 'Auto Size All',
+                    onClick: (api: GridApi) => api.autoSizeAllColumns(),
+                },
+            },
+            {
+                toolbarItem: CustomToolbarButton,
+                key: 'columnChooser',
+                toolbarItemParams: {
+                    label: 'Choose Columns',
+                    onClick: (api: GridApi) => api.showColumnChooser(),
+                },
+            },
+            'separator',
+            {
+                toolbarItem: CustomToolbarButton,
+                key: 'columnsPanel',
+                toolbarItemParams: {
+                    label: 'Columns Panel',
+                    onClick: (api: GridApi) =>
+                        api.getOpenedToolPanel() === 'columns' ? api.closeToolPanel() : api.openToolPanel('columns'),
+                },
+            },
+            {
+                toolbarItem: CustomToolbarButton,
+                key: 'filtersPanel',
+                toolbarItemParams: {
+                    label: 'Filters Panel',
+                    onClick: (api: GridApi) =>
+                        api.getOpenedToolPanel() === 'filters' ? api.closeToolPanel() : api.openToolPanel('filters'),
+                },
+            },
+            'separator',
+            {
+                toolbarItem: CustomToolbarButton,
+                key: 'csvExport',
+                toolbarItemParams: {
+                    label: 'CSV Export',
+                    onClick: (api: GridApi) => api.exportDataAsCsv(),
+                },
+            },
+            {
+                toolbarItem: CustomToolbarButton,
+                key: 'excelExport',
+                toolbarItemParams: {
+                    label: 'Excel Export',
+                    onClick: (api: GridApi) => api.exportDataAsExcel(),
+                },
+            },
+            'separator',
+            {
+                toolbarItem: CustomToolbarButton,
+                key: 'resetColumns',
+                toolbarItemParams: {
+                    label: 'Reset Columns',
+                    onClick: (api: GridApi) => api.resetColumnState(),
+                },
+            },
+        ],
     },
 };
 

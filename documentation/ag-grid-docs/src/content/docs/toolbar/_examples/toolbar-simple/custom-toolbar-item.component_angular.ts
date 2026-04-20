@@ -1,40 +1,38 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import type { IToolbarItemAngularComp } from 'ag-grid-angular';
-import type { IToolbarItemParams } from 'ag-grid-community';
+import type { GridApi, IToolbarItemParams } from 'ag-grid-community';
+
+interface CustomToolbarButtonParams extends IToolbarItemParams {
+    label: string;
+    onClick: (api: GridApi) => void;
+}
 
 @Component({
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div class="ag-toolbar-item">
-            <button class="ag-button ag-standard-button" (click)="onClick()">
-                {{ active ? 'Clear Analysis' : 'Analyse by Country' }}
-            </button>
-        </div>
+        <button
+            class="ag-toolbar-item ag-toolbar-button"
+            type="button"
+            [attr.title]="label"
+            [attr.aria-label]="label"
+            (click)="onClick()"
+        >
+            {{ label }}
+        </button>
     `,
 })
-export class CustomToolbarItem implements IToolbarItemAngularComp {
-    private params!: IToolbarItemParams;
-    private cdr = inject(ChangeDetectorRef);
-    active = false;
+export class CustomToolbarButton implements IToolbarItemAngularComp {
+    private params!: CustomToolbarButtonParams;
+    label = '';
 
-    agInit(params: IToolbarItemParams): void {
+    agInit(params: CustomToolbarButtonParams): void {
         this.params = params;
+        this.label = params.label;
     }
 
     onClick(): void {
-        const { api } = this.params;
-        this.active = !this.active;
-
-        if (this.active) {
-            api.setRowGroupColumns(['country']);
-            api.setFilterModel({ year: { filterType: 'number', type: 'equals', filter: 2008 } });
-        } else {
-            api.setRowGroupColumns([]);
-            api.setFilterModel(null);
-        }
-
-        this.cdr.markForCheck();
+        this.params.onClick(this.params.api);
     }
 }

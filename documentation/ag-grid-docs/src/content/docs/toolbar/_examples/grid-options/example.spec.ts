@@ -6,19 +6,19 @@ test.agExample(import.meta, () => {
 
         const toolbarItems = page.locator('.ag-toolbar-item');
 
-        // Initial state is Full (7 items)
-        await expect(toolbarItems).toHaveCount(7);
-
-        // Compact (6 items)
-        await page.locator('button', { hasText: 'Compact' }).click();
-        await expect(toolbarItems).toHaveCount(6);
-
-        // Minimal (3 items)
-        await page.locator('button', { hasText: 'Minimal' }).click();
+        // Initial state is Full (row group panel + find + quick filter = 3 items)
         await expect(toolbarItems).toHaveCount(3);
+
+        // Find Only (1 item)
+        await page.locator('button', { hasText: 'Find Only' }).click();
+        await expect(toolbarItems).toHaveCount(1);
+
+        // Quick Filter Only (1 item)
+        await page.locator('button', { hasText: 'Quick Filter Only' }).click();
+        await expect(toolbarItems).toHaveCount(1);
 
         // Back to Full
         await page.locator('button', { hasText: 'Full' }).click();
-        await expect(toolbarItems).toHaveCount(7);
+        await expect(toolbarItems).toHaveCount(3);
     });
 });

@@ -14,15 +14,10 @@ Configure the Toolbar with the `toolbar` grid option. The property takes a list 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     toolbar: {
-        alignment: 'right',
         items: [
-            { toolbarItem: 'find', alignment: 'left' },
-            'autoSizeAll',
-            'separator',
-            'csvExport',
-            'excelExport',
-            'separator',
-            { toolbarItem: 'resetColumns', display: 'iconAndLabel' },
+            'rowGroupPanel',
+            { toolbarItem: 'find', alignment: 'right' },
+            { toolbarItem: 'quickFilter', alignment: 'right' },
         ]
     },
 
@@ -34,19 +29,14 @@ const gridOptions = {
 
 The following built-in items are available as string shorthands:
 
--   `autoSizeAll`: Auto-sizes all columns to fit their content. Requires `ColumnAutoSizeModule`.
--   `columnChooser`: Opens the Column Chooser dialog. Requires `ColumnMenuModule`.
--   `columnsPanel`: Toggles the Columns Tool Panel in the sidebar. Requires `SideBarModule` and `ColumnsToolPanelModule`. Hidden if the sidebar does not include a columns panel.
--   `csvExport`: Exports grid data as CSV. Requires `CsvExportModule`.
--   `excelExport`: Exports grid data as Excel. Requires `ExcelExportModule`.
--   `filtersPanel`: Toggles the Filters Tool Panel in the sidebar. Requires `SideBarModule` and `FiltersToolPanelModule`. Hidden if the sidebar does not include a filters panel.
 -   `find`: A text input that searches within grid cells using the Find feature. Displays the current match count and provides Previous/Next navigation buttons. Use Enter to navigate to the next match and Shift+Enter for the previous match. Requires `FindModule`.
 -   `pivotPanel`: Embeds the Pivot Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `pivotPanelShow` grid option — if both are set, both will render.
 -   `rowGroupPanel`: Embeds the Row Group Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `rowGroupPanelShow` grid option — if both are set, both will render.
 -   `quickFilter`: A text input that filters grid rows using the Quick Filter. Requires `QuickFilterModule`.
--   `resetColumns`: Resets all columns to their default state.
 
 Built-in items require their corresponding modules to be registered. If a required module is not registered, the item will not render and a console warning will be logged.
+
+To add buttons that trigger grid actions — such as auto-sizing columns, opening the column chooser, toggling a tool panel, exporting data, or resetting column state — provide a [Custom Component](#custom-components).
 
 ## Configuration
 
@@ -62,7 +52,7 @@ Additional props are passed to Toolbar Items using `toolbarItemParams`.
 const gridOptions = {
     toolbar: {
         items: [
-            'autoSizeAll',
+            'quickFilter',
             {
                 key: 'myItem',
                 toolbarItem: CustomToolbarComponent,
@@ -86,7 +76,7 @@ const gridOptions = {
         alignment: 'right',
         items: [
             'find',
-            { toolbarItem: 'autoSizeAll', alignment: 'left' },
+            { toolbarItem: 'quickFilter', alignment: 'left' },
         ]
     }
 }
@@ -101,8 +91,8 @@ const gridOptions = {
     toolbar: {
         display: 'iconAndLabel',
         items: [
-            'autoSizeAll',
-            { toolbarItem: 'csvExport', display: 'icon' }
+            'quickFilter',
+            { toolbarItem: 'find', display: 'icon' }
         ]
     }
 }
@@ -110,7 +100,7 @@ const gridOptions = {
 
 ## Custom Components
 
-In addition to the built-in items, the Toolbar can render Custom Components. Use a Custom Component when the built-in items do not cover your use case, for example to trigger application-specific actions, surface a bespoke control, or reflect external state.
+In addition to the built-in items, the Toolbar can render Custom Components. Use a Custom Component when the built-in items do not cover your use case, for example to trigger grid actions (auto-sizing, exporting, resetting columns), open tool panels, or reflect external state.
 
 A Custom Toolbar Item is passed via the `toolbarItem` property of a Toolbar Item definition, alongside an optional `key`, `alignment`, `display` and `toolbarItemParams` object for passing custom props.
 
@@ -119,9 +109,12 @@ const gridOptions = {
     toolbar: {
         items: [
             {
-                key: 'analyseByCountry',
-                toolbarItem: CustomToolbarItem,
-                toolbarItemParams: { /* any custom props */ },
+                key: 'autoSizeAll',
+                toolbarItem: CustomToolbarButton,
+                toolbarItemParams: {
+                    label: 'Auto Size All',
+                    onClick: (api) => api.autoSizeAllColumns(),
+                },
             },
         ],
     },
@@ -130,7 +123,7 @@ const gridOptions = {
 
 Custom Toolbar Item components implement the `IToolbarItemComp` interface. The component is responsible for creating its own DOM via `init(params)` / `getGui()`, cleaning up in `destroy()`, and optionally implementing `refresh(params)` to handle toolbar updates in place — returning `true` keeps the existing instance, while returning `false` (or omitting the method) causes the grid to destroy and recreate the item. Params passed to the component include the grid `api`, the item `key`, the resolved `display` mode, and any values supplied via `toolbarItemParams`.
 
-The example below demonstrates a Custom Toolbar Item that toggles a row grouping and filter state when clicked, using the grid API made available through the component params:
+The example below demonstrates a reusable Custom Toolbar Item that renders a button and invokes a user-supplied `onClick` handler with the grid `api`. The same component is instantiated multiple times with different `toolbarItemParams` to drive common grid actions such as auto-sizing columns, opening tool panels, exporting data, and resetting column state.
 
 {% gridExampleRunner title="Custom Toolbar Item" name="toolbar-simple" /%}
 

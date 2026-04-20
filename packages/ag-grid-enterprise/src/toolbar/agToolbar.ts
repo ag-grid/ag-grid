@@ -30,16 +30,9 @@ import {
 import agToolbarCSS from './agToolbar.css';
 
 const BUILT_IN_ITEMS: Record<string, ToolbarItemComponentName> = {
-    autoSizeAll: 'agAutoSizeAllToolbarItem',
-    columnChooser: 'agColumnChooserToolbarItem',
-    columnsPanel: 'agColumnsPanelToolbarItem',
-    csvExport: 'agCsvExportToolbarItem',
-    excelExport: 'agExcelExportToolbarItem',
-    filtersPanel: 'agFiltersPanelToolbarItem',
     find: 'agFindToolbarItem',
     pivotPanel: 'agPivotPanelToolbarItem',
     quickFilter: 'agQuickFilterToolbarItem',
-    resetColumns: 'agResetColumnsToolbarItem',
     rowGroupPanel: 'agRowGroupPanelToolbarItem',
 };
 

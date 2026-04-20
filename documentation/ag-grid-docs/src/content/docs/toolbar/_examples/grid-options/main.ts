@@ -1,82 +1,41 @@
 import type { GridApi, GridOptions, Toolbar } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
-    ColumnAutoSizeModule,
-    CsvExportModule,
     ModuleRegistry,
     QuickFilterModule,
     TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import {
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    ExcelExportModule,
-    FiltersToolPanelModule,
-    FindModule,
-    NewFiltersToolPanelModule,
-    SideBarModule,
-    ToolbarModule,
-} from 'ag-grid-enterprise';
+import { FindModule, PivotModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     TextFilterModule,
     ClientSideRowModelModule,
-    ColumnAutoSizeModule,
-    CsvExportModule,
     QuickFilterModule,
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    ExcelExportModule,
-    FiltersToolPanelModule,
     FindModule,
-    NewFiltersToolPanelModule,
-    SideBarModule,
+    PivotModule,
+    RowGroupingModule,
+    RowGroupingPanelModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
 const fullToolbar: Toolbar = {
     items: [
+        'rowGroupPanel',
+        'pivotPanel',
+        { toolbarItem: 'find', alignment: 'right' },
         { toolbarItem: 'quickFilter', alignment: 'right' },
-        'separator',
-        { toolbarItem: 'columnChooser', alignment: 'right' },
-        { toolbarItem: 'autoSizeAll', alignment: 'right' },
-        'separator',
-        { toolbarItem: 'columnsPanel', alignment: 'right' },
-        { toolbarItem: 'filtersPanel', alignment: 'right' },
-        'separator',
-        { toolbarItem: 'csvExport', alignment: 'right' },
-        { toolbarItem: 'excelExport', alignment: 'right' },
-        'separator',
-        { toolbarItem: 'resetColumns', alignment: 'right' },
     ],
 };
 
-const compactToolbar: Toolbar = {
-    items: [
-        { toolbarItem: 'columnChooser', alignment: 'right' },
-        { toolbarItem: 'autoSizeAll', alignment: 'right' },
-        'separator',
-        { toolbarItem: 'columnsPanel', alignment: 'right' },
-        { toolbarItem: 'filtersPanel', alignment: 'right' },
-        'separator',
-        { toolbarItem: 'csvExport', alignment: 'right' },
-        { toolbarItem: 'excelExport', alignment: 'right' },
-        'separator',
-        { toolbarItem: 'resetColumns', alignment: 'right' },
-    ],
+const findOnlyToolbar: Toolbar = {
+    items: [{ toolbarItem: 'find', alignment: 'right' }],
 };
 
-const minimalToolbar: Toolbar = {
-    items: [
-        { toolbarItem: 'autoSizeAll', alignment: 'right' },
-        { toolbarItem: 'resetColumns', alignment: 'right' },
-        'separator',
-        { toolbarItem: 'csvExport', alignment: 'right' },
-        { toolbarItem: 'excelExport', alignment: 'right' },
-    ],
+const quickFilterOnlyToolbar: Toolbar = {
+    items: [{ toolbarItem: 'quickFilter', alignment: 'right' }],
 };
 
 let gridApi: GridApi<IOlympicData>;
@@ -99,11 +58,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         enableRowGroup: true,
         enablePivot: true,
     },
-    enableFilterHandlers: true,
-    sideBar: {
-        toolPanels: ['columns', 'filters-new'],
-        defaultToolPanel: '',
-    },
     toolbar: fullToolbar,
 };
 
@@ -111,12 +65,12 @@ function setFullToolbar() {
     gridApi.setGridOption('toolbar', fullToolbar);
 }
 
-function setCompactToolbar() {
-    gridApi.setGridOption('toolbar', compactToolbar);
+function setFindOnlyToolbar() {
+    gridApi.setGridOption('toolbar', findOnlyToolbar);
 }
 
-function setMinimalToolbar() {
-    gridApi.setGridOption('toolbar', minimalToolbar);
+function setQuickFilterOnlyToolbar() {
+    gridApi.setGridOption('toolbar', quickFilterOnlyToolbar);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

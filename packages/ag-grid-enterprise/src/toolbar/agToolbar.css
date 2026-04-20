@@ -49,16 +49,6 @@
     pointer-events: none;
 }
 
-.ag-toolbar-button-icon {
-    display: inline-flex;
-    align-items: center;
-}
-
-.ag-toolbar-button-label {
-    white-space: nowrap;
-    font-size: var(--ag-font-size);
-}
-
 .ag-toolbar-panel {
     display: inline-flex;
     flex: 1;

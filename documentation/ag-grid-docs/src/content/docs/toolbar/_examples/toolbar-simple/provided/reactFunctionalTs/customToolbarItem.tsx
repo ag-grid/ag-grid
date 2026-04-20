@@ -1,29 +1,28 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 
-import type { IToolbarItemParams } from 'ag-grid-community';
+import type { GridApi, IToolbarItemParams } from 'ag-grid-community';
 
-export default (props: IToolbarItemParams) => {
-    const [active, setActive] = useState(false);
+interface CustomToolbarButtonProps extends IToolbarItemParams {
+    label: string;
+    onClick: (api: GridApi) => void;
+}
 
-    const onClick = useCallback(() => {
-        const { api } = props;
-        const next = !active;
-        setActive(next);
+export default (props: CustomToolbarButtonProps) => {
+    const { api, label, onClick } = props;
 
-        if (next) {
-            api.setRowGroupColumns(['country']);
-            api.setFilterModel({ year: { filterType: 'number', type: 'equals', filter: 2008 } });
-        } else {
-            api.setRowGroupColumns([]);
-            api.setFilterModel(null);
-        }
-    }, [active, props]);
+    const handleClick = useCallback(() => {
+        onClick(api);
+    }, [api, onClick]);
 
     return (
-        <div className="ag-toolbar-item">
-            <button className="ag-button ag-standard-button" onClick={onClick}>
-                {active ? 'Clear Analysis' : 'Analyse by Country'}
-            </button>
-        </div>
+        <button
+            className="ag-toolbar-item ag-toolbar-button"
+            type="button"
+            onClick={handleClick}
+            title={label}
+            aria-label={label}
+        >
+            {label}
+        </button>
     );
 };

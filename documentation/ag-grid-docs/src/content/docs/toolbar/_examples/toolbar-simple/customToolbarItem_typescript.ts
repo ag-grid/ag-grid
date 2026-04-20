@@ -1,26 +1,27 @@
-import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
+import type { GridApi, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
 
-export class CustomToolbarItem implements IToolbarItemComp {
-    params!: IToolbarItemParams;
-    eGui!: HTMLDivElement;
-    eButton!: HTMLButtonElement;
+export interface CustomToolbarButtonParams extends IToolbarItemParams {
+    label: string;
+    onClick: (api: GridApi) => void;
+}
+
+export class CustomToolbarButton implements IToolbarItemComp {
+    params!: CustomToolbarButtonParams;
+    eGui!: HTMLButtonElement;
     buttonListener: any;
-    active = false;
 
-    init(params: IToolbarItemParams) {
+    init(params: CustomToolbarButtonParams) {
         this.params = params;
 
-        this.eGui = document.createElement('div');
-        this.eGui.className = 'ag-toolbar-item';
+        this.eGui = document.createElement('button');
+        this.eGui.type = 'button';
+        this.eGui.className = 'ag-toolbar-item ag-toolbar-button';
+        this.eGui.textContent = params.label;
+        this.eGui.title = params.label;
+        this.eGui.setAttribute('aria-label', params.label);
 
-        this.eButton = document.createElement('button');
-        this.eButton.className = 'ag-button ag-standard-button';
-        this.eButton.textContent = 'Analyse by Country';
-
-        this.buttonListener = this.onButtonClicked.bind(this);
-        this.eButton.addEventListener('click', this.buttonListener);
-
-        this.eGui.appendChild(this.eButton);
+        this.buttonListener = () => this.params.onClick(this.params.api);
+        this.eGui.addEventListener('click', this.buttonListener);
     }
 
     getGui() {
@@ -28,21 +29,6 @@ export class CustomToolbarItem implements IToolbarItemComp {
     }
 
     destroy() {
-        this.eButton.removeEventListener('click', this.buttonListener);
-    }
-
-    onButtonClicked() {
-        const { api } = this.params;
-        this.active = !this.active;
-
-        if (this.active) {
-            api.setRowGroupColumns(['country']);
-            api.setFilterModel({ year: { filterType: 'number', type: 'equals', filter: 2008 } });
-            this.eButton.textContent = 'Clear Analysis';
-        } else {
-            api.setRowGroupColumns([]);
-            api.setFilterModel(null);
-            this.eButton.textContent = 'Analyse by Country';
-        }
+        this.eGui.removeEventListener('click', this.buttonListener);
     }
 }

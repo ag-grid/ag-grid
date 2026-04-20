@@ -1,18 +1,36 @@
-import React, { StrictMode, useEffect, useMemo, useState } from 'react';
+import React, { StrictMode, useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, Toolbar } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
-import { RowGroupingModule, ToolbarModule } from 'ag-grid-enterprise';
+import type { ColDef, GridApi, Toolbar } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnAutoSizeModule,
+    CsvExportModule,
+    TextFilterModule,
+    ValidationModule,
+} from 'ag-grid-community';
+import {
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    ExcelExportModule,
+    FiltersToolPanelModule,
+    SideBarModule,
+    ToolbarModule,
+} from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import CustomToolbarItem from './customToolbarItem';
+import CustomToolbarButton from './customToolbarItem';
 
 const modules = [
     TextFilterModule,
-    NumberFilterModule,
     ClientSideRowModelModule,
-    RowGroupingModule,
+    ColumnAutoSizeModule,
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    CsvExportModule,
+    ExcelExportModule,
+    FiltersToolPanelModule,
+    SideBarModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ];
@@ -27,12 +45,13 @@ const GridExample = () => {
             .then((response) => response.json())
             .then((data) => setRowData(data));
     }, []);
+
     const columnDefs = useMemo<ColDef[]>(
         () => [
             { field: 'athlete', minWidth: 200 },
             { field: 'country', minWidth: 200 },
             { field: 'sport', minWidth: 200 },
-            { field: 'year', filter: 'agNumberColumnFilter' },
+            { field: 'year' },
             { field: 'gold' },
             { field: 'silver' },
             { field: 'bronze' },
@@ -48,15 +67,76 @@ const GridExample = () => {
         }),
         []
     );
-    const autoGroupColumnDef = useMemo<ColDef>(
-        () => ({
-            minWidth: 200,
-        }),
-        []
-    );
+    const sideBar = useMemo(() => ({ toolPanels: ['columns', 'filters'], defaultToolPanel: '' }), []);
     const toolbar = useMemo<Toolbar>(
         () => ({
-            items: [{ toolbarItem: CustomToolbarItem, key: 'analyseByCountry' }],
+            items: [
+                {
+                    toolbarItem: CustomToolbarButton,
+                    key: 'autoSizeAll',
+                    toolbarItemParams: {
+                        label: 'Auto Size All',
+                        onClick: (api: GridApi) => api.autoSizeAllColumns(),
+                    },
+                },
+                {
+                    toolbarItem: CustomToolbarButton,
+                    key: 'columnChooser',
+                    toolbarItemParams: {
+                        label: 'Choose Columns',
+                        onClick: (api: GridApi) => api.showColumnChooser(),
+                    },
+                },
+                'separator',
+                {
+                    toolbarItem: CustomToolbarButton,
+                    key: 'columnsPanel',
+                    toolbarItemParams: {
+                        label: 'Columns Panel',
+                        onClick: (api: GridApi) =>
+                            api.getOpenedToolPanel() === 'columns'
+                                ? api.closeToolPanel()
+                                : api.openToolPanel('columns'),
+                    },
+                },
+                {
+                    toolbarItem: CustomToolbarButton,
+                    key: 'filtersPanel',
+                    toolbarItemParams: {
+                        label: 'Filters Panel',
+                        onClick: (api: GridApi) =>
+                            api.getOpenedToolPanel() === 'filters'
+                                ? api.closeToolPanel()
+                                : api.openToolPanel('filters'),
+                    },
+                },
+                'separator',
+                {
+                    toolbarItem: CustomToolbarButton,
+                    key: 'csvExport',
+                    toolbarItemParams: {
+                        label: 'CSV Export',
+                        onClick: (api: GridApi) => api.exportDataAsCsv(),
+                    },
+                },
+                {
+                    toolbarItem: CustomToolbarButton,
+                    key: 'excelExport',
+                    toolbarItemParams: {
+                        label: 'Excel Export',
+                        onClick: (api: GridApi) => api.exportDataAsExcel(),
+                    },
+                },
+                'separator',
+                {
+                    toolbarItem: CustomToolbarButton,
+                    key: 'resetColumns',
+                    toolbarItemParams: {
+                        label: 'Reset Columns',
+                        onClick: (api: GridApi) => api.resetColumnState(),
+                    },
+                },
+            ],
         }),
         []
     );
@@ -69,7 +149,7 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        autoGroupColumnDef={autoGroupColumnDef}
+                        sideBar={sideBar}
                         toolbar={toolbar}
                     />
                 </div>

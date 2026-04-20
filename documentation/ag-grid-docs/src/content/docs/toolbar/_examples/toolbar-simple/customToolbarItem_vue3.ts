@@ -1,28 +1,18 @@
 export default {
     template: `
-        <div class="ag-toolbar-item">
-            <button class="ag-button ag-standard-button" @click="onClick">
-                {{ active ? 'Clear Analysis' : 'Analyse by Country' }}
-            </button>
-        </div>
+        <button
+            class="ag-toolbar-item ag-toolbar-button"
+            type="button"
+            :title="params.label"
+            :aria-label="params.label"
+            @click="onClick"
+        >
+            {{ params.label }}
+        </button>
     `,
-    data() {
-        return {
-            active: false,
-        };
-    },
     methods: {
         onClick() {
-            const { api } = this.params;
-            this.active = !this.active;
-
-            if (this.active) {
-                api.setRowGroupColumns(['country']);
-                api.setFilterModel({ year: { filterType: 'number', type: 'equals', filter: 2008 } });
-            } else {
-                api.setRowGroupColumns([]);
-                api.setFilterModel(null);
-            }
+            this.params.onClick(this.params.api);
         },
     },
 };
