@@ -93,7 +93,27 @@ const gridOptions = {
 
 ## Custom Components
 
-Custom Toolbar Item components implement the `IToolbarItemComp` interface.
+In addition to the built-in items, the Toolbar can render Custom Components. Use a Custom Component when the built-in items do not cover your use case, for example to trigger application-specific actions, surface a bespoke control, or reflect external state.
+
+A Custom Toolbar Item is passed via the `toolbarItem` property of a Toolbar Item definition, alongside an optional `key`, `alignment`, `display` and `toolbarItemParams` object for passing custom props.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: [
+            {
+                key: 'analyseByCountry',
+                toolbarItem: CustomToolbarItem,
+                toolbarItemParams: { /* any custom props */ },
+            },
+        ],
+    },
+}
+```
+
+Custom Toolbar Item components implement the `IToolbarItemComp` interface. The component is responsible for creating its own DOM via `init(params)` / `getGui()`, cleaning up in `destroy()`, and optionally implementing `refresh(params)` to handle toolbar updates in place — returning `true` keeps the existing instance, while returning `false` (or omitting the method) causes the grid to destroy and recreate the item. Params passed to the component include the grid `api`, the item `key`, the resolved `display` mode, and any values supplied via `toolbarItemParams`.
+
+The example below demonstrates a Custom Toolbar Item that toggles a row grouping and filter state when clicked, using the grid API made available through the component params:
 
 {% gridExampleRunner title="Custom Toolbar Item" name="toolbar-simple" /%}
 
