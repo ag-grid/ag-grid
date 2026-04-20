@@ -52,9 +52,9 @@ The following built-in items are available as string shorthands:
 -   `find`: A text input that searches within grid cells using the Find feature. Displays the current match count and provides Previous/Next navigation buttons. Use Enter to navigate to the next match and Shift+Enter for the previous match. Requires `FindModule`.
 -   `menu`: A dropdown menu button with custom items. Requires `toolbarItemParams` with a `menuItems` array of `MenuItemDef`. Optionally set `label` (defaults to `'Menu'`) and `icon` (defaults to `'menu'`).
 -   `pivotPanel`: Embeds the Pivot Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `pivotPanelShow` grid option — if both are set, both will render.
+-   `rowGroupPanel`: Embeds the Row Group Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `rowGroupPanelShow` grid option — if both are set, both will render.
 -   `quickFilter`: A text input that filters grid rows using the Quick Filter. Requires `QuickFilterModule`.
 -   `resetColumns`: Resets all columns to their default state.
--   `rowGroupPanel`: Embeds the Row Group Panel in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `rowGroupPanelShow` grid option — if both are set, both will render.
 
 Built-in items require their corresponding modules to be registered. If a required module is not registered, the item will not render and a console warning will be logged.
 
