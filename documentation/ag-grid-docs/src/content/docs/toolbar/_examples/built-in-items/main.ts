@@ -1,20 +1,22 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    ColumnAutoSizeModule,
     ModuleRegistry,
     NumberFilterModule,
-    QuickFilterModule,
     TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
 import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
 
+import { CustomToolbarButton } from './customToolbarItem_typescript';
+
 ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
-    QuickFilterModule,
+    ColumnAutoSizeModule,
     FindModule,
     RowGroupingModule,
     RowGroupingPanelModule,
@@ -45,7 +47,26 @@ const gridOptions: GridOptions<IOlympicData> = {
         items: [
             'rowGroupPanel',
             { toolbarItem: 'find', alignment: 'right' },
-            { toolbarItem: 'quickFilter', alignment: 'right' },
+            {
+                toolbarItem: CustomToolbarButton,
+                key: 'autoSizeAll',
+                alignment: 'right',
+                toolbarItemParams: {
+                    label: 'Auto Size All',
+                    icon: 'maximize',
+                    onClick: (api: GridApi) => api.autoSizeAllColumns(),
+                },
+            },
+            {
+                toolbarItem: CustomToolbarButton,
+                key: 'resetColumns',
+                alignment: 'right',
+                toolbarItemParams: {
+                    label: 'Reset Columns',
+                    icon: 'minimize',
+                    onClick: (api: GridApi) => api.resetColumnState(),
+                },
+            },
         ],
     },
 };
