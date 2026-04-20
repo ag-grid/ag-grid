@@ -799,11 +799,7 @@ describe('Cell Editing: full-row batch styles', () => {
         });
     });
 
-    test('commitBatchEdit clears styles when Enter closed editors on an unchanged row (AG-15609)', async () => {
-        // Repro: after Enter closed editors on a row with no pending changes,
-        // `FullRowEditStrategy.stopCommitted` used to early-return because
-        // `this.rowNode` pointed at a row whose UNEDITED entries had just been
-        // purged — leaving stale batch styles on previously-edited rows.
+    test('commitBatchEdit clears styles when Enter closed editors on an unchanged row', async () => {
         const api = await createGrid();
         const eventTracker = new EditEventTracker(api);
         const gridDiv = getGridElement(api)! as HTMLElement;
@@ -867,7 +863,78 @@ describe('Cell Editing: full-row batch styles', () => {
         });
     });
 
-    test('cancelBatchEdit clears styles when Enter closed editors on an unchanged row (AG-15609)', async () => {
+    test('commitBatchEdit persists every pending row after Enter on an unchanged row', async () => {
+        const api = await createGrid();
+        const eventTracker = new EditEventTracker(api);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const user = userEvent.setup({ skipHover: true });
+        await asyncSetTimeout(0);
+
+        api.startBatchEdit();
+
+        // Edit row 0, column a
+        const cellA0 = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+        await user.click(cellA0);
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        let input = await waitForInput(gridDiv, cellA0);
+        await user.clear(input);
+        await user.type(input, 'R0_NEW');
+
+        // Tab through col b of row 0 into row 1 col a
+        await user.keyboard('{Tab}');
+        await asyncSetTimeout(0);
+        await user.keyboard('{Tab}');
+        await asyncSetTimeout(0);
+
+        // Edit row 1, column a
+        const cellA1 = getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'a'));
+        input = await waitForInput(gridDiv, cellA1);
+        await user.clear(input);
+        await user.type(input, 'R1_NEW');
+
+        // Tab through col b of row 1 into row 2 col a (no changes on row 2)
+        await user.keyboard('{Tab}');
+        await asyncSetTimeout(0);
+        await user.keyboard('{Tab}');
+        await asyncSetTimeout(0);
+
+        // Press Enter on row 2 — purges row 2's UNEDITED entries while leaving
+        // `this.rowNode` pointing at row 2.
+        await user.keyboard('{Enter}');
+        await asyncSetTimeout(0);
+
+        // Sanity: rows 0 and 1 still carry pending styles
+        expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'))).toHaveClass(/ag-cell-batch-edit/);
+        expect(getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'a'))).toHaveClass(/ag-cell-batch-edit/);
+
+        api.commitBatchEdit();
+        await asyncSetTimeout(0);
+
+        // Both previously-edited rows must have styles cleared
+        const cellA0After = getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'a'));
+        expect(cellA0After).toHaveTextContent('R0_NEW');
+        expect(cellA0After).not.toHaveClass(/ag-cell-batch-edit/);
+        expect(cellA0After.closest('[row-index="0"]')).not.toHaveClass(/ag-row-batch-edit/);
+
+        const cellA1After = getByTestId(gridDiv, agTestIdFor.cell('ROW_1', 'a'));
+        expect(cellA1After).toHaveTextContent('R1_NEW');
+        expect(cellA1After).not.toHaveClass(/ag-cell-batch-edit/);
+        expect(cellA1After.closest('[row-index="1"]')).not.toHaveClass(/ag-row-batch-edit/);
+
+        // Data persisted for rows 0 and 1, row 2 untouched
+        const rowData = api.getGridOption('rowData')!;
+        expect(rowData[0].a).toBe('R0_NEW');
+        expect(rowData[1].a).toBe('R1_NEW');
+        expect(rowData[2].a).toBe('A2');
+
+        // rowValueChanged and cellValueChanged fire once per changed row
+        expect(eventTracker.counts.batchEditingStarted).toBe(1);
+        expect(eventTracker.counts.batchEditingStopped).toBe(1);
+        expect(eventTracker.counts.cellValueChanged).toBe(2);
+        expect(eventTracker.counts.rowValueChanged).toBe(2);
+    });
+
+    test('cancelBatchEdit clears styles when Enter closed editors on an unchanged row', async () => {
         // Symmetric case to the commit repro: after Enter purged the tracked row's UNEDITED
         // entries, cancelBatchEdit must still revert data and clear styles on previously-edited rows.
         const api = await createGrid();
