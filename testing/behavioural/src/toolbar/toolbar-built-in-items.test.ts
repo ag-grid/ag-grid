@@ -157,6 +157,9 @@ describe('Toolbar Built-in Items', () => {
             input.value = 'Alice';
             input.dispatchEvent(new Event('input'));
 
+            // Input is debounced; wait past the debounce window before asserting
+            await new Promise<void>((resolve) => setTimeout(resolve, 350));
+
             expect(api.getGridOption('quickFilterText')).toBe('Alice');
         });
     });
@@ -195,6 +198,9 @@ describe('Toolbar Built-in Items', () => {
             const input = gridDiv.querySelector<HTMLInputElement>('.ag-toolbar-input-field')!;
             input.value = 'Alice';
             input.dispatchEvent(new Event('input'));
+
+            // Input is debounced; wait past the debounce window before asserting
+            await new Promise<void>((resolve) => setTimeout(resolve, 350));
 
             expect(api.getGridOption('findSearchValue')).toBe('Alice');
         });
@@ -392,6 +398,118 @@ describe('Toolbar Built-in Items', () => {
             );
 
             warnSpy.mockRestore();
+        });
+    });
+
+    describe('runtime updates via setGridOption', () => {
+        test('adds items when toolbar items are populated at runtime', async () => {
+            // Start with an empty items array so the AG-TOOLBAR element is registered up-front
+            // (the optional selector is evaluated once at grid creation based on whether `toolbar` is set).
+            const api = gridMgr.createGrid('runtime-add-items', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: [] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+            expect(toolbar.querySelector('.ag-toolbar-input-field')).toBeNull();
+
+            api.setGridOption('toolbar', { items: ['quickFilter'] });
+
+            expect(toolbar.querySelector('.ag-toolbar-input-field')).not.toBeNull();
+        });
+
+        test('replaces items when toolbar is updated at runtime', async () => {
+            const api = gridMgr.createGrid('runtime-replace-items', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['quickFilter'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+            expect(toolbar.querySelector('.ag-toolbar-input-field')).not.toBeNull();
+
+            api.setGridOption('toolbar', { items: ['find'] });
+
+            const inputs = toolbar.querySelectorAll<HTMLInputElement>('.ag-toolbar-input-field');
+            expect(inputs).toHaveLength(1);
+            expect(inputs[0].placeholder).toBe('Find...');
+        });
+
+        test('clears items when toolbar items are emptied at runtime', async () => {
+            const api = gridMgr.createGrid('runtime-clear-items', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['quickFilter', 'find'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+            expect(toolbar.querySelectorAll('.ag-toolbar-input-field')).toHaveLength(2);
+
+            api.setGridOption('toolbar', { items: [] });
+
+            expect(toolbar.querySelectorAll('.ag-toolbar-input-field')).toHaveLength(0);
+        });
+
+        test('updates alignment when toolbar alignment changes at runtime', async () => {
+            const api = gridMgr.createGrid('runtime-alignment', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    alignment: 'left',
+                    items: ['quickFilter', 'find'],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+            expect(toolbar.querySelector('.ag-toolbar-right-start')).toBeNull();
+
+            api.setGridOption('toolbar', {
+                alignment: 'right',
+                items: ['quickFilter', 'find'],
+            });
+
+            // right-start marker appears before the first right-aligned item
+            const rightStart = toolbar.querySelector('.ag-toolbar-right-start');
+            expect(rightStart).not.toBeNull();
+            expect(toolbar.firstElementChild).toBe(rightStart);
+        });
+
+        test('rapid consecutive updates converge on the final configuration', async () => {
+            const api = gridMgr.createGrid('runtime-rapid-updates', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['quickFilter'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+
+            // Three rapid rebuilds: any in-flight resolves from earlier generations must not leak into the DOM
+            api.setGridOption('toolbar', { items: ['find'] });
+            api.setGridOption('toolbar', { items: ['quickFilter', 'find'] });
+            api.setGridOption('toolbar', { items: ['find'] });
+
+            // Give any pending async promises a chance to resolve
+            await new Promise<void>((resolve) => setTimeout(resolve, 0));
+
+            const inputs = toolbar.querySelectorAll<HTMLInputElement>('.ag-toolbar-input-field');
+            expect(inputs).toHaveLength(1);
+            expect(inputs[0].placeholder).toBe('Find...');
         });
     });
 

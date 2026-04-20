@@ -94,6 +94,8 @@ class AgToolbar extends Component implements FocusableContainer {
     private userCompFactory: UserComponentFactory;
     private readonly toolbarItems: Map<string, IToolbarItemComp> = new Map();
     private customKeyCounter: number = 0;
+    // Incremented on each rebuild so stale async resolves from a previous generation can be discarded
+    private generation: number = 0;
 
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
@@ -231,16 +233,20 @@ class AgToolbar extends Component implements FocusableContainer {
             }
         }
 
-        this.createAndRenderComponents([...leftItems, ...rightItems], leftItems.length, defaultDisplay);
+        const generation = ++this.generation;
+        this.createAndRenderComponents([...leftItems, ...rightItems], leftItems.length, defaultDisplay, generation);
     }
 
     private updateToolbar(): void {
+        // Bump generation before destroying so any in-flight resolves are invalidated immediately
+        this.generation++;
         _clearElement(this.getGui());
         this.destroyToolbarItems();
         this.processToolbarItems();
     }
 
     public override destroy(): void {
+        this.generation++;
         this.destroyToolbarItems();
         super.destroy();
     }
@@ -263,7 +269,8 @@ class AgToolbar extends Component implements FocusableContainer {
     private createAndRenderComponents(
         toolbarItems: ToolbarItemDef[],
         rightStartIndex: number,
-        defaultDisplay: ToolbarDisplay
+        defaultDisplay: ToolbarDisplay,
+        generation: number
     ): void {
         const eContainer = this.getGui();
         const hasRightItems = rightStartIndex < toolbarItems.length;
@@ -302,11 +309,27 @@ class AgToolbar extends Component implements FocusableContainer {
                 continue;
             }
 
-            compDetails.newAgStackInstance().then((component) => this.mountComponent(key, component, placeholder));
+            compDetails
+                .newAgStackInstance()
+                .then((component) => this.mountComponent(key, component, placeholder, generation));
         }
     }
 
-    private mountComponent(key: string, component: IToolbarItemComp | null, placeholder: HTMLElement): void {
+    private mountComponent(
+        key: string,
+        component: IToolbarItemComp | null,
+        placeholder: HTMLElement,
+        generation: number
+    ): void {
+        // Stale resolve from a previous rebuild — discard and clean up
+        if (generation !== this.generation) {
+            _removeFromParent(placeholder);
+            if (component != null) {
+                this.destroyBean(component);
+            }
+            return;
+        }
+
         if (component == null) {
             _removeFromParent(placeholder);
             return;
@@ -326,7 +349,9 @@ class AgToolbar extends Component implements FocusableContainer {
         if (component instanceof Component) {
             // Toggle display instead of removing from DOM to preserve order
             gui.style.display = component.isDisplayed() ? '' : 'none';
-            this.addManagedListeners(component, {
+            // Bind to the item's own lifecycle so the listener is cleaned up when the item is destroyed,
+            // rather than accumulating on the toolbar across rebuilds.
+            component.addManagedListeners(component, {
                 displayChanged: () => {
                     gui.style.display = component.isDisplayed() ? '' : 'none';
                 },
