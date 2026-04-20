@@ -94,7 +94,7 @@ class AgToolbar extends Component implements FocusableContainer {
     public postConstruct(): void {
         const eGui = this.getGui();
 
-        this.processToolbarItems(new Map());
+        this.processToolbarItems();
         this.addManagedPropertyListeners(['toolbar'], this.updateToolbar.bind(this));
 
         this.createManagedBean(
@@ -192,7 +192,7 @@ class AgToolbar extends Component implements FocusableContainer {
         });
     }
 
-    private processToolbarItems(existingItemsToReuse: Map<string, IToolbarItemComp>): void {
+    private processToolbarItems(): void {
         const toolbar = this.gos.get('toolbar');
         const items = this.getValidItems(toolbar);
         const validItemsProvided = Array.isArray(items) && items.length > 0;
@@ -217,43 +217,13 @@ class AgToolbar extends Component implements FocusableContainer {
             }
         }
 
-        this.createAndRenderComponents(
-            [...leftItems, ...rightItems],
-            leftItems.length,
-            existingItemsToReuse,
-            defaultDisplay
-        );
+        this.createAndRenderComponents([...leftItems, ...rightItems], leftItems.length, defaultDisplay);
     }
 
     private updateToolbar(): void {
-        const toolbar = this.gos.get('toolbar');
-        const items = this.getValidItems(toolbar);
-        const existingItemsToReuse: Map<string, IToolbarItemComp> = new Map();
-        const defaultDisplay: ToolbarDisplay = toolbar?.display ?? 'icon';
-
-        if (Array.isArray(items) && items.length > 0) {
-            for (const itemConfig of items) {
-                const key = itemConfig.key ?? itemConfig.toolbarItem;
-                const existingItem = this.toolbarItems.get(key);
-                if (existingItem?.refresh) {
-                    const newParams = this.createItemParams(itemConfig, key, defaultDisplay);
-                    const hasRefreshed = existingItem.refresh(newParams);
-                    if (hasRefreshed) {
-                        existingItemsToReuse.set(key, existingItem);
-                        this.toolbarItems.delete(key);
-                        _removeFromParent(existingItem.getGui());
-                    }
-                }
-            }
-        }
-
-        this.resetToolbar();
-        this.processToolbarItems(existingItemsToReuse);
-    }
-
-    private resetToolbar(): void {
         _clearElement(this.getGui());
         this.destroyToolbarItems();
+        this.processToolbarItems();
     }
 
     public override destroy(): void {
@@ -279,7 +249,6 @@ class AgToolbar extends Component implements FocusableContainer {
     private createAndRenderComponents(
         toolbarItems: ToolbarItemDef[],
         rightStartIndex: number,
-        existingItemsToReuse: Map<string, IToolbarItemComp>,
         defaultDisplay: ToolbarDisplay
     ): void {
         const eContainer = this.getGui();
@@ -304,17 +273,8 @@ class AgToolbar extends Component implements FocusableContainer {
                 continue;
             }
 
-            const existingItem = existingItemsToReuse.get(key);
-
             const placeholder = _createElement({ tag: 'div' });
             eContainer.appendChild(placeholder);
-
-            if (existingItem) {
-                // Reused item already has a display listener — just re-insert into DOM
-                placeholder.replaceWith(existingItem.getGui());
-                this.toolbarItems.set(key, existingItem);
-                continue;
-            }
 
             const compDetails = getToolbarItemCompDetails(
                 this.userCompFactory,
