@@ -43,14 +43,15 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     toolbar: {
+        alignment: 'right',
         items: [
-            'find',
-            { toolbarItem: 'autoSizeAll', alignment: 'right' },
+            { toolbarItem: 'find', alignment: 'left' },
+            'autoSizeAll',
             'separator',
-            { toolbarItem: 'csvExport', alignment: 'right' },
-            { toolbarItem: 'excelExport', alignment: 'right' },
+            'csvExport',
+            'excelExport',
             'separator',
-            { toolbarItem: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
+            { toolbarItem: 'resetColumns', display: 'iconAndLabel' },
         ],
     },
 };
