@@ -15,7 +15,7 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
     beanName = 'rowGroupingEditValueSvc' as const;
 
     public isGroupCellEditable(rowNode: IRowNode, column: AgColumn): boolean {
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         if (!column.isColumnFunc(rowNode, colDef.groupRowEditable)) {
             return false;
@@ -51,7 +51,7 @@ export class RowGroupingEditValueSvc extends BeanStub implements NamedBean, _IRo
         eventSource: string | undefined,
         valueChanged: boolean
     ): boolean | undefined {
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         // Resolve groupRowValueSetter: true or groupRowEditable → built-in distributeGroupValue,
         // false → explicitly disabled, function/object → as-is.

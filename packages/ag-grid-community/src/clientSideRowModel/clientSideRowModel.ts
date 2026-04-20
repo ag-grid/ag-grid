@@ -887,7 +887,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public forEachPivotNode(callback: ForEachNodeCallback, includeFooterNodes?: boolean, afterSort?: boolean): void {
         const { colModel, rowGroupColsSvc } = this.beans;
-        if (!colModel.isPivotMode()) {
+        if (!colModel.pivotMode) {
             return;
         }
 

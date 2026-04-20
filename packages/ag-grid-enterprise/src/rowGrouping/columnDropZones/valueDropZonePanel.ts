@@ -37,7 +37,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
 
     protected isItemDroppable(column: AgColumn, draggingEvent: GridDraggingEvent): boolean {
         // we never allow grouping of secondary columns
-        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gos.get('functionsReadOnly') || !column.primary) {
             return false;
         }
 

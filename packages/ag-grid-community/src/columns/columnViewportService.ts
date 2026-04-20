@@ -233,7 +233,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
             const groupsToRender: { [row: number]: AgColumnGroup[] } = {};
 
             for (const col of cols) {
-                let group = col.getParent();
+                let group = col.parent;
                 const skipFillers = col.isSpanHeaderHeight();
 
                 while (group) {
@@ -245,7 +245,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
                     const skipFillerGroup = skipFillers && group.isPadding();
                     if (skipFillerGroup) {
-                        group = group.getParent();
+                        group = group.parent;
                         continue;
                     }
 
@@ -254,7 +254,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
                     groupsToRender[level] ??= [];
                     groupsToRender[level].push(group);
                     groupsToRenderSet.add(group);
-                    group = group.getParent();
+                    group = group.parent;
                 }
             }
 
@@ -287,7 +287,7 @@ function isAnyParentAutoHeaderHeight(col: AgColumn | AgColumnGroup | null): bool
         if (col.isAutoHeaderHeight()) {
             return true;
         }
-        col = col.getParent();
+        col = col.parent;
     }
 
     return false;

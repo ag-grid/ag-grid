@@ -340,7 +340,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private setupClassesFromColDef(): void {
         const refreshHeaderClasses = () => {
-            const colDef = this.column.getColDef();
+            const colDef = this.column.colDef;
             const classes = _getHeaderClassesFromColDef(colDef, this.gos, this.column, null);
 
             const oldClasses = this.userHeaderClasses;
@@ -451,7 +451,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private workOutDraggable(): boolean {
-        const colDef = this.column.getColDef();
+        const colDef = this.column.colDef;
         const isSuppressMovableColumns = this.gos.get('suppressMovableColumns');
 
         const colCanMove = !isSuppressMovableColumns && !colDef.suppressMovable && !colDef.lockPosition;

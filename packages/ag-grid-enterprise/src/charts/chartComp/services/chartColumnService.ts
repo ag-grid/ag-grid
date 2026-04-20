@@ -55,7 +55,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public isPivotMode(): boolean {
-        return this.colModel.isPivotMode();
+        return this.colModel.pivotMode;
     }
 
     public isPivotActive(): boolean {
@@ -69,7 +69,7 @@ export class ChartColumnService extends BeanStub {
         const valueCols = new Set<AgColumn>();
 
         for (const col of gridCols) {
-            const colDef = col.getColDef();
+            const colDef = col.colDef;
             const chartDataType = colDef.chartDataType;
 
             if (chartDataType) {
@@ -95,7 +95,7 @@ export class ChartColumnService extends BeanStub {
                 continue;
             }
 
-            if (!col.isPrimary()) {
+            if (!col.primary) {
                 valueCols.add(col);
                 continue;
             }
@@ -108,7 +108,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     private isInferredValueCol(col: AgColumn): boolean {
-        const colId = col.getColId();
+        const colId = col.colId;
         if (colId === 'ag-Grid-AutoColumn') {
             return false;
         }

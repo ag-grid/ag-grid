@@ -246,7 +246,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
         // When in pivot mode, leafGroups cannot be expanded
-        if (node.leafGroup && this.colModel.isPivotMode()) {
+        if (node.leafGroup && this.colModel.pivotMode) {
             return false;
         }
         // node.expanded (getter with side effects) evaluated last
@@ -332,7 +332,7 @@ export class ValueService extends BeanStub implements NamedBean {
         newValue: TValueNew,
         oldValue: TValueOld
     ): TValue {
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         // we do not allow parsing of formulas
         if (colDef.allowFormula && this.beans.formula?.isFormula(newValue)) {
@@ -359,7 +359,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     public getDeleteValue(column: AgColumn, rowNode: IRowNode): any {
-        if (_exists(column.getColDef().valueParser)) {
+        if (_exists(column.colDef.valueParser)) {
             return (
                 this.parseValue(
                     column,
@@ -383,7 +383,7 @@ export class ValueService extends BeanStub implements NamedBean {
         let result: string | null = null;
         let formatter: ((value: any) => string) | string | undefined;
 
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         if (suppliedFormatter) {
             // use supplied formatter if provided, e.g. set filter items can have their own value formatters
@@ -428,7 +428,7 @@ export class ValueService extends BeanStub implements NamedBean {
      * @returns `true` if the value has been updated, otherwise `false`.
      */
     public setValue(rowNode: IRowNode, column: AgColumn, newValue: any, eventSource?: string): boolean {
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         if (!rowNode.data && this.canCreateRowNodeData(rowNode, colDef)) {
             rowNode.data = {}; // enableGroupEdit allows editing group rows without data.
@@ -568,12 +568,7 @@ export class ValueService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private isSetValueSupported(
-        column: AgColumn,
-        rowNode: IRowNode,
-        newValue: any,
-        colDef: ReturnType<AgColumn['getColDef']>
-    ): boolean {
+    private isSetValueSupported(column: AgColumn, rowNode: IRowNode, newValue: any, colDef: ColDef): boolean {
         const { field, valueSetter } = colDef;
 
         const formulaSvc = this.beans.formula;
@@ -625,7 +620,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
             // Store the computed value into rowData for consumers that do not understand formulas.
             const computedValue = formulaSvc?.resolveValue(column, rowNode as RowNode);
-            const colDef = column.getColDef();
+            const colDef = column.colDef;
             if (_exists(colDef.valueSetter) || !_missing(colDef.field)) {
                 const computedParams: ValueSetterParams = { ...setterParams, newValue: computedValue };
                 this.computeValueChange({
@@ -745,7 +740,7 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn,
         rowNode: IRowNode
     ): any {
-        const colId = column.getColId();
+        const colId = column.colId;
 
         const valueFromCache = this.valueCache!.getValue(rowNode as RowNode, colId);
         if (valueFromCache !== undefined) {
@@ -770,7 +765,7 @@ export class ValueService extends BeanStub implements NamedBean {
             data: data,
             node: rowNode,
             column: column,
-            colDef: column.getColDef(),
+            colDef: column.colDef,
             getValue: (field) => this.getValueCallback(rowNode, field),
         });
 
@@ -799,13 +794,13 @@ export class ValueService extends BeanStub implements NamedBean {
         // Use 'data' - grouping keys should be based on committed data, not pending edits.
         // Row structure should remain stable during editing; rows only move groups when edits are committed.
         const value = this.getValue(col, rowNode, 'data');
-        const keyCreator = col.getColDef().keyCreator;
+        const keyCreator = col.colDef.keyCreator;
 
         let result = value;
         if (keyCreator) {
             const keyParams: KeyCreatorParams = _addGridCommonParams(this.gos, {
                 value: value,
-                colDef: col.getColDef(),
+                colDef: col.colDef,
                 column: col,
                 node: rowNode,
                 data: rowNode.data,

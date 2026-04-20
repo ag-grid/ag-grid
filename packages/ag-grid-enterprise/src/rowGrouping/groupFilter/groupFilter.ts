@@ -163,11 +163,11 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         eGroupFieldSelect.setLabelAlignment('top');
         eGroupFieldSelect.addOptions(
             sourceColumns.map((sourceColumn) => ({
-                value: sourceColumn.getColId(),
+                value: sourceColumn.colId,
                 text: this.beans.colNames.getDisplayNameForColumn(sourceColumn, 'groupFilter', false) ?? undefined,
             }))
         );
-        eGroupFieldSelect.setValue(selectedColumn.getColId());
+        eGroupFieldSelect.setValue(selectedColumn.colId);
         eGroupFieldSelect.onValueChange((newValue) => this.updateSelectedColumn(newValue));
         eGroupFieldSelect.addCss('ag-group-filter-field-select-wrapper');
         if (sourceColumns.length === 1) {
@@ -198,7 +198,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
                                 column,
                             });
                         }
-                        if (column.getColId() === selectedColumn!.getColId()) {
+                        if (column.colId === selectedColumn!.colId) {
                             this.selectedFilter = filter ?? undefined;
                         }
                     })
@@ -291,6 +291,6 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         if (!columnId) {
             return undefined;
         }
-        return this.filterColumnPairs?.find(({ column }) => column.getColId() === columnId);
+        return this.filterColumnPairs?.find(({ column }) => column.colId === columnId);
     }
 }

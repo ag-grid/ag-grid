@@ -108,7 +108,7 @@ export function convertColumnTypes(type: string | string[]): string[] {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _areColIdsEqual(colsA: AgColumn[] | null, colsB: AgColumn[] | null): boolean {
-    return _areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
+    return _areEqual(colsA, colsB, (a, b) => a.colId === b.colId);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -127,7 +127,7 @@ export function _convertColumnEventSourceType(source: AgPropertyChangedSource): 
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _columnsMatch(column: AgColumn, key: ColKey): boolean {
-    return column === key || column.colId == key || column.getColDef() === key;
+    return column === key || column.colId == key || column.colDef === key;
 }
 
 export const getValueFactory =

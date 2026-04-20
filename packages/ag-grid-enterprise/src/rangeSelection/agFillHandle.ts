@@ -375,7 +375,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
                     if (!fromUserFunction) {
                         if (sourceCol) {
-                            const sourceColDef = sourceCol.getColDef();
+                            const sourceColDef = sourceCol.colDef;
                             if (sourceColDef.useValueFormatterForExport !== false && sourceColDef.valueFormatter) {
                                 const formattedValue = valueSvc.getValueForDisplay({
                                     column: sourceCol,
@@ -389,7 +389,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                                 }
                             }
                         }
-                        if (col.getColDef().useValueParserForImport !== false) {
+                        if (col.colDef.useValueParserForImport !== false) {
                             currentValue = valueSvc.parseValue(
                                 col,
                                 rowNode,

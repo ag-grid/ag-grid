@@ -26,7 +26,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
     ): AgPrimaryCols {
         const columnSelectPanel = parent.createManagedBean(new AgPrimaryCols());
 
-        const columnChooserParams = params ?? column?.getColDef().columnChooserParams ?? {};
+        const columnChooserParams = params ?? column?.colDef.columnChooserParams ?? {};
 
         const {
             contractColumnSelection,

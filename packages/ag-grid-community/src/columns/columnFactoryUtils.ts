@@ -63,7 +63,7 @@ export function _createColumnTreeWithIds(
         const colId = def.colId!;
 
         let column = colIdMap.get(colId);
-        const colDefMerged = _addColumnDefaultAndTypes(beans, def, column?.getColId() ?? colId);
+        const colDefMerged = _addColumnDefaultAndTypes(beans, def, column?.colId ?? colId);
         if (!column) {
             // no existing column, need to create one
             column = new AgColumn(colDefMerged, def, colId, primaryColumns);
@@ -219,7 +219,7 @@ function createColumn(
         column = new AgColumn(colDefMerged, colDef, colId, primaryColumns);
         beans.context.createBean(column);
     } else {
-        const colDefMerged = _addColumnDefaultAndTypes(beans, colDef, column.getColId());
+        const colDefMerged = _addColumnDefaultAndTypes(beans, colDef, column.colId);
         column.setColDef(colDefMerged, colDef, source);
         _updateColumnState(beans, column, colDefMerged, source);
     }

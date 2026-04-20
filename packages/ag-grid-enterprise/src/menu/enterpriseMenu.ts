@@ -343,7 +343,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         }
         // Determine whether there are any tabs to show in the menu, given that the filter tab may be hidden
         const isFilterDisabled = !this.beans.filterManager?.isFilterAllowed(column);
-        const tabs = column.getColDef().menuTabs ?? TABS_DEFAULT;
+        const tabs = column.colDef.menuTabs ?? TABS_DEFAULT;
         const numActiveTabs = isFilterDisabled && tabs.includes(TAB_FILTER) ? tabs.length - 1 : tabs.length;
         return numActiveTabs > 0;
     }
@@ -419,7 +419,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
             return this.restrictTo;
         }
 
-        return (this.column?.getColDef().menuTabs ?? TABS_DEFAULT).filter(
+        return (this.column?.colDef.menuTabs ?? TABS_DEFAULT).filter(
             (tabName) => this.isValidMenuTabItem(tabName) && this.isNotSuppressed(tabName)
         );
     }

@@ -63,8 +63,9 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         let foundColumn: AgColumn | null = null;
 
         for (const column of this.pivotResultCols.list) {
-            const thisPivotKeys = column.getColDef().pivotKeys;
-            const pivotValueColumn = column.getColDef().pivotValueColumn;
+            const colDef = column.colDef;
+            const thisPivotKeys = colDef.pivotKeys;
+            const pivotValueColumn = colDef.pivotValueColumn;
 
             const pivotKeyMatches = _areEqual(thisPivotKeys, pivotKeys);
             const pivotValueMatches = pivotValueColumn === valueColumnToFind;
@@ -102,7 +103,8 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         // Aggregation requires this order because total columns read from already-computed regular results.
         let hasAnyTotals = false;
         for (let i = 0; i < list.length; ++i) {
-            if (list[i].getColDef().pivotTotalColumnIds != null) {
+            const colDef = list[i].colDef;
+            if (colDef.pivotTotalColumnIds != null) {
                 hasAnyTotals = true;
                 break;
             }
@@ -115,7 +117,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
             const totals: AgColumn[] = [];
             for (let i = 0; i < list.length; ++i) {
                 const col = list[i];
-                if (col.getColDef().pivotTotalColumnIds != null) {
+                if (col.colDef.pivotTotalColumnIds != null) {
                     totals.push(col);
                 } else {
                     regular.push(col);

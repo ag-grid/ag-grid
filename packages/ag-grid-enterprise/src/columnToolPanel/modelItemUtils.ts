@@ -71,7 +71,7 @@ function setAllVisible(
     const colStateItems: ColumnState[] = [];
 
     for (const col of columns) {
-        if (col.getColDef().lockVisible) {
+        if (col.colDef.lockVisible) {
             continue;
         }
         if (updateStrategy.isColumnVisibleInToolPanel(isDeferredMode(params), col) !== visible) {
@@ -171,7 +171,7 @@ export function updateColumns(
     const updateStrategy = beans.columnStateUpdateStrategy;
     const isPivotMode = updateStrategy.getPivotMode(isDeferredMode(params));
     const state: ColumnState[] = columns.map((column) => {
-        const colId = column.getColId();
+        const colId = column.colId;
         if (isPivotMode) {
             const pivotStateForColumn = pivotState?.[colId];
             return {

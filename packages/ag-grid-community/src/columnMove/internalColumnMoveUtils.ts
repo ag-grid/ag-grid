@@ -52,10 +52,10 @@ function getColsToMove(allMovingColumns: AgColumn[]): AgColumn[] {
     for (const col of allMovingColumns) {
         let movingGroup: AgColumnGroup | null = null;
 
-        let parent = col.getParent();
+        let parent = col.parent;
         while (parent != null && parent.getDisplayedLeafColumns().length === 1) {
             movingGroup = parent;
-            parent = parent.getParent();
+            parent = parent.parent;
         }
         if (movingGroup != null) {
             const isMarryChildren = !!movingGroup.getColGroupDef()?.marryChildren;
@@ -269,8 +269,7 @@ function calculateValidMoves(params: {
     visibleCols: VisibleColsService;
 }): number[] {
     const { movingCols, draggingRight, xPosition, pinned, gos, colModel, visibleCols } = params;
-    const isMoveBlocked =
-        gos.get('suppressMovableColumns') || movingCols.some((col) => col.getColDef().suppressMovable);
+    const isMoveBlocked = gos.get('suppressMovableColumns') || movingCols.some((col) => col.colDef.suppressMovable);
 
     if (isMoveBlocked) {
         return [];

@@ -223,10 +223,10 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             comp.toggleCss('ag-row-group', expandable);
 
             // indent non-expandable cells so they correctly indent with expandable cells
-            const pivotModeAndLeaf = !expandable && colModel.isPivotMode();
+            const pivotModeAndLeaf = !expandable && colModel.pivotMode;
             comp.toggleCss('ag-pivot-leaf-group', pivotModeAndLeaf);
             const normalModeNotTotalFooter =
-                !colModel.isPivotMode() && (!this.displayedNode.footer || this.displayedNode.level !== -1);
+                !colModel.pivotMode && (!this.displayedNode.footer || this.displayedNode.level !== -1);
             comp.toggleCss('ag-row-group-leaf-indent', !expandable && normalModeNotTotalFooter);
 
             // update the child count component

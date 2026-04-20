@@ -459,7 +459,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const isStub = rowNode.stub && !suppressFullWidthLoading && !groupHideOpenParents;
         const isFullWidthCell = this.isNodeFullWidthCell();
         const isDetailCell = gos.get('masterDetail') && rowNode.detail;
-        const pivotMode = colModel.isPivotMode();
+        const pivotMode = colModel.pivotMode;
         const isFullWidthGroup = _isFullWidthGroupRow(gos, rowNode, pivotMode);
         // When suppressServerSideFullWidthLoadingRow is set, stub group rows (groupDisplayType='groupRows')
         // fall through to Normal so they render per-cell skeletons, consistent with leaf row stubs.

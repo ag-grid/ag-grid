@@ -96,7 +96,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             this.onColumnsChangedPending = true;
             return;
         }
-        const pivotModeActive = this.colModel.isPivotMode();
+        const pivotModeActive = this.colModel.pivotMode;
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         if (shouldSyncColumnLayoutWithGrid) {
             this.syncFilterLayout();
@@ -280,7 +280,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     private shouldDisplayFilter(column: AgColumn) {
-        const suppressFiltersToolPanel = column.getColDef()?.suppressFiltersToolPanel;
+        const suppressFiltersToolPanel = column.colDef?.suppressFiltersToolPanel;
         return column.isFilterAllowed() && !suppressFiltersToolPanel;
     }
 
@@ -384,7 +384,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
                 return anyChildrenChanged;
             }
 
-            const colId = filterComp.getColumn().getColId();
+            const colId = filterComp.getColumn().colId;
             const updateFilterExpandState = !colIds || colIds.includes(colId);
 
             if (updateFilterExpandState) {
@@ -558,7 +558,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
                     expandedGroupIds.push(groupId);
                 }
             } else if (filterComp.isExpanded()) {
-                expandedColIds.add(filterComp.getColumn().getColId());
+                expandedColIds.add(filterComp.getColumn().colId);
             }
         };
 
