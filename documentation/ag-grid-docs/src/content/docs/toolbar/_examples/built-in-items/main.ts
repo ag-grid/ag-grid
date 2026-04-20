@@ -11,8 +11,6 @@ import {
 } from 'ag-grid-community';
 import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
 
-import { CustomToolbarButton } from './customToolbarItem_typescript';
-
 ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
@@ -51,22 +49,16 @@ const gridOptions: GridOptions<IOlympicData> = {
             { toolbarItem: 'rowGroupPanel', alignment: 'left' },
             'find',
             {
-                toolbarItem: CustomToolbarButton,
                 key: 'autoSizeAll',
-                toolbarItemParams: {
-                    label: 'Auto Size All',
-                    icon: 'maximize',
-                    onClick: (api: GridApi) => api.autoSizeAllColumns(),
-                },
+                label: 'Auto Size All',
+                icon: 'maximize',
+                action: (params) => params.api.autoSizeAllColumns(),
             },
             {
-                toolbarItem: CustomToolbarButton,
                 key: 'resetColumns',
-                toolbarItemParams: {
-                    label: 'Reset Columns',
-                    icon: 'minimize',
-                    onClick: (api: GridApi) => api.resetColumnState(),
-                },
+                label: 'Reset Columns',
+                icon: 'minimize',
+                action: (params) => params.api.resetColumnState(),
             },
         ],
     },

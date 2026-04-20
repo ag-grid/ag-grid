@@ -1,7 +1,7 @@
 import React, { StrictMode, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GridApi, Toolbar } from 'ag-grid-community';
+import type { ColDef, Toolbar } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
@@ -12,8 +12,6 @@ import {
 } from 'ag-grid-community';
 import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
-
-import CustomToolbarButton from './customToolbarItem';
 
 const modules = [
     TextFilterModule,
@@ -68,22 +66,16 @@ const GridExample = () => {
                 { toolbarItem: 'rowGroupPanel', alignment: 'left' },
                 'find',
                 {
-                    toolbarItem: CustomToolbarButton,
                     key: 'autoSizeAll',
-                    toolbarItemParams: {
-                        label: 'Auto Size All',
-                        icon: 'maximize',
-                        onClick: (api: GridApi) => api.autoSizeAllColumns(),
-                    },
+                    label: 'Auto Size All',
+                    icon: 'maximize',
+                    action: (params) => params.api.autoSizeAllColumns(),
                 },
                 {
-                    toolbarItem: CustomToolbarButton,
                     key: 'resetColumns',
-                    toolbarItemParams: {
-                        label: 'Reset Columns',
-                        icon: 'minimize',
-                        onClick: (api: GridApi) => api.resetColumnState(),
-                    },
+                    label: 'Reset Columns',
+                    icon: 'minimize',
+                    action: (params) => params.api.resetColumnState(),
                 },
             ],
         }),
