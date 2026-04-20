@@ -21,6 +21,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
 
         const localeTextFunc = this.getLocaleTextFunc();
         const label = localeTextFunc('toolbarQuickFilter', 'Filter');
+        const eGui = this.getGui();
 
         const eIcon = _createIconNoSpan('filter', this.beans);
         if (eIcon) {
@@ -30,7 +31,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
                 attrs: { 'aria-hidden': 'true' },
             });
             eIconWrapper.appendChild(eIcon);
-            this.getGui().appendChild(eIconWrapper);
+            eGui.appendChild(eIconWrapper);
         }
 
         this.eInput = _createElement({ tag: 'input' });
@@ -48,7 +49,7 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
             input: () => this.beans.gridApi.setGridOption('quickFilterText', this.eInput.value),
         });
 
-        this.getGui().appendChild(this.eInput);
+        eGui.appendChild(this.eInput);
     }
 
     public refresh(_params: IToolbarItemParams): boolean {

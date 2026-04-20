@@ -46,11 +46,12 @@ class ToolbarButton extends Component implements IToolbarItemComp {
 
         const label = this.getLocaleTextFunc()(config.localeKey, config.defaultLabel);
         this.eLabel.textContent = label;
-        this.getGui().setAttribute('aria-label', label);
-        this.getGui().setAttribute('title', label);
+        const eGui = this.getGui();
+        eGui.setAttribute('aria-label', label);
+        eGui.setAttribute('title', label);
 
-        this.addManagedElementListeners(this.getGui(), {
-            click: () => config.onAction(this.beans, this.getGui(), this.gos),
+        this.addManagedElementListeners(eGui, {
+            click: () => config.onAction(this.beans, eGui, this.gos),
         });
     }
 
