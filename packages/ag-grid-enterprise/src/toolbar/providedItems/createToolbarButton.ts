@@ -6,7 +6,7 @@ import type {
     IToolbarItemParams,
     IconName,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _createIconNoSpan } from 'ag-grid-community';
+import { Component, RefPlaceholder, _createIconNoSpan, _setDisplayed } from 'ag-grid-community';
 
 const ToolbarButtonElement: ElementParams = {
     tag: 'button',
@@ -61,7 +61,7 @@ class ToolbarButton extends Component implements IToolbarItemComp {
     }
 
     public refresh(params: IToolbarItemParams): boolean {
-        this.eLabel.classList.toggle('ag-hidden', params.display !== 'iconAndLabel');
+        _setDisplayed(this.eLabel, params.display === 'iconAndLabel');
         if (this.config.shouldDisplay) {
             this.setDisplayed(this.config.shouldDisplay(this.gos, this.beans));
         }
