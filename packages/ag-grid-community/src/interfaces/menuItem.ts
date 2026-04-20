@@ -16,7 +16,7 @@ export interface MenuItemLeafDef<TData = any, TContext = any> {
     action?: (params: IMenuActionParams<TData, TContext>) => void;
     /** Set to true to provide a check beside the option. */
     checked?: boolean;
-    /** The icon to display — a DOM element, an icon name string (e.g. `'csvExport'`), or an HTML string (e.g. `'<img src="..." />'`). */
+    /** The icon to display, either a DOM element or HTML string. */
     icon?: Element | string;
     /** CSS classes to apply to the menu item. */
     cssClasses?: string[];

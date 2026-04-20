@@ -92,20 +92,15 @@ export class AgMenuItemRenderer<
         });
 
         const { checked, icon } = this.params;
-        const iconSvc = this.beans.iconSvc;
+
         if (checked) {
-            iconWrapper.appendChild(iconSvc.createIconNoSpan('check')!);
+            iconWrapper.appendChild(this.beans.iconSvc.createIconNoSpan('check')!);
         } else if (icon) {
             if (_isNodeOrElement(icon)) {
                 iconWrapper.appendChild(icon);
             } else if (typeof icon === 'string') {
-                let iconEl;
-                if (icon.trimStart().charAt(0) !== '<' && (iconEl = iconSvc.createIconNoSpan(icon))) {
-                    iconWrapper.appendChild(iconEl);
-                } else {
-                    // eslint-disable-next-line no-restricted-properties -- no other way to parse custom HTML strings from the user
-                    iconWrapper.innerHTML = icon;
-                }
+                // eslint-disable-next-line no-restricted-properties -- no other way to parse custom HTML strings from the user
+                iconWrapper.innerHTML = icon;
             } else {
                 this.callbacks?.warnNoIcon?.();
             }
