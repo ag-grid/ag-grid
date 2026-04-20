@@ -6,6 +6,7 @@ import type {
     FocusableContainer,
     IToolbarItemComp,
     IToolbarItemParams,
+    Toolbar,
     ToolbarDisplay,
     ToolbarItemComponentName,
     ToolbarItemDef,
@@ -20,6 +21,7 @@ import {
     _addGridCommonParams,
     _clearElement,
     _createElement,
+    _findFocusableElements,
     _getActiveDomElement,
     _removeFromParent,
     _warn,
@@ -77,10 +79,7 @@ const AgToolbarElement: ElementParams = {
 
 class AgToolbar extends Component implements FocusableContainer {
     private userCompFactory: UserComponentFactory;
-    private updateQueued: boolean = false;
-    private itemsPromise: Promise<void> = Promise.resolve();
     private readonly toolbarItems: Map<string, IToolbarItemComp> = new Map();
-    private readonly compDestroyFunctions: Map<string, () => void> = new Map();
     private customKeyCounter: number = 0;
 
     public wireBeans(beans: BeanCollection) {
@@ -96,7 +95,7 @@ class AgToolbar extends Component implements FocusableContainer {
         const eGui = this.getGui();
 
         this.processToolbarItems(new Map());
-        this.addManagedPropertyListeners(['toolbar'], this.handleToolbarChanged.bind(this));
+        this.addManagedPropertyListeners(['toolbar'], this.updateToolbar.bind(this));
 
         this.createManagedBean(
             new ManagedFocusFeature(eGui, {
@@ -117,38 +116,26 @@ class AgToolbar extends Component implements FocusableContainer {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        const activeEl = _getActiveDomElement(this.beans) as HTMLElement;
-        const eGui = this.getGui();
-        if (!eGui.contains(activeEl)) {
+        const { key } = e;
+        if (key !== KeyCode.LEFT && key !== KeyCode.RIGHT && key !== KeyCode.PAGE_HOME && key !== KeyCode.PAGE_END) {
             return;
         }
 
-        // Don't intercept navigation keys in text inputs — allow normal caret navigation
+        const activeEl = _getActiveDomElement(this.beans) as HTMLElement;
+        // Allow native caret navigation inside text inputs
         if (activeEl instanceof HTMLInputElement && (activeEl.type === 'text' || activeEl.type === 'search')) {
-            if (
-                e.key === KeyCode.LEFT ||
-                e.key === KeyCode.RIGHT ||
-                e.key === KeyCode.PAGE_HOME ||
-                e.key === KeyCode.PAGE_END
-            ) {
-                return;
-            }
+            return;
         }
 
-        const items: HTMLElement[] = Array.from(
-            eGui.querySelectorAll<HTMLElement>(
-                'button:not(:disabled), input:not(:disabled), [role="button"]:not([aria-disabled="true"])'
-            )
-        ).filter((el) => el.offsetParent !== null);
+        const items = _findFocusableElements(this.getGui());
         const currentIndex = items.indexOf(activeEl);
         if (currentIndex === -1) {
             return;
         }
 
         const rtl = this.gos.get('enableRtl');
-        let nextIndex: number | null = null;
-
-        switch (e.key) {
+        let nextIndex: number;
+        switch (key) {
             case KeyCode.LEFT:
                 nextIndex = rtl ? currentIndex + 1 : currentIndex - 1;
                 break;
@@ -163,10 +150,6 @@ class AgToolbar extends Component implements FocusableContainer {
                 break;
         }
 
-        if (nextIndex === null) {
-            return;
-        }
-
         nextIndex = Math.max(0, Math.min(nextIndex, items.length - 1));
         if (nextIndex !== currentIndex) {
             items[nextIndex].focus();
@@ -174,8 +157,7 @@ class AgToolbar extends Component implements FocusableContainer {
         }
     }
 
-    private getValidItems(): ToolbarItemDef[] | undefined {
-        const toolbar = this.gos.get('toolbar');
+    private getValidItems(toolbar: Toolbar | undefined): ToolbarItemDef[] | undefined {
         if (!toolbar?.items) {
             return undefined;
         }
@@ -183,91 +165,82 @@ class AgToolbar extends Component implements FocusableContainer {
         this.customKeyCounter = 0;
         const nextKey = () => `custom-toolbar-item-${this.customKeyCounter++}`;
         const seen = new Set<string>();
-        return toolbar.items
-            .map((item) => normaliseItem(item, nextKey))
-            .filter((item) => {
-                const key = item.key ?? item.toolbarItem;
-                if (item.toolbarItem === 'separator') {
-                    return true;
-                }
-                if (seen.has(key)) {
-                    return false;
-                }
+        return toolbar.items.reduce<ToolbarItemDef[]>((acc, item) => {
+            const normalised = normaliseItem(item, nextKey);
+            if (normalised.toolbarItem === 'separator') {
+                acc.push(normalised);
+                return acc;
+            }
+            const key = normalised.key ?? normalised.toolbarItem;
+            if (!seen.has(key)) {
                 seen.add(key);
-                return true;
-            });
+                acc.push(normalised);
+            }
+            return acc;
+        }, []);
     }
 
-    private resolveDisplay(itemDef: ToolbarItemDef): ToolbarDisplay {
-        return itemDef.display ?? this.gos.get('toolbar')?.display ?? 'icon';
-    }
-
-    private resolveDefaultAlignment(): 'left' | 'right' {
-        return this.gos.get('toolbar')?.alignment ?? (this.gos.get('enableRtl') ? 'right' : 'left');
-    }
-
-    private createItemParams(itemConfig: ToolbarItemDef, key: string): IToolbarItemParams {
+    private createItemParams(
+        itemConfig: ToolbarItemDef,
+        key: string,
+        defaultDisplay: ToolbarDisplay
+    ): IToolbarItemParams {
         return _addGridCommonParams(this.gos, {
             ...(itemConfig.toolbarItemParams ?? {}),
             key,
-            display: this.resolveDisplay(itemConfig),
+            display: itemConfig.display ?? defaultDisplay,
         });
     }
 
     private processToolbarItems(existingItemsToReuse: Map<string, IToolbarItemComp>): void {
-        const items = this.getValidItems();
+        const toolbar = this.gos.get('toolbar');
+        const items = this.getValidItems(toolbar);
         const validItemsProvided = Array.isArray(items) && items.length > 0;
         this.setDisplayed(validItemsProvided);
 
-        if (validItemsProvided) {
-            const eGui = this.getGui();
-            const leftItems: ToolbarItemDef[] = [];
-            const rightItems: ToolbarItemDef[] = [];
-            const defaultAlignment = this.resolveDefaultAlignment();
-            // Separators inherit the alignment of the preceding item, unless explicitly set
-            let lastAlignment: 'left' | 'right' = defaultAlignment;
-            for (const item of items) {
-                const isSeparator = item.toolbarItem === 'separator';
-                const alignment: 'left' | 'right' = item.alignment ?? (isSeparator ? lastAlignment : defaultAlignment);
-                (alignment === 'right' ? rightItems : leftItems).push(item);
-                if (!isSeparator) {
-                    lastAlignment = alignment;
-                }
-            }
-
-            this.itemsPromise = this.createAndRenderComponents(leftItems, eGui, existingItemsToReuse).then(() => {
-                if (rightItems.length > 0) {
-                    return this.createAndRenderComponents(rightItems, eGui, existingItemsToReuse, true);
-                }
-            });
-        }
-    }
-
-    private handleToolbarChanged(): void {
-        if (this.updateQueued) {
+        if (!validItemsProvided) {
             return;
         }
-        this.updateQueued = true;
-        this.itemsPromise.then(() => {
-            this.updateToolbar();
-            this.updateQueued = false;
-        });
+
+        const leftItems: ToolbarItemDef[] = [];
+        const rightItems: ToolbarItemDef[] = [];
+        const defaultAlignment: 'left' | 'right' = toolbar?.alignment ?? (this.gos.get('enableRtl') ? 'right' : 'left');
+        const defaultDisplay: ToolbarDisplay = toolbar?.display ?? 'icon';
+        // Separators inherit the alignment of the preceding item, unless explicitly set
+        let lastAlignment: 'left' | 'right' = defaultAlignment;
+        for (const item of items) {
+            const isSeparator = item.toolbarItem === 'separator';
+            const alignment: 'left' | 'right' = item.alignment ?? (isSeparator ? lastAlignment : defaultAlignment);
+            (alignment === 'right' ? rightItems : leftItems).push(item);
+            if (!isSeparator) {
+                lastAlignment = alignment;
+            }
+        }
+
+        this.createAndRenderComponents(
+            [...leftItems, ...rightItems],
+            leftItems.length,
+            existingItemsToReuse,
+            defaultDisplay
+        );
     }
 
     private updateToolbar(): void {
-        const items = this.getValidItems();
+        const toolbar = this.gos.get('toolbar');
+        const items = this.getValidItems(toolbar);
         const existingItemsToReuse: Map<string, IToolbarItemComp> = new Map();
+        const defaultDisplay: ToolbarDisplay = toolbar?.display ?? 'icon';
 
         if (Array.isArray(items) && items.length > 0) {
             for (const itemConfig of items) {
                 const key = itemConfig.key ?? itemConfig.toolbarItem;
                 const existingItem = this.toolbarItems.get(key);
                 if (existingItem?.refresh) {
-                    const newParams = this.createItemParams(itemConfig, key);
+                    const newParams = this.createItemParams(itemConfig, key, defaultDisplay);
                     const hasRefreshed = existingItem.refresh(newParams);
                     if (hasRefreshed) {
                         existingItemsToReuse.set(key, existingItem);
-                        this.compDestroyFunctions.delete(key);
+                        this.toolbarItems.delete(key);
                         _removeFromParent(existingItem.getGui());
                     }
                 }
@@ -280,21 +253,19 @@ class AgToolbar extends Component implements FocusableContainer {
 
     private resetToolbar(): void {
         _clearElement(this.getGui());
-
-        this.destroyComponents();
-        this.toolbarItems.clear();
+        this.destroyToolbarItems();
     }
 
     public override destroy(): void {
-        this.destroyComponents();
+        this.destroyToolbarItems();
         super.destroy();
     }
 
-    private destroyComponents(): void {
-        for (const func of this.compDestroyFunctions.values()) {
-            func();
+    private destroyToolbarItems(): void {
+        for (const comp of this.toolbarItems.values()) {
+            this.destroyBean(comp);
         }
-        this.compDestroyFunctions.clear();
+        this.toolbarItems.clear();
     }
 
     private createSeparator(): HTMLElement {
@@ -309,6 +280,7 @@ class AgToolbar extends Component implements FocusableContainer {
         toolbarItems: ToolbarItemDef[],
         eContainer: HTMLElement,
         existingItemsToReuse: Map<string, IToolbarItemComp>,
+        defaultDisplay: ToolbarDisplay,
         pushRight: boolean = false
     ): Promise<void> {
         const promises: Promise<void>[] = [];
@@ -339,12 +311,11 @@ class AgToolbar extends Component implements FocusableContainer {
                 // Reused item already has a display listener — just re-insert into DOM
                 placeholder.replaceWith(existingItem.getGui());
                 this.toolbarItems.set(key, existingItem);
-                this.compDestroyFunctions.set(key, () => this.destroyBean(existingItem));
             } else {
                 const compDetails = getToolbarItemCompDetails(
                     this.userCompFactory,
                     itemConfig,
-                    this.createItemParams(itemConfig, key)
+                    this.createItemParams(itemConfig, key, defaultDisplay)
                 );
 
                 if (compDetails == null) {
@@ -369,28 +340,23 @@ class AgToolbar extends Component implements FocusableContainer {
             return;
         }
 
-        const destroyFunc = () => {
-            this.destroyBean(component);
-        };
-
-        if (this.isAlive()) {
-            this.toolbarItems.set(key, component);
-            const gui = component.getGui();
-            placeholder.replaceWith(gui);
-            const comp = component instanceof Component ? component : undefined;
-            if (comp) {
-                // Toggle display instead of removing from DOM to preserve order
-                gui.style.display = comp.isDisplayed() ? '' : 'none';
-                this.addManagedListeners(comp, {
-                    displayChanged: () => {
-                        gui.style.display = comp.isDisplayed() ? '' : 'none';
-                    },
-                });
-            }
-            this.compDestroyFunctions.set(key, destroyFunc);
-        } else {
+        if (!this.isAlive()) {
             _removeFromParent(placeholder);
-            destroyFunc();
+            this.destroyBean(component);
+            return;
+        }
+
+        this.toolbarItems.set(key, component);
+        const gui = component.getGui();
+        placeholder.replaceWith(gui);
+        if (component instanceof Component) {
+            // Toggle display instead of removing from DOM to preserve order
+            gui.style.display = component.isDisplayed() ? '' : 'none';
+            this.addManagedListeners(component, {
+                displayChanged: () => {
+                    gui.style.display = component.isDisplayed() ? '' : 'none';
+                },
+            });
         }
     }
 }
