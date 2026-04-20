@@ -34,7 +34,6 @@ const BUILT_IN_ITEMS: Record<string, ToolbarItemComponentName> = {
     excelExport: 'agExcelExportToolbarItem',
     filtersPanel: 'agFiltersPanelToolbarItem',
     find: 'agFindToolbarItem',
-    menu: 'agMenuToolbarItem',
     pivotPanel: 'agPivotPanelToolbarItem',
     quickFilter: 'agQuickFilterToolbarItem',
     resetColumns: 'agResetColumnsToolbarItem',
@@ -202,6 +201,10 @@ class AgToolbar extends Component implements FocusableContainer {
         return itemDef.display ?? this.gos.get('toolbar')?.display ?? 'icon';
     }
 
+    private resolveDefaultAlignment(): 'left' | 'right' {
+        return this.gos.get('toolbar')?.alignment ?? (this.gos.get('enableRtl') ? 'right' : 'left');
+    }
+
     private createItemParams(itemConfig: ToolbarItemDef, key: string): IToolbarItemParams {
         return _addGridCommonParams(this.gos, {
             ...(itemConfig.toolbarItemParams ?? {}),
@@ -219,11 +222,12 @@ class AgToolbar extends Component implements FocusableContainer {
             const eGui = this.getGui();
             const leftItems: ToolbarItemDef[] = [];
             const rightItems: ToolbarItemDef[] = [];
+            const defaultAlignment = this.resolveDefaultAlignment();
             // Separators inherit the alignment of the preceding item, unless explicitly set
-            let lastAlignment: 'left' | 'right' = 'left';
+            let lastAlignment: 'left' | 'right' = defaultAlignment;
             for (const item of items) {
                 const isSeparator = item.toolbarItem === 'separator';
-                const alignment: 'left' | 'right' = item.alignment ?? (isSeparator ? lastAlignment : 'left');
+                const alignment: 'left' | 'right' = item.alignment ?? (isSeparator ? lastAlignment : defaultAlignment);
                 (alignment === 'right' ? rightItems : leftItems).push(item);
                 if (!isSeparator) {
                     lastAlignment = alignment;

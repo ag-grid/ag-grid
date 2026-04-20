@@ -5,6 +5,7 @@ export type ToolbarDisplay = 'icon' | 'iconAndLabel';
 
 export type Toolbar = {
     display?: ToolbarDisplay;
+    alignment?: 'left' | 'right';
     items: (ToolbarItemDef | string)[];
 };
 

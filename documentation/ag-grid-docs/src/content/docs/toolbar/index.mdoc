@@ -51,7 +51,7 @@ Built-in items require their corresponding modules to be registered. If a requir
 
 Items are rendered in the order they are defined.
 
-The `alignment` property can be `left` (default) or `right`.
+The `alignment` property can be `left` or `right`. When not set on an item, it falls back to the toolbar-level `alignment`, which itself defaults to `left` in LTR and `right` in RTL.
 
 The `key` uniquely identifies a Toolbar Item.
 
@@ -70,6 +70,22 @@ const gridOptions = {
                     label: 'Custom Label'
                 }
             }
+        ]
+    }
+}
+```
+
+### Default Alignment
+
+Set `alignment` at the toolbar level to change the default for every item that does not specify its own alignment. When omitted, items default to `left` in LTR and `right` in RTL.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        alignment: 'right',
+        items: [
+            'find',
+            { toolbarItem: 'autoSizeAll', alignment: 'left' },
         ]
     }
 }
