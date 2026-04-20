@@ -157,10 +157,6 @@ if (NODE_ENV !== 'test') {
 export default defineConfig({
     site: PUBLIC_SITE_URL,
     base: PUBLIC_BASE_URL,
-    experimental: {
-        // Prepare for Astro 6
-        preserveScriptOrder: true,
-    },
     devToolbar: {
         enabled: false,
     },
