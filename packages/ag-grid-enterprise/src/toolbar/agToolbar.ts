@@ -122,8 +122,8 @@ class AgToolbar extends Component implements FocusableContainer {
         }
 
         const activeEl = _getActiveDomElement(this.beans) as HTMLElement;
-        // Allow native caret navigation inside text inputs
-        if (activeEl instanceof HTMLInputElement && (activeEl.type === 'text' || activeEl.type === 'search')) {
+        // Let inputs handle their own arrow-key behaviour (caret, radio groups, number step, etc.)
+        if (activeEl instanceof HTMLInputElement) {
             return;
         }
 
