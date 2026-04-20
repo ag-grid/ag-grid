@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, MenuItemDef } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnAutoSizeModule,
@@ -47,22 +47,8 @@ const gridOptions: GridOptions<IOlympicData> = {
             'find',
             { toolbarItem: 'autoSizeAll', alignment: 'right' },
             'separator',
-            {
-                toolbarItem: 'menu',
-                alignment: 'right',
-                toolbarItemParams: {
-                    label: 'Export',
-                    icon: 'save',
-                    menuItems: [
-                        { name: 'CSV Export', icon: 'csvExport', action: (params) => params.api.exportDataAsCsv() },
-                        {
-                            name: 'Excel Export',
-                            icon: 'excelExport',
-                            action: (params) => params.api.exportDataAsExcel(),
-                        },
-                    ] as MenuItemDef[],
-                },
-            },
+            { toolbarItem: 'csvExport', alignment: 'right' },
+            { toolbarItem: 'excelExport', alignment: 'right' },
             'separator',
             { toolbarItem: 'resetColumns', alignment: 'right', display: 'iconAndLabel' },
         ],

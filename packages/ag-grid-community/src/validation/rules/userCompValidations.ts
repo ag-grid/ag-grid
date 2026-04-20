@@ -64,7 +64,6 @@ export const USER_COMP_MODULES: Record<UserComponentName, ValidationModuleName> 
     agExcelExportToolbarItem: 'Toolbar',
     agFiltersPanelToolbarItem: 'Toolbar',
     agFindToolbarItem: 'Toolbar',
-    agMenuToolbarItem: 'Toolbar',
     agPivotPanelToolbarItem: 'Toolbar',
     agQuickFilterToolbarItem: 'Toolbar',
     agResetColumnsToolbarItem: 'Toolbar',
