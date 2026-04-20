@@ -5,6 +5,7 @@ import type { GridApi, IToolbarItemParams } from 'ag-grid-community';
 
 interface CustomToolbarButtonParams extends IToolbarItemParams {
     label: string;
+    icon: string;
     onClick: (api: GridApi) => void;
 }
 
@@ -19,17 +20,24 @@ interface CustomToolbarButtonParams extends IToolbarItemParams {
             [attr.aria-label]="label"
             (click)="onClick()"
         >
-            {{ label }}
+            <span class="ag-icon ag-icon-{{ icon }}" aria-hidden="true"></span>
+            @if (showLabel) {
+                <span>{{ label }}</span>
+            }
         </button>
     `,
 })
 export class CustomToolbarButton implements IToolbarItemAngularComp {
     private params!: CustomToolbarButtonParams;
     label = '';
+    icon = '';
+    showLabel = false;
 
     agInit(params: CustomToolbarButtonParams): void {
         this.params = params;
         this.label = params.label;
+        this.icon = params.icon;
+        this.showLabel = params.display === 'iconAndLabel';
     }
 
     onClick(): void {

@@ -7,7 +7,8 @@ export default {
             :aria-label="params.label"
             @click="onClick"
         >
-            {{ params.label }}
+            <span :class="['ag-icon', 'ag-icon-' + params.icon]" aria-hidden="true"></span>
+            <span v-if="params.display === 'iconAndLabel'">{{ params.label }}</span>
         </button>
     `,
     methods: {

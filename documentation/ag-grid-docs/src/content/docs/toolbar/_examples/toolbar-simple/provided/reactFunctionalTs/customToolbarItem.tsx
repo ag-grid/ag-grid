@@ -4,11 +4,12 @@ import type { GridApi, IToolbarItemParams } from 'ag-grid-community';
 
 interface CustomToolbarButtonProps extends IToolbarItemParams {
     label: string;
+    icon: string;
     onClick: (api: GridApi) => void;
 }
 
 export default (props: CustomToolbarButtonProps) => {
-    const { api, label, onClick } = props;
+    const { api, label, icon, display, onClick } = props;
 
     const handleClick = useCallback(() => {
         onClick(api);
@@ -22,7 +23,8 @@ export default (props: CustomToolbarButtonProps) => {
             title={label}
             aria-label={label}
         >
-            {label}
+            <span className={`ag-icon ag-icon-${icon}`} aria-hidden="true"></span>
+            {display === 'iconAndLabel' && <span>{label}</span>}
         </button>
     );
 };

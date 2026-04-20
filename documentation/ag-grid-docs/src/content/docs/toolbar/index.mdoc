@@ -121,7 +121,9 @@ const gridOptions = {
 }
 ```
 
-Custom Toolbar Item components implement the `IToolbarItemComp` interface. The component is responsible for creating its own DOM via `init(params)` / `getGui()`, cleaning up in `destroy()`, and optionally implementing `refresh(params)` to handle toolbar updates in place — returning `true` keeps the existing instance, while returning `false` (or omitting the method) causes the grid to destroy and recreate the item. Params passed to the component include the grid `api`, the item `key`, the resolved `display` mode, and any values supplied via `toolbarItemParams`.
+Custom components implement the `IToolbarItemComp` interface: build the DOM in `init(params)`, return it from `getGui()`, and tear it down in `destroy()`. Params include the grid `api`, the item `key`, the resolved `display` mode, and anything passed via `toolbarItemParams`.
+
+Optionally implement `refresh(params)` to react to toolbar updates in place — return `true` to keep the instance, or `false` (or omit the method) to have the grid recreate it.
 
 The example below demonstrates a reusable Custom Toolbar Item that renders a button and invokes a user-supplied `onClick` handler with the grid `api`. The same component is instantiated multiple times with different `toolbarItemParams` to drive common grid actions such as auto-sizing columns, opening tool panels, exporting data, and resetting column state.
 

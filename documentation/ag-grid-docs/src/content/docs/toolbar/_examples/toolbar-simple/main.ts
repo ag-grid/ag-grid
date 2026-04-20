@@ -53,31 +53,15 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     sideBar: { toolPanels: ['columns', 'filters'], defaultToolPanel: '' },
     toolbar: {
+        alignment: 'right',
         items: [
-            {
-                toolbarItem: CustomToolbarButton,
-                key: 'autoSizeAll',
-                toolbarItemParams: {
-                    label: 'Auto Size All',
-                    onClick: (api: GridApi) => api.autoSizeAllColumns(),
-                },
-            },
             {
                 toolbarItem: CustomToolbarButton,
                 key: 'columnChooser',
                 toolbarItemParams: {
                     label: 'Choose Columns',
+                    icon: 'columns',
                     onClick: (api: GridApi) => api.showColumnChooser(),
-                },
-            },
-            'separator',
-            {
-                toolbarItem: CustomToolbarButton,
-                key: 'columnsPanel',
-                toolbarItemParams: {
-                    label: 'Columns Panel',
-                    onClick: (api: GridApi) =>
-                        api.getOpenedToolPanel() === 'columns' ? api.closeToolPanel() : api.openToolPanel('columns'),
                 },
             },
             {
@@ -85,17 +69,9 @@ const gridOptions: GridOptions<IOlympicData> = {
                 key: 'filtersPanel',
                 toolbarItemParams: {
                     label: 'Filters Panel',
+                    icon: 'filter',
                     onClick: (api: GridApi) =>
                         api.getOpenedToolPanel() === 'filters' ? api.closeToolPanel() : api.openToolPanel('filters'),
-                },
-            },
-            'separator',
-            {
-                toolbarItem: CustomToolbarButton,
-                key: 'csvExport',
-                toolbarItemParams: {
-                    label: 'CSV Export',
-                    onClick: (api: GridApi) => api.exportDataAsCsv(),
                 },
             },
             {
@@ -103,15 +79,49 @@ const gridOptions: GridOptions<IOlympicData> = {
                 key: 'excelExport',
                 toolbarItemParams: {
                     label: 'Excel Export',
+                    icon: 'excel',
                     onClick: (api: GridApi) => api.exportDataAsExcel(),
                 },
             },
             'separator',
             {
                 toolbarItem: CustomToolbarButton,
+                key: 'autoSizeAll',
+                display: 'iconAndLabel',
+                toolbarItemParams: {
+                    label: 'Auto Size All',
+                    icon: 'maximize',
+                    onClick: (api: GridApi) => api.autoSizeAllColumns(),
+                },
+            },
+            {
+                toolbarItem: CustomToolbarButton,
+                key: 'columnsPanel',
+                display: 'iconAndLabel',
+                toolbarItemParams: {
+                    label: 'Columns Panel',
+                    icon: 'columns',
+                    onClick: (api: GridApi) =>
+                        api.getOpenedToolPanel() === 'columns' ? api.closeToolPanel() : api.openToolPanel('columns'),
+                },
+            },
+            {
+                toolbarItem: CustomToolbarButton,
+                key: 'csvExport',
+                display: 'iconAndLabel',
+                toolbarItemParams: {
+                    label: 'CSV Export',
+                    icon: 'csv',
+                    onClick: (api: GridApi) => api.exportDataAsCsv(),
+                },
+            },
+            {
+                toolbarItem: CustomToolbarButton,
                 key: 'resetColumns',
+                display: 'iconAndLabel',
                 toolbarItemParams: {
                     label: 'Reset Columns',
+                    icon: 'minimize',
                     onClick: (api: GridApi) => api.resetColumnState(),
                 },
             },
