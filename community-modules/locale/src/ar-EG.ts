@@ -334,12 +334,6 @@ export const AG_GRID_LOCALE_EG = {
     sortAbsoluteDescending: 'ترتيب تنازلي مطلق',
     sortUnSort: 'إلغاء الترتيب',
 
-    // Toolbar
-    toolbarFind: 'Find',
-    toolbarFindPreviousMatch: 'Previous Match',
-    toolbarFindNextMatch: 'Next Match',
-    toolbarQuickFilter: 'Filter',
-
     // Enterprise Menu Aggregation and Status Bar
     sum: 'المجموع',
     first: 'الأول',

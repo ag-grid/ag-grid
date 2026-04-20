@@ -340,12 +340,6 @@ export const AG_GRID_LOCALE_FR = {
     sortAbsoluteDescending: 'Trier par ordre décroissant absolu',
     sortUnSort: 'Effacer le tri',
 
-    // Toolbar
-    toolbarFind: 'Find',
-    toolbarFindPreviousMatch: 'Previous Match',
-    toolbarFindNextMatch: 'Next Match',
-    toolbarQuickFilter: 'Filter',
-
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Somme',
     first: 'Premier',

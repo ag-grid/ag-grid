@@ -335,12 +335,6 @@ export const AG_GRID_LOCALE_PK = {
     sortAbsoluteDescending: 'مکمل اُتری ابجدی ترتیب میں ترتیب دیں',
     sortUnSort: 'ترتیب مٹائیں',
 
-    // Toolbar
-    toolbarFind: 'Find',
-    toolbarFindPreviousMatch: 'Previous Match',
-    toolbarFindNextMatch: 'Next Match',
-    toolbarQuickFilter: 'Filter',
-
     // Enterprise Menu Aggregation and Status Bar
     sum: 'مجموعہ',
     first: 'پہلا',
