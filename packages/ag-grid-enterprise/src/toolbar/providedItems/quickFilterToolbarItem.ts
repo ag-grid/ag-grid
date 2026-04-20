@@ -1,5 +1,7 @@
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _createElement, _createIconNoSpan, _warn } from 'ag-grid-community';
+import { Component, _warn } from 'ag-grid-community';
+
+import { createToolbarInput } from './toolbarItemUtils';
 
 export class QuickFilterToolbarItem extends Component implements IToolbarItemComp {
     private eInput!: HTMLInputElement;
@@ -23,37 +25,20 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
         const label = localeTextFunc('toolbarQuickFilter', 'Filter');
         const eGui = this.getGui();
 
-        const eIcon = _createIconNoSpan('filter', this.beans);
-        if (eIcon) {
-            const eIconWrapper = _createElement({
-                tag: 'span',
-                cls: 'ag-toolbar-input-icon',
-                attrs: { 'aria-hidden': 'true' },
-            });
-            eIconWrapper.appendChild(eIcon);
+        const { eIconWrapper, eInput } = createToolbarInput(this.beans, {
+            label,
+            iconName: 'filter',
+            initialValue: this.gos.get('quickFilterText'),
+        });
+        if (eIconWrapper) {
             eGui.appendChild(eIconWrapper);
         }
-
-        this.eInput = _createElement<HTMLInputElement>({
-            tag: 'input',
-            cls: 'ag-toolbar-input-field',
-            attrs: {
-                type: 'text',
-                placeholder: `${label}...`,
-                'aria-label': label,
-            },
-        });
-
-        const currentValue = this.gos.get('quickFilterText');
-        if (currentValue) {
-            this.eInput.value = currentValue;
-        }
+        this.eInput = eInput;
+        eGui.appendChild(this.eInput);
 
         this.addManagedElementListeners(this.eInput, {
             input: () => this.gos.updateGridOptions({ options: { quickFilterText: this.eInput.value } }),
         });
-
-        eGui.appendChild(this.eInput);
     }
 
     public refresh(_params: IToolbarItemParams): boolean {

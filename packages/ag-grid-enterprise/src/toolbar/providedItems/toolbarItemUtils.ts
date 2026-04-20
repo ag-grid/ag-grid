@@ -1,0 +1,70 @@
+import type { BeanCollection, IconName } from 'ag-grid-community';
+import { _createElement, _createIconNoSpan, _setDisabled } from 'ag-grid-community';
+
+interface CreateToolbarInputParams {
+    label: string;
+    iconName: IconName;
+    initialValue?: string;
+}
+
+export function createToolbarInput(
+    beans: BeanCollection,
+    { label, iconName, initialValue }: CreateToolbarInputParams
+): { eIconWrapper: HTMLElement | undefined; eInput: HTMLInputElement } {
+    const eIcon = _createIconNoSpan(iconName, beans);
+    let eIconWrapper: HTMLElement | undefined;
+    if (eIcon) {
+        eIconWrapper = _createElement({
+            tag: 'span',
+            cls: 'ag-toolbar-input-icon',
+            attrs: { 'aria-hidden': 'true' },
+        });
+        eIconWrapper.appendChild(eIcon);
+    }
+
+    const eInput = _createElement<HTMLInputElement>({
+        tag: 'input',
+        cls: 'ag-toolbar-input-field',
+        attrs: {
+            type: 'text',
+            placeholder: `${label}...`,
+            'aria-label': label,
+        },
+    });
+
+    if (initialValue) {
+        eInput.value = initialValue;
+    }
+
+    return { eIconWrapper, eInput };
+}
+
+interface CreateToolbarIconButtonParams {
+    iconName: IconName;
+    label: string;
+    cls?: string;
+    disabled?: boolean;
+}
+
+export function createToolbarIconButton(
+    beans: BeanCollection,
+    { iconName, label, cls, disabled }: CreateToolbarIconButtonParams
+): HTMLButtonElement {
+    const eButton = _createElement<HTMLButtonElement>({
+        tag: 'button',
+        cls: cls ? `ag-toolbar-button ${cls}` : 'ag-toolbar-button',
+        attrs: {
+            type: 'button',
+            'aria-label': label,
+            title: label,
+        },
+    });
+    if (disabled) {
+        _setDisabled(eButton, true);
+    }
+    const eIcon = _createIconNoSpan(iconName, beans);
+    if (eIcon) {
+        eButton.appendChild(eIcon);
+    }
+    return eButton;
+}

@@ -1,45 +1,7 @@
-import type {
-    BeanCollection,
-    FindChangedEvent,
-    IToolbarItemComp,
-    IToolbarItemParams,
-    IconName,
-} from 'ag-grid-community';
-import { Component, _createElement, _createIconNoSpan, _setDisabled, _setDisplayed, _warn } from 'ag-grid-community';
+import type { FindChangedEvent, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
+import { Component, _createElement, _setDisabled, _setDisplayed, _warn } from 'ag-grid-community';
 
-function createSearchIcon(beans: BeanCollection): HTMLElement | undefined {
-    const eIcon = _createIconNoSpan('filter', beans);
-    if (!eIcon) {
-        return undefined;
-    }
-
-    const eIconWrapper = _createElement({
-        tag: 'span',
-        cls: 'ag-toolbar-input-icon',
-        attrs: { 'aria-hidden': 'true' },
-    });
-    eIconWrapper.appendChild(eIcon);
-    return eIconWrapper;
-}
-
-function createSearchInput(beans: BeanCollection, label: string): HTMLInputElement {
-    const eInput = _createElement<HTMLInputElement>({
-        tag: 'input',
-        cls: 'ag-toolbar-input-field',
-        attrs: {
-            type: 'text',
-            placeholder: `${label}...`,
-            'aria-label': label,
-        },
-    });
-
-    const currentValue = beans.gos.get('findSearchValue');
-    if (currentValue) {
-        eInput.value = currentValue;
-    }
-
-    return eInput;
-}
+import { createToolbarIconButton, createToolbarInput } from './toolbarItemUtils';
 
 function createMatchCount(): HTMLSpanElement {
     const eMatchCount = _createElement<HTMLSpanElement>({
@@ -49,24 +11,6 @@ function createMatchCount(): HTMLSpanElement {
     });
     _setDisplayed(eMatchCount, false);
     return eMatchCount;
-}
-
-function createNavButton(beans: BeanCollection, iconName: IconName, label: string): HTMLButtonElement {
-    const eButton = _createElement<HTMLButtonElement>({
-        tag: 'button',
-        cls: 'ag-toolbar-button ag-toolbar-find-button',
-        attrs: {
-            type: 'button',
-            'aria-label': label,
-            title: label,
-        },
-    });
-    _setDisabled(eButton, true);
-    const eIcon = _createIconNoSpan(iconName, beans);
-    if (eIcon) {
-        eButton.appendChild(eIcon);
-    }
-    return eButton;
 }
 
 export class FindToolbarItem extends Component implements IToolbarItemComp {
@@ -90,25 +34,34 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         const label = localeTextFunc('toolbarFind', 'Find');
         const eGui = this.getGui();
 
-        const eSearchIcon = createSearchIcon(this.beans);
-        if (eSearchIcon) {
-            eGui.appendChild(eSearchIcon);
+        const { eIconWrapper, eInput } = createToolbarInput(this.beans, {
+            label,
+            iconName: 'filter',
+            initialValue: this.gos.get('findSearchValue'),
+        });
+        if (eIconWrapper) {
+            eGui.appendChild(eIconWrapper);
         }
-
-        this.eInput = createSearchInput(this.beans, label);
+        this.eInput = eInput;
         eGui.appendChild(this.eInput);
 
         this.eMatchCount = createMatchCount();
         eGui.appendChild(this.eMatchCount);
 
-        this.ePrevButton = createNavButton(
-            this.beans,
-            'previous',
-            localeTextFunc('toolbarFindPreviousMatch', 'Previous Match')
-        );
+        this.ePrevButton = createToolbarIconButton(this.beans, {
+            iconName: 'previous',
+            label: localeTextFunc('toolbarFindPreviousMatch', 'Previous Match'),
+            cls: 'ag-toolbar-find-button',
+            disabled: true,
+        });
         eGui.appendChild(this.ePrevButton);
 
-        this.eNextButton = createNavButton(this.beans, 'next', localeTextFunc('toolbarFindNextMatch', 'Next Match'));
+        this.eNextButton = createToolbarIconButton(this.beans, {
+            iconName: 'next',
+            label: localeTextFunc('toolbarFindNextMatch', 'Next Match'),
+            cls: 'ag-toolbar-find-button',
+            disabled: true,
+        });
         eGui.appendChild(this.eNextButton);
 
         this.addManagedElementListeners(this.eInput, {
