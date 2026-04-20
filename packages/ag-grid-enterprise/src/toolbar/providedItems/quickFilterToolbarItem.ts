@@ -10,7 +10,11 @@ export class QuickFilterToolbarItem extends Component implements IToolbarItemCom
 
     public init(_params: IToolbarItemParams): void {
         if (!this.gos.isModuleRegistered('QuickFilter')) {
-            _warn(303, { itemName: 'quickFilter', moduleName: 'QuickFilter' });
+            _warn(302, {
+                itemName: 'quickFilter',
+                moduleName: 'QuickFilter',
+                ...this.gos.getModuleErrorParams(),
+            });
             this.setDisplayed(false);
             return;
         }

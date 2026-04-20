@@ -740,8 +740,27 @@ export const AG_GRID_ERRORS = {
         `Toolbar item 'filtersPanel' requires a sidebar with a filters tool panel configured. The item will not be rendered.` as const,
     301: ({ key }: { key: string }) =>
         `Toolbar item '${key}' is missing the 'toolbarItem' property and will not be rendered.` as const,
-    303: ({ itemName, moduleName }: { itemName: string; moduleName: string }) =>
-        `Toolbar item '${itemName}' requires the ${moduleName}Module to be registered. The item will not be rendered.` as const,
+    302: ({
+        itemName,
+        moduleName,
+        gridScoped,
+        gridId,
+        rowModelType,
+    }: {
+        itemName: string;
+        moduleName: ValidationModuleName | ValidationModuleName[];
+        gridScoped: boolean;
+        gridId: string;
+        rowModelType: RowModelType;
+    }) =>
+        missingModule({
+            reasonOrId: `Toolbar item '${itemName}'`,
+            moduleName,
+            gridId,
+            gridScoped,
+            rowModelType,
+            additionalText: 'The item will not be rendered.',
+        }),
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

@@ -10,7 +10,7 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
 
     public init(_params: IToolbarItemParams): void {
         if (!this.gos.isModuleRegistered('Pivot')) {
-            _warn(303, { itemName: 'pivotPanel', moduleName: 'Pivot' });
+            _warn(302, { itemName: 'pivotPanel', moduleName: 'Pivot', ...this.gos.getModuleErrorParams() });
             this.setDisplayed(false);
             return;
         }

@@ -7,7 +7,6 @@ import { VERSION } from '../version';
 import { AgToolbarSelector } from './agToolbar';
 import { createToolbarButton } from './providedItems/createToolbarButton';
 import { FindToolbarItem } from './providedItems/findToolbarItem';
-import { MenuToolbarItem } from './providedItems/menuToolbarItem';
 import { PivotPanelToolbarItem } from './providedItems/pivotPanelToolbarItem';
 import { QuickFilterToolbarItem } from './providedItems/quickFilterToolbarItem';
 import { RowGroupPanelToolbarItem } from './providedItems/rowGroupPanelToolbarItem';
@@ -46,7 +45,7 @@ const ColumnChooserToolbarItem = createToolbarButton({
         (beans.colChooserFactory as ColumnChooserFactory | undefined)?.showColumnChooser({ eventSource: eGui }),
     onInit: (comp, gos) => {
         if (!gos.isModuleRegistered('ColumnMenu')) {
-            _warn(303, { itemName: 'columnChooser', moduleName: 'ColumnMenu' });
+            _warn(302, { itemName: 'columnChooser', moduleName: 'ColumnMenu', ...gos.getModuleErrorParams() });
         }
         comp.setDisplayed(gos.isModuleRegistered('ColumnMenu'));
     },
@@ -75,7 +74,11 @@ const ColumnsPanelToolbarItem = createToolbarButton({
     },
     onInit: (comp, gos) => {
         if (!gos.isModuleRegistered('SideBar') || !gos.isModuleRegistered('ColumnsToolPanel')) {
-            _warn(303, { itemName: 'columnsPanel', moduleName: 'SideBar and ColumnsToolPanel' });
+            _warn(302, {
+                itemName: 'columnsPanel',
+                moduleName: ['SideBar', 'ColumnsToolPanel'],
+                ...gos.getModuleErrorParams(),
+            });
         } else if (!hasSideBarPanel(gos.get('sideBar'), 'columns')) {
             _warn(299);
         }
@@ -91,7 +94,7 @@ const CsvExportToolbarItem = createToolbarButton({
     onAction: (beans) => beans.gridApi.exportDataAsCsv(),
     onInit: (comp, gos) => {
         if (!gos.isModuleRegistered('CsvExport')) {
-            _warn(303, { itemName: 'csvExport', moduleName: 'CsvExport' });
+            _warn(302, { itemName: 'csvExport', moduleName: 'CsvExport', ...gos.getModuleErrorParams() });
         }
         comp.setDisplayed(gos.isModuleRegistered('CsvExport') && !gos.get('suppressCsvExport'));
     },
@@ -105,7 +108,7 @@ const ExcelExportToolbarItem = createToolbarButton({
     onAction: (beans) => beans.gridApi.exportDataAsExcel(),
     onInit: (comp, gos) => {
         if (!gos.isModuleRegistered('ExcelExport')) {
-            _warn(303, { itemName: 'excelExport', moduleName: 'ExcelExport' });
+            _warn(302, { itemName: 'excelExport', moduleName: 'ExcelExport', ...gos.getModuleErrorParams() });
         }
         comp.setDisplayed(gos.isModuleRegistered('ExcelExport') && !gos.get('suppressExcelExport'));
     },
@@ -141,9 +144,10 @@ const FiltersPanelToolbarItem = createToolbarButton({
         const hasFilterModule =
             gos.isModuleRegistered('FiltersToolPanel') || gos.isModuleRegistered('NewFiltersToolPanel');
         if (!gos.isModuleRegistered('SideBar') || !hasFilterModule) {
-            _warn(303, {
+            _warn(302, {
                 itemName: 'filtersPanel',
-                moduleName: 'SideBar and FiltersToolPanel/NewFiltersToolPanel',
+                moduleName: ['SideBar', 'FiltersToolPanel', 'NewFiltersToolPanel'],
+                ...gos.getModuleErrorParams(),
             });
         } else if (!['filters', 'filters-new'].some((id) => hasSideBarPanel(gos.get('sideBar'), id))) {
             _warn(300);
@@ -174,7 +178,6 @@ export const ToolbarModule: _ModuleWithoutApi = {
         agCsvExportToolbarItem: CsvExportToolbarItem,
         agExcelExportToolbarItem: ExcelExportToolbarItem,
         agFiltersPanelToolbarItem: FiltersPanelToolbarItem,
-        agMenuToolbarItem: MenuToolbarItem,
         agFindToolbarItem: FindToolbarItem,
         agPivotPanelToolbarItem: PivotPanelToolbarItem,
         agQuickFilterToolbarItem: QuickFilterToolbarItem,

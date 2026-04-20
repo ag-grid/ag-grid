@@ -70,7 +70,7 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
 
     public init(_params: IToolbarItemParams): void {
         if (!this.gos.isModuleRegistered('Find')) {
-            _warn(303, { itemName: 'find', moduleName: 'Find' });
+            _warn(302, { itemName: 'find', moduleName: 'Find', ...this.gos.getModuleErrorParams() });
             this.setDisplayed(false);
             return;
         }
