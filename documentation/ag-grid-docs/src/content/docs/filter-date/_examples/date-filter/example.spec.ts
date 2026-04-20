@@ -12,7 +12,6 @@ test.agExample(import.meta, () => {
         const filterInput = agIdFor.dateFilterInstanceInput({ source: 'column-filter' });
         await expect(filterInput).toBeVisible();
 
-        // Built-in dateTime formatter outputs "YYYY-MM-DDTHH:mm:ss" (local time, T separator already present)
         await filterInput.fill(cellText);
         await filterInput.dispatchEvent('input');
 
@@ -70,9 +69,7 @@ test.agExample(import.meta, () => {
         const filterInput = agIdFor.dateFilterInstanceInput({ source: 'column-filter' });
         await expect(filterInput).toBeVisible();
 
-        // valueFormatter outputs "YYYY-MM-DD HH:mm:ss"; convert to datetime-local format "YYYY-MM-DDTHH:mm:ss"
-        const datetimeValue = cellText.replace(' ', 'T');
-        await filterInput.fill(datetimeValue);
+        await filterInput.fill(cellText);
         await filterInput.dispatchEvent('input');
 
         const otherCell = agIdFor.cell('0', 'startDate');
