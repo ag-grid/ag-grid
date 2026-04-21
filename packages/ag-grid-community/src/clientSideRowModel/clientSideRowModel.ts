@@ -1076,18 +1076,31 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return; // destroyed
         }
         beans.valueCache?.onDataChanged();
+        const formula = beans.formula;
         const rowNodeTrans: RowNodeTransaction[] = [];
         const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const changedRowNodes = new ChangedRowNodes();
         const animate = !this.gos.get('suppressAnimationFrame');
-        for (const { rowDataTransaction, callback } of asyncTransactions ?? []) {
-            this.rowNodesCountReady = true;
-            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
-            const rowNodeTransaction = nodeManager.updateRowData(rowDataTransaction, changedRowNodes, animate);
-            rowNodeTrans.push(rowNodeTransaction);
-            if (callback) {
-                callbackFuncsBound.push(callback.bind(null, rowNodeTransaction));
+        let updateOnlyTransactions = true;
+
+        formula?.beginChangeBatch();
+        try {
+            for (const { rowDataTransaction, callback } of asyncTransactions ?? []) {
+                this.rowNodesCountReady = true;
+                this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
+                const rowNodeTransaction = nodeManager.updateRowData(rowDataTransaction, changedRowNodes, animate);
+                rowNodeTrans.push(rowNodeTransaction);
+                updateOnlyTransactions &&=
+                    rowNodeTransaction.add.length === 0 && rowNodeTransaction.remove.length === 0;
+                if (callback) {
+                    callbackFuncsBound.push(callback.bind(null, rowNodeTransaction));
+                }
             }
+            if (updateOnlyTransactions && rowNodeTrans.some((transaction) => transaction.update.length > 0)) {
+                formula?.onUpdateOnlyTransactionApplied();
+            }
+        } finally {
+            formula?.endChangeBatch();
         }
         this.commitTransactions(changedRowNodes, animate);
 
@@ -1117,12 +1130,26 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return null; // destroyed
         }
         this.beans.valueCache?.onDataChanged();
+        const formula = this.beans.formula;
 
         this.rowNodesCountReady = true;
         const changedRowNodes = new ChangedRowNodes();
         const animate = !this.gos.get('suppressAnimationFrame');
         this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
-        const rowNodeTransaction = nodeManager.updateRowData(rowDataTran, changedRowNodes, animate);
+        formula?.beginChangeBatch();
+        let rowNodeTransaction: RowNodeTransaction;
+        try {
+            rowNodeTransaction = nodeManager.updateRowData(rowDataTran, changedRowNodes, animate);
+            const updateOnlyTransaction =
+                rowNodeTransaction.add.length === 0 &&
+                rowNodeTransaction.remove.length === 0 &&
+                rowNodeTransaction.update.length > 0;
+            if (updateOnlyTransaction) {
+                formula?.onUpdateOnlyTransactionApplied();
+            }
+        } finally {
+            formula?.endChangeBatch();
+        }
         this.commitTransactions(changedRowNodes, animate);
         return rowNodeTransaction;
     }

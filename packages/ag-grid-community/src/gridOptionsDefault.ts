@@ -181,6 +181,7 @@ export const GRID_OPTION_DEFAULTS = {
     reactiveCustomComponents: true,
     suppressSetFilterByDefault: false,
     enableFilterHandlers: false,
+    enableFormulaCellFlash: false,
 } as const;
 /**
  * Used simply to type check the default grid options.

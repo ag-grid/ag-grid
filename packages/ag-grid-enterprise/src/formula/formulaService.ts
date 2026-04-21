@@ -3,18 +3,28 @@ import type {
     BeanCollection,
     FormulaFunctionParams,
     IFormulaService,
+    IRowNode,
     NamedBean,
     RowNode,
+    ValueGetterParams,
     _ColumnCollections,
 } from 'ag-grid-community';
-import { BeanStub, _convertColumnEventSourceType, _isExpressionString, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _convertColumnEventSourceType,
+    _getClientSideRowModel,
+    _getValueUsingField,
+    _isExpressionString,
+    _warn,
+} from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
 import type { FormulaNode } from './ast/utils';
 import { FormulaError } from './ast/utils';
 import type { Addr } from './functions/resolver';
-import { evalAst, unresolvedDeps } from './functions/resolver';
+import { collectReferencedAddrs, evalAst, unresolvedDeps } from './functions/resolver';
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
 import { shiftNode } from './functions/utils';
 import { isFormulaIdentChar, isFormulaIdentStart } from './refUtils';
@@ -27,6 +37,7 @@ export class CellFormula {
     public error: FormulaError | null = null;
     public ast: FormulaNode | null = null;
     public astStale = true;
+    public dependencyKeys: string[] = [];
 
     private _value: unknown = undefined;
     private _valueStale = true;
@@ -45,6 +56,7 @@ export class CellFormula {
         this.formulaString = next;
         this.astStale = true;
         this._valueStale = true;
+        this.error = null;
     }
 
     /** Cache write: store a fresh computed value (and clear previous error). */
@@ -58,6 +70,11 @@ export class CellFormula {
     public setError(e: FormulaError) {
         this.error = e;
         this._valueStale = false;
+    }
+
+    public invalidateValue(): void {
+        this._valueStale = true;
+        this.error = null;
     }
 
     public isValueReady(): boolean {
@@ -92,11 +109,18 @@ interface FormulaFrame {
     ast: FormulaNode;
     unresolvedDepIterator: Generator<Addr>;
 }
+
+type CellKey = string;
+
 export class FormulaService extends BeanStub implements IFormulaService, NamedBean {
     public readonly beanName = 'formula' as const;
 
     /** Cache: row -> (column -> CellFormula) */
     private cachedResult: WeakMap<RowNode, WeakMap<AgColumn, CellFormula>> = new WeakMap();
+
+    /** Fast lookup for known formula cells and their reverse dependency graph. */
+    private readonly formulaByKey: Map<CellKey, CellFormula> = new Map();
+    private readonly dependentsByKey: Map<CellKey, Set<CellKey>> = new Map();
 
     /** Map "A", "B", ..., "AA" -> actual AgColumn */
     private colRefMap: Map<string, AgColumn> = new Map();
@@ -104,6 +128,14 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Built-in operations (extendable via gridOptions.formulaFuncs). */
     private supportedOperations: Map<string, (params: FormulaFunctionParams) => unknown>;
     private functionNames: string[] | null = null;
+    private changeBatchDepth = 0;
+    private readonly capturedRoots: Map<CellKey, Addr> = new Map();
+    private readonly committedRoots: Map<CellKey, Addr> = new Map();
+    private readonly snapshotValues: Map<CellKey, unknown> = new Map();
+    private readonly managedFlashCells: Set<CellKey> = new Set();
+    private discardCurrentBatch = false;
+    private flashNextModelUpdatedRefresh = false;
+    private skipNextModelUpdatedRefresh = false;
 
     public active = false;
 
@@ -153,11 +185,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     public postConstruct(): void {
         this.setupFunctions();
 
-        const refreshFormulas = () => {
-            if (this.active) {
-                this.refreshFormulas(true);
-            }
-        };
         const resetColMap = () => {
             if (this.active) {
                 this.setupColRefMap();
@@ -175,9 +202,22 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         });
 
         this.addManagedListeners(this.beans.eventSvc, {
-            modelUpdated: refreshFormulas,
-            cellValueChanged: refreshFormulas,
-            rowDataUpdated: refreshFormulas,
+            modelUpdated: (event) => {
+                if (!this.active) {
+                    this.flashNextModelUpdatedRefresh = false;
+                    this.skipNextModelUpdatedRefresh = false;
+                    return;
+                }
+                if (event.newData || !this.skipNextModelUpdatedRefresh) {
+                    if (this.flashNextModelUpdatedRefresh) {
+                        this.refreshFormulasAndFlashChanges();
+                    } else {
+                        this.refreshFormulas(true);
+                    }
+                }
+                this.flashNextModelUpdatedRefresh = false;
+                this.skipNextModelUpdatedRefresh = false;
+            },
             newColumnsLoaded: resetColMap,
             columnMoved: resetColMap,
         });
@@ -293,15 +333,232 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         return null;
     }
 
+    public beginChangeBatch(): void {
+        if (!this.active) {
+            return;
+        }
+        this.changeBatchDepth++;
+    }
+
+    public endChangeBatch(): void {
+        if (!this.active || this.changeBatchDepth === 0) {
+            return;
+        }
+        if (--this.changeBatchDepth > 0) {
+            return;
+        }
+        if (this.discardCurrentBatch) {
+            this.discardCurrentBatch = false;
+            this.clearTrackedState();
+            return;
+        }
+        this.flushCapturedChanges();
+    }
+
+    public captureCellValueChange(row: RowNode, column: AgColumn): void {
+        if (!this.active) {
+            return;
+        }
+        const primaryRow = row.primaryRow;
+        this.captureRootChange({ row: primaryRow, column });
+    }
+
+    public commitCellValueChange(row: RowNode, column: AgColumn): void {
+        if (!this.active) {
+            return;
+        }
+        const primaryRow = row.primaryRow;
+        const key = this.getCellKey(primaryRow, column);
+        this.committedRoots.set(key, { row: primaryRow, column });
+    }
+
+    public captureRowDataUpdate(row: RowNode, oldData: any, newData: any): void {
+        if (!this.active) {
+            return;
+        }
+
+        const primaryRow = row.primaryRow;
+        const primaryColumns = this.beans.colModel.getCols()?.filter((col) => col.isPrimary()) as
+            | AgColumn[]
+            | undefined;
+        if (!primaryColumns?.length) {
+            return;
+        }
+
+        for (const column of primaryColumns) {
+            const oldValue = this.getValueForData(column, primaryRow, oldData);
+            const newValue = this.getValueForData(column, primaryRow, newData);
+            if (Object.is(oldValue, newValue)) {
+                continue;
+            }
+
+            this.captureRootChange({ row: primaryRow, column });
+            this.commitCellValueChange(primaryRow, column);
+        }
+    }
+
+    /**
+     * Resolve a committed cell value against an arbitrary row data snapshot.
+     * Used by captureRowDataUpdate to diff pre- and post-update source values without
+     * consulting live row state or the value cache. Temporarily swaps rowNode.data so
+     * valueGetter-backed columns (and any nested getValue calls) see consistent data.
+     */
+    private getValueForData(column: AgColumn, rowNode: IRowNode, data: any): any {
+        const colDef = column.colDef;
+        const formulaDataSvc = this.beans.formulaDataSvc;
+        if (formulaDataSvc?.hasDataSource() && colDef.allowFormula === true) {
+            const formula = formulaDataSvc.getFormula({ column, rowNode });
+            if (_isExpressionString(formula)) {
+                return formula;
+            }
+        }
+
+        const valueGetter = colDef.valueGetter;
+        const field = colDef.field;
+        if (!valueGetter && !field) {
+            return undefined;
+        }
+
+        const originalData = (rowNode as RowNode).data;
+        (rowNode as RowNode).data = data;
+        try {
+            if (valueGetter) {
+                return this.executeValueGetterForData(valueGetter, data, column, rowNode);
+            }
+            if (field && data) {
+                return _getValueUsingField(data, field, column.isFieldContainsDots());
+            }
+            return undefined;
+        } finally {
+            (rowNode as RowNode).data = originalData;
+        }
+    }
+
+    private executeValueGetterForData(
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        valueGetter: string | Function,
+        data: any,
+        column: AgColumn,
+        rowNode: IRowNode
+    ): any {
+        const params: ValueGetterParams = _addGridCommonParams(this.gos, {
+            data,
+            node: rowNode,
+            column,
+            colDef: column.getColDef(),
+            getValue: (field) => {
+                const otherColumn = this.beans.colModel.getColDefCol(field);
+                return otherColumn ? this.getValueForData(otherColumn, rowNode, data) : null;
+            },
+        });
+
+        if (typeof valueGetter === 'function') {
+            return valueGetter(params);
+        }
+
+        return this.beans.expressionSvc?.evaluate(valueGetter, params);
+    }
+
+    /**
+     * CSRM hook called after a transaction applies but before commitTransactions runs the sort/filter stages.
+     * Decides how the upcoming modelUpdated refresh should handle formula recomputation:
+     *  - sort active: drop the targeted batch (row addresses may shift) and ask the blanket refresh to flash changed dependents.
+     *  - sort inactive: keep the targeted batch and suppress the blanket refresh (the capture/commit path already handled it).
+     * Non-updateOnly or empty transactions fall through to the default modelUpdated rebuild.
+     */
+    public onUpdateOnlyTransactionApplied(): void {
+        if (!this.active) {
+            return;
+        }
+        if (this.beans.sortSvc?.isSortActive()) {
+            this.discardCurrentBatch = true;
+            this.flashNextModelUpdatedRefresh = true;
+        } else {
+            this.skipNextModelUpdatedRefresh = true;
+        }
+    }
+
+    public shouldSuppressCellFlash(row: RowNode, column: AgColumn): boolean {
+        return this.managedFlashCells.delete(this.getCellKey(row.primaryRow, column));
+    }
+
+    /**
+     * Blanket rebuild wrapped with flash detection. Snapshots resolved formula values,
+     * delegates to refreshFormulas (which clears caches, rebuilds the dep graph, and
+     * refreshes with suppressFlash: true), then explicitly flashes cells whose value
+     * changed. This covers paths that can't use the targeted capture/commit mechanism,
+     * e.g. update-only transactions under active sort where formula row refs shift with
+     * the new order and the dep graph must be rebuilt from scratch.
+     */
+    private refreshFormulasAndFlashChanges(): void {
+        if (!this.gos.get('enableFormulaCellFlash')) {
+            this.refreshFormulas(true);
+            return;
+        }
+
+        const snapshot = new Map<CellKey, { row: RowNode; column: AgColumn; value: unknown }>();
+        for (const [key, formula] of this.formulaByKey) {
+            const value = formula.isValueReady()
+                ? formula.getValue()
+                : this.resolveValue(formula.column, formula.rowNode);
+            snapshot.set(key, { row: formula.rowNode, column: formula.column, value });
+        }
+
+        this.refreshFormulas(true);
+
+        if (!snapshot.size) {
+            return;
+        }
+
+        const cellFlashSvc = this.beans.cellFlashSvc;
+        if (!cellFlashSvc) {
+            return;
+        }
+
+        const changedCellsByRow = new Map<RowNode, AgColumn[]>();
+        for (const [key, prev] of snapshot) {
+            const formula = this.formulaByKey.get(key);
+            if (!formula) {
+                continue;
+            }
+            const nextValue = this.resolveValue(formula.column, formula.rowNode);
+            if (Object.is(prev.value, nextValue)) {
+                continue;
+            }
+            const columns = changedCellsByRow.get(formula.rowNode) ?? [];
+            columns.push(formula.column);
+            changedCellsByRow.set(formula.rowNode, columns);
+        }
+
+        if (!changedCellsByRow.size) {
+            return;
+        }
+
+        // No managedFlashCells coordination here: the preceding refreshFormulas(true) already
+        // ran with suppressFlash: true, and flashCell() below bypasses cellCtrl.refreshCell, so
+        // no default flash path can fire for these cells. Adding keys now would leave them
+        // undrained and silently suppress a future unrelated enableCellChangeFlash update.
+        for (const [rowNode, columns] of changedCellsByRow) {
+            for (const cellCtrl of this.beans.rowRenderer.getCellCtrls([rowNode], columns)) {
+                cellFlashSvc.flashCell(cellCtrl);
+            }
+        }
+    }
+
     /** Clear all cached results and re-render cells. */
     public refreshFormulas(refreshCells: boolean) {
-        /**
-         * This needs optimised
-         * Consider debouncing on high frequency cell value updates
-         * Consider only invalidating/refreshing part of the tree.
-         */
+        this.clearTrackedState();
+        this.managedFlashCells.clear();
+        this.flashNextModelUpdatedRefresh = false;
+        this.skipNextModelUpdatedRefresh = false;
+        this.cachedResult = new WeakMap();
+        this.formulaByKey.clear();
+        this.dependentsByKey.clear();
 
-        this.cachedResult = new WeakMap(); // drops cached values & ASTs
+        if (this.active) {
+            this.rebuildDependencyGraph();
+        }
+
         if (refreshCells) {
             this.beans.rowRenderer.refreshCells({ suppressFlash: true, force: true });
         }
@@ -343,23 +600,23 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     /** Ensure a CellFormula exists for (row,col) if it's a formula cell; returns null for non-formula. */
     private ensureCellFormula(row: RowNode, col: AgColumn): CellFormula | null {
-        // Get or create the per-row cache map
         let rowMap = this.cachedResult.get(row);
-
-        // See if it's already there
-        let cf = rowMap?.get(col);
-        if (cf) {
-            return cf;
-        }
 
         const str = this.getFormulaFromDataSource(row, col) ?? this.fetchRawValue(col, row);
         if (typeof str !== 'string' || str[0] !== '=') {
+            rowMap?.delete(col);
             return null;
+        }
+
+        let cf = rowMap?.get(col);
+        if (cf) {
+            cf.setFormulaString(str);
+            return cf;
         }
 
         cf = new CellFormula(row, col, str, this.beans);
         if (!rowMap) {
-            rowMap = new Map<AgColumn, CellFormula>();
+            rowMap = new WeakMap<AgColumn, CellFormula>();
             this.cachedResult.set(row, rowMap);
         }
         rowMap.set(col, cf);
@@ -404,6 +661,234 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Fetch a non-formula value from the grid without triggering nested formula calc. */
     private fetchRawValue(col: AgColumn, row: RowNode): unknown {
         return this.beans.valueSvc.getValue(col, row, 'data');
+    }
+
+    private getCellKey(row: RowNode, column: AgColumn): CellKey {
+        return `${row.id ?? row.sourceRowIndex}:${column.getColId()}`;
+    }
+
+    private clearTrackedState(): void {
+        this.changeBatchDepth = 0;
+        this.discardCurrentBatch = false;
+        this.capturedRoots.clear();
+        this.committedRoots.clear();
+        this.snapshotValues.clear();
+    }
+
+    private captureRootChange(address: Addr): void {
+        const key = this.getCellKey(address.row, address.column);
+        if (this.capturedRoots.has(key)) {
+            return;
+        }
+
+        this.capturedRoots.set(key, address);
+        for (const dependentKey of this.collectDependentFormulaKeys(key)) {
+            if (this.snapshotValues.has(dependentKey)) {
+                continue;
+            }
+
+            const formula = this.formulaByKey.get(dependentKey);
+            if (!formula) {
+                continue;
+            }
+
+            const previousValue = formula.isValueReady()
+                ? formula.getValue()
+                : this.resolveValue(formula.column, formula.rowNode);
+
+            this.snapshotValues.set(dependentKey, previousValue);
+        }
+    }
+
+    private collectDependentFormulaKeys(rootKey: CellKey): Set<CellKey> {
+        const dependents = new Set<CellKey>();
+        const pending = [...(this.dependentsByKey.get(rootKey) ?? [])];
+
+        while (pending.length) {
+            const dependentKey = pending.pop()!;
+            if (dependentKey === rootKey || dependents.has(dependentKey)) {
+                continue;
+            }
+
+            dependents.add(dependentKey);
+            const transitive = this.dependentsByKey.get(dependentKey);
+            if (transitive) {
+                pending.push(...transitive);
+            }
+        }
+
+        return dependents;
+    }
+
+    private flushCapturedChanges(): void {
+        if (!this.committedRoots.size) {
+            this.clearTrackedState();
+            return;
+        }
+
+        // Formula definition changes must update the reverse dependency graph before we
+        // recompute dependents, otherwise later edits in the same session would keep using
+        // the old source -> dependent links.
+        for (const { row, column } of this.committedRoots.values()) {
+            const key = this.getCellKey(row, column);
+            if (column.isAllowFormula() || this.formulaByKey.has(key)) {
+                this.syncFormulaCellDefinition(row, column);
+            }
+        }
+
+        for (const formulaKey of this.snapshotValues.keys()) {
+            this.formulaByKey.get(formulaKey)?.invalidateValue();
+        }
+
+        const changedCellsByRow = new Map<RowNode, AgColumn[]>();
+        for (const [formulaKey, previousValue] of this.snapshotValues) {
+            const formula = this.formulaByKey.get(formulaKey);
+            if (!formula) {
+                continue;
+            }
+
+            const nextValue = this.resolveValue(formula.column, formula.rowNode);
+            if (Object.is(previousValue, nextValue)) {
+                continue;
+            }
+
+            const rowColumns = changedCellsByRow.get(formula.rowNode) ?? [];
+            rowColumns.push(formula.column);
+            changedCellsByRow.set(formula.rowNode, rowColumns);
+        }
+
+        const rootRows = new Set([...this.committedRoots.values()].map(({ row }) => row));
+        this.clearTrackedState();
+
+        if (!changedCellsByRow.size) {
+            return;
+        }
+
+        for (const [rowNode, columns] of changedCellsByRow) {
+            if (!rootRows.has(rowNode)) {
+                continue;
+            }
+            for (const column of columns) {
+                this.managedFlashCells.add(this.getCellKey(rowNode, column));
+            }
+        }
+
+        for (const [rowNode, columns] of changedCellsByRow) {
+            this.beans.rowRenderer.refreshCells({
+                rowNodes: [rowNode],
+                columns,
+                force: true,
+                suppressFlash: true,
+            });
+        }
+
+        if (!this.gos.get('enableFormulaCellFlash')) {
+            return;
+        }
+
+        const cellFlashSvc = this.beans.cellFlashSvc;
+        if (!cellFlashSvc) {
+            return;
+        }
+
+        for (const [rowNode, columns] of changedCellsByRow) {
+            for (const cellCtrl of this.beans.rowRenderer.getCellCtrls([rowNode], columns)) {
+                cellFlashSvc.flashCell(cellCtrl);
+            }
+        }
+    }
+
+    private rebuildDependencyGraph(): void {
+        if (!this.active) {
+            return;
+        }
+
+        const rowModel = _getClientSideRowModel(this.beans);
+        const rows = rowModel?.rootNode?._leafs ?? [];
+        const formulaColumns = this.beans.colModel.getCols()?.filter((col) => col.isAllowFormula()) as
+            | AgColumn[]
+            | undefined;
+
+        if (!rows.length || !formulaColumns?.length) {
+            return;
+        }
+
+        for (const row of rows) {
+            for (const column of formulaColumns) {
+                this.syncFormulaCellDefinition(row, column);
+            }
+        }
+    }
+
+    private syncFormulaCellDefinition(row: RowNode, column: AgColumn): void {
+        const key = this.getCellKey(row, column);
+        const previousFormula = this.formulaByKey.get(key);
+        const formula = this.ensureCellFormula(row, column);
+
+        if (!formula) {
+            if (previousFormula) {
+                this.removeDependencyMappings(key, previousFormula);
+                this.formulaByKey.delete(key);
+            }
+            return;
+        }
+
+        this.formulaByKey.set(key, formula);
+        this.updateDependencyMappings(key, formula);
+    }
+
+    private updateDependencyMappings(formulaKey: CellKey, formula: CellFormula): void {
+        this.removeDependencyMappings(formulaKey, formula);
+
+        const ast = this.tryGetAst(formula);
+        if (!ast) {
+            formula.dependencyKeys = [];
+            return;
+        }
+
+        // Unresolved refs throw FormulaError; isolate the failure so one broken
+        // formula can't abort the whole graph rebuild.
+        let addrs: Addr[];
+        try {
+            addrs = collectReferencedAddrs(this.beans, ast);
+        } catch {
+            formula.dependencyKeys = [];
+            return;
+        }
+
+        const dependencyKeys = new Set<CellKey>();
+        for (const address of addrs) {
+            dependencyKeys.add(this.getCellKey(address.row, address.column));
+        }
+
+        formula.dependencyKeys = [...dependencyKeys];
+        for (const dependencyKey of formula.dependencyKeys) {
+            const dependents = this.dependentsByKey.get(dependencyKey) ?? new Set<CellKey>();
+            dependents.add(formulaKey);
+            this.dependentsByKey.set(dependencyKey, dependents);
+        }
+    }
+
+    private removeDependencyMappings(formulaKey: CellKey, formula: CellFormula): void {
+        for (const dependencyKey of formula.dependencyKeys) {
+            const dependents = this.dependentsByKey.get(dependencyKey);
+            if (!dependents) {
+                continue;
+            }
+            dependents.delete(formulaKey);
+            if (dependents.size === 0) {
+                this.dependentsByKey.delete(dependencyKey);
+            }
+        }
+        formula.dependencyKeys = [];
+    }
+
+    private tryGetAst(formula: CellFormula): FormulaNode | null {
+        try {
+            return formula.getAst();
+        } catch {
+            return null;
+        }
     }
 
     /**

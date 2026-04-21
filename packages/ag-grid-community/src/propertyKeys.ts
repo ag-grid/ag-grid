@@ -210,6 +210,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'unSortIcon',
     'suppressMultiSort',
     'alwaysMultiSort',
+    'enableFormulaCellFlash',
     'singleClickEdit',
     'suppressLoadingOverlay',
     'suppressNoRowsOverlay',

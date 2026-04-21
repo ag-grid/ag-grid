@@ -47,6 +47,12 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
      * Calls may be nested — flush only occurs when the outermost endDeferred() is reached.
      */
     public beginDeferred(): void {
+        // keep formula batching aligned with the outermost deferred scope only.
+        // Nested edit commits also call beginDeferred(), and starting a nested formula batch here
+        // would leave FormulaService one level deeper than endDeferred() ever drains.
+        if (this.deferredDepth === 0) {
+            this.beans.formula?.beginChangeBatch();
+        }
         this.deferredDepth++;
     }
 
@@ -61,6 +67,10 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         if (--this.deferredDepth > 0) {
             return;
         }
+
+        // flush formula re-computation before row refresh so any dependent formula cells
+        // render their latest values during the shared deferred refresh pass.
+        this.beans.formula?.endChangeBatch();
 
         // Snapshot and clear accumulated state.
         const path = this.batchedPath;

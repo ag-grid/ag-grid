@@ -360,30 +360,52 @@ export class RowNode<TData = any>
     private setDataCommon(data: TData, update: boolean): void {
         const { valueCache, eventSvc } = this.beans;
         const oldData = this.data;
+        const primaryRow = this.primaryRow;
+        const formula = this.beans.formula;
+        let formulaBatchEnded = false;
 
-        this.data = data;
-        valueCache?.onDataChanged();
-        this.updateDataOnDetailNode();
-        this.resetQuickFilterAggregateText();
+        formula?.beginChangeBatch();
+        formula?.captureRowDataUpdate(primaryRow, oldData, data);
+        try {
+            this.data = data;
+            valueCache?.onDataChanged();
+            this.updateDataOnDetailNode();
+            this.resetQuickFilterAggregateText();
 
-        const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
-        this.__localEventService?.dispatchEvent(event);
+            if (this.sibling) {
+                this.sibling.data = data;
+            }
 
-        if (this.sibling) {
-            this.sibling.data = data;
-            const event: DataChangedEvent<TData> = this.sibling.createDataChangedEvent(data, oldData, update);
-            this.sibling.__localEventService?.dispatchEvent(event);
-        }
+            const pinnedSibling = this.pinnedSibling;
+            if (pinnedSibling) {
+                pinnedSibling.data = data;
+            }
 
-        eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: this });
+            // keep formula re-computation ahead of the dataChanged refresh so dependent
+            // formula cells render their updated values in the same row refresh pass.
+            formula?.endChangeBatch();
+            formulaBatchEnded = true;
 
-        const pinnedSibling = this.pinnedSibling;
-        if (pinnedSibling) {
-            pinnedSibling.data = data;
-            pinnedSibling.__localEventService?.dispatchEvent(
-                pinnedSibling.createDataChangedEvent(data, oldData, update)
-            );
-            eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: pinnedSibling });
+            const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
+            this.__localEventService?.dispatchEvent(event);
+
+            if (this.sibling) {
+                const event: DataChangedEvent<TData> = this.sibling.createDataChangedEvent(data, oldData, update);
+                this.sibling.__localEventService?.dispatchEvent(event);
+            }
+
+            eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: this });
+
+            if (pinnedSibling) {
+                pinnedSibling.__localEventService?.dispatchEvent(
+                    pinnedSibling.createDataChangedEvent(data, oldData, update)
+                );
+                eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: pinnedSibling });
+            }
+        } finally {
+            if (!formulaBatchEnded) {
+                formula?.endChangeBatch();
+            }
         }
     }
 

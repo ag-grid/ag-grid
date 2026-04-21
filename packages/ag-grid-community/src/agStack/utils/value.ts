@@ -1,3 +1,4 @@
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
     if (!field || !data) {
         return;

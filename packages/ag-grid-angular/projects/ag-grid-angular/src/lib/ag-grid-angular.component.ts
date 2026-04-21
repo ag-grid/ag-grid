@@ -1201,6 +1201,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `FormulaModule`
      */
     @Input() public formulaFuncs: FormulaFuncs | undefined = undefined;
+    /** When `true`, formula cells with `enableCellChangeFlash` set will flash when a dependent value change
+     * causes their computed result to change.
+     * @default false
+     * @agModule `FormulaModule`
+     */
+    @Input({ transform: booleanAttribute }) public enableFormulaCellFlash: boolean | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`

@@ -1025,6 +1025,12 @@ export interface Props<TData> {
          * @agModule `FormulaModule`
          */
     formulaFuncs?: FormulaFuncs,
+    /** When `true`, formula cells with `enableCellChangeFlash` set will flash when a dependent value change
+         * causes their computed result to change.
+         * @default false
+         * @agModule `FormulaModule`
+         */
+    enableFormulaCellFlash?: boolean,
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
          * @default false
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
@@ -2205,6 +2211,7 @@ export function getProps() {
         noteShowDelay: undefined,
         noteHideDelay: undefined,
         formulaFuncs: undefined,
+        enableFormulaCellFlash: undefined,
         suppressAggFuncInHeader: undefined,
         alwaysAggregateAtRootLevel: undefined,
         aggregateOnlyChangedColumns: undefined,

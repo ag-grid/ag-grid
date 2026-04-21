@@ -75,6 +75,13 @@ export interface IFormulaService extends Bean {
     active: boolean;
     isFormula(value: unknown): value is `=${string}`;
     setFormulasActive(cols: ColumnCollections): void;
+    beginChangeBatch(): void;
+    endChangeBatch(): void;
+    captureCellValueChange(row: RowNode, column: AgColumn): void;
+    commitCellValueChange(row: RowNode, column: AgColumn): void;
+    captureRowDataUpdate(row: RowNode, oldData: any, newData: any): void;
+    onUpdateOnlyTransactionApplied(): void;
+    shouldSuppressCellFlash(row: RowNode, column: AgColumn): boolean;
     resolveValue(col: AgColumn, row: RowNode): unknown;
     getFormulaError(col: AgColumn, row: RowNode): Error | null;
     normaliseFormula(value: string, shorthand: boolean): string | null;

@@ -655,7 +655,12 @@ export class CellCtrl extends BeanStub {
             // be to busy. see comment in FilterManager with regards processingFilterChange
             const processingFilterChange = filterManager?.isSuppressFlashingCellsBecauseFiltering();
 
-            const flashCell = !params?.suppressFlash && !processingFilterChange && enableCellChangeFlash;
+            const suppressFormulaFlash = !!this.beans.formula?.shouldSuppressCellFlash(
+                this.rowNode as RowNode,
+                this.column
+            );
+            const flashCell =
+                !params?.suppressFlash && !processingFilterChange && !suppressFormulaFlash && enableCellChangeFlash;
 
             if (flashCell) {
                 cellFlashSvc?.flashCell(this);

@@ -562,7 +562,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         this.clearValidationIfNoOpenEditors();
 
-        const { rowRenderer, formula } = beans;
+        const { rowRenderer } = beans;
 
         if (willCancel) {
             // if we cancelled the edit, we need to refresh the rows to remove the pending value and editing styles
@@ -570,11 +570,7 @@ export class EditService extends BeanStub implements NamedBean {
         }
 
         if (this.batch) {
-            if (formula) {
-                formula.refreshFormulas(true);
-            } else {
-                rowRenderer.refreshRows({ suppressFlash: true, force: true });
-            }
+            rowRenderer.refreshRows({ suppressFlash: true, force: true });
 
             const batchCommit = willStop && commit;
             const batchCancel = willCancel && forceCancel;

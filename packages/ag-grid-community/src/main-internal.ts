@@ -190,6 +190,7 @@ export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './agStack/utils/locale';
 export { _isPromise } from './agStack/utils/promise';
 export { _camelCaseToHumanText, _escapeString, _isExpressionString, _toString } from './agStack/utils/string';
+export { _getValueUsingField } from './agStack/utils/value';
 export type { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
 export type {
     _AdvancedFilterGridApi,

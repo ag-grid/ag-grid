@@ -383,6 +383,54 @@ function* rangeAddrs(
     }
 }
 
+/** Collects every referenced cell address in traversal order, expanding ranges to concrete cells. */
+export function collectReferencedAddrs(beans: BeanCollection, root: FormulaNode): Addr[] {
+    const addresses: Addr[] = [];
+    const astStack: FormulaNode[] = [root];
+
+    while (astStack.length) {
+        const currentNode = astStack.pop()!;
+        if (currentNode.type === 'operand') {
+            const operandValue = currentNode.value;
+            if (typeof operandValue !== 'object' || operandValue == null) {
+                continue;
+            }
+
+            if (!operandValue.endColumn && !operandValue.endRow) {
+                const cellAddress = resolveRefToAddress(beans, operandValue);
+                if (!cellAddress) {
+                    throw new FormulaError(33);
+                }
+                addresses.push(cellAddress);
+                continue;
+            }
+
+            if (!operandValue.endColumn || !operandValue.endRow) {
+                throw new FormulaError(34);
+            }
+
+            const firstRowIndex = resolveRowIndex(beans, operandValue.row);
+            const secondRowIndex = resolveRowIndex(beans, operandValue.endRow);
+            const rowStartIndex = Math.min(firstRowIndex, secondRowIndex);
+            const rowEndIndex = Math.max(firstRowIndex, secondRowIndex);
+
+            const startCol = resolveCol(beans, operandValue.column);
+            const endCol = resolveCol(beans, operandValue.endColumn);
+
+            for (const cellAddress of rangeAddrs(beans, rowStartIndex, rowEndIndex, startCol, endCol)) {
+                addresses.push(cellAddress);
+            }
+            continue;
+        }
+
+        for (let i = 0; i < currentNode.operands.length; i++) {
+            astStack.push(currentNode.operands[i]);
+        }
+    }
+
+    return addresses;
+}
+
 /**
  * Streams uncached formula dependencies from an AST in traversal order.
  * Skips primitives, non-formula cells, cached formula cells, and already-done cells.
