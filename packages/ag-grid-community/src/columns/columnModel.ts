@@ -165,7 +165,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         });
 
         if (source === 'gridInitializing') {
-            colAutosize?.applyAutosizeStrategy();
+            colAutosize?.applyInitialAutoSizeStrategy();
         }
     }
 

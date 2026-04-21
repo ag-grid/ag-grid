@@ -1,20 +1,3 @@
-/**
- * Tests for the `api.applyAutoSizeStrategy()` grid API method. Covers:
- * - No-op when no strategy is configured and no override is passed
- * - Applies `fitProvidedWidth` configured on `gridOptions.autoSizeStrategy`
- * - Applies a strategy passed as the override argument
- * - Override argument takes precedence over the configured strategy
- * - Applies `fitGridWidth`
- * - Applies `fitCellContents` (autoSizeAllColumns path)
- * - Applies `fitCellContents` with `colIds` (autoSizeCols path)
- * - Is callable repeatedly (no one-shot guards)
- * - `columnResized` fires with `source: 'autoSizeStrategy'`
- *
- * Note: jsdom has no real layout engine. `mockGridLayout` (applied by
- * `TestGridsManager` by default) gives the grid a simulated width of 1000px
- * and simulated column widths of 150px. These tests assert behaviour that
- * does not depend on real cell content measurement.
- */
 import { ClientSideRowModelModule, ColumnAutoSizeModule } from 'ag-grid-community';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -189,15 +172,14 @@ describe('applyAutoSizeStrategy API', () => {
         api.applyAutoSizeStrategy({ type: 'fitCellContents', colIds: ['a', 'b'] });
         await asyncSetTimeout(5);
 
-        // Expect only columns a and b to appear in resize events; c should not be targeted.
+        expect(listener).toHaveBeenCalled();
         const resizedColIds = new Set<string>();
         for (const [ev] of listener.mock.calls) {
             for (const col of ev.columns ?? []) {
                 resizedColIds.add(col.getColId());
             }
         }
-        // At least one of the targeted columns should show up in the events,
-        // and 'c' should not appear as a target.
+        expect(resizedColIds.has('a') || resizedColIds.has('b')).toBe(true);
         expect(resizedColIds.has('c')).toBe(false);
 
         api.removeEventListener('columnResized', listener);

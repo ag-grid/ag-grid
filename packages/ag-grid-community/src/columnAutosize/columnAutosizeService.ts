@@ -32,12 +32,7 @@ interface AutoSizeColumnParams {
     columnLimits?: SizeColumnsToContentColumnLimits[];
     scaleUpToFitGridWidth?: boolean;
     source?: ColumnEventType;
-    /**
-     * Source for the final batched `columnResized` event fired after all columns have been
-     * sized. Defaults to `'autosizeColumns'`. Separate from `source` so that callers using
-     * `autoSizeCols` as a building block (e.g. `applyAutoSizeStrategy`) can surface their own
-     * higher-level source without affecting per-column events or legacy behaviour.
-     */
+    /** Override for the final batched `columnResized` event. Defaults to `'autosizeColumns'` to preserve pre-existing behaviour for `uiColumnResized`/`api` callers. */
     eventSource?: ColumnEventType;
 }
 
@@ -532,27 +527,15 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
     }
 
-    public applyAutosizeStrategy(): void {
+    public applyInitialAutoSizeStrategy(): void {
         const autoSizeStrategy = this.beans.gos.get('autoSizeStrategy');
         // fitCellContents is applied separately via the firstDataRendered listener registered in postConstruct.
         if (autoSizeStrategy?.type !== 'fitGridWidth' && autoSizeStrategy?.type !== 'fitProvidedWidth') {
             return;
         }
-        // ensure things like aligned grids have linked first
         this.dispatchAutoSizeStrategy(autoSizeStrategy, 'sizeColumnsToFit', true);
     }
 
-    /**
-     * Public API entrypoint for `api.applyAutoSizeStrategy()`.
-     *
-     * Applies the configured `autoSizeStrategy` (or a caller-supplied override) to the current columns,
-     * without the init-time column hide/reveal dance (columns are already visible at this point).
-     * Emits `columnResized` with `source: 'autoSizeStrategy'`.
-     *
-     * Note the casing difference vs. `applyAutosizeStrategy` above — this method matches the public
-     * `api.applyAutoSizeStrategy` and the grid option name `autoSizeStrategy`, whereas the legacy
-     * init-only method keeps its historical one-word-"autosize" spelling.
-     */
     public applyAutoSizeStrategy(strategyOverride?: AutoSizeStrategy): void {
         const strategy = strategyOverride ?? this.beans.gos.get('autoSizeStrategy');
         if (!strategy) {
@@ -565,13 +548,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.dispatchAutoSizeStrategy(strategy, 'autosizeColumns', true);
     }
 
-    /**
-     * Shared dispatch for applying an `AutoSizeStrategy`. Used both by the initial grid load path
-     * (via `applyAutosizeStrategy` and `onFirstDataRendered`) and by the public runtime API.
-     *
-     * The `setTimeout` wrapper defers to the next tick so that things like aligned grids or the
-     * initial render pass have a chance to settle before we measure/resize.
-     */
+    // setTimeout defers to the next tick so aligned grids / initial render can settle before we measure.
     private dispatchAutoSizeStrategy(
         strategy: AutoSizeStrategy,
         source: ColumnEventType,
@@ -601,9 +578,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 this.sizeColumnsToFit(strategy.width, source);
             } else if (type === 'fitCellContents') {
                 const { colIds: colKeys, ...params } = strategy;
-                // `eventSource` ensures the final batched columnResized event surfaces the caller's
-                // source (e.g. 'autoSizeStrategy') rather than the default 'autosizeColumns' used by
-                // other entrypoints that build on `autoSizeCols`.
+                // eventSource overrides the batched dispatch so the caller's source reaches consumers.
                 if (colKeys) {
                     this.autoSizeCols({ ...params, source, eventSource: source, colKeys });
                 } else {

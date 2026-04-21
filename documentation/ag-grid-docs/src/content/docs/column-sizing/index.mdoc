@@ -193,6 +193,10 @@ api.applyAutoSizeStrategy({ type: 'fitCellContents', scaleUpToFitGridWidth: true
 
 If no strategy is configured on `gridOptions.autoSizeStrategy` and no override is provided, the call is a no-op. Columns resized by this call fire the `columnResized` event with `source: 'autoSizeStrategy'`.
 
+The example below configures `fitCellContents` on `gridOptions.autoSizeStrategy` and exposes four buttons: one to re-apply the configured strategy, and three to override with each of the built-in variants.
+
+{% gridExampleRunner title="Applying the Auto-Size Strategy at Runtime" name="apply-auto-size-strategy" /%}
+
 {% apiDocumentation source="grid-api/api.json" section="columnSizing" names=["applyAutoSizeStrategy"] /%}
 
 ## Resize via Keyboard
