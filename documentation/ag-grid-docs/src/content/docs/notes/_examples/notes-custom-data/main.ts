@@ -34,15 +34,20 @@ interface OlympicWinner {
     sport: string;
 }
 
+interface NoteMetadata {
+    type: 'team' | 'review' | 'personal';
+    priority: 'high' | 'medium' | 'low';
+}
+
 const getNoteKey = (rowId: string, colId: string) => `${rowId}::${colId}`;
 
-const defaultMetadataByColumn: Record<string, { type: string; priority: string }> = {
+const defaultMetadataByColumn: Record<string, NoteMetadata> = {
     athlete: { type: 'team', priority: 'high' },
     country: { type: 'review', priority: 'medium' },
     sport: { type: 'personal', priority: 'low' },
 };
 
-const noteStore = new Map<string, Note>([
+const noteStore = new Map<string, Note<NoteMetadata>>([
     [
         getNoteKey('1', 'athlete'),
         {
@@ -72,16 +77,16 @@ const noteStore = new Map<string, Note>([
     ],
 ]);
 
-const getCellNoteMetadata = (rowId: string, colId: string): { type: string; priority: string } | undefined =>
+const getCellNoteMetadata = (rowId: string, colId: string): NoteMetadata | undefined =>
     noteStore.get(getNoteKey(rowId, colId))?.metadata;
 
-const getNoteClasses = (metadata: { type: string; priority: string } | undefined): string[] | undefined =>
+const getNoteClasses = (metadata: NoteMetadata | undefined): string[] | undefined =>
     metadata ? [`note-type-${metadata.type}`, `note-priority-${metadata.priority}`] : undefined;
 
-const notesDataSource: NotesDataSource = {
+const notesDataSource: NotesDataSource<NoteMetadata> = {
     getNote: (params: NotesDataSourceGetNoteParams) =>
         noteStore.get(getNoteKey(params.rowNode.id!, params.column.getColId())),
-    setNote: (params: NotesDataSourceSetNoteParams) => {
+    setNote: (params: NotesDataSourceSetNoteParams<NoteMetadata>) => {
         const key = getNoteKey(params.rowNode.id!, params.column.getColId());
         const existingNote = noteStore.get(key);
 
