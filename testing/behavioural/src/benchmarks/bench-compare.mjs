@@ -608,7 +608,10 @@ const runCountLabel =
 md += `${runCountLabel}. Aggregation: median hz per benchmark; `;
 md += `rme = max(run-to-run std, mean within-run rme).\n\n`;
 
-const notable = comparisons.filter((c) => Math.abs(c.delta) > 3);
+const notable = comparisons
+    .filter((c) => Math.abs(c.delta) > 3)
+    .slice()
+    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
 if (notable.length > 0) {
     md += `## Notable Changes\n\n`;
     md += `| Benchmark | base (ops/s) | test (ops/s) | Result |\n`;

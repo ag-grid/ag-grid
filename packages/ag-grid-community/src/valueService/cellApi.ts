@@ -27,7 +27,7 @@ export function expireValueCache(beans: BeanCollection): void {
 export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCellValueParams<TValue>): any {
     const { colKey, rowNode, useFormatter, from = 'edit' } = params;
 
-    const column = beans.colModel.getColDefCol(colKey) ?? beans.colModel.getCol(colKey);
+    const column = beans.colModel.getColDefColOrCol(colKey);
     if (!column) {
         return null;
     }
