@@ -23,7 +23,6 @@ import {
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
-import { getCsvExportMenuItem, getExcelExportMenuItem } from './exportMenuItems';
 import { validateMenuItem } from './menuItemValidations';
 
 export const MENU_ITEM_SEPARATOR = 'separator';
@@ -395,9 +394,21 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         : null;
                 }
                 case 'csvExport':
-                    return getCsvExportMenuItem(beans, localeTextFunc);
+                    return csvCreator
+                        ? {
+                              name: localeTextFunc('csvExport', 'CSV Export'),
+                              icon: _createIconNoSpan('csvExport', beans, null),
+                              action: () => csvCreator.exportDataAsCsv(),
+                          }
+                        : null;
                 case 'excelExport':
-                    return getExcelExportMenuItem(beans, localeTextFunc);
+                    return excelCreator
+                        ? {
+                              name: localeTextFunc('excelExport', 'Excel Export'),
+                              icon: _createIconNoSpan('excelExport', beans, null),
+                              action: () => excelCreator.exportDataAsExcel(),
+                          }
+                        : null;
                 case 'separator':
                     return key;
                 case 'pivotChart':
