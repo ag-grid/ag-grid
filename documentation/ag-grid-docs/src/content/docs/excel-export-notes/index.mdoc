@@ -62,18 +62,51 @@ const gridOptions = {
 }
 ```
 
-## Customising Exported Notes
+## Customising Grid Notes
 
-When both the Notes feature and `processNoteCallback` are used together, the callback receives `params.gridNote` (the original grid note) and `params.defaultNote` (the auto-derived Excel note). This allows you to:
+This example shows three customisation patterns together:
 
--   enhance the default note text with extra metadata
--   override or preserve the note author
--   inject export-only notes for cells that do not have a grid note
--   suppress the note for a specific cell by returning `null`
-
-Use `ExcelCell.note` on `prependContent`, `appendContent`, or `getCustomContentBelowRow` to attach notes to custom content rows outside the grid body.
+-   start from `params.defaultNote` and append extra export-only text
+-   read extra grid-only metadata from `params.gridNote`
+-   add notes to extra content rows with `ExcelCell.note`
 
 {% gridExampleRunner title="Excel Export - Customising Notes" name="excel-export-notes-customisation" exampleHeight=310 /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    notesDataSource,
+    defaultExcelExportParams: {
+        prependContent: [
+            {
+                cells: [
+                    {
+                        data: { type: 'String', value: 'Export Summary' },
+                        note: {
+                            text: 'This note is added only during export through ExcelCell.note.',
+                        },
+                    },
+                ],
+            },
+        ],
+        processNoteCallback: (params) => {
+            if (params.defaultNote) {
+                return {
+                    ...params.defaultNote,
+                    text: `${params.defaultNote.text}\n\nUpdated: ${params.gridNote?.updatedAt ?? 'Not recorded'}`,
+                };
+            }
+
+            if (params.column.getColId() === 'gold' && Number(params.value) >= 8) {
+                return {
+                    text: 'Flag this medal count for the performance review pack.',
+                };
+            }
+
+            return undefined;
+        },
+    },
+};
+```
 
 ## API
 
