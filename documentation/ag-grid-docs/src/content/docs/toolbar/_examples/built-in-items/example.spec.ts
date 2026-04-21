@@ -1,11 +1,19 @@
-import { clickAllButtons, ensureGridReady, test, waitForGridContent } from '@utils/grid/test-utils';
+import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ page }) => {
-        // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
-        await ensureGridReady(page);
+    test.eachFramework('Built-in and action toolbar items render', async ({ page }) => {
         await waitForGridContent(page);
-        await clickAllButtons(page);
-        // END PLACEHOLDER
+
+        const toolbar = page.locator('.ag-toolbar');
+        await expect(toolbar).toBeVisible();
+
+        // rowGroupPanel + find + 2 action buttons as configured in main.ts
+        await expect(toolbar.locator('.ag-toolbar-item')).toHaveCount(4);
+        await expect(toolbar.locator('.ag-toolbar-panel')).toHaveCount(1);
+        await expect(toolbar.locator('.ag-toolbar-find')).toHaveCount(1);
+        await expect(toolbar.locator('.ag-toolbar-button')).toHaveCount(2);
+
+        // Action button invokes its configured callback
+        await toolbar.locator('.ag-toolbar-button', { hasText: 'Auto Size All' }).click();
     });
 });
