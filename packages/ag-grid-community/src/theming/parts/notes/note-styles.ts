@@ -57,10 +57,10 @@ const baseParams: NoteStyleParams = {
     },
 };
 
-const makeBatchEditStyleBaseTreeShakeable = () =>
+const makeNoteStyleBaseTreeShakeable = () =>
     createPart<NoteStyleParams>({
         feature: 'noteStyle',
         params: baseParams,
     });
 
-export const noteStyleBase: Part<NoteStyleParams> = /*#__PURE__*/ makeBatchEditStyleBaseTreeShakeable();
+export const noteStyleBase: Part<NoteStyleParams> = /*#__PURE__*/ makeNoteStyleBaseTreeShakeable();
