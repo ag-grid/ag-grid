@@ -787,6 +787,7 @@ export interface ExpandOrCollapseAllEvent<TData = any, TContext = any>
 export type ColumnEventType =
     | 'sizeColumnsToFit'
     | 'autosizeColumns'
+    | 'autoSizeStrategy'
     | 'autosizeColumnHeaderHeight'
     | 'alignedGridChanged'
     | 'filterChanged'

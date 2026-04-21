@@ -194,6 +194,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         sizeColumnsToFit: 0,
         autoSizeColumns: 0,
         autoSizeAllColumns: 0,
+        applyAutoSizeStrategy: 0,
     }),
     ...mod<_ColumnGroupGridApi>('ColumnGroup', {
         setColumnGroupOpened: 0,

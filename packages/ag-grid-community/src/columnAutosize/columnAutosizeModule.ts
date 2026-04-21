@@ -3,7 +3,7 @@ import type { _ModuleWithApi } from '../interfaces/iModule';
 import { AutoWidthModule } from '../rendering/autoWidthModule';
 import { VERSION } from '../version';
 import columnAutoSizeCSS from './columnAutoSize.css';
-import { autoSizeAllColumns, autoSizeColumns, sizeColumnsToFit } from './columnAutosizeApi';
+import { applyAutoSizeStrategy, autoSizeAllColumns, autoSizeColumns, sizeColumnsToFit } from './columnAutosizeApi';
 import { ColumnAutosizeService } from './columnAutosizeService';
 
 /**
@@ -18,6 +18,7 @@ export const ColumnAutoSizeModule: _ModuleWithApi<_ColumnAutosizeApi> = {
         sizeColumnsToFit,
         autoSizeColumns,
         autoSizeAllColumns,
+        applyAutoSizeStrategy,
     },
     dependsOn: [AutoWidthModule],
     css: [columnAutoSizeCSS],

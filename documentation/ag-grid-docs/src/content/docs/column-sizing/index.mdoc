@@ -179,6 +179,22 @@ Just like Excel, each column can also be auto-resized by double clicking the rig
 
 {% /note %}
 
+### Reapplying the Auto-Size Strategy at Runtime
+
+The `autoSizeStrategy` grid option is applied once when the grid is first loaded. To reapply the configured strategy later — for example in response to a container resize or after rows are refreshed — call `api.applyAutoSizeStrategy()`. The method runs the same dispatch that is used at init time, so a single call handles whichever variant is configured (`fitGridWidth`, `fitProvidedWidth`, or `fitCellContents`, including `scaleUpToFitGridWidth`).
+
+```{% frameworkTransform=true %}
+// Use the strategy configured on gridOptions.autoSizeStrategy
+api.applyAutoSizeStrategy();
+
+// Or pass an explicit strategy to override the configured one
+api.applyAutoSizeStrategy({ type: 'fitCellContents', scaleUpToFitGridWidth: true });
+```
+
+If no strategy is configured on `gridOptions.autoSizeStrategy` and no override is provided, the call is a no-op. Columns resized by this call fire the `columnResized` event with `source: 'autoSizeStrategy'`.
+
+{% apiDocumentation source="grid-api/api.json" section="columnSizing" names=["applyAutoSizeStrategy"] /%}
+
 ## Resize via Keyboard
 
 Column headers can be resized using the keyboard. When a column header is focused, press {% kbd "⌥ Alt" /%} + {% kbd "←" /%} / {% kbd "→" /%} to resize the column in that direction.

@@ -75,6 +75,12 @@
                 "name": "Auto-Size Columns to Fit Cell Contents",
                 "url": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
             }
+        },
+        "applyAutoSizeStrategy": {
+            "more": {
+                "name": "Reapplying the Auto-Size Strategy at Runtime",
+                "url": "./column-sizing/#reapplying-the-auto-size-strategy-at-runtime"
+            }
         }
     },
     "columnMoving": {

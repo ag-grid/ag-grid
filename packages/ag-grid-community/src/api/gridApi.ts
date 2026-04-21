@@ -31,6 +31,7 @@ import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type {
+    AutoSizeStrategy,
     ISizeAllColumnsToContentParams,
     ISizeColumnsToContentParams,
     ISizeColumnsToFitParams,
@@ -635,6 +636,25 @@ export interface _ColumnAutosizeApi {
      * @agModule `ColumnAutoSizeModule`
      */
     autoSizeAllColumns(params: ISizeAllColumnsToContentParams): void;
+
+    /**
+     * Applies the configured `autoSizeStrategy` to the current columns. This runs the same logic
+     * that is applied on initial grid load, but can be called at any time — for example from a
+     * `ResizeObserver` on the grid's container when the user wants columns to respond to layout changes.
+     *
+     * If no strategy is configured via `gridOptions.autoSizeStrategy` and no `strategyOverride`
+     * is provided, this is a no-op.
+     *
+     * For best results with the `fitCellContents` strategy, call this after rows have rendered so
+     * that cell contents can be measured. If called before any rows are present, sizing will fall
+     * back to header text widths.
+     *
+     * Columns resized by this call fire `columnResized` with `source: 'autoSizeStrategy'`.
+     *
+     * @param strategyOverride Optional strategy to apply instead of the one configured on `gridOptions.autoSizeStrategy`.
+     * @agModule `ColumnAutoSizeModule`
+     */
+    applyAutoSizeStrategy(strategyOverride?: AutoSizeStrategy): void;
 }
 
 export interface _ColumnResizeApi {

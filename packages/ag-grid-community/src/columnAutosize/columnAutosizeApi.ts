@@ -1,6 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { ColKey } from '../entities/colDef';
 import type {
+    AutoSizeStrategy,
     ISizeAllColumnsToContentParams,
     ISizeColumnsToContentParams,
     ISizeColumnsToFitParams,
@@ -43,4 +44,8 @@ export function autoSizeAllColumns(
     } else {
         beans.colAutosize?.autoSizeAllColumns({ source: 'api', skipHeader: paramsOrSkipHeader });
     }
+}
+
+export function applyAutoSizeStrategy(beans: BeanCollection, strategyOverride?: AutoSizeStrategy): void {
+    beans.colAutosize?.applyAutoSizeStrategy(strategyOverride);
 }
