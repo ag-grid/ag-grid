@@ -129,12 +129,20 @@ const GridComp = ({ context }: GridCompProps) => {
         } = gridCtrl.getOptionalSelectors();
         const additionalEls: HTMLElement[] = [];
 
-        if (toolbarSelector) {
-            const toolbarComp = context.createBean(new toolbarSelector.component());
-            const eGui = toolbarComp.getGui();
-            eRootWrapper.prepend(eGui);
+        const addComponentToDom = <T extends Component>(
+            component: ComponentSelector<T>['component'],
+            position: 'beforebegin' | 'afterbegin' | 'beforeend' | 'afterend' = 'beforeend'
+        ): T => {
+            const comp = context.createBean(new component()) as T;
+            const eGui = comp.getGui();
+            eRootWrapper.insertAdjacentElement(position, eGui);
             additionalEls.push(eGui);
-            beansToDestroy.push(toolbarComp);
+            beansToDestroy.push(comp);
+            return comp;
+        };
+
+        if (toolbarSelector) {
+            const toolbarComp = addComponentToDom(toolbarSelector.component, 'afterbegin');
             focusableContainersRef.current.push(toolbarComp);
         }
 
@@ -167,15 +175,6 @@ const GridComp = ({ context }: GridCompProps) => {
             beansToDestroy.push(sideBarComp);
             focusableContainersRef.current.push(sideBarComp as FocusableContainerComp);
         }
-
-        const addComponentToDom = (component: ComponentSelector<Component>['component']) => {
-            const comp = context.createBean(new component());
-            const eGui = comp.getGui();
-            eRootWrapper.insertAdjacentElement('beforeend', eGui);
-            additionalEls.push(eGui);
-            beansToDestroy.push(comp);
-            return comp;
-        };
 
         if (statusBarSelector) {
             const statusBarComp = addComponentToDom(statusBarSelector.component);
