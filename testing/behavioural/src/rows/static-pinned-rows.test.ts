@@ -1,4 +1,5 @@
 import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
+import type { GridApi, IRowNode, RowPinnedType } from 'ag-grid-community';
 
 import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 import { VERSION } from '../version';
@@ -9,6 +10,15 @@ describe('Pinned rows', () => {
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     const topData = [{ athlete: 'Top Athlete', sport: 'Top Sport', age: 11 }];
     const bottomData = [{ athlete: 'Bottom Athlete', sport: 'Bottom Sport', age: 22 }];
+
+    function getPinnedRowLayout(api: GridApi, floating: NonNullable<RowPinnedType>) {
+        const rows: IRowNode[] = [];
+        api.forEachPinnedRow(floating, (node) => rows.push(node));
+        return {
+            tops: rows.map((n) => n.rowTop!),
+            heights: rows.map((n) => n.rowHeight!),
+        };
+    }
 
     function assertPinnedRowData(data: any[], location: 'top' | 'bottom', rowIndices?: string[]) {
         const pinnedRows = document.querySelectorAll(`.ag-floating-${location} .ag-row-pinned`);
@@ -260,6 +270,33 @@ describe('Pinned rows', () => {
             );
             consoleWarnSpy.mockRestore();
         });
+
+        // AG-16844: when column autoHeight grows pinned rows after initial render, rowTop must be
+        // re-stacked so rows don't overlap. Only the final row used to expand correctly.
+        test('rowTop re-stacks when pinned row heights grow after render', async () => {
+            const pinned = [
+                { athlete: 'A', sport: 'SA', age: 1 },
+                { athlete: 'B', sport: 'SB', age: 2 },
+                { athlete: 'C', sport: 'SC', age: 3 },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'body', sport: 'body', age: 0 }],
+                pinnedTopRowData: pinned,
+            });
+
+            const initial = getPinnedRowLayout(api, 'top');
+            expect(initial.tops).toEqual([0, initial.heights[0], initial.heights[0] + initial.heights[1]]);
+
+            const newHeights = [80, 60, initial.heights[2]];
+            let i = 0;
+            api.forEachPinnedRow('top', (node) => node.setRowHeight(newHeights[i++]));
+            api.onRowHeightChanged();
+
+            const after = getPinnedRowLayout(api, 'top');
+            expect(after.heights).toEqual(newHeights);
+            expect(after.tops).toEqual([0, newHeights[0], newHeights[0] + newHeights[1]]);
+        });
     });
 
     describe('bottom', () => {
@@ -479,6 +516,32 @@ describe('Pinned rows', () => {
                 )
             );
             consoleWarnSpy.mockRestore();
+        });
+
+        // AG-16844: bottom-pinned rows must also re-stack rowTop after autoHeight growth.
+        test('rowTop re-stacks when pinned row heights grow after render', async () => {
+            const pinned = [
+                { athlete: 'A', sport: 'SA', age: 1 },
+                { athlete: 'B', sport: 'SB', age: 2 },
+                { athlete: 'C', sport: 'SC', age: 3 },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'body', sport: 'body', age: 0 }],
+                pinnedBottomRowData: pinned,
+            });
+
+            const initial = getPinnedRowLayout(api, 'bottom');
+            expect(initial.tops).toEqual([0, initial.heights[0], initial.heights[0] + initial.heights[1]]);
+
+            const newHeights = [80, 60, initial.heights[2]];
+            let i = 0;
+            api.forEachPinnedRow('bottom', (node) => node.setRowHeight(newHeights[i++]));
+            api.onRowHeightChanged();
+
+            const after = getPinnedRowLayout(api, 'bottom');
+            expect(after.heights).toEqual(newHeights);
+            expect(after.tops).toEqual([0, newHeights[0], newHeights[0] + newHeights[1]]);
         });
     });
 });

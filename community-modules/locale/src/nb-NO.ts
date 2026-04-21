@@ -811,8 +811,4 @@ export const AG_GRID_LOCALE_NO = {
     editNote: 'Rediger notat',
     deleteNote: 'Fjern notat',
     notePlaceholder: 'Legg til et notat...',
-    noteHint:
-        'Hold markøren over for forhåndsvisning. Klikk inni for å redigere. Dra i hjørnet for å endre størrelse. Trykk Esc for å lukke.',
-    noteReadOnlyHint:
-        'Skrivebeskyttet notat. Merk teksten for å kopiere. Dra i hjørnet for å endre størrelse. Trykk Esc for å lukke.',
 };

@@ -811,8 +811,4 @@ export const AG_GRID_LOCALE_SK = {
     editNote: 'Upraviť poznámku',
     deleteNote: 'Odstrániť poznámku',
     notePlaceholder: 'Pridať poznámku...',
-    noteHint:
-        'Pre náhľad prejdite kurzorom. Kliknite dovnútra pre úpravu. Potiahnutím rohu zmeňte veľkosť. Stlačte Esc pre zatvorenie.',
-    noteReadOnlyHint:
-        'Poznámka iba na čítanie. Označte text na kopírovanie. Potiahnutím rohu zmeňte veľkosť. Stlačte Esc pre zatvorenie.',
 };

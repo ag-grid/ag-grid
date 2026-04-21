@@ -851,8 +851,8 @@
     .ag-has-cell-notes::after {
         content: '';
         position: absolute;
-        top: 0;
-        right: 0;
+        top: 1px;
+        right: 1px;
         border-style: solid;
         border-width: 0 10px 10px 0;
         pointer-events: none;
@@ -874,13 +874,18 @@
         flex-direction: column;
         min-height: 0;
         min-width: 0;
-        gap: var(--ag-grid-size);
-        padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 1.5);
+        gap: calc(var(--ag-grid-size) / 2);
+        padding: calc(var(--ag-grid-size) / 2);
     }
 
     .ag-notes-popup-meta {
         color: var(--ag-secondary-foreground-color);
         font-size: calc(var(--ag-font-size) - 1px);
+        @include ag.unthemed-rtl(
+            (
+                padding-left: calc(var(--ag-grid-size) / 2),
+            )
+        );
     }
 
     .ag-notes-popup-body {
@@ -898,7 +903,7 @@
         min-width: 0;
     }
 
-    .ag-notes-popup-editor :where(.ag-text-area-input-wrapper) {
+    .ag-notes-popup-editor .ag-text-area-input-wrapper {
         flex: 1 1 auto;
         width: 100%;
         height: 100%;
@@ -906,25 +911,21 @@
         align-items: stretch;
     }
 
-    .ag-notes-popup-editor :where(.ag-text-area-input) {
+    .ag-notes-popup-editor .ag-text-area-input {
         flex: 1 1 auto;
         width: 100%;
         height: 100%;
         min-width: 0;
         resize: none;
+        padding: calc(var(--ag-grid-size) / 2);
     }
 
-    .ag-notes-popup-read-only :where(.ag-text-area-input-wrapper) {
+    .ag-notes-popup-editor .ag-text-area-input[readonly] {
+        border: none;
+    }
+
+    .ag-notes-popup-read-only .ag-text-area-input-wrapper {
         background-color: var(--ag-input-disabled-background-color);
-        border-color: var(--ag-input-disabled-border-color);
-    }
-
-    .ag-notes-popup-footer {
-        padding-top: var(--ag-grid-size);
-        margin-top: auto;
-        border-top: 1px solid var(--ag-border-color);
-        color: var(--ag-secondary-foreground-color);
-        font-size: calc(var(--ag-font-size) - 1px);
     }
 
     ////////////////////////////////////////

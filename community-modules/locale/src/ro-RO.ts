@@ -814,8 +814,4 @@ export const AG_GRID_LOCALE_RO = {
     editNote: 'Editează nota',
     deleteNote: 'Elimină nota',
     notePlaceholder: 'Adaugă o notă...',
-    noteHint:
-        'Treceți cu cursorul pentru previzualizare. Faceți clic în interior pentru a edita. Trageți de colț pentru a redimensiona. Apăsați Esc pentru a închide.',
-    noteReadOnlyHint:
-        'Notă doar pentru citire. Selectați textul pentru a-l copia. Trageți de colț pentru a redimensiona. Apăsați Esc pentru a închide.',
 };

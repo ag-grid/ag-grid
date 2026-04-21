@@ -812,8 +812,4 @@ export const AG_GRID_LOCALE_NL = {
     editNote: 'Notitie bewerken',
     deleteNote: 'Notitie verwijderen',
     notePlaceholder: 'Een notitie toevoegen...',
-    noteHint:
-        'Beweeg erover om een voorbeeld te zien. Klik binnenin om te bewerken. Sleep de hoek om het formaat aan te passen. Druk op Esc om te sluiten.',
-    noteReadOnlyHint:
-        'Alleen-lezen-notitie. Selecteer tekst om te kopiëren. Sleep de hoek om het formaat aan te passen. Druk op Esc om te sluiten.',
 };

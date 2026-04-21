@@ -21,7 +21,7 @@ test.agExample(import.meta, () => {
     test.eachFramework('To Page 5 navigates to page 5', async ({ agIdFor, page }) => {
         await expect(agIdFor.cell('0', 'athlete')).toContainText('Michael Phelps');
 
-        await page.locator('button', { hasText: 'To Page 5' }).click();
+        await page.getByRole('button', { name: 'To Page 5', exact: true }).click();
         await expect(page.locator('#lbCurrentPage')).toContainText('5');
     });
 

@@ -810,7 +810,4 @@ export const AG_GRID_LOCALE_VN = {
     editNote: 'Chỉnh sửa ghi chú',
     deleteNote: 'Xóa ghi chú',
     notePlaceholder: 'Thêm ghi chú...',
-    noteHint:
-        'Di chuột để xem trước. Nhấp vào bên trong để chỉnh sửa. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
-    noteReadOnlyHint: 'Ghi chú chỉ đọc. Chọn văn bản để sao chép. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
 };

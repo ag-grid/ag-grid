@@ -810,8 +810,4 @@ export const AG_GRID_LOCALE_JP = {
     editNote: 'メモを編集',
     deleteNote: 'メモを削除',
     notePlaceholder: 'メモを追加...',
-    noteHint:
-        'プレビューするにはホバーします。編集するには内側をクリックします。サイズを変更するには角をドラッグします。閉じるにはEscを押します。',
-    noteReadOnlyHint:
-        '読み取り専用のメモです。コピーするにはテキストを選択してください。サイズを変更するには角をドラッグします。閉じるにはEscを押します。',
 };
