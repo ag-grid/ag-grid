@@ -15,6 +15,7 @@ function createGrid(gridsManager: TestGridsManager, options: Partial<GridOptions
         rowData: makeRowData(50),
         pagination: true,
         paginationPageSize: 10,
+        paginationPageSizeSelector: false,
         getRowId: (params) => params.data.id,
         ...options,
     });
