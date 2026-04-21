@@ -16,7 +16,11 @@ describe('Toolbar (React)', () => {
 
     test('renders toolbar element when toolbar option is provided', async () => {
         const rendered = render(
-            <AgGridReact rowData={[{ name: 'Alice' }]} columnDefs={[{ field: 'name' }]} toolbar={{ items: [] }} />
+            <AgGridReact
+                rowData={[{ name: 'Alice' }]}
+                columnDefs={[{ field: 'name' }]}
+                toolbar={{ items: [{ label: 'Test', action: () => {} }] }}
+            />
         );
 
         await rendered.findByText('Alice');
@@ -24,7 +28,7 @@ describe('Toolbar (React)', () => {
         const container = rendered.container;
         const toolbar = container.querySelector('.ag-toolbar');
         expect(toolbar).not.toBeNull();
-        expect(toolbar?.children.length).toBeGreaterThanOrEqual(0);
+        expect(toolbar?.classList.contains('ag-hidden')).toBe(false);
     });
 
     test('does not render toolbar when toolbar option is not provided', async () => {
@@ -37,9 +41,25 @@ describe('Toolbar (React)', () => {
         expect(toolbar).toBeNull();
     });
 
-    test('toolbar is positioned above grid body', async () => {
+    test('hides toolbar when items array is empty', async () => {
         const rendered = render(
             <AgGridReact rowData={[{ name: 'Alice' }]} columnDefs={[{ field: 'name' }]} toolbar={{ items: [] }} />
+        );
+
+        await rendered.findByText('Alice');
+
+        const container = rendered.container;
+        const toolbar = container.querySelector('.ag-toolbar');
+        expect(toolbar?.classList.contains('ag-hidden')).toBe(true);
+    });
+
+    test('toolbar is positioned above grid body', async () => {
+        const rendered = render(
+            <AgGridReact
+                rowData={[{ name: 'Alice' }]}
+                columnDefs={[{ field: 'name' }]}
+                toolbar={{ items: [{ label: 'Test', action: () => {} }] }}
+            />
         );
 
         await rendered.findByText('Alice');
