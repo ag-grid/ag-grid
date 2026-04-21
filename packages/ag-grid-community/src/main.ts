@@ -412,6 +412,7 @@ export type {
     Toolbar,
     ToolbarDisplay,
     ToolbarItemActionParams,
+    ToolbarItemComponent,
     ToolbarItemDef,
     ToolbarItemShorthand,
 } from './interfaces/iToolbar';

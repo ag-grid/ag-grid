@@ -27,22 +27,29 @@ export type ToolbarItemShorthand =
     // eslint-disable-next-line @typescript-eslint/ban-types
     | (string & {});
 
+/**
+ * A component reference for a toolbar item. Either a shorthand string identifier,
+ * a component class (AG Grid / Angular / React class component), or a component
+ * function (React functional component).
+ */
+export type ToolbarItemComponent = ToolbarItemShorthand | (new (...args: any[]) => any) | ((...args: any[]) => any);
+
 export interface ToolbarItemActionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The toolbar item `key` identifying which item triggered the action. */
     key: string;
 }
 
-export interface ToolbarItemDef<TData = any, TContext = any> {
+export interface ToolbarItemDef<TData = any, TContext = any, TParams = any> {
     /**
      * Provide a custom component for the toolbar item.
      * If omitted, the grid renders a default button using `label`, `icon` and `action`.
      */
-    toolbarItem?: any;
+    toolbarItem?: ToolbarItemComponent;
+    /** Parameters to be passed to the custom component specified in `toolbarItem`. */
+    toolbarItemParams?: TParams;
     alignment?: 'left' | 'right';
     display?: ToolbarDisplay;
     key?: string;
-    /** Parameters to be passed to the custom component specified in `toolbarItem`. */
-    toolbarItemParams?: any;
     /** Text used for the button tooltip and, when `display` is `'iconAndLabel'`, for the button label. */
     label?: string;
     /** Icon displayed on the default button. */
