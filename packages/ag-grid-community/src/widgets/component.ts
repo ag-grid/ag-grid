@@ -30,7 +30,6 @@ export type AgComponentSelectorType =
     | 'AG-GRID-HEADER-DROP-ZONES'
     | 'AG-NAME-VALUE'
     | 'AG-OVERLAY-WRAPPER'
-    | 'AG-PAGE-SIZE-SELECTOR'
     | 'AG-PAGINATION'
     | 'AG-PRIMARY-COLS-HEADER'
     | 'AG-PRIMARY-COLS-LIST'

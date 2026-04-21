@@ -101,29 +101,37 @@ Group total rows can also be used with `groupDisplayType='multipleColumns'`, as 
 
 ## Grand Total Row
 
-To display a grand total row, set the `grandTotalRow` property to `'top'`, `'bottom'`, `'pinnedTop'`, or `'pinnedBottom'`. This works on flat grids without any row grouping.
+To display a grand total row, set the `grandTotalRow` property to `'top'`, `'bottom'`, `'pinnedTop'`, or `'pinnedBottom'`. The grand total row is supported for both flat grids and grids with row grouping.
 
 ### Providing Grand Total Data
 
-When `grandTotalRow` is set, the `needsGrandTotal` hint on `getRows` params will be `true` for root-level requests that don't yet have cached grand total data. The server may always provide updated grand total data regardless of this hint.
+When `grandTotalRow` is set, the `needsGrandTotal` hint on `getRows` params will be `true` for root-level requests that don't yet have cached grand total data — this happens on first load and after any filter or aggregation change that purges the cached data. The server may also always provide updated grand total data regardless of this hint. Sort changes do not invalidate the grand total (sorting does not affect the totals), so `needsGrandTotal` remains `false` after a sort-only change.
 
-Set the `grandTotalData` field on the `success` callback params to the grand total data. Set it to `null` to explicitly remove an existing grand total row.
+The `grandTotalData` field on the `success` callback params controls the grand total row:
 
-The example below shows a flat grid (no grouping) with the grand total provided via `grandTotalData` in the `getRows` response:
+-   Pass the **grand total data object** to set or update the grand total row.
+-   Pass `null` to explicitly remove an existing grand total row.
+-   Leave it `undefined` (or omit the field entirely) to keep the grand total unchanged — the grid will continue to show whatever grand total is already cached. This lets paged block requests return data rows without having to re-send the grand total every time.
 
-{% gridExampleRunner title="Grand Total via getRows" name="grand-total-getrows" /%}
+The example below shows a grouped grid with aggregations on the medal columns. Note how the grand total is recomputed server-side when filters change (reflecting the filtered totals), and that changing an aggregation function via the column menu triggers a fresh request for both data and grand total:
 
-Alternatively, if `getRowId` is configured, a row with ID `GRAND_TOTAL_ROW_ID` included in `rowData` will also be treated as the grand total (the `grandTotalData` field takes priority).
+{% gridExampleRunner title="Grand Total via getRows" name="grand-total-getrows" exampleHeight=590 /%}
+
+Alternatively, if `getRowId` is configured, a row with ID `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) included in `rowData` will also be treated as the grand total (the `grandTotalData` field takes priority).
 
 ### Updating the Grand Total Row via Transactions
 
 The grand total row can be updated, added, or removed via `applyServerSideTransaction`:
 
--   **Update**: Include the grand total data in the `update` array. The `getRowId` must return `GRAND_TOTAL_ROW_ID` for this row.
+-   **Update**: Include the grand total data in the `update` array. The `getRowId` must return `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) for this row.
 -   **Add**: Include the grand total data in the `add` array. If a grand total already exists, it will be updated.
--   **Remove**: Include a row whose `getRowId` returns `GRAND_TOTAL_ROW_ID` in the `remove` array to remove it.
+-   **Remove**: Include a row whose `getRowId` returns `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) in the `remove` array to remove it.
 
-{% gridExampleRunner title="Grand Total with Transactions" name="grand-total-transactions" /%}
+This is useful when the grand total comes from a different endpoint than the paged data — for example, when computing totals is more expensive than loading rows and should be done in a separate, independently cancellable request.
+
+The example below demonstrates that pattern on a flat grid. Each `getRows` call fetches only the data rows; whenever the grid signals `needsGrandTotal`, a separate asynchronous request for the grand total is started in parallel. While it is in flight the current grand total is removed via transaction so stale values aren't shown, and when the response arrives the new total is applied via an `add` transaction. A monotonic request id ensures that if a newer grand-total fetch is started before an earlier one returns, the stale response is discarded rather than overwriting fresher data.
+
+{% gridExampleRunner title="Grand Total with Transactions" name="grand-total-transactions" exampleHeight=590 /%}
 
 ### Accessing Grand Total and Group Total Rows
 

@@ -810,8 +810,4 @@ export const AG_GRID_LOCALE_KR = {
     editNote: '메모 편집',
     deleteNote: '메모 제거',
     notePlaceholder: '메모 추가...',
-    noteHint:
-        '미리 보려면 마우스를 올리세요. 편집하려면 안쪽을 클릭하세요. 크기를 조절하려면 모서리를 드래그하세요. 닫으려면 Esc를 누르세요.',
-    noteReadOnlyHint:
-        '읽기 전용 메모입니다. 복사하려면 텍스트를 선택하세요. 크기를 조절하려면 모서리를 드래그하세요. 닫으려면 Esc를 누르세요.',
 };

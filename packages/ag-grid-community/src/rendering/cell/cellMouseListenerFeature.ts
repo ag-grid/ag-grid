@@ -72,7 +72,7 @@ export class CellMouseListenerFeature extends BeanStub {
         cellClickedEvent.isEventHandlingSuppressed = suppressMouseEvent;
         eventSvc.dispatchEvent(cellClickedEvent);
 
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
@@ -121,7 +121,7 @@ export class CellMouseListenerFeature extends BeanStub {
 
         const suppressMouseEvent = _suppressCellMouseEvent(gos, cellCtrl.column, cellCtrl.rowNode, event);
 
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
         // always dispatch event to eventService
         const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(
             event,

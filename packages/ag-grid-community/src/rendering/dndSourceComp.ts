@@ -33,7 +33,7 @@ export class DndSourceComp extends Component {
 
     private onDragStart(dragEvent: DragEvent): void {
         const { rowNode, column, eCell, gos } = this;
-        const providedOnRowDrag = column.getColDef().dndSourceOnRowDrag;
+        const providedOnRowDrag = column.colDef.dndSourceOnRowDrag;
 
         const dataTransfer = dragEvent.dataTransfer!;
 

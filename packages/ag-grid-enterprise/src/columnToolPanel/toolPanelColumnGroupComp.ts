@@ -378,7 +378,7 @@ export class ToolPanelColumnGroupComp extends Component {
         let uncheckedCount = 0;
 
         for (const column of visibleLeafColumns) {
-            if (pivotMode || !column.getColDef().lockVisible) {
+            if (pivotMode || !column.colDef.lockVisible) {
                 if (this.isColumnChecked(column)) {
                     checkedCount++;
                 } else {
@@ -404,7 +404,7 @@ export class ToolPanelColumnGroupComp extends Component {
                 if (col.isAnyFunctionAllowed()) {
                     colsThatCanAction++;
                 }
-            } else if (!col.getColDef().lockVisible) {
+            } else if (!col.colDef.lockVisible) {
                 colsThatCanAction++;
             }
         }

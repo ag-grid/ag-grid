@@ -41,7 +41,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());
         const groupCols = rowGroupColsSvc?.columns;
 
-        const isPivotMode = colModel.isPivotMode();
+        const isPivotMode = colModel.pivotMode;
         const postSortFunc = gos.getCallback('postSortRows');
 
         let hasAnyFirstChildChanged = false;

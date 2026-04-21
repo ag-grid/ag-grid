@@ -328,11 +328,11 @@ export class CellCtrl extends BeanStub {
     }
 
     public getCellAriaRole(): string {
-        return this.column.getColDef().cellAriaRole ?? 'gridcell';
+        return this.column.colDef.cellAriaRole ?? 'gridcell';
     }
 
     public isCellRenderer(): boolean {
-        const colDef = this.column.getColDef();
+        const colDef = this.column.colDef;
         return colDef.cellRenderer != null || colDef.cellRendererSelector != null;
     }
     public getValueToDisplay(): any {
@@ -346,7 +346,7 @@ export class CellCtrl extends BeanStub {
         const { beans, column } = this;
         const { userCompFactory, ctrlsSvc, eventSvc } = beans;
 
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
         const params = this.createCellRendererParams() as ILoadingCellRendererParams;
         params.deferRender = true;
 
@@ -381,7 +381,7 @@ export class CellCtrl extends BeanStub {
 
         // if node is stub, and no group data for this node (groupSelectsChildren can populate group data)
         const isSsrmLoading = rowNode.stub && rowNode.groupData?.[column.getId()] == null;
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         if (isSsrmLoading || this.isCellRenderer()) {
             const params = this.createCellRendererParams();
@@ -395,7 +395,7 @@ export class CellCtrl extends BeanStub {
             const params = this.createCellRendererParams();
             compDetails = _getCellRendererDetails(
                 userCompFactory,
-                { ...column.getColDef(), cellRenderer: 'agFindCellRenderer' },
+                { ...column.colDef, cellRenderer: 'agFindCellRenderer' },
                 params
             );
         }
@@ -428,7 +428,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private setupControlComps(): void {
-        const colDef = this.column.getColDef();
+        const colDef = this.column.colDef;
         this.includeSelection = this.isIncludeControl(this.isCheckboxSelection(colDef), true);
         this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
@@ -445,7 +445,7 @@ export class CellCtrl extends BeanStub {
 
     public getCellValueClass(): string {
         const prefix = 'ag-cell-value';
-        const isCheckboxRenderer = this.column.getColDef().cellRenderer === 'agCheckboxCellRenderer';
+        const isCheckboxRenderer = this.column.colDef.cellRenderer === 'agCheckboxCellRenderer';
         let suffix = '';
 
         if (isCheckboxRenderer) {
@@ -486,7 +486,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private refreshShouldDestroy(): boolean {
-        const colDef = this.column.getColDef();
+        const colDef = this.column.colDef;
         const selectionChanged = this.includeSelection != this.isIncludeControl(this.isCheckboxSelection(colDef), true);
         const rowDragChanged = this.includeRowDrag != this.isIncludeControl(colDef.rowDrag);
         const dndSourceChanged = this.includeDndSource != this.isIncludeControl(colDef.dndSource);
@@ -551,7 +551,7 @@ export class CellCtrl extends BeanStub {
             data: rowNode.data,
             node: rowNode,
             pinned: column.getPinned() as any,
-            colDef: column.getColDef(),
+            colDef: column.colDef,
             column,
             refreshCell: this.refreshCell.bind(this),
             eGridCell: eGui,
@@ -622,7 +622,7 @@ export class CellCtrl extends BeanStub {
             return;
         }
 
-        const { field, valueGetter, showRowGroup, enableCellChangeFlash } = column.getColDef();
+        const { field, valueGetter, showRowGroup, enableCellChangeFlash } = column.colDef;
         // we always refresh if cell has no value - this can happen when user provides Cell Renderer and the
         // cell renderer doesn't rely on a value, instead it could be looking directly at the data, or maybe
         // printing the current time (which would be silly)???. Generally speaking
@@ -722,7 +722,7 @@ export class CellCtrl extends BeanStub {
 
     private valuesAreEqual(val1: any, val2: any): boolean {
         // if the user provided an equals method, use that, otherwise do simple comparison
-        const colDef = this.column.getColDef();
+        const colDef = this.column.colDef;
         return colDef.equals ? colDef.equals(val1, val2) : val1 === val2;
     }
 
@@ -1015,13 +1015,13 @@ export class CellCtrl extends BeanStub {
     }
 
     private setWrapText(): void {
-        const value = this.column.getColDef().wrapText == true;
+        const value = this.column.colDef.wrapText == true;
 
         this.comp.toggleCss(CSS_CELL_WRAP_TEXT, value);
     }
 
     public dispatchCellContextMenuEvent(event: Event | null) {
-        const colDef = this.column.getColDef();
+        const colDef = this.column.colDef;
         const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, 'cellContextMenu');
 
         const { beans } = this;

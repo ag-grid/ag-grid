@@ -84,7 +84,7 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
             return undefined;
         }
 
-        const isSuppressed = column.isColumnFunc(params.rowNode, column.getColDef().suppressNoteActions ?? null);
+        const isSuppressed = column.isColumnFunc(params.rowNode, column.colDef.suppressNoteActions ?? null);
         const isReadOnly = !!note?.readOnly;
 
         return {

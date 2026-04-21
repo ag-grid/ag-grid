@@ -53,7 +53,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public cols?: ColumnCollections;
 
     // if pivotMode is on, however pivot results are NOT shown if no pivot columns are set
-    private pivotMode = false;
+    public pivotMode = false;
 
     // true when pivotResultCols are in cols
     private showingPivotResult: boolean;
@@ -272,7 +272,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             // If the current columns are the same or a subset of the previous
             // we keep the previous order, otherwise we go back to the order the pivot
             // cols are generated in
-            const hasSameColumns = pivotResultCols.list.some((col) => this.cols?.map[col.getColId()] !== undefined);
+            const hasSameColumns = pivotResultCols.list.some((col) => this.cols?.map[col.colId] !== undefined);
             if (!hasSameColumns) {
                 this.lastPivotOrder = null;
             }
@@ -289,7 +289,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const { beans, showingPivotResult, cols } = this;
 
         const { valueColsSvc, selectionColSvc, gos } = beans;
-        const showAutoGroupAndValuesOnly = this.isPivotMode() && !showingPivotResult;
+        const showAutoGroupAndValuesOnly = this.pivotMode && !showingPivotResult;
         const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
         const showRowNumbers = _isRowNumbers(beans);
         const valueColumns = valueColsSvc?.columns;
@@ -328,7 +328,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.beans,
             {
                 state: keys.map<ColumnState>((key) => ({
-                    colId: typeof key === 'string' ? key : key.getColId(),
+                    colId: typeof key === 'string' ? key : key.colId,
                     hide: !visible,
                 })),
             },

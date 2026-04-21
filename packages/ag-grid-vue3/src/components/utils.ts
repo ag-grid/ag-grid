@@ -77,6 +77,7 @@ import type {
     OverlaySelectorFunc,
     OverlayType,
     PaginationNumberFormatter,
+    PaginationPanel,
     PivotColumnGroupTotals,
     PivotRowTotals,
     PostProcessPopup,
@@ -925,7 +926,6 @@ export interface Props<TData> {
          * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
          * Set to `false` to hide the page size selector.
          * @default true
-         * @initial
          * @agModule `PaginationModule`
          */
     paginationPageSizeSelector?: number[] | boolean,
@@ -947,6 +947,14 @@ export interface Props<TData> {
          * @agModule `PaginationModule`
          */
     suppressPaginationPanel?: boolean,
+    /** Controls which built-in components appear in the pagination panel and in what order.
+         * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+         * Components render in the order they appear in the array. Omitted components are hidden.
+         * An empty array hides the pagination panel entirely.
+         * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+         * @agModule `PaginationModule`
+         */
+    paginationPanels?: PaginationPanel[],
     /** Set to `true` to enable pivot mode.
          * @default false
          * @agModule `PivotModule`
@@ -2190,6 +2198,7 @@ export function getProps() {
         paginationAutoPageSize: undefined,
         paginateChildRows: undefined,
         suppressPaginationPanel: undefined,
+        paginationPanels: undefined,
         pivotMode: undefined,
         pivotPanelShow: undefined,
         pivotMaxGeneratedColumns: undefined,

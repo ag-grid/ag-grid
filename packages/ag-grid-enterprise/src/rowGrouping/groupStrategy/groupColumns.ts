@@ -17,7 +17,7 @@ export const makeGroupColumns = (columns: AgColumn[] | null | undefined, result:
     result.length = len;
     for (let i = 0; i < len; i++) {
         const col = columns[i];
-        const colDef = col.getColDef();
+        const colDef = col.colDef;
         result[i] = {
             col,
             field: colDef.field,
@@ -39,7 +39,7 @@ export const groupColumnsChanged = (groupColumns: GroupColumn[], columns: AgColu
         if (a.col !== b) {
             return true;
         }
-        const bColDef = b.getColDef();
+        const bColDef = b.colDef;
         if (
             a.field !== bColDef.field ||
             a.type !== bColDef.type ||

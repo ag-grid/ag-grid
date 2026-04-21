@@ -111,7 +111,7 @@ export class RowDragService extends BeanStub implements NamedBean {
             return 'visible';
         }
 
-        const pivoting = beans.colModel.isPivotMode();
+        const pivoting = beans.colModel.pivotMode;
 
         if ((pivoting || beans.rowGroupColsSvc?.columns?.length) && !gos.get('refreshAfterGroupEdit')) {
             return 'hidden';

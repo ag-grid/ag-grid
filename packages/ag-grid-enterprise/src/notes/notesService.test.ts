@@ -35,6 +35,8 @@ describe('NotesService', () => {
         };
 
         column = {
+            colId: 'athlete',
+            colDef,
             getColId: () => 'athlete',
             getColDef: () => colDef,
             isColumnFunc: (_rowNode: IRowNode, value?: boolean | ((params: any) => boolean) | null) => {

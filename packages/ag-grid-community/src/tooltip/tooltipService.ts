@@ -64,7 +64,7 @@ const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => b
     }
 
     if (ctrl.isCellRenderer()) {
-        const colDef = ctrl.column.getColDef();
+        const colDef = ctrl.column.colDef;
         // create rule for our internal group cell renderer
         const isGroupCellRenderer = !!colDef.showRowGroup || colDef.cellRenderer === 'agGroupCellRenderer';
         if (!isGroupCellRenderer) {
@@ -164,7 +164,7 @@ const resolveCellTooltip = ({
         return { value, location: 'cell', shouldDisplay: shouldDisplayCustomTooltip };
     }
 
-    const colDef = column.getColDef();
+    const colDef = column.colDef;
     const data = rowNode.data;
 
     // 4) column tooltip field/valueGetter is the final fallback.
@@ -183,7 +183,7 @@ const resolveCellTooltip = ({
             value: valueGetter(
                 _addGridCommonParams(gos, {
                     location: 'cell',
-                    colDef: column.getColDef(),
+                    colDef: column.colDef,
                     column: column,
                     rowIndex: ctrl.cellPosition.rowIndex,
                     node: rowNode,
@@ -220,7 +220,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         const gos = this.gos;
         const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(gos);
         const { column, eGui } = ctrl;
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colDef.headerComponent) {
             shouldDisplayTooltip = _isElementOverflowingCallback(
@@ -243,7 +243,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             shouldDisplayTooltip,
             getAdditionalParams: () => ({
                 column,
-                colDef: column.getColDef(),
+                colDef: column.colDef,
             }),
         };
 
@@ -345,7 +345,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             },
             getAdditionalParams: () => ({
                 column,
-                colDef: column.getColDef(),
+                colDef: column.colDef,
                 rowIndex: ctrl.cellPosition.rowIndex,
                 node: rowNode,
                 data: rowNode.data,

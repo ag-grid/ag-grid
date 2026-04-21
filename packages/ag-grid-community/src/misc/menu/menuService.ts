@@ -82,7 +82,7 @@ export class MenuService extends BeanStub implements NamedBean {
     }
 
     public isColumnMenuInHeaderEnabled(column: AgColumn): boolean {
-        const { suppressHeaderMenuButton } = column.getColDef();
+        const { suppressHeaderMenuButton } = column.colDef;
         return (
             !suppressHeaderMenuButton &&
             !!this.activeMenuFactory?.isMenuEnabled(column) &&
@@ -91,11 +91,11 @@ export class MenuService extends BeanStub implements NamedBean {
     }
 
     public isFilterMenuInHeaderEnabled(column: AgColumn): boolean {
-        return !column.getColDef().suppressHeaderFilterButton && !!this.beans.filterManager?.isFilterAllowed(column);
+        return !column.colDef.suppressHeaderFilterButton && !!this.beans.filterManager?.isFilterAllowed(column);
     }
 
     public isHeaderContextMenuEnabled(column?: AgColumn | AgProvidedColumnGroup): boolean {
-        const colDef = column && isColumn(column) ? column.getColDef() : column?.getColGroupDef();
+        const colDef = column && isColumn(column) ? column.colDef : column?.getColGroupDef();
         return !colDef?.suppressHeaderContextMenu && this.gos.get('columnMenu') === 'new';
     }
 

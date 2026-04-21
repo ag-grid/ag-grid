@@ -380,7 +380,7 @@ export class StateService extends BeanStub implements NamedBean {
         columnOrder?: ColumnOrderState;
     } {
         const beans = this.beans;
-        return convertColumnState(_getColumnState(beans), beans.colModel.isPivotMode());
+        return convertColumnState(_getColumnState(beans), beans.colModel.pivotMode);
     }
 
     private setColumnState(

@@ -1169,11 +1169,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return func(params);
         }
 
-        if (canParse && column.getColDef().useValueParserForImport !== false) {
+        if (canParse && column.colDef.useValueParserForImport !== false) {
             return valueSvc.parseValue(column, rowNode ?? null, value, valueSvc.getValue(column, rowNode, 'edit'));
         }
 
-        if (canFormat && column.getColDef().useValueFormatterForExport !== false) {
+        if (canFormat && column.colDef.useValueFormatterForExport !== false) {
             if (formula?.isFormula(value)) {
                 return value;
             }

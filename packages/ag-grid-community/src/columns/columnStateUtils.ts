@@ -154,7 +154,7 @@ export function _applyColumnState(
         }
 
         // we do not do aggFunc, rowGroup or pivot for auto cols or secondary cols
-        if (autoCol || !column.isPrimary()) {
+        if (autoCol || !column.primary) {
             return;
         }
 
@@ -399,7 +399,7 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
             const changedColumns: AgColumn[] = [];
 
             colModel.forAllCols((column) => {
-                const colStateBefore = columnStateBeforeMap[column.getColId()];
+                const colStateBefore = columnStateBeforeMap[column.colId];
                 if (colStateBefore && changedPredicate(colStateBefore, column)) {
                     changedColumns.push(column);
                 }
@@ -408,7 +408,7 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
             return changedColumns;
         };
 
-        const columnIdMapper = (c: AgColumn) => c.getColId();
+        const columnIdMapper = (c: AgColumn) => c.colId;
 
         dispatchWhenListsDifferent(
             'columnRowGroupChanged',
@@ -484,7 +484,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
         const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
 
         res.push({
-            colId: column.getColId(),
+            colId: column.colId,
             width: column.getActualWidth(),
             hide: !column.isVisible(),
             pinned: column.getPinned(),
@@ -502,9 +502,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
     colModel.forAllCols((col) => createStateItemFromColumn(col));
 
     // for fast looking, store the index of each column
-    const colIdToGridIndexMap = new Map<string, number>(
-        colModel.getCols().map((col, index) => [col.getColId(), index])
-    );
+    const colIdToGridIndexMap = new Map<string, number>(colModel.getCols().map((col, index) => [col.colId, index]));
 
     res.sort((itemA: any, itemB: any) => {
         const posA = colIdToGridIndexMap.has(itemA.colId) ? colIdToGridIndexMap.get(itemA.colId) : -1;
@@ -518,7 +516,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
 export function getColumnStateFromColDef(column: AgColumn): ColumnState {
     const getValueOrNull = <T>(a: T, b: T) => (a != null ? a : b != null ? b : null);
 
-    const colDef = column.getColDef();
+    const colDef = column.colDef;
     const sortDefFromColDef = _getSortDefFromInput(getValueOrNull(colDef.sort, colDef.initialSort));
     const sort = sortDefFromColDef.direction;
     const sortType = sortDefFromColDef.type;
@@ -548,7 +546,7 @@ export function getColumnStateFromColDef(column: AgColumn): ColumnState {
     const aggFunc = getValueOrNull(colDef.aggFunc, colDef.initialAggFunc);
 
     return {
-        colId: column.getColId(),
+        colId: column.colId,
         sort,
         sortType,
         sortIndex,
@@ -604,7 +602,7 @@ function sortColsLikeKeys(
     // add in all other columns
     let autoGroupInsertIndex = 0;
     for (const col of cols.list) {
-        const colId = col.getColId();
+        const colId = col.colId;
         const alreadyProcessed = processedColIds[colId] != null;
         if (alreadyProcessed) {
             continue;

@@ -108,7 +108,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         }
 
         if (gos.get('enableCharts') && chartSvc) {
-            if (colModel.isPivotMode()) {
+            if (colModel.pivotMode) {
                 defaultMenuOptions.push('pivotChart');
             }
 

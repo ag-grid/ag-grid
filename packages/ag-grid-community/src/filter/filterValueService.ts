@@ -15,11 +15,11 @@ export class FilterValueService extends BeanStub implements NamedBean {
         if (!rowNode) {
             return;
         }
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
         const { selectableFilter, valueSvc, formula } = this.beans;
         const filterValueGetter =
             filterValueGetterOverride ??
-            selectableFilter?.getFilterValueGetter(column.getColId()) ??
+            selectableFilter?.getFilterValueGetter(column.colId) ??
             colDef.filterValueGetter;
         if (filterValueGetter) {
             return this.executeFilterValueGetter(filterValueGetter, rowNode.data, column, rowNode, colDef);

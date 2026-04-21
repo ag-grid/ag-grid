@@ -97,7 +97,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupActive(): void {
-        const colDef = this.column.getColDef();
+        const colDef = this.column.colDef;
         const filterExists = !!colDef.filter;
         const floatingFilterExists = !!colDef.floatingFilter;
         this.active = filterExists && floatingFilterExists;
@@ -185,7 +185,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             if (!nextCol) {
                 break;
             }
-        } while (!nextCol.getColDef().filter || !nextCol.getColDef().floatingFilter);
+        } while (!nextCol.colDef.filter || !nextCol.colDef.floatingFilter);
 
         return nextCol;
     }
@@ -433,7 +433,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
                 if (this.gos.get('enableFilterHandlers')) {
                     params = {
                         ...params,
-                        model: _getFilterModel(this.beans.colFilter?.model ?? {}, this.column.getColId()),
+                        model: _getFilterModel(this.beans.colFilter?.model ?? {}, this.column.colId),
                         source,
                     };
                 }

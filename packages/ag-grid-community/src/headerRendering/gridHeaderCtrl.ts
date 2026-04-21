@@ -119,7 +119,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private onPivotModeChanged(beans: BeanCollection): void {
-        const pivotMode = beans.colModel.isPivotMode();
+        const pivotMode = beans.colModel.pivotMode;
 
         this.comp.toggleCss('ag-pivot-on', pivotMode);
         this.comp.toggleCss('ag-pivot-off', !pivotMode);

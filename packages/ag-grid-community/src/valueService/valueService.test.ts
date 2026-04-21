@@ -16,8 +16,8 @@ let valueSvc: ValueService;
 describe('formatValue', () => {
     beforeEach(() => {
         colDef = {};
-        column = mock<AgColumn>('getColDef');
-        column.getColDef.mockReturnValue(colDef);
+        column = mock<AgColumn>();
+        column.colDef = colDef;
 
         gos = mock<GridOptionsService>('get', 'addCommon');
         gos.addCommon.mockImplementation((params) => params as any);

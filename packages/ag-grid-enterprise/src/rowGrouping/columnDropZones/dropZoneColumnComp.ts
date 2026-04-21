@@ -93,7 +93,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     protected getTooltip(): string | null | undefined {
-        return this.column.getColDef().headerTooltip;
+        return this.column.colDef.headerTooltip;
     }
 
     protected override addAdditionalAriaInstructions(

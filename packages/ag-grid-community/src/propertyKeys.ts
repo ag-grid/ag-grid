@@ -128,6 +128,7 @@ const ARRAY_GRID_OPTIONS: KeysWithType<any[]>[] = [
     'chartThemes',
     'rowClass',
     'paginationPageSizeSelector',
+    'paginationPanels',
     'suppressOverlays',
 ];
 

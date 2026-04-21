@@ -1,88 +1,85 @@
-import type { GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
-import { GRAND_TOTAL_ROW_ID, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { ServerSideRowModelModule } from 'ag-grid-enterprise';
+import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
+import { ModuleRegistry, NumberFilterModule, TextFilterModule, ValidationModule, createGrid } from 'ag-grid-community';
+import {
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    RowGroupingModule,
+    RowGroupingPanelModule,
+    ServerSideRowModelModule,
+} from 'ag-grid-enterprise';
+
+import { FakeServer } from './fakeServer';
 
 ModuleRegistry.registerModules([
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    NumberFilterModule,
+    RowGroupingModule,
+    RowGroupingPanelModule,
     ServerSideRowModelModule,
+    TextFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-interface RowData {
-    id: string;
-    country: string;
-    sport: string;
-    gold: number;
-    silver: number;
-    bronze: number;
-}
+let gridApi: GridApi<IOlympicData>;
+const gridOptions: GridOptions<IOlympicData> = {
+    columnDefs: [
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'sport', rowGroup: true, hide: true },
+        { field: 'year', minWidth: 100, filter: 'agNumberColumnFilter', floatingFilter: true },
+        { field: 'gold', aggFunc: 'sum', enableValue: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+        { field: 'silver', aggFunc: 'sum', enableValue: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+        { field: 'bronze', aggFunc: 'sum', enableValue: true, filter: 'agNumberColumnFilter', floatingFilter: true },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 120,
+    },
+    autoGroupColumnDef: {
+        flex: 1,
+        minWidth: 240,
+        field: 'athlete',
+    },
+    rowModelType: 'serverSide',
+    grandTotalRow: 'bottom',
+    cacheBlockSize: 20,
+    sideBar: {
+        toolPanels: ['columns'],
+    },
+};
 
-const countries = ['Ireland', 'Spain', 'UK', 'France', 'Germany', 'Italy', 'Portugal', 'Sweden', 'Norway', 'Denmark'];
-const sports = ['Swimming', 'Running', 'Cycling', 'Gymnastics', 'Rowing', 'Boxing'];
-
-const medalData: RowData[] = [];
-let nextId = 1;
-for (const country of countries) {
-    for (const sport of sports) {
-        medalData.push({
-            id: String(nextId++),
-            country,
-            sport,
-            gold: Math.floor(Math.random() * 5),
-            silver: Math.floor(Math.random() * 5),
-            bronze: Math.floor(Math.random() * 5),
-        });
-    }
-}
-
-function getServerSideDatasource(): IServerSideDatasource {
+function getServerSideDatasource(server: ReturnType<typeof FakeServer>): IServerSideDatasource {
     return {
-        getRows: (params: IServerSideGetRowsParams) => {
+        getRows: (params) => {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
-            // Compute grand total from all rows
+            const response = server.getData(params.request, params.needsGrandTotal);
 
-            const initial: Partial<RowData> = {
-                id: GRAND_TOTAL_ROW_ID,
-                gold: 0,
-                silver: 0,
-                bronze: 0,
-            };
-
-            const grandTotalData: Partial<RowData> = medalData.reduce(
-                (acc, row) => ({
-                    ...acc,
-                    gold: acc.gold! + row.gold,
-                    silver: acc.silver! + row.silver,
-                    bronze: acc.bronze! + row.bronze,
-                }),
-                initial
-            );
-
+            // Delay long enough for the loading rows to be clearly visible, simulating a remote call.
             setTimeout(() => {
-                params.success({
-                    rowData: [...medalData],
-                    rowCount: medalData.length,
-                    grandTotalData,
-                });
-            }, 200);
+                if (response.success) {
+                    params.success({
+                        rowData: response.rows,
+                        rowCount: response.lastRow,
+                        grandTotalData: response.grandTotalData,
+                    });
+                } else {
+                    params.fail();
+                }
+            }, 800);
         },
     };
 }
 
-const gridOptions: GridOptions<RowData> = {
-    columnDefs: [{ field: 'country' }, { field: 'sport' }, { field: 'gold' }, { field: 'silver' }, { field: 'bronze' }],
-    defaultColDef: {
-        flex: 1,
-        minWidth: 100,
-    },
-    rowModelType: 'serverSide',
-    grandTotalRow: 'bottom',
-    getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
-    serverSideDatasource: getServerSideDatasource(),
-};
-
-// setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    createGrid(gridDiv, gridOptions);
+    gridApi = createGrid(gridDiv, gridOptions);
+
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then(function (data) {
+            const fakeServer = new FakeServer(data);
+            const datasource = getServerSideDatasource(fakeServer);
+            gridApi!.setGridOption('serverSideDatasource', datasource);
+        });
 });

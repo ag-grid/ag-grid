@@ -41,6 +41,9 @@ jobs:
               const {
                 getOSSFScorecardResults,
               } = require("./external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs");
+              const {
+                generateScorecardSummaryMarkdown,
+              } = require("./external/ag-shared/scripts/ossf-scorecard/generateGithubSummary.mjs");
 
               const project = process.env.AG_LIBRARY;
               const threshold = process.env.THRESHOLD;
@@ -52,6 +55,11 @@ jobs:
 
               fs.writeFileSync("${{ env.REPORT_FILE }}", JSON.stringify(report));
               fs.writeFileSync("${{ env.SCORECARD_FILE }}", JSON.stringify(results));
+
+              if (process.env.GITHUB_STEP_SUMMARY) {
+                const markdown = generateScorecardSummaryMarkdown({ results, threshold, project, hasPassed });
+                fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown + "\n");
+              }
 
               // Exit with a numeric code to signal step success/failure to GitHub Actions
               process.exit(hasPassed ? 0 : 1);

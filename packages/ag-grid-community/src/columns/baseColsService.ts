@@ -216,7 +216,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         // if default only, change only if new
         for (const col of primaryCols ?? []) {
             const colIsNew = !oldProvidedCols.includes(col);
-            const colDef = col.getColDef();
+            const colDef = col.colDef;
 
             const value = getValueFunc(colDef);
             const initialValue = getInitialValueFunc(colDef);
@@ -268,7 +268,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         }
 
         const getIndexForCol = (col: AgColumn): number => {
-            const colDef = col.getColDef();
+            const colDef = col.colDef;
             return getIndexFunc(colDef) ?? getInitialIndexFunc(colDef)!;
         };
 
@@ -351,7 +351,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         const allColIds = new Set(
             colList
                 .map((column) => {
-                    const colId = column.getColId();
+                    const colId = column.colId;
                     newColIds.delete(colId);
                     return colId;
                 })
@@ -362,7 +362,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         const originalOrderMap: { [colId: string]: number } = {};
         let orderIndex = 0;
         for (let i = 0; i < primaryCols.length; i++) {
-            const colId = primaryCols[i].getColId();
+            const colId = primaryCols[i].colId;
             if (allColIds.has(colId)) {
                 colIdsInOriginalOrder.push(colId);
                 originalOrderMap[colId] = orderIndex++;
@@ -392,13 +392,13 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         };
 
         for (const column of colList) {
-            const colId = column.getColId();
+            const colId = column.colId;
             if (updatedColIds.has(colId)) {
                 // New col already exists. Add any other new cols that should be before it.
                 processPrecedingNewCols(colId);
                 incomingColumnState[colId][indexProp] = index++;
             } else {
-                const colDef = column.getColDef();
+                const colDef = column.colDef;
                 const missingIndex =
                     colDef[indexProp] === null || (colDef[indexProp] === undefined && colDef[initialIndexProp] == null);
                 if (missingIndex) {

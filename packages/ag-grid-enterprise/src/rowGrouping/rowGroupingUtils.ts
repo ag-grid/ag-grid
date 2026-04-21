@@ -16,7 +16,7 @@ export const setRowNodeGroupValue = (
         rowNode._groupData = groupData;
     }
 
-    const columnId = column.getColId();
+    const columnId = column.colId;
     const oldValue = groupData[columnId];
 
     if (oldValue === newValue) {
@@ -72,7 +72,7 @@ export const isRowGroupColLocked = (column: AgColumn | undefined | null, beans: 
         return true;
     }
 
-    const colIndex = rowGroupColsSvc.columns.findIndex((groupCol) => groupCol.getColId() === column.getColId());
+    const colIndex = rowGroupColsSvc.columns.findIndex((groupCol) => groupCol.colId === column.colId);
     return groupLockGroupColumns > colIndex;
 };
 

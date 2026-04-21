@@ -816,8 +816,4 @@ export const AG_GRID_LOCALE_HU = {
     editNote: 'Megjegyzés szerkesztése',
     deleteNote: 'Megjegyzés eltávolítása',
     notePlaceholder: 'Megjegyzés hozzáadása...',
-    noteHint:
-        'Vigye fölé az egeret az előnézethez. Kattintson bele a szerkesztéshez. Húzza a sarkát az átméretezéshez. Nyomja meg az Esc billentyűt a bezáráshoz.',
-    noteReadOnlyHint:
-        'Csak olvasható megjegyzés. Jelölje ki a szöveget a másoláshoz. Húzza a sarkát az átméretezéshez. Nyomja meg az Esc billentyűt a bezáráshoz.',
 };

@@ -141,7 +141,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     }
 
     public getColumnIds(event: ColumnEvent): string[] {
-        return this.extractDataFromEvent(event, (col) => col.getColId());
+        return this.extractDataFromEvent(event, (col) => col.colId);
     }
 
     public onColumnEvent(event: AgEvent): void {
@@ -246,7 +246,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                     };
                 } = {};
                 for (const column of masterColumns) {
-                    columnWidths[column.getId()] = { key: column.getColId(), newWidth: column.getActualWidth() };
+                    columnWidths[column.getId()] = { key: column.colId, newWidth: column.getActualWidth() };
                 }
                 // don't set flex columns width
                 for (const col of resizedEvent.flexColumns ?? []) {

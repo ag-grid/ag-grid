@@ -10,7 +10,7 @@ export const buildColumnSizingFeatureSchema = (beans: BeanCollection) => {
         return;
     }
 
-    const resizableColumnIds = resizableColumns.map((col) => col.getColId());
+    const resizableColumnIds = resizableColumns.map((col) => col.colId);
 
     return s
         .object(

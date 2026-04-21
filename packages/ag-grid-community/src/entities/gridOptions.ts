@@ -1088,7 +1088,6 @@ export interface GridOptions<TData = any> {
      * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
      * Set to `false` to hide the page size selector.
      * @default true
-     * @initial
      * @agModule `PaginationModule`
      */
     paginationPageSizeSelector?: number[] | boolean;
@@ -1113,6 +1112,15 @@ export interface GridOptions<TData = any> {
      * @agModule `PaginationModule`
      */
     suppressPaginationPanel?: boolean;
+    /**
+     * Controls which built-in components appear in the pagination panel and in what order.
+     * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+     * Components render in the order they appear in the array. Omitted components are hidden.
+     * An empty array hides the pagination panel entirely.
+     * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+     * @agModule `PaginationModule`
+     */
+    paginationPanels?: PaginationPanel[];
 
     // *** Pivot and Aggregation *** //
     /**
@@ -3307,6 +3315,8 @@ export type AgPublicEventHandlerType = `on${Capitalize<AgPublicEventType>}` & ke
 
 export type ProcessPivotResultColDef<TData = any, TValue = any> = (colDef: ColDef<TData, TValue>) => void;
 export type ProcessPivotResultColGroupDef<TData = any> = (colDef: ColGroupDef<TData>) => void;
+
+export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary';
 
 export type PivotColumnGroupTotals = 'before' | 'after';
 export type PivotRowTotals = 'before' | 'after';

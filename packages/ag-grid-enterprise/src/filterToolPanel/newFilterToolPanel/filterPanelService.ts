@@ -61,7 +61,7 @@ export class FilterPanelService
             filterClosed: updateApplyButton,
         });
         const refreshForColumn = ({ column }: { column: AgColumn }) => {
-            this.states.get(column.getColId())?.refresh?.();
+            this.states.get(column.colId)?.refresh?.();
             updateApplyButton();
         };
         this.addManagedListeners(this.beans.colFilter!, {
@@ -106,7 +106,7 @@ export class FilterPanelService
         const beans = this.beans;
         const availableFilters: { id: string; name: string }[] = [];
         for (const column of beans.colModel.getColDefCols() ?? []) {
-            const id = column.getColId();
+            const id = column.colId;
             if (column.isFilterAllowed() && !column.colDef.suppressFiltersToolPanel && !this.states.get(id)) {
                 availableFilters.push({
                     id,
@@ -303,7 +303,7 @@ export class FilterPanelService
         const beans = this.beans;
         const { colFilter, selectableFilter } = beans;
         const name = getDisplayName(beans, column);
-        const colId = column.getColId();
+        const colId = column.colId;
         const getIsEditing = () => !!this.params?.buttons && colFilter!.hasUnappliedModel(colId);
         const isEditing = getIsEditing();
         if (expanded) {
@@ -329,7 +329,7 @@ export class FilterPanelService
                 destroy: () => this.destroyBean(filterComp),
             };
         } else {
-            const colId = column.getColId();
+            const colId = column.colId;
             const getSummary = () =>
                 handler.getModelAsString?.(colFilter!.getStateForColumn(colId).model, 'filterToolPanel') ?? '';
             return {
@@ -408,5 +408,5 @@ export class FilterPanelService
 }
 
 function getDisplayName(beans: BeanCollection, column: AgColumn): string {
-    return beans.colNames.getDisplayNameForColumn(column, 'filterToolPanel') ?? column.getColId();
+    return beans.colNames.getDisplayNameForColumn(column, 'filterToolPanel') ?? column.colId;
 }

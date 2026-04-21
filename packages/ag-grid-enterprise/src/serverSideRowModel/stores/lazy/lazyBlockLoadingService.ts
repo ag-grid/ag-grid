@@ -170,7 +170,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
         const isRootStore = parentNode.level === -1;
         const store = isRootStore ? cache.store : undefined;
-        const needsGrandTotal = isRootStore && !store?.grandTotalData && !!_getGrandTotalRow(this.gos);
+        const needsGrandTotal = isRootStore && store?.grandTotalData === undefined && !!_getGrandTotalRow(this.gos);
 
         const params: IServerSideGetRowsParams = _addGridCommonParams(this.gos, {
             request,

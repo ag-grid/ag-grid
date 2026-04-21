@@ -12,10 +12,7 @@ export function getColumnDef<TValue = any, TData = any>(
     key: string | Column<TValue>
 ): ColDef<TData, TValue> | null {
     const column = beans.colModel.getColDefCol(key);
-    if (column) {
-        return column.getColDef();
-    }
-    return null;
+    return column ? column.colDef : null;
 }
 
 export function getColumnDefs<TData = any>(beans: BeanCollection): (ColDef<TData> | ColGroupDef<TData>)[] | undefined {

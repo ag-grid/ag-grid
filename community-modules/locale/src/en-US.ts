@@ -818,6 +818,4 @@ export const AG_GRID_LOCALE_EN = {
     editNote: 'Edit Note',
     deleteNote: 'Remove Note',
     notePlaceholder: 'Add a note...',
-    noteHint: 'Hover to preview. Click inside to edit. Drag the corner to resize. Press Esc to close.',
-    noteReadOnlyHint: 'Read-only note. Select text to copy. Drag the corner to resize. Press Esc to close.',
 };

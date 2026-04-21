@@ -809,6 +809,4 @@ export const AG_GRID_LOCALE_CN = {
     editNote: '编辑备注',
     deleteNote: '删除备注',
     notePlaceholder: '添加备注...',
-    noteHint: '悬停以预览。点击内部即可编辑。拖动角落可调整大小。按 Esc 关闭。',
-    noteReadOnlyHint: '只读备注。选择文本即可复制。拖动角落可调整大小。按 Esc 关闭。',
 };

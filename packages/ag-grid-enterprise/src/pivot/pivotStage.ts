@@ -106,7 +106,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
         const aggregationColumns = valueColsSvc?.columns ?? [];
         const aggregationColumnsHash = aggregationColumns
-            .map((column) => `${column.getId()}-${column.getColDef().headerName}`)
+            .map((column) => `${column.getId()}-${column.colDef.headerName}`)
             .join('#');
         const aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc()!.toString()).join('#');
 
@@ -121,7 +121,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
         const pivotColumns = pivotColsSvc?.columns ?? [];
         const shouldTrackPivotOrder =
-            gos.get('enableStrictPivotColumnOrder') && pivotColumns.some((col) => col.getColDef().pivotComparator);
+            gos.get('enableStrictPivotColumnOrder') && pivotColumns.some((col) => col.colDef.pivotComparator);
         const pivotOrder = shouldTrackPivotOrder ? computePivotOrder(this.uniqueValues, pivotColumns, 0) : [];
         const pivotOrderChanged = !_areEqual(pivotOrder, this.pivotOrderLastTime);
         this.pivotOrderLastTime = pivotOrder;
@@ -267,7 +267,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
  * function reference or source equality.
  */
 function computePivotOrder(values: Map<string, any>, pivotColumns: AgColumn[], depth: number): string[] {
-    const comparator = pivotColumns[depth]?.getColDef().pivotComparator;
+    const comparator = pivotColumns[depth]?.colDef.pivotComparator;
     const keys = [...values.keys()];
     if (comparator) {
         keys.sort(comparator);
