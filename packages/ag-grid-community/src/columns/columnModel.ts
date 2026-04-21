@@ -644,9 +644,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public getColDefCol(key: ColKey): AgColumn | null {
-        if (!this.colDefCols?.list) {
-            return null;
-        }
         return this.getColFromCollection(key, this.colDefCols) ?? this.getColFromServiceCols(key);
     }
 
