@@ -1220,9 +1220,12 @@ export class LazyCache extends BeanStub {
 
         // Grand total removal — clear data, setDisplayIndexes will destroy the node.
         // The grand total is not in the cache node map so the loop below won't find it.
+        // `null` (vs `undefined`) signals "explicitly cleared by the user" so `needsGrandTotal`
+        // stays `false` until the store is reset — this lets userland code safely remove the
+        // grand total as part of an async refresh without triggering another request per block.
         const idsToRemoveSet = new Set(idsToRemove);
         if (idsToRemoveSet.delete(GRAND_TOTAL_ROW_ID)) {
-            this.store.grandTotalData = undefined;
+            this.store.grandTotalData = null;
         }
 
         // track how many nodes have been deleted, as when we pass other nodes we need to shift them up

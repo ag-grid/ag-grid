@@ -150,9 +150,9 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
     }
 
     private createDefFromColumn(col: AgColumn, rowGroupColumns: AgColumn[], pivotColumns: AgColumn[]): ColDef {
-        const colDefCloned = _deepCloneDefinition(col.getColDef())!;
+        const colDefCloned = _deepCloneDefinition(col.colDef)!;
 
-        colDefCloned.colId = col.getColId();
+        colDefCloned.colId = col.colId;
 
         colDefCloned.width = col.getActualWidth();
         colDefCloned.rowGroup = col.isRowGroupActive();

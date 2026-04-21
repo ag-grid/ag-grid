@@ -9,7 +9,7 @@ export function placeLockedColumns(cols: AgColumn[], gos: GridOptionsService): A
     const normal: AgColumn[] = [];
     const right: AgColumn[] = [];
     cols.forEach((col: AgColumn) => {
-        const position = col.getColDef().lockPosition;
+        const position = col.colDef.lockPosition;
         if (position === 'right') {
             right.push(col);
         } else if (position === 'left' || position === true) {

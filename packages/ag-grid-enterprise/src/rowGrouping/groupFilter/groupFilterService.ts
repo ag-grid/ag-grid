@@ -11,7 +11,7 @@ export class GroupFilterService extends BeanStub implements NamedBean, IGroupFil
     }
 
     public isGroupFilter(column: AgColumn): boolean {
-        return column.getColDef().filter === 'agGroupColumnFilter';
+        return column.colDef.filter === 'agGroupColumnFilter';
     }
 
     public isFilterAllowed(column: AgColumn): boolean {

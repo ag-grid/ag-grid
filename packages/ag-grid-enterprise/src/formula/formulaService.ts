@@ -293,7 +293,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
         let idx = 0;
         list?.forEach((col) => {
-            if (!col.isPrimary()) {
+            if (!col.primary) {
                 return;
             }
             let label = '';

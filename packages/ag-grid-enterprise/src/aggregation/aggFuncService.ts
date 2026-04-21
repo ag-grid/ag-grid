@@ -55,7 +55,7 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
     }
 
     public getDefaultAggFunc(column: AgColumn): string | null {
-        const defaultAgg = column.getColDef().defaultAggFunc;
+        const defaultAgg = column.colDef.defaultAggFunc;
 
         if (_exists(defaultAgg) && this.isAggFuncPossible(column, defaultAgg)) {
             return defaultAgg;
@@ -87,7 +87,7 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
     }
 
     public getFuncNames(column: AgColumn): string[] {
-        const userAllowedFuncs = column.getColDef().allowedAggFuncs;
+        const userAllowedFuncs = column.colDef.allowedAggFuncs;
 
         return userAllowedFuncs == null ? Object.keys(this.aggFuncsMap).sort() : userAllowedFuncs;
     }

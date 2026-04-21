@@ -33,7 +33,7 @@ export class SortService extends BeanStub implements NamedBean {
         const isColumnsSortingCoupledToGroup = _isColumnsSortingCoupledToGroup(gos);
         let columnsToUpdate = [column];
         if (isColumnsSortingCoupledToGroup) {
-            if (column.getColDef().showRowGroup) {
+            if (column.colDef.showRowGroup) {
                 const rowGroupColumns = showRowGroupCols?.getSourceColumnsForGroupColumn?.(column);
                 const sortableRowGroupColumns = rowGroupColumns?.filter((col) => col.isSortable());
 
@@ -74,7 +74,7 @@ export class SortService extends BeanStub implements NamedBean {
         colModel.forAllCols((col) => this.setColSortIndex(col, null));
 
         const allSortedColsWithoutChangesOrGroups = allSortedCols.filter((col) => {
-            if (isCoupled && col.getColDef().showRowGroup) {
+            if (isCoupled && col.colDef.showRowGroup) {
                 return false;
             }
             return col !== lastSortIndexCol;
@@ -161,14 +161,14 @@ export class SortService extends BeanStub implements NamedBean {
             }
         });
 
-        if (colModel.isPivotMode()) {
+        if (colModel.pivotMode) {
             const isSortingLinked = _isColumnsSortingCoupledToGroup(gos);
             allSortedCols = allSortedCols.filter((col) => {
-                const isAggregated = !!col.getAggFunc();
-                const isSecondary = !col.isPrimary();
+                const isAggregated = !!col.aggFunc;
+                const isSecondary = !col.primary;
                 const isGroup = isSortingLinked
                     ? showRowGroupCols?.getShowRowGroupCol(col.getId())
-                    : col.getColDef().showRowGroup;
+                    : col.colDef.showRowGroup;
                 return isAggregated || isSecondary || isGroup;
             });
         }
@@ -263,7 +263,7 @@ export class SortService extends BeanStub implements NamedBean {
 
     public canColumnDisplayMixedSort(column: AgColumn): boolean {
         const isColumnSortCouplingActive = _isColumnsSortingCoupledToGroup(this.gos);
-        const isGroupDisplayColumn = !!column.getColDef().showRowGroup;
+        const isGroupDisplayColumn = !!column.colDef.showRowGroup;
         return isColumnSortCouplingActive && isGroupDisplayColumn;
     }
 
@@ -274,7 +274,7 @@ export class SortService extends BeanStub implements NamedBean {
         }
 
         // if column has unique data, its sorting is independent - but can still be mixed
-        const columnHasUniqueData = column.getColDef().field != null || !!column.getColDef().valueGetter;
+        const columnHasUniqueData = column.colDef.field != null || !!column.colDef.valueGetter;
         const sortableColumns = columnHasUniqueData ? [column, ...linkedColumns] : linkedColumns;
 
         const firstSort = sortableColumns[0].getSortDef();

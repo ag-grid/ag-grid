@@ -31,7 +31,6 @@ export type AgComponentSelectorType =
     | 'AG-HEADER-ROOT'
     | 'AG-NAME-VALUE'
     | 'AG-OVERLAY-WRAPPER'
-    | 'AG-PAGE-SIZE-SELECTOR'
     | 'AG-PAGINATION'
     | 'AG-PRIMARY-COLS-HEADER'
     | 'AG-PRIMARY-COLS-LIST'

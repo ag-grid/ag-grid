@@ -20,7 +20,7 @@ export function _isUserSuppressingKeyboardEvent(
     column: AgColumn,
     editing: boolean
 ): boolean {
-    const colDefFunc = column ? column.getColDef().suppressKeyboardEvent : undefined;
+    const colDefFunc = column ? column.colDef.suppressKeyboardEvent : undefined;
 
     // if no callbacks provided by user, then do nothing
     if (!colDefFunc) {
@@ -33,7 +33,7 @@ export function _isUserSuppressingKeyboardEvent(
         column,
         node: rowNode,
         data: rowNode.data,
-        colDef: column.getColDef(),
+        colDef: column.colDef,
     });
 
     // colDef get first preference on suppressing events

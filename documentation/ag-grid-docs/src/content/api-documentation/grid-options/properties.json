@@ -1057,6 +1057,12 @@
                 "url": "./row-pagination/#example-customising-pagination"
             }
         },
+        "paginationPanels": {
+            "more": {
+                "name": "Pagination Panel Layout",
+                "url": "./row-pagination/#pagination-panel-layout"
+            }
+        },
         "paginationNumberFormatter": {
             "more": {
                 "name": "Customising Pagination",

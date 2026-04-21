@@ -215,7 +215,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
 
     public isMenuEnabled(column: AgColumn): boolean {
         // for standard, we show menu if filter is enabled, and the menu is not suppressed by passing an empty array
-        return column.isFilterAllowed() && (column.getColDef().menuTabs ?? ['filterMenuTab']).includes('filterMenuTab');
+        return column.isFilterAllowed() && (column.colDef.menuTabs ?? ['filterMenuTab']).includes('filterMenuTab');
     }
 
     public showMenuAfterContextMenuEvent(): void {

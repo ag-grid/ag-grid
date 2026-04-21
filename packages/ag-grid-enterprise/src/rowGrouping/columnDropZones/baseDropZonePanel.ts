@@ -96,7 +96,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         if (isDeferredMode(this.updateParams)) {
             return;
         }
-        const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
+        const allowedCols = columns.filter((c) => !c.colDef.lockVisible);
         this.beans.columnStateUpdateStrategy.setColumnsVisible(false, allowedCols, visible, source);
     }
 

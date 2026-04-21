@@ -264,7 +264,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!this.isPendingInference) {
             return;
         }
-        const columnStateUpdates = this.columnStateUpdatesPendingInference[column.getColId()];
+        const columnStateUpdates = this.columnStateUpdatesPendingInference[column.colId];
         if (!columnStateUpdates) {
             return;
         }
@@ -383,11 +383,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
             if (!column) {
                 continue;
             }
-            const oldColDef = column.getColDef();
+            const oldColDef = column.colDef;
             if (!this.resetColDefIntoCol(column, 'cellDataTypeInferred')) {
                 continue;
             }
-            const newColDef = column.getColDef();
+            const newColDef = column.colDef;
             if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
                 const updatedColumnState = getUpdatedColumnState(column, columnStateUpdates);
                 if (updatedColumnState.rowGroup && updatedColumnState.rowGroupIndex == null) {
@@ -437,7 +437,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!userColDef) {
             return false;
         }
-        const newColDef = _addColumnDefaultAndTypes(this.beans, userColDef, column.getColId());
+        const newColDef = _addColumnDefaultAndTypes(this.beans, userColDef, column.colId);
         column.setColDef(newColDef, userColDef, source);
         return true;
     }
@@ -463,7 +463,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     public getDataTypeDefinition(column: AgColumn): DataTypeDefinition | CoreDataTypeDefinition | undefined {
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
         if (!colDef.cellDataType) {
             return undefined;
         }
@@ -484,7 +484,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
 
         // skip type checking for formulas
-        if (column.getColDef().allowFormula && this.beans.formula?.isFormula(value)) {
+        if (column.colDef.allowFormula && this.beans.formula?.isFormula(value)) {
             return true;
         }
         return dataTypeMatcher(value);
@@ -587,7 +587,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 },
                 comparator: (a: any, b: any) => {
                     const column = colModel.getColDefCol(colId);
-                    const colDef = column?.getColDef();
+                    const colDef = column?.colDef;
                     if (!column || !colDef) {
                         return 0;
                     }

@@ -163,6 +163,7 @@ import type {
     OverlayType,
     PaginationChangedEvent,
     PaginationNumberFormatter,
+    PaginationPanel,
     PasteEndEvent,
     PasteStartEvent,
     PinnedRowDataChangedEvent,
@@ -1101,7 +1102,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
      * Set to `false` to hide the page size selector.
      * @default true
-     * @initial
      * @agModule `PaginationModule`
      */
     @Input() public paginationPageSizeSelector: number[] | boolean | undefined = undefined;
@@ -1123,6 +1123,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `PaginationModule`
      */
     @Input({ transform: booleanAttribute }) public suppressPaginationPanel: boolean | undefined = undefined;
+    /** Controls which built-in components appear in the pagination panel and in what order.
+     * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+     * Components render in the order they appear in the array. Omitted components are hidden.
+     * An empty array hides the pagination panel entirely.
+     * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+     * @agModule `PaginationModule`
+     */
+    @Input() public paginationPanels: PaginationPanel[] | undefined = undefined;
     /** Set to `true` to enable pivot mode.
      * @default false
      * @agModule `PivotModule`

@@ -3,106 +3,128 @@ import type {
     GridApi,
     GridOptions,
     IServerSideDatasource,
-    IServerSideGetRowsParams,
+    IServerSideGetRowsRequest,
 } from 'ag-grid-community';
-import { GRAND_TOTAL_ROW_ID, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import {
+    GRAND_TOTAL_ROW_ID,
+    ModuleRegistry,
+    NumberFilterModule,
+    TextFilterModule,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
+import { FakeServer } from './fakeServer';
+
 ModuleRegistry.registerModules([
-    ServerSideRowModelModule,
+    NumberFilterModule,
     ServerSideRowModelApiModule,
+    ServerSideRowModelModule,
+    TextFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-interface RowData {
-    id: string;
-    country: string;
-    sport: string;
-    gold: number;
-    silver: number;
-    bronze: number;
-}
+type OlympicRow = IOlympicData & { id: string };
 
-const countries = ['Ireland', 'Spain', 'UK', 'France', 'Germany', 'Italy', 'Portugal', 'Sweden', 'Norway', 'Denmark'];
-const sports = ['Swimming', 'Running', 'Cycling', 'Gymnastics', 'Rowing', 'Boxing'];
+let gridApi: GridApi<OlympicRow>;
+let fakeServer: ReturnType<typeof FakeServer>;
 
-const medalData: RowData[] = [];
-let nextId = 1;
-for (const country of countries) {
-    for (const sport of sports) {
-        medalData.push({
-            id: String(nextId++),
-            country,
-            sport,
-            gold: Math.floor(Math.random() * 5),
-            silver: Math.floor(Math.random() * 5),
-            bronze: Math.floor(Math.random() * 5),
-        });
-    }
-}
+// Counter identifying the latest in-flight grand-total request. On arrival each fetch checks its
+// captured id against the counter; if it's been superseded by a newer request (e.g. a second
+// filter change before the first fetch returned), the stale response is discarded.
+let latestGrandTotalRequestId = 0;
 
-function computeGrandTotal(data: RowData[]): RowData {
-    const totals = data.reduce(
-        (acc, row) => ({
-            gold: acc.gold + row.gold,
-            silver: acc.silver + row.silver,
-            bronze: acc.bronze + row.bronze,
-        }),
-        { gold: 0, silver: 0, bronze: 0 }
-    );
-    return { id: GRAND_TOTAL_ROW_ID, country: '', sport: '', ...totals };
-}
+const gridOptions: GridOptions<OlympicRow> = {
+    columnDefs: [
+        { field: 'athlete', minWidth: 170 },
+        { field: 'country' },
+        { field: 'sport' },
+        { field: 'year', filter: 'agNumberColumnFilter', floatingFilter: true },
+        // aggFunc on a flat grid has no client-side effect, but the SSRM request's valueCols
+        // carries it to the server so our grand-total fetch uses the right aggregation.
+        { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true },
+        { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true },
+        { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 120,
+    },
+    rowModelType: 'serverSide',
+    grandTotalRow: 'bottom',
+    cacheBlockSize: 20,
+    getRowId: (params: GetRowIdParams<OlympicRow>) => params.data.id,
+};
 
-function getServerSideDatasource(): IServerSideDatasource {
+function getServerSideDatasource(server: ReturnType<typeof FakeServer>): IServerSideDatasource {
     return {
-        getRows: (params: IServerSideGetRowsParams) => {
-            console.log('[Datasource] - rows requested by grid: ', params.request);
+        getRows: (params) => {
+            console.log('[Datasource] - rows requested:', params.request);
 
-            // Provide the grand total via the grandTotalData field
-            const grandTotalData = params.needsGrandTotal ? computeGrandTotal(medalData) : undefined;
+            const response = server.getData(params.request, false);
+            const { needsGrandTotal, request } = params;
 
             setTimeout(() => {
-                params.success({ rowData: [...medalData], rowCount: medalData.length, grandTotalData });
-            }, 200);
+                if (!response.success) {
+                    params.fail();
+                    return;
+                }
+
+                // grandTotalData is deliberately omitted here — the async refresh below owns it.
+                params.success({
+                    rowData: response.rows,
+                    rowCount: response.lastRow,
+                });
+
+                // `refreshGrandTotalAsync`'s first act is a `remove` transaction, which sets
+                // store.grandTotalData = null. The grid treats null as "explicitly cleared" so
+                // `needsGrandTotal` stays false for subsequent block requests in the same store
+                // — this branch fires exactly once per logical query.
+                if (needsGrandTotal) {
+                    void refreshGrandTotalAsync(request);
+                }
+            }, 800);
         },
     };
 }
 
-let gridApi: GridApi<RowData>;
+async function refreshGrandTotalAsync(request: IServerSideGetRowsRequest) {
+    const thisRequestId = ++latestGrandTotalRequestId;
+    console.log(`[GrandTotal] - request ${thisRequestId} started`);
 
-const gridOptions: GridOptions<RowData> = {
-    columnDefs: [{ field: 'country' }, { field: 'sport' }, { field: 'gold' }, { field: 'silver' }, { field: 'bronze' }],
-    defaultColDef: {
-        flex: 1,
-        minWidth: 100,
-    },
-    rowModelType: 'serverSide',
-    grandTotalRow: 'bottom',
-    getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
-    serverSideDatasource: getServerSideDatasource(),
-};
-
-function updateGrandTotal() {
-    // Recompute grand total and update via transaction
-    const total = computeGrandTotal(medalData);
-    total.gold += 10; // Simulate updated values
-    gridApi.applyServerSideTransaction({ update: [total] });
-}
-
-function removeGrandTotal() {
+    // Clear the stale total immediately; we'll add the fresh one back when the fetch resolves.
     gridApi.applyServerSideTransaction({
-        remove: [{ id: GRAND_TOTAL_ROW_ID } as RowData],
+        remove: [{ id: GRAND_TOTAL_ROW_ID } as any],
     });
+
+    // Simulate a separate, backend call for the grand total.
+    const grandTotalData = await new Promise<OlympicRow>((resolve) => {
+        setTimeout(() => {
+            resolve(fakeServer.getData(request, true).grandTotalData);
+        }, 1500);
+    });
+
+    if (thisRequestId !== latestGrandTotalRequestId) {
+        console.log(`[GrandTotal] - request ${thisRequestId} ignored (superseded by ${latestGrandTotalRequestId})`);
+        return;
+    }
+
+    gridApi.applyServerSideTransaction({ add: [grandTotalData] });
+    console.log(`[GrandTotal] - request ${thisRequestId} applied`);
 }
 
-function addGrandTotal() {
-    gridApi.applyServerSideTransaction({
-        add: [computeGrandTotal(medalData)],
-    });
-}
-
-// setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
+
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then(function (data: IOlympicData[]) {
+            // Olympic rows aren't unique by athlete/country/year/sport, so a composite natural
+            // key collides. Index-based ids guarantee uniqueness.
+            const dataWithIds: OlympicRow[] = data.map((row, i) => ({ ...row, id: `row-${i}` }));
+            fakeServer = new FakeServer(dataWithIds);
+            gridApi!.setGridOption('serverSideDatasource', getServerSideDatasource(fakeServer));
+        });
 });

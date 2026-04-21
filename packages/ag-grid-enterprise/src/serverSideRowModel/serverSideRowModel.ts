@@ -376,7 +376,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                     id: col.getId(),
                     aggFunc: col.getAggFunc(),
                     displayName: this.colNames.getDisplayNameForColumn(col, 'model'),
-                    field: col.getColDef().field,
+                    field: col.colDef.field,
                 }) as ColumnVO
         );
     }
@@ -393,7 +393,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             valueCols: valueColumnVos,
             rowGroupCols: rowGroupColumnVos,
             pivotCols: pivotColumnVos,
-            pivotMode: this.colModel.isPivotMode(),
+            pivotMode: this.colModel.pivotMode,
 
             // sort and filter model
             filterModel: this.filterManager?.isAdvFilterEnabled()

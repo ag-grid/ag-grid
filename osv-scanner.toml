@@ -123,6 +123,10 @@ id = "GHSA-grv7-fg5c-xmjg"
 reason = "braces is only used in development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
+id = "GHSA-f886-m6hf-6m8v"
+reason = "brace-expansion is only used in development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
 id = "GHSA-fjxv-7rqg-78g4"
 reason = "We do not use form-data directly and where it is used is only for testing or examples"
 
@@ -156,6 +160,18 @@ reason = "Dev/build deps that don't appear in the libraries distributables"
 
 [[IgnoredVulns]]
 id = "GHSA-4hjh-wcwx-xvwj"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-3p68-rc4w-qgx5"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-fvcv-3m26-pcqx"
+reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-qj83-cq47-w5f8"
 reason = "We only use axios for build and testing"
 
 [[IgnoredVulns]]
@@ -228,6 +244,14 @@ reason = "axios is only used during development"
 
 [[IgnoredVulns]]
 id = "GHSA-5rq4-664w-9x2c"
+reason = "basic-ftp is used in dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-6v7q-wjvx-w8wg"
+reason = "basic-ftp is used in dev - not included in final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-rp42-5vxx-qpwr"
 reason = "basic-ftp is used in dev - not included in final production build"
 
 [[IgnoredVulns]]
@@ -389,4 +413,156 @@ reason = "Dev/build deps that don't appear in the libraries distributables"
 [[IgnoredVulns]]
 id = "GHSA-gmq8-994r-jv83"
 reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-92pp-h63x-v22m"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-wh4c-j3r5-mjhp"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-g735-7g2w-hh3f"
+reason = "Astro is used as a static site generator"
+
+[[IgnoredVulns]]
+id = "GHSA-22cc-p3c6-wpvm"
+reason = "h3 is used by astro during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-4hxc-9384-m385"
+reason = "h3 is used by astro during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-72gr-qfp7-vwhw"
+reason = "h3 is used by astro during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-wr4h-v87w-p3r7"
+reason = "h3 is used by astro during development and doesn't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-737v-mqg7-c878"
+reason = "Dev/build deps that don't appear in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-39q2-94rc-95cp"
+reason = "dompurify is only used in developer tools, and is not exposed to customers"
+
+[[IgnoredVulns]]
+id = "GHSA-cj63-jhhr-wcxv"
+reason = "dompurify is only used in developer tools, and is not exposed to customers"
+
+[[IgnoredVulns]]
+id = "GHSA-cjmm-f4jc-qw8r"
+reason = "dompurify is only used in developer tools, and is not exposed to customers"
+
+[[IgnoredVulns]]
+id = "GHSA-h8r8-wccr-v5f2"
+reason = "dompurify is only used in developer tools, and is not exposed to customers"
+
+[[IgnoredVulns]]
+id = "GHSA-38f7-945m-qr2g"
+reason = "effect is only used in development"
+
+[[IgnoredVulns]]
+id = "GHSA-rf6f-7fwh-wjgh"
+reason = "flatted is only used in development"
+
+[[IgnoredVulns]]
+id = "GHSA-r4q5-vmmm-2653"
+reason = "follow-redirects is only used in development"
+
+[[IgnoredVulns]]
+id = "GHSA-2qvq-rjwj-gvw9"
+reason = "handlebars is only used in test and dev"
+
+[[IgnoredVulns]]
+id = "GHSA-2w6w-674q-4c4q"
+reason = "handlebars is only used in test and dev"
+
+[[IgnoredVulns]]
+id = "GHSA-3mfm-83xf-c92r"
+reason = "handlebars is only used in test and dev"
+
+[[IgnoredVulns]]
+id = "GHSA-442j-39wm-28r2"
+reason = "handlebars is only used in test and dev"
+
+[[IgnoredVulns]]
+id = "GHSA-7rx3-28cr-v5wh"
+reason = "handlebars is only used in test and dev"
+
+[[IgnoredVulns]]
+id = "GHSA-9cx6-37pm-9jff"
+reason = "handlebars is only used in test and dev"
+
+[[IgnoredVulns]]
+id = "GHSA-xhpv-hc6g-r9c6"
+reason = "handlebars is only used in test and dev"
+
+[[IgnoredVulns]]
+id = "GHSA-xjpj-3mr7-gcpf"
+reason = "handlebars is only used in test and dev"
+
+[[IgnoredVulns]]
+id = "GHSA-26pp-8wgv-hjvm"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-458j-xx4x-4375"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-r5rp-j6wh-rvv4"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-wmmm-f939-6g9c"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-xf4j-xp2r-rqqx"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-xpcf-pg52-r92g"
+reason = "hono is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-37ch-88jc-xwx2"
+reason = "path-to-regexp is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-27v5-c462-wpq7"
+reason = "path-to-regexp is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-j3q9-mxjg-w52f"
+reason = "path-to-regexp is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-3v7f-55p6-f55p"
+reason = "picomatch is only used in testing and dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-c2c7-rcm5-vvqj"
+reason = "picomatch is only used in testing and dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-qj8w-gfj5-8c6v"
+reason = "serialize-javascript is only used in testing and dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-v3rj-xjv7-4jmq"
+reason = "smol-toml is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-677m-j7p3-52f9"
+reason = "socket.io-parser is only used in testing tools"
+
+[[IgnoredVulns]]
+id = "GHSA-48c2-rrv3-qjmp"
+reason = "yaml is only used in dev tools"
 

@@ -80,7 +80,7 @@ export class SortIndicatorComp extends Component {
 
         this.setupMultiSortIndicator();
 
-        if (!column.isSortable() && !column.getColDef().showRowGroup) {
+        if (!column.isSortable() && !column.colDef.showRowGroup) {
             return;
         }
 
@@ -139,7 +139,7 @@ export class SortIndicatorComp extends Component {
         }
 
         if (eSortNone) {
-            const alwaysHideNoSort = !column.getColDef().unSortIcon && !gos.get('unSortIcon');
+            const alwaysHideNoSort = !column.colDef.unSortIcon && !gos.get('unSortIcon');
             _setDisplayed(eSortNone, !alwaysHideNoSort && !direction, { skipAriaHidden: true });
         }
 
@@ -160,7 +160,7 @@ export class SortIndicatorComp extends Component {
         const { eSortMixed, column, gos } = this;
         this.addInIcon('sortUnSort', eSortMixed, column);
 
-        const isColumnShowingRowGroup = column.getColDef().showRowGroup;
+        const isColumnShowingRowGroup = column.colDef.showRowGroup;
         const areGroupsCoupled = _isColumnsSortingCoupledToGroup(gos);
         if (areGroupsCoupled && isColumnShowingRowGroup) {
             this.addManagedEventListeners({
