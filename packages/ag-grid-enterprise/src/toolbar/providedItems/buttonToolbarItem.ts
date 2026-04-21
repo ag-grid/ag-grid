@@ -5,7 +5,16 @@ import type {
     IconName,
     ToolbarItemActionParams,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _addGridCommonParams, _createIconNoSpan, _setDisplayed } from 'ag-grid-community';
+import {
+    Component,
+    RefPlaceholder,
+    _addGridCommonParams,
+    _addOrRemoveAttribute,
+    _clearElement,
+    _createIconNoSpan,
+    _setAriaLabel,
+    _setDisplayed,
+} from 'ag-grid-community';
 
 interface ButtonToolbarItemParams extends IToolbarItemParams {
     label?: string;
@@ -48,7 +57,7 @@ export class ButtonToolbarItem extends Component implements IToolbarItemComp {
         this.params = params;
         const eGui = this.getGui();
 
-        this.eIcon.replaceChildren();
+        _clearElement(this.eIcon);
         const hasIcon = !!params.icon;
         if (hasIcon) {
             const eIconEl = _createIconNoSpan(params.icon!, this.beans);
@@ -61,13 +70,8 @@ export class ButtonToolbarItem extends Component implements IToolbarItemComp {
         this.eLabel.textContent = params.label ?? '';
         _setDisplayed(this.eLabel, params.display === 'iconAndLabel' && !!params.label);
 
-        if (params.label) {
-            eGui.setAttribute('aria-label', params.label);
-            eGui.setAttribute('title', params.label);
-        } else {
-            eGui.removeAttribute('aria-label');
-            eGui.removeAttribute('title');
-        }
+        _setAriaLabel(eGui, params.label);
+        _addOrRemoveAttribute(eGui, 'title', params.label);
     }
 
     private invokeAction(): void {
