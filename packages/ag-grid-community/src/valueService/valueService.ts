@@ -429,12 +429,12 @@ export class ValueService extends BeanStub implements NamedBean {
      */
     public setValue(rowNode: IRowNode, column: AgColumn, newValue: any, eventSource?: string): boolean {
         const colDef = column.colDef;
-        const changeDetectionSvc = this.beans.changeDetectionSvc;
-        const formulaSvc = this.beans.formula;
+
+        const { changeDetectionSvc, formula } = this.beans;
         const primaryRow = (rowNode as RowNode).primaryRow;
 
         changeDetectionSvc?.beginDeferred();
-        formulaSvc?.captureCellValueChange(primaryRow, column);
+        formula?.captureCellValueChange(primaryRow, column);
         try {
             if (!rowNode.data && this.canCreateRowNodeData(rowNode, colDef)) {
                 rowNode.data = {}; // enableGroupEdit allows editing group rows without data.
@@ -468,7 +468,7 @@ export class ValueService extends BeanStub implements NamedBean {
                 });
                 if (externalFormulaResult !== null) {
                     if (externalFormulaResult) {
-                        formulaSvc?.commitCellValueChange(primaryRow, column);
+                        formula?.commitCellValueChange(primaryRow, column);
                     }
                     return externalFormulaResult;
                 }
@@ -502,7 +502,7 @@ export class ValueService extends BeanStub implements NamedBean {
                     if (!valueSetterChanged && !groupResult) {
                         return false;
                     }
-                    formulaSvc?.commitCellValueChange(primaryRow, column);
+                    formula?.commitCellValueChange(primaryRow, column);
                     // Use newValue (the user's scalar input) as the event value rather than re-reading
                     // aggData. aggData is stale until the outermost endDeferred() flushes, and for avg/count
                     // columns it stores an IAggFuncResult wrapper rather than a plain scalar.
@@ -517,7 +517,7 @@ export class ValueService extends BeanStub implements NamedBean {
                 return false;
             }
 
-            formulaSvc?.commitCellValueChange(primaryRow, column);
+            formula?.commitCellValueChange(primaryRow, column);
             return this.finishValueChange(rowNode, column, params, eventSource);
         } finally {
             changeDetectionSvc?.endDeferred();
