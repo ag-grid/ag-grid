@@ -42,9 +42,7 @@ Set `suppressGridNotesExport` to `true` to prevent grid notes from being include
 ```{% frameworkTransform=true %}
 const gridOptions = {
      defaultExcelExportParams: {
-        defaultExcelExportParams: {
-            suppressGridNotesExport: true,
-        },
+        suppressGridNotesExport: true,
      },
 }
 ```
@@ -58,10 +56,8 @@ By default, the author name is prepended as bold text in the Excel note body (ma
 ```{% frameworkTransform=true %}
 const gridOptions = {
      defaultExcelExportParams: {
-        defaultExcelExportParams: {
-            author: 'Portfolio Ops',
-            suppressPrependAuthorToNotes: true,
-        },
+        author: 'Portfolio Ops',
+        suppressPrependAuthorToNotes: true,
      },
 }
 ```
