@@ -815,8 +815,4 @@ export const AG_GRID_LOCALE_ES = {
     editNote: 'Editar nota',
     deleteNote: 'Eliminar nota',
     notePlaceholder: 'Añadir una nota...',
-    noteHint:
-        'Pase el cursor para previsualizar. Haga clic dentro para editar. Arrastre la esquina para cambiar el tamaño. Pulse Esc para cerrar.',
-    noteReadOnlyHint:
-        'Nota de solo lectura. Seleccione el texto para copiarlo. Arrastre la esquina para cambiar el tamaño. Pulse Esc para cerrar.',
 };

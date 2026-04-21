@@ -813,8 +813,4 @@ export const AG_GRID_LOCALE_DK = {
     editNote: 'Rediger note',
     deleteNote: 'Fjern note',
     notePlaceholder: 'Tilføj en note...',
-    noteHint:
-        'Hold musen over for at få vist en forhåndsvisning. Klik indenfor for at redigere. Træk i hjørnet for at ændre størrelsen. Tryk på Esc for at lukke.',
-    noteReadOnlyHint:
-        'Skrivebeskyttet note. Markér tekst for at kopiere. Træk i hjørnet for at ændre størrelsen. Tryk på Esc for at lukke.',
 };

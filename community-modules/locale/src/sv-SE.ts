@@ -813,8 +813,4 @@ export const AG_GRID_LOCALE_SE = {
     editNote: 'Redigera anteckning',
     deleteNote: 'Ta bort anteckning',
     notePlaceholder: 'Lägg till en anteckning...',
-    noteHint:
-        'Hovra för förhandsvisning. Klicka inuti för att redigera. Dra i hörnet för att ändra storlek. Tryck Esc för att stänga.',
-    noteReadOnlyHint:
-        'Skrivskyddad anteckning. Markera text för att kopiera. Dra i hörnet för att ändra storlek. Tryck Esc för att stänga.',
 };

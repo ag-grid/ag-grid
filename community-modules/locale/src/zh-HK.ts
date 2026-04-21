@@ -809,6 +809,4 @@ export const AG_GRID_LOCALE_HK = {
     editNote: '編輯備註',
     deleteNote: '移除備註',
     notePlaceholder: '新增備註...',
-    noteHint: '滑過即可預覽。按一下內部即可編輯。拖曳角落即可調整大小。按 Esc 關閉。',
-    noteReadOnlyHint: '唯讀備註。選取文字即可複製。拖曳角落即可調整大小。按 Esc 關閉。',
 };

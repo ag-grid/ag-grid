@@ -810,8 +810,4 @@ export const AG_GRID_LOCALE_CZ = {
     editNote: 'Upravit poznámku',
     deleteNote: 'Odstranit poznámku',
     notePlaceholder: 'Přidat poznámku...',
-    noteHint:
-        'Najeďte pro náhled. Klikněte dovnitř pro úpravu. Přetažením rohu změňte velikost. Stiskněte Esc pro zavření.',
-    noteReadOnlyHint:
-        'Poznámka jen pro čtení. Označte text pro kopírování. Přetažením rohu změňte velikost. Stiskněte Esc pro zavření.',
 };

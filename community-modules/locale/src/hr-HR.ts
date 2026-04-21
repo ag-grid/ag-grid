@@ -812,8 +812,4 @@ export const AG_GRID_LOCALE_HR = {
     editNote: 'Uredi napomenu',
     deleteNote: 'Ukloni napomenu',
     notePlaceholder: 'Dodaj napomenu...',
-    noteHint:
-        'Zadržite pokazivač za pretpregled. Kliknite unutar za uređivanje. Povucite kut za promjenu veličine. Pritisnite Esc za zatvaranje.',
-    noteReadOnlyHint:
-        'Napomena samo za čitanje. Označite tekst za kopiranje. Povucite kut za promjenu veličine. Pritisnite Esc za zatvaranje.',
 };

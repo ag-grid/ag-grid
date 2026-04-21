@@ -817,8 +817,4 @@ export const AG_GRID_LOCALE_DE = {
     editNote: 'Notiz bearbeiten',
     deleteNote: 'Notiz entfernen',
     notePlaceholder: 'Notiz hinzufügen...',
-    noteHint:
-        'Zum Anzeigen mit der Maus darüberfahren. Zum Bearbeiten hineinklicken. Ziehen Sie an der Ecke, um die Größe zu ändern. Drücken Sie Esc zum Schließen.',
-    noteReadOnlyHint:
-        'Schreibgeschützte Notiz. Text zum Kopieren markieren. Ziehen Sie an der Ecke, um die Größe zu ändern. Drücken Sie Esc zum Schließen.',
 };

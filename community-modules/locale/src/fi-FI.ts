@@ -813,8 +813,4 @@ export const AG_GRID_LOCALE_FI = {
     editNote: 'Muokkaa muistiinpanoa',
     deleteNote: 'Poista muistiinpano',
     notePlaceholder: 'Lisää muistiinpano...',
-    noteHint:
-        'Näytä esikatselu viemällä osoitin päälle. Muokkaa napsauttamalla sisälle. Muuta kokoa vetämällä kulmasta. Sulje painamalla Esc.',
-    noteReadOnlyHint:
-        'Vain luku -muistiinpano. Valitse teksti kopioidaksesi sen. Muuta kokoa vetämällä kulmasta. Sulje painamalla Esc.',
 };

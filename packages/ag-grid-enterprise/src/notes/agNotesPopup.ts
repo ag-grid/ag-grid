@@ -19,10 +19,10 @@ import { Dialog } from '../widgets/dialog';
 import { cloneNote } from './notesUtils';
 
 const DEFAULT_SIZE = {
-    width: 320,
-    height: 220,
+    width: 290,
+    height: 150,
     minWidth: 240,
-    minHeight: 180,
+    minHeight: 150,
 };
 
 const CELL_PLACEMENTS: _Alignment[] = ['tl-tr', 'bl-tr', 'tr-tl', 'br-tl', 'tr-br', 'br-tr'];
@@ -50,13 +50,11 @@ const NotesPopupContentElement: ElementParams = {
             cls: 'ag-notes-popup-body',
             children: [{ tag: 'ag-input-text-area', ref: 'eEditor', cls: 'ag-notes-popup-editor' }],
         },
-        { tag: 'div', ref: 'eFooter', cls: 'ag-notes-popup-footer' },
     ],
 };
 
 class AgNotesPopupContent extends Component {
     private readonly eMeta: HTMLElement = RefPlaceholder;
-    private readonly eFooter: HTMLElement = RefPlaceholder;
     private readonly eEditor: GridInputTextArea = RefPlaceholder;
     private readonly initialText: string;
 
@@ -76,16 +74,6 @@ class AgNotesPopupContent extends Component {
         const metaParts = [author, timestamp].filter((part): part is string => !!part);
         this.eMeta.textContent = metaParts.join(' · ');
         _setDisplayed(this.eMeta, !!metaParts.length);
-
-        this.eFooter.textContent = this.readOnly
-            ? translate(
-                  'noteReadOnlyHint',
-                  'Read-only note. Select text to copy. Drag the corner to resize. Press Esc to close.'
-              )
-            : translate(
-                  'noteHint',
-                  'Hover to preview. Click inside to edit. Drag the corner to resize. Press Esc to close.'
-              );
 
         this.eEditor
             .setInputPlaceholder(this.readOnly ? undefined : translate('notePlaceholder', 'Add a note...'))

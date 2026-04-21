@@ -815,8 +815,4 @@ export const AG_GRID_LOCALE_TR = {
     editNote: 'Notu düzenle',
     deleteNote: 'Notu kaldır',
     notePlaceholder: 'Bir not ekle...',
-    noteHint:
-        'Önizleme için üzerine gelin. Düzenlemek için içine tıklayın. Yeniden boyutlandırmak için köşeyi sürükleyin. Kapatmak için Esc tuşuna basın.',
-    noteReadOnlyHint:
-        'Salt okunur not. Kopyalamak için metni seçin. Yeniden boyutlandırmak için köşeyi sürükleyin. Kapatmak için Esc tuşuna basın.',
 };

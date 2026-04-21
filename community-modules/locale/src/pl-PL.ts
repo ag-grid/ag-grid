@@ -815,8 +815,4 @@ export const AG_GRID_LOCALE_PL = {
     editNote: 'Edytuj notatkę',
     deleteNote: 'Usuń notatkę',
     notePlaceholder: 'Dodaj notatkę...',
-    noteHint:
-        'Najedź, aby wyświetlić podgląd. Kliknij wewnątrz, aby edytować. Przeciągnij róg, aby zmienić rozmiar. Naciśnij Esc, aby zamknąć.',
-    noteReadOnlyHint:
-        'Notatka tylko do odczytu. Zaznacz tekst, aby go skopiować. Przeciągnij róg, aby zmienić rozmiar. Naciśnij Esc, aby zamknąć.',
 };
