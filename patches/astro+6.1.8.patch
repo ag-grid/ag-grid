@@ -1,0 +1,32 @@
+diff --git a/node_modules/astro/dist/core/build/app.js b/node_modules/astro/dist/core/build/app.js
+index b6aa453..301020d 100644
+--- a/node_modules/astro/dist/core/build/app.js
++++ b/node_modules/astro/dist/core/build/app.js
+@@ -12,7 +12,7 @@ class BuildApp extends BaseApp {
+     });
+   }
+   isDev() {
+-    return true;
++    return false;
+   }
+   setInternals(internals) {
+     this.pipeline.setInternals(internals);
+diff --git a/node_modules/astro/dist/core/render/params-and-props.js b/node_modules/astro/dist/core/render/params-and-props.js
+index cf07e3d..d9e87a4 100644
+--- a/node_modules/astro/dist/core/render/params-and-props.js
++++ b/node_modules/astro/dist/core/render/params-and-props.js
+@@ -44,9 +44,12 @@ async function getProps(opts) {
+ }
+ function getParams(route, pathname) {
+   if (!route.params.length) return {};
+-  const path = pathname.endsWith(".html") && !routeHasHtmlExtension(route) ? pathname.slice(0, -5) : pathname;
+   const allPatterns = [route, ...route.fallbackRoutes].map((r) => r.pattern);
+-  const paramsMatch = allPatterns.map((pattern) => pattern.exec(path)).find((x) => x);
++  let paramsMatch = allPatterns.map((pattern) => pattern.exec(pathname)).find((x) => x);
++  if (!paramsMatch && pathname.endsWith(".html") && !routeHasHtmlExtension(route)) {
++    const stripped = pathname.slice(0, -5);
++    paramsMatch = allPatterns.map((pattern) => pattern.exec(stripped)).find((x) => x);
++  }
+   if (!paramsMatch) return {};
+   const params = {};
+   route.params.forEach((key, i) => {
