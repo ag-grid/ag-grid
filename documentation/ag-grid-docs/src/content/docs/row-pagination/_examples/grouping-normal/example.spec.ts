@@ -19,7 +19,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.paginationSummaryPanelCurrentPage('1')).toBeVisible();
 
         // Child group rows (year) are now visible under United States
-        await expect(agIdFor.autoGroupCell('row-group-year-2008')).toContainText('2008', {
+        await expect(agIdFor.autoGroupCell('row-group-country-United States-year-2008')).toContainText('2008', {
             useInnerText: true,
         });
     });
