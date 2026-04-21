@@ -23,6 +23,7 @@ import { iconSetBalham } from '../icon-set/balham/icon-set-balham';
 import { iconSetAlpine, iconSetMaterial, iconSetQuartzRegular } from '../icon-set/icon-sets';
 import type { InputStyleParams } from '../input-style/input-styles';
 import { inputStyleBordered, inputStyleUnderlined } from '../input-style/input-styles';
+import type { NoteStyleParams } from '../notes/note-styles';
 import type { TabStyleParams } from '../tab-style/tab-styles';
 import { tabStyleAlpine, tabStyleMaterial, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
 import materialAdjustmentsCSS from './material-adjustments.css';
@@ -32,7 +33,9 @@ export type ThemeDefaultParams = CoreParams &
     CheckboxStyleParams &
     TabStyleParams &
     InputStyleParams &
-    BatchEditStyleParams;
+    BatchEditStyleParams &
+    FormulaStyleParams &
+    NoteStyleParams;
 
 /**
  * Used as an entry point for collecting parameters for automated API
@@ -40,7 +43,7 @@ export type ThemeDefaultParams = CoreParams &
  *
  * @knipIgnore
  */
-export type AllThemeParamsForAPIDocumentation = ThemeDefaultParams & FormulaStyleParams;
+export type AllThemeParamsForAPIDocumentation = ThemeDefaultParams;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const themeQuartzParams = () => ({
@@ -202,7 +205,7 @@ const makeStyleMaterialTreeShakeable = () => {
     // e.g. tabSelectedUnderlineColor, but not add that param to the type if
     // it's not there already
     const sharedParams: Partial<
-        StyleMaterialParams & TabStyleParams & CoreParams & ButtonStyleParams & InputStyleParams
+        StyleMaterialParams & TabStyleParams & CoreParams & ButtonStyleParams & InputStyleParams & NoteStyleParams
     > = {
         tabSelectedUnderlineColor: { ref: 'primaryColor' },
         sideButtonSelectedUnderlineColor: { ref: 'primaryColor' },

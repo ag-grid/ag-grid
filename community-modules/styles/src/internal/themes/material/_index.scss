@@ -250,10 +250,6 @@
         color: var(--ag-material-primary-color);
     }
 
-    .ag-has-cell-notes::after {
-        border-color: transparent var(--ag-material-accent-color) transparent transparent;
-    }
-
     .ag-header-highlight-before::after,
     .ag-header-highlight-after::after {
         background-color: var(--ag-material-primary-color);
