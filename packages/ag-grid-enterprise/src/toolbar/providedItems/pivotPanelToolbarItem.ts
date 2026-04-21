@@ -1,8 +1,6 @@
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
 import { Component, _warn } from 'ag-grid-community';
 
-import { PivotDropZonePanel } from '../../rowGrouping/columnDropZones/pivotDropZonePanel';
-
 export class PivotPanelToolbarItem extends Component implements IToolbarItemComp {
     constructor() {
         super({ tag: 'div', cls: 'ag-toolbar-item ag-toolbar-panel' });
@@ -15,7 +13,18 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
             return;
         }
 
-        const panel = this.createManagedBean(new PivotDropZonePanel(true));
+        const builder = this.beans.rowGroupPanelBuilder;
+        if (!builder) {
+            _warn(302, {
+                itemName: 'pivotPanel',
+                moduleName: 'RowGroupingPanel',
+                ...this.gos.getModuleErrorParams(),
+            });
+            this.setDisplayed(false);
+            return;
+        }
+
+        const panel = this.createManagedBean(builder.createPivotDropZone(true));
         this.getGui().appendChild(panel.getGui());
 
         // Keep the inner panel always visible — the wrapper controls visibility

@@ -81,6 +81,7 @@ import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
+import type { IRowGroupPanelBuilder } from '../interfaces/iRowGroupPanelBuilder';
 import type { IRowGroupingEditValueSvc } from '../interfaces/iRowGroupingEditValueSvc';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type {
@@ -388,6 +389,7 @@ interface CoreBeanCollection
     rowSpanSvc?: RowSpanService;
     spannedRowRenderer?: SpannedRowRenderer;
     findSvc?: IFindService;
+    rowGroupPanelBuilder?: IRowGroupPanelBuilder;
     groupFilter?: IGroupFilterService;
     multiFilter?: IMultiFilterService;
     filterPanelSvc?: IFilterPanelService;

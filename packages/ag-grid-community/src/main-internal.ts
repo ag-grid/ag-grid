@@ -434,6 +434,7 @@ export type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 export type { IGroupEditService as _IGroupEditService } from './interfaces/iGroupEditService';
 export type { IGroupFilterService } from './interfaces/iGroupFilterService';
 export type { IRowGroupingEditValueSvc as _IRowGroupingEditValueSvc } from './interfaces/iRowGroupingEditValueSvc';
+export type { IRowGroupPanelBuilder as _IRowGroupPanelBuilder } from './interfaces/iRowGroupPanelBuilder';
 export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
 export type { IMenuFactory } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';
