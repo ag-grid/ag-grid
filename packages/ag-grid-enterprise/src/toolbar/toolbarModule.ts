@@ -1,5 +1,4 @@
 import type { ToolbarItemComponentName, _ModuleWithoutApi } from 'ag-grid-community';
-import { _KeyboardNavigationModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
@@ -28,5 +27,5 @@ export const ToolbarModule: _ModuleWithoutApi = {
         filter: 'filter',
     },
     selectors: [AgToolbarSelector],
-    dependsOn: [EnterpriseCoreModule, _KeyboardNavigationModule],
+    dependsOn: [EnterpriseCoreModule],
 };
