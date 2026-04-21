@@ -13,7 +13,7 @@ export interface Note {
     author?: string;
     createdAt?: string;
     updatedAt?: string;
-    metadata?: any;
+    metadata?: unknown;
 }
 
 export interface NoteParams {
