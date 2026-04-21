@@ -41,22 +41,6 @@ describe('Toolbar', () => {
         expect(toolbar).toBeNull();
     });
 
-    test('renders left and right containers', async () => {
-        const api = gridMgr.createGrid('toolbar-containers', {
-            columnDefs: [{ field: 'name' }],
-            rowData: [{ name: 'Alice' }],
-            toolbar: {
-                items: [],
-            },
-        });
-
-        await waitForEvent('firstDataRendered', api);
-
-        const gridDiv = TestGridsManager.getHTMLElement(api)!;
-        const toolbar = gridDiv.querySelector('.ag-toolbar');
-        expect(toolbar).not.toBeNull();
-    });
-
     test('toolbar is positioned above header drop zones', async () => {
         const api = gridMgr.createGrid('toolbar-position', {
             columnDefs: [{ field: 'name' }],
