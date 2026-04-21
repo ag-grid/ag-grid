@@ -152,14 +152,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             }
         }
 
-        const value = beans.valueSvc.getValue(column, node, 'data');
-        if (column.isAllowFormula()) {
-            const formula = beans.formula;
-            if (formula?.isFormula(value)) {
-                return formula.resolveValue(column, node);
-            }
-        }
-        return value;
+        return beans.valueSvc.getValueResolved(column, node, 'data');
     }
 
     private getGroupDataValue(node: RowNode, column: AgColumn): any {

@@ -3,7 +3,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
-import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 
@@ -16,7 +15,7 @@ export class FilterValueService extends BeanStub implements NamedBean {
             return;
         }
         const colDef = column.colDef;
-        const { selectableFilter, valueSvc, formula } = this.beans;
+        const { selectableFilter, valueSvc } = this.beans;
         const filterValueGetter =
             filterValueGetterOverride ??
             selectableFilter?.getFilterValueGetter(column.colId) ??
@@ -24,11 +23,7 @@ export class FilterValueService extends BeanStub implements NamedBean {
         if (filterValueGetter) {
             return this.executeFilterValueGetter(filterValueGetter, rowNode.data, column, rowNode, colDef);
         }
-        const value = valueSvc.getValue(column, rowNode, 'data');
-        if (column.isAllowFormula() && formula?.isFormula(value)) {
-            return formula.resolveValue(column, rowNode as RowNode);
-        }
-        return value;
+        return valueSvc.getValueResolved(column, rowNode, 'data');
     }
 
     private executeFilterValueGetter(

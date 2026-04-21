@@ -630,7 +630,7 @@ export class RowNode<TData = any>
         colKey: ColKey<TValue>,
         from: DataValueFrom = 'data'
     ): TValue | IAggFuncResult<TValue> | null | undefined {
-        const { colModel, valueSvc, formula } = this.beans;
+        const { colModel, valueSvc } = this.beans;
 
         if (colKey == null) {
             return undefined;
@@ -645,14 +645,11 @@ export class RowNode<TData = any>
         // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
         const dataRaw = from === 'data-raw';
         const resolvedFrom = dataRaw || from === 'value' ? 'data' : from;
-        let value = valueSvc.getValue(column, this, resolvedFrom, dataRaw);
+        const value = dataRaw
+            ? valueSvc.getValue(column, this, resolvedFrom, true)
+            : valueSvc.getValueResolved(column, this, resolvedFrom);
 
         if (!dataRaw) {
-            // Resolve formulas to their computed value (skip for 'data-raw')
-            if (formula && column.isAllowFormula() && formula.isFormula(value)) {
-                value = formula.resolveValue(column, this);
-            }
-
             // For 'value', 'edit', and 'batch' modes, resolve aggregation wrapper objects to their scalar value
             // on agg columns. Matches the resolution pattern in dataTypeService:
             // first try toNumber(), then fall back to .value property.

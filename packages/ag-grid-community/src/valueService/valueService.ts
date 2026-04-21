@@ -166,6 +166,15 @@ export class ValueService extends BeanStub implements NamedBean {
         };
     }
 
+    public getValueResolved(column: AgColumn, rowNode: IRowNode, from: CellValueResolveFrom): any {
+        const value = this.getValue(column, rowNode, from);
+        const formula = this.beans.formula;
+        if (column.isAllowFormula() && formula?.isFormula(value)) {
+            return formula.resolveValue(column, rowNode as RowNode);
+        }
+        return value;
+    }
+
     // PERFORMANCE CRITICAL — called for every cell during filtering, rendering, and export.
     // Any change here can have a large impact. Run the getValue benchmark to verify.
     public getValue(

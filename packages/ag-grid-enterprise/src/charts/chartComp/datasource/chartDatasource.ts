@@ -180,7 +180,7 @@ export class ChartDatasource extends BeanStub {
                 const column = this.colModel.getCol(colId);
 
                 if (column) {
-                    const valueObject = this.valueSvc.getValue(column, rowNode, 'data');
+                    const valueObject = this.valueSvc.getValueResolved(column, rowNode, 'data');
 
                     // when grouping we also need to build up multi category labels for charts
                     if (grouping) {
@@ -239,15 +239,14 @@ export class ChartDatasource extends BeanStub {
                     const filteredOutColId = colId + '-filtered-out';
 
                     // add data value to value column
-                    const value = this.valueSvc.getValue(col, rowNode, 'data');
-                    let actualValue = value;
+                    let actualValue = this.valueSvc.getValueResolved(col, rowNode, 'data');
 
                     // unwrap value objects if present
-                    if (value != null) {
-                        if (typeof value.toNumber === 'function') {
-                            actualValue = value.toNumber();
-                        } else if (typeof value.value === 'number') {
-                            actualValue = value.value;
+                    if (actualValue != null) {
+                        if (typeof actualValue.toNumber === 'function') {
+                            actualValue = actualValue.toNumber();
+                        } else if (typeof actualValue.value === 'number') {
+                            actualValue = actualValue.value;
                         }
                     }
 
@@ -260,7 +259,7 @@ export class ChartDatasource extends BeanStub {
                     }
                 } else {
                     // add data value to value column
-                    let value = this.valueSvc.getValue(col, rowNode, 'data');
+                    let value = this.valueSvc.getValueResolved(col, rowNode, 'data');
 
                     // unwrap value object if present
                     if (value && typeof value.value === 'number') {
