@@ -1,9 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
-import type { GridApi, IRowNode, RowPinnedType } from 'ag-grid-community';
+import type { ColDef, GridApi, IRowNode, RowPinnedType } from 'ag-grid-community';
 
 import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 import { VERSION } from '../version';
