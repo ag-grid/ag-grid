@@ -1,4 +1,4 @@
-import { findNotesPopupPosition, getNotesPopupPlacements } from './agNotesPopup';
+import { buildEditedNote, findNotesPopupPosition, getNotesPopupPlacements } from './agNotesPopup';
 
 describe('AgNotesPopup positioning', () => {
     const popupSize = { width: 320, height: 220 };
@@ -108,5 +108,30 @@ describe('AgNotesPopup positioning', () => {
                 enableRtl: false,
             })
         ).toEqual({ x: 480, y: 280 });
+    });
+});
+
+describe('buildEditedNote', () => {
+    it('preserves custom metadata when note text is edited', () => {
+        expect(
+            buildEditedNote(
+                {
+                    text: 'Existing text',
+                    author: 'AG Grid',
+                    metadata: {
+                        type: 'team',
+                        priority: 'high',
+                    },
+                },
+                '  Updated text  '
+            )
+        ).toEqual({
+            text: 'Updated text',
+            author: 'AG Grid',
+            metadata: {
+                type: 'team',
+                priority: 'high',
+            },
+        });
     });
 });
