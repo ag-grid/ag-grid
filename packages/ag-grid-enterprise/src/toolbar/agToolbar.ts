@@ -1,5 +1,4 @@
 import type {
-    BeanCollection,
     ComponentSelector,
     ComponentType,
     ElementParams,
@@ -10,8 +9,6 @@ import type {
     ToolbarDisplay,
     ToolbarItemComponentName,
     ToolbarItemDef,
-    UserCompDetails,
-    UserComponentFactory,
 } from 'ag-grid-community';
 import {
     Component,
@@ -71,14 +68,6 @@ function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): To
     return normalised;
 }
 
-function getToolbarItemCompDetails(
-    userCompFactory: UserComponentFactory,
-    def: ToolbarItemDef,
-    params: IToolbarItemParams
-): UserCompDetails<IToolbarItemComp> | undefined {
-    return userCompFactory.getCompDetails(def, ToolbarItemComponent, undefined, params, true);
-}
-
 const ToolbarItemComponent: ComponentType = {
     name: 'toolbarItem',
     optionalMethods: ['refresh'],
@@ -91,15 +80,10 @@ const AgToolbarElement: ElementParams = {
 };
 
 class AgToolbar extends Component implements FocusableContainer {
-    private userCompFactory: UserComponentFactory;
     private readonly toolbarItems: Map<string, IToolbarItemComp> = new Map();
     private customKeyCounter: number = 0;
     // Incremented on each rebuild so stale async resolves from a previous generation can be discarded
     private generation: number = 0;
-
-    public wireBeans(beans: BeanCollection) {
-        this.userCompFactory = beans.userCompFactory;
-    }
 
     constructor() {
         super(AgToolbarElement);
@@ -132,11 +116,15 @@ class AgToolbar extends Component implements FocusableContainer {
 
     private handleKeyDown(e: KeyboardEvent): void {
         const { key } = e;
+        // eslint-disable-next-line no-console
+        console.log('[DBG] handleKeyDown key=', key);
         if (key !== KeyCode.LEFT && key !== KeyCode.RIGHT && key !== KeyCode.PAGE_HOME && key !== KeyCode.PAGE_END) {
             return;
         }
 
         const activeEl = _getActiveDomElement(this.beans) as HTMLElement;
+        // eslint-disable-next-line no-console
+        console.log('[DBG] activeEl=', activeEl?.tagName);
         // Let inputs handle their own arrow-key behaviour (caret, radio groups, number step, etc.)
         if (activeEl instanceof HTMLInputElement) {
             return;
@@ -144,6 +132,8 @@ class AgToolbar extends Component implements FocusableContainer {
 
         const items = _findFocusableElements(this.getGui());
         const currentIndex = items.indexOf(activeEl);
+        // eslint-disable-next-line no-console
+        console.log('[DBG] items.length=', items.length, 'currentIndex=', currentIndex);
         if (currentIndex === -1) {
             return;
         }
@@ -298,10 +288,12 @@ class AgToolbar extends Component implements FocusableContainer {
             const placeholder = _createElement({ tag: 'div' });
             eContainer.appendChild(placeholder);
 
-            const compDetails = getToolbarItemCompDetails(
-                this.userCompFactory,
+            const compDetails = this.beans.userCompFactory.getCompDetails(
                 itemConfig,
-                this.createItemParams(itemConfig, key, defaultDisplay)
+                ToolbarItemComponent,
+                undefined,
+                this.createItemParams(itemConfig, key, defaultDisplay),
+                true
             );
 
             if (compDetails == null) {
