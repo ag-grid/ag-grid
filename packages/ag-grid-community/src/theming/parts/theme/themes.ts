@@ -205,7 +205,7 @@ const makeStyleMaterialTreeShakeable = () => {
     // e.g. tabSelectedUnderlineColor, but not add that param to the type if
     // it's not there already
     const sharedParams: Partial<
-        StyleMaterialParams & TabStyleParams & CoreParams & ButtonStyleParams & InputStyleParams & NoteStyleParams
+        StyleMaterialParams & TabStyleParams & CoreParams & ButtonStyleParams & InputStyleParams
     > = {
         tabSelectedUnderlineColor: { ref: 'primaryColor' },
         sideButtonSelectedUnderlineColor: { ref: 'primaryColor' },
