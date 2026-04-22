@@ -146,7 +146,7 @@ describe('Toolbar keyboard navigation', () => {
             columnDefs: [{ field: 'name' }],
             rowData: [{ name: 'Alice' }],
             toolbar: {
-                items: [{ key: 'one', label: 'One', icon: 'maximize', action: () => {} }, 'quickFilter'],
+                items: [{ key: 'one', label: 'One', icon: 'maximize', action: () => {} }, 'agQuickFilterToolbarItem'],
             },
         });
 
