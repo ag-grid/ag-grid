@@ -20,12 +20,6 @@ export class RowGroupPanelToolbarItem extends Component implements IToolbarItemC
 
         const panel = this.createManagedBean(builder.createRowGroupDropZone(true));
         this.getGui().appendChild(panel.getGui());
-
-        // Keep the inner panel always visible — the wrapper controls visibility
-        panel.setDisplayed(true);
-        this.addManagedListeners(panel, {
-            displayChanged: () => panel.setDisplayed(true),
-        });
     }
 
     public refresh(_params: IToolbarItemParams): boolean {
