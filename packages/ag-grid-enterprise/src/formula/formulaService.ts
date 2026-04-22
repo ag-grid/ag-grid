@@ -245,10 +245,34 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             }
         });
 
+        const onPinnedRowDataChanged = () => {
+            if (!this.active) {
+                return;
+            }
+            // Pinned row changes don't flow through CSRM's `onRowsChanged`, but a `pinnedTopRowData`
+            // / `pinnedBottomRowData` replacement can reuse RowNodes via `updateData` (new data,
+            // same node) or drop them entirely. Both leave stale CellFormula entries in the cache
+            // (stale `formulaString` / stale cached value). Drop every pinned-row entry; non-pinned
+            // rows never reference pinned rows via absolute refs (those resolve through CSRM only)
+            // so their cache is unaffected.
+            const cache = this.cachedResult;
+            let dropped = false;
+            for (const row of cache.keys()) {
+                if (row.rowPinned) {
+                    cache.delete(row);
+                    dropped = true;
+                }
+            }
+            if (dropped) {
+                this.beans.rowRenderer.refreshCells({ suppressFlash: true, force: true });
+            }
+        };
+
         this.addManagedListeners(this.beans.eventSvc, {
             cellValueChanged: refreshFormulas,
             newColumnsLoaded: onNewColumnsLoaded,
             columnMoved: onColumnMoved,
+            pinnedRowDataChanged: onPinnedRowDataChanged,
         });
     }
 
