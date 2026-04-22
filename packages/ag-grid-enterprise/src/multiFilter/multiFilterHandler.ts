@@ -78,7 +78,10 @@ export class MultiFilterHandler
         if (params.source !== 'floating' && params.source !== 'ui') {
             this.resetActiveList(params.model);
         }
-        if (params.additionalEventAttributes?.fromButtons) {
+        // Floating filter changes bypass MultiFilterUi (whose onModelChange triggers sibling
+        // notification for the 'ui' source). Cross-column onAnyFilterChanged notification skips
+        // the active column, so siblings within this Multi Filter would otherwise never refresh.
+        if (params.additionalEventAttributes?.fromButtons || params.source === 'floating') {
             this.onAnyFilterChanged();
         }
     }
