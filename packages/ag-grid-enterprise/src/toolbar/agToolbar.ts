@@ -6,6 +6,7 @@ import type {
     IToolbarItemComp,
     IToolbarItemParams,
     Toolbar,
+    ToolbarButtonItemDef,
     ToolbarItemDef,
 } from 'ag-grid-community';
 import {
@@ -24,31 +25,37 @@ import {
 
 import agToolbarCSS from './agToolbar.css';
 
-function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): ToolbarItemDef {
+/**
+ * The flat shape every toolbar item is coerced into before rendering.
+ * `key` is always populated; `toolbarItem` may still be absent if the user
+ * supplied a definition without any actionable fields (warned downstream).
+ */
+interface NormalisedToolbarItem {
+    toolbarItem?: unknown;
+    toolbarItemParams?: any;
+    alignment?: 'left' | 'right';
+    key: string;
+}
+
+function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): NormalisedToolbarItem {
     if (typeof item === 'string') {
         return { toolbarItem: item, key: item };
     }
-    let normalised = item;
-    if (
-        normalised.toolbarItem == null &&
-        (normalised.action != null || normalised.label != null || normalised.icon != null)
-    ) {
-        normalised = {
-            ...normalised,
-            toolbarItem: 'agButtonToolbarItem',
-            toolbarItemParams: {
-                ...(normalised.toolbarItemParams ?? {}),
-                label: normalised.label,
-                icon: normalised.icon,
-                action: normalised.action,
-            },
-        };
+
+    let toolbarItem: unknown = item.toolbarItem;
+    let toolbarItemParams: any = item.toolbarItemParams;
+
+    if (toolbarItem == null) {
+        const { label, icon, action } = item as ToolbarButtonItemDef;
+        if (action != null || label != null || icon != null) {
+            toolbarItem = 'agButtonToolbarItem';
+            toolbarItemParams = { ...(toolbarItemParams ?? {}), label, icon, action };
+        }
     }
-    if (normalised.key == null) {
-        const key = typeof normalised.toolbarItem === 'string' ? normalised.toolbarItem : nextKey();
-        normalised = { ...normalised, key };
-    }
-    return normalised;
+
+    const key = item.key ?? (typeof toolbarItem === 'string' ? toolbarItem : nextKey());
+
+    return { toolbarItem, toolbarItemParams, alignment: item.alignment, key };
 }
 
 const ToolbarItemComponent: ComponentType = {
@@ -98,23 +105,19 @@ class AgToolbar extends Component implements FocusableContainer {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
+        const activeEl = _getActiveDomElement(this.beans) as HTMLElement;
+        // Let inputs handle their own key behaviour (caret, typing, arrow keys, etc.)
+        if (activeEl instanceof HTMLInputElement) {
+            return;
+        }
+
         const { key } = e;
         if (key !== KeyCode.LEFT && key !== KeyCode.RIGHT && key !== KeyCode.PAGE_HOME && key !== KeyCode.PAGE_END) {
             return;
         }
 
-        const activeEl = _getActiveDomElement(this.beans) as HTMLElement;
-        // eslint-disable-next-line no-console
-        console.log('[DBG] activeEl=', activeEl?.tagName);
-        // Let inputs handle their own arrow-key behaviour (caret, radio groups, number step, etc.)
-        if (activeEl instanceof HTMLInputElement) {
-            return;
-        }
-
         const items = _findFocusableElements(this.getGui());
         const currentIndex = items.indexOf(activeEl);
-        // eslint-disable-next-line no-console
-        console.log('[DBG] items.length=', items.length, 'currentIndex=', currentIndex);
         if (currentIndex === -1) {
             return;
         }
@@ -143,7 +146,7 @@ class AgToolbar extends Component implements FocusableContainer {
         }
     }
 
-    private getValidItems(toolbar: Toolbar | undefined): ToolbarItemDef[] | undefined {
+    private getValidItems(toolbar: Toolbar | undefined): NormalisedToolbarItem[] | undefined {
         if (!toolbar?.items) {
             return undefined;
         }
@@ -151,23 +154,21 @@ class AgToolbar extends Component implements FocusableContainer {
         this.customKeyCounter = 0;
         const nextKey = () => `custom-toolbar-item-${this.customKeyCounter++}`;
         const seen = new Set<string>();
-        return toolbar.items.reduce<ToolbarItemDef[]>((acc, item) => {
+        return toolbar.items.reduce<NormalisedToolbarItem[]>((acc, item) => {
             const normalised = normaliseItem(item, nextKey);
             if (normalised.toolbarItem === 'separator') {
                 acc.push(normalised);
                 return acc;
             }
-            // normaliseItem guarantees `key` is set for non-separator items
-            const key = normalised.key!;
-            if (!seen.has(key)) {
-                seen.add(key);
+            if (!seen.has(normalised.key)) {
+                seen.add(normalised.key);
                 acc.push(normalised);
             }
             return acc;
         }, []);
     }
 
-    private createItemParams(itemConfig: ToolbarItemDef, key: string): IToolbarItemParams {
+    private createItemParams(itemConfig: NormalisedToolbarItem, key: string): IToolbarItemParams {
         return _addGridCommonParams(this.gos, {
             ...(itemConfig.toolbarItemParams ?? {}),
             key,
@@ -184,8 +185,8 @@ class AgToolbar extends Component implements FocusableContainer {
             return;
         }
 
-        const leftItems: ToolbarItemDef[] = [];
-        const rightItems: ToolbarItemDef[] = [];
+        const leftItems: NormalisedToolbarItem[] = [];
+        const rightItems: NormalisedToolbarItem[] = [];
         const defaultAlignment: 'left' | 'right' = toolbar?.alignment ?? (this.gos.get('enableRtl') ? 'right' : 'left');
         // Separators inherit the alignment of the preceding item, unless explicitly set
         let lastAlignment: 'left' | 'right' = defaultAlignment;
@@ -232,7 +233,7 @@ class AgToolbar extends Component implements FocusableContainer {
     }
 
     private createAndRenderComponents(
-        toolbarItems: ToolbarItemDef[],
+        toolbarItems: NormalisedToolbarItem[],
         rightStartIndex: number,
         generation: number
     ): void {
@@ -251,8 +252,7 @@ class AgToolbar extends Component implements FocusableContainer {
                 continue;
             }
 
-            // normaliseItem guarantees `key` is set for non-separator items
-            const key = itemConfig.key!;
+            const { key } = itemConfig;
 
             if (itemConfig.toolbarItem == null) {
                 _warn(301, { key });

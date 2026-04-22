@@ -31,14 +31,14 @@ describe('Toolbar (React)', () => {
         expect(toolbar?.classList.contains('ag-hidden')).toBe(false);
     });
 
-    test('does not render toolbar when toolbar option is not provided', async () => {
+    test('hides toolbar when toolbar option is not provided', async () => {
         const rendered = render(<AgGridReact rowData={[{ name: 'Alice' }]} columnDefs={[{ field: 'name' }]} />);
 
         await rendered.findByText('Alice');
 
         const container = rendered.container;
         const toolbar = container.querySelector<HTMLElement>('.ag-toolbar');
-        expect(toolbar).toBeNull();
+        expect(toolbar?.classList.contains('ag-hidden')).toBe(true);
     });
 
     test('hides toolbar when items array is empty', async () => {

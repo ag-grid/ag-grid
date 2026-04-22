@@ -182,7 +182,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
             const item = gridDiv.querySelector<HTMLElement>('.ag-toolbar-panel');
             expect(item).not.toBeNull();
-            expect(item!.style.display).toBe('none');
+            expect(item!.classList.contains('ag-hidden')).toBe(true);
 
             expect(warnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #302'),
@@ -207,7 +207,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
             const item = gridDiv.querySelector<HTMLElement>('.ag-toolbar-panel');
             expect(item).not.toBeNull();
-            expect(item!.style.display).toBe('none');
+            expect(item!.classList.contains('ag-hidden')).toBe(true);
 
             expect(warnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #302'),
