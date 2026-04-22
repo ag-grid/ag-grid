@@ -1,8 +1,8 @@
 .ag-has-cell-notes::after {
     content: '';
     position: absolute;
-    top: 1px;
-    right: 1px;
+    top: 0;
+    right: 0;
     border-style: solid;
     border-width: 0 var(--ag-note-indicator-size) var(--ag-note-indicator-size) 0;
     border-color: transparent var(--ag-note-indicator-color) transparent transparent;
