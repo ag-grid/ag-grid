@@ -25,7 +25,7 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
 
     public init(_params: IToolbarItemParams): void {
         if (!this.gos.isModuleRegistered('Find')) {
-            _warn(302, { itemName: 'find', moduleName: 'Find', ...this.gos.getModuleErrorParams() });
+            _warn(302, { itemName: 'agFindToolbarItem', moduleName: 'Find', ...this.gos.getModuleErrorParams() });
             this.setDisplayed(false);
             return;
         }
@@ -94,6 +94,8 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         this.addManagedEventListeners({
             findChanged: (event: FindChangedEvent) => this.onFindChanged(event),
         });
+
+        this.syncMatchState();
     }
 
     public refresh(_params: IToolbarItemParams): boolean {

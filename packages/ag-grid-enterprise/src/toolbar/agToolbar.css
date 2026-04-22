@@ -112,6 +112,7 @@
     gap: calc(var(--ag-spacing) * 0.5);
     border: solid var(--ag-border-width) var(--ag-border-color);
     border-radius: var(--ag-border-radius);
+    min-width: 80px;
 }
 
 .ag-toolbar-find:focus-within {
@@ -136,7 +137,7 @@
     opacity: 0.7;
     user-select: none;
     font-variant-numeric: tabular-nums;
-    min-width: 6ch;
+    min-width: 11ch;
     text-align: end;
 }
 

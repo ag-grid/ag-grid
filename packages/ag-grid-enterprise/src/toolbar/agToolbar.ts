@@ -7,7 +7,6 @@ import type {
     IToolbarItemParams,
     Toolbar,
     ToolbarDisplay,
-    ToolbarItemComponentName,
     ToolbarItemDef,
 } from 'ag-grid-community';
 import {
@@ -26,26 +25,11 @@ import {
 
 import agToolbarCSS from './agToolbar.css';
 
-const BUILT_IN_ITEMS: Record<string, ToolbarItemComponentName> = {
-    find: 'agFindToolbarItem',
-    pivotPanel: 'agPivotPanelToolbarItem',
-    quickFilter: 'agQuickFilterToolbarItem',
-    rowGroupPanel: 'agRowGroupPanelToolbarItem',
-};
-
 function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): ToolbarItemDef {
     if (typeof item === 'string') {
-        const toolbarItem = BUILT_IN_ITEMS[item] ?? item;
-        return { toolbarItem, key: item };
+        return { toolbarItem: item, key: item };
     }
     let normalised = item;
-    if (typeof normalised.toolbarItem === 'string' && BUILT_IN_ITEMS[normalised.toolbarItem]) {
-        normalised = {
-            ...normalised,
-            key: normalised.key ?? normalised.toolbarItem,
-            toolbarItem: BUILT_IN_ITEMS[normalised.toolbarItem],
-        };
-    }
     if (
         normalised.toolbarItem == null &&
         (normalised.action != null || normalised.label != null || normalised.icon != null)
@@ -116,8 +100,6 @@ class AgToolbar extends Component implements FocusableContainer {
 
     private handleKeyDown(e: KeyboardEvent): void {
         const { key } = e;
-        // eslint-disable-next-line no-console
-        console.log('[DBG] handleKeyDown key=', key);
         if (key !== KeyCode.LEFT && key !== KeyCode.RIGHT && key !== KeyCode.PAGE_HOME && key !== KeyCode.PAGE_END) {
             return;
         }
