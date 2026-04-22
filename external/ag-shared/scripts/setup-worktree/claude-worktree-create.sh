@@ -55,7 +55,7 @@ cleanup_stale_agent_worktrees
 log "Creating worktree '${NAME}' for ${REPO_NAME}..."
 
 log "Fetching from origin..."
-git -C "$CWD" fetch origin --quiet >&2
+git -C "$CWD" fetch origin --quiet >&2 || log "WARNING: git fetch failed, continuing with local refs"
 
 mkdir -p "${WORKTREE_ROOT}/${REPO_NAME}"
 

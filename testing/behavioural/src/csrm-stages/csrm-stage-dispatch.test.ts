@@ -28,7 +28,7 @@ describe('CSRM stage dispatch', () => {
                 ],
             });
 
-            const gridRows = new GridRows(api, 'initial', { checkDom: false });
+            const gridRows = new GridRows(api, 'initial');
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 name:"A" value:1
@@ -47,7 +47,7 @@ describe('CSRM stage dispatch', () => {
                 ],
             });
 
-            const gridRows = new GridRows(api, 'sorted desc', { checkDom: false });
+            const gridRows = new GridRows(api, 'sorted desc');
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:2 name:"C" value:3
@@ -84,7 +84,7 @@ describe('CSRM stage dispatch', () => {
                 groupDefaultExpanded: -1,
             });
 
-            const gridRows = new GridRows(api, 'initial', { checkDom: false });
+            const gridRows = new GridRows(api, 'initial');
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID
                 └─┬ A GROUP id:1 ag-Grid-AutoColumn:"A" name:"A"
@@ -107,7 +107,7 @@ describe('CSRM stage dispatch', () => {
                 groupDefaultExpanded: -1,
             });
 
-            const gridRows = new GridRows(api, 'sorted desc', { checkDom: false });
+            const gridRows = new GridRows(api, 'sorted desc');
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID
                 └─┬ A GROUP id:1 ag-Grid-AutoColumn:"A" name:"A"
@@ -131,7 +131,7 @@ describe('CSRM stage dispatch', () => {
 
             api.applyTransaction({ add: [{ id: '3', path: ['A', 'C'], name: 'C' }] });
 
-            const gridRows = new GridRows(api, 'after add', { checkDom: false });
+            const gridRows = new GridRows(api, 'after add');
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID
                 └─┬ A GROUP id:1 ag-Grid-AutoColumn:"A" name:"A"
@@ -170,7 +170,7 @@ describe('CSRM stage dispatch', () => {
 
             api.setFilterModel({ name: { filterType: 'text', type: 'contains', filter: 'Ban' } });
 
-            const gridRows = new GridRows(api, 'filtered', { checkDom: false });
+            const gridRows = new GridRows(api, 'filtered');
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID
                 └─┬ A GROUP id:1 ag-Grid-AutoColumn:"A" name:"A"
@@ -179,7 +179,7 @@ describe('CSRM stage dispatch', () => {
 
             api.setFilterModel(null);
 
-            const gridRowsAfterClear = new GridRows(api, 'filter cleared', { checkDom: false });
+            const gridRowsAfterClear = new GridRows(api, 'filter cleared');
             await gridRowsAfterClear.check(`
                 ROOT id:ROOT_NODE_ID
                 └─┬ A GROUP id:1 ag-Grid-AutoColumn:"A" name:"A"
@@ -213,7 +213,7 @@ describe('CSRM stage dispatch', () => {
                 groupDefaultExpanded: -1,
             });
 
-            const gridRows = new GridRows(api, 'initial', { checkDom: false });
+            const gridRows = new GridRows(api, 'initial');
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID
                 ├─┬ LEAF_GROUP id:row-group-category-Fruit ag-Grid-AutoColumn:"Fruit"

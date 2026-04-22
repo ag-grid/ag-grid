@@ -31,7 +31,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getColumn(colId: string): AgColumn | null {
-        return this.colModel.getColDefCol(colId);
+        return this.colModel.getColDefColOrCol(colId);
     }
 
     public getAllDisplayedColumns(): AgColumn[] {

@@ -25,9 +25,8 @@ const DEFAULT_SIZE = {
     minHeight: 150,
 };
 
-const CELL_PLACEMENTS: _Alignment[] = ['tl-tr', 'bl-tr', 'tr-tl', 'br-tl', 'tr-br', 'br-tr'];
+const CELL_PLACEMENTS: _Alignment[] = ['tl-tr', 'tr-br', 'br-tr', 'tr-tl', 'br-tl'];
 const FULL_WIDTH_ROW_PLACEMENTS: _Alignment[] = ['tl-tr', 'tr-br', 'br-tr'];
-
 type NotesPopupPlacementMode = 'cell' | 'fullWidthRow';
 type BoundsRect = Pick<DOMRectReadOnly, 'top' | 'left' | 'right' | 'bottom'>;
 type PopupSize = Pick<DOMRectReadOnly, 'width' | 'height'>;
@@ -96,15 +95,7 @@ class AgNotesPopupContent extends Component {
     }
 
     public getEditedNote(): Note | undefined {
-        const text = this.eEditor.getValue()?.trim();
-        if (!text) {
-            return undefined;
-        }
-
-        return {
-            ...(this.note ?? {}),
-            text,
-        };
+        return buildEditedNote(this.note, this.eEditor.getValue());
     }
 
     public isDirty(): boolean {
@@ -114,6 +105,18 @@ class AgNotesPopupContent extends Component {
 
         return (this.eEditor.getValue()?.trim() ?? '') !== this.initialText;
     }
+}
+
+export function buildEditedNote(note: Note | undefined, nextText: string | null | undefined): Note | undefined {
+    const text = nextText?.trim();
+    if (!text) {
+        return undefined;
+    }
+
+    return {
+        ...(note ?? {}),
+        text,
+    };
 }
 
 export class AgNotesPopup extends BeanStub {
@@ -262,18 +265,22 @@ export function findNotesPopupPosition(params: NotesPopupPositionParams): { x: n
     const { anchorRect, parentRect, popupSize, placementMode, enableRtl } = params;
     const referenceRect = _toRelativeRect(anchorRect, parentRect);
     const parentSize = _getRectSize(parentRect);
-    const basePlacements = getNotesPopupPlacements(placementMode);
+    const basePlacements = placementMode === 'fullWidthRow' ? FULL_WIDTH_ROW_PLACEMENTS : CELL_PLACEMENTS;
     const placements = _getEffectivePlacements(basePlacements, enableRtl);
 
     for (const alignment of placements) {
         const position = _computeAlignedPosition(referenceRect, popupSize, alignment, 0);
+
+        if (alignment === 'tl-tr' || alignment === 'tr-tl') {
+            position.y -= 1;
+        }
 
         if (_fitsWithinBounds(position, popupSize, parentSize)) {
             return position;
         }
     }
 
-    return _findBestPlacement(referenceRect, popupSize, parentSize, basePlacements, {
+    return _findBestPlacement(referenceRect, popupSize, parentSize, [...basePlacements.slice(1), basePlacements[0]], {
         gap: 0,
         enableRtl,
     });

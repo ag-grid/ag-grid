@@ -1,1 +1,0 @@
-../../external/ag-shared/prompts/guides/code-quality.md

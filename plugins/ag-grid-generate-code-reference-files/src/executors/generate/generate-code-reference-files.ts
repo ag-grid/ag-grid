@@ -841,6 +841,8 @@ export function getThemeParams(themesFile: string) {
                         resolveAndCollect(t.typeName.getText(nodeFile));
                     }
                 }
+            } else if (ts.isTypeReferenceNode(node.type)) {
+                resolveAndCollect(node.type.typeName.getText(nodeFile));
             } else if (ts.isTypeLiteralNode(node.type)) {
                 node.type.members.forEach(
                     (m) => (members = mergeMembersPreservingMeta(members, extractTypesFromNode(m, nodeFile, false)))

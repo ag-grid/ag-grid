@@ -644,17 +644,38 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public getColDefCol(key: ColKey): AgColumn | null {
-        if (!this.colDefCols?.list) {
+        return this.getColFromCollection(key, this.colDefCols) ?? this.getColFromServiceCols(key);
+    }
+
+    /** Look up by key across colDefCols, displayed cols, and service columns (auto-group, selection, row-number). */
+    public getColDefColOrCol(key: Maybe<ColKey>): AgColumn | null {
+        if (key == null) {
             return null;
         }
-        return this.getColFromCollection(key, this.colDefCols);
+        return (
+            this.getColFromCollection(key, this.colDefCols) ??
+            this.getColFromCollection(key, this.cols) ??
+            this.getColFromServiceCols(key)
+        );
+    }
+
+    /** Look up by key across displayed cols, colDefCols, and service columns — prefers displayed cols. */
+    public getColOrColDefCol(key: Maybe<ColKey>): AgColumn | null {
+        if (key == null) {
+            return null;
+        }
+        return (
+            this.getColFromCollection(key, this.cols) ??
+            this.getColFromCollection(key, this.colDefCols) ??
+            this.getColFromServiceCols(key)
+        );
     }
 
     public getCol(key: Maybe<ColKey>): AgColumn | null {
         if (key == null) {
             return null;
         }
-        return this.getColFromCollection(key, this.cols);
+        return this.getColFromCollection(key, this.cols) ?? this.getColFromServiceCols(key);
     }
 
     /**
@@ -670,26 +691,28 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (cols == null) {
             return null;
         }
-
-        const { map, list } = cols;
-
+        const map = cols.map;
         // most of the time this method gets called the key is a string, so we put this shortcut in
         // for performance reasons, to see if we can match for ID (it doesn't do auto columns, that's done below)
         if (typeof key == 'string' && map[key]) {
             return map[key];
         }
 
-        for (let i = 0; i < list.length; i++) {
+        const list = cols.list;
+        for (let i = 0, len = list.length; i < len; ++i) {
             if (_columnsMatch(list[i], key)) {
                 return list[i];
             }
         }
+        return null;
+    }
 
-        const { autoColSvc, selectionColSvc, groupHierarchyColSvc } = this.beans;
+    private getColFromServiceCols(key: ColKey): AgColumn | null {
+        const beans = this.beans;
         return (
-            autoColSvc?.getColumn(key) ??
-            selectionColSvc?.getColumn(key) ??
-            groupHierarchyColSvc?.getColumn(key) ??
+            beans.autoColSvc?.getColumn(key) ??
+            beans.selectionColSvc?.getColumn(key) ??
+            beans.groupHierarchyColSvc?.getColumn(key) ??
             null
         );
     }

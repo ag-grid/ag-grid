@@ -271,5 +271,13 @@
         --ag-formula-token-7-color: #247492;
         --ag-formula-token-7-background-color: rgb(36 116 146 / 16%);
         --ag-formula-token-7-border-color: var(--ag-formula-token-7-color);
+
+        --ag-note-indicator-size: 8px;
+        --ag-note-popup-background-color: var(--ag-menu-background-color);
+        --ag-note-popup-text-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 75%);
+        --ag-note-popup-input-text-color: var(--ag-input-text-color);
+        --ag-note-popup-input-background-color: var(--ag-input-background-color);
+        --ag-note-popup-border: var(--ag-dialog-border);
+        --ag-note-popup-padding: calc(var(--ag-grid-size) / 2);
     }
 }

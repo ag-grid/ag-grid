@@ -15,7 +15,7 @@ export function readAsJsFile(srcFile, internalFramework: InternalFramework) {
         tsFile = tsFile.replace(/import {((.|\n)*?)} from(?!(\s['"]\.\/)).*\n/g, '');
     } else {
         tsFile = tsFile.replace(/import ((.|\n)*?)from.*\n/g, '');
-        tsFile = tsFile.replace(/export /g, '');
+        tsFile = tsFile.replace(/^export /gm, '');
     }
 
     const jsFile = transform(tsFile, { transforms: ['typescript'], disableESTransforms: true }).code;

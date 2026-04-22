@@ -42,6 +42,7 @@ jobs:
             contents: read
             pull-requests: write
             issues: write
+            packages: read
         # Only run if permissions check passed and PR is not a draft
         # For issue_comment, also verify it's on a PR (not a regular issue)
         if: |

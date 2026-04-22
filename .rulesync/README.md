@@ -80,10 +80,10 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 
 ## Documentation Review
 
-| Type    | Name                      | Invoke                 | What it does                                                     |
-| ------- | ------------------------- | ---------------------- | ---------------------------------------------------------------- |
-| Command | 🟢 `/docs-review`         | `/docs-review`         | Review docs pages for technical accuracy and example consistency |
-| Command | 🟢 `/release-docs-review` | `/release-docs-review` | Review all documentation changes between releases                |
+| Type  | Name                     | Invoke                            | What it does                                                                                                                 |
+| ----- | ------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Skill | 🟢 `docs-review`         | `/ag-prodeng:docs-review`         | Review docs pages for technical accuracy and example consistency (auto-detects ag-grid via `packages/ag-grid-community/src`) |
+| Skill | 🟢 `release-docs-review` | `/ag-prodeng:release-docs-review` | Review all documentation changes between releases                                                                            |
 
 ## Git and Branch Management
 

@@ -7,12 +7,13 @@ import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
 import type { IRowNode } from './iRowNode';
 
-export interface Note {
+export interface Note<TMetadata = any> {
     text: string;
     readOnly?: boolean;
     author?: string;
     createdAt?: string;
     updatedAt?: string;
+    metadata?: TMetadata;
 }
 
 export interface NoteParams {
@@ -29,8 +30,8 @@ export interface FullWidthRowNoteParams {
 
 export type GetNoteParams = NoteParams | FullWidthRowNoteParams;
 
-export type SetNoteParams = GetNoteParams & {
-    note: Note | undefined;
+export type SetNoteParams<TMetadata = any> = GetNoteParams & {
+    note: Note<TMetadata> | undefined;
 };
 
 export interface NotesDataSourceNoteParams {
@@ -47,16 +48,16 @@ export interface NotesDataSourceFullWidthRowNoteParams {
 
 export type NotesDataSourceGetNoteParams = NotesDataSourceNoteParams;
 
-export interface NotesDataSourceSetNoteParams extends NotesDataSourceNoteParams {
-    note: Note | undefined;
+export interface NotesDataSourceSetNoteParams<TMetadata = any> extends NotesDataSourceNoteParams {
+    note: Note<TMetadata> | undefined;
 }
 
 export type FullWidthNotesDataSourceGetNoteParams = NotesDataSourceNoteParams | NotesDataSourceFullWidthRowNoteParams;
 
-export type FullWidthNotesDataSourceSetNoteParams =
-    | NotesDataSourceSetNoteParams
+export type FullWidthNotesDataSourceSetNoteParams<TMetadata = any> =
+    | NotesDataSourceSetNoteParams<TMetadata>
     | (NotesDataSourceFullWidthRowNoteParams & {
-          note: Note | undefined;
+          note: Note<TMetadata> | undefined;
       });
 
 export interface NotesDataSourceParams extends AgGridCommon<any, any> {}
@@ -72,23 +73,23 @@ interface BaseNotesDataSource {
  * Control where notes are stored/retrieved from.
  * An implementation can store note state separately from the row data, or persist it remotely.
  */
-export interface NotesDataSource extends BaseNotesDataSource {
+export interface NotesDataSource<TMetadata = any> extends BaseNotesDataSource {
     /** Return the note for the given cell. */
-    getNote(params: NotesDataSourceGetNoteParams): Note | undefined;
+    getNote(params: NotesDataSourceGetNoteParams): Note<TMetadata> | undefined;
     /** Set or clear the note for the given cell. */
-    setNote(params: NotesDataSourceSetNoteParams): void;
+    setNote(params: NotesDataSourceSetNoteParams<TMetadata>): void;
 }
 
 /**
  * Control where notes are stored/retrieved from for both cells and full width rows.
  */
-export interface FullWidthNotesDataSource extends BaseNotesDataSource {
+export interface FullWidthNotesDataSource<TMetadata = any> extends BaseNotesDataSource {
     /** Enables full width row notes for this datasource. */
     supportsFullWidthRows: true;
     /** Return the note for the given cell or full width row. */
-    getNote(params: FullWidthNotesDataSourceGetNoteParams): Note | undefined;
+    getNote(params: FullWidthNotesDataSourceGetNoteParams): Note<TMetadata> | undefined;
     /** Set or clear the note for the given cell or full width row. */
-    setNote(params: FullWidthNotesDataSourceSetNoteParams): void;
+    setNote(params: FullWidthNotesDataSourceSetNoteParams<TMetadata>): void;
 }
 
 export interface RefreshNotesParams {

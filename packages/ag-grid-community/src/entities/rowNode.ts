@@ -560,7 +560,7 @@ export class RowNode<TData = any>
             return false; // no column
         }
 
-        let column = colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
+        let column = colModel.getColOrColDefCol(colKey);
         if (!column) {
             return false; // column not found
         }
@@ -636,7 +636,7 @@ export class RowNode<TData = any>
             return undefined;
         }
 
-        const column = colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
+        const column = colModel.getColOrColDefCol(colKey);
         if (!column) {
             return undefined;
         }

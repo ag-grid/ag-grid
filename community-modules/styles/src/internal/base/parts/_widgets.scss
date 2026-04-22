@@ -851,15 +851,18 @@
     .ag-has-cell-notes::after {
         content: '';
         position: absolute;
-        top: 1px;
-        right: 1px;
+        top: 0;
+        right: 0;
         border-style: solid;
-        border-width: 0 10px 10px 0;
+        border-width: 0 var(--ag-note-indicator-size) var(--ag-note-indicator-size) 0;
+        border-color: transparent var(--ag-note-indicator-color) transparent transparent;
         pointer-events: none;
     }
 
-    .ag-notes-panel {
+    .ag-notes-panel.ag-panel {
         width: 100%;
+        border: var(--ag-note-popup-border);
+        background-color: var(--ag-note-popup-background-color);
     }
 
     .ag-notes-panel-content-wrapper {
@@ -875,11 +878,11 @@
         min-height: 0;
         min-width: 0;
         gap: calc(var(--ag-grid-size) / 2);
-        padding: calc(var(--ag-grid-size) / 2);
+        padding: var(--ag-note-popup-padding);
     }
 
     .ag-notes-popup-meta {
-        color: var(--ag-secondary-foreground-color);
+        color: var(--ag-note-popup-text-color);
         font-size: calc(var(--ag-font-size) - 1px);
         @include ag.unthemed-rtl(
             (
@@ -917,10 +920,13 @@
         height: 100%;
         min-width: 0;
         resize: none;
+        color: var(--ag-note-popup-input-text-color);
+        background-color: var(--ag-note-popup-input-background-color);
         padding: calc(var(--ag-grid-size) / 2);
     }
 
     .ag-notes-popup-editor .ag-text-area-input[readonly] {
+        background-color: var(--ag-note-popup-background-color);
         border: none;
     }
 

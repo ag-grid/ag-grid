@@ -15,7 +15,7 @@ Right-click a cell or press `Shift + F2` to add a note. Hover a noted cell to vi
 Notes are **not** displayed for the cell currently being edited. Hovering that cell or pressing `Shift + F2` for it has no effect until editing is complete. Notes for other cells continue to work normally.
 {% /note %}
 
-{% gridExampleRunner title="Notes" name="notes" exampleHeight=440 /%}
+{% gridExampleRunner title="Notes" name="notes" exampleHeight=350 /%}
 
 {% apiDocumentation source="grid-options/properties.json" section="notes" names=["notesDataSource"] /%}
 
@@ -41,11 +41,11 @@ const gridOptions = {
 
 The example above uses `getRowId()` so the note store can key notes consistently by row ID and column ID.
 
-## Notes Metadata
+## Metadata
 
-Any note metadata, including `author`, `createdAt`, and `updatedAt`, is rendered exactly as provided by your datasource.
+Built-in note metadata, including `author`, `createdAt`, and `updatedAt`, is rendered exactly as provided by your datasource.
 
-{% gridExampleRunner title="Notes Metadata" name="notes-metadata" exampleHeight=480 /%}
+{% gridExampleRunner title="Metadata" name="notes-metadata" exampleHeight=380 /%}
 
 The built-in note editor only updates the note text. If notes created from the built-in UI should also include metadata, stamp it inside `notesDataSource.setNote()`. The example includes an `Authenticated User` input to simulate the current user being stamped into saved notes.
 
@@ -76,13 +76,53 @@ const gridOptions = {
 };
 ```
 
+### Custom Data
+
+Use `note.metadata` to store any application-defined data alongside the built-in note fields. The Grid preserves this data when the built-in editor updates an existing note, but the built-in note popup does not render it.
+
+The example below stores `metadata.type` and `metadata.priority` on notes, then uses application-level cell classes and CSS variables to style note indicators differently. This keeps custom Note data in your datasource while letting your app decide how that data should affect presentation.
+
+{% gridExampleRunner title="Custom Data" name="notes-custom-data" exampleHeight=380 /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    defaultColDef: {
+        cellClass: ({ node, column }) => {
+            const colId = column.getColId();
+            const metadata = getCellNoteMetadata(node.id, colId);
+
+            if (metadata) {
+                const { type, priority } = metadata;
+                return [`note-type-${type}`, `note-priority-${priority}`]
+            }
+        },
+    },
+    notesDataSource: {
+        setNote: ({ rowNode, column, note }) => {
+            const key = `${rowNode.id}::${column.getColId()}`;
+            const existingNote = noteStore.get(key);
+
+            if (note === undefined) {
+                noteStore.delete(key);
+            } else {
+                noteStore.set(key, {
+                    ...existingNote,
+                    ...note,
+                    metadata: existingNote?.metadata ?? { type: 'team', priority: 'medium' },
+                });
+            }
+        },
+    },
+};
+```
+
 ## Read-Only Notes
 
 Set `Note.readOnly = true` to make a note view-only. Read-only notes can still be opened from hover, the context menu, or `Shift + F2`, but they cannot be edited or removed through the built-in UI. The grid API can still update or remove read-only notes programmatically.
 
 `Athlete` has an editable note. `Country` and `Sport` have **read-only** notes, so they can be viewed but not edited or removed through the built-in UI.
 
-{% gridExampleRunner title="Read-Only Notes" name="notes-read-only" exampleHeight=440 /%}
+{% gridExampleRunner title="Read-Only Notes" name="notes-read-only" exampleHeight=350 /%}
 
 ```ts
 noteStore.set(noteKey('3', 'country'), {
@@ -99,7 +139,7 @@ Use `colDef.suppressNoteActions` to suppress built-in note actions for a column 
 
 `Year` and `Sport` suppress built-in note actions. Existing notes on those cells can still be viewed on hover, while other columns keep the standard add, edit, and remove behaviour.
 
-{% gridExampleRunner title="Suppressing Notes" name="notes-suppressing" exampleHeight=440 /%}
+{% gridExampleRunner title="Suppressing Notes" name="notes-suppressing" exampleHeight=350 /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

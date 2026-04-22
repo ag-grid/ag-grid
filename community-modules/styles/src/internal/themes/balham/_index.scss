@@ -160,10 +160,6 @@
         color: var(--ag-balham-active-color);
     }
 
-    .ag-has-cell-notes::after {
-        border-color: transparent var(--ag-balham-active-color) transparent transparent;
-    }
-
     .ag-advanced-filter-builder-item-button-disabled,
     .ag-disabled,
     .ag-column-select-column-group-readonly,
