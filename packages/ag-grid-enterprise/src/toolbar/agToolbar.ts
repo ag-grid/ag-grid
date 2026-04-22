@@ -6,7 +6,6 @@ import type {
     IToolbarItemComp,
     IToolbarItemParams,
     Toolbar,
-    ToolbarDisplay,
     ToolbarItemDef,
 } from 'ag-grid-community';
 import {
@@ -168,15 +167,10 @@ class AgToolbar extends Component implements FocusableContainer {
         }, []);
     }
 
-    private createItemParams(
-        itemConfig: ToolbarItemDef,
-        key: string,
-        defaultDisplay: ToolbarDisplay
-    ): IToolbarItemParams {
+    private createItemParams(itemConfig: ToolbarItemDef, key: string): IToolbarItemParams {
         return _addGridCommonParams(this.gos, {
             ...(itemConfig.toolbarItemParams ?? {}),
             key,
-            display: itemConfig.display ?? defaultDisplay,
         });
     }
 
@@ -193,7 +187,6 @@ class AgToolbar extends Component implements FocusableContainer {
         const leftItems: ToolbarItemDef[] = [];
         const rightItems: ToolbarItemDef[] = [];
         const defaultAlignment: 'left' | 'right' = toolbar?.alignment ?? (this.gos.get('enableRtl') ? 'right' : 'left');
-        const defaultDisplay: ToolbarDisplay = toolbar?.display ?? 'icon';
         // Separators inherit the alignment of the preceding item, unless explicitly set
         let lastAlignment: 'left' | 'right' = defaultAlignment;
         for (const item of items) {
@@ -206,7 +199,7 @@ class AgToolbar extends Component implements FocusableContainer {
         }
 
         const generation = ++this.generation;
-        this.createAndRenderComponents([...leftItems, ...rightItems], leftItems.length, defaultDisplay, generation);
+        this.createAndRenderComponents([...leftItems, ...rightItems], leftItems.length, generation);
     }
 
     private updateToolbar(): void {
@@ -241,7 +234,6 @@ class AgToolbar extends Component implements FocusableContainer {
     private createAndRenderComponents(
         toolbarItems: ToolbarItemDef[],
         rightStartIndex: number,
-        defaultDisplay: ToolbarDisplay,
         generation: number
     ): void {
         const eContainer = this.getGui();
@@ -274,7 +266,7 @@ class AgToolbar extends Component implements FocusableContainer {
                 itemConfig,
                 ToolbarItemComponent,
                 undefined,
-                this.createItemParams(itemConfig, key, defaultDisplay),
+                this.createItemParams(itemConfig, key),
                 true
             );
 
@@ -318,19 +310,7 @@ class AgToolbar extends Component implements FocusableContainer {
         }
 
         this.toolbarItems.set(key, component);
-        const gui = component.getGui();
-        placeholder.replaceWith(gui);
-        if (component instanceof Component) {
-            // Toggle display instead of removing from DOM to preserve order
-            gui.style.display = component.isDisplayed() ? '' : 'none';
-            // Bind to the item's own lifecycle so the listener is cleaned up when the item is destroyed,
-            // rather than accumulating on the toolbar across rebuilds.
-            component.addManagedListeners(component, {
-                displayChanged: () => {
-                    gui.style.display = component.isDisplayed() ? '' : 'none';
-                },
-            });
-        }
+        placeholder.replaceWith(component.getGui());
     }
 }
 
