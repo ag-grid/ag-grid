@@ -67,8 +67,9 @@ export class ButtonToolbarItem extends Component implements IToolbarItemComp {
         }
         _setDisplayed(this.eIcon, hasIcon);
 
+        const hasLabel = !!params.label;
         this.eLabel.textContent = params.label ?? '';
-        _setDisplayed(this.eLabel, params.display === 'iconAndLabel' && !!params.label);
+        _setDisplayed(this.eLabel, hasLabel);
 
         _setAriaLabel(eGui, params.label);
         _addOrRemoveAttribute(eGui, 'title', params.label);

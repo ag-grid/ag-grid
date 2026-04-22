@@ -9,7 +9,7 @@ interface CustomToolbarButtonProps extends IToolbarItemParams {
 }
 
 export default (props: CustomToolbarButtonProps) => {
-    const { api, label, icon, display, onClick } = props;
+    const { api, label, icon, onClick } = props;
 
     const handleClick = useCallback(() => {
         onClick(api);
@@ -24,7 +24,7 @@ export default (props: CustomToolbarButtonProps) => {
             aria-label={label}
         >
             <span className={`ag-icon ag-icon-${icon}`} aria-hidden="true"></span>
-            {display === 'iconAndLabel' && <span>{label}</span>}
+            {label && <span>{label}</span>}
         </button>
     );
 };

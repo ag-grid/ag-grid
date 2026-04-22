@@ -3,10 +3,7 @@ import type { ToolbarItemComponentName } from '../context/context';
 import type { IconName } from '../utils/icon';
 import type { AgGridCommon } from './iCommon';
 
-export type ToolbarDisplay = 'icon' | 'iconAndLabel';
-
 export type Toolbar = {
-    display?: ToolbarDisplay;
     alignment?: 'left' | 'right';
     items: (ToolbarItemDef | ToolbarItemShorthand)[];
 };
@@ -27,25 +24,24 @@ export type ToolbarItemShorthand =
  * a component class (AG Grid / Angular / React class component), or a component
  * function (React functional component).
  */
-export type ToolbarItemComponent = ToolbarItemShorthand | (new (...args: any[]) => any) | ((...args: any[]) => any);
+export type ToolbarItemComponent<T> = ToolbarItemShorthand | T;
 
 export interface ToolbarItemActionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The toolbar item `key` identifying which item triggered the action. */
     key: string;
 }
 
-export interface ToolbarItemDef<TData = any, TContext = any, TParams = any> {
+export interface ToolbarItemDef<TData = any, TContext = any, TParams = any, TCustom = any> {
     /**
      * Provide a custom component for the toolbar item.
      * If omitted, the grid renders a default button using `label`, `icon` and `action`.
      */
-    toolbarItem?: ToolbarItemComponent;
+    toolbarItem?: ToolbarItemComponent<TCustom>;
     /** Parameters to be passed to the custom component specified in `toolbarItem`. */
     toolbarItemParams?: TParams;
     alignment?: 'left' | 'right';
-    display?: ToolbarDisplay;
     key?: string;
-    /** Text used for the button tooltip and, when `display` is `'iconAndLabel'`, for the button label. */
+    /** Text used for the button tooltip and `aria-label`. */
     label?: string;
     /** Icon displayed on the default button. */
     icon?: IconName;
@@ -55,7 +51,6 @@ export interface ToolbarItemDef<TData = any, TContext = any, TParams = any> {
 
 export interface IToolbarItemParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     key: string;
-    display: ToolbarDisplay;
 }
 
 export interface IToolbarItem<TData = any, TContext = any> {

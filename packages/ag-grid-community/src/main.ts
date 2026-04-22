@@ -419,7 +419,6 @@ export type {
     IToolbarItemComp,
     IToolbarItemParams,
     Toolbar,
-    ToolbarDisplay,
     ToolbarItemActionParams,
     ToolbarItemComponent,
     ToolbarItemDef,

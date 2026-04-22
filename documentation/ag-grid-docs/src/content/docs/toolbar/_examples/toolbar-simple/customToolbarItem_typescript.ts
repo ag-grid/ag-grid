@@ -25,7 +25,7 @@ export class CustomToolbarButton implements IToolbarItemComp {
         eIcon.setAttribute('aria-hidden', 'true');
         this.eGui.appendChild(eIcon);
 
-        if (params.display === 'iconAndLabel') {
+        if (params.label) {
             const eLabel = document.createElement('span');
             eLabel.textContent = params.label;
             this.eGui.appendChild(eLabel);

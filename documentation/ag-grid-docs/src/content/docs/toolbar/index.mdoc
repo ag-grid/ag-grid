@@ -58,7 +58,6 @@ An item object supports the following properties:
 
 -   `key`: a unique identifier for the item.
 -   `alignment`: `'left'` or `'right'`. See [Default Alignment](#default-alignment).
--   `display`: `'icon'` or `'iconAndLabel'`. See [Display Mode](#display-mode).
 -   `toolbarItem`: a built-in item name or a reference to a [Custom Component](#custom-components).
 -   `toolbarItemParams`: additional props forwarded to the component.
 -   `label`, `icon`, `action`: shorthand for rendering an [Action Button](#action-buttons) without a component.
@@ -97,22 +96,6 @@ const gridOptions = {
 }
 ```
 
-### Display Mode
-
-Items can be displayed as icons only (default) or icons with labels. Set `display` at the toolbar level to change the default, or per-item to override it.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    toolbar: {
-        display: 'iconAndLabel',
-        items: [
-            'agQuickFilterToolbarItem',
-            { toolbarItem: 'agFindToolbarItem', display: 'icon' }
-        ]
-    }
-}
-```
-
 ## Custom Components
 
 The Toolbar accepts two kinds of user-defined items: [Action Buttons](#action-buttons) — a declarative shorthand for rendering a button — and Custom Components that can render anything.
@@ -142,7 +125,7 @@ const gridOptions = {
 }
 ```
 
-Buttons respect the current [Display Mode](#display-mode): in `'icon'` mode the `label` is used as the tooltip and `aria-label`; in `'iconAndLabel'` mode the label renders next to the icon.
+Buttons render the `icon` and `label` side by side when both are provided; the `label` is also used as the tooltip and `aria-label`.
 
 ### Custom Component
 

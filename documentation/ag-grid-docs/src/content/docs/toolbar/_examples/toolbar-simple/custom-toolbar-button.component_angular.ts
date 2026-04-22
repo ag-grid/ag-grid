@@ -21,7 +21,7 @@ interface CustomToolbarButtonParams extends IToolbarItemParams {
             (click)="onClick()"
         >
             <span class="ag-icon ag-icon-{{ icon }}" aria-hidden="true"></span>
-            @if (showLabel) {
+            @if (label) {
                 <span>{{ label }}</span>
             }
         </button>
@@ -31,13 +31,11 @@ export class CustomToolbarButton implements IToolbarItemAngularComp {
     private params!: CustomToolbarButtonParams;
     label = '';
     icon = '';
-    showLabel = false;
 
     agInit(params: CustomToolbarButtonParams): void {
         this.params = params;
         this.label = params.label;
         this.icon = params.icon;
-        this.showLabel = params.display === 'iconAndLabel';
     }
 
     onClick(): void {

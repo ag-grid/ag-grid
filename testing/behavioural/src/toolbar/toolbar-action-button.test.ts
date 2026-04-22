@@ -12,7 +12,7 @@ describe('Toolbar action button item', () => {
         gridMgr.reset();
     });
 
-    test('renders a button with icon and tooltip from label', async () => {
+    test('renders a button with icon, label and tooltip', async () => {
         const api = gridMgr.createGrid('action-button-render', {
             columnDefs: [{ field: 'name' }],
             rowData: [{ name: 'Alice' }],
@@ -36,19 +36,19 @@ describe('Toolbar action button item', () => {
         expect(button!.getAttribute('title')).toBe('Auto Size All');
         expect(button!.getAttribute('aria-label')).toBe('Auto Size All');
         expect(button!.querySelector('.ag-icon')).not.toBeNull();
-        expect(button!.querySelector('.ag-toolbar-button-label')!.classList.contains('ag-hidden')).toBe(true);
+        const label = button!.querySelector<HTMLElement>('.ag-toolbar-button-label')!;
+        expect(label.classList.contains('ag-hidden')).toBe(false);
+        expect(label.textContent).toBe('Auto Size All');
     });
 
-    test('shows label text when display is iconAndLabel', async () => {
-        const api = gridMgr.createGrid('action-button-icon-and-label', {
+    test('hides label when not provided', async () => {
+        const api = gridMgr.createGrid('action-button-no-label', {
             columnDefs: [{ field: 'name' }],
             rowData: [{ name: 'Alice' }],
             toolbar: {
-                display: 'iconAndLabel',
                 items: [
                     {
                         key: 'autoSizeAll',
-                        label: 'Auto Size All',
                         icon: 'maximize',
                         action: () => {},
                     },
@@ -60,8 +60,7 @@ describe('Toolbar action button item', () => {
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         const label = gridDiv.querySelector<HTMLElement>('.ag-toolbar-button-label')!;
-        expect(label.classList.contains('ag-hidden')).toBe(false);
-        expect(label.textContent).toBe('Auto Size All');
+        expect(label.classList.contains('ag-hidden')).toBe(true);
     });
 
     test('invokes action with grid api, context and key on click', async () => {

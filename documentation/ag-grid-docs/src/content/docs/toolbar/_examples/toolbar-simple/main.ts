@@ -89,7 +89,6 @@ const gridOptions: GridOptions<IOlympicData> = {
             {
                 toolbarItem: CustomToolbarButton,
                 key: 'autoSizeAll',
-                display: 'iconAndLabel',
                 toolbarItemParams: {
                     label: 'Auto Size All',
                     icon: 'maximize',
@@ -99,7 +98,6 @@ const gridOptions: GridOptions<IOlympicData> = {
             {
                 toolbarItem: CustomToolbarButton,
                 key: 'columnsPanel',
-                display: 'iconAndLabel',
                 toolbarItemParams: {
                     label: 'Columns Panel',
                     icon: 'columns',
@@ -110,7 +108,6 @@ const gridOptions: GridOptions<IOlympicData> = {
             {
                 toolbarItem: CustomToolbarButton,
                 key: 'csvExport',
-                display: 'iconAndLabel',
                 toolbarItemParams: {
                     label: 'CSV Export',
                     icon: 'csv',
@@ -120,7 +117,6 @@ const gridOptions: GridOptions<IOlympicData> = {
             {
                 toolbarItem: CustomToolbarButton,
                 key: 'resetColumns',
-                display: 'iconAndLabel',
                 toolbarItemParams: {
                     label: 'Reset Columns',
                     icon: 'minimize',
