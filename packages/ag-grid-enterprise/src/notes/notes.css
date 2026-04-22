@@ -9,7 +9,8 @@
     pointer-events: none;
 }
 
-.ag-notes-panel {
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-notes-panel.ag-panel {
     width: 100%;
     border: var(--ag-note-popup-border);
     background-color: var(--ag-note-popup-background-color);
@@ -28,7 +29,7 @@
     min-height: 0;
     min-width: 0;
     gap: calc(var(--ag-spacing) / 2);
-    padding: calc(var(--ag-spacing) / 2);
+    padding: var(--ag-note-popup-padding);
 }
 
 .ag-notes-popup-meta {
