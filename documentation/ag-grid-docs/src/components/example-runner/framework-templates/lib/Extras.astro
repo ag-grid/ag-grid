@@ -1,7 +1,8 @@
+---
 import { Scripts } from './Scripts';
-import { Styles } from './Styles';
+import Styles from './Styles.astro';
 
-const extrasMap = {
+const extrasMap: Record<string, { scripts?: string[]; styles?: string[] }> = {
     jquery: {
         scripts: ['https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js'],
     },
@@ -37,49 +38,45 @@ interface Props {
     extras?: string[];
 }
 
-/**
- * These are the extra scripts or styles that an example can import.
- */
-export const Extras = ({ extras }: Props) => {
-    if (!extras) {
-        return null;
+const { extras } = Astro.props as Props;
+
+const requiredExtras = new Set<string>();
+
+extras?.forEach((extra) => {
+    requiredExtras.add(extra);
+
+    if (extra === 'jqueryui') {
+        // jQuery UI requires jQuery
+        requiredExtras.add('jquery');
+    }
+});
+
+const styles: string[] = [];
+const scripts: string[] = [];
+
+// Iterate over all possible scripts to ensure they are included in the correct order
+Object.keys(extrasMap).forEach((key) => {
+    if (!requiredExtras.has(key)) {
+        return;
     }
 
-    const requiredExtras = new Set();
+    const config = extrasMap[key];
 
-    extras.forEach((extra) => {
-        requiredExtras.add(extra);
+    if (config.styles) {
+        styles.push(...config.styles);
+    }
 
-        if (extra === 'jqueryui') {
-            // jQuery UI require jQuery
-            requiredExtras.add('jquery');
-        }
-    });
+    if (config.scripts) {
+        scripts.push(...config.scripts);
+    }
+});
+---
 
-    const styles = [];
-    const scripts = [];
-
-    // iterate over all possible scripts to ensure they are included in the correct order
-    Object.keys(extrasMap).forEach((key) => {
-        if (!requiredExtras.has(key)) {
-            return;
-        }
-
-        const config = extrasMap[key];
-
-        if (config.styles) {
-            styles.push(...config.styles);
-        }
-
-        if (config.scripts) {
-            scripts.push(...config.scripts);
-        }
-    });
-
-    return (
-        <>
-            <Styles files={styles} />
-            <Scripts files={scripts} />
-        </>
-    );
-};
+{
+    extras && (
+        <Fragment>
+            <Styles baseUrl="" files={styles} />
+            <Scripts baseUrl="" files={scripts} />
+        </Fragment>
+    )
+}
