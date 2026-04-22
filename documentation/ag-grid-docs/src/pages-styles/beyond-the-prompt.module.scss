@@ -1,0 +1,507 @@
+@use 'design-system' as *;
+
+.logoStrip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-size-4;
+    margin-bottom: $spacing-size-8;
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        justify-content: flex-start;
+    }
+}
+
+.logoDivider {
+    font-size: var(--text-fs-xl);
+    opacity: 0.6;
+    color: var(--color-white);
+}
+
+.logoAgGrid {
+    height: 38px;
+    width: auto;
+}
+
+.logoBryntum {
+    height: 24px;
+    width: auto;
+}
+
+.hero {
+    position: relative;
+    background-image: linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-util-brand-500) 92%, transparent) 0%,
+            color-mix(in srgb, var(--color-util-brand-500) 55%, transparent) 100%
+        ),
+        var(--hero-bg-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    #{$selector-darkmode} & {
+        background-image: linear-gradient(
+                135deg,
+                color-mix(in srgb, var(--color-util-gray-100) 90%, transparent) 0%,
+                color-mix(in srgb, var(--color-util-gray-100) 55%, transparent) 100%
+            ),
+            var(--hero-bg-image);
+    }
+}
+
+.heroContent {
+    max-width: 720px;
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        max-width: 640px;
+    }
+}
+
+.sectionNav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.sectionNavLink {
+    &:not(:last-child)::after {
+        content: '•';
+        display: inline-block;
+        margin: 0 $spacing-size-3;
+        color: var(--color-fg-secondary);
+        pointer-events: none;
+    }
+}
+
+.eventMeta {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    gap: $spacing-size-4 $spacing-size-6;
+    margin: 0 0 $spacing-size-8;
+    padding: 0;
+    list-style: none;
+
+    @media screen and (min-width: $breakpoint-hero-large) {
+        justify-content: flex-start;
+    }
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: $spacing-size-2;
+        color: var(--color-white);
+        font-size: var(--text-fs-base);
+
+        :global(.icon) {
+            --icon-size: 20px;
+            --icon-color: var(--color-white);
+            flex-shrink: 0;
+        }
+    }
+}
+
+.intro {
+    text-align: center;
+    max-width: 70ch;
+
+    h2 {
+        font-size: var(--text-fs-2xl);
+        line-height: var(--text-lh-2xl);
+        margin-bottom: $spacing-size-6;
+    }
+
+    p {
+        font-size: var(--text-fs-lg);
+        line-height: var(--text-lh-lg);
+        margin-bottom: $spacing-size-4;
+    }
+}
+
+.atAGlance {
+    width: 100%;
+
+    h2 {
+        text-align: center;
+        font-size: var(--text-fs-2xl);
+        line-height: var(--text-lh-2xl);
+        margin-bottom: $spacing-size-8;
+    }
+}
+
+.atAGlanceGrid {
+    display: grid;
+    gap: $spacing-size-4;
+    grid-template-columns: 1fr;
+
+    @media screen and (min-width: $breakpoint-landing-page-medium) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.atAGlanceCard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: $spacing-size-6;
+    border: 1px solid var(--color-util-gray-200);
+    border-radius: 8px;
+    background-color: var(--color-bg-primary);
+    box-shadow: 0 2px 4px #0000001a;
+
+    #{$selector-darkmode} & {
+        border-color: var(--color-util-gray-300);
+        background-color: #192232;
+    }
+
+    :global(.icon) {
+        --icon-size: 28px;
+        --icon-color: var(--color-link);
+        margin-bottom: $spacing-size-3;
+    }
+
+    h3 {
+        font-size: var(--text-fs-lg);
+        margin-bottom: $spacing-size-2;
+        color: var(--color-fg-primary);
+    }
+
+    p {
+        margin-bottom: $spacing-size-3;
+        line-height: 1.5;
+    }
+
+    a:global(.button-tertiary) {
+        margin-top: auto;
+    }
+
+    a:not(:global(.button-tertiary)) {
+        color: var(--color-link);
+        display: inline-flex;
+        align-items: center;
+        gap: $spacing-size-1;
+
+        :global(.icon) {
+            --icon-size: 16px;
+            --icon-color: currentColor;
+            margin-bottom: 0;
+        }
+    }
+}
+
+.agendaSection {
+    width: 100%;
+    scroll-margin-top: $spacing-size-16;
+
+    h2 {
+        text-align: center;
+        font-size: var(--text-fs-2xl);
+        line-height: var(--text-lh-2xl);
+        margin-bottom: $spacing-size-2;
+    }
+}
+
+.agendaIntro {
+    text-align: center;
+    color: var(--color-fg-secondary);
+    margin-bottom: $spacing-size-8;
+}
+
+.agenda {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--color-util-gray-200);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--color-bg-primary);
+
+    #{$selector-darkmode} & {
+        border-color: var(--color-util-gray-300);
+        background-color: #192232;
+    }
+}
+
+.agendaRow {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-1;
+    margin-bottom: 0;
+    padding: $spacing-size-4 $spacing-size-6;
+
+    @media screen and (min-width: $breakpoint-landing-page-medium) {
+        flex-direction: row;
+        gap: $spacing-size-6;
+        padding: $spacing-size-5 $spacing-size-8;
+    }
+
+    &:not(:last-child) {
+        border-bottom: 1px solid var(--color-util-gray-200);
+
+        #{$selector-darkmode} & {
+            border-bottom-color: var(--color-util-gray-300);
+        }
+    }
+}
+
+.agendaBreak {
+    background-color: color-mix(in srgb, var(--color-util-gray-100) 40%, transparent);
+    color: var(--color-fg-secondary);
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-util-gray-200) 20%, transparent);
+    }
+
+    .agendaBody h3 {
+        font-weight: var(--text-regular);
+        color: var(--color-fg-secondary);
+    }
+}
+
+.agendaTime {
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--text-semibold);
+    color: var(--color-fg-secondary);
+
+    @media screen and (min-width: $breakpoint-landing-page-medium) {
+        width: 140px;
+        padding-top: 2px;
+    }
+}
+
+.agendaBody {
+    flex: 1;
+    min-width: 0;
+
+    h3 {
+        font-size: var(--text-fs-lg);
+        line-height: 1.3;
+        margin: 0 0 $spacing-size-1;
+        color: var(--color-fg-primary);
+    }
+}
+
+.agendaSpeakers {
+    margin: 0 0 $spacing-size-2;
+    font-size: var(--text-fs-sm);
+    color: var(--color-link);
+    font-weight: var(--text-semibold);
+}
+
+.agendaDescription {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.speakersSection {
+    width: 100%;
+    scroll-margin-top: $spacing-size-16;
+
+    h2 {
+        text-align: center;
+        font-size: var(--text-fs-2xl);
+        line-height: var(--text-lh-2xl);
+        margin-bottom: $spacing-size-2;
+    }
+}
+
+.speakersIntro {
+    text-align: center;
+    color: var(--color-fg-secondary);
+    margin-bottom: $spacing-size-8;
+}
+
+.speakersMore {
+    display: block;
+    text-align: center;
+    margin: $spacing-size-8 auto 0;
+    padding: $spacing-size-5 $spacing-size-6;
+    max-width: 640px;
+    border: 2px dashed var(--color-util-gray-300);
+    border-radius: 8px;
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    color: var(--color-fg-primary);
+    background-color: color-mix(in srgb, var(--color-util-gray-100) 30%, transparent);
+
+    #{$selector-darkmode} & {
+        border-color: var(--color-util-gray-300);
+        background-color: color-mix(in srgb, var(--color-util-gray-200) 20%, transparent);
+    }
+}
+
+.speakerGrid {
+    display: grid;
+    gap: $spacing-size-6;
+    grid-template-columns: 1fr;
+
+    @media screen and (min-width: $breakpoint-landing-page-medium) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media screen and (min-width: 960px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.speakerCard {
+    display: flex;
+    flex-direction: column;
+    padding: $spacing-size-4;
+    border: 1px solid var(--color-util-gray-200);
+    border-radius: 8px;
+    background-color: var(--color-bg-primary);
+
+    #{$selector-darkmode} & {
+        border-color: var(--color-util-gray-300);
+        background-color: #192232;
+    }
+}
+
+.speakerImage {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: $spacing-size-4;
+    background-color: var(--color-util-gray-100);
+}
+
+.speakerName {
+    font-size: var(--text-fs-lg);
+    line-height: 1.3;
+    margin: 0 0 $spacing-size-1;
+    color: var(--color-fg-primary);
+}
+
+.speakerTitle {
+    margin: 0 0 $spacing-size-3;
+    font-size: var(--text-fs-sm);
+    color: var(--color-link);
+    font-weight: var(--text-semibold);
+}
+
+.speakerBio {
+    margin: 0;
+    line-height: 1.5;
+    color: var(--color-fg-secondary);
+}
+
+.venueSection {
+    width: 100%;
+    scroll-margin-top: $spacing-size-16;
+
+    h2 {
+        text-align: center;
+        font-size: var(--text-fs-2xl);
+        line-height: var(--text-lh-2xl);
+        margin-bottom: $spacing-size-2;
+    }
+}
+
+.venueIntro {
+    text-align: center;
+    color: var(--color-fg-secondary);
+    margin-bottom: $spacing-size-8;
+}
+
+.venueCarousel {
+    position: relative;
+    width: 100%;
+}
+
+.venueTrack {
+    display: flex;
+    gap: $spacing-size-4;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: $spacing-size-2;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.venueSlide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    margin: 0;
+
+    @media screen and (min-width: $breakpoint-landing-page-medium) {
+        flex: 0 0 calc(50% - #{$spacing-size-2});
+    }
+
+    @media screen and (min-width: 960px) {
+        flex: 0 0 calc(33.333% - #{$spacing-size-3});
+    }
+}
+
+.venueImage {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 8px;
+    background-color: var(--color-util-gray-100);
+    display: block;
+}
+
+.venueCaption {
+    margin-top: $spacing-size-2;
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-secondary);
+    text-align: center;
+}
+
+.venueNav {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-size-2;
+    margin-top: $spacing-size-4;
+}
+
+.venueNavButton {
+    --icon-size: 20px;
+    --icon-color: var(--color-fg-primary);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--color-util-gray-200);
+    border-radius: 50%;
+    background-color: var(--color-bg-primary);
+    cursor: pointer;
+    transition:
+        background-color 0.2s,
+        border-color 0.2s;
+
+    &:hover {
+        background-color: var(--color-util-gray-100);
+        border-color: var(--color-util-gray-300);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-link);
+        outline-offset: 2px;
+    }
+
+    #{$selector-darkmode} & {
+        --icon-color: var(--color-white);
+        border-color: var(--color-util-gray-300);
+        background-color: #192232;
+
+        &:hover {
+            background-color: var(--color-util-gray-200);
+        }
+    }
+}

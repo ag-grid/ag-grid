@@ -1,0 +1,408 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import styles from '../../pages-styles/campaigns.module.scss';
+import pageStyles from '../../pages-styles/beyond-the-prompt.module.scss';
+
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+// Links
+const MAILTO_HREF = 'mailto:info@ag-grid.com?subject=Beyond the Prompt enquiry';
+const BOOK_TICKETS_HREF = 'https://maglo.co.uk/event/ag-grid/ag-grid-bryntum';
+const VENUE_MAP_HREF = 'https://maps.app.goo.gl/GRcWV6LPBoXJwDLu6';
+
+// Hero background (full-bleed venue photo with brand-colour overlay)
+const HERO_BG_URL = urlWithBaseUrl('images/campaigns/beyond-the-prompt/iet-savoy.webp');
+
+type AgendaItem = {
+    time: string;
+    title: string;
+    speakers?: string;
+    description?: string;
+    isBreak?: boolean;
+};
+
+type Speaker = {
+    name: string;
+    title: string;
+    bio: string;
+    image: string;
+};
+
+type VenueImage = {
+    src: string;
+    alt: string;
+    caption?: string;
+};
+
+const AGENDA: AgendaItem[] = [
+    {
+        time: '08:30 – 09:30',
+        title: 'Registration and coffee',
+        isBreak: true,
+    },
+    {
+        time: '09:30 – 09:45',
+        title: 'Welcome',
+        description: 'Opening remarks to set the theme for the day: building with tools you can trust.',
+    },
+    {
+        time: '09:45 – 10:15',
+        title: 'Opening Keynote',
+        speakers: 'John Masterson (CEO, AG Grid) & Mats Bryntse (Founder & CEO, Bryntum)',
+    },
+    {
+        time: '10:15 – 10:45',
+        title: 'Coffee break',
+        isBreak: true,
+    },
+    {
+        time: '10:45 – 11:15',
+        title: 'Codebase design for the agent era',
+        speakers: 'Stephen Cooper (Team Lead, AG Grid)',
+        description:
+            "As AI agents become part of the development workflow, codebase structure and well-designed system prompts matter more than ever. This session will show you how we're approaching this in the AG Grid and AG Charts codebases..",
+    },
+    {
+        time: '11:15 – 11:45',
+        title: 'One-click agentic SDLC',
+        speakers: 'Mats Bryntse (Founder & CEO, Bryntum)',
+        description:
+            'A demo of a headless Claude workflow, built by Bryntum CEO Mats, that turns GitHub issues into mergeable PRs, with agents doing the work, and a custom Kanban UI keeping things in check.',
+    },
+    {
+        time: '11:45 – 13:00',
+        title: 'Lunch and product demos',
+        isBreak: true,
+    },
+    {
+        time: '13:00 – 13:30',
+        title: 'Debugging CSS performance with AI',
+        speakers: 'Bernie Sumption (Engineer, AG Grid)',
+        description:
+            'CSS performance issues can be subtle and time-consuming. This talk will show you how you can guide AI to uncover bugs without needing to learn the intricacies of CSS rendering internals.',
+    },
+    {
+        time: '13:30 – 14:00',
+        title: 'AI in AG Studio',
+        speakers: 'Josh Hobson (Developer, AG Grid)',
+        description:
+            "How do you build a dashboard you can't see? A behind-the-scenes look at AG Studio's multi-agent architecture and the client-side tools that let any LLM build reports it otherwise couldn't.",
+    },
+    {
+        time: '14:00 – 14:30',
+        title: 'Customer Showcase',
+        description: 'To be announced',
+    },
+    {
+        time: '14:30 – 15:00',
+        title: 'Coffee break',
+        isBreak: true,
+    },
+    {
+        time: '15:00 – 15:30',
+        title: 'Product Roadmap',
+        speakers: 'Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (AG Studio Product Lead, AG Grid)',
+        description: "A detailed look at our upcoming roadmap, covering AG Grid and Bryntum's suite of tools.",
+    },
+    {
+        time: '15:30 – 16:15',
+        title: 'Panel Discussion',
+        description: 'To be announced',
+    },
+    {
+        time: '16:15 – 16:45',
+        title: 'Vibe Coding as a Maker',
+        speakers: 'Matt Webb',
+        description:
+            'Matt will show his vibe coding experiments, from his AI clock to an app that points to the centre of the galaxy, and share some learnings from building hardware at his startup, Inanimate. Then we ask: what are the limits of vibing and agentic coding? And how might we create libraries that agents love?',
+    },
+    {
+        time: '17:00 – 20:00',
+        title: 'Networking reception',
+        isBreak: true,
+    },
+];
+
+// Drop speaker headshots at /public/images/campaigns/beyond-the-prompt/speakers/
+// (recommend 400x400 square JPG/PNG).
+const SPEAKERS: Speaker[] = [
+    {
+        name: 'Matt Webb',
+        title: 'Co-founder, Inanimate',
+        bio: "Matt is co-founder of Inanimate, consumer hardware bringing agents into the real world. Previously he has consulted with Google's AI research group, run startup accelerators with R/GA Ventures, and was CEO and co-founder of the design studio BERG which invented some of the world’s first internet-connected consumer products like Little Printer (and has work in the New York MoMA). He is co-author of Mind Hacks (O’Reilly, 2004). Since 2000 Matt has blogged at interconnected.org. He writes weekly+ on computing, design, and speculative futures. He lives in London.",
+        image: 'images/campaigns/beyond-the-prompt/speakers/matt-webb.webp',
+    },
+    {
+        name: 'Stephen Cooper',
+        title: 'Team Lead, AG Grid',
+        bio: `Stephen is the Team Lead for AG Grid and loves sharing practical, experience-based tips, tricks, and case studies from years in the codebase. He's gone deep into grid performance and framework integrations, and has spent more time than he'd like profiling render cycles. Outside of work, life revolves around family, four kids and two dogs, and he's happiest when the whole crew is out together exploring in the park.`,
+        image: 'images/campaigns/beyond-the-prompt/speakers/stephen-cooper.webp',
+    },
+    {
+        name: 'Maggie Appleton',
+        title: 'Staff Research Engineer, GitHub',
+        bio: `Maggie is a Staff Research Engineer at GitHub, where she works on tools for thinking, writing, and building with code. With a background in anthropology, she’s known for her visual essays that explore how developers understand systems, languages, and ideas. She’s a strong advocate for “digital gardens” over traditional publishing, and spends her time mapping out how knowledge grows on the web. Outside of work, she’s usually sketching concepts, writing, or connecting dots between code and culture.`,
+        image: 'images/campaigns/beyond-the-prompt/speakers/maggie-appleton.webp',
+    },
+    {
+        name: 'Mats Bryntse',
+        title: 'Founder & CEO, Bryntum',
+        bio: `Mats is the founder and CEO of Bryntum, where he and his team build advanced scheduling and project planning tools for modern web apps. For the past 15 years, he has obsessed over JavaScript performance, developer experience, and making complex UIs feel simple. He used to enjoy chess, badminton, and independent thought, until Claude entered his life and optimized those away.`,
+        image: 'images/campaigns/beyond-the-prompt/speakers/mats-bryntse.webp',
+    },
+    {
+        name: 'Bernie Sumption',
+        title: 'Engineer, AG Grid',
+        bio: `Bernie is an engineer at AG Grid specialising in theming. "The other engineers make it work fast and well, I make it look pretty" he likes to say. Outside work he goes hiking, plays with his kids, and once made a tweeting cat flap that has 10x more social media followers than he does.`,
+        image: 'images/campaigns/beyond-the-prompt/speakers/bernie-sumption.webp',
+    },
+    {
+        name: 'Josh Hobson',
+        title: 'Developer, AG Grid',
+        bio: `Josh is a developer at AG Grid, where he's been building AG Studio — a new dashboard library with multi-agent AI baked in. He's a mathematician by training and a maker by instinct, with a particular love for developer tooling, type systems, and intelligent interfaces. Outside of work, Josh can be found tinkering with 3D printers, ski touring in the Alps, or out on long walks with his dog.`,
+        image: 'images/campaigns/beyond-the-prompt/speakers/josh-hobson.webp',
+    },
+    {
+        name: 'Adam Wang',
+        title: 'AG Studio Product Lead, AG Grid',
+        bio: `Adam is the AG Studio Product Lead at AG Grid, with around 10 years of experience in product management across various disciplines. He previously worked on AG Grid Integrated Charts before focusing on AG Studio. He enjoys the creative process of product management and is keen to solve problems by truly understanding user needs. Outside of work, he's a spin instructor who loves to put together a fire playlist. He also collects coloured vinyl.`,
+        image: 'images/campaigns/beyond-the-prompt/speakers/adam-wang.webp',
+    },
+    {
+        name: 'Johan Isaksson',
+        title: 'Head of Engineering, Bryntum',
+        bio: `Johan is responsible for architecture, gate keeping, performance and styling across all Bryntum products. When not checking pull requests, recording performance profiles or tweaking CSS he enjoys watching hockey and playing floorball.`,
+        image: 'images/campaigns/beyond-the-prompt/speakers/johan-isaksson.webp',
+    },
+    {
+        name: 'John Masterson',
+        title: 'CEO, AG Grid',
+        bio: `John is the CEO of AG Grid, which he first joined in 2016 as employee number two. After a detour as CTO of a London health-tech startup, he returned in 2020 and stepped into the CEO role in 2024. He's spent fifteen years building software and leading engineering teams, and is determined to keep AG Grid the first choice for JavaScript developers. Outside of work, John can be found on his bike, in his headphones listening to a podcast, or picking up a guitar.`,
+        image: 'images/campaigns/beyond-the-prompt/speakers/john-masterson.webp',
+    },
+    {
+        name: 'Phil Hawksworth',
+        title: 'Event MC',
+        bio: `With a passion for browser technologies, and the empowering properties of the web, Phil loves seeking out ingenuity and simplicity, especially in places where over-engineering is common. After 25 years of building web applications for companies such as Google, Apple, Nike, R/GA, and The London Stock Exchange, he has worked to challenge traditional technical architectures in favour of simplicity and effectiveness, working in Developer Experience at Netlify and Deno.`,
+        image: 'images/campaigns/beyond-the-prompt/speakers/phil-hawksworth.webp',
+    },
+];
+
+// TODO: drop venue photos into /public/images/campaigns/beyond-the-prompt/venue/
+// (recommend landscape 3:2, min 1600x1067).
+const VENUE_IMAGES: VenueImage[] = [
+    {
+        src: 'images/campaigns/beyond-the-prompt/venue/venue-1.webp',
+        alt: 'IET London exterior',
+        caption: 'IET London',
+    },
+    {
+        src: 'images/campaigns/beyond-the-prompt/venue/venue-2.webp',
+        alt: 'Networking reception space',
+        caption: 'Entrance and Foyer',
+    },
+    {
+        src: 'images/campaigns/beyond-the-prompt/venue/venue-3.webp',
+        alt: 'Kelvin Lecture Theatre',
+        caption: 'Kelvin Lecture Theatre',
+    },
+];
+---
+
+<Layout
+    title={'Beyond the Prompt — AG Grid & Bryntum Conference, 19 May 2026'}
+    description={'A one-day conference from AG Grid and Bryntum on building AI-assisted applications that hold up in production. Tuesday 19 May 2026, IET London.'}
+    showDocsNav={false}
+    showSearchBar={true}
+    hidePageFromSearchEngines={true}
+>
+    <div class:list={[styles.homepageHero, pageStyles.hero]} style={`--hero-bg-image: url('${HERO_BG_URL}')`}>
+        <div class:list={[styles.heroInner, 'layout-max-width-small']}>
+            <div class:list={[styles.heroHeadings, pageStyles.heroContent]}>
+                <div class={pageStyles.logoStrip}>
+                    <img
+                        src={urlWithBaseUrl('images/ag-logos/svg-logos/AG-Grid-Logo_Dark-Theme.svg')}
+                        alt="AG Grid"
+                        class={pageStyles.logoAgGrid}
+                    />
+                    <span class={pageStyles.logoDivider} aria-hidden="true">×</span>
+                    <img
+                        src={urlWithBaseUrl('images/campaigns/bryntum-logo.png')}
+                        alt="Bryntum"
+                        class={pageStyles.logoBryntum}
+                    />
+                </div>
+
+                <h1>Beyond the Prompt</h1>
+
+                <h2>
+                    A one-day conference on building applications that hold up in production — hosted by
+                    <span class={styles.noWrap}>AG Grid</span> and Bryntum.
+                </h2>
+
+                <ul class={pageStyles.eventMeta}>
+                    <li>
+                        <Icon name="alarm" />
+                        <span>Tuesday 19 May 2026</span>
+                    </li>
+                    <li>
+                        <Icon name="mapPin" />
+                        <span>IET London, 2 Savoy Place</span>
+                    </li>
+                    <li>
+                        <Icon name="creditCard" />
+                        <span>Early bird £149</span>
+                    </li>
+                </ul>
+
+                <div>
+                    <a href={BOOK_TICKETS_HREF} class="button-secondary">
+                        Book tickets <Icon name="chevronRight" />
+                    </a>
+                    <a href={MAILTO_HREF} class="button-secondary">Contact us <Icon name="email" /></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class={styles.campaignOuter}>
+        <nav class={pageStyles.sectionNav} aria-label="Jump to section">
+            <a href="#speakers" class={pageStyles.sectionNavLink}>Speakers</a>
+            <a href="#agenda" class={pageStyles.sectionNavLink}>Agenda</a>
+            <a href="#venue" class={pageStyles.sectionNavLink}>Venue</a>
+        </nav>
+
+        <section class={pageStyles.intro}>
+            <h2>Getting to a prototype with AI is easy. Production is not.</h2>
+            <p>
+                Beyond the Prompt is built around a simple observation: getting to a working prototype with AI is easy.
+                But when real data arrives, everything changes. Performance degrades, edge cases multiply, and the
+                application you built is not the one you need. That is the point where AI helps less, and where the real
+                engineering begins.
+            </p>
+            <p>
+                The day brings together engineers and experts to talk honestly about what it takes to build applications
+                that hold up in production — with time to connect with our teams over lunch, coffee, and drinks.
+            </p>
+        </section>
+
+        <section class={pageStyles.atAGlance} aria-labelledby="at-a-glance-heading">
+            <h2 id="at-a-glance-heading">At a glance</h2>
+            <div class={pageStyles.atAGlanceGrid}>
+                <div class={pageStyles.atAGlanceCard}>
+                    <Icon name="alarm" />
+                    <h3>When</h3>
+                    <p><b>Tuesday 19 May 2026</b></p>
+                    <p>Doors open 08:30 <br /> Sessions 09:30 - 16:45 <br /> Networking 17:00 - 20:00</p>
+                </div>
+                <div class={pageStyles.atAGlanceCard}>
+                    <Icon name="mapPin" />
+                    <h3>Where</h3>
+                    <p><b>IET London</b></p>
+                    <p>2 Savoy Place, <br /> London <br /> WC2R 0BL</p>
+                    <a href={VENUE_MAP_HREF} target="_blank" rel="noopener">View on map <Icon name="arrowRight" /></a>
+                </div>
+                <div class={pageStyles.atAGlanceCard}>
+                    <Icon name="creditCard" />
+                    <h3>Tickets</h3>
+                    <p><b>Early bird £149</b></p>
+                    <p>Includes refreshments, lunch, and entry to the networking reception.</p>
+                    <a href={BOOK_TICKETS_HREF} target="_blank" rel="noopener">Book Now <Icon name="arrowRight" /></a>
+                </div>
+            </div>
+        </section>
+
+        <section id="speakers" class={pageStyles.speakersSection} aria-labelledby="speakers-heading">
+            <h2 id="speakers-heading">Speakers</h2>
+            <p class={pageStyles.speakersIntro}>
+                Engineers and experts from AG Grid, Bryntum, and beyond — talking about what it takes to build
+                applications that hold up in production.
+            </p>
+
+            <div class={pageStyles.speakerGrid}>
+                {
+                    SPEAKERS.map((speaker) => (
+                        <article class={pageStyles.speakerCard}>
+                            <img
+                                src={urlWithBaseUrl(speaker.image)}
+                                alt={speaker.name}
+                                class={pageStyles.speakerImage}
+                                loading="lazy"
+                            />
+                            <h3 class={pageStyles.speakerName}>{speaker.name}</h3>
+                            <p class={pageStyles.speakerTitle}>{speaker.title}</p>
+                            <p class={pageStyles.speakerBio}>{speaker.bio}</p>
+                        </article>
+                    ))
+                }
+            </div>
+
+            <p class={pageStyles.speakersMore}>More speakers to be announced soon...</p>
+        </section>
+
+        <section id="agenda" class={pageStyles.agendaSection} aria-labelledby="agenda-heading">
+            <h2 id="agenda-heading">Full schedule</h2>
+            <p class={pageStyles.agendaIntro}>
+                A single track across the day, with breaks designed for conversation. Some sessions are still being
+                finalised and speakers may be added.
+            </p>
+
+            <ol class={pageStyles.agenda}>
+                {
+                    AGENDA.map((item) => (
+                        <li class:list={[pageStyles.agendaRow, { [pageStyles.agendaBreak]: item.isBreak }]}>
+                            <div class={pageStyles.agendaTime}>{item.time}</div>
+                            <div class={pageStyles.agendaBody}>
+                                <h3>{item.title}</h3>
+                                {item.speakers && <p class={pageStyles.agendaSpeakers}>{item.speakers}</p>}
+                                {item.description && <p class={pageStyles.agendaDescription}>{item.description}</p>}
+                            </div>
+                        </li>
+                    ))
+                }
+            </ol>
+        </section>
+
+        <section id="venue" class={pageStyles.venueSection} aria-labelledby="venue-heading">
+            <h2 id="venue-heading">The venue</h2>
+            <p class={pageStyles.venueIntro}>
+                IET London at 2 Savoy Place - a historical, Grade II listed building on the Thames, home to the
+                Institution of Engineering and Technology.
+            </p>
+
+            <div class={pageStyles.venueCarousel}>
+                <div class={pageStyles.venueTrack} data-venue-track>
+                    {
+                        VENUE_IMAGES.map((img) => (
+                            <figure class={pageStyles.venueSlide}>
+                                <img
+                                    src={urlWithBaseUrl(img.src)}
+                                    alt={img.alt}
+                                    class={pageStyles.venueImage}
+                                    loading="lazy"
+                                />
+                                {img.caption && <figcaption class={pageStyles.venueCaption}>{img.caption}</figcaption>}
+                            </figure>
+                        ))
+                    }
+                </div>
+            </div>
+        </section>
+
+        <div class={styles.finalCTA}>
+            <h2 class="text-2xl">Join us on 19 May in London</h2>
+
+            <div>
+                Early bird tickets are £149. <a href={BOOK_TICKETS_HREF}>Book your place</a> or email
+                <a href={MAILTO_HREF}>info@ag-grid.com</a> with any questions.
+            </div>
+            <br />
+            <div>
+                <div>
+                    <a href={BOOK_TICKETS_HREF} class="button-tertiary">Register Now <Icon name="arrowRight" /></a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
