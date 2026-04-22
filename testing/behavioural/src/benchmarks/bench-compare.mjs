@@ -289,14 +289,18 @@ function isExcluded(filepath) {
 }
 
 /**
- * Extract a file-unique identifier from a filepath. Uses the path relative to the first
- * `src/` segment so keys are stable across base/test checkouts that live in different
- * absolute directories. Falls back to the basename when `src/` is absent.
+ * Extract a file-unique identifier from a filepath. Returns a path relative to the monorepo
+ * root (stable across base/test checkouts that live in different absolute directories) by
+ * anchoring on the first known top-level segment. Falls back to the basename if nothing
+ * recognisable is found.
  */
+const RELATIVE_ANCHORS = ['/testing/', '/packages/', '/community-modules/', '/external/'];
 function fileIdentity(filepath) {
-    const srcIndex = filepath.lastIndexOf('/src/');
-    if (srcIndex !== -1) {
-        return filepath.slice(srcIndex + 1); // keep the leading 'src/...'
+    for (const anchor of RELATIVE_ANCHORS) {
+        const idx = filepath.lastIndexOf(anchor);
+        if (idx !== -1) {
+            return filepath.slice(idx + 1); // strip the leading '/'
+        }
     }
     const slash = filepath.lastIndexOf('/');
     return slash === -1 ? filepath : filepath.slice(slash + 1);
@@ -486,6 +490,7 @@ for (const [key, base] of baseAgg) {
             key,
             name: base.name,
             group: base.group,
+            file: base.file,
             baseHz: base.hz,
             testHz: test.hz,
             reason: !baseHzValid ? 'invalid base hz' : 'invalid test hz',
@@ -504,6 +509,7 @@ for (const [key, base] of baseAgg) {
         key,
         name: base.name,
         group: base.group,
+        file: base.file,
         baseHz: round(base.hz, 4),
         baseRme: round(base.rme, 2),
         baseSamples: base.sampleCount,
@@ -578,6 +584,17 @@ function fmtHz(hz) {
     return hz.toFixed(3);
 }
 
+/**
+ * Report-friendly file label. Drops the default benchmark-folder prefix for files that live
+ * there (so `foo.bench.ts` / `tree-data/flatten.bench.ts` show without the long `testing/...`
+ * path) and strips the `.bench.ts` suffix everywhere for brevity.
+ */
+const BENCH_DIR_PREFIX = 'testing/behavioural/src/benchmarks/';
+function shortFile(file) {
+    const trimmed = file.startsWith(BENCH_DIR_PREFIX) ? file.slice(BENCH_DIR_PREFIX.length) : file;
+    return trimmed.replace(/\.bench\.[tj]sx?$/, '');
+}
+
 /** Format speedup as "1.23x faster" / "1.10x slower" / "unchanged". */
 function fmtSpeedup(c) {
     if (!(c.baseHz > 0) || !(c.testHz > 0)) {
@@ -598,6 +615,16 @@ function isNoisy(c) {
     return c.deltaConservative === 0;
 }
 
+// Reporting thresholds. Small raw deltas inside the confidence interval are just benchmark
+// jitter and add noise to the report - filter them out.
+//
+// - CERTAIN_MIN_PCT: the *conservative* delta (CI endpoint nearest zero) must exceed this.
+//   A 3% raw delta with 5% rme fails this; a 5% delta with 2% rme (conservative 3%) passes.
+// - NOISY_MIN_PCT: only surface within-CI items when the raw delta is large enough to suggest
+//   the benchmark is flaky or needs more runs - not every 3% wobble.
+const CERTAIN_MIN_PCT = 3;
+const NOISY_MIN_PCT = 10;
+
 let md = `# Benchmark Comparison\n\n`;
 const baseRunCount = baseRuns.length;
 const testRunCount = testRuns.length;
@@ -608,38 +635,56 @@ const runCountLabel =
 md += `${runCountLabel}. Aggregation: median hz per benchmark; `;
 md += `rme = max(run-to-run std, mean within-run rme).\n\n`;
 
-const notable = comparisons
-    .filter((c) => Math.abs(c.delta) > 3)
+// "Certain" = confidence interval excludes zero AND its nearest endpoint exceeds the threshold.
+// "Noisy"   = delta is within the CI (flaky or needs more runs), only surfaced when the raw
+//             delta is large enough to warrant investigation.
+const notableCertain = comparisons
+    .filter((c) => !isNoisy(c) && Math.abs(c.deltaConservative) >= CERTAIN_MIN_PCT)
+    .slice()
+    .sort((a, b) => Math.abs(b.deltaConservative) - Math.abs(a.deltaConservative));
+const notableNoisy = comparisons
+    .filter((c) => isNoisy(c) && Math.abs(c.delta) >= NOISY_MIN_PCT)
     .slice()
     .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
-if (notable.length > 0) {
-    md += `## Notable Changes\n\n`;
-    md += `| Benchmark | base (ops/s) | test (ops/s) | Result |\n`;
-    md += `|-----------|-------------|-------------|--------|\n`;
-    for (const c of notable) {
-        const result = fmtSpeedup(c);
-        const cell = isNoisy(c) ? `${result} <sub>noisy</sub>` : `**${result}**`;
-        md += `| ${c.name} | ${fmtHz(c.baseHz)} | ${fmtHz(c.testHz)} | ${cell} |\n`;
+const notable = [...notableCertain, ...notableNoisy];
+
+function writeNotableTable(header, rows) {
+    if (rows.length === 0) {
+        return;
+    }
+    md += `${header}\n\n`;
+    md += `| File | Benchmark | base (ops/s) | test (ops/s) | Result |\n`;
+    md += `|------|-----------|-------------|-------------|--------|\n`;
+    for (const c of rows) {
+        md += `| ${shortFile(c.file)} | ${c.name} | ${fmtHz(c.baseHz)} | ${fmtHz(c.testHz)} | **${fmtSpeedup(c)}** |\n`;
     }
     md += `\n`;
+}
+
+if (notable.length > 0) {
+    writeNotableTable('## Notable Changes (outside margin of error)', notableCertain);
+    writeNotableTable('## Notable Changes — Noisy (delta within margin of error)', notableNoisy);
 } else {
     md += `## No notable changes detected.\n\n`;
 }
 
-const byGroup = new Map();
+// Key by file + group so two bench files with identically-named suites don't get merged into
+// one section (and so each section's header can show its file of origin).
+const byFileGroup = new Map();
 for (const c of comparisons) {
-    if (!byGroup.has(c.group)) {
-        byGroup.set(c.group, []);
+    const key = `${c.file} :: ${c.group}`;
+    if (!byFileGroup.has(key)) {
+        byFileGroup.set(key, { file: c.file, group: c.group, items: [] });
     }
-    byGroup.get(c.group).push(c);
+    byFileGroup.get(key).items.push(c);
 }
 
 md += `## Detailed Results\n\n`;
 md += `rme = relative margin of error (lower = more precise).\n\n`;
 
-for (const [group, items] of byGroup) {
+for (const { file, group, items } of byFileGroup.values()) {
     const shortGroup = group.includes(' > ') ? group.split(' > ').pop() : group;
-    md += `### ${shortGroup}\n\n`;
+    md += `### ${shortFile(file)} › ${shortGroup}\n\n`;
     md += `| Benchmark | base ops/s (rme) | test ops/s (rme) | Result |\n`;
     md += `|-----------|-----------------|-----------------|--------|\n`;
     for (const c of items) {
@@ -655,14 +700,16 @@ if (baseOnly.length > 0 || testOnly.length > 0) {
     if (baseOnly.length > 0) {
         md += `**Only in base** (removed or renamed?):\n`;
         for (const k of baseOnly) {
-            md += `- ${baseAgg.get(k).name}\n`;
+            const b = baseAgg.get(k);
+            md += `- [${shortFile(b.file)}] ${b.name}\n`;
         }
         md += `\n`;
     }
     if (testOnly.length > 0) {
         md += `**Only in test** (added or renamed?):\n`;
         for (const k of testOnly) {
-            md += `- ${testAgg.get(k).name}\n`;
+            const t = testAgg.get(k);
+            md += `- [${shortFile(t.file)}] ${t.name}\n`;
         }
         md += `\n`;
     }
@@ -673,7 +720,7 @@ if (invalidComparisons.length > 0) {
     md += `These benchmarks were excluded from the comparison because the base or test had a `;
     md += `non-positive or non-finite hz value.\n\n`;
     for (const c of invalidComparisons) {
-        md += `- ${c.name}: ${c.reason} (base=${c.baseHz}, test=${c.testHz})\n`;
+        md += `- [${shortFile(c.file)}] ${c.name}: ${c.reason} (base=${c.baseHz}, test=${c.testHz})\n`;
     }
     md += `\n`;
 }
@@ -690,18 +737,27 @@ console.log(`  ${jsonPath}`);
 console.log(`  ${mdPath}`);
 console.log(`\n=== Summary (${runCountLabel}, median hz) ===`);
 
+function printNotableLine(c) {
+    const arrow = c.delta > 0 ? '↑' : '↓';
+    const result = fmtSpeedup(c);
+    console.log(
+        `  ${arrow} ${result.padStart(16)}  [${shortFile(c.file)}] ${c.name}  (${fmtHz(c.baseHz)} → ${fmtHz(c.testHz)} ops/s)`
+    );
+}
+
 if (notable.length > 0) {
-    for (const c of notable) {
-        const arrow = c.delta > 0 ? '↑' : '↓';
-        const result = fmtSpeedup(c);
-        const suffix = isNoisy(c) ? '  (noisy)' : '';
-        console.log(
-            `  ${arrow} ${result.padStart(16)}  ${c.name}  (${fmtHz(c.baseHz)} → ${fmtHz(c.testHz)} ops/s)${suffix}`
-        );
+    if (notableCertain.length > 0) {
+        console.log(`\n-- Certain (outside margin of error) --`);
+        for (const c of notableCertain) {
+            printNotableLine(c);
+        }
     }
-    const notableNoisy = notable.filter(isNoisy).length;
-    if (notableNoisy > 0) {
-        console.log(`  ${notableNoisy} of ${notable.length} notable change(s) are within noise.`);
+    if (notableNoisy.length > 0) {
+        console.log(`\n-- Noisy (delta within margin of error) --`);
+        for (const c of notableNoisy) {
+            printNotableLine(c);
+        }
+        console.log(`\n  ${notableNoisy.length} of ${notable.length} notable change(s) are within noise.`);
     }
 } else {
     console.log('  No notable changes detected.');
