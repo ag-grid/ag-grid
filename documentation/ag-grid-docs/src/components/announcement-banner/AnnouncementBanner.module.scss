@@ -2,13 +2,13 @@
 
 .banner {
     display: block;
-    background-color: var(--color-logo-orange);
+    background-color: var(--color-brand-900);
     color: var(--color-white);
     text-decoration: none;
     transition: background-color $transition-default-timing;
 
     &:hover {
-        background-color: color-mix(in srgb, var(--color-logo-orange) 85%, white);
+        background-color: var(--color-brand-950);
         color: var(--color-white);
         text-decoration: none;
 
@@ -35,7 +35,6 @@
     max-width: calc(var(--layout-max-width) + var(--layout-horizontal-margins) * 2);
     margin: 0 auto;
     padding: $spacing-size-2 var(--layout-horizontal-margins);
-    font-size: var(--text-fs-sm);
     line-height: 1.3;
     text-align: center;
 
@@ -50,7 +49,6 @@
     border-radius: var(--radius-md);
     background-color: var(--color-util-brand-500);
     color: var(--color-white);
-    font-size: var(--text-fs-xs);
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
