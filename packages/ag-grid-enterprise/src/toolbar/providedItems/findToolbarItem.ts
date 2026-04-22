@@ -84,6 +84,14 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
             },
         });
 
+        this.addManagedElementListeners(this.eMatchCount, {
+            click: () => {
+                this.eInput.focus();
+                const end = this.eInput.value.length;
+                this.eInput.setSelectionRange(end, end);
+            },
+        });
+
         this.addManagedElementListeners(this.ePrevButton, {
             click: () => this.beans.findSvc?.previous(),
         });

@@ -52,6 +52,29 @@ describe('Toolbar find item', () => {
         expect(api.getGridOption('findSearchValue')).toBe('Alice');
     });
 
+    test('focuses input when match count area is clicked', async () => {
+        const api = gridMgr.createGrid('find-match-count-click', {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }],
+            toolbar: {
+                items: ['agFindToolbarItem'],
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        const input = gridDiv.querySelector<HTMLInputElement>('.ag-toolbar-input-field')!;
+        const matchCount = gridDiv.querySelector<HTMLSpanElement>('.ag-toolbar-find-match-count')!;
+
+        input.value = 'Ali';
+        matchCount.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+        expect(document.activeElement).toBe(input);
+        expect(input.selectionStart).toBe(3);
+        expect(input.selectionEnd).toBe(3);
+    });
+
     describe('missing FindModule', () => {
         const minimalGridMgr = new TestGridsManager({
             modules: [ClientSideRowModelModule, ToolbarModule],
