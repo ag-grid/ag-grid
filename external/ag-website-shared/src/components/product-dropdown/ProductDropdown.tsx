@@ -4,7 +4,7 @@ import GridDark from '@ag-website-shared/images/inline-svgs/grid-dark.svg?react'
 import GridLight from '@ag-website-shared/images/inline-svgs/grid-light.svg?react';
 import StudioDark from '@ag-website-shared/images/inline-svgs/studio-dark.svg?react';
 import StudioLight from '@ag-website-shared/images/inline-svgs/studio-light.svg?react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import styles from './ProductDropdown.module.scss';
 
