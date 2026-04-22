@@ -17,7 +17,7 @@ describe('Toolbar separator item', () => {
             columnDefs: [{ field: 'name' }],
             rowData: [{ name: 'Alice' }],
             toolbar: {
-                items: ['find', 'separator', 'quickFilter'],
+                items: ['agFindToolbarItem', 'separator', 'agQuickFilterToolbarItem'],
             },
         });
 

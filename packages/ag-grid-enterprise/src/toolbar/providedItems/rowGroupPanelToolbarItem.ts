@@ -10,7 +10,7 @@ export class RowGroupPanelToolbarItem extends Component implements IToolbarItemC
         const builder = this.beans.rowGroupPanelBuilder;
         if (!builder) {
             _warn(302, {
-                itemName: 'rowGroupPanel',
+                itemName: 'agRowGroupPanelToolbarItem',
                 moduleName: 'RowGroupingPanel',
                 ...this.gos.getModuleErrorParams(),
             });

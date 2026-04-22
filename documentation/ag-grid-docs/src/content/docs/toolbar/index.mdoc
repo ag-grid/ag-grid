@@ -16,8 +16,8 @@ const gridOptions = {
     toolbar: {
         alignment: 'right',
         items: [
-            { toolbarItem: 'rowGroupPanel', alignment: 'left' },
-            'find',
+            { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'left' },
+            'agFindToolbarItem',
             {
                 key: 'autoSizeAll',
                 label: 'Auto Size All',
@@ -39,12 +39,12 @@ const gridOptions = {
 
 ## Built-in Items
 
-The following built-in items are available as string shorthands:
+The following built-in items are available:
 
--   `find`: A text input that searches within grid cells using the [Find](./find/) feature. Requires `FindModule`.
--   `pivotPanel`: Embeds the [Pivot Panel](./pivoting/) in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `pivotPanelShow` grid option — if both are set, both will render.
--   `rowGroupPanel`: Embeds the [Row Group Panel](./grouping-group-panel/) in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `rowGroupPanelShow` grid option — if both are set, both will render.
--   `quickFilter`: A text input that filters grid rows using the [Quick Filter](./filter-quick/). Requires `QuickFilterModule`.
+-   `agFindToolbarItem`: A text input that searches within grid cells using the [Find](./find/) feature. Requires `FindModule`.
+-   `agPivotPanelToolbarItem`: Embeds the [Pivot Panel](./pivoting/) in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `pivotPanelShow` grid option — if both are set, both will render.
+-   `agRowGroupPanelToolbarItem`: Embeds the [Row Group Panel](./grouping-group-panel/) in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `rowGroupPanelShow` grid option — if both are set, both will render.
+-   `agQuickFilterToolbarItem`: A text input that filters grid rows using the [Quick Filter](./filter-quick/). Requires `QuickFilterModule`.
 
 Built-in items require their corresponding modules to be registered. If a required module is not registered, the item will not render and a console warning will be logged.
 
@@ -52,7 +52,7 @@ To add buttons that trigger grid actions — such as auto-sizing columns, openin
 
 ## Configuration
 
-Each entry in `items` is either a built-in string shorthand or an item object. Items are partitioned by [alignment](#default-alignment): left-aligned items render first in their declared order, followed by right-aligned items in their declared order.
+Each entry in `items` is either a built-in item name or an item object. Items are partitioned by [alignment](#default-alignment): left-aligned items render first in their declared order, followed by right-aligned items in their declared order.
 
 An item object supports the following properties:
 
@@ -67,7 +67,7 @@ An item object supports the following properties:
 const gridOptions = {
     toolbar: {
         items: [
-            'quickFilter',
+            'agQuickFilterToolbarItem',
             {
                 key: 'myItem',
                 toolbarItem: CustomToolbarComponent,
@@ -90,8 +90,8 @@ const gridOptions = {
     toolbar: {
         alignment: 'right',
         items: [
-            'find',
-            { toolbarItem: 'quickFilter', alignment: 'left' },
+            'agFindToolbarItem',
+            { toolbarItem: 'agQuickFilterToolbarItem', alignment: 'left' },
         ]
     }
 }
@@ -106,8 +106,8 @@ const gridOptions = {
     toolbar: {
         display: 'iconAndLabel',
         items: [
-            'quickFilter',
-            { toolbarItem: 'find', display: 'icon' }
+            'agQuickFilterToolbarItem',
+            { toolbarItem: 'agFindToolbarItem', display: 'icon' }
         ]
     }
 }

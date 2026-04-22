@@ -8,7 +8,11 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
 
     public init(_params: IToolbarItemParams): void {
         if (!this.gos.isModuleRegistered('Pivot')) {
-            _warn(302, { itemName: 'pivotPanel', moduleName: 'Pivot', ...this.gos.getModuleErrorParams() });
+            _warn(302, {
+                itemName: 'agPivotPanelToolbarItem',
+                moduleName: 'Pivot',
+                ...this.gos.getModuleErrorParams(),
+            });
             this.setDisplayed(false);
             return;
         }
@@ -16,7 +20,7 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
         const builder = this.beans.rowGroupPanelBuilder;
         if (!builder) {
             _warn(302, {
-                itemName: 'pivotPanel',
+                itemName: 'agPivotPanelToolbarItem',
                 moduleName: 'RowGroupingPanel',
                 ...this.gos.getModuleErrorParams(),
             });

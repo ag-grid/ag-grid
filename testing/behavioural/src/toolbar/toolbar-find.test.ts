@@ -17,7 +17,7 @@ describe('Toolbar find item', () => {
             columnDefs: [{ field: 'name' }],
             rowData: [{ name: 'Alice' }],
             toolbar: {
-                items: ['find'],
+                items: ['agFindToolbarItem'],
             },
         });
 
@@ -35,7 +35,7 @@ describe('Toolbar find item', () => {
             columnDefs: [{ field: 'name' }],
             rowData: [{ name: 'Alice' }],
             toolbar: {
-                items: ['find'],
+                items: ['agFindToolbarItem'],
             },
         });
 
@@ -67,7 +67,7 @@ describe('Toolbar find item', () => {
             const api = minimalGridMgr.createGrid('find-no-module', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
-                toolbar: { items: ['find'] },
+                toolbar: { items: ['agFindToolbarItem'] },
             });
 
             await waitForEvent('firstDataRendered', api);
@@ -79,7 +79,7 @@ describe('Toolbar find item', () => {
 
             expect(warnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #302'),
-                expect.stringContaining('find'),
+                expect.stringContaining('agFindToolbarItem'),
                 expect.anything()
             );
 

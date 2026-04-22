@@ -13,16 +13,11 @@ export type Toolbar = {
 
 /**
  * Shorthand string identifiers that can be used in `Toolbar.items` or `ToolbarItemDef.toolbarItem`.
- * Includes the provided toolbar item components, `'separator'`, and the built-in shorthand keys
- * (`'find'`, `'pivotPanel'`, `'quickFilter'`, `'rowGroupPanel'`).
+ * Includes the provided toolbar item components and `'separator'`.
  */
 export type ToolbarItemShorthand =
     | ToolbarItemComponentName
     | 'separator'
-    | 'find'
-    | 'pivotPanel'
-    | 'quickFilter'
-    | 'rowGroupPanel'
     // Preserve the literal-union autocomplete while still allowing arbitrary registered component names
     // eslint-disable-next-line @typescript-eslint/ban-types
     | (string & {});

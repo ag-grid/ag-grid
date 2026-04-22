@@ -63,8 +63,8 @@ const GridExample = () => {
         () => ({
             alignment: 'right',
             items: [
-                { toolbarItem: 'rowGroupPanel', alignment: 'left' },
-                'find',
+                { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'left' },
+                'agFindToolbarItem',
                 {
                     key: 'autoSizeAll',
                     label: 'Auto Size All',

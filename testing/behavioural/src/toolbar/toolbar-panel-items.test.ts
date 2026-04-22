@@ -34,7 +34,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                 columnDefs: [{ field: 'name', enableRowGroup: true }],
                 rowData: [{ name: 'Alice' }],
                 toolbar: {
-                    items: ['rowGroupPanel'],
+                    items: ['agRowGroupPanelToolbarItem'],
                 },
             });
 
@@ -52,7 +52,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                 rowData: [{ name: 'Alice' }],
                 rowGroupPanelShow: 'never',
                 toolbar: {
-                    items: ['rowGroupPanel'],
+                    items: ['agRowGroupPanelToolbarItem'],
                 },
             });
 
@@ -71,7 +71,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                 columnDefs: [{ field: 'name', enablePivot: true }],
                 rowData: [{ name: 'Alice' }],
                 toolbar: {
-                    items: ['pivotPanel'],
+                    items: ['agPivotPanelToolbarItem'],
                 },
             });
 
@@ -89,7 +89,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                 rowData: [{ name: 'Alice' }],
                 pivotPanelShow: 'never',
                 toolbar: {
-                    items: ['pivotPanel'],
+                    items: ['agPivotPanelToolbarItem'],
                 },
             });
 
@@ -137,10 +137,10 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
                 rowGroupPanelShow: 'never',
                 toolbar: {
                     items: [
-                        'rowGroupPanel',
-                        'pivotPanel',
-                        { toolbarItem: 'quickFilter', alignment: 'right' },
-                        { toolbarItem: 'find', alignment: 'right' },
+                        'agRowGroupPanelToolbarItem',
+                        'agPivotPanelToolbarItem',
+                        { toolbarItem: 'agQuickFilterToolbarItem', alignment: 'right' },
+                        { toolbarItem: 'agFindToolbarItem', alignment: 'right' },
                     ],
                 },
             });
@@ -174,7 +174,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             const api = minimalGridMgr.createGrid('row-group-panel-no-module', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
-                toolbar: { items: ['rowGroupPanel'] },
+                toolbar: { items: ['agRowGroupPanelToolbarItem'] },
             });
 
             await waitForEvent('firstDataRendered', api);
@@ -186,7 +186,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
 
             expect(warnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #302'),
-                expect.stringContaining('rowGroupPanel'),
+                expect.stringContaining('agRowGroupPanelToolbarItem'),
                 expect.anything()
             );
 
@@ -199,7 +199,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             const api = minimalGridMgr.createGrid('pivot-panel-no-module', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
-                toolbar: { items: ['pivotPanel'] },
+                toolbar: { items: ['agPivotPanelToolbarItem'] },
             });
 
             await waitForEvent('firstDataRendered', api);
@@ -211,7 +211,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
 
             expect(warnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #302'),
-                expect.stringContaining('pivotPanel'),
+                expect.stringContaining('agPivotPanelToolbarItem'),
                 expect.anything()
             );
 

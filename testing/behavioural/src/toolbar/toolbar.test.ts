@@ -95,7 +95,7 @@ describe('Toolbar', () => {
             const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
             expect(toolbar.querySelector('.ag-toolbar-input-field')).toBeNull();
 
-            api.setGridOption('toolbar', { items: ['quickFilter'] });
+            api.setGridOption('toolbar', { items: ['agQuickFilterToolbarItem'] });
 
             expect(toolbar.querySelector('.ag-toolbar-input-field')).not.toBeNull();
         });
@@ -104,7 +104,7 @@ describe('Toolbar', () => {
             const api = gridMgr.createGrid('runtime-replace-items', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
-                toolbar: { items: ['quickFilter'] },
+                toolbar: { items: ['agQuickFilterToolbarItem'] },
             });
 
             await waitForEvent('firstDataRendered', api);
@@ -113,7 +113,7 @@ describe('Toolbar', () => {
             const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
             expect(toolbar.querySelector('.ag-toolbar-input-field')).not.toBeNull();
 
-            api.setGridOption('toolbar', { items: ['find'] });
+            api.setGridOption('toolbar', { items: ['agFindToolbarItem'] });
 
             const inputs = toolbar.querySelectorAll<HTMLInputElement>('.ag-toolbar-input-field');
             expect(inputs).toHaveLength(1);
@@ -124,7 +124,7 @@ describe('Toolbar', () => {
             const api = gridMgr.createGrid('runtime-clear-items', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
-                toolbar: { items: ['quickFilter', 'find'] },
+                toolbar: { items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] },
             });
 
             await waitForEvent('firstDataRendered', api);
@@ -144,7 +144,7 @@ describe('Toolbar', () => {
                 rowData: [{ name: 'Alice' }],
                 toolbar: {
                     alignment: 'left',
-                    items: ['quickFilter', 'find'],
+                    items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'],
                 },
             });
 
@@ -156,7 +156,7 @@ describe('Toolbar', () => {
 
             api.setGridOption('toolbar', {
                 alignment: 'right',
-                items: ['quickFilter', 'find'],
+                items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'],
             });
 
             // right-start marker appears before the first right-aligned item
@@ -169,7 +169,7 @@ describe('Toolbar', () => {
             const api = gridMgr.createGrid('runtime-rapid-updates', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
-                toolbar: { items: ['quickFilter'] },
+                toolbar: { items: ['agQuickFilterToolbarItem'] },
             });
 
             await waitForEvent('firstDataRendered', api);
@@ -178,9 +178,9 @@ describe('Toolbar', () => {
             const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
 
             // Three rapid rebuilds: any in-flight resolves from earlier generations must not leak into the DOM
-            api.setGridOption('toolbar', { items: ['find'] });
-            api.setGridOption('toolbar', { items: ['quickFilter', 'find'] });
-            api.setGridOption('toolbar', { items: ['find'] });
+            api.setGridOption('toolbar', { items: ['agFindToolbarItem'] });
+            api.setGridOption('toolbar', { items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] });
+            api.setGridOption('toolbar', { items: ['agFindToolbarItem'] });
 
             // Give any pending async promises a chance to resolve
             await new Promise<void>((resolve) => setTimeout(resolve, 0));

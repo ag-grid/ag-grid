@@ -23,19 +23,19 @@ ModuleRegistry.registerModules([
 
 const fullToolbar: Toolbar = {
     items: [
-        'rowGroupPanel',
-        'pivotPanel',
-        { toolbarItem: 'find', alignment: 'right' },
-        { toolbarItem: 'quickFilter', alignment: 'right' },
+        'agRowGroupPanelToolbarItem',
+        'agPivotPanelToolbarItem',
+        { toolbarItem: 'agFindToolbarItem', alignment: 'right' },
+        { toolbarItem: 'agQuickFilterToolbarItem', alignment: 'right' },
     ],
 };
 
 const findOnlyToolbar: Toolbar = {
-    items: [{ toolbarItem: 'find', alignment: 'right' }],
+    items: [{ toolbarItem: 'agFindToolbarItem', alignment: 'right' }],
 };
 
 const quickFilterOnlyToolbar: Toolbar = {
-    items: [{ toolbarItem: 'quickFilter', alignment: 'right' }],
+    items: [{ toolbarItem: 'agQuickFilterToolbarItem', alignment: 'right' }],
 };
 
 let gridApi: GridApi<IOlympicData>;

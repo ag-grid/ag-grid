@@ -17,7 +17,7 @@ describe('Toolbar quickFilter item', () => {
             columnDefs: [{ field: 'name' }],
             rowData: [{ name: 'Alice' }, { name: 'Bob' }],
             toolbar: {
-                items: ['quickFilter'],
+                items: ['agQuickFilterToolbarItem'],
             },
         });
 
@@ -35,7 +35,7 @@ describe('Toolbar quickFilter item', () => {
             columnDefs: [{ field: 'name' }],
             rowData: [{ name: 'Alice' }, { name: 'Bob' }],
             toolbar: {
-                items: ['quickFilter'],
+                items: ['agQuickFilterToolbarItem'],
             },
         });
 
@@ -67,7 +67,7 @@ describe('Toolbar quickFilter item', () => {
             const api = minimalGridMgr.createGrid('quick-filter-no-module', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
-                toolbar: { items: ['quickFilter'] },
+                toolbar: { items: ['agQuickFilterToolbarItem'] },
             });
 
             await waitForEvent('firstDataRendered', api);
@@ -79,7 +79,7 @@ describe('Toolbar quickFilter item', () => {
 
             expect(warnSpy).toHaveBeenCalledWith(
                 expect.stringContaining('warning #302'),
-                expect.stringContaining('quickFilter'),
+                expect.stringContaining('agQuickFilterToolbarItem'),
                 expect.anything()
             );
 
