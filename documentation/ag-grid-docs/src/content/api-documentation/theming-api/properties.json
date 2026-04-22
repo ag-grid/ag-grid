@@ -545,6 +545,7 @@
         "notePopupTextColor": {},
         "notePopupInputTextColor": {},
         "notePopupInputBackgroundColor": {},
-        "notePopupBorder": {}
+        "notePopupBorder": {},
+        "notePopupPadding": {}
     }
 }

@@ -276,14 +276,30 @@ copy_extra_configs() {
                 ;;
         esac
 
+        # Derive marketplace ref suffix from AG_DEV_PROMPTS_REF. An unset or
+        # 'latest' value leaves the source unqualified (Claude picks the default
+        # branch); any other value pins the marketplace to that branch/tag via
+        # the `repo#ref` syntax. This lets a single consumer opt into the
+        # canary track without changing settings for the other products.
+        local dev_prompts_ref="${AG_DEV_PROMPTS_REF:-}"
+        local ref_suffix=""
+        if [[ -n "$dev_prompts_ref" && "$dev_prompts_ref" != "latest" ]]; then
+            ref_suffix="#$dev_prompts_ref"
+        fi
+
         mkdir -p "$REPO_ROOT/.claude"
         # Atomic render via temp file + mv. Drop any stale symlink first.
         local tmp_file="$claude_settings_dest.tmp.$$"
-        sed "s|\${PRODUCT}|$product|g" "$REPO_ROOT/$claude_settings_template" > "$tmp_file"
+        sed \
+            -e "s|\${PRODUCT}|$product|g" \
+            -e "s|\${AG_DEV_PROMPTS_REF_SUFFIX}|$ref_suffix|g" \
+            "$REPO_ROOT/$claude_settings_template" > "$tmp_file"
         rm -f "$claude_settings_dest"
         mv "$tmp_file" "$claude_settings_dest"
         if [[ "$verbose" == "true" ]]; then
-            echo -e "${GREEN}✓${NC} Rendered Claude Code settings for product: $product"
+            local track_note=""
+            [[ -n "$ref_suffix" ]] && track_note=" (marketplace pinned to ${dev_prompts_ref})"
+            echo -e "${GREEN}✓${NC} Rendered Claude Code settings for product: ${product}${track_note}"
         fi
     fi
 }

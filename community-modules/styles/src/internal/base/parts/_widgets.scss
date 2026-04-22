@@ -851,15 +851,15 @@
     .ag-has-cell-notes::after {
         content: '';
         position: absolute;
-        top: 1px;
-        right: 1px;
+        top: 0;
+        right: 0;
         border-style: solid;
         border-width: 0 var(--ag-note-indicator-size) var(--ag-note-indicator-size) 0;
         border-color: transparent var(--ag-note-indicator-color) transparent transparent;
         pointer-events: none;
     }
 
-    .ag-notes-panel {
+    .ag-notes-panel.ag-panel {
         width: 100%;
         border: var(--ag-note-popup-border);
         background-color: var(--ag-note-popup-background-color);
@@ -878,7 +878,7 @@
         min-height: 0;
         min-width: 0;
         gap: calc(var(--ag-grid-size) / 2);
-        padding: calc(var(--ag-grid-size) / 2);
+        padding: var(--ag-note-popup-padding);
     }
 
     .ag-notes-popup-meta {
