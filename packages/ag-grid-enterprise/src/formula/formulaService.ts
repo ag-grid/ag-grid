@@ -218,10 +218,16 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             this.refreshFormulas(true);
         };
         const onColumnMoved = () => {
-            if (!this.active || this.cachedResult.size === 0) {
+            if (!this.active) {
                 return;
             }
+            // Rebuild unconditionally: `col.formulaRef` is read by the header and formula input,
+            // and absolute `COLUMN("A",true)` refs resolve via `colRefMap`, so both must reflect
+            // the new order even when no formula has been evaluated yet.
             this.rebuildColRefMap();
+            if (this.cachedResult.size === 0) {
+                return;
+            }
             // Column instances are stable across a reorder - only their positions changed. Parsed
             // ASTs keep referring to the right colIds; only absolute `COLUMN("A",true)` refs pick
             // up different columns via colRefMap. Bumping the value version re-evaluates surviving
@@ -616,7 +622,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             let message: string;
             let variableValues: string[] | null;
             if (source instanceof CellFormula) {
-                type = source.errorType!;
+                // Throw sites only raise a CellFormula after stamping errorType; fall back to
+                // the generic error type rather than `null` if that invariant is ever violated.
+                type = source.errorType ?? '#ERROR!';
                 errorId = source.errorId;
                 message = source.errorMessage;
                 variableValues = source.errorVariableValues;
