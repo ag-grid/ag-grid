@@ -1,0 +1,163 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_NO_FLICKER": "1",
+    "ENABLE_TOOL_SEARCH": "true"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "allow": [
+      "Bash(command -v:*)",
+      "Bash(find:*)",
+      "Bash(gh api:*)",
+      "Bash(gh gist:*)",
+      "Bash(gh pr:*)",
+      "Bash(gh run:*)",
+      "Bash(gh workflow:*)",
+      "Bash(git add:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git diff:*)",
+      "Bash(git fetch:*)",
+      "Bash(git log:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git stash list:*)",
+      "Bash(git stash show:*)",
+      "Bash(git status:*)",
+      "Bash(grep:*)",
+      "Bash(jq:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(npx tsc:*)",
+      "Bash(nx benchmark:*)",
+      "Bash(nx build:*)",
+      "Bash(nx dev)",
+      "Bash(nx e2e:*)",
+      "Bash(nx format:*)",
+      "Bash(nx lint:*)",
+      "Bash(nx run:*)",
+      "Bash(nx show projects:*)",
+      "Bash(nx test:*)",
+      "Bash(rg:*)",
+      "Bash(touch:*)",
+      "Bash(./external/ag-shared/scripts/setup-prompts/setup-prompts.sh)",
+      "Bash(./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh)",
+      "Bash(yarn nx build:*)",
+      "Bash(yarn nx format:write:*)",
+      "Bash(yarn nx:*)",
+      "Bash(yarn test:*)",
+      "WebFetch(domain:ag-grid.atlassian.net)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:docs.github.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:localhost)",
+      "WebFetch(domain:www.npmjs.com)",
+      "mcp__atlassian__atlassianUserInfo",
+      "mcp__atlassian__fetch",
+      "mcp__atlassian__getAccessibleAtlassianResources",
+      "mcp__atlassian__getIssueLinkTypes",
+      "mcp__atlassian__getJiraIssue",
+      "mcp__atlassian__getJiraIssueRemoteIssueLinks",
+      "mcp__atlassian__getJiraIssueTypeMetaWithFields",
+      "mcp__atlassian__getJiraProjectIssueTypesMetadata",
+      "mcp__atlassian__getTransitionsForJiraIssue",
+      "mcp__atlassian__getVisibleJiraProjects",
+      "mcp__atlassian__lookupJiraAccountId",
+      "mcp__atlassian__search",
+      "mcp__atlassian__searchJiraIssuesUsingJql",
+      "mcp__claude_ai_Atlassian__atlassianUserInfo",
+      "mcp__claude_ai_Atlassian__fetch",
+      "mcp__claude_ai_Atlassian__getAccessibleAtlassianResources",
+      "mcp__claude_ai_Atlassian__getIssueLinkTypes",
+      "mcp__claude_ai_Atlassian__getJiraIssue",
+      "mcp__claude_ai_Atlassian__getJiraIssueRemoteIssueLinks",
+      "mcp__claude_ai_Atlassian__getJiraIssueTypeMetaWithFields",
+      "mcp__claude_ai_Atlassian__getJiraProjectIssueTypesMetadata",
+      "mcp__claude_ai_Atlassian__getTransitionsForJiraIssue",
+      "mcp__claude_ai_Atlassian__getVisibleJiraProjects",
+      "mcp__claude_ai_Atlassian__lookupJiraAccountId",
+      "mcp__claude_ai_Atlassian__search",
+      "mcp__claude_ai_Atlassian__searchJiraIssuesUsingJql",
+      "mcp__ide__getDiagnostics",
+      "mcp__sequential-thinking__sequentialthinking"
+    ],
+    "deny": []
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | ( read file_path; yarn nx format --files \"$file_path\" )"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/install-for-cloud/install-for-cloud.sh"
+          },
+          {
+            "type": "command",
+            "command": "if [ -n \"$CLAUDE_ENV_FILE\" ]; then echo 'export NX_DAEMON=false' >> \"$CLAUDE_ENV_FILE\"; fi"
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/install-for-cloud/setup-terminal-title.sh"
+          }
+        ]
+      }
+    ],
+    "WorktreeCreate": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/setup-worktree/claude-worktree-create.sh",
+            "timeout": 300
+          }
+        ]
+      }
+    ],
+    "WorktreeRemove": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/external/ag-shared/scripts/setup-worktree/claude-worktree-remove.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "ag-core@ag-dev": true,
+    "ag-prodeng@ag-dev": true,
+    "${PRODUCT}@ag-dev": true,
+    "codex@openai-codex": true,
+    "skill-creator@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "ag-dev": {
+      "source": {
+        "source": "github",
+        "repo": "ag-grid/ag-dev-prompts"
+      }
+    },
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
+  }
+}

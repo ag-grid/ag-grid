@@ -530,5 +530,21 @@
         "findMatchColor": {},
         "findActiveMatchBackgroundColor": {},
         "findActiveMatchColor": {}
+    },
+    "notes": {
+        "meta": {
+            "displayName": "Notes",
+            "page": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteIndicatorColor": {},
+        "noteIndicatorSize": {},
+        "notePopupBackgroundColor": {},
+        "notePopupTextColor": {},
+        "notePopupInputTextColor": {},
+        "notePopupInputBackgroundColor": {},
+        "notePopupBorder": {}
     }
 }

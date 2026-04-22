@@ -96,15 +96,7 @@ class AgNotesPopupContent extends Component {
     }
 
     public getEditedNote(): Note | undefined {
-        const text = this.eEditor.getValue()?.trim();
-        if (!text) {
-            return undefined;
-        }
-
-        return {
-            ...(this.note ?? {}),
-            text,
-        };
+        return buildEditedNote(this.note, this.eEditor.getValue());
     }
 
     public isDirty(): boolean {
@@ -114,6 +106,18 @@ class AgNotesPopupContent extends Component {
 
         return (this.eEditor.getValue()?.trim() ?? '') !== this.initialText;
     }
+}
+
+export function buildEditedNote(note: Note | undefined, nextText: string | null | undefined): Note | undefined {
+    const text = nextText?.trim();
+    if (!text) {
+        return undefined;
+    }
+
+    return {
+        ...(note ?? {}),
+        text,
+    };
 }
 
 export class AgNotesPopup extends BeanStub {

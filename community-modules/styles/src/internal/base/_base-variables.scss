@@ -271,5 +271,12 @@
         --ag-formula-token-7-color: #247492;
         --ag-formula-token-7-background-color: rgb(36 116 146 / 16%);
         --ag-formula-token-7-border-color: var(--ag-formula-token-7-color);
+
+        --ag-note-indicator-size: 10px;
+        --ag-note-popup-background-color: var(--ag-background-color);
+        --ag-note-popup-text-color: var(--ag-secondary-foreground-color);
+        --ag-note-popup-input-text-color: var(--ag-input-text-color);
+        --ag-note-popup-input-background-color: var(--ag-input-background-color);
+        --ag-note-popup-border: var(--ag-dialog-border);
     }
 }

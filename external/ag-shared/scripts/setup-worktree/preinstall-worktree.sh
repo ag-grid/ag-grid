@@ -96,7 +96,7 @@ get_cow_source() {
 # Broken symlink fix for worktrees
 # ---------------------------------------------------------------------------
 #
-# Relative symlinks in external/ (e.g. ../../ag-charts-prompts) resolve from
+# Relative symlinks in external/ (e.g. ../../ag-grid-documentation) resolve from
 # the main repo's parent directory. In a worktree at a different filesystem
 # path, these break because ../../ points to the wrong parent.
 #
