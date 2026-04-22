@@ -95,7 +95,7 @@ export class GridCtrl extends BeanStub {
             gridHeaderDropZonesSelector: beans.registry?.getSelector('AG-GRID-HEADER-DROP-ZONES'),
             sideBarSelector: beans.sideBar?.getSelector(),
             statusBarSelector: beans.registry?.getSelector('AG-STATUS-BAR'),
-            toolbarSelector: this.gos.get('toolbar') ? beans.registry?.getSelector('AG-TOOLBAR') : undefined,
+            toolbarSelector: beans.registry?.getSelector('AG-TOOLBAR'),
             watermarkSelector: beans.licenseManager?.getWatermarkSelector(),
         };
     }
