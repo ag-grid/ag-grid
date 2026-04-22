@@ -5,17 +5,19 @@ import { createToolbarIconButton, createToolbarInput } from './toolbarItemUtils'
 
 const INPUT_DEBOUNCE_MS = 300;
 
-function createMatchCount(): HTMLSpanElement {
-    return _createElement<HTMLSpanElement>({
-        tag: 'span',
+let findInputIdCounter = 0;
+
+function createMatchCount(inputId: string): HTMLLabelElement {
+    return _createElement<HTMLLabelElement>({
+        tag: 'label',
         cls: 'ag-toolbar-find-match-count',
-        attrs: { 'aria-live': 'polite' },
+        attrs: { 'aria-live': 'polite', for: inputId },
     });
 }
 
 export class FindToolbarItem extends Component implements IToolbarItemComp {
     private eInput!: HTMLInputElement;
-    private eMatchCount!: HTMLSpanElement;
+    private eMatchCount!: HTMLLabelElement;
     private ePrevButton!: HTMLButtonElement;
     private eNextButton!: HTMLButtonElement;
 
@@ -39,13 +41,15 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
             iconName: 'filter',
             initialValue: this.gos.get('findSearchValue'),
         });
+        const inputId = `ag-toolbar-find-input-${++findInputIdCounter}`;
+        eInput.id = inputId;
         if (eIconWrapper) {
             eGui.appendChild(eIconWrapper);
         }
         this.eInput = eInput;
         eGui.appendChild(this.eInput);
 
-        this.eMatchCount = createMatchCount();
+        this.eMatchCount = createMatchCount(inputId);
         eGui.appendChild(this.eMatchCount);
 
         this.ePrevButton = createToolbarIconButton(this.beans, {
@@ -81,14 +85,6 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
                         this.beans.findSvc?.next();
                     }
                 }
-            },
-        });
-
-        this.addManagedElementListeners(this.eMatchCount, {
-            click: () => {
-                this.eInput.focus();
-                const end = this.eInput.value.length;
-                this.eInput.setSelectionRange(end, end);
             },
         });
 

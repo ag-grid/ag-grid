@@ -52,8 +52,8 @@ describe('Toolbar find item', () => {
         expect(api.getGridOption('findSearchValue')).toBe('Alice');
     });
 
-    test('focuses input when match count area is clicked', async () => {
-        const api = gridMgr.createGrid('find-match-count-click', {
+    test('match count is a label associated with the input', async () => {
+        const api = gridMgr.createGrid('find-match-count-label', {
             columnDefs: [{ field: 'name' }],
             rowData: [{ name: 'Alice' }],
             toolbar: {
@@ -65,14 +65,11 @@ describe('Toolbar find item', () => {
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         const input = gridDiv.querySelector<HTMLInputElement>('.ag-toolbar-input-field')!;
-        const matchCount = gridDiv.querySelector<HTMLSpanElement>('.ag-toolbar-find-match-count')!;
+        const matchCount = gridDiv.querySelector<HTMLLabelElement>('.ag-toolbar-find-match-count')!;
 
-        input.value = 'Ali';
-        matchCount.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-
-        expect(document.activeElement).toBe(input);
-        expect(input.selectionStart).toBe(3);
-        expect(input.selectionEnd).toBe(3);
+        expect(matchCount.tagName).toBe('LABEL');
+        expect(input.id).toBeTruthy();
+        expect(matchCount.getAttribute('for')).toBe(input.id);
     });
 
     describe('missing FindModule', () => {

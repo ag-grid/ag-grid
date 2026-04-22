@@ -131,6 +131,10 @@
 }
 
 .ag-toolbar-find-match-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    align-self: stretch;
     white-space: nowrap;
     font-size: var(--ag-font-size);
     color: var(--ag-text-color);
@@ -138,7 +142,7 @@
     user-select: none;
     font-variant-numeric: tabular-nums;
     min-width: 11ch;
-    text-align: end;
+    cursor: text;
 }
 
 .ag-toolbar-find-button {
