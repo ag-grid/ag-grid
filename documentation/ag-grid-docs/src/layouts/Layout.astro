@@ -13,6 +13,7 @@ import { getApiPaths } from '@utils/apiMenuPath';
 import { SITE_BASE_URL, PUBLIC_GTM_ID, PUBLIC_GTM_AUTH, PUBLIC_GTM_PREVIEW } from '@constants';
 import GoogleTagManager from '@ag-website-shared/components/google-tag-manager/GoogleTagManager.astro';
 import GoogleTagManagerBody from '@ag-website-shared/components/google-tag-manager/GoogleTagManagerBody.astro';
+import AnnouncementBanner from '@components/announcement-banner/AnnouncementBanner.astro';
 
 interface Props {
     title: string;
@@ -22,6 +23,13 @@ interface Props {
     hideHeader?: boolean;
     hideFooter?: boolean;
     hidePageFromSearchEngines?: boolean;
+    showAnnouncementBanner?: boolean;
+    announcementBannerProps?: {
+        href: string;
+        title: string;
+        description: string;
+        ctaLabel: string;
+    };
 }
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
@@ -44,6 +52,8 @@ const {
     hideHeader,
     hideFooter,
     hidePageFromSearchEngines,
+    showAnnouncementBanner,
+    announcementBannerProps,
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -170,6 +180,16 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
             observer.observe(htmlEl, { attributes: true });
         </script>
 
+        {
+            showAnnouncementBanner && announcementBannerProps && (
+                <AnnouncementBanner
+                    href={announcementBannerProps.href}
+                    title={announcementBannerProps.title}
+                    description={announcementBannerProps.description}
+                    ctaLabel={announcementBannerProps.ctaLabel}
+                />
+            )
+        }
         <div id="mainContainer" class:list={styles.mainContainer}>
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}
             <slot />

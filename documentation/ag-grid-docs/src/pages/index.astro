@@ -27,6 +27,13 @@ const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) 
 const { data: faqData } = (await getEntry('faqs', 'homepage')) as CollectionEntry<'faqs'>;
 const { blogPrefix } = whatsNewData['grid'];
 
+const announcementBannerProps = {
+    href: urlWithBaseUrl('/campaigns/beyond-the-prompt/'),
+    title: 'Beyond the Prompt',
+    description: 'A one-day AG Grid & Bryntum conference • 19th May 26',
+    ctaLabel: 'Learn more',
+};
+
 const frameworksData = [
     {
         name: 'react',
@@ -78,6 +85,8 @@ const frameworksData = [
     description={'AG Grid is a feature-rich Data Grid for all major JavaScript frameworks, offering filtering, grouping, pivoting, and more. Free and open-source. Upgrade to Enterprise for advanced features.'}
     showSearchBar={false}
     showDocsNav={false}
+    showAnnouncementBanner={true}
+    announcementBannerProps={announcementBannerProps}
 >
     <div class={styles.homepageHero}>
         <section class:list={[styles.heroInner, 'layout-max-width-small']}>
