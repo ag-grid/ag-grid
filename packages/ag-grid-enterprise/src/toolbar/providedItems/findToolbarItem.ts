@@ -1,18 +1,16 @@
 import type { FindChangedEvent, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _createElement, _debounce, _setDisabled, _setDisplayed, _warn } from 'ag-grid-community';
+import { Component, _createElement, _debounce, _setDisabled, _warn } from 'ag-grid-community';
 
 import { createToolbarIconButton, createToolbarInput } from './toolbarItemUtils';
 
 const INPUT_DEBOUNCE_MS = 300;
 
 function createMatchCount(): HTMLSpanElement {
-    const eMatchCount = _createElement<HTMLSpanElement>({
+    return _createElement<HTMLSpanElement>({
         tag: 'span',
         cls: 'ag-toolbar-find-match-count',
         attrs: { 'aria-live': 'polite' },
     });
-    _setDisplayed(eMatchCount, false);
-    return eMatchCount;
 }
 
 export class FindToolbarItem extends Component implements IToolbarItemComp {
@@ -123,7 +121,6 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
         const hasSearch = !!findSearchValue?.length;
 
         this.eMatchCount.textContent = hasSearch ? `${activeIndex}/${totalMatches}` : '';
-        _setDisplayed(this.eMatchCount, hasSearch);
 
         const hasMatches = totalMatches > 0;
         _setDisabled(this.ePrevButton, !hasMatches);

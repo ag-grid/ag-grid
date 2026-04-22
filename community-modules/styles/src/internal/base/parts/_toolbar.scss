@@ -154,6 +154,9 @@
         color: var(--ag-text-color);
         opacity: 0.7;
         user-select: none;
+        font-variant-numeric: tabular-nums;
+        min-width: 6ch;
+        text-align: end;
     }
 
     .ag-toolbar-find-button {
