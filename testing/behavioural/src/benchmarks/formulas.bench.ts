@@ -7,10 +7,6 @@ import { FormulaModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
 
-// General formula performance: these three scenarios between them exercise
-// parse, evaluation, range iteration, dependency walking, and cache
-// invalidation on row updates - the main levers affected by AG-16878.
-
 const FORMULA_MODULES = [
     ClientSideRowModelModule,
     ClientSideRowModelApiModule,
@@ -25,11 +21,6 @@ function resolveColumnForAllRows(api: GridApi, colKey: string): void {
     });
 }
 
-// ---------------------------------------------------------------------------
-// 1. Flat formula grid: realistic-looking dataset with per-row arithmetic
-//    and per-row cross-cell refs. Covers parse + evaluation on first read
-//    and the fast path on re-read.
-// ---------------------------------------------------------------------------
 suite('formulas - flat grid evaluation', () => {
     const gridsManager = new TestGridsManager({ benchmark: true, modules: FORMULA_MODULES });
     const rowCount = 3000;
@@ -75,7 +66,7 @@ suite('formulas - flat grid evaluation', () => {
         setup: () => {
             if (!api) {
                 api = createFlatGrid();
-                evaluateAll(api); // prime the cache outside the measured region
+                evaluateAll(api);
             }
         },
         teardown: () => {
@@ -92,11 +83,6 @@ suite('formulas - flat grid evaluation', () => {
     );
 });
 
-// ---------------------------------------------------------------------------
-// 2. Dependency graph under mutation: N dependents share one source. A
-//    single-cell update invalidates the graph; measure invalidate + re-eval.
-//    Also covers the deep-chain path by layering refs through an intermediate.
-// ---------------------------------------------------------------------------
 suite('formulas - dependent re-evaluation on update', () => {
     const gridsManager = new TestGridsManager({ benchmark: true, modules: FORMULA_MODULES });
     const dependentCount = 1500;
@@ -104,12 +90,10 @@ suite('formulas - dependent re-evaluation on update', () => {
 
     const rowData: Record<string, unknown>[] = [{ id: 'source', value: 10 }];
 
-    // Deep chain: each link references the previous link's value.
     for (let i = 0; i < chainLength; i++) {
         const prev = i === 0 ? 'source' : `link-${i - 1}`;
         rowData.push({ id: `link-${i}`, value: `=REF(COLUMN("value"),ROW("${prev}"))+1` });
     }
-    // Wide fan-out: each dependent reads the tip of the chain.
     const tip = `link-${chainLength - 1}`;
     for (let i = 0; i < dependentCount; i++) {
         rowData.push({ id: `dep-${i}`, value: `=REF(COLUMN("value"),ROW("${tip}"))*${(i % 7) + 1}` });
@@ -126,8 +110,6 @@ suite('formulas - dependent re-evaluation on update', () => {
                 rowData,
                 getRowId: ({ data }) => data.id as string,
             });
-            // Warm all formulas so the bench measures invalidation + re-eval,
-            // not first-time parse.
             resolveColumnForAllRows(api, 'value');
             sourceValue = 10;
         },
@@ -148,11 +130,6 @@ suite('formulas - dependent re-evaluation on update', () => {
     );
 });
 
-// ---------------------------------------------------------------------------
-// 3. Range aggregate: a single SUM() reads many cells via the range iterator.
-//    Stresses range resolution and row/column lookup - paths that sit behind
-//    ensureCellFormula and colRefMap.
-// ---------------------------------------------------------------------------
 suite('formulas - large range aggregate', () => {
     const gridsManager = new TestGridsManager({ benchmark: true, modules: FORMULA_MODULES });
     const rowCount = 5000;

@@ -6,13 +6,6 @@ import { FormulaModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout, waitForEvent } from '../test-utils';
 
-/**
- * Edge cases outside pure function evaluation: error codes from bad refs and
- * parse failures, range iteration under row mutation, column topology changes,
- * custom-function error surfacing, cycle detection, row moves, and the cell
- * editor normalise round-trip. Pure function-on-values edge cases live in
- * formulas-functions.test.ts.
- */
 describe('ag-grid formulas edge cases', () => {
     const rowNumberRefreshBufferMs = 25;
     const gridRowsOpts = { useFormatter: false } as const;
@@ -37,10 +30,6 @@ describe('ag-grid formulas edge cases', () => {
         };
         return gridsManager.createGrid(id, options);
     }
-
-    // ------------------------------------------------------------------
-    // Error code surface: every user-facing error type on the unhappy path.
-    // ------------------------------------------------------------------
 
     test('division by zero via intermediate arithmetic yields #DIV/0!', async () => {
         const api = createGrid('edge-div0-intermediate', {
@@ -122,7 +111,6 @@ describe('ag-grid formulas edge cases', () => {
                 { id: 'r2', value: 2 },
                 {
                     id: 'bad',
-                    // The formula root IS a range - no aggregating function accepts it.
                     value: '=REF(COLUMN("value"),ROW("r1"),COLUMN("value"),ROW("r2"))',
                 },
             ],
@@ -150,10 +138,6 @@ describe('ag-grid formulas edge cases', () => {
             └── LEAF id:r1 row-number:"1" value:"#PARSE!"
         `);
     });
-
-    // ------------------------------------------------------------------
-    // Range iteration under mutation.
-    // ------------------------------------------------------------------
 
     test('range formula re-evaluates when a middle row changes value', async () => {
         const api = createGrid('edge-range-mid-update', {
@@ -243,11 +227,6 @@ describe('ag-grid formulas edge cases', () => {
         `);
     });
 
-    // ------------------------------------------------------------------
-    // Column visibility / pinning - topology changes that rebuild colRefMap
-    // but must not change results of relative (colId) refs.
-    // ------------------------------------------------------------------
-
     test('hiding a referenced column does not break relative refs', async () => {
         const rowData = [{ id: 'r1', a: 2, b: 3, out: '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))' }];
         const api = createGrid('edge-hide-col', {
@@ -261,9 +240,6 @@ describe('ag-grid formulas edge cases', () => {
             └── LEAF id:r1 row-number:"1" a:2 b:3 out:5
         `);
 
-        // GridRows snapshots every column's data regardless of visibility; the
-        // assertion that matters here is that `out` still evaluates to 5 with
-        // `a` hidden - relative refs look up by colId, not by visible position.
         api.setColumnsVisible(['a'], false);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -294,8 +270,6 @@ describe('ag-grid formulas edge cases', () => {
             └── LEAF id:r1 row-number:"1" a:4 b:5 out:20
         `);
 
-        // Pinning rebuilds colRefMap; the formula must still resolve to the
-        // same value because it uses the relative (colId) form.
         api.applyColumnState({ state: [{ colId: 'a', pinned: 'left' }] });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -304,10 +278,6 @@ describe('ag-grid formulas edge cases', () => {
             └── LEAF id:r1 row-number:"1" a:4 b:5 out:20
         `);
     });
-
-    // ------------------------------------------------------------------
-    // Custom function error handling.
-    // ------------------------------------------------------------------
 
     test('custom function throwing a plain Error yields #ERROR!', async () => {
         const api = createGrid('edge-custom-error', {
@@ -353,10 +323,6 @@ describe('ag-grid formulas edge cases', () => {
         `);
     });
 
-    // ------------------------------------------------------------------
-    // Cycle detection corner cases.
-    // ------------------------------------------------------------------
-
     test('mutually referencing cells both report #CIRCREF!', async () => {
         const api = createGrid('edge-mutual-cycle', {
             rowData: [
@@ -386,10 +352,6 @@ describe('ag-grid formulas edge cases', () => {
             └── LEAF id:r1 row-number:"1" value:"#CIRCREF!"
         `);
     });
-
-    // ------------------------------------------------------------------
-    // Row move: remove + add with the same id in a single transaction.
-    // ------------------------------------------------------------------
 
     test('removing and re-inserting a row at a new position via a single transaction', async () => {
         const api = createGrid('edge-row-move', {
@@ -424,12 +386,6 @@ describe('ag-grid formulas edge cases', () => {
         `);
     });
 
-    // ------------------------------------------------------------------
-    // FormulaService.normaliseFormula - exercised via the cell editor.
-    // When editing starts, the stored REF longhand is converted to the
-    // A1 shorthand the user sees; on commit, it must normalise back.
-    // ------------------------------------------------------------------
-
     test('cell editor displays REF longhand formulas as A1 shorthand', async () => {
         const longhand = '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))';
         const api = createGrid('edge-editor-shorthand', {
@@ -449,7 +405,6 @@ describe('ag-grid formulas edge cases', () => {
         const [editor] = api.getCellEditorInstances();
         const editorValue = editor?.getValue();
 
-        // Editor shows shorthand: A1-style refs, no REF(...) wrapper.
         expect(typeof editorValue).toBe('string');
         expect(editorValue as string).not.toContain('REF(');
         expect(editorValue as string).not.toContain('COLUMN(');
@@ -479,7 +434,6 @@ describe('ag-grid formulas edge cases', () => {
         const [editor] = api.getCellEditorInstances() as unknown as [
             { agSetEditValue?: (v: unknown) => void; getValue: () => unknown },
         ];
-        // Feed the editor a shorthand (A1) formula as if the user typed it.
         editor?.agSetEditValue?.('=A1*B1');
 
         const editingStopped = waitForEvent('cellEditingStopped', api);
@@ -489,7 +443,6 @@ describe('ag-grid formulas edge cases', () => {
 
         const stored = api.getRowNode('r1')?.data?.out as string;
         expect(typeof stored).toBe('string');
-        // Stored form must have been canonicalised to the REF longhand.
         expect(stored).toContain('REF(');
         expect(stored).toContain('COLUMN(');
         expect(stored).toContain('ROW(');
@@ -511,8 +464,6 @@ describe('ag-grid formulas edge cases', () => {
         await editingStarted;
 
         const [editor] = api.getCellEditorInstances() as unknown as [{ agSetEditValue?: (v: unknown) => void }];
-        // Syntactically invalid: trailing operator. normaliseFormula returns
-        // null on parse failure; the raw input should be stored as-is.
         editor?.agSetEditValue?.('=1+');
 
         const editingStopped = waitForEvent('cellEditingStopped', api);
@@ -544,7 +495,6 @@ describe('ag-grid formulas edge cases', () => {
         editor?.agSetEditValue?.('=A1*B1*100');
 
         const editingStopped = waitForEvent('cellEditingStopped', api);
-        // stopEditing(true) cancels; the new formula must NOT be written back.
         api.stopEditing(true);
         await editingStopped;
         await asyncSetTimeout(rowNumberRefreshBufferMs);
@@ -580,16 +530,9 @@ describe('ag-grid formulas edge cases', () => {
         const second = await roundTrip();
         const third = await roundTrip();
 
-        // No-op commits must yield the exact same stored form every time.
         expect(first).toBe(second);
         expect(second).toBe(third);
     });
-
-    // ------------------------------------------------------------------
-    // Undo / redo of formula edits: the history stack must capture the
-    // stored REF form and be able to roll it back without leaving stale
-    // cached values behind.
-    // ------------------------------------------------------------------
 
     test('undoing a formula edit reverts to the previous formula and value', async () => {
         const original = '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))';
@@ -626,12 +569,6 @@ describe('ag-grid formulas edge cases', () => {
         await asyncSetTimeout(rowNumberRefreshBufferMs);
         expect(api.getCellValue({ rowNode, colKey: 'out', useFormatter: false })).toBe(50);
     });
-
-    // ------------------------------------------------------------------
-    // FormulaDataSource: external provider for formula strings. Grids with
-    // no dataSource fall back to reading formulas from row data (already
-    // covered). This test exercises the dataSource path.
-    // ------------------------------------------------------------------
 
     test('formulaDataSource provides formula strings out-of-band from row data', async () => {
         const formulas = new Map<string, string>([

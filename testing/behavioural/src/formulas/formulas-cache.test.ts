@@ -6,15 +6,7 @@ import { FormulaModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
-/**
- * These tests cover the formula cache: what must stay invalidated, what should
- * stay cached, and what topology changes must not leak stale state. Some cases
- * are marked `test.skip` - they document behaviour the granular-invalidation
- * rewrite (AG-16878) is expected to deliver and will currently fail because
- * `refreshFormulas` blows the whole cache on every cellValueChanged.
- */
 describe('ag-grid formulas cache behaviour', () => {
-    // Formula refs read row numbers; give the row-number service a tick to settle.
     const rowNumberRefreshBufferMs = 25;
     const gridRowsOpts = { useFormatter: false } as const;
 
@@ -30,7 +22,6 @@ describe('ag-grid formulas cache behaviour', () => {
         gridsManager.reset();
     });
 
-    /** A spied identity function so tests can assert how many times a formula ran. */
     function createSpy(name: string) {
         return vi
             .fn((params: FormulaFunctionParams) => {
@@ -175,8 +166,7 @@ describe('ag-grid formulas cache behaviour', () => {
     });
 
     test('custom function reading row.data directly still refreshes when data changes', async () => {
-        // Granular invalidation must not skip cells whose formula reads row.data
-        // bypass-style instead of through REF(). This guards that regression.
+        // Granular invalidation must not skip cells that read row.data bypass-style instead of via REF().
         const directReader = vi
             .fn((params: FormulaFunctionParams) => {
                 const data = params.row.data as { a?: number; b?: number } | undefined;
@@ -292,8 +282,6 @@ describe('ag-grid formulas cache behaviour', () => {
             └── LEAF id:target row-number:"2" value:30
         `);
 
-        // Replace the formula string with a plain value - the cache must drop
-        // the computed result (30) and expose the new raw value instead.
         applyTransactionChecked(api, { update: [{ id: 'target', value: 7 }] });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -303,7 +291,6 @@ describe('ag-grid formulas cache behaviour', () => {
             └── LEAF id:target row-number:"2" value:7
         `);
 
-        // Going back the other way: plain value becomes a formula again.
         applyTransactionChecked(api, {
             update: [{ id: 'target', value: '=REF(COLUMN("value"),ROW("src"))+1' }],
         });
@@ -383,8 +370,6 @@ describe('ag-grid formulas cache behaviour', () => {
             └── LEAF id:total row-number:"7" value:60
         `);
 
-        // All three sources updated atomically - every downstream formula must
-        // pick up the new inputs, not a mix of old and new.
         applyTransactionChecked(api, {
             update: [
                 { id: 's1', value: 4 },
@@ -426,7 +411,6 @@ describe('ag-grid formulas cache behaviour', () => {
             values.push(api.getCellValue({ rowNode: depNode, colKey: 'value', useFormatter: false }));
         }
 
-        // Each read must reflect the value applied immediately before it.
         expect(values).toEqual([11, 21, 31, 41, 51]);
     });
 
@@ -449,9 +433,6 @@ describe('ag-grid formulas cache behaviour', () => {
             └── LEAF id:y row-number:"2" value:111
         `);
 
-        // Re-assigning the same array identity must not produce a transient
-        // stale value. Any refresh path triggered by rowDataUpdated must leave
-        // the cache consistent before the next read.
         api.setGridOption('rowData', rowData);
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 

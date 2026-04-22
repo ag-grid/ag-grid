@@ -6,13 +6,6 @@ import { FormulaModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
-/**
- * Function / operator semantics: covers how individual built-in and custom
- * functions behave on boundary inputs (blanks, mismatched ranges, wildcards,
- * zero-args) and how arithmetic / string / logical operators coerce their
- * operands. Does NOT cover reference resolution, topology changes, cycle
- * detection or the editor round-trip - those live in formulas-edge-cases.
- */
 describe('ag-grid formulas function semantics', () => {
     const rowNumberRefreshBufferMs = 25;
     const gridRowsOpts = { useFormatter: false } as const;
@@ -37,10 +30,6 @@ describe('ag-grid formulas function semantics', () => {
         };
         return gridsManager.createGrid(id, options);
     }
-
-    // ------------------------------------------------------------------
-    // Aggregate functions: empty/blank/single-value boundaries.
-    // ------------------------------------------------------------------
 
     test('SUM over a range of all blanks surfaces a parse error', async () => {
         const api = createGrid('fn-sum-blanks', {
@@ -85,10 +74,7 @@ describe('ag-grid formulas function semantics', () => {
     });
 
     test('MIN / MAX skip null cells but still see empty strings as values', async () => {
-        // MIN/MAX intentionally ignore only null/undefined. Empty string sorts
-        // as 0 in JS, so the current impl treats it as a value. This test
-        // pins that behaviour so the cache rewrite cannot silently re-order
-        // the range iteration and produce different results.
+        // MIN/MAX skip only null/undefined - empty string sorts as 0 in JS and is treated as a value.
         const api = createGrid('fn-minmax-blanks', {
             rowData: [
                 { id: 'r1', value: 5 },
@@ -148,10 +134,6 @@ describe('ag-grid formulas function semantics', () => {
             └── LEAF id:r4 row-number:"4" a:4 b:null c:0
         `);
     });
-
-    // ------------------------------------------------------------------
-    // Criteria / wildcard edge cases for SUMIF & COUNTIF.
-    // ------------------------------------------------------------------
 
     test('COUNTIF with * and ? wildcards matches any / single character', async () => {
         const api = createGrid('fn-countif-wildcards', {
@@ -281,10 +263,6 @@ describe('ag-grid formulas function semantics', () => {
         `);
     });
 
-    // ------------------------------------------------------------------
-    // Operator coverage: unary, postfix percent, power precedence, concat.
-    // ------------------------------------------------------------------
-
     test('percent operator handles numeric and string-number operands', async () => {
         const api = createGrid('fn-percent', {
             rowData: [
@@ -379,10 +357,6 @@ describe('ag-grid formulas function semantics', () => {
         `);
     });
 
-    // ------------------------------------------------------------------
-    // IF semantics: truthy/falsy branches, non-boolean conditions.
-    // ------------------------------------------------------------------
-
     test('IF returns the branch selected by the condition and handles non-boolean conditions', async () => {
         const api = createGrid('fn-if-branches', {
             rowData: [
@@ -411,10 +385,6 @@ describe('ag-grid formulas function semantics', () => {
         `);
     });
 
-    // ------------------------------------------------------------------
-    // Trivial formulas, zero-arg calls, nested custom, date, BigInt.
-    // ------------------------------------------------------------------
-
     test('trivial constant formulas evaluate to their literal value', async () => {
         const api = createGrid('fn-trivial-consts', {
             rowData: [
@@ -423,8 +393,7 @@ describe('ag-grid formulas function semantics', () => {
                     intLit: '=42',
                     floatLit: '=3.14',
                     smallDecimal: '=0.001',
-                    // Scientific notation is not recognised by the tokenizer;
-                    // `1e3` parses as an integer followed by an unknown ident.
+                    // Scientific notation is not recognised; `1e3` parses as integer + unknown ident.
                     sciNotation: '=1e3',
                     negative: '=-5',
                     negZero: '=-0',
@@ -535,16 +504,11 @@ describe('ag-grid formulas function semantics', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        // Adding 0.5 produces 12345.5 which cannot be coerced to bigint.
         await new GridRows(api, 'bigint unsafe coercion', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r row-number:"1" base:"12345n" derived:"#VALUE!"
         `);
     });
-
-    // ------------------------------------------------------------------
-    // Parser stress: deep parens, long expressions, unicode strings.
-    // ------------------------------------------------------------------
 
     test('deeply nested parentheses parse and evaluate correctly', async () => {
         const api = createGrid('fn-deep-parens', {
@@ -567,7 +531,6 @@ describe('ag-grid formulas function semantics', () => {
     });
 
     test('long additive expression parses and evaluates in reasonable time', async () => {
-        // Build =1+2+3+...+50 programmatically.
         const terms = Array.from({ length: 50 }, (_, i) => String(i + 1));
         const formula = '=' + terms.join('+');
         const expected = terms.reduce((sum, n) => sum + Number(n), 0); // 1275

@@ -7,13 +7,6 @@ import { FormulaModule, MasterDetailModule, PivotModule, RowGroupingModule, Tree
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
-/**
- * `FormulaService.checkForIncompatibleServices` refuses to activate formulas
- * when any of these grid features is in use, logging warning 295 with the
- * specific blocked-service name. Each branch gets its own test so a
- * regression in one wire-up is visible. We assert on the warning only, since
- * downstream behaviour (cell value, row shape) differs per feature.
- */
 describe('ag-grid formulas module interop', () => {
     const rowNumberRefreshBufferMs = 25;
 
@@ -29,24 +22,26 @@ describe('ag-grid formulas module interop', () => {
     });
 
     let warnSpy: MockInstance | undefined;
+    let errorSpy: MockInstance | undefined;
 
     beforeEach(() => {
         gridsManager.reset();
-        // _warn de-dupes via _doOnce across the whole process. Clear the dedupe
-        // set before each test so every test can observe its own warning.
+        // _warn de-dupes via _doOnce across the whole process; clear per test so warnings fire again.
         (_doOnce as unknown as { _set: Set<string> })._set.clear();
         warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        // enableCellExpressions evaluates `=REF(...)` as JS and logs to console.error; suppress it.
+        errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     });
 
     afterEach(() => {
         gridsManager.reset();
         warnSpy?.mockRestore();
         warnSpy = undefined;
+        errorSpy?.mockRestore();
+        errorSpy = undefined;
     });
 
     function expectBlockedWith(service: string) {
-        // The warning URL encodes the blocked-service name in a query param;
-        // look across every string arg of every console.warn call.
         const encoded = encodeURIComponent(service);
         const hit = warnSpy!.mock.calls.some((args) =>
             args.some((arg) => typeof arg === 'string' && (arg.includes(service) || arg.includes(encoded)))

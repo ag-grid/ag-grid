@@ -21,12 +21,6 @@ import {
     waitForEvent,
 } from '../test-utils';
 
-/**
- * Interactive formula workflows: clipboard copy/paste with ref shifting, fill
- * handle expansion, and batch editing. Each path invokes formula shifting or
- * cache invalidation from a different entry point than direct editing, so the
- * cache rewrite needs to stay correct across all of them.
- */
 describe('ag-grid formulas interactive workflows', () => {
     const gridRowsOpts = { useFormatter: false } as const;
 
@@ -66,10 +60,6 @@ describe('ag-grid formulas interactive workflows', () => {
         return gridsManager.createGridAndWait(id, options);
     }
 
-    // ------------------------------------------------------------------
-    // Clipboard copy/paste of formula cells.
-    // ------------------------------------------------------------------
-
     test('pasting a raw formula string evaluates in the destination row', async () => {
         const api = await createGrid('fx-clipboard-paste', {
             cellSelection: true,
@@ -86,10 +76,6 @@ describe('ag-grid formulas interactive workflows', () => {
             └── LEAF id:r2 row-number:"2" a:5 b:7 out:null
         `);
 
-        // Seed the clipboard with a formula string referencing r2 and paste
-        // into r2's `out` cell - pasteFromClipboard should accept it, the
-        // formula service should parse and cache it, and the value should
-        // come out as the computed sum.
         clipboardUtils.setText('=REF(COLUMN("a"),ROW("r2"))+REF(COLUMN("b"),ROW("r2"))');
         api.setFocusedCell(1, 'out');
         const pasteEnd = waitForEvent('pasteEnd', api);
@@ -100,14 +86,9 @@ describe('ag-grid formulas interactive workflows', () => {
         const r2 = api.getRowNode('r2')!;
         expect(api.getCellValue({ rowNode: r2, colKey: 'out', useFormatter: false })).toBe(12);
 
-        // r1 is untouched.
         const r1 = api.getRowNode('r1')!;
         expect(api.getCellValue({ rowNode: r1, colKey: 'out', useFormatter: false })).toBeNull();
     });
-
-    // ------------------------------------------------------------------
-    // Fill handle dragged downward from a formula cell.
-    // ------------------------------------------------------------------
 
     test('fill handle drag down replicates a formula with row-shifted refs', async () => {
         const api = await createGrid('fx-fill-handle', {
@@ -141,7 +122,6 @@ describe('ag-grid formulas interactive workflows', () => {
         await fillEnd;
         await asyncSetTimeout(5);
 
-        // Each filled row must evaluate its own row's a+b, not r1's values.
         await new GridRows(api, 'after fill down', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:r1 row-number:"1" a:1 b:10 total:11
@@ -150,10 +130,6 @@ describe('ag-grid formulas interactive workflows', () => {
             └── LEAF id:r4 row-number:"4" a:4 b:40 total:44
         `);
     });
-
-    // ------------------------------------------------------------------
-    // Batch editing.
-    // ------------------------------------------------------------------
 
     test('batch-edit commit persists formula edits and their computed values', async () => {
         const api = await createGrid('fx-batch-commit', {
@@ -174,7 +150,6 @@ describe('ag-grid formulas interactive workflows', () => {
         api.startBatchEdit();
         expect(api.isBatchEditing()).toBe(true);
 
-        // Stage pending edits against two different formula cells.
         api.getRowNode('r1')!.setDataValue('out', '=REF(COLUMN("a"),ROW("r1"))*REF(COLUMN("b"),ROW("r1"))');
         api.getRowNode('r2')!.setDataValue('a', 10);
         await asyncSetTimeout(1);
@@ -190,7 +165,7 @@ describe('ag-grid formulas interactive workflows', () => {
         `);
     });
 
-    test('batch-edit cancel rolls back pending formula edits and their computed values', async () => {
+    test('batch-edit cancel rolls back pending formula edits', async () => {
         const api = await createGrid('fx-batch-cancel', {
             cellSelection: true,
             rowData: [{ id: 'r1', a: 2, b: 3, out: '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))' }],
@@ -210,11 +185,100 @@ describe('ag-grid formulas interactive workflows', () => {
         api.cancelBatchEdit();
         await asyncSetTimeout(5);
 
-        // Cancel reverts both the formula string and the input cell - the
-        // cache must recompute to the original value, not leave stale state.
         await new GridRows(api, 'after cancel', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 row-number:"1" a:2 b:3 out:5
+        `);
+    });
+
+    test('tabbing forward from an editing formula cell commits it and moves focus right', async () => {
+        const api = await createGrid('fx-tab-forward', {
+            cellSelection: true,
+            rowData: [{ id: 'r1', a: 5, b: 0, c: 0 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+
+        const [editor] = api.getCellEditorInstances() as unknown as [
+            { agSetEditValue?: (v: unknown) => void; getValidationElement?: () => HTMLElement },
+        ];
+        editor?.agSetEditValue?.('=REF(COLUMN("a"),ROW("r1"))*2');
+
+        const contentEl = editor?.getValidationElement?.();
+        contentEl?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+        await asyncSetTimeout(5);
+
+        const rowNode = api.getRowNode('r1')!;
+        expect(api.getCellValue({ rowNode, colKey: 'b', useFormatter: false })).toBe(10);
+        expect(api.getFocusedCell()?.column.getColId()).toBe('c');
+    });
+
+    test('tabbing backward via Shift+Tab from an editing formula cell commits and moves left', async () => {
+        const api = await createGrid('fx-tab-backward', {
+            cellSelection: true,
+            rowData: [{ id: 'r1', a: 0, b: 0, c: 5 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+
+        const [editor] = api.getCellEditorInstances() as unknown as [
+            { agSetEditValue?: (v: unknown) => void; getValidationElement?: () => HTMLElement },
+        ];
+        editor?.agSetEditValue?.('=REF(COLUMN("c"),ROW("r1"))+1');
+
+        const contentEl = editor?.getValidationElement?.();
+        contentEl?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true }));
+        await asyncSetTimeout(5);
+
+        const rowNode = api.getRowNode('r1')!;
+        expect(api.getCellValue({ rowNode, colKey: 'b', useFormatter: false })).toBe(6);
+        expect(api.getFocusedCell()?.column.getColId()).toBe('a');
+    });
+
+    test('closing one formula editor and opening another does not leak active-editor state', async () => {
+        const api = await createGrid('fx-editor-handoff', {
+            cellSelection: true,
+            rowData: [
+                { id: 'r1', a: 2, b: 0 },
+                { id: 'r2', a: 3, b: 0 },
+            ],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        let started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+
+        let [editor] = api.getCellEditorInstances() as unknown as [{ agSetEditValue?: (v: unknown) => void }];
+        editor?.agSetEditValue?.('=REF(COLUMN("a"),ROW("r1"))*10');
+
+        let stopped = waitForEvent('cellEditingStopped', api);
+        api.stopEditing(false);
+        await stopped;
+        await asyncSetTimeout(5);
+
+        started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 1, colKey: 'b' });
+        await started;
+
+        [editor] = api.getCellEditorInstances() as unknown as [{ agSetEditValue?: (v: unknown) => void }];
+        editor?.agSetEditValue?.('=REF(COLUMN("a"),ROW("r2"))*100');
+
+        stopped = waitForEvent('cellEditingStopped', api);
+        api.stopEditing(false);
+        await stopped;
+        await asyncSetTimeout(5);
+
+        await new GridRows(api, 'both cells edited', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" a:2 b:20
+            └── LEAF id:r2 row-number:"2" a:3 b:300
         `);
     });
 });
