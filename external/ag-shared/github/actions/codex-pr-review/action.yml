@@ -38,12 +38,16 @@ inputs:
         description: 'PR number to review'
         required: true
     prompt-file:
-        description: 'Path to the prompt file'
+        description: 'Path to the prompt file. Defaults to the pr-review skill delivered via the @ag-grid/dev-prompts GitHub Packages npm package (installed by this action at runtime).'
         required: false
-        default: 'external/ag-shared/prompts/skills/pr-review/SKILL.md'
+        default: ''
     github-token:
         description: 'GitHub token for PR access and commenting'
         required: true
+    dev-prompts-version:
+        description: 'Version of the @ag-grid/dev-prompts npm package to install. Defaults to the @latest dist-tag on GitHub Packages (npm.pkg.github.com).'
+        required: false
+        default: 'latest'
     post-comment:
         description: 'Whether to post the review as a PR comment'
         required: false
@@ -221,66 +225,65 @@ runs:
               echo "PR refs fetched successfully"
 
         - name: Setup Node.js
+          # `registry-url` + `scope` configure a process-scoped .npmrc that
+          # references $NODE_AUTH_TOKEN literally (not interpolated), so the
+          # token is never persisted to disk. See AG-17085 review.
           if: steps.check-auth.outputs.skipped != 'true'
           uses: actions/setup-node@v4
           with:
               node-version-file: package.json
+              registry-url: https://npm.pkg.github.com
+              scope: '@ag-grid'
 
         - name: Install Codex CLI
           if: steps.check-auth.outputs.skipped != 'true'
           shell: bash
           run: npm install -g @openai/codex@latest
 
-        - name: Install and Patch Rulesync
+        - name: Install @ag-grid/dev-prompts
+          # AG-17085 Phase 3: the pr-review skill ships via the @ag-grid/dev-prompts
+          # npm package published to GitHub Packages. The calling workflow must
+          # declare `permissions: packages: read` and the package must have granted
+          # Actions access to this repo in its package settings.
           if: steps.check-auth.outputs.skipped != 'true'
+          id: install-prompts
           shell: bash
+          env:
+              NODE_AUTH_TOKEN: ${{ inputs.github-token }}
+              DEV_PROMPTS_VERSION: ${{ inputs.dev-prompts-version }}
           run: |
-              # Install rulesync to isolated temp dir to apply patches (avoids workspace dependency conflicts)
-              PATCH_DIR="$(pwd)/external/ag-shared/prompts/patches"
-              if [ -d "$PATCH_DIR" ] && ls "$PATCH_DIR"/rulesync*.patch 1>/dev/null 2>&1; then
-                # Get rulesync version from patch filename (e.g., rulesync+5.2.0.patch -> 5.2.0)
-                PATCH_FILE=$(ls "$PATCH_DIR"/rulesync*.patch | head -1)
-                RULESYNC_VERSION=$(basename "$PATCH_FILE" | sed 's/rulesync+\(.*\)\.patch/\1/')
-                echo "Installing rulesync@$RULESYNC_VERSION with patches..."
-
-                # Create isolated temp directory for rulesync installation
-                RULESYNC_DIR="$(mktemp -d)"
-                cd "$RULESYNC_DIR"
-
-                # Initialize minimal package.json and install rulesync + patch-package
-                echo '{"name":"rulesync-patched","private":true}' > package.json
-                npm install "rulesync@$RULESYNC_VERSION" patch-package
-
-                # Copy patches to temp dir (patch-package requires relative path)
-                cp -r "$PATCH_DIR" ./patches
-                npx patch-package --patch-dir ./patches
-                echo "Patches applied successfully"
-
-                # Export path for setup-prompts.sh to find patched rulesync
-                echo "RULESYNC_BIN=$RULESYNC_DIR/node_modules/.bin/rulesync" >> $GITHUB_ENV
-
-                cd -
-              else
-                echo "No rulesync patches found, using npx default"
+              install_dir="$RUNNER_TEMP/ag-dev-prompts"
+              mkdir -p "$install_dir"
+              cd "$install_dir"
+              echo '{"name":"ag-dev-prompts-install","private":true}' > package.json
+              npm install --no-save --silent "@ag-grid/dev-prompts@${DEV_PROMPTS_VERSION}"
+              package_root="$install_dir/node_modules/@ag-grid/dev-prompts"
+              if [ ! -d "$package_root" ]; then
+                echo "::error::@ag-grid/dev-prompts not found after install"
+                exit 1
               fi
-
-        - name: Setup Prompts
-          if: steps.check-auth.outputs.skipped != 'true'
-          shell: bash
-          run: |
-              # Generate Codex CLI config if setup script exists
-              if [ -f "./external/ag-shared/scripts/setup-prompts/setup-prompts.sh" ]; then
-                ./external/ag-shared/scripts/setup-prompts/setup-prompts.sh --targets=codexcli --verbose || true
-              fi
+              echo "package_root=${package_root}" >> $GITHUB_OUTPUT
+              echo "Installed @ag-grid/dev-prompts at ${package_root}"
 
         - name: Determine Prompt File
           if: steps.check-auth.outputs.skipped != 'true'
           id: prompt
           shell: bash
+          env:
+              INPUT_PROMPT_FILE: ${{ inputs.prompt-file }}
+              INLINE_COMMENTS: ${{ inputs.inline-comments }}
+              PACKAGE_ROOT: ${{ steps.install-prompts.outputs.package_root }}
           run: |
-              # Use same prompt file for both modes; JSON mode is controlled via --json in ARGUMENTS
-              prompt_file="${{ inputs.prompt-file }}"
-              if [[ "${{ inputs.inline-comments }}" == "true" ]]; then
+              if [ -n "$INPUT_PROMPT_FILE" ]; then
+                prompt_file="$INPUT_PROMPT_FILE"
+              else
+                prompt_file="${PACKAGE_ROOT}/plugins/ag-prodeng/skills/pr-review/SKILL.md"
+              fi
+              if [ ! -f "$prompt_file" ]; then
+                echo "::error::Prompt file not found at: $prompt_file"
+                exit 1
+              fi
+              if [[ "$INLINE_COMMENTS" == "true" ]]; then
                 output_ext="json"
               else
                 output_ext="md"

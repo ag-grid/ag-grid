@@ -1,5 +1,5 @@
 import { _getSortDefFromInput } from '../../entities/agColumn';
-import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
+import type { DomLayoutType, GridOptions, PaginationPanel } from '../../entities/gridOptions';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
@@ -127,18 +127,23 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     getMainMenuItems: 'ColumnMenu',
     getRowClass: 'RowStyle',
     getRowStyle: 'RowStyle',
-    groupTotalRow: 'SharedRowGrouping',
-    grandTotalRow: 'CsrmHierarchy',
+    groupTotalRow: (_options, gridOptions) =>
+        gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'RowGrouping',
+    grandTotalRow: ['CsrmHierarchy', 'ServerSideRowModel'],
     initialState: 'GridState',
     isExternalFilterPresent: 'ExternalFilter',
     isRowPinnable: 'PinnedRow',
     isRowPinned: 'PinnedRow',
     localeText: 'Locale',
-    masterDetail: 'SharedMasterDetail',
+    masterDetail: (_options, gridOptions) =>
+        gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'MasterDetail',
+    notesDataSource: 'Notes',
+    noteShowDelay: 'Notes',
+    noteHideDelay: 'Notes',
     pagination: 'Pagination',
     pinnedBottomRowData: 'PinnedRow',
     pinnedTopRowData: 'PinnedRow',
-    pivotMode: 'SharedPivot',
+    pivotMode: (_options, gridOptions) => (gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'Pivot'),
     pivotPanelShow: 'RowGroupingPanel',
     quickFilterText: 'QuickFilter',
     rowClass: 'RowStyle',
@@ -148,12 +153,14 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     refreshAfterGroupEdit: ['RowGrouping', 'TreeData'],
     rowGroupPanelShow: 'RowGroupingPanel',
     rowNumbers: 'RowNumbers',
-    rowSelection: 'SharedRowSelection',
+    rowSelection: (_options, gridOptions) =>
+        gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'RowSelection',
     rowStyle: 'RowStyle',
     serverSideDatasource: 'ServerSideRowModel',
     sideBar: 'SideBar',
     statusBar: 'StatusBar',
-    treeData: 'SharedTreeData',
+    treeData: (_options, gridOptions) =>
+        gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'TreeData',
     toolbar: 'Toolbar',
     undoRedoCellEditing: 'UndoRedoEdit',
     valueCache: 'ValueCache',
@@ -264,6 +271,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide', 'serverSide'],
             dependencies: {
                 groupTotalRow: { required: [undefined, 'bottom'] },
+                groupDisplayType: { required: [undefined, 'multipleColumns'] },
                 treeData: {
                     required: [undefined, false],
                     reason: "Tree Data has values at the group level so it doesn't make sense to hide them.",
@@ -361,6 +369,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        paginationPanels: {
+            validate: ({ paginationPanels }) => {
+                const validNames = new Set<PaginationPanel>(['pageSize', 'rowSummary', 'pageSummary']);
+                if (
+                    paginationPanels != null &&
+                    (!Array.isArray(paginationPanels) || paginationPanels.some((p) => !validNames.has(p)))
+                ) {
+                    return "'paginationPanels' expects an array of panel names: ['pageSize', 'rowSummary', 'pageSummary']";
+                }
+                return null;
+            },
+        },
         pivotMode: {
             dependencies: {
                 treeData: {
@@ -416,6 +436,30 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const rowStyle = options.rowStyle;
                 if (rowStyle && typeof rowStyle === 'function') {
                     return 'rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead';
+                }
+                return null;
+            },
+        },
+        notesDataSource: {
+            validate: ({ getRowId }) => {
+                if (!getRowId) {
+                    return `'getRowId' callback must be provided for Notes to work correctly.`;
+                }
+                return null;
+            },
+        },
+        noteHideDelay: {
+            validate: (options) => {
+                if (options.noteHideDelay != null && options.noteHideDelay < 0) {
+                    return 'noteHideDelay should not be lower than 0';
+                }
+                return null;
+            },
+        },
+        noteShowDelay: {
+            validate: (options) => {
+                if (options.noteShowDelay != null && options.noteShowDelay < 0) {
+                    return 'noteShowDelay should not be lower than 0';
                 }
                 return null;
             },

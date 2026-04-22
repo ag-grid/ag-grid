@@ -28,6 +28,7 @@ import type {
     FocusGridInnerElement,
     FormulaDataSource,
     FormulaFuncs,
+    FullWidthNotesDataSource,
     GetBusinessKeyForNode,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -72,9 +73,11 @@ import type {
     MenuItemDef,
     NavigateToNextCell,
     NavigateToNextHeader,
+    NotesDataSource,
     OverlaySelectorFunc,
     OverlayType,
     PaginationNumberFormatter,
+    PaginationPanel,
     PivotColumnGroupTotals,
     PivotRowTotals,
     PostProcessPopup,
@@ -928,7 +931,6 @@ export interface Props<TData> {
          * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
          * Set to `false` to hide the page size selector.
          * @default true
-         * @initial
          * @agModule `PaginationModule`
          */
     paginationPageSizeSelector?: number[] | boolean,
@@ -950,6 +952,14 @@ export interface Props<TData> {
          * @agModule `PaginationModule`
          */
     suppressPaginationPanel?: boolean,
+    /** Controls which built-in components appear in the pagination panel and in what order.
+         * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+         * Components render in the order they appear in the array. Omitted components are hidden.
+         * An empty array hides the pagination panel entirely.
+         * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+         * @agModule `PaginationModule`
+         */
+    paginationPanels?: PaginationPanel[],
     /** Set to `true` to enable pivot mode.
          * @default false
          * @agModule `PivotModule`
@@ -1008,6 +1018,21 @@ export interface Props<TData> {
          * @agModule `FormulaModule`
          */
     formulaDataSource?: FormulaDataSource,
+    /** Provide a data source to control where notes are stored and retrieved.
+         * Can be updated to enable, disable, or replace Notes at runtime.
+         * @agModule `NotesModule`
+         */
+    notesDataSource?: NotesDataSource | FullWidthNotesDataSource,
+    /** The delay in milliseconds before a note is shown when hovering a noted cell.
+         * @default 180
+         * @agModule `NotesModule`
+         */
+    noteShowDelay?: number,
+    /** The delay in milliseconds before a note is hidden after the pointer leaves a noted cell or note popup.
+         * @default 220
+         * @agModule `NotesModule`
+         */
+    noteHideDelay?: number,
     /** A map of 'function name' to 'function' for custom functions that are used for formulas.
          * @initial
          * @agModule `FormulaModule`
@@ -2179,6 +2204,7 @@ export function getProps() {
         paginationAutoPageSize: undefined,
         paginateChildRows: undefined,
         suppressPaginationPanel: undefined,
+        paginationPanels: undefined,
         pivotMode: undefined,
         pivotPanelShow: undefined,
         pivotMaxGeneratedColumns: undefined,
@@ -2190,6 +2216,9 @@ export function getProps() {
         functionsReadOnly: undefined,
         aggFuncs: undefined,
         formulaDataSource: undefined,
+        notesDataSource: undefined,
+        noteShowDelay: undefined,
+        noteHideDelay: undefined,
         formulaFuncs: undefined,
         suppressAggFuncInHeader: undefined,
         alwaysAggregateAtRootLevel: undefined,

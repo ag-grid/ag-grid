@@ -4,7 +4,14 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, getRowsSnapshot, setRowDataChecked } from '../../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    getRowsSnapshot,
+    setRowDataChecked,
+} from '../../test-utils';
 import { simpleParentIdRowsSnapshot } from './simpleParentIdRowsSnapshot';
 
 describe('ag-grid tree data parent id', () => {
@@ -73,6 +80,12 @@ describe('ag-grid tree data parent id', () => {
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(true);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── x "X" width:200
+        `);
     });
 
     test('ag-grid tree data parent id', async () => {
@@ -115,6 +128,12 @@ describe('ag-grid tree data parent id', () => {
 
         const rowsSnapshot = getRowsSnapshot(gridRows.rowNodes);
         expect(rowsSnapshot).toMatchObject(simpleParentIdRowsSnapshot());
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── x "X" width:200
+        `);
     });
 
     test('ag-grid tree data with inverted order', async () => {

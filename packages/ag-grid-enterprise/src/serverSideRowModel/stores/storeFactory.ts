@@ -100,7 +100,7 @@ export class StoreFactory extends BeanStub implements NamedBean {
             parentRowNode: parentNode.level >= 0 ? parentNode : undefined,
             rowGroupColumns: this.rowGroupColsSvc?.columns ?? [],
             pivotColumns: this.pivotColsSvc?.columns ?? [],
-            pivotMode: this.colModel.isPivotMode(),
+            pivotMode: this.colModel.pivotMode,
         };
 
         const res = callback(params);

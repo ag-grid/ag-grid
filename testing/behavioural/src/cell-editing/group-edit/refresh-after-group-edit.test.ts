@@ -4,7 +4,7 @@ import { ClientSideRowModelModule, TextEditorModule, UndoRedoEditModule } from '
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
 
 describe('cell editing with refreshAfterGroupEdit', () => {
     const gridsManager = new TestGridsManager({
@@ -56,6 +56,13 @@ describe('cell editing with refreshAfterGroupEdit', () => {
 
         expect(api.getRowNode('2')?.parent?.key).toBe('B');
         expect(api.getRowNode('1')?.parent?.key).toBe('A');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── group "Group" width:200 rowGroup editable
+            └── value "Value" width:200
+        `);
     });
 
     test('batch editing grouped column refreshes model once', async () => {
@@ -155,6 +162,13 @@ describe('cell editing with refreshAfterGroupEdit', () => {
 
         expect(api.getRowNode('2')?.parent?.key).toBe('B');
         expect(api.getRowNode('3')?.parent?.key).toBe('A');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── group "Group" width:200 rowGroup editable
+            └── value "Value" width:200
+        `);
     });
 
     test('aggregation columns refresh when rows move', async () => {

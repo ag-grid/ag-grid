@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_NL = {
     sortAbsoluteAscending: 'Sorteren absoluut oplopend',
     sortAbsoluteDescending: 'Sorteren absoluut aflopend',
     sortUnSort: 'Sortering wissen',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Som',
@@ -758,6 +759,7 @@ export const AG_GRID_LOCALE_NL = {
     ariaLabelAddFilterField: 'Filterveld toevoegen',
     ariaLabelFilterCardDelete: 'Filter verwijderen',
     ariaLabelFilterCardHasEdits: 'Heeft wijzigingen',
+    ariaHasNote: 'Deze cel heeft een notitie.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -802,4 +804,12 @@ export const AG_GRID_LOCALE_NL = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM JJJJ',
     timeFormatHHMMSS: 'UU:MM:SS',
     timeFormatHHMMSSAmPm: 'UU:MM:SS AM/PM',
+
+    // Notes
+    note: 'Celnotitie',
+    addNote: 'Notitie toevoegen',
+    viewNote: 'Notitie bekijken',
+    editNote: 'Notitie bewerken',
+    deleteNote: 'Notitie verwijderen',
+    notePlaceholder: 'Een notitie toevoegen...',
 };

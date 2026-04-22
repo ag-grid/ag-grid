@@ -19,8 +19,7 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
         if (isRootNode) {
             const grandTotal = includeFooterNodes && _getGrandTotalRow(this.gos);
             if (_positionMatchesGrandTotalRow(position, grandTotal)) {
-                _createRowNodeFooter(node, this.beans);
-                callback(node.sibling, index++);
+                callback(_createRowNodeFooter(node, this.beans), index++);
             }
             return index;
         }
@@ -28,8 +27,7 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
         const isGroupIncludeFooter = _getGroupTotalRowCallback(this.gos);
         const groupTotal = includeFooterNodes && isGroupIncludeFooter({ node });
         if (groupTotal === position) {
-            _createRowNodeFooter(node, this.beans);
-            callback(node.sibling, index++);
+            callback(_createRowNodeFooter(node, this.beans), index++);
         }
         return index;
     }

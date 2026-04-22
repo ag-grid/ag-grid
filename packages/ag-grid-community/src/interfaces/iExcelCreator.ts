@@ -1,8 +1,9 @@
 import type { Column } from '../interfaces/iColumn';
-import type { ExportFileNameGetter, ExportParams } from './exportParams';
+import type { ExportFileNameGetter, ExportParams, ProcessCellForExportParams } from './exportParams';
 import type { AgGridCommon } from './iCommon';
 import type { IRowNode } from './iRowNode';
 import type { XmlElement } from './iXmlFactory';
+import type { Note } from './notes';
 
 // Excel Styles
 export interface ExcelStyle {
@@ -306,6 +307,13 @@ export interface ExcelRow {
     cells: ExcelCell[];
 }
 
+export interface ExcelNote {
+    /** The body text to export in the Excel note/comment. */
+    text: string;
+    /** Optional author name shown in Excel. */
+    author?: string;
+}
+
 export interface ExcelCell {
     /** The data that will be added to the cell. */
     data?: ExcelData;
@@ -324,6 +332,9 @@ export interface ExcelCell {
      * @default 0
      */
     mergeAcross?: number;
+
+    /** Optional note/comment to export for this cell. */
+    note?: ExcelNote;
 }
 
 export interface ExcelImagePosition {
@@ -573,6 +584,31 @@ export interface ExcelWorksheetConfigParams {
         column: Column,
         value: string
     ) => { image: ExcelImage; value?: string } | undefined;
+    /**
+     * Set to `true` to suppress exporting cell notes from the grid `notesDataSource`.
+     * Callback-based note injection via `processNoteCallback` still works when this is set.
+     * @default false
+     */
+    suppressGridNotesExport?: boolean;
+    /**
+     * Allows customising, suppressing, or injecting Excel notes/comments for exported cells.
+     *
+     * Return `undefined` to keep the default behaviour, `null` to suppress the note for the current cell,
+     * or an `ExcelNote` to export a custom note.
+     */
+    processNoteCallback?: (params: ProcessNoteForExportParams) => ExcelNote | null | undefined;
+}
+
+export interface ProcessNoteForExportParams<TData = any, TContext = any>
+    extends ProcessCellForExportParams<TData, TContext> {
+    /**
+     * The grid note resolved for the current cell, when the Notes feature is available.
+     */
+    gridNote?: Note;
+    /**
+     * The default Excel note/comment derived from `gridNote` when automatic note export is enabled.
+     */
+    defaultNote?: ExcelNote;
 }
 
 export type ExcelCustomMetadataValue = string | number | boolean;
@@ -589,6 +625,13 @@ interface ExcelFileParams {
      * @default "AG Grid"
      * */
     author?: string;
+    /**
+     * Set to `true` to suppress prepending the author name as bold text in the
+     * exported Excel note body. The note author is still stored in the
+     * exported Excel note metadata regardless of this setting.
+     * @default false
+     */
+    suppressPrependAuthorToNotes?: boolean;
     /**
      * The default value for the font size of the Excel document.
      * @default 11

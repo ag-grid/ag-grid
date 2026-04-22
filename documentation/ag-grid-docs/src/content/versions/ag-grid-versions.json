@@ -1,5 +1,9 @@
 [
     {
+        "version": "35.2.1",
+        "date": "7th April 2026"
+    },
+    {
         "version": "35.2.0",
         "date": "25th March 2026",
         "landingPageHighlight": "Aggregation Editing, Row Grouping Compact Group Column, Columns Tool Panel Deferred Updates, Rich Select Editor Improvements, Accessibility Improvements",

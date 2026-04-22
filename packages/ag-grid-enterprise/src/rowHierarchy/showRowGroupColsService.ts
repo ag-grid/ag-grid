@@ -31,7 +31,7 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
         const cols = colModel.getCols();
         for (let colIdx = 0, colsLen = cols.length; colIdx < colsLen; ++colIdx) {
             const col = cols[colIdx];
-            const colDef = col.getColDef();
+            const colDef = col.colDef;
             const showRowGroup = colDef.showRowGroup;
 
             if (typeof showRowGroup === 'string') {
@@ -68,7 +68,7 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
     }
 
     public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
-        const sourceColumnId = groupCol.getColDef().showRowGroup;
+        const sourceColumnId = groupCol.colDef.showRowGroup;
         if (!sourceColumnId) {
             return null;
         }
@@ -83,7 +83,7 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
     }
 
     public isRowGroupDisplayed(column: AgColumn, colId: string | null): boolean {
-        const showRowGroup = column.getColDef()?.showRowGroup;
+        const showRowGroup = column.colDef.showRowGroup;
         return showRowGroup === true || (showRowGroup != null && showRowGroup === colId);
     }
 }

@@ -129,7 +129,7 @@ export class AgColumn<TValue = any>
         // This is used in ColumnFactory
         public userProvidedColDef: ColDef<any, TValue> | null,
         public readonly colId: string,
-        private readonly primary: boolean
+        public readonly primary: boolean
     ) {
         super();
         this.colIdSanitised = _escapeString(colId)!;
@@ -605,8 +605,7 @@ export class AgColumn<TValue = any>
     }
 
     public isSpanHeaderHeight(): boolean {
-        const colDef = this.getColDef();
-        return !colDef.suppressSpanHeaderHeight;
+        return !this.colDef.suppressSpanHeaderHeight;
     }
 
     /**
@@ -621,7 +620,7 @@ export class AgColumn<TValue = any>
     }
 
     public getColumnGroupPaddingInfo(): { numberOfParents: number; isSpanningTotal: boolean } {
-        let parent = this.getParent();
+        let parent = this.parent;
 
         if (!parent?.isPadding()) {
             return { numberOfParents: 0, isSpanningTotal: false };
@@ -635,7 +634,7 @@ export class AgColumn<TValue = any>
                 isSpanningTotal = false;
                 break;
             }
-            parent = parent.getParent();
+            parent = parent.parent;
         }
 
         return { numberOfParents, isSpanningTotal };

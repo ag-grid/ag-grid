@@ -337,6 +337,7 @@ export const AG_GRID_LOCALE_PT = {
     sortAbsoluteAscending: 'Ordenar Absolutamente Ascendente',
     sortAbsoluteDescending: 'Ordenar Absolutamente Descendente',
     sortUnSort: 'Limpar Ordenação',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Soma',
@@ -760,6 +761,7 @@ export const AG_GRID_LOCALE_PT = {
     ariaLabelAddFilterField: 'Adicionar Campo de Filtro',
     ariaLabelFilterCardDelete: 'Excluir Filtro',
     ariaLabelFilterCardHasEdits: 'Possui Edições',
+    ariaHasNote: 'Esta célula tem uma nota.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -804,4 +806,12 @@ export const AG_GRID_LOCALE_PT = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM AAAA',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Notes
+    note: 'Nota da célula',
+    addNote: 'Adicionar nota',
+    viewNote: 'Ver nota',
+    editNote: 'Editar nota',
+    deleteNote: 'Remover nota',
+    notePlaceholder: 'Adicionar uma nota...',
 };

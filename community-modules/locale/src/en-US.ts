@@ -325,6 +325,7 @@ export const AG_GRID_LOCALE_EN = {
     sortAbsoluteAscending: 'Sort Absolute Ascending',
     sortAbsoluteDescending: 'Sort Absolute Descending',
     sortUnSort: 'Clear Sort',
+    shiftF2: 'Shift+F2',
 
     // Toolbar
     toolbarFind: 'Find',
@@ -770,6 +771,7 @@ export const AG_GRID_LOCALE_EN = {
     ariaLabelAddFilterField: 'Add Filter Field',
     ariaLabelFilterCardDelete: 'Delete Filter',
     ariaLabelFilterCardHasEdits: 'Has Edits',
+    ariaHasNote: 'This cell has a note.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -814,4 +816,12 @@ export const AG_GRID_LOCALE_EN = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Notes
+    note: 'Note',
+    addNote: 'Add Note',
+    viewNote: 'View Note',
+    editNote: 'Edit Note',
+    deleteNote: 'Remove Note',
+    notePlaceholder: 'Add a note...',
 };

@@ -285,7 +285,7 @@ describe('Row Selection Grid Options', () => {
         // Collapse and re-expand master row again
         await actions.collapseGroupRowByIndex(1, { count: 1 });
         await actions.expandGroupRowByIndex(1, { count: 1 });
-        await asyncSetTimeout(10);
+        await asyncSetTimeout(20);
 
         info = api.getDetailGridInfo('detail_1')!;
         detailActions = new GridActions(info.api!, '[row-id="detail_1"]');

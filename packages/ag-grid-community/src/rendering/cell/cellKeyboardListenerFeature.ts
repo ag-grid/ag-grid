@@ -212,10 +212,22 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private onF2KeyDown(event: KeyboardEvent): void {
         const {
             cellCtrl,
-            beans: { editSvc },
+            beans: { editSvc, notesSvc },
         } = this;
 
         const editing = editSvc?.isEditing();
+
+        if (event.shiftKey && notesSvc?.hasDataSource() && !editing) {
+            const access = notesSvc.getNoteAccess({ rowNode: this.rowNode, column: cellCtrl.column });
+
+            if (access) {
+                if (!access.isSuppressed || access.canView) {
+                    notesSvc.showNote(access.params, true);
+                    event.preventDefault();
+                    return;
+                }
+            }
+        }
 
         if (editing) {
             // re-run ALL validations, F2 is used to initiate a new edit. If we have one already in progress,

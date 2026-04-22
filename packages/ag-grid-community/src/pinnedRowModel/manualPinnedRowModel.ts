@@ -18,6 +18,8 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private bottom: PinnedRows;
     /** Cached CSRM reference, null if not using client-side row model */
     private csrm: IClientSideRowModel | null = null;
+    /** True if using server-side row model */
+    private ssrm: boolean = false;
     /**
      * Determines where the grand total row should be pinned. Need a separate flag to break
      * an infinite recursion with CSRM.
@@ -29,8 +31,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.top = new PinnedRows(beans, 'top');
         this.bottom = new PinnedRows(beans, 'bottom');
 
-        // Cache CSRM reference if using client-side row model
+        // Cache row model references
         this.csrm = _getClientSideRowModel(beans) ?? null;
+        this.ssrm = beans.rowModel.getType() === 'serverSide';
 
         const shouldHide = (node: RowNode) => _shouldHidePinnedRows(beans, node.pinnedSibling!);
 
@@ -314,12 +317,12 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     private pinGrandTotalRow() {
-        const { csrm, beans, _grandTotalPinned: float } = this;
-        if (!csrm) {
-            return;
-        }
+        const { beans, _grandTotalPinned: float } = this;
 
-        const sibling = csrm.rootNode?.sibling;
+        // Grand total node is the root node's sibling in both CSRM and SSRM.
+        // Other row models (Infinite, Viewport) have a rootNode but never set sibling.
+        const sibling = this.csrm || this.ssrm ? beans.rowModel.rootNode?.sibling : undefined;
+
         if (!sibling) {
             return;
         }

@@ -215,7 +215,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             const colDef = this.createRowNumbersColDef();
             col.setColDef(colDef, null, source);
 
-            _applyColumnState(this.beans, { state: [_getColumnStateFromColDef(colDef, col.getColId())] }, source);
+            _applyColumnState(this.beans, { state: [_getColumnStateFromColDef(colDef, col.colId)] }, source);
         }
     }
 

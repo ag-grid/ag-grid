@@ -190,6 +190,7 @@ import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { Toolbar } from '../interfaces/iToolbar';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
+import type { FullWidthNotesDataSource, NotesDataSource } from '../interfaces/notes';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
 import type { OverlaySelectorFunc, OverlayType } from '../rendering/overlays/overlayComponent';
 import type { Icons } from '../utils/icon';
@@ -1093,7 +1094,6 @@ export interface GridOptions<TData = any> {
      * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
      * Set to `false` to hide the page size selector.
      * @default true
-     * @initial
      * @agModule `PaginationModule`
      */
     paginationPageSizeSelector?: number[] | boolean;
@@ -1118,6 +1118,15 @@ export interface GridOptions<TData = any> {
      * @agModule `PaginationModule`
      */
     suppressPaginationPanel?: boolean;
+    /**
+     * Controls which built-in components appear in the pagination panel and in what order.
+     * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+     * Components render in the order they appear in the array. Omitted components are hidden.
+     * An empty array hides the pagination panel entirely.
+     * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+     * @agModule `PaginationModule`
+     */
+    paginationPanels?: PaginationPanel[];
 
     // *** Pivot and Aggregation *** //
     /**
@@ -1190,6 +1199,25 @@ export interface GridOptions<TData = any> {
      * @agModule `FormulaModule`
      */
     formulaDataSource?: FormulaDataSource;
+
+    /**
+     * Provide a data source to control where notes are stored and retrieved.
+     * Can be updated to enable, disable, or replace Notes at runtime.
+     * @agModule `NotesModule`
+     */
+    notesDataSource?: NotesDataSource | FullWidthNotesDataSource;
+    /**
+     * The delay in milliseconds before a note is shown when hovering a noted cell.
+     * @default 180
+     * @agModule `NotesModule`
+     */
+    noteShowDelay?: number;
+    /**
+     * The delay in milliseconds before a note is hidden after the pointer leaves a noted cell or note popup.
+     * @default 220
+     * @agModule `NotesModule`
+     */
+    noteHideDelay?: number;
 
     /**
      * A map of 'function name' to 'function' for custom functions that are used for formulas.
@@ -3293,6 +3321,8 @@ export type AgPublicEventHandlerType = `on${Capitalize<AgPublicEventType>}` & ke
 
 export type ProcessPivotResultColDef<TData = any, TValue = any> = (colDef: ColDef<TData, TValue>) => void;
 export type ProcessPivotResultColGroupDef<TData = any> = (colDef: ColGroupDef<TData>) => void;
+
+export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary';
 
 export type PivotColumnGroupTotals = 'before' | 'after';
 export type PivotRowTotals = 'before' | 'after';

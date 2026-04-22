@@ -5,6 +5,7 @@ import type { DragInteractionType } from '../test-utils';
 import {
     DRAG_INTERACTION_TYPES,
     DRAG_NO_MOVE_INTERACTION_CASES,
+    GridColumns,
     GridRows,
     RowDragDispatcher,
     TestGridsManager,
@@ -55,6 +56,11 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
                 await dispatcher.finish();
             }
         }
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── v "V" width:200
+        `);
     });
 
     test('drag on empty and single-item rowData', async () => {
@@ -84,6 +90,11 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:only v:1
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── v "V" width:200
         `);
     });
 

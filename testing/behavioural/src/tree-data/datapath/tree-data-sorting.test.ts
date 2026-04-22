@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 
 describe('tree dats sorting behaviour', () => {
     const gridsManager = new TestGridsManager({
@@ -214,6 +214,12 @@ describe('tree dats sorting behaviour', () => {
             · │ └── Proposal.docx LEAF id:1 ag-Grid-AutoColumn:"Proposal.docx" size:"500 KB"
             · └── MeetingNotes_August.pdf LEAF id:4 ag-Grid-AutoColumn:"MeetingNotes_August.pdf" size:"450 KB"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "File Explorer" width:280 flex:1 sort:desc
+            └── size "Size" width:200 flex:1 aggFunc:sum
+        `);
     });
 
     test('auto group column respects value getter comparator', async () => {
@@ -272,6 +278,12 @@ describe('tree dats sorting behaviour', () => {
             · ├── AlphaLong LEAF id:a ag-Grid-AutoColumn:"AlphaLong" label:"AlphaLong"
             · ├── Gamma LEAF id:c ag-Grid-AutoColumn:"Gamma" label:"Gamma"
             · └── Zed LEAF id:b ag-Grid-AutoColumn:"Zed" label:"Zed"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200 sort:desc
+            └── label "Label" width:200
         `);
     });
 

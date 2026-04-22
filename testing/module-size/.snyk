@@ -30,12 +30,6 @@ ignore:
                   Test dependency - not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-23T10:10:57.436Z
-    SNYK-JS-FLATTED-15518041:
-        - eslint@9.39.1 > file-entry-cache@8.0.0 > flat-cache@4.0.1 > flatted@3.3.3:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-16T10:07:27.932Z
     SNYK-JS-ROLLUP-15340920:
         - vite@5.4.21 > rollup@4.52.5:
               reason: >-
@@ -126,18 +120,6 @@ ignore:
                   Used in testing - not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-02T09:19:22.625Z
-    SNYK-JS-ESLINTPLUGINKIT-8340627:
-        - eslint@9.14.0 > @eslint/plugin-kit@0.2.5:
-              reason: >-
-                  Only used for testing packages, so ReDos attack would only affect developer machines and CI
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2025-07-22T10:35:00.007Z
-    SNYK-JS-ESLINTPLUGINKIT-10847878:
-        - eslint@9.18.0 > @eslint/plugin-kit@0.2.5:
-              reason: >-
-                  Only used for testing packages, so ReDos attack would only affect developer machines and CI
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2025-07-22T10:35:00.007Z
     SNYK-JS-ISAACSBRACEEXPANSION-15208653:
         - 'glob@11.1.0 > minimatch@10.1.1 > @isaacs/brace-expansion@5.0.0':
               reason: >-

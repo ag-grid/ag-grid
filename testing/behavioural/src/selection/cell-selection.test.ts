@@ -15,6 +15,7 @@ import {
 import { CellSelectionModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     assertColumnsSelected,
@@ -124,6 +125,14 @@ describe('Cell Selection', () => {
             });
 
             expect(sports).toEqual(['football', 'rugby', 'tennis', 'tennis', 'tennis', 'tennis', 'tennis']);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── sport "Sport" width:200 editable
+                ├── year "Year" width:200 editable
+                ├── amount "Amount" width:200 editable
+                └── day "Day" width:200 editable
+            `);
         });
     });
 
@@ -153,6 +162,14 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{/Control}');
 
             assertColumnsSelected([['sport'], ['year']], api);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── sport "Sport" width:200
+                ├── year "Year" width:200
+                ├── amount "Amount" width:200
+                └── day "Day" width:200
+            `);
         });
 
         test('clicking selects column and clears all other ranges', async () => {

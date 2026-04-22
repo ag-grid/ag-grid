@@ -102,7 +102,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         let headerGroupRowCount = 0;
         for (const col of this.allCols) {
-            let parent = col.getParent();
+            let parent = col.parent;
             while (parent) {
                 if (!parent.isPadding()) {
                     const level = parent.getProvidedColumnGroup().getLevel() + 1;
@@ -112,7 +112,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                     break;
                 }
 
-                parent = parent.getParent();
+                parent = parent.parent;
             }
         }
 

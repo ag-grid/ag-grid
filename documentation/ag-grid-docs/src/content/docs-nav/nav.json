@@ -764,6 +764,12 @@
                         },
                         {
                             "type": "item",
+                            "title": "Notes",
+                            "path": "notes",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
                             "title": "Styling Cells",
                             "path": "cell-styles"
                         },
@@ -1730,6 +1736,12 @@
                                     "type": "item",
                                     "title": "Extra Content",
                                     "path": "excel-export-extra-content",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Notes",
+                                    "path": "excel-export-notes",
                                     "isEnterprise": true
                                 },
                                 {

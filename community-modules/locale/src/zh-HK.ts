@@ -333,6 +333,7 @@ export const AG_GRID_LOCALE_HK = {
     sortAbsoluteAscending: '絕對升序排序',
     sortAbsoluteDescending: '絕對降序排序',
     sortUnSort: '清除排序',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '總和',
@@ -755,6 +756,7 @@ export const AG_GRID_LOCALE_HK = {
     ariaLabelAddFilterField: '新增篩選字段',
     ariaLabelFilterCardDelete: '刪除篩選',
     ariaLabelFilterCardHasEdits: '已有編輯',
+    ariaHasNote: '此儲存格有備註。',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -799,4 +801,12 @@ export const AG_GRID_LOCALE_HK = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
+
+    // Notes
+    note: '儲存格備註',
+    addNote: '新增備註',
+    viewNote: '檢視備註',
+    editNote: '編輯備註',
+    deleteNote: '移除備註',
+    notePlaceholder: '新增備註...',
 };

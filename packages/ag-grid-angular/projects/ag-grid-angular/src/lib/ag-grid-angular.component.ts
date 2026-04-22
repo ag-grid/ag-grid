@@ -107,6 +107,7 @@ import type {
     FormulaDataSource,
     FormulaFuncs,
     FullWidthCellKeyDownEvent,
+    FullWidthNotesDataSource,
     GetBusinessKeyForNode,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -157,10 +158,12 @@ import type {
     NavigateToNextCell,
     NavigateToNextHeader,
     NewColumnsLoadedEvent,
+    NotesDataSource,
     OverlaySelectorFunc,
     OverlayType,
     PaginationChangedEvent,
     PaginationNumberFormatter,
+    PaginationPanel,
     PasteEndEvent,
     PasteStartEvent,
     PinnedRowDataChangedEvent,
@@ -1104,7 +1107,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
      * Set to `false` to hide the page size selector.
      * @default true
-     * @initial
      * @agModule `PaginationModule`
      */
     @Input() public paginationPageSizeSelector: number[] | boolean | undefined = undefined;
@@ -1126,6 +1128,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `PaginationModule`
      */
     @Input({ transform: booleanAttribute }) public suppressPaginationPanel: boolean | undefined = undefined;
+    /** Controls which built-in components appear in the pagination panel and in what order.
+     * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+     * Components render in the order they appear in the array. Omitted components are hidden.
+     * An empty array hides the pagination panel entirely.
+     * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+     * @agModule `PaginationModule`
+     */
+    @Input() public paginationPanels: PaginationPanel[] | undefined = undefined;
     /** Set to `true` to enable pivot mode.
      * @default false
      * @agModule `PivotModule`
@@ -1184,6 +1194,21 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `FormulaModule`
      */
     @Input() public formulaDataSource: FormulaDataSource | undefined = undefined;
+    /** Provide a data source to control where notes are stored and retrieved.
+     * Can be updated to enable, disable, or replace Notes at runtime.
+     * @agModule `NotesModule`
+     */
+    @Input() public notesDataSource: NotesDataSource | FullWidthNotesDataSource | undefined = undefined;
+    /** The delay in milliseconds before a note is shown when hovering a noted cell.
+     * @default 180
+     * @agModule `NotesModule`
+     */
+    @Input() public noteShowDelay: number | undefined = undefined;
+    /** The delay in milliseconds before a note is hidden after the pointer leaves a noted cell or note popup.
+     * @default 220
+     * @agModule `NotesModule`
+     */
+    @Input() public noteHideDelay: number | undefined = undefined;
     /** A map of 'function name' to 'function' for custom functions that are used for formulas.
      * @initial
      * @agModule `FormulaModule`

@@ -7,6 +7,7 @@ import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-e
 
 import {
     EditEventTracker,
+    GridColumns,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
@@ -103,6 +104,11 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         expect(lastSetValue).toBe('Top Value');
         expect(valueSetterTargets).toEqual(['ROW_1']);
         expect(valueSetterCalls).toBe(1);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── field "Field" width:200 editable
+        `);
     });
 
     test('copy/paste APIs should only update the destination cell once', async () => {
@@ -167,6 +173,11 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         expect(lastSetValue).toBe('Top Value');
         expect(valueSetterTargets).toEqual(['ROW_1']);
         expect(valueSetterCalls).toBe(1);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── field "Field" width:200 editable
+        `);
     });
 
     test('paste during edit session should only update the destination cell once', async () => {

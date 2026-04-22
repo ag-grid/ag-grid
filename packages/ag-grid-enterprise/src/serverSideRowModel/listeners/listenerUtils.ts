@@ -13,7 +13,7 @@ export class ListenerUtils extends BeanStub implements NamedBean {
     }
 
     public isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
-        const valueColIds = (this.valueColsSvc?.columns ?? []).map((col) => col.getColId());
+        const valueColIds = (this.valueColsSvc?.columns ?? []).map((col) => col.colId);
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
             if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
@@ -30,7 +30,7 @@ export class ListenerUtils extends BeanStub implements NamedBean {
             return false;
         }
 
-        const secondaryColIds = pivotResultCols.list.map((col) => col.getColId());
+        const secondaryColIds = pivotResultCols.list.map((col) => col.colId);
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
             if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {

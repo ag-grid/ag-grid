@@ -90,6 +90,7 @@
         0 1px 5px 0 rgba(0, 0, 0, 0.12);
     --ag-card-radius: 2px;
     --ag-invalid-color: #e02525;
+    --ag-note-indicator-color: var(--ag-material-accent-color);
 }
 
 @mixin -dark-vars {

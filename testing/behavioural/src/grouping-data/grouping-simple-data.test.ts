@@ -4,6 +4,7 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { RowSnapshot } from '../test-utils';
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -392,6 +393,12 @@ describe('ag-grid grouping simple data', () => {
         ];
 
         expect(rowsSnapshot).toMatchObject(expectedRowsSnapshots);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── athlete "Athlete" width:200
+        `);
     });
 
     test('can change an entire group without row id', async () => {

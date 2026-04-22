@@ -54,7 +54,7 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
 
         // all new columns added will have aggFunc missing, so set it to what is in the colDef
         for (const col of this.columns) {
-            const colDef = col.getColDef();
+            const colDef = col.colDef;
             // if aggFunc provided, we always override, as reactive property
             if (colDef.aggFunc != null && colDef.aggFunc != '') {
                 this.setColAggFunc(col, colDef.aggFunc);

@@ -2,7 +2,7 @@ import { ClientSideRowModelModule, PaginationModule, PinnedRowModule } from 'ag-
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 function assertPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>, ids: any[]): void {
     const pinnedNodes: RowNode[] = [];
@@ -92,6 +92,13 @@ describe('ag-grid grouping pinned rows', () => {
         expect(api.getRowNode('row-group-country-France')).toBeUndefined();
         expect(api.getPinnedTopRowCount()).toBe(0);
         expect(franceGroup!.destroyed).toBe(true);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── sport "Sport" width:200
+            └── amount "Amount" width:200 aggFunc:sum
+        `);
     });
 
     test('pinned group row survives when some but not all children are removed', async () => {
@@ -147,6 +154,13 @@ describe('ag-grid grouping pinned rows', () => {
         expect(pinnedFrance?.key).toBe('France');
         // The source group should still be alive
         expect(franceGroup!.destroyed).toBe(false);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── sport "Sport" width:200
+            └── amount "Amount" width:200 aggFunc:sum
+        `);
     });
 
     test('multiple pinned group rows are unpinned when their groups are destroyed', async () => {

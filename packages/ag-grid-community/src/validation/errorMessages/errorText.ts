@@ -14,15 +14,42 @@ import { baseDocLink, getErrorLink } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
 import { USER_COMP_MODULES } from '../rules/userCompValidations';
 
-export const NoModulesRegisteredError = () =>
-    `No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:
-                    
-    import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
-    
-    ModuleRegistry.registerModules([ AllCommunityModule ]);
-    ` as const;
+/** Formats a code snippet showing how to register modules — via AgGridProvider for React, or ModuleRegistry otherwise. */
+const moduleRegistrationSnippet = (imports: string[], moduleList: string, usesAgGridProvider?: boolean): string => {
+    if (usesAgGridProvider) {
+        const allImports = ["import { AgGridProvider, AgGridReact } from 'ag-grid-react';", ...imports];
+        return `${allImports.join(' \n')}
 
-const moduleImportMsg = (moduleNames: ModuleName[]) => {
+const modules = [ ${moduleList} ];
+
+function App() {
+    return (
+        <AgGridProvider modules={modules}>
+            <AgGridReact /* ... props */ />
+        </AgGridProvider>
+    );
+}`;
+    }
+
+    return `${imports.join(' \n')}
+
+ModuleRegistry.registerModules([ ${moduleList} ]);`;
+};
+
+export const NoModulesRegisteredError = (usesAgGridProvider?: boolean) => {
+    // For React users without AgGridProvider (false), guide them toward AgGridProvider
+    const showAgGridProvider = usesAgGridProvider !== undefined;
+    const imports = [
+        `import { ${showAgGridProvider ? '' : 'ModuleRegistry, '}AllCommunityModule } from 'ag-grid-community';`,
+    ];
+
+    return `No AG Grid modules are registered! It is recommended to start with all Community features via the AllCommunityModule:
+
+${moduleRegistrationSnippet(imports, 'AllCommunityModule', showAgGridProvider)}
+`;
+};
+
+const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean) => {
     const imports = moduleNames.map(
         (moduleName) =>
             `import { ${convertToUserModuleName(moduleName)} } from '${ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] ? 'ag-grid-enterprise' : 'ag-grid-community'}';`
@@ -33,7 +60,15 @@ const moduleImportMsg = (moduleNames: ModuleName[]) => {
         const chartImport = `import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';`;
         imports.push(chartImport);
     }
-    return `import { ModuleRegistry } from 'ag-grid-community'; \n${imports.join(' \n')} \n\nModuleRegistry.registerModules([ ${moduleNames.map((m) => convertToUserModuleName(m, true)).join(', ')} ]); \n\nFor more info see: ${baseDocLink}/modules/`;
+
+    const moduleList = moduleNames.map((m) => convertToUserModuleName(m, true)).join(', ');
+
+    if (!usesAgGridProvider) {
+        imports.unshift("import { ModuleRegistry } from 'ag-grid-community';");
+    }
+    return `${moduleRegistrationSnippet(imports, moduleList, usesAgGridProvider)}
+
+For more info see: ${baseDocLink}/modules/`;
 };
 
 function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = false) {
@@ -81,6 +116,7 @@ const missingModule = ({
     rowModelType,
     additionalText,
     isUmd,
+    usesAgGridProvider,
 }: {
     reasonOrId: string | keyof MissingModuleErrors;
     moduleName: ValidationModuleName | ValidationModuleName[];
@@ -89,6 +125,7 @@ const missingModule = ({
     rowModelType: RowModelType;
     additionalText?: string;
     isUmd?: boolean;
+    usesAgGridProvider?: boolean;
 }) => {
     const resolvedModuleNames = resolveModuleNames(moduleName, rowModelType);
     const reason = typeof reasonOrId === 'string' ? reasonOrId : MISSING_MODULE_REASONS[reasonOrId];
@@ -107,7 +144,7 @@ const missingModule = ({
 
     return (
         `${explanation}
-${moduleImportMsg(resolvedModuleNames)}` + (additionalText ? ` \n\n${additionalText}` : '')
+${moduleImportMsg(resolvedModuleNames, usesAgGridProvider)}` + (additionalText ? ` \n\n${additionalText}` : '')
     );
 };
 
@@ -355,7 +392,7 @@ export const AG_GRID_ERRORS = {
             inputValue: componentName,
             allSuggestions: validComponents,
             hideIrrelevant: true,
-            filterByPercentageOfBestMatch: 0.8,
+            maxSuggestions: 4,
         }).values;
 
         textOutput.push(
@@ -383,7 +420,7 @@ export const AG_GRID_ERRORS = {
             inputValue,
             allSuggestions,
             hideIrrelevant: true,
-            filterByPercentageOfBestMatch: 0.8,
+            maxSuggestions: 4,
         }).values;
         return [
             `Could not find '${inputValue}' aggregate function. It was configured as "aggFunc: '${inputValue}'" but it wasn't found in the list of registered aggregations.`,
@@ -645,12 +682,14 @@ export const AG_GRID_ERRORS = {
         gridScoped,
         gridId,
         rowModelType,
+        usesAgGridProvider,
     }: {
         propName: string;
         compName: string;
         gridScoped: boolean;
         gridId: string;
         rowModelType: RowModelType;
+        usesAgGridProvider?: boolean;
     }) =>
         missingModule({
             reasonOrId: `AG Grid '${propName}' component: ${compName}`,
@@ -658,6 +697,7 @@ export const AG_GRID_ERRORS = {
             gridId,
             gridScoped,
             rowModelType,
+            usesAgGridProvider,
         }),
     261: () => 'As of v33, `column.isHovered()` is deprecated. Use `api.isColumnHovered(column)` instead.' as const,
     262: () =>

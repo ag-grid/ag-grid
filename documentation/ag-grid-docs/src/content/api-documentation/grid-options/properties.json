@@ -637,6 +637,33 @@
             }
         }
     },
+    "notes": {
+        "meta": {
+            "displayName": "Notes",
+            "page": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "notesDataSource": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteShowDelay": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteHideDelay": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        }
+    },
     "charts": {
         "meta": {
             "displayName": "Integrated Charts",
@@ -1038,6 +1065,12 @@
             "more": {
                 "name": "Customising Pagination",
                 "url": "./row-pagination/#example-customising-pagination"
+            }
+        },
+        "paginationPanels": {
+            "more": {
+                "name": "Pagination Panel Layout",
+                "url": "./row-pagination/#pagination-panel-layout"
             }
         },
         "paginationNumberFormatter": {

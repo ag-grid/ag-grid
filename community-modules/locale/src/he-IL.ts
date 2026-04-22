@@ -333,6 +333,7 @@ export const AG_GRID_LOCALE_IL = {
     sortAbsoluteAscending: 'מיון עולה מוחלט',
     sortAbsoluteDescending: 'מיון יורד מוחלט',
     sortUnSort: 'נקה מיון',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'סכום',
@@ -755,6 +756,7 @@ export const AG_GRID_LOCALE_IL = {
     ariaLabelAddFilterField: 'הוסף שדה סינון',
     ariaLabelFilterCardDelete: 'מחק סינון',
     ariaLabelFilterCardHasEdits: 'יש עריכות',
+    ariaHasNote: 'לתא זה יש הערה.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -799,4 +801,12 @@ export const AG_GRID_LOCALE_IL = {
     timeFormatSpacesDDMMMMYYYY: 'יי חחחח שששש',
     timeFormatHHMMSS: 'שש:דד:שש',
     timeFormatHHMMSSAmPm: 'שש:דד:שש לפנה״צ/אחה״צ',
+
+    // Notes
+    note: 'הערת תא',
+    addNote: 'הוסף הערה',
+    viewNote: 'הצג הערה',
+    editNote: 'ערוך הערה',
+    deleteNote: 'הסר הערה',
+    notePlaceholder: 'הוסף הערה...',
 };

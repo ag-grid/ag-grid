@@ -333,6 +333,7 @@ export const AG_GRID_LOCALE_EG = {
     sortAbsoluteAscending: 'ترتيب تصاعدي مطلق',
     sortAbsoluteDescending: 'ترتيب تنازلي مطلق',
     sortUnSort: 'إلغاء الترتيب',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'المجموع',
@@ -755,6 +756,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaLabelAddFilterField: 'إضافة حقل الفلتر',
     ariaLabelFilterCardDelete: 'حذف الفلتر',
     ariaLabelFilterCardHasEdits: 'يوجد تعديلات',
+    ariaHasNote: 'تحتوي هذه الخلية على ملاحظة.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '،',
@@ -799,4 +801,12 @@ export const AG_GRID_LOCALE_EG = {
     timeFormatSpacesDDMMMMYYYY: 'يوم شهر سنة',
     timeFormatHHMMSS: 'ساعة:دقيقة:ثانية',
     timeFormatHHMMSSAmPm: 'ساعة:دقيقة:ثانية ص/م',
+
+    // Notes
+    note: 'ملاحظة الخلية',
+    addNote: 'إضافة ملاحظة',
+    viewNote: 'عرض الملاحظة',
+    editNote: 'تحرير الملاحظة',
+    deleteNote: 'إزالة الملاحظة',
+    notePlaceholder: 'أضف ملاحظة...',
 };

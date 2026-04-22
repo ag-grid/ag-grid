@@ -45,7 +45,7 @@ export function getGroupRowsHeight(beans: BeanCollection): number[] {
 }
 
 function getColumnGroupHeaderRowHeight(beans: BeanCollection, headerRowCtrl: HeaderRowCtrl): number {
-    const defaultHeight = beans.colModel.isPivotMode() ? getPivotGroupHeaderHeight(beans) : getGroupHeaderHeight(beans);
+    const defaultHeight = beans.colModel.pivotMode ? getPivotGroupHeaderHeight(beans) : getGroupHeaderHeight(beans);
     let maxDisplayedHeight = defaultHeight;
     const headerRowCellCtrls = headerRowCtrl.getHeaderCellCtrls();
     for (const headerCellCtrl of headerRowCellCtrls) {
@@ -59,7 +59,7 @@ function getColumnGroupHeaderRowHeight(beans: BeanCollection, headerRowCtrl: Hea
 }
 
 export function getColumnHeaderRowHeight(beans: BeanCollection): number {
-    const defaultHeight = beans.colModel.isPivotMode() ? getPivotHeaderHeight(beans) : getHeaderHeight(beans);
+    const defaultHeight = beans.colModel.pivotMode ? getPivotHeaderHeight(beans) : getHeaderHeight(beans);
     let maxDisplayedHeight = defaultHeight;
     beans.colModel.forAllCols((col) => {
         const height = col.getAutoHeaderHeight();

@@ -11,9 +11,17 @@ import { RowSpanCache } from './rowSpanCache';
 export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements NamedBean {
     beanName = 'rowSpanSvc' as const;
 
+    /** Active only if `enableCellSpan=true` */
+    public active: boolean = false;
     private readonly spanningColumns: Map<AgColumn, RowSpanCache> = new Map();
 
     public postConstruct(): void {
+        if (!this.gos.get('enableCellSpan')) {
+            // Don't setup listeners when the feature is not configured.
+            return;
+        }
+        this.active = true;
+
         const onRowDataUpdated = this.onRowDataUpdated.bind(this);
         const buildPinnedCaches = this.buildPinnedCaches.bind(this);
         this.addManagedEventListeners({
@@ -30,13 +38,10 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
      * @param column column that is now spanning
      */
     public register(column: AgColumn): void {
-        const { gos } = this.beans;
-        if (!gos.get('enableCellSpan')) {
+        if (!this.active || this.spanningColumns.has(column)) {
             return;
         }
-        if (this.spanningColumns.has(column)) {
-            return;
-        }
+
         const cache = this.createManagedBean(new RowSpanCache(column));
         this.spanningColumns.set(column, cache);
 
@@ -122,6 +127,9 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
     }
 
     public isCellSpanning(col: AgColumn, rowNode: RowNode): boolean {
+        if (!this.active) {
+            return false;
+        }
         const cache = this.spanningColumns.get(col);
         if (!cache) {
             return false;
@@ -131,25 +139,24 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
     }
 
     public getCellSpanByPosition(position: CellPosition): CellSpan | undefined {
-        const { pinnedRowModel, rowModel } = this.beans;
-        const col = position.column;
-        const index = position.rowIndex;
-
-        const cache = this.spanningColumns.get(col as AgColumn);
+        const { column, rowIndex } = position;
+        const cache = this.spanningColumns.get(column as AgColumn);
         if (!cache) {
             return undefined;
         }
 
+        const { pinnedRowModel, rowModel } = this.beans;
+
         let node;
         switch (position.rowPinned) {
             case 'top':
-                node = pinnedRowModel?.getPinnedTopRow(index);
+                node = pinnedRowModel?.getPinnedTopRow(rowIndex);
                 break;
             case 'bottom':
-                node = pinnedRowModel?.getPinnedBottomRow(index);
+                node = pinnedRowModel?.getPinnedBottomRow(rowIndex);
                 break;
             default:
-                node = rowModel.getRow(index);
+                node = rowModel.getRow(rowIndex);
         }
 
         if (!node) {

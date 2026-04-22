@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_CZ = {
     sortAbsoluteAscending: 'Řadit absolutně vzestupně',
     sortAbsoluteDescending: 'Řadit absolutně sestupně',
     sortUnSort: 'Zrušit třídění',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Součet',
@@ -756,6 +757,7 @@ export const AG_GRID_LOCALE_CZ = {
     ariaLabelAddFilterField: 'Přidat filtr',
     ariaLabelFilterCardDelete: 'Smazat filtr',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
+    ariaHasNote: 'Tato buňka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '‚',
@@ -800,4 +802,12 @@ export const AG_GRID_LOCALE_CZ = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM RRRR',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Notes
+    note: 'Poznámka buňky',
+    addNote: 'Přidat poznámku',
+    viewNote: 'Zobrazit poznámku',
+    editNote: 'Upravit poznámku',
+    deleteNote: 'Odstranit poznámku',
+    notePlaceholder: 'Přidat poznámku...',
 };

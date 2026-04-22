@@ -51,6 +51,10 @@
                 "url": "https://www.ag-grid.com/charts/"
             },
             {
+                "name": "AG Studio",
+                "url": "https://www.ag-grid.com/studio"
+            },
+            {
                 "name": "About",
                 "url": "/about"
             },

@@ -44,9 +44,9 @@ const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: Structur
     const enableFilterHandlers = gos.get('enableFilterHandlers');
 
     for (const column of filterableColumns) {
-        const columnParams = params?.columns ? params.columns[column.getColId()] : undefined;
+        const columnParams = params?.columns ? params.columns[column.colId] : undefined;
 
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
         const defaultFilter = colFilter!.getDefaultFilter(column);
         const includeSetValues = columnParams?.includeSetValues ?? false;
 

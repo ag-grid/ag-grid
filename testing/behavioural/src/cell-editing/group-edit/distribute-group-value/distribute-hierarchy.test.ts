@@ -1,7 +1,7 @@
 import { AllCommunityModule, ClientSideRowModelModule, UndoRedoEditModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingEditModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../../test-utils';
 import { createGroupRowData as createRowData } from '../group-edit-test-utils';
 import { distributeGroupValue, gridsManager } from './distribute-test-utils';
 
@@ -80,6 +80,12 @@ describe('distributeGroupValue multi-level group hierarchy', () => {
             · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:70
             · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:50
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
+        `);
     });
 
     test('increment mode propagates through nested groups to leaves', async () => {
@@ -130,6 +136,12 @@ describe('distributeGroupValue multi-level group hierarchy', () => {
             · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:80
             · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:45
             · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:35
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
         `);
     });
 

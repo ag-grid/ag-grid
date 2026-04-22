@@ -41,6 +41,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     pagination: true,
     paginationPageSize: 500,
     paginationPageSizeSelector: [200, 500, 1000],
+    paginationPanels: ['pageSummary', 'rowSummary', 'pageSize'],
     onFirstDataRendered: onFirstDataRendered,
     paginationNumberFormatter: (params: PaginationNumberFormatterParams) => {
         return '[' + params.value.toLocaleString() + ']';

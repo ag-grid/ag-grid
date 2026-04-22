@@ -108,6 +108,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'advancedFilterParams',
     'formulaDataSource',
     'formulaFuncs',
+    'notesDataSource',
     'initialState',
     'autoSizeStrategy',
     'selectionColumnDef',
@@ -128,6 +129,7 @@ const ARRAY_GRID_OPTIONS: KeysWithType<any[]>[] = [
     'chartThemes',
     'rowClass',
     'paginationPageSizeSelector',
+    'paginationPanels',
     'suppressOverlays',
 ];
 
@@ -152,6 +154,8 @@ export const _NUMBER_GRID_OPTIONS: KeysWithType<number>[] = [
     'tooltipShowDelay',
     'tooltipSwitchShowDelay',
     'tooltipHideDelay',
+    'noteShowDelay',
+    'noteHideDelay',
     'cacheOverflowSize',
     'paginationPageSize',
     'cacheBlockSize',

@@ -35,7 +35,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         const { colModel, gos, visibleCols } = this.beans;
 
         for (const columnWidth of columnWidths) {
-            const col = colModel.getColDefCol(columnWidth.key) || colModel.getCol(columnWidth.key);
+            const col = colModel.getColDefColOrCol(columnWidth.key);
 
             if (!col) {
                 continue;

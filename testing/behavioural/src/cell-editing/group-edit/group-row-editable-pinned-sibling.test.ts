@@ -9,7 +9,7 @@ import {
 } from 'ag-grid-community';
 import { PivotModule, RowGroupingEditModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import { EDIT_MODES, cascadeGroupRowValueSetter, editCell } from './group-edit-test-utils';
 
 /**
@@ -163,6 +163,14 @@ describe('editing with pinned sibling rows', () => {
 
                 // valueSetter should have been called once (for the pinned row edit)
                 expect(valueSetterCalls.length).toBe(1);
+
+                await new GridColumns(api, 'columns').checkColumns(`
+                    CENTER
+                    ├── country "Country" width:200 editable
+                    ├── year "Year" width:200 editable
+                    ├── sales "Sales" width:200 editable
+                    └── region "Region" width:200 editable
+                `);
             });
 
             test('editing source row updates pinned sibling in simple grid', async () => {
@@ -207,6 +215,14 @@ describe('editing with pinned sibling rows', () => {
                     ├── LEAF id:5 country:"USA" year:2020 sales:2000 region:"Americas"
                     └── LEAF id:6 country:"USA" year:2021 sales:2200 region:"Americas"
                     PINNED_BOTTOM id:b-bottom-1 country:"France" year:2020 sales:1111 region:"Europe"
+                `);
+
+                await new GridColumns(api, 'columns').checkColumns(`
+                    CENTER
+                    ├── country "Country" width:200 editable
+                    ├── year "Year" width:200 editable
+                    ├── sales "Sales" width:200 editable
+                    └── region "Region" width:200 editable
                 `);
             });
         });
@@ -310,6 +326,12 @@ describe('editing with pinned sibling rows', () => {
                     └─┬ LEAF_GROUP id:row-group-country-Germany amount:400
                     · ├── LEAF id:de-berlin country:"Germany" amount:150
                     · └── LEAF id:de-hamburg country:"Germany" amount:250
+                `);
+
+                await new GridColumns(api, 'columns').checkColumns(`
+                    CENTER
+                    ├── group "Group" width:200
+                    └── amount "Amount" width:200 aggFunc:sum editable
                 `);
             });
 

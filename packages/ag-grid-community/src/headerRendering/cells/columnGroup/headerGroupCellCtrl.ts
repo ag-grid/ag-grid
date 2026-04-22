@@ -451,9 +451,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         // if any child is fixed, then don't allow moving
         return (
             this.gos.get('suppressMovableColumns') ||
-            this.column
-                .getLeafColumns()
-                .some((column) => column.getColDef().suppressMovable || column.getColDef().lockPosition)
+            this.column.getLeafColumns().some((column) => column.colDef.suppressMovable || column.colDef.lockPosition)
         );
     }
 

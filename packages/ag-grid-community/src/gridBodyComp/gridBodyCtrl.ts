@@ -184,7 +184,7 @@ export class GridBodyCtrl extends BeanStub {
         let isTreeGrid = gos.get('treeData');
 
         if (!isTreeGrid) {
-            const isPivotActive = colModel.isPivotMode();
+            const isPivotActive = colModel.pivotMode;
             const rowGroupColumnLen = !rowGroupColsSvc ? 0 : rowGroupColsSvc.columns.length;
             const columnsNeededForGrouping = isPivotActive ? 2 : 1;
             isTreeGrid = rowGroupColumnLen >= columnsNeededForGrouping;

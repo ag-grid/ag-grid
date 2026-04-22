@@ -148,10 +148,10 @@ const baseParams: FormulaStyleParams = {
     },
 };
 
-const makeBatchEditStyleBaseTreeShakeable = () =>
+const makeFormulaStyleBaseTreeShakeable = () =>
     createPart<FormulaStyleParams>({
         feature: 'formulaStyle',
         params: baseParams,
     });
 
-export const formulaStyleBase: Part<FormulaStyleParams> = /*#__PURE__*/ makeBatchEditStyleBaseTreeShakeable();
+export const formulaStyleBase: Part<FormulaStyleParams> = /*#__PURE__*/ makeFormulaStyleBaseTreeShakeable();

@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_IR = {
     sortAbsoluteAscending: 'مرتب‌سازی مطلق به صورت صعودی',
     sortAbsoluteDescending: 'مرتب‌سازی مطلق به صورت نزولی',
     sortUnSort: 'پاک کردن مرتب‌سازی',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'جمع',
@@ -758,6 +759,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaLabelAddFilterField: 'افزودن فیلد فیلتر',
     ariaLabelFilterCardDelete: 'حذف فیلتر',
     ariaLabelFilterCardHasEdits: 'دارای ویرایش‌ها',
+    ariaHasNote: 'این سلول یک یادداشت دارد.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '،',
@@ -802,4 +804,12 @@ export const AG_GRID_LOCALE_IR = {
     timeFormatSpacesDDMMMMYYYY: 'روز ماه سال',
     timeFormatHHMMSS: 'ساعت:دقیقه:ثانیه',
     timeFormatHHMMSSAmPm: 'ساعت:دقیقه:ثانیه ق.ظ/ب.ظ',
+
+    // Notes
+    note: 'یادداشت سلول',
+    addNote: 'افزودن یادداشت',
+    viewNote: 'نمایش یادداشت',
+    editNote: 'ویرایش یادداشت',
+    deleteNote: 'حذف یادداشت',
+    notePlaceholder: 'یک یادداشت اضافه کنید...',
 };

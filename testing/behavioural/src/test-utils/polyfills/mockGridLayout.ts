@@ -122,10 +122,29 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
             break;
 
         case 'default': {
-            width = 100;
-            height = 20;
+            // For position:fixed elements (auto-width measurement containers),
+            // return 0 so auto-sizing falls back to minWidth. Otherwise, return a default.
+            if (this.style?.position === 'fixed') {
+                width = 0;
+                height = 0;
+            } else {
+                width = 100;
+                height = 20;
+            }
             break;
         }
+    }
+
+    // If the element has an explicit style.width or style.height set by the grid,
+    // use those values instead of the mock defaults. This ensures that auto-sizing
+    // code reads the actual column/row dimensions rather than generic mock values.
+    const styleWidth = parseFloat(this.style?.width);
+    if (!isNaN(styleWidth) && styleWidth > 0) {
+        width = styleWidth;
+    }
+    const styleHeight = parseFloat(this.style?.height);
+    if (!isNaN(styleHeight) && styleHeight > 0) {
+        height = styleHeight;
     }
 
     const offsetParent = this.offsetParent ?? this.parentElement;

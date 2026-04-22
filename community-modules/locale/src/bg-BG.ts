@@ -336,6 +336,7 @@ export const AG_GRID_LOCALE_BG = {
     sortAbsoluteAscending: 'Абсолютно сортиране възходящо',
     sortAbsoluteDescending: 'Абсолютно сортиране низходящо',
     sortUnSort: 'Изчистване на сортирането',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Сума',
@@ -761,6 +762,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaLabelAddFilterField: 'Добавяне на поле за филтър',
     ariaLabelFilterCardDelete: 'Изтриване на филтър',
     ariaLabelFilterCardHasEdits: 'Има редакции',
+    ariaHasNote: 'Тази клетка има бележка.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -805,4 +807,12 @@ export const AG_GRID_LOCALE_BG = {
     timeFormatSpacesDDMMMMYYYY: 'ДД ММММ ГГГГ',
     timeFormatHHMMSS: 'ЧЧ:ММ:СС',
     timeFormatHHMMSSAmPm: 'ЧЧ:ММ:СС AM/PM',
+
+    // Notes
+    note: 'Бележка за клетка',
+    addNote: 'Добавяне на бележка',
+    viewNote: 'Преглед на бележката',
+    editNote: 'Редактиране на бележката',
+    deleteNote: 'Премахване на бележката',
+    notePlaceholder: 'Добавете бележка...',
 };

@@ -335,6 +335,7 @@ export const AG_GRID_LOCALE_HR = {
     sortAbsoluteAscending: 'Sortiraj apsolutno uzlazno',
     sortAbsoluteDescending: 'Sortiraj apsolutno silazno',
     sortUnSort: 'Očisti sortiranje',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Zbroj',
@@ -758,6 +759,7 @@ export const AG_GRID_LOCALE_HR = {
     ariaLabelAddFilterField: 'Dodaj polje filtera',
     ariaLabelFilterCardDelete: 'Izbriši filter',
     ariaLabelFilterCardHasEdits: 'Ima izmjene',
+    ariaHasNote: 'Ova ćelija ima bilješku.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -802,4 +804,12 @@ export const AG_GRID_LOCALE_HR = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM GGGG',
     timeFormatHHMMSS: 'SS:MM:VV',
     timeFormatHHMMSSAmPm: 'SS:MM:VV AM/PM',
+
+    // Notes
+    note: 'Napomena ćelije',
+    addNote: 'Dodaj napomenu',
+    viewNote: 'Prikaži napomenu',
+    editNote: 'Uredi napomenu',
+    deleteNote: 'Ukloni napomenu',
+    notePlaceholder: 'Dodaj napomenu...',
 };

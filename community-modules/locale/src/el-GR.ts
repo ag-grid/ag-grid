@@ -339,6 +339,7 @@ export const AG_GRID_LOCALE_GR = {
     sortAbsoluteAscending: '"Απόλυτη αύξουσα ταξινόμηση"',
     sortAbsoluteDescending: '"Απόλυτη φθίνουσα ταξινόμηση"',
     sortUnSort: 'Καθαρισμός Ταξινόμησης',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Άθροισμα',
@@ -762,6 +763,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaLabelAddFilterField: 'Προσθήκη πεδίου φίλτρου',
     ariaLabelFilterCardDelete: 'Διαγραφή φίλτρου',
     ariaLabelFilterCardHasEdits: 'Έχει επεξεργασίες',
+    ariaHasNote: 'Αυτό το κελί έχει σημείωση.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -806,4 +808,12 @@ export const AG_GRID_LOCALE_GR = {
     timeFormatSpacesDDMMMMYYYY: 'ΗΗ ΜΜΜΜ ΕΕΕΕ',
     timeFormatHHMMSS: 'ΩΩ:ΛΛ:ΔΔ',
     timeFormatHHMMSSAmPm: 'ΩΩ:ΛΛ:ΔΔ ΠΜ/ΜΜ',
+
+    // Notes
+    note: 'Σημείωση κελιού',
+    addNote: 'Προσθήκη σημείωσης',
+    viewNote: 'Προβολή σημείωσης',
+    editNote: 'Επεξεργασία σημείωσης',
+    deleteNote: 'Αφαίρεση σημείωσης',
+    notePlaceholder: 'Προσθέστε μια σημείωση...',
 };

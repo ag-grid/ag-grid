@@ -10,7 +10,14 @@ import {
     RowGroupingModule,
 } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, clipboardUtils, waitForEvent } from '../../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    clipboardUtils,
+    waitForEvent,
+} from '../../test-utils';
 
 describe('Group Edit: clipboard paste', () => {
     const gridMgr = new TestGridsManager({
@@ -95,6 +102,11 @@ describe('Group Edit: clipboard paste', () => {
             · ├── LEAF id:a-1 group:"Edited Group" category:"A"
             · └── LEAF id:a-2 group:"Edited Group" category:"A"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── group "Group" width:200 editable
+        `);
     });
 
     test('paste skips group row when groupRowEditable is not set', async () => {
@@ -152,6 +164,11 @@ describe('Group Edit: clipboard paste', () => {
             └─┬ LEAF_GROUP id:row-group-category-A
             · ├── LEAF id:a-1 group:"Pasted Value" category:"A"
             · └── LEAF id:a-2 group:"A2" category:"A"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── group "Group" width:200 editable
         `);
     });
 

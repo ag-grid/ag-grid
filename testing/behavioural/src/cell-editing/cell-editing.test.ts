@@ -16,7 +16,14 @@ import {
     setupAgTestIds,
 } from 'ag-grid-community';
 
-import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from '../test-utils';
 
 /** Asserts the value of a form control, handling number/date/checkbox inputs correctly. */
 function expectInputValue(input: HTMLInputElement, expected: unknown): void {
@@ -128,6 +135,16 @@ describe('Cell Editing Start', () => {
             // as it might not be available for all cell editors, use testing-library
             const inputElement = await waitForInput(gridDiv, cell, { popup });
             expectInputValue(inputElement, expected);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── number "Number" width:200 editable
+                ├── string1 "String1" width:200 editable
+                ├── string2 "String2" width:200 editable
+                ├── date "Date" width:200 editable
+                ├── dateStr "Date Str" width:200 editable
+                └── boolean "Boolean" width:200 editable
+            `);
         });
     });
 
@@ -163,6 +180,16 @@ describe('Cell Editing Start', () => {
 
             expect(inputElement.selectionStart).toEqual(selectionStart);
             expect(inputElement.selectionEnd).toEqual(selectionEnd);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── number "Number" width:200 editable
+                ├── string1 "String1" width:200 editable
+                ├── string2 "String2" width:200 editable
+                ├── date "Date" width:200 editable
+                ├── dateStr "Date Str" width:200 editable
+                └── boolean "Boolean" width:200 editable
+            `);
         });
     });
 

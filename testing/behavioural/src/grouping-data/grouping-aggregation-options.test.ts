@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping aggregation options', () => {
     const gridsManager = new TestGridsManager({
@@ -62,6 +62,13 @@ describe('ag-grid grouping aggregation options', () => {
             │ └── LEAF id:3 group:"A" value:30 year:2022
             └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B" value:90
             · └── LEAF id:5 group:"B" value:50 year:2021
+        `);
+
+        await new GridColumns(api, 'columns after filter').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── value "Value" width:200 aggFunc:sum
+            └── year "Year" width:200 filter
         `);
     });
 

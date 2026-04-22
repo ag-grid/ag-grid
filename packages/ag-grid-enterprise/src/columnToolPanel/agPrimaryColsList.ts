@@ -261,7 +261,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const expandedStates = this.getExpandedStates();
 
-        const pivotModeActive = this.colModel.isPivotMode();
+        const pivotModeActive = this.colModel.pivotMode;
         const deferApply = isDeferredMode(params);
         const hasDeferredColumnOrder =
             deferApply && this.beans.columnStateUpdateStrategy.hasDeferredColumnOrder(deferApply);
@@ -428,7 +428,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         };
 
         const createColumnItem = (column: AgColumn, depth: number, parentList: ColumnModelItem[]): void => {
-            const skipThisColumn = column.getColDef()?.suppressColumnsToolPanel;
+            const skipThisColumn = column.colDef?.suppressColumnsToolPanel;
 
             if (skipThisColumn) {
                 return;
@@ -609,7 +609,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             }
 
             const column = item.column;
-            const colDef = column.getColDef();
+            const colDef = column.colDef;
 
             let checked: boolean;
 

@@ -1,5 +1,6 @@
 import type { GroupRowValueSetterParams } from 'ag-grid-community';
 
+import { GridColumns } from '../../../test-utils';
 import {
     GridRows,
     asyncSetTimeout,
@@ -72,6 +73,12 @@ describe('distributeGroupValue edge cases', () => {
             · · ├── LEAF id:a1 region:"R" country:"C" label:"alpha"
             · · └── LEAF id:a2 region:"R" country:"C" label:"beta"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── label "Label" width:200 aggFunc:first editable
+        `);
     });
 
     test('editing leaf node does NOT trigger distributeGroupValue', async () => {
@@ -123,6 +130,12 @@ describe('distributeGroupValue edge cases', () => {
             · └─┬ LEAF_GROUP id:row-group-region-Americas-country-Canada amount:60
             · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
             · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
         `);
     });
 

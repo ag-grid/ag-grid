@@ -27,8 +27,9 @@ This file provides guidance to AI Agents when working with code in this reposito
 
 ### Content Locations
 
--   **Rulesync source:** `.rulesync/` (rules, commands, subagents)
--   **Shared prompts:** `external/ag-shared/prompts/` (symlinked into .rulesync)
+-   **Plugin marketplace:** Shared skills, subagents, commands, and guides are delivered via Claude Code plugins from [`ag-grid/ag-dev-prompts`](https://github.com/ag-grid/ag-dev-prompts) — `ag-core`, `ag-prodeng`, and `ag-grid` (enabled in `.claude/settings.json`). Invoke with the plugin prefix, e.g. `/ag-prodeng:pr-review`, `/ag-core:recall`.
+-   **Local overrides:** `.rulesync/` tracks repo-specific content that layers on top of the plugins. See the allowlist in `.rulesync/.gitignore` for what's tracked.
+-   **Generated tool configs:** `setup-prompts.sh` (run at `yarn` time) stages plugin content into `.rulesync/` and regenerates `.claude/`, `.cursor/`, `.codex/`, `.gemini/`, `.github/`, `AGENTS.md`, and `CLAUDE.md`. Never hand-edit those — edit `.rulesync/` and re-run.
 
 ---
 
@@ -50,11 +51,11 @@ This file provides guidance to AI Agents when working with code in this reposito
 
 On the **first response** of a conversation, verify that project skills are available by checking the system-reminder skill list. If **any** of the canary skills are missing, display a one-time warning before doing anything else. Do not repeat the warning on subsequent responses.
 
-**Canary skills:** `example`, `dev-server`, `debug`, `git-conventions`, `jira`
+**Canary skills:** `example`, `dev-server`, `debug-trace`, `git-conventions`, `jira`
 
 **Warning to display (if any canary skill is missing):**
 
-> **Agentic tooling is not initialised.** Expected skills (example, dev-server, debug, git-conventions, jira) are missing or incomplete. Run `yarn` from the repository root to set up AI tooling configuration, then restart your session. If you are in a worktree, ensure you ran `yarn` in the worktree directory (not just the main checkout).
+> **Agentic tooling is not initialised.** Expected skills (example, dev-server, debug-trace, git-conventions, jira) are missing or incomplete. Run `yarn` from the repository root to set up AI tooling configuration, then restart your session. If you are in a worktree, ensure you ran `yarn` in the worktree directory (not just the main checkout).
 
 Continue assisting the user after displaying the warning.
 
@@ -105,6 +106,10 @@ For detailed information about preferred technologies and architectural constrai
 -   `./behave.sh --update-grid-rows` – update GridRows inline snapshots after diagram format changes.
 -   `./behave.sh --update-grid-rows "<pattern>"` – update snapshots in matching test files only.
 -   `./behave.sh --update-grid-rows=dry` – dry run, shows what would change without writing files.
+-   `./benches.sh` – run behavioural benchmarks via `vitest bench` (non-watch by default).
+-   `./benches.sh "<file-pattern>"` – run benchmarks matching a file pattern.
+-   `./benches.sh "<file-pattern>" -t "<bench-name>"` – run a specific benchmark by name.
+-   `./benches.sh --watch` – run benchmarks in watch mode.
 -   `yarn nx test <package>` – execute Jest unit tests for the affected package.
 -   `yarn nx test <package> --testPathPattern="<file-name>"` - test specific test file
 -   `yarn nx test <package> --testPathPattern="<file-name>" --testNamePattern="<test-name>"` - test specific test name in a specific test file
@@ -115,16 +120,15 @@ For detailed information about preferred technologies and architectural constrai
 
 Run rulesync commands via slash notation:
 
--   `/pr-review` - Review pull requests
--   `/code-cleanup` - Reduce code bloat and productionize
--   `/code-fixup` - Fix build and lint errors
--   `/batch-lint-cleanup` - ESLint auto-fix tool
--   `/git-split` - Split large files preserving git history
--   `/git-bisect` - Find commits that introduced issues
--   `/remember` - Save branch context or project learnings as memory
--   `/recall` - Load branch context and browse project memory
--   `/docs-review` - Review documentation pages for technical accuracy
--   `/release-docs-review` - Review all documentation changes between releases
+-   `/ag-prodeng:pr-review` - Review pull requests
+-   `/ag-prodeng:code-fixup` - Fix build and lint errors
+-   `/ag-prodeng:batch-lint-cleanup` - ESLint auto-fix tool
+-   `/ag-prodeng:git-split` - Split large files preserving git history
+-   `/ag-prodeng:git-bisect` - Find commits that introduced issues
+-   `/ag-core:remember` - Save branch context or project learnings as memory
+-   `/ag-core:recall` - Load branch context and browse project memory
+-   `/ag-prodeng:docs-review` - Review documentation pages for technical accuracy (auto-detects ag-grid; product config at `plugins/ag-prodeng/skills/docs-review/ag-grid/config.md`)
+-   `/ag-prodeng:release-docs-review` - Review all documentation changes between releases
 
 ### Architecture
 
