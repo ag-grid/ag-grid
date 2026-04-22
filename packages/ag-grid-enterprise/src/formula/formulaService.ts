@@ -245,35 +245,63 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             }
         });
 
-        const onPinnedRowDataChanged = () => {
-            if (!this.active) {
-                return;
-            }
-            // Pinned row changes don't flow through CSRM's `onRowsChanged`, but a `pinnedTopRowData`
-            // / `pinnedBottomRowData` replacement can reuse RowNodes via `updateData` (new data,
-            // same node) or drop them entirely. Both leave stale CellFormula entries in the cache
-            // (stale `formulaString` / stale cached value). Drop every pinned-row entry; non-pinned
-            // rows never reference pinned rows via absolute refs (those resolve through CSRM only)
-            // so their cache is unaffected.
-            const cache = this.cachedResult;
-            let dropped = false;
-            for (const row of cache.keys()) {
-                if (row.rowPinned) {
-                    cache.delete(row);
-                    dropped = true;
-                }
-            }
-            if (dropped) {
-                this.beans.rowRenderer.refreshCells({ suppressFlash: true, force: true });
-            }
-        };
-
         this.addManagedListeners(this.beans.eventSvc, {
             cellValueChanged: refreshFormulas,
             newColumnsLoaded: onNewColumnsLoaded,
             columnMoved: onColumnMoved,
-            pinnedRowDataChanged: onPinnedRowDataChanged,
+            pinnedRowDataChanged: this.onPinnedRowDataChanged.bind(this),
         });
+    }
+
+    /**
+     * Pinned row changes don't flow through CSRM's `onRowsChanged`. A `pinnedTopRowData` /
+     * `pinnedBottomRowData` replacement can reuse RowNodes via `updateData` (new data, same node)
+     * or drop them entirely - both leave stale CellFormula entries. Drop every cached entry whose
+     * row is currently pinned; non-pinned rows never reference pinned rows via absolute refs
+     * (those resolve through CSRM only) so their cache is unaffected. Rare event, so the O(N)
+     * single-property-check scan is cheaper than maintaining a side index on the hot path.
+     */
+    private onPinnedRowDataChanged(): void {
+        if (!this.active || this.cachedResult.size === 0) {
+            return;
+        }
+        const cache = this.cachedResult;
+        let dropped = false;
+        for (const row of cache.keys()) {
+            if (row.rowPinned) {
+                cache.delete(row);
+                dropped = true;
+                const sibling = row.sibling;
+                if (sibling) {
+                    cache.delete(sibling);
+                }
+            }
+        }
+        if (dropped) {
+            this.beans.rowRenderer.refreshCells({ suppressFlash: true, force: true });
+        }
+    }
+
+    /**
+     * Evict a row from the cache. Pinned rows and group-feature siblings share the row's `data`
+     * object but live as distinct entries, each with its own captured formulaString — drop them
+     * all together.
+     */
+    private dropRow(row: RowNode): void {
+        const cache = this.cachedResult;
+        cache.delete(row);
+        const sibling = row.sibling;
+        if (sibling) {
+            cache.delete(sibling);
+            const siblingPinnedSibling = sibling.pinnedSibling;
+            if (siblingPinnedSibling) {
+                cache.delete(siblingPinnedSibling);
+            }
+        }
+        const pinnedSibling = row.pinnedSibling;
+        if (pinnedSibling) {
+            cache.delete(pinnedSibling);
+        }
     }
 
     /**
@@ -298,29 +326,13 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         let needsRefresh: boolean;
 
         if (changed) {
-            const cache = this.cachedResult;
             const { removals, updates, reordered } = changed;
-
-            // Pinned rows and group-feature siblings share their `data` object with their main
-            // RowNode but are distinct entries in the cache. When the main row is removed/updated
-            // we must drop those auxiliary entries too or they'll keep serving stale formula
-            // strings (captured at creation) over the now-updated shared data.
-            const dropRow = (row: RowNode): void => {
-                cache.delete(row);
-                const sibling = row.sibling;
-                if (sibling) {
-                    cache.delete(sibling);
-                }
-                const pinnedSibling = row.pinnedSibling;
-                if (pinnedSibling) {
-                    cache.delete(pinnedSibling);
-                }
-            };
-
             for (const row of removals) {
-                dropRow(row);
+                this.dropRow(row);
             }
-            updates.forEach(dropRow);
+            for (const row of updates) {
+                this.dropRow(row);
+            }
 
             // Bump only when something could actually invalidate surviving formulas:
             //   - removals: a surviving formula might reference a removed row (now #REF!)
