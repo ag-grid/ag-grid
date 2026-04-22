@@ -43,6 +43,23 @@ describe('Cell Selection', () => {
         return [api, actions];
     }
 
+    function getAriaAnnouncementText(gridDiv: HTMLElement): string {
+        return gridDiv.querySelector('.ag-aria-description-container')?.textContent ?? '';
+    }
+
+    function getRenderedHeaderGroupCell(gridDiv: HTMLElement): HTMLElement {
+        const groupHeader = gridDiv.querySelector('.ag-header-group-cell') as HTMLElement | null;
+        expect(groupHeader).toBeTruthy();
+        return groupHeader!;
+    }
+
+    async function focusHeaderAndGetAnnouncement(api: GridApi, colKey: string): Promise<string> {
+        api.setFocusedHeader(api.getColumnGroup(colKey) ?? colKey);
+        await asyncSetTimeout(300);
+
+        return getAriaAnnouncementText(getGridElement(api)! as HTMLElement);
+    }
+
     const columnDefs = [{ field: 'sport' }, { field: 'year' }, { field: 'amount' }, { field: 'day' }];
     let rowData = [
         { sport: 'football', year: 2021, amount: 43, day: 'monday' },
@@ -765,6 +782,140 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{/Control}');
 
             assertColumnsSelected([['sport', 'day']], api);
+        });
+
+        describe('ARIA announcements', () => {
+            test('sortable leaf header announces ENTER sort when column selection is disabled', async () => {
+                const [api] = await createGrid({
+                    columnDefs: [{ field: 'sport', sortable: true }],
+                    rowData,
+                });
+
+                const gridDiv = getGridElement(api)! as HTMLElement;
+                const announcement = await focusHeaderAndGetAnnouncement(api, 'sport');
+                const sportHeader = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+
+                expect(announcement).toContain('Press ENTER to sort');
+                expect(announcement).not.toContain('Press ALT ENTER to sort');
+                expect(sportHeader.getAttribute('aria-sort')).toBe('none');
+            });
+
+            test('sortable leaf header announces selection and ALT ENTER sort when column selection is enabled', async () => {
+                const [api] = await createGrid({
+                    columnDefs: [{ field: 'sport', sortable: true }],
+                    rowData,
+                    cellSelection: { enableColumnSelection: true },
+                });
+
+                const gridDiv = getGridElement(api)! as HTMLElement;
+                const announcement = await focusHeaderAndGetAnnouncement(api, 'sport');
+                const sportHeader = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+
+                expect(announcement).toContain('Press Enter to toggle selection for all visible cells in this column');
+                expect(announcement).toContain('Press ALT ENTER to sort');
+                expect(announcement).not.toContain('Press ENTER to sort');
+                expect(sportHeader.getAttribute('aria-sort')).toBe('none');
+            });
+
+            test('non-sortable leaf header only announces selection when column selection is enabled', async () => {
+                const [api] = await createGrid({
+                    columnDefs: [{ field: 'sport', sortable: false }],
+                    rowData,
+                    cellSelection: { enableColumnSelection: true },
+                });
+
+                const gridDiv = getGridElement(api)! as HTMLElement;
+                const announcement = await focusHeaderAndGetAnnouncement(api, 'sport');
+                const sportHeader = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+
+                expect(announcement).toContain('Press Enter to toggle selection for all visible cells in this column');
+                expect(announcement).not.toContain('Press ENTER to sort');
+                expect(announcement).not.toContain('Press ALT ENTER to sort');
+                expect(sportHeader.getAttribute('aria-sort')).toBeNull();
+            });
+
+            test('expandable group header announces ENTER expand or collapse when column selection is disabled', async () => {
+                const [api] = await createGrid({
+                    columnDefs: [
+                        {
+                            groupId: 'expandableGroup',
+                            headerName: 'Expandable Group',
+                            openByDefault: true,
+                            children: [
+                                { field: 'sport' },
+                                { field: 'year', columnGroupShow: 'open' },
+                                { field: 'amount', columnGroupShow: 'closed' },
+                            ],
+                        },
+                    ],
+                    rowData,
+                });
+
+                const gridDiv = getGridElement(api)! as HTMLElement;
+                const announcement = await focusHeaderAndGetAnnouncement(api, 'expandableGroup');
+                const groupHeader = getRenderedHeaderGroupCell(gridDiv);
+
+                expect(announcement).toContain('Press ENTER to expand or collapse this column group');
+                expect(announcement).not.toContain(
+                    'Press Enter to toggle selection for all visible cells in this column group'
+                );
+                expect(groupHeader.getAttribute('aria-expanded')).toBe('true');
+            });
+
+            test('expandable group header announces selection and ALT ENTER expand or collapse when column selection is enabled', async () => {
+                const [api] = await createGrid({
+                    columnDefs: [
+                        {
+                            groupId: 'expandableGroup',
+                            headerName: 'Expandable Group',
+                            openByDefault: true,
+                            children: [
+                                { field: 'sport' },
+                                { field: 'year', columnGroupShow: 'open' },
+                                { field: 'amount', columnGroupShow: 'closed' },
+                            ],
+                        },
+                    ],
+                    rowData,
+                    cellSelection: { enableColumnSelection: true },
+                });
+
+                const gridDiv = getGridElement(api)! as HTMLElement;
+                const announcement = await focusHeaderAndGetAnnouncement(api, 'expandableGroup');
+                const groupHeader = getRenderedHeaderGroupCell(gridDiv);
+
+                expect(announcement).toContain(
+                    'Press Enter to toggle selection for all visible cells in this column group'
+                );
+                expect(announcement).toContain('Press ALT ENTER to expand or collapse this column group');
+                expect(announcement).not.toContain('Press ENTER to expand or collapse this column group');
+                expect(groupHeader.getAttribute('aria-expanded')).toBe('true');
+            });
+
+            test('non-expandable group header only announces selection when column selection is enabled', async () => {
+                const [api] = await createGrid({
+                    columnDefs: [
+                        {
+                            groupId: 'staticGroup',
+                            headerName: 'Static Group',
+                            children: [{ field: 'sport' }, { field: 'year' }],
+                        },
+                    ],
+                    rowData,
+                    cellSelection: { enableColumnSelection: true },
+                });
+
+                const gridDiv = getGridElement(api)! as HTMLElement;
+                const announcement = await focusHeaderAndGetAnnouncement(api, 'staticGroup');
+                const groupHeader = getRenderedHeaderGroupCell(gridDiv);
+
+                expect(announcement).toContain(
+                    'Press Enter to toggle selection for all visible cells in this column group'
+                );
+                expect(announcement).not.toContain('Press ENTER to expand or collapse this column group');
+                expect(announcement).not.toContain('Press ALT ENTER to expand or collapse this column group');
+                expect(groupHeader.getAttribute('aria-expanded')).toBeNull();
+            });
         });
     });
 });
