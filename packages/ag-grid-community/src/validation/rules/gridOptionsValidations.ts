@@ -154,6 +154,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     sideBar: 'SideBar',
     statusBar: 'StatusBar',
     treeData: 'SharedTreeData',
+    toolbar: 'Toolbar',
     undoRedoCellEditing: 'UndoRedoEdit',
     valueCache: 'ValueCache',
     viewportDatasource: 'ViewportRowModel',
