@@ -504,6 +504,97 @@ describe('ag-grid formulas edge cases', () => {
         expect(api.getCellValue({ rowNode, colKey: 'out', useFormatter: false })).toBe(5);
     });
 
+    test('serializer output covers operand types, precedence and parens branches', async () => {
+        // Commits an A1 formula via the editor and reads back the normalised REF-format string
+        // written to row data. This exercises the full parse -> serialize pipeline and pins down
+        // the exact serializer output so regressions in `needsParensInBinary`,
+        // `needsParensForUnaryMinus`, operand emission (string/number/boolean/cell) and range
+        // formatting are caught.
+        const api = createGrid('edge-serializer-shapes', {
+            rowData: [
+                { id: 'r1', a: 1, b: 2, c: 3, x: null },
+                { id: 'r2', a: 10, b: 20, c: 30, x: null },
+            ],
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+                { field: 'c', editable: true },
+                { field: 'x', editable: true },
+            ],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        const commitAndRead = async (input: string): Promise<string> => {
+            const started = waitForEvent('cellEditingStarted', api);
+            api.startEditingCell({ rowIndex: 0, colKey: 'x' });
+            await started;
+            const [editor] = api.getCellEditorInstances() as unknown as [{ agSetEditValue?: (v: unknown) => void }];
+            editor?.agSetEditValue?.(input);
+            const stopped = waitForEvent('cellEditingStopped', api);
+            api.stopEditing(false);
+            await stopped;
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+            return api.getRowNode('r1')?.data?.x as string;
+        };
+
+        const A = '=REF(COLUMN("a"),ROW("r1"))';
+        const B = '=REF(COLUMN("b"),ROW("r1"))';
+        const C = '=REF(COLUMN("c"),ROW("r1"))';
+        // Unwrapped REF pieces (no leading '=') for composing expected outputs.
+        const a = A.slice(1);
+        const b = B.slice(1);
+        const c = C.slice(1);
+
+        const cases: [label: string, input: string, expected: string][] = [
+            // --- Operand types (emit branches) -----------------------------------------------
+            ['number operand', '=42', '=42'],
+            ['negative number operand', '=-7', '=-7'],
+            ['decimal number operand', '=3.5', '=3.5'],
+            ['string operand', '="hello"', '="hello"'],
+            ['boolean TRUE operand (IF branch)', '=IF(1=1,TRUE,FALSE)', '=IF(1=1,TRUE,FALSE)'],
+
+            // --- Basic cell refs --------------------------------------------------------------
+            ['relative single ref', '=A1', A],
+            ['absolute col ref', '=$A1', '=REF(COLUMN("A",true),ROW("r1"))'],
+            ['absolute row ref', '=A$1', '=REF(COLUMN("a"),ROW("1",true))'],
+            ['fully absolute ref', '=$A$1', '=REF(COLUMN("A",true),ROW("1",true))'],
+
+            // --- Ranges (endColumn/endRow branch) --------------------------------------------
+            ['range via SUM', '=SUM(A1:B2)', '=SUM(REF(COLUMN("a"),ROW("r1"),COLUMN("b"),ROW("r2")))'],
+
+            // --- Infix / needsParensInBinary branches ----------------------------------------
+            ['binary add, same-precedence associative (no parens)', '=A1+B1+C1', `=${a}+${b}+${c}`],
+            ['binary sub, left-assoc non-associative right-side parens', '=A1-(B1-C1)', `=${a}-(${b}-${c})`],
+            ['binary div, left-assoc non-associative right-side parens', '=A1/(B1/C1)', `=${a}/(${b}/${c})`],
+            ['mixed precedence, higher-on-right (no parens)', '=A1+B1*C1', `=${a}+${b}*${c}`],
+            ['mixed precedence, higher-on-left (parens on left)', '=(A1+B1)*C1', `=(${a}+${b})*${c}`],
+            ['power is right-associative (no parens)', '=A1^B1^C1', `=${a}^${b}^${c}`],
+            ['power left-parens forced when same op on left', '=(A1^B1)^C1', `=(${a}^${b})^${c}`],
+
+            // --- Unary minus (isUnaryMinusNode + needsParensForUnaryMinus branches) ----------
+            ['unary minus on cell ref', '=-A1', `=-${a}`],
+            ['unary minus wraps +,- inner', '=-(A1+B1)', `=-(${a}+${b})`],
+            ['unary minus does NOT wrap ^ inner', '=-A1^2', `=-${a}^2`],
+
+            // --- Postfix / prefix operator paths ---------------------------------------------
+            ['postfix percent on cell', '=A1%', `=${a}%`],
+            ['postfix percent on number', '=50%', '=50%'],
+
+            // --- Function-call fallback (manual args loop, 0+/1/multi-arg) -------------------
+            ['function with one arg', '=ABS(A1)', `=ABS(${a})`],
+            ['function with three args', '=IF(A1,B1,C1)', `=IF(${a},${b},${c})`],
+        ];
+
+        const failures: string[] = [];
+        for (const [label, input, expected] of cases) {
+            const actual = await commitAndRead(input);
+            if (actual !== expected) {
+                failures.push(`  [${label}] input=${input}\n    expected: ${expected}\n    actual:   ${actual}`);
+            }
+        }
+        expect(failures.join('\n')).toBe('');
+    });
+
     test('normaliseFormula is idempotent across successive edit round-trips', async () => {
         const api = createGrid('edge-editor-idempotent', {
             rowData: [{ id: 'r1', a: 1, b: 2, out: '=REF(COLUMN("a"),ROW("r1"))+REF(COLUMN("b"),ROW("r1"))' }],
