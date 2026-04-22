@@ -926,6 +926,7 @@
     }
 
     .ag-notes-popup-editor .ag-text-area-input[readonly] {
+        background-color: var(--ag-note-popup-background-color);
         border: none;
     }
 
