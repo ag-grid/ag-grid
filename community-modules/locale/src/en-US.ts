@@ -690,7 +690,8 @@ export const AG_GRID_LOCALE_EN = {
     ariaColumnCellSelection: 'Press Enter to toggle selection for all visible cells in this column',
     ariaColumnGroupCellSelection: 'Press Enter to toggle selection for all visible cells in this column group',
     ariaColumnGroupExpansion: 'Press ENTER to expand or collapse this column group',
-    ariaColumnGroupCellSelectionAndExpansion: 'Press Enter to toggle selection for all visible cells in this column group. Press ALT ENTER to expand or collapse this column group',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Press Enter to toggle selection for all visible cells in this column group. Press ALT ENTER to expand or collapse this column group',
     ariaRowSelectAll: 'Press Space to toggle all rows selection',
     ariaRowToggleSelection: 'Press Space to toggle row selection',
     ariaRowSelect: 'Press SPACE to select this row',

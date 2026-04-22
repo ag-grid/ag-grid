@@ -687,7 +687,8 @@ export const AG_GRID_LOCALE_JP = {
     ariaColumnCellSelection: 'この列のすべての表示セルの選択を切り替えるにはEnterキーを押してください',
     ariaColumnGroupCellSelection: 'この列グループのすべての表示セルの選択を切り替えるにはEnterキーを押してください',
     ariaColumnGroupExpansion: 'この列グループを展開または折りたたむにはENTERキーを押してください',
-    ariaColumnGroupCellSelectionAndExpansion: 'この列グループのすべての表示セルの選択を切り替えるにはEnterキーを押してください. この列グループを展開または折りたたむにはALT ENTERキーを押してください',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'この列グループのすべての表示セルの選択を切り替えるにはEnterキーを押してください. この列グループを展開または折りたたむにはALT ENTERキーを押してください',
     ariaRowSelectAll: 'すべての行の選択を切り替えるにはSPACEを押してください',
     ariaRowToggleSelection: '行の選択を切り替えるにはSPACEを押してください',
     ariaRowSelect: 'この行を選択するにはSPACEを押してください',

@@ -687,7 +687,8 @@ export const AG_GRID_LOCALE_PK = {
     ariaColumnCellSelection: 'اس کالم میں تمام نظر آنے والے سیلز کا انتخاب بدلنے کے لیے Enter دبائیں',
     ariaColumnGroupCellSelection: 'اس کالم گروپ میں تمام نظر آنے والے سیلز کا انتخاب بدلنے کے لیے Enter دبائیں',
     ariaColumnGroupExpansion: 'اس کالم گروپ کو پھیلانے یا سکیڑنے کے لیے ENTER دبائیں',
-    ariaColumnGroupCellSelectionAndExpansion: 'اس کالم گروپ میں تمام نظر آنے والے سیلز کا انتخاب بدلنے کے لیے Enter دبائیں. اس کالم گروپ کو پھیلانے یا سکیڑنے کے لیے ALT ENTER دبائیں',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'اس کالم گروپ میں تمام نظر آنے والے سیلز کا انتخاب بدلنے کے لیے Enter دبائیں. اس کالم گروپ کو پھیلانے یا سکیڑنے کے لیے ALT ENTER دبائیں',
     ariaRowSelectAll: 'تمام صفوں کا انتخاب ٹوگل کرنے کے لیے SPACE دبائیں',
     ariaRowToggleSelection: 'صف کا انتخاب ٹوگل کرنے کے لیے SPACE دبائیں',
     ariaRowSelect: 'اس صف کو منتخب کرنے کے لیے SPACE دبائیں',

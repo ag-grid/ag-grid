@@ -689,7 +689,8 @@ export const AG_GRID_LOCALE_IR = {
     ariaColumnGroupCellSelection:
         'برای تغییر انتخاب همه سلول‌های قابل مشاهده در این گروه ستون، کلید Enter را فشار دهید',
     ariaColumnGroupExpansion: 'برای باز یا بسته کردن این گروه ستون ENTER را فشار دهید',
-    ariaColumnGroupCellSelectionAndExpansion: 'برای تغییر انتخاب همه سلول‌های قابل مشاهده در این گروه ستون، کلید Enter را فشار دهید. برای باز یا بسته کردن این گروه ستون ALT ENTER را فشار دهید',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'برای تغییر انتخاب همه سلول‌های قابل مشاهده در این گروه ستون، کلید Enter را فشار دهید. برای باز یا بسته کردن این گروه ستون ALT ENTER را فشار دهید',
     ariaRowSelectAll: 'SPACE را فشار دهید تا همه سطرها انتخاب/غیرفعال شوند',
     ariaRowToggleSelection: 'SPACE را فشار دهید تا انتخاب سطر تغییر یابد',
     ariaRowSelect: 'SPACE را فشار دهید تا این سطر انتخاب شود',

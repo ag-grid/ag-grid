@@ -690,7 +690,8 @@ export const AG_GRID_LOCALE_SE = {
     ariaColumnGroupCellSelection:
         'Tryck på Enter för att växla markeringen av alla synliga celler i den här kolumngruppen',
     ariaColumnGroupExpansion: 'Tryck ENTER för att expandera eller kollapsa denna kolumngrupp',
-    ariaColumnGroupCellSelectionAndExpansion: 'Tryck på Enter för att växla markeringen av alla synliga celler i den här kolumngruppen. Tryck ALT ENTER för att expandera eller kollapsa denna kolumngrupp',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Tryck på Enter för att växla markeringen av alla synliga celler i den här kolumngruppen. Tryck ALT ENTER för att expandera eller kollapsa denna kolumngrupp',
     ariaRowSelectAll: 'Tryck SPACE för att växla markering av alla rader',
     ariaRowToggleSelection: 'Tryck SPACE för att växla radmarkering',
     ariaRowSelect: 'Tryck SPACE för att markera denna rad',

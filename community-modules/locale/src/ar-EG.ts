@@ -686,7 +686,8 @@ export const AG_GRID_LOCALE_EG = {
     ariaColumnCellSelection: 'اضغط على Enter لتبديل تحديد جميع الخلايا المرئية في هذا العمود',
     ariaColumnGroupCellSelection: 'اضغط على Enter لتبديل تحديد جميع الخلايا المرئية في مجموعة الأعمدة هذه',
     ariaColumnGroupExpansion: 'اضغط على ENTER لتوسيع أو طي مجموعة الأعمدة هذه',
-    ariaColumnGroupCellSelectionAndExpansion: 'اضغط على Enter لتبديل تحديد جميع الخلايا المرئية في مجموعة الأعمدة هذه. اضغط على ALT ENTER لتوسيع أو طي مجموعة الأعمدة هذه',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'اضغط على Enter لتبديل تحديد جميع الخلايا المرئية في مجموعة الأعمدة هذه. اضغط على ALT ENTER لتوسيع أو طي مجموعة الأعمدة هذه',
     ariaRowSelectAll: 'اضغط Space لتبديل تحديد كل الصفوف',
     ariaRowToggleSelection: 'اضغط Space لتبديل تحديد الصف',
     ariaRowSelect: 'اضغط SPACE لتحديد هذا الصف',

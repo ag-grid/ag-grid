@@ -689,7 +689,8 @@ export const AG_GRID_LOCALE_NL = {
     ariaColumnGroupCellSelection:
         'Druk op Enter om de selectie van alle zichtbare cellen in deze kolomgroep te wisselen',
     ariaColumnGroupExpansion: 'Druk op ENTER om deze kolomgroep uit te vouwen of samen te vouwen',
-    ariaColumnGroupCellSelectionAndExpansion: 'Druk op Enter om de selectie van alle zichtbare cellen in deze kolomgroep te wisselen. Druk op ALT ENTER om deze kolomgroep uit te vouwen of samen te vouwen',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Druk op Enter om de selectie van alle zichtbare cellen in deze kolomgroep te wisselen. Druk op ALT ENTER om deze kolomgroep uit te vouwen of samen te vouwen',
     ariaRowSelectAll: 'Druk op SPATIE om alle rijen te selecteren/deselecteren',
     ariaRowToggleSelection: 'Druk op SPATIE om rijselectie te schakelen',
     ariaRowSelect: 'Druk op SPATIE om deze rij te selecteren',

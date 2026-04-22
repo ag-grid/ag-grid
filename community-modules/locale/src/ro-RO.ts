@@ -691,7 +691,8 @@ export const AG_GRID_LOCALE_RO = {
     ariaColumnGroupCellSelection:
         'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din acest grup de coloane',
     ariaColumnGroupExpansion: 'Apăsați ENTER pentru a extinde sau restrânge acest grup de coloane',
-    ariaColumnGroupCellSelectionAndExpansion: 'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din acest grup de coloane. Apăsați ALT ENTER pentru a extinde sau restrânge acest grup de coloane',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din acest grup de coloane. Apăsați ALT ENTER pentru a extinde sau restrânge acest grup de coloane',
     ariaRowSelectAll: 'Apăsați Space pentru a comuta selecția tuturor rândurilor',
     ariaRowToggleSelection: 'Apăsați Space pentru a comuta selecția rândului',
     ariaRowSelect: 'Apăsați SPACE pentru a selecta acest rând',

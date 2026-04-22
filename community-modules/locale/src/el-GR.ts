@@ -693,7 +693,8 @@ export const AG_GRID_LOCALE_GR = {
     ariaColumnCellSelection: 'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή τη στήλη',
     ariaColumnGroupCellSelection: 'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή την ομάδα στηλών',
     ariaColumnGroupExpansion: 'Πατήστε ENTER για ανάπτυξη ή σύμπτυξη αυτής της ομάδας στηλών',
-    ariaColumnGroupCellSelectionAndExpansion: 'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή την ομάδα στηλών. Πατήστε ALT ENTER για ανάπτυξη ή σύμπτυξη αυτής της ομάδας στηλών',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή την ομάδα στηλών. Πατήστε ALT ENTER για ανάπτυξη ή σύμπτυξη αυτής της ομάδας στηλών',
     ariaRowSelectAll: 'Πατήστε SPACE για αλλαγή επιλογής όλων των γραμμών',
     ariaRowToggleSelection: 'Πατήστε SPACE για εναλλαγή επιλογής γραμμής',
     ariaRowSelect: 'Πατήστε SPACE για επιλογή αυτής της γραμμής',

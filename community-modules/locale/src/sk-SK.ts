@@ -688,7 +688,8 @@ export const AG_GRID_LOCALE_SK = {
     ariaColumnGroupCellSelection:
         'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tejto skupine stĺpcov',
     ariaColumnGroupExpansion: 'Stlačte ENTER na rozbalenie alebo zbalenie tejto skupiny stĺpcov',
-    ariaColumnGroupCellSelectionAndExpansion: 'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tejto skupine stĺpcov. Stlačte ALT ENTER na rozbalenie alebo zbalenie tejto skupiny stĺpcov',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tejto skupine stĺpcov. Stlačte ALT ENTER na rozbalenie alebo zbalenie tejto skupiny stĺpcov',
     ariaRowSelectAll: 'Stlačte SPACE na prepínanie výberu všetkých riadkov',
     ariaRowToggleSelection: 'Stlačte SPACE na prepínanie výberu riadku',
     ariaRowSelect: 'Stlačte SPACE na výber tohto riadku',

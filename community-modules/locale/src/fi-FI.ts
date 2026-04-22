@@ -690,7 +690,8 @@ export const AG_GRID_LOCALE_FI = {
     ariaColumnCellSelection: 'Paina Enteriä vaihtaaksesi kaikkien tämän sarakkeen näkyvien solujen valinnan',
     ariaColumnGroupCellSelection: 'Paina Enteriä vaihtaaksesi kaikkien tämän sarakeryhmän näkyvien solujen valinnan',
     ariaColumnGroupExpansion: 'Paina ENTER laajentaaksesi tai supistaaksesi tämän sarakeryhmän',
-    ariaColumnGroupCellSelectionAndExpansion: 'Paina Enteriä vaihtaaksesi kaikkien tämän sarakeryhmän näkyvien solujen valinnan. Paina ALT ENTER laajentaaksesi tai supistaaksesi tämän sarakeryhmän',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Paina Enteriä vaihtaaksesi kaikkien tämän sarakeryhmän näkyvien solujen valinnan. Paina ALT ENTER laajentaaksesi tai supistaaksesi tämän sarakeryhmän',
     ariaRowSelectAll: 'Paina VÄLILYÖNTI vaihtaaksesi kaikkien rivien valintaa',
     ariaRowToggleSelection: 'Paina VÄLILYÖNTI vaihtaaksesi rivin valintaa',
     ariaRowSelect: 'Paina VÄLILYÖNTI valitaksesi tämän rivin',

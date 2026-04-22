@@ -691,7 +691,8 @@ export const AG_GRID_LOCALE_BG = {
     ariaColumnGroupCellSelection:
         'Натиснете Enter, за да превключите избора на всички видими клетки в тази група колони',
     ariaColumnGroupExpansion: 'Натиснете ENTER, за да разгънете или свиете тази група колони',
-    ariaColumnGroupCellSelectionAndExpansion: 'Натиснете Enter, за да превключите избора на всички видими клетки в тази група колони. Натиснете ALT ENTER, за да разгънете или свиете тази група колони',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Натиснете Enter, за да превключите избора на всички видими клетки в тази група колони. Натиснете ALT ENTER, за да разгънете или свиете тази група колони',
     ariaRowSelectAll: 'Натиснете SPACE, за да превключите избора на всички редове',
     ariaRowToggleSelection: 'Натиснете SPACE, за да превключите избора на реда',
     ariaRowSelect: 'Натиснете SPACE, за да изберете този ред',

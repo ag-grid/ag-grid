@@ -693,7 +693,8 @@ export const AG_GRID_LOCALE_IT = {
     ariaColumnGroupCellSelection:
         'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questo gruppo di colonne',
     ariaColumnGroupExpansion: 'Premi INVIO per espandere o comprimere questo gruppo di colonne',
-    ariaColumnGroupCellSelectionAndExpansion: 'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questo gruppo di colonne. Premi ALT INVIO per espandere o comprimere questo gruppo di colonne',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questo gruppo di colonne. Premi ALT INVIO per espandere o comprimere questo gruppo di colonne',
     ariaRowSelectAll: 'Premi SPAZIO per attivare/disattivare la selezione di tutte le righe',
     ariaRowToggleSelection: 'Premi SPAZIO per attivare/disattivare la selezione della riga',
     ariaRowSelect: 'Premi SPAZIO per selezionare questa riga',

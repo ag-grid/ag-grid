@@ -694,7 +694,8 @@ export const AG_GRID_LOCALE_DE = {
     ariaColumnGroupCellSelection:
         'Drücken Sie EINGABETASTE, um die Auswahl aller sichtbaren Zellen in dieser Spaltengruppe umzuschalten',
     ariaColumnGroupExpansion: 'Drücken Sie EINGABETASTE, um diese Spaltengruppe zu erweitern oder zu reduzieren',
-    ariaColumnGroupCellSelectionAndExpansion: 'Drücken Sie EINGABETASTE, um die Auswahl aller sichtbaren Zellen in dieser Spaltengruppe umzuschalten. Drücken Sie ALT EINGABETASTE, um diese Spaltengruppe zu erweitern oder zu reduzieren',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Drücken Sie EINGABETASTE, um die Auswahl aller sichtbaren Zellen in dieser Spaltengruppe umzuschalten. Drücken Sie ALT EINGABETASTE, um diese Spaltengruppe zu erweitern oder zu reduzieren',
     ariaRowSelectAll: 'Drücken Sie LEERTASTE, um die Auswahl aller Zeilen umzuschalten',
     ariaRowToggleSelection: 'Drücken Sie LEERTASTE, um die Zeilenauswahl umzuschalten',
     ariaRowSelect: 'Drücken Sie LEERTASTE, um diese Zeile auszuwählen',

@@ -689,7 +689,8 @@ export const AG_GRID_LOCALE_UA = {
     ariaColumnCellSelection: 'Натисніть Enter, щоб перемкнути виділення всіх видимих комірок у цьому стовпці',
     ariaColumnGroupCellSelection: 'Натисніть Enter, щоб перемкнути виділення всіх видимих комірок у цій групі стовпців',
     ariaColumnGroupExpansion: 'Натисніть ENTER, щоб розгорнути або згорнути цю групу стовпців',
-    ariaColumnGroupCellSelectionAndExpansion: 'Натисніть Enter, щоб перемкнути виділення всіх видимих комірок у цій групі стовпців. Натисніть ALT ENTER, щоб розгорнути або згорнути цю групу стовпців',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Натисніть Enter, щоб перемкнути виділення всіх видимих комірок у цій групі стовпців. Натисніть ALT ENTER, щоб розгорнути або згорнути цю групу стовпців',
     ariaRowSelectAll: 'Натисніть Space для перемикання вибору всіх рядків',
     ariaRowToggleSelection: 'Натисніть Space для перемикання вибору рядка',
     ariaRowSelect: 'Натисніть SPACE для вибору цього рядка',

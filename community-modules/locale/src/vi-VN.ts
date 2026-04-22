@@ -687,7 +687,8 @@ export const AG_GRID_LOCALE_VN = {
     ariaColumnCellSelection: 'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong cột này',
     ariaColumnGroupCellSelection: 'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong nhóm cột này',
     ariaColumnGroupExpansion: 'Nhấn ENTER để mở rộng hoặc thu gọn nhóm cột này',
-    ariaColumnGroupCellSelectionAndExpansion: 'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong nhóm cột này. Nhấn ALT ENTER để mở rộng hoặc thu gọn nhóm cột này',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong nhóm cột này. Nhấn ALT ENTER để mở rộng hoặc thu gọn nhóm cột này',
     ariaRowSelectAll: 'Nhấn SPACE để chuyển đổi chọn tất cả các hàng',
     ariaRowToggleSelection: 'Nhấn SPACE để chuyển đổi chọn hàng',
     ariaRowSelect: 'Nhấn SPACE để chọn hàng này',

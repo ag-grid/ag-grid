@@ -688,7 +688,8 @@ export const AG_GRID_LOCALE_NO = {
     ariaColumnCellSelection: 'Trykk på Enter for å veksle markering av alle synlige celler i denne kolonnen',
     ariaColumnGroupCellSelection: 'Trykk på Enter for å veksle markering av alle synlige celler i denne kolonnegruppen',
     ariaColumnGroupExpansion: 'Trykk ENTER for å utvide eller skjule denne kolonnegruppen',
-    ariaColumnGroupCellSelectionAndExpansion: 'Trykk på Enter for å veksle markering av alle synlige celler i denne kolonnegruppen. Trykk ALT ENTER for å utvide eller skjule denne kolonnegruppen',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Trykk på Enter for å veksle markering av alle synlige celler i denne kolonnegruppen. Trykk ALT ENTER for å utvide eller skjule denne kolonnegruppen',
     ariaRowSelectAll: 'Trykk SPACE for å veksle alle radvalgene',
     ariaRowToggleSelection: 'Trykk SPACE for å veksle radvalg',
     ariaRowSelect: 'Trykk SPACE for å velge denne raden',

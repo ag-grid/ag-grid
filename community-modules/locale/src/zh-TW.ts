@@ -686,7 +686,8 @@ export const AG_GRID_LOCALE_TW = {
     ariaColumnCellSelection: '按 Enter 鍵切換此欄中所有可見儲存格的選取',
     ariaColumnGroupCellSelection: '按 Enter 鍵切換此欄群組中所有可見儲存格的選取',
     ariaColumnGroupExpansion: '按 ENTER 鍵展開或摺疊此欄群組',
-    ariaColumnGroupCellSelectionAndExpansion: '按 Enter 鍵切換此欄群組中所有可見儲存格的選取. 按 ALT ENTER 鍵展開或摺疊此欄群組',
+    ariaColumnGroupCellSelectionAndExpansion:
+        '按 Enter 鍵切換此欄群組中所有可見儲存格的選取. 按 ALT ENTER 鍵展開或摺疊此欄群組',
     ariaRowSelectAll: '按 SPACE 鍵切換所有行的選擇',
     ariaRowToggleSelection: '按 SPACE 鍵切換行的選擇',
     ariaRowSelect: '按 SPACE 鍵選取此行',

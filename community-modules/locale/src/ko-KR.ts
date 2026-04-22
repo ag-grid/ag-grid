@@ -687,7 +687,8 @@ export const AG_GRID_LOCALE_KR = {
     ariaColumnCellSelection: '이 열의 모든 표시 셀 선택을 전환하려면 Enter 키를 누르세요',
     ariaColumnGroupCellSelection: '이 열 그룹의 모든 표시 셀 선택을 전환하려면 Enter 키를 누르세요',
     ariaColumnGroupExpansion: '이 열 그룹을 확장하거나 축소하려면 ENTER를 누르세요',
-    ariaColumnGroupCellSelectionAndExpansion: '이 열 그룹의 모든 표시 셀 선택을 전환하려면 Enter 키를 누르세요. 이 열 그룹을 확장하거나 축소하려면 ALT ENTER를 누르세요',
+    ariaColumnGroupCellSelectionAndExpansion:
+        '이 열 그룹의 모든 표시 셀 선택을 전환하려면 Enter 키를 누르세요. 이 열 그룹을 확장하거나 축소하려면 ALT ENTER를 누르세요',
     ariaRowSelectAll: '모든 행 선택 전환을 위해 SPACE를 누르세요',
     ariaRowToggleSelection: '행 선택을 전환하려면 SPACE를 누르세요',
     ariaRowSelect: '이 행을 선택하려면 SPACE를 누르세요',

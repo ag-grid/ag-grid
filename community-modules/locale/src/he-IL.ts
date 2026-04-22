@@ -686,7 +686,8 @@ export const AG_GRID_LOCALE_IL = {
     ariaColumnCellSelection: 'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בעמודה זו',
     ariaColumnGroupCellSelection: 'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בקבוצת עמודות זו',
     ariaColumnGroupExpansion: 'לחץ על ENTER כדי להרחיב או לכווץ קבוצת עמודות זו',
-    ariaColumnGroupCellSelectionAndExpansion: 'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בקבוצת עמודות זו. לחץ על ALT ENTER כדי להרחיב או לכווץ קבוצת עמודות זו',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בקבוצת עמודות זו. לחץ על ALT ENTER כדי להרחיב או לכווץ קבוצת עמודות זו',
     ariaRowSelectAll: 'לחץ על Space כדי להחליף את בחירת כל השורות',
     ariaRowToggleSelection: 'לחץ על Space כדי להחליף את בחירת השורה',
     ariaRowSelect: 'לחץ על SPACE כדי לבחור שורה זו',

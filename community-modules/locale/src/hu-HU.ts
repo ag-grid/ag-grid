@@ -692,8 +692,10 @@ export const AG_GRID_LOCALE_HU = {
     ariaColumnCellSelection: 'Nyomja meg az Entert az oszlop összes látható cellájának kijelölésének váltásához',
     ariaColumnGroupCellSelection:
         'Nyomja meg az Entert az oszlopcsoport összes látható cellájának kijelölésének váltásához',
-    ariaColumnGroupExpansion: 'Nyomja meg az ENTER billentyűt ennek az oszlopcsoportnak a kibontásához vagy összecsukásához',
-    ariaColumnGroupCellSelectionAndExpansion: 'Nyomja meg az Entert az oszlopcsoport összes látható cellájának kijelölésének váltásához. Nyomja meg az ALT ENTER billentyűt ennek az oszlopcsoportnak a kibontásához vagy összecsukásához',
+    ariaColumnGroupExpansion:
+        'Nyomja meg az ENTER billentyűt ennek az oszlopcsoportnak a kibontásához vagy összecsukásához',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Nyomja meg az Entert az oszlopcsoport összes látható cellájának kijelölésének váltásához. Nyomja meg az ALT ENTER billentyűt ennek az oszlopcsoportnak a kibontásához vagy összecsukásához',
     ariaRowSelectAll: 'Nyomja le a SPACE billentyűt az összes sor kiválasztásának váltásához',
     ariaRowToggleSelection: 'Nyomja le a SPACE billentyűt a sor kiválasztásának váltásához',
     ariaRowSelect: 'Nyomja le a SPACE billentyűt ezen sor kiválasztásához',

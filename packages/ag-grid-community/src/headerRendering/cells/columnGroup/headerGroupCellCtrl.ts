@@ -424,10 +424,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
                 'Press Enter to toggle selection for all visible cells in this column group'
             );
         } else if (expandable) {
-            description = translate(
-                'ariaColumnGroupExpansion',
-                'Press ENTER to expand or collapse this column group'
-            );
+            description = translate('ariaColumnGroupExpansion', 'Press ENTER to expand or collapse this column group');
         }
 
         this.ariaAnnouncement = description;

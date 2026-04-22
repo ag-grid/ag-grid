@@ -689,7 +689,8 @@ export const AG_GRID_LOCALE_HR = {
     ariaColumnCellSelection: 'Pritisnite Enter za prebacivanje odabira svih vidljivih ćelija u ovom stupcu',
     ariaColumnGroupCellSelection: 'Pritisnite Enter za prebacivanje odabira svih vidljivih ćelija u ovoj grupi stupaca',
     ariaColumnGroupExpansion: 'Pritisnite ENTER za proširivanje ili sažimanje ove grupe stupaca',
-    ariaColumnGroupCellSelectionAndExpansion: 'Pritisnite Enter za prebacivanje odabira svih vidljivih ćelija u ovoj grupi stupaca. Pritisnite ALT ENTER za proširivanje ili sažimanje ove grupe stupaca',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Pritisnite Enter za prebacivanje odabira svih vidljivih ćelija u ovoj grupi stupaca. Pritisnite ALT ENTER za proširivanje ili sažimanje ove grupe stupaca',
     ariaRowSelectAll: 'Pritisnite SPACE za uključivanje/isključivanje odabira svih redaka',
     ariaRowToggleSelection: 'Pritisnite SPACE za uključivanje/isključivanje odabira retka',
     ariaRowSelect: 'Pritisnite SPACE za odabir ovog retka',

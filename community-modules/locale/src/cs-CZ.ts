@@ -687,7 +687,8 @@ export const AG_GRID_LOCALE_CZ = {
     ariaColumnCellSelection: 'Stiskněte Enter pro přepnutí výběru všech viditelných buněk v tomto sloupci',
     ariaColumnGroupCellSelection: 'Stiskněte Enter pro přepnutí výběru všech viditelných buněk v této skupině sloupců',
     ariaColumnGroupExpansion: 'Stiskněte ENTER pro rozbalení nebo sbalení této skupiny sloupců',
-    ariaColumnGroupCellSelectionAndExpansion: 'Stiskněte Enter pro přepnutí výběru všech viditelných buněk v této skupině sloupců. Stiskněte ALT ENTER pro rozbalení nebo sbalení této skupiny sloupců',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Stiskněte Enter pro přepnutí výběru všech viditelných buněk v této skupině sloupců. Stiskněte ALT ENTER pro rozbalení nebo sbalení této skupiny sloupců',
     ariaRowSelectAll: 'Stiskněte SPACE pro přepnutí výběru všech řádků',
     ariaRowToggleSelection: 'Stiskněte SPACE pro přepnutí výběru řádku',
     ariaRowSelect: 'Stiskněte SPACE pro výběr tohoto řádku',

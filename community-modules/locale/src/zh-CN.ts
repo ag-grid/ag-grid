@@ -686,7 +686,8 @@ export const AG_GRID_LOCALE_CN = {
     ariaColumnCellSelection: '按 Enter 键切换此列中所有可见单元格的选择',
     ariaColumnGroupCellSelection: '按 Enter 键切换此列组中所有可见单元格的选择',
     ariaColumnGroupExpansion: '按 ENTER 键展开或折叠此列组',
-    ariaColumnGroupCellSelectionAndExpansion: '按 Enter 键切换此列组中所有可见单元格的选择. 按 ALT ENTER 键展开或折叠此列组',
+    ariaColumnGroupCellSelectionAndExpansion:
+        '按 Enter 键切换此列组中所有可见单元格的选择. 按 ALT ENTER 键展开或折叠此列组',
     ariaRowSelectAll: '按 Space 切换所有行选择',
     ariaRowToggleSelection: '按 Space 切换行选择',
     ariaRowSelect: '按 SPACE 选择此行',

@@ -690,7 +690,8 @@ export const AG_GRID_LOCALE_DK = {
     ariaColumnCellSelection: 'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonne',
     ariaColumnGroupCellSelection: 'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonnegruppe',
     ariaColumnGroupExpansion: 'Tryk på ENTER for at udvide eller skjule denne kolonnegruppe',
-    ariaColumnGroupCellSelectionAndExpansion: 'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonnegruppe. Tryk på ALT ENTER for at udvide eller skjule denne kolonnegruppe',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonnegruppe. Tryk på ALT ENTER for at udvide eller skjule denne kolonnegruppe',
     ariaRowSelectAll: 'Tryk på MELLEMRUM for at skifte alle rækkers valg',
     ariaRowToggleSelection: 'Tryk på MELLEMRUM for at skifte rækkes valg',
     ariaRowSelect: 'Tryk på MELLEMRUM for at vælge denne række',
