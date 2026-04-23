@@ -135,13 +135,11 @@ function serializeCellA1(beans: BeanCollection, cell: Cell, unsafe: boolean): st
 }
 
 function emitRefColPart(beans: BeanCollection, ref: CellRef): string {
-    const value = quoteString(columnValueForREF(beans, ref));
-    return ref.absolute ? 'COLUMN(' + value + ',true)' : 'COLUMN(' + value + ')';
+    return 'COLUMN(' + quoteString(columnValueForREF(beans, ref)) + (ref.absolute ? ',true)' : ')');
 }
 
 function emitRefRowPart(beans: BeanCollection, ref: CellRef): string {
-    const value = quoteString(rowValueForREF(beans, ref));
-    return ref.absolute ? 'ROW(' + value + ',true)' : 'ROW(' + value + ')';
+    return 'ROW(' + quoteString(rowValueForREF(beans, ref)) + (ref.absolute ? ',true)' : ')');
 }
 
 function serializeCellREF(beans: BeanCollection, cell: Cell): string {
