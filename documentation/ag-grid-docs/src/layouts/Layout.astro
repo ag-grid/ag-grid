@@ -194,6 +194,10 @@ const announcementBannerProps = {
                 });
             });
             observer.observe(htmlEl, { attributes: true });
+
+            if (localStorage.getItem('documentation:announcement-banner-dismissed') !== 'true') {
+                document.documentElement.dataset.showAnnouncement = 'true';
+            }
         </script>
 
         <AnnouncementBanner
