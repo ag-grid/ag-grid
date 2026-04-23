@@ -29,9 +29,9 @@ export function _escapeString(toEscape?: string | null): string | null {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isExpressionString(value: unknown): value is `=${string}` {
-    // 61 = '='.charCodeAt(0). `charCodeAt` is faster than `startsWith('=')` for a single char
-    // and avoids the UTF-16 / length-check overhead of the higher-level string method.
-    return typeof value === 'string' && value.length > 1 && value.charCodeAt(0) === 61;
+    // 61 = '='.codePointAt(0). Direct integer read is cheaper than `startsWith('=')`, which pays
+    // for argument-length and UTF-16 boundary handling on a single-char prefix.
+    return typeof value === 'string' && value.length > 1 && value.codePointAt(0) === 61;
 }
 
 /**
