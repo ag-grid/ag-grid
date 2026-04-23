@@ -8,47 +8,67 @@ import type { AgGridCommon } from './iCommon';
 import type { IRowNode } from './iRowNode';
 
 export interface Note<TMetadata = any> {
+    /** Text content of the note. */
     text: string;
+    /** Set to `true` to make this note readonly. */
     readOnly?: boolean;
+    /** Optional author of the note. */
     author?: string;
+    /** Optional creation timestamp. */
     createdAt?: string;
+    /** Optional updated timestamp. */
     updatedAt?: string;
+    /** Optional application metadata to be associated with this note. */
     metadata?: TMetadata;
 }
 
 export interface NoteParams {
+    /** Column that the note is for. */
     column: ColKey;
+    /** Row that the note is for. */
     rowNode: IRowNode;
+    /** If using fullWidthRows the location is `cell` for normal cells. */
     location?: 'cell';
 }
 
 export interface FullWidthRowNoteParams {
+    /** Full width row */
     rowNode: IRowNode;
+    /** Location is `fullWidthRow` for full width row notes. */
     location: 'fullWidthRow';
+    /** If `embedFullWidthRows=true` identifies the pinned section the note has been applied to. */
     pinned?: 'left' | 'right';
 }
 
 export type GetNoteParams = NoteParams | FullWidthRowNoteParams;
 
 export type SetNoteParams<TMetadata = any> = GetNoteParams & {
+    /** Note to be saved. */
     note: Note<TMetadata> | undefined;
 };
 
 export interface NotesDataSourceNoteParams {
+    /** Column for the note. */
     column: Column;
+    /** Row for the note. */
     rowNode: IRowNode;
+    /** Location of the note. */
     location?: 'cell';
 }
 
 export interface NotesDataSourceFullWidthRowNoteParams {
+    /** Row for the note. */
     rowNode: IRowNode;
+    /** Location of the note. */
     location: 'fullWidthRow';
+    /** If `embedFullWidthRows=true` identifies the pinned section the note has been applied to. */
     pinned?: 'left' | 'right';
 }
 
 export type NotesDataSourceGetNoteParams = NotesDataSourceNoteParams;
 
 export interface NotesDataSourceSetNoteParams<TMetadata = any> extends NotesDataSourceNoteParams {
+    /** Note to be saved. */
     note: Note<TMetadata> | undefined;
 }
 
@@ -57,6 +77,7 @@ export type FullWidthNotesDataSourceGetNoteParams = NotesDataSourceNoteParams | 
 export type FullWidthNotesDataSourceSetNoteParams<TMetadata = any> =
     | NotesDataSourceSetNoteParams<TMetadata>
     | (NotesDataSourceFullWidthRowNoteParams & {
+          /** Note to be saved. */
           note: Note<TMetadata> | undefined;
       });
 
@@ -93,7 +114,9 @@ export interface FullWidthNotesDataSource<TMetadata = any> extends BaseNotesData
 }
 
 export interface RefreshNotesParams {
+    /** Only refresh the provided rowNodes. If `undefined` refresh all rows. */
     rowNodes?: IRowNode[];
+    /** Only refresh the provided columns. If `undefined` refresh all columns. */
     columns?: (string | Column)[];
 }
 

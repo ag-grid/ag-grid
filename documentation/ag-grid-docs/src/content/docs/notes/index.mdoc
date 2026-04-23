@@ -7,13 +7,9 @@ Notes let users attach comments to individual cells without storing note text in
 
 ## Enabling Notes
 
-Notes are enabled by providing a `notesDataSource`. This lets you keep note state in a separate store and persist it independently of the row data.
+Notes are enabled by providing a `notesDataSource` to the grid. The datasource has two required methods `getNote()` and `setNote()` and is responsible for managing the state of the notes for the grid. To ensure stable row ids [getRowId()](./row-ids/) is required.
 
-Right-click a cell or press `Shift + F2` to add a note. Hover a noted cell to view it. Use `noteShowDelay` and `noteHideDelay` to control how quickly note popups appear and disappear on hover.
-
-{% note %}
-Notes are **not** displayed for the cell currently being edited. Hovering that cell or pressing `Shift + F2` for it has no effect until editing is complete. Notes for other cells continue to work normally.
-{% /note %}
+To add a new note either right-click a cell to open the context menu or press `Shift + F2`. Hovering a cell with a note will display the note popup. Use `noteShowDelay` and `noteHideDelay` to control how quickly note popups appear and disappear on hover.
 
 {% gridExampleRunner title="Notes" name="notes" exampleHeight=350 /%}
 
@@ -37,9 +33,8 @@ const gridOptions = {
         },
     },
 };
-```
 
-The example above uses `getRowId()` so the note store can key notes consistently by row ID and column ID.
+```
 
 ## Notes Trigger
 
@@ -61,9 +56,9 @@ const gridOptions = {
 
 Built-in note metadata, including `author`, `createdAt`, and `updatedAt`, is rendered exactly as provided by your datasource.
 
-{% gridExampleRunner title="Metadata" name="notes-metadata" exampleHeight=380 /%}
+The built-in note editor only updates the note text. If notes created from the built-in UI should also include metadata, stamp it inside `notesDataSource.setNote()`. The example below includes an `Authenticated User` input to simulate the current user being stamped into saved notes.
 
-The built-in note editor only updates the note text. If notes created from the built-in UI should also include metadata, stamp it inside `notesDataSource.setNote()`. The example includes an `Authenticated User` input to simulate the current user being stamped into saved notes.
+{% gridExampleRunner title="Metadata" name="notes-metadata" exampleHeight=380 /%}
 
 ```{% frameworkTransform=true %}
 const getCurrentUser = () => document.getElementById('current-user').value;
@@ -169,11 +164,38 @@ const gridOptions = {
 
 ## Full Width Rows
 
-Notes also work with full width rows.
+To support adding notes to full width rows ensure the `notesDataSource` implements the `FullWidthNotesDataSource` interface. The interface requires `supportsFullWidthRows:true` to be set on the `notesDataSource`.
+
+The example below includes both regular notes on cells and notes on full width rows in the same datasource. Full width rows use a separate note identity. Instead of receiving a `column`, the datasource receives `location: 'fullWidthRow'` and an optional `pinned` value when in `embedFullWidthRows` mode.
 
 {% gridExampleRunner title="Notes with Full Width Rows" name="notes-full-width" exampleHeight=460 /%}
 
-This example includes both regular notes on cells and notes on full width rows in the same datasource. Full width rows use a separate note identity. Instead of receiving a `column`, the datasource receives `location: 'fullWidthRow'` and an optional `pinned` value when in `embedFullWidthRows` mode. Use `FullWidthNotesDataSource` when your datasource needs to support both shapes.
+```{% frameworkTransform=true %}
+const notesStore = {};
+
+const gridOptions = {
+    getRowId: (params) => String(params.data.id),
+    notesDataSource: {
+        // Enable support for Full Width Rows
+        supportsFullWidthRows: true,
+    getNote: (params) =>
+        params.location === 'fullWidthRow'
+            ? noteStore.get(getFullWidthNoteKey(params.rowNode.id))
+            : noteStore.get(getNoteKey(params.rowNode.id, params.column.getColId())),
+    setNote: (params) => {
+        const key =
+            params.location === 'fullWidthRow'
+                ? getFullWidthNoteKey(params.rowNode.id)
+                : getNoteKey(params.rowNode.id, params.column.getColId());
+        if (params.note === undefined) {
+            noteStore.delete(key);
+        } else {
+            noteStore.set(key, params.note);
+        }
+    },
+    },
+};
+```
 
 ```ts
 noteStore.set('2', {
@@ -181,17 +203,17 @@ noteStore.set('2', {
 });
 ```
 
-If you are using embedded full width rows with pinned sections and need separate notes per section, include `pinned` in your store key.
-
 ### Embedded Full Width Rows
 
-When `embedFullWidthRows=true`, the datasource still receives `location: 'fullWidthRow'`, but `pinned` identifies whether the note belongs to the left, centre, or right rendered section.
+When `embedFullWidthRows=true`, the datasource still receives `location: 'fullWidthRow'`, but `pinned` identifies whether the note belongs to the left, centre, or right rendered section so that the `notesDataSource` can save the note appropriately.
 
 {% gridExampleRunner title="Notes with Embedded Full Width Rows" name="notes-full-width-embedded" exampleHeight=460 /%}
 
 ## Feature Interaction
 
-When the `ContextMenuModule` is loaded, the default context menu adds note actions automatically. If you customise `getContextMenuItems()`, include the built-in `note` item to keep the standard note actions:
+### Context Menu
+
+When the `ContextMenuModule` is registered, the note actions are included automatically. If you customise `getContextMenuItems()`, include the built-in `note` item to keep the standard note actions:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -206,15 +228,26 @@ The built-in `note` item expands based on the current cell state:
 -   `View Note`, plus a disabled `Remove Note`, when the existing note is read-only.
 -   Disabled note actions when the cell is suppressed. Existing suppressed notes still show `View Note`.
 
+### Keyboard Shortcuts
+
 `Shift + F2` opens an existing note for the focused cell, or creates a new note if the cell allows notes and does not already have one. Plain `F2` keeps the normal cell editing behaviour.
+
+### Cell Editing
+
+Notes are **not** displayed if the cell is currently being edited. Hovering that cell or pressing `Shift + F2` will have no effect until editing is complete.
 
 ## API
 
 Use the grid API to read, write, remove and refresh notes programmatically. This is useful when notes are edited from application UI outside the grid, or when the underlying note store changes directly. The API example also shows how to set `readOnly` on a note payload.
 
-{% gridExampleRunner title="Notes API" name="notes-api" exampleHeight=560 /%}
+In the example below:
 
-In the example above, clicking a cell selects it and syncs the toolbar controls automatically. `Save via API` updates the note with `setNote()`, including setting or clearing `readOnly`. `Remove via API` clears the note, and `Mutate Store Directly` plus `Refresh Notes` shows how to resync the grid after external store updates.
+-   clicking a cell selects it and syncs the toolbar controls automatically.
+-   `Save via API` updates the note with `setNote()`, including setting or clearing `readOnly`.
+-   `Remove via API` clears the note
+-   `Mutate Store Directly` plus `Refresh Notes` shows how to resync the grid after external store updates.
+
+{% gridExampleRunner title="Notes API" name="notes-api" exampleHeight=560 /%}
 
 ### Grid Options
 

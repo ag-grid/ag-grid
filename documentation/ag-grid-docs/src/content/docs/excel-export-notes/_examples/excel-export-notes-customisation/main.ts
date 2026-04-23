@@ -1,7 +1,5 @@
 import type {
     ColDef,
-    ExcelExportParams,
-    ExcelRow,
     GetRowIdParams,
     GridApi,
     GridOptions,
@@ -81,53 +79,6 @@ const rowData: OlympicWinner[] = [
 
 let gridApi: GridApi<OlympicWinner>;
 
-const getExtraContentRows = (): ExcelRow[] => [
-    {
-        cells: [
-            {
-                data: { type: 'String', value: 'Export Summary' },
-                styleId: 'coverHeading',
-                note: {
-                    text: 'This note is added only during export through ExcelCell.note.',
-                },
-            },
-        ],
-    },
-    {
-        cells: [
-            {
-                data: {
-                    type: 'String',
-                    value: 'Grid notes start from excelNoteValue and append metadata from gridNote. Extra content rows can also carry notes.',
-                },
-            },
-        ],
-    },
-    { cells: [] },
-];
-
-const defaultExcelExportParams: ExcelExportParams = {
-    allColumns: true,
-    author: 'Portfolio Ops',
-    prependContent: getExtraContentRows(),
-    processNoteCallback: (params) => {
-        if (params.excelNoteValue) {
-            return {
-                ...params.excelNoteValue,
-                text: `${params.excelNoteValue.text}\n\nUpdated: ${params.gridNote?.updatedAt ?? 'Not recorded'}`,
-            };
-        }
-
-        if (params.column.getColId() === 'gold' && Number(params.value) >= 8) {
-            return {
-                text: 'Flag this medal count for the performance review pack.',
-            };
-        }
-
-        return undefined;
-    },
-};
-
 const gridOptions: GridOptions<OlympicWinner> = {
     columnDefs,
     rowData,
@@ -136,17 +87,25 @@ const gridOptions: GridOptions<OlympicWinner> = {
         flex: 1,
         minWidth: 120,
     },
-    excelStyles: [
-        {
-            id: 'coverHeading',
-            font: {
-                bold: true,
-                size: 14,
-            },
-        },
-    ],
     notesDataSource,
-    defaultExcelExportParams,
+    defaultExcelExportParams: {
+        author: 'Portfolio Ops',
+        processNoteCallback: (params) => {
+            if (params.excelNote) {
+                return {
+                    ...params.excelNote,
+                    text: `${params.excelNote.text}\n\nUpdated: ${params.gridNote?.updatedAt ?? 'Not recorded'}`,
+                };
+            }
+
+            // Export a note to Excel for which there is not an existing gridNote
+            if (params.column.getColId() === 'gold' && Number(params.value) >= 8) {
+                return {
+                    text: 'Flag this medal count for the performance review pack.',
+                };
+            }
+        },
+    },
 };
 
 function onBtExport() {

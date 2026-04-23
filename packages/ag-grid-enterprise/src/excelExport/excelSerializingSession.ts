@@ -651,19 +651,19 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             ? this.notesSvc?.getNote({ rowNode: params.node, column: params.column, location: 'cell' })
             : undefined;
 
-        let excelNoteValue: ExcelNote | undefined;
+        let excelNote: ExcelNote | undefined;
         if (shouldAutoExportGridNotes && gridNote?.text != null && gridNote.text !== '') {
-            excelNoteValue = { text: gridNote.text, author: gridNote.author };
+            excelNote = { text: gridNote.text, author: gridNote.author };
         }
 
         if (!processNoteCallback) {
-            return excelNoteValue;
+            return excelNote;
         }
 
-        const callbackResult = processNoteCallback(this.getCellNoteExportParams(params, gridNote, excelNoteValue));
+        const callbackResult = processNoteCallback(this.getCellNoteExportParams(params, gridNote, excelNote));
 
         if (callbackResult === undefined) {
-            return excelNoteValue;
+            return excelNote;
         }
 
         if (callbackResult?.text == null || callbackResult.text === '') {
@@ -680,7 +680,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             node: RowNode;
         },
         gridNote: Note | undefined,
-        excelNoteValue: ExcelNote | undefined
+        excelNote: ExcelNote | undefined
     ): ProcessNoteForExportParams {
         const { column, node, accumulatedRowIndex } = params;
         const value = this.valueSvc.getValueForDisplay({ column, node, from: this.valueFrom }).value;
@@ -701,7 +701,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             formatValue: (valueToFormat: any) =>
                 this.valueSvc.formatValue(column, node, valueToFormat) ?? valueToFormat,
             gridNote,
-            excelNoteValue,
+            excelNote,
         });
     }
 

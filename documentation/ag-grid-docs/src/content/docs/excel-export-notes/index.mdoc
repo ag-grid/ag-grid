@@ -47,6 +47,33 @@ const gridOptions = {
 }
 ```
 
+### Customising Exported Notes
+
+The `processNoteCallback` can be used to customise existing grid notes before they are exported. For cells that contain grid notes the `processNoteCallback` provides both `excelNote` and `gridNote`.
+
+-   `excelNote` - is the note that will be exported to Excel
+-   `gridNote` - is the source grid note for this cell
+
+The example below shows how the existing `excelNote` text can be updated to include the `updatedAt` value from the underlying `gridNote`.
+
+{% gridExampleRunner title="Excel Export - Customising Notes" name="excel-export-notes-customisation" exampleHeight=310 /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    notesDataSource,
+    defaultExcelExportParams: {
+        processNoteCallback: (params) => {
+            if (params.excelNote) {
+                return {
+                    ...params.excelNote,
+                    text: `${params.excelNote.text}\n\nUpdated: ${params.gridNote?.updatedAt ?? 'Not recorded'}`,
+                };
+            }
+        },
+    },
+};
+```
+
 ## Hiding Author
 
 By default, the author name is prepended as bold text in the Excel note body (matching Excel's native behaviour). Set `suppressPrependAuthorToNotes` to `true` to export only the note text. The author is still stored in the Excel workbook's note metadata.
@@ -62,18 +89,14 @@ const gridOptions = {
 }
 ```
 
-## Customising Grid Notes
+## Adding Notes to Extra Content
 
-This example shows two note customisation paths:
+Cells in [extra content](./excel-export-extra-content/) rows can carry Excel notes via `ExcelCell.note`.
 
--   custom cells with Excel notes are added with `prependContent` using `ExcelCell.note`
--   `processNoteCallback` uses `params.excelNoteValue` and `params.gridNote` to change the exported note text
-
-{% gridExampleRunner title="Excel Export - Customising Notes" name="excel-export-notes-customisation" exampleHeight=310 /%}
+{% gridExampleRunner title="Excel Export - Notes on Extra Content" name="excel-export-notes-extra-content" exampleHeight=310 /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    notesDataSource,
     defaultExcelExportParams: {
         prependContent: [
             {
@@ -87,22 +110,6 @@ const gridOptions = {
                 ],
             },
         ],
-        processNoteCallback: (params) => {
-            if (params.excelNoteValue) {
-                return {
-                    ...params.excelNoteValue,
-                    text: `${params.excelNoteValue.text}\n\nUpdated: ${params.gridNote?.updatedAt ?? 'Not recorded'}`,
-                };
-            }
-
-            if (params.column.getColId() === 'gold' && Number(params.value) >= 8) {
-                return {
-                    text: 'Flag this medal count for the performance review pack.',
-                };
-            }
-
-            return undefined;
-        },
     },
 };
 ```

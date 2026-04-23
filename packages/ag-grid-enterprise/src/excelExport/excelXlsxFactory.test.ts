@@ -448,7 +448,7 @@ describe('excelXlsxFactory Workbook', () => {
                         }
 
                         return {
-                            text: `${params.excelNoteValue?.text} (exported)`,
+                            text: `${params.excelNote?.text} (exported)`,
                         };
                     },
                 },
