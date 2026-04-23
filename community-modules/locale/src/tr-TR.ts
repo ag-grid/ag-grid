@@ -691,12 +691,16 @@ export const AG_GRID_LOCALE_TR = {
     ariaColumnCellSelection: 'Bu sütundaki tüm görünür hücrelerin seçimini değiştirmek için Enter tuşuna basın',
     ariaColumnGroupCellSelection:
         'Bu sütun grubundaki tüm görünür hücrelerin seçimini değiştirmek için Enter tuşuna basın',
+    ariaColumnGroupExpansion: 'Bu sütun grubunu genişletmek veya daraltmak için ENTER tuşuna basın',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Bu sütun grubundaki tüm görünür hücrelerin seçimini değiştirmek için Enter tuşuna basın. Bu sütun grubunu genişletmek veya daraltmak için ALT ENTER tuşuna basın',
     ariaRowSelectAll: 'Tüm satırların seçimini değiştirmek için Boşluk tuşuna basın',
     ariaRowToggleSelection: 'Satır seçimini değiştirmek için Boşluk tuşuna basın',
     ariaRowSelect: 'Bu satırı seçmek için SPACE tuşuna basın',
     ariaRowSelectionDisabled: 'Bu satır için Satır Seçimi devre dışı bırakılmıştır',
     ariaSearch: 'Ara',
     ariaSortableColumn: 'Sıralamak için ENTER tuşuna basın',
+    ariaSortableColumnWithCellSelection: 'Sıralamak için ALT ENTER tuşuna basın',
     ariaToggleVisibility: 'Görünürlüğü değiştirmek için SPACE tuşuna basın',
     ariaToggleCellValue: 'Hücre değerini değiştirmek için SPACE tuşuna basın',
     ariaUnchecked: 'işaretli değil',

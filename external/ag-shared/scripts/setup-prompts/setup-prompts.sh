@@ -255,35 +255,54 @@ copy_extra_configs() {
     local claude_settings_dest="$REPO_ROOT/.claude/settings.json"
 
     if [[ -f "$REPO_ROOT/$claude_settings_template" ]] && [[ "$targets" == *"claudecode"* || "$targets" == "*" ]]; then
+        # Detect product via AG_PRODUCT env var or by reading package.json .name.
+        # Fall back gracefully when neither source yields a match: skipping the
+        # render leaves any existing .claude/settings.json in place and lets
+        # the rest of postinstall complete. Failing here would otherwise abort
+        # `yarn install` on environments missing jq or on unknown checkouts.
         local product="${AG_PRODUCT:-}"
-        if [[ -z "$product" && -f "$REPO_ROOT/package.json" ]]; then
+        if [[ -z "$product" && -f "$REPO_ROOT/package.json" ]] && command -v jq >/dev/null 2>&1; then
             product=$(jq -r '.name // empty' "$REPO_ROOT/package.json" 2>/dev/null)
         fi
 
         if [[ -z "$product" ]]; then
-            echo -e "${RED}✗${NC} Cannot render .claude/settings.json: no product detected."
-            echo -e "${YELLOW}  Expected workspace root package.json .name to be one of: ag-charts | ag-grid | ag-studio.${NC}"
-            echo -e "${YELLOW}  Override with AG_PRODUCT env var if running from a non-standard checkout.${NC}"
-            return 1
+            echo -e "${YELLOW}!${NC} Skipping .claude/settings.json render: no product detected" >&2
+            echo -e "${YELLOW}  Set AG_PRODUCT (ag-charts | ag-grid | ag-studio) or ensure jq is installed + package.json .name is set.${NC}" >&2
+            return 0
         fi
 
         case "$product" in
             ag-charts|ag-grid|ag-studio) ;;
             *)
-                echo -e "${RED}✗${NC} Unknown product '$product' (expected: ag-charts | ag-grid | ag-studio)"
-                echo -e "${YELLOW}  Detected from package.json .name; override with AG_PRODUCT if needed.${NC}"
-                return 1
+                echo -e "${YELLOW}!${NC} Skipping .claude/settings.json render: unknown product '$product' (expected: ag-charts | ag-grid | ag-studio). Override with AG_PRODUCT if needed." >&2
+                return 0
                 ;;
         esac
+
+        # Derive marketplace ref suffix from AG_DEV_PROMPTS_REF. An unset or
+        # 'latest' value leaves the source unqualified (Claude picks the default
+        # branch); any other value pins the marketplace to that branch/tag via
+        # the `repo#ref` syntax. This lets a single consumer opt into the
+        # canary track without changing settings for the other products.
+        local dev_prompts_ref="${AG_DEV_PROMPTS_REF:-}"
+        local ref_suffix=""
+        if [[ -n "$dev_prompts_ref" && "$dev_prompts_ref" != "latest" ]]; then
+            ref_suffix="#$dev_prompts_ref"
+        fi
 
         mkdir -p "$REPO_ROOT/.claude"
         # Atomic render via temp file + mv. Drop any stale symlink first.
         local tmp_file="$claude_settings_dest.tmp.$$"
-        sed "s|\${PRODUCT}|$product|g" "$REPO_ROOT/$claude_settings_template" > "$tmp_file"
+        sed \
+            -e "s|\${PRODUCT}|$product|g" \
+            -e "s|\${AG_DEV_PROMPTS_REF_SUFFIX}|$ref_suffix|g" \
+            "$REPO_ROOT/$claude_settings_template" > "$tmp_file"
         rm -f "$claude_settings_dest"
         mv "$tmp_file" "$claude_settings_dest"
         if [[ "$verbose" == "true" ]]; then
-            echo -e "${GREEN}✓${NC} Rendered Claude Code settings for product: $product"
+            local track_note=""
+            [[ -n "$ref_suffix" ]] && track_note=" (marketplace pinned to ${dev_prompts_ref})"
+            echo -e "${GREEN}✓${NC} Rendered Claude Code settings for product: ${product}${track_note}"
         fi
     fi
 }
@@ -439,13 +458,15 @@ generate_config() {
     # items. If it does, rulesync would regenerate them in .claude/skills
     # alongside the same skill delivered by the plugin — duplicate content and
     # ambiguous trigger behaviour. Fail fast if stale symlinks exist.
+    # Cleanup requires python3; skip with a warning when it's unavailable so
+    # postinstall still succeeds on environments without it.
     local cleanup_script="$REPO_ROOT/external/ag-shared/scripts/setup-prompts/cleanup-plugin-delivered.py"
-    if [[ -f "$cleanup_script" ]] && [[ -f "$cache_manifest" ]]; then
+    if [[ -f "$cleanup_script" ]] && [[ -f "$cache_manifest" ]] && command -v python3 >/dev/null 2>&1; then
         if ! python3 "$cleanup_script" --verify >/dev/null 2>&1; then
             echo -e "${YELLOW}Warning: .rulesync/ contains symlinks for plugin-delivered items${NC}"
             python3 "$cleanup_script" --verify || true
             echo -e "${YELLOW}Removing stale symlinks...${NC}"
-            python3 "$cleanup_script"
+            python3 "$cleanup_script" || true
         fi
     fi
 

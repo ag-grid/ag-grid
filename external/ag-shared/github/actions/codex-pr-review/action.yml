@@ -330,8 +330,43 @@ runs:
               LINES_ADDED=$(git diff --numstat "${DIFF_BASE}" | awk '{ s += $1 } END { print s+0 }')
               LINES_REMOVED=$(git diff --numstat "${DIFF_BASE}" | awk '{ s += $2 } END { print s+0 }')
 
-              # Write the raw diff to a standalone file (avoids Markdown escaping issues)
-              git diff "${DIFF_BASE}" > "${diff_file}"
+              # Write the raw diff to a standalone file (avoids Markdown escaping issues).
+              # Apply per-file-type size caps so a single churn-heavy file (typically generated
+              # snapshots or lockfiles) cannot blow Codex's 1 MiB turn input limit.
+              DEFAULT_FILE_CAP_BYTES=204800   # 200 KiB for regular source files
+              SNAPSHOT_FILE_CAP_BYTES=10240   # 10 KiB for *.snap (generated snapshots)
+              : > "${diff_file}"
+              TRUNCATED_COUNT=0
+              TRUNCATED_BYTES_SAVED=0
+              per_file_tmp=$(mktemp)
+              while IFS= read -r path; do
+                  [ -z "$path" ] && continue
+                  case "$path" in
+                      *.snap) cap="$SNAPSHOT_FILE_CAP_BYTES" ;;
+                      *)      cap="$DEFAULT_FILE_CAP_BYTES" ;;
+                  esac
+                  git diff "${DIFF_BASE}" -- "$path" > "$per_file_tmp"
+                  file_size=$(wc -c < "$per_file_tmp" | tr -d ' ')
+                  if [ "$file_size" -gt "$cap" ]; then
+                      numstat=$(git diff --numstat "${DIFF_BASE}" -- "$path")
+                      added=$(echo "$numstat" | awk '{print $1}')
+                      removed=$(echo "$numstat" | awk '{print $2}')
+                      {
+                          echo ""
+                          echo "diff --git a/${path} b/${path}"
+                          printf '[truncated by codex-pr-review: diff is %s bytes, exceeds %s-byte cap for this file type; +%s / -%s lines]\n' \
+                              "$file_size" "$cap" "$added" "$removed"
+                      } >> "${diff_file}"
+                      TRUNCATED_COUNT=$((TRUNCATED_COUNT + 1))
+                      TRUNCATED_BYTES_SAVED=$((TRUNCATED_BYTES_SAVED + file_size - cap))
+                  else
+                      cat "$per_file_tmp" >> "${diff_file}"
+                  fi
+              done < <(git diff --name-only "${DIFF_BASE}")
+              rm -f "$per_file_tmp"
+              if [ "$TRUNCATED_COUNT" -gt 0 ]; then
+                  echo "Truncated ${TRUNCATED_COUNT} file(s) in diff (~${TRUNCATED_BYTES_SAVED} bytes elided) to stay under Codex input limits."
+              fi
 
               # Build the context file (metadata only, no embedded diff).
               # Uses printf instead of a heredoc to keep content indented within the

@@ -690,12 +690,16 @@ export const AG_GRID_LOCALE_BR = {
     ariaColumnCellSelection: 'Pressione Enter para alternar a seleção de todas as células visíveis nesta coluna',
     ariaColumnGroupCellSelection:
         'Pressione Enter para alternar a seleção de todas as células visíveis neste grupo de colunas',
+    ariaColumnGroupExpansion: 'Pressione ENTER para expandir ou recolher este grupo de colunas',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Pressione Enter para alternar a seleção de todas as células visíveis neste grupo de colunas. Pressione ALT ENTER para expandir ou recolher este grupo de colunas',
     ariaRowSelectAll: 'Pressione SPACE para alternar a seleção de todas as linhas',
     ariaRowToggleSelection: 'Pressione SPACE para alternar a seleção da linha',
     ariaRowSelect: 'Pressione SPACE para selecionar esta linha',
     ariaRowSelectionDisabled: 'A seleção de linha está desativada para esta linha',
     ariaSearch: 'Pesquisar',
     ariaSortableColumn: 'Pressione ENTER para classificar',
+    ariaSortableColumnWithCellSelection: 'Pressione ALT ENTER para classificar',
     ariaToggleVisibility: 'Pressione SPACE para alternar a visibilidade',
     ariaToggleCellValue: 'Pressione SPACE para alternar o valor da célula',
     ariaUnchecked: 'desmarcado',

@@ -690,12 +690,16 @@ export const AG_GRID_LOCALE_BG = {
     ariaColumnCellSelection: 'Натиснете Enter, за да превключите избора на всички видими клетки в тази колона',
     ariaColumnGroupCellSelection:
         'Натиснете Enter, за да превключите избора на всички видими клетки в тази група колони',
+    ariaColumnGroupExpansion: 'Натиснете ENTER, за да разгънете или свиете тази група колони',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Натиснете Enter, за да превключите избора на всички видими клетки в тази група колони. Натиснете ALT ENTER, за да разгънете или свиете тази група колони',
     ariaRowSelectAll: 'Натиснете SPACE, за да превключите избора на всички редове',
     ariaRowToggleSelection: 'Натиснете SPACE, за да превключите избора на реда',
     ariaRowSelect: 'Натиснете SPACE, за да изберете този ред',
     ariaRowSelectionDisabled: 'Изборът на редове е деактивиран за този ред',
     ariaSearch: 'Търсене',
     ariaSortableColumn: 'Натиснете ENTER, за да сортирате',
+    ariaSortableColumnWithCellSelection: 'Натиснете ALT ENTER, за да сортирате',
     ariaToggleVisibility: 'Натиснете SPACE, за да превключите видимостта',
     ariaToggleCellValue: 'Натиснете SPACE, за да превключите стойността на клетката',
     ariaUnchecked: 'немаркирано',

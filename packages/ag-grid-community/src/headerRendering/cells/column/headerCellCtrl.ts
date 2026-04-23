@@ -128,6 +128,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader', 'enableAdvancedFilter'],
             () => this.refresh()
         );
+        compBean.addManagedPropertyListener('cellSelection', () => this.refreshAria());
         compBean.addManagedListeners(column, {
             colDefChanged: () => this.refresh(),
             formulaRefChanged: () => this.refresh(),
@@ -588,12 +589,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private refreshAriaSort(): void {
         let description: string | null = null;
-        const { beans, column, comp, sortable } = this;
+        const { beans, column, comp, sortable, gos } = this;
         if (sortable) {
             const translate = this.getLocaleTextFunc();
             const sortDef = beans.sortSvc?.getDisplaySortForColumn(column) ?? null;
             comp.setAriaSort(_getAriaSortState(sortDef));
-            description = translate('ariaSortableColumn', 'Press ENTER to sort');
+            description = _getEnableColumnSelection(gos)
+                ? translate('ariaSortableColumnWithCellSelection', 'Press ALT ENTER to sort')
+                : translate('ariaSortableColumn', 'Press ENTER to sort');
         } else {
             comp.setAriaSort();
         }

@@ -33,6 +33,10 @@ export type NoteStyleParams = {
      * The border of the note popup
      */
     notePopupBorder: BorderValue;
+    /**
+     * The padding inside the note popup
+     */
+    notePopupPadding: LengthValue;
 };
 
 const baseParams: NoteStyleParams = {
@@ -55,6 +59,9 @@ const baseParams: NoteStyleParams = {
     },
     notePopupBorder: {
         ref: 'dialogBorder',
+    },
+    notePopupPadding: {
+        calc: 'spacing * 0.5',
     },
 };
 

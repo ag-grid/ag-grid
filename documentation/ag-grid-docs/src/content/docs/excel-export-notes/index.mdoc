@@ -64,11 +64,10 @@ const gridOptions = {
 
 ## Customising Grid Notes
 
-This example shows three customisation patterns together:
+This example shows two note customisation paths:
 
--   start from `params.defaultNote` and append extra export-only text
--   read extra grid-only metadata from `params.gridNote`
--   add notes to extra content rows with `ExcelCell.note`
+-   custom cells with Excel notes are added with `prependContent` using `ExcelCell.note`
+-   `processNoteCallback` uses `params.excelNoteValue` and `params.gridNote` to change the exported note text
 
 {% gridExampleRunner title="Excel Export - Customising Notes" name="excel-export-notes-customisation" exampleHeight=310 /%}
 
@@ -89,10 +88,10 @@ const gridOptions = {
             },
         ],
         processNoteCallback: (params) => {
-            if (params.defaultNote) {
+            if (params.excelNoteValue) {
                 return {
-                    ...params.defaultNote,
-                    text: `${params.defaultNote.text}\n\nUpdated: ${params.gridNote?.updatedAt ?? 'Not recorded'}`,
+                    ...params.excelNoteValue,
+                    text: `${params.excelNoteValue.text}\n\nUpdated: ${params.gridNote?.updatedAt ?? 'Not recorded'}`,
                 };
             }
 
