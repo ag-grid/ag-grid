@@ -171,34 +171,34 @@ The example below includes both regular notes on cells and notes on full width r
 {% gridExampleRunner title="Notes with Full Width Rows" name="notes-full-width" exampleHeight=460 /%}
 
 ```{% frameworkTransform=true %}
-const notesStore = {};
+const notesStore = new Map();
 
 const gridOptions = {
     getRowId: (params) => String(params.data.id),
     notesDataSource: {
         // Enable support for Full Width Rows
         supportsFullWidthRows: true,
-    getNote: (params) =>
-        params.location === 'fullWidthRow'
-            ? noteStore.get(getFullWidthNoteKey(params.rowNode.id))
-            : noteStore.get(getNoteKey(params.rowNode.id, params.column.getColId())),
-    setNote: (params) => {
-        const key =
+        getNote: (params) =>
             params.location === 'fullWidthRow'
-                ? getFullWidthNoteKey(params.rowNode.id)
-                : getNoteKey(params.rowNode.id, params.column.getColId());
-        if (params.note === undefined) {
-            noteStore.delete(key);
-        } else {
-            noteStore.set(key, params.note);
-        }
-    },
+                ? notesStore.get(getFullWidthNoteKey(params.rowNode.id))
+                : notesStore.get(getNoteKey(params.rowNode.id, params.column.getColId())),
+        setNote: (params) => {
+            const key =
+                params.location === 'fullWidthRow'
+                    ? getFullWidthNoteKey(params.rowNode.id)
+                    : getNoteKey(params.rowNode.id, params.column.getColId());
+            if (params.note === undefined) {
+                notesStore.delete(key);
+            } else {
+                notesStore.set(key, params.note);
+            }
+        },
     },
 };
 ```
 
 ```ts
-noteStore.set('2', {
+notesStore.set('2', {
     text: 'This note belongs to a full width row.',
 });
 ```
