@@ -32,6 +32,7 @@
         color: var(--ag-text-color);
         cursor: pointer;
         line-height: 1;
+        white-space: nowrap;
     }
 
     .ag-toolbar-button:hover {
@@ -128,7 +129,7 @@
         gap: calc(var(--ag-spacing) * 0.5);
         border: solid var(--ag-border-width) var(--ag-border-color);
         border-radius: var(--ag-border-radius);
-        min-width: 80px;
+        width: 240px;
     }
 
     .ag-toolbar-find:focus-within {
