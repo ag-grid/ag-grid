@@ -61,6 +61,10 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
         this.closeNotePopup(false);
     }
 
+    protected getNoteTrigger(): 'hover' | 'click' {
+        return this.beans.gos.get('noteTrigger') === 'click' ? 'click' : 'hover';
+    }
+
     protected onPointerEnter(target: NoteTarget | undefined, event: PointerEvent): void {
         if (event.pointerType !== 'mouse') {
             return;
@@ -70,7 +74,7 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
             return;
         }
 
-        if (this.beans.gos.get('noteTrigger') !== 'hover') {
+        if (this.getNoteTrigger() !== 'hover') {
             if (target && this.matchesActiveTarget(target)) {
                 this.cancelHide();
             }
@@ -122,7 +126,7 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
     }
 
     protected onClick(target: NoteTarget | undefined, event: MouseEvent): void {
-        if (this.beans.gos.get('noteTrigger') !== 'click' || _interpretAsRightClick(this.beans, event)) {
+        if (this.getNoteTrigger() !== 'click' || _interpretAsRightClick(this.beans, event)) {
             return;
         }
 
