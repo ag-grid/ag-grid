@@ -1,6 +1,6 @@
 import type { BeanCollection, CellCtrl, INoteAccess } from 'ag-grid-community';
 
-import { AgNotesFeature } from './agNotesFeature';
+import { AgFullWidthRowNotesFeature, AgNotesFeature } from './agNotesFeature';
 import type { INotesFeatureSupport } from './notesShared';
 
 describe('AgNotesFeature', () => {
@@ -13,10 +13,11 @@ describe('AgNotesFeature', () => {
         CellCtrl,
         'addManagedElementListeners' | 'column' | 'comp' | 'eGui' | 'isNoteHoverSuppressed' | 'rowNode'
     >;
-    let listeners: Record<string, (event: PointerEvent) => void>;
+    let listeners: Record<string, (event: any) => void>;
     let popup: { hide: jest.Mock; focusEditor: jest.Mock; hasFocus: jest.Mock };
     let context: { createBean: jest.Mock; destroyBean: jest.Mock };
     let access: INoteAccess;
+    let noteTrigger: 'hover' | 'click';
     let notesSvc: Pick<
         INotesFeatureSupport,
         'clearActivePopupOwner' | 'getNoteAccess' | 'getHoverGeneration' | 'replaceActivePopupOwner' | 'setNote'
@@ -31,6 +32,7 @@ describe('AgNotesFeature', () => {
             focusEditor: jest.fn(),
             hasFocus: jest.fn(() => false),
         };
+        noteTrigger = 'hover';
         context = {
             createBean: jest.fn(() => popup),
             destroyBean: jest.fn(),
@@ -72,10 +74,14 @@ describe('AgNotesFeature', () => {
             gos: {
                 get: jest.fn((key: string) => {
                     switch (key) {
+                        case 'noteTrigger':
+                            return noteTrigger;
                         case 'noteShowDelay':
                             return 25;
                         case 'noteHideDelay':
                             return 40;
+                        case 'allowContextMenuWithControlKey':
+                            return false;
                         default:
                             return undefined;
                     }
@@ -113,11 +119,92 @@ describe('AgNotesFeature', () => {
         expect(context.createBean).toHaveBeenCalledTimes(1);
     });
 
+    it('does not open a note on hover when noteTrigger is click', () => {
+        noteTrigger = 'click';
+
+        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        feature.initialise();
+
+        listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
+        jest.advanceTimersByTime(25);
+
+        expect(context.createBean).not.toHaveBeenCalled();
+    });
+
+    it('opens a note on left click when noteTrigger is click', () => {
+        noteTrigger = 'click';
+
+        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        feature.initialise();
+
+        listeners.click?.({ button: 0, ctrlKey: false } as MouseEvent);
+
+        expect(context.createBean).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not open a note on click when the cell has no note', () => {
+        noteTrigger = 'click';
+        access = {
+            ...access,
+            note: undefined,
+            canView: false,
+            canCreate: true,
+            canEdit: false,
+            canDelete: false,
+        };
+
+        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        feature.initialise();
+
+        listeners.click?.({ button: 0, ctrlKey: false } as MouseEvent);
+
+        expect(context.createBean).not.toHaveBeenCalled();
+    });
+
+    it('does not open a note on right click when noteTrigger is click', () => {
+        noteTrigger = 'click';
+
+        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        feature.initialise();
+
+        listeners.click?.({ button: 2, ctrlKey: false } as MouseEvent);
+
+        expect(context.createBean).not.toHaveBeenCalled();
+    });
+
+    it('does not open a note on click when note display is suppressed', () => {
+        noteTrigger = 'click';
+        (ctrl.isNoteHoverSuppressed as jest.Mock).mockReturnValue(true);
+
+        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        feature.initialise();
+
+        listeners.click?.({ button: 0, ctrlKey: false } as MouseEvent);
+
+        expect(context.createBean).not.toHaveBeenCalled();
+    });
+
     it('uses noteHideDelay before hiding an open note', () => {
         const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
         feature.initialise();
 
         feature.show();
+        listeners.pointerleave?.({ pointerType: 'mouse' } as PointerEvent);
+
+        jest.advanceTimersByTime(39);
+        expect(popup.hide).not.toHaveBeenCalled();
+
+        jest.advanceTimersByTime(1);
+        expect(popup.hide).toHaveBeenCalledWith(true);
+    });
+
+    it('uses noteHideDelay before hiding a click-opened note', () => {
+        noteTrigger = 'click';
+
+        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        feature.initialise();
+
+        listeners.click?.({ button: 0, ctrlKey: false } as MouseEvent);
         listeners.pointerleave?.({ pointerType: 'mouse' } as PointerEvent);
 
         jest.advanceTimersByTime(39);
@@ -251,5 +338,147 @@ describe('AgNotesFeature', () => {
         expect(createdPopups).toHaveLength(3);
         expect(createdPopups[0].hide).toHaveBeenCalledWith(true);
         expect(createdPopups[1].hide).toHaveBeenCalledWith(true);
+    });
+});
+
+describe('AgFullWidthRowNotesFeature', () => {
+    let beans: BeanCollection;
+    let context: { createBean: jest.Mock; destroyBean: jest.Mock };
+    let popup: { hide: jest.Mock; focusEditor: jest.Mock; hasFocus: jest.Mock };
+    let guiListeners = new Map<HTMLElement, Record<string, (event: any) => void>>();
+    let leftElement: HTMLElement;
+    let centerElement: HTMLElement;
+    let leftGui: any;
+    let centerGui: any;
+    let rowCtrl: any;
+    let noteTrigger: 'hover' | 'click';
+    let notesSvc: Pick<
+        INotesFeatureSupport,
+        'clearActivePopupOwner' | 'getNoteAccess' | 'getHoverGeneration' | 'replaceActivePopupOwner' | 'setNote'
+    >;
+
+    beforeEach(() => {
+        noteTrigger = 'click';
+        guiListeners = new Map();
+        popup = {
+            hide: jest.fn(),
+            focusEditor: jest.fn(),
+            hasFocus: jest.fn(() => false),
+        };
+        context = {
+            createBean: jest.fn(() => popup),
+            destroyBean: jest.fn(),
+        };
+
+        leftElement = document.createElement('div');
+        centerElement = document.createElement('div');
+
+        leftGui = {
+            element: leftElement,
+            rowComp: { toggleCss: jest.fn() },
+        };
+        centerGui = {
+            element: centerElement,
+            rowComp: { toggleCss: jest.fn() },
+        };
+
+        rowCtrl = {
+            rowNode: { id: '1', rowIndex: 0, rowPinned: null },
+            isFullWidth: jest.fn(() => true),
+            forEachGui: jest.fn((_pinned: any, callback: any) => {
+                callback(leftGui);
+                callback(centerGui);
+            }),
+            addManagedGuiElementListeners: jest.fn((gui: any, listeners: Record<string, (event: any) => void>) => {
+                guiListeners.set(gui.element, listeners);
+            }),
+            getPinnedForFullWidth: jest.fn((gui: any) => (gui === leftGui ? 'left' : null)),
+            getColumnForFullWidth: jest.fn((gui: any) => ({ getColId: () => (gui === leftGui ? 'athlete' : 'sport') })),
+        };
+
+        beans = {
+            gos: {
+                get: jest.fn((key: string) => {
+                    switch (key) {
+                        case 'noteTrigger':
+                            return noteTrigger;
+                        case 'noteShowDelay':
+                            return 25;
+                        case 'noteHideDelay':
+                            return 40;
+                        case 'allowContextMenuWithControlKey':
+                            return false;
+                        default:
+                            return undefined;
+                    }
+                }),
+            },
+            context,
+            focusSvc: {
+                setFocusedCell: jest.fn(),
+            },
+        } as unknown as BeanCollection;
+
+        notesSvc = {
+            getNoteAccess: jest.fn((params) => ({
+                params,
+                rowNode: params.rowNode,
+                column: { getColId: () => ('column' in params ? params.column.getColId() : 'athlete') },
+                note: { text: `note-${'pinned' in params ? params.pinned ?? 'center' : 'cell'}` },
+                isReadOnly: false,
+                isSuppressed: false,
+                canView: true,
+                canCreate: false,
+                canEdit: true,
+                canDelete: true,
+            })),
+            getHoverGeneration: jest.fn(() => 0),
+            replaceActivePopupOwner: jest.fn(() => undefined),
+            clearActivePopupOwner: jest.fn(),
+            setNote: jest.fn(),
+        };
+    });
+
+    it('opens full-width notes on left click when noteTrigger is click', () => {
+        const feature = new AgFullWidthRowNotesFeature(beans, rowCtrl, notesSvc);
+        feature.initialise();
+
+        guiListeners.get(leftElement)?.click?.({ button: 0, ctrlKey: false } as MouseEvent);
+
+        expect(context.createBean).toHaveBeenCalledTimes(1);
+        expect(notesSvc.getNoteAccess).toHaveBeenCalledWith({
+            rowNode: rowCtrl.rowNode,
+            location: 'fullWidthRow',
+            pinned: 'left',
+        });
+    });
+
+    it('keeps embedded full-width sections independent in click mode', () => {
+        const feature = new AgFullWidthRowNotesFeature(beans, rowCtrl, notesSvc);
+        feature.initialise();
+
+        guiListeners.get(leftElement)?.click?.({ button: 0, ctrlKey: false } as MouseEvent);
+        guiListeners.get(centerElement)?.click?.({ button: 0, ctrlKey: false } as MouseEvent);
+
+        expect(context.createBean).toHaveBeenCalledTimes(2);
+        expect(notesSvc.getNoteAccess).toHaveBeenCalledWith({
+            rowNode: rowCtrl.rowNode,
+            location: 'fullWidthRow',
+            pinned: 'left',
+        });
+        expect(notesSvc.getNoteAccess).toHaveBeenCalledWith({
+            rowNode: rowCtrl.rowNode,
+            location: 'fullWidthRow',
+            pinned: undefined,
+        });
+    });
+
+    it('does not open full-width notes on right click when noteTrigger is click', () => {
+        const feature = new AgFullWidthRowNotesFeature(beans, rowCtrl, notesSvc);
+        feature.initialise();
+
+        guiListeners.get(leftElement)?.click?.({ button: 2, ctrlKey: false } as MouseEvent);
+
+        expect(context.createBean).not.toHaveBeenCalled();
     });
 });

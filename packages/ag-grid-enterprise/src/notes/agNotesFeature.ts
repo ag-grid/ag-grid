@@ -1,4 +1,5 @@
 import type { BeanCollection, CellCtrl, GetNoteParams, INotesFeature, Note, RowCtrl, RowGui } from 'ag-grid-community';
+import { _interpretAsRightClick } from 'ag-grid-community';
 
 import { AgNotesPopup } from './agNotesPopup';
 import type { INotePopupOwner, INotesFeatureSupport, NoteTarget } from './notesShared';
@@ -69,6 +70,13 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
             return;
         }
 
+        if (this.beans.gos.get('noteTrigger') !== 'hover') {
+            if (target && this.matchesActiveTarget(target)) {
+                this.cancelHide();
+            }
+            return;
+        }
+
         const access = target && this.notesSvc.getNoteAccess(target.noteParams);
         this.cancelHide();
 
@@ -111,6 +119,20 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
     protected onContextMenu(): void {
         this.suppressHoverUntilPointerLeave = true;
         this.closeNotePopup();
+    }
+
+    protected onClick(target: NoteTarget | undefined, event: MouseEvent): void {
+        if (this.beans.gos.get('noteTrigger') !== 'click' || _interpretAsRightClick(this.beans, event)) {
+            return;
+        }
+
+        const access = target && this.notesSvc.getNoteAccess(target.noteParams);
+        if (!target || !access?.canView) {
+            return;
+        }
+
+        this.suppressHoverUntilPointerLeave = false;
+        this.openPopup(target);
     }
 
     protected abstract refreshHasNotesStyling(): void;
@@ -254,6 +276,13 @@ export class AgNotesFeature extends BaseNotesFeature {
                 this.onPointerEnter(this.getTarget(), event);
             },
             pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
+            click: (event: MouseEvent) => {
+                if (this.ctrl.isNoteHoverSuppressed()) {
+                    return;
+                }
+
+                this.onClick(this.getTarget(), event);
+            },
             contextmenu: () => this.onContextMenu(),
         });
         this.refresh();
@@ -312,6 +341,7 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
         this.ctrl.addManagedGuiElementListeners(gui, {
             pointerenter: (event: PointerEvent) => this.onPointerEnter(this.getTargetForGui(gui), event),
             pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
+            click: (event: MouseEvent) => this.onClick(this.getTargetForGui(gui), event),
             contextmenu: () => this.onContextMenu(),
         });
     }

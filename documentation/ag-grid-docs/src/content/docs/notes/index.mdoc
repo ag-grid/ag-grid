@@ -41,6 +41,22 @@ const gridOptions = {
 
 The example above uses `getRowId()` so the note store can key notes consistently by row ID and column ID.
 
+## Notes Trigger
+
+Use `noteTrigger` to control whether existing notes open on hover or on left-click. `hover` is the default. When using `click`, `noteShowDelay` no longer applies, but `noteHideDelay` still controls how long the note stays open after the pointer leaves the cell or popup.
+
+Click mode follows the same passive note rules as hover mode: notes still do not open for the cell currently being edited.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    noteTrigger: 'click',
+};
+```
+
+{% gridExampleRunner title="Notes Trigger" name="notes-trigger" exampleHeight=350 /%}
+
+{% apiDocumentation source="grid-options/properties.json" section="notes" names=["noteTrigger", "noteShowDelay", "noteHideDelay"] /%}
+
 ## Metadata
 
 Built-in note metadata, including `author`, `createdAt`, and `updatedAt`, is rendered exactly as provided by your datasource.
@@ -118,7 +134,7 @@ const gridOptions = {
 
 ## Read-Only Notes
 
-Set `Note.readOnly = true` to make a note view-only. Read-only notes can still be opened from hover, the context menu, or `Shift + F2`, but they cannot be edited or removed through the built-in UI. The grid API can still update or remove read-only notes programmatically.
+Set `Note.readOnly = true` to make a note view-only. Read-only notes can still be opened from hover or click based on `noteTrigger`, the context menu, or `Shift + F2`, but they cannot be edited or removed through the built-in UI. The grid API can still update or remove read-only notes programmatically.
 
 `Athlete` has an editable note. `Country` and `Sport` have **read-only** notes, so they can be viewed but not edited or removed through the built-in UI.
 
@@ -135,9 +151,9 @@ noteStore.set(noteKey('3', 'country'), {
 
 ## Suppressing Note Actions
 
-Use `colDef.suppressNoteActions` to suppress built-in note actions for a column or specific row. Suppressed cells still allow existing notes to be viewed on hover and through `getNote()`, but add/edit/remove actions and note creation shortcuts are blocked.
+Use `colDef.suppressNoteActions` to suppress built-in note actions for a column or specific row. Suppressed cells still allow existing notes to be viewed through the configured note trigger and through `getNote()`, but add/edit/remove actions and note creation shortcuts are blocked.
 
-`Year` and `Sport` suppress built-in note actions. Existing notes on those cells can still be viewed on hover, while other columns keep the standard add, edit, and remove behaviour.
+`Year` and `Sport` suppress built-in note actions. Existing notes on those cells can still be viewed normally, while other columns keep the standard add, edit, and remove behaviour.
 
 {% gridExampleRunner title="Suppressing Notes" name="notes-suppressing" exampleHeight=350 /%}
 
@@ -202,7 +218,7 @@ In the example above, clicking a cell selects it and syncs the toolbar controls 
 
 ### Grid Options
 
-{% apiDocumentation source="grid-options/properties.json" section="notes" names=["noteShowDelay", "noteHideDelay"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="notes" names=["noteTrigger", "noteShowDelay", "noteHideDelay"] /%}
 
 ### API Reference
 

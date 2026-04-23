@@ -1023,7 +1023,15 @@ export interface Props<TData> {
          * @agModule `NotesModule`
          */
     notesDataSource?: NotesDataSource | FullWidthNotesDataSource,
+    /** Changes how existing notes are opened.
+         *  - `'hover'` - Existing notes open when hovering a noted cell or full width row.
+         *  - `'click'` - Existing notes open when clicking a noted cell or full width row.
+         * @default 'hover'
+         * @agModule `NotesModule`
+         */
+    noteTrigger?: 'hover' | 'click',
     /** The delay in milliseconds before a note is shown when hovering a noted cell.
+         * Only applies when `noteTrigger = 'hover'`.
          * @default 180
          * @agModule `NotesModule`
          */
@@ -2217,6 +2225,7 @@ export function getProps() {
         aggFuncs: undefined,
         formulaDataSource: undefined,
         notesDataSource: undefined,
+        noteTrigger: undefined,
         noteShowDelay: undefined,
         noteHideDelay: undefined,
         formulaFuncs: undefined,

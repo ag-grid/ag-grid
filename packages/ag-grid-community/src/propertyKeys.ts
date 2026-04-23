@@ -57,6 +57,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'treeDataParentIdField',
     'colResizeDefault',
     'tooltipTrigger',
+    'noteTrigger',
     'serverSidePivotResultFieldSeparator',
     'columnMenu',
     'tooltipShowMode',
