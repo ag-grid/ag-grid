@@ -6,6 +6,7 @@
     overflow: hidden;
     max-height: 200px;
     background-color: var(--color-brand-900);
+    z-index: 10005;
     transition:
         max-height $transition-default-timing,
         transform $transition-default-timing,
