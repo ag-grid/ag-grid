@@ -161,6 +161,21 @@ const httpsEnabled = !['0', 'false'].includes(PUBLIC_HTTPS_SERVER);
 export default defineConfig({
     site: PUBLIC_SITE_URL,
     base: PUBLIC_BASE_URL,
+    security: {
+        /**
+         * Allow cross-origin dev-server fetches from external example hosts.
+         *
+         * Astro 6's secFetchMiddleware runs before Vite's CORS middleware and
+         * returns 403 for unknown cross-origin subresource requests, so hosts
+         * have to be allowed here as well as in `vite.server.cors.origin` below.
+         */
+        allowedDomains: [
+            // Plunkr
+            { hostname: 'run.plnkr.co', protocol: 'https' },
+            // Codesandbox
+            { hostname: '**.csb.app', protocol: 'https' },
+        ],
+    },
     devToolbar: {
         enabled: false,
     },
