@@ -606,9 +606,9 @@ export interface ProcessNoteForExportParams<TData = any, TContext = any>
      */
     gridNote?: Note;
     /**
-     * The default Excel note/comment derived from `gridNote` when automatic note export is enabled.
+     * The Excel note/comment value derived from `gridNote` when automatic note export is enabled.
      */
-    defaultNote?: ExcelNote;
+    excelNoteValue?: ExcelNote;
 }
 
 export type ExcelCustomMetadataValue = string | number | boolean;

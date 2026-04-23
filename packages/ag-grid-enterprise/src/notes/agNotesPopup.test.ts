@@ -5,11 +5,11 @@ describe('AgNotesPopup positioning', () => {
     const parentRect = { top: 0, left: 0, right: 800, bottom: 600 };
 
     it('uses the expected placement order for normal cells', () => {
-        expect(getNotesPopupPlacements('cell')).toEqual(['tl-tr', 'bl-tr', 'tr-tl', 'br-tl', 'tr-br', 'br-tr']);
+        expect(getNotesPopupPlacements('cell')).toEqual(['tl-tr', 'tr-br', 'br-tr', 'tr-tl', 'br-tl']);
     });
 
     it('mirrors the horizontal placements in RTL', () => {
-        expect(getNotesPopupPlacements('cell', true)).toEqual(['tr-tl', 'br-tl', 'tl-tr', 'bl-tr', 'tl-bl', 'bl-tl']);
+        expect(getNotesPopupPlacements('cell', true)).toEqual(['tr-tl', 'tl-bl', 'bl-tl', 'tl-tr', 'bl-tr']);
     });
 
     it('opens flush to the right edge of a normal cell when there is room', () => {
@@ -23,10 +23,24 @@ describe('AgNotesPopup positioning', () => {
                 placementMode: 'cell',
                 enableRtl: false,
             })
-        ).toEqual({ x: 200, y: 100 });
+        ).toEqual({ x: 200, y: 99 });
     });
 
-    it('falls back to right-above for a normal cell near the bottom edge', () => {
+    it('falls back below before trying placements on the left', () => {
+        const anchorRect = { top: 100, left: 450, right: 550, bottom: 140 };
+
+        expect(
+            findNotesPopupPosition({
+                anchorRect,
+                parentRect,
+                popupSize,
+                placementMode: 'cell',
+                enableRtl: false,
+            })
+        ).toEqual({ x: 230, y: 140 });
+    });
+
+    it('falls back above before trying placements on the left', () => {
         const anchorRect = { top: 500, left: 100, right: 200, bottom: 540 };
 
         expect(
@@ -37,21 +51,22 @@ describe('AgNotesPopup positioning', () => {
                 placementMode: 'cell',
                 enableRtl: false,
             })
-        ).toEqual({ x: 200, y: 280 });
+        ).toEqual({ x: 0, y: 280 });
     });
 
-    it('falls back to left-top when there is no room to the right', () => {
-        const anchorRect = { top: 100, left: 700, right: 800, bottom: 140 };
+    it('falls back to the left after below and above fail', () => {
+        const constrainedParentRect = { top: 0, left: 0, right: 800, bottom: 250 };
+        const anchorRect = { top: 180, left: 700, right: 800, bottom: 220 };
 
         expect(
             findNotesPopupPosition({
                 anchorRect,
-                parentRect,
+                parentRect: constrainedParentRect,
                 popupSize,
                 placementMode: 'cell',
                 enableRtl: false,
             })
-        ).toEqual({ x: 380, y: 100 });
+        ).toEqual({ x: 380, y: 30 });
     });
 
     it('falls back below and right-aligned when the parent is too narrow for side placement', () => {

@@ -39,6 +39,7 @@ export type AgComponentSelectorType =
     | 'AG-SIDE-BAR-BUTTONS'
     | 'AG-SORT-INDICATOR'
     | 'AG-STATUS-BAR'
+    | 'AG-TOOLBAR'
     | 'AG-WATERMARK'
     | 'AG-FORMULA-INPUT-FIELD';
 

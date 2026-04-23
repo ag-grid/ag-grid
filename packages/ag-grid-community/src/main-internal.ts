@@ -263,7 +263,13 @@ export {
 } from './components/framework/userCompUtils';
 export type { Bean, NamedBean } from './context/bean';
 export { BeanStub } from './context/beanStub';
-export type { BeanCollection, BeanName, SingletonBean, StatusPanelComponentName } from './context/context';
+export type {
+    BeanCollection,
+    BeanName,
+    SingletonBean,
+    StatusPanelComponentName,
+    ToolbarItemComponentName,
+} from './context/context';
 export type { Context } from './context/context';
 export type { CtrlsService } from './ctrlsService';
 export type { DragAndDropService } from './dragAndDrop/dragAndDropService';
@@ -439,6 +445,7 @@ export type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 export type { IGroupEditService as _IGroupEditService } from './interfaces/iGroupEditService';
 export type { IGroupFilterService } from './interfaces/iGroupFilterService';
 export type { IRowGroupingEditValueSvc as _IRowGroupingEditValueSvc } from './interfaces/iRowGroupingEditValueSvc';
+export type { IRowGroupPanelBuilder as _IRowGroupPanelBuilder } from './interfaces/iRowGroupPanelBuilder';
 export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
 export type { IMenuFactory } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';

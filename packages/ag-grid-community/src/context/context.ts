@@ -81,6 +81,7 @@ import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
+import type { IRowGroupPanelBuilder } from '../interfaces/iRowGroupPanelBuilder';
 import type { IRowGroupingEditValueSvc } from '../interfaces/iRowGroupingEditValueSvc';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type {
@@ -169,6 +170,14 @@ export type DynamicBeanName =
     | 'agTextColumnFilterHandler';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type ToolbarItemComponentName =
+    | 'agButtonToolbarItem'
+    | 'agFindToolbarItem'
+    | 'agPivotPanelToolbarItem'
+    | 'agQuickFilterToolbarItem'
+    | 'agRowGroupPanelToolbarItem';
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type StatusPanelComponentName =
     | 'agAggregationComponent'
     | 'agSelectedRowCountComponent'
@@ -227,6 +236,7 @@ export type UserComponentName =
     | 'agDetailCellRenderer'
     | 'agSparklineCellRenderer'
     | StatusPanelComponentName
+    | ToolbarItemComponentName
     | 'agFindCellRenderer';
 
 interface ComponentMetaWithParams {
@@ -380,6 +390,7 @@ interface CoreBeanCollection
     rowSpanSvc?: RowSpanService;
     spannedRowRenderer?: SpannedRowRenderer;
     findSvc?: IFindService;
+    rowGroupPanelBuilder?: IRowGroupPanelBuilder;
     groupFilter?: IGroupFilterService;
     multiFilter?: IMultiFilterService;
     filterPanelSvc?: IFilterPanelService;

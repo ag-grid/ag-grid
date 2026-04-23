@@ -79,7 +79,7 @@ const GridComp = ({ context }: GridCompProps) => {
                     }
 
                     const name = comp.getFocusableContainerName();
-                    if (name === 'rowGroupToolbar' || name === 'pivotToolbar') {
+                    if (name === 'toolbar' || name === 'rowGroupToolbar' || name === 'pivotToolbar') {
                         beforeGridBody.push(comp);
                         continue;
                     }
@@ -124,16 +124,40 @@ const GridComp = ({ context }: GridCompProps) => {
             paginationSelector,
             sideBarSelector,
             statusBarSelector,
+            toolbarSelector,
             gridHeaderDropZonesSelector,
         } = gridCtrl.getOptionalSelectors();
         const additionalEls: HTMLElement[] = [];
+
+        const addComponentToDom = <T extends Component>(
+            component: ComponentSelector<T>['component'],
+            position: 'beforebegin' | 'afterbegin' | 'beforeend' | 'afterend' = 'beforeend'
+        ): T => {
+            const comp = context.createBean(new component()) as T;
+            const eGui = comp.getGui();
+            eRootWrapper.insertAdjacentElement(position, eGui);
+            additionalEls.push(eGui);
+            beansToDestroy.push(comp);
+            return comp;
+        };
+
+        if (toolbarSelector) {
+            const toolbarComp = addComponentToDom(toolbarSelector.component, 'afterbegin');
+            focusableContainersRef.current.push(toolbarComp);
+        }
 
         if (gridHeaderDropZonesSelector) {
             const headerDropZonesComp = context.createBean(
                 new gridHeaderDropZonesSelector.component()
             ) as HeaderDropZonesComp;
             const eGui = headerDropZonesComp.getGui();
-            eRootWrapper.insertAdjacentElement('afterbegin', eGui);
+            // Insert after toolbar (if present) or at the start
+            const toolbar = eRootWrapper.querySelector('.ag-toolbar');
+            if (toolbar) {
+                toolbar.after(eGui);
+            } else {
+                eRootWrapper.prepend(eGui);
+            }
             additionalEls.push(eGui);
             beansToDestroy.push(headerDropZonesComp);
             focusableContainersRef.current.push(...(headerDropZonesComp.getFocusableContainers?.() ?? []));
@@ -151,15 +175,6 @@ const GridComp = ({ context }: GridCompProps) => {
             beansToDestroy.push(sideBarComp);
             focusableContainersRef.current.push(sideBarComp as FocusableContainerComp);
         }
-
-        const addComponentToDom = (component: ComponentSelector<Component>['component']) => {
-            const comp = context.createBean(new component());
-            const eGui = comp.getGui();
-            eRootWrapper.insertAdjacentElement('beforeend', eGui);
-            additionalEls.push(eGui);
-            beansToDestroy.push(comp);
-            return comp;
-        };
 
         if (statusBarSelector) {
             const statusBarComp = addComponentToDom(statusBarSelector.component);

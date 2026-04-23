@@ -98,7 +98,7 @@ const getExtraContentRows = (): ExcelRow[] => [
             {
                 data: {
                     type: 'String',
-                    value: 'Grid notes start from defaultNote and append metadata from gridNote. Extra content rows can also carry notes.',
+                    value: 'Grid notes start from excelNoteValue and append metadata from gridNote. Extra content rows can also carry notes.',
                 },
             },
         ],
@@ -111,10 +111,10 @@ const defaultExcelExportParams: ExcelExportParams = {
     author: 'Portfolio Ops',
     prependContent: getExtraContentRows(),
     processNoteCallback: (params) => {
-        if (params.defaultNote) {
+        if (params.excelNoteValue) {
             return {
-                ...params.defaultNote,
-                text: `${params.defaultNote.text}\n\nUpdated: ${params.gridNote?.updatedAt ?? 'Not recorded'}`,
+                ...params.excelNoteValue,
+                text: `${params.excelNoteValue.text}\n\nUpdated: ${params.gridNote?.updatedAt ?? 'Not recorded'}`,
             };
         }
 

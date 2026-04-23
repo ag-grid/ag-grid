@@ -28,6 +28,7 @@ export interface OptionalGridComponents {
     gridHeaderDropZonesSelector?: ComponentSelector<Component>;
     sideBarSelector?: ComponentSelector<Component>;
     statusBarSelector?: ComponentSelector<Component>;
+    toolbarSelector?: ComponentSelector<Component & FocusableContainer>;
     watermarkSelector?: ComponentSelector<Component>;
 }
 
@@ -94,6 +95,7 @@ export class GridCtrl extends BeanStub {
             gridHeaderDropZonesSelector: beans.registry?.getSelector('AG-GRID-HEADER-DROP-ZONES'),
             sideBarSelector: beans.sideBar?.getSelector(),
             statusBarSelector: beans.registry?.getSelector('AG-STATUS-BAR'),
+            toolbarSelector: beans.registry?.getSelector('AG-TOOLBAR'),
             watermarkSelector: beans.licenseManager?.getWatermarkSelector(),
         };
     }

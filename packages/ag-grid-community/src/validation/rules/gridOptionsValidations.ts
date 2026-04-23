@@ -161,6 +161,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     statusBar: 'StatusBar',
     treeData: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'TreeData',
+    toolbar: 'Toolbar',
     undoRedoCellEditing: 'UndoRedoEdit',
     valueCache: 'ValueCache',
     viewportDatasource: 'ViewportRowModel',

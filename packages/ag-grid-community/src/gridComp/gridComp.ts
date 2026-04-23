@@ -19,6 +19,7 @@ interface HeaderDropZonesComp extends Component {
 
 export class GridComp extends TabGuardComp {
     private readonly gridBody: GridBodyComp = RefPlaceholder;
+    private readonly toolbar: Component & FocusableContainer = RefPlaceholder;
     private readonly gridHeaderDropZones: HeaderDropZonesComp = RefPlaceholder;
     private readonly sideBar: ISideBar & Component & FocusableContainer = RefPlaceholder;
     private readonly statusBar: Component & FocusableContainer = RefPlaceholder;
@@ -90,6 +91,7 @@ export class GridComp extends TabGuardComp {
     }
 
     private createTemplate(params: OptionalGridComponents): ElementParams {
+        const toolbar: ElementParams | null = params.toolbarSelector ? { tag: 'ag-toolbar', ref: 'toolbar' } : null;
         const dropZones: ElementParams | null = params.gridHeaderDropZonesSelector
             ? { tag: 'ag-grid-header-drop-zones', ref: 'gridHeaderDropZones' }
             : null;
@@ -112,6 +114,7 @@ export class GridComp extends TabGuardComp {
             cls: 'ag-root-wrapper',
             role: 'presentation',
             children: [
+                toolbar,
                 dropZones,
                 {
                     tag: 'div',
@@ -140,10 +143,13 @@ export class GridComp extends TabGuardComp {
     }
 
     protected getFocusableContainers(): FocusableContainer[] {
-        const focusableContainers: FocusableContainer[] = [
-            ...(this.gridHeaderDropZones?.getFocusableContainers?.() ?? []),
-            this.gridBody,
-        ];
+        const focusableContainers: FocusableContainer[] = [];
+
+        if (this.toolbar) {
+            focusableContainers.push(this.toolbar);
+        }
+
+        focusableContainers.push(...(this.gridHeaderDropZones?.getFocusableContainers?.() ?? []), this.gridBody);
 
         for (const comp of [this.sideBar, this.statusBar, this.pagination]) {
             if (comp) {

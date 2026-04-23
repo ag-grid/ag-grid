@@ -1,0 +1,22 @@
+{% if isFramework("react") %}
+
+```jsx
+<AgGridReact
+    toolbar={{
+        items: [
+            {
+                key: 'autoSizeAll',
+                toolbarItem: CustomToolbarButton,
+                toolbarItemParams: {
+                    label: 'Auto Size All',
+                    onClick: (api) => api.autoSizeAllColumns(),
+                },
+            },
+            'agQuickFilterToolbarItem',
+        ],
+    }}
+    // ...other props
+/>
+```
+
+{% /if %}

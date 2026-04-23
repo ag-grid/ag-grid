@@ -474,6 +474,7 @@ type RoleType =
     | 'tab'
     | 'tablist'
     | 'tabpanel'
+    | 'toolbar'
     | 'treeitem';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
