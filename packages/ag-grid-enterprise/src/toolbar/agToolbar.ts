@@ -46,10 +46,10 @@ function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): No
     let toolbarItemParams: any = item.toolbarItemParams;
 
     if (toolbarItem == null) {
-        const { label, icon, action } = item as ToolbarButtonItemDef;
+        const { label, tooltip, icon, action } = item as ToolbarButtonItemDef;
         if (action != null || label != null || icon != null) {
             toolbarItem = 'agButtonToolbarItem';
-            toolbarItemParams = { ...(toolbarItemParams ?? {}), label, icon, action };
+            toolbarItemParams = { ...(toolbarItemParams ?? {}), label, tooltip, icon, action };
         }
     }
 

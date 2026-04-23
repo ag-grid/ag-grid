@@ -18,6 +18,7 @@ import {
 
 interface ButtonToolbarItemParams extends IToolbarItemParams {
     label?: string;
+    tooltip?: string;
     icon?: IconName;
     action?: (params: ToolbarItemActionParams) => void;
 }
@@ -71,8 +72,9 @@ export class ButtonToolbarItem extends Component implements IToolbarItemComp {
         this.eLabel.textContent = params.label ?? '';
         _setDisplayed(this.eLabel, hasLabel);
 
-        _setAriaLabel(eGui, params.label);
-        _addOrRemoveAttribute(eGui, 'title', params.label);
+        const hoverText = params.tooltip ?? params.label;
+        _setAriaLabel(eGui, hoverText);
+        _addOrRemoveAttribute(eGui, 'title', hoverText);
     }
 
     private invokeAction(): void {

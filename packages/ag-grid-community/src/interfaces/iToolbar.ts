@@ -44,8 +44,10 @@ interface ToolbarItemDefBase {
  * without requiring a component reference. Provide at least one of `label`, `icon` or `action`.
  */
 export interface ToolbarButtonItemDef<TData = any, TContext = any> extends ToolbarItemDefBase {
-    /** Text used for the button label, tooltip and `aria-label`. */
+    /** Visible text rendered next to the icon. Omit to render an icon-only button. */
     label?: string;
+    /** Hover tooltip and `aria-label`. Falls back to `label` when omitted. */
+    tooltip?: string;
     /** Icon displayed on the default button. */
     icon?: IconName;
     /** Function invoked when the default button is clicked. */

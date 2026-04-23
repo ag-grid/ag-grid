@@ -73,7 +73,7 @@ const GridExample = () => {
                 },
                 {
                     key: 'resetColumns',
-                    label: 'Reset Columns',
+                    tooltip: 'Reset Columns',
                     icon: 'minimize',
                     action: (params) => params.api.resetColumnState(),
                 },

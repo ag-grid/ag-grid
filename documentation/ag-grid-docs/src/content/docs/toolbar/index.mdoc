@@ -26,7 +26,7 @@ const gridOptions = {
             },
             {
                 key: 'resetColumns',
-                label: 'Reset Columns',
+                tooltip: 'Reset Columns',
                 icon: 'minimize',
                 action: (params) => params.api.resetColumnState(),
             },
@@ -60,7 +60,7 @@ An item object supports the following properties:
 -   `alignment`: `'left'` or `'right'`. See [Default Alignment](#default-alignment).
 -   `toolbarItem`: a built-in item name or a reference to a [Custom Component](#custom-components).
 -   `toolbarItemParams`: additional props forwarded to the component.
--   `label`, `icon`, `action`: shorthand for rendering an [Action Button](#action-buttons) without a component.
+-   `label`, `tooltip`, `icon`, `action`: shorthand for rendering an [Action Button](#action-buttons) without a component.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -102,7 +102,7 @@ The Toolbar accepts two kinds of user-defined items: [Action Buttons](#action-bu
 
 ### Action Buttons
 
-Set `label`, `icon` and `action` on an item to render a button inline, without writing a component. The `action` callback fires on click and receives the grid `api`, `context`, and the item `key`.
+Set `label`, `tooltip`, `icon` and `action` on an item to render a button inline, without writing a component. The `action` callback fires on click and receives the grid `api`, `context`, and the item `key`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -116,7 +116,7 @@ const gridOptions = {
             },
             {
                 key: 'excelExport',
-                label: 'Excel Export',
+                tooltip: 'Excel Export',
                 icon: 'excel',
                 action: (params) => params.api.exportDataAsExcel(),
             },
@@ -125,7 +125,7 @@ const gridOptions = {
 }
 ```
 
-Buttons render the `icon` and `label` side by side when both are provided; the `label` is also used as the tooltip and `aria-label`.
+`label` is the visible text rendered next to the icon; omit it to render an icon-only button. `tooltip` sets the hover tooltip and `aria-label`, and falls back to `label` when omitted.
 
 ### Custom Component
 
