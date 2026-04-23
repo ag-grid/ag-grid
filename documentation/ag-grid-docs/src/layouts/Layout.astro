@@ -200,12 +200,16 @@ const announcementBannerProps = {
             }
         </script>
 
-        <AnnouncementBanner
-            href={announcementBannerProps.href}
-            title={announcementBannerProps.title}
-            description={announcementBannerProps.description}
-            ctaLabel={announcementBannerProps.ctaLabel}
-        />
+        {
+            !isArchive && (
+                <AnnouncementBanner
+                    href={announcementBannerProps.href}
+                    title={announcementBannerProps.title}
+                    description={announcementBannerProps.description}
+                    ctaLabel={announcementBannerProps.ctaLabel}
+                />
+            )
+        }
 
         <div id="mainContainer" class:list={styles.mainContainer}>
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}
