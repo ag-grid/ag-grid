@@ -180,8 +180,15 @@ export default defineConfig({
                 ],
             },
             headers: {
-                'Content-Security-Policy':
-                    "default-src 'self'; script-src 'self' https://*.ag-grid.com https://localhost:4610 https://localhost:4611 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
+                'Content-Security-Policy': [
+                    "default-src 'self'",
+                    "script-src 'self' https://*.ag-grid.com https://localhost:4610 https://localhost:4611 https://www.googletagmanager.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'",
+                    "style-src 'self' https://fonts.googleapis.com 'unsafe-inline'",
+                    "font-src 'self' https://fonts.gstatic.com data:",
+                    "img-src 'self' data: blob: https:",
+                    "connect-src 'self' https:",
+                    "worker-src 'self' blob:",
+                ].join('; '),
                 'X-Content-Type-Options': 'nosniff',
             },
         },
