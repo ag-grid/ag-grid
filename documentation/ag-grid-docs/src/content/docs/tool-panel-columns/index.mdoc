@@ -24,44 +24,6 @@ Selecting columns means different things depending on whether the grid is in piv
 -   **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true`, you can drag a column from the tool panel onto the grid and it will become visible.
 -   **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
-## Deferred Updates
-
-You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed. This allows multiple configuration changes to be made and applied in a single update, avoiding unnecessary intermediate recomputations or requests.
-
-Deferred Updates are enabled by including the **Apply** button in `toolPanelParams.buttons`.
-
-The example below uses the Server-Side Row Model. Note that in the example below:
-
--   Changes made in the Columns Tool Panel are staged as pending changes.
--   **Apply** commits all pending changes in a single operation.
--   **Cancel** discards all pending changes and restores the last applied state.
-
-{% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode"  exampleHeight=830 /%}
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    sideBar: {
-        toolPanels: [
-            {
-                id: 'columns',
-                labelDefault: 'Columns',
-                labelKey: 'columns',
-                iconKey: 'columns',
-                toolPanel: 'agColumnsToolPanel',
-                toolPanelParams: {
-                    buttons: ['cancel', 'apply'],
-                },
-            },
-        ],
-        defaultToolPanel: 'columns',
-    },
-};
-```
-
-{% note %}
-Changes made outside the Columns Tool Panel — such as dragging columns into the Row Group or Pivot Panels, using the Column Menu, or calling the Grid / Column API — are applied immediately and clear any pending changes. Column pinning, resizing, and group expansion do not clear pending changes.
-{% /note %}
-
 ## Columns Tool Panel Sections
 
 The Columns Tool Panel is split into different sections as described from the top:
@@ -248,6 +210,46 @@ The example below demonstrates these methods in action. Note the following:
 -   Clicking **Collapse Competition** collapses only the 'Competition' column group using `collapseColumnGroups(['competitionGroupId'])`.
 
 {% gridExampleRunner title="Expand / Collapse Column Groups" name="expand-collapse"  exampleHeight=640 /%}
+
+## Deferred Updates
+
+You can configure the Columns Tool Panel to stage changes and require an explicit **Apply** action before they are committed. This allows multiple configuration changes to be made and applied in a single update, avoiding unnecessary intermediate recomputations or requests.
+
+Deferred Updates are enabled by including the **Apply** button in `toolPanelParams.buttons`.
+
+Note that in the example below:
+
+-   Changes made in the Columns Tool Panel are staged as pending changes.
+-   **Apply** commits all pending changes in a single operation.
+-   **Cancel** discards all pending changes and restores the last applied state.
+
+{% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode-csrm"  exampleHeight=830 /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    buttons: ['cancel', 'apply'],
+                },
+            },
+        ],
+        defaultToolPanel: 'columns',
+    },
+};
+```
+
+{% note %}
+Changes made outside the Columns Tool Panel — such as dragging columns into the Row Group or Pivot Panels, using the Column Menu, or calling the Grid / Column API — are applied immediately and clear any pending changes. Column pinning, resizing, and group expansion do not clear pending changes.
+{% /note %}
+
+When using the [Server-Side Row Model](./server-side-model/), Deferred Updates can be used to batch multiple configuration changes into a single server request. See [Batching Data Requests](./server-side-model-grouping/#batching-data-requests) for an SSRM-specific example.
 
 ## Custom Column Layout
 

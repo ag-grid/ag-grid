@@ -9,7 +9,10 @@ import { batchEditStyleBase } from './parts/batch-edit/batch-edit-styles';
 import { buttonStyleQuartz } from './parts/button-style/button-styles';
 import type { ButtonStyleParams } from './parts/button-style/button-styles';
 import { columnDropStyleBordered } from './parts/column-drop-style/column-drop-styles';
+import type { FormulaStyleParams } from './parts/formula-style/formula-styles';
 import { formulaStyleBase } from './parts/formula-style/formula-styles';
+import type { NoteStyleParams } from './parts/notes/note-styles';
+import { noteStyleBase } from './parts/notes/note-styles';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const gridThemeLogger: ThemeLogger = {
@@ -32,10 +35,13 @@ export const gridThemeLogger: ThemeLogger = {
 // must be bundled by default to avoid a breaking change for people using
 // createTheme(). In v34 the withPart calls can be removed.
 
-export const createTheme = (): Theme<CoreParams & ButtonStyleParams & BatchEditStyleParams> =>
+export const createTheme = (): Theme<
+    CoreParams & ButtonStyleParams & BatchEditStyleParams & FormulaStyleParams & NoteStyleParams
+> =>
     createSharedTheme<CoreParams>(gridThemeLogger)
         .withParams(coreDefaults)
         .withPart(buttonStyleQuartz)
         .withPart(columnDropStyleBordered)
         .withPart(batchEditStyleBase)
-        .withPart(formulaStyleBase);
+        .withPart(formulaStyleBase)
+        .withPart(noteStyleBase);

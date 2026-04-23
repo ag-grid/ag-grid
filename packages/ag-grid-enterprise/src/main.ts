@@ -62,6 +62,7 @@ export { MenuModule, ColumnMenuModule, ContextMenuModule } from './menu/menuModu
 export { RichSelectModule } from './richSelect/richSelectModule';
 export { SetFilterModule } from './setFilter/setFilterModule';
 export { StatusBarModule } from './statusBar/statusBarModule';
+export { ToolbarModule } from './toolbar/toolbarModule';
 export { ExcelExportModule } from './excelExport/excelExportModule';
 export { MultiFilterModule } from './multiFilter/multiFilterModule';
 export { GroupFilterModule, RowGroupingPanelModule, RowGroupingModule } from './rowGrouping/rowGroupingModule';
@@ -74,6 +75,7 @@ export { MasterDetailModule } from './masterDetail/masterDetailModule';
 export { CellSelectionModule, RangeSelectionModule } from './rangeSelection/rangeSelectionModule';
 export { ServerSideRowModelModule, ServerSideRowModelApiModule } from './serverSideRowModel/serverSideRowModelModule';
 export { FormulaModule } from './formula/formulaModule';
+export { NotesModule } from './notes/notesModule';
 export { SparklinesModule } from './sparkline/sparklinesModule';
 export { TreeDataModule } from './treeData/treeDataModule';
 export { AggregationModule } from './aggregation/aggregationModule';

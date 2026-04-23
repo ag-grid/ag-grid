@@ -30,7 +30,9 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
         gridMgr.reset();
     });
 
-    async function createGrid(params: { suppressSyncLayoutWithGrid?: boolean; columnDefs?: ColDef[] } = {}): Promise<{
+    async function createGrid(
+        params: { suppressSyncLayoutWithGrid?: boolean; columnDefs?: ColDef[]; aggFuncs?: Record<string, any> } = {}
+    ): Promise<{
         gridApi: GridApi;
         toolPanel: any;
         toolPanelGui: HTMLElement;
@@ -38,6 +40,7 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
         const gridApi = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: params.columnDefs ?? baseColumnDefs,
             rowData,
+            aggFuncs: params.aggFuncs,
             sideBar: {
                 toolPanels: [
                     {
@@ -339,14 +342,15 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
         });
 
         test('external aggFunc change with custom function resets staged changes', async () => {
-            const customSum = (params: any) => params.values.reduce((a: number, b: number) => a + b, 0);
-            const customMax = (params: any) => Math.max(...params.values);
-
             const { gridApi, toolPanel, toolPanelGui } = await createGrid({
                 suppressSyncLayoutWithGrid: true,
+                aggFuncs: {
+                    customSum: (params: any) => params.values.reduce((a: number, b: number) => a + b, 0),
+                    customMax: (params: any) => Math.max(...params.values),
+                },
                 columnDefs: [
                     { field: 'athlete' },
-                    { field: 'age', enableValue: true, aggFunc: customSum },
+                    { field: 'age', enableValue: true, aggFunc: 'customSum' },
                     { field: 'country' },
                     { field: 'sport' },
                     { field: 'gold' },
@@ -361,7 +365,7 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
             expect(getApplyButton(toolPanelGui).disabled).toBe(false);
 
             // External aggFunc change: swap one custom function for another
-            gridApi.applyColumnState({ state: [{ colId: 'age', aggFunc: customMax }] });
+            gridApi.applyColumnState({ state: [{ colId: 'age', aggFunc: 'customMax' }] });
             await asyncSetTimeout(50);
 
             // Staged changes should be reset — the snapshot must detect function reference change

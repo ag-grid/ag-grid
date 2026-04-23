@@ -8,9 +8,9 @@ fi
 
 RELEASE_VERSION=$1
 RELEASE_BRANCH=$2
-ALLOWED_FILES="package.json|yarn.lock|version.ts|licenseManager.ts|.env|README.md|baseUrl.ts|documentation/ag-grid-docs/src/content/versions/ag-grid-versions.json"
+ALLOWED_FILES="package.json|yarn.lock|version.ts|licenseManager.ts|.env|README.md|baseUrl.ts|documentation/ag-grid-docs/src/content/versions/ag-grid-versions.json|.mdoc"
 
-NON_PACKAGE_JSON_COUNT=`git status --porcelain | grep -Ev "$ALLOWED_FILES" | wc -l`
+NON_PACKAGE_JSON_COUNT=`git status --porcelain | grep -Ev "package.json|yarn.lock|version.ts|licenseManager.ts|.env|README.md|baseUrl.ts|documentation/ag-grid-docs/src/content/versions/ag-grid-versions.json|.mdoc" | wc -l`
 
 if [ $NON_PACKAGE_JSON_COUNT -ne 0 ];
 then

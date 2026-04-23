@@ -63,6 +63,36 @@ const sumOfSquaresValueSetter: GroupRowValueSetterFunc<MetricsRecord> = ({ newVa
     return changed;
 };
 
+/**
+ * Cross-column groupRowValueSetter: editing the group row's "Rate %"
+ * sets each leaf child's bonus to a percentage of their individual salary.
+ *
+ * Uses getAggregatedChildren with recursive=true to reach all descendant
+ * leaf rows, since intermediate group rows don't have salary data.
+ *
+ * For example, entering 20 on the Engineering group sets each engineer's
+ * bonus to 20% of their salary: Alice (salary 90) gets bonus 18,
+ * Dave (salary 95) gets bonus 19, etc.
+ */
+const bonusRateSetter: GroupRowValueSetterFunc<MetricsRecord> = ({ newValue, node, column }) => {
+    const rate = Number(newValue) / 100;
+    if (!Number.isFinite(rate)) {
+        return false;
+    }
+    const leaves = node.getAggregatedChildren(column, true);
+    if (!leaves.length) {
+        return false;
+    }
+    let changed = false;
+    for (const child of leaves) {
+        const salary = child.data?.salary ?? 0;
+        if (child.setDataValue('bonus', Math.round(salary * rate), 'data')) {
+            changed = true;
+        }
+    }
+    return changed;
+};
+
 const gridOptions: GridOptions<MetricsRecord> = {
     columnDefs: [
         { field: 'department', rowGroup: true, hide: true },
@@ -76,27 +106,33 @@ const gridOptions: GridOptions<MetricsRecord> = {
             groupRowValueSetter: { precision: 0 },
         },
 
-        // avg: overwrites every child with the edited value
-        { field: 'bonus', aggFunc: 'avg' },
+        // avg: default strategy is 'overwrite' — sets every child to the edited value
+        {
+            field: 'bonus',
+            aggFunc: 'avg',
+            valueFormatter: ({ value }) => (value != null ? Number(value).toFixed(2) : ''),
+        },
 
-        // min: writes to the child currently holding the minimum
-        { field: 'rating', aggFunc: 'min' },
+        // No aggFunc: the default strategy is 'overwrite', writing the edited
+        // value to every child. The group cell is blank (no aggregation) but
+        // still editable via groupRowEditable.
+        { field: 'projects' },
 
-        // max: writes to the child currently holding the maximum
-        { field: 'hours', aggFunc: 'max' },
-
-        // count: overwrites every child
-        { field: 'overtime', aggFunc: 'count' },
-
-        // first: writes to the first child only
-        { field: 'projects', aggFunc: 'first' },
-
-        // last: writes to the last child only
-        { field: 'seniority', aggFunc: 'last' },
+        // Cross-column custom callback: editing the group row's "Rate"
+        // reads each child's salary and writes a computed bonus.
+        {
+            headerName: 'Rate %',
+            valueGetter: ({ data }) => (data ? (data.bonus / data.salary) * 100 : null),
+            valueFormatter: ({ value }) => (value != null ? Number(value).toFixed(2) : ''),
+            aggFunc: 'avg',
+            editable: false,
+            groupRowEditable: true,
+            groupRowValueSetter: bonusRateSetter,
+        },
 
         // Custom aggregation function with a custom groupRowValueSetter
         {
-            headerName: 'sumSq(score)',
+            headerName: 'SumSq',
             field: 'score',
             aggFunc: 'sumOfSquares',
             groupRowValueSetter: sumOfSquaresValueSetter,
@@ -104,7 +140,7 @@ const gridOptions: GridOptions<MetricsRecord> = {
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
+        minWidth: 120,
         sortable: true,
         filter: true,
         resizable: true,

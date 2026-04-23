@@ -377,6 +377,10 @@ a:hover { text-decoration: underline; }
 .cve-link { font-family: monospace; font-size: 11px; color: var(--c-text-muted); }
 .cve-link:hover { color: var(--c-accent); }
 
+.npm-link { display: inline-flex; align-items: center; vertical-align: middle; margin-right: 4px; }
+.npm-icon { width: 16px; height: 16px; vertical-align: middle; opacity: 0.7; transition: opacity 0.15s; }
+.npm-link:hover .npm-icon { opacity: 1; }
+
 .proj-count { font-size: 11px; color: var(--c-text-muted); white-space: nowrap; }
 .near-ignored-row-badge {
     display: inline-flex;

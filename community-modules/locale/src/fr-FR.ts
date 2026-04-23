@@ -339,6 +339,7 @@ export const AG_GRID_LOCALE_FR = {
     sortAbsoluteAscending: 'Trier par ordre croissant absolu',
     sortAbsoluteDescending: 'Trier par ordre décroissant absolu',
     sortUnSort: 'Effacer le tri',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Somme',
@@ -693,12 +694,16 @@ export const AG_GRID_LOCALE_FR = {
         'Appuyez sur Entrée pour basculer la sélection de toutes les cellules visibles de cette colonne',
     ariaColumnGroupCellSelection:
         'Appuyez sur Entrée pour basculer la sélection de toutes les cellules visibles de ce groupe de colonnes',
+    ariaColumnGroupExpansion: 'Appuyez sur ENTER pour développer ou réduire ce groupe de colonnes',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Appuyez sur Entrée pour basculer la sélection de toutes les cellules visibles de ce groupe de colonnes. Appuyez sur ALT ENTER pour développer ou réduire ce groupe de colonnes',
     ariaRowSelectAll: 'Appuyez sur ESPACE pour basculer la sélection de toutes les lignes',
     ariaRowToggleSelection: 'Appuyez sur ESPACE pour basculer la sélection de la ligne',
     ariaRowSelect: 'Appuyez sur ESPACE pour sélectionner cette ligne',
     ariaRowSelectionDisabled: 'La sélection de lignes est désactivée pour cette ligne',
     ariaSearch: 'Rechercher',
     ariaSortableColumn: 'Appuyez sur ENTER pour trier',
+    ariaSortableColumnWithCellSelection: 'Appuyez sur ALT ENTER pour trier',
     ariaToggleVisibility: 'Appuyez sur ESPACE pour basculer la visibilité',
     ariaToggleCellValue: 'Appuyez sur ESPACE pour basculer la valeur de la cellule',
     ariaUnchecked: 'non coché',
@@ -765,6 +770,7 @@ export const AG_GRID_LOCALE_FR = {
     ariaLabelAddFilterField: 'Ajouter un champ de filtre',
     ariaLabelFilterCardDelete: 'Supprimer le filtre',
     ariaLabelFilterCardHasEdits: 'A des modifications',
+    ariaHasNote: 'Cette cellule a une note.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -809,4 +815,12 @@ export const AG_GRID_LOCALE_FR = {
     timeFormatSpacesDDMMMMYYYY: 'JJ MMMM AAAA',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Notes
+    note: 'Note de cellule',
+    addNote: 'Ajouter une note',
+    viewNote: 'Afficher la note',
+    editNote: 'Modifier la note',
+    deleteNote: 'Supprimer la note',
+    notePlaceholder: 'Ajouter une note...',
 };

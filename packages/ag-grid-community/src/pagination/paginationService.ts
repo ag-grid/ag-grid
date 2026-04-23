@@ -1,7 +1,5 @@
-import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { EditService } from '../edit/editService';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { PaginationSelector } from './paginationComp';
 
@@ -30,8 +28,6 @@ export class PaginationService extends BeanStub implements NamedBean {
     private bottomDisplayedRowIndex = 0;
 
     private masterRowCount: number = 0;
-
-    private readonly editSvc?: EditService;
 
     public postConstruct() {
         const gos = this.gos;
@@ -151,21 +147,24 @@ export class PaginationService extends BeanStub implements NamedBean {
     }
 
     private get pageSize(): number {
+        const {
+            pageSizeAutoCalculated,
+            pageSizeFromInitialState,
+            pageSizeFromGridOptions,
+            pageSizeFromPageSizeSelector,
+            gos,
+        } = this;
+
         // Explicitly check for autosize status as this can be set to false before the calculated value is cleared.
         // Due to a race condition in when event listeners are added.
-        if (_exists(this.pageSizeAutoCalculated) && this.gos.get('paginationAutoPageSize')) {
-            return this.pageSizeAutoCalculated;
-        }
-        if (_exists(this.pageSizeFromPageSizeSelector)) {
-            return this.pageSizeFromPageSizeSelector;
-        }
-        if (_exists(this.pageSizeFromInitialState)) {
-            return this.pageSizeFromInitialState;
-        }
-        if (_exists(this.pageSizeFromGridOptions)) {
-            return this.pageSizeFromGridOptions;
-        }
-        return DEFAULT_PAGE_SIZE;
+        const autoValue = gos.get('paginationAutoPageSize') ? pageSizeAutoCalculated : undefined;
+        return (
+            autoValue ??
+            pageSizeFromPageSizeSelector ??
+            pageSizeFromInitialState ??
+            pageSizeFromGridOptions ??
+            DEFAULT_PAGE_SIZE
+        );
     }
 
     public calculatePages(): void {

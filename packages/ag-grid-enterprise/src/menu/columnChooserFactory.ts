@@ -26,7 +26,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
     ): AgPrimaryCols {
         const columnSelectPanel = parent.createManagedBean(new AgPrimaryCols());
 
-        const columnChooserParams = params ?? column?.getColDef().columnChooserParams ?? {};
+        const columnChooserParams = params ?? column?.colDef.columnChooserParams ?? {};
 
         const {
             contractColumnSelection,
@@ -120,7 +120,12 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
     }
 
     public hideActiveColumnChooser(): void {
-        this.destroyBean(this.activeColumnChooserDialog);
+        this.activeColumnChooserDialog = this.destroyBean(this.activeColumnChooserDialog);
+    }
+
+    public override destroy(): void {
+        this.hideActiveColumnChooser();
+        super.destroy();
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, column?: AgColumn | null): void {

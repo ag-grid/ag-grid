@@ -289,8 +289,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         // if locked return true only if both col and container are same pin type.
         // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
         // if not pin locked, then always allowed to be in this container
-        const conditionCallback = (col: AgColumn) =>
-            col.getColDef().lockPinned ? col.getPinned() == this.pinned : true;
+        const conditionCallback = (col: AgColumn) => (col.colDef.lockPinned ? col.getPinned() == this.pinned : true);
 
         if (!columns) {
             return [];
@@ -358,7 +357,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             // (e.g. hovering an empty area of the column header beyond all columns)
             for (let i = consideredColumns.length - 1; i >= 0; i--) {
                 const currentColumn = consideredColumns[i];
-                const parent = consideredColumns[i].getParent();
+                const parent = consideredColumns[i].parent;
                 if (!parent) {
                     targetColumn = currentColumn;
                     break;
@@ -680,7 +679,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         pinned?: ColumnPinnedType,
         fromMoving: boolean = false
     ): number {
-        const allowedCols = (columns || []).filter((c) => !c.getColDef().lockPinned);
+        const allowedCols = (columns || []).filter((c) => !c.colDef.lockPinned);
 
         if (!allowedCols.length) {
             return 0;

@@ -2,7 +2,7 @@ import { ClientSideRowModelModule, PaginationModule, PinnedRowModule } from 'ag-
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 function assertPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>, ids: any[]): void {
     const pinnedNodes: RowNode[] = [];
@@ -96,6 +96,13 @@ describe('ag-grid tree data pinned rows', () => {
         expect(api.getRowNode('france')).toBeUndefined();
         expect(api.getPinnedTopRowCount()).toBe(0);
         expect(franceNode!.destroyed).toBe(true);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── name "Name" width:200
+            └── amount "Amount" width:200 aggFunc:sum
+        `);
     });
 
     test('pinned tree node survives when some children are removed', async () => {
@@ -153,6 +160,13 @@ describe('ag-grid tree data pinned rows', () => {
         const pinnedFrance = api.getPinnedTopRow(0);
         expect(pinnedFrance?.key).toBe('France');
         expect(franceNode!.destroyed).toBe(false);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── name "Name" width:200
+            └── amount "Amount" width:200 aggFunc:sum
+        `);
     });
 
     test('multiple pinned tree nodes are unpinned when their source nodes are destroyed', async () => {
@@ -211,6 +225,13 @@ describe('ag-grid tree data pinned rows', () => {
 
         expect(api.getPinnedTopRowCount()).toBe(0);
         expect(api.getPinnedBottomRowCount()).toBe(0);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├── name "Name" width:200
+            └── amount "Amount" width:200 aggFunc:sum
+        `);
     });
 
     test('pinned tree node is unpinned when source node is destroyed via setRowData', async () => {

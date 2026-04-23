@@ -2,7 +2,7 @@ import type { GridApi, GridOptions, IRowNode, RowNode, RowPinnedType } from 'ag-
 import { ClientSideRowModelModule, NumberFilterModule, PinnedRowModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
 
 interface RowData {
     id: string;
@@ -93,6 +93,12 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
                 └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
                 · └── LEAF id:it-rome country:"Italy" amount:300
             `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum
+            `);
         });
 
         test('transaction add updates pinned sibling aggregation', async () => {
@@ -125,6 +131,12 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
                 │ └── LEAF id:de-hamburg country:"Germany" amount:250
                 └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
                 · └── LEAF id:it-rome country:"Italy" amount:300
+            `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── amount "Amount" width:200 aggFunc:sum
             `);
         });
 

@@ -1,26 +1,16 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
 import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { IRowNodeFilterStage } from '../interfaces/iRowNodeStage';
-import type { ChangedPath } from '../utils/changedPath';
-import { _forEachChangedGroupDepthFirst } from '../utils/changedPath';
-
-export function updateRowNodeAfterFilter(rowNode: RowNode): void {
-    const sibling = rowNode.sibling;
-    if (sibling) {
-        sibling.childrenAfterFilter = rowNode.childrenAfterFilter;
-    }
-}
 
 export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedBean {
     beanName = 'filterStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'filter';
-    public readonly refreshProps: (keyof GridOptions<any>)[] = ['excludeChildrenWhenTreeDataFiltering'];
+    public readonly refreshProps = null;
 
     private filterManager?: FilterManager;
 
@@ -28,101 +18,80 @@ export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedB
         this.filterManager = beans.filterManager;
     }
 
-    public execute(changedPath: ChangedPath | undefined): void {
-        const filterActive = !!this.filterManager?.isChildFilterPresent();
-        if (this.beans.formula?.active) {
-            this.softFilter(filterActive, changedPath);
-        } else {
-            this.filterNodes(filterActive, changedPath);
-        }
-    }
+    public execute(): void {
+        const beans = this.beans;
+        const rootNode = beans.rowModel.rootNode!;
+        const rows = rootNode.childrenAfterGroup!;
+        const len = rows.length;
+        const fm = this.filterManager;
+        const active = !!fm?.isChildFilterPresent();
 
-    private filterNodes(filterActive: boolean, changedPath: ChangedPath | undefined): void {
-        const filterCallback = (rowNode: RowNode, includeChildNodes: boolean) => {
-            // recursively get all children that are groups to also filter
-            if (rowNode.hasChildren()) {
-                // result of filter for this node. when filtering tree data, includeChildNodes = true when parent passes
-                if (filterActive && !includeChildNodes) {
-                    rowNode.childrenAfterFilter = rowNode.childrenAfterGroup!.filter((childNode) => {
-                        // a group is included in the result if it has any children of it's own.
-                        // by this stage, the child groups are already filtered
-                        const passBecauseChildren =
-                            childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
-
-                        // both leaf level nodes and tree data nodes have data. these get added if
-                        // the data passes the filter
-                        const passBecauseDataPasses =
-                            childNode.data && this.filterManager!.doesRowPassFilter({ rowNode: childNode });
-
-                        // note - tree data nodes pass either if a) they pass themselves or b) any children of that node pass
-
-                        return passBecauseChildren || passBecauseDataPasses;
-                    });
-                } else {
-                    // if not filtering, the result is the original list
-                    rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
+        if (beans.formula?.active) {
+            rootNode.childrenAfterFilter = rows;
+            if (active) {
+                for (let i = 0; i < len; ++i) {
+                    const row = rows[i];
+                    row.softFiltered = !fm!.doesRowPassFilter(row);
                 }
             } else {
-                rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
-            }
-
-            updateRowNodeAfterFilter(rowNode);
-        };
-
-        if (this.doingTreeDataFiltering()) {
-            const treeDataDepthFirstFilter = (rowNode: RowNode, alreadyFoundInParent: boolean) => {
-                // tree data filter traverses the hierarchy depth first and includes child nodes if parent passes
-                // filter, and parent nodes will be include if any children exist.
-
-                if (rowNode.childrenAfterGroup) {
-                    for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
-                        const childNode = rowNode.childrenAfterGroup[i];
-
-                        // first check if current node passes filter before invoking child nodes
-                        const foundInParent =
-                            alreadyFoundInParent || this.filterManager!.doesRowPassFilter({ rowNode: childNode });
-                        if (childNode.childrenAfterGroup) {
-                            treeDataDepthFirstFilter(rowNode.childrenAfterGroup[i], foundInParent);
-                        } else {
-                            filterCallback(childNode, foundInParent);
-                        }
-                    }
+                for (let i = 0; i < len; ++i) {
+                    rows[i].softFiltered = false;
                 }
-                filterCallback(rowNode, alreadyFoundInParent);
-            };
-
-            treeDataDepthFirstFilter(this.beans.rowModel.rootNode!, false);
+            }
+        } else if (active) {
+            rootNode.childrenAfterFilter = filterFlat(rows, len, rootNode.childrenAfterFilter ?? rows, fm!);
         } else {
-            const defaultFilterCallback = (rowNode: RowNode) => filterCallback(rowNode, false);
-            _forEachChangedGroupDepthFirst(
-                this.beans.rowModel.rootNode,
-                this.beans.rowModel.hierarchical,
-                changedPath,
-                defaultFilterCallback
-            );
+            rootNode.childrenAfterFilter = rows;
         }
     }
-
-    private softFilter(filterActive: boolean, changedPath: ChangedPath | undefined): void {
-        const filterCallback = (rowNode: RowNode) => {
-            rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
-            if (rowNode.hasChildren()) {
-                for (const childNode of rowNode.childrenAfterGroup!) {
-                    childNode.softFiltered =
-                        filterActive &&
-                        !(childNode.data && this.filterManager!.doesRowPassFilter({ rowNode: childNode }));
-                }
-            }
-
-            updateRowNodeAfterFilter(rowNode);
-        };
-
-        const rowModel = this.beans.rowModel;
-        _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, filterCallback);
-    }
-
-    private doingTreeDataFiltering() {
-        const { gos } = this;
-        return !!this.beans.groupStage?.treeData && !gos.get('excludeChildrenWhenTreeDataFiltering');
-    }
 }
+
+/**
+ * Filters flat rows by calling `doesRowPassFilter` on each row.
+ *
+ * Returns the previous result (`prev`) by reference when the filtered output is identical,
+ * or the input `rows` array when every row passes — both cases allocate nothing.
+ * A new array is only created when the result actually differs from `prev`.
+ *
+ * Algorithm (two-phase):
+ * 1. **Compare phase** — iterate rows, checking each against `prev[n]` where `n` is the number
+ *    of passing rows seen so far.
+ *    While every passing row matches `prev` at the same index, no memory is allocated.
+ * 2. **Build phase** (`filterFlatBuild`) — entered on first mismatch.
+ *    Slices the matching prefix from `prev` and pushes remaining passing rows into the new array.
+ */
+const filterFlat = (rows: RowNode[], len: number, prev: RowNode[], fm: FilterManager): RowNode[] => {
+    const prevLen = prev.length;
+    let n = 0;
+    for (let i = 0; i < len; ++i) {
+        const row = rows[i];
+        if (fm.doesRowPassFilter(row)) {
+            if (n >= prevLen || prev[n] !== row) {
+                return filterFlatBuild(rows, len, i, n, prev, fm);
+            }
+            ++n;
+        } else if (n < prevLen) {
+            return filterFlatBuild(rows, len, i, n, prev, fm);
+        }
+    }
+    return n === prevLen ? prev : rows;
+};
+
+/** Cold path: result diverged at rows[i] with n rows matched so far. Build new array. */
+const filterFlatBuild = (
+    rows: RowNode[],
+    len: number,
+    i: number,
+    n: number,
+    prev: RowNode[],
+    fm: FilterManager
+): RowNode[] => {
+    const result = n > 0 ? prev.slice(0, n) : [];
+    while (i < len) {
+        const row = rows[i++];
+        if (fm.doesRowPassFilter(row)) {
+            result.push(row);
+        }
+    }
+    return result;
+};

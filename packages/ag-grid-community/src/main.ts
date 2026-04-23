@@ -9,6 +9,7 @@ export {
 export { isColumn } from './entities/agColumn';
 export { isColumnGroup } from './entities/agColumnGroup';
 export { isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
+
 export type {
     AutoSizeStrategy,
     IColumnLimit,
@@ -31,6 +32,12 @@ export type {
 export type { SortModelItem } from './interfaces/iSortModelItem';
 
 // IRowNode
+export {
+    DETAIL_ROW_ID_PREFIX,
+    GRAND_TOTAL_ROW_ID,
+    GROUP_TOTAL_ROW_ID_PREFIX,
+    ROOT_NODE_ID,
+} from './interfaces/iRowNode';
 export type {
     AllChildrenCountChangedEvent,
     CellChangedEvent,
@@ -108,10 +115,12 @@ export type {
     ExcelImage,
     ExcelImagePosition,
     ExcelInterior,
+    ExcelNote,
     ExcelNumberFormat,
     ExcelOOXMLDataType,
     ExcelOOXMLTemplate,
     ExcelProtection,
+    ProcessNoteForExportParams,
     ExcelRelationship,
     ExcelRow,
     ExcelSheetMargin,
@@ -404,6 +413,21 @@ export type {
     StatusPanelDef,
 } from './interfaces/iStatusPanel';
 
+// Toolbar
+export type {
+    IToolbarItem,
+    IToolbarItemComp,
+    IToolbarItemParams,
+    Toolbar,
+    ToolbarBuiltInItemDef,
+    ToolbarButtonItemDef,
+    ToolbarCustomItemDef,
+    ToolbarItemActionParams,
+    ToolbarItemComponent,
+    ToolbarItemDef,
+    ToolbarItemShorthand,
+} from './interfaces/iToolbar';
+
 // Tool Panel
 export type { IColumnToolPanel } from './interfaces/iColumnToolPanel';
 export type { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
@@ -682,6 +706,8 @@ export type {
     SpanRowsParams,
     SuppressHeaderKeyboardEventFunc,
     SuppressHeaderKeyboardEventParams,
+    SuppressNoteActionsCallback,
+    SuppressNoteActionsCallbackParams,
     SuppressKeyboardEventFunc,
     SuppressKeyboardEventParams,
     SuppressNavigableCallback,
@@ -769,6 +795,9 @@ export type {
     LocaleText,
     MasterSelectionMode,
     MultiRowSelectionOptions,
+    PaginationPanel,
+    PivotColumnGroupTotals,
+    PivotRowTotals,
     ProcessPivotResultColDef,
     ProcessPivotResultColGroupDef,
     RangeHandleOptions,
@@ -929,6 +958,23 @@ export type {
     SetFormulaParams,
     ValueParam,
 } from './interfaces/formulas';
+export type {
+    FullWidthNotesDataSource,
+    NoteParams,
+    Note,
+    FullWidthRowNoteParams,
+    GetNoteParams,
+    NotesDataSource,
+    FullWidthNotesDataSourceGetNoteParams,
+    FullWidthNotesDataSourceSetNoteParams,
+    NotesDataSourceNoteParams,
+    NotesDataSourceFullWidthRowNoteParams,
+    NotesDataSourceGetNoteParams,
+    NotesDataSourceParams,
+    NotesDataSourceSetNoteParams,
+    RefreshNotesParams,
+    SetNoteParams,
+} from './interfaces/notes';
 
 // Public AG Grid Modules and ModuleRegistry
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';

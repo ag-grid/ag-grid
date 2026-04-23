@@ -339,6 +339,7 @@ export const AG_GRID_LOCALE_GR = {
     sortAbsoluteAscending: '"Απόλυτη αύξουσα ταξινόμηση"',
     sortAbsoluteDescending: '"Απόλυτη φθίνουσα ταξινόμηση"',
     sortUnSort: 'Καθαρισμός Ταξινόμησης',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Άθροισμα',
@@ -691,12 +692,16 @@ export const AG_GRID_LOCALE_GR = {
     ariaSelectAllRowCells: 'Πατήστε Enter για επιλογή όλων των κελιών σε αυτή τη γραμμή',
     ariaColumnCellSelection: 'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή τη στήλη',
     ariaColumnGroupCellSelection: 'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή την ομάδα στηλών',
+    ariaColumnGroupExpansion: 'Πατήστε ENTER για ανάπτυξη ή σύμπτυξη αυτής της ομάδας στηλών',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή την ομάδα στηλών. Πατήστε ALT ENTER για ανάπτυξη ή σύμπτυξη αυτής της ομάδας στηλών',
     ariaRowSelectAll: 'Πατήστε SPACE για αλλαγή επιλογής όλων των γραμμών',
     ariaRowToggleSelection: 'Πατήστε SPACE για εναλλαγή επιλογής γραμμής',
     ariaRowSelect: 'Πατήστε SPACE για επιλογή αυτής της γραμμής',
     ariaRowSelectionDisabled: 'Η επιλογή γραμμής έχει απενεργοποιηθεί για αυτή τη γραμμή',
     ariaSearch: 'Αναζήτηση',
     ariaSortableColumn: 'Πατήστε ENTER για ταξινόμηση',
+    ariaSortableColumnWithCellSelection: 'Πατήστε ALT ENTER για ταξινόμηση',
     ariaToggleVisibility: 'Πατήστε SPACE για αλλαγή ορατότητας',
     ariaToggleCellValue: 'Πατήστε SPACE για εναλλαγή τιμής κελιού',
     ariaUnchecked: 'μη ελεγμένο',
@@ -762,6 +767,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaLabelAddFilterField: 'Προσθήκη πεδίου φίλτρου',
     ariaLabelFilterCardDelete: 'Διαγραφή φίλτρου',
     ariaLabelFilterCardHasEdits: 'Έχει επεξεργασίες',
+    ariaHasNote: 'Αυτό το κελί έχει σημείωση.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -806,4 +812,12 @@ export const AG_GRID_LOCALE_GR = {
     timeFormatSpacesDDMMMMYYYY: 'ΗΗ ΜΜΜΜ ΕΕΕΕ',
     timeFormatHHMMSS: 'ΩΩ:ΛΛ:ΔΔ',
     timeFormatHHMMSSAmPm: 'ΩΩ:ΛΛ:ΔΔ ΠΜ/ΜΜ',
+
+    // Notes
+    note: 'Σημείωση κελιού',
+    addNote: 'Προσθήκη σημείωσης',
+    viewNote: 'Προβολή σημείωσης',
+    editNote: 'Επεξεργασία σημείωσης',
+    deleteNote: 'Αφαίρεση σημείωσης',
+    notePlaceholder: 'Προσθέστε μια σημείωση...',
 };

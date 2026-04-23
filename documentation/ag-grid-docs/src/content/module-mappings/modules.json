@@ -124,6 +124,12 @@
                     "name": "Find",
                     "path": "find",
                     "isEnterprise": true
+                },
+                {
+                    "moduleName": "NotesModule",
+                    "name": "Notes",
+                    "path": "notes",
+                    "isEnterprise": true
                 }
             ]
         },
@@ -399,6 +405,12 @@
                     "moduleName": "StatusBarModule",
                     "name": "Status Bar",
                     "path": "status-bar",
+                    "isEnterprise": true
+                },
+                {
+                    "moduleName": "ToolbarModule",
+                    "name": "Toolbar",
+                    "path": "toolbar",
                     "isEnterprise": true
                 }
             ]

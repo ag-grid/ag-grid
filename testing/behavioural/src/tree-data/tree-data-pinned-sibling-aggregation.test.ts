@@ -2,7 +2,7 @@ import type { GridApi, GridOptions, IRowNode, RowNode, RowPinnedType } from 'ag-
 import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
 
 interface TreeRowData {
     id: string;
@@ -99,6 +99,13 @@ describe('ag-grid tree data pinned sibling aggregation', () => {
                 · └─┬ Japan filler id:row-group-0-Asia-1-Japan ag-Grid-AutoColumn:"Japan" amount:300
                 · · └── Tokyo LEAF id:jp-tokyo ag-Grid-AutoColumn:"Tokyo" name:"Tokyo" amount:300
             `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Location" width:200
+                ├── name "Name" width:200
+                └── amount "Amount" width:200 aggFunc:sum
+            `);
         });
 
         test('transaction add updates pinned sibling aggregation', async () => {
@@ -133,6 +140,13 @@ describe('ag-grid tree data pinned sibling aggregation', () => {
                 └─┬ Asia filler id:row-group-0-Asia ag-Grid-AutoColumn:"Asia" amount:300
                 · └─┬ Japan filler id:row-group-0-Asia-1-Japan ag-Grid-AutoColumn:"Japan" amount:300
                 · · └── Tokyo LEAF id:jp-tokyo ag-Grid-AutoColumn:"Tokyo" name:"Tokyo" amount:300
+            `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Location" width:200
+                ├── name "Name" width:200
+                └── amount "Amount" width:200 aggFunc:sum
             `);
         });
 

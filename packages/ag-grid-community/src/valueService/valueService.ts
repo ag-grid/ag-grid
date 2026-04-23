@@ -166,6 +166,8 @@ export class ValueService extends BeanStub implements NamedBean {
         };
     }
 
+    // PERFORMANCE CRITICAL — called for every cell during filtering, rendering, and export.
+    // Any change here can have a large impact. Run the getValue benchmark to verify.
     public getValue(
         column: AgColumn,
         rowNode: IRowNode | null | undefined,
@@ -185,13 +187,11 @@ export class ValueService extends BeanStub implements NamedBean {
         const colDef = column.colDef;
         const isGroup = rowNode.group;
 
-        // For leaf (non-group) rows with pivot result columns, resolve to the underlying value column.
-        // Pivot columns don't map to real data fields on leaf rows — only the source value column does.
-        // This matches the behaviour of setDataValue which also resolves pivot columns for leaf rows.
-        if (!isGroup) {
-            const pivotValueColumn = colDef.pivotValueColumn as AgColumn | undefined;
+        // Resolve pivot result columns to their underlying value column for non-group, non-pinned rows.
+        if (!isGroup && !rowNode.rowPinned) {
+            const pivotValueColumn = colDef.pivotValueColumn;
             if (pivotValueColumn) {
-                column = pivotValueColumn;
+                column = pivotValueColumn as AgColumn;
             }
         }
 
@@ -246,7 +246,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
         // When in pivot mode, leafGroups cannot be expanded
-        if (node.leafGroup && this.colModel.isPivotMode()) {
+        if (node.leafGroup && this.colModel.pivotMode) {
             return false;
         }
         // node.expanded (getter with side effects) evaluated last
@@ -332,7 +332,7 @@ export class ValueService extends BeanStub implements NamedBean {
         newValue: TValueNew,
         oldValue: TValueOld
     ): TValue {
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         // we do not allow parsing of formulas
         if (colDef.allowFormula && this.beans.formula?.isFormula(newValue)) {
@@ -359,7 +359,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     public getDeleteValue(column: AgColumn, rowNode: IRowNode): any {
-        if (_exists(column.getColDef().valueParser)) {
+        if (_exists(column.colDef.valueParser)) {
             return (
                 this.parseValue(
                     column,
@@ -383,7 +383,7 @@ export class ValueService extends BeanStub implements NamedBean {
         let result: string | null = null;
         let formatter: ((value: any) => string) | string | undefined;
 
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         if (suppliedFormatter) {
             // use supplied formatter if provided, e.g. set filter items can have their own value formatters
@@ -428,13 +428,13 @@ export class ValueService extends BeanStub implements NamedBean {
      * @returns `true` if the value has been updated, otherwise `false`.
      */
     public setValue(rowNode: IRowNode, column: AgColumn, newValue: any, eventSource?: string): boolean {
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         if (!rowNode.data && this.canCreateRowNodeData(rowNode, colDef)) {
             rowNode.data = {}; // enableGroupEdit allows editing group rows without data.
         }
 
-        if (!this.isSetValueSupported({ column, newValue, colDef })) {
+        if (!this.isSetValueSupported(column, rowNode, newValue, colDef)) {
             return false;
         }
 
@@ -568,12 +568,7 @@ export class ValueService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private isSetValueSupported(params: {
-        column: AgColumn;
-        newValue: any;
-        colDef: ReturnType<AgColumn['getColDef']>;
-    }): boolean {
-        const { column, newValue, colDef } = params;
+    private isSetValueSupported(column: AgColumn, rowNode: IRowNode, newValue: any, colDef: ColDef): boolean {
         const { field, valueSetter } = colDef;
 
         const formulaSvc = this.beans.formula;
@@ -581,6 +576,11 @@ export class ValueService extends BeanStub implements NamedBean {
         const hasExternalFormulaData = !!this.formulaDataSvc?.hasDataSource();
 
         if (_missing(field) && _missing(valueSetter) && !(hasExternalFormulaData && isFormulaValue)) {
+            // Group rows with groupRowValueSetter or groupRowEditable don't need field or valueSetter —
+            // the groupRowValueSetter handles the edit entirely.
+            if (rowNode.group && (colDef.groupRowValueSetter || colDef.groupRowEditable)) {
+                return true;
+            }
             _warn(17);
             return false;
         }
@@ -620,7 +620,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
             // Store the computed value into rowData for consumers that do not understand formulas.
             const computedValue = formulaSvc?.resolveValue(column, rowNode as RowNode);
-            const colDef = column.getColDef();
+            const colDef = column.colDef;
             if (_exists(colDef.valueSetter) || !_missing(colDef.field)) {
                 const computedParams: ValueSetterParams = { ...setterParams, newValue: computedValue };
                 this.computeValueChange({
@@ -740,7 +740,7 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn,
         rowNode: IRowNode
     ): any {
-        const colId = column.getColId();
+        const colId = column.colId;
 
         const valueFromCache = this.valueCache!.getValue(rowNode as RowNode, colId);
         if (valueFromCache !== undefined) {
@@ -765,7 +765,7 @@ export class ValueService extends BeanStub implements NamedBean {
             data: data,
             node: rowNode,
             column: column,
-            colDef: column.getColDef(),
+            colDef: column.colDef,
             getValue: (field) => this.getValueCallback(rowNode, field),
         });
 
@@ -779,14 +779,9 @@ export class ValueService extends BeanStub implements NamedBean {
         return result;
     }
 
-    public getValueCallback(node: IRowNode, field: string | AgColumn): any {
-        const otherColumn = this.colModel.getColDefCol(field);
-
-        if (otherColumn) {
-            return this.getValue(otherColumn, node, 'data');
-        }
-
-        return null;
+    private getValueCallback(node: IRowNode, field: string): any {
+        const otherColumn = this.colModel.getColDefColOrCol(field);
+        return otherColumn ? this.getValue(otherColumn, node, 'data') : null;
     }
 
     // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
@@ -794,13 +789,13 @@ export class ValueService extends BeanStub implements NamedBean {
         // Use 'data' - grouping keys should be based on committed data, not pending edits.
         // Row structure should remain stable during editing; rows only move groups when edits are committed.
         const value = this.getValue(col, rowNode, 'data');
-        const keyCreator = col.getColDef().keyCreator;
+        const keyCreator = col.colDef.keyCreator;
 
         let result = value;
         if (keyCreator) {
             const keyParams: KeyCreatorParams = _addGridCommonParams(this.gos, {
                 value: value,
-                colDef: col.getColDef(),
+                colDef: col.colDef,
                 column: col,
                 node: rowNode,
                 data: rowNode.data,

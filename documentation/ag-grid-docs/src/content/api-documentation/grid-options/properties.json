@@ -12,6 +12,16 @@
         "meta": {
             "displayName": "Accessories"
         },
+        "toolbar": {
+            "more": {
+                "name": "Toolbar",
+                "url": "./toolbar/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": ["IToolbarItemComp", "IconName"],
+                "include": []
+            }
+        },
         "statusBar": {
             "more": {
                 "name": "Status Bar",
@@ -627,6 +637,33 @@
             }
         }
     },
+    "notes": {
+        "meta": {
+            "displayName": "Notes",
+            "page": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "notesDataSource": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteShowDelay": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteHideDelay": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        }
+    },
     "charts": {
         "meta": {
             "displayName": "Integrated Charts",
@@ -1030,6 +1067,12 @@
                 "url": "./row-pagination/#example-customising-pagination"
             }
         },
+        "paginationPanels": {
+            "more": {
+                "name": "Pagination Panel Layout",
+                "url": "./row-pagination/#pagination-panel-layout"
+            }
+        },
         "paginationNumberFormatter": {
             "more": {
                 "name": "Customising Pagination",
@@ -1278,7 +1321,8 @@
                 "url": "./row-spanning/"
             }
         },
-        "suppressRowTransform": {}
+        "suppressRowTransform": {},
+        "suppressContentVisibilityAuto": {}
     },
     "rowDragging": {
         "meta": {

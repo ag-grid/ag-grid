@@ -43,7 +43,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         }
 
         cols.list = groupHierarchyCols.list
-            .filter((col) => !cols.list.some((c) => c.getColId() === col.getColId()))
+            .filter((col) => !cols.list.some((c) => c.colId === col.colId))
             .concat(cols.list);
 
         cols.tree = groupHierarchyCols.tree
@@ -94,7 +94,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     public expandColumnInto(target: AgColumn[], col: AgColumn): void {
         const expanded = this.getVirtualColumnsForColumn(col).concat(col);
         for (const expandedCol of expanded) {
-            if (!target.some((_c) => _columnsMatch(_c, expandedCol) || _c.getColId() === expandedCol.getColId())) {
+            if (!target.some((_c) => _columnsMatch(_c, expandedCol) || _c.colId === expandedCol.colId)) {
                 target.push(expandedCol);
             }
         }
@@ -153,7 +153,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     }
 
     private isGroupHierarchyColsEnabledForCol(col: AgColumn): boolean {
-        const def = col.getColDef();
+        const def = col.colDef;
         const groupHierarchy = _getGroupHierarchy(def);
         return !!(
             groupHierarchy &&
@@ -168,7 +168,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
     private createGroupHierarchyColDefs(sourceCol: AgColumn): ColDef[] {
         const colDefs: ColDef[] = [];
-        const sourceColDef = sourceCol.getColDef();
+        const sourceColDef = sourceCol.colDef;
         const groupHierarchy = _getGroupHierarchy(sourceColDef);
 
         if (!groupHierarchy) {
@@ -223,7 +223,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     private createColDefForPart(part: string, sourceCol: AgColumn, sourceColDef: ColDef): ColDef | null {
         const { beans, gos } = this;
 
-        const colId = `${GROUP_HIERARCHY_COLUMN_ID_PREFIX}-${sourceCol.getColId()}-${part}`;
+        const colId = `${GROUP_HIERARCHY_COLUMN_ID_PREFIX}-${sourceCol.colId}-${part}`;
         const defaults: Partial<ColDef> = {
             enableRowGroup: sourceColDef.enableRowGroup,
             rowGroup: sourceColDef.rowGroup,

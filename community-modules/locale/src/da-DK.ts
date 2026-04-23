@@ -336,6 +336,7 @@ export const AG_GRID_LOCALE_DK = {
     sortAbsoluteAscending: 'Sorter Absolut Stigende',
     sortAbsoluteDescending: 'Sorter Absolut Faldende',
     sortUnSort: 'Ryd Sortering',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
@@ -688,12 +689,16 @@ export const AG_GRID_LOCALE_DK = {
     ariaSelectAllRowCells: 'Tryk på Enter for at vælge alle celler i denne række',
     ariaColumnCellSelection: 'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonne',
     ariaColumnGroupCellSelection: 'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonnegruppe',
+    ariaColumnGroupExpansion: 'Tryk på ENTER for at udvide eller skjule denne kolonnegruppe',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonnegruppe. Tryk på ALT ENTER for at udvide eller skjule denne kolonnegruppe',
     ariaRowSelectAll: 'Tryk på MELLEMRUM for at skifte alle rækkers valg',
     ariaRowToggleSelection: 'Tryk på MELLEMRUM for at skifte rækkes valg',
     ariaRowSelect: 'Tryk på MELLEMRUM for at vælge denne række',
     ariaRowSelectionDisabled: 'Rækkevalg er deaktiveret for denne række',
     ariaSearch: 'Søg',
     ariaSortableColumn: 'Tryk på ENTER for at sortere',
+    ariaSortableColumnWithCellSelection: 'Tryk på ALT ENTER for at sortere',
     ariaToggleVisibility: 'Tryk på MELLEMRUM for at skifte synlighed',
     ariaToggleCellValue: 'Tryk på MELLEMRUM for at skifte celleværdi',
     ariaUnchecked: 'umarkeret',
@@ -759,6 +764,7 @@ export const AG_GRID_LOCALE_DK = {
     ariaLabelAddFilterField: 'Tilføj filterfelt',
     ariaLabelFilterCardDelete: 'Slet filter',
     ariaLabelFilterCardHasEdits: 'Har redigeringer',
+    ariaHasNote: 'Denne celle har en note.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -803,4 +809,12 @@ export const AG_GRID_LOCALE_DK = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM ÅÅÅÅ',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
+
+    // Notes
+    note: 'Cellenote',
+    addNote: 'Tilføj note',
+    viewNote: 'Vis note',
+    editNote: 'Rediger note',
+    deleteNote: 'Fjern note',
+    notePlaceholder: 'Tilføj en note...',
 };

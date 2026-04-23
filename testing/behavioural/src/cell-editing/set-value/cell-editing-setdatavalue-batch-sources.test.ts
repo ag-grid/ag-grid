@@ -12,7 +12,7 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 /**
  * Tests for setDataValue behaviour during batch editing — source routing.
@@ -70,9 +70,9 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             });
 
             await new GridRows(api, 'before batch edit').check(`
-                    ROOT id:ROOT_NODE_ID
-                    └── LEAF id:0 a:"initial"
-                `);
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
             api.startBatchEdit();
             await asyncSetTimeout(1);
@@ -82,9 +82,9 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
 
             // GridRows shows rendered values (pending in batch mode)
             await new GridRows(api, `after ${eventSource ?? 'undefined'} setDataValue`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    └── LEAF ⏳ id:0 a:⏳"changed" "initial"
-                `);
+                ROOT id:ROOT_NODE_ID
+                └── LEAF ⏳ id:0 a:⏳"changed" "initial"
+            `);
 
             expect(result).toBe(true);
             expect(rowNode.data.a).toBe('initial'); // Data unchanged
@@ -95,6 +95,11 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'edit' })).toBe('changed'); // Edit value
 
             api.cancelBatchEdit();
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
         });
 
         test.each(allBatchSources)("'%s' pending value is committed on commitBatchEdit", async (eventSource) => {
@@ -111,19 +116,24 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             rowNode.setDataValue('a', 'committed', eventSource);
 
             await new GridRows(api, 'before commit').check(`
-                    ROOT id:ROOT_NODE_ID
-                    └── LEAF ⏳ id:0 a:⏳"committed" "initial"
-                `);
+                ROOT id:ROOT_NODE_ID
+                └── LEAF ⏳ id:0 a:⏳"committed" "initial"
+            `);
 
             api.commitBatchEdit();
             await asyncSetTimeout(1);
 
             await new GridRows(api, 'after commit').check(`
-                    ROOT id:ROOT_NODE_ID
-                    └── LEAF id:0 a:"committed"
-                `);
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"committed"
+            `);
 
             expect(rowNode.data.a).toBe('committed');
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                └── a "A" width:200 editable
+            `);
         });
 
         test.each(allBatchSources)("'%s' pending value is reverted on cancelBatchEdit", async (eventSource) => {
@@ -140,17 +150,17 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             rowNode.setDataValue('a', 'pending', eventSource);
 
             await new GridRows(api, 'before cancel').check(`
-                    ROOT id:ROOT_NODE_ID
-                    └── LEAF ⏳ id:0 a:⏳"pending" "initial"
-                `);
+                ROOT id:ROOT_NODE_ID
+                └── LEAF ⏳ id:0 a:⏳"pending" "initial"
+            `);
 
             api.cancelBatchEdit();
             await asyncSetTimeout(1);
 
             await new GridRows(api, 'after cancel').check(`
-                    ROOT id:ROOT_NODE_ID
-                    └── LEAF id:0 a:"initial"
-                `);
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
             expect(rowNode.data.a).toBe('initial');
         });
@@ -225,17 +235,17 @@ describe('Cell Editing: setDataValue in Batch Mode — sources', () => {
             });
 
             await new GridRows(api, 'before setDataValue').check(`
-                    ROOT id:ROOT_NODE_ID
-                    └── LEAF id:0 a:"initial"
-                `);
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"initial"
+            `);
 
             const rowNode = api.getDisplayedRowAtIndex(0)!;
             const result = rowNode.setDataValue('a', 'changed', eventSource);
 
             await new GridRows(api, `after ${eventSource ?? 'undefined'} setDataValue`).check(`
-                    ROOT id:ROOT_NODE_ID
-                    └── LEAF id:0 a:"changed"
-                `);
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 a:"changed"
+            `);
 
             expect(result).toBe(true);
             expect(rowNode.data.a).toBe('changed');

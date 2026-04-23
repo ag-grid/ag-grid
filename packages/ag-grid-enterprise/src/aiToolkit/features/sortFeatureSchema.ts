@@ -15,7 +15,7 @@ export const buildSortFeatureSchema = (beans: BeanCollection) => {
         return;
     }
 
-    const sortableColumnIds = sortableColumns.map((col) => col.getColId());
+    const sortableColumnIds = sortableColumns.map((col) => col.colId);
 
     return s
         .object(

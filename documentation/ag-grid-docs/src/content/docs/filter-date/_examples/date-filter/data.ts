@@ -7,7 +7,8 @@ export function getData(): any[] {
             startDate: `20${i}-${pad(m, 2)}-${pad(getRandom(28), 2)}`,
             endDate: `20${i}-${pad(m + 1, 2)}-${pad(getRandom(28), 2)}`,
             startDateTime: new Date(13e11 + getRandom(5e8) * 1e3),
-            endDateTime: new Date(13e11 + getRandom(5e8) * 1e3).toISOString(),
+            // ISO string format without milliseconds
+            endDateTime: new Date(13e11 + getRandom(5e8) * 1e3).toISOString().slice(0, 19),
         });
     }
 

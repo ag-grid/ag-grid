@@ -147,7 +147,7 @@ myInput.addEventListener("keydown", event => {
     gridApi.ensureIndexVisible(0);
 
     // scrolls to the first column
-    const firstCol = api.getAllDisplayedColumns()[0];
+    const firstCol = gridApi.getAllDisplayedColumns()[0];
     gridApi.ensureColumnVisible(firstCol);
 
     // sets focus into the first grid cell

@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_VN = {
     sortAbsoluteAscending: 'Sắp Xếp Tăng Dần Tuyệt Đối',
     sortAbsoluteDescending: 'Sắp Xếp Giảm Dần Tuyệt Đối',
     sortUnSort: 'Xóa Sắp Xếp',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Tổng',
@@ -685,12 +686,16 @@ export const AG_GRID_LOCALE_VN = {
     ariaSelectAllRowCells: 'Nhấn Enter để chọn tất cả các ô trên hàng này',
     ariaColumnCellSelection: 'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong cột này',
     ariaColumnGroupCellSelection: 'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong nhóm cột này',
+    ariaColumnGroupExpansion: 'Nhấn ENTER để mở rộng hoặc thu gọn nhóm cột này',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong nhóm cột này. Nhấn ALT ENTER để mở rộng hoặc thu gọn nhóm cột này',
     ariaRowSelectAll: 'Nhấn SPACE để chuyển đổi chọn tất cả các hàng',
     ariaRowToggleSelection: 'Nhấn SPACE để chuyển đổi chọn hàng',
     ariaRowSelect: 'Nhấn SPACE để chọn hàng này',
     ariaRowSelectionDisabled: 'Chọn hàng bị vô hiệu hoá cho hàng này',
     ariaSearch: 'Tìm kiếm',
     ariaSortableColumn: 'Nhấn ENTER để sắp xếp',
+    ariaSortableColumnWithCellSelection: 'Nhấn ALT ENTER để sắp xếp',
     ariaToggleVisibility: 'Nhấn SPACE để chuyển đổi hiển thị',
     ariaToggleCellValue: 'Nhấn SPACE để chuyển đổi giá trị ô',
     ariaUnchecked: 'chưa đánh dấu',
@@ -756,6 +761,7 @@ export const AG_GRID_LOCALE_VN = {
     ariaLabelAddFilterField: 'Thêm Trường Bộ Lọc',
     ariaLabelFilterCardDelete: 'Xóa Bộ Lọc',
     ariaLabelFilterCardHasEdits: 'Có Chỉnh Sửa',
+    ariaHasNote: 'Ô này có ghi chú.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -800,4 +806,12 @@ export const AG_GRID_LOCALE_VN = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS SA/CH',
+
+    // Notes
+    note: 'Ghi chú ô',
+    addNote: 'Thêm ghi chú',
+    viewNote: 'Xem ghi chú',
+    editNote: 'Chỉnh sửa ghi chú',
+    deleteNote: 'Xóa ghi chú',
+    notePlaceholder: 'Thêm ghi chú...',
 };

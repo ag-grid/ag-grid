@@ -148,7 +148,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             batchEditingStopped: refreshAndKeepActiveDebounced,
         });
         const rowSpanSvc = this.beans.rowSpanSvc;
-        if (rowSpanSvc) {
+        if (rowSpanSvc?.active) {
             this.addManagedListeners(rowSpanSvc, { spannedCellsUpdated: refreshAndKeepActiveDebounced });
         }
 
@@ -370,7 +370,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         const fullWidthCellRendererParams = gos.get('fullWidthCellRendererParams');
         const groupRowRendererParams = gos.get('groupRowRendererParams');
         const flattenDetails = _getFlattenDetails(gos);
-        const pivotMode = colModel.isPivotMode();
+        const pivotMode = colModel.pivotMode;
 
         let containerNumMatches = 0;
         let matches: Matches;

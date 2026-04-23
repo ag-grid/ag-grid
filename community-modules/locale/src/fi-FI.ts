@@ -337,6 +337,7 @@ export const AG_GRID_LOCALE_FI = {
     sortAbsoluteAscending: 'Lajittele ehdoton nouseva',
     sortAbsoluteDescending: 'Lajittele ehdoton laskeva',
     sortUnSort: 'Tyhjennä lajittelu',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Summa',
@@ -688,12 +689,16 @@ export const AG_GRID_LOCALE_FI = {
     ariaSelectAllRowCells: 'Paina Enteriä valitaksesi kaikki tämän rivin solut',
     ariaColumnCellSelection: 'Paina Enteriä vaihtaaksesi kaikkien tämän sarakkeen näkyvien solujen valinnan',
     ariaColumnGroupCellSelection: 'Paina Enteriä vaihtaaksesi kaikkien tämän sarakeryhmän näkyvien solujen valinnan',
+    ariaColumnGroupExpansion: 'Paina ENTER laajentaaksesi tai supistaaksesi tämän sarakeryhmän',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Paina Enteriä vaihtaaksesi kaikkien tämän sarakeryhmän näkyvien solujen valinnan. Paina ALT ENTER laajentaaksesi tai supistaaksesi tämän sarakeryhmän',
     ariaRowSelectAll: 'Paina VÄLILYÖNTI vaihtaaksesi kaikkien rivien valintaa',
     ariaRowToggleSelection: 'Paina VÄLILYÖNTI vaihtaaksesi rivin valintaa',
     ariaRowSelect: 'Paina VÄLILYÖNTI valitaksesi tämän rivin',
     ariaRowSelectionDisabled: 'Rivin valinta on poistettu käytöstä tälle riville',
     ariaSearch: 'Haku',
     ariaSortableColumn: 'Paina ENTER lajitellaksesi',
+    ariaSortableColumnWithCellSelection: 'Paina ALT ENTER lajitellaksesi',
     ariaToggleVisibility: 'Paina VÄLILYÖNTI vaihtaaksesi näkyvyyttä',
     ariaToggleCellValue: 'Paina VÄLILYÖNTI vaihtaaksesi solun arvoa',
     ariaUnchecked: 'valitsematon',
@@ -759,6 +764,7 @@ export const AG_GRID_LOCALE_FI = {
     ariaLabelAddFilterField: 'Lisää suodatin kenttä',
     ariaLabelFilterCardDelete: 'Poista suodatin',
     ariaLabelFilterCardHasEdits: 'On muutoksia',
+    ariaHasNote: 'Tässä solussa on muistiinpano.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ' ',
@@ -803,4 +809,12 @@ export const AG_GRID_LOCALE_FI = {
     timeFormatSpacesDDMMMMYYYY: 'PP KKKK VVVV',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
+
+    // Notes
+    note: 'Solumuistio',
+    addNote: 'Lisää muistiinpano',
+    viewNote: 'Näytä muistiinpano',
+    editNote: 'Muokkaa muistiinpanoa',
+    deleteNote: 'Poista muistiinpano',
+    notePlaceholder: 'Lisää muistiinpano...',
 };

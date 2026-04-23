@@ -4,7 +4,14 @@ import { userEvent } from '@testing-library/user-event';
 import { NumberEditorModule, TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
-import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from '../test-utils';
 
 describe('Cell Editing: edge cases', () => {
     const gridMgr = new TestGridsManager({
@@ -58,6 +65,12 @@ describe('Cell Editing: edge cases', () => {
             // valueSetter uppercased → data should show HELLO
             expect(rowNode.data.a).toBe('HELLO');
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('HELLO');
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `);
         });
 
         test('rangeSvc setDataValue with transforming valueSetter writes transformed data', async () => {
@@ -86,6 +99,12 @@ describe('Cell Editing: edge cases', () => {
 
             expect(rowNode.data.a).toBe('[wrapped]');
             expect(api.getCellValue({ rowNode, colKey: 'a', from: 'data' })).toBe('[wrapped]');
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── a "A" width:200 editable
+                └── b "B" width:200 editable
+            `);
         });
     });
 

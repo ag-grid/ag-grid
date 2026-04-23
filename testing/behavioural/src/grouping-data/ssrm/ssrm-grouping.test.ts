@@ -4,7 +4,7 @@ import type {
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
 } from 'ag-grid-community';
-import { CsvExportModule } from 'ag-grid-community';
+import { CsvExportModule, GROUP_TOTAL_ROW_ID_PREFIX } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, ssrmExpandAndLoadAll, unindentText, waitForNoLoadingRows } from '../../test-utils';
@@ -175,6 +175,14 @@ describe('csv exports for server-side grouping', () => {
             · │ └─ footer collapsed id:"rowGroupFooter_BLANK|year:BLANK" ag-Grid-AutoColumn-country:"(Blanks)" ag-Grid-AutoColumn-year:"Total (Blanks)" year:"" medals:9
             · └─ footer collapsed id:"rowGroupFooter_country:BLANK" ag-Grid-AutoColumn-country:"Total (Blanks)" ag-Grid-AutoColumn-year:null country:"" medals:30
         `);
+
+        const irelandGroupTotal = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'country:Ireland');
+        expect(irelandGroupTotal?.footer).toBe(true);
+        expect(irelandGroupTotal?.data?.medals).toBe(6);
+
+        const irelandYear2000Total = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'Ireland|year:2000');
+        expect(irelandYear2000Total?.footer).toBe(true);
+        expect(irelandYear2000Total?.data?.medals).toBe(5);
 
         expect(unindentText(api.getDataAsCsv({ suppressQuotes: true }))).toEqual(unindentText`
             Country,Country,sum(Medals)

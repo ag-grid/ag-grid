@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, FirstDataRenderedEvent, GridApi, GridOptions } from 'ag-grid-community';
 import { ModuleRegistry, createGrid, themeQuartz } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -30,6 +30,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     defaultColDef: {
         filter: true,
+    },
+    onFirstDataRendered: (event: FirstDataRenderedEvent) => {
+        event.api.showColumnMenu('athlete');
     },
 };
 

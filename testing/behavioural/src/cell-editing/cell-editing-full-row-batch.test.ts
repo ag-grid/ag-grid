@@ -6,7 +6,14 @@ import type { BatchEditingStoppedEvent } from 'ag-grid-community';
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from '../test-utils';
 
 describe('Cell Editing: full-row batch', () => {
     const gridMgr = new TestGridsManager({
@@ -103,6 +110,12 @@ describe('Cell Editing: full-row batch', () => {
             expect(valueSetterTargets).toEqual([]);
             expect(valueSetterCalls).toBe(0);
         }
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
     });
 
     test('rowValueChanged does not fire during batch row-to-row Tab navigation', async () => {
@@ -175,6 +188,12 @@ describe('Cell Editing: full-row batch', () => {
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 a:"X" b:"B0"
             └── LEAF id:ROW_1 a:"A1" b:"B1"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
         `);
     });
 

@@ -1,0 +1,70 @@
+name: snapshot-branch
+
+inputs:
+    path:
+        description: 'Path to snapshot files.'
+        required: true
+    source_branch:
+        description: 'Source branch to use for snapshots.'
+        required: true
+    branch:
+        description: 'Snapshot branch name to use.'
+        required: true
+    type:
+        description: 'Type of snapshot to update.'
+        required: false
+        default: 'e2e'
+outputs:
+    updates:
+        description: 'If any snapshots were updated.'
+        value: ${{ steps.stash-snapshot-changes.outputs.updates }}
+
+runs:
+    using: 'composite'
+    steps:
+        - name: Stash Snapshot Changes
+          id: stash-snapshot-changes
+          shell: bash
+          run: |
+              set -eux
+
+              git add ${{ inputs.path }} 
+              git status
+              if [[ $(git diff --cached --name-only | wc -l) -gt 0 ]] ; then
+                  echo "Stashing changes."
+                  git stash push -S
+                  echo "updates=true" >> $GITHUB_OUTPUT
+              else
+                  echo "No changes to commit."
+                  echo "updates=false" >> $GITHUB_OUTPUT
+              fi
+
+        - name: Push Snapshot Changes
+          id: push-snapshot-changes
+          if: steps.stash-snapshot-changes.outputs.updates == 'true'
+          shell: bash
+          run: |
+              set -eux
+
+              git fetch origin "${{inputs.source_branch}}"
+              git switch "${{inputs.source_branch}}"
+
+              git checkout -b "${{inputs.branch}}"
+
+              git stash pop
+              git add ${{ inputs.path }}
+              # Based on https://github.com/actions/checkout?tab=readme-ov-file#push-a-commit-using-the-built-in-token
+              git config user.name "github-actions[bot]"
+              git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+              git commit -m "Update ${{ inputs.type }} snapshots."
+
+              while ! (git push origin "HEAD:${{inputs.branch}}") ; do
+                  git pull origin "${{inputs.branch}}" --rebase --autostash
+              done
+
+        - name: Fail PR checks if updates needed
+          if: steps.stash-snapshot-changes.outputs.updates == 'true' && github.head_ref
+          shell: bash
+          run: |
+              echo "Snapshots need to be updated, failing test execution."
+              exit 1

@@ -384,14 +384,24 @@ async function build() {
     const reloadableSet = globalConfig?.devServerReloadTargets ? new Set(globalConfig.devServerReloadTargets) : new Set();
     const [, config, firstTarget] = buildBuffer.at(0);
     const firstIsReloadable = reloadableSet.has(firstTarget);
+
+    // Collect items for this batch. Reloadable batches match on (config, reloadable)
+    // as before. Non-reloadable batches collect ALL remaining non-reloadable items
+    // regardless of config, then run each config group in parallel — saving one Nx
+    // spawn (~1s) per extra config group.
     const newBuildBuffer = [];
-    const projects = new Set();
-    const targets = new Set();
+    const configGroups = new Map(); // config -> { projects: Set, targets: Set }
     for (const next of buildBuffer) {
         const nextIsReloadable = reloadableSet.has(next[2]);
-        if (projects.size < BATCH_LIMIT && next[1] === config && nextIsReloadable === firstIsReloadable) {
-            projects.add(next[0]);
-            targets.add(next[2]);
+        const configMatch = firstIsReloadable ? next[1] === config : true;
+        if (configGroups.size < BATCH_LIMIT && configMatch && nextIsReloadable === firstIsReloadable) {
+            const groupKey = next[1];
+            if (!configGroups.has(groupKey)) {
+                configGroups.set(groupKey, { projects: new Set(), targets: new Set() });
+            }
+            const group = configGroups.get(groupKey);
+            group.projects.add(next[0]);
+            group.targets.add(next[2]);
         } else {
             newBuildBuffer.push(next);
         }
@@ -399,18 +409,25 @@ async function build() {
     buildBuffer = newBuildBuffer;
     const afterReloadableCount = countReloadTargets();
 
-    const targetsArr = [...targets];
-    let targetMsg = [...projects.values()].slice(0, PROJECT_ECHO_LIMIT).join(' ');
-    if (projects.size > PROJECT_ECHO_LIMIT) {
-        targetMsg += ` (+${projects.size - PROJECT_ECHO_LIMIT} targets)`;
+    // Build a combined message and targets list for logging/status
+    const allProjects = new Set();
+    const allTargets = new Set();
+    for (const { projects, targets } of configGroups.values()) {
+        for (const p of projects) allProjects.add(p);
+        for (const t of targets) allTargets.add(t);
+    }
+    const targetsArr = [...allTargets];
+    let targetMsg = [...allProjects].slice(0, PROJECT_ECHO_LIMIT).join(' ');
+    if (allProjects.size > PROJECT_ECHO_LIMIT) {
+        targetMsg += ` (+${allProjects.size - PROJECT_ECHO_LIMIT} targets)`;
     }
 
     // Update status to BUILDING
     await writeStatusFile(STATUS.BUILDING, {
         currentBuild: {
             targets: targetsArr,
-            config,
-            projects: Array.from(projects),
+            config: configGroups.size === 1 ? config : null,
+            projects: Array.from(allProjects),
             queueLength: buildBuffer.length,
         },
     });
@@ -419,14 +436,28 @@ async function build() {
     try {
         timeManager.start(`${targetMsg} build`);
         success(`Starting build for: ${targetMsg}`);
-        await spawnNxRun(targetsArr, config, [...projects.values()]);
+
+        // Run config groups in parallel (single group = same as before,
+        // multiple groups = parallel nx spawns saving sequential overhead)
+        const groupEntries = [...configGroups.entries()];
+        if (groupEntries.length === 1) {
+            const [groupConfig, { targets, projects }] = groupEntries[0];
+            await spawnNxRun([...targets], groupConfig, [...projects]);
+        } else {
+            await Promise.all(
+                groupEntries.map(([groupConfig, { targets, projects }]) =>
+                    spawnNxRun([...targets], groupConfig, [...projects])
+                )
+            );
+        }
+
         success(`Completed build for: ${targetMsg}`);
         success(`Build queue has ${buildBuffer.length} remaining.`);
         timeManager.stop(`${targetMsg} build`);
         info(timeManager.timeString(`${targetMsg} build`));
 
         // Update build history with success
-        updateBuildHistory(targetsArr.join(','), config, projects, 'completed', buildStartTime, performance.now());
+        updateBuildHistory(targetsArr.join(','), config, allProjects, 'completed', buildStartTime, performance.now());
 
         if (beforeReloadableCount > 0 && afterReloadableCount === 0) {
             const elapsed = formatTime(performance.now() - firstEventTime);
@@ -452,7 +483,7 @@ async function build() {
         error(`Build failed for: ${targetMsg}: ${errorMsg}`);
 
         // Update build history with failure
-        updateBuildHistory(targetsArr.join(','), config, projects, 'failed', buildStartTime, performance.now(), errorMsg);
+        updateBuildHistory(targetsArr.join(','), config, allProjects, 'failed', buildStartTime, performance.now(), errorMsg);
 
         // Update status if queue is empty
         if (buildBuffer.length === 0) {

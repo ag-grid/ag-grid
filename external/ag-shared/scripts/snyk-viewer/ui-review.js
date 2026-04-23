@@ -15,7 +15,7 @@
     window.initReviewQueue = function (projects, ignorePatternsByFileInit, reviewState, sharedExpiry, _rootPackageName) {
         let ignorePatternsByFile = ignorePatternsByFileInit;
         const { esc, sevClass, stripVer, getSnykFilePath, getNearIgnoredPath,
-                sameMajorFixVersion } = window.SnykUtils;
+                sameMajorFixVersion, npmLink } = window.SnykUtils;
 
         // ── Collect vuln entries ──
         const allVulnEntries = [];
@@ -255,7 +255,7 @@
                 }).join('');
                 return `<div class="dep-card">
                     <div class="dep-card-header">
-                        <span class="dep-card-name">${esc(depName)}</span>
+                        <span class="dep-card-name">${npmLink(depName)}${esc(depName)}</span>
                         <div class="dep-card-vulns">${vulnBadgesHtml}</div>
                     </div>
                     <div class="dep-card-body">${fileRowsHtml}</div>
@@ -297,7 +297,7 @@
             const ids = allIds(items);
             return `<div class="rq-card" id="${esc(cardId)}">
                 <div class="rq-card-header">
-                    <span class="rq-card-title">Pin <code>${esc(pkg)}</code> &#x2192; <code>${esc(fixVersion)}</code></span>
+                    <span class="rq-card-title">${npmLink(pkg)}Pin <code>${esc(pkg)}</code> &#x2192; <code>${esc(fixVersion)}</code></span>
                 </div>
                 <div class="rq-card-body">
                     <div class="rq-vuln-list">${vulnListHtml(items)}</div>
@@ -507,7 +507,7 @@
                     return `<div class="s3-dep-group${allDepIgnored ? ' s3-dep-group--done' : ''}" data-dep="${esc(depName)}" id="${esc(groupId)}">
                         <div class="s3-dep-group-header" data-action="toggle-dep-group" data-group-id="${esc(groupId)}">
                             <span class="s3-dep-group-chevron">&#x25BC;</span>
-                            <span class="s3-dep-group-name">${esc(depName)}</span>
+                            <span class="s3-dep-group-name">${npmLink(depName)}${esc(depName)}</span>
                             <span class="s3-dep-group-count">${dps.length} path${dps.length !== 1 ? 's' : ''}</span>
                             ${allDepIgnored ? '<span class="already-ignored-badge">&#x2713; In .snyk</span>' : ''}
                         </div>

@@ -336,6 +336,7 @@ export const AG_GRID_LOCALE_BG = {
     sortAbsoluteAscending: 'Абсолютно сортиране възходящо',
     sortAbsoluteDescending: 'Абсолютно сортиране низходящо',
     sortUnSort: 'Изчистване на сортирането',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Сума',
@@ -689,12 +690,16 @@ export const AG_GRID_LOCALE_BG = {
     ariaColumnCellSelection: 'Натиснете Enter, за да превключите избора на всички видими клетки в тази колона',
     ariaColumnGroupCellSelection:
         'Натиснете Enter, за да превключите избора на всички видими клетки в тази група колони',
+    ariaColumnGroupExpansion: 'Натиснете ENTER, за да разгънете или свиете тази група колони',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Натиснете Enter, за да превключите избора на всички видими клетки в тази група колони. Натиснете ALT ENTER, за да разгънете или свиете тази група колони',
     ariaRowSelectAll: 'Натиснете SPACE, за да превключите избора на всички редове',
     ariaRowToggleSelection: 'Натиснете SPACE, за да превключите избора на реда',
     ariaRowSelect: 'Натиснете SPACE, за да изберете този ред',
     ariaRowSelectionDisabled: 'Изборът на редове е деактивиран за този ред',
     ariaSearch: 'Търсене',
     ariaSortableColumn: 'Натиснете ENTER, за да сортирате',
+    ariaSortableColumnWithCellSelection: 'Натиснете ALT ENTER, за да сортирате',
     ariaToggleVisibility: 'Натиснете SPACE, за да превключите видимостта',
     ariaToggleCellValue: 'Натиснете SPACE, за да превключите стойността на клетката',
     ariaUnchecked: 'немаркирано',
@@ -761,6 +766,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaLabelAddFilterField: 'Добавяне на поле за филтър',
     ariaLabelFilterCardDelete: 'Изтриване на филтър',
     ariaLabelFilterCardHasEdits: 'Има редакции',
+    ariaHasNote: 'Тази клетка има бележка.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -805,4 +811,12 @@ export const AG_GRID_LOCALE_BG = {
     timeFormatSpacesDDMMMMYYYY: 'ДД ММММ ГГГГ',
     timeFormatHHMMSS: 'ЧЧ:ММ:СС',
     timeFormatHHMMSSAmPm: 'ЧЧ:ММ:СС AM/PM',
+
+    // Notes
+    note: 'Бележка за клетка',
+    addNote: 'Добавяне на бележка',
+    viewNote: 'Преглед на бележката',
+    editNote: 'Редактиране на бележката',
+    deleteNote: 'Премахване на бележката',
+    notePlaceholder: 'Добавете бележка...',
 };

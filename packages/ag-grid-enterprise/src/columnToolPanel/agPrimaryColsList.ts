@@ -176,7 +176,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 getCurrentDragValue: (listItemDragStartEvent: ColumnPanelItemDragStartEvent) =>
                     getCurrentDragValue(listItemDragStartEvent),
                 isMoveBlocked: (currentDragValue: AgColumn | AgProvidedColumnGroup | null) =>
-                    isMoveBlocked(gos, beans, getCurrentColumnsBeingMoved(currentDragValue)),
+                    isMoveBlocked(gos, beans, getCurrentColumnsBeingMoved(currentDragValue), this.params),
                 getNumRows: (comp: AgPrimaryColsList) => comp.getDisplayedColsList().length,
                 moveItem: (
                     currentDragValue: AgColumn | AgProvidedColumnGroup | null,
@@ -192,7 +192,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         const { group, columnGroup, column, expanded } = modelItem;
         const currentColumns = getCurrentColumnsBeingMoved(group ? columnGroup : column);
 
-        if (isMoveBlocked(gos, beans, currentColumns)) {
+        if (isMoveBlocked(gos, beans, currentColumns, this.params)) {
             return;
         }
 
@@ -261,9 +261,12 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const expandedStates = this.getExpandedStates();
 
-        const pivotModeActive = this.colModel.isPivotMode();
+        const pivotModeActive = this.colModel.pivotMode;
         const deferApply = isDeferredMode(params);
-        const shouldSyncColumnLayoutWithGrid = (!params.suppressSyncLayoutWithGrid || deferApply) && !pivotModeActive;
+        const hasDeferredColumnOrder =
+            deferApply && this.beans.columnStateUpdateStrategy.hasDeferredColumnOrder(deferApply);
+        const shouldSyncColumnLayoutWithGrid =
+            ((!params.suppressSyncLayoutWithGrid || deferApply) && !pivotModeActive) || hasDeferredColumnOrder;
 
         if (shouldSyncColumnLayoutWithGrid) {
             this.buildTreeFromWhatGridIsDisplaying();
@@ -425,7 +428,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         };
 
         const createColumnItem = (column: AgColumn, depth: number, parentList: ColumnModelItem[]): void => {
-            const skipThisColumn = column.getColDef()?.suppressColumnsToolPanel;
+            const skipThisColumn = column.colDef?.suppressColumnsToolPanel;
 
             if (skipThisColumn) {
                 return;
@@ -606,7 +609,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             }
 
             const column = item.column;
-            const colDef = column.getColDef();
+            const colDef = column.colDef;
 
             let checked: boolean;
 

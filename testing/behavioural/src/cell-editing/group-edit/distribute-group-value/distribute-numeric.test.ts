@@ -1,3 +1,5 @@
+import type { GroupRowValueSetterParams } from 'ag-grid-community';
+
 import { asyncSetTimeout, createSimpleGrid, distributeGroupValue, gridsManager } from './distribute-test-utils';
 
 afterEach(() => {
@@ -99,36 +101,46 @@ describe('non-numeric newValue handling', () => {
 // --- Direct distributeGroupValue tests for value conversion (bypasses grid's data type checks) ---
 
 describe('numeric-like newValue handling (direct distributeGroupValue calls)', () => {
+    type MockChild = Pick<
+        GroupRowValueSetterParams['aggregatedChildren'][number],
+        'data' | 'getDataValue' | 'setDataValue'
+    >;
+
     /** Creates mock children that track writes via setDataValue. */
-    function mockChildren(values: number[]) {
+    function mockChildren(values: number[]): MockChild[] {
         return values.map((v, i) => {
             const data = { amount: v };
             return {
                 id: `child-${i}`,
                 data,
                 getDataValue: () => data.amount,
-                setDataValue: (_col: any, val: any) => {
+                setDataValue: (_col: GroupRowValueSetterParams['column'], val: unknown) => {
                     const old = data.amount;
-                    data.amount = val;
+                    data.amount = val as number;
                     return old !== val;
                 },
-            } as any;
+            };
         });
     }
 
-    function callDistribute(newValue: unknown, oldValue: unknown, children: any[], opts?: any) {
+    function callDistribute(
+        newValue: unknown,
+        oldValue: unknown,
+        children: MockChild[],
+        opts?: GroupRowValueSetterParams
+    ) {
         return distributeGroupValue(
             {
-                aggregatedChildren: children,
-                column: {} as any,
-                colDef: { aggFunc: 'sum' } as any,
+                aggregatedChildren: children as GroupRowValueSetterParams['aggregatedChildren'],
+                column: {} as GroupRowValueSetterParams['column'],
+                colDef: { aggFunc: 'sum' } as GroupRowValueSetterParams['colDef'],
                 newValue,
                 oldValue,
                 data: undefined,
                 eventSource: 'ui',
                 valueChanged: true,
-                node: {} as any,
-                api: {} as any,
+                node: {} as GroupRowValueSetterParams['node'],
+                api: {} as GroupRowValueSetterParams['api'],
                 context: undefined,
             },
             opts

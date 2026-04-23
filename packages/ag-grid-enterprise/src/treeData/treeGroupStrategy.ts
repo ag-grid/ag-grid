@@ -111,7 +111,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const groupDisplayCols = this.beans.showRowGroupCols?.columns;
         if (groupDisplayCols) {
             for (let i = 0, len = groupDisplayCols.length; i < len; ++i) {
-                groupData[groupDisplayCols[i].getColId()] = key;
+                groupData[groupDisplayCols[i].colId] = key;
             }
         }
         return groupData;

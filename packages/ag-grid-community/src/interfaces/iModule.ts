@@ -81,8 +81,9 @@ type InternalModuleName =
     | 'ChangedPath'
     | 'ChangeDetection'
     | 'CheckboxCellRenderer'
-    | 'ClientSideRowModelFilter'
-    | 'ClientSideRowModelHierarchy'
+    | 'CsrmFilter'
+    | 'CsrmHierarchy'
+    | 'CsrmGroupStages'
     | 'ColumnDelayRender'
     | 'ColumnFilter'
     | 'ColumnFlex'
@@ -216,6 +217,7 @@ export type EnterpriseModuleName =
     | 'TreeData'
     | 'ViewportRowModel'
     | 'Formula'
+    | 'Notes'
     | 'RowGroupingEdit';
 
 /** The names of all publicly available AG Grid modules */
@@ -300,7 +302,8 @@ export type AgModuleName =
     | 'ToolbarModule'
     | 'TreeDataModule'
     | 'ViewportRowModelModule'
-    | 'FormulaModule';
+    | 'FormulaModule'
+    | 'NotesModule';
 
 // Types to ensure that our AgModuleName type with Module suffix is equivalent to the internal module names based on Community and Enterprise module names
 type AgModuleNameInternal = `${CommunityModuleName | EnterpriseModuleName}Module`;
@@ -347,7 +350,8 @@ export type ResolvableModuleName = Extract<
     | 'ColumnGroup'
     | 'Overlay'
     | 'PinnedColumn'
-    | 'ClientSideRowModelHierarchy'
+    | 'CsrmHierarchy'
+    | 'CsrmGroupStages'
     | 'SkeletonCellRenderer'
     | 'CheckboxCellRenderer'
     | 'SharedTreeData'

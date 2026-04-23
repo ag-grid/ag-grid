@@ -3,12 +3,11 @@ import type {
     DistributionGetValueParams,
     DistributionSetValueParams,
     GroupRowValueSetterDistributionOptions,
-    GroupRowValueSetterFunc,
     GroupRowValueSetterParams,
     IRowNode,
 } from 'ag-grid-community';
 
-import type { DistributionStrategy } from './valueConversion';
+import type { AggFuncInput, DistributionStrategy } from './valueConversion';
 import { detectPrecision, isNumericLike, resolveStrategy, toNumber } from './valueConversion';
 
 interface ValueAndCount {
@@ -33,8 +32,7 @@ export class DistributorNumber {
     constructor(
         private readonly params: GroupRowValueSetterParams,
         opts: GroupRowValueSetterDistributionOptions | undefined,
-        aggFunc: string | null,
-        private readonly defaultHandler: GroupRowValueSetterFunc | undefined
+        aggFunc: AggFuncInput
     ) {
         const { aggregatedChildren: children, column, colDef, newValue } = params;
         const newNumber = toNumber(newValue);
@@ -72,30 +70,12 @@ export class DistributorNumber {
     run(): boolean {
         const { strategy, newValue } = this;
 
-        if (strategy === 'none') {
+        if (strategy === false) {
             return false;
         }
 
-        if (strategy === null) {
-            const handler = this.defaultHandler;
-            if (handler) {
-                return handler(this.params) ?? true;
-            }
+        if (strategy === 'overwrite') {
             return this.writeAll(newValue);
-        }
-
-        const { children } = this;
-        switch (strategy) {
-            case 'first':
-                return this.writeOne(children[0], newValue);
-            case 'last':
-                return this.writeOne(children[this.count - 1], newValue);
-            case 'min':
-                return this.writeToExtremum(true);
-            case 'max':
-                return this.writeToExtremum(false);
-            case 'overwrite':
-                return this.writeAll(newValue);
         }
 
         // Non-numeric value (e.g. null, non-numeric string) — write raw value to all children
@@ -170,21 +150,6 @@ export class DistributorNumber {
             }
         }
         return changed;
-    }
-
-    private writeToExtremum(isMin: boolean): boolean {
-        const { children, count, newValue } = this;
-        let bestNode = children[0];
-        let bestVal = this.readOne(bestNode);
-        for (let i = 1; i < count; i++) {
-            const node = children[i];
-            const v = this.readOne(node);
-            if (isMin ? v < bestVal : v > bestVal) {
-                bestVal = v;
-                bestNode = node;
-            }
-        }
-        return this.writeOne(bestNode, newValue);
     }
 
     private distributeUniform(): boolean {

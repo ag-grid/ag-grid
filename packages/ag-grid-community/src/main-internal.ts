@@ -73,6 +73,15 @@ export type {
 export type { ITooltipFeature as _ITooltipFeature, TooltipCtrl as _TooltipCtrl } from './agStack/interfaces/iTooltip';
 export { AgPopupComponent } from './agStack/popup/agPopupComponent';
 export { BasePopupService as _BasePopupService } from './agStack/popup/basePopupService';
+export {
+    computeAlignedPosition as _computeAlignedPosition,
+    findBestPlacement as _findBestPlacement,
+    getEffectivePlacements as _getEffectivePlacements,
+    getRectSize as _getRectSize,
+    fitsWithinBounds as _fitsWithinBounds,
+    toRelativeRect as _toRelativeRect,
+} from './agStack/popup/popupPositionUtils';
+export type { Alignment as _Alignment, Anchor as _Anchor } from './agStack/popup/popupPositionUtils';
 export { AgPositionableFeature as _AgPositionableFeature } from './agStack/rendering/agPositionableFeature';
 export type {
     PositionableOptions,
@@ -198,6 +207,7 @@ export type {
     _GridChartsGridApi,
     _InfiniteRowModelGridApi,
     _MasterDetailGridApi,
+    _NotesGridApi,
     _PinnedRowGridApi,
     _PivotGridApi,
     _RowGroupingGridApi,
@@ -205,6 +215,7 @@ export type {
     _SideBarGridApi,
     _StatusBarGridApi,
 } from './api/gridApi';
+export type { INoteAccess, INotesFeature, INotesDataService, INotesService } from './interfaces/notes';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';
@@ -252,7 +263,13 @@ export {
 } from './components/framework/userCompUtils';
 export type { Bean, NamedBean } from './context/bean';
 export { BeanStub } from './context/beanStub';
-export type { BeanCollection, BeanName, SingletonBean, StatusPanelComponentName } from './context/context';
+export type {
+    BeanCollection,
+    BeanName,
+    SingletonBean,
+    StatusPanelComponentName,
+    ToolbarItemComponentName,
+} from './context/context';
 export type { Context } from './context/context';
 export type { CtrlsService } from './ctrlsService';
 export type { DragAndDropService } from './dragAndDrop/dragAndDropService';
@@ -428,6 +445,7 @@ export type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 export type { IGroupEditService as _IGroupEditService } from './interfaces/iGroupEditService';
 export type { IGroupFilterService } from './interfaces/iGroupFilterService';
 export type { IRowGroupingEditValueSvc as _IRowGroupingEditValueSvc } from './interfaces/iRowGroupingEditValueSvc';
+export type { IRowGroupPanelBuilder as _IRowGroupPanelBuilder } from './interfaces/iRowGroupPanelBuilder';
 export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
 export type { IMenuFactory } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';
@@ -439,9 +457,11 @@ export type { IRowChildrenService } from './interfaces/iRowChildrenService';
 export type {
     IRowNodeAggregationStage as _IRowNodeAggregationStage,
     IRowNodeFilterAggregateStage as _IRowNodeFilterAggregateStage,
+    IRowNodeFilterStage as _IRowNodeFilterStage,
     IRowNodeFlattenStage as _IRowNodeFlattenStage,
     IRowNodeGroupStage as _IRowNodeGroupStage,
     IRowNodePivotStage as _IRowNodePivotStage,
+    IRowNodeSortStage as _IRowNodeSortStage,
     NestedDataGetter,
 } from './interfaces/iRowNodeStage';
 export type { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
@@ -480,7 +500,7 @@ export {
     _suppressCellMouseEvent,
 } from './rendering/renderUtils';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
-export type { IRowComp, RowCtrl } from './rendering/row/rowCtrl';
+export type { IRowComp, RowCtrl, RowGui } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
 export { BaseSelectionService } from './selection/baseSelectionService';
 export type { RowRangeSelectionContext } from './selection/rowRangeSelectionContext';
@@ -498,6 +518,10 @@ export { _getShouldDisplayTooltip, _isShowTooltipWhenTruncated } from './tooltip
 export type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltip/tooltipFeature';
 export type { ChangedCellsPath, ChangedPath, ChangedRowsPath, IChangedPathFactory } from './utils/changedPath';
 export { _forEachChangedGroupDepthFirst } from './utils/changedPath';
+
+export { updateRowNodeAfterSort as _updateRowNodeAfterSort } from './clientSideRowModel/sortStage';
+export { doDeltaSort as _doDeltaSort } from './clientSideRowModel/deltaSort';
+
 export { _createElement } from './utils/element';
 export type { ElementParams } from './utils/element';
 export { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from './utils/gridEvent';
@@ -546,7 +570,7 @@ export type {
 export { AgInputDateField } from './agStack/widgets/agInputDateField';
 export { AgInputNumberField, AgInputNumberFieldSelector } from './agStack/widgets/agInputNumberField';
 export type { AgInputNumberFieldParams } from './agStack/widgets/agInputNumberField';
-export { AgInputTextArea } from './agStack/widgets/agInputTextArea';
+export { AgInputTextArea, AgInputTextAreaSelector } from './agStack/widgets/agInputTextArea';
 export { AgInputTextField, AgInputTextFieldSelector } from './agStack/widgets/agInputTextField';
 export type { AgInputTextFieldParams } from './agStack/widgets/agInputTextField';
 export type { ListOption } from './agStack/widgets/agList';

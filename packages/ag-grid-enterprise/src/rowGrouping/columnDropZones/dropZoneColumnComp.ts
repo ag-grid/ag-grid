@@ -93,7 +93,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     protected getTooltip(): string | null | undefined {
-        return this.column.getColDef().headerTooltip;
+        return this.column.colDef.headerTooltip;
     }
 
     protected override addAdditionalAriaInstructions(
@@ -360,11 +360,14 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
                 value,
                 'toolPanelDragAndDrop'
             );
-            const eText = this.getGui().querySelector<HTMLElement>('.ag-column-drop-cell-text');
-            if (eText) {
-                eText.textContent = this.getDisplayValue();
+            // In synchronous mode, setColumnAggFunc dispatches events that can destroy this component, nulling this.column
+            if (this.column) {
+                const eText = this.getGui().querySelector<HTMLElement>('.ag-column-drop-cell-text');
+                if (eText) {
+                    eText.textContent = this.getDisplayValue();
+                }
+                this.setupAria();
             }
-            this.setupAria();
             refreshDeferredToolPanelUi(this.beans, this.updateParams);
         };
 

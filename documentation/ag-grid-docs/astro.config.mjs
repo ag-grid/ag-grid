@@ -111,6 +111,16 @@ const {
      * Charts robots.txt disallow json url to merge
      */
     CHARTS_ROBOTS_DISALLOW_JSON_URL,
+
+    /**
+     * Studio sitemap index to merge
+     */
+    STUDIO_SITEMAP_INDEX_URL,
+
+    /**
+     * Studio robots.txt disallow json url to merge
+     */
+    STUDIO_ROBOTS_DISALLOW_JSON_URL,
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -130,6 +140,8 @@ console.log(
             DISABLE_EXAMPLE_RUNNER,
             CHARTS_SITEMAP_INDEX_URL,
             CHARTS_ROBOTS_DISALLOW_JSON_URL,
+            STUDIO_SITEMAP_INDEX_URL,
+            STUDIO_ROBOTS_DISALLOW_JSON_URL,
         },
         null,
         2
@@ -199,7 +211,7 @@ export default defineConfig({
         buildTime(),
         react(),
         markdoc(),
-        sitemap(getSitemapConfig({ chartsSitemap: CHARTS_SITEMAP_INDEX_URL })),
+        sitemap(getSitemapConfig({ chartsSitemap: CHARTS_SITEMAP_INDEX_URL, studioSitemap: STUDIO_SITEMAP_INDEX_URL })),
         agHtaccessGen({ include: HTACCESS === 'true' }),
         agRedirectsChecker({
             skip: CHECK_REDIRECTS !== 'true',

@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_KR = {
     sortAbsoluteAscending: '절대 오름차순 정렬',
     sortAbsoluteDescending: '절대 내림차순 정렬',
     sortUnSort: '정렬 해제',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '합계',
@@ -685,12 +686,16 @@ export const AG_GRID_LOCALE_KR = {
     ariaSelectAllRowCells: '이 행의 모든 셀을 선택하려면 Enter 키를 누르세요',
     ariaColumnCellSelection: '이 열의 모든 표시 셀 선택을 전환하려면 Enter 키를 누르세요',
     ariaColumnGroupCellSelection: '이 열 그룹의 모든 표시 셀 선택을 전환하려면 Enter 키를 누르세요',
+    ariaColumnGroupExpansion: '이 열 그룹을 확장하거나 축소하려면 ENTER를 누르세요',
+    ariaColumnGroupCellSelectionAndExpansion:
+        '이 열 그룹의 모든 표시 셀 선택을 전환하려면 Enter 키를 누르세요. 이 열 그룹을 확장하거나 축소하려면 ALT ENTER를 누르세요',
     ariaRowSelectAll: '모든 행 선택 전환을 위해 SPACE를 누르세요',
     ariaRowToggleSelection: '행 선택을 전환하려면 SPACE를 누르세요',
     ariaRowSelect: '이 행을 선택하려면 SPACE를 누르세요',
     ariaRowSelectionDisabled: '이 행의 행 선택이 비활성화되었습니다',
     ariaSearch: '검색',
     ariaSortableColumn: '정렬하려면 ENTER를 누르세요',
+    ariaSortableColumnWithCellSelection: '정렬하려면 ALT ENTER를 누르세요',
     ariaToggleVisibility: '가시성을 전환하려면 SPACE를 누르세요',
     ariaToggleCellValue: '셀 값을 전환하려면 SPACE를 누르세요',
     ariaUnchecked: '선택 해제됨',
@@ -756,6 +761,7 @@ export const AG_GRID_LOCALE_KR = {
     ariaLabelAddFilterField: '필터 필드 추가',
     ariaLabelFilterCardDelete: '필터 삭제',
     ariaLabelFilterCardHasEdits: '편집 사항 있음',
+    ariaHasNote: '이 셀에 메모가 있습니다.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -800,4 +806,12 @@ export const AG_GRID_LOCALE_KR = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 오전/오후',
+
+    // Notes
+    note: '셀 메모',
+    addNote: '메모 추가',
+    viewNote: '메모 보기',
+    editNote: '메모 편집',
+    deleteNote: '메모 제거',
+    notePlaceholder: '메모 추가...',
 };

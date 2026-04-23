@@ -1,54 +1,54 @@
-export interface FileRecord {
+export interface BudgetRecord {
     name: string;
-    size: number;
-    children?: FileRecord[];
+    budget: number;
+    children?: BudgetRecord[];
 }
 
-export function getData(): FileRecord[] {
+export function getData(): BudgetRecord[] {
     return [
         {
-            name: 'Documents',
-            size: 0,
+            name: 'Engineering',
+            budget: 0,
             children: [
                 {
-                    name: 'Reports',
-                    size: 0,
+                    name: 'Frontend',
+                    budget: 0,
                     children: [
-                        { name: 'Q1 Report.pdf', size: 120 },
-                        { name: 'Q2 Report.pdf', size: 150 },
-                        { name: 'Q3 Report.pdf', size: 90 },
+                        { name: 'Alice', budget: 85000 },
+                        { name: 'Bob', budget: 92000 },
+                        { name: 'Charlie', budget: 78000 },
                     ],
                 },
                 {
-                    name: 'Invoices',
-                    size: 0,
+                    name: 'Backend',
+                    budget: 0,
                     children: [
-                        { name: 'Invoice 001.pdf', size: 45 },
-                        { name: 'Invoice 002.pdf', size: 60 },
+                        { name: 'Diana', budget: 95000 },
+                        { name: 'Evan', budget: 88000 },
                     ],
                 },
-                { name: 'README.txt', size: 10 },
+                { name: 'Dave (DevOps)', budget: 90000 },
             ],
         },
         {
-            name: 'Media',
-            size: 0,
+            name: 'Marketing',
+            budget: 0,
             children: [
                 {
-                    name: 'Photos',
-                    size: 0,
+                    name: 'Digital',
+                    budget: 0,
                     children: [
-                        { name: 'Vacation.jpg', size: 250 },
-                        { name: 'Family.jpg', size: 180 },
-                        { name: 'Sunset.jpg', size: 320 },
+                        { name: 'Fiona', budget: 72000 },
+                        { name: 'George', budget: 68000 },
+                        { name: 'Hannah', budget: 75000 },
                     ],
                 },
                 {
-                    name: 'Videos',
-                    size: 0,
+                    name: 'Brand',
+                    budget: 0,
                     children: [
-                        { name: 'Tutorial.mp4', size: 500 },
-                        { name: 'Presentation.mp4', size: 350 },
+                        { name: 'Ian', budget: 80000 },
+                        { name: 'Jane', budget: 76000 },
                     ],
                 },
             ],

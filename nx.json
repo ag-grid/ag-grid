@@ -37,7 +37,7 @@
     "styleOutputs": [
       {
         "dependentTasksOutputFiles": "**/*.*css",
-        "transitive": true
+        "transitive": false
       }
     ],
     "allOutputs": [
@@ -148,7 +148,20 @@
       "cache": true
     },
     "pack": {
-      "inputs": ["allTransitiveOutputs"],
+      "inputs": ["allTransitiveOutputs", "{projectRoot}/.npmignore"],
+      "cache": true
+    },
+    "nx:noop": {
+      "cache": true,
+      "inputs": [],
+      "outputs": []
+    },
+    "nx:run-script": {
+      "cache": true,
+      "inputs": ["production"],
+      "outputs": []
+    },
+    "nx:run-commands": {
       "cache": true
     },
     "@nx/jest:jest": {

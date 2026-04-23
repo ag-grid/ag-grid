@@ -1,0 +1,167 @@
+@use 'ag';
+
+@mixin output {
+    .ag-toolbar {
+        display: flex;
+        align-items: center;
+        gap: var(--ag-spacing);
+        overflow: hidden;
+        border-bottom: var(--ag-header-row-border);
+        padding-right: calc(var(--ag-spacing) * 2);
+        padding-left: calc(var(--ag-spacing) * 2);
+        min-height: var(--ag-header-height);
+        line-height: 1.5;
+    }
+
+    .ag-toolbar-right-start {
+        margin-inline-start: auto;
+    }
+
+    .ag-toolbar-item {
+        display: inline-flex;
+    }
+
+    .ag-toolbar-button {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--ag-spacing);
+        padding: var(--ag-spacing);
+        border: 0;
+        border-radius: var(--ag-border-radius);
+        background: transparent;
+        color: var(--ag-text-color);
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .ag-toolbar-button:hover {
+        background-color: var(--ag-row-hover-color);
+    }
+
+    .ag-toolbar-button:active {
+        background-color: var(--ag-range-selection-background-color);
+    }
+
+    .ag-toolbar-button:focus-visible {
+        box-shadow: var(--ag-focus-shadow);
+    }
+
+    .ag-toolbar-button:disabled {
+        opacity: 0.5;
+        cursor: default;
+        pointer-events: none;
+    }
+
+    .ag-toolbar-panel {
+        display: inline-flex;
+        flex: 1;
+        min-width: 235px;
+    }
+
+    .ag-toolbar-input {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        min-width: 140px;
+    }
+
+    .ag-toolbar-input-icon {
+        position: absolute;
+        display: inline-flex;
+        align-items: center;
+        color: var(--ag-text-color);
+        opacity: 0.5;
+        pointer-events: none;
+        @include ag.unthemed-rtl(
+            (
+                left: var(--ag-spacing),
+            )
+        );
+    }
+
+    .ag-toolbar-input-field {
+        border: solid var(--ag-border-width) var(--ag-border-color);
+        border-radius: var(--ag-border-radius);
+        background: transparent;
+        color: var(--ag-text-color);
+        font-size: var(--ag-font-size);
+        line-height: 1.5;
+        outline: none;
+        width: 100%;
+        padding-top: calc(var(--ag-spacing) * 0.5);
+        padding-bottom: calc(var(--ag-spacing) * 0.5);
+        @include ag.unthemed-rtl(
+            (
+                padding-right: var(--ag-spacing),
+                padding-left: calc(var(--ag-spacing) + 14px + var(--ag-spacing) * 0.5),
+            )
+        );
+    }
+
+    .ag-toolbar-input-field:focus {
+        box-shadow: var(--ag-focus-shadow);
+    }
+
+    .ag-toolbar-panel .ag-column-drop-horizontal {
+        background-color: transparent;
+        border-bottom: none;
+        padding: 0;
+    }
+
+    .ag-toolbar-button-chevron {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .ag-toolbar-separator {
+        align-self: stretch;
+        width: 0;
+        margin: 0 var(--ag-spacing);
+        @include ag.unthemed-rtl(
+            (
+                border-left: solid var(--ag-border-width) var(--ag-border-color),
+            )
+        );
+    }
+
+    .ag-toolbar-find {
+        gap: calc(var(--ag-spacing) * 0.5);
+        border: solid var(--ag-border-width) var(--ag-border-color);
+        border-radius: var(--ag-border-radius);
+        min-width: 80px;
+    }
+
+    .ag-toolbar-find:focus-within {
+        box-shadow: var(--ag-focus-shadow);
+    }
+
+    .ag-toolbar-find .ag-toolbar-input-field {
+        border: 0;
+        border-radius: 0;
+        @include ag.unthemed-rtl(
+            (
+                padding-right: 0,
+            )
+        );
+    }
+
+    .ag-toolbar-find .ag-toolbar-input-field:focus {
+        box-shadow: none;
+    }
+
+    .ag-toolbar-find-match-count {
+        white-space: nowrap;
+        font-size: var(--ag-font-size);
+        color: var(--ag-text-color);
+        opacity: 0.7;
+        user-select: none;
+        font-variant-numeric: tabular-nums;
+        min-width: 11ch;
+        text-align: end;
+    }
+
+    .ag-toolbar-find-button {
+        flex-shrink: 0;
+        padding: calc(var(--ag-spacing) * 0.5);
+    }
+}

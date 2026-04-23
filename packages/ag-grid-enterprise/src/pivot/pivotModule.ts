@@ -2,7 +2,7 @@ import type { _ModuleWithApi, _ModuleWithoutApi, _PivotGridApi } from 'ag-grid-c
 import { _ColumnGroupModule } from 'ag-grid-community';
 
 import { RowGroupingModule, SharedRowGroupingModule } from '../rowGrouping/rowGroupingModule';
-import { ClientSideRowModelHierarchyModule } from '../rowHierarchy/rowHierarchyModule';
+import { CsrmHierarchyModule } from '../rowHierarchy/rowHierarchyModule';
 import { VERSION } from '../version';
 import {
     addPivotColumns,
@@ -57,5 +57,5 @@ export const PivotModule: _ModuleWithoutApi = {
     version: VERSION,
     rowModels: ['clientSide'],
     beans: [PivotStage],
-    dependsOn: [SharedPivotModule, RowGroupingModule, ClientSideRowModelHierarchyModule],
+    dependsOn: [SharedPivotModule, RowGroupingModule, CsrmHierarchyModule],
 };

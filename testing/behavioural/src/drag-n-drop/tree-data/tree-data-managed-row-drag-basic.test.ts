@@ -4,7 +4,14 @@ import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-
 import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout, getRowHtmlElement } from '../../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    RowDragDispatcher,
+    TestGridsManager,
+    asyncSetTimeout,
+    getRowHtmlElement,
+} from '../../test-utils';
 
 describe.each([false, true])('tree data drag basics (suppress move %s)', (suppressMoveWhenRowDragging) => {
     const gridsManager = new TestGridsManager({
@@ -31,7 +38,7 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
         treeDataChildrenField: 'children',
         rowDragManaged: true,
         suppressMoveWhenRowDragging,
-        rowDragInsertDelay: 30,
+        rowDragInsertDelay: 1,
         groupDefaultExpanded: -1,
         getRowId: ({ data }) => data.id,
     };
@@ -103,6 +110,12 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
             · └── archive-old LEAF id:archive-old ag-Grid-AutoColumn:"Old" type:"file"
         `);
         expect(api.getRowNode('docs-drafts')?.parent?.id).toBe('archive');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Name" width:200
+            └── type "Type" width:200
+        `);
     });
 
     test('dragging a parent node moves its subtree when managed', async () => {
@@ -162,6 +175,12 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
             · └── archive-report LEAF id:archive-report ag-Grid-AutoColumn:"Report" type:"file"
         `);
         expect(finalRows.getById('plans')?.parent?.id).toBe('archive');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Name" width:200
+            └── type "Type" width:200
+        `);
     });
 
     test('allows dropping a nested group between shallower nodes', async () => {
@@ -358,5 +377,66 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
         expect(api.getRowNode('projects')?.parent?.id).toBe('storage');
         expect(api.getRowNode('project-alpha')?.parent?.id).toBe('projects');
         expect(api.getRowNode('alpha-design')?.parent?.id).toBe('project-alpha');
+    });
+
+    test('clears child count when dragging the only child out of a group', async () => {
+        const rowData = [
+            {
+                id: 'backend',
+                name: 'Backend',
+                type: 'folder',
+                children: [
+                    { id: 'payment', name: 'Payment Integration', type: 'folder', children: [] },
+                    { id: 'user-auth', name: 'User Auth', type: 'folder', children: [] },
+                ],
+            },
+        ];
+
+        const api = createGrid('tree-managed-child-count', rowData);
+
+        const initialRows = new GridRows(api, 'initial');
+        await initialRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ backend GROUP id:backend ag-Grid-AutoColumn:"Backend" type:"folder"
+            · ├── payment LEAF id:payment ag-Grid-AutoColumn:"Payment Integration" type:"folder"
+            · └── user-auth LEAF id:user-auth ag-Grid-AutoColumn:"User Auth" type:"folder"
+        `);
+
+        // Step 1: Drag 'User Auth' into 'Payment Integration' (making it a child)
+        const dispatcher1 = new RowDragDispatcher({ api });
+        await dispatcher1.start('user-auth');
+        await waitFor(() => expect(dispatcher1.getDragGhostLabel()).toBe('User Auth'));
+        await dispatcher1.move('payment', { center: true });
+        await asyncSetTimeout(10); // Wait for rowDragInsertDelay timer to fire and nudge
+        await dispatcher1.finish();
+        await asyncSetTimeout(0);
+
+        const afterDragIn = new GridRows(api, 'after drag into Payment');
+        await afterDragIn.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ backend GROUP id:backend ag-Grid-AutoColumn:"Backend" type:"folder"
+            · └─┬ payment GROUP id:payment ag-Grid-AutoColumn:"Payment Integration" type:"folder"
+            · · └── user-auth LEAF id:user-auth ag-Grid-AutoColumn:"User Auth" type:"folder"
+        `);
+        expect(api.getRowNode('user-auth')?.parent?.id).toBe('payment');
+        expect(api.getRowNode('payment')?.allChildrenCount).toBe(1);
+
+        // Step 2: Drag 'User Auth' back out alongside 'Payment Integration'
+        const dispatcher2 = new RowDragDispatcher({ api });
+        await dispatcher2.start('user-auth');
+        await waitFor(() => expect(dispatcher2.getDragGhostLabel()).toBe('User Auth'));
+        await dispatcher2.move('payment', { yOffsetPercent: 0.05 });
+        await dispatcher2.finish();
+        await asyncSetTimeout(0);
+
+        const afterDragOut = new GridRows(api, 'after drag out of Payment');
+        await afterDragOut.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ backend GROUP id:backend ag-Grid-AutoColumn:"Backend" type:"folder"
+            · ├── user-auth LEAF id:user-auth ag-Grid-AutoColumn:"User Auth" type:"folder"
+            · └── payment LEAF id:payment ag-Grid-AutoColumn:"Payment Integration" type:"folder"
+        `);
+        expect(api.getRowNode('user-auth')?.parent?.id).toBe('backend');
+        expect(api.getRowNode('payment')?.allChildrenCount).toBeNull();
     });
 });

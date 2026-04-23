@@ -4,7 +4,8 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { AggregationModule, SharedAggregationModule } from '../aggregation/aggregationModule';
 import {
     ChangedPathModule,
-    ClientSideRowModelHierarchyModule,
+    CsrmGroupStagesModule,
+    CsrmHierarchyModule,
     GroupColumnModule,
     GroupEditModule,
     StickyRowModule,
@@ -30,5 +31,5 @@ export const TreeDataModule: _ModuleWithoutApi = {
     version: VERSION,
     dynamicBeans: { treeGroupStrategy: TreeGroupStrategy },
     rowModels: ['clientSide'],
-    dependsOn: [SharedTreeDataModule, AggregationModule, ClientSideRowModelHierarchyModule, GroupEditModule],
+    dependsOn: [SharedTreeDataModule, AggregationModule, CsrmHierarchyModule, CsrmGroupStagesModule, GroupEditModule],
 };

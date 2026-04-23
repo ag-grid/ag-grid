@@ -334,6 +334,7 @@ export const AG_GRID_LOCALE_SK = {
     sortAbsoluteAscending: 'Zoradiť absolútne vzostupne',
     sortAbsoluteDescending: 'Zoradiť absolútne zostupne',
     sortUnSort: 'Zrušiť zoradenie',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Súčet',
@@ -686,12 +687,16 @@ export const AG_GRID_LOCALE_SK = {
     ariaColumnCellSelection: 'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tomto stĺpci',
     ariaColumnGroupCellSelection:
         'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tejto skupine stĺpcov',
+    ariaColumnGroupExpansion: 'Stlačte ENTER na rozbalenie alebo zbalenie tejto skupiny stĺpcov',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tejto skupine stĺpcov. Stlačte ALT ENTER na rozbalenie alebo zbalenie tejto skupiny stĺpcov',
     ariaRowSelectAll: 'Stlačte SPACE na prepínanie výberu všetkých riadkov',
     ariaRowToggleSelection: 'Stlačte SPACE na prepínanie výberu riadku',
     ariaRowSelect: 'Stlačte SPACE na výber tohto riadku',
     ariaRowSelectionDisabled: 'Výber riadku je pre tento riadok zakázaný',
     ariaSearch: 'Hľadať',
     ariaSortableColumn: 'Stlačte ENTER na zoradenie',
+    ariaSortableColumnWithCellSelection: 'Stlačte ALT ENTER na zoradenie',
     ariaToggleVisibility: 'Stlačte SPACE na prepínanie viditeľnosti',
     ariaToggleCellValue: 'Stlačte SPACE na prepínanie hodnoty bunky',
     ariaUnchecked: 'neoznačené',
@@ -757,6 +762,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaLabelAddFilterField: 'Pridať pole filtra',
     ariaLabelFilterCardDelete: 'Odstrániť filter',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
+    ariaHasNote: 'Táto bunka má poznámku.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -801,4 +807,12 @@ export const AG_GRID_LOCALE_SK = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM RRRR',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+
+    // Notes
+    note: 'Poznámka bunky',
+    addNote: 'Pridať poznámku',
+    viewNote: 'Zobraziť poznámku',
+    editNote: 'Upraviť poznámku',
+    deleteNote: 'Odstrániť poznámku',
+    notePlaceholder: 'Pridať poznámku...',
 };

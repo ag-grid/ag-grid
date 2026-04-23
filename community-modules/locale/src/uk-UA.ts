@@ -335,6 +335,7 @@ export const AG_GRID_LOCALE_UA = {
     sortAbsoluteAscending: 'Сортувати за зростанням',
     sortAbsoluteDescending: 'Сортувати за спаданням',
     sortUnSort: 'Очистити Сортування',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Сума',
@@ -687,12 +688,16 @@ export const AG_GRID_LOCALE_UA = {
     ariaSelectAllRowCells: 'Натисніть Enter, щоб вибрати всі комірки в цьому рядку',
     ariaColumnCellSelection: 'Натисніть Enter, щоб перемкнути виділення всіх видимих комірок у цьому стовпці',
     ariaColumnGroupCellSelection: 'Натисніть Enter, щоб перемкнути виділення всіх видимих комірок у цій групі стовпців',
+    ariaColumnGroupExpansion: 'Натисніть ENTER, щоб розгорнути або згорнути цю групу стовпців',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Натисніть Enter, щоб перемкнути виділення всіх видимих комірок у цій групі стовпців. Натисніть ALT ENTER, щоб розгорнути або згорнути цю групу стовпців',
     ariaRowSelectAll: 'Натисніть Space для перемикання вибору всіх рядків',
     ariaRowToggleSelection: 'Натисніть Space для перемикання вибору рядка',
     ariaRowSelect: 'Натисніть SPACE для вибору цього рядка',
     ariaRowSelectionDisabled: 'Вибір рядка відключено для цього рядка',
     ariaSearch: 'Пошук',
     ariaSortableColumn: 'Натисніть ENTER для сортування',
+    ariaSortableColumnWithCellSelection: 'Натисніть ALT ENTER для сортування',
     ariaToggleVisibility: 'Натисніть SPACE для перемикання видимості',
     ariaToggleCellValue: 'Натисніть SPACE для перемикання значення комірки',
     ariaUnchecked: 'не відмічено',
@@ -758,6 +763,7 @@ export const AG_GRID_LOCALE_UA = {
     ariaLabelAddFilterField: 'Додати поле фільтра',
     ariaLabelFilterCardDelete: 'Видалити фільтр',
     ariaLabelFilterCardHasEdits: 'Є зміни',
+    ariaHasNote: 'Ця комірка має нотатку.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ' ',
@@ -802,4 +808,12 @@ export const AG_GRID_LOCALE_UA = {
     timeFormatSpacesDDMMMMYYYY: 'ДД ММММ РРРР',
     timeFormatHHMMSS: 'ГГ:ХХ:СС',
     timeFormatHHMMSSAmPm: 'ГГ:ХХ:СС AM/PM',
+
+    // Notes
+    note: 'Нотатка комірки',
+    addNote: 'Додати нотатку',
+    viewNote: 'Переглянути нотатку',
+    editNote: 'Редагувати нотатку',
+    deleteNote: 'Видалити нотатку',
+    notePlaceholder: 'Додати нотатку...',
 };

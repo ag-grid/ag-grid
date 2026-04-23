@@ -1,0 +1,22 @@
+{% if isFramework("vue") %}
+
+```js
+this.gridOptions = {
+    toolbar: {
+        items: [
+            {
+                key: 'autoSizeAll',
+                toolbarItem: 'customToolbarButton',
+                toolbarItemParams: {
+                    label: 'Auto Size All',
+                    onClick: (api) => api.autoSizeAllColumns(),
+                },
+            },
+            'agQuickFilterToolbarItem',
+        ],
+    },
+    // ...other properties
+}
+```
+
+{% /if %}

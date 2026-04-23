@@ -12,7 +12,7 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 /** Tests for AG-16448: valueGetter using params.getValue() sees committed data only during batch editing */
 describe('Cell Editing Batch Value (AG-16448)', () => {
@@ -74,6 +74,12 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         await asyncSetTimeout(1);
 
         expect(cellB).toHaveTextContent('xx');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200
+        `);
     });
 
     test('valueGetter sees original value during batch, reverts after cancel', async () => {
@@ -111,6 +117,12 @@ describe('Cell Editing Batch Value (AG-16448)', () => {
         await asyncSetTimeout(1);
 
         expect(cellB).toHaveTextContent('initial');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200
+        `);
     });
 
     test('re-edit and commit batch edit updates valueGetter correctly', async () => {

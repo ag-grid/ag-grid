@@ -109,7 +109,7 @@ The example below shows change detection impacting the result of groups. The gri
 
 -   Column 'Group' is marked as a [Row Group](./grouping/) and columns A to D are marked as [Aggregation](./aggregation/) columns so that their values are summed into the group level.
 
--   Column 'Total' has a valueGetter which gives a sum of all columns A to D for the rows, and a `sum` aggregation for the groups.
+-   Column 'Total' has a valueGetter which gives a sum of all columns A to D.
 
 -   Columns A to D are editable. If you edit a cells value, then the aggregate value at the group level is also updated to reflect the change. This is because the grid is recalculating the aggregations as a result of the change.
 
@@ -165,14 +165,7 @@ For this reason, if you want to update the sorting, filtering or group grouping 
 
 ### Example: Change Detection and Filter / Sort / Group
 
-The following example is the same as the example above [Change Detection and Groups](#example-change-detection-groups) except it sets the flag `refreshAfterGroupEdit` to true.
-This flag tells the grid to refresh the grouping, sorting and filtering if the group column changes.
-
-See [Editing Groups](./grouping-edit/) for more on editing grouped data and `refreshAfterGroupEdit`.
-
-{% gridExampleRunner title="Change Detection with Filter / Sort / Group" name="change-detection-filter-sort-group" /%}
-
-From the example, the following can be noted:
+The following example is the same as the example above [Change Detection and Groups](#example-change-detection-groups) except it gets the grid to do a transaction update so that the grouping, sorting and filtering are recomputed. From the example, the following can be noted:
 
 -   As before, updating any value will update the total column and aggregated group columns.
 
@@ -181,6 +174,8 @@ From the example, the following can be noted:
 -   If you order by a column (eg order by 'A') and then change the data so that the order is incorrect, the grid will fix itself so that the ordering is maintained. In other words, the updated row will move to the new sorted position.
 
 -   If you set a filter (eg filter 'A' to be 'less than 50') and then change the data so that a row no longer passes the filter, the grid will fix itself so that the filtering is maintained. In other words, the updated row will be removed if it no longer passes the filter.
+
+{% gridExampleRunner title="Change Detection with Filter / Sort / Group" name="change-detection-filter-sort-group" /%}
 
 ## Aggregation Path Selection
 

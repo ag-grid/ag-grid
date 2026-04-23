@@ -141,13 +141,13 @@ export class ChartDatasource extends BeanStub {
                 let colNamesArr: string[] = [];
 
                 // pivot keys should be added first
-                const pivotKeys = col.getColDef().pivotKeys;
+                const pivotKeys = col.colDef.pivotKeys;
                 if (pivotKeys) {
                     colNamesArr = pivotKeys.slice();
                 }
 
                 // then add column header name to results
-                const headerName = col.getColDef().headerName;
+                const headerName = col.colDef.headerName;
                 if (headerName) {
                     colNamesArr.push(headerName);
                 }
@@ -234,7 +234,7 @@ export class ChartDatasource extends BeanStub {
 
             // then get data for value columns
             for (const col of valueCols) {
-                const colId = col.getColId();
+                const colId = col.colId;
                 if (crossFiltering) {
                     const filteredOutColId = colId + '-filtered-out';
 
@@ -360,7 +360,7 @@ export class ChartDatasource extends BeanStub {
 
             for (const groupItem of dataAggregated) {
                 for (const col of params.valueCols) {
-                    const colId = col.getColId();
+                    const colId = col.colId;
 
                     if (params.crossFiltering) {
                         // filtered data
@@ -442,10 +442,10 @@ export class ChartDatasource extends BeanStub {
         // the same logic can be used for CSRM and SSRM to extract legend names in extractRowsFromGridRowModel()
         for (const col of secondaryColumns) {
             if (pivotKeySeparator === '') {
-                col.getColDef().pivotKeys = [];
+                col.colDef.pivotKeys = [];
             } else {
-                const keys = col.getColId().split(pivotKeySeparator);
-                col.getColDef().pivotKeys = keys.slice(0, keys.length - 1);
+                const keys = col.colId.split(pivotKeySeparator);
+                col.colDef.pivotKeys = keys.slice(0, keys.length - 1);
             }
         }
     }
@@ -468,7 +468,7 @@ export class ChartDatasource extends BeanStub {
         if (firstSecondaryCol.getParent() == null) {
             return '';
         }
-        return extractSeparator(firstSecondaryCol.getParent()!, firstSecondaryCol.getColId());
+        return extractSeparator(firstSecondaryCol.getParent()!, firstSecondaryCol.colId);
     }
 
     private getGroupLabels(rowNode: RowNode | null, initialLabel: string): string[] {

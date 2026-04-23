@@ -2,8 +2,11 @@ import type {
     AgColumn,
     ColumnEventType,
     DefaultMenuItem,
+    GetNoteParams,
     IAggFuncService,
     IColsService,
+    INoteAccess,
+    INotesService,
     LocaleTextFunc,
     MenuItemDef,
     NamedBean,
@@ -27,19 +30,30 @@ import { validateMenuItem } from './menuItemValidations';
 
 export const MENU_ITEM_SEPARATOR = 'separator';
 
-export function _removeRepeatsFromArray<T>(array: T[], object: T) {
-    if (!array) {
+export function _normaliseSeparators<T>(array: T[], separator: T) {
+    if (!array?.length) {
         return;
     }
 
-    for (let index = array.length - 2; index >= 0; index--) {
-        const thisOneMatches = array[index] === object;
-        const nextOneMatches = array[index + 1] === object;
+    let writeIndex = 0;
+    let lastItemWasSeparator = true;
 
-        if (thisOneMatches && nextOneMatches) {
-            array.splice(index + 1, 1);
+    for (const item of array) {
+        const isSeparator = item === separator;
+
+        if (isSeparator && lastItemWasSeparator) {
+            continue;
         }
+
+        array[writeIndex++] = item;
+        lastItemWasSeparator = isSeparator;
     }
+
+    if (writeIndex > 0 && array[writeIndex - 1] === separator) {
+        writeIndex--;
+    }
+
+    array.length = writeIndex;
 }
 
 const SORT_MENU_ITEM_TO_MENU_ACTION_PARAMS: Record<
@@ -72,6 +86,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         originalList: (MenuItemDef | DefaultMenuItem)[],
         column: AgColumn | null,
         node: RowNode | null,
+        noteParams: GetNoteParams | undefined,
         sourceElement: () => HTMLElement,
         source: ColumnEventType
     ): (MenuItemDef | 'separator')[] {
@@ -101,6 +116,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             chartMenuItemMapper,
             valueColsSvc,
             pinnedRowModel,
+            notesSvc,
         } = beans;
 
         const getStockMenuItem = (
@@ -197,7 +213,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'valueAggSubMenu':
-                    if (aggFuncSvc && valueColsSvc && (column?.isPrimary() || column?.getColDef().pivotValueColumn)) {
+                    if (aggFuncSvc && valueColsSvc && (column?.primary || column?.colDef.pivotValueColumn)) {
                         return {
                             name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                             icon: _createIconNoSpan('menuValue', beans, null),
@@ -237,14 +253,14 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               disabled:
                                   gos.get('functionsReadOnly') ||
                                   column?.isRowGroupActive() ||
-                                  !column?.getColDef().enableRowGroup,
+                                  !column?.colDef.enableRowGroup,
                               action: () => rowGroupColsSvc.addColumns([column], source),
                               icon: _createIconNoSpan('menuAddRowGroup', beans, null),
                           }
                         : null;
                 case 'rowUnGroup': {
                     if (rowGroupColsSvc && gos.isModuleRegistered('SharedRowGrouping')) {
-                        const showRowGroup = column?.getColDef().showRowGroup;
+                        const showRowGroup = column?.colDef.showRowGroup;
                         const lockedGroups = gos.get('groupLockGroupColumns');
                         let name: string;
                         let disabled: boolean;
@@ -280,7 +296,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                             disabled =
                                 gos.get('functionsReadOnly') ||
                                 !column?.isRowGroupActive() ||
-                                !column?.getColDef().enableRowGroup ||
+                                !column?.colDef.enableRowGroup ||
                                 isRowGroupColLocked(column, beans);
                             action = () => rowGroupColsSvc.removeColumns([column], source);
                         }
@@ -472,6 +488,22 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             let result: MenuItemDef | 'separator' | null;
 
             if (typeof menuItemOrString === 'string') {
+                if (menuItemOrString === 'note') {
+                    const noteItems = createNoteMenuItems({
+                        notesSvc,
+                        column,
+                        node,
+                        noteParams,
+                        localeTextFunc,
+                    });
+
+                    if (noteItems.length) {
+                        resultList.push(MENU_ITEM_SEPARATOR, ...noteItems, MENU_ITEM_SEPARATOR);
+                    }
+
+                    continue;
+                }
+
                 result = getStockMenuItem(menuItemOrString, column, sourceElement, source);
             } else {
                 // Spread to prevent leaking mapped subMenus back into the original menuItem
@@ -490,6 +522,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     subMenu as (DefaultMenuItem | MenuItemDef)[],
                     column,
                     node,
+                    noteParams,
                     sourceElement,
                     source
                 );
@@ -501,11 +534,82 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         }
 
         // items could have been removed due to missing modules
-        _removeRepeatsFromArray(resultList, MENU_ITEM_SEPARATOR);
+        _normaliseSeparators(resultList, MENU_ITEM_SEPARATOR);
 
         return resultList;
     }
 }
+
+function createNoteMenuItems({
+    notesSvc,
+    column,
+    node,
+    noteParams,
+    localeTextFunc,
+}: {
+    notesSvc: Pick<INotesService, 'hasDataSource' | 'getNoteAccess' | 'showNote' | 'setNote'> | undefined;
+    column: AgColumn | null;
+    node: RowNode | null;
+    noteParams: GetNoteParams | undefined;
+    localeTextFunc: LocaleTextFunc;
+}): MenuItemDef[] {
+    const access: INoteAccess | undefined = notesSvc?.hasDataSource()
+        ? noteParams
+            ? notesSvc.getNoteAccess(noteParams)
+            : column && node
+              ? notesSvc.getNoteAccess({ rowNode: node, column })
+              : undefined
+        : undefined;
+
+    if (!access) {
+        return [];
+    }
+
+    const result: MenuItemDef[] = [];
+
+    if (!access.note) {
+        result.push({
+            name: localeTextFunc('addNote', 'Add Note'),
+            shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
+            disabled: !access.canCreate,
+            action: access.canCreate ? () => notesSvc!.showNote(access.params, true) : undefined,
+        });
+
+        return result;
+    }
+
+    if (access.canView && (access.isReadOnly || access.isSuppressed)) {
+        result.push({
+            name: localeTextFunc('viewNote', 'View Note'),
+            shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
+            action: () => notesSvc!.showNote(access.params, true),
+        });
+    }
+
+    if (!access.isReadOnly && !access.isSuppressed) {
+        result.push({
+            name: localeTextFunc('editNote', 'Edit Note'),
+            shortcut: localeTextFunc('shiftF2', 'Shift+F2'),
+            disabled: !access.canEdit,
+            action: access.canEdit ? () => notesSvc!.showNote(access.params, true) : undefined,
+        });
+    }
+
+    result.push({
+        name: localeTextFunc('deleteNote', 'Remove Note'),
+        disabled: !access.canDelete,
+        action: access.canDelete
+            ? () =>
+                  notesSvc!.setNote({
+                      ...access.params,
+                      note: undefined,
+                  })
+            : undefined,
+    });
+
+    return result;
+}
+
 function createAggregationSubMenu(
     column: AgColumn,
     aggFuncSvc: IAggFuncService,
@@ -513,10 +617,10 @@ function createAggregationSubMenu(
     localeTextFunc: LocaleTextFunc
 ): MenuItemDef[] {
     let columnToUse: AgColumn | undefined;
-    if (column.isPrimary()) {
+    if (column.primary) {
         columnToUse = column;
     } else {
-        const pivotValueColumn = column.getColDef().pivotValueColumn as AgColumn;
+        const pivotValueColumn = column.colDef.pivotValueColumn as AgColumn;
         columnToUse = _exists(pivotValueColumn) ? pivotValueColumn : undefined;
     }
 

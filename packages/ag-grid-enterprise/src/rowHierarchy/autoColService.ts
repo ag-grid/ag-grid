@@ -72,7 +72,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
     ): void {
         const beans = this.beans;
         const { colModel, gos, rowGroupColsSvc, colGroupSvc } = beans;
-        const isPivotMode = colModel.isPivotMode();
+        const isPivotMode = colModel.pivotMode;
         const groupFullWidthRow = _isGroupUseEntireRow(gos, isPivotMode);
         // we need to allow suppressing auto-column separately for group and pivot as the normal situation
         // is CSRM and user provides group column themselves for normal view, but when they go into pivot the
@@ -115,7 +115,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
             for (const col of this.columns?.list ?? []) {
                 const newDef = colsMap.get(col.getId());
                 if (newDef) {
-                    col.setColDef(newDef.getColDef(), null, source);
+                    col.setColDef(newDef.colDef, null, source);
                 }
             }
             return;
@@ -215,7 +215,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
      * Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef
      */
     private updateOneAutoCol(colToUpdate: AgColumn, index: number, source: ColumnEventType) {
-        const oldColDef = colToUpdate.getColDef();
+        const oldColDef = colToUpdate.colDef;
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
         const beans = this.beans;
         const underlyingColumn = underlyingColId != null ? beans.colModel.getColDefCol(underlyingColId) : undefined;
@@ -284,7 +284,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
 
         const res: ColDef = {
             headerName: localeTextFunc('group', 'Group'),
-            showRowGroup: rowGroupCol?.getColId() ?? true,
+            showRowGroup: rowGroupCol?.colId ?? true,
         };
 
         const userHasProvidedGroupCellRenderer = userDef && (userDef.cellRenderer || userDef.cellRendererSelector);

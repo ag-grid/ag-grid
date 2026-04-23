@@ -338,6 +338,7 @@ export const AG_GRID_LOCALE_HU = {
     sortAbsoluteAscending: 'Abszolút növekvő sorrendben rendez',
     sortAbsoluteDescending: 'Abszolút csökkenő sorrendben rendez',
     sortUnSort: 'Rendezés törlése',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Összeg',
@@ -691,12 +692,17 @@ export const AG_GRID_LOCALE_HU = {
     ariaColumnCellSelection: 'Nyomja meg az Entert az oszlop összes látható cellájának kijelölésének váltásához',
     ariaColumnGroupCellSelection:
         'Nyomja meg az Entert az oszlopcsoport összes látható cellájának kijelölésének váltásához',
+    ariaColumnGroupExpansion:
+        'Nyomja meg az ENTER billentyűt ennek az oszlopcsoportnak a kibontásához vagy összecsukásához',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Nyomja meg az Entert az oszlopcsoport összes látható cellájának kijelölésének váltásához. Nyomja meg az ALT ENTER billentyűt ennek az oszlopcsoportnak a kibontásához vagy összecsukásához',
     ariaRowSelectAll: 'Nyomja le a SPACE billentyűt az összes sor kiválasztásának váltásához',
     ariaRowToggleSelection: 'Nyomja le a SPACE billentyűt a sor kiválasztásának váltásához',
     ariaRowSelect: 'Nyomja le a SPACE billentyűt ezen sor kiválasztásához',
     ariaRowSelectionDisabled: 'A sor kiválasztása le van tiltva ehhez a sorhoz',
     ariaSearch: 'Keresés',
     ariaSortableColumn: 'Nyomja meg az ENTER billentyűt a rendezéshez',
+    ariaSortableColumnWithCellSelection: 'Nyomja meg az ALT ENTER billentyűt a rendezéshez',
     ariaToggleVisibility: 'Nyomja meg a SPACE billentyűt a láthatóság váltásához',
     ariaToggleCellValue: 'Nyomja meg a SPACE billentyűt a cella értékének váltásához',
     ariaUnchecked: 'nincs kiválasztva',
@@ -762,6 +768,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaLabelAddFilterField: 'Szűrőmező hozzáadása',
     ariaLabelFilterCardDelete: 'Szűrő törlése',
     ariaLabelFilterCardHasEdits: 'Módosításokat tartalmaz',
+    ariaHasNote: 'Ez a cella jegyzettel rendelkezik.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -806,4 +813,12 @@ export const AG_GRID_LOCALE_HU = {
     timeFormatSpacesDDMMMMYYYY: 'NN MMMM ÉÉÉÉ',
     timeFormatHHMMSS: 'ÓÓ:PP:MP',
     timeFormatHHMMSSAmPm: 'ÓÓ:PP:MP DE/DU',
+
+    // Notes
+    note: 'Cella megjegyzés',
+    addNote: 'Megjegyzés hozzáadása',
+    viewNote: 'Megjegyzés megtekintése',
+    editNote: 'Megjegyzés szerkesztése',
+    deleteNote: 'Megjegyzés eltávolítása',
+    notePlaceholder: 'Megjegyzés hozzáadása...',
 };

@@ -51,4 +51,7 @@ export interface IFrameworkOverrides extends AgFrameworkOverrides {
      * Required for React to work with StrictMode from v19 with the current implementation of the CtrlsService.
      */
     runWhenReadyAsync?(): boolean;
+
+    /** True when modules are provided via AgGridProvider React context, used for accurate missing module error messages */
+    readonly usesAgGridProvider?: boolean;
 }

@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('Grouping delta sorting', () => {
     const gridsManager = new TestGridsManager({
@@ -94,6 +94,13 @@ describe('Grouping delta sorting', () => {
             · ├── LEAF id:ire-a country:"Ireland" athlete:"Aine" score:40
             · └── LEAF id:ire-b country:"Ireland" athlete:"Brigid" score:5
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── athlete "Athlete" width:200
+            └── score "Score" width:200 sort:desc aggFunc:sum
+        `);
     });
 
     test('delta sort preserves order for untouched grouped rows', async () => {
@@ -161,6 +168,13 @@ describe('Grouping delta sorting', () => {
             └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             · ├── LEAF id:ita-a country:"Italy" athlete:"Isabella" score:18
             · └── LEAF id:ita-b country:"Italy" athlete:"Leonardo" score:22
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── athlete "Athlete" width:200
+            └── score "Score" width:200 sort:asc
         `);
     });
 
