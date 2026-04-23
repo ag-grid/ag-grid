@@ -106,6 +106,12 @@ function cssFileDefaultImport(): Plugin {
                     from: realPath,
                     to: realPath,
                 });
+                // Register each as a watched dependency for HMR
+                for (const msg of result.messages) {
+                    if (msg.type === 'dependency' && typeof msg.file === 'string') {
+                        this.addWatchFile(msg.file);
+                    }
+                }
                 return result.css;
             }
         },
