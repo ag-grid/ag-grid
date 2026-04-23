@@ -1,5 +1,5 @@
 import type { BeanCollection, CellCtrl, GetNoteParams, INotesFeature, Note, RowCtrl, RowGui } from 'ag-grid-community';
-import { _interpretAsRightClick } from 'ag-grid-community';
+import { _interpretAsRightClick, _isStopPropagationForAgGrid } from 'ag-grid-community';
 
 import { AgNotesPopup } from './agNotesPopup';
 import type { INotePopupOwner, INotesFeatureSupport, NoteTarget } from './notesShared';
@@ -126,7 +126,11 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
     }
 
     protected onClick(target: NoteTarget | undefined, event: MouseEvent): void {
-        if (this.getNoteTrigger() !== 'click' || _interpretAsRightClick(this.beans, event)) {
+        if (
+            this.getNoteTrigger() !== 'click' ||
+            _isStopPropagationForAgGrid(event) ||
+            _interpretAsRightClick(this.beans, event)
+        ) {
             return;
         }
 

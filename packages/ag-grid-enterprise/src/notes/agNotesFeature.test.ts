@@ -172,6 +172,20 @@ describe('AgNotesFeature', () => {
         expect(context.createBean).not.toHaveBeenCalled();
     });
 
+    it('does not open a note on click when propagation is stopped for AG Grid', () => {
+        noteTrigger = 'click';
+
+        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        feature.initialise();
+
+        const event = { button: 0, ctrlKey: false } as MouseEvent & { __ag_Grid_Stop_Propagation?: boolean };
+        event.__ag_Grid_Stop_Propagation = true;
+
+        listeners.click?.(event);
+
+        expect(context.createBean).not.toHaveBeenCalled();
+    });
+
     it('does not open a note on click when note display is suppressed', () => {
         noteTrigger = 'click';
         (ctrl.isNoteHoverSuppressed as jest.Mock).mockReturnValue(true);
