@@ -52,8 +52,6 @@ const {
     hideHeader,
     hideFooter,
     hidePageFromSearchEngines,
-    showAnnouncementBanner,
-    announcementBannerProps,
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -63,6 +61,13 @@ const lightModeCSSUrl = `url("${urlWithBaseUrl('/images/sun.svg')}")`;
 const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
 
 const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.replaceAll('/', '');
+
+const announcementBannerProps = {
+    href: urlWithBaseUrl('/campaigns/beyond-the-prompt/'),
+    title: 'Beyond the Prompt',
+    description: 'A one-day AG Grid & Bryntum conference • 19th May 26',
+    ctaLabel: 'Learn more',
+};
 ---
 
 <!doctype html>
@@ -191,16 +196,13 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
             observer.observe(htmlEl, { attributes: true });
         </script>
 
-        {
-            showAnnouncementBanner && announcementBannerProps && (
-                <AnnouncementBanner
-                    href={announcementBannerProps.href}
-                    title={announcementBannerProps.title}
-                    description={announcementBannerProps.description}
-                    ctaLabel={announcementBannerProps.ctaLabel}
-                />
-            )
-        }
+        <AnnouncementBanner
+            href={announcementBannerProps.href}
+            title={announcementBannerProps.title}
+            description={announcementBannerProps.description}
+            ctaLabel={announcementBannerProps.ctaLabel}
+        />
+
         <div id="mainContainer" class:list={styles.mainContainer}>
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}
             <slot />
