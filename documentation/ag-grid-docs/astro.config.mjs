@@ -10,6 +10,7 @@ import svgr from 'vite-plugin-svgr';
 
 import agCacheSitemap from '../../external/ag-website-shared/plugins/agCacheSitemap';
 import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecker';
+import agMkcertPreview from '../../external/ag-website-shared/plugins/agMkcertPreview';
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
 import agHotModuleReload from './plugins/agHotModuleReload';
@@ -130,6 +131,7 @@ console.log(
             PORT,
             PUBLIC_SITE_URL,
             PUBLIC_BASE_URL,
+            PUBLIC_HTTPS_SERVER,
             PUBLIC_USE_PUBLISHED_PACKAGES,
             USE_PACKAGES,
             SHOW_DEBUG_LOGS,
@@ -153,6 +155,8 @@ if (NODE_ENV !== 'test') {
     plugins.push(mkcert()); // mkcert is not necessary for tests
 }
 
+const httpsEnabled = !['0', 'false'].includes(PUBLIC_HTTPS_SERVER);
+
 // https://astro.build/config
 export default defineConfig({
     site: PUBLIC_SITE_URL,
@@ -163,7 +167,7 @@ export default defineConfig({
     vite: {
         plugins,
         server: {
-            https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER),
+            https: httpsEnabled,
             cors: {
                 /**
                  * CORS allow list for opening examples on external sites
@@ -177,7 +181,7 @@ export default defineConfig({
             },
             headers: {
                 'Content-Security-Policy':
-                    "default-src 'self'; script-src 'self' https://*.ag-grid.com https://localhost:4610 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
+                    "default-src 'self'; script-src 'self' https://*.ag-grid.com https://localhost:4610 https://localhost:4611 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
                 'X-Content-Type-Options': 'nosniff',
             },
         },
@@ -217,5 +221,6 @@ export default defineConfig({
         agCacheSitemap({
             cacheFolder: SITEMAP_CACHE_DIR,
         }),
+        agMkcertPreview({ enabled: httpsEnabled }),
     ],
 });
