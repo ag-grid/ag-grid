@@ -45,6 +45,9 @@ fi
 # embedding credentials in the remote URL, so nothing secret lands in
 # .git/config. Assignment happens at top level (not inside a subshell) so the
 # array is visible to the git invocations below.
+#
+# Callers MUST expand with the ${arr[@]+"${arr[@]}"} idiom — under `set -u`,
+# macOS's system bash 3.2 treats "${empty_array[@]}" as an unbound variable.
 GIT_AUTH_ARGS=()
 if [[ "$AUTH_MODE" == "token" || "$AUTH_MODE" == "gh" ]]; then
     _basic=$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 | tr -d '\n')
@@ -163,12 +166,12 @@ REPO_URL=$(resolve_repo_url)
 mkdir -p "$CACHE_ROOT"
 
 if [[ ! -d "$REPO_DIR/.git" ]]; then
-    git "${GIT_AUTH_ARGS[@]}" clone --depth=1 --filter=blob:none --branch "$REF" "$REPO_URL" "$REPO_DIR" >&2
+    git ${GIT_AUTH_ARGS[@]+"${GIT_AUTH_ARGS[@]}"} clone --depth=1 --filter=blob:none --branch "$REF" "$REPO_URL" "$REPO_DIR" >&2
 else
     # Keep the remote URL in sync (no credentials embedded) in case the slug or
     # AG_DEV_PROMPTS_REPO changed between runs.
     git -C "$REPO_DIR" remote set-url origin "$REPO_URL"
-    git "${GIT_AUTH_ARGS[@]}" -C "$REPO_DIR" fetch --depth=1 --quiet origin "$REF" >&2
+    git ${GIT_AUTH_ARGS[@]+"${GIT_AUTH_ARGS[@]}"} -C "$REPO_DIR" fetch --depth=1 --quiet origin "$REF" >&2
     git -C "$REPO_DIR" reset --hard --quiet FETCH_HEAD >&2
 fi
 

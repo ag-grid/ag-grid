@@ -12,6 +12,16 @@
         "meta": {
             "displayName": "Accessories"
         },
+        "toolbar": {
+            "more": {
+                "name": "Toolbar",
+                "url": "./toolbar/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": ["IToolbarItemComp", "IconName"],
+                "include": []
+            }
+        },
         "statusBar": {
             "more": {
                 "name": "Status Bar",

@@ -690,12 +690,16 @@ export const AG_GRID_LOCALE_RO = {
     ariaColumnCellSelection: 'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din această coloană',
     ariaColumnGroupCellSelection:
         'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din acest grup de coloane',
+    ariaColumnGroupExpansion: 'Apăsați ENTER pentru a extinde sau restrânge acest grup de coloane',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din acest grup de coloane. Apăsați ALT ENTER pentru a extinde sau restrânge acest grup de coloane',
     ariaRowSelectAll: 'Apăsați Space pentru a comuta selecția tuturor rândurilor',
     ariaRowToggleSelection: 'Apăsați Space pentru a comuta selecția rândului',
     ariaRowSelect: 'Apăsați SPACE pentru a selecta acest rând',
     ariaRowSelectionDisabled: 'Selecția rândului este dezactivată pentru acest rând',
     ariaSearch: 'Căutare',
     ariaSortableColumn: 'Apăsați ENTER pentru a sorta',
+    ariaSortableColumnWithCellSelection: 'Apăsați ALT ENTER pentru a sorta',
     ariaToggleVisibility: 'Apăsați SPACE pentru a comuta vizibilitatea',
     ariaToggleCellValue: 'Apăsați SPACE pentru a comuta valoarea celulei',
     ariaUnchecked: 'nebifat',

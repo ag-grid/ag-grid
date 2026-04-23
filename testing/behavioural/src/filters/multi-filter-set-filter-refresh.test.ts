@@ -78,7 +78,9 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
 
         await typeInFloatingFilter(api, 'michael');
 
-        expect(api.getDisplayedRowCount()).toBe(1);
+        await waitFor(() => {
+            expect(api.getDisplayedRowCount()).toBe(1);
+        });
 
         await waitFor(async () => {
             expect(await openPopupAndGetDisplayedSetFilterKeys(api)).toEqual(['michael']);
@@ -96,7 +98,9 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
 
         await typeInFloatingFilter(api, 'michael');
 
-        expect(api.getDisplayedRowCount()).toBe(1);
+        await waitFor(() => {
+            expect(api.getDisplayedRowCount()).toBe(1);
+        });
 
         await waitFor(async () => {
             expect(await openPopupAndGetDisplayedSetFilterKeys(api)).toEqual(['michael']);

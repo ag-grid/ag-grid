@@ -1482,6 +1482,12 @@
                         },
                         {
                             "type": "item",
+                            "title": "Quick Access Toolbar",
+                            "path": "toolbar",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
                             "title": "Column Menu",
                             "path": "column-menu",
                             "isEnterprise": true

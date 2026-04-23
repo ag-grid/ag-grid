@@ -103,6 +103,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             cellSelectionChanged: () => this.refreshAnnouncement(),
         });
 
+        compBean.addManagedPropertyListener('cellSelection', () => this.refreshAnnouncement());
         compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners(compBean);
         // Make sure this is the last destroy func as it clears the gui and comp
@@ -314,6 +315,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
 
         this.refreshHeaderStyles();
+        this.refreshAnnouncement();
     }
 
     private addClasses(): void {
@@ -404,15 +406,22 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     private refreshAnnouncement(): void {
         let description: string | undefined;
-        const { gos } = this;
+        const { gos, expandable } = this;
         const enableColumnSelection = _getEnableColumnSelection(gos);
+        const translate = this.getLocaleTextFunc();
 
-        if (enableColumnSelection) {
-            const translate = this.getLocaleTextFunc();
+        if (enableColumnSelection && expandable) {
+            description = translate(
+                'ariaColumnGroupCellSelectionAndExpansion',
+                'Press Enter to toggle selection for all visible cells in this column group. Press ALT ENTER to expand or collapse this column group'
+            );
+        } else if (enableColumnSelection) {
             description = translate(
                 'ariaColumnGroupCellSelection',
                 'Press Enter to toggle selection for all visible cells in this column group'
             );
+        } else if (expandable) {
+            description = translate('ariaColumnGroupExpansion', 'Press ENTER to expand or collapse this column group');
         }
 
         this.ariaAnnouncement = description;

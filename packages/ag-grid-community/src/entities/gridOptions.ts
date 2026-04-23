@@ -187,6 +187,7 @@ import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
 import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusBar } from '../interfaces/iStatusPanel';
+import type { Toolbar } from '../interfaces/iToolbar';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { FullWidthNotesDataSource, NotesDataSource } from '../interfaces/notes';
@@ -210,6 +211,11 @@ export interface GridOptions<TData = any> {
     // ******************************************************************************************************
 
     // *** Accessories *** //
+    /**
+     * Specifies the toolbar items to use in the toolbar.
+     * @agModule `ToolbarModule`
+     */
+    toolbar?: Toolbar;
     /**
      * Specifies the status bar components to use in the status bar.
      * @agModule `StatusBarModule`

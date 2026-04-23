@@ -14,6 +14,7 @@ import {
 } from '../rowHierarchy/rowHierarchyModule';
 import { VERSION } from '../version';
 import { AgGridHeaderDropZonesSelector } from './columnDropZones/agGridHeaderDropZones';
+import { RowGroupPanelBuilder } from './columnDropZones/rowGroupPanelBuilder';
 import { GroupFilter, processGroupFilterParams } from './groupFilter/groupFilter';
 import { GroupFilterHandler } from './groupFilter/groupFilterHandler';
 import { GroupFilterService } from './groupFilter/groupFilterService';
@@ -73,6 +74,7 @@ export const RowGroupingModule: _ModuleWithoutApi = {
 export const RowGroupingPanelModule: _ModuleWithoutApi = {
     moduleName: 'RowGroupingPanel',
     version: VERSION,
+    beans: [RowGroupPanelBuilder],
     selectors: [AgGridHeaderDropZonesSelector],
     icons: {
         // identifies the pivot drop zone

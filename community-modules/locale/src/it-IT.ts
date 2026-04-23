@@ -692,12 +692,16 @@ export const AG_GRID_LOCALE_IT = {
         'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questa colonna',
     ariaColumnGroupCellSelection:
         'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questo gruppo di colonne',
+    ariaColumnGroupExpansion: 'Premi INVIO per espandere o comprimere questo gruppo di colonne',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questo gruppo di colonne. Premi ALT INVIO per espandere o comprimere questo gruppo di colonne',
     ariaRowSelectAll: 'Premi SPAZIO per attivare/disattivare la selezione di tutte le righe',
     ariaRowToggleSelection: 'Premi SPAZIO per attivare/disattivare la selezione della riga',
     ariaRowSelect: 'Premi SPAZIO per selezionare questa riga',
     ariaRowSelectionDisabled: 'La selezione della riga è disabilitata per questa riga',
     ariaSearch: 'Cerca',
     ariaSortableColumn: 'Premi INVIO per ordinare',
+    ariaSortableColumnWithCellSelection: 'Premi ALT INVIO per ordinare',
     ariaToggleVisibility: 'Premi SPAZIO per attivare/disattivare la visibilità',
     ariaToggleCellValue: 'Premi SPAZIO per attivare/disattivare il valore della cella',
     ariaUnchecked: 'non selezionato',
