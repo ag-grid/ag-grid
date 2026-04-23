@@ -12,13 +12,16 @@ test.agExample(import.meta, () => {
         );
     });
 
-    test.eachFramework('Hovering a noted cell does not show the note popup in click mode', async ({ agIdFor, page }) => {
-        const notedCell = agIdFor.cell('1', 'athlete');
-        await notedCell.hover();
+    test.eachFramework(
+        'Hovering a noted cell does not show the note popup in click mode',
+        async ({ agIdFor, page }) => {
+            const notedCell = agIdFor.cell('1', 'athlete');
+            await notedCell.hover();
 
-        const popup = page.locator('.ag-notes-popup');
-        await expect(popup).toHaveCount(0);
-    });
+            const popup = page.locator('.ag-notes-popup');
+            await expect(popup).toHaveCount(0);
+        }
+    );
 
     test.eachFramework('Cells with notes still have indicator class in click mode', async ({ agIdFor }) => {
         await expect(agIdFor.cell('1', 'athlete')).toHaveClass(/ag-has-cell-notes/);
