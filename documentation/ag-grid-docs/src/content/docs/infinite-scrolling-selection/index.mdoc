@@ -1,0 +1,74 @@
+---
+title: "Infinite Row Model - Row Selection"
+---
+
+Row selection in the Infinite Row Model uses [Row IDs](./row-ids/) to persist selections across data reloads.
+
+## Selection
+
+Selection works on the rows in infinite scrolling by using the [Row IDs](./row-ids/) of the Row Nodes. If you do not provide Keys for the Row Nodes, the index of the Row Node will be used. Using the index of the row breaks down when (server-side) filtering or sorting, as these change the index of the Rows. For this reason, if you do not provide your own [Row IDs](./row-ids/), then selection is cleared if sort or filter is changed.
+
+### Implementing Row IDs
+
+To provide your own [Row IDs](./row-ids/), implement the method `getRowId(params)`, which should return the Key for the data.
+
+```js
+gridOptions.getRowId: function(params) {
+    // the ID can be any string, as long as it's unique within your dataset
+    return params.data.id.toString();
+}
+```
+
+Once you have `getRowId()` implemented, selection will persist across sorts and filters.
+
+{% note %}
+The infinite row model does not have built-in support for [Select-All](./row-selection-multi-row/#selecting-all-rows) functionality. Neither clicking the header checkbox nor pressing {% kbd "^ Ctrl" /%}+A will have any effect.
+{% /note %}
+
+### Example: Sorting, Filtering and Selection
+
+The following example extends the example above by adding server-side sorting, filtering and persistent selection.
+
+Any column can be sorted by clicking the header. When this happens, the datasource is called again with the new sort options.
+
+The columns `Age`, `Country` and `Year` can be filtered. When this happens, the datasource is called again with the new filtering options.
+
+When a row is selected, the selection will remain inside the grid, even if the grid gets sorted or filtered. Notice that when the grid loads a selected row (e.g. select first row, scroll down so the first block is removed from cache, then scroll back up again) the row is not highlighted until the row is loaded from the server. This is because the grid is waiting to see what the ID is of the row to be loaded.
+
+{% note %}
+The example below uses AG Grid Enterprise, to demonstrate the set filter with server-side filtering. AG Grid Enterprise is not required for infinite scrolling.
+{% /note %}
+
+{% gridExampleRunner title="Server-Side Sorting And Filtering" name="server-side" /%}
+
+{% note %}
+When performing multiple row selections using shift-click, it is possible that not all rows are available in memory if the configured value of `maxBlocksInCache` doesn't cover the range. In this case multiple selections will not be allowed.
+{% /note %}
+
+## Specify Selectable Rows
+
+It is also possible to specify which rows can be selected via the `rowSelection.isRowSelectable` callback function.
+
+{% interfaceDocumentation interfaceName="MultiRowSelectionOptions" names=["isRowSelectable"] config={"description":""} /%}
+
+For instance if we only wanted to allow rows where the `data.country` property is the 'United States' we could implement the following:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    rowSelection: {
+        mode: 'multiRow',
+        isRowSelectable: function(data) {
+            return data.country === 'United States';
+        }
+    }
+}
+```
+
+{% gridExampleRunner title="Specify Selectable Rows" name="specify-selectable-rows" /%}
+
+Note that in the above example we have hidden disabled checkboxes to help highlight which rows are selectable.
+
+## See Also
+
+-   [Row IDs](./row-ids/) - Understanding row identification
+-   [Row Selection](./row-selection/) - Selection configuration and modes

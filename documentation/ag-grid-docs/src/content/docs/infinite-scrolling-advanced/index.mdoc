@@ -1,0 +1,64 @@
+---
+title: "Infinite Row Model - Sorting, Filtering & Pagination"
+---
+
+Sort and filter data server-side and combine pagination with infinite scrolling.
+
+## Sorting & Filtering
+
+The grid cannot do sorting or filtering for you, as it does not have all of the data. Sorting or filtering must be done on the server-side. For this reason, if the sort or filter changes, the grid will use the datasource to get the data again and provide the sort and filter state to you.
+
+See [Selection - Example: Sorting, Filtering and Selection](./infinite-scrolling-selection/#example-sorting-filtering-and-selection) for a complete working example that demonstrates server-side sorting and filtering.
+
+## Pagination
+
+As with all row models, it is possible to enable pagination with infinite scrolling. With infinite scrolling, it is possible to mix and match with the configuration to achieve different effects. The following examples are presented:
+
+| Example   | Page Size | Block Size | Comment               |
+| --------- | --------- | ---------- | --------------------- |
+| Example 1 | Auto      | Large      | Most Recommended      |
+| Example 2 | Equal     | Equal      | Recommended Sometimes |
+
+{% note %}
+**Having smaller infinite blocks size than your pagination page size is not supported**
+
+You must have infinite block size greater than or equal to the pagination page size. If you have a smaller block size, the grid will not fetch enough rows to display one page. This breaks how infinite scrolling works and is not supported.
+{% /note %}
+
+### Example 1: Auto Pagination Page Size, Large Infinite Block Size
+
+This example is the recommended approach. The infinite block size is larger than the pages size, so the grid loads data for a few pages, allowing the user to hit 'next' a few times before a server sided call is needed.
+
+{% gridExampleRunner title="Block Larger Than Page" name="block-larger-page" exampleHeight=615 /%}
+
+### Example 2: Equal Pagination Page Size and Large Infinite Block Size
+
+This example demonstrates having the page and block sizes equal. Here the server is hit every time a new page is navigated to.
+
+{% gridExampleRunner title="Block Equal Than Page" name="block-equal-page" exampleHeight=615 /%}
+
+## Aggregation and Grouping
+
+Aggregation and grouping are not available in infinite scrolling. This is because to do so would require the grid knowing the entire dataset, which is not possible when using the Infinite Row Model. If you need aggregation and / or grouping for large datasets, check the [Server-Side Row Model](./server-side-model/) for doing aggregations on the server-side.
+
+## Changing Columns
+
+[Changing columns](./column-updating-definitions/) is possible using infinite scroll and it does not require the data getting fetched again from the server. If the change of columns impacts the sort or filter (i.e. a column with a sort or filter applied is removed), the grid will fetch data again similar to how data is fetched again after the user changes the sort or filter explicitly.
+
+The example below demonstrates changing columns on the infinite row model. The following can be noted:
+
+-   Hit the buttons 'Show Year' and 'Hide Year'. Notice that the data is not re-fetched.
+-   Add a sort or filter to Age column. When the sort or filter is applied the data is re-fetched. However once fetched, you can add and remove the Year column without re-fetching the data.
+-   Add a sort or filter to the Year column. When the sort or filter is applied the data is re-fetched. Now remove the Year column and the data is re-fetched again as the sort or filter has changed.
+
+{% gridExampleRunner title="Changing Columns" name="changing-columns" /%}
+
+## Overlays
+
+The infinite row model does not automatically show the `loading` overlay as rows are loaded in blocks as the user interacts with the grid. The grid will show the `no rows` overlay if the datasource returns an empty array and the `no matching rows` overlay if an empty array is returned while filters are set.
+
+For configuration details, including suppressing the built in overlays, see [Overlays](./overlays-overview/).
+
+## See Also
+
+-   [Row Pagination](./row-pagination/) - Pagination configuration
