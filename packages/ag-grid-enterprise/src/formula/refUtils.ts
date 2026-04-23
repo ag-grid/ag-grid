@@ -10,6 +10,18 @@ export const isFormulaIdentStart = (char: string | undefined): boolean => {
     return !!char && /[A-Za-z]/.test(char);
 };
 
+export const isValidFunctionName = (name: string): boolean => {
+    if (!isFormulaIdentStart(name[0])) {
+        return false;
+    }
+    for (let i = 1, len = name.length; i < len; ++i) {
+        if (!isFormulaIdentChar(name[i])) {
+            return false;
+        }
+    }
+    return true;
+};
+
 type ParsedA1Ref = {
     startCol: string;
     startRow: string;

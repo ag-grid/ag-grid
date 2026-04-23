@@ -92,7 +92,7 @@ export interface IFormulaService extends Bean {
      * Called by CSRM after every model refresh so the service can evict cache entries for destroyed
      * rows and, if the row order or set changed, drop stale computed values while keeping parsed ASTs.
      */
-    onRowsChanged(params: { changedRowNodes: ChangedRowNodes | undefined; newData: boolean | undefined }): void;
+    onRowsChanged(changedRowNodes: ChangedRowNodes | undefined, newData: boolean | undefined): void;
     getFunction(name: string): ((params: FormulaFunctionParams) => unknown) | undefined;
     getFunctionNames(): string[];
 }
