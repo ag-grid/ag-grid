@@ -1,8 +1,8 @@
 import type { DefaultMenuItem, MenuItemDef, NamedBean } from 'ag-grid-community';
 import { BeanStub, _createElement, _focusInto } from 'ag-grid-community';
 
-import type { MenuItemMapper } from '../../menu/menuItemMapper';
-import { MenuList } from '../../widgets/menuList';
+import { MenuList } from '../widgets/menuList';
+import type { MenuItemMapper } from './menuItemMapper';
 
 interface ShowToolbarMenuParams {
     anchorElement: HTMLElement;

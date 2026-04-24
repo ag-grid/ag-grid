@@ -10,8 +10,8 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
+import type { ToolbarMenuBuilder } from '../../menu/toolbarMenuBuilder';
 import { renderToolbarButtonContents } from './toolbarItemUtils';
-import type { ToolbarMenuBuilder } from './toolbarMenuBuilder';
 
 interface MenuToolbarItemInitParams extends IToolbarItemParams, ToolbarMenuItemParams {}
 
