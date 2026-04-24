@@ -9,7 +9,13 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
+import {
+    ExcelExportModule,
+    FindModule,
+    RowGroupingModule,
+    RowGroupingPanelModule,
+    ToolbarModule,
+} from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     TextFilterModule,
@@ -17,6 +23,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnApiModule,
     ColumnAutoSizeModule,
+    ExcelExportModule,
     FindModule,
     RowGroupingModule,
     RowGroupingPanelModule,
@@ -47,6 +54,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         alignment: 'right',
         items: [
             { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'left' },
+            'separator',
             'agFindToolbarItem',
             {
                 key: 'autoSizeAll',
@@ -55,10 +63,10 @@ const gridOptions: GridOptions<IOlympicData> = {
                 action: (params) => params.api.autoSizeAllColumns(),
             },
             {
-                key: 'resetColumns',
-                tooltip: 'Reset Columns',
-                icon: 'minimize',
-                action: (params) => params.api.resetColumnState(),
+                key: 'excelExport',
+                tooltip: 'Excel Export',
+                icon: 'excel',
+                action: (params) => params.api.exportDataAsExcel(),
             },
         ],
     },

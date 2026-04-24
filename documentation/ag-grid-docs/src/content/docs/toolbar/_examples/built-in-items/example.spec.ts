@@ -12,6 +12,8 @@ test.agExample(import.meta, () => {
         await expect(toolbar.locator('.ag-toolbar-panel')).toHaveCount(1);
         await expect(toolbar.locator('.ag-toolbar-find')).toHaveCount(1);
         await expect(toolbar.locator('.ag-toolbar-button')).toHaveCount(2);
+        // Separator between rowGroupPanel and find
+        await expect(toolbar.locator('.ag-toolbar-separator')).toHaveCount(1);
 
         // Action button invokes its configured callback
         await toolbar.locator('.ag-toolbar-button', { hasText: 'Auto Size All' }).click();
