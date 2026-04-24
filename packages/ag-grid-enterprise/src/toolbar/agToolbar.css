@@ -108,11 +108,10 @@
 
 .ag-toolbar-separator {
     width: var(--ag-border-width);
-    height: calc(var(--ag-spacing) * 5);
-    align-self: center;
+    align-self: stretch;
     background: var(--ag-border-color);
     flex-shrink: 0;
-    margin: 0 calc(var(--ag-spacing) * 0.5);
+    margin: calc(var(--ag-spacing) * 2) calc(var(--ag-spacing) * 0.5);
 }
 
 .ag-toolbar-find {
