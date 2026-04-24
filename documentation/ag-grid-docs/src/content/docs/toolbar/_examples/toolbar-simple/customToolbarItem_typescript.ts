@@ -1,11 +1,5 @@
 import type { GridApi, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
 
-export interface CustomToolbarButtonParams extends IToolbarItemParams {
-    label: string;
-    icon: string;
-    onClick: (api: GridApi) => void;
-}
-
 export class CustomToolbarButton implements IToolbarItemComp {
     params!: CustomToolbarButtonParams;
     eGui!: HTMLButtonElement;
@@ -42,4 +36,10 @@ export class CustomToolbarButton implements IToolbarItemComp {
     destroy() {
         this.eGui.removeEventListener('click', this.buttonListener);
     }
+}
+
+export interface CustomToolbarButtonParams extends IToolbarItemParams {
+    label: string;
+    icon: string;
+    onClick: (api: GridApi) => void;
 }
