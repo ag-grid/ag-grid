@@ -453,10 +453,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return highestSibling;
         };
 
-        // In pivot mode the cols are regenerated each refresh, so an added col with no sibling
-        // in the preserved order (e.g. a freshly-created pivotRowTotals group when a value
-        // column is re-added) should follow its neighbour in the freshly generated order,
-        // not be banished to the tail of the grid.
+        /* In pivot mode, new cols with no preserved-order sibling follow their neighbour
+           in the fresh list rather than being pushed to the tail. */
         const newListIndex = this.showingPivotResult ? new Map<AgColumn, number>() : null;
         if (newListIndex) {
             for (let i = 0; i < cols.list.length; i++) {
