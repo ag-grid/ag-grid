@@ -194,10 +194,16 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
 
         test('Tab inside a toolbar pivot panel does not force the next grid container', async () => {
             // Pivot toolbar item has its own wiring around pivot mode / visibility; verify
-            // the embedded flag reaches it too.
+            // the embedded flag reaches it too. A rowGroup column + value column are
+            // required for pivotMode to produce any rows — without them the pivot output
+            // is empty and `firstDataRendered` never fires.
             const api = gridMgr.createGrid('embedded-pivot-tab', {
-                columnDefs: [{ field: 'name', enablePivot: true, pivot: true }],
-                rowData: [{ name: 'Alice' }],
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'name', enablePivot: true, pivot: true },
+                    { field: 'value', enableValue: true, aggFunc: 'sum' },
+                ],
+                rowData: [{ country: 'US', name: 'Alice', value: 1 }],
                 pivotMode: true,
                 toolbar: {
                     items: [
