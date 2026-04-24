@@ -54,7 +54,7 @@ enum CellClearType {
     FocusedCell,
 }
 
-// This will parse a delimited string into an array of arrays.
+/** @knipIgnore Used in tests */
 export function stringToArray(strData: string, delimiter = ','): string[][] {
     const data: string[][] = [];
     const isNewline = (char: string) => char === '\r' || char === '\n';
@@ -1129,8 +1129,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         return csvCreator!.getDataAsCsv(exportParams, true);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    private dispatchFlashCells(cellsToFlash: {}): void {
+    private dispatchFlashCells(cellsToFlash: Record<string, boolean>): void {
         window.setTimeout(() => {
             this.eventSvc.dispatchEvent({
                 type: 'flashCells',

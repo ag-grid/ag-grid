@@ -59,8 +59,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private isSsrm = false;
 
     private executeValueGetter: (
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-        valueGetter: string | Function,
+        valueGetter: string | ((...args: any[]) => any),
         data: any,
         column: AgColumn,
         rowNode: IRowNode
@@ -734,8 +733,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private executeValueGetterWithValueCache(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-        valueGetter: string | Function,
+        valueGetter: string | ((...args: any[]) => any),
         data: any,
         column: AgColumn,
         rowNode: IRowNode
@@ -755,8 +753,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private executeValueGetterWithoutValueCache(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-        valueGetter: string | Function,
+        valueGetter: string | ((...args: any[]) => any),
         data: any,
         column: AgColumn,
         rowNode: IRowNode

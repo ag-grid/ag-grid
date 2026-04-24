@@ -382,6 +382,7 @@ function cleanup(model: ChartModel) {
     return model;
 }
 
+/** @knipIgnore Used in tests */
 export function heuristicVersionDetection(model: ChartModel) {
     const modelAny = model as any;
 

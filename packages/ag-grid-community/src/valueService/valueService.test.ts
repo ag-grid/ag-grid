@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueFormatterParams } from '../entities/colDef';

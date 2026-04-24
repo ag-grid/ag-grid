@@ -1,3 +1,5 @@
+import type { MockInstance } from 'vitest';
+
 import type { RichCellEditorParams } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';

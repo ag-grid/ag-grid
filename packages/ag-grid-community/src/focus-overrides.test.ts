@@ -1,3 +1,5 @@
+import type { Mock, MockInstance, Mocked } from 'vitest';
+
 import { FocusService } from './focusService';
 import { GridCtrl } from './gridComp/gridCtrl';
 import type { GridOptionsService } from './gridOptionsService';
@@ -55,8 +57,8 @@ describe('Focus override callbacks', () => {
         let focusSvc: FocusService;
         let focusSvcAny: any;
         let gos: Mocked<GridOptionsService>;
-        let getOption: Mock<unknown, [string]>;
-        let getCallback: Mock<unknown, [string]>;
+        let getOption: Mock;
+        let getCallback: Mock;
         let focusProvidedHeaderPosition: MockInstance;
         let rootDiv: HTMLElement;
 
@@ -69,8 +71,8 @@ describe('Focus override callbacks', () => {
             focusSvcAny = focusSvc as any;
 
             gos = mock<GridOptionsService>('get', 'getCallback');
-            getOption = gos.get as unknown as Mock<unknown, [string]>;
-            getCallback = gos.getCallback as unknown as Mock<unknown, [string]>;
+            getOption = gos.get as unknown as Mock;
+            getCallback = gos.getCallback as unknown as Mock;
 
             getOption.mockImplementation((key) => {
                 if (key === 'suppressHeaderFocus') {
@@ -442,8 +444,8 @@ describe('Focus override callbacks', () => {
         let navigationSvc: NavigationService;
         let navigationSvcAny: any;
         let gos: Mocked<GridOptionsService>;
-        let getOption: Mock<unknown, [string]>;
-        let getCallback: Mock<unknown, [string]>;
+        let getOption: Mock;
+        let getCallback: Mock;
         let colA: Column;
         let colB: Column;
 
@@ -452,8 +454,8 @@ describe('Focus override callbacks', () => {
             navigationSvcAny = navigationSvc as any;
 
             gos = mock<GridOptionsService>('get', 'getCallback');
-            getOption = gos.get as unknown as Mock<unknown, [string]>;
-            getCallback = gos.getCallback as unknown as Mock<unknown, [string]>;
+            getOption = gos.get as unknown as Mock;
+            getCallback = gos.getCallback as unknown as Mock;
 
             getOption.mockImplementation((key) => {
                 if (key === 'enableRtl') {
@@ -686,8 +688,8 @@ describe('Focus override callbacks', () => {
         let gridCtrl: GridCtrl;
         let gridCtrlAny: any;
         let gos: Mocked<GridOptionsService>;
-        let getOption: Mock<unknown, [string]>;
-        let getCallback: Mock<unknown, [string]>;
+        let getOption: Mock;
+        let getCallback: Mock;
         let gridBodyContainer: FocusableContainer;
         let paginationContainer: FocusableContainer;
         let rootDiv: HTMLElement;
@@ -703,8 +705,8 @@ describe('Focus override callbacks', () => {
             gridCtrlAny = gridCtrl as any;
 
             gos = mock<GridOptionsService>('get', 'getCallback');
-            getOption = gos.get as unknown as Mock<unknown, [string]>;
-            getCallback = gos.getCallback as unknown as Mock<unknown, [string]>;
+            getOption = gos.get as unknown as Mock;
+            getCallback = gos.getCallback as unknown as Mock;
 
             getOption.mockImplementation((key) => {
                 if (key === 'headerHeight') {
@@ -1292,18 +1294,18 @@ describe('Focus override callbacks', () => {
         let headerCtrl: GridHeaderCtrl;
         let headerCtrlAny: any;
         let gos: Mocked<GridOptionsService>;
-        let getOption: Mock<unknown, [string]>;
+        let getOption: Mock;
         let gridCtrl: {
-            focusNextInnerContainer: Mock<boolean | undefined, [boolean]>;
-            forceFocusOutOfContainer: Mock<void, [boolean?]>;
-            isDetailGrid: Mock<boolean, []>;
-            isFocusInsideGridBody: Mock<boolean, []>;
+            focusNextInnerContainer: Mock;
+            forceFocusOutOfContainer: Mock;
+            isDetailGrid: Mock;
+            isFocusInsideGridBody: Mock;
         };
         let headerNavigation: {
-            navigateHorizontally: Mock<boolean, [string, boolean, KeyboardEvent]>;
+            navigateHorizontally: Mock;
         };
         let focusSvc: {
-            focusOverlay: Mock<boolean, [boolean?]>;
+            focusOverlay: Mock;
         };
 
         const createTabEvent = (shiftKey = false): KeyboardEvent =>
@@ -1314,7 +1316,7 @@ describe('Focus override callbacks', () => {
             headerCtrlAny = headerCtrl as any;
 
             gos = mock<GridOptionsService>('get');
-            getOption = gos.get as unknown as Mock<unknown, [string]>;
+            getOption = gos.get as unknown as Mock;
             getOption.mockImplementation((key) => (key === 'enableRtl' ? false : undefined));
 
             gridCtrl = {

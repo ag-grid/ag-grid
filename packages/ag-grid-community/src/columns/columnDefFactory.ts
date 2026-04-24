@@ -11,6 +11,7 @@ import { SKIP_JS_BUILTINS } from '../utils/mergeDeep';
 // this is used for eg creating copies of Column Definitions, where we want to
 // deep copy all objects, but do not want to deep copy functions (eg when user provides
 // a function or class for colDef.cellRenderer)
+/** @knipIgnore Used in tests */
 export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined {
     if (!object) {
         return;

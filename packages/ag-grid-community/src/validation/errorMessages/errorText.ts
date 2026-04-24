@@ -172,6 +172,7 @@ const clipboardApiError = (method: string) =>
  * 2. Returning an array enables the console to log actual objects / numbers / booleans nicely as this will be spread to the underlying console call instead of being cast to a string.
  * 3. Each entry should be followed by as const so that the IDE hover shows the actual message to aid devs
  */
+/** @knipIgnore Used in tests and documentation site */
 export const AG_GRID_ERRORS = {
     1: () => '`rowData` must be an array' as const,
     2: ({ nodeId }: { nodeId: string | undefined }) =>

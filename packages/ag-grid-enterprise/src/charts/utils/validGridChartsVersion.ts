@@ -24,6 +24,7 @@ function isValidMajorVersion({
     return gridMajorDifference === chartsMajorDifference && isFirstOrAfterVersion;
 }
 
+/** @knipIgnore Used in tests */
 export function gridChartVersion(gridVersion: string):
     | {
           gridMajorMinor: string;
@@ -54,6 +55,7 @@ export function gridChartVersion(gridVersion: string):
     };
 }
 
+/** @knipIgnore Used in tests */
 export function validGridChartsVersionErrorMessage({
     type,
     gridVersion,

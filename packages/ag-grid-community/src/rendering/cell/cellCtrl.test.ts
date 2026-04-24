@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';

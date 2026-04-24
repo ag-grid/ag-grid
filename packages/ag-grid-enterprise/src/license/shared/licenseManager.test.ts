@@ -1,4 +1,6 @@
 /* eslint no-console: 0 */
+import type { Mock } from 'vitest';
+
 import { LicenseManager } from './licenseManager';
 
 function createMockDocument(hostname: string, pathname = '/'): Document {

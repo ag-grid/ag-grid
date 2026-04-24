@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import type { BeanCollection, CellCtrl, INoteAccess } from 'ag-grid-community';
 
 import { AgFullWidthRowNotesFeature, AgNotesFeature } from './agNotesFeature';
@@ -188,7 +190,7 @@ describe('AgNotesFeature', () => {
 
     it('does not open a note on click when note display is suppressed', () => {
         noteTrigger = 'click';
-        (ctrl.isNoteHoverSuppressed as vi.Mock).mockReturnValue(true);
+        (ctrl.isNoteHoverSuppressed as Mock).mockReturnValue(true);
 
         const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
         feature.initialise();
@@ -341,8 +343,8 @@ describe('AgNotesFeature', () => {
 
 describe('AgFullWidthRowNotesFeature', () => {
     let beans: BeanCollection;
-    let context: { createBean: vi.Mock; destroyBean: vi.Mock };
-    let popup: { hide: vi.Mock; focusEditor: vi.Mock; hasFocus: vi.Mock };
+    let context: { createBean: Mock; destroyBean: Mock };
+    let popup: { hide: Mock; focusEditor: Mock; hasFocus: Mock };
     let guiListeners = new Map<HTMLElement, Record<string, (event: any) => void>>();
     let leftElement: HTMLElement;
     let centerElement: HTMLElement;

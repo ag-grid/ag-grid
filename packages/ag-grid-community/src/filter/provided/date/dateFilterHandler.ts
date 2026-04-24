@@ -265,6 +265,7 @@ const tomorrow: RelativeRangeFn = (from: Date, to: Date) => {
  * Last 6 months           last6Months         [startOfToday − 6 months, startOfTomorrow)
  * Last 12 months          last12Months        [startOfToday − 12 months, startOfTomorrow)
  * Last 24 months          last24Months        [startOfToday − 24 months, startOfTomorrow)
+ * @knipIgnore Used in tests
  */
 export const presetDateFilterTypeRelativeFromToMap: Record<
     | ISimpleFilterModelPresetType

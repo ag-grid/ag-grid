@@ -5,7 +5,9 @@
         "./src/typings.ts",
         "./src/charts/chartComp/menu/settings/miniCharts/**",
         "./src/excelExport/**/*.ts",
-        "./src/main-umd-styles.ts"
+        "./src/main-umd-styles.ts",
+        "./**/*.test.ts",
+        "./src/test-utils/**"
     ],
     "rules": {
         "unlisted": "off",

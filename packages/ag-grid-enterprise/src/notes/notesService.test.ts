@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import type { AgColumn, BeanCollection, ColDef, IRowNode, Note } from 'ag-grid-community';
 
 import { NotesService } from './notesService';

@@ -94,24 +94,23 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
         });
     });
 
-    // spl - temporarily disable flaky test
-    // test('Scenario B: popup opened+closed before floating filter — reopening popup shows filtered Set Filter list', async () => {
-    //     const api = await createGrid();
-    //     await asyncSetTimeout(0);
-    //
-    //     api.showColumnFilter('name');
-    //     await asyncSetTimeout(10);
-    //     api.hideColumnFilter();
-    //     await asyncSetTimeout(10);
-    //
-    //     await typeInFloatingFilter(api, 'michael');
-    //
-    //     await waitFor(() => {
-    //         expect(api.getDisplayedRowCount()).toBe(1);
-    //     });
-    //
-    //     await waitFor(async () => {
-    //         expect(await openPopupAndGetDisplayedSetFilterKeys(api)).toEqual(['michael']);
-    //     });
-    // });
+    test('Scenario B: popup opened+closed before floating filter — reopening popup shows filtered Set Filter list', async () => {
+        const api = await createGrid();
+        await asyncSetTimeout(0);
+
+        api.showColumnFilter('name');
+        await asyncSetTimeout(10);
+        api.hideColumnFilter();
+        await asyncSetTimeout(10);
+
+        await typeInFloatingFilter(api, 'michael');
+
+        await waitFor(() => {
+            expect(api.getDisplayedRowCount()).toBe(1);
+        });
+
+        await waitFor(async () => {
+            expect(await openPopupAndGetDisplayedSetFilterKeys(api)).toEqual(['michael']);
+        });
+    });
 });
