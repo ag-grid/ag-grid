@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, Toolbar } from 'ag-grid-community';
+import type { GridApi, GridOptions, Toolbar, ToolbarItemDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -21,22 +21,21 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-const fullToolbar: Toolbar = {
-    items: [
-        'agRowGroupPanelToolbarItem',
-        'agPivotPanelToolbarItem',
-        { toolbarItem: 'agFindToolbarItem', alignment: 'right' },
-        { toolbarItem: 'agQuickFilterToolbarItem', alignment: 'right' },
-    ],
-};
+const findItem: ToolbarItemDef = { toolbarItem: 'agFindToolbarItem', alignment: 'right' };
+const quickFilterItem: ToolbarItemDef = { toolbarItem: 'agQuickFilterToolbarItem', alignment: 'right' };
 
-const findOnlyToolbar: Toolbar = {
-    items: [{ toolbarItem: 'agFindToolbarItem', alignment: 'right' }],
-};
+const state = { find: true, quickFilter: true };
 
-const quickFilterOnlyToolbar: Toolbar = {
-    items: [{ toolbarItem: 'agQuickFilterToolbarItem', alignment: 'right' }],
-};
+function buildToolbar(): Toolbar {
+    const items: (ToolbarItemDef | string)[] = ['agRowGroupPanelToolbarItem', 'agPivotPanelToolbarItem'];
+    if (state.find) {
+        items.push(findItem);
+    }
+    if (state.quickFilter) {
+        items.push(quickFilterItem);
+    }
+    return { items };
+}
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -58,19 +57,23 @@ const gridOptions: GridOptions<IOlympicData> = {
         enableRowGroup: true,
         enablePivot: true,
     },
-    toolbar: fullToolbar,
+    toolbar: buildToolbar(),
 };
 
 function setFullToolbar() {
-    gridApi.setGridOption('toolbar', fullToolbar);
+    state.find = true;
+    state.quickFilter = true;
+    gridApi.setGridOption('toolbar', buildToolbar());
 }
 
-function setFindOnlyToolbar() {
-    gridApi.setGridOption('toolbar', findOnlyToolbar);
+function toggleFind() {
+    state.find = !state.find;
+    gridApi.setGridOption('toolbar', buildToolbar());
 }
 
-function setQuickFilterOnlyToolbar() {
-    gridApi.setGridOption('toolbar', quickFilterOnlyToolbar);
+function toggleQuickFilter() {
+    state.quickFilter = !state.quickFilter;
+    gridApi.setGridOption('toolbar', buildToolbar());
 }
 
 document.addEventListener('DOMContentLoaded', () => {
