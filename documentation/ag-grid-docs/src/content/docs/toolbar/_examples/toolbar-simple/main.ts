@@ -13,7 +13,7 @@ import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
     ExcelExportModule,
-    FiltersToolPanelModule,
+    NewFiltersToolPanelModule,
     SideBarModule,
     ToolbarModule,
 } from 'ag-grid-enterprise';
@@ -29,7 +29,7 @@ ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     CsvExportModule,
     ExcelExportModule,
-    FiltersToolPanelModule,
+    NewFiltersToolPanelModule,
     SideBarModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
@@ -53,7 +53,8 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         filter: true,
     },
-    sideBar: { toolPanels: ['columns', 'filters'], defaultToolPanel: '' },
+    enableFilterHandlers: true,
+    sideBar: { toolPanels: ['columns', 'filters-new'], defaultToolPanel: '' },
     toolbar: {
         alignment: 'right',
         items: [
@@ -73,7 +74,9 @@ const gridOptions: GridOptions<IOlympicData> = {
                     label: 'Filters Panel',
                     icon: 'filter',
                     onClick: (api: GridApi) =>
-                        api.getOpenedToolPanel() === 'filters' ? api.closeToolPanel() : api.openToolPanel('filters'),
+                        api.getOpenedToolPanel() === 'filters-new'
+                            ? api.closeToolPanel()
+                            : api.openToolPanel('filters-new'),
                 },
             },
             {

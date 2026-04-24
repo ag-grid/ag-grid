@@ -14,8 +14,8 @@ test.agExample(import.meta, () => {
         // Opening and closing the filters panel via a custom button wires through to the grid API
         const filtersButton = toolbar.locator('button[aria-label="Filters Panel"]');
         await filtersButton.click();
-        await expect(page.locator('.ag-filter-toolpanel')).toBeVisible();
+        await expect(page.locator('.ag-filter-panel')).toBeVisible();
         await filtersButton.click();
-        await expect(page.locator('.ag-filter-toolpanel')).toBeHidden();
+        await expect(page.locator('.ag-filter-panel')).toBeHidden();
     });
 });

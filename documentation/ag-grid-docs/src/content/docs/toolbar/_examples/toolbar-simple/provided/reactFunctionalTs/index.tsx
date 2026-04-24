@@ -14,7 +14,7 @@ import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
     ExcelExportModule,
-    FiltersToolPanelModule,
+    NewFiltersToolPanelModule,
     SideBarModule,
     ToolbarModule,
 } from 'ag-grid-enterprise';
@@ -31,7 +31,7 @@ const modules = [
     ColumnsToolPanelModule,
     CsvExportModule,
     ExcelExportModule,
-    FiltersToolPanelModule,
+    NewFiltersToolPanelModule,
     SideBarModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
@@ -69,7 +69,7 @@ const GridExample = () => {
         }),
         []
     );
-    const sideBar = useMemo(() => ({ toolPanels: ['columns', 'filters'], defaultToolPanel: '' }), []);
+    const sideBar = useMemo(() => ({ toolPanels: ['columns', 'filters-new'], defaultToolPanel: '' }), []);
     const toolbar = useMemo<Toolbar>(
         () => ({
             alignment: 'right',
@@ -90,9 +90,9 @@ const GridExample = () => {
                         label: 'Filters Panel',
                         icon: 'filter',
                         onClick: (api: GridApi) =>
-                            api.getOpenedToolPanel() === 'filters'
+                            api.getOpenedToolPanel() === 'filters-new'
                                 ? api.closeToolPanel()
-                                : api.openToolPanel('filters'),
+                                : api.openToolPanel('filters-new'),
                     },
                 },
                 {
@@ -157,6 +157,7 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
+                        enableFilterHandlers
                         sideBar={sideBar}
                         toolbar={toolbar}
                     />
