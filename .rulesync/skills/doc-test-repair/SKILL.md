@@ -10,6 +10,29 @@ This skill fetches overnight CI failures from `doc-tests.yml` by reading job log
 creates an isolated worktree, starts a dev server on a conflict-free port, reproduces
 failures locally to get full Playwright error output, and iterates fixes until all pass.
 
+## Required diagnostic signal
+
+Read this before you do anything else. It overrides the temptation to move fast.
+
+The only acceptable input for Phase 5 (diagnosis and fixing) is the **Playwright
+error output from a local test run against the worktree's dev server**. Nothing
+else is a substitute:
+
+- CI annotations and job logs tell you *what* failed, not *why*. They are not diagnostic input.
+- Reading `example.spec.ts` tells you what the test asserts, not why the assertion fails now.
+- Reading `main.ts` / `provided/*` tells you what the example does, not what broke.
+- `git log` on the example or the grid tells you what changed, not whether that change caused this failure.
+
+If you think you already know the cause from CI logs and source reading alone,
+you are guessing. That is exactly the failure mode this skill exists to prevent:
+guessed fixes edit code that wasn't broken, or miss the real cause, or "fix"
+things that were already fixed on `latest`. Phases 2–4 are not optional scaffolding
+— they produce the one piece of evidence you are allowed to act on.
+
+**Do not skip to fixes.** Phases 2, 3, and 4 are mandatory before any edit to
+example source. If you find yourself reading source files to form a theory
+before you have local Playwright output, stop and go set up the worktree.
+
 ## Important: persisting state across shell commands
 
 Shell variables do not survive between separate Bash tool calls. All setup state
@@ -202,6 +225,16 @@ lsof -i :4610 | head -3 || echo "(nothing on 4610 — good)"
 > further 30–60 seconds or watch `$DEV_LOG` for the build-complete message
 > before running tests, to avoid stale-page false failures.
 
+### Setup checklist
+
+Before moving to Phase 4, confirm all of the following. If any is missing,
+go back and finish Phase 2 or 3 before reading any source files:
+
+- Worktree exists at `$WORKTREE_PATH` and is on the repair branch.
+- Dev server is reachable on `https://localhost:${FREE_PORT}/` (curl returns).
+- State file has `WORKTREE_PATH`, `FREE_PORT`, `DEV_SERVER_PID`, `FAILING_EXAMPLES`.
+- Nothing is listening on port 4610 (or you've confirmed it's a different dev server you don't care about).
+
 ---
 
 ## Phase 4: Reproduce Failures Locally
@@ -209,6 +242,11 @@ lsof -i :4610 | head -3 || echo "(nothing on 4610 — good)"
 Run the failing tests against the local dev server to get full Playwright error output.
 This is the primary source of diagnostic information — the CI log only tells you
 *what* failed; the local run tells you *why*.
+
+**This phase is a gate.** Do not proceed to Phase 5 (diagnosis or fixes) for any
+example until that example has been confirmed to fail locally. Fixing something
+you haven't reproduced means you're guessing — and you'll waste time "fixing"
+code that was never broken, or that was already fixed on `latest` since the CI run.
 
 ```bash
 source /tmp/ag-doc-repair-state
@@ -239,16 +277,66 @@ BASE_URL="https://localhost:${FREE_PORT}" FRAMEWORK=angular NX_DAEMON=false \
   yarn nx run ag-grid-docs:test:interactive:chromium -- "row-pagination/client-paging"
 ```
 
-If a test passes locally that failed in CI, it may be a flaky timing issue
-(retry a couple of times), a regression already fixed on `latest` after the CI
-run, or a browser-specific failure (Safari/Firefox). Check which framework job
-the CI failure came from.
+### Triage before fixing
+
+Split the failing examples into two buckets based on the local run:
+
+1. **Reproduced locally** — the test fails against the worktree's dev server.
+   These are the only examples you should diagnose and fix in Phase 5.
+2. **Did not reproduce** — the test passes locally. Do **not** edit these.
+   Investigate the cause instead:
+   - Re-run 2–3 times to rule out flakiness (timing, animation, network).
+   - Check `git log origin/latest --since="<CI run timestamp>"` for commits
+     that may have already fixed it on `latest` after the CI run.
+   - Check which framework job the CI failure came from (Safari/Firefox
+     failures won't reproduce under the default chromium run — re-run with
+     `FRAMEWORK=…` or the matching browser project).
+
+Record both buckets in the state file and report them to the user before
+starting any fixes:
+
+```bash
+source /tmp/ag-doc-repair-state
+echo "REPRODUCED<<EOF" >> /tmp/ag-doc-repair-state
+echo "<paths that failed locally>" >> /tmp/ag-doc-repair-state
+echo "EOF" >> /tmp/ag-doc-repair-state
+echo "NOT_REPRODUCED<<EOF" >> /tmp/ag-doc-repair-state
+echo "<paths that passed locally>" >> /tmp/ag-doc-repair-state
+echo "EOF" >> /tmp/ag-doc-repair-state
+```
+
+Report a short summary to the user: how many failures reproduced, how many
+did not, and your best guess at why (flake / already-fixed / framework-specific)
+for each that did not. Wait for the user to confirm the plan before moving to
+Phase 5. If *no* failures reproduce, stop and hand back to the user — there is
+nothing to fix.
 
 ---
 
 ## Phase 5: Diagnose and Fix
 
-Work through failures one example at a time. For each failure:
+### Precondition check
+
+Before editing any source file in this phase, answer these questions for the
+example you are about to work on. If you cannot answer yes to all three, stop
+and go back to Phase 4.
+
+1. Did I run Playwright locally against `https://localhost:${FREE_PORT}/` for this example?
+2. Did it fail?
+3. Do I have the Playwright error output (assertion message, stack trace, locator that failed) in my context right now?
+
+If the answer to any of these is no — including "I read the spec and CI log
+and I'm confident I know the cause" — you do not have the required input.
+Go run the test locally. The only exception is examples in the **did not
+reproduce** bucket from Phase 4, which you are not allowed to edit at all.
+
+### Work loop
+
+Only work on examples in the **reproduced locally** bucket from Phase 4.
+If an example did not reproduce, do not touch its source files — write up
+what you found and leave it for the user to decide.
+
+Work through the reproduced failures one example at a time. For each failure:
 
 1. Read the Playwright error — it includes the failing assertion, the test URL,
    and a stack trace pointing to the spec file line.
