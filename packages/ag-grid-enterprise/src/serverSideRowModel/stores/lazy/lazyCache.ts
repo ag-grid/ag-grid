@@ -933,10 +933,9 @@ export class LazyCache extends BeanStub {
             lazyNodesAfterStoreEnd.forEach((lazyNode) => this.destroyRowAtIndex(lazyNode.index));
         }
 
-        // Sort before fireStoreUpdatedEvent so the grid sees sorted data in a single update.
-        // This is the single client-side sort point after a load; transactions sort via
-        // applyTransaction. Do not add another sort in fireRefreshFinishedEvent — it would
-        // double-sort every refresh (see revert of PR #13039).
+        // Sort here — before fireStoreUpdatedEvent — so the grid sees sorted data in a single
+        // update. Other sort entry points (transactions in lazyStore.applyServerSideTransaction,
+        // sort changes in lazyStore.refreshAfterSort) stay as they are.
         if (this.gos.get('serverSideEnableClientSideSort') && this.isStoreFullyLoaded()) {
             this.clientSideSortRows();
         }
@@ -970,15 +969,15 @@ export class LazyCache extends BeanStub {
     /**
      * @returns true if all rows are loaded
      */
-    public isStoreFullyLoaded() {
+    public isStoreFullyLoaded(): boolean {
         const knowsSize = this.isLastRowKnown;
         const hasCorrectRowCount = this.nodeMap.getSize() === this.numberOfRows;
         if (!knowsSize || !hasCorrectRowCount) {
-            return;
+            return false;
         }
 
         if (this.nodesToRefresh.size > 0) {
-            return;
+            return false;
         }
 
         // Walk by index rather than iterating the nodeMap: after moves/restores during

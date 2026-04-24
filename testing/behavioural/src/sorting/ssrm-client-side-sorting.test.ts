@@ -168,7 +168,8 @@ describe('SSRM Client-Side Sorting', () => {
         await waitForNoLoadingRows(api);
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
-        // Sort indicator should still reflect the active sort after refresh (AG-16487).
+        // Column sort state is preserved across refresh — refreshServerSide should never
+        // touch column state, so the sort indicator stays rendered on the header.
         expect(api.getColumnState().find((c) => c.colId === 'value')?.sort).toBe('asc');
     });
 
@@ -436,7 +437,8 @@ describe('SSRM Client-Side Sorting', () => {
         await refreshed;
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
-        // Sort indicator should still reflect the active sort after refresh (AG-16487).
+        // Column sort state is preserved across refresh — refreshServerSide should never
+        // touch column state, so the sort indicator stays rendered on the header.
         expect(api.getColumnState().find((c) => c.colId === 'value')?.sort).toBe('asc');
     });
 
