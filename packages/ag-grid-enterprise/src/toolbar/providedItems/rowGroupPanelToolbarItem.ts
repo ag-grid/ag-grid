@@ -18,7 +18,7 @@ export class RowGroupPanelToolbarItem extends Component implements IToolbarItemC
             return;
         }
 
-        const panel = this.createManagedBean(builder.createRowGroupDropZone(true));
+        const panel = this.createManagedBean(builder.createRowGroupDropZone(true, true));
         this.getGui().appendChild(panel.getGui());
     }
 
