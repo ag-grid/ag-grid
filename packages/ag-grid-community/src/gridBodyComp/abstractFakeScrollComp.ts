@@ -13,6 +13,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
 
     protected invisibleScrollbar: boolean;
     protected hideTimeout: number = 0;
+    private scrollVisibleDebounce: number = 0;
 
     protected abstract setScrollVisible(): void;
     public abstract getScrollPosition(): number;
@@ -38,6 +39,24 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
         super.destroy();
 
         window.clearTimeout(this.hideTimeout);
+        window.clearTimeout(this.scrollVisibleDebounce);
+    }
+
+    // Avoid scrollbars flickering on as we resize the grid. Before showing
+    // a scrollbar, give a little time for the grid to resize, after which
+    // a scrollbar may no longer be required. Hiding is applied immediately
+    // so the grid responds to shrinking content without perceptible delay.
+    protected applyScrollVisible(isShowing: boolean, apply: () => void): void {
+        window.clearTimeout(this.scrollVisibleDebounce);
+        this.scrollVisibleDebounce = 0;
+        if (!isShowing) {
+            apply();
+        } else {
+            this.scrollVisibleDebounce = window.setTimeout(() => {
+                this.scrollVisibleDebounce = 0;
+                apply();
+            }, 100);
+        }
     }
 
     protected initialiseInvisibleScrollbar(): void {

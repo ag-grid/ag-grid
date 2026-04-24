@@ -62,11 +62,6 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));
     }
 
-    override destroy(): void {
-        window.clearTimeout(this.setScrollVisibleDebounce);
-        super.destroy();
-    }
-
     protected override initialiseInvisibleScrollbar(): void {
         if (this.invisibleScrollbar !== undefined) {
             return;
@@ -122,8 +117,6 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.eLeftSpacer.classList.toggle('ag-scroller-corner', leftSpacing <= scrollbarWidth);
     }
 
-    private setScrollVisibleDebounce = 0;
-
     protected setScrollVisible(): void {
         const hScrollShowing = this.scrollVisibleSvc.horizontalScrollShowing;
         const invisibleScrollbar = this.invisibleScrollbar;
@@ -132,11 +125,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         const adjustedScrollbarWidth = scrollbarWidth === 0 && invisibleScrollbar ? 16 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;
 
-        // Avoid scrollbars flickering on as we resize the grid. Before showing
-        // a scrollbar, give a little time for the grid to resize, after which a
-        // scrollbar may no longer be required
-        const apply = () => {
-            this.setScrollVisibleDebounce = 0;
+        this.applyScrollVisible(hScrollShowing, () => {
             this.toggleCss('ag-scrollbar-invisible', invisibleScrollbar);
             _setFixedHeight(this.getGui(), scrollContainerSize);
             _setFixedHeight(this.eViewport, scrollContainerSize);
@@ -148,13 +137,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
                 this.eContainer.style.setProperty('min-height', '1px');
             }
             this.setVisible(hScrollShowing, { skipAriaHidden: true });
-        };
-        window.clearTimeout(this.setScrollVisibleDebounce);
-        if (!hScrollShowing) {
-            apply();
-        } else {
-            this.setScrollVisibleDebounce = window.setTimeout(apply, 100);
-        }
+        });
     }
 
     public getScrollPosition(): number {
