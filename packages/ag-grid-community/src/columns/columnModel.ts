@@ -453,6 +453,20 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return highestSibling;
         };
 
+        // In pivot mode the cols are regenerated each refresh, so an added col with no sibling
+        // in the preserved order (e.g. a freshly-created pivotRowTotals group when a value
+        // column is re-added) should follow its neighbour in the freshly generated order,
+        // not be banished to the tail of the grid.
+        const newListIndex = this.showingPivotResult ? new Map<AgColumn, number>() : null;
+        if (newListIndex) {
+            for (let i = 0; i < cols.list.length; i++) {
+                newListIndex.set(cols.list[i], i);
+            }
+        }
+
+        // pivot-mode bucket: new cols that sit before every preserved col in the new list.
+        const leadingOrphans: AgColumn[] = [];
+
         // array of cols that have no siblings in the last order, to be added at the tail of the results
         const noSiblingsAvailable: AgColumn[] = [];
 
@@ -462,20 +476,33 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         // for each new col, find the col it needs inserted after and store for when array is constructed
         for (const col of additionalCols) {
-            const prevSiblingIdx = getPreviousSibling(col, null);
-            if (prevSiblingIdx == null) {
+            let anchor = getPreviousSibling(col, null);
+            if (anchor == null && newListIndex) {
+                const idx = newListIndex.get(col)!;
+                for (let j = idx - 1; j >= 0; j--) {
+                    const candidate = cols.list[j];
+                    if (colPositionMap.has(candidate)) {
+                        anchor = candidate;
+                        break;
+                    }
+                }
+                if (anchor == null) {
+                    leadingOrphans.push(col);
+                    continue;
+                }
+            } else if (anchor == null) {
                 noSiblingsAvailable.push(col);
                 continue;
             }
 
-            const prev = previousSiblingPosMap.get(prevSiblingIdx);
+            const prev = previousSiblingPosMap.get(anchor);
             if (prev === undefined) {
-                previousSiblingPosMap.set(prevSiblingIdx, col);
+                previousSiblingPosMap.set(anchor, col);
             } else if (Array.isArray(prev)) {
                 prev.push(col);
             } else {
                 // if we have a single col, then we need to add the new col to the array
-                previousSiblingPosMap.set(prevSiblingIdx, [prev, col]);
+                previousSiblingPosMap.set(anchor, [prev, col]);
             }
         }
 
@@ -483,6 +510,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // first it applies all of the cols with no siblings (so no location in last order)
         // then it works backwards through the preserved order - when a col has siblings, it adds
         // them to the array and then adds the col itself.
+        // finally, any leadingOrphans (pivot-only) are written at the head of the array.
 
         const result = new Array(cols.list.length);
         let resultPointer = result.length - 1;
@@ -506,6 +534,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 }
             }
             result[resultPointer--] = nextCol;
+        }
+
+        for (let i = leadingOrphans.length - 1; i >= 0; i--) {
+            result[resultPointer--] = leadingOrphans[i];
         }
         cols.list = result;
     }
