@@ -8,6 +8,7 @@ mcp.json
 # Plugin-delivered skills — allowlist local-only skills
 /skills/*
 !/skills/technology-stack/
+!/skills/doc-test-repair/
 
 # Plugin-delivered agents — all agents live in plugins
 /subagents/*.md
