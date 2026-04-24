@@ -9,6 +9,47 @@ import type { CellFormula } from '../cellFormula';
  * This file contains utils for resolving formula AST to values
  */
 
+/**
+ * Per-eval cycle-detection state. Tracked as row -> set-of-visiting-columns so push/pop of an
+ * eval frame maps to a single add/remove on a cell's set. A fresh map is allocated at the
+ * outermost `resolveValue` call and reused across nested evals (so a valueGetter that chains
+ * into another formula shares the visiting set and doesn't raise false-positive cycles).
+ */
+export type FormulaVisitorContext = Map<RowNode, Set<AgColumn>>;
+
+/**
+ * Contract the eval loop (`evalAst`, `unresolvedDeps`, error propagation) needs. FormulaService
+ * implements this directly so we pass `this` and avoid allocating bound callbacks.
+ */
+export interface FormulaResolver {
+    ensureCellFormula(row: RowNode, col: AgColumn): CellFormula | null;
+    resolveAddrRef(addr: Addr): unknown;
+}
+
+/** Mark `(r, c)` as visiting. Throws FormulaError(51) if already visiting (cycle). */
+export function formulaVisitorSetVisiting(ctx: FormulaVisitorContext, r: RowNode, c: AgColumn): void {
+    let colSet = ctx.get(r);
+    if (colSet?.has(c)) {
+        throw new FormulaError(51);
+    }
+    if (!colSet) {
+        colSet = new Set<AgColumn>();
+        ctx.set(r, colSet);
+    }
+    colSet.add(c);
+}
+
+/** Mark `(r, c)` as visited. Cleans up the row's entry when its column set becomes empty. */
+export function formulaVisitorSetVisited(ctx: FormulaVisitorContext, r: RowNode, c: AgColumn): void {
+    const colSet = ctx.get(r);
+    if (colSet) {
+        colSet.delete(c);
+        if (colSet.size === 0) {
+            ctx.delete(r);
+        }
+    }
+}
+
 function isRangeCell(cell: Cell): boolean {
     return !!(cell.endColumn && cell.endRow);
 }
@@ -35,7 +76,7 @@ function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | n
 export function evalAst(
     beans: BeanCollection,
     node: FormulaNode,
-    getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown,
+    resolver: FormulaResolver,
     caller: { row: RowNode; column: AgColumn }
 ): unknown {
     if (node.type === 'operand') {
@@ -53,7 +94,7 @@ export function evalAst(
         if (!addr) {
             throw new FormulaError(26);
         }
-        return getCellValue(addr);
+        return resolver.resolveAddrRef(addr);
     }
 
     const fn = beans.formula?.getFunction(node.operation);
@@ -61,14 +102,14 @@ export function evalAst(
         throw new FormulaError(27, [node.operation]);
     }
 
-    const { args, values } = makeArgIterables(beans, node.operands, getCellValue, caller);
+    const { args, values } = makeArgIterables(beans, node.operands, resolver, caller);
     return fn({ row: caller.row, column: caller.column, args, values });
 }
 
 function operandToArg(
     beans: BeanCollection,
     node: FormulaNode,
-    getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown,
+    resolver: FormulaResolver,
     caller: { row: RowNode; column: AgColumn }
 ): FormulaParam {
     if (node.type === 'operand') {
@@ -79,18 +120,18 @@ function operandToArg(
 
         if (isRangeCell(v)) {
             // return a range iterable with range context
-            return buildRangeArgLazy(beans, v, getCellValue);
+            return buildRangeArgLazy(beans, v, resolver);
         }
 
         const addr = resolveRefToAddress(beans, v);
         if (!addr) {
             throw new FormulaError(26);
         }
-        return { kind: 'value', value: getCellValue(addr) };
+        return { kind: 'value', value: resolver.resolveAddrRef(addr) };
     }
 
     // nested op -> scalar
-    const val = evalAst(beans, node, getCellValue, caller);
+    const val = evalAst(beans, node, resolver, caller);
     return { kind: 'value', value: val };
 }
 
@@ -104,7 +145,7 @@ class ParamsIterator implements Iterator<FormulaParam> {
     constructor(
         private readonly beans: BeanCollection,
         private readonly operandNodes: FormulaNode[],
-        private readonly getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown,
+        private readonly resolver: FormulaResolver,
         private readonly caller: { row: RowNode; column: AgColumn }
     ) {}
 
@@ -115,7 +156,7 @@ class ParamsIterator implements Iterator<FormulaParam> {
             return this.res;
         }
         this.res.done = false;
-        this.res.value = operandToArg(this.beans, this.operandNodes[this.i++], this.getCellValue, this.caller);
+        this.res.value = operandToArg(this.beans, this.operandNodes[this.i++], this.resolver, this.caller);
         return this.res;
     }
 
@@ -133,7 +174,7 @@ class ValuesIterator implements Iterator<unknown> {
     constructor(
         private readonly beans: BeanCollection,
         private readonly operandNodes: FormulaNode[],
-        private readonly getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown,
+        private readonly resolver: FormulaResolver,
         private readonly caller: { row: RowNode; column: AgColumn }
     ) {}
 
@@ -156,7 +197,7 @@ class ValuesIterator implements Iterator<unknown> {
                 return this.res;
             }
 
-            const arg = operandToArg(this.beans, this.operandNodes[this.i++], this.getCellValue, this.caller);
+            const arg = operandToArg(this.beans, this.operandNodes[this.i++], this.resolver, this.caller);
 
             if (arg.kind === 'value') {
                 this.res.done = false;
@@ -181,17 +222,17 @@ class ValuesIterator implements Iterator<unknown> {
 function makeArgIterables(
     beans: BeanCollection,
     operandNodes: FormulaNode[],
-    getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown,
+    resolver: FormulaResolver,
     caller: { row: RowNode; column: AgColumn }
 ): { args: Iterable<FormulaParam>; values: Iterable<unknown> } {
     const args: Iterable<FormulaParam> = {
         [Symbol.iterator](): Iterator<FormulaParam> {
-            return new ParamsIterator(beans, operandNodes, getCellValue, caller);
+            return new ParamsIterator(beans, operandNodes, resolver, caller);
         },
     };
     const values: Iterable<unknown> = {
         [Symbol.iterator](): Iterator<unknown> {
-            return new ValuesIterator(beans, operandNodes, getCellValue, caller);
+            return new ValuesIterator(beans, operandNodes, resolver, caller);
         },
     };
     return { args, values };
@@ -244,7 +285,7 @@ class RangeValuesIterator implements Iterator<unknown> {
         private readonly rowEndIndex: number,
         private readonly colStart: AgColumn,
         private readonly colEnd: AgColumn,
-        private readonly getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown
+        private readonly resolver: FormulaResolver
     ) {}
 
     private initColsOnce() {
@@ -290,7 +331,7 @@ class RangeValuesIterator implements Iterator<unknown> {
                 this.currentRowIndex++;
             }
 
-            this.res.value = this.getCellValue({ row, column: col });
+            this.res.value = this.resolver.resolveAddrRef({ row, column: col });
             return this.res;
         }
 
@@ -300,11 +341,7 @@ class RangeValuesIterator implements Iterator<unknown> {
     }
 }
 
-function buildRangeArgLazy(
-    beans: BeanCollection,
-    cell: Cell,
-    getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown
-): RangeParam {
+function buildRangeArgLazy(beans: BeanCollection, cell: Cell, resolver: FormulaResolver): RangeParam {
     const r1 = resolveRowIndex(beans, cell.row);
     const r2 = cell.endRow ? resolveRowIndex(beans, cell.endRow) : r1;
     const rowStart = Math.min(r1, r2);
@@ -320,7 +357,7 @@ function buildRangeArgLazy(
         colStart: c1,
         colEnd: c2,
         [Symbol.iterator](): Iterator<unknown> {
-            return new RangeValuesIterator(beans, rowStart, rowEnd, c1, c2, getCellValue);
+            return new RangeValuesIterator(beans, rowStart, rowEnd, c1, c2, resolver);
         },
     };
 }
@@ -387,11 +424,7 @@ function* rangeAddrs(
  * Streams uncached formula dependencies from an AST in traversal order.
  * Skips primitives, non-formula cells, cached formula cells, and already-done cells.
  */
-export function* unresolvedDeps(
-    beans: BeanCollection,
-    root: FormulaNode,
-    ensureFormulaCache: (row: RowNode, col: AgColumn) => CellFormula | null
-): Generator<Addr> {
+export function* unresolvedDeps(beans: BeanCollection, root: FormulaNode, resolver: FormulaResolver): Generator<Addr> {
     const astStack: FormulaNode[] = [root];
 
     while (astStack.length) {
@@ -412,7 +445,7 @@ export function* unresolvedDeps(
                     throw new FormulaError(33);
                 }
 
-                const cachedCellFormula = ensureFormulaCache(cellAddress.row, cellAddress.column);
+                const cachedCellFormula = resolver.ensureCellFormula(cellAddress.row, cellAddress.column);
                 if (!cachedCellFormula || cachedCellFormula.isValueReady()) {
                     continue; // skip non-formula or already computed
                 }
@@ -435,7 +468,7 @@ export function* unresolvedDeps(
             const endCol = resolveCol(beans, operandValue.endColumn);
 
             for (const cellAddress of rangeAddrs(beans, rowStartIndex, rowEndIndex, startCol, endCol)) {
-                const cachedCellFormula = ensureFormulaCache(cellAddress.row, cellAddress.column);
+                const cachedCellFormula = resolver.ensureCellFormula(cellAddress.row, cellAddress.column);
                 if (!cachedCellFormula || cachedCellFormula.isValueReady()) {
                     continue; // skip non-formula or already computed
                 }

@@ -332,6 +332,12 @@
             }
         },
         "refreshHeader": {},
+        "refreshFormulas": {
+            "more": {
+                "name": "Formula Caching",
+                "url": "./formulas/#caching"
+            }
+        },
         "flashCells": {
             "more": {
                 "name": "Flashing Cells",
