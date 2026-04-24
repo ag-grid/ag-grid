@@ -107,8 +107,8 @@ Multi-line values cannot be round-tripped through a sourceable `KEY=VALUE`
 state file — attempting a heredoc such as `FAILING_EXAMPLES<<EOF ... EOF`
 is a no-op (bash parses it as input redirection to the nonexistent command
 `FAILING_EXAMPLES`), and the inner `EOF` also terminates the outer one.
-Instead, persist the list to a dedicated file and record the **path** in
-state. Every later phase reads it back with `readarray`:
+Instead, persist the list to a dedicated file (one example per line) and
+record the **path** in state:
 
 ```bash
 source /tmp/ag-doc-repair-state
@@ -125,12 +125,19 @@ cat "$FAILING_EXAMPLES_FILE"
 echo "FAILING_EXAMPLES_FILE=${FAILING_EXAMPLES_FILE}" >> /tmp/ag-doc-repair-state
 ```
 
-To use the list in a later phase:
+To iterate the list in a later phase, use a `while read` loop — it's the
+only construct that's portable across every shell Claude Code might use
+(`readarray`/`mapfile` are bash-4-only; macOS ships bash 3.2, and zsh
+doesn't have either). Don't try to collapse the list into a single
+pipe-separated pattern: nx re-shells the positional args, and `|` gets
+reinterpreted as a pipeline operator, splitting your command in two.
 
 ```bash
 source /tmp/ag-doc-repair-state
-readarray -t FAILING_EXAMPLES < "$FAILING_EXAMPLES_FILE"
-GREP_PATTERN=$(IFS='|'; echo "${FAILING_EXAMPLES[*]}")
+while IFS= read -r example; do
+  [ -z "$example" ] && continue
+  # ...use $example one at a time...
+done < "$FAILING_EXAMPLES_FILE"
 ```
 
 This extracts paths of the form `row-pagination/client-paging` directly from
@@ -180,13 +187,35 @@ echo "WORKTREE_PATH=${WORKTREE_PATH}" >> /tmp/ag-doc-repair-state
 echo "BRANCH=${BRANCH}" >> /tmp/ag-doc-repair-state
 ```
 
-Symlink `node_modules` from the main checkout so no reinstall is needed:
+Symlink every `node_modules` from the main checkout so no reinstall is needed.
+**A top-level symlink alone is not enough** — yarn workspaces hoist most
+dependencies to the root but leave package-specific ones in nested
+`packages/*/node_modules` and `community-modules/*/node_modules`. If those
+aren't linked, the dev server fails with errors like
+`Cannot find package @vue/tsconfig/tsconfig.dom.json`. Walk every
+`node_modules` outside of itself and link each in place:
 
 ```bash
 source /tmp/ag-doc-repair-state
-ln -s "${REPO_ROOT}/node_modules" "${WORKTREE_PATH}/node_modules"
+
+# Link .yarn once (cheap, might not exist).
 [ -d "${REPO_ROOT}/.yarn" ] && ln -s "${REPO_ROOT}/.yarn" "${WORKTREE_PATH}/.yarn"
+
+# Link every node_modules directory, skipping nested ones (find prunes).
+while IFS= read -r dir; do
+  rel="${dir#${REPO_ROOT}/}"
+  link="${WORKTREE_PATH}/${rel}"
+  mkdir -p "$(dirname "$link")"
+  ln -s "$dir" "$link"
+done < <(find "$REPO_ROOT" -name node_modules -type d -prune)
+
+# Sanity-check one nested dep the dev server needs.
+test -e "${WORKTREE_PATH}/packages/ag-grid-vue3/node_modules/@vue/tsconfig/tsconfig.dom.json" \
+  || { echo "nested node_modules link missing"; exit 1; }
 ```
+
+`find -prune` stops descending once it finds a `node_modules`, so nested
+`node_modules/*/node_modules` are skipped (they live under their parent link).
 
 ---
 
@@ -264,7 +293,15 @@ until curl -sk "https://localhost:${FREE_PORT}/" > /dev/null 2>&1; do
   if [ "$ELAPSED" -ge "$MAX_WAIT" ]; then
     echo "ERROR: Dev server did not start in ${MAX_WAIT}s. Last log:"
     tail -30 "$DEV_LOG"
-    kill "$DEV_SERVER_PID" 2>/dev/null
+    # Kill the whole process group if we have one (matches Phase 7 cleanup),
+    # so nx/vite/astro children don't get orphaned on this exit path.
+    if [ -n "${DEV_SERVER_PGID:-}" ]; then
+      kill -TERM -- "-${DEV_SERVER_PGID}" 2>/dev/null
+      sleep 2
+      kill -KILL -- "-${DEV_SERVER_PGID}" 2>/dev/null
+    else
+      kill "$DEV_SERVER_PID" 2>/dev/null
+    fi
     exit 1
   fi
 done
@@ -298,45 +335,70 @@ go back and finish Phase 2 or 3 before reading any source files:
 
 ## Phase 4: Reproduce Failures Locally
 
-Run the failing tests against the local dev server to get full Playwright error output.
-This is the primary source of diagnostic information — the CI log only tells you
-*what* failed; the local run tells you *why*.
+Run the failing tests against the local dev server to capture the Playwright
+error output — the only diagnostic signal you're allowed to act on (see
+"Required diagnostic signal" at the top of this skill).
 
-**This phase is a gate.** Do not proceed to Phase 5 (diagnosis or fixes) for any
-example until that example has been confirmed to fail locally. Fixing something
-you haven't reproduced means you're guessing — and you'll waste time "fixing"
-code that was never broken, or that was already fixed on `latest` since the CI run.
+### Playwright positional-arg format
+
+The final positional argument to `playwright test` is a **file-path regex**,
+not a test-name pattern. Example paths are stored in state as
+`toolbar/grid-options`, but the actual spec file lives at
+`.../toolbar/_examples/grid-options/example.spec.ts`. So the argument must
+match the `/_examples/` segment:
+
+| Stored path | Playwright arg |
+|---|---|
+| `toolbar/grid-options` | `toolbar/_examples/grid-options` |
+| `aggregation-columns/enable-aggregation` | `aggregation-columns/_examples/enable-aggregation` |
+
+Do not try to batch examples with a `|`-separated alternation; nx re-shells
+the positional args and the pipe gets interpreted as a shell pipeline,
+truncating the command. Run one example per invocation.
+
+### Run each failing example
 
 ```bash
 source /tmp/ag-doc-repair-state 2>/dev/null || { echo "State file missing"; exit 1; }
 [ -n "$WORKTREE_PATH" ] || { echo "WORKTREE_PATH is empty"; exit 1; }
 [ -d "$WORKTREE_PATH" ] || { echo "WORKTREE_PATH does not exist"; exit 1; }
-readarray -t FAILING_EXAMPLES < "$FAILING_EXAMPLES_FILE"
-GREP_PATTERN=$(IFS='|'; echo "${FAILING_EXAMPLES[*]}")
-echo "Running pattern: $GREP_PATTERN"
-echo "Against: https://localhost:${FREE_PORT}"
+
+REPRODUCED_FILE=/tmp/ag-doc-repair-reproduced
+NOT_REPRODUCED_FILE=/tmp/ag-doc-repair-not-reproduced
+: > "$REPRODUCED_FILE"
+: > "$NOT_REPRODUCED_FILE"
 
 cd "$WORKTREE_PATH"
-BASE_URL="https://localhost:${FREE_PORT}" NX_DAEMON=false \
-  yarn nx run ag-grid-docs:test:interactive:chromium -- "$GREP_PATTERN"
+while IFS= read -r example; do
+  [ -z "$example" ] && continue
+  # toolbar/grid-options -> toolbar/_examples/grid-options
+  spec_arg="${example%/*}/_examples/${example##*/}"
+  echo "=== $example  (arg: $spec_arg) ==="
+  if BASE_URL="https://localhost:${FREE_PORT}" NX_DAEMON=false \
+       yarn nx run ag-grid-docs:test:interactive:chromium -- "$spec_arg"; then
+    echo "$example" >> "$NOT_REPRODUCED_FILE"
+  else
+    echo "$example" >> "$REPRODUCED_FILE"
+  fi
+done < "$FAILING_EXAMPLES_FILE"
+
+echo "REPRODUCED_FILE=${REPRODUCED_FILE}" >> /tmp/ag-doc-repair-state
+echo "NOT_REPRODUCED_FILE=${NOT_REPRODUCED_FILE}" >> /tmp/ag-doc-repair-state
+
+echo "--- Reproduced locally ($(wc -l < "$REPRODUCED_FILE")) ---"
+cat "$REPRODUCED_FILE"
+echo "--- Did not reproduce ($(wc -l < "$NOT_REPRODUCED_FILE")) ---"
+cat "$NOT_REPRODUCED_FILE"
 ```
 
-To run a single example in isolation:
-
-```bash
-source /tmp/ag-doc-repair-state
-cd "$WORKTREE_PATH"
-BASE_URL="https://localhost:${FREE_PORT}" NX_DAEMON=false \
-  yarn nx run ag-grid-docs:test:interactive:chromium -- "row-pagination/client-paging"
-```
-
-To target a specific framework:
+To target a specific framework, re-run one example with `FRAMEWORK=` set
+(useful for Safari/Firefox-only CI failures):
 
 ```bash
 source /tmp/ag-doc-repair-state
 cd "$WORKTREE_PATH"
 BASE_URL="https://localhost:${FREE_PORT}" FRAMEWORK=angular NX_DAEMON=false \
-  yarn nx run ag-grid-docs:test:interactive:chromium -- "row-pagination/client-paging"
+  yarn nx run ag-grid-docs:test:interactive:chromium -- "row-pagination/_examples/client-paging"
 ```
 
 ### Triage before fixing
@@ -354,18 +416,9 @@ Split the failing examples into two buckets based on the local run:
      failures won't reproduce under the default chromium run — re-run with
      `FRAMEWORK=…` or the matching browser project).
 
-Record both buckets in the state file and report them to the user before
-starting any fixes:
-
-```bash
-source /tmp/ag-doc-repair-state
-echo "REPRODUCED<<EOF" >> /tmp/ag-doc-repair-state
-echo "<paths that failed locally>" >> /tmp/ag-doc-repair-state
-echo "EOF" >> /tmp/ag-doc-repair-state
-echo "NOT_REPRODUCED<<EOF" >> /tmp/ag-doc-repair-state
-echo "<paths that passed locally>" >> /tmp/ag-doc-repair-state
-echo "EOF" >> /tmp/ag-doc-repair-state
-```
+The loop above already wrote `/tmp/ag-doc-repair-reproduced` and
+`/tmp/ag-doc-repair-not-reproduced`. Those files are the source of truth for
+the rest of the workflow — don't re-record the buckets in the state file.
 
 Report a short summary to the user: how many failures reproduced, how many
 did not, and your best guess at why (flake / already-fixed / framework-specific)
@@ -377,28 +430,12 @@ nothing to fix.
 
 ## Phase 5: Diagnose and Fix
 
-### Precondition check
+Only work on examples listed in `$REPRODUCED_FILE` from Phase 4, and only
+once you have the local Playwright error output for that example in your
+context (see "Required diagnostic signal" at the top). Examples in
+`$NOT_REPRODUCED_FILE` are off-limits — leave them for the user.
 
-Before editing any source file in this phase, answer these questions for the
-example you are about to work on. If you cannot answer yes to all three, stop
-and go back to Phase 4.
-
-1. Did I run Playwright locally against `https://localhost:${FREE_PORT}/` for this example?
-2. Did it fail?
-3. Do I have the Playwright error output (assertion message, stack trace, locator that failed) in my context right now?
-
-If the answer to any of these is no — including "I read the spec and CI log
-and I'm confident I know the cause" — you do not have the required input.
-Go run the test locally. The only exception is examples in the **did not
-reproduce** bucket from Phase 4, which you are not allowed to edit at all.
-
-### Work loop
-
-Only work on examples in the **reproduced locally** bucket from Phase 4.
-If an example did not reproduce, do not touch its source files — write up
-what you found and leave it for the user to decide.
-
-Work through the reproduced failures one example at a time. For each failure:
+Work through the reproduced failures one at a time. For each failure:
 
 1. Read the Playwright error — it includes the failing assertion, the test URL,
    and a stack trace pointing to the spec file line.
@@ -437,16 +474,30 @@ not a regression.
 
 ## Phase 6: Verify All Fixes and Commit
 
-Re-run the full set of previously-failing examples to confirm everything passes:
+Re-run the set of examples that reproduced locally in Phase 4 (one at a time
+— see Phase 4 for why batching with `|` doesn't work). Passing the
+previously-reproduced examples is the bar for finishing; the never-reproduced
+ones were deliberately not touched.
 
 ```bash
 source /tmp/ag-doc-repair-state 2>/dev/null || { echo "State file missing"; exit 1; }
 [ -n "$WORKTREE_PATH" ] || { echo "WORKTREE_PATH is empty"; exit 1; }
-readarray -t FAILING_EXAMPLES < "$FAILING_EXAMPLES_FILE"
-GREP_PATTERN=$(IFS='|'; echo "${FAILING_EXAMPLES[*]}")
+
 cd "$WORKTREE_PATH"
-BASE_URL="https://localhost:${FREE_PORT}" NX_DAEMON=false \
-  yarn nx run ag-grid-docs:test:interactive:chromium -- "$GREP_PATTERN"
+FAIL_COUNT=0
+while IFS= read -r example; do
+  [ -z "$example" ] && continue
+  spec_arg="${example%/*}/_examples/${example##*/}"
+  echo "=== verify $example ==="
+  if ! BASE_URL="https://localhost:${FREE_PORT}" NX_DAEMON=false \
+         yarn nx run ag-grid-docs:test:interactive:chromium -- "$spec_arg"; then
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+    echo "STILL FAILING: $example"
+  fi
+done < "$REPRODUCED_FILE"
+
+[ "$FAIL_COUNT" -eq 0 ] || { echo "$FAIL_COUNT examples still failing"; exit 1; }
+echo "All previously-reproduced examples now pass."
 ```
 
 If any still fail, repeat Phase 5 for those.
