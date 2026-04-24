@@ -1,5 +1,4 @@
 import { getByTestId } from '@testing-library/dom';
-import '@testing-library/jest-dom';
 import { act, cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import React from 'react';

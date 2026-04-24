@@ -4,5 +4,5 @@
     "types": ["vite/client"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts", "src/**/test/**", "src/**/test-utils/**"]
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts", "src/**/test/**", "src/**/test-utils/**"]
 }

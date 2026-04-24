@@ -424,7 +424,7 @@ describe('AgFullWidthRowNotesFeature', () => {
                 params,
                 rowNode: params.rowNode,
                 column: { getColId: () => ('column' in params ? params.column.getColId() : 'athlete') },
-                note: { text: `note-${'pinned' in params ? params.pinned ?? 'center' : 'cell'}` },
+                note: { text: `note-${'pinned' in params ? (params.pinned ?? 'center') : 'cell'}` },
                 isReadOnly: false,
                 isSuppressed: false,
                 canView: true,

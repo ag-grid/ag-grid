@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom';
-
 import { TextEditorModule, UndoRedoEditModule, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
