@@ -44,23 +44,10 @@ export class CellFormula {
         public readonly rowNode: RowNode,
         public readonly column: AgColumn,
         public formulaString: string,
+        public readonly fromDataSource: boolean,
         private readonly beans: BeanCollection,
         private readonly service: FormulaService
     ) {}
-
-    public setFormulaString(next: string) {
-        if (this.formulaString === next) {
-            return;
-        }
-        this.formulaString = next;
-        this.astStale = true;
-        this._valueVersion = -1;
-        // inline _clearError: drop the stale error fields
-        this.errorType = null;
-        this.errorId = null;
-        this.errorMessage = '';
-        this.errorVariableValues = null;
-    }
 
     /** Cache write: store a fresh computed value (and clear previous error). */
     public setComputedValue(v: unknown) {

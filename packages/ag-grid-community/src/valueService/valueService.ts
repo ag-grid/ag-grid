@@ -262,11 +262,10 @@ export class ValueService extends BeanStub implements NamedBean {
         const colDef = column.colDef;
         const colId = column.colId;
 
-        // Formula datasource is skipped for group rows — formulas and row grouping are not supported together.
-        const formulaDataSvc = !isGroup && this.formulaDataSvc;
-        if (formulaDataSvc && formulaDataSvc.hasDataSource() && colDef.allowFormula === true) {
-            const formula = formulaDataSvc.getFormula({ column, rowNode });
-            if (_isExpressionString(formula)) {
+        // Skipped for group rows — formulas + row grouping are not supported together.
+        if (!isGroup && colDef.allowFormula) {
+            const formula = this.beans.formula?.getDataSourceFormula(rowNode as RowNode, column);
+            if (formula !== undefined) {
                 return formula;
             }
         }

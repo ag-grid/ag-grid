@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
-import type { FormulaDataSource, FormulaFunctionParams, GridOptions, Module } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
+import type { FormulaDataSource, FormulaFunctionParams, GridOptions, Module, RowNode } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule, TextEditorModule, UndoRedoEditModule } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout, waitForEvent } from '../test-utils';
@@ -11,7 +11,13 @@ describe('ag-grid formulas edge cases', () => {
     const gridRowsOpts = { useFormatter: false } as const;
 
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, FormulaModule, TextEditorModule, UndoRedoEditModule] as Module[],
+        modules: [
+            ClientSideRowModelModule,
+            FormulaModule,
+            PinnedRowModule,
+            TextEditorModule,
+            UndoRedoEditModule,
+        ] as Module[],
     });
 
     beforeEach(() => {
@@ -505,11 +511,6 @@ describe('ag-grid formulas edge cases', () => {
     });
 
     test('serializer output covers operand types, precedence and parens branches', async () => {
-        // Commits an A1 formula via the editor and reads back the normalised REF-format string
-        // written to row data. This exercises the full parse -> serialize pipeline and pins down
-        // the exact serializer output so regressions in `needsParensInBinary`,
-        // `needsParensForUnaryMinus`, operand emission (string/number/boolean/cell) and range
-        // formatting are caught.
         const api = createGrid('edge-serializer-shapes', {
             rowData: [
                 { id: 'r1', a: 1, b: 2, c: 3, x: null },
@@ -698,5 +699,426 @@ describe('ag-grid formulas edge cases', () => {
         `);
 
         expect(getFormula).toHaveBeenCalled();
+    });
+
+    test('formulaDataSource.getFormula is only called for columns with allowFormula=true', async () => {
+        const getFormula = vi.fn(({ rowNode, column }) =>
+            rowNode.id === 'r1' && column.getColId() === 'a' ? '=1+2' : undefined
+        );
+        const setFormula = vi.fn();
+        const dataSource: FormulaDataSource = { getFormula, setFormula };
+
+        gridsManager.createGrid('edge-formula-datasource-allowformula-gated', {
+            getRowId: (params) => params.data?.id,
+            rowData: [
+                { id: 'r1', a: 1, b: 2, c: 3 },
+                { id: 'r2', a: 4, b: 5, c: 6 },
+            ],
+            columnDefs: [
+                { field: 'a', allowFormula: true },
+                { field: 'b' }, // no allowFormula
+                { field: 'c', allowFormula: false },
+            ],
+            formulaDataSource: dataSource,
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        const columnsQueried = new Set(getFormula.mock.calls.map(([p]) => p.column.getColId()));
+        expect(columnsQueried.has('a')).toBe(true);
+        expect(columnsQueried.has('b')).toBe(false);
+        expect(columnsQueried.has('c')).toBe(false);
+    });
+
+    test('formulas can reference non-allowFormula columns without triggering getFormula on them', async () => {
+        const getFormula = vi.fn(({ rowNode, column }) =>
+            rowNode.id === 'r1' && column.getColId() === 'out' ? '=REF(COLUMN("plain"),ROW("r1"))*2' : undefined
+        );
+        const setFormula = vi.fn();
+        const dataSource: FormulaDataSource = { getFormula, setFormula };
+
+        const api = gridsManager.createGrid('edge-formula-refs-plain-col', {
+            getRowId: (params) => params.data?.id,
+            rowData: [{ id: 'r1', plain: 7, out: null }],
+            columnDefs: [
+                { field: 'plain' }, // NOT allowFormula — only read by REF, never queried via getFormula
+                { field: 'out', allowFormula: true },
+            ],
+            formulaDataSource: dataSource,
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        await new GridRows(api, 'formula reads raw value from non-formula column', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" plain:7 out:14
+        `);
+
+        const columnsQueried = new Set(getFormula.mock.calls.map(([p]) => p.column.getColId()));
+        expect(columnsQueried.has('out')).toBe(true);
+        expect(columnsQueried.has('plain')).toBe(false);
+    });
+
+    test('plain-value cells in allowFormula columns cache their "not a formula" result (no re-query per dep lookup)', async () => {
+        const getFormula = vi.fn(({ rowNode, column }) => {
+            const colId = column.getColId();
+            if (colId === 'b1' && rowNode.id === 'r1') {
+                return '=REF(COLUMN("a"),ROW("r1"))*2';
+            }
+            if (colId === 'b2' && rowNode.id === 'r1') {
+                return '=REF(COLUMN("a"),ROW("r1"))+10';
+            }
+            if (colId === 'b3' && rowNode.id === 'r1') {
+                return '=REF(COLUMN("a"),ROW("r1"))-5';
+            }
+            return undefined;
+        });
+        const dataSource: FormulaDataSource = { getFormula, setFormula: vi.fn() };
+
+        const api = gridsManager.createGrid('edge-negative-cache', {
+            getRowId: (params) => params.data?.id,
+            rowData: [{ id: 'r1', a: 7, b1: null, b2: null, b3: null }],
+            columnDefs: [
+                { field: 'a', allowFormula: true },
+                { field: 'b1', allowFormula: true },
+                { field: 'b2', allowFormula: true },
+                { field: 'b3', allowFormula: true },
+            ],
+            formulaDataSource: dataSource,
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        await new GridRows(api, 'shared plain-value reference', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" a:7 b1:14 b2:17 b3:2
+        `);
+
+        const aR1Calls = getFormula.mock.calls.filter(([p]) => p.column.getColId() === 'a' && p.rowNode.id === 'r1');
+        expect(aR1Calls.length).toBe(1);
+    });
+
+    test('plain-text "=..." values on non-formula columns are not parsed as formulas', async () => {
+        const api = gridsManager.createGrid('edge-plain-text-equals-on-non-formula-col', {
+            getRowId: (params) => params.data?.id,
+            rowData: [{ id: 'r1', formulaCol: '=1+2', textCol: '=1+2' }],
+            columnDefs: [
+                { field: 'formulaCol', allowFormula: true },
+                { field: 'textCol' }, // no allowFormula — the `=` prefix must NOT be interpreted
+            ],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        await new GridRows(api, 'non-formula column preserves "=" prefix', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" formulaCol:3 textCol:"=1+2"
+        `);
+    });
+
+    test('REF into a non-allowFormula column with a "=..." raw value returns the literal string', async () => {
+        const api = gridsManager.createGrid('edge-ref-non-allowformula-col-equals-text', {
+            getRowId: (params) => params.data?.id,
+            rowData: [{ id: 'r1', textCol: '=1+2', out: '=REF(COLUMN("textCol"),ROW("r1"))' }],
+            columnDefs: [
+                { field: 'textCol' }, // NOT allowFormula — "=1+2" must NOT be re-parsed
+                { field: 'out', allowFormula: true },
+            ],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        await new GridRows(api, 'REF reads raw string from non-formula column', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 row-number:"1" textCol:"=1+2" out:"=1+2"
+        `);
+    });
+
+    describe('api.refreshFormulas', () => {
+        type StoreKey = `${string}:${string}`;
+        const k = (rowId: string, colId: string): StoreKey => `${rowId}:${colId}`;
+
+        /**
+         * Build a grid whose `out` column formula comes from an external store. Mutating the
+         * store alone does not reach the grid until `refreshFormulas` (or another invalidation
+         * event) runs — that's exactly what these tests exercise.
+         */
+        function createRefreshFixture(testId: string, initial: Record<StoreKey, string>) {
+            const store = new Map<string, string>(Object.entries(initial));
+            const getFormula = vi.fn(({ rowNode, column }) => store.get(k(rowNode.id!, column.getColId())));
+            const dataSource: FormulaDataSource = { getFormula, setFormula: vi.fn() };
+
+            const api = gridsManager.createGrid(testId, {
+                getRowId: (params) => params.data?.id,
+                rowData: [
+                    { id: 'r1', out: null },
+                    { id: 'r2', out: null },
+                ],
+                columnDefs: [{ field: 'out', allowFormula: true }],
+                formulaDataSource: dataSource,
+            });
+            return { api, store, getFormula };
+        }
+
+        test('no-arg call invalidates the whole cache and re-queries every cell', async () => {
+            const { api, store, getFormula } = createRefreshFixture('api-refresh-all', {
+                [k('r1', 'out')]: '=1+2',
+                [k('r2', 'out')]: '=10+20',
+            });
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            await new GridRows(api, 'initial formulas', gridRowsOpts).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:r1 row-number:"1" out:3
+                └── LEAF id:r2 row-number:"2" out:30
+            `);
+
+            getFormula.mockClear();
+            store.set(k('r1', 'out'), '=100+1');
+            store.set(k('r2', 'out'), '=200+2');
+            expect(api.refreshFormulas()).toBe(true);
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            await new GridRows(api, 'after refreshFormulas()', gridRowsOpts).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:r1 row-number:"1" out:101
+                └── LEAF id:r2 row-number:"2" out:202
+            `);
+
+            const refreshedRows = new Set(getFormula.mock.calls.map(([p]) => p.rowNode.id));
+            expect(refreshedRows.has('r1')).toBe(true);
+            expect(refreshedRows.has('r2')).toBe(true);
+        });
+
+        test('passing a RowNode invalidates only that row', async () => {
+            const { api, store, getFormula } = createRefreshFixture('api-refresh-rownode', {
+                [k('r1', 'out')]: '=1+2',
+                [k('r2', 'out')]: '=10+20',
+            });
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            getFormula.mockClear();
+            store.set(k('r1', 'out'), '=100+1');
+            store.set(k('r2', 'out'), '=200+2'); // updated but NOT invalidated
+            const r1 = api.getRowNode('r1')!;
+            expect(api.refreshFormulas(r1)).toBe(true);
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            await new GridRows(api, 'only r1 refreshed', gridRowsOpts).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:r1 row-number:"1" out:101
+                └── LEAF id:r2 row-number:"2" out:30
+            `);
+
+            const refreshedRows = new Set(getFormula.mock.calls.map(([p]) => p.rowNode.id));
+            expect(refreshedRows.has('r1')).toBe(true);
+            expect(refreshedRows.has('r2')).toBe(false);
+        });
+
+        test('passing a row id string resolves via the row model', async () => {
+            const { api, store, getFormula } = createRefreshFixture('api-refresh-rowid', {
+                [k('r1', 'out')]: '=1+2',
+                [k('r2', 'out')]: '=10+20',
+            });
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            getFormula.mockClear();
+            store.set(k('r1', 'out'), '=100+1');
+            store.set(k('r2', 'out'), '=200+2');
+            expect(api.refreshFormulas('r2')).toBe(true);
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            await new GridRows(api, 'only r2 refreshed', gridRowsOpts).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:r1 row-number:"1" out:3
+                └── LEAF id:r2 row-number:"2" out:202
+            `);
+
+            const refreshedRows = new Set(getFormula.mock.calls.map(([p]) => p.rowNode.id));
+            expect(refreshedRows.has('r1')).toBe(false);
+            expect(refreshedRows.has('r2')).toBe(true);
+        });
+
+        test('unknown row id is a silent no-op — cached values remain stale', async () => {
+            const { api, store, getFormula } = createRefreshFixture('api-refresh-unknown-id', {
+                [k('r1', 'out')]: '=1+2',
+                [k('r2', 'out')]: '=10+20',
+            });
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            getFormula.mockClear();
+            store.set(k('r1', 'out'), '=100+1');
+            store.set(k('r2', 'out'), '=200+2');
+            expect(api.refreshFormulas('does-not-exist')).toBe(false);
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            await new GridRows(api, 'unknown id: no rows refreshed', gridRowsOpts).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:r1 row-number:"1" out:3
+                └── LEAF id:r2 row-number:"2" out:30
+            `);
+            expect(getFormula).not.toHaveBeenCalled();
+        });
+
+        test('returns false when the formula service is inactive', async () => {
+            const api = gridsManager.createGrid('api-refresh-inactive', {
+                getRowId: (params) => params.data?.id,
+                rowData: [{ id: 'r1', value: 1 }],
+                columnDefs: [{ field: 'value' }], // no allowFormula anywhere
+            });
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            const r1 = api.getRowNode('r1')!;
+            expect(api.refreshFormulas(r1)).toBe(false);
+            expect(api.refreshFormulas('r1')).toBe(false);
+        });
+
+        test('cellValueChanged walks the sibling chain — pinned cache does not diverge after a body edit', async () => {
+            const store = { template: (plain: number) => `=${plain}+2` };
+            const getFormula = vi.fn(({ rowNode, column }) => {
+                if (column.getColId() !== 'out') {
+                    return undefined;
+                }
+                const plainValue = Number(rowNode.data?.plain ?? 0);
+                return store.template(plainValue);
+            });
+
+            const api = gridsManager.createGrid('api-cell-edit-sibling-invalidation', {
+                getRowId: (params) => params.data?.id,
+                rowData: [{ id: 'r1', plain: 2, out: null }],
+                columnDefs: [{ field: 'plain' }, { field: 'out', allowFormula: true }],
+                enableRowPinning: true,
+                isRowPinned: () => 'top',
+                formulaDataSource: { getFormula, setFormula: vi.fn() },
+            });
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            // Initial: plain=2, getFormula returns "=2+2" → out=4 on both sides.
+            await new GridRows(api, 'initial', gridRowsOpts).check(`
+                PINNED_TOP id:t-top-r1 row-number:"1" plain:2 out:4
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" plain:2 out:4
+            `);
+
+            const r1 = api.getRowNode('r1')!;
+            r1.setDataValue('plain', 10);
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            await new GridRows(api, 'after body edit — pinned matches body', gridRowsOpts).check(`
+                PINNED_TOP id:t-top-r1 row-number:"1" plain:10 out:12
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" plain:10 out:12
+            `);
+        });
+
+        test('cellValueChanged invalidates formulas that REF a non-formula column — downstream rows are not left stale', async () => {
+            const api = gridsManager.createGrid('api-cell-edit-cross-row-non-formula-ref', {
+                getRowId: (params) => params.data?.id,
+                rowData: [
+                    { id: 'a', plain: 5 },
+                    { id: 'b', out: '=REF(COLUMN("plain"),ROW("a"))*2' },
+                ],
+                columnDefs: [{ field: 'plain' }, { field: 'out', allowFormula: true }],
+            });
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            await new GridRows(api, 'initial: b.out reads a.plain', gridRowsOpts).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:a row-number:"1" plain:5
+                └── LEAF id:b row-number:"2" out:10
+            `);
+
+            const a = api.getRowNode('a')!;
+            a.setDataValue('plain', 20);
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            await new GridRows(api, 'after a.plain edit: b.out refreshed', gridRowsOpts).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:a row-number:"1" plain:20
+                └── LEAF id:b row-number:"2" out:40
+            `);
+        });
+
+        test('cellValueChanged does not double-refresh when valueService fires both body and pinned events', async () => {
+            const getFormula = vi.fn(({ rowNode, column }) => {
+                if (column.getColId() !== 'out') {
+                    return undefined;
+                }
+                return `=${Number(rowNode.data?.plain ?? 0)}+2`;
+            });
+
+            const api = gridsManager.createGrid('api-cell-edit-no-double-refresh', {
+                getRowId: (params) => params.data?.id,
+                rowData: [{ id: 'r1', plain: 2, out: null }],
+                columnDefs: [{ field: 'plain' }, { field: 'out', allowFormula: true }],
+                enableRowPinning: true,
+                isRowPinned: () => 'top',
+                formulaDataSource: { getFormula, setFormula: vi.fn() },
+            });
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            // Clear the spy after initial render populates both caches.
+            getFormula.mockClear();
+
+            const r1 = api.getRowNode('r1')!;
+            r1.setDataValue('plain', 10);
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            // After the edit: cache for body and pinned each cleared once (by the first event),
+            // then re-populated once each by the repaint. With the old always-bump handler the
+            // second event would wipe + refresh again, doubling the getFormula calls.
+            const outCalls = getFormula.mock.calls.filter(([p]) => p.column.getColId() === 'out');
+            expect(outCalls.length).toBe(2); // one for body, one for pinned sibling
+        });
+
+        test('refreshFormulas propagates through the pinned-sibling chain from either side', async () => {
+            const store = new Map<string, string>([['r1:out', '=1+2']]);
+            const getFormula = vi.fn(({ rowNode, column }) => {
+                const bodyId = rowNode.id!.replace(/^t-top-/, '');
+                return store.get(`${bodyId}:${column.getColId()}`);
+            });
+
+            const api = gridsManager.createGrid('api-refresh-pinned-sibling-chain', {
+                getRowId: (params) => params.data?.id,
+                rowData: [{ id: 'r1', out: null }],
+                columnDefs: [{ field: 'out', allowFormula: true }],
+                enableRowPinning: true,
+                isRowPinned: () => 'top',
+                formulaDataSource: { getFormula, setFormula: vi.fn() },
+            });
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            await new GridRows(api, 'initial: body and pinned both cached', gridRowsOpts).check(`
+                PINNED_TOP id:t-top-r1 row-number:"1" out:3
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" out:3
+            `);
+
+            store.set('r1:out', '=100+1');
+            const pinnedRow = api.getPinnedTopRow(0) as RowNode;
+            expect(api.refreshFormulas(pinnedRow)).toBe(true);
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            await new GridRows(api, 'after refresh via pinned node', gridRowsOpts).check(`
+                PINNED_TOP id:t-top-r1 row-number:"1" out:101
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" out:101
+            `);
+
+            store.set('r1:out', '=999-1');
+            expect(api.refreshFormulas('r1')).toBe(true);
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            await new GridRows(api, 'after refresh via body id', gridRowsOpts).check(`
+                PINNED_TOP id:t-top-r1 row-number:"1" out:998
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" out:998
+            `);
+
+            store.set('r1:out', '=42+0');
+            expect(api.refreshFormulas(pinnedRow.id!)).toBe(true);
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            await new GridRows(api, 'after refresh via pinned id string', gridRowsOpts).check(`
+                PINNED_TOP id:t-top-r1 row-number:"1" out:42
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:r1 row-number:"1" out:42
+            `);
+        });
     });
 });
