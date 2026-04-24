@@ -93,7 +93,22 @@ class AgToolbar extends Component implements FocusableContainer {
             })
         );
 
+        // The toolbar clips overflow, so a focused item that sits outside the visible area
+        // would otherwise appear to lose focus. Scroll it back into view on focusin.
+        this.addManagedElementListeners(eGui, {
+            focusin: this.ensureFocusedItemVisible.bind(this),
+        });
+
         _addFocusableContainerListener(this.beans, this, eGui);
+    }
+
+    private ensureFocusedItemVisible(e: FocusEvent): void {
+        const eGui = this.getGui();
+        const target = e.target as HTMLElement | null;
+        if (!target || !eGui.contains(target) || target === eGui) {
+            return;
+        }
+        target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     }
 
     public getFocusableContainerName(): 'toolbar' {
