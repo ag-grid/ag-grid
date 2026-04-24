@@ -158,7 +158,7 @@
     cursor: text;
 }
 
-.ag-toolbar-find-match-count:not(:empty) {
+:where(.ag-toolbar-find-match-count):not(:empty) {
     padding-inline-start: calc(var(--ag-spacing) * 0.5);
 }
 

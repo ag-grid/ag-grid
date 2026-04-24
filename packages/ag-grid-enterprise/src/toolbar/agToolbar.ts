@@ -108,7 +108,10 @@ class AgToolbar extends Component implements FocusableContainer {
         if (!target || !eGui.contains(target) || target === eGui) {
             return;
         }
-        target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        // JSDOM and some embedders omit scrollIntoView.
+        if (typeof target.scrollIntoView === 'function') {
+            target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        }
     }
 
     public getFocusableContainerName(): 'toolbar' {
