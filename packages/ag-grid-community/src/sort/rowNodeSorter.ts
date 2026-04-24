@@ -153,7 +153,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         }
 
         const value = beans.valueSvc.getValue(column, node, 'data');
-        if (column.isAllowFormula()) {
+        if (column.colDef.allowFormula) {
             const formula = beans.formula;
             if (formula?.isFormula(value)) {
                 return formula.resolveValue(column, node);
@@ -165,6 +165,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     private getGroupDataValue(node: RowNode, column: AgColumn): any {
         // because they're group rows, no display cols exist, so groupData never populated.
         // instead delegate to getting value from leaf child.
+        // Formulas are currently not supported on row-group columns, so no formula resolution is needed here.
         if (_isGroupUseEntireRow(this.gos, this.pivotActive)) {
             const leafChild = this.firstLeaf(node);
             return leafChild && this.beans.valueSvc.getValue(column, leafChild, 'data');

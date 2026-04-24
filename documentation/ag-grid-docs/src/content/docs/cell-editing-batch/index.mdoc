@@ -62,6 +62,11 @@ The table below shows the impact of the `from` parameter on the value that is re
 -   **`'value'`** — same as `'data'`, but unwraps the aggregation result returned by `avg` and `count` to its scalar value.
 -   **`'data-raw'`** — same as `'data'` but skips aggregation results (`rowNode.aggData`). For group rows the valueGetter or field value is returned instead, which is typically `undefined` since group rows do not hold leaf data.
 
+**Formula Cells (`allowFormula: true`)**
+
+-   **`'data'` / `'value'`** — return the computed result.
+-   **`'edit'` / `'batch'` / `'data-raw'`** — return the raw formula string (e.g. `"=A1*2"`).
+
 ### Example getDataValue()
 
 ```js

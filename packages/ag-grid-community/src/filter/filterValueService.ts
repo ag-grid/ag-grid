@@ -44,9 +44,11 @@ export class FilterValueService extends BeanStub implements NamedBean {
         }
 
         const value = valueSvc.getValue(column, rowNode, 'data');
-        const formula = beans.formula;
-        if (formula && column.isAllowFormula() && formula.isFormula(value)) {
-            return formula.resolveValue(column, rowNode as RowNode);
+        if (column.colDef.allowFormula) {
+            const formula = beans.formula;
+            if (formula?.isFormula(value)) {
+                return formula.resolveValue(column, rowNode as RowNode);
+            }
         }
         return value;
     }

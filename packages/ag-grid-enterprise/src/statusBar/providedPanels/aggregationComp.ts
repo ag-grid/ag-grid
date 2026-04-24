@@ -160,7 +160,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
      */
     private onCellSelectionChanged(): void {
         const beans = this.beans;
-        const { rangeSvc, valueSvc } = beans;
+        const rangeSvc = beans.rangeSvc;
         const cellRanges = rangeSvc?.getCellRanges();
 
         let sum = 0;
@@ -254,7 +254,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                             return;
                         }
 
-                        let value = valueSvc.getValue(col, rowNode, 'data');
+                        let value = rowNode.getDataValue(col, 'data');
 
                         // if empty cell, skip it, doesn't impact count or anything
                         if (_missing(value) || value === '') {

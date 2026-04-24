@@ -47,15 +47,26 @@ export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: bo
         return 1;
     }
 
-    // this is for aggregations sum and avg, where the result can be a number that is wrapped.
-    // if we didn't do this, then the toString() value would be used, which would result in
-    // the strings getting used instead of the numbers.
-    if (typeof valueA === 'object' && valueA.toNumber) {
-        valueA = valueA.toNumber();
+    // Unwrap `IAggFuncResult`-shaped objects (built-in avg/count as well as custom aggFuncs) so we
+    // compare the underlying scalar. Without this, `>`/`<` on objects returns false and the column
+    // silently fails to sort. `toNumber()` is preferred — avg/count provide it and it preserves
+    // precision. Fall back to `.value` for custom aggregation results that expose only the scalar
+    // property (e.g. `{ value: 300, label: '...' }`).
+    // Null / undefined are already short-circuited above, so `typeof === 'object'` is enough here.
+    if (typeof valueA === 'object') {
+        if (typeof valueA.toNumber === 'function') {
+            valueA = valueA.toNumber();
+        } else if ('value' in valueA) {
+            valueA = valueA.value;
+        }
     }
 
-    if (typeof valueB === 'object' && valueB.toNumber) {
-        valueB = valueB.toNumber();
+    if (typeof valueB === 'object') {
+        if (typeof valueB.toNumber === 'function') {
+            valueB = valueB.toNumber();
+        } else if ('value' in valueB) {
+            valueB = valueB.value;
+        }
     }
 
     if (!accentedCompare || typeof valueA !== 'string') {
