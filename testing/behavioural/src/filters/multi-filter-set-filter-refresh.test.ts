@@ -34,6 +34,14 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
                 {
                     field: 'name',
                     filter: 'agMultiColumnFilter',
+                    // Eliminate the 500ms floating-filter debounce so the test is deterministic
+                    // on slow CI runners. This test is about refresh behaviour, not debouncing.
+                    filterParams: {
+                        filters: [
+                            { filter: 'agTextColumnFilter', filterParams: { debounceMs: 1 } },
+                            { filter: 'agSetColumnFilter' },
+                        ],
+                    },
                     floatingFilter: true,
                 },
             ],
@@ -51,8 +59,7 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
         input.value = text;
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
-        // Filters are debounced; wait enough for debounce + async handler refresh.
-        await asyncSetTimeout(600);
+        await asyncSetTimeout(5);
     }
 
     /**
@@ -62,7 +69,7 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
      */
     async function openPopupAndGetDisplayedSetFilterKeys(api: GridApi<Row>): Promise<string[]> {
         api.showColumnFilter('name');
-        await asyncSetTimeout(0);
+        await asyncSetTimeout(5);
         const multiFilter = (await api.getColumnFilterInstance('name')) as MultiFilter | null | undefined;
         const setFilter = multiFilter?.getChildFilterInstance<SetFilter>(1);
         if (!setFilter) {
@@ -74,7 +81,7 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
 
     test('Scenario A: no popup opened — reopening popup shows filtered Set Filter list', async () => {
         const api = await createGrid();
-        await asyncSetTimeout(0);
+        await asyncSetTimeout(5);
 
         await typeInFloatingFilter(api, 'michael');
 
