@@ -474,3 +474,23 @@ reason = "socket.io-parser is only used in testing tools"
 id = "GHSA-48c2-rrv3-qjmp"
 reason = "yaml is only used in dev tools"
 
+[[IgnoredVulns]]
+id = "GHSA-2v35-w6hq-6mfw"
+reason = "@xmldom/xmldom is used only at build time by @vusion/webfonts-generator for webfont generation - not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-f6ww-3ggp-fr8h"
+reason = "@xmldom/xmldom is used only at build time by @vusion/webfonts-generator for webfont generation - not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-j759-j44w-7fr8"
+reason = "@xmldom/xmldom is used only at build time by @vusion/webfonts-generator for webfont generation - not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-x6wf-f3px-wcqx"
+reason = "@xmldom/xmldom is used only at build time by @vusion/webfonts-generator for webfont generation - not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-w5hq-g745-h8pq"
+reason = "uuid is only used by dev/test tooling (jest-junit, jest-text-transformer, sockjs, request) - not included in the libraries distributables"
+
