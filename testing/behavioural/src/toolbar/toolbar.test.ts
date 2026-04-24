@@ -165,6 +165,65 @@ describe('Toolbar', () => {
             expect(toolbar.firstElementChild).toBe(rightStart);
         });
 
+        test('default alignment in RTL does not force right partition', async () => {
+            // When enableRtl is on and no alignment is set, items should stay in the
+            // left partition and rely on flex to mirror them visually. Otherwise,
+            // default items get pushed into the rightItems bucket and the spacer
+            // ends up flipping their position versus explicit-left configs.
+            const api = gridMgr.createGrid('rtl-default-alignment', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                enableRtl: true,
+                toolbar: { items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+
+            // No right-start spacer: all items are in the left partition.
+            expect(toolbar.querySelector('.ag-toolbar-right-start')).toBeNull();
+        });
+
+        test('explicit left alignment matches inherited left alignment in RTL', async () => {
+            const withExplicit = gridMgr.createGrid('rtl-explicit-left', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                enableRtl: true,
+                toolbar: {
+                    alignment: 'left',
+                    items: [
+                        { toolbarItem: 'agQuickFilterToolbarItem', alignment: 'left' },
+                        { toolbarItem: 'agFindToolbarItem', alignment: 'left' },
+                    ],
+                },
+            });
+            const withInherited = gridMgr.createGrid('rtl-inherited-left', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                enableRtl: true,
+                toolbar: {
+                    alignment: 'left',
+                    items: ['agQuickFilterToolbarItem', 'agFindToolbarItem'],
+                },
+            });
+
+            await Promise.all([
+                waitForEvent('firstDataRendered', withExplicit),
+                waitForEvent('firstDataRendered', withInherited),
+            ]);
+
+            const explicitToolbar =
+                TestGridsManager.getHTMLElement(withExplicit)!.querySelector<HTMLElement>('.ag-toolbar')!;
+            const inheritedToolbar =
+                TestGridsManager.getHTMLElement(withInherited)!.querySelector<HTMLElement>('.ag-toolbar')!;
+
+            const explicitChildClasses = Array.from(explicitToolbar.children).map((el) => el.className);
+            const inheritedChildClasses = Array.from(inheritedToolbar.children).map((el) => el.className);
+            expect(explicitChildClasses).toEqual(inheritedChildClasses);
+        });
+
         test('rapid consecutive updates converge on the final configuration', async () => {
             const api = gridMgr.createGrid('runtime-rapid-updates', {
                 columnDefs: [{ field: 'name' }],

@@ -187,7 +187,9 @@ class AgToolbar extends Component implements FocusableContainer {
 
         const leftItems: NormalisedToolbarItem[] = [];
         const rightItems: NormalisedToolbarItem[] = [];
-        const defaultAlignment: 'left' | 'right' = toolbar?.alignment ?? (this.gos.get('enableRtl') ? 'right' : 'left');
+        // Alignment is semantic, not physical — flex mirrors layout in RTL automatically, so
+        // the default is always 'left' regardless of direction.
+        const defaultAlignment: 'left' | 'right' = toolbar?.alignment ?? 'left';
         // Separators inherit the alignment of the preceding item, unless explicitly set
         let lastAlignment: 'left' | 'right' = defaultAlignment;
         for (const item of items) {
