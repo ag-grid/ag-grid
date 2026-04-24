@@ -22,8 +22,8 @@ The grid will reorder the columns so that 'left pinned' columns come first and '
 
 It is possible to pin a column by moving the column in the following ways:
 
--   When other columns are pinned, drag the column to the existing pinned area.
--   When no columns are pinned, drag the column to the edge of the grid and wait for approximately one second. The grid will then assume you want to pin and create a pinned area and place the column into it.
+- When other columns are pinned, drag the column to the existing pinned area.
+- When no columns are pinned, drag the column to the edge of the grid and wait for approximately one second. The grid will then assume you want to pin and create a pinned area and place the column into it.
 
 {% video videoSrc="resources/pinning-by-moving.mp4" centered=true /%}
 
@@ -37,13 +37,13 @@ When resizing pinned columns, the size of the pinned sections (left and right) w
 
 If you do not want the user to be able to pin using the UI, set the property `lockPinned=true`. This will block the UI in the following way:
 
--   Dragging a column to the pinned section will not pin the column.
--   For AG Grid Enterprise, the column menu will not have a pin option.
+- Dragging a column to the pinned section will not pin the column.
+- For AG Grid Enterprise, the column menu will not have a pin option.
 
 The example below demonstrates columns with pinning locked. The following can be noted:
 
--   The column **Athlete** is pinned via the configuration and has `lockPinned=true`. This means the column will be pinned always, it is not possible to drag the column out of the pinned section.
--   The column **Age** is not pinned and has `lockPinned=true`. This means the column cannot be pinned by dragging the column.
--   All other columns act as normal. They can be added and removed from the pinned section by dragging.
+- The column **Athlete** is pinned via the configuration and has `lockPinned=true`. This means the column will be pinned always, it is not possible to drag the column out of the pinned section.
+- The column **Age** is not pinned and has `lockPinned=true`. This means the column cannot be pinned by dragging the column.
+- All other columns act as normal. They can be added and removed from the pinned section by dragging.
 
 {% gridExampleRunner title="Lock Pinned" name="lock-pinned" /%}

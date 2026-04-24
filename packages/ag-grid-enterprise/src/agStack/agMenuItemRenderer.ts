@@ -21,14 +21,14 @@ interface AgMenuItemRendererParams {
 }
 
 export class AgMenuItemRenderer<
-        TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-        TProperties extends _BaseProperties,
-        TGlobalEvents extends _BaseEvents,
-        TCommon,
-        TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
-        TComponentSelectorType extends string,
-        TMenuActionParams extends TCommon,
-    >
+    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TCommon,
+    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TComponentSelectorType extends string,
+    TMenuActionParams extends TCommon,
+>
     extends _AgComponentStub<
         TBeanCollection,
         TProperties,

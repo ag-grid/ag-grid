@@ -11,8 +11,11 @@ import type { GridCheckbox } from '../../widgets/gridWidgetTypes';
 import checkboxCellRendererCSS from './checkboxCellRenderer.css';
 import type { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 
-export interface ICheckboxCellRendererParams<TData = any, TContext = any>
-    extends ICellRendererParams<TData, boolean, TContext> {
+export interface ICheckboxCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<
+    TData,
+    boolean,
+    TContext
+> {
     /** Set to `true` for the input to be disabled. */
     disabled?: boolean;
 }

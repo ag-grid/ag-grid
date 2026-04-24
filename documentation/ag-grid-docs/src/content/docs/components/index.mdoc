@@ -20,22 +20,22 @@ You can create your own Custom Components to customise the behaviour of the grid
 
 The full list of component types you can provide in the grid are as follows:
 
--   [Cell Component](./component-cell-renderer/): To customise the contents of a cell.
--   [Header Component](./column-headers-components/#custom-component): To customise the header of a column.
--   [Inner Header Component](./column-headers-components/#inner-header-component): To customise the inner header of a column.
--   [Header Group Component](./column-groups/#custom-group-component): To customise the header of a column group.
--   [Inner HeaderGroup Component](./column-groups/#inner-header-group-component): To customise the inner header component of a column group.
--   [Edit Component](./cell-editors/): To customise the editing of a cell.
--   [Filter Component](./component-filter/): For custom column filter that appears inside the column menu.
--   [Floating Filter](./component-floating-filter/): For custom column floating filter that appears inside the column menu.
--   [Date Component](./filter-date/#custom-selection-component): To customise the date selection component in the date filter.
--   [Menu Item Component](./component-menu-item/): To customise the items within grid menus.
--   [Loading Component](./component-loading-cell-renderer/): To customise the loading cell row when using Server Side row model.
--   [Overlay Component](./overlays-overview/): To customise loading, no rows, no matching rows and exporting overlay components or provide a custom overlay.
--   [Status Bar Component](./status-bar/): For custom status bar components.
--   [Tool Panel Component](./component-tool-panel/): For custom tool panel components.
--   [Toolbar Item Component](./toolbar/#custom-components): For custom items rendered in the Quick Access Toolbar.
--   [Tooltip Component](./tooltips/): For custom cell tooltip components.
+- [Cell Component](./component-cell-renderer/): To customise the contents of a cell.
+- [Header Component](./column-headers-components/#custom-component): To customise the header of a column.
+- [Inner Header Component](./column-headers-components/#inner-header-component): To customise the inner header of a column.
+- [Header Group Component](./column-groups/#custom-group-component): To customise the header of a column group.
+- [Inner HeaderGroup Component](./column-groups/#inner-header-group-component): To customise the inner header component of a column group.
+- [Edit Component](./cell-editors/): To customise the editing of a cell.
+- [Filter Component](./component-filter/): For custom column filter that appears inside the column menu.
+- [Floating Filter](./component-floating-filter/): For custom column floating filter that appears inside the column menu.
+- [Date Component](./filter-date/#custom-selection-component): To customise the date selection component in the date filter.
+- [Menu Item Component](./component-menu-item/): To customise the items within grid menus.
+- [Loading Component](./component-loading-cell-renderer/): To customise the loading cell row when using Server Side row model.
+- [Overlay Component](./overlays-overview/): To customise loading, no rows, no matching rows and exporting overlay components or provide a custom overlay.
+- [Status Bar Component](./status-bar/): For custom status bar components.
+- [Tool Panel Component](./component-tool-panel/): For custom tool panel components.
+- [Toolbar Item Component](./toolbar/#custom-components): For custom items rendered in the Quick Access Toolbar.
+- [Tooltip Component](./tooltips/): For custom cell tooltip components.
 
 The remainder of this page gives information that is common across all the component types.
 
@@ -345,20 +345,20 @@ The grid comes with pre-registered components that can be used. Each component p
 
 It is also possible to override components. Where the grid uses a default value, this means the override component will be used instead. The default components, where overriding makes sense, are as follows:
 
--   **agDragAndDropImage**: To change the default drag and drop image when dragging grid parts.
--   **agDateInput**: To change the default date selection across all filters.
--   **agColumnHeader**: To change the default column header across all columns.
--   **agColumnGroupHeader**: To change the default column group header across all columns.
--   **agLoadingCellRenderer**: To change the default loading cell renderer for Enterprise Row Model.
--   **agSkeletonCellRenderer**: To change the default skeleton loading cell renderer for Enterprise Row Model.
--   **agLoadingOverlay**: To change the default 'loading' overlay.
--   **agNoRowsOverlay**: To change the default 'no rows' overlay.
--   **agNoMatchingRowsOverlay**: To change the default 'no matching rows' overlay.
--   **agExportingOverlay**: To change the default 'exporting' overlay.
--   **agCellEditor**: To change the default cell editor.
--   **agDetailCellRenderer**: To change the default detail panel for master / detail grids.
--   **agMenuItem**: To change the default menu item for column and context menus.
--   **agTooltipComponent**: To change the default tooltip component for all tooltips.
+- **agDragAndDropImage**: To change the default drag and drop image when dragging grid parts.
+- **agDateInput**: To change the default date selection across all filters.
+- **agColumnHeader**: To change the default column header across all columns.
+- **agColumnGroupHeader**: To change the default column group header across all columns.
+- **agLoadingCellRenderer**: To change the default loading cell renderer for Enterprise Row Model.
+- **agSkeletonCellRenderer**: To change the default skeleton loading cell renderer for Enterprise Row Model.
+- **agLoadingOverlay**: To change the default 'loading' overlay.
+- **agNoRowsOverlay**: To change the default 'no rows' overlay.
+- **agNoMatchingRowsOverlay**: To change the default 'no matching rows' overlay.
+- **agExportingOverlay**: To change the default 'exporting' overlay.
+- **agCellEditor**: To change the default cell editor.
+- **agDetailCellRenderer**: To change the default detail panel for master / detail grids.
+- **agMenuItem**: To change the default menu item for column and context menus.
+- **agTooltipComponent**: To change the default tooltip component for all tooltips.
 
 To override the default component, register the custom component in the GridOptions `components` property under the above name.
 

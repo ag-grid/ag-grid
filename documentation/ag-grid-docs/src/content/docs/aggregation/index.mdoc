@@ -59,10 +59,10 @@ The method `rowNode.getAggregatedChildren(colKey)` with Client Side Row Model re
 of a group row. This is useful when implementing custom logic based on aggregated data or when
 [Editing Group Rows](./grouping-edit/) to update child rows accordingly.
 
--   For regular group columns, returns the direct children used for aggregation (respecting `suppressAggFilteredOnly`
-    and `groupAggFiltering` settings).
--   For pivot columns on leaf groups, returns only the children matching the column's pivot keys.
--   Returns an empty array for leaf (non-group) rows.
+- For regular group columns, returns the direct children used for aggregation (respecting `suppressAggFilteredOnly`
+  and `groupAggFiltering` settings).
+- For pivot columns on leaf groups, returns only the children matching the column's pivot keys.
+- Returns an empty array for leaf (non-group) rows.
 
 ### Retrieving All Leaf Descendants
 

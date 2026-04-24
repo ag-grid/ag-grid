@@ -63,7 +63,7 @@ export class AgInputDateField<
 
     public setMin(minDate: Date | string | undefined): this {
         const min =
-            minDate instanceof Date ? _serialiseDate(minDate ?? null, !!this.includeTime) ?? undefined : minDate;
+            minDate instanceof Date ? (_serialiseDate(minDate ?? null, !!this.includeTime) ?? undefined) : minDate;
         if (this.min === min) {
             return this;
         }
@@ -77,7 +77,7 @@ export class AgInputDateField<
 
     public setMax(maxDate: Date | string | undefined): this {
         const max =
-            maxDate instanceof Date ? _serialiseDate(maxDate ?? null, !!this.includeTime) ?? undefined : maxDate;
+            maxDate instanceof Date ? (_serialiseDate(maxDate ?? null, !!this.includeTime) ?? undefined) : maxDate;
         if (this.max === max) {
             return this;
         }

@@ -1950,7 +1950,8 @@ export interface _AiToolkitGridApi {
 }
 
 export interface GridApi<TData = any>
-    extends _CoreGridApi<TData>,
+    extends
+        _CoreGridApi<TData>,
         _StateGridApi,
         _RowSelectionGridApi<TData>,
         _RowGridApi<TData>,

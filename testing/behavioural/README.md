@@ -71,7 +71,7 @@ To execute benchmarks on a single file (any positional arg is forwarded to `vite
 
 ## References:
 
--   https://www.youtube.com/watch?v=EZ05e7EMOLM
--   https://docs.google.com/presentation/d/1bEK7sOindHAMIyzFK59VMdjuSzC-NFG3hlUZkwLeGT8
--   https://martinfowler.com/articles/mocksArentStubs.html
--   https://agilewarrior.wordpress.com/2015/04/18/classical-vs-mockist-testing/
+- https://www.youtube.com/watch?v=EZ05e7EMOLM
+- https://docs.google.com/presentation/d/1bEK7sOindHAMIyzFK59VMdjuSzC-NFG3hlUZkwLeGT8
+- https://martinfowler.com/articles/mocksArentStubs.html
+- https://agilewarrior.wordpress.com/2015/04/18/classical-vs-mockist-testing/

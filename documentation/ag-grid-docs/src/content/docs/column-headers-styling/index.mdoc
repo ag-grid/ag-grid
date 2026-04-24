@@ -71,11 +71,11 @@ const gridOptions = {
 
 Below shows both headerStyle and headerClass in a full working example. The example demonstrates the following:
 
--   **Athlete Details**: uses `headerStyle` static object.
--   **Athlete**: uses `headerStyle` static object. This also causes the floating filter to be styled.
--   **Country**: uses `headerStyle` function callback. This allows to set a different background color for the header and floating filter.
--   **Sport**: uses `headerClass` to add the `sport-header` class to the header.
--   **Medal Details**: uses `headerStyle` callback function to toggle different styles when the group is expanded or collapsed.
+- **Athlete Details**: uses `headerStyle` static object.
+- **Athlete**: uses `headerStyle` static object. This also causes the floating filter to be styled.
+- **Country**: uses `headerStyle` function callback. This allows to set a different background color for the header and floating filter.
+- **Sport**: uses `headerClass` to add the `sport-header` class to the header.
+- **Medal Details**: uses `headerStyle` callback function to toggle different styles when the group is expanded or collapsed.
 
 {% gridExampleRunner title="Header Styling" name="header-styles" /%}
 
@@ -97,8 +97,8 @@ To enable this, set `autoHeaderHeight=true` on the column definition you want to
 
 The example below demonstrates using the `autoHeaderHeight` property in conjunction with the `wrapHeaderText` property, so that long column names are fully displayed.
 
--   Note that the long column header names wrap onto another line.
--   Try making a column smaller by dragging the resize handle on the column header, observe that the header will expand so the full header content is still visible.
+- Note that the long column header names wrap onto another line.
+- Try making a column smaller by dragging the resize handle on the column header, observe that the header will expand so the full header content is still visible.
 
 {% gridExampleRunner title="Auto Header Height" name="auto-height" /%}
 
@@ -108,7 +108,7 @@ By default, the text label for the header is displayed horizontally, i.e. as nor
 
 The following example shows how you can provide a unique look and feel to the headers. Note that:
 
--   The header heights have all been changed via grid options:
+- The header heights have all been changed via grid options:
 
 ```{% frameworkTransform=true  %}
     const gridOptions = {
@@ -123,7 +123,7 @@ The following example shows how you can provide a unique look and feel to the he
     }
 ```
 
--   The grouped column header `Athlete Details` has a specific style applied to it to make it bigger. Note that the style is slightly different depending if pivoting or not:
+- The grouped column header `Athlete Details` has a specific style applied to it to make it bigger. Note that the style is slightly different depending if pivoting or not:
 
 ```css
 .ag-pivot-off .ag-header-group-cell {
@@ -137,7 +137,7 @@ The following example shows how you can provide a unique look and feel to the he
 }
 ```
 
--   The column labels have CSS applied to them so they are displayed vertically.
+- The column labels have CSS applied to them so they are displayed vertically.
 
 ```css
 .ag-header-cell-label {
@@ -157,7 +157,7 @@ The following example shows how you can provide a unique look and feel to the he
 }
 ```
 
--   The styling of the column labels have also been tweaked depending if pivoting or not.
+- The styling of the column labels have also been tweaked depending if pivoting or not.
 
 ```css
 .ag-pivot-off .ag-header-cell-label {

@@ -1,7 +1,10 @@
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 
-export interface INumberCellEditorParams<TData = any, TContext = any>
-    extends ICellEditorParams<TData, number, TContext> {
+export interface INumberCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<
+    TData,
+    number,
+    TContext
+> {
     /** Min allowed value. */
     min?: number;
     /** Max allowed value. */

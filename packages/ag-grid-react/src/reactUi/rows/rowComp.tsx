@@ -90,13 +90,9 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             cellsChanged.current = () => {};
         };
     }, []);
-    const cellCtrlsUses = agUseSyncExternalStore(
-        sub,
-        () => {
-            return cellCtrlsRef.current;
-        },
-        []
-    );
+    const cellCtrlsUses = agUseSyncExternalStore(sub, () => {
+        return cellCtrlsRef.current;
+    }, []);
 
     // Will only use useSyncExternalStore if it is supported by the React version and the rendering mode has not been set to 'legacy
     const cellCtrlsMerged = enableUses ? cellCtrlsUses : cellCtrlsFlushSync;

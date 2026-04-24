@@ -17,8 +17,7 @@ import { AgFiltersToolPanelListSelector } from './agFiltersToolPanelList';
 import filtersToolPanelCSS from './filtersToolPanel.css';
 
 export interface ToolPanelFiltersCompParams<TData = any, TContext = any>
-    extends IToolPanelParams<TData, TContext, FiltersToolPanelState>,
-        IToolPanelFiltersCompParams {}
+    extends IToolPanelParams<TData, TContext, FiltersToolPanelState>, IToolPanelFiltersCompParams {}
 
 const FiltersToolPanelElement: ElementParams = {
     tag: 'div',

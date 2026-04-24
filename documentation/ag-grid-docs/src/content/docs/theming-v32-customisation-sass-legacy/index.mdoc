@@ -61,23 +61,22 @@ Theme Parameters are arguments to a theme that change its appearance. Some param
 
 Here are some of the most important theme parameters. There is a [full list](#base-theme-parameters) further down this page.
 
--   `grid-size` is the main control for affecting how tightly data and UI elements are packed together. All padding and spacing in the grid is defined as a multiple of grid-size, so increasing it will make most components larger by increasing their internal white space while leaving the size of text and icons unchanged.
+- `grid-size` is the main control for affecting how tightly data and UI elements are packed together. All padding and spacing in the grid is defined as a multiple of grid-size, so increasing it will make most components larger by increasing their internal white space while leaving the size of text and icons unchanged.
 
--   `borders` controls whether borders are drawn around the grid. There are more `border-*` parameters to provide fine-grained control over which borders are drawn and their colour.
+- `borders` controls whether borders are drawn around the grid. There are more `border-*` parameters to provide fine-grained control over which borders are drawn and their colour.
 
--   `row-height` height in pixels of a grid row.
+- `row-height` height in pixels of a grid row.
 
--   `header-height` height in pixels of a header row.
+- `header-height` height in pixels of a header row.
 
--   `foreground-color` and `background-color` set the text colour and background colour for the grid - there are more colour parameters available for more fine-grained control over the colour scheme.
+- `foreground-color` and `background-color` set the text colour and background colour for the grid - there are more colour parameters available for more fine-grained control over the colour scheme.
 
--   The provided themes have theme-specific parameters to set the colour of many elements at once. These are shortcuts for setting several other parameters.
+- The provided themes have theme-specific parameters to set the colour of many elements at once. These are shortcuts for setting several other parameters.
+    - `alpine-active-color` (Alpine only) sets the colour of checked checkboxes, range selections, row selections, selected tab underlines, and input focus outlines.
 
-    -   `alpine-active-color` (Alpine only) sets the colour of checked checkboxes, range selections, row selections, selected tab underlines, and input focus outlines.
+    - `balham-active-color` (Balham only) sets the colour of checked checkboxes, range selections, row selections, and input focus outlines.
 
-    -   `balham-active-color` (Balham only) sets the colour of checked checkboxes, range selections, row selections, and input focus outlines.
-
-    -   `material-primary-color` and `material-accent-color` (Material only) set the colours used for the primary and accent colour roles specified in the [Material Design colour system](https://material.io/design/color/). Currently primary colour is used for buttons, range selections, selected tab underlines and input focus underlines, and accent colour is used for checked checkboxes.
+    - `material-primary-color` and `material-accent-color` (Material only) set the colours used for the primary and accent colour roles specified in the [Material Design colour system](https://material.io/design/color/). Currently primary colour is used for buttons, range selections, selected tab underlines and input focus underlines, and accent colour is used for checked checkboxes.
 
 ### Customising row and header heights
 
@@ -157,11 +156,11 @@ The simpler your CSS rules are, the less likely they are to break between releas
 
 Browsers use the same mechanism - CSS - for controlling how elements work (e.g. scrolling and whether they respond to mouse events), where elements appear, and how elements look. Our "structural stylesheet" (ag-grid.scss) sets CSS rules that control how the grid works, and the code depends on those rules not being overridden. There is nothing that we can do to prevent themes overriding critical rules, so as a theme author you need to be careful not to break the grid. Here's a guide:
 
--   Visual styles including margins, paddings, sizes, colours, fonts, borders etc are all fine to change in a theme.
+- Visual styles including margins, paddings, sizes, colours, fonts, borders etc are all fine to change in a theme.
 
--   Setting a component to `display: flex` and changing flex child layout properties like `align-items`, `align-self` and `flex-direction` is probably OK if you're trying to change how something looks on a small scale, e.g. to change the align of some text or icons within a container; but if you're trying to change the layout of the grid on a larger scale e.g. turning a vertical scrolling list into a horizontal one, you are likely to break Grid features.
+- Setting a component to `display: flex` and changing flex child layout properties like `align-items`, `align-self` and `flex-direction` is probably OK if you're trying to change how something looks on a small scale, e.g. to change the align of some text or icons within a container; but if you're trying to change the layout of the grid on a larger scale e.g. turning a vertical scrolling list into a horizontal one, you are likely to break Grid features.
 
--   The style properties `position`, `overflow` and `pointer-events` are intrinsic to how the grid works. Changing these values will change how the grid operates, and may break functionality now or in future minor releases.
+- The style properties `position`, `overflow` and `pointer-events` are intrinsic to how the grid works. Changing these values will change how the grid operates, and may break functionality now or in future minor releases.
 
 ## Full list of theme parameters
 
@@ -545,21 +544,19 @@ $my-theme-default-params: (
 
 The following modifiers are available:
 
--   Available for numeric parameters:
+- Available for numeric parameters:
+    - `$times: number` - equivalent to Sass `$value * $number`
+    - `$divide: number` - equivalent to Sass `$value / $number`
+    - `$plus: number` - equivalent to Sass `$value + $number`
+    - `$minus: number` - equivalent to Sass `$value - $number`
 
-    -   `$times: number` - equivalent to Sass `$value * $number`
-    -   `$divide: number` - equivalent to Sass `$value / $number`
-    -   `$plus: number` - equivalent to Sass `$value + $number`
-    -   `$minus: number` - equivalent to Sass `$value - $number`
+- Available for colour parameters:
+    - `$opacity: percentage` - amount should be from 0 to 1, equivalent to Sass `rgba($value, $amount)`
 
--   Available for colour parameters:
+    - `$mix: color percentage` - mixes in an amount of another colour, e.g. `$mix: red 10%` produce a colour made from 90% the parameter value and 10% red.
 
-    -   `$opacity: percentage` - amount should be from 0 to 1, equivalent to Sass `rgba($value, $amount)`
+    - `$lighten: percentage` - amount should be a percentage from 0% to 100%, equivalent to Sass `lighten($value, $amount)`.
 
-    -   `$mix: color percentage` - mixes in an amount of another colour, e.g. `$mix: red 10%` produce a colour made from 90% the parameter value and 10% red.
+    - `$darken: percentage` - amount should be a percentage from 0% to 100%, equivalent to Sass `darken($value, $amount)`
 
-    -   `$lighten: percentage` - amount should be a percentage from 0% to 100%, equivalent to Sass `lighten($value, $amount)`.
-
-    -   `$darken: percentage` - amount should be a percentage from 0% to 100%, equivalent to Sass `darken($value, $amount)`
-
-    -   `$self-overlay: times` - takes a semi-transparent colour and overlays it on top of itself multiple times. For example, if the value of the parameter is `rgba(0, 0, 0, 0.5)` then `$self-overlay: 2` will produce `rgba(0, 0, 0, 0.75)`
+    - `$self-overlay: times` - takes a semi-transparent colour and overlays it on top of itself multiple times. For example, if the value of the parameter is `rgba(0, 0, 0, 0.5)` then `$self-overlay: 2` will produce `rgba(0, 0, 0, 0.75)`

@@ -14,9 +14,9 @@ Behavioural tests in `testing/behavioural/` are the primary test suite for AG Gr
 
 **Key principles:**
 
--   The unit under test is a **behaviour**, not a function, class, method, or file
--   **Avoid mocking** — prefer fakes instead (e.g., fake DOM)
--   Test at the edges of the system to ensure real integration using public APIs
+- The unit under test is a **behaviour**, not a function, class, method, or file
+- **Avoid mocking** — prefer fakes instead (e.g., fake DOM)
+- Test at the edges of the system to ensure real integration using public APIs
 
 ## Test Structure
 
@@ -186,6 +186,6 @@ for (const [name, example] of Object.entries(EXAMPLES)) {
 
 ## Coverage
 
--   Aim for meaningful coverage, not 100%
--   Focus on edge cases and error handling
--   Critical paths should have comprehensive tests
+- Aim for meaningful coverage, not 100%
+- Focus on edge cases and error handling
+- Critical paths should have comprehensive tests

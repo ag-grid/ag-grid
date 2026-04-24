@@ -12,9 +12,9 @@ See [Master / Detail](./master-detail/) to include full width rows as a child of
 
 Below shows an example using full width. The following can be noted:
 
--   The rows for countries France, Italy and Peru have full width components instead of cells.
+- The rows for countries France, Italy and Peru have full width components instead of cells.
 
--   Sorting and filtering all work as if the data was displayed as normal.
+- Sorting and filtering all work as if the data was displayed as normal.
 
 {% gridExampleRunner title="Simple Full Width" name="simple-full-width"  exampleHeight=580 /%}
 
@@ -22,10 +22,10 @@ Below shows an example using full width. The following can be noted:
 
 A `fullWidth` (full width) component takes up the entire width of the grid. A full width component:
 
--   is not impacted by horizontal scrolling.
--   is the width of the grid, regardless of what columns are present.
--   is not impacted by pinned sections of the grid, will span left and right pinned areas regardless.
--   does not participate in the navigation, [Cell Selection](./cell-selection) (AG Grid Enterprise) or [Context Menu](./context-menu) (AG Grid Enterprise) of the main grid.
+- is not impacted by horizontal scrolling.
+- is the width of the grid, regardless of what columns are present.
+- is not impacted by pinned sections of the grid, will span left and right pinned areas regardless.
+- does not participate in the navigation, [Cell Selection](./cell-selection) (AG Grid Enterprise) or [Context Menu](./context-menu) (AG Grid Enterprise) of the main grid.
 
 To use `fullWidth`, you must:
 
@@ -56,21 +56,21 @@ The example's data is minimalistic to focus on how full width impacts rows. For 
 
 The following points should be noted:
 
--   Full width can be applied to any row, including pinned rows. The example demonstrates full width in pinned top, pinned bottom and body rows.
+- Full width can be applied to any row, including pinned rows. The example demonstrates full width in pinned top, pinned bottom and body rows.
 
--   Full width rows can be of any height, which is specified in the usual way using the `getRowHeight(params)` callback. The example sets body `fullWidth` rows to 75px.
+- Full width rows can be of any height, which is specified in the usual way using the `getRowHeight(params)` callback. The example sets body `fullWidth` rows to 75px.
 
--   The pinned full width rows are not impacted by either vertical or horizontal scrolling.
+- The pinned full width rows are not impacted by either vertical or horizontal scrolling.
 
--   The unpinned full width rows are impacted by vertical scrolling only, and not horizontal scrolling.
+- The unpinned full width rows are impacted by vertical scrolling only, and not horizontal scrolling.
 
--   The full width rows span the entire grid, including the pinned left and pinned right sections.
+- The full width rows span the entire grid, including the pinned left and pinned right sections.
 
--   The full width rows are the width of the grid, despite the grid requiring horizontal scrolling to show the cells.
+- The full width rows are the width of the grid, despite the grid requiring horizontal scrolling to show the cells.
 
--   The example is showing a flat list of data. There is no grouping or parent / child relationships between the full width and normal rows.
+- The example is showing a flat list of data. There is no grouping or parent / child relationships between the full width and normal rows.
 
--   The buttons log to the developer console.
+- The buttons log to the developer console.
 
 {% gridExampleRunner title="Basic Full Width" name="basic-full-width"  exampleHeight=595 /%}
 
@@ -83,10 +83,10 @@ In order to have Full Width Rows scroll like normal rows, set `embedFullWidthRow
 
 The example below demonstrates the behaviour when Full Width Rows are embedded in the same container as regular rows. Note the following:
 
--   A different instance of the Full Width Cell Renderer is created for each one of the following sections: **Pinned Left**, **Pinned Right**, **Non Pinned**.
--   Full Width Rows in the **non pinned** section take the whole width of the section and scroll horizontally.
--   Full Width Rows in the **pinned** sections take the whole width of the section.
--   The buttons log to the developer console.
+- A different instance of the Full Width Cell Renderer is created for each one of the following sections: **Pinned Left**, **Pinned Right**, **Non Pinned**.
+- Full Width Rows in the **non pinned** section take the whole width of the section and scroll horizontally.
+- Full Width Rows in the **pinned** sections take the whole width of the section.
+- The buttons log to the developer console.
 
 {% gridExampleRunner title="Embedded Full Width Rows" name="embedded-full-width"  exampleHeight=595 /%}
 
@@ -98,8 +98,8 @@ Adding support for keyboard navigation and focus requires a custom `suppressKeyb
 
 An example of this is shown below, enabling keyboard navigation through the full width cell elements when pressing {% kbd "⇥ Tab" /%} and {% kbd "⇧ Shift" /%}+{% kbd "⇥ Tab" /%}:
 
--   Click on the `United Kingdom` row, press the {% kbd "⇥ Tab" /%} a few times and notice that the full width `France` row can be tabbed into, along with the button, link and textbox. At the end of the cell elements, the tab focus moves to the next cell in the next row
--   Use {% kbd "⇧ Shift" /%}+{% kbd "⇥ Tab" /%} to navigate in the reverse direction
+- Click on the `United Kingdom` row, press the {% kbd "⇥ Tab" /%} a few times and notice that the full width `France` row can be tabbed into, along with the button, link and textbox. At the end of the cell elements, the tab focus moves to the next cell in the next row
+- Use {% kbd "⇧ Shift" /%}+{% kbd "⇥ Tab" /%} to navigate in the reverse direction
 
 The `suppressKeyboardEvent` callback is used to capture tab events and determine if the user is tabbing forward or backwards. It also suppresses the default behaviour of moving to the next cell if tabbing within the child elements.
 

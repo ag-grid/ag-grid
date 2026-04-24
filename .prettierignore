@@ -4,6 +4,7 @@ package-lock.json
 dist
 *.zip
 .github
+.rulesync
 
 # Website
 .astro

@@ -13,8 +13,12 @@ import type { AgDialogCallbacks, AgDialogOptions } from '../agStack/agDialog';
 import { AgDialog } from '../agStack/agDialog';
 import type { PanelPostProcessPopupParams } from './panel';
 
-interface DialogOptions
-    extends AgDialogOptions<BeanCollection, GridOptionsWithDefaults, AgEventTypeParams, PanelPostProcessPopupParams> {}
+interface DialogOptions extends AgDialogOptions<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    PanelPostProcessPopupParams
+> {}
 
 export const DIALOG_CALLBACKS: AgDialogCallbacks<BeanCollection, Dialog> = {
     stopPropagationCallbacks: _STOP_PROPAGATION_CALLBACKS,

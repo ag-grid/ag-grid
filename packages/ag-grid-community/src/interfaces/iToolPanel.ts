@@ -9,8 +9,11 @@ export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> 
     initialState?: TState;
 }
 
-export interface IToolPanelParams<TData = any, TContext = any, TState = any>
-    extends BaseToolPanelParams<TData, TContext, TState> {
+export interface IToolPanelParams<TData = any, TContext = any, TState = any> extends BaseToolPanelParams<
+    TData,
+    TContext,
+    TState
+> {
     /** If tool panel is saving and restoring state, this should be called after the state is updated */
     onStateUpdated: () => void;
 }
@@ -30,8 +33,7 @@ export interface IToolPanel<TData = any, TContext = any, TState = any> {
 }
 
 export interface IToolPanelComp<TData = any, TContext = any, TState = any>
-    extends IToolPanel<TData, TContext, TState>,
-        IComponent<IToolPanelParams<TData, TContext, TState>> {}
+    extends IToolPanel<TData, TContext, TState>, IComponent<IToolPanelParams<TData, TContext, TState>> {}
 
 export interface IToolPanelColumnCompParams {
     /** Suppress Column Move */

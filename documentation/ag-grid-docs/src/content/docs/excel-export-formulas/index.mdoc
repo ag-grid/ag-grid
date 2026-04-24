@@ -51,9 +51,9 @@ const gridOptions = {
 
 Note the following:
 
--   The `Full Name` column uses a `valueGetter` to combine `First Name` and `Last Name`.
--   The `processCellCallback` creates a formula that has a similar function of the `valueGetter`.
--   The exported Excel Sheet will have the `Full Name` column computed using a formula that uses the `First Name` and `Last Name` columns as inputs.
+- The `Full Name` column uses a `valueGetter` to combine `First Name` and `Last Name`.
+- The `processCellCallback` creates a formula that has a similar function of the `valueGetter`.
+- The exported Excel Sheet will have the `Full Name` column computed using a formula that uses the `First Name` and `Last Name` columns as inputs.
 
 {% gridExampleRunner title="Excel Export - Formula DataType" name="excel-export-formula-data-type" /%}
 
@@ -86,8 +86,8 @@ const gridOptions = {
 
 Note the following:
 
--   The `Full Name` column uses a `valueGetter` to combine `First Name` and `Last Name`.
--   The `processCellCallback` code will be executed for all cells exported to Excel. This code will create an Excel formula for any cell with a `valueGetter`. In our sample there's only one such column (Full Name), and we output the corresponding formula (CONCATENATE) into the Excel exported file. This way the exported Excel file will have cells in the `Full Name` column be computed based on the values of `First Name` and `Last Name`.
--   As `autoConvertFormulas=true` there is no need to declare `dataType='Formula'`
+- The `Full Name` column uses a `valueGetter` to combine `First Name` and `Last Name`.
+- The `processCellCallback` code will be executed for all cells exported to Excel. This code will create an Excel formula for any cell with a `valueGetter`. In our sample there's only one such column (Full Name), and we output the corresponding formula (CONCATENATE) into the Excel exported file. This way the exported Excel file will have cells in the `Full Name` column be computed based on the values of `First Name` and `Last Name`.
+- As `autoConvertFormulas=true` there is no need to declare `dataType='Formula'`
 
 {% gridExampleRunner title="Excel Export - Auto Convert Formulas" name="excel-export-auto-convert-formulas" /%}

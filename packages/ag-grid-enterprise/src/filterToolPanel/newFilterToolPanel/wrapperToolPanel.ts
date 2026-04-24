@@ -12,8 +12,7 @@ import { FilterPanel } from './filterPanel';
 import newFiltersToolPanelCSS from './newFiltersToolPanel.css';
 
 interface ToolPanelNewFiltersCompParams<TData = any, TContext = any>
-    extends IToolPanelParams<TData, TContext, NewFiltersToolPanelState>,
-        IToolPanelNewFiltersCompParams {}
+    extends IToolPanelParams<TData, TContext, NewFiltersToolPanelState>, IToolPanelNewFiltersCompParams {}
 
 export class WrapperToolPanel extends Component implements INewFiltersToolPanel, IToolPanelComp {
     private filterPanel: FilterPanel;

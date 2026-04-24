@@ -31,21 +31,21 @@ The example keeps a list of records to mimic data in a "store". Each time the us
 
 Note the following:
 
--   **Reverse**: Reverses the order of the items. The rows are moved rather than recreated. No flicker.
+- **Reverse**: Reverses the order of the items. The rows are moved rather than recreated. No flicker.
 
--   **Append Items**: Adds five items to the end. The rows are moved rather than recreated. No flicker.
+- **Append Items**: Adds five items to the end. The rows are moved rather than recreated. No flicker.
 
--   **Prepend Items**: Adds five items to the start. No flicker.
+- **Prepend Items**: Adds five items to the start. No flicker.
 
--   Note that if a grid sort is applied, the grid sorting order gets preference to the order of the data in the provided list.
+- Note that if a grid sort is applied, the grid sorting order gets preference to the order of the data in the provided list.
 
--   **Remove Selected**: Removes the selected items. Try selecting multiple rows (using the checkboxes, {% kbd "⇧ Shift" /%} + click for range) and remove multiple rows at the same time. Notice how the remaining rows animate to new positions.
+- **Remove Selected**: Removes the selected items. Try selecting multiple rows (using the checkboxes, {% kbd "⇧ Shift" /%} + click for range) and remove multiple rows at the same time. Notice how the remaining rows animate to new positions.
 
--   **Update Prices**: Updates all the prices. Try ordering by price and notice the order change as the prices change. Also try highlighting a range on prices and see the aggregations appear in the status bar. As you update the prices, the aggregation values recalculate.
+- **Update Prices**: Updates all the prices. Try ordering by price and notice the order change as the prices change. Also try highlighting a range on prices and see the aggregations appear in the status bar. As you update the prices, the aggregation values recalculate.
 
--   **Turn Grouping On / Off**: To turn grouping by symbol on and off.
+- **Turn Grouping On / Off**: To turn grouping by symbol on and off.
 
--   **Group Selected A / B / C**: With grouping on, hit the buttons Move to Group A, B and C to move selected items to that group. Notice how the rows animate to the new position.
+- **Group Selected A / B / C**: With grouping on, hit the buttons Move to Group A, B and C to move selected items to that group. Notice how the rows animate to the new position.
 
 (Note: the example uses the Enterprise-only features [Row Grouping](./grouping/), [Cell Selection](./cell-selection/) and [Status Bar](./status-bar/).)
 
@@ -55,26 +55,26 @@ Note the following:
 
 When providing Row IDs, the grid assumes it is fed with data from an immutable store where the following is true about the data:
 
--   Changes to a single row data item results in a new row data item object instance.
--   Any changes within the list or row data results in a new list.
+- Changes to a single row data item results in a new row data item object instance.
+- Any changes within the list or row data results in a new list.
 
 The grid works out what changes need to be applied to the grid using the following rules:
 
--   If the ID for the new item doesn't have a corresponding item already in the grid then it's added as a new row to the grid.
+- If the ID for the new item doesn't have a corresponding item already in the grid then it's added as a new row to the grid.
 
--   If the ID for the new item does have a corresponding item in the grid then compare the object references. If the object references are different, the row is updated with the new data, otherwise it's assumed the data is the same as the already present data.
+- If the ID for the new item does have a corresponding item in the grid then compare the object references. If the object references are different, the row is updated with the new data, otherwise it's assumed the data is the same as the already present data.
 
--   If there are items in the grid for which there are no corresponding items in the new data, then those rows are removed.
+- If there are items in the grid for which there are no corresponding items in the new data, then those rows are removed.
 
--   Lastly the rows in the grid are sorted to match the order in the newly provided list.
+- Lastly the rows in the grid are sorted to match the order in the newly provided list.
 
 ## Example: Immutable Store - Large Dataset
 
 Below is a dataset with over 11,000 rows with Row Grouping and Aggregation over multiple columns. As far as Client-Side Row Data goes, this is a fairly complex grid. From the example, note the following:
 
--   Row IDs are provided using the callback `getRowId()`.
--   Selecting the Update button updates a range of the data.
--   Note that all grid state (row and range selections, filters, sorting etc.) remain after updates are applied.
+- Row IDs are provided using the callback `getRowId()`.
+- Selecting the Update button updates a range of the data.
+- Note that all grid state (row and range selections, filters, sorting etc.) remain after updates are applied.
 
 {% gridExampleRunner title="Complex Immutable Store" name="complex-immutable-store"  exampleHeight=590 /%}
 
@@ -86,11 +86,11 @@ However when providing Row IDs and updating Row Data, the grid creates a [Transa
 
 There are however some differences with updating Row Data (with Row IDs) and Transaction Updates. These differences are as follows:
 
--   When setting Row Data, the grid will have the overhead of identifying what rows are added, removed and updated.
+- When setting Row Data, the grid will have the overhead of identifying what rows are added, removed and updated.
 
--   When setting Row Data, the grid stores the data in the same order as the data was provided. For example if you provide a new list with data added in the middle of the list, the grid will also put the data into the middle of the list rather than just appending to the end. This decides the order of data when there is no grid sort applied. If this is not required by your application, then you can suppress this behaviour for a performance boost by setting `suppressMaintainUnsortedOrder=true` in the [Grid Options](./grid-options/#reference-sort-suppressMaintainUnsortedOrder).
+- When setting Row Data, the grid stores the data in the same order as the data was provided. For example if you provide a new list with data added in the middle of the list, the grid will also put the data into the middle of the list rather than just appending to the end. This decides the order of data when there is no grid sort applied. If this is not required by your application, then you can suppress this behaviour for a performance boost by setting `suppressMaintainUnsortedOrder=true` in the [Grid Options](./grid-options/#reference-sort-suppressMaintainUnsortedOrder).
 
--   There is no equivalent of [Async Transactions](./data-update-high-frequency/) when it comes to updating Row Data. If you want a grid that manages high frequency data changes, do not update Row Data directly, use [Async Transactions](./data-update-high-frequency/) instead.
+- There is no equivalent of [Async Transactions](./data-update-high-frequency/) when it comes to updating Row Data. If you want a grid that manages high frequency data changes, do not update Row Data directly, use [Async Transactions](./data-update-high-frequency/) instead.
 
 For the reasons mentioned above, if you have large data sets (thousands of rows) and are looking for ways to make things go faster, consider using [Transaction Update](./data-update-transactions/).
 

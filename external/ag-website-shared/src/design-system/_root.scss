@@ -49,12 +49,13 @@
     --radius-full: 100%;
 
     // Typography
-    --text-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-        'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --text-font-family:
+        -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans',
+        sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-    --text-monospace-font-family: 'JetBrains Mono', ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
-        'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono',
-        'Courier New', monospace;
+    --text-monospace-font-family:
+        'JetBrains Mono', ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono',
+        'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 
     --text-regular: 400;
     --text-semibold: 600;
@@ -283,13 +284,17 @@
 
     // Shadows
     --shadow-xs: 0 1px 2px 0 color-mix(in srgb, var(--color-gray-950) 05%, transparent);
-    --shadow-sm: 0 1px 3px 0 color-mix(in srgb, var(--color-gray-950) 10%, transparent),
+    --shadow-sm:
+        0 1px 3px 0 color-mix(in srgb, var(--color-gray-950) 10%, transparent),
         0 1px 2px -1px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
-    --shadow-md: 0 4px 6px -1px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
+    --shadow-md:
+        0 4px 6px -1px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
         0 2px 4px -2px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
-    --shadow-lg: 0 10px 15px -3px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
+    --shadow-lg:
+        0 10px 15px -3px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
         0 4px 6px -4px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
-    --shadow-xl: 0 20px 25px -5px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
+    --shadow-xl:
+        0 20px 25px -5px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
         0 8px 10px -6px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
     --shadow-2xl: 0 25px 50px -12px color-mix(in srgb, var(--color-gray-950) 25%, transparent);
 

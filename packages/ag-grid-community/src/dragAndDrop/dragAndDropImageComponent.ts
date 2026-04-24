@@ -19,8 +19,8 @@ export interface IDragAndDropImageComponent<
     TData = any,
     TContext = any,
     TParams extends Readonly<IDragAndDropImageParams<TData, TContext>> = IDragAndDropImageParams<TData, TContext>,
-> extends IComponent<TParams>,
-        IDragAndDropImage {}
+>
+    extends IComponent<TParams>, IDragAndDropImage {}
 
 // the wrapper div has no class - the drag and drop service adds the theme class to it
 const DragAndDropElement: ElementParams = {

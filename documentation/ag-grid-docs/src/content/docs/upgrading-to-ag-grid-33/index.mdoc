@@ -42,33 +42,33 @@ The changes can be summarised as follows:
 
 {% if isFramework("react") %}
 
--   `@ag-grid-community/react` is replaced with `ag-grid-react`
--   All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
-    -   Exception - the `@ag-grid-community/locale` package remains unchanged.
--   All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
+- `@ag-grid-community/react` is replaced with `ag-grid-react`
+- All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
+    - Exception - the `@ag-grid-community/locale` package remains unchanged.
+- All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 
 {% /if %}
 {% if isFramework("angular") %}
 
--   `@ag-grid-community/angular` is replaced with `ag-grid-angular`
--   All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
-    -   Exception - the `@ag-grid-community/locale` package remains unchanged.
--   All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
+- `@ag-grid-community/angular` is replaced with `ag-grid-angular`
+- All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
+    - Exception - the `@ag-grid-community/locale` package remains unchanged.
+- All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 
 {% /if %}
 {% if isFramework("javascript") %}
 
--   All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
-    -   Exception - the `@ag-grid-community/locale` package remains unchanged.
--   All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
+- All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
+    - Exception - the `@ag-grid-community/locale` package remains unchanged.
+- All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 
 {% /if %}
 {% if isFramework("vue") %}
 
--   `@ag-grid-community/vue3` is replaced with `ag-grid-vue3`
--   All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
-    -   Exception - the `@ag-grid-community/locale` package remains unchanged.
--   All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
+- `@ag-grid-community/vue3` is replaced with `ag-grid-vue3`
+- All individual `@ag-grid-community/**` packages are replaced by a single tree-shakable package `ag-grid-community`
+    - Exception - the `@ag-grid-community/locale` package remains unchanged.
+- All individual `@ag-grid-enterprise/**` packages are replaced by a single tree-shakable package `ag-grid-enterprise`.
 
 {% /if %}
 
@@ -196,18 +196,18 @@ After updating your package.json file, we recommend using the Codmod to assist y
 
 The following changes have been made to the existing modules to ensure that each module only includes the minimal code required for that feature:
 
--   `ColumnsToolPanelModule` - no longer imports the `RowGroupingModule`
--   `ExcelExportModule` - no longer imports the `CsvExportModule`
--   `MenuModule` - split into `ColumnMenuModule` for the Column Menu, and `ContextMenuModule` for the Context Menu
--   `RangeSelectionModule` - replaced with `CellSelectionModule`
--   `RowGroupingModule` - split into several modules
-    -   `RowGroupingModule` - Row Grouping only
-    -   `TreeDataModule` - Tree Data
-    -   `PivotModule` - Pivoting
-    -   `RowGroupingPanelModule` - Row Grouping Panel / Pivot Panel
-    -   `GroupFilterModule` - Group Filter
--   `GridChartsModule` - replaced with `IntegratedChartsModule` and requires AG Charts module to be registered
--   `SparklinesModule` - requires AG Charts module to be registered
+- `ColumnsToolPanelModule` - no longer imports the `RowGroupingModule`
+- `ExcelExportModule` - no longer imports the `CsvExportModule`
+- `MenuModule` - split into `ColumnMenuModule` for the Column Menu, and `ContextMenuModule` for the Context Menu
+- `RangeSelectionModule` - replaced with `CellSelectionModule`
+- `RowGroupingModule` - split into several modules
+    - `RowGroupingModule` - Row Grouping only
+    - `TreeDataModule` - Tree Data
+    - `PivotModule` - Pivoting
+    - `RowGroupingPanelModule` - Row Grouping Panel / Pivot Panel
+    - `GroupFilterModule` - Group Filter
+- `GridChartsModule` - replaced with `IntegratedChartsModule` and requires AG Charts module to be registered
+- `SparklinesModule` - requires AG Charts module to be registered
 
 {% note %}
 The codemod will include the new modules to match the existing behaviour of v32 module dependencies. For example, if you were importing the ExcelExportModule in v32 then the codemod will automatically include the CsvExportModule in v33.
@@ -392,26 +392,26 @@ For boolean values provided as strings, "false" is no longer converted to false 
 
 ### React
 
--   `AgReactUiProps` removed, please use `AgGridReactProps` instead.
--   `AgGridReactProps`:
-    -   `disableStaticMarkup` no longer used.
-    -   `legacyComponentRendering` no longer used.
--   `AgReactComponent`:
-    -   `getReactContainerStyle` removed, apply styling directly to `ag-react-container` if needed.
-    -   `getReactContainerClasses` removed, apply styling directly to `ag-react-container` if needed.
-    -   `IHeaderGroupReactComp` removed, please use `IHeaderGroup` instead.
-    -   `IHeaderReactComp` removed, please use `IHeader` instead.
-    -   `IDateReactComp` removed, please use `IDate` instead.
-    -   `IFilterReactComp` removed, please use `IFilter` instead.
-    -   `IFloatingFilterReactComp` removed, please use `IFloatingFilter` instead.
-    -   `ICellRendererReactComp` removed, please use `ICellRenderer` instead.
-    -   `ICellEditorReactComp` removed, please use `ICellEditor` instead.
-    -   `ILoadingCellRendererReactComp` removed, no interface required.
-    -   `ILoadingOverlayReactComp` removed, please use `ILoadingOverlay` instead.
-    -   `INoRowsOverlayReactComp` removed, please use `INoRowsOverlay` instead.
-    -   `IStatusPanelReactComp` removed, please use `IStatusPanel` instead.
-    -   `IToolPanelReactComp` removed, please use `IToolPanel` instead.
-    -   `ITooltipReactComp` removed, no interface required.
+- `AgReactUiProps` removed, please use `AgGridReactProps` instead.
+- `AgGridReactProps`:
+    - `disableStaticMarkup` no longer used.
+    - `legacyComponentRendering` no longer used.
+- `AgReactComponent`:
+    - `getReactContainerStyle` removed, apply styling directly to `ag-react-container` if needed.
+    - `getReactContainerClasses` removed, apply styling directly to `ag-react-container` if needed.
+    - `IHeaderGroupReactComp` removed, please use `IHeaderGroup` instead.
+    - `IHeaderReactComp` removed, please use `IHeader` instead.
+    - `IDateReactComp` removed, please use `IDate` instead.
+    - `IFilterReactComp` removed, please use `IFilter` instead.
+    - `IFloatingFilterReactComp` removed, please use `IFloatingFilter` instead.
+    - `ICellRendererReactComp` removed, please use `ICellRenderer` instead.
+    - `ICellEditorReactComp` removed, please use `ICellEditor` instead.
+    - `ILoadingCellRendererReactComp` removed, no interface required.
+    - `ILoadingOverlayReactComp` removed, please use `ILoadingOverlay` instead.
+    - `INoRowsOverlayReactComp` removed, please use `INoRowsOverlay` instead.
+    - `IStatusPanelReactComp` removed, please use `IStatusPanel` instead.
+    - `IToolPanelReactComp` removed, please use `IToolPanel` instead.
+    - `ITooltipReactComp` removed, no interface required.
 
 {% /if %}
 
@@ -423,8 +423,8 @@ AG Grid no longer patches global properties that are not present in a Server env
 
 The following properties are now strictly typed to only their valid values instead of `string`:
 
--   gridOptions - `chartMenuItems` / `getMainMenuItems` / `getContextMenuItems`
--   columnDefs - `mainMenuItems` / `contextMenuItems`
+- gridOptions - `chartMenuItems` / `getMainMenuItems` / `getContextMenuItems`
+- columnDefs - `mainMenuItems` / `contextMenuItems`
 
 ### Column Menu
 
@@ -456,67 +456,67 @@ Restoring grid state with the old `colId` will have no effect.
 
 ### Sparklines
 
--   `type: 'column'` - removed, use `type: 'bar'` and `direction: 'vertical'` instead.
--   `tooltip.renderer` no longer returns tooltip font colour and opacity - use CSS instead.
--   `tooltip.xOffset / tooltip.yOffset` - removed, use CSS instead.
--   `tooltip.container` - removed, AG Charts now handles this.
--   `marker.formatter` - removed, use `marker.itemStyler` instead.
--   `sparklineOptions.[line, area, bar, column]` to apply styles - removed, use `sparklineOptions` properties instead.
--   `highlightStyle` now follows the AG Charts options - for more customisation options use an `itemStyler` instead.
--   `sparklineOptions.valueAxisDomain` - removed, use `sparklineOptions.min/max` instead.
--   `sparklineOptions.paddingInner / sparklineOptions.paddingOuter` - removed, use `sparklineOptions.axis.paddingInner / sparklineOptions.axis.paddingOuter` instead.
--   `sparklineOptions.container` - removed.
--   `sparklineOptions.label.placement` - updated to use [AG Charts Label Placement](https://www.ag-grid.com/charts/javascript/bar-series/#reference-AgBarSeriesOptions-label-placement). Instead of `insideBase`, `center`, `insideEnd` and `outsideEnd`, please use `inside-center`, `inside-start`, `inside-end` or `outside-end`
+- `type: 'column'` - removed, use `type: 'bar'` and `direction: 'vertical'` instead.
+- `tooltip.renderer` no longer returns tooltip font colour and opacity - use CSS instead.
+- `tooltip.xOffset / tooltip.yOffset` - removed, use CSS instead.
+- `tooltip.container` - removed, AG Charts now handles this.
+- `marker.formatter` - removed, use `marker.itemStyler` instead.
+- `sparklineOptions.[line, area, bar, column]` to apply styles - removed, use `sparklineOptions` properties instead.
+- `highlightStyle` now follows the AG Charts options - for more customisation options use an `itemStyler` instead.
+- `sparklineOptions.valueAxisDomain` - removed, use `sparklineOptions.min/max` instead.
+- `sparklineOptions.paddingInner / sparklineOptions.paddingOuter` - removed, use `sparklineOptions.axis.paddingInner / sparklineOptions.axis.paddingOuter` instead.
+- `sparklineOptions.container` - removed.
+- `sparklineOptions.label.placement` - updated to use [AG Charts Label Placement](https://www.ag-grid.com/charts/javascript/bar-series/#reference-AgBarSeriesOptions-label-placement). Instead of `insideBase`, `center`, `insideEnd` and `outsideEnd`, please use `inside-center`, `inside-start`, `inside-end` or `outside-end`
 
 ### Custom Icons
 
 Setting any of the custom icons listed below will have the provided custom icon only apply in the specific use case its name indicates, instead of all cases as before. To have the custom icon apply to additional cases, set the additional icon keys pointing to the same custom icon. See list of icons changed:
 
--   `smallDown` (deprecated):
-    -   `advancedFilterBuilderSelect` for Advanced Filter Builder dropdown
-    -   `selectOpen` for Select cell editor and dropdowns (e.g., Integrated Charts menu)
-    -   `richSelectOpen` for Rich Select cell editor
--   `smallLeft` (deprecated):
-    -   `panelDelimiterRtl` for Row Group Panel / Pivot Panel
-    -   `subMenuOpenRtl` for sub-menus
--   `smallRight` (deprecated):
-    -   `panelDelimiter` for Row Group Panel / Pivot Panel
-    -   `subMenuOpen` for sub-menus
--   `previous`:
-    -   `previous` for pagination
-    -   `chartsThemePrevious` for Integrated Charts theme picker
--   `next`:
-    -   `next` for pagination
-    -   `chartsThemeNext` for Integrated Charts theme picker
--   `cancel`:
-    -   `cancel` for column drag pills
-    -   `richSelectRemove` for Rich Select cell editor pills
--   `menu`:
-    -   `menu` for button to launch the legacy column menu
-    -   `legacyMenu` for legacy column menu tab header
--   `menuAlt`:
-    -   `menuAlt` for new column menu
-    -   `chartsMenu` for Integrated Charts menu
--   `columns`:
-    -   `columns` for the column menu/column chooser
-    -   `columnsToolPanel` for the Columns Tool Panel tab icon
--   `filter`:
-    -   `filter` for buttons that open the filter (header/menu)
-    -   `filtersToolPanel` for the Filters Tool Panel tab icon
-    -   `filterActive` for displaying the filter is active (header with legacy column menu, Filters Tool Panel item)
-    -   `filterTab` for the filter tab of the legacy tabbed column menu
--   `save`:
-    -   `save` for the export menu
-    -   `chartsDownload` for Integrated Charts download
--   `columnSelectClosed`:
-    -   `columnSelectClosed` for the Columns Tool Panel/Column Chooser/column tab in the legacy tabbed column menu
-    -   `accordionClosed` for accordions (Filters Tool Panel, Integrated Charts tool panels)
--   `columnSelectOpen`:
-    -   `columnSelectOpen` for the Columns Tool Panel/Column Chooser/column tab in the legacy tabbed column menu
-    -   `accordionOpen` for accordions (Filters Tool Panel, Integrated Charts tool panels)
--   `columnSelectIndeterminate`:
-    -   `columnSelectIndeterminate` for the Columns Tool Panel/Column Chooser/column tab in the legacy tabbed column menu
-    -   `accordionIndeterminate` for accordions (Filters Tool Panel, Integrated Charts tool panels)
+- `smallDown` (deprecated):
+    - `advancedFilterBuilderSelect` for Advanced Filter Builder dropdown
+    - `selectOpen` for Select cell editor and dropdowns (e.g., Integrated Charts menu)
+    - `richSelectOpen` for Rich Select cell editor
+- `smallLeft` (deprecated):
+    - `panelDelimiterRtl` for Row Group Panel / Pivot Panel
+    - `subMenuOpenRtl` for sub-menus
+- `smallRight` (deprecated):
+    - `panelDelimiter` for Row Group Panel / Pivot Panel
+    - `subMenuOpen` for sub-menus
+- `previous`:
+    - `previous` for pagination
+    - `chartsThemePrevious` for Integrated Charts theme picker
+- `next`:
+    - `next` for pagination
+    - `chartsThemeNext` for Integrated Charts theme picker
+- `cancel`:
+    - `cancel` for column drag pills
+    - `richSelectRemove` for Rich Select cell editor pills
+- `menu`:
+    - `menu` for button to launch the legacy column menu
+    - `legacyMenu` for legacy column menu tab header
+- `menuAlt`:
+    - `menuAlt` for new column menu
+    - `chartsMenu` for Integrated Charts menu
+- `columns`:
+    - `columns` for the column menu/column chooser
+    - `columnsToolPanel` for the Columns Tool Panel tab icon
+- `filter`:
+    - `filter` for buttons that open the filter (header/menu)
+    - `filtersToolPanel` for the Filters Tool Panel tab icon
+    - `filterActive` for displaying the filter is active (header with legacy column menu, Filters Tool Panel item)
+    - `filterTab` for the filter tab of the legacy tabbed column menu
+- `save`:
+    - `save` for the export menu
+    - `chartsDownload` for Integrated Charts download
+- `columnSelectClosed`:
+    - `columnSelectClosed` for the Columns Tool Panel/Column Chooser/column tab in the legacy tabbed column menu
+    - `accordionClosed` for accordions (Filters Tool Panel, Integrated Charts tool panels)
+- `columnSelectOpen`:
+    - `columnSelectOpen` for the Columns Tool Panel/Column Chooser/column tab in the legacy tabbed column menu
+    - `accordionOpen` for accordions (Filters Tool Panel, Integrated Charts tool panels)
+- `columnSelectIndeterminate`:
+    - `columnSelectIndeterminate` for the Columns Tool Panel/Column Chooser/column tab in the legacy tabbed column menu
+    - `accordionIndeterminate` for accordions (Filters Tool Panel, Integrated Charts tool panels)
 
 {% /expandingSection %}
 
@@ -532,51 +532,51 @@ The following APIs have been deprecated since at least v31 and have now been rem
 
 ### Grid API
 
--   `new Grid()` - removed, use `createGrid` instead.
--   `api` - no longer mutated onto the provided `gridOptions` for Javascript users.
--   First argument of `selectAll` and `deselectAll` grid API methods is now the selection mode, the event source is now the second argument. Both are optional.
--   `getFirstDisplayedRow` - removed, use `getFirstDisplayedRowIndex` instead.
--   `getLastDisplayedRow` - removed, use `getLastDisplayedRowIndex` instead.
--   `getModel()` - removed, use the appropriate grid API methods instead.
--   `getValue` - removed, use `getCellValue` instead.
--   `showColumnMenuAfterButtonClick` - removed, use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere.
--   `showColumnMenuAfterMouseClick` - removed, use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere.
--   `autoSizeColumn(key)` - removed, please use `autoSizeColumns([colKey])` instead.
--   `setColumnWidths(key, newWidth)` - removed, please use `{ setColumnWidths([{ key: newWidth }]) }` instead.
--   `moveColumn(key, toIndex)` - removed, please use `moveColumns([key], toIndex)` instead.
--   `addAggFunc(key, func)` - removed, please use `{ addAggFuncs({ key: func }) }` instead.
--   `removeValueColumn(colKey)` - removed, please use `removeValueColumns([colKey])` instead.
--   `addValueColumn(colKey)` - removed, please use `addValueColumns([colKey])` instead.
--   `removeRowGroupColumn(colKey)` - removed, please use `removeRowGroupColumns([colKey])` instead.
--   `addRowGroupColumn(colKey)` - removed, please use `addRowGroupColumns([colKey])` instead.
--   `removePivotColumn(colKey)` - removed, please use `removePivotColumns([colKey])` instead.
--   `addPivotColumn(colKey)` - removed, please use `addPivotColumns([colKey])` instead.
--   `setColumnVisible(key, visible)` - removed, please use `setColumnsVisible([key], visible)` instead.
--   `setColumnPinned(key, pinned)` - removed, please use `setColumnsPinned([key], pinned)` instead.
--   To get/set individual filter models, use `getColumnFilterModel` or `setColumnFilterModel` instead.
+- `new Grid()` - removed, use `createGrid` instead.
+- `api` - no longer mutated onto the provided `gridOptions` for Javascript users.
+- First argument of `selectAll` and `deselectAll` grid API methods is now the selection mode, the event source is now the second argument. Both are optional.
+- `getFirstDisplayedRow` - removed, use `getFirstDisplayedRowIndex` instead.
+- `getLastDisplayedRow` - removed, use `getLastDisplayedRowIndex` instead.
+- `getModel()` - removed, use the appropriate grid API methods instead.
+- `getValue` - removed, use `getCellValue` instead.
+- `showColumnMenuAfterButtonClick` - removed, use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere.
+- `showColumnMenuAfterMouseClick` - removed, use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere.
+- `autoSizeColumn(key)` - removed, please use `autoSizeColumns([colKey])` instead.
+- `setColumnWidths(key, newWidth)` - removed, please use `{ setColumnWidths([{ key: newWidth }]) }` instead.
+- `moveColumn(key, toIndex)` - removed, please use `moveColumns([key], toIndex)` instead.
+- `addAggFunc(key, func)` - removed, please use `{ addAggFuncs({ key: func }) }` instead.
+- `removeValueColumn(colKey)` - removed, please use `removeValueColumns([colKey])` instead.
+- `addValueColumn(colKey)` - removed, please use `addValueColumns([colKey])` instead.
+- `removeRowGroupColumn(colKey)` - removed, please use `removeRowGroupColumns([colKey])` instead.
+- `addRowGroupColumn(colKey)` - removed, please use `addRowGroupColumns([colKey])` instead.
+- `removePivotColumn(colKey)` - removed, please use `removePivotColumns([colKey])` instead.
+- `addPivotColumn(colKey)` - removed, please use `addPivotColumns([colKey])` instead.
+- `setColumnVisible(key, visible)` - removed, please use `setColumnsVisible([key], visible)` instead.
+- `setColumnPinned(key, pinned)` - removed, please use `setColumnsPinned([key], pinned)` instead.
+- To get/set individual filter models, use `getColumnFilterModel` or `setColumnFilterModel` instead.
 
 ### Grid Options
 
--   `suppressServerSideInfiniteScroll` - removed without replacement.
--   Interface `getServerSideGroupLevelParams` - `suppressInfiniteScroll` property removed without replacement.
--   `advancedFilterModel` - removed, please use `initialState.filter.advancedFilterModel` instead.
--   `suppressAsyncEvents` - removed, Events should be handled asynchronously.
--   `cellFlashDelay` - removed, please use `cellFlashDuration` instead.
--   `cellFadeDelay` - removed, please use `cellFadeDuration` instead.
--   `enableCellChangeFlash` - removed, set `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.
--   `suppressGroupMaintainValueType` - removed.
--   `groupIncludeFooter` - removed, please use `groupTotalRow` instead.
--   `groupIncludeTotalFooter` - removed, please use `grandTotalRow` instead.
--   `serverSideSortOnServer` - removed.
--   `serverSideFilterOnServer` - removed.
--   `tabToNextCell` returning `null` - removed.
--   `tabToNextHeader` returning `null` - removed.
+- `suppressServerSideInfiniteScroll` - removed without replacement.
+- Interface `getServerSideGroupLevelParams` - `suppressInfiniteScroll` property removed without replacement.
+- `advancedFilterModel` - removed, please use `initialState.filter.advancedFilterModel` instead.
+- `suppressAsyncEvents` - removed, Events should be handled asynchronously.
+- `cellFlashDelay` - removed, please use `cellFlashDuration` instead.
+- `cellFadeDelay` - removed, please use `cellFadeDuration` instead.
+- `enableCellChangeFlash` - removed, set `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.
+- `suppressGroupMaintainValueType` - removed.
+- `groupIncludeFooter` - removed, please use `groupTotalRow` instead.
+- `groupIncludeTotalFooter` - removed, please use `grandTotalRow` instead.
+- `serverSideSortOnServer` - removed.
+- `serverSideFilterOnServer` - removed.
+- `tabToNextCell` returning `null` - removed.
+- `tabToNextHeader` returning `null` - removed.
 
 ### ColDef
 
--   `suppressCellFlash` - removed, please use `enableCellChangeFlash: false` in the `ColDef`.
--   `columnsMenuParams` - removed, please use `columnChooserParams` instead.
--   `suppressMenu` - removed, please use `suppressHeaderMenuButton` instead.
+- `suppressCellFlash` - removed, please use `enableCellChangeFlash: false` in the `ColDef`.
+- `columnsMenuParams` - removed, please use `columnChooserParams` instead.
+- `suppressMenu` - removed, please use `suppressHeaderMenuButton` instead.
 
 ### Floating Filters
 
@@ -584,20 +584,20 @@ Floating filters provided via the `colDef.filter` values `text`, `number`, `date
 
 ### Interfaces
 
--   `RowDragEvent` interface: `vDirection` property is now typed as `'up' | 'down' | null`.
--   `IFloatingFilterParams`: `suppressFilterButton` - removed, please use `colDef.suppressFloatingFilterButton` instead.
--   `ITextFilterParams`: `textCustomComparator` - removed, please use `textMatcher` instead.
--   `IFloatingFilter`: `onParamsUpdated` - removed, please use `refresh` instead.
--   `IFilterParams`: `valueGetter` - removed, please use `getValue` instead.
--   `IDate`: `onParamsUpdated` - removed, please use `refresh` instead.
--   `IGroupCellRendererParams`: `footerValueGetter` - removed, please use `totalValueGetter` instead.
--   `FlashCellsParams`:
-    -   `flashDelay` - removed, please use `flashDuration` instead.
-    -   `fadeDelay` - removed, please use `fadeDuration` instead.
--   `ToolPanelColumnCompParams`: `ToolPanelColumnCompParams` - removed, please use `IToolPanelColumnCompParams` instead.
--   `ExcelAlignment`: Legacy property `verticalText` - removed.
--   `ExcelFont`: Legacy property `charSet` - removed.
--   `ExcelStyle`: Legacy property `name` - removed.
+- `RowDragEvent` interface: `vDirection` property is now typed as `'up' | 'down' | null`.
+- `IFloatingFilterParams`: `suppressFilterButton` - removed, please use `colDef.suppressFloatingFilterButton` instead.
+- `ITextFilterParams`: `textCustomComparator` - removed, please use `textMatcher` instead.
+- `IFloatingFilter`: `onParamsUpdated` - removed, please use `refresh` instead.
+- `IFilterParams`: `valueGetter` - removed, please use `getValue` instead.
+- `IDate`: `onParamsUpdated` - removed, please use `refresh` instead.
+- `IGroupCellRendererParams`: `footerValueGetter` - removed, please use `totalValueGetter` instead.
+- `FlashCellsParams`:
+    - `flashDelay` - removed, please use `flashDuration` instead.
+    - `fadeDelay` - removed, please use `fadeDuration` instead.
+- `ToolPanelColumnCompParams`: `ToolPanelColumnCompParams` - removed, please use `IToolPanelColumnCompParams` instead.
+- `ExcelAlignment`: Legacy property `verticalText` - removed.
+- `ExcelFont`: Legacy property `charSet` - removed.
+- `ExcelStyle`: Legacy property `name` - removed.
 
 {% /expandingSection %}
 
@@ -607,57 +607,57 @@ Floating filters provided via the `colDef.filter` values `text`, `number`, `date
 
 ### Modules
 
--   `ModuleRegistry.register(module)` - deprecated, use `ModuleRegistry.registerModules([module])` instead.
--   `MenuModule` - deprecated, use `ColumnMenuModule` for the Column Menu and/or `ContextMenuModule` for the Context Menu instead.
--   `RangeSelectionModule` - deprecated, use `CellSelectionModule` instead.
+- `ModuleRegistry.register(module)` - deprecated, use `ModuleRegistry.registerModules([module])` instead.
+- `MenuModule` - deprecated, use `ColumnMenuModule` for the Column Menu and/or `ContextMenuModule` for the Context Menu instead.
+- `RangeSelectionModule` - deprecated, use `CellSelectionModule` instead.
 
 ### Column Object
 
--   `Column.isHovered()` - deprecated, use `api.isColumnHovered(column)` instead.
+- `Column.isHovered()` - deprecated, use `api.isColumnHovered(column)` instead.
 
 ### Grid API
 
--   `deselectAllFiltered` - deprecated, use `deselectAll('filtered')` instead.
--   `deselectAllOnCurrentPage` - deprecated, use `deselectAll('currentPage')` instead.
--   `selectAllFiltered` - deprecated, use `selectAll('filtered')` instead.
--   `selectAllOnCurrentPage` - deprecated, use `selectAll('currentPage')` instead.
+- `deselectAllFiltered` - deprecated, use `deselectAll('filtered')` instead.
+- `deselectAllOnCurrentPage` - deprecated, use `deselectAll('currentPage')` instead.
+- `selectAllFiltered` - deprecated, use `selectAll('filtered')` instead.
+- `selectAllOnCurrentPage` - deprecated, use `selectAll('currentPage')` instead.
 
 ### Grid Options
 
--   `cellRendererParams.checkbox` - deprecated, use `rowSelection.checkboxLocation = "autoGroupColumn"` instead.
--   `gridOptions.sortingOrder` - deprecated, use `defaultColDef.sortingOrder` instead.
--   `gridOptions.unSortIcon` - deprecated, use `defaultColDef.unSortIcon` instead.
--   `groupRemoveLowestSingleChildren` - deprecated, use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
--   `groupRemoveSingleChildren` - deprecated, use `groupHideParentOfSingleChild: true` instead.
--   `suppressMakeColumnVisibleAfterUnGroup` - deprecated, use `suppressGroupChangesColumnVisibility: "suppressShowOnUngroup"` instead.
--   `suppressPropertyNamesCheck` - deprecated without replacement. Previously used for adding user properties in `gridOptions` and `columnDefs`. Now, use the `context` property in both for storing arbitrary metadata.
--   `suppressRowGroupHidesColumns` - deprecated, use `suppressGroupChangesColumnVisibility: "suppressHideOnGroup"` instead.
--   When setting both `suppressMakeColumnVisibleAfterUnGroup` and `suppressRowGroupHidesColumns` to `true`, use `suppressGroupChangesColumnVisibility: true` instead.
+- `cellRendererParams.checkbox` - deprecated, use `rowSelection.checkboxLocation = "autoGroupColumn"` instead.
+- `gridOptions.sortingOrder` - deprecated, use `defaultColDef.sortingOrder` instead.
+- `gridOptions.unSortIcon` - deprecated, use `defaultColDef.unSortIcon` instead.
+- `groupRemoveLowestSingleChildren` - deprecated, use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
+- `groupRemoveSingleChildren` - deprecated, use `groupHideParentOfSingleChild: true` instead.
+- `suppressMakeColumnVisibleAfterUnGroup` - deprecated, use `suppressGroupChangesColumnVisibility: "suppressShowOnUngroup"` instead.
+- `suppressPropertyNamesCheck` - deprecated without replacement. Previously used for adding user properties in `gridOptions` and `columnDefs`. Now, use the `context` property in both for storing arbitrary metadata.
+- `suppressRowGroupHidesColumns` - deprecated, use `suppressGroupChangesColumnVisibility: "suppressHideOnGroup"` instead.
+- When setting both `suppressMakeColumnVisibleAfterUnGroup` and `suppressRowGroupHidesColumns` to `true`, use `suppressGroupChangesColumnVisibility: true` instead.
 
 ### Row Node
 
--   `childIndex` - deprecated, use `rowNode.parent?.childrenAfterSort?.findIndex(r =&gt; r === rowNode)` instead.
--   `firstChild` - deprecated, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.
--   `lastChild` - deprecated, use `!!rowNode.parent?.childrenAfterSort && (rowNode.parent.childrenAfterSort[rowNode.parent.childrenAfterSort.length - 1] === rowNode)` instead.
+- `childIndex` - deprecated, use `rowNode.parent?.childrenAfterSort?.findIndex(r =&gt; r === rowNode)` instead.
+- `firstChild` - deprecated, use `rowNode.parent?.childrenAfterSort?.[0] === rowNode` instead.
+- `lastChild` - deprecated, use `!!rowNode.parent?.childrenAfterSort && (rowNode.parent.childrenAfterSort[rowNode.parent.childrenAfterSort.length - 1] === rowNode)` instead.
 
 ### Row Node Events
 
--   `childIndexChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
--   `firstChildChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
--   `lastChildChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
+- `childIndexChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
+- `firstChildChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
+- `lastChildChanged` - deprecated, use the global `modelUpdated` event to determine when row children have changed.
 
 ### Theming Custom Icons
 
--   `smallDown` - deprecated, use:
-    -   `advancedFilterBuilderSelect` for Advanced Filter Builder dropdown.
-    -   `selectOpen` for Select cell editor and dropdowns (e.g., Integrated Charts menu).
-    -   `richSelectOpen` for Rich Select cell editor.
--   `smallLeft` - deprecated, use:
-    -   `panelDelimiterRtl` for Row Group Panel / Pivot Panel.
-    -   `subMenuOpenRtl` for sub-menus.
--   `smallRight` - deprecated, use:
-    -   `panelDelimiter` for Row Group Panel / Pivot Panel.
-    -   `subMenuOpen` for sub-menus.
+- `smallDown` - deprecated, use:
+    - `advancedFilterBuilderSelect` for Advanced Filter Builder dropdown.
+    - `selectOpen` for Select cell editor and dropdowns (e.g., Integrated Charts menu).
+    - `richSelectOpen` for Rich Select cell editor.
+- `smallLeft` - deprecated, use:
+    - `panelDelimiterRtl` for Row Group Panel / Pivot Panel.
+    - `subMenuOpenRtl` for sub-menus.
+- `smallRight` - deprecated, use:
+    - `panelDelimiter` for Row Group Panel / Pivot Panel.
+    - `subMenuOpen` for sub-menus.
 
 {% /expandingSection %}
 

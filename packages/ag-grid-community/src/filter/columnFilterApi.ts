@@ -44,7 +44,7 @@ export function getColumnFilterModel<TModel>(
         useUnapplied = false;
     }
     const column = colModel.getColDefColOrCol(key);
-    return column ? colFilter?.getModelForColumn(column, useUnapplied) ?? null : null;
+    return column ? (colFilter?.getModelForColumn(column, useUnapplied) ?? null) : null;
 }
 
 export function setColumnFilterModel<TModel>(

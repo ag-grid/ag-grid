@@ -40,69 +40,69 @@ See the [Codemods](./codemods/) documentation for more details.
 
 ### ColDef
 
--   `checkboxSelection` is deprecated, `rowSelection.checkboxes` is default now, set to `false` in `gridOptions` to disable.
+- `checkboxSelection` is deprecated, `rowSelection.checkboxes` is default now, set to `false` in `gridOptions` to disable.
 
--   `showDisabledCheckboxes` is deprecated, use `rowSelection.hideDisabledCheckboxes = true` in `gridOptions` instead.
+- `showDisabledCheckboxes` is deprecated, use `rowSelection.hideDisabledCheckboxes = true` in `gridOptions` instead.
 
--   `headerCheckboxSelection` is deprecated, `rowSelection.headerCheckbox = true` is default now, set to `false` in `gridOptions` to disable.
+- `headerCheckboxSelection` is deprecated, `rowSelection.headerCheckbox = true` is default now, set to `false` in `gridOptions` to disable.
 
--   `headerCheckboxSelectionFilteredOnly` is deprecated, use `rowSelection.selectAll = "filtered"` in `gridOptions` instead.
+- `headerCheckboxSelectionFilteredOnly` is deprecated, use `rowSelection.selectAll = "filtered"` in `gridOptions` instead.
 
--   `headerCheckboxSelectionCurrentPageOnly` is deprecated, use `rowSelection.selectAll = "currentPage"` in `gridOptions` instead.
+- `headerCheckboxSelectionCurrentPageOnly` is deprecated, use `rowSelection.selectAll = "currentPage"` in `gridOptions` instead.
 
 ### Events
 
--   `columnEverythingChanged` - deprecated, use `displayedColumnsChanged` which is fired at the same time, or one of the more specific [Column Events](./column-state/#column-events).
+- `columnEverythingChanged` - deprecated, use `displayedColumnsChanged` which is fired at the same time, or one of the more specific [Column Events](./column-state/#column-events).
 
--   `rangeDeleteStart` - deprecated, use `cellSelectionDeleteStart` instead.
+- `rangeDeleteStart` - deprecated, use `cellSelectionDeleteStart` instead.
 
--   `rangeDeleteEnd` - deprecated, use `cellSelectionDeleteEnd` instead.
+- `rangeDeleteEnd` - deprecated, use `cellSelectionDeleteEnd` instead.
 
--   `rangeSelectionChanged` - deprecated, use `cellSelectionChanged` instead.
+- `rangeSelectionChanged` - deprecated, use `cellSelectionChanged` instead.
 
 ### Grid API
 
--   `getInfiniteRowCount` - deprecated, use `getDisplayedRowCount` instead.
+- `getInfiniteRowCount` - deprecated, use `getDisplayedRowCount` instead.
 
--   `clearRangeSelection` - deprecated, use `clearCellSelection` method instead.
+- `clearRangeSelection` - deprecated, use `clearCellSelection` method instead.
 
 ### Grid Options
 
--   `rowSelection="single"` is now deprecated, use `rowSelection.mode = "singleRow"` instead.
+- `rowSelection="single"` is now deprecated, use `rowSelection.mode = "singleRow"` instead.
 
--   `rowSelection="multiple"` is now deprecated, use `rowSelection.mode = "multiRow"` instead.
+- `rowSelection="multiple"` is now deprecated, use `rowSelection.mode = "multiRow"` instead.
 
--   `suppressCopyRowsToClipboard` is deprecated. Copying of selected rows is suppressed by default, use `rowSelection.copySelectedRows` to enable it.
+- `suppressCopyRowsToClipboard` is deprecated. Copying of selected rows is suppressed by default, use `rowSelection.copySelectedRows` to enable it.
 
--   `suppressCopySingleCellRanges` is deprecated, use `rowSelection.copySelectedRows` instead.
+- `suppressCopySingleCellRanges` is deprecated, use `rowSelection.copySelectedRows` instead.
 
--   `groupSelectsChildren` is deprecated, use `rowSelection.groupSelects = "descendants"` instead.
+- `groupSelectsChildren` is deprecated, use `rowSelection.groupSelects = "descendants"` instead.
 
--   `groupSelectsFiltered` is deprecated, use `rowSelection.groupSelects = "filteredDescendants"` instead.
+- `groupSelectsFiltered` is deprecated, use `rowSelection.groupSelects = "filteredDescendants"` instead.
 
--   `rowMultiSelectWithClick` is deprecated, use `rowSelection.enableMultiSelectWithClick` instead.
+- `rowMultiSelectWithClick` is deprecated, use `rowSelection.enableMultiSelectWithClick` instead.
 
--   `suppressBrowserResizeObserver` - deprecated without replacement.
+- `suppressBrowserResizeObserver` - deprecated without replacement.
 
--   `suppressRowDeselection` is deprecated. Row Deselection is suppressed by default, use `rowSelection.enableClickSelection` instead.
+- `suppressRowDeselection` is deprecated. Row Deselection is suppressed by default, use `rowSelection.enableClickSelection` instead.
 
--   `suppressRowClickSelection` is deprecated, use `rowSelection.enableClickSelection` instead.
+- `suppressRowClickSelection` is deprecated, use `rowSelection.enableClickSelection` instead.
 
--   `suppressMultiRangeSelection` is deprecated, use `cellSelection.suppressMultiRanges` instead.
+- `suppressMultiRangeSelection` is deprecated, use `cellSelection.suppressMultiRanges` instead.
 
--   `enableRangeSelection` is deprecated, use `cellSelection` instead.
+- `enableRangeSelection` is deprecated, use `cellSelection` instead.
 
--   `enableRangeHandle` is deprecated, use `cellSelection.handle` instead.
+- `enableRangeHandle` is deprecated, use `cellSelection.handle` instead.
 
--   `enableFillHandle` is deprecated, use `cellSelection.handle` instead.
+- `enableFillHandle` is deprecated, use `cellSelection.handle` instead.
 
--   `fillHandleDirection` is deprecated, use `cellSelection.handle.direction` instead.
+- `fillHandleDirection` is deprecated, use `cellSelection.handle.direction` instead.
 
--   `suppressClearOnFillReduction` is deprecated, use `cellSelection.handle.suppressClearOnFillReduction` instead.
+- `suppressClearOnFillReduction` is deprecated, use `cellSelection.handle.suppressClearOnFillReduction` instead.
 
--   `isRowSelectable` is deprecated, use `rowSelection.isRowSelectable` instead.
+- `isRowSelectable` is deprecated, use `rowSelection.isRowSelectable` instead.
 
--   `fillOperation` is deprecated, use `cellSelection.handle.setFillValue` instead.
+- `fillOperation` is deprecated, use `cellSelection.handle.setFillValue` instead.
 
 ### Grid State Object Fields
 

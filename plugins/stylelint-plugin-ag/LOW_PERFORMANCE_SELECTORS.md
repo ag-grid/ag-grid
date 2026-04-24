@@ -144,8 +144,8 @@ Under right-to-left matching, these match every element of the specified type in
 
 These are always low performance on their own because they require checking every element on the page against a condition.
 
--   `:not()` matches broadly (everything that ISN'T something)
--   `:has()` requires checking descendants
+- `:not()` matches broadly (everything that ISN'T something)
+- `:has()` requires checking descendants
 
 **Problem:**
 

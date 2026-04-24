@@ -149,7 +149,7 @@ function processTableConfig(worksheet: ExcelWorksheet, config: ExcelGridSerializ
         tableColumns.push(col.displayName || '');
         showFilterButtons.push(
             showFilterButton === 'match' || showFilterButton === undefined
-                ? col.filterAllowed ?? false // We fall back to the column's filterAllowed property on match
+                ? (col.filterAllowed ?? false) // We fall back to the column's filterAllowed property on match
                 : showFilterButton
         );
     }

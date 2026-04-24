@@ -221,8 +221,10 @@ export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
 export type GetServerSideGroupLevelParams<TData = any, TContext = any> = (
     params: GetServerSideGroupLevelParamsParams<TData, TContext>
 ) => ServerSideGroupLevelParams;
-export interface GetServerSideGroupLevelParamsParams<TData = any, TContext = any>
-    extends AgGridCommon<TData, TContext> {
+export interface GetServerSideGroupLevelParamsParams<TData = any, TContext = any> extends AgGridCommon<
+    TData,
+    TContext
+> {
     /** The level of the store. Top level is 0. */
     level: number;
     /** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */
@@ -238,8 +240,10 @@ export interface GetServerSideGroupLevelParamsParams<TData = any, TContext = any
 export type IsServerSideGroupOpenByDefault<TData = any, TContext = any> = (
     params: IsServerSideGroupOpenByDefaultParams<TData, TContext>
 ) => boolean;
-export interface IsServerSideGroupOpenByDefaultParams<TData = any, TContext = any>
-    extends AgGridCommon<TData, TContext> {
+export interface IsServerSideGroupOpenByDefaultParams<TData = any, TContext = any> extends AgGridCommon<
+    TData,
+    TContext
+> {
     data: any;
     rowNode: IRowNode;
 }
