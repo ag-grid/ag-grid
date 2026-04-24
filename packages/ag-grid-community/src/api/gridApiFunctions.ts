@@ -32,6 +32,7 @@ import type {
     _InfiniteRowModelGridApi,
     _KeyboardNavigationGridApi,
     _MasterDetailGridApi,
+    _NotesGridApi,
     _OverlayGridApi,
     _PaginationGridApi,
     _PinnedRowGridApi,
@@ -259,6 +260,11 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         isQuickFilterPresent: 0,
         getQuickFilter: 0,
         resetQuickFilter: 0,
+    }),
+    ...mod<_NotesGridApi>('Notes', {
+        getNote: 0,
+        setNote: 0,
+        refreshNotes: 0,
     }),
     ...mod<_FindApi<any>>('Find', {
         findGetActiveMatch: 0,

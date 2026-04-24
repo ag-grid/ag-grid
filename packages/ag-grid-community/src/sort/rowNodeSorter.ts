@@ -125,7 +125,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             return;
         }
         // comparator on col get preference over everything else
-        return this.getComparatorFromColDef(primaryColumn.getColDef(), sortOption);
+        return this.getComparatorFromColDef(primaryColumn.colDef, sortOption);
     }
 
     private getComparatorFromColDef(colDef: ColDef, sortOption: SortOption): SortComparatorFn | undefined {
@@ -147,7 +147,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 return this.getGroupDataValue(node, column);
             }
 
-            if (node.group && column.getColDef().showRowGroup) {
+            if (node.group && column.colDef.showRowGroup) {
                 return undefined;
             }
         }

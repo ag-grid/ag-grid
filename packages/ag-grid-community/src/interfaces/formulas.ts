@@ -1,3 +1,4 @@
+import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import type { ColumnCollections } from '../columns/columnModel';
 import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
@@ -87,6 +88,11 @@ export interface IFormulaService extends Bean {
         useRefFormat?: boolean;
     }): string;
     refreshFormulas(refreshRows: boolean): void;
+    /**
+     * Called by CSRM after every model refresh so the service can evict cache entries for destroyed
+     * rows and, if the row order or set changed, drop stale computed values while keeping parsed ASTs.
+     */
+    onRowsChanged(changedRowNodes: ChangedRowNodes | undefined, newData: boolean | undefined): void;
     getFunction(name: string): ((params: FormulaFunctionParams) => unknown) | undefined;
     getFunctionNames(): string[];
 }

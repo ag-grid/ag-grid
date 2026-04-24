@@ -333,6 +333,7 @@ export const AG_GRID_LOCALE_CN = {
     sortAbsoluteAscending: '绝对升序排序',
     sortAbsoluteDescending: '绝对降序排序',
     sortUnSort: '清除排序',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '总和',
@@ -684,12 +685,16 @@ export const AG_GRID_LOCALE_CN = {
     ariaSelectAllRowCells: '按 Enter 键选择此行中的所有单元格',
     ariaColumnCellSelection: '按 Enter 键切换此列中所有可见单元格的选择',
     ariaColumnGroupCellSelection: '按 Enter 键切换此列组中所有可见单元格的选择',
+    ariaColumnGroupExpansion: '按 ENTER 键展开或折叠此列组',
+    ariaColumnGroupCellSelectionAndExpansion:
+        '按 Enter 键切换此列组中所有可见单元格的选择. 按 ALT ENTER 键展开或折叠此列组',
     ariaRowSelectAll: '按 Space 切换所有行选择',
     ariaRowToggleSelection: '按 Space 切换行选择',
     ariaRowSelect: '按 SPACE 选择此行',
     ariaRowSelectionDisabled: '此行的行选择功能被禁用',
     ariaSearch: '搜索',
     ariaSortableColumn: '按 ENTER 排序',
+    ariaSortableColumnWithCellSelection: '按 ALT ENTER 排序',
     ariaToggleVisibility: '按 Space 切换可见性',
     ariaToggleCellValue: '按 Space 切换单元格值',
     ariaUnchecked: '未选中',
@@ -755,6 +760,7 @@ export const AG_GRID_LOCALE_CN = {
     ariaLabelAddFilterField: '添加过滤字段',
     ariaLabelFilterCardDelete: '删除过滤器',
     ariaLabelFilterCardHasEdits: '有编辑',
+    ariaHasNote: '此单元格有备注。',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -799,4 +805,12 @@ export const AG_GRID_LOCALE_CN = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
+
+    // Notes
+    note: '单元格备注',
+    addNote: '添加备注',
+    viewNote: '查看备注',
+    editNote: '编辑备注',
+    deleteNote: '删除备注',
+    notePlaceholder: '添加备注...',
 };

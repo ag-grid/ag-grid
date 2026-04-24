@@ -12,7 +12,7 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule, PivotModule, RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 
 describe('Cell Editing: change detection', () => {
     const gridMgr = new TestGridsManager({
@@ -53,6 +53,12 @@ describe('Cell Editing: change detection', () => {
                 · ├── LEAF id:1 group:"A" value:50
                 · └── LEAF id:2 group:"A" value:20
             `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── value "Value" width:200 aggFunc:sum editable
+            `);
         });
 
         test('updates group footer sibling aggregation', async () => {
@@ -83,6 +89,12 @@ describe('Cell Editing: change detection', () => {
                 · ├── LEAF id:2 group:"A" value:20
                 · └─ footer id:rowGroupFooter_row-group-group-A ag-Grid-AutoColumn:"Total A" value:70
             `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── value "Value" width:200 aggFunc:sum editable
+            `);
         });
 
         test('refreshes pinnedTopRowData row directly (no aggregation)', async () => {
@@ -101,6 +113,11 @@ describe('Cell Editing: change detection', () => {
                 PINNED_TOP id:t-0 value:42
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 value:10
+            `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                └── value "Value" width:200 editable
             `);
         });
     });

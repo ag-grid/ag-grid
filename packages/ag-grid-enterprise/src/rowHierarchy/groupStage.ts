@@ -169,7 +169,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
 
     private getStrategy(): IRowGroupingStrategy<TData> | null {
         let strategy = this.strategy;
-        const pivotMode = this.beans.colModel.isPivotMode();
+        const pivotMode = this.beans.colModel.pivotMode;
         if (pivotMode !== this.pivotMode) {
             this.pivotMode = pivotMode;
             this.columnsInvalidated = true;

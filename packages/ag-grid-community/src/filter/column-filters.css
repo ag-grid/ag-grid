@@ -176,7 +176,7 @@
 }
 
 :where(.ag-filter-menu) .ag-set-filter-list {
-    min-width: 200px;
+    min-width: max(200px, 100%);
 }
 
 .ag-filter-virtual-list-item:focus-visible {

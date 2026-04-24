@@ -1,5 +1,19 @@
 [
     {
+        "key": "AG-17021",
+        "issueType": "Bug",
+        "manualEntry": true,
+        "summary": "Placeholder for 35.2.1",
+        "versions": ["35.2.1"],
+        "status": "Done",
+        "resolution": "Done",
+        "features": null,
+        "moreInformation": null,
+        "deprecationNotes": null,
+        "breakingChangesNotes": null,
+        "documentationUrl": null
+    },
+    {
         "key": "AG-16799",
         "issueType": "Bug",
         "manualEntry": true,

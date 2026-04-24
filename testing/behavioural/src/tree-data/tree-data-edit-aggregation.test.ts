@@ -4,7 +4,14 @@ import type { GridOptions, IAggFuncParams, ValueSetterParams } from 'ag-grid-com
 import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects, waitForInput } from '../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    cachedJSONObjects,
+    waitForInput,
+} from '../test-utils';
 
 interface VehicleRow {
     id: string;
@@ -180,6 +187,13 @@ describe('ag-grid tree data edit aggregation', () => {
             · · · ├── 8 LEAF id:8 ag-Grid-AutoColumn:"8" model:"EQA" total:333.33
             · · · ├── 9 LEAF id:9 ag-Grid-AutoColumn:"9" model:"500" total:333.33
             · · · └── 10 LEAF id:10 ag-Grid-AutoColumn:"10" model:"Juke" total:333.33
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200 flex:1
+            ├── model "Model" width:200 flex:1 editable
+            └── total "Total" width:200 flex:1 aggFunc:sumFunctionWithQty editable
         `);
     });
 });

@@ -48,7 +48,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         if (!this.gos.get('refreshAfterGroupEdit')) {
             return false;
         }
-        return !!this.beans.rowGroupColsSvc?.columns?.length && !this.beans.colModel.isPivotMode();
+        return !!this.beans.rowGroupColsSvc?.columns?.length && !this.beans.colModel.pivotMode;
     }
 
     private initDraggingGroups(rowsDrop: _RowsDrop): void {
@@ -443,7 +443,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         while (current && current.level >= 0) {
             const column: AgColumn | undefined = columns[current.level];
             if (column) {
-                const colId = column.getColId();
+                const colId = column.colId;
                 const level = current.level;
                 values[level] = current.groupData?.[colId] ?? current.key ?? undefined;
                 if (level > maxLevel) {

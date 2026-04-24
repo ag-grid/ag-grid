@@ -174,8 +174,10 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
     }
 
     private clearLongPress(): void {
-        window.clearTimeout(this.longPressTimer);
-        this.longPressTimer = 0;
+        if (this.longPressTimer !== 0) {
+            window.clearTimeout(this.longPressTimer);
+            this.longPressTimer = 0;
+        }
         this.moved = false;
     }
 

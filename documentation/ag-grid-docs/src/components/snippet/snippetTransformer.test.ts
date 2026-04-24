@@ -198,6 +198,31 @@ const rowNode = api.getRowNode('55');`
         );
     });
 
+    describe('given const with new expression', () => {
+        runSnippetFrameworkTests(
+            `const formulaStore = new Map();
+const formulaKey = (rowId, colId) => \`\${rowId}-\${colId}\`;
+
+const gridOptions = {
+    columnDefs: [
+        { field: 'sales' },
+        { field: 'tax', allowFormula: true },
+    ],
+    formulaDataSource: {
+        getFormula: ({ column, rowNode }) => formulaStore.get(formulaKey(rowNode.id, column.getColId())),
+        setFormula: ({ column, rowNode, formula }) => {
+            const key = formulaKey(rowNode.id, column.getColId());
+            if (formula === undefined) {
+                formulaStore.delete(key);
+            } else {
+                formulaStore.set(key, formula);
+            }
+        },
+    },
+}`
+        );
+    });
+
     describe('given useMemo and useCallback properties with JS literals does not add useMemo or useCallback', () => {
         runSnippetFrameworkTests(`const gridOptions = {
             popupParent: -Infinity,

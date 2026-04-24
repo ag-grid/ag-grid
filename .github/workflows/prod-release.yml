@@ -61,8 +61,9 @@ jobs:
           npx --yes @cyclonedx/cyclonedx-npm -o ./dist/artifacts/packages/sbom.json --ignore-npm-errors --omit dev --omit peer --omit optional
 
       # Ensure npm 11.5.1 or later is installed - required for OIDC
+      # pinned to 11.10.1 due to https://github.com/npm/cli/issues/9151
       - name: Update npm
-        run: npm install -g npm@latest
+        run: npm install -g npm@11.10.1
 
       - name: Sanity Check Base URL
         run: |

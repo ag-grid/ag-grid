@@ -145,7 +145,7 @@ export class AgPositionableFeature<
     private offsetParent: HTMLElement;
     private boundaryEl: HTMLElement | null = null;
 
-    private isResizing: boolean = false;
+    public isResizing = false;
     private isMoving = false;
     private resizable: ResizableStructure = {};
     private movable = false;

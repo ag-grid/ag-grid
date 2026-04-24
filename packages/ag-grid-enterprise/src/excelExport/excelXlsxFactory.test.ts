@@ -1,6 +1,14 @@
 import type { ExcelGridSerializingParams } from './excelSerializingSession';
 import { ExcelSerializingSession } from './excelSerializingSession';
-import { Workbook, createXlsxContentTypes, createXlsxCustomProperties, createXlsxRels } from './excelXlsxFactory';
+import {
+    Workbook,
+    createXlsxComments,
+    createXlsxContentTypes,
+    createXlsxCustomProperties,
+    createXlsxNoteVmlDrawing,
+    createXlsxRelationships,
+    createXlsxRels,
+} from './excelXlsxFactory';
 
 const stubParams = (
     overrides: Partial<ExcelGridSerializingParams> = {},
@@ -8,11 +16,16 @@ const stubParams = (
 ): ExcelGridSerializingParams => ({
     baseExcelStyles: [],
     styleLinker: () => [],
-    colModel: { isPivotActive: () => false } as any,
+    colModel: { isPivotActive: () => false, isPivotMode: () => false } as any,
     colNames: { getDisplayNameForColumn: () => 'A' } as any,
-    valueSvc: {} as any,
+    valueSvc: {
+        getValueForDisplay: () => ({ value: '' }),
+        getValue: () => '',
+        parseValue: () => '',
+        formatValue: () => '',
+    } as any,
     formulaSvc: {} as any,
-    gos: { get: () => undefined } as any,
+    gos: { get: () => undefined, addCommon: (p: any) => p } as any,
     rowGroupColsSvc: {} as any,
     processCellCallback: undefined,
     processHeaderCallback: undefined,
@@ -31,6 +44,41 @@ const basicWorksheet = (name: string, cellValue: string = '1') => ({
         rows: [{ cells: [{ data: { type: 'n' as const, value: cellValue } }] }],
     },
 });
+
+const createColumnStub = (colId: string, overrides: Record<string, any> = {}) =>
+    ({
+        getActualWidth: () => 100,
+        isFilterAllowed: () => false,
+        getDefinition: () => ({}),
+        colDef: {},
+        getColSpan: () => 1,
+        getPinned: () => null,
+        isAllowFormula: () => false,
+        getColId: () => colId,
+        ...overrides,
+    }) as any;
+
+const rowValueServiceStub = () =>
+    ({
+        getValueForDisplay: ({ column, node, includeValueFormatted }: any) => {
+            const value = node?.data?.[column.getColId()];
+
+            if (includeValueFormatted) {
+                return { value, valueFormatted: value };
+            }
+
+            return { value };
+        },
+        getValue: (column: any, node: any) => node?.data?.[column.getColId()],
+        parseValue: (_column: any, _node: any, valueToParse: any) => valueToParse,
+        formatValue: (_column: any, _node: any, valueToFormat: any) => valueToFormat,
+    }) as any;
+
+const noteServiceStub = (note?: { text: string; author?: string }) =>
+    ({
+        hasDataSource: () => true,
+        getNote: () => note,
+    }) as any;
 
 describe('excelXlsxFactory Workbook', () => {
     afterEach(() => {
@@ -150,7 +198,7 @@ describe('excelXlsxFactory Workbook', () => {
         expect(worksheetXml).toContain('<drawing');
     });
 
-    it('maps empty strings to shared string indices', () => {
+    it('maps non-empty strings to shared string indices', () => {
         const workbook = new Workbook();
         const session = new ExcelSerializingSession(
             stubParams(
@@ -162,6 +210,340 @@ describe('excelXlsxFactory Workbook', () => {
             )
         );
 
+        const colStub = createColumnStub('c1');
+        session.prepare([colStub]);
+
+        session.addCustomContent([
+            {
+                cells: [{ data: { type: 's', value: 'Hello' }, styleId: 'cell' }],
+            },
+        ]);
+
+        const worksheetXml = session.parse();
+
+        // Shared string cells must have a numeric `<v>` index.
+        expect(worksheetXml).toMatch(/t="s"[^>]*>\s*<v>0<\/v>/);
+        expect(worksheetXml).not.toMatch(/t="s"[^>]*>\s*<v>\s*<\/v>/);
+    });
+
+    it('exports custom-content empty strings as blank cells', () => {
+        const workbook = new Workbook();
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    baseExcelStyles: [{ id: 'cell' }] as any,
+                    styleLinker: () => ['cell'],
+                },
+                workbook
+            )
+        );
+
+        const colStub = createColumnStub('c1');
+        session.prepare([colStub]);
+
+        session.addCustomContent([
+            {
+                cells: [{ data: { type: 's', value: '' }, styleId: 'cell' }],
+            },
+        ]);
+
+        const worksheetXml = session.parse();
+
+        expect(worksheetXml).toContain('<c r="A1" s="1"/>');
+        expect(worksheetXml).not.toContain('t="s"');
+        expect(worksheetXml).not.toMatch(/<v>\s*<\/v>/);
+    });
+
+    it('exports empty numeric cells as blank styled cells', () => {
+        const workbook = new Workbook();
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    baseExcelStyles: [{ id: 'numeric', dataType: 'Number' }] as any,
+                },
+                workbook
+            )
+        );
+
+        const colStub = createColumnStub('c1');
+        session.prepare([colStub]);
+
+        session.addCustomContent([
+            {
+                cells: [{ data: { value: '' }, styleId: 'numeric' }],
+            },
+        ]);
+
+        const worksheetXml = session.parse();
+
+        expect(worksheetXml).toContain('<c r="A1" s="1"/>');
+        expect(worksheetXml).not.toContain('t="n"');
+        expect(worksheetXml).not.toMatch(/<v>\s*0\s*<\/v>/);
+    });
+
+    it('omits plain blank grid body cells for empty and missing values', () => {
+        const workbook = new Workbook();
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    colNames: { getDisplayNameForColumn: (column: any) => column.getColId() } as any,
+                    valueSvc: rowValueServiceStub(),
+                },
+                workbook
+            )
+        );
+
+        const athleteCol = createColumnStub('athlete');
+        const countryCol = createColumnStub('country');
+        session.prepare([athleteCol, countryCol]);
+
+        const headerRow = session.onNewHeaderRow();
+        headerRow.onColumn(athleteCol, 0, undefined as any);
+        headerRow.onColumn(countryCol, 1, undefined as any);
+
+        const rowData = [
+            { athlete: 'Natalie Coughlin', country: 'United States' },
+            { athlete: 'Aleksey Nemov', country: '' },
+            { athlete: 'Alicia Coutts', country: 'Australia' },
+            { athlete: 'Missy Franklin' },
+        ];
+
+        rowData.forEach((data) => {
+            const node = { data, group: false, footer: false } as any;
+            const row = session.onNewBodyRow(node);
+            row.onColumn(athleteCol, 0, node);
+            row.onColumn(countryCol, 1, node);
+        });
+
+        const worksheetXml = session.parse();
+
+        expect(worksheetXml).toContain('<c r="B2" t="s">');
+        expect(worksheetXml).toContain('<c r="B4" t="s">');
+        expect(worksheetXml).not.toContain('<c r="B3"');
+        expect(worksheetXml).not.toContain('<c r="B5"');
+        expect(worksheetXml).not.toMatch(/t="s"[^>]*>\s*<v>\s*<\/v>/);
+        expect(worksheetXml).not.toMatch(/t="n"[^>]*>\s*<v>\s*<\/v>/);
+    });
+
+    it('omits trailing blank cells for AG-5330 keyboard navigation semantics', () => {
+        const workbook = new Workbook();
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    colNames: { getDisplayNameForColumn: (column: any) => column.getColId() } as any,
+                    valueSvc: rowValueServiceStub(),
+                },
+                workbook
+            )
+        );
+
+        const athleteCol = createColumnStub('athlete');
+        const ageCol = createColumnStub('age');
+        const countryCol = createColumnStub('country');
+        const yearCol = createColumnStub('year');
+        session.prepare([athleteCol, ageCol, countryCol, yearCol]);
+
+        const headerRow = session.onNewHeaderRow();
+        headerRow.onColumn(athleteCol, 0, undefined as any);
+        headerRow.onColumn(ageCol, 1, undefined as any);
+        headerRow.onColumn(countryCol, 2, undefined as any);
+        headerRow.onColumn(yearCol, 3, undefined as any);
+
+        const node = { data: { athlete: 'sample' }, group: false, footer: false } as any;
+        const row = session.onNewBodyRow(node);
+        row.onColumn(athleteCol, 0, node);
+        row.onColumn(ageCol, 1, node);
+        row.onColumn(countryCol, 2, node);
+        row.onColumn(yearCol, 3, node);
+
+        const worksheetXml = session.parse();
+
+        expect(worksheetXml).toContain('<c r="A2" t="s">');
+        expect(worksheetXml).not.toContain('<c r="B2"');
+        expect(worksheetXml).not.toContain('<c r="C2"');
+        expect(worksheetXml).not.toContain('<c r="D2"');
+    });
+
+    it('exports blank note-only cells as comment anchors', () => {
+        const workbook = new Workbook();
+        const session = new ExcelSerializingSession(stubParams({}, workbook));
+
+        const colStub = createColumnStub('c1');
+        session.prepare([colStub]);
+
+        session.addCustomContent([
+            {
+                cells: [{ note: { text: 'Blank note' } }],
+            },
+        ]);
+
+        const worksheetXml = session.parse();
+
+        expect(worksheetXml).toContain('<c r="A1"/>');
+        expect(worksheetXml).toContain('legacyDrawing');
+        expect(createXlsxComments(0, 'Workbook Author')).toContain('Blank note');
+    });
+
+    it('exports merged blank anchors as blank cells', () => {
+        const workbook = new Workbook();
+        const session = new ExcelSerializingSession(stubParams({}, workbook));
+
+        const colStub = createColumnStub('c1');
+        session.prepare([colStub]);
+
+        session.addCustomContent([
+            {
+                cells: [{ data: { type: 's', value: '' }, mergeAcross: 1 }],
+            },
+        ]);
+
+        const worksheetXml = session.parse();
+
+        expect(worksheetXml).toContain('<c r="A1"/>');
+        expect(worksheetXml).toContain('<mergeCell ref="A1:B1"/>');
+        expect(worksheetXml).not.toContain('t="s"');
+    });
+
+    it('maps grid notes to Excel comments by default', () => {
+        const workbook = new Workbook();
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    notesSvc: noteServiceStub({ text: 'Grid note', author: 'Chris' }),
+                },
+                workbook
+            )
+        );
+
+        const colStub = {
+            getActualWidth: () => 100,
+            isFilterAllowed: () => false,
+            getDefinition: () => ({}),
+            colDef: {},
+            getColSpan: () => 1,
+            getPinned: () => null,
+            isAllowFormula: () => false,
+            getColId: () => 'c1',
+        } as any;
+        session.prepare([colStub]);
+
+        session.onNewBodyRow({ data: { value: 1 } } as any).onColumn(colStub, 0, { data: { value: 1 } } as any);
+
+        const worksheetXml = session.parse();
+
+        expect(worksheetXml).toContain('legacyDrawing');
+        expect(createXlsxComments(0, 'Workbook Author')).toContain('Grid note');
+        expect(createXlsxComments(0, 'Workbook Author')).toContain('<author>Chris</author>');
+    });
+
+    it('allows processNoteCallback to override or suppress notes', () => {
+        const workbook = new Workbook();
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    notesSvc: noteServiceStub({ text: 'Grid note', author: 'Chris' }),
+                    processNoteCallback: (params) => {
+                        if (params.accumulatedRowIndex === 2) {
+                            return null;
+                        }
+
+                        return {
+                            text: `${params.excelNote?.text} (exported)`,
+                        };
+                    },
+                },
+                workbook
+            )
+        );
+
+        const colStub = {
+            getActualWidth: () => 100,
+            isFilterAllowed: () => false,
+            getDefinition: () => ({}),
+            colDef: {},
+            getColSpan: () => 1,
+            getPinned: () => null,
+            isAllowFormula: () => false,
+            getColId: () => 'c1',
+        } as any;
+        session.prepare([colStub]);
+
+        session.onNewBodyRow({ data: { value: 1 } } as any).onColumn(colStub, 0, { data: { value: 1 } } as any);
+        session.onNewBodyRow({ data: { value: 2 } } as any).onColumn(colStub, 0, { data: { value: 2 } } as any);
+
+        session.parse();
+
+        const commentsXml = createXlsxComments(0, 'Workbook Author');
+        expect(commentsXml).toContain('Grid note (exported)');
+        expect(commentsXml).not.toContain('author>Chris</author>');
+        expect(commentsXml.match(/<comment /g)?.length).toBe(1);
+    });
+
+    it('allows callback note injection when automatic grid-note export is disabled', () => {
+        const workbook = new Workbook();
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    suppressGridNotesExport: true,
+                    processNoteCallback: () => ({
+                        text: 'Injected during export',
+                    }),
+                },
+                workbook
+            )
+        );
+
+        const colStub = {
+            getActualWidth: () => 100,
+            isFilterAllowed: () => false,
+            getDefinition: () => ({}),
+            colDef: {},
+            getColSpan: () => 1,
+            getPinned: () => null,
+            isAllowFormula: () => false,
+            getColId: () => 'c1',
+        } as any;
+        session.prepare([colStub]);
+
+        session.onNewBodyRow({ data: { value: 1 } } as any).onColumn(colStub, 0, { data: { value: 1 } } as any);
+
+        const worksheetXml = session.parse();
+
+        expect(worksheetXml).toContain('legacyDrawing');
+        expect(createXlsxComments(0, 'Workbook Author')).toContain('Injected during export');
+    });
+
+    it('falls back to the workbook author when a note author is not provided', () => {
+        const workbook = new Workbook();
+        const worksheetXml = workbook.addWorksheet(
+            [],
+            {
+                name: 'AuthorFallback',
+                table: {
+                    columns: [{ width: 100, displayName: 'A', filterAllowed: true }],
+                    rows: [
+                        {
+                            cells: [
+                                {
+                                    data: { type: 's', value: 'One' },
+                                    note: { text: 'Needs review' },
+                                },
+                            ],
+                        },
+                    ],
+                },
+            },
+            stubParams({}, workbook)
+        );
+
+        expect(worksheetXml).toContain('legacyDrawing');
+        expect(createXlsxComments(0, 'Workbook Author')).toContain('<author>Workbook Author</author>');
+        expect(createXlsxComments(0, '')).toContain('<author>AG Grid</author>');
+    });
+
+    it('exports notes for custom content cells', () => {
+        const workbook = new Workbook();
+        const session = new ExcelSerializingSession(stubParams({}, workbook));
         const colStub = {
             getActualWidth: () => 100,
             isFilterAllowed: () => false,
@@ -173,14 +555,123 @@ describe('excelXlsxFactory Workbook', () => {
 
         session.addCustomContent([
             {
-                cells: [{ data: { type: 's', value: '' }, styleId: 'cell' }],
+                cells: [
+                    {
+                        data: { type: 'String', value: 'Cover' },
+                        note: { text: 'Export-only cover note' },
+                    },
+                ],
             },
         ]);
 
-        const worksheetXml = session.parse();
+        session.parse();
 
-        // Shared string cells must have a numeric `<v>` index (including empty strings).
-        expect(worksheetXml).toMatch(/t="s"[^>]*>\s*<v>0<\/v>/);
+        expect(createXlsxComments(0, 'Workbook Author')).toContain('Export-only cover note');
+    });
+
+    it('omits bold author prefix when suppressPrependAuthorToNotes is true', () => {
+        const workbook = new Workbook();
+        workbook.addWorksheet(
+            [],
+            {
+                name: 'NoPrepend',
+                table: {
+                    columns: [{ width: 100, displayName: 'A', filterAllowed: true }],
+                    rows: [
+                        {
+                            cells: [
+                                {
+                                    data: { type: 's', value: 'One' },
+                                    note: { text: 'Review this cell', author: 'Reviewer' },
+                                },
+                            ],
+                        },
+                    ],
+                },
+            },
+            stubParams({}, workbook)
+        );
+
+        const withAuthor = createXlsxComments(0, 'Workbook Author');
+        expect(withAuthor).toContain('<b/>');
+        expect(withAuthor).toContain('Review this cell');
+
+        const withoutAuthor = createXlsxComments(0, 'Workbook Author', true);
+        expect(withoutAuthor).toContain('Review this cell');
+        expect(withoutAuthor).not.toContain('<b/>');
+    });
+
+    it('keeps comment data aligned when sheet order is reordered', () => {
+        const workbook = new Workbook();
+        const sheetA = workbook.addWorksheet(
+            [],
+            {
+                name: 'First',
+                table: {
+                    columns: [{ width: 100, displayName: 'A', filterAllowed: true }],
+                    rows: [{ cells: [{ data: { type: 's', value: 'A' }, note: { text: 'First note' } }] }],
+                },
+            },
+            stubParams({}, workbook)
+        );
+        const sheetB = workbook.addWorksheet(
+            [],
+            {
+                name: 'Second',
+                table: {
+                    columns: [{ width: 100, displayName: 'A', filterAllowed: true }],
+                    rows: [{ cells: [{ data: { type: 's', value: 'B' }, note: { text: 'Second note' } }] }],
+                },
+            },
+            stubParams({}, workbook)
+        );
+
+        workbook.syncOrderWithSheetData([sheetB, sheetA]);
+
+        expect(createXlsxComments(0, 'Workbook Author')).toContain('Second note');
+        expect(createXlsxComments(1, 'Workbook Author')).toContain('First note');
+    });
+
+    it('adds note and header/footer relationships on the same worksheet', () => {
+        const workbook = new Workbook();
+        const worksheetXml = workbook.addWorksheet(
+            [],
+            {
+                name: 'Combined',
+                table: {
+                    columns: [{ width: 100, displayName: 'A', filterAllowed: true }],
+                    rows: [{ cells: [{ data: { type: 's', value: 'One' }, note: { text: 'Cell note' } }] }],
+                },
+            },
+            stubParams(
+                {
+                    headerFooterConfig: {
+                        all: {
+                            header: [
+                                {
+                                    value: '&[Picture]',
+                                    image: {
+                                        id: 'logo',
+                                        base64: 'abc',
+                                        imageType: 'png',
+                                        width: 20,
+                                        height: 20,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                },
+                workbook
+            )
+        );
+
+        expect(worksheetXml).toContain('legacyDrawing');
+        expect(worksheetXml).toContain('legacyDrawingHF');
+        expect(
+            createXlsxRelationships({ noteVmlDrawingIndex: 0, headerFooterVmlDrawingIndex: 1, commentsIndex: 0 })
+        ).toContain('relationships/comments');
+        expect(createXlsxNoteVmlDrawing(0)).toContain('ObjectType="Note"');
     });
 });
 

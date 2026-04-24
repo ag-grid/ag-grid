@@ -101,7 +101,7 @@ export class ToolPanelColumnComp extends Component {
                 getLocation: () => 'columnToolPanelColumn',
                 shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
                 getAdditionalParams: () => ({
-                    colDef: column.getColDef(),
+                    colDef: column.colDef,
                 }),
             } as ITooltipCtrl)
         );
@@ -138,7 +138,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.setupTooltip();
 
-        const classes = _getToolPanelClassesFromColDef(column.getColDef(), gos, column, null);
+        const classes = _getToolPanelClassesFromColDef(column.colDef, gos, column, null);
         for (const c of classes) {
             this.toggleCss(c, true);
         }
@@ -149,7 +149,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private setupTooltip(): void {
-        const refresh = () => this.tooltipFeature?.setTooltipAndRefresh(this.column.getColDef().headerTooltip);
+        const refresh = () => this.tooltipFeature?.setTooltipAndRefresh(this.column.colDef.headerTooltip);
         refresh();
 
         this.addManagedEventListeners({ newColumnsLoaded: refresh });
@@ -280,7 +280,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private createDragItem() {
-        const colId = this.column.getColId();
+        const colId = this.column.colId;
         const visibleState = { [colId]: this.column.isVisible() };
         const updateStrategy = this.beans.columnStateUpdateStrategy;
         const pivotState = {
@@ -320,7 +320,7 @@ export class ToolPanelColumnComp extends Component {
             canBeToggled = !functionsReadOnly && !noFunctionsAllowed;
             canBeDragged = canBeToggled;
         } else {
-            const { enableRowGroup, enableValue, lockPosition, suppressMovable, lockVisible } = this.column.getColDef();
+            const { enableRowGroup, enableValue, lockPosition, suppressMovable, lockVisible } = this.column.colDef;
             const forceDraggable = !!enableRowGroup || !!enableValue;
             const disableDraggable = !!lockPosition || !!suppressMovable;
             canBeToggled = !lockVisible;

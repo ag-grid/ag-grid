@@ -337,6 +337,7 @@ export const AG_GRID_LOCALE_PL = {
     sortAbsoluteAscending: 'Sortuj bezwzględnie rosnąco',
     sortAbsoluteDescending: 'Sortuj bezwzględnie malejąco',
     sortUnSort: 'Usuń Sortowanie',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Suma',
@@ -690,12 +691,16 @@ export const AG_GRID_LOCALE_PL = {
     ariaColumnCellSelection: 'Naciśnij Enter, aby przełączyć zaznaczenie wszystkich widocznych komórek w tej kolumnie',
     ariaColumnGroupCellSelection:
         'Naciśnij Enter, aby przełączyć zaznaczenie wszystkich widocznych komórek w tej grupie kolumn',
+    ariaColumnGroupExpansion: 'Naciśnij ENTER, aby rozwinąć lub zwinąć tę grupę kolumn',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Naciśnij Enter, aby przełączyć zaznaczenie wszystkich widocznych komórek w tej grupie kolumn. Naciśnij ALT ENTER, aby rozwinąć lub zwinąć tę grupę kolumn',
     ariaRowSelectAll: 'Naciśnij SPACJĘ, aby przełączyć zaznaczenie wszystkich wierszy',
     ariaRowToggleSelection: 'Naciśnij SPACJĘ, aby przełączyć zaznaczenie wiersza',
     ariaRowSelect: 'Naciśnij SPACJĘ, aby zaznaczyć ten wiersz',
     ariaRowSelectionDisabled: 'Zaznaczenie wiersza jest wyłączone dla tego wiersza',
     ariaSearch: 'Szukaj',
     ariaSortableColumn: 'Naciśnij ENTER, aby sortować',
+    ariaSortableColumnWithCellSelection: 'Naciśnij ALT ENTER, aby sortować',
     ariaToggleVisibility: 'Naciśnij SPACJĘ, aby przełączyć widoczność',
     ariaToggleCellValue: 'Naciśnij SPACJĘ, aby przełączyć wartość komórki',
     ariaUnchecked: 'niezaznaczone',
@@ -761,6 +766,7 @@ export const AG_GRID_LOCALE_PL = {
     ariaLabelAddFilterField: 'Dodaj pole filtru',
     ariaLabelFilterCardDelete: 'Usuń filtr',
     ariaLabelFilterCardHasEdits: 'Ma edycje',
+    ariaHasNote: 'Ta komórka ma notatkę.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -805,4 +811,12 @@ export const AG_GRID_LOCALE_PL = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM RRRR',
     timeFormatHHMMSS: 'GG:MM:SS',
     timeFormatHHMMSSAmPm: 'GG:MM:SS AM/PM',
+
+    // Notes
+    note: 'Notatka komórki',
+    addNote: 'Dodaj notatkę',
+    viewNote: 'Wyświetl notatkę',
+    editNote: 'Edytuj notatkę',
+    deleteNote: 'Usuń notatkę',
+    notePlaceholder: 'Dodaj notatkę...',
 };

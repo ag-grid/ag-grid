@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('ag-grid grouping complex transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -105,6 +105,13 @@ describe('ag-grid grouping complex transactions', () => {
             · · └── LEAF id:5 country:"Germany" year:2021 athlete:"Carlos Garcia Updated" sport:"Basketball"
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toStrictEqual([row1b, row4, row5b]);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country/Year" width:200
+            ├── athlete "Athlete" width:200
+            └── sport "Sport" width:200
+        `);
     });
 
     test('grouping async transaction batching', async () => {
@@ -160,6 +167,13 @@ describe('ag-grid grouping complex transactions', () => {
             │ └── LEAF id:3 country:"France" athlete:"Jean Dupont" sport:"Tennis"
             └─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
             · └── LEAF id:4 country:"Spain" athlete:"Carlos Garcia" sport:"Basketball"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── athlete "Athlete" width:200
+            └── sport "Sport" width:200
         `);
     });
 

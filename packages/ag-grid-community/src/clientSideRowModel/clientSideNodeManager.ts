@@ -3,6 +3,7 @@ import type { GetRowIdFunc } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { RefreshModelParams } from '../interfaces/iClientSideRowModel';
+import { ROOT_NODE_ID } from '../interfaces/iRowNode';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _error, _warn } from '../validation/logging';
@@ -413,7 +414,7 @@ const initRootNode = <TData = any>(rootNode: RowNode<TData>): RowNode<TData> => 
     rootNode.group = true;
     rootNode.level = -1;
     rootNode._expanded = true;
-    rootNode.id = 'ROOT_NODE_ID';
+    rootNode.id = ROOT_NODE_ID;
     if (rootNode._leafs?.length !== 0) {
         rootNode._leafs = [];
     }

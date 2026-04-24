@@ -2,7 +2,7 @@ import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, QuickFilterModule, getGridElement } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 function getVisibleAutoGroupColIds(api: GridApi): string[] {
     return api
@@ -167,6 +167,13 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2021 ag-Grid-AutoColumn-year:"2021"
             · · └── LEAF hidden id:4 country:"France" year:"2021" athlete:"Jean Dupont" gold:1
         `);
+
+        await new GridColumns(api, 'all collapsed').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            ├── athlete "Athlete" width:200
+            └── gold "Gold" width:200
+        `);
     });
 
     test('expand level 0 - level 1 auto column appears', async () => {
@@ -219,6 +226,14 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
             └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn-country:"France" ag-Grid-AutoColumn-year:null
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2021 ag-Grid-AutoColumn-year:"2021"
             · · └── LEAF hidden id:4 country:"France" year:"2021" athlete:"Jean Dupont" gold:1
+        `);
+
+        await new GridColumns(api, 'Ireland expanded').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            ├── ag-Grid-AutoColumn-year "Year" width:200
+            ├── athlete "Athlete" width:200
+            └── gold "Gold" width:200
         `);
     });
 
@@ -301,6 +316,15 @@ describe('ag-grid groupHideColumnsUntilExpanded', () => {
             · └─┬ filler collapsed hidden id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn-year:"2020" ag-Grid-AutoColumn-sport:null
             · · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Italy-year-2020-sport-Soccer ag-Grid-AutoColumn-sport:"Soccer"
             · · · └── LEAF hidden id:4 country:"Italy" year:"2020" sport:"Soccer" athlete:"Mario Rossi" gold:4
+        `);
+
+        await new GridColumns(api, 'Ireland > 2020 expanded').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn-country "Country" width:200
+            ├── ag-Grid-AutoColumn-year "Year" width:200
+            ├── ag-Grid-AutoColumn-sport "Sport" width:200
+            ├── athlete "Athlete" width:200
+            └── gold "Gold" width:200
         `);
     });
 

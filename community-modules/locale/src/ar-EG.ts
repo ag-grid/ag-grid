@@ -333,6 +333,7 @@ export const AG_GRID_LOCALE_EG = {
     sortAbsoluteAscending: 'ترتيب تصاعدي مطلق',
     sortAbsoluteDescending: 'ترتيب تنازلي مطلق',
     sortUnSort: 'إلغاء الترتيب',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'المجموع',
@@ -684,12 +685,16 @@ export const AG_GRID_LOCALE_EG = {
     ariaSelectAllRowCells: 'اضغط على Enter لتحديد كل الخلايا في هذا الصف',
     ariaColumnCellSelection: 'اضغط على Enter لتبديل تحديد جميع الخلايا المرئية في هذا العمود',
     ariaColumnGroupCellSelection: 'اضغط على Enter لتبديل تحديد جميع الخلايا المرئية في مجموعة الأعمدة هذه',
+    ariaColumnGroupExpansion: 'اضغط على ENTER لتوسيع أو طي مجموعة الأعمدة هذه',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'اضغط على Enter لتبديل تحديد جميع الخلايا المرئية في مجموعة الأعمدة هذه. اضغط على ALT ENTER لتوسيع أو طي مجموعة الأعمدة هذه',
     ariaRowSelectAll: 'اضغط Space لتبديل تحديد كل الصفوف',
     ariaRowToggleSelection: 'اضغط Space لتبديل تحديد الصف',
     ariaRowSelect: 'اضغط SPACE لتحديد هذا الصف',
     ariaRowSelectionDisabled: 'تحديد الصف معطل لهذا الصف',
     ariaSearch: 'بحث',
     ariaSortableColumn: 'اضغط ENTER لفرز',
+    ariaSortableColumnWithCellSelection: 'اضغط ALT ENTER لفرز',
     ariaToggleVisibility: 'اضغط SPACE لتبديل الرؤية',
     ariaToggleCellValue: 'اضغط SPACE لتبديل قيمة الخلية',
     ariaUnchecked: 'غير محدد',
@@ -755,6 +760,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaLabelAddFilterField: 'إضافة حقل الفلتر',
     ariaLabelFilterCardDelete: 'حذف الفلتر',
     ariaLabelFilterCardHasEdits: 'يوجد تعديلات',
+    ariaHasNote: 'تحتوي هذه الخلية على ملاحظة.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '،',
@@ -799,4 +805,12 @@ export const AG_GRID_LOCALE_EG = {
     timeFormatSpacesDDMMMMYYYY: 'يوم شهر سنة',
     timeFormatHHMMSS: 'ساعة:دقيقة:ثانية',
     timeFormatHHMMSSAmPm: 'ساعة:دقيقة:ثانية ص/م',
+
+    // Notes
+    note: 'ملاحظة الخلية',
+    addNote: 'إضافة ملاحظة',
+    viewNote: 'عرض الملاحظة',
+    editNote: 'تحرير الملاحظة',
+    deleteNote: 'إزالة الملاحظة',
+    notePlaceholder: 'أضف ملاحظة...',
 };

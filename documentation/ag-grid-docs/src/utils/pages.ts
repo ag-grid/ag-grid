@@ -4,6 +4,8 @@ import type { CollectionEntry } from 'astro:content';
 import fs from 'fs/promises';
 import * as glob from 'glob';
 import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 import { SITE_BASE_URL, USE_PUBLISHED_PACKAGES } from '../constants';
 import { type GlobConfig, createFilePathFinder } from './createFilePathFinder';
@@ -95,40 +97,29 @@ export function getJsonFile(fileKey: FileKey) {
 
 /**
  * The root url where the monorepo exists
+ *
+ * Anchored to `process.cwd()` (the `documentation/ag-grid-docs` project dir for both
+ * `astro dev` and the nx build). Avoids `import.meta.url`, which resolves to the
+ * bundled chunk location at build time and so breaks when Astro's output structure
+ * changes (e.g. the extra `dist/.prerender/chunks/` level added in Astro 6).
  */
 export const getRootUrl = (): URL => {
-    // Relative to the folder of this file
-    const root = '../../../../';
-    return new URL(root, import.meta.url);
+    return pathToFileURL(path.resolve(process.cwd(), '../../') + path.sep);
 };
 
 /**
  *  TODO: Figure this out when working on build
  */
 export const getExampleRootFileUrl = (): URL => {
-    const root = getRootUrl().pathname;
-    return new URL(`${root}/dist/generated-examples/ag-grid-docs/`, import.meta.url);
-};
-
-/**
- * The `ag-charts-website` root url where the monorepo exists
- */
-const getWebsiteRootUrl = (): URL => {
-    // Relative to the folder of this file
-    const root = '../../';
-    return new URL(root, import.meta.url);
+    return pathToFileURL(path.resolve(getRootUrl().pathname, 'dist/generated-examples/ag-grid-docs') + path.sep);
 };
 
 export const getContentRootFileUrl = (): URL => {
-    const websiteRoot = getWebsiteRootUrl();
-    const contentRoot = pathJoin(websiteRoot, 'src/content');
-    return new URL(contentRoot, import.meta.url);
+    return pathToFileURL(path.resolve(process.cwd(), 'src/content') + path.sep);
 };
 
 export const getDebugFolderUrl = (): URL => {
-    const websiteRoot = getWebsiteRootUrl();
-    const contentRoot = pathJoin(websiteRoot, 'src/pages/debug');
-    return new URL(contentRoot, import.meta.url);
+    return pathToFileURL(path.resolve(process.cwd(), 'src/pages/debug') + path.sep);
 };
 
 export const getDebugPageUrls = async ({

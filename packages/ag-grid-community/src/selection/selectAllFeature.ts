@@ -212,7 +212,7 @@ export class SelectAllFeature extends BeanStub {
         if (selectAll) {
             return selectAll;
         }
-        const { headerCheckboxSelectionCurrentPageOnly, headerCheckboxSelectionFilteredOnly } = this.column.getColDef();
+        const { headerCheckboxSelectionCurrentPageOnly, headerCheckboxSelectionFilteredOnly } = this.column.colDef;
         if (headerCheckboxSelectionCurrentPageOnly) {
             return 'currentPage';
         }
@@ -231,7 +231,7 @@ export class SelectAllFeature extends BeanStub {
 
 export function isCheckboxSelection({ gos, selectionColSvc }: BeanCollection, column: AgColumn): boolean {
     const rowSelection = gos.get('rowSelection');
-    const colDef = column.getColDef();
+    const colDef = column.colDef;
     const { headerCheckboxSelection } = colDef;
 
     let result = false;

@@ -61,7 +61,7 @@ export class CellSpan {
      * needs applied to the last row in the span.
      */
     public getLastNodeAutoHeight(): number | undefined {
-        const autoHeight = this.firstNode.__autoHeights?.[this.col.getColId()];
+        const autoHeight = this.firstNode.__autoHeights?.[this.col.colId];
         if (autoHeight == null) {
             return undefined;
         }

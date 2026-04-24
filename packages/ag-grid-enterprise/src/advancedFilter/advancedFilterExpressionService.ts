@@ -212,12 +212,9 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         const entries: AutocompleteEntry[] = [];
         const includeHiddenColumns = this.gos.get('includeHiddenColumnsInAdvancedFilter');
         for (const column of columns) {
-            if (
-                column.getColDef().filter &&
-                (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())
-            ) {
+            if (column.colDef.filter && (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())) {
                 entries.push({
-                    key: column.getColId(),
+                    key: column.colId,
                     displayValue: this.colNames.getDisplayNameForColumn(column, 'advancedFilter')!,
                 });
             }
@@ -310,7 +307,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 break;
             case 'object':
                 // If there's a filter value getter, assume the value is already a string. Otherwise we need to format it.
-                if (column.getColDef().filterValueGetter) {
+                if (column.colDef.filterValueGetter) {
                     params = { valueConverter: (v: any) => v };
                 } else {
                     params = {
@@ -328,7 +325,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 params = { valueConverter: (v: any) => v };
                 break;
         }
-        const { filterParams } = column.getColDef();
+        const { filterParams } = column.colDef;
         if (filterParams) {
             ['caseSensitive', 'includeBlanksInEquals', 'includeBlanksInLessThan', 'includeBlanksInGreaterThan'].forEach(
                 (param: keyof FilterExpressionEvaluatorParams<ConvertedTValue, TValue>) => {
@@ -383,7 +380,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     private getActiveOperators(column: AgColumn): string[] | undefined {
-        const filterOptions = column.getColDef().filterParams?.filterOptions;
+        const filterOptions = column.colDef.filterParams?.filterOptions;
         if (!filterOptions) {
             return undefined;
         }

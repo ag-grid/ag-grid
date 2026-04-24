@@ -6,8 +6,6 @@ import type { InfixOpDef } from './operators';
 import { FormulaError } from './utils';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
 
-// shared, symbol-only
-
 const isOperationNode = (n: FormulaNode): n is FormulaOperation => n.type === 'operation';
 
 function colLabelFromId(beans: BeanCollection, colId: string): string | null {
@@ -32,14 +30,14 @@ export function colIndexFromId(colModel: ColumnModel, cols: AgColumn[], colId: s
 }
 
 export function colIdFromIndex(cols: AgColumn[], idx: number): string | null {
-    const col = cols[idx];
-    return col ? col.getId() ?? null : null;
+    return cols[idx]?.colId ?? null;
 }
 
 export function rowIndexFromId(beans: BeanCollection, rowId: string): number | null {
     const row = beans.rowModel?.getRowNode?.(rowId);
-    if (row?.formulaRowIndex != null) {
-        return row.formulaRowIndex + 1; // convert 0-based to 1-based
+    const formulaRowIndex = row?.formulaRowIndex;
+    if (formulaRowIndex != null) {
+        return formulaRowIndex + 1; // convert 0-based to 1-based
     }
     return null;
 }
@@ -47,140 +45,132 @@ export function rowIdFromIndex(beans: BeanCollection, idx: number): string | nul
     return _getClientSideRowModel(beans)?.getFormulaRow?.(idx - 1)?.id ?? null;
 }
 
+const LETTERS_ONLY = /^[A-Za-z]+$/;
+
 function quoteString(s: string): string {
     if (s.includes('"')) {
         throw new FormulaError(18);
     }
-    return `"${s}"`;
+    return '"' + s + '"';
 }
 
 function columnValueForREF(beans: BeanCollection, ref: CellRef): string {
-    const looksLetters = /^[A-Za-z]+$/.test(ref.id);
+    const id = ref.id;
+    const looksLetters = LETTERS_ONLY.test(id);
     if (ref.absolute) {
         if (looksLetters) {
-            return ref.id.toUpperCase();
+            return id.toUpperCase();
         }
-        const label = colLabelFromId(beans, ref.id);
+        const label = colLabelFromId(beans, id);
         if (label) {
             return label.toUpperCase();
         }
-        throw new FormulaError(19, [ref.id]);
-    } else {
-        if (looksLetters) {
-            const id = colIdFromLabel(beans, ref.id);
-            if (id) {
-                return id;
-            }
-        }
-        return ref.id;
+        throw new FormulaError(19, [id]);
     }
+    if (looksLetters) {
+        const mappedId = colIdFromLabel(beans, id);
+        if (mappedId) {
+            return mappedId;
+        }
+    }
+    return id;
 }
 
 function rowValueForREF(beans: BeanCollection, ref: CellRef): string {
     const { id, absolute } = ref;
     if (absolute) {
         // when absolute, the reference id is the index
-        const rowId = rowIdFromIndex(beans, Number(id));
-        if (rowId == null) {
+        if (rowIdFromIndex(beans, Number(id)) == null) {
             throw new FormulaError(20, [id]);
         }
-    } else {
-        const idx = rowIndexFromId(beans, id);
-        if (idx == null) {
-            throw new FormulaError(21, [id]);
-        }
+    } else if (rowIndexFromId(beans, id) == null) {
+        throw new FormulaError(21, [id]);
     }
-
     return id;
 }
 
 function columnLabelForA1(beans: BeanCollection, ref: CellRef): string {
+    const id = ref.id;
     // if absolute, already storing col label
     if (ref.absolute) {
-        return ref.id;
+        return id;
     }
 
-    const label = colLabelFromId(beans, ref.id);
+    const label = colLabelFromId(beans, id);
     if (label) {
         return label.toUpperCase();
     }
-    throw new FormulaError(22, [ref.id]);
+    throw new FormulaError(22, [id]);
 }
 
 function rowIndexForA1(beans: BeanCollection, ref: CellRef): number {
     // if absolute, already storing 1-based row index
+    const id = ref.id;
     if (ref.absolute) {
-        const idx = Number(ref.id);
+        const idx = Number(id);
         if (Number.isFinite(idx) && idx >= 1) {
             return idx;
         }
-        throw new FormulaError(23, [ref.id]);
+        throw new FormulaError(23, [id]);
     }
-    const idx = rowIndexFromId(beans, ref.id);
+    const idx = rowIndexFromId(beans, id);
     if (idx != null) {
         return idx;
     }
-    throw new FormulaError(24, [ref.id]);
+    throw new FormulaError(24, [id]);
+}
+
+function emitA1Ref(beans: BeanCollection, ref: CellRef, isCol: boolean, unsafe: boolean): string {
+    const raw = unsafe ? ref.id : isCol ? columnLabelForA1(beans, ref) : rowIndexForA1(beans, ref);
+    return ref.absolute ? '$' + raw : '' + raw;
 }
 
 function serializeCellA1(beans: BeanCollection, cell: Cell, unsafe: boolean): string {
-    const a = (abs: boolean, x: string | number) => (abs ? '$' : '') + String(x);
-
-    const col1 = unsafe ? cell.column.id : columnLabelForA1(beans, cell.column);
-    const row1 = unsafe ? cell.row.id : rowIndexForA1(beans, cell.row);
-    const startRef = a(cell.column.absolute, col1) + a(cell.row.absolute, row1);
-
-    if (cell.endColumn && cell.endRow) {
-        const col2 = unsafe ? cell.endColumn.id : columnLabelForA1(beans, cell.endColumn);
-        const row2 = unsafe ? cell.endRow.id : rowIndexForA1(beans, cell.endRow);
-        return `${startRef}:${a(cell.endColumn.absolute, col2)}${a(cell.endRow.absolute, row2)}`;
+    const startRef = emitA1Ref(beans, cell.column, true, unsafe) + emitA1Ref(beans, cell.row, false, unsafe);
+    const { endColumn, endRow } = cell;
+    if (endColumn && endRow) {
+        return startRef + ':' + emitA1Ref(beans, endColumn, true, unsafe) + emitA1Ref(beans, endRow, false, unsafe);
     }
     return startRef;
 }
 
-function serializeCellREF(beans: BeanCollection, cell: Cell): string {
-    const colPart = (r: CellRef) => `COLUMN(${quoteString(columnValueForREF(beans, r))}${r.absolute ? ',true' : ''})`;
-    const rowPart = (r: CellRef) => `ROW(${quoteString(rowValueForREF(beans, r))}${r.absolute ? ',true' : ''})`;
-
-    const start = `REF(${colPart(cell.column)},${rowPart(cell.row)}`;
-    if (cell.endColumn && cell.endRow) {
-        return `${start},${colPart(cell.endColumn)},${rowPart(cell.endRow)})`;
-    }
-    return `${start})`;
+function emitRefColPart(beans: BeanCollection, ref: CellRef): string {
+    return 'COLUMN(' + quoteString(columnValueForREF(beans, ref)) + (ref.absolute ? ',true)' : ')');
 }
 
-/** Detects if unary - by checking if first child is 0 */
-function isUnaryMinusNode(node: FormulaNode): FormulaNode | null {
-    if (!isOperationNode(node) || node.operation !== '-' || node.operands.length !== 2) {
+function emitRefRowPart(beans: BeanCollection, ref: CellRef): string {
+    return 'ROW(' + quoteString(rowValueForREF(beans, ref)) + (ref.absolute ? ',true)' : ')');
+}
+
+function serializeCellREF(beans: BeanCollection, cell: Cell): string {
+    const start = 'REF(' + emitRefColPart(beans, cell.column) + ',' + emitRefRowPart(beans, cell.row);
+    const { endColumn, endRow } = cell;
+    if (endColumn && endRow) {
+        return start + ',' + emitRefColPart(beans, endColumn) + ',' + emitRefRowPart(beans, endRow) + ')';
+    }
+    return start + ')';
+}
+
+/** True if `node` is `-(0, x)` (the encoding of unary minus); returns inner `x`, else null. */
+function unaryMinusInner(node: FormulaOperation): FormulaNode | null {
+    if (node.operation !== '-' || node.operands.length !== 2) {
         return null;
     }
     const [left, right] = node.operands;
-    if (left.type === 'operand' && left.value === 0) {
-        return right;
-    }
-    return null;
-}
-
-/** True if this node is an infix operation that's in the operator table. */
-function isInfixOpNode(node: FormulaNode): boolean {
-    if (!isOperationNode(node)) {
-        return false;
-    }
-    return !!getDefBySymbol(node.operation, 'infix');
+    return left.type === 'operand' && left.value === 0 ? right : null;
 }
 
 function needsParensInBinary(parentDef: InfixOpDef, child: FormulaNode, side: 'left' | 'right'): boolean {
     if (!isOperationNode(child)) {
         return false;
     }
-
-    // If child is unary-minus-encoded, let the unary print logic decide.
-    if (isUnaryMinusNode(child)) {
+    // Unary-minus children format as '-x' or '-(x)' which is self-contained; no outer parens.
+    if (unaryMinusInner(child)) {
         return false;
     }
 
     const childDef = getDefBySymbol(child.operation, 'infix');
-    if (!childDef || childDef.fixity !== 'infix') {
+    if (!childDef) {
         // functions or non-infix -> no parens
         return false;
     }
@@ -197,14 +187,12 @@ function needsParensInBinary(parentDef: InfixOpDef, child: FormulaNode, side: 'l
 
     // Equal precedence
     if (parentDef.associativity === 'right') {
-        // e.g., '^': parenthesize LEFT child if also '^'
-        const sameOp = childDef.symbol === parentDef.symbol;
-        return side === 'left' && sameOp;
+        // e.g. '^': parenthesize LEFT child if also '^'
+        return side === 'left' && childDef.symbol === parentDef.symbol;
     }
 
     // Left-assoc at equal precedence: add parens on RIGHT if not associative (e.g., '-', '/')
-    const parentAssociative = parentDef.isAssociative === true;
-    if (!parentAssociative) {
+    if (!parentDef.isAssociative) {
         return side === 'right';
     }
 
@@ -216,14 +204,9 @@ function needsParensForUnaryMinus(rhs: FormulaNode): boolean {
     if (!isOperationNode(rhs)) {
         return false;
     }
-
-    // If inner is an infix op, we mirror original behavior: wrap for +, -, *, /; don't wrap for '^'
+    // Mirror original behavior: wrap for +, -, *, /; don't wrap for '^'.
     const innerInfix = getDefBySymbol(rhs.operation, 'infix');
-    if (!innerInfix) {
-        return false;
-    }
-    const isPow = innerInfix.symbol === '^';
-    return !isPow;
+    return !!innerInfix && innerInfix.symbol !== '^';
 }
 
 /**
@@ -243,9 +226,6 @@ export function serializeFormula(
     useRefFormat: boolean,
     unsafe: boolean
 ): string {
-    const emitCell = (cell: Cell) =>
-        useRefFormat ? serializeCellREF(beans, cell) : serializeCellA1(beans, cell, unsafe);
-
     function emit(node: FormulaNode): string {
         if (node.type === 'operand') {
             const v = node.value;
@@ -253,60 +233,70 @@ export function serializeFormula(
                 return quoteString(v);
             }
             if (typeof v === 'number') {
-                return String(v);
+                return '' + v;
             }
             if (typeof v === 'boolean') {
                 return v ? 'TRUE' : 'FALSE';
             }
-            return emitCell(v as Cell);
+            return useRefFormat ? serializeCellREF(beans, v as Cell) : serializeCellA1(beans, v as Cell, unsafe);
         }
 
-        // Unary minus special-case: represented as '-' with [0, expr]
-        const unaryMinusInner = isUnaryMinusNode(node);
-        if (unaryMinusInner) {
-            const s = emit(unaryMinusInner);
-            return needsParensForUnaryMinus(unaryMinusInner) ? `-(${s})` : `-${s}`;
+        // node is FormulaOperation here.
+        const operands = node.operands;
+        const arity = operands.length;
+
+        // Unary minus special-case: '-' with operands [0, expr].
+        if (arity === 2 && node.operation === '-') {
+            const inner = unaryMinusInner(node);
+            if (inner) {
+                const s = emit(inner);
+                return needsParensForUnaryMinus(inner) ? '-(' + s + ')' : '-' + s;
+            }
         }
 
         const op = node.operation.toUpperCase();
 
-        // unary +-% (prefix or postfix)
-        if (node.operands.length === 1) {
-            const rhs = node.operands[0];
+        // unary +- or postfix % (1 operand)
+        if (arity === 1) {
+            const rhs = operands[0];
 
-            // Prefer postfix if defined for this symbol (e.g., '%')
+            // Prefer postfix if defined (e.g., '%')
             const post = getDefBySymbol(op, 'postfix');
             if (post) {
-                return `${emit(rhs)}${post.symbol}`;
+                return emit(rhs) + post.symbol;
             }
 
-            // Otherwise prefix (if you add real prefix ops later)
             const pre = getDefBySymbol(op, 'prefix');
             if (pre) {
                 const inner = emit(rhs);
-                // Conservative: add parens if inner is an infix expression
-                const need = isInfixOpNode(rhs);
-                return need ? `${pre.symbol}(${inner})` : `${pre.symbol}${inner}`;
+                // Conservative: add parens if inner is an infix expression.
+                return isOperationNode(rhs) && getDefBySymbol(rhs.operation, 'infix')
+                    ? pre.symbol + '(' + inner + ')'
+                    : pre.symbol + inner;
             }
 
             // Fallback: function-style
-            return `${op}(${emit(rhs)})`;
+            return op + '(' + emit(rhs) + ')';
         }
 
         // infix binary operator
-        if (node.operands.length === 2) {
+        if (arity === 2) {
             const def = getDefBySymbol(op, 'infix');
-
             if (def) {
-                const [l, r] = node.operands;
-                const Ls = needsParensInBinary(def, l, 'left') ? `(${emit(l)})` : emit(l);
-                const Rs = needsParensInBinary(def, r, 'right') ? `(${emit(r)})` : emit(r);
-                return `${Ls}${def.symbol}${Rs}`;
+                const l = operands[0];
+                const r = operands[1];
+                const Ls = needsParensInBinary(def, l, 'left') ? '(' + emit(l) + ')' : emit(l);
+                const Rs = needsParensInBinary(def, r, 'right') ? '(' + emit(r) + ')' : emit(r);
+                return Ls + def.symbol + Rs;
             }
         }
 
         // function call or unknown operation: OP(arg1,arg2,...)
-        return `${op}(${node.operands.map(emit).join(',')})`;
+        let args = '';
+        for (let i = 0; i < arity; i++) {
+            args += (i === 0 ? '' : ',') + emit(operands[i]);
+        }
+        return op + '(' + args + ')';
     }
 
     return '=' + emit(root);

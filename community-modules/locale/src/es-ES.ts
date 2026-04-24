@@ -337,6 +337,7 @@ export const AG_GRID_LOCALE_ES = {
     sortAbsoluteAscending: 'Ordenar absolutamente ascendente',
     sortAbsoluteDescending: 'Ordenar absolutamente descendente',
     sortUnSort: 'Limpiar Orden',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Suma',
@@ -689,12 +690,16 @@ export const AG_GRID_LOCALE_ES = {
     ariaColumnCellSelection: 'Presione Enter para alternar la selección de todas las celdas visibles en esta columna',
     ariaColumnGroupCellSelection:
         'Presione Enter para alternar la selección de todas las celdas visibles en este grupo de columnas',
+    ariaColumnGroupExpansion: 'Presione ENTER para expandir o contraer este grupo de columnas',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Presione Enter para alternar la selección de todas las celdas visibles en este grupo de columnas. Presione ALT ENTER para expandir o contraer este grupo de columnas',
     ariaRowSelectAll: 'Presiona SPACE para alternar la selección de todas las filas',
     ariaRowToggleSelection: 'Presiona SPACE para alternar la selección de la fila',
     ariaRowSelect: 'Presiona SPACE para seleccionar esta fila',
     ariaRowSelectionDisabled: 'La selección de filas está deshabilitada para esta fila',
     ariaSearch: 'Buscar',
     ariaSortableColumn: 'Presiona ENTER para ordenar',
+    ariaSortableColumnWithCellSelection: 'Presiona ALT ENTER para ordenar',
     ariaToggleVisibility: 'Presiona SPACE para alternar la visibilidad',
     ariaToggleCellValue: 'Presiona SPACE para alternar el valor de la celda',
     ariaUnchecked: 'no seleccionado',
@@ -761,6 +766,7 @@ export const AG_GRID_LOCALE_ES = {
     ariaLabelAddFilterField: 'Agregar campo de filtro',
     ariaLabelFilterCardDelete: 'Eliminar filtro',
     ariaLabelFilterCardHasEdits: 'Tiene ediciones',
+    ariaHasNote: 'Esta celda tiene una nota.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -805,4 +811,12 @@ export const AG_GRID_LOCALE_ES = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM AAAA',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS a. m./p. m.',
+
+    // Notes
+    note: 'Nota de celda',
+    addNote: 'Añadir nota',
+    viewNote: 'Ver nota',
+    editNote: 'Editar nota',
+    deleteNote: 'Eliminar nota',
+    notePlaceholder: 'Añadir una nota...',
 };

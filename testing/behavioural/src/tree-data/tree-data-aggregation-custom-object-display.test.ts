@@ -2,7 +2,7 @@ import type { GridApi, IAggFuncParams, IRowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 /** Custom aggFunc that returns an object with .value for display.
  * Uses typeof check instead of leafGroup since filler nodes in tree data don't have leafGroup set.
@@ -90,6 +90,12 @@ describe('ag-grid tree data custom aggregation object display value', () => {
         const ukGroupNode = findGroupRow(api, 'UK');
         expect(irelandGroupNode.aggData?.rangeTotal).toEqual({ max: 30, min: 10, value: 20 });
         expect(ukGroupNode.aggData?.rangeTotal).toEqual({ max: 25, min: 5, value: 20 });
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:220 flex:1
+            └── rangeTotal "Total" width:200 flex:1 aggFunc:custom
+        `);
     });
 
     test('user-supplied valueFormatter that handles group objects shows unwrapped values', async () => {
@@ -131,6 +137,12 @@ describe('ag-grid tree data custom aggregation object display value', () => {
             └─┬ UK filler id:row-group-0-UK ag-Grid-AutoColumn:"UK" rangeTotal:"Range: 20"
             · ├── Row1 LEAF id:uk-1 ag-Grid-AutoColumn:"Row1" rangeTotal:"Range: 5"
             · └── Row2 LEAF id:uk-2 ag-Grid-AutoColumn:"Row2" rangeTotal:"Range: 25"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:220 flex:1
+            └── rangeTotal "Total" width:200 flex:1 aggFunc:custom
         `);
     });
 

@@ -1,11 +1,52 @@
-import { clickAllButtons, ensureGridReady, test, waitForGridContent } from '@utils/grid/test-utils';
+import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Example', async ({ page }) => {
-        // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
+    test.eachFramework('should load grid with data and show advanced filter input', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
-        await clickAllButtons(page);
-        // END PLACEHOLDER
+
+        // Advanced filter input should be visible
+        const filterInput = page.locator('.ag-advanced-filter input[type=text]');
+        await expect(filterInput).toBeVisible();
+
+        // Grid should have rows loaded — unfiltered data includes many different athletes
+        const athleteCells = page.locator('.ag-row [col-id="athlete"]');
+        await expect(athleteCells.first()).toBeVisible();
+        const athletes = await athleteCells.allTextContents();
+        const uniqueAthletes = new Set(athletes);
+        expect(uniqueAthletes.size).toBeGreaterThan(5);
+    });
+
+    test.eachFramework('should filter rows by typing expression and clicking Apply', async ({ page }) => {
+        await ensureGridReady(page);
+        await waitForGridContent(page);
+
+        // Before filtering: verify non-Phelps athletes are visible
+        const athleteCells = page.locator('.ag-row [col-id="athlete"]');
+        const athletesBefore = await athleteCells.allTextContents();
+        const hasNonPhelps = athletesBefore.some((name) => !name.toLowerCase().includes('phelps'));
+        expect(hasNonPhelps).toBe(true);
+
+        // Type expression into the filter input
+        const filterInput = page.locator('.ag-advanced-filter input[type=text]');
+        await filterInput.fill('[Athlete] contains "phelps"');
+
+        // Close any autocomplete dropdown, then click the Apply button
+        await page.keyboard.press('Escape');
+        await page.locator('.ag-advanced-filter-buttons').getByText('Apply').click();
+
+        // Wait for filter to apply — Phelps should appear and non-Phelps should disappear
+        // Use page.waitForFunction to wait for the grid to settle with only Phelps rows
+        await page.waitForFunction(() => {
+            const cells = document.querySelectorAll('.ag-row [col-id="athlete"]');
+            return cells.length > 0 && Array.from(cells).every((c) => c.textContent?.toLowerCase().includes('phelps'));
+        });
+
+        // Every visible athlete cell should contain "Phelps"
+        const athletesAfter = await athleteCells.allTextContents();
+        expect(athletesAfter.length).toBeGreaterThan(0);
+        for (const text of athletesAfter) {
+            expect(text.toLowerCase()).toContain('phelps');
+        }
     });
 });

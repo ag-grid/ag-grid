@@ -3,7 +3,7 @@ import { ClientSideRowModelModule, NumberFilterModule, PinnedRowModule } from 'a
 import { PivotModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('IRowNode.getAggregatedChildren()', () => {
     const gridsManager = new TestGridsManager({
@@ -76,6 +76,13 @@ describe('IRowNode.getAggregatedChildren()', () => {
             const goldCol = api.getColumn('gold')!;
             const italyChildren = italyGroup!.getAggregatedChildren(goldCol);
             expect(italyChildren.map((n) => n.data?.id).sort()).toEqual(['4', '5']);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Country" width:200
+                ├── sport "Sport" width:200
+                └── gold "Gold" width:200 aggFunc:sum
+            `);
         });
 
         test('with multiple grouping levels, returns only direct children', async () => {
@@ -130,6 +137,12 @@ describe('IRowNode.getAggregatedChildren()', () => {
             // getAggregatedChildren returns the leaf children
             const irelandChildren = irelandGroup!.getAggregatedChildren(null);
             expect(irelandChildren.map((n) => n.data?.id).sort()).toEqual(['1', '2']);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                └── gold "Gold" width:200 aggFunc:sum
+            `);
         });
 
         test('respects filtering - returns only filtered children', async () => {

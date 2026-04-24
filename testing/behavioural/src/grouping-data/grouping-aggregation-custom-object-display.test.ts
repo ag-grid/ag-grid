@@ -2,7 +2,7 @@ import type { GridApi, IAggFuncParams, IRowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 /** Custom aggFunc that returns an object with .value for display, as shown in the docs example.
  * Also validates that aggregatedChildren is correctly populated. */
@@ -91,6 +91,12 @@ describe('ag-grid grouping custom aggregation object display value', () => {
         const ukGroupNode = findGroupRow(api, 'UK');
         expect(irelandGroupNode.aggData?.rangeTotal).toEqual({ max: 30, min: 10, value: 20 });
         expect(ukGroupNode.aggData?.rangeTotal).toEqual({ max: 25, min: 5, value: 20 });
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:220 flex:1
+            └── rangeTotal "Total" width:200 flex:1 aggFunc:custom
+        `);
     });
 
     test('user-supplied valueFormatter that handles group objects shows unwrapped values', async () => {
@@ -131,6 +137,12 @@ describe('ag-grid grouping custom aggregation object display value', () => {
             └─┬ LEAF_GROUP id:row-group-country-UK ag-Grid-AutoColumn:"UK" rangeTotal:"Range: 20"
             · ├── LEAF id:uk-1 country:"UK" rangeTotal:"Range: 5"
             · └── LEAF id:uk-2 country:"UK" rangeTotal:"Range: 25"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:220 flex:1
+            └── rangeTotal "Total" width:200 flex:1 aggFunc:custom
         `);
     });
 

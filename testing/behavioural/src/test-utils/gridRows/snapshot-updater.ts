@@ -22,6 +22,8 @@ export interface SnapshotMismatch {
     column: number;
     actualDiagram: string;
     label: string;
+    /** The method name that recorded this mismatch ('check' or 'checkColumns'). */
+    methodName?: string;
 }
 
 interface Replacement {
@@ -43,13 +45,16 @@ function getUpdatesArray(): SnapshotMismatch[] | undefined {
     return (globalThis as any).__gridRowsSnapshotUpdates as SnapshotMismatch[] | undefined;
 }
 
-// ─── Call site capture ───────────────────────────────────────────────────────
-
 /**
  * Records a snapshot mismatch for later rewriting.
  * Called from GridRows.check() when update mode is active.
  */
-export function recordSnapshotMismatch(callerFn: Function, actualDiagram: string, label: string): void {
+export function recordSnapshotMismatch(
+    callerFn: Function,
+    actualDiagram: string,
+    label: string,
+    methodName?: string
+): void {
     const updates = getUpdatesArray();
     if (!updates) {
         return;
@@ -67,11 +72,13 @@ export function recordSnapshotMismatch(callerFn: Function, actualDiagram: string
         column: callSite.column,
         actualDiagram,
         label,
+        methodName,
     });
 }
 
-/** Directory path used to filter out internal frames from stack traces. */
-const GRID_ROWS_DIR = path.join('test-utils', 'gridRows') + path.sep;
+/** Directory path prefix used to filter out internal frames from stack traces.
+ * Matches both `test-utils/gridRows/` and `test-utils/gridColumns/`. */
+const GRID_TEST_UTILS_DIR = path.join('test-utils', 'grid');
 
 function captureCallSite(callerFn: Function): { file: string; line: number; column: number } | null {
     const err: { stack?: string } = {};
@@ -95,8 +102,8 @@ function captureCallSite(callerFn: Function): { file: string; line: number; colu
                     file = file.slice(7);
                 }
             }
-            // Skip frames from node_modules or the gridRows utilities directory
-            if (file.includes('node_modules') || file.includes(GRID_ROWS_DIR)) {
+            // Skip frames from node_modules or the grid test utilities directories
+            if (file.includes('node_modules') || file.includes(GRID_TEST_UTILS_DIR)) {
                 continue;
             }
             return { file, line: parseInt(match[2], 10), column: parseInt(match[3], 10) };
@@ -173,15 +180,25 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
         // Sort descending by start position so replacements don't shift offsets
         replacements.sort((a, b) => b.start - a.start);
 
-        // Deduplicate overlapping replacements (keep only the first = last in source order)
+        // Deduplicate overlapping replacements
         const deduped: Replacement[] = [];
         for (const r of replacements) {
             if (deduped.length > 0) {
                 const prev = deduped[deduped.length - 1];
-                // prev.start >= r.end since sorted descending — but check overlap just in case
                 if (r.end > prev.start) {
-                    logWarning(`  ⚠️️ Skipped ${relPath}:${r.line} — "${r.label}" (overlapping replacement)`);
-                    totalSkipped++;
+                    // Two replacements target the same range (e.g., shared variable in parameterized tests)
+                    if (r.start === prev.start && r.end === prev.end && r.newText !== prev.newText) {
+                        // Different content for the same target — shared variable with different parameterizations.
+                        // Skip BOTH to avoid corruption. The user needs to expand the parameterized test.
+                        deduped.pop();
+                        logWarning(
+                            `  ⚠️️ Skipped ${relPath}:${prev.line} — "${prev.label}" (shared variable produces different snapshots across parameterizations — expand the test.each/describe.each)`
+                        );
+                        totalSkipped += 2;
+                    } else {
+                        logWarning(`  ⚠️️ Skipped ${relPath}:${r.line} — "${r.label}" (overlapping replacement)`);
+                        totalSkipped++;
+                    }
                     continue;
                 }
             }
@@ -258,11 +275,13 @@ export async function processSnapshotUpdates(currentTestFile?: string): Promise<
 
 // ─── AST-based replacement finder ────────────────────────────────────────────
 
-/** Information about a .check() call found in the AST. */
+/** Information about a .check() or .checkColumns() call found in the AST. */
 interface CheckCallInfo {
     callLine: number;
     node: any;
     arg: any;
+    /** The method name: 'check' or 'checkColumns'. */
+    methodName: string;
 }
 
 function findReplacements(
@@ -293,16 +312,20 @@ function findReplacements(
     }
     collectVarDeclarations(sourceFile);
 
-    // Collect all .check() calls from the AST
+    // Collect all .check() and .checkColumns() calls from the AST
     const checkCalls: CheckCallInfo[] = [];
 
     function visit(node: any): void {
         if (ts.isCallExpression(node)) {
             const expr = node.expression;
-            // Match .check(...) — PropertyAccessExpression where name is "check"
-            if (ts.isPropertyAccessExpression(expr) && expr.name.text === 'check' && node.arguments.length >= 1) {
+            // Match .check(...) or .checkColumns(...) — PropertyAccessExpression
+            if (
+                ts.isPropertyAccessExpression(expr) &&
+                (expr.name.text === 'check' || expr.name.text === 'checkColumns') &&
+                node.arguments.length >= 1
+            ) {
                 const callLine = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1; // 1-based
-                checkCalls.push({ callLine, node, arg: node.arguments[0] });
+                checkCalls.push({ callLine, node, arg: node.arguments[0], methodName: expr.name.text });
             }
         }
         ts.forEachChild(node, visit);
@@ -315,12 +338,18 @@ function findReplacements(
     const usedCheckCalls = new Set<CheckCallInfo>();
 
     for (const mismatch of sortedMismatches) {
-        // Find the closest unused .check() call to this mismatch's line
+        // Find the closest unused call to this mismatch's line.
+        // When the mismatch has a methodName, only match calls with the same method name
+        // (prevents .checkColumns() mismatches from replacing .check() snapshots and vice versa).
         let bestMatch: CheckCallInfo | undefined;
         let bestDistance = Infinity;
 
         for (const cc of checkCalls) {
             if (usedCheckCalls.has(cc)) {
+                continue;
+            }
+            // Filter by method name when available
+            if (mismatch.methodName && cc.methodName !== mismatch.methodName) {
                 continue;
             }
             const distance = Math.abs(cc.callLine - mismatch.line);
@@ -368,7 +397,11 @@ function findIndentationFixes(ts: Typescript, source: string, file: string): Rep
     function visit(node: any): void {
         if (ts.isCallExpression(node)) {
             const expr = node.expression;
-            if (ts.isPropertyAccessExpression(expr) && expr.name.text === 'check' && node.arguments.length >= 1) {
+            if (
+                ts.isPropertyAccessExpression(expr) &&
+                (expr.name.text === 'check' || expr.name.text === 'checkColumns') &&
+                node.arguments.length >= 1
+            ) {
                 const arg = node.arguments[0];
                 if (ts.isNoSubstitutionTemplateLiteral(arg)) {
                     const start = arg.getStart(sourceFile);
@@ -505,8 +538,6 @@ function resolveTemplateLiteral(
     return null;
 }
 
-// ─── Text replacement with indentation ───────────────────────────────────────
-
 /**
  * Builds the replacement text for a .check() argument.
  * Indentation is always derived from the line containing `start` — content gets +4 spaces,
@@ -557,8 +588,6 @@ function buildReplacementText(
 
     return { text: '`\n' + indentedLines.join('\n') + '\n' + closingIndent + '`', indentFixed };
 }
-
-// ─── Utilities ───────────────────────────────────────────────────────────────
 
 function relativePath(file: string): string {
     try {

@@ -333,6 +333,7 @@ export const AG_GRID_LOCALE_IL = {
     sortAbsoluteAscending: 'מיון עולה מוחלט',
     sortAbsoluteDescending: 'מיון יורד מוחלט',
     sortUnSort: 'נקה מיון',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'סכום',
@@ -684,12 +685,16 @@ export const AG_GRID_LOCALE_IL = {
     ariaSelectAllRowCells: 'לחץ על Enter כדי לבחור את כל התאים בשורה זו',
     ariaColumnCellSelection: 'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בעמודה זו',
     ariaColumnGroupCellSelection: 'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בקבוצת עמודות זו',
+    ariaColumnGroupExpansion: 'לחץ על ENTER כדי להרחיב או לכווץ קבוצת עמודות זו',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בקבוצת עמודות זו. לחץ על ALT ENTER כדי להרחיב או לכווץ קבוצת עמודות זו',
     ariaRowSelectAll: 'לחץ על Space כדי להחליף את בחירת כל השורות',
     ariaRowToggleSelection: 'לחץ על Space כדי להחליף את בחירת השורה',
     ariaRowSelect: 'לחץ על SPACE כדי לבחור שורה זו',
     ariaRowSelectionDisabled: 'בחירת שורות מושבתת עבור שורה זו',
     ariaSearch: 'חיפוש',
     ariaSortableColumn: 'לחץ על ENTER למיון',
+    ariaSortableColumnWithCellSelection: 'לחץ על ALT ENTER למיון',
     ariaToggleVisibility: 'לחץ על SPACE כדי להחליף נראות',
     ariaToggleCellValue: 'לחץ על SPACE כדי להחליף ערך תא',
     ariaUnchecked: 'לא מסומן',
@@ -755,6 +760,7 @@ export const AG_GRID_LOCALE_IL = {
     ariaLabelAddFilterField: 'הוסף שדה סינון',
     ariaLabelFilterCardDelete: 'מחק סינון',
     ariaLabelFilterCardHasEdits: 'יש עריכות',
+    ariaHasNote: 'לתא זה יש הערה.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -799,4 +805,12 @@ export const AG_GRID_LOCALE_IL = {
     timeFormatSpacesDDMMMMYYYY: 'יי חחחח שששש',
     timeFormatHHMMSS: 'שש:דד:שש',
     timeFormatHHMMSSAmPm: 'שש:דד:שש לפנה״צ/אחה״צ',
+
+    // Notes
+    note: 'הערת תא',
+    addNote: 'הוסף הערה',
+    viewNote: 'הצג הערה',
+    editNote: 'ערוך הערה',
+    deleteNote: 'הסר הערה',
+    notePlaceholder: 'הוסף הערה...',
 };

@@ -106,6 +106,7 @@
     --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
     --ag-popup-shadow: var(--ag-card-shadow);
     --ag-side-bar-panel-width: 250px;
+    --ag-note-indicator-color: var(--ag-alpine-active-color);
 }
 
 @mixin -dark-vars {

@@ -3,7 +3,7 @@ import type { AgColumn, BeanCollection, FormulaParam, RangeParam, RowNode } from
 
 import type { Cell, CellRef, FormulaNode } from '../ast/utils';
 import { FormulaError } from '../ast/utils';
-import type { CellFormula } from '../formulaService';
+import type { CellFormula } from '../cellFormula';
 
 /**
  * This file contains utils for resolving formula AST to values

@@ -1,4 +1,4 @@
-import { GridRows } from '../../test-utils';
+import { GridColumns, GridRows } from '../../test-utils';
 import {
     EDIT_MODES,
     asyncSetTimeout,
@@ -89,6 +89,13 @@ describe.each([true, false])(
                     · · ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:60 score:120
                     · · └── LEAF id:us-la region:"Americas" country:"USA" amount:40 score:80
                 `);
+
+                await new GridColumns(api, 'columns').checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── amount "Amount" width:200 aggFunc:sum editable
+                    └── score "Score" width:200 aggFunc:sum editable
+                `);
             });
 
             test('sequential edits on different columns propagate correctly', async () => {
@@ -145,6 +152,13 @@ describe.each([true, false])(
                     · └─┬ LEAF_GROUP id:row-group-region-Americas-country-USA ag-Grid-AutoColumn:"USA" amount:100 score:200
                     · · ├── LEAF id:us-nyc region:"Americas" country:"USA" amount:60 score:120
                     · · └── LEAF id:us-la region:"Americas" country:"USA" amount:40 score:80
+                `);
+
+                await new GridColumns(api, 'columns').checkColumns(`
+                    CENTER
+                    ├── ag-Grid-AutoColumn "Group" width:200
+                    ├── amount "Amount" width:200 aggFunc:sum editable
+                    └── score "Score" width:200 aggFunc:sum editable
                 `);
             });
 

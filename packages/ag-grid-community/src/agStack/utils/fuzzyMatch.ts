@@ -6,9 +6,9 @@ export function _fuzzySuggestions(params: {
     inputValue: string;
     allSuggestions: string[];
     hideIrrelevant?: boolean;
-    filterByPercentageOfBestMatch?: number;
+    maxSuggestions?: number;
 }): { values: string[]; indices: number[] } {
-    const { inputValue, allSuggestions, hideIrrelevant, filterByPercentageOfBestMatch } = params;
+    const { inputValue, allSuggestions, hideIrrelevant, maxSuggestions } = params;
 
     let thisSuggestions: { value: string; relevance: number; idx: number }[] = (allSuggestions ?? []).map(
         (text, idx) => ({
@@ -27,10 +27,8 @@ export function _fuzzySuggestions(params: {
         );
     }
 
-    if (thisSuggestions.length > 0 && filterByPercentageOfBestMatch && filterByPercentageOfBestMatch > 0) {
-        const bestMatch = thisSuggestions[0].relevance;
-        const limit = bestMatch * filterByPercentageOfBestMatch;
-        thisSuggestions = thisSuggestions.filter((suggestion) => limit - suggestion.relevance < 0);
+    if (maxSuggestions != null && maxSuggestions > 0) {
+        thisSuggestions = thisSuggestions.slice(0, maxSuggestions);
     }
 
     const values: string[] = [];
@@ -62,6 +60,15 @@ export function _getLevenshteinSimilarityDistance(source: string, target: string
     let inputLower = source.toLocaleLowerCase();
     let targetLower = target.toLocaleLowerCase();
     let swapTmp;
+
+    // Substring match: if the input appears verbatim (case-insensitive)
+    // within the target, score based on position. Position 0 (prefix) = 0 (best).
+    if (sourceLength > 0) {
+        const substringPos = targetLower.indexOf(inputLower);
+        if (substringPos >= 0) {
+            return substringPos * 0.01;
+        }
+    }
 
     // Always use the shorter string for columns to reduce space
     if (source.length < target.length) {

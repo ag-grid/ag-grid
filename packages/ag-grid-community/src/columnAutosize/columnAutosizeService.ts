@@ -17,6 +17,7 @@ import type {
     SizeColumnsToContentColumnLimits,
     SizeColumnsToContentStrategy,
 } from '../interfaces/autoSize';
+import { MIN_CENTER_VIEWPORT_WIDTH } from '../pinnedColumns/pinnedColumnService';
 import { _warn } from '../validation/logging';
 import { TouchListener } from '../widgets/touchListener';
 
@@ -84,7 +85,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
             // We exclude all pinned columns here, we only want columns in the main viewport to be scaled up
             const colKeys = params.colKeys.filter((col) => {
-                const allowAutoSize = !colModel.getCol(col)?.getColDef().suppressAutoSize;
+                const allowAutoSize = !colModel.getCol(col)?.colDef.suppressAutoSize;
                 return allowAutoSize && !isRowNumberCol(col) && !isLeftCol(col) && !isRightCol(col);
             });
 
@@ -175,7 +176,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                     const column = colModel.getCol(key);
 
                     // if already autoSized or suppressed, skip it
-                    if (!column || columnsAutoSized.has(column) || column.getColDef().suppressAutoSize) {
+                    if (!column || columnsAutoSized.has(column) || column.colDef.suppressAutoSize) {
                         continue;
                     }
 
@@ -219,12 +220,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         const columns = colModel.getColsForKeys(keys);
 
         for (const col of columns) {
-            let parent = col.getParent();
+            let parent = col.parent;
             while (parent && parent != stopAtGroup) {
                 if (!parent.isPadding()) {
                     columnGroups.add(parent);
                 }
-                parent = parent.getParent();
+                parent = parent.parent;
             }
         }
 
@@ -285,8 +286,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
             for (const column of leafCols) {
                 // not all cols in the group may be participating with auto-resize
-                if (!column.getColDef().suppressAutoSize) {
-                    keys.push(column.getColId());
+                if (!column.colDef.suppressAutoSize) {
+                    keys.push(column.colId);
                 }
             }
 
@@ -314,7 +315,14 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        const availableWidth = getAvailableWidth(this.beans);
+        let availableWidth = getAvailableWidth(this.beans);
+
+        // When all visible columns are pinned, cap the available width so the pinned sections
+        // don't fill the entire viewport. Without this, the processUnpinnedColumns callback is triggered
+        // and would asynchronously unpin columns — visually reversing their order.
+        if (availableWidth > 0 && this.beans.visibleCols.centerCols.length === 0) {
+            availableWidth = Math.max(availableWidth - MIN_CENTER_VIEWPORT_WIDTH, 0);
+        }
 
         if (availableWidth > 0) {
             this.sizeColumnsToFit(availableWidth, 'sizeColumnsToFit', false, params);
@@ -398,7 +406,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         for (const column of allDisplayedColumns) {
             const isIncluded = params?.colKeys?.some((key) => _columnsMatch(column, key)) ?? true;
-            if (column.getColDef().suppressSizeToFit || !isIncluded) {
+            if (column.colDef.suppressSizeToFit || !isIncluded) {
                 colsToNotSpread.push(column);
             } else {
                 colsToSpread.push(column);
@@ -425,7 +433,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (params?.onlyScaleUp) {
                 // When `onlyScaleUp`, we store the current widths to act as a true minimum because we don't
                 // want any columns to get smaller
-                currentWidths[column.getColId()] = column.getActualWidth();
+                currentWidths[column.colId] = column.getActualWidth();
             }
             column.resetActualWidth(source);
 
@@ -462,7 +470,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 for (let i = colsToSpread.length - 1; i >= 0; i--) {
                     const column = colsToSpread[i];
 
-                    const id = column.getColId();
+                    const id = column.colId;
                     const prevWidth = currentWidths[id];
                     const widthOverride = limitsMap?.[id];
                     const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? prevWidth;

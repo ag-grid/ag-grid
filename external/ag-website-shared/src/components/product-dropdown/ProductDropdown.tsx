@@ -2,6 +2,8 @@ import ChartsDark from '@ag-website-shared/images/inline-svgs/chart-dark.svg?rea
 import ChartsLight from '@ag-website-shared/images/inline-svgs/chart-light.svg?react';
 import GridDark from '@ag-website-shared/images/inline-svgs/grid-dark.svg?react';
 import GridLight from '@ag-website-shared/images/inline-svgs/grid-light.svg?react';
+import StudioDark from '@ag-website-shared/images/inline-svgs/studio-dark.svg?react';
+import StudioLight from '@ag-website-shared/images/inline-svgs/studio-light.svg?react';
 import { useEffect, useRef, useState } from 'react';
 
 import styles from './ProductDropdown.module.scss';
@@ -27,7 +29,7 @@ export const ProductDropdown = ({ items, children }) => {
         };
     }, []);
 
-    const getIconComponent = (title) => {
+    const getIconComponent = (title: string) => {
         switch (title) {
             case 'AG Grid':
                 return (
@@ -42,8 +44,15 @@ export const ProductDropdown = ({ items, children }) => {
                         <ChartsDark className={styles.iconDark} />
                     </>
                 );
+            case 'AG Studio':
+                return (
+                    <>
+                        <StudioLight className={styles.iconLight} />
+                        <StudioDark className={styles.iconDark} />
+                    </>
+                );
             default:
-                return null; // Handle other cases or provide a default icon
+                return null;
         }
     };
 

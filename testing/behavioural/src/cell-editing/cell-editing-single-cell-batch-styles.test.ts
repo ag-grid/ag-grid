@@ -5,7 +5,14 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
-import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from '../test-utils';
 
 describe('Cell Editing: single-cell batch styles', () => {
     const gridMgr = new TestGridsManager({
@@ -127,6 +134,12 @@ describe('Cell Editing: single-cell batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 1,
         });
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
     });
 
     test('multiple cells across rows retain batch edit styles', async () => {
@@ -186,6 +199,12 @@ describe('Cell Editing: single-cell batch styles', () => {
             batchEditingStarted: 1,
             batchEditingStopped: 0,
         });
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── a "A" width:200 editable
+            └── b "B" width:200 editable
+        `);
     });
 
     test('cancel removes batch edit styles and reverts data', async () => {

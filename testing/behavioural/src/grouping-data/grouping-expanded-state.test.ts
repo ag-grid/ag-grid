@@ -2,7 +2,14 @@ import type { GridOptions, ModelUpdatedEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, PinnedRowModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout, cachedJSONObjects } from '../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    cachedJSONObjects,
+} from '../test-utils';
 
 describe('ag-grid grouping expanded state', () => {
     const gridsManager = new TestGridsManager({
@@ -166,6 +173,13 @@ describe('ag-grid grouping expanded state', () => {
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Spain-year-2020 ag-Grid-AutoColumn:2020
             · · └── LEAF hidden id:8 country:"Spain" year:2020 athlete:"Carlos Garcia" sport:"Basketball"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country/Year" width:200
+            ├── athlete "Athlete" width:200
+            └── sport "Sport" width:200
+        `);
     });
 
     test('programmatic expand/collapse operations', async () => {
@@ -236,6 +250,13 @@ describe('ag-grid grouping expanded state', () => {
             │ └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
             └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └── LEAF id:4 country:"France" athlete:"Jean Dupont" sport:"Tennis"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── athlete "Athlete" width:200
+            └── sport "Sport" width:200
         `);
     });
 

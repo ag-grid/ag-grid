@@ -73,7 +73,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
             if (col.isRowGroupDisplayed(rowGroupColId)) {
                 // if maintain group value type, get the value from any leaf node.
-                groupData[col.getColId()] = valueSvc.getValue(rowGroupCol, leafNode, 'data');
+                groupData[col.colId] = valueSvc.getValue(rowGroupCol, leafNode, 'data');
             }
         }
 
@@ -140,7 +140,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     private initRefresh(params: RefreshModelParams): 'skip' | 'refresh' | 'groupColsChanged' {
         const { rowGroupColsSvc, colModel, gos } = this.beans;
 
-        this.pivotMode = colModel.isPivotMode();
+        this.pivotMode = colModel.pivotMode;
         this.groupEmpty = this.pivotMode || !gos.get('groupAllowUnbalanced');
         const cols = rowGroupColsSvc?.columns;
         const groupCols = this.groupCols;
@@ -517,7 +517,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         leafNode: RowNode
     ): RowNode {
         const col = groupCol.col;
-        const id = (parent.level >= 0 ? parent.id! + '-' : 'row-group-') + (col.getColId() + '-' + key);
+        const id = (parent.level >= 0 ? parent.id! + '-' : 'row-group-') + (col.colId + '-' + key);
 
         const groupsById = this.nonLeafsById;
         let node = groupsById.get(id);

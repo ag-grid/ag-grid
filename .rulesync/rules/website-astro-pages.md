@@ -1,1 +1,0 @@
-../../external/ag-shared/prompts/guides/website-astro-pages.md

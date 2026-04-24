@@ -81,8 +81,8 @@ export class ToolPanelContextMenu extends Component {
         const isPivotMode = updateStrategy.getPivotMode(isDeferredMode(this.params));
 
         this.allowScrollIntoView = !isPivotMode && columns.some(this.isColumnValidForScrollIntoView);
-        this.allowGrouping = columns.some((col) => col.isPrimary() && col.isAllowRowGroup());
-        this.allowValues = columns.some((col) => col.isPrimary() && col.isAllowValue());
+        this.allowGrouping = columns.some((col) => col.primary && col.isAllowRowGroup());
+        this.allowValues = columns.some((col) => col.primary && col.isAllowValue());
         this.allowPivoting = isPivotMode && columns.some((col) => col.isPrimary() && col.isAllowPivot());
     }
 
@@ -97,10 +97,10 @@ export class ToolPanelContextMenu extends Component {
         const deferMode = isDeferredMode(this.params);
         const isPivotMode = updateStrategy.getPivotMode(deferMode);
         const rowGroupColIdSet = new Set(
-            updateStrategy.getRowGroupColumns(deferMode).map((col: AgColumn) => col.getColId())
+            updateStrategy.getRowGroupColumns(deferMode).map((col: AgColumn) => col.colId)
         );
-        const valueColIdSet = new Set(updateStrategy.getValueColumns(deferMode).map((col: AgColumn) => col.getColId()));
-        const pivotColIdSet = new Set(updateStrategy.getPivotColumns(deferMode).map((col: AgColumn) => col.getColId()));
+        const valueColIdSet = new Set(updateStrategy.getValueColumns(deferMode).map((col: AgColumn) => col.colId));
+        const pivotColIdSet = new Set(updateStrategy.getPivotColumns(deferMode).map((col: AgColumn) => col.colId));
 
         menuItemMap.set('scrollIntoView', {
             allowedFunction: (col) => !col.isPinned() && !isPivotMode && this.isColumnValidForScrollIntoView(col),
@@ -119,10 +119,10 @@ export class ToolPanelContextMenu extends Component {
         });
 
         const rowGroupAllowed = (col: AgColumn) =>
-            col.isPrimary() && col.isAllowRowGroup() && !isRowGroupColLocked(col, beans);
+            col.primary && col.isAllowRowGroup() && !isRowGroupColLocked(col, beans);
         menuItemMap.set('rowGroup', {
             allowedFunction: rowGroupAllowed,
-            activeFunction: (col) => rowGroupColIdSet.has(col.getColId()),
+            activeFunction: (col) => rowGroupColIdSet.has(col.colId),
             activateLabel: () => getGroupingLocaleText(localeTextFunc, 'groupBy', displayName!),
             deactivateLabel: () => getGroupingLocaleText(localeTextFunc, 'ungroupBy', displayName!),
             activateFunction: () => {
@@ -142,10 +142,10 @@ export class ToolPanelContextMenu extends Component {
             removeIcon: 'menuRemoveRowGroup',
         });
 
-        const valueAllowed = (col: AgColumn) => col.isPrimary() && col.isAllowValue();
+        const valueAllowed = (col: AgColumn) => col.primary && col.isAllowValue();
         menuItemMap.set('value', {
             allowedFunction: valueAllowed,
-            activeFunction: (col) => valueColIdSet.has(col.getColId()),
+            activeFunction: (col) => valueColIdSet.has(col.colId),
             activateLabel: () => localeTextFunc('addToValues', `Add ${displayName} to values`, [displayName!]),
             deactivateLabel: () =>
                 localeTextFunc('removeFromValues', `Remove ${displayName} from values`, [displayName!]),
@@ -163,10 +163,10 @@ export class ToolPanelContextMenu extends Component {
             removeIcon: 'valuePanel',
         });
 
-        const pivotAllowed = (col: AgColumn) => isPivotMode && col.isPrimary() && col.isAllowPivot();
+        const pivotAllowed = (col: AgColumn) => isPivotMode && col.primary && col.isAllowPivot();
         menuItemMap.set('pivot', {
             allowedFunction: pivotAllowed,
-            activeFunction: (col) => pivotColIdSet.has(col.getColId()),
+            activeFunction: (col) => pivotColIdSet.has(col.colId),
             activateLabel: () => localeTextFunc('addToLabels', `Add ${displayName} to labels`, [displayName!]),
             deactivateLabel: () =>
                 localeTextFunc('removeFromLabels', `Remove ${displayName} from labels`, [displayName!]),

@@ -333,6 +333,7 @@ export const AG_GRID_LOCALE_HK = {
     sortAbsoluteAscending: '絕對升序排序',
     sortAbsoluteDescending: '絕對降序排序',
     sortUnSort: '清除排序',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '總和',
@@ -684,12 +685,16 @@ export const AG_GRID_LOCALE_HK = {
     ariaSelectAllRowCells: '按 Enter 鍵以選擇此行中的所有單元格',
     ariaColumnCellSelection: '按 Enter 鍵切換此欄中所有可見單元格的選取',
     ariaColumnGroupCellSelection: '按 Enter 鍵切換此欄群組中所有可見單元格的選取',
+    ariaColumnGroupExpansion: '按 ENTER 鍵展開或摺疊此欄群組',
+    ariaColumnGroupCellSelectionAndExpansion:
+        '按 Enter 鍵切換此欄群組中所有可見單元格的選取. 按 ALT ENTER 鍵展開或摺疊此欄群組',
     ariaRowSelectAll: '按空格切換所有行的選擇',
     ariaRowToggleSelection: '按空格切換行選擇',
     ariaRowSelect: '按 SPACE 選擇此行',
     ariaRowSelectionDisabled: '此行的行選擇已禁用',
     ariaSearch: '搜索',
     ariaSortableColumn: '按 ENTER 排序',
+    ariaSortableColumnWithCellSelection: '按 ALT ENTER 排序',
     ariaToggleVisibility: '按 SPACE 切換可見性',
     ariaToggleCellValue: '按 SPACE 切換單元格值',
     ariaUnchecked: '未選中',
@@ -755,6 +760,7 @@ export const AG_GRID_LOCALE_HK = {
     ariaLabelAddFilterField: '新增篩選字段',
     ariaLabelFilterCardDelete: '刪除篩選',
     ariaLabelFilterCardHasEdits: '已有編輯',
+    ariaHasNote: '此儲存格有備註。',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -799,4 +805,12 @@ export const AG_GRID_LOCALE_HK = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
     timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
+
+    // Notes
+    note: '儲存格備註',
+    addNote: '新增備註',
+    viewNote: '檢視備註',
+    editNote: '編輯備註',
+    deleteNote: '移除備註',
+    notePlaceholder: '新增備註...',
 };

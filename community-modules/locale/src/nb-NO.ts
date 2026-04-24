@@ -335,6 +335,7 @@ export const AG_GRID_LOCALE_NO = {
     sortAbsoluteAscending: 'Sorter absolutt stigende',
     sortAbsoluteDescending: 'Sorter absolutt synkende',
     sortUnSort: 'Fjern Sortering',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
@@ -686,12 +687,16 @@ export const AG_GRID_LOCALE_NO = {
     ariaSelectAllRowCells: 'Trykk på Enter for å velge alle celler i denne raden',
     ariaColumnCellSelection: 'Trykk på Enter for å veksle markering av alle synlige celler i denne kolonnen',
     ariaColumnGroupCellSelection: 'Trykk på Enter for å veksle markering av alle synlige celler i denne kolonnegruppen',
+    ariaColumnGroupExpansion: 'Trykk ENTER for å utvide eller skjule denne kolonnegruppen',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Trykk på Enter for å veksle markering av alle synlige celler i denne kolonnegruppen. Trykk ALT ENTER for å utvide eller skjule denne kolonnegruppen',
     ariaRowSelectAll: 'Trykk SPACE for å veksle alle radvalgene',
     ariaRowToggleSelection: 'Trykk SPACE for å veksle radvalg',
     ariaRowSelect: 'Trykk SPACE for å velge denne raden',
     ariaRowSelectionDisabled: 'Radvalg er deaktivert for denne raden',
     ariaSearch: 'Søk',
     ariaSortableColumn: 'Trykk ENTER for å sortere',
+    ariaSortableColumnWithCellSelection: 'Trykk ALT ENTER for å sortere',
     ariaToggleVisibility: 'Trykk SPACE for å veksle synlighet',
     ariaToggleCellValue: 'Trykk SPACE for å veksle celleverdi',
     ariaUnchecked: 'uavmerket',
@@ -757,6 +762,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaLabelAddFilterField: 'Legg til filterfelt',
     ariaLabelFilterCardDelete: 'Slett filter',
     ariaLabelFilterCardHasEdits: 'Har endringer',
+    ariaHasNote: 'Denne cellen har et notat.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',
@@ -801,4 +807,12 @@ export const AG_GRID_LOCALE_NO = {
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM ÅÅÅÅ',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
+
+    // Notes
+    note: 'Cellenotat',
+    addNote: 'Legg til notat',
+    viewNote: 'Vis notat',
+    editNote: 'Rediger notat',
+    deleteNote: 'Fjern notat',
+    notePlaceholder: 'Legg til et notat...',
 };

@@ -13,6 +13,7 @@ ag-grid-angular {
     border-radius: var(--ag-wrapper-border-radius);
 
     &.ag-layout-normal {
+        content-visibility: auto;
         height: 100%;
     }
 }

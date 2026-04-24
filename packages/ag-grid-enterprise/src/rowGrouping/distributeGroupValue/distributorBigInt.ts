@@ -3,12 +3,11 @@ import type {
     DistributionGetValueParams,
     DistributionSetValueParams,
     GroupRowValueSetterDistributionOptions,
-    GroupRowValueSetterFunc,
     GroupRowValueSetterParams,
     IRowNode,
 } from 'ag-grid-community';
 
-import type { DistributionStrategy } from './valueConversion';
+import type { AggFuncInput, DistributionStrategy } from './valueConversion';
 import { isNumericLike, resolveStrategy, toBigInt } from './valueConversion';
 
 /** Distributes a BigInt value to children using integer-safe arithmetic. */
@@ -27,8 +26,7 @@ export class DistributorBigInt {
     constructor(
         private readonly params: GroupRowValueSetterParams,
         opts: GroupRowValueSetterDistributionOptions | undefined,
-        aggFunc: string | null,
-        private readonly defaultHandler: GroupRowValueSetterFunc | undefined
+        aggFunc: AggFuncInput
     ) {
         const { aggregatedChildren: children, column, newValue } = params;
         const newBigInt = toBigInt(newValue);
@@ -55,32 +53,13 @@ export class DistributorBigInt {
     run(): boolean {
         const { strategy, newValue } = this;
 
-        // Explicit 'none' — suppress distribution
-        if (strategy === 'none') {
+        // Explicit suppression
+        if (strategy === false) {
             return false;
         }
 
-        // Unknown aggFunc with no matching strategy — use default handler or overwrite
-        if (strategy === null) {
-            const handler = this.defaultHandler;
-            if (handler) {
-                return handler(this.params) ?? true;
-            }
+        if (strategy === 'overwrite') {
             return this.writeAll(newValue);
-        }
-
-        // Single-child or overwrite strategies — write the raw value
-        switch (strategy) {
-            case 'first':
-                return this.writeOne(0, newValue);
-            case 'last':
-                return this.writeOne(this.count - 1, newValue);
-            case 'min':
-                return this.writeToExtremum(true);
-            case 'max':
-                return this.writeToExtremum(false);
-            case 'overwrite':
-                return this.writeAll(newValue);
         }
 
         // Non-numeric value (e.g. null, non-numeric string) — write raw value to all children
@@ -137,21 +116,6 @@ export class DistributorBigInt {
             }
         }
         return changed;
-    }
-
-    /** Writes the new value to the child currently holding the min or max. */
-    private writeToExtremum(isMin: boolean): boolean {
-        const { count, newValue } = this;
-        let targetIdx = 0;
-        let targetVal = this.readOne(0);
-        for (let i = 1; i < count; i++) {
-            const v = this.readOne(i);
-            if (isMin ? v < targetVal : v > targetVal) {
-                targetVal = v;
-                targetIdx = i;
-            }
-        }
-        return this.writeOne(targetIdx, newValue);
     }
 
     /** Writes uniform values directly without array allocation. */

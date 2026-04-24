@@ -12,6 +12,7 @@ import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
     DRAG_NO_MOVE_INTERACTION_CASES,
+    GridColumns,
     GridRows,
     RowDragDispatcher,
     TestGridsManager,
@@ -103,6 +104,12 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(api.getRowNode('b1')?.data.level2).toBe('B');
         expect(api.getRowNode('b2')?.data.level1).toBe('Beta');
         expect(api.getRowNode('b2')?.data.level2).toBe('B');
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Levels" width:200
+            └── value "Value" width:200
+        `);
     });
 
     test('reordering root level groups is allowed', async () => {
@@ -170,6 +177,12 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
             · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
             · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
             · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Levels" width:200
+            └── value "Value" width:200
         `);
     });
 

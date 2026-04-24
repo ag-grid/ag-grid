@@ -60,16 +60,16 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return Math.min(numberOfLockedCols, numberOfGroupCols);
     }
 
-    private showOrHideColumnOnExit(draggingEvent: GridDraggingEvent): boolean {
+    private shouldToggleColumnVisibility(draggingEvent: GridDraggingEvent, isGrouped: boolean): boolean {
         return (
-            this.isRowGroupPanel() && _shouldUpdateColVisibilityAfterGroup(this.gos, true) && !draggingEvent.fromNudge
+            this.isRowGroupPanel() &&
+            _shouldUpdateColVisibilityAfterGroup(this.gos, isGrouped) &&
+            !draggingEvent.fromNudge
         );
     }
 
     protected override handleDragEnterEnd(draggingEvent: GridDraggingEvent): void {
-        const hideColumnOnExit = this.showOrHideColumnOnExit(draggingEvent);
-
-        if (hideColumnOnExit) {
+        if (this.shouldToggleColumnVisibility(draggingEvent, true)) {
             const dragItem = draggingEvent.dragSource.getDragItem();
             const columns = dragItem.columns as AgColumn[];
             this.setColumnsVisible(columns, false, 'uiColumnDragged');
@@ -77,9 +77,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     }
 
     protected override handleDragLeaveEnd(draggingEvent: GridDraggingEvent): void {
-        const showColumnOnExit = this.showOrHideColumnOnExit(draggingEvent);
-
-        if (showColumnOnExit) {
+        if (this.shouldToggleColumnVisibility(draggingEvent, false)) {
             const dragItem = draggingEvent.dragSource.getDragItem();
 
             this.setColumnsVisible(dragItem.columns as AgColumn[], true, 'uiColumnDragged');
@@ -90,13 +88,14 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         if (!columns) {
             return;
         }
-        const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-        this.beans.columnStateUpdateStrategy.setColumnsVisible(
-            isDeferredMode(this.updateParams),
-            allowedCols,
-            visible,
-            source
-        );
+        // In deferred mode, skip visibility changes from drag-and-drop — they will be
+        // applied when the deferred state is committed. Creating hide patches here leaves
+        // stale state when a column is removed then re-added to row groups.
+        if (isDeferredMode(this.updateParams)) {
+            return;
+        }
+        const allowedCols = columns.filter((c) => !c.colDef.lockVisible);
+        this.beans.columnStateUpdateStrategy.setColumnsVisible(false, allowedCols, visible, source);
     }
 
     private isRowGroupPanel() {

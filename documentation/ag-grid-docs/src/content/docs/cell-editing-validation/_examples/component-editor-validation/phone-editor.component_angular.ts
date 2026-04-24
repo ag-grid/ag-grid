@@ -58,7 +58,7 @@ export class PhoneEditor implements ICellEditorAngularComp, AfterViewInit {
 
             const { cellStartedEdit, eventKey } = this.params;
 
-            if (cellStartedEdit && eventKey.length === 1) {
+            if (cellStartedEdit && eventKey?.length === 1) {
                 this.inputRef.nativeElement.value = eventKey;
             }
         });

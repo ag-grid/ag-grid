@@ -5,7 +5,14 @@ import { userEvent } from '@testing-library/user-event';
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
 
-import { EditEventTracker, GridRows, TestGridsManager, asyncSetTimeout, waitForInput } from '../../test-utils';
+import {
+    EditEventTracker,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForInput,
+} from '../../test-utils';
 
 describe('Cell Editing: delete and range clearing', () => {
     const gridMgr = new TestGridsManager({
@@ -98,6 +105,11 @@ describe('Cell Editing: delete and range clearing', () => {
         expect(api.getDisplayedRowAtIndex(0)?.data?.field ?? null).toBeNull();
         expect(valueSetterTargets).toEqual(['ROW_0']);
         expect(valueSetterCalls).toBe(1);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── field "Field" width:200 editable
+        `);
     });
 
     test.each([
@@ -178,6 +190,11 @@ describe('Cell Editing: delete and range clearing', () => {
         expect(api.getDisplayedRowAtIndex(0)?.data?.field).toBe('Initial Value');
         expect(valueSetterTargets).toEqual([]);
         expect(valueSetterCalls).toBe(0);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── field "Field" width:200 editable
+        `);
     });
 
     test.each([false, true])('delete key uses rangeSvc once per cell (batch=%s)', async (batchEnabled) => {

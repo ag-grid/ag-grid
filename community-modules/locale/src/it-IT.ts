@@ -337,6 +337,7 @@ export const AG_GRID_LOCALE_IT = {
     sortAbsoluteAscending: 'Ordina Assoluto Crescente',
     sortAbsoluteDescending: 'Ordina Assoluto Decrescente',
     sortUnSort: 'Annulla Ordinamento',
+    shiftF2: 'Shift+F2',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Somma',
@@ -691,12 +692,16 @@ export const AG_GRID_LOCALE_IT = {
         'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questa colonna',
     ariaColumnGroupCellSelection:
         'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questo gruppo di colonne',
+    ariaColumnGroupExpansion: 'Premi INVIO per espandere o comprimere questo gruppo di colonne',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questo gruppo di colonne. Premi ALT INVIO per espandere o comprimere questo gruppo di colonne',
     ariaRowSelectAll: 'Premi SPAZIO per attivare/disattivare la selezione di tutte le righe',
     ariaRowToggleSelection: 'Premi SPAZIO per attivare/disattivare la selezione della riga',
     ariaRowSelect: 'Premi SPAZIO per selezionare questa riga',
     ariaRowSelectionDisabled: 'La selezione della riga è disabilitata per questa riga',
     ariaSearch: 'Cerca',
     ariaSortableColumn: 'Premi INVIO per ordinare',
+    ariaSortableColumnWithCellSelection: 'Premi ALT INVIO per ordinare',
     ariaToggleVisibility: 'Premi SPAZIO per attivare/disattivare la visibilità',
     ariaToggleCellValue: 'Premi SPAZIO per attivare/disattivare il valore della cella',
     ariaUnchecked: 'non selezionato',
@@ -762,6 +767,7 @@ export const AG_GRID_LOCALE_IT = {
     ariaLabelAddFilterField: 'Aggiungi campo filtro',
     ariaLabelFilterCardDelete: 'Elimina filtro',
     ariaLabelFilterCardHasEdits: 'Ha modifiche',
+    ariaHasNote: 'Questa cella ha una nota.',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -806,4 +812,12 @@ export const AG_GRID_LOCALE_IT = {
     timeFormatSpacesDDMMMMYYYY: 'GG MMMM AAAA',
     timeFormatHHMMSS: 'OO:MM:SS',
     timeFormatHHMMSSAmPm: 'OO:MM:SS AM/PM',
+
+    // Notes
+    note: 'Nota della cella',
+    addNote: 'Aggiungi nota',
+    viewNote: 'Visualizza nota',
+    editNote: 'Modifica nota',
+    deleteNote: 'Rimuovi nota',
+    notePlaceholder: 'Aggiungi una nota...',
 };

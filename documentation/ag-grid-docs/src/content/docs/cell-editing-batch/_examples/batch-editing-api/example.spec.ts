@@ -154,8 +154,8 @@ test.agExample(import.meta, () => {
         await targetCell.click();
         await page.keyboard.press('Control+v');
 
-        // Wait for cell to exit editing state after paste
-        await expect(targetCell).not.toHaveClass(/ag-cell-editing/);
+        // Wait for cell to exit inline editing state after paste
+        await expect(targetCell.locator('input')).toHaveCount(0);
 
         await expect(targetCell).toHaveText('1'); // pasted value from source
         await expect(targetCell).toHaveClass(/ag-cell-batch-edit/); // pending, not committed
@@ -198,8 +198,8 @@ test.agExample(import.meta, () => {
         await targetCell.click();
         await page.keyboard.press('Control+v');
 
-        // Wait for cell to exit editing state after paste
-        await expect(targetCell).not.toHaveClass(/ag-cell-editing/);
+        // Wait for cell to exit inline editing state after paste
+        await expect(targetCell.locator('input')).toHaveCount(0);
 
         await expect(targetCell).toHaveText('99'); // pending value was copied, not committed value
         await expect(targetCell).toHaveClass(/ag-cell-batch-edit/); // paste staged as pending

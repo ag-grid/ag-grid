@@ -1,3 +1,4 @@
+import { GridColumns } from '../../../test-utils';
 import {
     EDIT_MODES,
     GridRows,
@@ -94,6 +95,12 @@ describe.each(EDIT_MODES)('distributeGroupValue with explicit modes (%s)', (edit
             · · ├── LEAF id:ca-toronto region:"Americas" country:"Canada" amount:35
             · · └── LEAF id:ca-vancouver region:"Americas" country:"Canada" amount:25
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
+        `);
     });
 
     test('percentage mode: all children zero falls back to uniform', async () => {
@@ -134,6 +141,12 @@ describe.each(EDIT_MODES)('distributeGroupValue with explicit modes (%s)', (edit
             · └─┬ LEAF_GROUP id:row-group-region-R-country-C amount:100
             · · ├── LEAF id:a1 region:"R" country:"C" amount:50
             · · └── LEAF id:a2 region:"R" country:"C" amount:50
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── group "Group" width:200
+            └── amount "Amount" width:200 aggFunc:sum editable
         `);
     });
 

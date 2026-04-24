@@ -11,7 +11,7 @@ import {
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
 import type { MenuItemMapper } from './menuItemMapper';
-import { MENU_ITEM_SEPARATOR, _removeRepeatsFromArray } from './menuItemMapper';
+import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuItemMapper';
 
 export class ColumnMenuFactory extends BeanStub implements NamedBean {
     beanName = 'colMenuFactory' as const;
@@ -34,6 +34,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             menuItems,
             column ?? null,
             null,
+            undefined,
             sourceElement,
             'columnMenu'
         );
@@ -50,7 +51,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         const defaultItems = this.getDefaultMenuOptions(column);
         let result: (DefaultMenuItem | MenuItemDef)[];
 
-        const columnMainMenuItems = (column?.getColDef() ?? columnGroup?.getColGroupDef())?.mainMenuItems;
+        const columnMainMenuItems = (column?.colDef ?? columnGroup?.getColGroupDef())?.mainMenuItems;
         if (Array.isArray(columnMainMenuItems)) {
             result = columnMainMenuItems;
         } else if (typeof columnMainMenuItems === 'function') {
@@ -74,9 +75,9 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             }
         }
 
-        // GUI looks weird when two separators are side by side. this can happen accidentally
-        // if we remove items from the menu then two separators can edit up adjacent.
-        _removeRepeatsFromArray(result, MENU_ITEM_SEPARATOR);
+        // normalise separators after item removal so we don't leave duplicates,
+        // or separators stranded at the start or end of the menu.
+        _normaliseSeparators(result, MENU_ITEM_SEPARATOR);
 
         return result;
     }
@@ -118,7 +119,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         const grandTotalRow = _getGrandTotalRow(gos);
         const treeData = gos.get('treeData');
 
-        const isPrimary = column.isPrimary();
+        const isPrimary = column.primary;
 
         // 1. secondary columns can always have aggValue, as it means it's a pivot value column
         // 2. otherwise, only allow aggValue if it's a value column and we're grouping or have a grand total row
@@ -209,7 +210,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         if (
             expansionSvc &&
             (_isClientSideRowModel(gos) || gos.get('ssrmExpandAllAffectsAllRows')) &&
-            (treeData || rowGroupCount > (colModel.isPivotMode() ? 1 : 0))
+            (treeData || rowGroupCount > (colModel.pivotMode ? 1 : 0))
         ) {
             result.push('expandAll');
             result.push('contractAll');

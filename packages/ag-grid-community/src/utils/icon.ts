@@ -171,7 +171,7 @@ export function _createIconNoSpan(
     }
 
     // check col for icon first
-    const icons: any = column?.getColDef().icons;
+    const icons: any = column?.colDef.icons;
 
     if (icons) {
         userProvidedIcon = icons[iconName];

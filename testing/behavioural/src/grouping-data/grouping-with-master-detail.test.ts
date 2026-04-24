@@ -1,5 +1,5 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, DETAIL_ROW_ID_PREFIX, ROOT_NODE_ID } from 'ag-grid-community';
 import { MasterDetailModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
@@ -82,5 +82,14 @@ describe('ag-grid grouping with master detail', () => {
             · · · └─┬ ROOT id:ROOT_NODE_ID
             · · · · └── LEAF id:0 orderId:"F" amount:1500
         `);
+
+        const rootNode = api.getRowNode(ROOT_NODE_ID);
+        expect(rootNode?.level).toBe(-1);
+        expect(rootNode?.group).toBe(true);
+
+        const detailNode = api.getRowNode(DETAIL_ROW_ID_PREFIX + '1');
+        expect(detailNode?.detail).toBe(true);
+        expect(detailNode?.data?.country).toBe('Ireland');
+        expect(detailNode?.data?.year).toBe(2020);
     });
 });

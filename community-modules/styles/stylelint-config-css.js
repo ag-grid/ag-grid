@@ -3,6 +3,7 @@ module.exports = {
     rules: {
         'csstree/validator': {
             ignoreProperties: ['container-type'],
+            ignoreValue: /\bmax\(/,
         },
     },
 };

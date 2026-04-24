@@ -4,7 +4,7 @@ import { s } from '../schemaBuilder';
 
 export const buildPivotFeatureSchema = (beans: BeanCollection) => {
     const columns = beans.colModel.getCols();
-    const pivotableColumnIds = columns.filter((col) => col.isAllowPivot()).map((col) => col.getColId());
+    const pivotableColumnIds = columns.filter((col) => col.isAllowPivot()).map((col) => col.colId);
 
     if (pivotableColumnIds.length === 0) {
         return;

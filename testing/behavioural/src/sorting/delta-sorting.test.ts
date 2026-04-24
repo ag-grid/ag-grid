@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('Delta Sorting', () => {
     const gridMgr = new TestGridsManager({
@@ -55,6 +55,11 @@ describe('Delta Sorting', () => {
             ├── LEAF id:delta-16 value:35
             ├── LEAF id:delta-1 value:42
             └── LEAF id:delta-10 value:50
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── value "Value" width:200 sort:asc
         `);
     });
 
@@ -121,6 +126,11 @@ describe('Delta Sorting', () => {
             ├── LEAF id:delta-17 value:27
             └── LEAF id:delta-19 value:29
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── value "Value" width:200 sort:asc
+        `);
     });
 
     test('delta sort handles adds and removes', async () => {
@@ -163,6 +173,11 @@ describe('Delta Sorting', () => {
             ├── LEAF id:delta-17 value:85
             ├── LEAF id:delta-18 value:90
             └── LEAF id:delta-19 value:95
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── value "Value" width:200 sort:asc
         `);
     });
 
