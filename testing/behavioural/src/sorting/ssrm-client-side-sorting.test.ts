@@ -76,15 +76,58 @@ function getDisplayedValues<T = unknown>(api: GridApi, field: string): T[] {
     return values;
 }
 
-async function expandAliceByKey(api: GridApi): Promise<void> {
+async function expandGroupByKey(api: GridApi, key: string): Promise<void> {
     for (let i = 0; i < api.getDisplayedRowCount(); i++) {
         const node = api.getDisplayedRowAtIndex(i);
-        if (node?.key === 'Alice' && !node.expanded) {
+        if (node?.key === key && !node.expanded) {
             api.setRowNodeExpanded(node, true);
             await waitForNoLoadingRows(api);
             return;
         }
     }
+}
+
+// Mirrors QA TC1 — row grouping + aggregation.
+// UK sum=10, US sum=8, FR sum=6 — clear ordering for asc-sort assertions.
+const OLYMPIC_LEAF_ROWS = [
+    { country: 'UK', athlete: 'Alice', gold: 3 },
+    { country: 'UK', athlete: 'Bob', gold: 7 },
+    { country: 'US', athlete: 'Carol', gold: 5 },
+    { country: 'US', athlete: 'Dan', gold: 3 },
+    { country: 'FR', athlete: 'Eve', gold: 2 },
+    { country: 'FR', athlete: 'Frank', gold: 4 },
+];
+
+function createOlympicGridOptions(): GridOptions {
+    return {
+        columnDefs: [
+            { field: 'country', rowGroup: true, hide: true },
+            { field: 'athlete' },
+            { field: 'gold', aggFunc: 'sum' },
+        ],
+        autoGroupColumnDef: { field: 'athlete' },
+        rowModelType: 'serverSide',
+        serverSideEnableClientSideSort: true,
+        cacheBlockSize: 500000,
+        getRowId: (p) => (p.data.athlete ? `${p.data.country}-${p.data.athlete}` : `group-${p.data.country}`),
+        serverSideDatasource: {
+            getRows: (params: IServerSideGetRowsParams) => {
+                const groupKeys = params.request.groupKeys ?? [];
+                if (groupKeys.length === 0) {
+                    const countries = Array.from(new Set(OLYMPIC_LEAF_ROWS.map((r) => r.country)));
+                    const rows = countries.map((country) => ({
+                        country,
+                        gold: OLYMPIC_LEAF_ROWS.filter((r) => r.country === country).reduce((s, r) => s + r.gold, 0),
+                    }));
+                    params.success({ rowData: [...rows], rowCount: rows.length });
+                    return;
+                }
+                const country = groupKeys[0];
+                const rows = OLYMPIC_LEAF_ROWS.filter((r) => r.country === country);
+                params.success({ rowData: [...rows], rowCount: rows.length });
+            },
+        },
+    };
 }
 
 describe('SSRM Client-Side Sorting', () => {
@@ -292,7 +335,7 @@ describe('SSRM Client-Side Sorting', () => {
         await waitForNoLoadingRows(api);
 
         // Re-expand Alice (row IDs are auto-generated on purge)
-        await expandAliceByKey(api);
+        await expandGroupByKey(api, 'Alice');
 
         await new GridRows(api, 'tree sorted after purge').check(`
             ROOT id:<no-id>
@@ -348,7 +391,7 @@ describe('SSRM Client-Side Sorting', () => {
         api.refreshServerSide({ purge: true });
         await waitForNoLoadingRows(api);
 
-        await expandAliceByKey(api);
+        await expandGroupByKey(api, 'Alice');
 
         await new GridRows(api, 'tree sorted after async purge').check(`
             ROOT id:<no-id>
@@ -415,6 +458,35 @@ describe('SSRM Client-Side Sorting', () => {
             │ ├── LEAF id:Alice-3 ag-Grid-AutoColumn:"Charlie" employeeId:"3" name:"Charlie" experience:3
             │ └── LEAF id:Alice-5 ag-Grid-AutoColumn:"Bob" employeeId:"5" name:"Bob" experience:7
             └── LEAF id:1 ag-Grid-AutoColumn:"Eve" employeeId:"2" name:"Eve" experience:10
+        `);
+    });
+
+    test('tree data: non-purge refresh at root re-sorts rows client-side', async () => {
+        // Mirrors QA TC2 — "Refresh Everything" button
+        // issues refreshServerSide({ purge: false }) on the root of a tree-data grid.
+        const api = gridsManager.createGrid(null, createTreeGridOptions());
+        await waitForEvent('firstDataRendered', api);
+
+        const aliceNode = api.getDisplayedRowAtIndex(0)!;
+        api.setRowNodeExpanded(aliceNode, true);
+        await waitForNoLoadingRows(api);
+
+        api.applyColumnState({ state: [{ colId: 'experience', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        // Non-purge refresh at root (no `route`) — refreshes root store without destroying it.
+        // storeRefreshed, because non-purge doesn't stub rows.
+        const refreshed = waitForEvent('storeRefreshed', api);
+        api.refreshServerSide({ purge: false });
+        await refreshed;
+
+        await new GridRows(api, 'tree sorted after root non-purge refresh').check(`
+            ROOT id:<no-id>
+            ├─┬ Alice GROUP id:0 ag-Grid-AutoColumn:"Alice" employeeId:"1" name:"Alice" experience:5
+            │ ├── LEAF id:Alice-1 ag-Grid-AutoColumn:"Dave" employeeId:"4" name:"Dave" experience:1
+            │ ├── LEAF id:Alice-0 ag-Grid-AutoColumn:"Charlie" employeeId:"3" name:"Charlie" experience:3
+            │ └── LEAF id:Alice-2 ag-Grid-AutoColumn:"Bob" employeeId:"5" name:"Bob" experience:7
+            └── LEAF id:2 ag-Grid-AutoColumn:"Eve" employeeId:"2" name:"Eve" experience:10
         `);
     });
 
@@ -710,5 +782,281 @@ describe('SSRM Client-Side Sorting', () => {
             │ └── LEAF id:uk-1 country:"United Kingdom" value:50
             └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
         `);
+    });
+
+    test('row grouping: purge refresh re-sorts groups at root and child route', async () => {
+        // Mirrors QA TC1 — "Purge Everything" then
+        // "Purge ['US']". Row grouping + aggregation are exercised together
+        const api = gridsManager.createGrid(null, createOlympicGridOptions());
+        await waitForEvent('firstDataRendered', api);
+
+        // Expand US so the child store loads and participates in later refresh.
+        await expandGroupByKey(api, 'US');
+
+        api.applyColumnState({ state: [{ colId: 'gold', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        await new GridRows(api, 'row grouping: sorted before purge').check(`
+            ROOT id:<no-id>
+            ├── GROUP-leafGroup collapsed id:group-FR ag-Grid-AutoColumn:"FR" country:"FR" gold:6
+            ├─┬ GROUP-leafGroup id:group-US ag-Grid-AutoColumn:"US" country:"US" gold:8
+            │ ├── LEAF id:US-Dan ag-Grid-AutoColumn:"Dan" country:"US" athlete:"Dan" gold:3
+            │ └── LEAF id:US-Carol ag-Grid-AutoColumn:"Carol" country:"US" athlete:"Carol" gold:5
+            └── GROUP-leafGroup collapsed id:group-UK ag-Grid-AutoColumn:"UK" country:"UK" gold:10
+        `);
+
+        // Purge Everything — destroys the root cache.
+        api.refreshServerSide({ purge: true });
+        await waitForNoLoadingRows(api);
+
+        // Re-expand US (group IDs are regenerated on purge).
+        await expandGroupByKey(api, 'US');
+
+        await new GridRows(api, 'row grouping: sorted after root purge').check(`
+            ROOT id:<no-id>
+            ├── GROUP-leafGroup collapsed id:group-FR ag-Grid-AutoColumn:"FR" country:"FR" gold:6
+            ├─┬ GROUP-leafGroup id:group-US ag-Grid-AutoColumn:"US" country:"US" gold:8
+            │ ├── LEAF id:US-Dan ag-Grid-AutoColumn:"Dan" country:"US" athlete:"Dan" gold:3
+            │ └── LEAF id:US-Carol ag-Grid-AutoColumn:"Carol" country:"US" athlete:"Carol" gold:5
+            └── GROUP-leafGroup collapsed id:group-UK ag-Grid-AutoColumn:"UK" country:"UK" gold:10
+        `);
+
+        // Purge ['US'] — destroys only the US child cache.
+        api.refreshServerSide({ route: ['US'], purge: true });
+        await waitForNoLoadingRows(api);
+
+        await new GridRows(api, 'row grouping: sorted after child-route purge').check(`
+            ROOT id:<no-id>
+            ├── GROUP-leafGroup collapsed id:group-FR ag-Grid-AutoColumn:"FR" country:"FR" gold:6
+            ├─┬ GROUP-leafGroup id:group-US ag-Grid-AutoColumn:"US" country:"US" gold:8
+            │ ├── LEAF id:US-Dan ag-Grid-AutoColumn:"Dan" country:"US" athlete:"Dan" gold:3
+            │ └── LEAF id:US-Carol ag-Grid-AutoColumn:"Carol" country:"US" athlete:"Carol" gold:5
+            └── GROUP-leafGroup collapsed id:group-UK ag-Grid-AutoColumn:"UK" country:"UK" gold:10
+        `);
+    });
+
+    test('row grouping: non-purge refresh re-sorts groups at root and child route', async () => {
+        // Mirrors QA TC1 — "Refresh Everything" then
+        // "Refresh ['US']". Non-purge doesn't stub rows, so use storeRefreshed.
+        const api = gridsManager.createGrid(null, createOlympicGridOptions());
+        await waitForEvent('firstDataRendered', api);
+
+        await expandGroupByKey(api, 'US');
+
+        api.applyColumnState({ state: [{ colId: 'gold', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        // Refresh Everything — non-purge at root.
+        let refreshed = waitForEvent('storeRefreshed', api);
+        api.refreshServerSide({ purge: false });
+        await refreshed;
+
+        await new GridRows(api, 'row grouping: sorted after root non-purge').check(`
+            ROOT id:<no-id>
+            ├── GROUP-leafGroup collapsed id:group-FR ag-Grid-AutoColumn:"FR" country:"FR" gold:6
+            ├─┬ GROUP-leafGroup id:group-US ag-Grid-AutoColumn:"US" country:"US" gold:8
+            │ ├── LEAF id:US-Dan ag-Grid-AutoColumn:"Dan" country:"US" athlete:"Dan" gold:3
+            │ └── LEAF id:US-Carol ag-Grid-AutoColumn:"Carol" country:"US" athlete:"Carol" gold:5
+            └── GROUP-leafGroup collapsed id:group-UK ag-Grid-AutoColumn:"UK" country:"UK" gold:10
+        `);
+
+        // Refresh ['US'] — non-purge at child route.
+        refreshed = waitForEvent('storeRefreshed', api);
+        api.refreshServerSide({ route: ['US'], purge: false });
+        await refreshed;
+
+        await new GridRows(api, 'row grouping: sorted after child-route non-purge').check(`
+            ROOT id:<no-id>
+            ├── GROUP-leafGroup collapsed id:group-FR ag-Grid-AutoColumn:"FR" country:"FR" gold:6
+            ├─┬ GROUP-leafGroup id:group-US ag-Grid-AutoColumn:"US" country:"US" gold:8
+            │ ├── LEAF id:US-Dan ag-Grid-AutoColumn:"Dan" country:"US" athlete:"Dan" gold:3
+            │ └── LEAF id:US-Carol ag-Grid-AutoColumn:"Carol" country:"US" athlete:"Carol" gold:5
+            └── GROUP-leafGroup collapsed id:group-UK ag-Grid-AutoColumn:"UK" country:"UK" gold:10
+        `);
+    });
+
+    test('grand total row: non-purge refresh re-sorts leaves and preserves grand total', async () => {
+        // The client-side sort block in onLoadSuccess sits right after grand-total handling.
+        // Verify the grand total isn't swept into the sort (should stay pinned below leaves).
+        const rowData = [
+            { id: '1', name: 'Charlie', value: 3 },
+            { id: '2', name: 'Alice', value: 1 },
+            { id: '3', name: 'Bob', value: 2 },
+        ];
+
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'name' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            serverSideEnableClientSideSort: true,
+            grandTotalRow: 'bottom',
+            getRowId: (params) => params.data.id,
+            serverSideDatasource: {
+                getRows: (params) => {
+                    params.success({
+                        rowData: [...rowData],
+                        rowCount: rowData.length,
+                        grandTotalData: { id: 'grand', name: 'Total', value: 6 },
+                    });
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        // Non-purge refresh — server returns unsorted data again plus grand total.
+        const refreshed = waitForEvent('storeRefreshed', api);
+        api.refreshServerSide({ purge: false });
+        await refreshed;
+
+        // Leaves sorted asc; grand total still present and not interleaved.
+        expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3, 6]);
+        const lastNode = api.getDisplayedRowAtIndex(api.getDisplayedRowCount() - 1);
+        expect(lastNode?.footer).toBe(true);
+    });
+
+    test('changing sort column between refreshes updates ordering to latest sort', async () => {
+        // Previously the PR only covered "same sort, re-applied after refresh". This verifies
+        // that switching to a different sort column and refreshing uses the NEW sort, not
+        // stale options from the prior sort.
+        const rowData = [
+            { id: '1', a: 3, b: 10 },
+            { id: '2', a: 1, b: 30 },
+            { id: '3', a: 2, b: 20 },
+        ];
+
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'a' }, { field: 'b' }],
+            rowModelType: 'serverSide',
+            serverSideEnableClientSideSort: true,
+            getRowId: (params) => params.data.id,
+            serverSideDatasource: {
+                getRows: (params) => {
+                    params.success({ rowData: [...rowData], rowCount: rowData.length });
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        let refreshed = waitForEvent('storeRefreshed', api);
+        api.refreshServerSide({ purge: false });
+        await refreshed;
+
+        // Sort by a asc: [1, 2, 3]
+        expect(getDisplayedValues(api, 'a')).toEqual([1, 2, 3]);
+
+        // Switch sort to b desc, refresh.
+        api.applyColumnState({
+            state: [
+                { colId: 'a', sort: null },
+                { colId: 'b', sort: 'desc' },
+            ],
+        });
+        await waitForNoLoadingRows(api);
+
+        refreshed = waitForEvent('storeRefreshed', api);
+        api.refreshServerSide({ purge: false });
+        await refreshed;
+
+        // Sort now by b desc: b=[30, 20, 10] → ids=[2, 3, 1] → a=[1, 2, 3]
+        expect(getDisplayedValues(api, 'b')).toEqual([30, 20, 10]);
+        expect(getDisplayedValues(api, 'a')).toEqual([1, 2, 3]);
+    });
+
+    test('row grouping: purge refresh on child route with paginated loading re-sorts all blocks', async () => {
+        // Combines pagination (cacheBlockSize: 2) + row grouping + child-route purge refresh.
+        // Ensures the fix waits for all blocks to reload before sorting, and that child-store
+        // pagination doesn't race the sort.
+        const rootData = [{ id: 'uk', country: 'United Kingdom' }];
+        const childRows = [
+            { id: 'uk-1', country: 'United Kingdom', value: 50 },
+            { id: 'uk-2', country: 'United Kingdom', value: 10 },
+            { id: 'uk-3', country: 'United Kingdom', value: 40 },
+            { id: 'uk-4', country: 'United Kingdom', value: 20 },
+            { id: 'uk-5', country: 'United Kingdom', value: 30 },
+        ];
+
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            serverSideEnableClientSideSort: true,
+            cacheBlockSize: 2,
+            getRowId: (params) => params.data.id,
+            serverSideDatasource: {
+                getRows: (params) => {
+                    const groupKeys = params.request.groupKeys as string[];
+                    if (groupKeys.length === 0) {
+                        params.success({ rowData: [...rootData], rowCount: rootData.length });
+                        return;
+                    }
+                    const start = params.request.startRow ?? 0;
+                    const end = params.request.endRow ?? childRows.length;
+                    const page = childRows.slice(start, end);
+                    params.success({ rowData: [...page], rowCount: childRows.length });
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        const ukNode = api.getRowNode('uk')!;
+        api.setRowNodeExpanded(ukNode, true);
+        await waitForNoLoadingRows(api);
+
+        // Purge the child route — destroys and reloads all 5 children in 3 paginated blocks.
+        api.refreshServerSide({ route: ['United Kingdom'], purge: true });
+        await waitForNoLoadingRows(api);
+
+        await new GridRows(api, 'row grouping: paginated child sorted after child-route purge').check(`
+            ROOT id:<no-id>
+            └─┬ GROUP-leafGroup id:uk ag-Grid-AutoColumn:"United Kingdom" country:"United Kingdom"
+            · ├── LEAF id:uk-2 country:"United Kingdom" value:10
+            · ├── LEAF id:uk-4 country:"United Kingdom" value:20
+            · ├── LEAF id:uk-5 country:"United Kingdom" value:30
+            · ├── LEAF id:uk-3 country:"United Kingdom" value:40
+            · └── LEAF id:uk-1 country:"United Kingdom" value:50
+        `);
+    });
+
+    test('transaction add: out-of-order row is placed at its sorted position', async () => {
+        // applyServerSideTransaction sorts client-side when serverSideEnableClientSideSort is
+        // enabled and the store is fully loaded. A row added with a value that belongs between
+        // existing rows should land in its sorted slot, not at the tail where it was appended.
+        const rowData = [
+            { id: '1', name: 'Alice', value: 1 },
+            { id: '2', name: 'Bob', value: 3 },
+            { id: '3', name: 'Charlie', value: 5 },
+        ];
+
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'name' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            serverSideEnableClientSideSort: true,
+            getRowId: (params) => params.data.id,
+            serverSideDatasource: {
+                getRows: (params) => {
+                    params.success({ rowData: [...rowData], rowCount: rowData.length });
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        expect(getDisplayedValues(api, 'value')).toEqual([1, 3, 5]);
+
+        // Value 2 belongs between Alice (1) and Bob (3). Without client-side sort it would
+        // appear last; with the sort it takes its natural position.
+        api.applyServerSideTransaction({ add: [{ id: '4', name: 'Dora', value: 2 }] });
+
+        expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3, 5]);
+        expect(getDisplayedValues(api, 'name')).toEqual(['Alice', 'Dora', 'Bob', 'Charlie']);
     });
 });

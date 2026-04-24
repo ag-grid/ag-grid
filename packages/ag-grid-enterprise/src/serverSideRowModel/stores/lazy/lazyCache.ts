@@ -981,26 +981,20 @@ export class LazyCache extends BeanStub {
             return;
         }
 
-        // nodeMap find cancels early when it finds a matching record.
-        // better to use this than forEach
-        let index = -1;
-        const firstOutOfPlaceNode = this.nodeMap.find((lazyNode) => {
-            index += 1;
-            // node not contiguous, nodes must be missing
-            if (lazyNode.index !== index) {
-                return true;
+        // Walk by index rather than iterating the nodeMap: after moves/restores during
+        // a non-purge refresh, insertion order no longer matches index order, so a
+        // forEach/find comparison against a running counter falsely reports "out of place".
+        for (let i = 0; i < this.numberOfRows; i++) {
+            const lazyNode = this.nodeMap.getBy('index', i);
+            if (!lazyNode) {
+                return false;
             }
-            // node data is out of date
-            if (lazyNode.node.__needsRefreshWhenVisible) {
-                return true;
+            const { node } = lazyNode;
+            if (node.__needsRefreshWhenVisible || node.stub) {
+                return false;
             }
-            // node not yet loaded
-            if (lazyNode.node.stub) {
-                return true;
-            }
-            return false;
-        });
-        return firstOutOfPlaceNode == null;
+        }
+        return true;
     }
 
     public isLastRowIndexKnown() {
