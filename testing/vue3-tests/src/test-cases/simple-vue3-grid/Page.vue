@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineExpose, ref } from 'vue';
+import { ref } from 'vue';
 
 import type { ColDef } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';

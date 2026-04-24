@@ -28,7 +28,7 @@ type KeysLike<U> = Exclude<GetPropKeys<GridOptions, U>, undefined>;
 type KeysWithType<U> = Exclude<GetPropKeys<GridOptions, U>, AnyGridOptions>;
 type CallbackKeys = KeysWithType<(any: AgGridCommon<any, any>) => any>;
 /** All function properties excluding those explicity match the common callback interface. */
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
 
 /**

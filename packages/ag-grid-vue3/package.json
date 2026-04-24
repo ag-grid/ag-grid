@@ -47,24 +47,24 @@
     "ag-grid-community": "35.2.1-beta.20260419.2046"
   },
   "devDependencies": {
-    "vue": "^3.5.0",
-    "replace-in-file": "4.3.1",
-    "@tsconfig/node20": "^20.1.4",
+    "vue": "^3.5.32",
+    "replace-in-file": "8.4.0",
+    "@tsconfig/node20": "^20.1.9",
     "@types/jsdom": "^21.1.7",
-    "@types/node": "^20.14.5",
+    "@types/node": "^22.15.3",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vitejs/plugin-vue-jsx": "^4.0.0",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.5.1",
     "jsdom": "^24.1.0",
-    "npm-run-all2": "^6.2.0",
+    "npm-run-all2": "^8.0.4",
     "typescript": "~5.4.5",
     "vite": "~5.4.19",
-    "vite-plugin-vue-devtools": "^7.3.1",
-    "vue-tsc": "^2.0.21"
+    "vite-plugin-vue-devtools": "^8.1.1",
+    "vue-tsc": "^3.2.7"
   },
   "peerDependencies": {
-    "vue": "^3.5.0"
+    "vue": "^3.5.32"
   },
   "publishConfig": {
     "access": "public"

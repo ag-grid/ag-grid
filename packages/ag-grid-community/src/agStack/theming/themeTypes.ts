@@ -21,7 +21,6 @@ type ParamTypeForLowercaseKey<K extends string> = K extends `${string}color`
 
 // string & {} used to preserve auto-complete from string union but allow any string
 // NOSONAR
-// eslint-disable-next-line @typescript-eslint/ban-types
 type AnyString = string & {};
 
 /**

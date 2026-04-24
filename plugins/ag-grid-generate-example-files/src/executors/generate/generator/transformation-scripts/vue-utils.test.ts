@@ -81,7 +81,7 @@ describe('convertTemplate', () => {
 });
 
 describe('indentTemplate', () => {
-    expect(
+    it('indents correctly', () => expect(
         indentTemplate(
             `
                 <div style="display: flex; flex-direction: column">
@@ -115,5 +115,5 @@ describe('indentTemplate', () => {
                 />
             </div>
         `.slice(1, -9)
-    );
+    ));
 });
