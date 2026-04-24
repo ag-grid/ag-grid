@@ -5,9 +5,11 @@ import { VERSION } from '../version';
 import { AgToolbarSelector } from './agToolbar';
 import { ButtonToolbarItem } from './providedItems/buttonToolbarItem';
 import { FindToolbarItem } from './providedItems/findToolbarItem';
+import { MenuToolbarItem } from './providedItems/menuToolbarItem';
 import { PivotPanelToolbarItem } from './providedItems/pivotPanelToolbarItem';
 import { QuickFilterToolbarItem } from './providedItems/quickFilterToolbarItem';
 import { RowGroupPanelToolbarItem } from './providedItems/rowGroupPanelToolbarItem';
+import { ToolbarMenuBuilder } from './providedItems/toolbarMenuBuilder';
 
 /**
  * @feature Accessories -> Toolbar
@@ -16,13 +18,15 @@ import { RowGroupPanelToolbarItem } from './providedItems/rowGroupPanelToolbarIt
 export const ToolbarModule: _ModuleWithoutApi = {
     moduleName: 'Toolbar',
     version: VERSION,
+    beans: [ToolbarMenuBuilder],
     userComponents: {
         agButtonToolbarItem: ButtonToolbarItem,
         agFindToolbarItem: FindToolbarItem,
+        agMenuToolbarItem: MenuToolbarItem,
         agPivotPanelToolbarItem: PivotPanelToolbarItem,
         agQuickFilterToolbarItem: QuickFilterToolbarItem,
         agRowGroupPanelToolbarItem: RowGroupPanelToolbarItem,
-    } satisfies Record<ToolbarItemComponentName, any>,
+    } satisfies Partial<Record<ToolbarItemComponentName, any>>,
     icons: {
         filter: 'filter',
     },
