@@ -173,6 +173,7 @@ export type DynamicBeanName =
 export type ToolbarItemComponentName =
     | 'agButtonToolbarItem'
     | 'agFindToolbarItem'
+    | 'agMenuToolbarItem'
     | 'agPivotPanelToolbarItem'
     | 'agQuickFilterToolbarItem'
     | 'agRowGroupPanelToolbarItem';
@@ -450,4 +451,5 @@ type UntypedBeanNames =
     | 'ssrmStoreUtils'
     | 'statusBarSvc'
     | 'testIdSvc'
+    | 'toolbarMenuBuilder'
     | 'formula';
