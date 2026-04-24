@@ -108,12 +108,9 @@ export interface IToolbarItemParams<TData = any, TContext = any> extends AgGridC
 
 export interface IToolbarItem<TData = any, TContext = any> {
     /**
-     * Called when the `toolbar` grid option is updated.
-     * If this method returns `true`,
-     * the grid assumes that the toolbar item has updated with the latest params,
-     * and takes no further action.
-     * If this method returns `false`, or is not implemented,
-     * the grid will destroy and recreate the toolbar item.
+     * Called when the `toolbar` grid option updates.
+     * Return `true` if the component updates itself with the new params.
+     * Return `false` (or omit) to have the grid destroy and recreate the component.
      */
     refresh?(params: IToolbarItemParams<TData, TContext>): boolean;
 }
