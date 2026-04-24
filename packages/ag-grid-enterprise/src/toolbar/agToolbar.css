@@ -120,11 +120,24 @@
     box-shadow: var(--ag-focus-shadow);
 }
 
+/*
+ * Within the Find pill the icon renders as a flex sibling rather than an
+ * absolute overlay, so the input's bounding rect does not span the icon.
+ * This keeps the VoiceOver focus indicator aligned with the visible input.
+ */
+:where(.ag-toolbar-find) .ag-toolbar-input-icon {
+    position: static;
+    padding-inline-start: var(--ag-spacing);
+}
+
 /* stylelint-disable-next-line no-descending-specificity */
 :where(.ag-toolbar-find) .ag-toolbar-input-field {
     border: 0;
     border-radius: 0;
+    padding-left: 0;
     padding-right: 0;
+    flex: 1;
+    min-width: 0;
 }
 
 :where(.ag-toolbar-find) .ag-toolbar-input-field:focus {
