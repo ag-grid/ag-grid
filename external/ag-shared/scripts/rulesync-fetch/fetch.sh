@@ -39,11 +39,11 @@ elif command -v gh >/dev/null 2>&1 && _gh_token="$(gh auth token 2>/dev/null)" &
     # avoids HTTPS failures when the user authenticated gh with SSH protocol
     # but never ran `gh auth setup-git` to wire the token into git's
     # credential helper.
-    # Match current ("Git operations protocol: ssh") and older
-    # ("Git operations for github.com configured to use ssh protocol.")
-    # gh auth status layouts. Anchor `ssh` near end-of-line so an unrelated
-    # line (e.g. token scopes containing 'ssh') doesn't false-match.
-    if gh auth status 2>&1 | grep -qiE 'git operations.*\bssh\b([^[:alnum:]]*protocol)?[^[:alnum:]]*$'; then
+    # Query the github.com-specific protocol. `gh auth status` reports every
+    # configured host, so grepping its output could pick up SSH from an
+    # unrelated host and flip github.com onto SSH incorrectly. `gh config get`
+    # is scoped to a host and returns exactly 'ssh' or 'https'.
+    if [[ "$(gh config get -h github.com git_protocol 2>/dev/null)" == "ssh" ]]; then
         AUTH_MODE="gh-ssh"
     else
         GITHUB_TOKEN="$_gh_token"
