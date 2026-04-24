@@ -168,6 +168,8 @@ describe('SSRM Client-Side Sorting', () => {
         await waitForNoLoadingRows(api);
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
+        // Sort indicator should still reflect the active sort after refresh (AG-16487).
+        expect(api.getColumnState().find((c) => c.colId === 'value')?.sort).toBe('asc');
     });
 
     test('purge refresh re-sorts rows with descending sort', async () => {
@@ -434,6 +436,8 @@ describe('SSRM Client-Side Sorting', () => {
         await refreshed;
 
         expect(getDisplayedValues(api, 'value')).toEqual([1, 2, 3]);
+        // Sort indicator should still reflect the active sort after refresh (AG-16487).
+        expect(api.getColumnState().find((c) => c.colId === 'value')?.sort).toBe('asc');
     });
 
     test('tree data: purge on child route re-sorts child rows', async () => {
