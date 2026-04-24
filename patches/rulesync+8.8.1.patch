@@ -1,0 +1,150 @@
+diff --git a/node_modules/rulesync/dist/chunk-XIMWQREW.js b/node_modules/rulesync/dist/chunk-XIMWQREW.js
+index 5a934ab..2a66d6d 100644
+--- a/node_modules/rulesync/dist/chunk-XIMWQREW.js
++++ b/node_modules/rulesync/dist/chunk-XIMWQREW.js
+@@ -2678,10 +2678,11 @@ var GeminiCliCommand = class _GeminiCliCommand extends ToolCommand {
+       prompt: rulesyncCommand.getBody(),
+       ...geminicliFields
+     };
++    const escapedPrompt = geminiFrontmatter.prompt.replace(/\\/g, "\\\\");
+     const descriptionLine = geminiFrontmatter.description !== void 0 ? `description = "${geminiFrontmatter.description}"
+ ` : "";
+     const tomlContent = `${descriptionLine}prompt = """
+-${geminiFrontmatter.prompt}
++${escapedPrompt}
+ """`;
+     const paths = this.getSettablePaths({ global });
+     return new _GeminiCliCommand({
+@@ -3828,11 +3829,19 @@ var CommandsProcessor = class extends FeatureProcessor {
+   async loadRulesyncFiles() {
+     const basePath = RulesyncCommand.getSettablePaths().relativeDirPath;
+     const rulesyncCommandPaths = await findFilesByGlobs(join21(basePath, "**", "*.md"));
+-    const rulesyncCommands = await Promise.all(
+-      rulesyncCommandPaths.map(
+-        (path4) => RulesyncCommand.fromFile({ relativeFilePath: this.safeRelativePath(basePath, path4) })
+-      )
+-    );
++    const rulesyncCommands = (await Promise.all(
++      rulesyncCommandPaths.map(async (path4) => {
++        try {
++          return await RulesyncCommand.fromFile({ relativeFilePath: this.safeRelativePath(basePath, path4) });
++        } catch (e) {
++          if (e.code === "ENOENT") {
++            this.logger.warn(`Skipping missing or broken symlink: ${this.safeRelativePath(basePath, path4)}`);
++            return null;
++          }
++          throw e;
++        }
++      })
++    )).filter(Boolean);
+     this.logger.debug(`Successfully loaded ${rulesyncCommands.length} rulesync commands`);
+     return rulesyncCommands;
+   }
+@@ -21476,18 +21485,26 @@ var RulesProcessor = class extends FeatureProcessor {
+     const rulesyncBaseDir = join141(process.cwd(), RULESYNC_RULES_RELATIVE_DIR_PATH);
+     const files = await findFilesByGlobs(join141(rulesyncBaseDir, "**", "*.md"));
+     this.logger.debug(`Found ${files.length} rulesync files`);
+-    const rulesyncRules = await Promise.all(
+-      files.map((file) => {
++    const rulesyncRules = (await Promise.all(
++      files.map(async (file) => {
+         const relativeFilePath = relative6(rulesyncBaseDir, file);
+         checkPathTraversal({
+           relativePath: relativeFilePath,
+           intendedRootDir: rulesyncBaseDir
+         });
+-        return RulesyncRule.fromFile({
+-          relativeFilePath
+-        });
++        try {
++          return await RulesyncRule.fromFile({
++            relativeFilePath
++          });
++        } catch (e) {
++          if (e.code === "ENOENT") {
++            this.logger.warn(`Skipping missing or broken symlink: ${relativeFilePath}`);
++            return null;
++          }
++          throw e;
++        }
+       })
+-    );
++    )).filter(Boolean);
+     const factory = this.getFactory(this.toolTarget);
+     const rootRules = rulesyncRules.filter((rule) => rule.getFrontmatter().root);
+     const targetedRootRules = rootRules.filter(
+diff --git a/node_modules/rulesync/dist/index.cjs b/node_modules/rulesync/dist/index.cjs
+index 3480d16..8ce1985 100644
+--- a/node_modules/rulesync/dist/index.cjs
++++ b/node_modules/rulesync/dist/index.cjs
+@@ -2516,10 +2516,11 @@ var GeminiCliCommand = class _GeminiCliCommand extends ToolCommand {
+       prompt: rulesyncCommand.getBody(),
+       ...geminicliFields
+     };
++    const escapedPrompt = geminiFrontmatter.prompt.replace(/\\/g, "\\\\");
+     const descriptionLine = geminiFrontmatter.description !== void 0 ? `description = "${geminiFrontmatter.description}"
+ ` : "";
+     const tomlContent = `${descriptionLine}prompt = """
+-${geminiFrontmatter.prompt}
++${escapedPrompt}
+ """`;
+     const paths = this.getSettablePaths({ global });
+     return new _GeminiCliCommand({
+@@ -3666,11 +3667,19 @@ var CommandsProcessor = class extends FeatureProcessor {
+   async loadRulesyncFiles() {
+     const basePath = RulesyncCommand.getSettablePaths().relativeDirPath;
+     const rulesyncCommandPaths = await findFilesByGlobs((0, import_node_path24.join)(basePath, "**", "*.md"));
+-    const rulesyncCommands = await Promise.all(
+-      rulesyncCommandPaths.map(
+-        (path4) => RulesyncCommand.fromFile({ relativeFilePath: this.safeRelativePath(basePath, path4) })
+-      )
+-    );
++    const rulesyncCommands = (await Promise.all(
++      rulesyncCommandPaths.map(async (path4) => {
++        try {
++          return await RulesyncCommand.fromFile({ relativeFilePath: this.safeRelativePath(basePath, path4) });
++        } catch (e) {
++          if (e.code === "ENOENT") {
++            this.logger.warn(`Skipping missing or broken symlink: ${this.safeRelativePath(basePath, path4)}`);
++            return null;
++          }
++          throw e;
++        }
++      })
++    )).filter(Boolean);
+     this.logger.debug(`Successfully loaded ${rulesyncCommands.length} rulesync commands`);
+     return rulesyncCommands;
+   }
+@@ -21382,18 +21391,26 @@ var RulesProcessor = class extends FeatureProcessor {
+     const rulesyncBaseDir = (0, import_node_path144.join)(process.cwd(), RULESYNC_RULES_RELATIVE_DIR_PATH);
+     const files = await findFilesByGlobs((0, import_node_path144.join)(rulesyncBaseDir, "**", "*.md"));
+     this.logger.debug(`Found ${files.length} rulesync files`);
+-    const rulesyncRules = await Promise.all(
+-      files.map((file) => {
++    const rulesyncRules = (await Promise.all(
++      files.map(async (file) => {
+         const relativeFilePath = (0, import_node_path144.relative)(rulesyncBaseDir, file);
+         checkPathTraversal({
+           relativePath: relativeFilePath,
+           intendedRootDir: rulesyncBaseDir
+         });
+-        return RulesyncRule.fromFile({
+-          relativeFilePath
+-        });
++        try {
++          return await RulesyncRule.fromFile({
++            relativeFilePath
++          });
++        } catch (e) {
++          if (e.code === "ENOENT") {
++            this.logger.warn(`Skipping missing or broken symlink: ${relativeFilePath}`);
++            return null;
++          }
++          throw e;
++        }
+       })
+-    );
++    )).filter(Boolean);
+     const factory = this.getFactory(this.toolTarget);
+     const rootRules = rulesyncRules.filter((rule) => rule.getFrontmatter().root);
+     const targetedRootRules = rootRules.filter(

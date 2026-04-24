@@ -27,13 +27,13 @@ type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class AgBeanStub<
-        TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-        TProperties extends BaseProperties,
-        TGlobalEvents extends BaseEvents,
-        TCommon,
-        TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-        TLocalEventType extends string = AgBeanStubEvent,
-    >
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TLocalEventType extends string = AgBeanStubEvent,
+>
     implements
         AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType>,
         IEventEmitter<AgEventOrDestroyed<TLocalEventType>>
@@ -267,7 +267,7 @@ export abstract class AgBeanStub<
             if (event.changeSet) {
                 // ChangeSet is only set when the property change is part of a group of changes from ComponentUtils
                 // Direct api calls should always be run as
-                if (event.changeSet && event.changeSet.id === this.lastChangeSetIdLookup[eventsKey]) {
+                if (event.changeSet?.id === this.lastChangeSetIdLookup[eventsKey]) {
                     // Already run the listener for this set of prop changes so don't run again
                     return;
                 }

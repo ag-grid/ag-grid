@@ -4,10 +4,10 @@
   "private": true,
   "dependencies": {
     "ag-shared": "0.0.1",
-    "glob": "8.0.3",
+    "glob": "^11.1.0",
     "typescript": "~5.4.5",
-    "@nx/devkit": "17.2.6",
-    "@swc/helpers": "0.5.3"
+    "@nx/devkit": "20.8.4",
+    "@swc/helpers": "0.5.21"
   },
   "type": "commonjs",
   "main": "./dist/src/index.js",

@@ -40,15 +40,9 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "devDependencies": {
-    "@jest/globals": "29.6.1",
-    "@types/jest": "^29.5.0",
-    "@types/node": "^16.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.51.0",
-    "@typescript-eslint/parser": "^5.51.0",
-    "jest": "^29.5.0",
-    "jest-runner": "^29.5.0",
-    "jest-serial-runner": "^1.2.1",
-    "ts-jest": "^29.1.0",
+    "@types/node": "^22.15.3",
+    "@typescript-eslint/eslint-plugin": "8.59.0",
+    "@typescript-eslint/parser": "8.59.0",
     "typescript": "~5.4.5"
   },
   "publishConfig": {

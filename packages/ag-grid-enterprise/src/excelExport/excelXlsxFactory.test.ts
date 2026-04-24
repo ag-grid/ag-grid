@@ -888,7 +888,7 @@ describe('excel styles', () => {
 
     it('skips Excel table when exportAsExcelTable is true but pivot mode is active', () => {
         const workbook = new Workbook();
-        const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const worksheetXml = workbook.addWorksheet(
             [],
             basicWorksheet('TableSkip'),

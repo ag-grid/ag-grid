@@ -75,7 +75,7 @@ export function dispatchColumnChangedEvent<
     eventSvc.dispatchEvent({
         type,
         columns,
-        column: columns && columns.length == 1 ? columns[0] : null,
+        column: columns?.length == 1 ? columns[0] : null,
         source,
     } as WithoutGridCommon<ColumnEvent>);
 }

@@ -13,7 +13,6 @@ export default [
             'no-useless-escape': 'error',
             'prefer-spread': 'error',
             'no-irregular-whitespace': 'error',
-            '@typescript-eslint/ban-types': 'error',
             '@typescript-eslint/no-unused-vars': 'error',
             'prefer-const': ['error', { destructuring: 'all' }],
             'prefer-rest-params': 'error',

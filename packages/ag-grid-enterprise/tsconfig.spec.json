@@ -3,12 +3,11 @@
   "compilerOptions": {
     "emitDecoratorMetadata": false,
     "noImplicitAny": false,
-    "module": "commonjs",
-    "types": ["jest", "node"]
+    "types": ["vitest/globals", "node"]
   },
   "include": [
-    "jest.config.ts",
-    "jest.setup.ts",
+    "vitest.config.ts",
+    "vitest.setup.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.d.ts",

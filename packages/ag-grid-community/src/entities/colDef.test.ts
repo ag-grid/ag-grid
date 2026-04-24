@@ -1,6 +1,5 @@
 /* eslint-disable sonarjs/no-dead-store */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { describe, test } from '@jest/globals';
 
 import type { ColDef, ColGroupDef } from './colDef';
 
