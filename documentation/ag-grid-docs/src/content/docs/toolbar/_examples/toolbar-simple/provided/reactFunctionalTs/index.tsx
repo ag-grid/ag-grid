@@ -69,7 +69,7 @@ const GridExample = () => {
         }),
         []
     );
-    const sideBar = useMemo(() => ({ toolPanels: ['columns', 'filters-new'], defaultToolPanel: '' }), []);
+    const sideBar = useMemo(() => ({ toolPanels: ['columns', 'filters-new'] }), []);
     const toolbar = useMemo<Toolbar>(
         () => ({
             alignment: 'right',

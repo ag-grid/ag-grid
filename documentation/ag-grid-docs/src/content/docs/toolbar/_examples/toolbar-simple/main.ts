@@ -54,7 +54,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     enableFilterHandlers: true,
-    sideBar: { toolPanels: ['columns', 'filters-new'], defaultToolPanel: '' },
+    sideBar: { toolPanels: ['columns', 'filters-new'] },
     toolbar: {
         alignment: 'right',
         items: [
