@@ -1,4 +1,3 @@
-
 import { gridChartVersion, validGridChartsVersion, validGridChartsVersionErrorMessage } from './validGridChartsVersion';
 
 describe.each([

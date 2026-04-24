@@ -1,4 +1,3 @@
-
 import { createAutoGroupHierarchy, createCategoryHierarchy } from './hierarchicalChartUtils';
 
 describe(createCategoryHierarchy as any, () => {

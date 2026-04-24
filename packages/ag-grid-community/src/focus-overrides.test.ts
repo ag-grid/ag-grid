@@ -486,9 +486,7 @@ describe('Focus override callbacks', () => {
                 },
             };
 
-            vi.spyOn(navigationSvcAny, 'getLastCellOfColSpan').mockImplementation(
-                (position: CellPosition) => position
-            );
+            vi.spyOn(navigationSvcAny, 'getLastCellOfColSpan').mockImplementation((position: CellPosition) => position);
             vi.spyOn(navigationSvcAny, 'isValidNavigateCell').mockReturnValue(true);
         });
 

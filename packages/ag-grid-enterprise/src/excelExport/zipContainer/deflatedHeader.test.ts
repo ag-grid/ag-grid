@@ -1,4 +1,3 @@
-
 import type { ZipFile } from './zipContainer';
 import { getHeaders, preprocessFileForZip } from './zipContainerHelper';
 

@@ -1,4 +1,3 @@
-
 import { ZipContainer } from './zipContainer';
 
 const readUInt16LE = (buffer: Uint8Array, offset: number): number => buffer[offset] | (buffer[offset + 1] << 8);

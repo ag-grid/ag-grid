@@ -50,11 +50,9 @@ function createRichSelectMock() {
 
     const setValueList = vi.fn();
     const setIsLoading = vi.fn();
-    const setLoadMoreRowsCallback = vi.fn(
-        (callback?: (direction?: 'up' | 'down') => void, _thresholdRows?: number) => {
-            loadMoreCallback = callback;
-        }
-    );
+    const setLoadMoreRowsCallback = vi.fn((callback?: (direction?: 'up' | 'down') => void, _thresholdRows?: number) => {
+        loadMoreCallback = callback;
+    });
 
     const richSelect = {
         addCss: vi.fn(),

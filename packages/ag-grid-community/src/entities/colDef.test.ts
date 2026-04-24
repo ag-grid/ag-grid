@@ -1,6 +1,5 @@
 /* eslint-disable sonarjs/no-dead-store */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
 import type { ColDef, ColGroupDef } from './colDef';
 
 describe('ColDef.field Types', () => {
