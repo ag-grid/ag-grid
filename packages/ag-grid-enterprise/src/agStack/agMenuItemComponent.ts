@@ -476,7 +476,7 @@ export class AgMenuItemComponent<
                 )
             );
         } else {
-            this.openSubMenu(event && event.type === 'keydown', event);
+            this.openSubMenu(event?.type === 'keydown', event);
         }
 
         if ((this.params.subMenu && !this.params.action) || this.params.suppressCloseOnSelect) {

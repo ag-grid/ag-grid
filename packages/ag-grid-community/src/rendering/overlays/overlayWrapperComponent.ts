@@ -57,7 +57,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             return;
         }
 
-        let isFocused = false;
+        let isFocused: boolean;
         if (e.shiftKey) {
             isFocused = beans.focusSvc.focusGridView({
                 column: _last(beans.visibleCols.allCols),
@@ -143,9 +143,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             if (this.activePromise !== overlayComponentPromise) {
                 // Another promise was started, we need to cancel this old operation
                 if (this.activeOverlay !== comp) {
-                    // We can destroy the component as it will not be used
                     this.destroyBean(comp);
-                    comp = null;
                 }
                 return;
             }

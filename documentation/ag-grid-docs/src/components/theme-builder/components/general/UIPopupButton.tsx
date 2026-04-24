@@ -61,6 +61,7 @@ export const UIPopupButton = (props: UIPopupButtonProps) => {
 
     const prevShow = useRef(show);
     const onCloseRef = useRef(props.onClose);
+    // eslint-disable-next-line react-hooks/refs -- keeping ref in sync with latest callback
     onCloseRef.current = props.onClose;
     useEffect(() => {
         if (prevShow.current && !show) {
@@ -88,6 +89,7 @@ export const UIPopupButton = (props: UIPopupButtonProps) => {
                 {props.endDecorator}
             </Button>
             {show && (
+                // eslint-disable-next-line react-hooks/refs -- floating-ui callback ref pattern
                 <DropdownArea ref={refs.setFloating} style={floatingStyles} className={props.dropdownClassName}>
                     <div className="dropdownWrapper">
                         {typeof props.dropdownContent === 'function'

@@ -132,7 +132,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
         try {
             this.selectedState = recursivelyDeserializeState(state, !!state.selectAllChildren);
-        } catch (e) {
+        } catch {
             // do nothing - error already logged
         }
     }

@@ -83,6 +83,7 @@ type DropZoneCallbacks = {
 export function useFileDropZone(targetRef: RefObject<HTMLElement | null>, callbacks: DropZoneCallbacks): void {
     const dragCounter = useRef(0);
     const callbacksRef = useRef(callbacks);
+    // eslint-disable-next-line react-hooks/refs -- keeping ref in sync with latest callbacks
     callbacksRef.current = callbacks;
 
     useEffect(() => {

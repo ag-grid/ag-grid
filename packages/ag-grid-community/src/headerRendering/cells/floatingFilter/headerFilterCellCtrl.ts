@@ -237,7 +237,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         if (notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             const lastFocusEvent = this.lastFocusEvent;
-            const fromTab = !!(lastFocusEvent && lastFocusEvent.key === KeyCode.TAB);
+            const fromTab = lastFocusEvent?.key === KeyCode.TAB;
 
             if (lastFocusEvent && fromTab) {
                 const shouldFocusLast = lastFocusEvent.shiftKey;

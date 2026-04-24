@@ -379,8 +379,7 @@ export class ChartDatasource extends BeanStub {
                             api,
                             context,
                         });
-                        groupItem[colId] =
-                            aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                        groupItem[colId] = typeof aggResult?.value !== 'undefined' ? aggResult.value : aggResult;
 
                         // filtered out data
                         const filteredOutColId = `${colId}-filtered-out`;
@@ -400,7 +399,7 @@ export class ChartDatasource extends BeanStub {
                             context,
                         });
                         groupItem[filteredOutColId] =
-                            aggResultFiltered && typeof aggResultFiltered.value !== 'undefined'
+                            typeof aggResultFiltered?.value !== 'undefined'
                                 ? aggResultFiltered.value
                                 : aggResultFiltered;
                     } else {
@@ -417,8 +416,7 @@ export class ChartDatasource extends BeanStub {
                             context,
                         });
 
-                        groupItem[colId] =
-                            aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                        groupItem[colId] = typeof aggResult?.value !== 'undefined' ? aggResult.value : aggResult;
                     }
                 }
             }

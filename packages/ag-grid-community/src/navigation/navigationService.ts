@@ -480,7 +480,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     ): boolean | null {
         const { editSvc, focusSvc } = this.beans;
 
-        let res: boolean | null | undefined = undefined;
+        let res: boolean | null | undefined;
         const cellCtrl = previous instanceof CellCtrl ? previous : previous.getAllCellCtrls()?.[0];
 
         if (editSvc?.isEditing()) {
@@ -706,7 +706,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             hitEdgeOfGrid = _missing(nextCell);
         }
 
-        if (hitEdgeOfGrid && event && event.key === KeyCode.UP) {
+        if (hitEdgeOfGrid && event?.key === KeyCode.UP) {
             nextCell = {
                 rowIndex: -1,
                 rowPinned: null,

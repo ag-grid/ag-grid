@@ -190,7 +190,7 @@ function aggCount(params: IAggFuncParams) {
 
     // the previous aggregation data
     const existingAggData = params.rowNode?.aggData?.[params.column.getColId()];
-    if (existingAggData && existingAggData.value === count) {
+    if (existingAggData?.value === count) {
         // the underlying values haven't changed, return the old object to avoid triggering change detection
         return existingAggData;
     }
@@ -260,7 +260,7 @@ function aggAvg(params: IAggFuncParams): {
 
     // the previous aggregation data
     const existingAggData = params.rowNode?.aggData?.[params.column?.getColId()];
-    if (existingAggData && existingAggData.count === count && existingAggData.value === value) {
+    if (existingAggData?.count === count && existingAggData.value === value) {
         // the underlying values haven't changed, return the old object to avoid triggering change detection
         return existingAggData;
     }

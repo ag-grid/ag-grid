@@ -309,8 +309,8 @@ export class ToolPanelColumnComp extends Component {
             this.cbSelect.setValue(updateStrategy.isColumnVisibleInToolPanel(isDeferredMode(this.params), this.column));
         }
 
-        let canBeToggled = true;
-        let canBeDragged = true;
+        let canBeToggled: boolean;
+        let canBeDragged: boolean;
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes

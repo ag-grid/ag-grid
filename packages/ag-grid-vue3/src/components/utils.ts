@@ -2607,4 +2607,3 @@ export function deepToRaw<T extends Record<string, any>>(sourceObj: T): T {
      return objectIterator(sourceObj);
 }
 
-// export const convertToRaw = (value: any) => (value ? (Object.isFrozen(value) ? value : markRaw(toRaw(value))) : value);

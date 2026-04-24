@@ -34,7 +34,6 @@ const MESSAGE_FEQUENCY_1X = 200;
 
 let dataWorker;
 let scriptRunner: ScriptRunner;
-let restartScriptTimeout;
 
 ModuleRegistry.registerModules([
     AllCommunityModule,
@@ -295,7 +294,6 @@ export function createAutomatedRowGrouping({
 }
 
 export function cleanUp() {
-    clearTimeout(restartScriptTimeout);
     if (scriptRunner) {
         scriptRunner.stop();
     }

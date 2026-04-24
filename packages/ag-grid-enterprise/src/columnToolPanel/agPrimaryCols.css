@@ -70,10 +70,12 @@
     opacity: 0.5;
     pointer-events: none;
 
+    /* stylelint-disable-next-line selector-max-specificity */
     .ag-icon {
         opacity: 0.5;
     }
 
+    /* stylelint-disable-next-line selector-max-specificity */
     &.ag-icon-grip {
         opacity: 0.35;
     }

@@ -136,7 +136,7 @@ export class CheckboxSelectionComponent extends Component {
         const selectable = rowNode.selectable;
 
         const isVisible = this.getIsVisible();
-        let checkboxes = undefined;
+        let checkboxes: boolean | undefined;
         if (typeof isVisible === 'function') {
             const extraParams = overrides?.callbackParams;
             if (!column) {

@@ -159,7 +159,6 @@ describe('excelXlsxFactory Workbook', () => {
             stubParams(
                 {
                     protectSheet: {
-                        // eslint-disable-next-line sonarjs/no-hardcoded-passwords
                         password: 'password',
                         formatCells: true,
                         selectLockedCells: false,

@@ -16,7 +16,6 @@ export type ToolbarItemShorthand =
     | ToolbarItemComponentName
     | 'separator'
     // Preserve the literal-union autocomplete while still allowing arbitrary registered component names
-    // eslint-disable-next-line @typescript-eslint/ban-types
     | (string & {});
 
 /**

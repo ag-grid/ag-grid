@@ -77,6 +77,7 @@ export const CodeViewer = ({
     stripOutExampleGeneratorCode(localFiles);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- sync state from prop
         setActiveFile(initialSelectedFile);
     }, [initialSelectedFile]);
 

@@ -672,7 +672,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             if (rowNode.id === id) {
                 result = rowNode;
             }
-            if (rowNode.detailNode && rowNode.detailNode.id === id) {
+            if (rowNode.detailNode?.id === id) {
                 result = rowNode.detailNode;
             }
         });

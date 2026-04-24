@@ -213,7 +213,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         const prevEditable = prevCell.isCellEditable();
         const nextEditable = nextCell.isCellEditable();
 
-        const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
+        const rowsMatch = prevPos.rowIndex === nextPos?.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
         if (prevEditable && !preventNavigation) {
             this.setFocusOutOnEditor(prevCell);

@@ -135,8 +135,7 @@ export class RowSpanCache extends BeanStub {
 
             // if level or key is different, cells do not span.
             if (
-                lastNode == null ||
-                node.level !== lastNode.level || // no span across groups
+                node.level !== lastNode?.level || // no span across groups
                 node.footer ||
                 (spanData && node.rowIndex - 1 !== spanData?.getLastNode().rowIndex) // no span if rows not contiguous (SSRM)
             ) {

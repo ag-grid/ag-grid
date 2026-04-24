@@ -91,7 +91,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
             seedRepos.filter((seedRepo) => {
                 return seedRepo.framework === framework;
             }),
-        [seedRepos, isIntegratedCharts, framework]
+        [seedRepos, framework]
     );
     const productName = 'AG Grid';
 

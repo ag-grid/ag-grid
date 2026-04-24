@@ -305,7 +305,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         } while (nextRow?.footer);
 
         const childrenAfterGroup = this.draggingGroups?.get(target) ?? target.childrenAfterGroup;
-        if (nextRow && nextRow.parent === target && childrenAfterGroup?.length) {
+        if (nextRow?.parent === target && childrenAfterGroup?.length) {
             const rowsSet = new Set(rows);
             for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
                 const child = childrenAfterGroup[i];

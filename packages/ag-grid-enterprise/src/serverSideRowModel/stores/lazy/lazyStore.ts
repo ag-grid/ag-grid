@@ -458,7 +458,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns the row node if the display index falls within the store, if it didn't exist this will create a new stub to return
      */
     getRowUsingDisplayIndex(displayRowIndex: number): IRowNode<any> | undefined {
-        if (this.parentRowNode.sibling && displayRowIndex === this.parentRowNode.sibling.rowIndex) {
+        if (displayRowIndex === this.parentRowNode.sibling?.rowIndex) {
             return this.parentRowNode.sibling;
         }
         return this.cache.getRowByDisplayIndex(displayRowIndex);
