@@ -191,6 +191,33 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             // element in DOM — which, inside the toolbar, is the following action button.
             expect(event.defaultPrevented).toBe(false);
         });
+
+        test('Tab inside a toolbar pivot panel does not force the next grid container', async () => {
+            // Pivot toolbar item has its own wiring around pivot mode / visibility; verify
+            // the embedded flag reaches it too.
+            const api = gridMgr.createGrid('embedded-pivot-tab', {
+                columnDefs: [{ field: 'name', enablePivot: true, pivot: true }],
+                rowData: [{ name: 'Alice' }],
+                pivotMode: true,
+                toolbar: {
+                    items: [
+                        'agPivotPanelToolbarItem',
+                        { key: 'after', label: 'After', icon: 'maximize', action: () => {} },
+                    ],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+            const panel = toolbar.querySelector<HTMLElement>('.ag-column-drop')!;
+
+            const event = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+            panel.dispatchEvent(event);
+
+            expect(event.defaultPrevented).toBe(false);
+        });
     });
 
     describe('console warnings for missing feature modules', () => {

@@ -5,9 +5,9 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         const findItem = page.locator('.ag-toolbar-find');
-        const quickFilterInput = page
-            .locator('.ag-toolbar .ag-toolbar-input')
-            .filter({ hasNot: page.locator('.ag-toolbar-find') });
+        // .ag-toolbar-find and quickFilter both carry .ag-toolbar-input, so select the
+        // quickFilter node directly via the absence of .ag-toolbar-find.
+        const quickFilterInput = page.locator('.ag-toolbar .ag-toolbar-input:not(.ag-toolbar-find)');
         const toggleFind = page.locator('button', { hasText: 'Toggle Find' });
         const toggleQuickFilter = page.locator('button', { hasText: 'Toggle Quick Filter' });
         const full = page.locator('button', { hasText: 'Full' });
