@@ -81,6 +81,22 @@ const gridOptions = {
 }
 ```
 
+### Separators
+
+Group toolbar items visually by inserting the string `'separator'` between them. A separator renders as a vertical divider and has no other behaviour.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: [
+            'agQuickFilterToolbarItem',
+            'separator',
+            'agFindToolbarItem',
+        ]
+    }
+}
+```
+
 ### Default Alignment
 
 When an item does not specify its own `alignment`, it falls back to the toolbar-level `alignment`, which itself defaults to `left` in LTR and `right` in RTL. Set `alignment` at the toolbar level to change the default for every item that does not override it.
