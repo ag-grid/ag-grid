@@ -12,7 +12,6 @@ import type {
     RowNodeSorter,
     SortOption,
     SortService,
-    ValueService,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -57,7 +56,6 @@ export interface ChartValueWrapper<T = any> {
 export class ChartDatasource extends BeanStub {
     private gridRowModel: IRowModel;
     private pivotResultCols?: IPivotResultColsService;
-    private valueSvc: ValueService;
     private colModel: ColumnModel;
     private rowNodeSorter?: RowNodeSorter;
     private sortSvc?: SortService;
@@ -66,7 +64,6 @@ export class ChartDatasource extends BeanStub {
         this.sortSvc = beans.sortSvc;
         this.gridRowModel = beans.rowModel;
         this.colModel = beans.colModel;
-        this.valueSvc = beans.valueSvc;
         this.pivotResultCols = beans.pivotResultCols;
         this.rowNodeSorter = beans.rowNodeSorter;
     }
@@ -180,7 +177,7 @@ export class ChartDatasource extends BeanStub {
                 const column = this.colModel.getCol(colId);
 
                 if (column) {
-                    const valueObject = this.valueSvc.getValue(column, rowNode, 'data');
+                    const valueObject = rowNode.getDataValue(column, 'data');
 
                     // when grouping we also need to build up multi category labels for charts
                     if (grouping) {
@@ -239,7 +236,7 @@ export class ChartDatasource extends BeanStub {
                     const filteredOutColId = colId + '-filtered-out';
 
                     // add data value to value column
-                    const value = this.valueSvc.getValue(col, rowNode, 'data');
+                    const value = rowNode.getDataValue(col, 'data');
                     let actualValue = value;
 
                     // unwrap value objects if present
@@ -260,7 +257,7 @@ export class ChartDatasource extends BeanStub {
                     }
                 } else {
                     // add data value to value column
-                    let value = this.valueSvc.getValue(col, rowNode, 'data');
+                    let value = rowNode.getDataValue(col, 'data');
 
                     // unwrap value object if present
                     if (value && typeof value.value === 'number') {
@@ -481,7 +478,7 @@ export class ChartDatasource extends BeanStub {
                     // just like we do for the initialLabel
                     const groupColumn = this.colModel.getCol(GROUP_AUTO_COLUMN_ID);
                     if (groupColumn) {
-                        const valueObject = this.valueSvc.getValue(groupColumn, rowNode, 'data');
+                        const valueObject = rowNode.getDataValue(groupColumn, 'data');
                         const valueString = valueObject?.toString ? String(valueObject.toString()) : ' ';
                         labels.push(valueString);
                     }
