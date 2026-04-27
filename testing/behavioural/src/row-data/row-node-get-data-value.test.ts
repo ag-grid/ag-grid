@@ -66,6 +66,27 @@ describe('RowNode.getDataValue', () => {
             expect(rowNode.getDataValue('nonexistent')).toBeUndefined();
         });
 
+        test('getDataValue returns undefined for nullish colKey', async () => {
+            // Defensive call sites pass `colKey` from configuration that may be null/undefined.
+            // The implementation relies on `colModel.getColOrColDefCol`'s internal `key == null`
+            // short-circuit rather than re-checking — this test pins that contract so any future
+            // change to the lookup surface fails loudly here instead of in a runtime error path.
+            const api = await gridsManager.createGridAndWait('nullish-colkey', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ id: '1', name: 'Alice' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const rowNode = api.getRowNode('1')!;
+            expect(rowNode.getDataValue(null as any)).toBeUndefined();
+            expect(rowNode.getDataValue(undefined as any)).toBeUndefined();
+            // Same for non-default `from` modes — the lookup happens before the from-branching.
+            expect(rowNode.getDataValue(null as any, 'edit')).toBeUndefined();
+            expect(rowNode.getDataValue(null as any, 'batch')).toBeUndefined();
+            expect(rowNode.getDataValue(null as any, 'value')).toBeUndefined();
+            expect(rowNode.getDataValue(null as any, 'data-raw')).toBeUndefined();
+        });
+
         test('getDataValue returns null for null cell value', async () => {
             const api = await gridsManager.createGridAndWait('null-value', {
                 columnDefs: [{ field: 'name' }, { field: 'value' }],
