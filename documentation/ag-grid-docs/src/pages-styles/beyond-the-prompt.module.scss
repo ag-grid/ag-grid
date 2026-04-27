@@ -823,20 +823,20 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 // cards (When + Where), which are informational. The third card (Tickets)
 // inherits this base then gets overridden below into an orange knockout
 // to bias attention toward the booking CTA.
+//
+// Border is kept (1px transparent) only so the box dimensions match the
+// orange Tickets card sitting next to it — but never renders any colour
+// in either default or hover state on the informational cards.
 .atAGlanceCard {
     display: flex;
     flex-direction: column;
     gap: 12px;
     padding: 32px;
     background: var(--btp-card);
-    border: 1px solid var(--btp-border);
+    border: 1px solid transparent;
     transition:
         background-color 0.2s ease,
         border-color 0.2s ease;
-
-    &:hover {
-        border-color: var(--btp-orange);
-    }
 
     :global(.icon) {
         --icon-size: 24px;
