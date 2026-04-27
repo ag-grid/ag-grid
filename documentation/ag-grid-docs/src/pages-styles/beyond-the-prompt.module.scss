@@ -819,31 +819,28 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
-// Orange knockout treatment. The card flips the brand colours so the
-// "At a glance" trio reads as a high-contrast strip — orange fills,
-// page-bg copy and icons. Inner ghost buttons get scoped overrides so
-// their default orange-on-cream styling doesn't collide with the card's
-// new background.
+// Default card = white background, orange text. Used by the first two
+// cards (When + Where), which are informational. The third card (Tickets)
+// inherits this base then gets overridden below into an orange knockout
+// to bias attention toward the booking CTA.
 .atAGlanceCard {
     display: flex;
     flex-direction: column;
     gap: 12px;
     padding: 32px;
-    background: var(--btp-orange);
-    border: 1px solid var(--btp-orange);
+    background: var(--btp-card);
+    border: 1px solid var(--btp-border);
     transition:
         background-color 0.2s ease,
         border-color 0.2s ease;
 
     &:hover {
-        background: var(--btp-orange-dark);
-        border-color: var(--btp-orange-dark);
+        border-color: var(--btp-orange);
     }
 
     :global(.icon) {
         --icon-size: 24px;
-        --icon-color: var(--btp-bg);
-        transition: --icon-color 0.2s ease;
+        --icon-color: var(--btp-orange);
     }
 
     h3 {
@@ -852,38 +849,59 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         font-weight: 500;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--btp-bg);
-        opacity: 0.8;
-        transition:
-            color 0.2s ease,
-            opacity 0.2s ease;
+        color: var(--btp-ink-muted);
     }
 
     .atAGlancePrimary {
         font-size: 22px;
         font-weight: 600;
         letter-spacing: -0.02em;
-        color: var(--btp-bg);
-        transition: color 0.2s ease;
+        color: var(--btp-ink);
     }
 
     .atAGlanceDetail {
         font-size: 15px;
         line-height: 1.5;
-        color: var(--btp-bg);
-        opacity: 0.85;
-        transition:
-            color 0.2s ease,
-            opacity 0.2s ease;
+        color: var(--btp-ink-muted);
     }
 
     a {
         margin-top: auto;
         align-self: flex-start;
     }
+}
 
-    // Re-skin the ghost CTA so its default orange text + orange icon
-    // don't disappear into the new orange card background.
+// Third card (Tickets) gets the orange knockout treatment so the booking
+// action stands out against its two informational siblings. Hover deepens
+// to `--btp-orange-dark` and the inner `.btnGhost` is re-skinned so its
+// default orange text + icon stay legible on the new orange surface.
+.atAGlanceCard:nth-child(3) {
+    background: var(--btp-orange);
+    border-color: var(--btp-orange);
+
+    &:hover {
+        background: var(--btp-orange-dark);
+        border-color: var(--btp-orange-dark);
+    }
+
+    :global(.icon) {
+        --icon-color: var(--btp-bg);
+    }
+
+    h3 {
+        color: var(--btp-bg);
+        opacity: 0.8;
+    }
+
+    .atAGlancePrimary {
+        color: var(--btp-bg);
+    }
+
+    .atAGlanceDetail {
+        color: var(--btp-bg);
+        opacity: 0.85;
+    }
+
     .btnGhost {
         color: var(--btp-bg) !important;
 
@@ -899,35 +917,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
                 --icon-color: var(--btp-bg);
             }
         }
-    }
-}
-
-// First two cards (When + Where) are informational, not CTAs — instead of
-// deepening to orange-dark on hover like the Tickets card, they flip to a
-// clean white surface with no border and revert text/icon colours back to
-// the page's default ink + orange. Specificity is `:nth-child + :hover`
-// (0,3,0) which beats the bare `.atAGlanceCard:hover` rule above (0,2,0).
-.atAGlanceCard:nth-child(1):hover,
-.atAGlanceCard:nth-child(2):hover {
-    background: var(--btp-card);
-    border-color: transparent;
-
-    :global(.icon) {
-        --icon-color: var(--btp-orange);
-    }
-
-    h3 {
-        color: var(--btp-ink-muted);
-        opacity: 1;
-    }
-
-    .atAGlancePrimary {
-        color: var(--btp-ink);
-    }
-
-    .atAGlanceDetail {
-        color: var(--btp-ink-muted);
-        opacity: 1;
     }
 }
 
