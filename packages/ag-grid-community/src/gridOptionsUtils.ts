@@ -235,6 +235,22 @@ export function _getGrandTotalRow(gos: GridOptionsService): GridOptions['grandTo
     return gos.get('grandTotalRow');
 }
 
+/**
+ * Maps a `grandTotalRow` option to the floating side the grand total should be pinned to,
+ * or `null` when it should render inline (or is disabled).
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getGrandTotalPinnedFloat(grandTotalRow: GridOptions['grandTotalRow']): 'top' | 'bottom' | null {
+    switch (grandTotalRow) {
+        case 'pinnedTop':
+            return 'top';
+        case 'pinnedBottom':
+            return 'bottom';
+        default:
+            return null;
+    }
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getGroupTotalRowCallback(
     gos: GridOptionsService
