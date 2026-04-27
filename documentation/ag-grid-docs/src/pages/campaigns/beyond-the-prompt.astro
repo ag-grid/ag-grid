@@ -86,14 +86,14 @@ const AGENDA_SECTIONS: AgendaSection[] = [
                 description:
                     'A demo of a headless Claude workflow, built by Bryntum CEO Mats, that turns GitHub issues into mergeable PRs, with agents doing the work, and a custom Kanban UI keeping things in check.',
             },
-            { time: '12:00 – 13:15', title: 'Lunch and product demos', isBreak: true },
+            { time: '12:00 – 13:10', title: 'Lunch and product demos', isBreak: true },
         ],
     },
     {
         label: 'Afternoon',
         items: [
             {
-                time: '13:15 – 13:40',
+                time: '13:10 – 13:40',
                 title: 'Debugging CSS performance with AI',
                 speakers: 'Bernie Sumption (Engineer, AG Grid)',
                 description:
@@ -275,13 +275,15 @@ const VENUE_IMAGES: VenueImage[] = [
     overrideSocialImage={SOCIAL_IMAGE_URL}
 >
     <div class={styles.page}>
-        {/*
+        {
+            /*
             Sticky page nav. Hidden by default; revealed via `data-visible="true"`
             once the hero scrolls fully out of view. The IntersectionObserver
             script lives at the end of this file. Background matches the page
             (var(--btp-bg) === #f2f2f2) so it reads as a continuation rather
             than a chrome bar.
-        */}
+        */
+        }
         <nav class={styles.stickyNav} data-sticky-nav aria-label="Beyond the Prompt page nav">
             <div class={`${styles.container} ${styles.stickyNavInner}`}>
                 <a href="#top" class={styles.stickyNavBrand} aria-label="Back to top">
@@ -575,10 +577,7 @@ const VENUE_IMAGES: VenueImage[] = [
                                 */}
                                 <picture>
                                     {img.srcMobile && (
-                                        <source
-                                            media="(max-width: 719px)"
-                                            srcset={urlWithBaseUrl(img.srcMobile)}
-                                        />
+                                        <source media="(max-width: 719px)" srcset={urlWithBaseUrl(img.srcMobile)} />
                                     )}
                                     <img
                                         src={urlWithBaseUrl(img.src)}
