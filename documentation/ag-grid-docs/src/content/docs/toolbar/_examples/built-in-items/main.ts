@@ -3,13 +3,21 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     ColumnAutoSizeModule,
+    CsvExportModule,
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
+import {
+    ContextMenuModule,
+    ExcelExportModule,
+    FindModule,
+    RowGroupingModule,
+    RowGroupingPanelModule,
+    ToolbarModule,
+} from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     TextFilterModule,
@@ -17,6 +25,9 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnApiModule,
     ColumnAutoSizeModule,
+    ContextMenuModule,
+    CsvExportModule,
+    ExcelExportModule,
     FindModule,
     RowGroupingModule,
     RowGroupingPanelModule,
@@ -59,6 +70,14 @@ const gridOptions: GridOptions<IOlympicData> = {
                 tooltip: 'Reset Columns',
                 icon: 'minimize',
                 action: (params) => params.api.resetColumnState(),
+            },
+            {
+                toolbarItem: 'agMenuToolbarItem',
+                toolbarItemParams: {
+                    label: 'Export',
+                    icon: 'save',
+                    menuItems: ['csvExport', 'excelExport'],
+                },
             },
         ],
     },

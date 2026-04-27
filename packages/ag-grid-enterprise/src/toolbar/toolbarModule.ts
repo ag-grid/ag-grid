@@ -5,6 +5,7 @@ import { VERSION } from '../version';
 import { AgToolbarSelector } from './agToolbar';
 import { ButtonToolbarItem } from './providedItems/buttonToolbarItem';
 import { FindToolbarItem } from './providedItems/findToolbarItem';
+import { MenuToolbarItem } from './providedItems/menuToolbarItem';
 import { PivotPanelToolbarItem } from './providedItems/pivotPanelToolbarItem';
 import { QuickFilterToolbarItem } from './providedItems/quickFilterToolbarItem';
 import { RowGroupPanelToolbarItem } from './providedItems/rowGroupPanelToolbarItem';
@@ -19,10 +20,11 @@ export const ToolbarModule: _ModuleWithoutApi = {
     userComponents: {
         agButtonToolbarItem: ButtonToolbarItem,
         agFindToolbarItem: FindToolbarItem,
+        agMenuToolbarItem: MenuToolbarItem,
         agPivotPanelToolbarItem: PivotPanelToolbarItem,
         agQuickFilterToolbarItem: QuickFilterToolbarItem,
         agRowGroupPanelToolbarItem: RowGroupPanelToolbarItem,
-    } satisfies Record<ToolbarItemComponentName, any>,
+    } satisfies Partial<Record<ToolbarItemComponentName, any>>,
     icons: {
         filter: 'filter',
     },

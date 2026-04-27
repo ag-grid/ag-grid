@@ -1,5 +1,13 @@
 import type { BeanCollection, IconName } from 'ag-grid-community';
-import { _createElement, _createIconNoSpan, _setDisabled } from 'ag-grid-community';
+import {
+    _addOrRemoveAttribute,
+    _clearElement,
+    _createElement,
+    _createIconNoSpan,
+    _setAriaLabel,
+    _setDisabled,
+    _setDisplayed,
+} from 'ag-grid-community';
 
 interface CreateToolbarInputParams {
     label: string;
@@ -67,4 +75,34 @@ export function createToolbarIconButton(
         eButton.appendChild(eIcon);
     }
     return eButton;
+}
+
+interface RenderToolbarButtonContentsParams {
+    eIcon: HTMLElement;
+    eLabel: HTMLElement;
+    eGui: HTMLElement;
+    icon?: IconName;
+    label?: string;
+    hoverText?: string;
+}
+
+export function renderToolbarButtonContents(
+    beans: BeanCollection,
+    { eIcon, eLabel, eGui, icon, label, hoverText }: RenderToolbarButtonContentsParams
+): void {
+    _clearElement(eIcon);
+    if (icon) {
+        const eIconEl = _createIconNoSpan(icon, beans);
+        if (eIconEl) {
+            eIcon.appendChild(eIconEl);
+        }
+    }
+    _setDisplayed(eIcon, !!icon);
+
+    const hasLabel = !!label;
+    eLabel.textContent = label ?? '';
+    _setDisplayed(eLabel, hasLabel);
+
+    _setAriaLabel(eGui, hoverText);
+    _addOrRemoveAttribute(eGui, 'title', hoverText);
 }

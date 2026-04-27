@@ -426,6 +426,8 @@ export type {
     ToolbarItemComponent,
     ToolbarItemDef,
     ToolbarItemShorthand,
+    ToolbarMenuBuiltInItemDef,
+    ToolbarMenuItemParams,
 } from './interfaces/iToolbar';
 
 // Tool Panel

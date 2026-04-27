@@ -1,13 +1,7 @@
 .ag-toolbar {
     display: flex;
     align-items: center;
-    gap: var(--ag-spacing);
     overflow: hidden;
-    border-bottom: var(--ag-header-row-border);
-    padding-right: calc(var(--ag-spacing) * 2);
-    padding-left: calc(var(--ag-spacing) * 2);
-    min-height: var(--ag-header-height);
-    line-height: 1.5;
 }
 
 .ag-toolbar-right-start {
@@ -22,7 +16,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--ag-spacing);
-    padding: calc(var(--ag-spacing) * 2.5);
+    padding: calc(var(--ag-spacing) * 2);
     border: 0;
     border-radius: var(--ag-border-radius);
     background: transparent;
@@ -41,11 +35,7 @@
 }
 
 .ag-toolbar-button:focus-visible {
-    outline: solid calc(var(--ag-border-width) * 2) var(--ag-accent-color);
-    outline-offset: calc(var(--ag-border-width) * -2);
     box-shadow: var(--ag-focus-shadow);
-    position: relative;
-    z-index: 1;
 }
 
 .ag-toolbar-button:disabled {
@@ -107,18 +97,17 @@
 }
 
 .ag-toolbar-separator {
-    width: var(--ag-border-width);
     align-self: stretch;
-    background: var(--ag-border-color);
-    flex-shrink: 0;
-    margin: calc(var(--ag-spacing) * 2) calc(var(--ag-spacing) * 0.5);
+    width: 0;
+    margin: calc(var(--ag-spacing) * 1.75) calc(var(--ag-spacing) * 0.5);
+    border-left: solid var(--ag-border-width) var(--ag-border-color);
 }
 
 .ag-toolbar-find {
     gap: calc(var(--ag-spacing) * 0.5);
     border: solid var(--ag-border-width) var(--ag-border-color);
     border-radius: var(--ag-border-radius);
-    min-width: 240px;
+    width: 280px;
 }
 
 .ag-toolbar-find:focus-within {

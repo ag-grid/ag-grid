@@ -77,8 +77,9 @@ const GridExample = () => {
                 {
                     toolbarItem: CustomToolbarButton,
                     key: 'columnChooser',
+                    alignment: 'left',
                     toolbarItemParams: {
-                        label: 'Choose Columns',
+                        title: 'Choose Columns',
                         icon: 'columns',
                         onClick: (api: GridApi) => api.showColumnChooser(),
                     },
@@ -86,8 +87,9 @@ const GridExample = () => {
                 {
                     toolbarItem: CustomToolbarButton,
                     key: 'filtersPanel',
+                    alignment: 'left',
                     toolbarItemParams: {
-                        label: 'Filters Panel',
+                        title: 'Filters Panel',
                         icon: 'filter',
                         onClick: (api: GridApi) =>
                             api.getOpenedToolPanel() === 'filters'
@@ -98,18 +100,18 @@ const GridExample = () => {
                 {
                     toolbarItem: CustomToolbarButton,
                     key: 'excelExport',
+                    alignment: 'left',
                     toolbarItemParams: {
-                        label: 'Excel Export',
+                        title: 'Excel Export',
                         icon: 'excel',
                         onClick: (api: GridApi) => api.exportDataAsExcel(),
                     },
                 },
-                'separator',
                 {
                     toolbarItem: CustomToolbarButton,
                     key: 'autoSizeAll',
                     toolbarItemParams: {
-                        label: 'Auto Size All',
+                        title: 'Auto Size All',
                         icon: 'maximize',
                         onClick: (api: GridApi) => api.autoSizeAllColumns(),
                     },
@@ -118,7 +120,7 @@ const GridExample = () => {
                     toolbarItem: CustomToolbarButton,
                     key: 'columnsPanel',
                     toolbarItemParams: {
-                        label: 'Columns Panel',
+                        title: 'Columns Panel',
                         icon: 'columns',
                         onClick: (api: GridApi) =>
                             api.getOpenedToolPanel() === 'columns'
@@ -130,7 +132,7 @@ const GridExample = () => {
                     toolbarItem: CustomToolbarButton,
                     key: 'csvExport',
                     toolbarItemParams: {
-                        label: 'CSV Export',
+                        title: 'CSV Export',
                         icon: 'csv',
                         onClick: (api: GridApi) => api.exportDataAsCsv(),
                     },
@@ -139,7 +141,7 @@ const GridExample = () => {
                     toolbarItem: CustomToolbarButton,
                     key: 'resetColumns',
                     toolbarItemParams: {
-                        label: 'Reset Columns',
+                        title: 'Reset Columns',
                         icon: 'minimize',
                         onClick: (api: GridApi) => api.resetColumnState(),
                     },
