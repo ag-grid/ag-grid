@@ -214,6 +214,22 @@ describe('AgNotesFeature', () => {
         expect(popup.hide).toHaveBeenCalledWith(true);
     });
 
+    it('uses noteHideDelay before hiding a click-opened note', () => {
+        noteTrigger = 'click';
+
+        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        feature.initialise();
+
+        listeners.click?.({ button: 0, ctrlKey: false } as MouseEvent);
+        listeners.pointerleave?.({ pointerType: 'mouse' } as PointerEvent);
+
+        vi.advanceTimersByTime(39);
+        expect(popup.hide).not.toHaveBeenCalled();
+
+        vi.advanceTimersByTime(1);
+        expect(popup.hide).toHaveBeenCalledWith(true);
+    });
+
     it('does not hide an open note when leaving the owner cell while the popup is focused', () => {
         popup.hasFocus.mockReturnValue(true);
 
@@ -424,7 +440,7 @@ describe('AgFullWidthRowNotesFeature', () => {
                 params,
                 rowNode: params.rowNode,
                 column: { getColId: () => ('column' in params ? params.column.getColId() : 'athlete') },
-                note: { text: `note-${'pinned' in params ? params.pinned ?? 'center' : 'cell'}` },
+                note: { text: `note-${'pinned' in params ? (params.pinned ?? 'center') : 'cell'}` },
                 isReadOnly: false,
                 isSuppressed: false,
                 canView: true,
