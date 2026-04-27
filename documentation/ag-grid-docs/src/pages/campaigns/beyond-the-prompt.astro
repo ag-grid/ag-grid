@@ -41,55 +41,60 @@ const AGENDA: AgendaItem[] = [
         isBreak: true,
     },
     {
-        time: '09:30 – 09:45',
+        time: '09:30 – 09:40',
         title: 'Welcome',
         description: 'Opening remarks to set the theme for the day: building with tools you can trust.',
     },
     {
-        time: '09:45 – 10:15',
+        time: '09:40 – 10:10',
         title: 'Opening Keynote',
         speakers: 'John Masterson (CEO, AG Grid) & Mats Bryntse (Founder & CEO, Bryntum)',
     },
     {
-        time: '10:15 – 10:45',
+        time: '10:10 – 10:140,
+        title: 'Technical Keynote',
+        speakers: 'David Kourshid',
+    },
+    {
+        time: '10:40 – 11:10',
         title: 'Coffee break',
         isBreak: true,
     },
     {
-        time: '10:45 – 11:15',
+        time: '11:10 – 11:35',
         title: 'Codebase design for the agent era',
         speakers: 'Stephen Cooper (Team Lead, AG Grid)',
         description:
             "As AI agents become part of the development workflow, codebase structure and well-designed system prompts matter more than ever. This session will show you how we're approaching this in the AG Grid and AG Charts codebases..",
     },
     {
-        time: '11:15 – 11:45',
+        time: '11:35 – 12:00',
         title: 'One-click agentic SDLC',
         speakers: 'Mats Bryntse (Founder & CEO, Bryntum)',
         description:
             'A demo of a headless Claude workflow, built by Bryntum CEO Mats, that turns GitHub issues into mergeable PRs, with agents doing the work, and a custom Kanban UI keeping things in check.',
     },
     {
-        time: '11:45 – 13:00',
+        time: '12:00 – 13:15',
         title: 'Lunch and product demos',
         isBreak: true,
     },
     {
-        time: '13:00 – 13:30',
+        time: '13:15 – 13:40',
         title: 'Debugging CSS performance with AI',
         speakers: 'Bernie Sumption (Engineer, AG Grid)',
         description:
             'CSS performance issues can be subtle and time-consuming. This talk will show you how you can guide AI to uncover bugs without needing to learn the intricacies of CSS rendering internals.',
     },
     {
-        time: '13:30 – 14:00',
+        time: '13:40 – 14:05',
         title: 'AI in AG Studio',
         speakers: 'Josh Hobson (Developer, AG Grid)',
         description:
             "How do you build a dashboard you can't see? A behind-the-scenes look at AG Studio's multi-agent architecture and the client-side tools that let any LLM build reports it otherwise couldn't.",
     },
     {
-        time: '14:00 – 14:30',
+        time: '14:05 – 14:30',
         title: 'Customer Showcase',
         description: 'To be announced',
     },
@@ -107,6 +112,8 @@ const AGENDA: AgendaItem[] = [
     {
         time: '15:30 – 16:15',
         title: 'Panel Discussion',
+        speakers:
+            'Maggie Appleton (Staff Research Engineer, GitHub), Matt Pocock (Senior Developer Educator, AI Hero), & more',
         description: 'To be announced',
     },
     {
@@ -123,8 +130,6 @@ const AGENDA: AgendaItem[] = [
     },
 ];
 
-// Drop speaker headshots at /public/images/campaigns/beyond-the-prompt/speakers/
-// (recommend 400x400 square JPG/PNG).
 const SPEAKERS: Speaker[] = [
     {
         name: 'Matt Webb',
@@ -145,10 +150,22 @@ const SPEAKERS: Speaker[] = [
         image: 'images/campaigns/beyond-the-prompt/speakers/maggie-appleton.webp',
     },
     {
+        name: 'David Kourshid',
+        title: 'Founder, Stately.ai',
+        bio: `David is the founder of Stately.ai and creator of XState, the most popular open-source state machine & statecharts library. He's a longtime advocate for event-driven modeling and visual diagramming as the foundation for reliable UIs and, increasingly, AI agents. When he's not at a computer keyboard, he's at a piano keyboard.`,
+        image: 'images/campaigns/beyond-the-prompt/speakers/david-kourshid.webp',
+    },
+    {
         name: 'Mats Bryntse',
         title: 'Founder & CEO, Bryntum',
         bio: `Mats is the founder and CEO of Bryntum, where he and his team build advanced scheduling and project planning tools for modern web apps. For the past 15 years, he has obsessed over JavaScript performance, developer experience, and making complex UIs feel simple. He used to enjoy chess, badminton, and independent thought, until Claude entered his life and optimized those away.`,
         image: 'images/campaigns/beyond-the-prompt/speakers/mats-bryntse.webp',
+    },
+    {
+        name: 'Matt Pocock',
+        title: 'Senior Developer Educator, AI Hero',
+        bio: `Matt is a senior developer educator at AI Hero, a TypeScript author, and an educator passionate about bringing real software engineering rigour to the age of AI. He co-organizes the AI Coding for Real Engineers cohort, a community for experienced developers who want to build with AI tools without throwing away everything they already know. Outside of the keyboard, Matt enjoys long runs through the Oxfordshire countryside, loudly supporting Arsenal, and experimenting with new ways to make complex ideas click for developers everywhere.`,
+        image: 'images/campaigns/beyond-the-prompt/speakers/matt-pocock.jpg',
     },
     {
         name: 'Bernie Sumption',
@@ -188,8 +205,6 @@ const SPEAKERS: Speaker[] = [
     },
 ];
 
-// TODO: drop venue photos into /public/images/campaigns/beyond-the-prompt/venue/
-// (recommend landscape 3:2, min 1600x1067).
 const VENUE_IMAGES: VenueImage[] = [
     {
         src: 'images/campaigns/beyond-the-prompt/venue/venue-1.webp',
