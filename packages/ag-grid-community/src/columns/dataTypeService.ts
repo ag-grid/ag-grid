@@ -1,11 +1,12 @@
 import { KeyCode } from '../agStack/constants/keyCode';
 import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
+import { _parseBigIntOrNull } from '../agStack/utils/bigInt';
 import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../agStack/utils/date';
 import { _toStringOrNull } from '../agStack/utils/generic';
 import { _getValueUsingField } from '../agStack/utils/value';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, UserComponentName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, SuppressKeyboardEventParams, ValueFormatterFunc, ValueFormatterParams } from '../entities/colDef';
 import type {
@@ -50,10 +51,12 @@ const SORTED_CELL_DATA_TYPES_FOR_MATCHING: readonly Exclude<BaseCellDataType, 'd
     'dateString',
     'text',
     'number',
+    'bigint',
     'boolean',
     'date',
 ] as const;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class DataTypeService extends BeanStub implements NamedBean {
     beanName = 'dataTypeSvc' as const;
 
@@ -215,11 +218,14 @@ export class DataTypeService extends BeanStub implements NamedBean {
             cellDataType = colDef.cellDataType;
         }
 
-        const { field, allowFormula } = userColDef;
+        const { field } = userColDef;
 
         if (cellDataType == null || cellDataType === true) {
             cellDataType = this.canInferCellDataType(colDef, userColDef) ? this.inferCellDataType(field, colId) : false;
         }
+
+        this.addFormulaCellEditorToColDef(colDef, userColDef);
+
         if (!cellDataType) {
             colDef.cellDataType = false;
             return undefined;
@@ -231,7 +237,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
 
         colDef.cellDataType = cellDataType;
-        colDef.allowFormula ??= allowFormula;
 
         if (dataTypeDefinition.groupSafeValueFormatter) {
             colDef.valueFormatter = dataTypeDefinition.groupSafeValueFormatter;
@@ -245,11 +250,21 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return dataTypeDefinition.columnTypes;
     }
 
+    private addFormulaCellEditorToColDef(colDef: ColDef, userColDef: ColDef): void {
+        const allowFormula = userColDef.allowFormula ?? colDef.allowFormula;
+
+        if (!allowFormula || userColDef.cellEditor) {
+            return;
+        }
+
+        colDef.cellEditor = 'agFormulaCellEditor';
+    }
+
     public addColumnListeners(column: AgColumn): void {
         if (!this.isPendingInference) {
             return;
         }
-        const columnStateUpdates = this.columnStateUpdatesPendingInference[column.getColId()];
+        const columnStateUpdates = this.columnStateUpdatesPendingInference[column.colId];
         if (!columnStateUpdates) {
             return;
         }
@@ -368,11 +383,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
             if (!column) {
                 continue;
             }
-            const oldColDef = column.getColDef();
+            const oldColDef = column.colDef;
             if (!this.resetColDefIntoCol(column, 'cellDataTypeInferred')) {
                 continue;
             }
-            const newColDef = column.getColDef();
+            const newColDef = column.colDef;
             if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
                 const updatedColumnState = getUpdatedColumnState(column, columnStateUpdates);
                 if (updatedColumnState.rowGroup && updatedColumnState.rowGroupIndex == null) {
@@ -422,7 +437,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!userColDef) {
             return false;
         }
-        const newColDef = _addColumnDefaultAndTypes(this.beans, userColDef, column.getColId());
+        const newColDef = _addColumnDefaultAndTypes(this.beans, userColDef, column.colId);
         column.setColDef(newColDef, userColDef, source);
         return true;
     }
@@ -448,7 +463,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     public getDataTypeDefinition(column: AgColumn): DataTypeDefinition | CoreDataTypeDefinition | undefined {
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
         if (!colDef.cellDataType) {
             return undefined;
         }
@@ -469,15 +484,19 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
 
         // skip type checking for formulas
-        if (column.getColDef().allowFormula && this.beans.formula?.isFormula(value)) {
+        if (column.colDef.allowFormula && this.beans.formula?.isFormula(value)) {
             return true;
         }
         return dataTypeMatcher(value);
     }
 
-    public validateColDef(colDef: ColDef): void {
-        const warning = (property: 'Formatter' | 'Parser') => _warn(48, { property });
+    public validateColDef(colDef: ColDef, userColDef?: ColDef, defaultColDef?: ColDef, colId?: string): void {
         if (colDef.cellDataType === 'object') {
+            const wasInferred = (colDef?: ColDef) => {
+                return colDef?.cellDataType == null || colDef?.cellDataType === true;
+            };
+            const inferred = wasInferred(userColDef) && wasInferred(defaultColDef);
+            const warning = (property: 'Formatter' | 'Parser') => _warn(48, { property, inferred, colId });
             const { object } = this.dataTypeDefinitions;
             if (colDef.valueFormatter === object.groupSafeValueFormatter && !this.hasObjectValueFormatter) {
                 warning('Formatter');
@@ -520,18 +539,33 @@ export class DataTypeService extends BeanStub implements NamedBean {
             dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
             colId: string;
             formatValue: DataTypeFormatValueFunc;
+            filterModuleBean: BeanCollection['filterManager'];
         }) => Partial<ColDef>
     > = {
         number() {
             return { cellEditor: 'agNumberCellEditor' };
+        },
+        bigint({ filterModuleBean }) {
+            if (filterModuleBean) {
+                return {
+                    cellEditor: 'agTextCellEditor',
+                };
+            }
+            return {
+                cellEditor: 'agTextCellEditor',
+                comparator: {
+                    default: bigintComparator,
+                    absolute: bigintAbsoluteComparator,
+                },
+            };
         },
         boolean() {
             return {
                 cellEditor: 'agCheckboxCellEditor',
                 cellRenderer: 'agCheckboxCellRenderer',
                 getFindText: () => null,
-                suppressKeyboardEvent: (params: SuppressKeyboardEventParams<any, boolean>) =>
-                    !!params.colDef.editable && params.event.key === KeyCode.SPACE,
+                suppressKeyboardEvent: ({ node, event, column }: SuppressKeyboardEventParams<any, boolean>) =>
+                    event.key === KeyCode.SPACE && column.isCellEditable(node),
             };
         },
         date({ formatValue }) {
@@ -553,7 +587,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 },
                 comparator: (a: any, b: any) => {
                     const column = colModel.getColDefCol(colId);
-                    const colDef = column?.getColDef();
+                    const colDef = column?.colDef;
                     if (!column || !colDef) {
                         return 0;
                     }
@@ -586,22 +620,16 @@ export class DataTypeService extends BeanStub implements NamedBean {
             dataTypeDefinition,
             colId,
             formatValue,
+            filterModuleBean: this.beans.filterManager,
         });
-        Object.assign(colDef, partialColDef);
 
-        const { cellEditor, allowFormula } = colDef;
-
-        if (allowFormula) {
-            const supportedEditors: UserComponentName[] = [
-                'agFormulaCellEditor',
-                'agTextCellEditor',
-                'agLargeTextCellEditor',
-            ];
-
-            if (!supportedEditors.includes(cellEditor)) {
-                colDef.cellEditor = 'agFormulaCellEditor';
-            }
+        // if the user enabled formula and did not manually provide an editor
+        // we should keep `agFormulaCellEditor` as the default editor.
+        if (colDef.cellEditor === 'agFormulaCellEditor' && partialColDef.cellEditor !== colDef.cellEditor) {
+            partialColDef.cellEditor = colDef.cellEditor;
         }
+
+        Object.assign(colDef, partialColDef);
     }
 
     private getDateObjectTypeDef<T extends 'date' | 'dateTime'>(baseDataType: T) {
@@ -657,6 +685,29 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     return String(params.value);
                 },
                 dataTypeMatcher: (value: any) => typeof value === 'number',
+            },
+            bigint: {
+                baseDataType: 'bigint',
+                valueParser: (params: ValueParserLiteParams<any, bigint>) => {
+                    const { newValue } = params;
+                    if (newValue == null) {
+                        return null;
+                    }
+                    if (typeof newValue === 'string' && newValue.trim() === '') {
+                        return null;
+                    }
+                    return _parseBigIntOrNull(newValue);
+                },
+                valueFormatter: (params: ValueFormatterLiteParams<any, bigint>) => {
+                    if (params.value == null) {
+                        return '';
+                    }
+                    if (typeof params.value !== 'bigint') {
+                        return translate('invalidBigInt', 'Invalid BigInt');
+                    }
+                    return String(params.value);
+                },
+                dataTypeMatcher: (value: any) => typeof value === 'bigint',
             },
             text: {
                 baseDataType: 'text',
@@ -746,6 +797,9 @@ function validateDataTypeDefinition(
     return true;
 }
 
+const isNumberOrBigintType = (v: unknown) => typeof v === 'bigint' || typeof v === 'number';
+const isNumberOrBigintBaseDataType = (v: string) => v === 'number' || v === 'bigint';
+
 function createGroupSafeValueFormatter(
     dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition,
     gos: GridOptionsService
@@ -753,37 +807,35 @@ function createGroupSafeValueFormatter(
     if (!dataTypeDefinition.valueFormatter) {
         return undefined;
     }
+
     return (params: ValueFormatterParams) => {
-        if (params.node?.group) {
-            const aggFunc = (params.colDef.pivotValueColumn ?? params.column).getAggFunc();
+        const { node, colDef, column, value } = params;
+
+        if (node?.group) {
+            const aggFunc = (colDef.pivotValueColumn ?? column).getAggFunc();
             if (aggFunc) {
                 // the resulting type of these will be the same, so we call valueFormatter anyway
                 if (aggFunc === 'first' || aggFunc === 'last') {
                     return dataTypeDefinition.valueFormatter!(params);
                 }
 
-                if (dataTypeDefinition.baseDataType === 'number' && aggFunc !== 'count') {
-                    if (typeof params.value === 'number') {
+                const { baseDataType } = dataTypeDefinition;
+                if (isNumberOrBigintBaseDataType(baseDataType) && aggFunc !== 'count') {
+                    if (isNumberOrBigintType(value)) {
                         return dataTypeDefinition.valueFormatter!(params);
                     }
 
-                    if (typeof params.value === 'object') {
-                        if (!params.value) {
-                            return undefined;
+                    if (value == null) {
+                        return undefined;
+                    }
+
+                    if (typeof value === 'object') {
+                        if (typeof value.toNumber === 'function') {
+                            return dataTypeDefinition.valueFormatter!({ ...params, value: value.toNumber() });
                         }
 
-                        if ('toNumber' in params.value) {
-                            return dataTypeDefinition.valueFormatter!({
-                                ...params,
-                                value: params.value.toNumber(),
-                            });
-                        }
-
-                        if ('value' in params.value) {
-                            return dataTypeDefinition.valueFormatter!({
-                                ...params,
-                                value: params.value.value,
-                            });
+                        if ('value' in value) {
+                            return dataTypeDefinition.valueFormatter!({ ...params, value: value.value });
                         }
                     }
                 }
@@ -818,6 +870,50 @@ function doesColDefPropPreventInference(
     } else {
         return comparisonValue === undefined ? !!value : value === comparisonValue;
     }
+}
+
+function bigintComparator(valueA: any, valueB: any): number {
+    if (valueA == null) {
+        return valueB == null ? 0 : -1;
+    }
+    if (valueB == null) {
+        return 1;
+    }
+    const bigA = _parseBigIntOrNull(valueA);
+    const bigB = _parseBigIntOrNull(valueB);
+    if (bigA != null && bigB != null) {
+        if (bigA === bigB) {
+            return 0;
+        }
+        return bigA > bigB ? 1 : -1;
+    }
+    return 0;
+}
+
+function bigintAbsoluteComparator(valueA: any, valueB: any): number {
+    if (valueA == null) {
+        return valueB == null ? 0 : -1;
+    }
+    if (valueB == null) {
+        return 1;
+    }
+    const bigA = toAbsoluteBigInt(valueA);
+    const bigB = toAbsoluteBigInt(valueB);
+    if (bigA != null && bigB != null) {
+        if (bigA === bigB) {
+            return 0;
+        }
+        return bigA > bigB ? 1 : -1;
+    }
+    return 0;
+}
+
+function toAbsoluteBigInt(value: any): bigint | null {
+    const bigIntValue = _parseBigIntOrNull(value);
+    if (bigIntValue == null) {
+        return null;
+    }
+    return bigIntValue < 0n ? -bigIntValue : bigIntValue;
 }
 
 function doColDefPropsPreventInference(

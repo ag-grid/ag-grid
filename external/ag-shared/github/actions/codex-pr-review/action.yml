@@ -1,0 +1,802 @@
+name: codex-pr-review
+description: Run a Codex PR review with complete log suppression - no LLM output appears in workflow logs
+#
+# Flow Overview:
+#
+# 1. TRIGGER: PR opened/ready, `/pr-review` command comment, or manual dispatch
+# 2. REACT STARTED: Add 👀 reaction to the PR description to signal review in progress
+# 3. FETCH & REVIEW: Fetch PR refs, install tools, run Codex review
+# 4. CLEANUP OLD COMMENTS: Delete stale bot inline review comments from prior runs
+#    (only those with no user reactions or replies - preserving conversations)
+# 5. POST RESULTS: Create/update summary comment (<!-- codex-pr-review --> marker)
+#    and post new inline comments on specific file/line locations
+# 6. REACT COMPLETE: Remove 👀 from PR description, add 👍 (no findings) or 👎 (has findings)
+# 7. CLEANUP FILES: Remove sensitive review output files
+#
+# Re-review behaviour:
+# - Summary comment is updated in-place (found via marker)
+# - Old inline comments are deleted (unless users have reacted/replied)
+# - Reactions target the PR description, not the trigger comment
+#
+# PR-visible output states (old 👍/👎 reactions are cleaned up at the start of each run):
+#
+# | Scenario                             | 👀  | Reaction | Summary comment       | Inline comments    |
+# |--------------------------------------|-----|----------|-----------------------|--------------------|
+# | Auth not configured (skipped)        | No  | None     | No                    | No                 |
+# | Codex exits non-zero                 | Yes then removed | None | No             | No                 |
+# | Codex exits 0, empty output          | Yes then removed | None | No             | No                 |
+# | Codex exits 0 (markdown mode)        | Yes then removed | None | Yes (created/updated) | No                 |
+# | Codex exits 0, no findings (JSON)    | Yes then removed | 👍   | Yes (created/updated) | No                 |
+# | Codex exits 0, 1+ findings (JSON)    | Yes then removed | 👎   | Yes (created/updated) | Yes                |
+#
+inputs:
+    codex-api-key:
+        description: 'Codex API key for Codex CLI authentication'
+        required: false
+        default: ''
+    pr-number:
+        description: 'PR number to review'
+        required: true
+    prompt-file:
+        description: 'Path to the prompt file. Defaults to the pr-review skill delivered via the @ag-grid/dev-prompts GitHub Packages npm package (installed by this action at runtime).'
+        required: false
+        default: ''
+    github-token:
+        description: 'GitHub token for PR access and commenting'
+        required: true
+    dev-prompts-version:
+        description: 'Version of the @ag-grid/dev-prompts npm package to install. Defaults to the @latest dist-tag on GitHub Packages (npm.pkg.github.com).'
+        required: false
+        default: 'latest'
+    post-comment:
+        description: 'Whether to post the review as a PR comment'
+        required: false
+        default: 'true'
+    inline-comments:
+        description: 'Whether to post inline comments on specific files/lines (requires JSON prompt)'
+        required: false
+        default: 'false'
+    comment-id:
+        description: 'Deprecated - reactions now target the PR description. Kept for backwards compatibility.'
+        required: false
+        default: ''
+    base-ref:
+        description: 'Base branch ref for the PR (e.g., latest, main)'
+        required: false
+        default: ''
+    pr-title:
+        description: 'PR title for review output'
+        required: false
+        default: ''
+    pr-author:
+        description: 'PR author username'
+        required: false
+        default: ''
+    head-ref:
+        description: 'Head branch ref for the PR'
+        required: false
+        default: ''
+outputs:
+    success:
+        description: 'Whether the review completed successfully'
+        value: ${{ steps.verify.outputs.success }}
+    skipped:
+        description: 'Whether the review was skipped due to missing authentication'
+        value: ${{ steps.check-auth.outputs.skipped }}
+runs:
+    using: composite
+    steps:
+        - name: Check Authentication
+          id: check-auth
+          shell: bash
+          env:
+              CODEX_API_KEY: ${{ inputs.codex-api-key }}
+          run: |
+              if [ -z "${CODEX_API_KEY:-}" ]; then
+                echo "::warning::Skipping PR review - no authentication configured (set CODEX_API_KEY secret)"
+                echo "skipped=true" >> $GITHUB_OUTPUT
+              else
+                echo "skipped=false" >> $GITHUB_OUTPUT
+              fi
+
+        - name: React Started
+          if: steps.check-auth.outputs.skipped != 'true'
+          id: react-started
+          uses: actions/github-script@v7
+          continue-on-error: true
+          env:
+              PR_NUMBER: ${{ inputs.pr-number }}
+          with:
+              github-token: ${{ inputs.github-token }}
+              script: |
+                  const { data: reaction } = await github.rest.reactions.createForIssue({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: parseInt(process.env.PR_NUMBER, 10),
+                    content: 'eyes'
+                  });
+                  core.setOutput('reaction_id', reaction.id);
+
+        - name: Clean Up Old Completion Reactions
+          # Removes prior +1/-1 reactions from github-actions[bot] on this PR.
+          # Note: github-actions[bot] is a shared identity for all GITHUB_TOKEN-based actions,
+          # so this could theoretically remove reactions from other workflows. Accepted trade-off:
+          # GitHub limits each user to one reaction per type per issue, so blast radius is minimal.
+          if: steps.check-auth.outputs.skipped != 'true'
+          uses: actions/github-script@v7
+          continue-on-error: true
+          env:
+              PR_NUMBER: ${{ inputs.pr-number }}
+          with:
+              github-token: ${{ inputs.github-token }}
+              script: |
+                  const prNumber = parseInt(process.env.PR_NUMBER, 10);
+                  const reactions = await github.paginate(
+                    github.rest.reactions.listForIssue,
+                    {
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: prNumber,
+                      per_page: 100
+                    }
+                  );
+                  for (const reaction of reactions) {
+                    if (reaction.user?.login === 'github-actions[bot]' && (reaction.content === '+1' || reaction.content === '-1')) {
+                      await github.rest.reactions.deleteForIssue({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        issue_number: prNumber,
+                        reaction_id: reaction.id
+                      });
+                    }
+                  }
+
+        - name: Fetch PR refs
+          if: steps.check-auth.outputs.skipped != 'true'
+          shell: bash
+          env:
+              PR_NUMBER: ${{ inputs.pr-number }}
+              BASE_REF: ${{ inputs.base-ref }}
+              GH_TOKEN: ${{ inputs.github-token }}
+          run: |
+              # Fetch PR head ref and base branch for git diff access
+              # This allows Codex to use git commands to analyze the PR changes
+              # Uses GitHub Compare API to determine exact fetch depth needed for merge-base
+
+              # Validate PR number is numeric to prevent shell injection
+              if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+                echo "::error::Invalid PR number: must be numeric"
+                exit 1
+              fi
+
+              echo "Fetching PR #${PR_NUMBER} refs..."
+
+              # Query GitHub Compare API to get merge-base info and commit counts
+              # This tells us exactly how much history we need to fetch
+              COMPARE_URL="repos/${GITHUB_REPOSITORY}/compare/${BASE_REF}...pull/${PR_NUMBER}/head"
+              COMPARE_DATA=$(gh api "$COMPARE_URL" --jq '{
+                merge_base: .merge_base_commit.sha,
+                ahead: .ahead_by,
+                behind: .behind_by,
+                total: .total_commits
+              }')
+
+              MERGE_BASE_SHA=$(echo "$COMPARE_DATA" | jq -r '.merge_base')
+              AHEAD_BY=$(echo "$COMPARE_DATA" | jq -r '.ahead')
+              BEHIND_BY=$(echo "$COMPARE_DATA" | jq -r '.behind')
+              TOTAL_COMMITS=$(echo "$COMPARE_DATA" | jq -r '.total')
+
+              echo "Merge-base SHA: ${MERGE_BASE_SHA}"
+              echo "PR is ${AHEAD_BY} commits ahead, ${BEHIND_BY} behind (${TOTAL_COMMITS} total in diff)"
+
+              # Calculate fetch depth: max(ahead, behind) + buffer
+              # - ahead_by: commits in PR branch since merge-base
+              # - behind_by: commits on base branch since merge-base
+              # We need enough depth on both branches to reach the merge-base
+              if [ "$AHEAD_BY" -gt "$BEHIND_BY" ]; then
+                MAX_DISTANCE=$AHEAD_BY
+              else
+                MAX_DISTANCE=$BEHIND_BY
+              fi
+              FETCH_DEPTH=$((MAX_DISTANCE + 20))
+              echo "Fetching with depth ${FETCH_DEPTH} (max(${AHEAD_BY}, ${BEHIND_BY}) + 20 buffer)..."
+
+              git fetch --depth=${FETCH_DEPTH} --no-tags origin \
+                "${BASE_REF}" \
+                "+refs/pull/${PR_NUMBER}/head:refs/remotes/origin/pr/${PR_NUMBER}"
+
+              # Verify merge-base is available
+              if git merge-base origin/${BASE_REF} origin/pr/${PR_NUMBER} >/dev/null 2>&1; then
+                LOCAL_MERGE_BASE=$(git merge-base origin/${BASE_REF} origin/pr/${PR_NUMBER})
+                echo "Merge-base verified: ${LOCAL_MERGE_BASE}"
+              else
+                echo "::warning::Merge-base not found with calculated depth, deepening..."
+                # Fallback: iteratively deepen until merge-base is found
+                for i in {1..5}; do
+                  git fetch --deepen=50 origin "${BASE_REF}" "+refs/pull/${PR_NUMBER}/head:refs/remotes/origin/pr/${PR_NUMBER}"
+                  if git merge-base origin/${BASE_REF} origin/pr/${PR_NUMBER} >/dev/null 2>&1; then
+                    LOCAL_MERGE_BASE=$(git merge-base origin/${BASE_REF} origin/pr/${PR_NUMBER})
+                    echo "Merge-base found after deepening: ${LOCAL_MERGE_BASE}"
+                    break
+                  fi
+                done
+              fi
+
+              echo "PR refs fetched successfully"
+
+        - name: Setup Node.js
+          # `registry-url` + `scope` configure a process-scoped .npmrc that
+          # references $NODE_AUTH_TOKEN literally (not interpolated), so the
+          # token is never persisted to disk. See AG-17085 review.
+          if: steps.check-auth.outputs.skipped != 'true'
+          uses: actions/setup-node@v4
+          with:
+              node-version-file: package.json
+              registry-url: https://npm.pkg.github.com
+              scope: '@ag-grid'
+
+        - name: Install Codex CLI
+          if: steps.check-auth.outputs.skipped != 'true'
+          shell: bash
+          run: npm install -g @openai/codex@latest
+
+        - name: Install @ag-grid/dev-prompts
+          # AG-17085 Phase 3: the pr-review skill ships via the @ag-grid/dev-prompts
+          # npm package published to GitHub Packages. The calling workflow must
+          # declare `permissions: packages: read` and the package must have granted
+          # Actions access to this repo in its package settings.
+          if: steps.check-auth.outputs.skipped != 'true'
+          id: install-prompts
+          shell: bash
+          env:
+              NODE_AUTH_TOKEN: ${{ inputs.github-token }}
+              DEV_PROMPTS_VERSION: ${{ inputs.dev-prompts-version }}
+          run: |
+              install_dir="$RUNNER_TEMP/ag-dev-prompts"
+              mkdir -p "$install_dir"
+              cd "$install_dir"
+              echo '{"name":"ag-dev-prompts-install","private":true}' > package.json
+              npm install --no-save --silent "@ag-grid/dev-prompts@${DEV_PROMPTS_VERSION}"
+              package_root="$install_dir/node_modules/@ag-grid/dev-prompts"
+              if [ ! -d "$package_root" ]; then
+                echo "::error::@ag-grid/dev-prompts not found after install"
+                exit 1
+              fi
+              echo "package_root=${package_root}" >> $GITHUB_OUTPUT
+              echo "Installed @ag-grid/dev-prompts at ${package_root}"
+
+        - name: Determine Prompt File
+          if: steps.check-auth.outputs.skipped != 'true'
+          id: prompt
+          shell: bash
+          env:
+              INPUT_PROMPT_FILE: ${{ inputs.prompt-file }}
+              INLINE_COMMENTS: ${{ inputs.inline-comments }}
+              PACKAGE_ROOT: ${{ steps.install-prompts.outputs.package_root }}
+          run: |
+              if [ -n "$INPUT_PROMPT_FILE" ]; then
+                prompt_file="$INPUT_PROMPT_FILE"
+              else
+                prompt_file="${PACKAGE_ROOT}/plugins/ag-prodeng/skills/pr-review/SKILL.md"
+              fi
+              if [ ! -f "$prompt_file" ]; then
+                echo "::error::Prompt file not found at: $prompt_file"
+                exit 1
+              fi
+              if [[ "$INLINE_COMMENTS" == "true" ]]; then
+                output_ext="json"
+              else
+                output_ext="md"
+              fi
+              echo "prompt_file=${prompt_file}" >> $GITHUB_OUTPUT
+              echo "output_ext=${output_ext}" >> $GITHUB_OUTPUT
+
+        - name: Generate PR Diff Context
+          if: steps.check-auth.outputs.skipped != 'true'
+          id: diff-context
+          shell: bash
+          env:
+              PR_NUMBER: ${{ inputs.pr-number }}
+              BASE_REF: ${{ inputs.base-ref }}
+              HEAD_REF: ${{ inputs.head-ref }}
+              PR_TITLE: ${{ inputs.pr-title }}
+              PR_AUTHOR: ${{ inputs.pr-author }}
+              ARGUMENTS: ${{ inputs.inline-comments == 'true' && format('--json {0}', inputs.pr-number) || inputs.pr-number }}
+              GH_TOKEN: ${{ inputs.github-token }}
+          run: |
+              # Pre-generate the diff and metadata so Codex doesn't need to exec git commands.
+              # This avoids sandbox (bwrap) issues on GitHub Actions runners.
+              context_file=".codex-diff-context-${PR_NUMBER}.md"
+              diff_file=".codex-diff-${PR_NUMBER}.patch"
+              echo "context_file=${context_file}" >> $GITHUB_OUTPUT
+              echo "diff_file=${diff_file}" >> $GITHUB_OUTPUT
+
+              PR_REF="origin/pr/${PR_NUMBER}"
+              DIFF_BASE="origin/${BASE_REF}...${PR_REF}"
+              HEAD_SHA=$(git rev-parse "${PR_REF}")
+              PR_URL="https://github.com/${GITHUB_REPOSITORY}/pull/${PR_NUMBER}"
+
+              # Fill in missing metadata (e.g. workflow_dispatch doesn't have PR event context)
+              if [ -z "${PR_TITLE}" ] || [ -z "${PR_AUTHOR}" ] || [ -z "${HEAD_REF}" ]; then
+                PR_META=$(gh pr view "${PR_NUMBER}" --json title,author,headRefName 2>/dev/null || echo '{}')
+                [ -z "${PR_TITLE}" ] && PR_TITLE=$(echo "${PR_META}" | jq -r '.title // empty')
+                [ -z "${PR_AUTHOR}" ] && PR_AUTHOR=$(echo "${PR_META}" | jq -r '.author.login // empty')
+                [ -z "${HEAD_REF}" ] && HEAD_REF=$(echo "${PR_META}" | jq -r '.headRefName // empty')
+              fi
+
+              # Collect diff stats
+              FILES_CHANGED=$(git diff --name-only "${DIFF_BASE}" | wc -l | tr -d ' ')
+              DIFF_STAT=$(git diff --stat "${DIFF_BASE}")
+              LINES_ADDED=$(git diff --numstat "${DIFF_BASE}" | awk '{ s += $1 } END { print s+0 }')
+              LINES_REMOVED=$(git diff --numstat "${DIFF_BASE}" | awk '{ s += $2 } END { print s+0 }')
+
+              # Write the raw diff to a standalone file (avoids Markdown escaping issues).
+              # Apply per-file-type size caps so a single churn-heavy file (typically generated
+              # snapshots or lockfiles) cannot blow Codex's 1 MiB turn input limit.
+              DEFAULT_FILE_CAP_BYTES=204800   # 200 KiB for regular source files
+              SNAPSHOT_FILE_CAP_BYTES=10240   # 10 KiB for *.snap (generated snapshots)
+              : > "${diff_file}"
+              TRUNCATED_COUNT=0
+              TRUNCATED_BYTES_SAVED=0
+              per_file_tmp=$(mktemp)
+              while IFS= read -r path; do
+                  [ -z "$path" ] && continue
+                  case "$path" in
+                      *.snap) cap="$SNAPSHOT_FILE_CAP_BYTES" ;;
+                      *)      cap="$DEFAULT_FILE_CAP_BYTES" ;;
+                  esac
+                  git diff "${DIFF_BASE}" -- "$path" > "$per_file_tmp"
+                  file_size=$(wc -c < "$per_file_tmp" | tr -d ' ')
+                  if [ "$file_size" -gt "$cap" ]; then
+                      numstat=$(git diff --numstat "${DIFF_BASE}" -- "$path")
+                      added=$(echo "$numstat" | awk '{print $1}')
+                      removed=$(echo "$numstat" | awk '{print $2}')
+                      {
+                          echo ""
+                          echo "diff --git a/${path} b/${path}"
+                          printf '[truncated by codex-pr-review: diff is %s bytes, exceeds %s-byte cap for this file type; +%s / -%s lines]\n' \
+                              "$file_size" "$cap" "$added" "$removed"
+                      } >> "${diff_file}"
+                      TRUNCATED_COUNT=$((TRUNCATED_COUNT + 1))
+                      TRUNCATED_BYTES_SAVED=$((TRUNCATED_BYTES_SAVED + file_size - cap))
+                  else
+                      cat "$per_file_tmp" >> "${diff_file}"
+                  fi
+              done < <(git diff --name-only "${DIFF_BASE}")
+              rm -f "$per_file_tmp"
+              if [ "$TRUNCATED_COUNT" -gt 0 ]; then
+                  echo "Truncated ${TRUNCATED_COUNT} file(s) in diff (~${TRUNCATED_BYTES_SAVED} bytes elided) to stay under Codex input limits."
+              fi
+
+              # Build the context file (metadata only, no embedded diff).
+              # Uses printf instead of a heredoc to keep content indented within the
+              # YAML block scalar — unindented heredoc lines break GitHub Actions' YAML parser.
+              COMMIT_MSGS=$(git log --format="%s" "origin/${BASE_REF}..${PR_REF}")
+              printf '%s\n' \
+                "" \
+                "## Pre-generated PR Context" \
+                "" \
+                "The PR diff and metadata have been pre-generated and are provided below." \
+                "**Do NOT run any git, gh, or shell commands.** Analyse the diff below directly." \
+                "" \
+                "### Arguments" \
+                "" \
+                "ARGUMENTS: ${ARGUMENTS}" \
+                "" \
+                "### PR Metadata" \
+                "- **PR Number:** ${PR_NUMBER}" \
+                "- **PR Title:** ${PR_TITLE}" \
+                "- **PR URL:** ${PR_URL}" \
+                "- **Author:** ${PR_AUTHOR}" \
+                "- **Base Branch:** ${BASE_REF}" \
+                "- **Head Branch:** ${HEAD_REF}" \
+                "- **Head SHA:** ${HEAD_SHA}" \
+                "- **Files Changed:** ${FILES_CHANGED}" \
+                "- **Lines Added:** ${LINES_ADDED}" \
+                "- **Lines Removed:** ${LINES_REMOVED}" \
+                "" \
+                "### Diff Stats" \
+                '```' \
+                "${DIFF_STAT}" \
+                '```' \
+                "" \
+                "### Commit Messages" \
+                '```' \
+                "${COMMIT_MSGS}" \
+                '```' \
+                "" \
+                "### Full Diff" \
+                "" \
+                "Everything below this line is the raw unified diff for this PR." \
+                "---" \
+                > "${context_file}"
+
+              echo "Generated context ($(wc -c < "${context_file}") bytes) + diff ($(wc -c < "${diff_file}") bytes)"
+
+        - name: Run Codex Review
+          if: steps.check-auth.outputs.skipped != 'true'
+          id: codex
+          shell: bash
+          env:
+              OPENAI_API_KEY: ${{ inputs.codex-api-key }}
+              CODEX_API_KEY: ${{ inputs.codex-api-key }}
+              ARGUMENTS: ${{ inputs.inline-comments == 'true' && format('--json {0}', inputs.pr-number) || inputs.pr-number }}
+              BASE_REF: ${{ inputs.base-ref }}
+              HEAD_REF: ${{ inputs.head-ref }}
+              PR_TITLE: ${{ inputs.pr-title }}
+              PR_AUTHOR: ${{ inputs.pr-author }}
+              GITHUB_TOKEN: ${{ inputs.github-token }}
+              GH_TOKEN: ${{ inputs.github-token }}
+          run: |
+              # Output file paths (unique per PR to avoid conflicts)
+              output_file=".codex-review-${{ inputs.pr-number }}.${{ steps.prompt.outputs.output_ext }}"
+              error_file=".codex-error-${{ inputs.pr-number }}.log"
+              context_file="${{ steps.diff-context.outputs.context_file }}"
+              diff_file="${{ steps.diff-context.outputs.diff_file }}"
+
+              echo "output_file=${output_file}" >> $GITHUB_OUTPUT
+
+              # Run Codex with ALL output suppressed
+              # - stdin: Review instructions + metadata context + raw diff (three files concatenated)
+              # - stdout (>/dev/null): Suppresses reasoning/streaming output
+              # - stderr (2>file): Captured to file for debugging, not logged
+              set +e
+              cat "${{ steps.prompt.outputs.prompt_file }}" "${context_file}" "${diff_file}" | codex exec \
+                --output-last-message "${output_file}" \
+                --sandbox read-only \
+                2>"${error_file}" \
+                >/dev/null
+              exit_code=$?
+              set -e
+
+              echo "exit_code=${exit_code}" >> $GITHUB_OUTPUT
+
+              if [ $exit_code -ne 0 ]; then
+                echo "::error::Codex review failed with exit code ${exit_code}"
+
+                # Check if error is authentication-related
+                if [ -f "${error_file}" ] && grep -qE "(invalid_api_key|token_expired|refresh_token_reused|401 Unauthorized|Incorrect API key|Your access token could not be refreshed|exceeded retry limit.*401)" "${error_file}"; then
+                  echo "::error::Authentication failure detected — the CODEX_API_KEY secret is likely invalid, expired, or has insufficient permissions. Verify the secret in repo/org settings."
+                fi
+
+                # Show stderr for debugging - contains CLI errors, not review content
+                if [ -f "${error_file}" ] && [ -s "${error_file}" ]; then
+                  echo "::group::Codex CLI Error Output"
+                  cat "${error_file}"
+                  echo "::endgroup::"
+                fi
+              fi
+
+        - name: Verify Output Generated
+          if: steps.check-auth.outputs.skipped != 'true'
+          id: verify
+          shell: bash
+          run: |
+              output_file="${{ steps.codex.outputs.output_file }}"
+              exit_code="${{ steps.codex.outputs.exit_code }}"
+              if [ "$exit_code" != "0" ]; then
+                echo "success=false" >> $GITHUB_OUTPUT
+                echo "::error::Codex exited with code ${exit_code}"
+                exit 1
+              fi
+              if [ -f "${output_file}" ] && [ -s "${output_file}" ]; then
+                echo "success=true" >> $GITHUB_OUTPUT
+                echo "Review output generated successfully"
+              else
+                echo "success=false" >> $GITHUB_OUTPUT
+                echo "::error::Review output file is missing or empty"
+                exit 1
+              fi
+
+        - name: Post Review Comment
+          id: post-comment
+          if: steps.check-auth.outputs.skipped != 'true' && steps.verify.outputs.success == 'true' && inputs.post-comment == 'true'
+          uses: actions/github-script@v7
+          env:
+              OUTPUT_FILE: ${{ steps.codex.outputs.output_file }}
+              PR_NUMBER: ${{ inputs.pr-number }}
+              INLINE_COMMENTS: ${{ inputs.inline-comments }}
+          with:
+              github-token: ${{ inputs.github-token }}
+              script: |
+                  const fs = require('fs');
+
+                  // Read file content - fs.readFileSync does NOT log content
+                  const rawContent = fs.readFileSync(process.env.OUTPUT_FILE, 'utf8');
+                  const prNumber = parseInt(process.env.PR_NUMBER, 10);
+                  const inlineComments = process.env.INLINE_COMMENTS === 'true';
+                  const commentMarker = '<!-- codex-pr-review -->';
+
+                  let reviewBody;
+                  let inlineReviewComments = [];
+
+                  if (inlineComments) {
+                    // Parse JSON output and create inline comments
+                    let review;
+                    try {
+                      // Handle potential markdown code fences around JSON
+                      let jsonContent = rawContent.trim();
+
+                      // Remove BOM if present
+                      if (jsonContent.charCodeAt(0) === 0xFEFF) {
+                        jsonContent = jsonContent.slice(1);
+                      }
+
+                      // Strip markdown code fences if present
+                      if (jsonContent.startsWith('```json')) {
+                        jsonContent = jsonContent.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+                      } else if (jsonContent.startsWith('```')) {
+                        jsonContent = jsonContent.replace(/^```\n?/, '').replace(/\n?```$/, '');
+                      }
+
+                      // Find the JSON object boundaries (in case there's extra content)
+                      const jsonStart = jsonContent.indexOf('{');
+                      const jsonEnd = jsonContent.lastIndexOf('}');
+                      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+                        jsonContent = jsonContent.slice(jsonStart, jsonEnd + 1);
+                      }
+
+                      review = JSON.parse(jsonContent);
+                    } catch (e) {
+                      console.log(`Failed to parse JSON output: ${e.message}`);
+                      console.log(`Content length: ${rawContent.length}`);
+                      reviewBody = rawContent;
+                      review = null;
+                    }
+
+                    if (review) {
+                      // Log parsed review structure for debugging
+                      console.log(`Parsed review: pr_number=${review.pr_number}, findings=${review.findings?.length || 0}`);
+
+                      // Build inline comments for each finding
+                      for (const finding of review.findings || []) {
+                        if (finding.file && finding.line) {
+                          const priorityEmoji = {
+                            'P0': ':x:',
+                            'P1': ':warning:',
+                            'P2': ':information_source:',
+                            'P3': ':bulb:'
+                          }[finding.priority] || ':grey_question:';
+
+                          // GitHub API requires side: 'RIGHT' for inline comments on new file version
+                          const comment = {
+                            path: finding.file,
+                            line: finding.end_line || finding.line,
+                            side: 'RIGHT',
+                            body: `${priorityEmoji} **[${finding.priority}] ${finding.title}**\n\n${finding.description}\n\n${commentMarker}`
+                          };
+
+                          // For multi-line comments, add start_line and start_side
+                          if (finding.end_line && finding.end_line > finding.line) {
+                            comment.start_line = finding.line;
+                            comment.start_side = 'RIGHT';
+                          }
+
+                          inlineReviewComments.push(comment);
+                        } else {
+                          console.log(`Skipped finding without file/line: ${JSON.stringify(finding)}`);
+                        }
+                      }
+
+                      // Build summary comment body from JSON
+                      const verdictEmoji = review.verdict?.assessment === 'correct' ? ':white_check_mark:' : ':x:';
+                      const totalFindings = (review.stats?.p0_count || 0) + (review.stats?.p1_count || 0) + (review.stats?.p2_count || 0) + (review.stats?.p3_count || 0);
+                      core.setOutput('has_findings', String(totalFindings > 0));
+                      const statsLine = `P0: ${review.stats?.p0_count || 0} | P1: ${review.stats?.p1_count || 0} | P2: ${review.stats?.p2_count || 0} | P3: ${review.stats?.p3_count || 0}`;
+
+                      // Build summary line
+                      const summaryLine = totalFindings === 0
+                        ? `${verdictEmoji} Codex review complete; no issues found`
+                        : `${verdictEmoji} Codex review complete; ${totalFindings} issue${totalFindings === 1 ? '' : 's'} found (${statsLine})`;
+
+                      // Build collapsible details
+                      const requiredActions = review.verdict?.required_actions?.length > 0
+                        ? '**Required Actions:**\n' + review.verdict.required_actions.map(a => `- ${a}`).join('\n')
+                        : '**Required Actions:** None - ready to merge';
+
+                      const findingsNote = inlineReviewComments.length > 0
+                        ? `*${inlineReviewComments.length} inline comments posted.*`
+                        : (totalFindings > 0 ? '*See verdict for details.*' : '*No issues found.*');
+
+                      // Build diff stats line if available
+                      const diffStatsLine = review.diff_stats
+                        ? `**Diff:** ${review.diff_stats.files_changed} file${review.diff_stats.files_changed === 1 ? '' : 's'} changed, +${review.diff_stats.lines_added} -${review.diff_stats.lines_removed}`
+                        : '';
+
+                      // Build body using array join to avoid YAML parsing issues with angle brackets
+                      reviewBody = [
+                        summaryLine,
+                        '',
+                        '\x3Cdetails\x3E',
+                        '\x3Csummary\x3EView full review\x3C/summary\x3E',
+                        '',
+                        `# ${review.pr_title}`,
+                        '',
+                        `**PR:** ${review.pr_url}`,
+                        `**Author:** ${review.author} | **Base:** ${review.base_branch} \u2190 **Head:** ${review.head_branch}`,
+                        diffStatsLine,
+                        '',
+                        '# Summary',
+                        '',
+                        review.summary,
+                        '',
+                        '# Findings',
+                        '',
+                        statsLine,
+                        '',
+                        findingsNote,
+                        '',
+                        '# Verdict',
+                        '',
+                        `**Assessment:** ${review.verdict?.assessment || 'unknown'}`,
+                        `**Confidence:** ${review.verdict?.confidence || 'N/A'}`,
+                        '',
+                        review.verdict?.justification || '',
+                        '',
+                        requiredActions,
+                        '',
+                        '\x3C/details\x3E'
+                      ].join('\n');
+                    }
+                  } else {
+                    // Use raw markdown content
+                    reviewBody = rawContent;
+                  }
+
+                  // Clean up old inline review comments from previous Codex reviews
+                  // Only remove comments with no user reactions or replies (preserving conversations)
+                  try {
+                    const allReviewComments = await github.paginate(
+                      github.rest.pulls.listReviewComments,
+                      {
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        pull_number: prNumber,
+                        per_page: 100
+                      }
+                    );
+                    const botComments = allReviewComments.filter(c => c.user.login === 'github-actions[bot]' && c.body.includes(commentMarker));
+                    const nonBotComments = allReviewComments.filter(c => c.user.login !== 'github-actions[bot]');
+
+                    // Build set of bot comment IDs that have user replies
+                    const repliedToIds = new Set(
+                      nonBotComments
+                        .filter(c => c.in_reply_to_id)
+                        .map(c => c.in_reply_to_id)
+                    );
+
+                    let deleted = 0;
+                    let preserved = 0;
+                    for (const comment of botComments) {
+                      const hasUserReply = repliedToIds.has(comment.id);
+                      const hasReactions = (comment.reactions?.total_count || 0) > 0;
+                      if (!hasUserReply && !hasReactions) {
+                        await github.rest.pulls.deleteReviewComment({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          comment_id: comment.id
+                        });
+                        deleted++;
+                      } else {
+                        preserved++;
+                      }
+                    }
+                    if (deleted > 0 || preserved > 0) {
+                      console.log(`Cleaned up ${deleted} old inline review comments (preserved ${preserved} with user interactions)`);
+                    }
+                  } catch (e) {
+                    console.log(`Warning: Failed to clean up old review comments: ${e.message}`);
+                  }
+
+                  // Post inline comments as a review if we have any
+                  if (inlineReviewComments.length > 0) {
+                    try {
+                      // Get the PR head SHA for the review
+                      const { data: pr } = await github.rest.pulls.get({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        pull_number: prNumber
+                      });
+
+                      await github.rest.pulls.createReview({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        pull_number: prNumber,
+                        commit_id: pr.head.sha,
+                        event: 'COMMENT',
+                        comments: inlineReviewComments
+                      });
+                      console.log(`Posted ${inlineReviewComments.length} inline comments on commit ${pr.head.sha}`);
+                    } catch (e) {
+                      console.log(`Failed to post inline comments: ${e.message}`);
+                      // Fall back to including findings in the summary comment
+                      reviewBody += '\n\n---\n\n**Note:** Failed to post inline comments. Findings listed above.';
+                    }
+                  }
+
+                  // Find existing bot comment to update (avoid duplicates)
+                  const { data: comments } = await github.rest.issues.listComments({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    per_page: 100
+                  });
+
+                  const existingComment = comments.find(c =>
+                    c.user.type === 'Bot' && c.body.includes(commentMarker)
+                  );
+
+                  const body = `${commentMarker}\n${reviewBody}\n`;
+
+                  if (existingComment) {
+                    await github.rest.issues.updateComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      comment_id: existingComment.id,
+                      body: body
+                    });
+                    console.log('Updated existing review comment');
+                  } else {
+                    await github.rest.issues.createComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: prNumber,
+                      body: body
+                    });
+                    console.log('Created new review comment');
+                  }
+
+        - name: Remove Eyes Reaction
+          if: always() && steps.check-auth.outputs.skipped != 'true' && steps.react-started.outputs.reaction_id != ''
+          uses: actions/github-script@v7
+          continue-on-error: true
+          env:
+              PR_NUMBER: ${{ inputs.pr-number }}
+              REACTION_ID: ${{ steps.react-started.outputs.reaction_id }}
+          with:
+              github-token: ${{ inputs.github-token }}
+              script: |
+                  await github.rest.reactions.deleteForIssue({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: parseInt(process.env.PR_NUMBER, 10),
+                    reaction_id: parseInt(process.env.REACTION_ID, 10)
+                  });
+
+        - name: React Success
+          if: steps.check-auth.outputs.skipped != 'true' && steps.verify.outputs.success == 'true' && steps.post-comment.outputs.has_findings == 'false'
+          uses: actions/github-script@v7
+          continue-on-error: true
+          env:
+              PR_NUMBER: ${{ inputs.pr-number }}
+          with:
+              github-token: ${{ inputs.github-token }}
+              script: |
+                  await github.rest.reactions.createForIssue({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: parseInt(process.env.PR_NUMBER, 10),
+                    content: '+1'
+                  });
+
+        - name: React Has Findings
+          if: steps.check-auth.outputs.skipped != 'true' && steps.verify.outputs.success == 'true' && steps.post-comment.outputs.has_findings == 'true'
+          uses: actions/github-script@v7
+          continue-on-error: true
+          env:
+              PR_NUMBER: ${{ inputs.pr-number }}
+          with:
+              github-token: ${{ inputs.github-token }}
+              script: |
+                  await github.rest.reactions.createForIssue({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: parseInt(process.env.PR_NUMBER, 10),
+                    content: '-1'
+                  });
+
+        - name: Cleanup Sensitive Files
+          if: always()
+          shell: bash
+          run: |
+              rm -f ".codex-review-${{ inputs.pr-number }}.md" ".codex-review-${{ inputs.pr-number }}.json" ".codex-error-${{ inputs.pr-number }}.log" ".codex-diff-context-${{ inputs.pr-number }}.md" ".codex-diff-${{ inputs.pr-number }}.patch"

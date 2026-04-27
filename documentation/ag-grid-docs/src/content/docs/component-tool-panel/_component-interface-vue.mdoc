@@ -3,6 +3,7 @@ Any valid Vue component can be a tool panel component, however it is also possib
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```ts
 interface IToolPanel {
     // Called when `api.refreshToolPanel()` is called (with the current params).
@@ -16,6 +17,7 @@ interface IToolPanel {
     getState(): any;
 }
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}

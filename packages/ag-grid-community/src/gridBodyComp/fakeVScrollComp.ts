@@ -18,6 +18,7 @@ const FakeVScrollElement: ElementParams = {
         },
     ],
 };
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FakeVScrollComp extends AbstractFakeScrollComp {
     constructor() {
         super(FakeVScrollElement, 'vertical');

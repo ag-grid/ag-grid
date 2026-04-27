@@ -4,7 +4,14 @@ import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-
 import type { GridOptions, IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout, getRowHtmlElement } from '../../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    RowDragDispatcher,
+    TestGridsManager,
+    asyncSetTimeout,
+    getRowHtmlElement,
+} from '../../test-utils';
 
 describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppressMoveWhenRowDragging) => {
     const gridsManager = new TestGridsManager({
@@ -109,6 +116,13 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
             · ├── beta LEAF selected id:beta ag-Grid-AutoColumn:"Beta" type:"folder"
             · └── archive-reports LEAF id:archive-reports ag-Grid-AutoColumn:"Reports" type:"folder"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+            ├── ag-Grid-AutoColumn "Name" width:200
+            └── type "Type" width:200
+        `);
     });
 
     test('rowDragInsertDelay nudger expands collapsed parents before dropping', async () => {
@@ -182,6 +196,14 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
             });
         }
 
+        if (suppressMoveWhenRowDragging) {
+            await waitFor(() => {
+                const indicator = api.getRowDropPositionIndicator();
+                expect(indicator.dropIndicatorPosition).not.toBe('none');
+                expect(['root-ops', 'root-ops-logs']).toContain(indicator.row?.id);
+            });
+        }
+
         await asyncSetTimeout(10);
         await dispatcher.move(targetRowId, { clientX, clientY });
         await dispatcher.finish();
@@ -198,6 +220,12 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
             · └─┬ root-ops GROUP id:root-ops ag-Grid-AutoColumn:"Operations" type:"folder"
             · · ├── root-plan-tasks LEAF id:root-plan-tasks ag-Grid-AutoColumn:"Tasks" type:"file"
             · · └── root-ops-logs LEAF id:root-ops-logs ag-Grid-AutoColumn:"Logs" type:"file"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Name" width:200
+            └── type "Type" width:200
         `);
     });
 
@@ -262,5 +290,128 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         expect(dropInfo?.pointerPos).toBe('inside');
         expect(dropInfo?.rows?.length ?? 0).toBeGreaterThan(0);
         expect(dropInfo?.newParent?.id ?? dropInfo?.overNode?.id).toBe('inbox');
+    });
+
+    test('rowDragInsertDelay promotes leaf targets without a validator', async () => {
+        const rowData = [
+            {
+                id: 'root',
+                name: 'Root',
+                type: 'folder',
+                children: [
+                    { id: 'inbox', name: 'Inbox', type: 'folder', children: [] },
+                    { id: 'incoming', name: 'Incoming', type: 'file', children: [] },
+                ],
+            },
+        ];
+
+        const api = createGrid('tree-managed-insert-promote-default', rowData, {
+            rowDragInsertDelay: 60,
+        });
+
+        const initialRows = new GridRows(api, 'insert promote default initial');
+        await initialRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            · ├── inbox LEAF id:inbox ag-Grid-AutoColumn:"Inbox" type:"folder"
+            · └── incoming LEAF id:incoming ag-Grid-AutoColumn:"Incoming" type:"file"
+        `);
+
+        const sourceRowId = 'incoming';
+        const targetRowId = 'inbox';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRowId);
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Incoming'));
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.45 });
+        await asyncSetTimeout(80);
+        await dispatcher.move(targetRowId, { center: true });
+
+        if (suppressMoveWhenRowDragging) {
+            await waitFor(() => {
+                const indicator = api.getRowDropPositionIndicator();
+                expect(indicator.dropIndicatorPosition).toBe('inside');
+                expect(indicator.row?.id).toBe('inbox');
+            });
+        }
+
+        await dispatcher.finish();
+        await asyncSetTimeout(0);
+
+        const dropInfo = dispatcher.rowDragEndEvents[0]?.rowsDrop;
+
+        if (suppressMoveWhenRowDragging) {
+            // Without intermediate drops, the insert delay promotes incoming into inbox
+            const finalRows = new GridRows(api, 'insert promote default after');
+            await finalRows.check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+                · └─┬ inbox GROUP id:inbox ag-Grid-AutoColumn:"Inbox" type:"folder"
+                · · └── incoming LEAF id:incoming ag-Grid-AutoColumn:"Incoming" type:"file"
+            `);
+
+            expect(api.getRowNode('incoming')?.parent?.id).toBe('inbox');
+            expect(api.getRowNode('inbox')?.childrenAfterSort?.some((node) => node.id === 'incoming')).toBe(true);
+            expect(dropInfo?.newParent?.id ?? dropInfo?.overNode?.id).toBe('inbox');
+            expect(dropInfo?.position).toBe('inside');
+        } else {
+            // With live reordering, the intermediate drop during the first move reorders
+            // incoming above inbox as a sibling before the insert delay can promote it
+            const finalRows = new GridRows(api, 'insert promote default after');
+            await finalRows.check(`
+                ROOT id:ROOT_NODE_ID
+                └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+                · ├── inbox LEAF id:inbox ag-Grid-AutoColumn:"Inbox" type:"folder"
+                · └── incoming LEAF id:incoming ag-Grid-AutoColumn:"Incoming" type:"file"
+            `);
+
+            expect(api.getRowNode('incoming')?.parent?.id).toBe('root');
+        }
+    });
+
+    test('rowDragInsertDelay skips already expanded groups', async () => {
+        const rowData = [
+            {
+                id: 'root',
+                name: 'Root',
+                type: 'folder',
+                children: [
+                    {
+                        id: 'alpha',
+                        name: 'Alpha',
+                        type: 'folder',
+                        children: [{ id: 'alpha-item', name: 'Alpha Item', type: 'file', children: [] }],
+                    },
+                    {
+                        id: 'beta',
+                        name: 'Beta',
+                        type: 'folder',
+                        children: [{ id: 'beta-item', name: 'Beta Item', type: 'file', children: [] }],
+                    },
+                ],
+            },
+        ];
+
+        const api = createGrid('tree-managed-insert-expanded', rowData, {
+            rowDragInsertDelay: 10000,
+            groupDefaultExpanded: -1,
+        });
+
+        await asyncSetTimeout(0);
+        expect(api.getRowNode('beta')?.expanded).toBe(true);
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('alpha-item');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Alpha Item'));
+        await dispatcher.move('beta', { center: true });
+        await dispatcher.finish();
+        await asyncSetTimeout(0);
+
+        const dropInfo = dispatcher.rowDragMoveEvents.at(-1)?.rowsDrop;
+        expect(dropInfo?.position).toBe('above');
+        expect(dropInfo?.newParent?.id).toBe('beta');
+        expect(api.getRowNode('alpha-item')?.parent?.id).toBe('beta');
     });
 });

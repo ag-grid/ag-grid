@@ -2,26 +2,20 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GridReadyEvent } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    NumberFilterModule,
-    TextFilterModule,
-    ValidationModule,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     NumberFilterModule,
     TextFilterModule,
     ClientSideRowModelModule,
     TreeDataModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
@@ -79,31 +73,38 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div className="example-header">
-                    <label>
-                        <span>suppressAggFilteredOnly:</span>
-                        <input type="checkbox" id="suppressAggFilteredOnly" onClick={toggleCheckbox} defaultChecked />
-                    </label>
-                </div>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div className="example-header">
+                        <label>
+                            <span>suppressAggFilteredOnly:</span>
+                            <input
+                                type="checkbox"
+                                id="suppressAggFilteredOnly"
+                                onClick={toggleCheckbox}
+                                defaultChecked
+                            />
+                        </label>
+                    </div>
 
-                <div style={gridStyle}>
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        autoGroupColumnDef={autoGroupColumnDef}
-                        treeData={true}
-                        groupDefaultExpanded={1}
-                        suppressAggFilteredOnly={true}
-                        getDataPath={getDataPath}
-                        onGridReady={onGridReady}
-                    />
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            ref={gridRef}
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            autoGroupColumnDef={autoGroupColumnDef}
+                            treeData={true}
+                            groupDefaultExpanded={1}
+                            suppressAggFilteredOnly={true}
+                            getDataPath={getDataPath}
+                            onGridReady={onGridReady}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

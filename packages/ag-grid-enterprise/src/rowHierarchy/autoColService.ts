@@ -5,6 +5,7 @@ import type {
     IColumnCollectionService,
     NamedBean,
     PropertyValueChangedEvent,
+    RowNode,
     _ColumnCollections,
 } from 'ag-grid-community';
 import {
@@ -19,6 +20,7 @@ import {
     _destroyColumnTree,
     _getColumnStateFromColDef,
     _isColumnsSortingCoupledToGroup,
+    _isGroupHideColumnsUntilExpanded,
     _isGroupMultiAutoColumn,
     _isGroupUseEntireRow,
     _mergeDeep,
@@ -36,14 +38,30 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
 
     public postConstruct(): void {
         this.addManagedPropertyListener('autoGroupColumnDef', this.updateColumns.bind(this));
+
+        this.setupGroupHideColumnsUntilExpanded();
+    }
+
+    private setupGroupHideColumnsUntilExpanded() {
+        const updateGroupColumnVisibility = () => this.updateGroupColumnVisibility();
+        this.addManagedEventListeners({
+            // modelUpdated is fired when rowGroup events are fired so we do not duplicate work by also listening to "rowGroupOpened" and "expandOrCollapseAll"
+            modelUpdated: updateGroupColumnVisibility,
+        });
+        // Ensure the properties are reactive.
+        this.addManagedPropertyListeners(
+            ['groupHideColumnsUntilExpanded', 'groupDisplayType', 'groupHideOpenParents'],
+            updateGroupColumnVisibility
+        );
     }
 
     public addColumns(cols: _ColumnCollections): void {
-        if (this.columns == null) {
+        const { columns } = this;
+        if (columns == null) {
             return;
         }
-        cols.list = this.columns.list.concat(cols.list);
-        cols.tree = this.columns.tree.concat(cols.tree);
+        cols.list = columns.list.concat(cols.list);
+        cols.tree = columns.tree.concat(cols.tree);
         _updateColsMap(cols);
     }
 
@@ -54,7 +72,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
     ): void {
         const beans = this.beans;
         const { colModel, gos, rowGroupColsSvc, colGroupSvc } = beans;
-        const isPivotMode = colModel.isPivotMode();
+        const isPivotMode = colModel.pivotMode;
         const groupFullWidthRow = _isGroupUseEntireRow(gos, isPivotMode);
         // we need to allow suppressing auto-column separately for group and pivot as the normal situation
         // is CSRM and user provides group column themselves for normal view, but when they go into pivot the
@@ -97,7 +115,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
             for (const col of this.columns?.list ?? []) {
                 const newDef = colsMap.get(col.getId());
                 if (newDef) {
-                    col.setColDef(newDef.getColDef(), null, source);
+                    col.setColDef(newDef.colDef, null, source);
                 }
             }
             return;
@@ -197,7 +215,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
      * Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef
      */
     private updateOneAutoCol(colToUpdate: AgColumn, index: number, source: ColumnEventType) {
-        const oldColDef = colToUpdate.getColDef();
+        const oldColDef = colToUpdate.colDef;
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
         const beans = this.beans;
         const underlyingColumn = underlyingColId != null ? beans.colModel.getColDefCol(underlyingColId) : undefined;
@@ -217,6 +235,17 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         _mergeDeep(res, autoGroupColumnDef);
 
         res = _addColumnDefaultAndTypes(this.beans, res, colId, true);
+
+        // TODO: Remove this guard when we properly implement editing of auto group column.
+        // Auto group columns should not inherit groupRowEditable or groupRowValueSetter from
+        // defaultColDef — group row editing of the auto group column is not yet fully supported.
+        // Only honour these properties if the user explicitly set them on autoGroupColumnDef.
+        if (autoGroupColumnDef?.groupRowEditable == null) {
+            res.groupRowEditable = undefined;
+        }
+        if (autoGroupColumnDef?.groupRowValueSetter == null) {
+            res.groupRowValueSetter = undefined;
+        }
 
         // For tree data the filter is always allowed
         if (!this.gos.get('treeData')) {
@@ -255,7 +284,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
 
         const res: ColDef = {
             headerName: localeTextFunc('group', 'Group'),
-            showRowGroup: rowGroupCol?.getColId() ?? true,
+            showRowGroup: rowGroupCol?.colId ?? true,
         };
 
         const userHasProvidedGroupCellRenderer = userDef && (userDef.cellRenderer || userDef.cellRendererSelector);
@@ -271,6 +300,86 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         }
 
         return res;
+    }
+
+    private getDeepestExpandedLevel(nodes: RowNode[] | null | undefined, maxLevel: number): number {
+        let deepest = -1;
+
+        if (!nodes) {
+            return deepest;
+        }
+
+        for (const node of nodes) {
+            if (!node.group || !node.expanded) {
+                continue;
+            }
+
+            if (node.level > deepest) {
+                deepest = node.level;
+            }
+
+            if (deepest >= maxLevel) {
+                return deepest;
+            }
+
+            // only expanded nodes recurse into their child groups; collapsed branches are skipped.
+            const childDeepest = this.getDeepestExpandedLevel(node.childrenAfterGroup, maxLevel);
+            if (childDeepest > deepest) {
+                deepest = childDeepest;
+            }
+            if (deepest >= maxLevel) {
+                return deepest;
+            }
+        }
+
+        return deepest;
+    }
+
+    private updateGroupColumnVisibility(): void {
+        const columns = this.columns?.list;
+
+        if (!columns || columns.length === 0) {
+            return;
+        }
+
+        const { gos, visibleCols, rowModel } = this.beans;
+        const isFeatureEnabled = _isGroupHideColumnsUntilExpanded(gos);
+
+        let changed = false;
+        const setColVisible = (col: AgColumn, visible: boolean): void => {
+            if (visible !== col.isVisible()) {
+                col.setVisible(visible, 'api');
+                changed = true;
+            }
+        };
+
+        const setAllColumnsVisible = (): void => {
+            for (const col of columns) {
+                setColVisible(col, true);
+            }
+        };
+
+        if (!isFeatureEnabled) {
+            setAllColumnsVisible();
+        } else if (columns.length > 1) {
+            // Feature only applies when there are multiple columns to show/hide;
+            // the first column is always visible so a single column needs no adjustment.
+            const maxLevel = columns.length - 2;
+            const rootChildren = rowModel?.rootNode?.childrenAfterGroup;
+            const deepestExpandedLevel = this.getDeepestExpandedLevel(rootChildren, maxLevel);
+
+            if (deepestExpandedLevel >= maxLevel) {
+                setAllColumnsVisible();
+            } else {
+                for (let level = 0; level < columns.length - 1; level++) {
+                    setColVisible(columns[level + 1], deepestExpandedLevel >= level);
+                }
+            }
+        }
+
+        if (changed) {
+            visibleCols.refresh('api');
+        }
     }
 
     public override destroy(): void {

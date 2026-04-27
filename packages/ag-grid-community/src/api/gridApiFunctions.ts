@@ -27,11 +27,13 @@ import type {
     _ExcelExportGridApi,
     _FilterGridApi,
     _FindApi,
+    _FormulaGridApi,
     _GridChartsGridApi,
     _HighlightChangesGridApi,
     _InfiniteRowModelGridApi,
     _KeyboardNavigationGridApi,
     _MasterDetailGridApi,
+    _NotesGridApi,
     _OverlayGridApi,
     _PaginationGridApi,
     _PinnedRowGridApi,
@@ -260,6 +262,11 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getQuickFilter: 0,
         resetQuickFilter: 0,
     }),
+    ...mod<_NotesGridApi>('Notes', {
+        getNote: 0,
+        setNote: 0,
+        refreshNotes: 0,
+    }),
     ...mod<_FindApi<any>>('Find', {
         findGetActiveMatch: 0,
         findGetTotalMatches: 0,
@@ -287,6 +294,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     ...mod<_CsrmSsrmSharedGridApi>('CsrmSsrmSharedApi', {
         expandAll: 0,
         collapseAll: 0,
+        resetRowGroupExpansion: 0,
     }),
     ...mod<_SsrmInfiniteSharedGridApi>('SsrmInfiniteSharedApi', {
         setRowCount: 0,
@@ -362,6 +370,10 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         removeDetailGridInfo: 0,
         getDetailGridInfo: 0,
         forEachDetailGridInfo: 0,
+    }),
+
+    ...mod<_FormulaGridApi<any>>('Formula', {
+        refreshFormulas: 0,
     }),
 
     ...mod<_ContextMenuGridApi>('ContextMenu', {

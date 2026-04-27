@@ -2,6 +2,7 @@ import type { UserComponentName } from '../../context/context';
 import { _isSortDefValid, _isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
+import { buildAllValidNames } from '../validationTypes';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
@@ -39,8 +40,9 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     autoHeight: 'RowAutoHeight',
     cellClass: 'CellStyle',
     cellClassRules: 'CellStyle',
-    cellEditor: ({ cellEditor, editable }: ColDef) => {
-        if (!editable) {
+    cellEditor: ({ cellEditor, editable, groupRowEditable }: ColDef) => {
+        const editingEnabled = !!editable || !!groupRowEditable;
+        if (!editingEnabled) {
             return null;
         }
         if (typeof cellEditor === 'string') {
@@ -65,6 +67,13 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
         }
         return null;
     },
+    groupRowEditable: ({ groupRowEditable, cellEditor }: ColDef) => {
+        if (!groupRowEditable) {
+            return null;
+        }
+        return cellEditor ? 'RowGroupingEdit' : ['RowGroupingEdit', 'TextEditor'];
+    },
+    groupRowValueSetter: ({ groupRowValueSetter }: ColDef) => (groupRowValueSetter ? 'RowGroupingEdit' : null),
     enableCellChangeFlash: 'HighlightChanges',
     enablePivot: 'SharedPivot',
     enableRowGroup: 'SharedRowGrouping',
@@ -253,6 +262,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         spanRows: {
             dependencies: {
                 editable: { required: [false, undefined] },
+                groupRowEditable: { required: [false, undefined] },
                 rowDrag: { required: [false, undefined] },
                 colSpan: { required: [undefined] },
                 rowSpan: { required: [undefined] },
@@ -357,6 +367,8 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     initialAggFunc: undefined,
     defaultAggFunc: undefined,
     aggFunc: undefined,
+    groupRowEditable: undefined,
+    groupRowValueSetter: undefined,
     pinned: undefined,
     initialPinned: undefined,
     chartDataType: undefined,
@@ -485,13 +497,21 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     rowGroupingHierarchy: undefined,
     groupHierarchy: undefined,
     allowFormula: undefined,
+    suppressNoteActions: undefined,
 };
 const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 
-export const COL_DEF_VALIDATORS: () => OptionsValidator<ColDef | ColGroupDef> = () => ({
-    objectName: 'colDef',
-    allProperties: ALL_PROPERTIES(),
-    docsUrl: 'column-properties/',
-    deprecations: COLUMN_DEFINITION_DEPRECATIONS(),
-    validations: COLUMN_DEFINITION_VALIDATIONS(),
-});
+let _colDefValidatorsCache: OptionsValidator<ColDef | ColGroupDef> | undefined;
+export const COL_DEF_VALIDATORS: () => OptionsValidator<ColDef | ColGroupDef> = () =>
+    (_colDefValidatorsCache ??= (() => {
+        const allProperties = ALL_PROPERTIES();
+        const deprecations = COLUMN_DEFINITION_DEPRECATIONS();
+        return {
+            objectName: 'colDef',
+            allProperties,
+            allValidNames: buildAllValidNames(allProperties, deprecations),
+            docsUrl: 'column-properties/',
+            deprecations,
+            validations: COLUMN_DEFINITION_VALIDATIONS(),
+        };
+    })());

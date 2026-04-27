@@ -13,20 +13,17 @@ import type {
     EditValidationMap,
     EditValue,
     GetEditsParams,
-    IEditCellValidationModel,
-    IEditModelService,
-    IEditRowValidationModel,
 } from '../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { UNEDITED } from './utils/editors';
 
-export class EditModelService extends BeanStub implements NamedBean, IEditModelService {
+export class EditModelService extends BeanStub implements NamedBean {
     public beanName = 'editModelSvc' as const;
 
     private readonly edits: EditMap = new Map();
-    private cellValidations: IEditCellValidationModel = new EditCellValidationModel();
-    private rowValidations: IEditRowValidationModel = new EditRowValidationModel();
+    private cellValidations: EditCellValidationModel = new EditCellValidationModel();
+    private rowValidations: EditRowValidationModel = new EditRowValidationModel();
 
     // during some operations, we want to always return false from `hasEdits`
     private suspendEdits = false;
@@ -92,12 +89,13 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
             return undefined;
         }
 
-        const data: any = Object.assign({}, rowNode.data);
+        const data: any = { ...rowNode.data };
 
         const applyEdits = (edits: EditRow, data: any) =>
-            edits.forEach(({ pendingValue }, column) => {
-                if (pendingValue !== UNEDITED) {
-                    data[column.getColId()] = pendingValue;
+            edits.forEach(({ editorValue, pendingValue }, column) => {
+                const value = editorValue === undefined ? pendingValue : editorValue;
+                if (value !== UNEDITED) {
+                    data[column.getColId()] = value;
                 }
             });
 
@@ -112,21 +110,28 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         return data;
     }
 
-    public getEdit(position: EditPosition, copy?: false): Readonly<EditValue> | undefined {
-        const edit = this._getEdit(position);
-        return copy && edit ? { ...edit } : edit;
-    }
-
-    private _getEdit(position: EditPosition): EditValue | undefined {
-        if (this.suspendEdits) {
-            return undefined;
+    public getEdit(position: EditPosition = {}, params?: GetEditsParams): EditValue | undefined {
+        const { rowNode, column } = position;
+        const edits = this.edits;
+        if (this.suspendEdits || edits.size === 0 || !rowNode || !column) {
+            return undefined; // no edits or incomplete position
         }
 
-        if (this.edits.size === 0) {
-            return undefined;
+        // Check the row's edits first
+        const edit = edits.get(rowNode)?.get(column);
+        if (edit) {
+            return edit; // found edit for the cell
         }
 
-        return position.rowNode && position.column && this.getEditRow(position.rowNode)?.get(position.column);
+        // If checkSiblings, also check the pinned sibling for the column
+        if (params?.checkSiblings) {
+            const pinnedSibling = (rowNode as RowNode).pinnedSibling;
+            if (pinnedSibling) {
+                return edits.get(pinnedSibling)?.get(column); // return edit from pinned sibling if found
+            }
+        }
+
+        return undefined;
     }
 
     public getEditMap(copy = true): EditMap {
@@ -163,18 +168,21 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public setEdit(position: Required<EditPosition>, edit: Partial<EditValue>): Readonly<EditValue> {
-        (this.edits.size === 0 || !this.edits.has(position.rowNode)) && this.edits.set(position.rowNode, new Map());
+        const edits = this.edits;
+        if (edits.size === 0 || !edits.has(position.rowNode)) {
+            edits.set(position.rowNode, new Map());
+        }
 
-        const currentEdit = this._getEdit(position);
+        const currentEdit = this.getEdit(position);
 
-        const updatedEdit = Object.assign({
+        const updatedEdit: EditValue = {
             editorState: {
                 isCancelAfterEnd: undefined,
                 isCancelBeforeStart: undefined,
             },
             ...currentEdit,
             ...edit,
-        }) as EditValue;
+        } as EditValue;
 
         this.getEditRow(position.rowNode)!.set(position.column, updatedEdit);
 
@@ -183,21 +191,26 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
 
     public clearEditValue(position: EditPosition): void {
         const { rowNode, column } = position;
-        if (rowNode) {
-            if (column) {
-                const edit = this._getEdit(position);
-                if (edit) {
-                    edit.editorValue = undefined;
-                    edit.pendingValue = edit.sourceValue;
-                    edit.state = 'changed';
-                }
-            } else {
-                this.getEditRow(rowNode)?.forEach((cellData) => {
-                    cellData.editorValue = undefined;
-                    cellData.pendingValue = cellData.sourceValue;
-                    cellData.state = 'changed';
-                });
-            }
+        if (!rowNode) {
+            return; // no row specified, cannot clear
+        }
+
+        const update = (edit: EditValue) => {
+            edit.editorValue = undefined;
+            edit.pendingValue = edit.sourceValue;
+            // Reverting to sourceValue is always 'changed' (i.e. "no longer editing").
+            // The value matches source so _sourceAndPendingDiffer will return false and nothing commits.
+            edit.state = 'changed';
+        };
+
+        if (!column) {
+            this.getEditRow(rowNode)?.forEach(update); // clear all columns in the row
+            return;
+        }
+
+        const edit = this.getEdit(position);
+        if (edit) {
+            update(edit); // clear specific cell
         }
     }
 
@@ -263,7 +276,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                 if (withOpenEditor) {
                     return this.getEdit(position)?.state === 'editing';
                 }
-                return rowEdits.has(column) ?? false;
+                return rowEdits.has(column);
             }
 
             if (rowEdits.size !== 0) {
@@ -290,7 +303,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
             map.set(column, {
                 editorValue: undefined,
                 pendingValue: UNEDITED,
-                sourceValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, false, 'api'),
+                sourceValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, 'data'),
                 state: 'editing',
                 editorState: {
                     isCancelAfterEnd: undefined,
@@ -301,15 +314,27 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         this.edits.set(rowNode, map);
     }
 
-    public stop(position?: Required<EditPosition>): void {
+    public stop(position: Required<EditPosition>, preserveBatch: boolean, cancel: boolean): void {
         if (!this.hasEdits(position)) {
             return;
         }
 
-        if (position) {
-            this.removeEdits(position);
+        if (preserveBatch) {
+            // Keep edits that were actually changed; remove unchanged ones.
+            const edit = this.getEditRow(position.rowNode)?.get(position.column);
+            if (edit && (edit.pendingValue === UNEDITED || edit.pendingValue === edit.sourceValue)) {
+                this.removeEdits(position);
+            } else if (edit && cancel) {
+                // Clear the transient editorValue so the cell renderer shows pendingValue.
+                // No event dispatch is needed here — editorValue is an internal field only
+                // consumed while an editor is open, and the editor has already been destroyed
+                // by the caller (_destroyEditor dispatched cellEditingStopped). The visible
+                // pendingValue is preserved and any UI refresh is handled by the caller's
+                // bulkRefresh call afterward.
+                edit.editorValue = undefined;
+            }
         } else {
-            this.clear();
+            this.removeEdits(position);
         }
     }
 
@@ -320,19 +345,19 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         this.edits.clear();
     }
 
-    public getCellValidationModel(): IEditCellValidationModel {
+    public getCellValidationModel(): EditCellValidationModel {
         return this.cellValidations;
     }
 
-    public getRowValidationModel(): IEditRowValidationModel {
+    public getRowValidationModel(): EditRowValidationModel {
         return this.rowValidations;
     }
 
-    public setCellValidationModel(model: IEditCellValidationModel): void {
+    public setCellValidationModel(model: EditCellValidationModel): void {
         this.cellValidations = model;
     }
 
-    public setRowValidationModel(model: IEditRowValidationModel): void {
+    public setRowValidationModel(model: EditRowValidationModel): void {
         this.rowValidations = model;
     }
 
@@ -342,7 +367,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 }
 
-export class EditCellValidationModel implements IEditCellValidationModel {
+export class EditCellValidationModel {
     private cellValidations: EditValidationMap = new Map();
 
     public getCellValidation(position?: EditPosition): EditValidation | undefined {
@@ -382,7 +407,7 @@ export class EditCellValidationModel implements IEditCellValidationModel {
         this.cellValidations.clear();
     }
 }
-export class EditRowValidationModel implements IEditRowValidationModel {
+export class EditRowValidationModel {
     private rowValidations: EditRowValidationMap = new Map();
 
     public getRowValidation(position?: EditRowPosition): EditValidation | undefined {

@@ -12,8 +12,8 @@ When you call `applyTransactionAsync()` the grid will execute the update, along 
 
 The following example demonstrates updating data using normal transactions and async transactions:
 
-* **Normal Update**: Calls `applyTransaction()` 5000 times with each call updating a single row.
-* **Async Update**: Calls `applyTransactionAsync()` 5000 times with each call updating a single row.
+-   **Normal Update**: Calls `applyTransaction()` 5000 times with each call updating a single row.
+-   **Async Update**: Calls `applyTransactionAsync()` 5000 times with each call updating a single row.
 
 {% gridExampleRunner title="Async Transaction" name="async-transaction"  exampleHeight=590 /%}
 
@@ -32,9 +32,9 @@ applyTransactionAsync(
 
 Use Async Transactions if you have a high volume of streaming data going into the grid and don't want the grid's rendering and recalculating to be a bottleneck.
 
-## Async Transactions Applied Event
+## Async Transactions Flushed Event
 
-Each time the grid executes a batch of Async Transactions, it dispatches a `asyncTransactionsApplied` event.
+Each time the grid executes a batch of Async Transactions, it dispatches an `asyncTransactionsFlushed` event.
 
 The event contains `results` attribute, which is a list of all the results for all Transactions that got applied.
 
@@ -52,9 +52,9 @@ It is also possible to change the wait between executing batches from the defaul
 
 The example below demonstrates setting the wait time and also flushing. Note the following:
 
-* The property `asyncTransactionWaitMillis` is set to 4000, thus transactions get flushed every 4 seconds.
-* The button Flush Transactions will call the API method `flushAsyncTransactions`.
-* Transactions getting added and executed is logged to the console.
-* The example listens on event `asyncTransactionsFlushed` and logs how many transactions got applied.
+-   The property `asyncTransactionWaitMillis` is set to 4000, thus transactions get flushed every 4 seconds.
+-   The button Flush Transactions will call the API method `flushAsyncTransactions`.
+-   Transactions getting added and executed is logged to the console.
+-   The example listens on event `asyncTransactionsFlushed` and logs how many transactions got applied.
 
 {% gridExampleRunner title="Flush Transactions" name="flush-transactions"  exampleHeight=590 /%}

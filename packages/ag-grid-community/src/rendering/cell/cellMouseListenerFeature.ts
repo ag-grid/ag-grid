@@ -31,6 +31,7 @@ export class CellMouseListenerFeature extends BeanStub {
             case 'click':
                 this.onCellClicked(mouseEvent);
                 break;
+            case 'pointerdown':
             case 'mousedown':
             case 'touchstart':
                 this.onMouseDown(mouseEvent);
@@ -71,7 +72,7 @@ export class CellMouseListenerFeature extends BeanStub {
         cellClickedEvent.isEventHandlingSuppressed = suppressMouseEvent;
         eventSvc.dispatchEvent(cellClickedEvent);
 
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
@@ -120,7 +121,7 @@ export class CellMouseListenerFeature extends BeanStub {
 
         const suppressMouseEvent = _suppressCellMouseEvent(gos, cellCtrl.column, cellCtrl.rowNode, event);
 
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
         // always dispatch event to eventService
         const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(
             event,
@@ -144,9 +145,10 @@ export class CellMouseListenerFeature extends BeanStub {
 
         if (editSvc?.shouldStartEditing(cellCtrl, event) && editModelSvc?.getState(cellCtrl) !== 'editing') {
             const editing = editSvc?.isEditing();
+            const isRangeSelectionEnabledWhileEditing = editSvc?.isRangeSelectionEnabledWhileEditing();
             const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
             const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
-            if (editing && (cellValidations > 0 || rowValidations > 0)) {
+            if (editing && (isRangeSelectionEnabledWhileEditing || cellValidations > 0 || rowValidations > 0)) {
                 return;
             }
 

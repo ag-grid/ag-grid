@@ -1,5 +1,7 @@
 {% if isFramework("angular") %}
+
 ## Component Lifecycle Hook agInit
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -7,9 +9,11 @@ Each custom Angular component must implement the `agInit(params)` lifecycle hook
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ## Mixing JavaScript and Angular
 
 When providing Custom Components you have a choice of the following:
+
 1. Provide an AG Grid component as an Angular Component.
 1. Provide an AG Grid component in JavaScript.
 
@@ -18,6 +22,7 @@ The following code snippet shows how both JavaScript and Angular Components can 
 {% /if %}
 
 {% if isFramework("angular") %}
+
 ```ts
 //...other imports
 import { Component } from '@angular/core';
@@ -63,6 +68,7 @@ export class AppComponent {
   //...other properties & methods
 }
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}

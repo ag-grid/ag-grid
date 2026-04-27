@@ -1,5 +1,70 @@
 [
     {
+        "version": "35.2.1",
+        "date": "7th April 2026"
+    },
+    {
+        "version": "35.2.0",
+        "date": "25th March 2026",
+        "landingPageHighlight": "Aggregation Editing, Row Grouping Compact Group Column, Columns Tool Panel Deferred Updates, Rich Select Editor Improvements, Accessibility Improvements",
+        "highlights": [
+            {
+                "text": "Aggregation Editing",
+                "path": "./grouping-edit/"
+            },
+            {
+                "text": "Row Grouping Compact Group Column",
+                "path": "./grouping-multiple-group-columns/#hiding-group-columns-until-expanded"
+            },
+            {
+                "text": "Columns Tool Panel Deferred Updates",
+                "path": "./tool-panel-columns/#deferred-updates"
+            },
+            {
+                "text": "Rich Select Editor Improvements",
+                "path": "./provided-cell-editors-rich-select-async/#paged-async-filtering"
+            },
+            {
+                "text": "Accessibility Improvements"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-35-2",
+        "hideBlogPostLink": false
+    },
+    {
+        "version": "35.1.0",
+        "date": "11th February 2026",
+        "landingPageHighlight": "Filtering Named Date Ranges, Formula Editor, BigInt Support, Excel Export Security, Theme Builder - Import Theme",
+        "highlights": [
+            {
+                "text": "Filtering Named Date Ranges",
+                "path": "./filter-date/#built-in-named--relative-date-ranges"
+            },
+            {
+                "text": "Formula Editor",
+                "path": "./formula-editor-component/"
+            },
+            {
+                "text": "BigInt Support",
+                "path": "./cell-data-types/#bigint"
+            },
+            {
+                "text": "Excel Export Security",
+                "path": "./excel-export-data-protection/"
+            },
+            {
+                "text": "Theme Builder - Import Theme",
+                "path": "./theming-theme-builder/#importing-themes"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-35-1",
+        "hideBlogPostLink": false
+    },
+    {
+        "version": "35.0.1",
+        "date": "22nd January 2026"
+    },
+    {
         "version": "35.0.0",
         "date": "10th December 2025",
         "landingPageHighlight": "Formulas, Row Group Dragging, Absolute Sorting, Column Selection, Filtering & Export Overlays",
@@ -111,7 +176,7 @@
             },
             {
                 "text": "Compact Column Headers",
-                "path": "./column-headers/#hide-padded-column-headers"
+                "path": "./column-groups/#hide-padded-header-rows"
             },
             {
                 "text": "Grid Context in Integrated Charts",
@@ -304,7 +369,7 @@
             },
             {
                 "text": "Default Column Header Customization",
-                "path": "./column-headers/#inner-header-component"
+                "path": "./column-headers-components/#inner-header-component"
             },
             {
                 "text": "Native Support for Vue 3 Composition API"

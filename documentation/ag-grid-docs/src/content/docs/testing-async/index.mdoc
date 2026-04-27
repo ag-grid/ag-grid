@@ -16,8 +16,8 @@ The filter value uses two way data binding, via `[(ngModel)]=quickFilterText`, t
 <input type="text" id="quickFilter" [(ngModel)]="quickFilterText">
 <div id="numberOfRows">Number of rows: {{displayedRows}}</div>
 
-<ag-grid-angular 
-    [quickFilterText]="quickFilterText" 
+<ag-grid-angular
+    [quickFilterText]="quickFilterText"
     (modelUpdated)="onModelUpdated($event)" />
 ```
 
@@ -64,8 +64,8 @@ It is not recommended to run fixture.detectChanges() inside the beforeEach metho
 
 Two approaches are outlined below to test the asynchronous grid behaviour.
 
-* Using `async` `await` (recommended)
-* Using `fakeAsync`
+-   Using `async` `await` (recommended)
+-   Using `fakeAsync`
 
 ### Validation Helper Function
 
@@ -73,14 +73,14 @@ Both approaches share a common helper function, `validateState`, that tests the 
 
 ```ts
 function validateState({ gridRows, displayedRows, templateRows }) {
-  
+
     // Validate the internal grid model by calling its api method to get the row count
     expect(component.grid.api.getDisplayedRowCount()).toEqual(gridRows)
-    
+
     // Validate the component property displayedRows which we use in the template
     expect(component.displayedRows).toEqual(displayedRows)
 
-    // Validate the rendered html content that the user would see 
+    // Validate the rendered html content that the user would see
     expect(rowNumberDE.nativeElement.innerHTML).toContain(templateRows)
 }
 ```
@@ -176,7 +176,7 @@ it('should filter rows by quickFilterText', (async () => {
     // Run change detection again to update the template.
     fixture.detectChanges()
 
-    // State is now stable and the quick filter has been validated    
+    // State is now stable and the quick filter has been validated
     validateState({ gridRows: 68, displayedRows: 68, templateRows: 68 })
 
 }))
@@ -234,7 +234,7 @@ it('should filter rows by quickFilterText', fakeAsync(() => {
     quickFilterDE.nativeElement.value = 'Germany'
     quickFilterDE.nativeElement.dispatchEvent(new Event('input'));
 
-    // At this point the text input has been updated but the grid 
+    // At this point the text input has been updated but the grid
     // @Input [quickFilterText]="quickFilterText" has not.
     validateState({ gridRows: 1000, displayedRows: 1000, templateRows: 1000 })
 
@@ -255,7 +255,7 @@ it('should filter rows by quickFilterText', fakeAsync(() => {
 
     // Run change detection again so that the template reflects the displayedRows value from the component.
     fixture.detectChanges()
-    // State is now stable and the quick filter has been validated    
+    // State is now stable and the quick filter has been validated
     validateState({ gridRows: 68, displayedRows: 68, templateRows: 68 })
 
 }))

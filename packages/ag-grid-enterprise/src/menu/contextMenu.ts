@@ -8,6 +8,7 @@ import type {
     CellPosition,
     DefaultMenuItem,
     EventShowContextMenuParams,
+    GetNoteParams,
     GridOptionsService,
     GridOptionsWithDefaults,
     IContextMenuService,
@@ -90,7 +91,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         const defaultMenuOptions: DefaultMenuItem[] = [];
 
-        const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos } = this.beans;
+        const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos, notesSvc } = this.beans;
 
         if (_exists(node) && clipboardSvc) {
             if (column) {
@@ -102,8 +103,12 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             }
         }
 
+        if (_exists(node) && column && notesSvc?.hasDataSource()) {
+            defaultMenuOptions.push('note');
+        }
+
         if (gos.get('enableCharts') && chartSvc) {
-            if (colModel.isPivotMode()) {
+            if (colModel.pivotMode) {
                 defaultMenuOptions.push('pivotChart');
             }
 
@@ -184,13 +189,15 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         };
     }
 
-    public showContextMenu(params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }): void {
+    public showContextMenu(
+        params: EventShowContextMenuParams & { anchorToElement?: HTMLElement; noteParams?: GetNoteParams }
+    ): void {
         const rowNode = (params.rowNode ?? null) as RowNode | null;
         const column = (params.column ?? null) as AgColumn | null;
-        let { anchorToElement, value, source } = params;
+        let { anchorToElement, value, source, noteParams } = params;
 
         if (rowNode && column && value == null) {
-            value = this.beans.valueSvc.getValueForDisplay({ column, node: rowNode }).value;
+            value = this.beans.valueSvc.getValueForDisplay({ column, node: rowNode, from: 'edit' }).value;
         }
 
         if (anchorToElement == null) {
@@ -201,7 +208,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             mouseEvent: (params as MouseShowContextMenuParams).mouseEvent ?? null,
             touchEvent: (params as TouchShowContextMenuParam).touchEvent ?? null,
             showMenuCallback: (eventOrTouch) =>
-                this.menu.showMenu({ node: rowNode, column, value }, eventOrTouch, anchorToElement),
+                this.menu.showMenu({ node: rowNode, column, value, noteParams }, eventOrTouch, anchorToElement),
             source,
         });
     }
@@ -213,10 +220,23 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         cellCtrl: CellCtrl
     ): void {
         // prio cell ctrl first, in case of spanned cell, then rowCtrl in case of full width row
+        const fullWidthInfo = rowCtrl?.findFullWidthInfoForEvent(mouseEvent || touchEvent);
         const rowNode = cellCtrl?.rowNode ?? rowCtrl?.rowNode ?? null;
-        const column = cellCtrl?.column ?? rowCtrl?.findFullWidthInfoForEvent(mouseEvent || touchEvent)?.column ?? null;
+        const column = cellCtrl?.column ?? fullWidthInfo?.column ?? null;
+        const noteParams = cellCtrl
+            ? { rowNode: cellCtrl.rowNode, column: cellCtrl.column }
+            : rowCtrl && fullWidthInfo
+              ? {
+                    rowNode: rowCtrl.rowNode,
+                    location: 'fullWidthRow' as const,
+                    pinned:
+                        fullWidthInfo.pinned === 'left' || fullWidthInfo.pinned === 'right'
+                            ? fullWidthInfo.pinned
+                            : undefined,
+                }
+              : undefined;
         const { valueSvc, ctrlsSvc } = this.beans;
-        const value = column ? valueSvc.getValue(column, rowNode) : null;
+        const value = column ? valueSvc.getValue(column, rowNode, 'edit') : null;
 
         // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
         const gridBodyCon = ctrlsSvc.getGridBodyCtrl();
@@ -229,6 +249,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             column,
             value,
             anchorToElement,
+            noteParams,
             source: 'ui',
         } as EventShowContextMenuParams);
     }
@@ -315,6 +336,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             menuItems,
             column as AgColumn | null,
             node as RowNode | null,
+            menuActionParams.noteParams,
             getGui,
             'contextMenu'
         );

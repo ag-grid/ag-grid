@@ -1,0 +1,22 @@
+{% if isFramework("javascript") %}
+
+```js
+const gridOptions = {
+    toolbar: {
+        items: [
+            {
+                key: 'autoSizeAll',
+                toolbarItem: CustomToolbarButton,
+                toolbarItemParams: {
+                    label: 'Auto Size All',
+                    onClick: (api) => api.autoSizeAllColumns(),
+                },
+            },
+            'agQuickFilterToolbarItem',
+        ],
+    },
+    // ...other properties
+}
+```
+
+{% /if %}

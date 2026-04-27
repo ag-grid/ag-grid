@@ -1,8 +1,5 @@
 /* eslint-disable sonarjs/no-dead-store */
-
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { describe, test } from '@jest/globals';
-
 import type { ColDef, ColGroupDef } from './colDef';
 
 describe('ColDef.field Types', () => {
@@ -148,6 +145,20 @@ describe('ColDef.field Types', () => {
         }
         const t: ColDef<RowData>[] = [
             { field: 'list.0' }, // maintain support for this as it works for accessing items from an array
+        ];
+    });
+
+    test('suppressNoteActions callback types', () => {
+        interface RowData {
+            athlete: string;
+        }
+
+        const t: ColDef<RowData>[] = [
+            {
+                field: 'athlete',
+                suppressNoteActions: ({ data, column, colDef, node }) =>
+                    !!data?.athlete && !!column && !!colDef && !!node,
+            },
         ];
     });
 

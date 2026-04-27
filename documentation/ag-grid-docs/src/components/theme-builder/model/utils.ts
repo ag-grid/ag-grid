@@ -85,10 +85,9 @@ export const reinterpretCSSValue = (value: string, type: ParamType): string | nu
 
 let _reinterpretationElement: HTMLElement | null = null;
 
-const getReinterpretationElement = () => {
+export const getReinterpretationElement = () => {
     if (!_reinterpretationElement) {
         _reinterpretationElement = document.createElement('span');
-        _reinterpretationElement.className = 'apply-current-theme-params';
         document.body.appendChild(_reinterpretationElement);
     }
     return _reinterpretationElement;

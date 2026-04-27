@@ -15,7 +15,9 @@ export function waitForEvent(event: AgPublicEventType, api: GridApi, n = 1): Pro
     });
 }
 
-const POINTER_EVENT_SUPPORTED = typeof PointerEvent === 'function';
+function isPointerEventSupported(): boolean {
+    return typeof PointerEvent === 'function';
+}
 
 export async function firePointerLikeClick(element: string | HTMLElement | null | undefined): Promise<boolean> {
     if (typeof element === 'string') {
@@ -42,7 +44,7 @@ export async function firePointerLikeClick(element: string | HTMLElement | null 
         buttons,
     };
 
-    if (POINTER_EVENT_SUPPORTED) {
+    if (isPointerEventSupported()) {
         element.dispatchEvent(new PointerEvent('pointerdown', pointerDownInit));
     }
 
@@ -62,7 +64,7 @@ export async function firePointerLikeClick(element: string | HTMLElement | null 
         ...pointerDownInit,
         buttons: 0,
     };
-    if (POINTER_EVENT_SUPPORTED) {
+    if (isPointerEventSupported()) {
         element.dispatchEvent(new PointerEvent('pointerup', pointerUpInit));
     }
 
@@ -76,4 +78,94 @@ export async function firePointerLikeClick(element: string | HTMLElement | null 
     const clickNotCancelled = true;
 
     return clickNotCancelled;
+}
+
+export type EditEventCounts = {
+    cellEditingStarted: number;
+    cellEditingStopped: number;
+    cellValueChanged: number;
+    rowValueChanged: number;
+    cellEditRequest: number;
+    bulkEditingStarted: number;
+    bulkEditingStopped: number;
+    batchEditingStarted: number;
+    batchEditingStopped: number;
+};
+
+export type UndoCounts = {
+    undoStarted: number;
+    undoEnded: number;
+    redoStarted: number;
+    redoEnded: number;
+};
+const DEFAULT_EDIT_EVENT_COUNTS = {
+    cellEditingStarted: 0,
+    cellEditingStopped: 0,
+    cellValueChanged: 0,
+    rowValueChanged: 0,
+    cellEditRequest: 0,
+    bulkEditingStarted: 0,
+    bulkEditingStopped: 0,
+    batchEditingStarted: 0,
+    batchEditingStopped: 0,
+};
+
+const DEFAULT_UNDO_COUNTS = {
+    undoStarted: 0,
+    undoEnded: 0,
+    redoStarted: 0,
+    redoEnded: 0,
+};
+
+export class EditEventTracker {
+    public readonly counts: EditEventCounts = { ...DEFAULT_EDIT_EVENT_COUNTS };
+    public readonly undoCounts: UndoCounts = { ...DEFAULT_UNDO_COUNTS };
+
+    private readonly listeners: Array<{ event: AgPublicEventType; listener: () => void }> = [];
+
+    constructor(private readonly api: GridApi) {
+        this.track('cellEditingStarted');
+        this.track('cellEditingStopped');
+        this.track('cellValueChanged');
+        this.track('rowValueChanged');
+        this.track('cellEditRequest');
+        this.track('bulkEditingStarted');
+        this.track('bulkEditingStopped');
+        this.track('batchEditingStarted');
+        this.track('batchEditingStopped');
+        this.trackUndo('undoStarted');
+        this.trackUndo('undoEnded');
+        this.trackUndo('redoStarted');
+        this.trackUndo('redoEnded');
+    }
+
+    private track(event: AgPublicEventType): void {
+        const listener = () => {
+            this.counts[event] += 1;
+        };
+
+        this.listeners.push({ event, listener });
+        this.api.addEventListener(event, listener);
+    }
+
+    private trackUndo(event: AgPublicEventType): void {
+        const listener = () => {
+            this.undoCounts[event] += 1;
+        };
+
+        this.listeners.push({ event, listener });
+        this.api.addEventListener(event, listener);
+    }
+
+    public destroy(): void {
+        for (const { event, listener } of this.listeners) {
+            this.api.removeEventListener(event, listener);
+        }
+        this.listeners.length = 0;
+    }
+
+    public reset(): void {
+        Object.assign(this.counts, DEFAULT_EDIT_EVENT_COUNTS);
+        Object.assign(this.undoCounts, DEFAULT_UNDO_COUNTS);
+    }
 }

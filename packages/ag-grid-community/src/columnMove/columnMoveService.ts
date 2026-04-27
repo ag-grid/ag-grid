@@ -96,7 +96,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             let lastPlacement = isRtl ? MoveDirection.RIGHT : MoveDirection.LEFT;
             let rulePassed = true;
             for (const col of proposedColumnOrder) {
-                const placement = lockPositionToPlacement(col.getColDef().lockPosition);
+                const placement = lockPositionToPlacement(col.colDef.lockPosition);
                 if (isRtl) {
                     if (placement > lastPlacement) {
                         // If placement goes up, we're not in the correct order
@@ -185,7 +185,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
                 if (!leafCols.length) {
                     return;
                 }
-                const parent = leafCols[0].getParent();
+                const parent = leafCols[0].parent;
                 if (!parent) {
                     return;
                 }
@@ -260,7 +260,7 @@ function findGroupWidthId(columnGroup: AgColumnGroup | null, id: any): AgColumnG
         if (columnGroup.getGroupId() === id) {
             return columnGroup;
         }
-        columnGroup = columnGroup.getParent();
+        columnGroup = columnGroup.parent;
     }
 
     return undefined;

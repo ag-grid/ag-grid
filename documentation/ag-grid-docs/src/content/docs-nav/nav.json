@@ -56,6 +56,10 @@
                             "path": "deep-dive"
                         },
                         {
+                            "title": "Styling a Grid",
+                            "path": "styling-tutorial"
+                        },
+                        {
                             "title": "Best Practices",
                             "path": "react-hooks",
                             "frameworks": ["react"]
@@ -250,6 +254,11 @@
                             "type": "item",
                             "title": "Extending with CSS",
                             "path": "theming-css"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Theme Builder",
+                            "path": "theming-theme-builder"
                         },
                         {
                             "type": "item",
@@ -560,7 +569,19 @@
                         {
                             "type": "item",
                             "title": "Column Headers",
-                            "path": "column-headers"
+                            "path": "column-headers",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Styling & Height",
+                                    "path": "column-headers-styling"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Components",
+                                    "path": "column-headers-components"
+                                }
+                            ]
                         },
                         {
                             "type": "item",
@@ -713,12 +734,38 @@
                             "type": "item",
                             "title": "Formulas",
                             "path": "formulas",
-                            "isEnterprise": true
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Formula Editor",
+                                    "path": "formula-editor-component",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Formula Reference",
+                                    "path": "formula-reference",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Functions",
+                                    "path": "formula-custom-functions",
+                                    "isEnterprise": true
+                                }
+                            ]
                         },
                         {
                             "type": "item",
                             "title": "Find",
                             "path": "find",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Notes",
+                            "path": "notes",
                             "isEnterprise": true
                         },
                         {
@@ -781,6 +828,11 @@
                                     "type": "item",
                                     "title": "Number Filter",
                                     "path": "filter-number"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "BigInt Filter",
+                                    "path": "filter-bigint"
                                 },
                                 {
                                     "type": "item",
@@ -987,17 +1039,6 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Select Editor",
-                                    "path": "provided-cell-editors-select"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Rich Select Editor",
-                                    "path": "provided-cell-editors-rich-select",
-                                    "isEnterprise": true
-                                },
-                                {
-                                    "type": "item",
                                     "title": "Number Editor",
                                     "path": "provided-cell-editors-number"
                                 },
@@ -1010,6 +1051,31 @@
                                     "type": "item",
                                     "title": "Checkbox Editor",
                                     "path": "provided-cell-editors-checkbox"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Select Editor",
+                                    "path": "provided-cell-editors-select"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Rich Select Editor",
+                                    "path": "provided-cell-editors-rich-select",
+                                    "isEnterprise": true,
+                                    "children": [
+                                        {
+                                            "type": "item",
+                                            "title": "Customisation",
+                                            "path": "provided-cell-editors-rich-select-customisation",
+                                            "isEnterprise": true
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "Async Values",
+                                            "path": "provided-cell-editors-rich-select-async",
+                                            "isEnterprise": true
+                                        }
+                                    ]
                                 }
                             ]
                         },
@@ -1416,6 +1482,12 @@
                         },
                         {
                             "type": "item",
+                            "title": "Quick Access Toolbar",
+                            "path": "toolbar",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
                             "title": "Column Menu",
                             "path": "column-menu",
                             "isEnterprise": true
@@ -1664,6 +1736,12 @@
                                     "type": "item",
                                     "title": "Extra Content",
                                     "path": "excel-export-extra-content",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Notes",
+                                    "path": "excel-export-notes",
                                     "isEnterprise": true
                                 },
                                 {

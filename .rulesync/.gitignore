@@ -1,0 +1,37 @@
+# AG-17098 — content staged by external/ag-shared/scripts/rulesync-fetch/.
+# Patterns cover everything delivered via ag-dev-prompts plugins; local-only
+# items (skills, commands, rules) remain tracked via allowlist entries.
+
+.fetched-from-ag-dev-prompts
+mcp.json
+
+# Plugin-delivered skills — allowlist local-only skills
+/skills/*
+!/skills/technology-stack/
+
+# Plugin-delivered agents — all agents live in plugins
+/subagents/*.md
+
+# Plugin-delivered commands — allowlist local-only ag-grid dev loops.
+# docs-review and release-docs-review are delivered as skills by
+# ag-prodeng; invoke as /ag-prodeng:docs-review etc. (auto-detects ag-grid
+# via packages/ag-grid-community/src).
+/commands/*.md
+/commands/docs/
+!/commands/docs-e2e-tests.md
+!/commands/manual-test.md
+
+# Plugin-delivered rules — allowlist local-only rules (ag-grid-specific).
+# The ag-grid flavours of benchmarks/docs-pages/examples/testing share filenames
+# with ag-charts plugin guides; the ag-grid checkout relies on stage.py's
+# product filter (ag-grid/ag-shared#5) to stop staging ag-charts guides here,
+# so these tracked files are not overwritten.
+/rules/*.md
+!/rules/ag-grid.md
+!/rules/benchmarks.md
+!/rules/docs-pages.md
+!/rules/examples.md
+!/rules/testing.md
+# docs-review-testing.md ships as a sibling asset of the ag-prodeng docs-review
+# skill config (at skills/docs-review/ag-grid/), not as a top-level rule, so no
+# allowlist entry is needed here.

@@ -85,17 +85,18 @@ The `getRows()` method takes the `IGetRowsParams` parameters:
 The `getRows()` function is called by the grid to load a block of rows into the browser-side cache of blocks.
 It takes the following as parameters:
 
-* The `startRow` and `endRow` define the range expected for the call. For example, if the `getRows` function is called with `startRow: 0` and `endRow: 100`, then the grid will expect a result with 100 rows (rows 0 to 99).
+-   The `startRow` and `endRow` define the range expected for the call. For example, if the `getRows` function is called with `startRow: 0` and `endRow: 100`, then the grid will expect a result with 100 rows (rows 0 to 99).
 
-* The `successCallback(rowsThisBlock, lastRow)` should be called when you successfully receive data from the server. The callback has the following parameters:
-  * `rowsThisBlock` should be the rows you have received for the current block.
-  * `lastRow` should be the index of the last row if known.
+-   The `successCallback(rowsThisBlock, lastRow)` should be called when you successfully receive data from the server. The callback has the following parameters:
 
-* The `failCallback()` should be called if the loading failed. Either one of `successCallback()` or `failCallback()` should be called exactly once.
+    -   `rowsThisBlock` should be the rows you have received for the current block.
+    -   `lastRow` should be the index of the last row if known.
 
-* The `filterModel()` and `sortModel()` are passed for doing server-side sorting and filtering.
+-   The `failCallback()` should be called if the loading failed. Either one of `successCallback()` or `failCallback()` should be called exactly once.
 
-* The [context](./context/) is just passed as is and nothing to do with infinite scrolling. It's there if you need it for providing application state to your datasource.
+-   The `filterModel()` and `sortModel()` are passed for doing server-side sorting and filtering.
+
+-   The [context](./context/) is just passed as is and nothing to do with infinite scrolling. It's there if you need it for providing application state to your datasource.
 
 ### Setting Last Row Index
 
@@ -241,15 +242,15 @@ Adding / removing rows directly in the grid for infinite scrolling is not recomm
 
 Below demonstrates the different API methods via the buttons. The example outputs a lot of debugging items to the console because the grid property `debug=true` is set. The buttons are as follows:
 
-* **Insert Rows**: Inserts 5 rows at row index 2 from the server, then refreshes the grid.
-* **Delete Rows**: Deletes 10 rows at row index 3 from the server, then refreshes the grid.
-* **Set Row Count**: Sets the row count to 200. This adjusts the vertical scroll to show 200 rows. If the scroll is positioned at the end, this results in the grid automatically re-adjusting as it seeks ahead for the next block of data.
-* **Print Info**: Prints `rowCount` and `maxFound` to the console.
-* **Jump to 500**: Positions the grid so that row 500 is displayed.
-* **Print Cache State**: Debugging method, to see the state of the cache.
-* **Set Prices High & Set Prices Low**: Sets the prices on the server-side to either high or low prices. This will not impact the grid until after a block cache is loaded. Use these buttons to then further test the refresh and purge methods.
-* **Refresh Cache**: Calls for the cache to be refreshed.
-* **Purge Cache**: Calls for the cache to be purged.
+-   **Insert Rows**: Inserts 5 rows at row index 2 from the server, then refreshes the grid.
+-   **Delete Rows**: Deletes 10 rows at row index 3 from the server, then refreshes the grid.
+-   **Set Row Count**: Sets the row count to 200. This adjusts the vertical scroll to show 200 rows. If the scroll is positioned at the end, this results in the grid automatically re-adjusting as it seeks ahead for the next block of data.
+-   **Print Info**: Prints `rowCount` and `maxFound` to the console.
+-   **Jump to 500**: Positions the grid so that row 500 is displayed.
+-   **Print Cache State**: Debugging method, to see the state of the cache.
+-   **Set Prices High & Set Prices Low**: Sets the prices on the server-side to either high or low prices. This will not impact the grid until after a block cache is loaded. Use these buttons to then further test the refresh and purge methods.
+-   **Refresh Cache**: Calls for the cache to be refreshed.
+-   **Purge Cache**: Calls for the cache to be purged.
 
 The example also makes each Honda row bold - demonstrating that the callbacks `getRowStyle` and `getRowClass`
 get called after the data is set as well as when the row is created (when the data may not yet be available).
@@ -262,9 +263,9 @@ get called after the data is set as well as when the row is created (when the da
 
 The example below demonstrates changing columns on the infinite row model. The following can be noted:
 
-* Hit the buttons 'Show Year' and 'Hide Year'. Notice that the data is not re-fetched.
-* Add a sort or filter to Age column. When the sort or filter is applied the data is re-fetched. However once fetched, you can add and remove the Year column without re-fetching the data.
-* Add a sort or filter to the Year column. When the sort or filter is applied the data is re-fetched. Now remove the Year column and the data is re-fetched again as the sort or filter has changed.
+-   Hit the buttons 'Show Year' and 'Hide Year'. Notice that the data is not re-fetched.
+-   Add a sort or filter to Age column. When the sort or filter is applied the data is re-fetched. However once fetched, you can add and remove the Year column without re-fetching the data.
+-   Add a sort or filter to the Year column. When the sort or filter is applied the data is re-fetched. Now remove the Year column and the data is re-fetched again as the sort or filter has changed.
 
 {% gridExampleRunner title="Changing Columns" name="changing-columns" /%}
 
@@ -300,4 +301,3 @@ This example demonstrates having the page and block sizes equal. Here the server
 The infinite row model does not automatically show the `loading` overlay as rows are loaded in blocks as the user interacts with the grid. The grid will show the `no rows` overlay if the datasource returns an empty array and the `no matching rows` overlay if an empty array is returned while filters are set.
 
 For configuration details, including suppressing the built in overlays, see [Overlays](./overlays-overview/).
-

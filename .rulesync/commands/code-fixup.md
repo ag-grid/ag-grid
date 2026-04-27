@@ -1,1 +1,0 @@
-../../external/ag-shared/prompts/commands/code/fixup.md

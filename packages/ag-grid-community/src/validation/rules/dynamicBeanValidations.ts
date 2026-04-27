@@ -21,6 +21,7 @@ export const DYNAMIC_BEAN_MODULES: Record<DynamicBeanName, ValidationModuleName>
     agMultiColumnFilterHandler: 'MultiFilter',
     agGroupColumnFilterHandler: 'GroupFilter',
     agNumberColumnFilterHandler: 'NumberFilter',
+    agBigIntColumnFilterHandler: 'BigIntFilter',
     agDateColumnFilterHandler: 'DateFilter',
     agTextColumnFilterHandler: 'TextFilter',
 };

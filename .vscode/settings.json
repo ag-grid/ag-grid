@@ -3,8 +3,17 @@
   "editor.tabSize": 4,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.associations": {
+    "*.mdoc": "markdown",
+    "*.snyk": "yaml"
+  },
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "yaml.format.singleQuote": true,
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.tabSize": 4
   },
   "search.exclude": {
     "**/vitest.config.js.timestamp*": true,
@@ -76,9 +85,10 @@
   "cSpell.files": ["**/*", "!**/{package,settings,project,tsconfig}.json"],
   "git.detectSubmodulesLimit": 20,
   "files.exclude": {
-    "**/vitest.config.*.timestamp*": true,
+    "**/.angular/": true,
+    "**/.DS_Store": true,
     "**/.git": true,
-    "**/.DS_Store": true
+    "**/vitest.config.*.timestamp*": true
   },
   "[scss]": {
     "editor.detectIndentation": false,
@@ -148,8 +158,6 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "vitest.workspaceConfig": "vitest.workspace.ts",
-  "jest.rootPath": "testing/behavioural",
-  "jest.runMode": "watch",
   "files.watcherExclude": {
     "**/.nx/**": true,
     "**/dist/**": true,

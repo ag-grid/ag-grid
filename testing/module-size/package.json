@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-module-size",
   "private": true,
-  "version": "35.0.0-beta.20260104.2036",
+  "version": "35.2.1-beta.20260419.2046",
   "scripts": {
     "dev": "vite",
     "cp-app": "cp ./src/App_Src.tsx ./src/App_AUTO.tsx",
@@ -14,26 +14,26 @@
     "test:e2e": "run-s \"module-combinations -- {1}\" module-validate --"
   },
   "dependencies": {
-    "ag-grid-react": "35.0.0-beta.20260104.2036",
-    "ag-grid-community": "35.0.0-beta.20260104.2036",
-    "ag-grid-enterprise": "35.0.0-beta.20260104.2036",
-    "ag-charts-community": "13.0.0-beta.20260104",
-    "ag-charts-enterprise": "13.0.0-beta.20260104",
+    "ag-grid-react": "35.2.1-beta.20260419.2046",
+    "ag-grid-community": "35.2.1-beta.20260419.2046",
+    "ag-grid-enterprise": "35.2.1-beta.20260419.2046",
+    "ag-charts-community": "13.2.1-beta.20260426",
+    "ag-charts-enterprise": "13.2.1-beta.20260426",
     "ag-shared": "0.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.9.0",
+    "@eslint/js": "^10.0.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
-    "eslint": "^9.9.0",
+    "eslint": "^10.2.0",
     "glob": "^11.1.0",
-    "globals": "^15.9.0",
-    "terser": "^5.36.0",
+    "globals": "^17.5.0",
+    "terser": "^5.46.1",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^8.0.1",
+    "typescript-eslint": "^8.58.2",
     "vite": "~5.4.19",
     "npm-run-all": "4.1.5"
   }

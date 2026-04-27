@@ -192,39 +192,58 @@ preflight_checks() {
 # =============================================================================
 
 generate_to_temp() {
-    log_info "Generating rulesync output to temp directory..."
+    log_info "Setting up temp directory for setup-prompts.sh..."
     log_info "Target: $TARGET"
     log_info "Temp dir: $TEMP_DIR"
 
-    # Copy .rulesync/ to temp directory so rulesync outputs there
+    cd "$TEMP_DIR"
+
+    # Initialize git repo (required for stash/restore_agents_md in setup-prompts.sh)
+    git init --quiet
+
+    # Copy .rulesync/ to temp directory
     log_info "Copying .rulesync/ to temp directory..."
     cp -R "$REPO_ROOT/.rulesync" "$TEMP_DIR/.rulesync"
 
     # Resolve symlinks in the copied .rulesync to actual file content
     # This is needed because symlinks point to relative paths that won't work in temp
-    for f in "$TEMP_DIR/.rulesync/commands/"*.md "$TEMP_DIR/.rulesync/subagents/"*.md "$TEMP_DIR/.rulesync/rules/"*.md; do
+    # Handles both top-level files and files in subdirectories (e.g., rules/data-engine/)
+    while IFS= read -r -d '' f; do
         if [[ -L "$f" ]]; then
             local target
             target=$(resolve_symlink "$REPO_ROOT/.rulesync/${f#$TEMP_DIR/.rulesync/}")
             rm "$f"
             cp "$target" "$f"
         fi
-    done 2>/dev/null || true
+    done < <(find "$TEMP_DIR/.rulesync/commands" "$TEMP_DIR/.rulesync/subagents" "$TEMP_DIR/.rulesync/rules" -name "*.md" -print0 2>/dev/null) || true
 
-    cd "$TEMP_DIR"
+    # Copy original AGENTS.md from repo (the expected final state)
+    if [[ -f "$REPO_ROOT/AGENTS.md" ]]; then
+        cp "$REPO_ROOT/AGENTS.md" "$TEMP_DIR/AGENTS.md"
+    else
+        touch "$TEMP_DIR/AGENTS.md"
+    fi
+    git add AGENTS.md
+    # Use inline config for git identity to avoid relying on global config (may be unset in CI)
+    git -c user.name="verify-rulesync" -c user.email="verify@localhost" commit -m "initial" --quiet
 
-    # Run rulesync generate from temp directory
-    # Use the repo's rulesync to ensure we test the patched version
-    if ! "$REPO_ROOT/node_modules/.bin/rulesync" generate \
-        --targets="$TARGET" \
-        --features="rules,ignore,mcp,commands,subagents" \
-        --delete 2>&1; then
-        log_error "Rulesync execution failed"
+    # Symlink node_modules for rulesync binary
+    ln -s "$REPO_ROOT/node_modules" "$TEMP_DIR/node_modules"
+
+    # Symlink external directory for script dependencies
+    ln -s "$REPO_ROOT/external" "$TEMP_DIR/external"
+
+    # Run setup-prompts.sh with specific target and postinstall flag
+    # Use SETUP_PROMPTS_REPO_ROOT to override the repo root to our temp directory
+    # This will: 1) run rulesync, 2) reset AGENTS.md to committed state (for codexcli)
+    if ! SETUP_PROMPTS_REPO_ROOT="$TEMP_DIR" "$REPO_ROOT/external/ag-shared/scripts/setup-prompts/setup-prompts.sh" \
+        --targets="$TARGET" --postinstall 2>&1; then
+        log_error "setup-prompts.sh execution failed"
         exit 4
     fi
 
     cd "$REPO_ROOT"
-    log_success "Rulesync generation completed"
+    log_success "setup-prompts.sh completed successfully"
 }
 
 # =============================================================================
@@ -251,7 +270,8 @@ build_expected_inventory() {
             root_rule_source="$rule_file"
             # Root rule becomes CLAUDE.md or AGENTS.md
             if [[ "$TARGET" == "claudecode" ]]; then
-                EXPECTED_FILES+=("$root_rule")
+                # CLAUDE.md is at repo root, not inside .claude/
+                EXPECTED_FILES+=("../$root_rule")
             else
                 # For codexcli, root goes to repo root as AGENTS.md
                 EXPECTED_FILES+=("../$root_rule")
@@ -269,12 +289,23 @@ build_expected_inventory() {
         fi
     done
 
+    # Rules in subdirectories (e.g., rules/data-engine/*.md)
+    while IFS= read -r -d '' rule_file; do
+        local rel_path="${rule_file#$REPO_ROOT/.rulesync/rules/}"
+        EXPECTED_FILES+=("$rules_dir/$rel_path")
+    done < <(find "$REPO_ROOT/.rulesync/rules" -mindepth 2 -type f -name "*.md" -print0 2>/dev/null)
+
     # Commands (claudecode only - goes to commands/)
+    # Skip files with _ prefix as they are internal helper files (e.g., _review-core.md)
     if [[ "$TARGET" == "claudecode" ]] && [[ -d "$REPO_ROOT/.rulesync/commands" ]]; then
         for cmd_file in "$REPO_ROOT/.rulesync/commands/"*.md; do
             if [[ -f "$cmd_file" ]]; then
                 local basename
                 basename=$(basename "$cmd_file")
+                # Skip internal helper files (prefixed with _)
+                if [[ "$basename" == _* ]]; then
+                    continue
+                fi
                 EXPECTED_FILES+=("commands/$basename")
             fi
         done
@@ -287,6 +318,38 @@ build_expected_inventory() {
                 local basename
                 basename=$(basename "$agent_file")
                 EXPECTED_FILES+=("agents/$basename")
+            fi
+        done
+    fi
+
+    # Skills (claudecode only - goes to skills/<name>/SKILL.md plus helper files)
+    if [[ "$TARGET" == "claudecode" ]] && [[ -d "$REPO_ROOT/.rulesync/skills" ]]; then
+        for skill_dir in "$REPO_ROOT/.rulesync/skills/"*/; do
+            if [[ -d "$skill_dir" ]]; then
+                local dirname
+                dirname=$(basename "$skill_dir")
+                EXPECTED_FILES+=("skills/$dirname/SKILL.md")
+                # Include all non-SKILL.md markdown files (helpers, templates, guides)
+                for helper_file in "$skill_dir"*.md; do
+                    if [[ -f "$helper_file" && "$(basename "$helper_file")" != "SKILL.md" ]]; then
+                        local helper_basename
+                        helper_basename=$(basename "$helper_file")
+                        EXPECTED_FILES+=("skills/$dirname/$helper_basename")
+                    fi
+                done
+                # Include co-located shell scripts (e.g., context-path.sh)
+                for helper_file in "$skill_dir"*.sh; do
+                    if [[ -f "$helper_file" ]]; then
+                        local helper_basename
+                        helper_basename=$(basename "$helper_file")
+                        EXPECTED_FILES+=("skills/$dirname/$helper_basename")
+                    fi
+                done
+                # Include files in subdirectories (e.g., assets/)
+                while IFS= read -r -d '' sub_file; do
+                    local rel_path="${sub_file#$skill_dir}"
+                    EXPECTED_FILES+=("skills/$dirname/$rel_path")
+                done < <(find "$skill_dir" -mindepth 2 -type f -print0 2>/dev/null)
             fi
         done
     fi
@@ -319,7 +382,10 @@ verify_inventory() {
         actual_files+=("$rel_path")
     done < <(find "$temp_output" -type f -print0 2>/dev/null)
 
-    # Check for codexcli root rule in parent
+    # Check for root rule in parent directory (repo root, not inside output dir)
+    if [[ "$TARGET" == "claudecode" ]] && [[ -f "$TEMP_DIR/CLAUDE.md" ]]; then
+        actual_files+=("../CLAUDE.md")
+    fi
     if [[ "$TARGET" == "codexcli" ]] && [[ -f "$TEMP_DIR/AGENTS.md" ]]; then
         actual_files+=("../AGENTS.md")
     fi
@@ -395,12 +461,15 @@ verify_content() {
         basename=$(basename "$rule_file")
         local source_file
         source_file=$(resolve_symlink "$rule_file")
+        local is_root_rule=false
 
         # Determine output path
         local output_file
         if grep -q "^root:[[:space:]]*true" "$rule_file"; then
+            is_root_rule=true
             if [[ "$TARGET" == "claudecode" ]]; then
-                output_file="$temp_output/CLAUDE.md"
+                # CLAUDE.md is at repo root, not inside .claude/
+                output_file="$TEMP_DIR/CLAUDE.md"
             else
                 output_file="$TEMP_DIR/AGENTS.md"
             fi
@@ -409,6 +478,47 @@ verify_content() {
         fi
 
         if [[ -f "$output_file" ]]; then
+            if [[ "$is_root_rule" == "true" ]]; then
+                if [[ "$TARGET" == "codexcli" ]]; then
+                    # codexcli: verify AGENTS.md was properly reset by stash/restore
+                    if [[ -f "$REPO_ROOT/AGENTS.md" ]]; then
+                        local original_content
+                        local output_content
+                        original_content=$(cat "$REPO_ROOT/AGENTS.md" | normalise_content)
+                        output_content=$(cat "$output_file" | normalise_content)
+
+                        if [[ "$original_content" != "$output_content" ]]; then
+                            log_error "AGENTS.md was not properly reset by setup-prompts.sh"
+                            log_info "  Expected: matches $REPO_ROOT/AGENTS.md"
+                            log_info "  Actual: modified content (possibly TOON header not removed)"
+                            diff <(echo "$original_content") <(echo "$output_content") | head -20 || true
+                            ((content_errors++)) || true
+                        else
+                            log_success "AGENTS.md verified: properly reset to original state"
+                        fi
+                    else
+                        log_success "AGENTS.md verified: no original to compare (expected empty)"
+                    fi
+                else
+                    # claudecode: verify CLAUDE.md content matches source rule
+                    local source_content
+                    local output_content
+                    source_content=$(strip_frontmatter "$source_file" | normalise_content)
+                    output_content=$(strip_frontmatter "$output_file" | normalise_content)
+
+                    if [[ "$source_content" != "$output_content" ]]; then
+                        log_error "Content mismatch: CLAUDE.md"
+                        log_info "  Source: $source_file"
+                        log_info "  Output: $output_file"
+                        diff <(echo "$source_content") <(echo "$output_content") | head -20 || true
+                        ((content_errors++)) || true
+                    else
+                        log_success "Content verified: CLAUDE.md"
+                    fi
+                fi
+                continue
+            fi
+
             # Compare content after stripping frontmatter
             local source_content
             local output_content
@@ -428,7 +538,33 @@ verify_content() {
         fi
     done
 
+    # Verify rules in subdirectories (e.g., rules/data-engine/*.md)
+    while IFS= read -r -d '' rule_file; do
+        local rel_path="${rule_file#$REPO_ROOT/.rulesync/rules/}"
+        local source_file
+        source_file=$(resolve_symlink "$rule_file")
+        local output_file="$temp_output/$rules_dir/$rel_path"
+
+        if [[ -f "$output_file" ]]; then
+            local source_content
+            local output_content
+            source_content=$(strip_frontmatter "$source_file" | normalise_content)
+            output_content=$(strip_frontmatter "$output_file" | normalise_content)
+
+            if [[ "$source_content" != "$output_content" ]]; then
+                log_error "Content mismatch: $rules_dir/$rel_path"
+                log_info "  Source: $source_file"
+                log_info "  Output: $output_file"
+                diff <(echo "$source_content") <(echo "$output_content") | head -20 || true
+                ((content_errors++)) || true
+            else
+                log_success "Content verified: $rel_path"
+            fi
+        fi
+    done < <(find "$REPO_ROOT/.rulesync/rules" -mindepth 2 -type f -name "*.md" -print0 2>/dev/null)
+
     # Verify commands content (claudecode only)
+    # Skip files with _ prefix as they are internal helper files (e.g., _review-core.md)
     if [[ "$TARGET" == "claudecode" ]] && [[ -d "$REPO_ROOT/.rulesync/commands" ]]; then
         for cmd_file in "$REPO_ROOT/.rulesync/commands/"*.md; do
             if [[ ! -f "$cmd_file" ]]; then
@@ -437,6 +573,10 @@ verify_content() {
 
             local basename
             basename=$(basename "$cmd_file")
+            # Skip internal helper files (prefixed with _)
+            if [[ "$basename" == _* ]]; then
+                continue
+            fi
             local source_file
             source_file=$(resolve_symlink "$cmd_file")
             local output_file="$temp_output/commands/$basename"
@@ -489,6 +629,67 @@ verify_content() {
                     log_success "Content verified: agents/$basename"
                 fi
             fi
+        done
+    fi
+
+    # Verify skills content (claudecode only)
+    if [[ "$TARGET" == "claudecode" ]] && [[ -d "$REPO_ROOT/.rulesync/skills" ]]; then
+        for skill_dir in "$REPO_ROOT/.rulesync/skills/"*/; do
+            if [[ ! -d "$skill_dir" ]]; then
+                continue
+            fi
+
+            local dirname
+            dirname=$(basename "$skill_dir")
+            local source_skill_dir
+            source_skill_dir=$(resolve_symlink "$skill_dir")
+            local source_file="$source_skill_dir/SKILL.md"
+            local output_file="$temp_output/skills/$dirname/SKILL.md"
+
+            if [[ -f "$source_file" && -f "$output_file" ]]; then
+                local source_content
+                local output_content
+                source_content=$(strip_frontmatter "$source_file" | normalise_content)
+                output_content=$(strip_frontmatter "$output_file" | normalise_content)
+
+                if [[ "$source_content" != "$output_content" ]]; then
+                    log_error "Content mismatch: skills/$dirname/SKILL.md"
+                    log_info "  Source: $source_file"
+                    log_info "  Output: $output_file"
+                    diff <(echo "$source_content") <(echo "$output_content") | head -20 || true
+                    ((content_errors++)) || true
+                else
+                    log_success "Content verified: skills/$dirname/SKILL.md"
+                fi
+            fi
+
+            # Verify non-SKILL.md helper files (templates, guides, etc.)
+            for helper_file in "$skill_dir"*.md; do
+                if [[ -f "$helper_file" && "$(basename "$helper_file")" != "SKILL.md" ]]; then
+                    local helper_basename
+                    helper_basename=$(basename "$helper_file")
+                    local helper_source
+                    helper_source=$(resolve_symlink "$helper_file")
+                    local helper_output="$temp_output/skills/$dirname/$helper_basename"
+
+                    if [[ -f "$helper_output" ]]; then
+                        local source_content
+                        local output_content
+                        source_content=$(strip_frontmatter "$helper_source" | normalise_content)
+                        output_content=$(strip_frontmatter "$helper_output" | normalise_content)
+
+                        if [[ "$source_content" != "$output_content" ]]; then
+                            log_error "Content mismatch: skills/$dirname/$helper_basename"
+                            log_info "  Source: $helper_source"
+                            log_info "  Output: $helper_output"
+                            diff <(echo "$source_content") <(echo "$output_content") | head -20 || true
+                            ((content_errors++)) || true
+                        else
+                            log_success "Content verified: skills/$dirname/$helper_basename"
+                        fi
+                    fi
+                fi
+            done
         done
     fi
 

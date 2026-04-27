@@ -1,0 +1,80 @@
+---
+title: "Formula Reference"
+enterprise: true
+---
+
+This page lists all supported operators and built-in functions for quick reference. For syntax usage and examples, see the main [Formulas](./formulas/) page.
+
+## Mathematical Operators
+
+| Symbol | Description                                                                         |
+| ------ | ----------------------------------------------------------------------------------- |
+| `+`    | Addition, can be used to add two numbers, or add days to a Date                     |
+| `-`    | Subtraction, can be used to subtract two numbers, or subtract days from a Date      |
+| `*`    | Multiplication, can be used to multiply two numbers                                 |
+| `/`    | Division, can be used to divide two numbers                                         |
+| `^`    | Exponentiation, can be used to raise a number to a power                            |
+| `&`    | Concatenation, can be used to join two strings                                      |
+| `=`    | Equal to, can be used to compare two values                                         |
+| `<>`   | Not equal to, can be used to compare two values                                     |
+| `>`    | Greater than, can be used to compare two values                                     |
+| `<`    | Less than, can be used to compare two values                                        |
+| `>=`   | Greater than or equal to, can be used to compare two values                         |
+| `<=`   | Less than or equal to, can be used to compare two values                            |
+| `%`    | Percentage postfix operator, divides a value by 100 (e.g. `50%` evaluates to `0.5`) |
+
+## Provided Functions
+
+**Numeric Functions**
+
+| Function                              | Description                                                                                                                                                            |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SUM(arg1, arg2, ...)`                | Returns the sum of all arguments.                                                                                                                                      |
+| `SUMIF(range, criteria, [sum_range])` | Returns the sum of values in `sum_range` where the corresponding values in `range` meet the `criteria`. If `sum_range` is not provided, `range` is used for summation. |
+| `PRODUCT(arg1, arg2, ...)`            | Returns the product of all arguments.                                                                                                                                  |
+| `MIN(arg1, arg2, ...)`                | Returns the minimum value among the arguments.                                                                                                                         |
+| `MAX(arg1, arg2, ...)`                | Returns the maximum value among the arguments.                                                                                                                         |
+| `AVERAGE(arg1, arg2, ...)`            | Returns the average of all numeric values among the arguments.                                                                                                         |
+| `MEDIAN(arg1, arg2, ...)`             | Returns the median of all numeric values among the arguments.                                                                                                          |
+| `POWER(arg1, arg2)`                   | Returns the result of raising the first argument to the power of the second argument.                                                                                  |
+| `RAND()`                              | Returns a random number between 0 and 1.                                                                                                                               |
+
+**Date Functions**
+
+| Function  | Description                                                                        |
+| --------- | ---------------------------------------------------------------------------------- |
+| `NOW()`   | Returns a date object representing the current date and time.                      |
+| `TODAY()` | Returns a date object representing the current date with the time set to 00:00:00. |
+
+**Text Functions**
+
+| Function                  | Description                                      |
+| ------------------------- | ------------------------------------------------ |
+| `CONCAT(arg1, arg2, ...)` | Concatenates all arguments into a single string. |
+
+**Logical Functions**
+
+| Function                                       | Description                                                                           |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `IF(condition, value_if_true, value_if_false)` | Returns `value_if_true` if the condition is true, otherwise returns `value_if_false`. |
+
+**Counting Functions**
+
+| Function                      | Description                                                      |
+| ----------------------------- | ---------------------------------------------------------------- |
+| `COUNT(arg1, arg2, ...)`      | Returns the count of numeric values among the arguments.         |
+| `COUNTA(arg1, arg2, ...)`     | Returns the count of non-empty values among the arguments.       |
+| `COUNTBLANK(arg1, arg2, ...)` | Returns the count of empty values among the arguments.           |
+| `COUNTIF(range, criteria)`    | Returns the count of values in the range that meet the criteria. |
+
+## Error Codes
+
+| Error       | Description                                                                        |
+| ----------- | ---------------------------------------------------------------------------------- |
+| `#REF!`     | Formula contains invalid cell reference                                            |
+| `#NAME?`    | Formula contains invalid operation                                                 |
+| `#CIRCREF!` | Formula contains circular reference                                                |
+| `#PARSE!`   | Could not parse formula value                                                      |
+| `#VALUE!`   | Formula contains value of the wrong type (e.g. non-numeric arguments to functions) |
+| `#DIV/0!`   | Formula results in a division by zero                                              |
+| `#ERROR!`   | Formula contains some other kind of error                                          |

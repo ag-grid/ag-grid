@@ -78,7 +78,7 @@ export class ToolPanelFilterGroupComp extends Component {
                     () => filterGroupComp.getGui().querySelector('.ag-group-title') as HTMLElement | undefined
                 ),
                 getAdditionalParams: () => ({
-                    colDef: column?.getColDef(),
+                    colDef: column?.colDef,
                     column,
                 }),
             } as ITooltipCtrl)
@@ -101,7 +101,7 @@ export class ToolPanelFilterGroupComp extends Component {
         }
 
         const refresh = () => {
-            this.tooltipFeature?.setTooltipAndRefresh((this.columnGroup as AgColumn).getColDef().headerTooltip);
+            this.tooltipFeature?.setTooltipAndRefresh((this.columnGroup as AgColumn).colDef.headerTooltip);
         };
 
         refresh();

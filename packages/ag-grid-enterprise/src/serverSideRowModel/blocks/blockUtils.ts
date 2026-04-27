@@ -117,7 +117,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     private setRowGroupInfo(rowNode: RowNode): void {
-        rowNode.key = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode);
+        // Use 'data' - group keys should be based on committed data, not pending edits
+        rowNode.key = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode, 'data');
 
         if (rowNode.key === null || rowNode.key === undefined) {
             _doOnce(() => {
@@ -134,10 +135,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
         const getGroupIncludeFooter = _getGroupTotalRowCallback(this.beans.gos);
         const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
         if (doesRowShowFooter) {
-            _createRowNodeFooter(rowNode, this.beans);
-            if (rowNode.sibling) {
-                rowNode.sibling.uiLevel = rowNode.uiLevel + 1;
-            }
+            const footerNode = _createRowNodeFooter(rowNode, this.beans);
+            footerNode.uiLevel = rowNode.uiLevel + 1;
         }
     }
 
@@ -253,10 +252,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
                 rowNode._groupData = groupData;
             }
             if (usingTreeData) {
-                groupData[col.getColId()] = key;
+                groupData[col.colId] = key;
             } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
-                const groupValue = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode);
-                groupData[col.getColId()] = groupValue;
+                // Use 'data' - group keys should be based on committed data, not pending edits
+                const groupValue = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode, 'data');
+                groupData[col.colId] = groupValue;
             }
         }
     }
@@ -402,11 +402,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     public checkOpenByDefault(rowNode: RowNode): void {
         const expanded = !!this.expansionSvc?.isNodeExpanded(rowNode);
-        const oldExpanded = rowNode.expanded;
+        const oldExpanded = rowNode._expanded;
         if (!!oldExpanded !== expanded) {
             rowNode.setExpanded(expanded);
         } else if (oldExpanded === undefined) {
-            rowNode.expanded = expanded; // Initial state, don't fire event
+            rowNode._expanded = expanded; // Initial state, don't fire event
         }
     }
 }

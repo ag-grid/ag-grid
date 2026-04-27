@@ -59,11 +59,20 @@ const darkParams = () =>
         advancedFilterBuilderOptionPillColor: '#5a3168',
         advancedFilterBuilderValuePillColor: '#374c86',
         filterPanelApplyButtonColor: foregroundColor,
+        columnPanelApplyButtonColor: foregroundColor,
         findMatchColor: backgroundColor,
         findActiveMatchColor: backgroundColor,
         checkboxUncheckedBorderColor: foregroundBackgroundMix(0.4),
         toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.4),
         rowBatchEditBackgroundColor: foregroundBackgroundMix(0.1),
+        // dark colours for formula editor / formula ranges
+        formulaToken1Color: '#4da3e5',
+        formulaToken2Color: '#f55864',
+        formulaToken3Color: '#b688f2',
+        formulaToken4Color: '#24bb4a',
+        formulaToken5Color: '#e772ba',
+        formulaToken6Color: '#f69b5f',
+        formulaToken7Color: '#a3e6ff',
     }) as const;
 
 const makeColorSchemeDarkTreeShakeable = () =>

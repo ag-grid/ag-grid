@@ -1,12 +1,13 @@
 import { getByTestId } from '@testing-library/dom';
-import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
 import type { GridOptions, ValueGetterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    DateEditorModule,
     NumberEditorModule,
     PinnedRowModule,
+    ScrollApiModule,
     SelectEditorModule,
     TextEditorModule,
     agTestIdFor,
@@ -44,10 +45,12 @@ describe('Batch editing documentation examples', () => {
         includeDefaultModules: true,
         modules: [
             ClientSideRowModelModule,
+            DateEditorModule,
             NumberEditorModule,
             TextEditorModule,
             SelectEditorModule,
             PinnedRowModule,
+            ScrollApiModule,
             BatchEditModule,
             CellSelectionModule,
             ColumnsToolPanelModule,
@@ -164,6 +167,13 @@ describe('Batch editing documentation examples', () => {
         expect(aliceTotalCell).not.toHaveClass('ag-cell-batch-edit');
         expect(api.isBatchEditing()).toBe(true);
 
+        await new GridRows(api, 'batch pending gold=100 before commit').check(`
+            ROOT id:ROOT_NODE_ID age:{"count":2,"value":25} total:9
+            ├── LEAF ⏳ id:0 athlete:"Ali" age:24 country:"Ireland" date:"2024-01-01" sport:"Rowing" gold:⏳100 1 silver:2 bronze:3 total:105
+            ├── LEAF id:1 athlete:"Bob" age:26 country:"Spain" date:"2024-01-02" sport:"Cycling" gold:2 silver:1 bronze:0 total:3
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID age:{"count":2,"value":25} total:9
+        `);
+
         api.commitBatchEdit();
         expect(api.isBatchEditing()).toBe(false);
         expect(aliceGoldCell).not.toHaveClass('ag-cell-batch-edit');
@@ -239,5 +249,96 @@ describe('Batch editing documentation examples', () => {
             ├── LEAF id:1 athlete:"Bob" age:26 country:"Spain" date:"2024-01-02" sport:"Cycling" gold:2 silver:1 bronze:0 total:3
             └─ footer id:rowGroupFooter_ROOT_NODE_ID age:{"count":2,"value":25} total:128
         `);
+    });
+
+    test('batch editing preserves values when navigating between cells', async () => {
+        const api = await gridsManager.createGridAndWait('batchNavigation', {
+            columnDefs: [
+                { field: 'a', cellEditor: 'agTextCellEditor' },
+                { field: 'b', cellEditor: 'agTextCellEditor' },
+                { field: 'c', cellEditor: 'agTextCellEditor' },
+            ],
+            rowData: [
+                { id: '0', a: 'a0', b: 'b0', c: 'c0' },
+                { id: '1', a: 'a1', b: 'b1', c: 'c1' },
+            ],
+            getRowId: (params) => params.data.id,
+            defaultColDef: { editable: true, flex: 1 },
+        });
+
+        await asyncSetTimeout(1);
+        const gridElement = getGridElement(api)! as HTMLElement;
+        const getCell = (rowId: string, colId: string) => getByTestId(gridElement, agTestIdFor.cell(rowId, colId));
+        const user = userEvent.setup();
+
+        api.startBatchEdit();
+
+        // Edit cell a0
+        const cellA0 = getCell('0', 'a');
+        await user.dblClick(cellA0);
+        await user.keyboard('edited-a0');
+        expect(cellA0.querySelector('input')?.value).toBe('edited-a0');
+
+        // Tab to next cell - value should be preserved
+        await user.keyboard('{Tab}');
+        await asyncSetTimeout(1);
+
+        expect(cellA0).toHaveTextContent('edited-a0');
+        expect(cellA0).toHaveClass('ag-cell-batch-edit');
+
+        // Edit cell b0
+        const cellB0 = getCell('0', 'b');
+        expect(cellB0.querySelector('input')).toBeTruthy();
+        await user.keyboard('edited-b0');
+        await asyncSetTimeout(1);
+
+        // Tab to next cell
+        await user.keyboard('{Tab}');
+        await asyncSetTimeout(1);
+
+        expect(cellA0).toHaveTextContent('edited-a0');
+        expect(cellB0).toHaveTextContent('edited-b0');
+        expect(cellA0).toHaveClass('ag-cell-batch-edit');
+        expect(cellB0).toHaveClass('ag-cell-batch-edit');
+
+        // Edit cell c0
+        const cellC0 = getCell('0', 'c');
+        expect(cellC0.querySelector('input')).toBeTruthy();
+        await user.keyboard('edited-c0');
+        await asyncSetTimeout(1);
+
+        // Press Enter to close editor
+        await user.keyboard('{Enter}');
+        await asyncSetTimeout(1);
+
+        expect(cellA0).toHaveTextContent('edited-a0');
+        expect(cellB0).toHaveTextContent('edited-b0');
+        expect(cellC0).toHaveTextContent('edited-c0');
+        expect(cellA0).toHaveClass('ag-cell-batch-edit');
+        expect(cellB0).toHaveClass('ag-cell-batch-edit');
+        expect(cellC0).toHaveClass('ag-cell-batch-edit');
+
+        await new GridRows(api, 'three cells batch pending before commit').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF ⏳ id:0 a:⏳"edited-a0" "a0" b:⏳"edited-b0" "b0" c:⏳"edited-c0" "c0"
+            └── LEAF id:1 a:"a1" b:"b1" c:"c1"
+        `);
+
+        // Data should still be original until commit
+        const rowNode = api.getRowNode('0')!;
+        expect(rowNode.data.a).toBe('a0');
+        expect(rowNode.data.b).toBe('b0');
+        expect(rowNode.data.c).toBe('c0');
+
+        // Commit should apply all pending values
+        api.commitBatchEdit();
+        await asyncSetTimeout(1);
+
+        expect(rowNode.data.a).toBe('edited-a0');
+        expect(rowNode.data.b).toBe('edited-b0');
+        expect(rowNode.data.c).toBe('edited-c0');
+        expect(cellA0).not.toHaveClass('ag-cell-batch-edit');
+        expect(cellB0).not.toHaveClass('ag-cell-batch-edit');
+        expect(cellC0).not.toHaveClass('ag-cell-batch-edit');
     });
 });

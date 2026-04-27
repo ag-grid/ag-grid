@@ -210,10 +210,12 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
                 eFloatingFilterText.setDisplayed(true);
             }
         };
-        if (this.gos.get('enableFilterHandlers')) {
-            updateText(colFilter.getHandler(column!));
+        if (!column) {
+            updateText();
+        } else if (this.gos.get('enableFilterHandlers')) {
+            updateText(colFilter.getHandler(column));
         } else {
-            colFilter.getOrCreateFilterUi(column!)?.then((filter) => {
+            colFilter.getOrCreateFilterUi(column)?.then((filter) => {
                 updateText(filter);
             });
         }

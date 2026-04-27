@@ -18,6 +18,7 @@ import { _getRowContainerClass, _getRowViewportClass } from './rowContainer/rowC
 import type { ScrollVisibleService } from './scrollVisibleService';
 import { _shouldShowVerticalScroll } from './scrollbarVisibilityHelper';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type RowAnimationCssClasses = 'ag-row-animation' | 'ag-row-no-animation';
 
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
@@ -25,6 +26,7 @@ export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IGridBodyComp extends LayoutView {
     setColumnMovingCss(cssClass: string, on: boolean): void;
     setCellSelectableCss(cssClass: string | null, on: boolean): void;
@@ -48,6 +50,7 @@ export interface IGridBodyComp extends LayoutView {
     setGridRootRole(role: 'grid' | 'treegrid'): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class GridBodyCtrl extends BeanStub {
     private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;
@@ -181,7 +184,7 @@ export class GridBodyCtrl extends BeanStub {
         let isTreeGrid = gos.get('treeData');
 
         if (!isTreeGrid) {
-            const isPivotActive = colModel.isPivotMode();
+            const isPivotActive = colModel.pivotMode;
             const rowGroupColumnLen = !rowGroupColsSvc ? 0 : rowGroupColsSvc.columns.length;
             const columnsNeededForGrouping = isPivotActive ? 2 : 1;
             isTreeGrid = rowGroupColumnLen >= columnsNeededForGrouping;
@@ -289,12 +292,22 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public isVerticalScrollShowing(): boolean {
-        const show = this.gos.get('alwaysShowVerticalScroll');
+        const { gos, comp, ctrlsSvc } = this;
+        const show = gos.get('alwaysShowVerticalScroll');
+
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
-        const allowVerticalScroll = _isDomLayout(this.gos, 'normal');
-        this.comp.setAlwaysVerticalScrollClass(cssClass, show);
-        const horizontalScrollElement = this.ctrlsSvc.get('center')?.eViewport;
-        return show || (allowVerticalScroll && _shouldShowVerticalScroll(this.eBodyViewport, horizontalScrollElement));
+        const allowVerticalScroll = _isDomLayout(gos, 'normal');
+
+        comp.setAlwaysVerticalScrollClass(cssClass, show);
+        const horizontalScrollElement = ctrlsSvc.get('center')?.eViewport;
+        const hScrollEl = ctrlsSvc.get('fakeHScrollComp')?.getGui();
+        const vScrollEl = ctrlsSvc.get('fakeVScrollComp')?.getGui();
+
+        return (
+            show ||
+            (allowVerticalScroll &&
+                _shouldShowVerticalScroll(this.eBodyViewport, horizontalScrollElement, undefined, vScrollEl, hScrollEl))
+        );
     }
 
     private setupRowAnimationCssClass(): void {

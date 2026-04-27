@@ -8,11 +8,21 @@ export function _logIfDebug(gos: GridOptionsService, message: string, ...args: a
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _warnOnce(msg: string, ...args: any[]) {
-    // eslint-disable-next-line no-console
-    _doOnce(() => console.warn('AG Grid: ' + msg, ...args), msg + args?.join(''));
+    _doOnce(() => _consoleWarn(msg, ...args), msg + args?.join(''));
 }
 export function _errorOnce(msg: string, ...args: any[]) {
+    _doOnce(() => _consoleError(msg, ...args), msg + args?.join(''));
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _consoleError(msg: string, ...args: any[]) {
     // eslint-disable-next-line no-console
-    _doOnce(() => console.error('AG Grid: ' + msg, ...args), msg + args?.join(''));
+    console.error('AG Grid: ' + msg, ...args);
+}
+
+export function _consoleWarn(msg: string, ...args: any[]) {
+    // eslint-disable-next-line no-console
+    console.warn('AG Grid: ' + msg, ...args);
 }

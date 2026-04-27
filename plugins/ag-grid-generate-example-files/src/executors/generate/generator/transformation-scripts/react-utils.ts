@@ -97,7 +97,7 @@ export const getValueType = (value: string) => {
     let type = 'object';
     try {
         type = typeof JSON5.parse(value);
-    } catch (_) {
+    } catch {
         // if it's something we can't parse we'll assume an object
     }
     return type;

@@ -23,3 +23,8 @@ export const CONTACT_FORM_DATA = {
         formLocationId: '00NQ500000CVgqT',
     },
 };
+
+// Relative to website folder
+export const SITEMAP_CACHE_DIR = '.astro/cache/sitemap';
+
+export const PRIVACY_POLICY_URL = 'https://www.ag-grid.com/privacy';

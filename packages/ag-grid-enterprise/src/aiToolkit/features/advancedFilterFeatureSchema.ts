@@ -18,6 +18,7 @@ export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc }: Bean
         dateTime: [],
         dateTimeString: [],
         number: [],
+        bigint: [],
         text: [],
     };
 
@@ -200,6 +201,32 @@ const buildNumberFilterSchema = (colIds: string[]) => {
     });
 };
 
+const buildBigIntFilterSchema = (colIds: string[]) => {
+    return s.object({
+        filterType: s.literal('bigint', 'Filter type identifier for bigint column filters'),
+        colId: s.enum(colIds, 'Column identifier for the bigint column to filter'),
+        filter: s
+            .string({
+                pattern: '^-?\\d+$',
+                description: 'BigInt value to filter by',
+            })
+            .nullable(),
+        type: s.enum(
+            [
+                'equals',
+                'notEqual',
+                'lessThan',
+                'lessThanOrEqual',
+                'greaterThan',
+                'greaterThanOrEqual',
+                'blank',
+                'notBlank',
+            ],
+            'BigInt filter operation type'
+        ),
+    });
+};
+
 const buildTextFilterSchema = (colIds: string[]) => {
     return s.object({
         filterType: s.literal('text', 'Filter type identifier for text column filters'),
@@ -220,5 +247,6 @@ const DataTypeSchemaBuilders: Record<BaseCellDataType, (colIds: string[]) => any
     dateTime: buildDateTimeFilterSchema,
     dateTimeString: buildDateTimeStringFilterSchema,
     number: buildNumberFilterSchema,
+    bigint: buildBigIntFilterSchema,
     text: buildTextFilterSchema,
 };

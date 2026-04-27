@@ -16,6 +16,9 @@ import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _warn } from '../validation/logging';
 
+/** Minimum center viewport width (in px) reserved when pinned columns are present. */
+export const MIN_CENTER_VIEWPORT_WIDTH = 50;
+
 export class PinnedColumnService extends BeanStub implements NamedBean {
     beanName = 'pinnedCols' as const;
 
@@ -58,12 +61,13 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         const eBodyViewport = this.gridBodyCtrl.eBodyViewport;
         const bodyWidth = _getInnerWidth(eBodyViewport);
 
-        if (bodyWidth <= 50) {
+        if (bodyWidth <= MIN_CENTER_VIEWPORT_WIDTH) {
             return;
         }
 
-        // remove 50px from the bodyWidth to give some margin
-        const processedColumnsToRemove = this.getPinnedColumnsOverflowingViewport(bodyWidth - 50);
+        const processedColumnsToRemove = this.getPinnedColumnsOverflowingViewport(
+            bodyWidth - MIN_CENTER_VIEWPORT_WIDTH
+        );
         const processUnpinnedColumns = this.gos.getCallback('processUnpinnedColumns');
         const { columns, hasLockedPinned } = processedColumnsToRemove;
 
@@ -214,7 +218,8 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         const pinned = column.getPinned();
         if (pinned) {
             const { leftWidth, rightWidth } = this;
-            const bodyWidth = _getInnerWidth(this.beans.ctrlsSvc.getGridBodyCtrl().eBodyViewport) - 50;
+            const bodyWidth =
+                _getInnerWidth(this.beans.ctrlsSvc.getGridBodyCtrl().eBodyViewport) - MIN_CENTER_VIEWPORT_WIDTH;
 
             if (leftWidth + rightWidth + diff > bodyWidth) {
                 if (bodyWidth > leftWidth + rightWidth) {

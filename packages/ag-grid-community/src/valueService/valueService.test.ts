@@ -1,23 +1,25 @@
+import type { Mocked } from 'vitest';
+
+import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueFormatterParams } from '../entities/colDef';
 import { RowNode } from '../entities/rowNode';
 import type { GridOptionsService } from '../gridOptionsService';
-import type { IEditService } from '../interfaces/iEditService';
 import { mock } from '../test-utils/mock';
 import type { ExpressionService } from './expressionService';
 import { ValueService } from './valueService';
 
 let colDef: ColDef;
-let column: jest.Mocked<AgColumn>;
-let gos: jest.Mocked<GridOptionsService>;
-let expressionSvc: jest.Mocked<ExpressionService>;
+let column: Mocked<AgColumn>;
+let gos: Mocked<GridOptionsService>;
+let expressionSvc: Mocked<ExpressionService>;
 let valueSvc: ValueService;
 
 describe('formatValue', () => {
     beforeEach(() => {
         colDef = {};
-        column = mock<AgColumn>('getColDef');
-        column.getColDef.mockReturnValue(colDef);
+        column = mock<AgColumn>();
+        column.colDef = colDef;
 
         gos = mock<GridOptionsService>('get', 'addCommon');
         gos.addCommon.mockImplementation((params) => params as any);
@@ -26,7 +28,7 @@ describe('formatValue', () => {
         (valueSvc as any).gos = gos;
         (valueSvc as any).expressionSvc = expressionSvc;
         (valueSvc as any).beans = {
-            editSvc: mock<IEditService>('isEditing'),
+            editSvc: mock<EditService>('isEditing'),
             expressionSvc,
         };
     });

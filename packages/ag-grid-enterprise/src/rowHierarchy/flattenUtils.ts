@@ -57,19 +57,30 @@ export function _shouldRowBeRendered(
     isRemovedSingleChildrenGroup: boolean,
     isRemovedLowestSingleChildrenGroup: boolean | undefined
 ): boolean {
-    const isSkippedLeafNode = skipLeafNodes && !isParent;
+    if (skipLeafNodes && !isParent) {
+        return false;
+    }
+    if (isRemovedSingleChildrenGroup || isRemovedLowestSingleChildrenGroup) {
+        return false;
+    }
 
     // hide open parents means when group is open, we don't show it. we also need to make sure the
     // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
     // the UI will never allow expanding leaf groups, however the user might via the API (or menu option 'expand all row groups')
+    if (!details.hideOpenParents) {
+        return true;
+    }
+
+    if (rowNode.master || rowNode.level === -1) {
+        return true;
+    }
+
     const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
 
-    const isHiddenOpenParent = details.hideOpenParents && rowNode.expanded && !rowNode.master && !neverAllowToExpand;
+    // rowNode.expanded evaluated LAST because it has side effects
+    if (!neverAllowToExpand && rowNode.expanded) {
+        return false;
+    }
 
-    return (
-        !isSkippedLeafNode &&
-        !isHiddenOpenParent &&
-        !isRemovedSingleChildrenGroup &&
-        !isRemovedLowestSingleChildrenGroup
-    );
+    return true;
 }

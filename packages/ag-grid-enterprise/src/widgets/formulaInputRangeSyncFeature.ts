@@ -1,4 +1,4 @@
-import { BeanStub, _last } from 'ag-grid-community';
+import { BeanStub, _last, isSpecialCol } from 'ag-grid-community';
 import type { CellRange, CellSelectionChangedEvent, Column } from 'ag-grid-community';
 
 import type { AgFormulaInputField } from './agFormulaInputField';
@@ -15,21 +15,33 @@ import {
 type TrackedRange = { ref: string; tokenIndex?: number | null };
 
 export class FormulaInputRangeSyncFeature extends BeanStub {
-    // Local mirror of editSvc range selection state while formula editing is active.
+    // local mirror of editSvc range selection state while formula editing is active.
     private rangeSelectionEnabled = false;
     private editingCellRef?: string;
     private editingColumn?: Column;
     private editingRowIndex?: number;
-    // Refs found in the formula that should have matching grid ranges (counts handle duplicates).
+
+    // refs found in the formula that should have matching grid ranges (counts handle duplicates).
     private readonly trackedRangeRefs = new Map<string, number>();
-    // Ranges we are actively tracking and their current ref string.
+    // ranges we are actively tracking and their current ref string.
     private readonly trackedRanges = new Map<CellRange, TrackedRange>();
-    // Prevents our own range changes from re-entering the selection handler.
+    // prevents our own range changes from re-entering the selection handler.
     private suppressRangeEvents = false;
-    // Skips the synthetic refresh event we dispatch after re-tagging ranges.
+    // skips the synthetic refresh event we dispatch after re-tagging ranges.
     private ignoreNextRangeEvent = false;
-    // Avoids a value update loop when we re-render on enabling range selection.
+    // avoids a value update loop when we re-render on enabling range selection.
     private skipNextValueUpdate = false;
+    // suppress selection handling while keyboard navigation updates the focus range.
+    private suppressSelectionChangeHandling = false;
+
+    // keep a stable callback so the input manager can deactivate the previous editor.
+    private readonly handleEditorDeactivated = () => {
+        this.rangeSelectionEnabled = false;
+        this.suppressRangeEvents = false;
+        this.ignoreNextRangeEvent = false;
+        this.skipNextValueUpdate = false;
+        this.clearTrackedRanges(true);
+    };
 
     constructor(private readonly field: AgFormulaInputField) {
         super();
@@ -40,6 +52,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             cellSelectionChanged: this.onCellSelectionChanged.bind(this),
         });
         this.addDestroyFunc(() => this.disableRangeSelectionWhileEditing());
+        this.addDestroyFunc(() => this.unregisterActiveEditor());
     }
 
     public onValueUpdated(value: string, hasFormulaPrefix: boolean): void {
@@ -48,11 +61,15 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
+        if (!this.isActiveEditor()) {
+            return;
+        }
+
         if (hasFormulaPrefix) {
-            // Enable range selection once the user is building a formula (even if it is just "=").
+            // enable range selection once the user is building a formula (even if it is just "=").
             const newlyEnabled = this.enableRangeSelectionWhileEditing();
             if (newlyEnabled) {
-                // Re-render with colors now that range selection is on.
+                // re-render with colors now that range selection is on.
                 this.skipNextValueUpdate = true;
                 this.field.setValue(value, true);
             }
@@ -67,6 +84,80 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         this.editingColumn = column;
         this.editingRowIndex = rowIndex ?? undefined;
         this.editingCellRef = editingCellRef;
+    }
+
+    public setEditorActive(active: boolean): void {
+        if (active) {
+            // focus decides which editor owns range syncing when multiple editors are open.
+            this.registerActiveEditor();
+            return;
+        }
+        this.unregisterActiveEditor();
+    }
+
+    public withSelectionChangeHandlingSuppressed(action: () => void): void {
+        // avoid re-writing the formula when the grid updates range selection during navigation.
+        const previous = this.suppressSelectionChangeHandling;
+        this.suppressSelectionChangeHandling = true;
+        try {
+            action();
+        } finally {
+            this.suppressSelectionChangeHandling = previous;
+        }
+    }
+
+    public deactivateForFocusLoss(): void {
+        if (!this.isActiveEditor()) {
+            return;
+        }
+        // drop range sync when focus moves to a non-formula editor.
+        this.handleEditorDeactivated();
+        this.beans.editSvc?.disableRangeSelectionWhileEditing?.();
+        this.unregisterActiveEditor();
+    }
+
+    private registerActiveEditor(): void {
+        const fieldId = this.field.getCompId();
+        const { formulaInputManager } = this.beans;
+
+        if (!formulaInputManager) {
+            return;
+        }
+
+        const becameActive = formulaInputManager.registerActiveEditor(fieldId, this.handleEditorDeactivated);
+
+        if (!becameActive) {
+            return;
+        }
+
+        // reset tracking so the new active editor rebuilds its range state cleanly.
+        this.rangeSelectionEnabled = false;
+        this.suppressRangeEvents = false;
+        this.ignoreNextRangeEvent = false;
+        this.skipNextValueUpdate = false;
+        this.clearTrackedRanges(false);
+
+        const value = this.field.getCurrentValue();
+        const hasFormulaPrefix = value.trimStart().startsWith('=');
+        this.onValueUpdated(value, hasFormulaPrefix);
+    }
+
+    private unregisterActiveEditor(): void {
+        const fieldId = this.field.getCompId();
+        const { formulaInputManager } = this.beans;
+
+        if (!formulaInputManager) {
+            return;
+        }
+
+        formulaInputManager.unregisterActiveEditor(fieldId, this.handleEditorDeactivated);
+    }
+
+    private isActiveEditor(): boolean {
+        const fieldId = this.field.getCompId();
+        const { formulaInputManager } = this.beans;
+
+        return !!formulaInputManager && formulaInputManager.isActiveEditor(fieldId);
     }
 
     private getTrackedRefCount(ref: string): number {
@@ -105,14 +196,98 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         }
         this.rangeSelectionEnabled = false;
         this.beans.editSvc?.disableRangeSelectionWhileEditing?.();
-        this.clearTrackedRanges();
+        this.clearTrackedRanges(this.isActiveEditor());
     }
 
-    private clearTrackedRanges(): void {
-        const refs = Array.from(this.trackedRangeRefs.keys());
-        refs.forEach((ref) => this.removeRangeForRef(ref));
+    private clearTrackedRanges(clearGridRanges: boolean = true): void {
+        if (clearGridRanges) {
+            const refs = Array.from(this.trackedRangeRefs.keys());
+            refs.forEach((ref) => this.removeRangeForRef(ref));
+        }
         this.trackedRangeRefs.clear();
         this.trackedRanges.clear();
+    }
+
+    private getLiveRanges(): CellRange[] {
+        return this.beans.rangeSvc?.getCellRanges() ?? [];
+    }
+
+    private withSuppressedRangeEvents(action: () => void): void {
+        this.suppressRangeEvents = true;
+        action();
+        this.suppressRangeEvents = false;
+    }
+
+    private setCellRangesSilently(ranges: CellRange[]): void {
+        const rangeSvc = this.beans.rangeSvc;
+        if (!rangeSvc) {
+            return;
+        }
+        this.withSuppressedRangeEvents(() => rangeSvc.setCellRanges(ranges));
+    }
+
+    private getColorIndexForTokenOrRef(ref: string, tokenIndex?: number | null): number | null {
+        return this.field.getColorIndexForToken(tokenIndex ?? null) ?? this.field.getColorIndexForRef(ref);
+    }
+
+    private normaliseRefForComparison(ref: string | null | undefined): string | null {
+        if (!ref) {
+            return null;
+        }
+        const trimmed = ref.endsWith(':') ? ref.slice(0, -1) : ref;
+        return trimmed.replace(/\$/g, '').toUpperCase();
+    }
+
+    private tagRangeColor(range: CellRange, ref: string, colorIndex: number | null): boolean {
+        const { rangeClass } = getColorClassesForRef(ref, colorIndex);
+        if (range.colorClass === rangeClass) {
+            return false;
+        }
+        tagRangeWithFormulaColor(range, ref, colorIndex);
+        return true;
+    }
+
+    private trackRange(range: CellRange, ref: string, tokenIndex?: number | null): void {
+        const existing = this.trackedRanges.get(range);
+        const nextTokenIndex = tokenIndex !== undefined ? tokenIndex : existing?.tokenIndex ?? null;
+
+        if (!existing) {
+            this.addTrackedRef(ref);
+        } else if (existing.ref !== ref) {
+            this.removeTrackedRef(existing.ref);
+            this.addTrackedRef(ref);
+        }
+
+        this.trackedRanges.set(range, { ref, tokenIndex: nextTokenIndex });
+    }
+
+    private getUntrackedFormulaRangesByRef(): Map<string, CellRange[]> {
+        const rangesByRef = new Map<string, CellRange[]>();
+        const ranges = this.getLiveRanges();
+
+        for (const range of ranges) {
+            if (this.trackedRanges.has(range)) {
+                continue;
+            }
+
+            if (getRangeColorIndexFromClass(range.colorClass) == null) {
+                continue;
+            }
+
+            const ref = rangeToRef(this.beans, range);
+            if (!ref || ref === this.editingCellRef) {
+                continue;
+            }
+
+            const existing = rangesByRef.get(ref);
+            if (existing) {
+                existing.push(range);
+            } else {
+                rangesByRef.set(ref, [range]);
+            }
+        }
+
+        return rangesByRef;
     }
 
     private syncRangesFromFormula(value?: string | null): void {
@@ -128,17 +303,19 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
-        const refTokens = getRefTokensFromText(text);
-        // Group token indices by ref so duplicates map to distinct ranges.
+        const refTokens = getRefTokensFromText(this.beans, text);
+        // group token indices by ref so duplicates map to distinct ranges.
         const desiredByRef = new Map<string, number[]>();
 
         for (const token of refTokens) {
-            if (token.ref === this.editingCellRef) {
+            const { ref, index } = token;
+            if (ref === this.editingCellRef) {
                 continue;
             }
-            const list = desiredByRef.get(token.ref) ?? [];
-            list.push(token.index);
-            desiredByRef.set(token.ref, list);
+
+            const list = desiredByRef.get(ref) ?? [];
+            list.push(index);
+            desiredByRef.set(ref, list);
         }
 
         for (const ref of Array.from(this.trackedRangeRefs.keys())) {
@@ -152,7 +329,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
-        const liveRanges = new Set(rangeSvc.getCellRanges() ?? []);
+        const liveRanges = new Set(this.getLiveRanges());
         for (const [range, tracked] of this.trackedRanges.entries()) {
             if (!liveRanges.has(range)) {
                 this.trackedRanges.delete(range);
@@ -160,12 +337,21 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             }
         }
 
+        const untrackedFormulaRanges = this.getUntrackedFormulaRangesByRef();
         let reTagged = false;
         for (const [ref, tokenIndices] of desiredByRef.entries()) {
             const rangesForRef: CellRange[] = [];
             for (const [range, tracked] of this.trackedRanges.entries()) {
                 if (tracked.ref === ref) {
                     rangesForRef.push(range);
+                }
+            }
+
+            const reuseCandidates = untrackedFormulaRanges.get(ref);
+            while (rangesForRef.length < tokenIndices.length && reuseCandidates?.length) {
+                const candidate = reuseCandidates.shift();
+                if (candidate) {
+                    rangesForRef.push(candidate);
                 }
             }
 
@@ -188,18 +374,27 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             for (let i = 0; i < rangesForRef.length && i < tokenIndices.length; i++) {
                 const range = rangesForRef[i];
                 const tokenIndex = tokenIndices[i];
-                const tracked = this.trackedRanges.get(range);
-                if (!tracked || tracked.tokenIndex !== tokenIndex) {
-                    this.trackedRanges.set(range, { ref, tokenIndex });
-                }
-
-                const colorIndex = this.field.getColorIndexForToken(tokenIndex) ?? this.field.getColorIndexForRef(ref);
-                const { rangeClass } = getColorClassesForRef(ref, colorIndex);
-
-                if (range.colorClass !== rangeClass) {
-                    tagRangeWithFormulaColor(range, ref, colorIndex);
+                this.trackRange(range, ref, tokenIndex);
+                const colorIndex = this.getColorIndexForTokenOrRef(ref, tokenIndex);
+                if (this.tagRangeColor(range, ref, colorIndex)) {
                     reTagged = true;
                 }
+            }
+        }
+
+        const unusedFormulaRanges: CellRange[] = [];
+        for (const ranges of untrackedFormulaRanges.values()) {
+            if (ranges.length) {
+                unusedFormulaRanges.push(...ranges);
+            }
+        }
+
+        if (unusedFormulaRanges.length) {
+            const currentRanges = this.getLiveRanges();
+            const remaining = currentRanges.filter((range) => !unusedFormulaRanges.includes(range));
+            if (remaining.length !== currentRanges.length) {
+                this.setCellRangesSilently(remaining);
+                reTagged = true;
             }
         }
 
@@ -209,15 +404,41 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private onCellSelectionChanged(event: CellSelectionChangedEvent): void {
-        if (!this.rangeSelectionEnabled || !this.beans.editSvc?.isRangeSelectionEnabledWhileEditing?.()) {
+        if (
+            !this.isActiveEditor() ||
+            !this.rangeSelectionEnabled ||
+            !this.beans.editSvc?.isRangeSelectionEnabledWhileEditing?.()
+        ) {
             return;
         }
+
         if (this.ignoreNextRangeEvent) {
             this.ignoreNextRangeEvent = false;
             return;
         }
 
-        // Re-tag ranges if their colors are out of sync with the formula tokens.
+        if (this.suppressSelectionChangeHandling) {
+            return;
+        }
+
+        const { finished, started } = event;
+        const liveRanges = this.getLiveRanges();
+        // drop selection/row-number ranges while editing formulas as they can't map to refs
+        const nonSpecialRanges = liveRanges.filter((range) => !this.isSpecialOnlyRange(range));
+
+        if (nonSpecialRanges.length !== liveRanges.length) {
+            this.setCellRangesSilently(nonSpecialRanges);
+            this.refocusEditingCell();
+            return;
+        }
+
+        const latestRange = liveRanges.length ? _last(liveRanges) : null;
+        const latestRef = latestRange ? rangeToRef(this.beans, latestRange) : null;
+        const hasInsertCandidate =
+            !!latestRange && !this.trackedRanges.has(latestRange) && !!latestRef && latestRef !== this.editingCellRef;
+        const shouldInsert = finished && (started || hasInsertCandidate);
+
+        // re-tag ranges if their colors are out of sync with the formula tokens.
         const reTagged = this.ensureTrackedRangeColors();
 
         if (this.suppressRangeEvents) {
@@ -227,7 +448,18 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
-        // If an existing range was resized, update its token instead of inserting a new one.
+        if (started || hasInsertCandidate) {
+            // remember caret so we can restore it after any selection-driven edits.
+            this.field.rememberCaret();
+        }
+
+        if (!hasInsertCandidate && this.handleRemovedRangeTokens()) {
+            this.field.restoreCaretAfterToken();
+            this.refocusEditingCell();
+            return;
+        }
+
+        // if an existing range was resized, update its token instead of inserting a new one.
         if (this.updateTrackedRangeTokens()) {
             return;
         }
@@ -239,22 +471,21 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
-        if (event.started) {
-            // Remember caret so we can restore it after inserting/replacing tokens.
-            this.field.rememberCaret();
-        }
-
-        if (event.started && event.finished) {
+        if (shouldInsert) {
             const { action, previousRef, tokenIndex } = this.field.applyRangeInsert(ref);
 
             if (action === 'none') {
-                // Treat the click as an edit completion when not in a formula context.
+                // range selection while editing appends ranges, so collapse to the latest selection
+                // before stopping the edit to avoid leaving the previous cell highlighted.
+                this.keepLatestSelectionOnly(latestRange);
+
+                // treat the click as edit completion when we are not inserting a token.
                 this.beans.editSvc?.stopEditing(undefined, { source: 'edit' });
                 return;
             }
 
             if (action === 'replace' && previousRef === ref) {
-                // Clicking the same ref should not leave a duplicate range behind.
+                // clicking the same ref should not leave a duplicate range behind.
                 this.discardLatestRangeForRef(ref);
                 this.field.restoreCaretAfterToken();
                 this.refocusEditingCell();
@@ -263,15 +494,15 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
 
             this.tagLatestRangeForRef(ref, tokenIndex);
             this.handleRangeTokenUpdate(previousRef, ref, true, action === 'insert', tokenIndex);
-            // Refresh token indices for existing ranges so their colors match the new token order.
+            // refresh token indices for existing ranges so their colors match the new token order.
             this.syncRangesFromFormula(this.field.getCurrentValue());
             this.field.restoreCaretAfterToken();
             this.refocusEditingCell();
             return;
         }
 
-        if (!event.started && !event.finished) {
-            // Drag updates should rewrite the active token as the range grows/shrinks.
+        if (!started && !finished) {
+            // drag updates should rewrite the active token as the range grows/shrinks.
             const { previousRef, tokenIndex } = this.field.insertOrReplaceToken(ref, false);
             this.tagLatestRangeForRef(ref, tokenIndex);
             this.handleRangeTokenUpdate(previousRef, ref, false, false);
@@ -281,10 +512,23 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
 
         this.tagLatestRangeForRef(ref);
 
-        if (event.finished) {
+        if (finished) {
             this.field.restoreCaretAfterToken();
             this.refocusEditingCell();
         }
+    }
+
+    private keepLatestSelectionOnly(latestRange: CellRange | null): void {
+        if (!latestRange || this.getLiveRanges().length <= 1) {
+            return;
+        }
+
+        this.setCellRangesSilently([latestRange]);
+    }
+
+    private isSpecialOnlyRange(range: CellRange): boolean {
+        const columns = range.columns;
+        return !!columns?.length && columns.every((col) => isSpecialCol(col));
     }
 
     private handleRangeTokenUpdate(
@@ -303,12 +547,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
-        if (isNew) {
-            this.addTrackedRef(ref);
-            return;
-        }
-
-        if (!previousRef) {
+        if (isNew || !previousRef) {
             this.addTrackedRef(ref);
             return;
         }
@@ -320,7 +559,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private addRangeForRef(ref: string, skipAddCellRange?: boolean, tokenIndex?: number | null): CellRange | undefined {
-        // Create or re-tag an existing range for the given ref.
+        // create or re-tag an existing range for the given ref.
         const rangeSvc = this.beans.rangeSvc;
 
         if (!rangeSvc) {
@@ -334,26 +573,17 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             if (!params) {
                 return undefined;
             }
-            this.suppressRangeEvents = true;
-            created = rangeSvc.addCellRange(params);
-            this.suppressRangeEvents = false;
+            this.withSuppressedRangeEvents(() => {
+                created = rangeSvc.addCellRange(params);
+            });
         } else {
             created = this.findLatestRangeForRef(ref, true) ?? this.findLatestRangeForRef(ref, false);
         }
 
         if (created) {
-            const colorIndex = this.field.getColorIndexForToken(tokenIndex) ?? this.field.getColorIndexForRef(ref);
-            tagRangeWithFormulaColor(created, ref, colorIndex);
-
-            const existing = this.trackedRanges.get(created);
-            if (!existing) {
-                this.addTrackedRef(ref);
-            } else if (existing.ref !== ref) {
-                this.removeTrackedRef(existing.ref);
-                this.addTrackedRef(ref);
-            }
-
-            this.trackedRanges.set(created, { ref, tokenIndex: tokenIndex ?? existing?.tokenIndex ?? null });
+            const colorIndex = this.getColorIndexForTokenOrRef(ref, tokenIndex);
+            this.tagRangeColor(created, ref, colorIndex);
+            this.trackRange(created, ref, tokenIndex);
             this.refreshRangeStyling();
         }
 
@@ -361,7 +591,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private findLatestRangeForRef(ref: string, skipTracked: boolean): CellRange | undefined {
-        const ranges = this.beans.rangeSvc?.getCellRanges() ?? [];
+        const ranges = this.getLiveRanges();
         for (let i = ranges.length - 1; i >= 0; i--) {
             const range = ranges[i];
             if (rangeToRef(this.beans, range) !== ref) {
@@ -376,30 +606,24 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private tagLatestRangeForRef(ref: string, tokenIndex?: number | null): void {
-        // The newest range is the one the user just clicked/dragged.
+        // the newest range is the one the user just clicked/dragged.
 
-        const { beans, field, trackedRanges } = this;
-        const ranges = beans.rangeSvc?.getCellRanges();
-        const latest = ranges?.length ? _last(ranges) : null;
+        const { trackedRanges } = this;
+        const ranges = this.getLiveRanges();
+        const latest = ranges.length ? _last(ranges) : null;
 
         if (!latest) {
             return;
         }
 
         const trackedIndex = trackedRanges.get(latest)?.tokenIndex ?? null;
-        const colorIndex = field.getColorIndexForToken(tokenIndex ?? trackedIndex) ?? field.getColorIndexForRef(ref);
-
-        tagRangeWithFormulaColor(latest, ref, colorIndex);
+        const colorIndex = this.getColorIndexForTokenOrRef(ref, tokenIndex ?? trackedIndex);
+        this.tagRangeColor(latest, ref, colorIndex);
         this.refreshRangeStyling();
     }
 
     private discardLatestRangeForRef(ref: string): void {
-        const rangeSvc = this.beans.rangeSvc;
-        if (!rangeSvc) {
-            return;
-        }
-
-        const ranges = rangeSvc.getCellRanges() ?? [];
+        const ranges = this.getLiveRanges();
         if (!ranges.length) {
             return;
         }
@@ -414,9 +638,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
-        this.suppressRangeEvents = true;
-        rangeSvc.setCellRanges(ranges.slice(0, -1));
-        this.suppressRangeEvents = false;
+        this.setCellRangesSilently(ranges.slice(0, -1));
     }
 
     private ensureTrackedRangeColors(): boolean {
@@ -425,13 +647,10 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         // it only re-tags colors for whatever ranges currently exist in the grid.
         // Some color logic mirrors syncRangesFromFormula on purpose to keep overlays
         // correct even when external range updates bypass the formula sync.
-        const rangeSvc = this.beans.rangeSvc;
-
-        if (!rangeSvc) {
+        const ranges = this.getLiveRanges();
+        if (!ranges.length) {
             return false;
         }
-
-        const ranges = rangeSvc.getCellRanges();
         let reTagged = false;
 
         for (const range of ranges) {
@@ -441,7 +660,8 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
                 continue;
             }
 
-            const tokenColorIndex = this.field.getColorIndexForToken(tracked?.tokenIndex ?? null);
+            const tokenIndex = tracked?.tokenIndex ?? null;
+            const tokenColorIndex = this.field.getColorIndexForToken(tokenIndex);
             const inferredColorIndex = getRangeColorIndexFromClass(range.colorClass);
             const colorIndex =
                 tokenColorIndex ??
@@ -453,24 +673,98 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
                 continue;
             }
 
-            const { rangeClass } = getColorClassesForRef(ref, colorIndex);
-
-            if (range.colorClass !== rangeClass) {
-                tagRangeWithFormulaColor(range, ref, colorIndex);
+            if (this.tagRangeColor(range, ref, colorIndex)) {
                 reTagged = true;
             }
 
             if (!this.trackedRanges.has(range)) {
-                this.trackedRanges.set(range, { ref, tokenIndex: tracked?.tokenIndex ?? null });
-                this.addTrackedRef(ref);
+                this.trackRange(range, ref, tokenIndex);
             }
         }
 
         return reTagged;
     }
 
+    private handleRemovedRangeTokens(): boolean {
+        // if a tracked range was removed via selection (e.g. Ctrl/Cmd click), drop its token.
+        if (!this.beans.rangeSvc || this.trackedRanges.size === 0) {
+            return false;
+        }
+
+        const value = this.field.getCurrentValue();
+        const tokens = getRefTokensFromText(this.beans, value).filter(({ ref }) => ref !== this.editingCellRef);
+        if (!tokens.length) {
+            return false;
+        }
+
+        const liveRanges = this.getLiveRanges();
+        const liveSet = new Set(liveRanges);
+        const liveCounts = new Map<string, number>();
+
+        for (const range of liveRanges) {
+            const ref = rangeToRef(this.beans, range);
+            if (!ref || ref === this.editingCellRef) {
+                continue;
+            }
+            liveCounts.set(ref, (liveCounts.get(ref) ?? 0) + 1);
+        }
+
+        const pendingRemovals = new Map<string, number>();
+        for (const token of tokens) {
+            const { ref } = token;
+            pendingRemovals.set(ref, (pendingRemovals.get(ref) ?? 0) + 1);
+        }
+        for (const [ref, tokenCount] of Array.from(pendingRemovals.entries())) {
+            const liveCount = liveCounts.get(ref) ?? 0;
+            const remaining = tokenCount - liveCount;
+            if (remaining > 0) {
+                pendingRemovals.set(ref, remaining);
+            } else {
+                pendingRemovals.delete(ref);
+            }
+        }
+
+        if (!pendingRemovals.size) {
+            return false;
+        }
+
+        const removals: Array<{ range: CellRange; tracked: TrackedRange }> = [];
+        for (const [range, tracked] of Array.from(this.trackedRanges.entries())) {
+            if (liveSet.has(range)) {
+                continue;
+            }
+            const { ref } = tracked;
+            const remaining = pendingRemovals.get(ref) ?? 0;
+            if (remaining <= 0) {
+                continue;
+            }
+            pendingRemovals.set(ref, remaining - 1);
+            removals.push({ range, tracked });
+        }
+
+        if (!removals.length) {
+            return false;
+        }
+
+        removals.sort((a, b) => (b.tracked.tokenIndex ?? -1) - (a.tracked.tokenIndex ?? -1));
+
+        let removed = false;
+        for (const { range, tracked } of removals) {
+            const { ref, tokenIndex } = tracked;
+            removed = this.field.removeTokenRef(ref, tokenIndex ?? null) || removed;
+            this.trackedRanges.delete(range);
+            this.removeTrackedRef(ref);
+        }
+
+        if (removed) {
+            this.syncRangesFromFormula(this.field.getCurrentValue());
+        }
+
+        return removed;
+    }
+
     private refreshRangeStyling(): void {
-        // Trigger a lightweight refresh so overlays pick up any updated classes.
+        // trigger a lightweight refresh so overlays pick up any updated classes.
         const { eventSvc } = this.beans;
         if (!eventSvc) {
             return;
@@ -486,14 +780,15 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private refocusEditingCell(): void {
-        // Keep focus on the edited cell so keyboard editing continues.
+        // keep focus on the edited cell so keyboard editing continues.
         const { focusSvc } = this.beans;
-        if (!focusSvc || this.editingColumn == null || this.editingRowIndex == null) {
+        const { editingColumn, editingRowIndex } = this;
+        if (!focusSvc || editingColumn == null || editingRowIndex == null) {
             return;
         }
         focusSvc.setFocusedCell({
-            column: this.editingColumn as any,
-            rowIndex: this.editingRowIndex,
+            column: editingColumn,
+            rowIndex: editingRowIndex,
             rowPinned: null,
             preventScrollOnBrowserFocus: true,
         });
@@ -505,15 +800,10 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             return;
         }
 
-        const { rangeSvc } = this.beans;
-        if (rangeSvc) {
-            const ranges = rangeSvc.getCellRanges() ?? [];
-            const remaining = ranges.filter((candidate) => candidate !== range);
-            if (remaining.length !== ranges.length) {
-                this.suppressRangeEvents = true;
-                rangeSvc.setCellRanges(remaining);
-                this.suppressRangeEvents = false;
-            }
+        const ranges = this.getLiveRanges();
+        const remaining = ranges.filter((candidate) => candidate !== range);
+        if (remaining.length !== ranges.length) {
+            this.setCellRangesSilently(remaining);
         }
 
         this.trackedRanges.delete(range);
@@ -521,7 +811,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private removeRangeForRef(ref: string | undefined, tokenIndex?: number | null): void {
-        // Drop ranges that no longer exist in the formula and clean our tracking maps.
+        // drop ranges that no longer exist in the formula and clean our tracking maps.
         if (!ref || !this.hasTrackedRef(ref)) {
             return;
         }
@@ -529,10 +819,8 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         if (tokenIndex != null) {
             let removed = false;
             for (const [range, tracked] of Array.from(this.trackedRanges.entries())) {
-                if (tracked.ref !== ref) {
-                    continue;
-                }
-                if (tracked.tokenIndex !== tokenIndex) {
+                const { ref: trackedRef, tokenIndex: trackedTokenIndex } = tracked;
+                if (trackedRef !== ref || trackedTokenIndex !== tokenIndex) {
                     continue;
                 }
                 this.removeTrackedRange(range);
@@ -560,13 +848,13 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
     }
 
     private updateTrackedRangeTokens(): boolean {
-        // When a tracked range changes, update the corresponding token text.
-        const rangeSvc = this.beans.rangeSvc;
-        if (!rangeSvc) {
+        // when a tracked range changes, update the corresponding token text.
+        if (!this.beans.rangeSvc) {
             return false;
         }
 
-        const ranges = rangeSvc.getCellRanges();
+        const ranges = this.getLiveRanges();
+        const editingRef = this.normaliseRefForComparison(this.editingCellRef);
         let updated = false;
 
         for (const range of ranges) {
@@ -575,30 +863,27 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
                 continue;
             }
 
-            const previousRef = tracked.ref;
+            const { ref: previousRef, tokenIndex } = tracked;
             const nextRef = rangeToRef(this.beans, range);
-            if (!nextRef || nextRef === previousRef || nextRef === this.editingCellRef) {
+            const normalisedPrevious = this.normaliseRefForComparison(previousRef);
+            const normalisedNext = this.normaliseRefForComparison(nextRef);
+            if (!nextRef || !normalisedNext || normalisedNext === normalisedPrevious || normalisedNext === editingRef) {
                 continue;
             }
 
-            const tokenColorIndex = this.field.getColorIndexForToken(tracked.tokenIndex ?? null);
+            const { colorClass } = range;
+            const tokenColorIndex = this.field.getColorIndexForToken(tokenIndex ?? null);
             const colorIndex =
                 tokenColorIndex ??
-                this.field.moveColorToRef(
-                    previousRef,
-                    nextRef,
-                    getRangeColorIndexFromClass(range.colorClass) ?? undefined
-                );
+                this.field.moveColorToRef(previousRef, nextRef, getRangeColorIndexFromClass(colorClass) ?? undefined);
 
-            const replacedIndex = this.field.replaceTokenRef(previousRef, nextRef, colorIndex, tracked.tokenIndex);
+            const replacedIndex = this.field.replaceTokenRef(previousRef, nextRef, colorIndex, tokenIndex);
             if (replacedIndex == null) {
                 continue;
             }
 
-            tagRangeWithFormulaColor(range, nextRef, colorIndex);
-            this.trackedRanges.set(range, { ref: nextRef, tokenIndex: replacedIndex ?? tracked.tokenIndex ?? null });
-            this.removeTrackedRef(previousRef);
-            this.addTrackedRef(nextRef);
+            this.tagRangeColor(range, nextRef, colorIndex);
+            this.trackRange(range, nextRef, replacedIndex ?? tokenIndex ?? null);
             updated = true;
         }
 
@@ -607,10 +892,5 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         }
 
         return updated;
-    }
-
-    public override destroy(): void {
-        this.clearTrackedRanges();
-        super.destroy();
     }
 }

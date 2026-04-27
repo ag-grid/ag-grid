@@ -1,11 +1,11 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid parentId tree selection', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TreeDataModule],
+        modules: [TextFilterModule, RowSelectionModule, ClientSideRowModelModule, TreeDataModule],
     });
 
     beforeEach(() => {
@@ -120,6 +120,13 @@ describe('ag-grid parentId tree selection', () => {
             └─┬ X GROUP id:X ag-Grid-AutoColumn:"X" name:"A. Church"
             · └─┬ Y GROUP id:Y ag-Grid-AutoColumn:"Y" name:"Brian Kernighan"
             · · └── E LEAF selected id:E ag-Grid-AutoColumn:"E" name:"Grace Hopper"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+            ├── ag-Grid-AutoColumn "Hierarchy" width:200
+            └── name "Name" width:200 filter
         `);
     });
 });

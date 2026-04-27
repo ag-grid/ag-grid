@@ -3,10 +3,14 @@ import { BASE_URL } from './baseUrl';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import { setValidationDocLink } from './validation/logging';
 
-/** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */
+/**
+ * The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     public readonly renderingEngine: 'vanilla' | 'react' = 'vanilla';
     public readonly batchFrameworkComps: boolean = false;
+    public readonly usesAgGridProvider: boolean | undefined = undefined;
     private readonly baseDocLink: string;
 
     constructor(private readonly frameworkName: 'javascript' | 'angular' | 'react' | 'vue' = 'javascript') {

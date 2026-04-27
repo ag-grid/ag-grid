@@ -12,7 +12,6 @@ import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import type { DragAndDropIcon, DropTarget } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
@@ -676,7 +675,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             step: 'group',
             keepRenderedRows: true,
             animate: !this.gos.get('suppressAnimationFrame'),
-            changedPath: new ChangedPath(false, rootNode as RowNode),
             changedRowNodes,
         });
 
@@ -703,14 +701,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
 const rowsDropChanged = (a: RowsDrop | null | undefined, b: RowsDrop): boolean =>
     a !== b &&
-    (!a ||
-        a.sameGrid !== b.sameGrid ||
-        a.allowed !== b.allowed ||
-        a.position !== b.position ||
-        a.target !== b.target ||
-        a.source !== b.source ||
-        a.newParent !== b.newParent ||
-        !_areEqual(a.rows, b.rows));
+    (a?.sameGrid !== b.sameGrid ||
+        a?.allowed !== b.allowed ||
+        a?.position !== b.position ||
+        a?.target !== b.target ||
+        a?.source !== b.source ||
+        a?.newParent !== b.newParent ||
+        !_areEqual(a?.rows, b.rows));
 
 const compareRowIndex = ({ rowIndex: a }: IRowNode, { rowIndex: b }: IRowNode): number =>
     a !== null && b !== null ? a - b : 0;

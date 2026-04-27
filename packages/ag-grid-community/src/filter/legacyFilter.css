@@ -1,0 +1,11 @@
+/* `> *` is required for legacy custom filters where custom component DOM is
+   added directly to .ag-filter without .ag-filter-wrapper. To prevent slowing
+   down applications that don't use legacy custom filters. We add this file
+   dynamically when legacy custom filters are first used. */
+
+/* stylelint-disable ag/no-low-performance-key-selector */
+:where(.ag-menu:not(.ag-tabs) .ag-filter) > *:not(.ag-filter-wrapper) {
+    /* Add a minimum width for the filter menu to avoid having zero width when the
+       content tries to size itself to the menu */
+    min-width: 180px;
+}

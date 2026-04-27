@@ -6,13 +6,14 @@ import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 import { colorSchemeDarkBlue, themeQuartz } from 'ag-grid-community';
 import type { ColDef, GridApi, GridOptions, MenuItemDef } from 'ag-grid-community';
-import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, createGrid } from 'ag-grid-community';
 import {
     CellSelectionModule,
     ColumnMenuModule,
     ContextMenuModule,
     IntegratedChartsModule,
     RowGroupingModule,
+    RowGroupingPanelModule,
     SideBarModule,
 } from 'ag-grid-enterprise';
 
@@ -33,12 +34,11 @@ const MESSAGE_FEQUENCY_1X = 200;
 
 let dataWorker;
 let scriptRunner: ScriptRunner;
-let restartScriptTimeout;
 
 ModuleRegistry.registerModules([
     AllCommunityModule,
-    ClientSideRowModelModule,
     RowGroupingModule,
+    RowGroupingPanelModule,
     CellSelectionModule,
     ColumnMenuModule,
     ContextMenuModule,
@@ -294,7 +294,6 @@ export function createAutomatedRowGrouping({
 }
 
 export function cleanUp() {
-    clearTimeout(restartScriptTimeout);
     if (scriptRunner) {
         scriptRunner.stop();
     }

@@ -25,8 +25,8 @@ gridApi.exportDataAsExcel({
 
 The following example shows Excel customisations where the exported document has the following:
 
-* All row groups with the prefix `row group: `
-* All cell values surrounded by `_`, unless they are `undefined`, in which case they are empty
+-   All row groups with the prefix `row group: `
+-   All cell values surrounded by `_`, unless they are `undefined`, in which case they are empty
 
 {% note %}
 When using row grouping while [hiding open parents](./grouping-multiple-group-columns/#hiding-expanded-parent-rows) (`groupHideOpenParents=true`), export to Excel doesn't export the group rows as collapsible groups in Excel. Instead, all exported rows are on the same level and cannot be expanded/collapsed in Excel.
@@ -53,11 +53,37 @@ gridApi.exportDataAsExcel({
 
 The following example shows Excel customisations where the exported document has the following:
 
-* Group headers with the prefix `group header: `
-* Headers with the prefix `header: `
+-   Group headers with the prefix `group header: `
+-   Headers with the prefix `header: `
 
 {% gridExampleRunner title="Excel Export - Customising Column Group Headers" name="excel-export-customising-column-group-headers" /%}
 
-## Next Up
+## Custom Metadata
 
-Continue to the next section: [Images](./excel-export-images/).
+Use `customMetadata` to write custom document properties to the exported file. The values are added as metadata to the Excel file and serialised as strings.
+
+This is useful for attaching internal identifiers, workflow hints, or metadata consumed by downstream systems.
+
+Use cases for custom metadata may include:
+
+-   Internal workflow tagging (for example, adding `ExportID` or `GeneratedBy` for tracking in automation scripts).
+-   Integration with document management systems (for example, embedding `ContractType` or `ExpirationDate` for indexing in SharePoint or similar tools).
+-   Integration with third-party analytics tools (for example, passing `CampaignID` for BI dashboard automation).
+
+```{% frameworkTransform=true %}
+gridApi.exportDataAsExcel({
+    customMetadata: {
+        ExportID: 'EXP-2026-001',
+        ExpirationDate: '2025-01-01T12:00:00Z',
+        Disclaimer: 'Preliminary data; subject to audit',
+    },
+});
+```
+
+{% interfaceDocumentation interfaceName="ExcelExportParams" names=["customMetadata"] /%}
+
+{% note %}
+The Grid does not interpret these values or apply labels; it only writes the custom properties provided in the `customMetadata` parameter. This feature does not replace or integrate with officially endorsed labelling systems, such as Microsoft Purview Sensitivity Labels, which require specific SDKs or APIs for enforcement, encryption, and compliance.
+{% /note %}
+
+{% gridExampleRunner title="Excel Export - Custom Metadata" name="excel-export-customising-custom-metadata" /%}

@@ -7,9 +7,9 @@ import {
     foregroundBackgroundMix,
     foregroundMix,
 } from '../../../agStack/theming/themeUtils';
-import { inputStyleBaseCSS } from './input-style-base.css-GENERATED';
-import { inputStyleBorderedCSS } from './input-style-bordered.css-GENERATED';
-import { inputStyleUnderlinedCSS } from './input-style-underlined.css-GENERATED';
+import inputStyleBaseCSS from './input-style-base.css';
+import inputStyleBorderedCSS from './input-style-bordered.css';
+import inputStyleUnderlinedCSS from './input-style-underlined.css';
 
 export type InputStyleParams = {
     /**
@@ -133,27 +133,27 @@ export type InputStyleParams = {
     pickerListBackgroundColor: ColorValue;
 
     /**
-     * Size of thumb (the draggable item) in color picker popup.
+     * Size of thumb (the draggable item) in color picker popup
      */
     colorPickerThumbSize: LengthValue;
 
     /**
-     * Size of track in color picker popup.
+     * Size of track in color picker popup
      */
     colorPickerTrackSize: LengthValue;
 
     /**
-     * Border width of thumb (the draggable item) in color picker popup.
+     * Border width of thumb (the draggable item) in color picker popup
      */
     colorPickerThumbBorderWidth: LengthValue;
 
     /**
-     * Border radius of track in color picker popup.
+     * Border radius of track in color picker popup
      */
     colorPickerTrackBorderRadius: LengthValue;
 
     /**
-     * Border radius of selected/recent colors in color picker.
+     * Border radius of selected/recent colors in color picker
      */
     colorPickerColorBorderRadius: LengthValue;
 };

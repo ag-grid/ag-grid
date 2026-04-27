@@ -9,6 +9,7 @@ export type IColumnKeyCreator = {
     getUniqueKey(colId?: string | null, colField?: string | null): string;
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ColumnKeyCreator implements IColumnKeyCreator {
     private existingKeys: { [key: string]: boolean } = {};
 

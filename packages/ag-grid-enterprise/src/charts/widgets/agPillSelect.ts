@@ -17,7 +17,7 @@ import {
 
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
-import { agPillSelectCSS } from './agPillSelect.css-GENERATED';
+import agPillSelectCSS from './agPillSelect.css';
 
 interface AgPillSelectParams<TValue = string | null> {
     valueList?: TValue[];

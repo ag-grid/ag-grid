@@ -31,9 +31,9 @@ export function getHeaderIndexToFocus(beans: BeanCollection, column: AgColumn, l
     }
 
     // if level is less, then find the group with the given level
-    let parent = column.getParent();
+    let parent = column.parent;
     while (parent && parent.getProvidedColumnGroup().getLevel() > level) {
-        parent = parent.getParent();
+        parent = parent.parent;
     }
 
     const isColSpanning = column.isSpanHeaderHeight();
@@ -52,6 +52,7 @@ export function getHeaderIndexToFocus(beans: BeanCollection, column: AgColumn, l
     };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class HeaderNavigationService extends BeanStub implements NamedBean {
     beanName = 'headerNavigation' as const;
 
@@ -103,7 +104,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
         while (col) {
             row++;
-            col = col.getParent();
+            col = col.parent;
         }
 
         let headerRowIndex = row;
@@ -242,7 +243,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         const beans = this.beans;
         const currentIndex = focusedHeader.headerRowIndex;
 
-        let nextFocusedCol: AgColumn | null = null;
+        let nextFocusedCol: AgColumn | null;
         let nextRowIndex: number;
 
         const headerRowCount = getFocusHeaderRowCount(beans);
@@ -360,14 +361,14 @@ function getColumnVisibleParent(
     const optimisticNextIndex = currentIndex - 1;
     if (currentRowType !== 'filter') {
         const isSpanningCol = currentColumn instanceof AgColumn && currentColumn.isSpanHeaderHeight();
-        let nextVisibleParent = currentColumn.getParent();
+        let nextVisibleParent = currentColumn.parent;
         while (
             nextVisibleParent &&
             // skip if row isn't visible or col is padding and spanned
             (nextVisibleParent.getProvidedColumnGroup().getLevel() > optimisticNextIndex ||
                 (isSpanningCol && nextVisibleParent.isPadding()))
         ) {
-            nextVisibleParent = nextVisibleParent.getParent();
+            nextVisibleParent = nextVisibleParent.parent;
         }
 
         if (nextVisibleParent) {

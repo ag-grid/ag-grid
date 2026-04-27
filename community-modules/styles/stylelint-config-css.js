@@ -1,6 +1,9 @@
 module.exports = {
     plugins: ['stylelint-csstree-validator'],
     rules: {
-        'csstree/validator': true,
+        'csstree/validator': {
+            ignoreProperties: ['container-type'],
+            ignoreValue: /\bmax\(/,
+        },
     },
 };

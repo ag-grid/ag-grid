@@ -7,6 +7,7 @@ import { RowDragComp } from './rowDragComp';
 import { RowDragFeature } from './rowDragFeature';
 import type { RowDragVisibility } from './rowDragTypes';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowDragService extends BeanStub implements NamedBean {
     beanName = 'rowDragSvc' as const;
 
@@ -110,7 +111,7 @@ export class RowDragService extends BeanStub implements NamedBean {
             return 'visible';
         }
 
-        const pivoting = beans.colModel.isPivotMode();
+        const pivoting = beans.colModel.pivotMode;
 
         if ((pivoting || beans.rowGroupColsSvc?.columns?.length) && !gos.get('refreshAfterGroupEdit')) {
             return 'hidden';

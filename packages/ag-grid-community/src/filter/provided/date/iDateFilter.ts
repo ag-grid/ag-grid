@@ -1,6 +1,6 @@
 import type { IFilterParams } from '../../../interfaces/iFilter';
 import type { IScalarFilterParams } from '../iScalarFilter';
-import type { ISimpleFilterModel } from '../iSimpleFilter';
+import type { ISimpleFilterModel, ISimpleFilterModelPresetType } from '../iSimpleFilter';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -14,12 +14,32 @@ export interface DateFilterModel extends ISimpleFilterModel {
      * If `useIsoSeparator = true`, the format is instead `YYYY-MM-DDThh:mm:ss`.
      * Custom filters can have no values (hence both are optional). Range filter has two values (from and to).
      */
-    dateFrom: string | null;
+    dateFrom: string | null | undefined;
     /**
      * Range filter `to` date value.
      */
-    dateTo: string | null;
+    dateTo: string | null | undefined;
 }
+
+/**
+ * Date filter model used when a built-in preset range (for example, Today or Last 7 Days) is selected.
+ * `dateFrom` and `dateTo` are always `undefined` and the `type` carries the preset key.
+ */
+export interface PresetDateRangeFilterModel extends DateFilterModel {
+    /**
+     * Preset range type (for example, `today` or `last7Days`).
+     */
+    type: ISimpleFilterModelPresetType;
+    /**
+     * Preset range does not provide an explicit `from` date.
+     */
+    dateFrom: undefined;
+    /**
+     * Preset range does not provide an explicit `to` date.
+     */
+    dateTo: undefined;
+}
+
 /**
  * Parameters provided by the grid to the `init` method of a `DateFilter`.
  * Do not use in `colDef.filterParams` - see `IDateFilterParams` instead.

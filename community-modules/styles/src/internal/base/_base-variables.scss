@@ -16,6 +16,8 @@
 
         --ag-background-color: #fff;
 
+        --ag-wrapper-background-color: var(--ag-background-color);
+
         --ag-header-background-color: transparent;
 
         --ag-tooltip-background-color: transparent;
@@ -214,6 +216,7 @@
         --ag-menu-min-width: 181px;
 
         --ag-side-bar-panel-width: 200px;
+        --ag-side-bar-panel-animation-duration: 0s;
 
         --ag-font-family: 'Helvetica Neue', sans-serif;
         --ag-font-size: 14px;
@@ -241,6 +244,9 @@
 
         --ag-filter-panel-apply-button-color: var(--ag-foreground-color);
         --ag-filter-panel-apply-button-background-color: var(--ag-background-color);
+
+        --ag-column-panel-apply-button-color: var(--ag-foreground-color);
+        --ag-column-panel-apply-button-background-color: var(--ag-background-color);
         --ag-filter-panel-card-subtle-color: var(--ag-foreground-color);
         --ag-filter-panel-card-subtle-hover-color: var(--ag-foreground-color);
 
@@ -265,5 +271,13 @@
         --ag-formula-token-7-color: #247492;
         --ag-formula-token-7-background-color: rgb(36 116 146 / 16%);
         --ag-formula-token-7-border-color: var(--ag-formula-token-7-color);
+
+        --ag-note-indicator-size: 8px;
+        --ag-note-popup-background-color: var(--ag-menu-background-color);
+        --ag-note-popup-text-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 75%);
+        --ag-note-popup-input-text-color: var(--ag-input-text-color);
+        --ag-note-popup-input-background-color: var(--ag-input-background-color);
+        --ag-note-popup-border: var(--ag-dialog-border);
+        --ag-note-popup-padding: calc(var(--ag-grid-size) / 2);
     }
 }

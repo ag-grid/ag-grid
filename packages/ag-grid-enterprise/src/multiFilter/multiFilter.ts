@@ -187,7 +187,11 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         const setFilterModel = (filter: IFilterComp, filterModel: any) => {
             return new AgPromise<void>((resolve) => {
                 const promise = filter.setModel(filterModel);
-                promise ? promise.then(() => resolve()) : resolve();
+                if (promise) {
+                    promise.then(resolve);
+                } else {
+                    resolve();
+                }
             });
         };
 

@@ -1,7 +1,21 @@
 import type { AgEvent } from '../agStack/interfaces/agEvent';
+import type { ColKey, IAggFuncResult } from '../entities/colDef';
 import type { BuildEventTypeMap } from '../eventTypes';
 import type { SelectionEventSourceType } from '../events';
 import type { Column } from '../interfaces/iColumn';
+import type { CellValueResolveFrom } from '../interfaces/iEditService';
+
+/**
+ * Specifies how to resolve the value returned by `rowNode.getDataValue()`.
+ *
+ * - `'data'` (default) — Committed data, ignoring pending edits.
+ *   For aggregation columns using `avg` or `count`, the raw `IAggFuncResult` wrapper is returned.
+ * - `'data-raw'` — Same as `'data'` but skips aggregation results (`rowNode.aggData`) and formula resolution.
+ * - `'value'` — Same as `'data'`, but aggregation wrappers are resolved to their scalar value.
+ * - `'edit'` — Live editor value if a cell is being edited, then pending batch value, then committed data.
+ * - `'batch'` — Pending batch value (excludes live editor typing), then committed data.
+ */
+export type DataValueFrom = 'data' | 'data-raw' | 'value' | CellValueResolveFrom;
 
 export type RowNodeEventType =
     | 'rowSelected'
@@ -187,7 +201,7 @@ interface GroupRowNode<TData = any> {
 
     /** If using row grouping, contains the group values for this group. */
     groupData: { [key: string]: any | null } | null;
-    /** If using row grouping and aggregation, contains the aggregation data. */
+    /** If using row grouping and aggregation, contains the aggregation data. Created via `Object.create(null)` to avoid prototype conflicts. */
     aggData: any;
 
     /** The row group column used for this group. */
@@ -212,11 +226,11 @@ interface GroupRowNode<TData = any> {
     allLeafChildren: IRowNode<TData>[] | null;
     /** Number of children and grand children. */
     allChildrenCount: number | null;
-    /** Children of this group. If multi levels of grouping, shows only immediate children. */
+    /** Children of this group. `null` for leaf nodes, non-empty array for groups. Never an empty array. */
     childrenAfterGroup: IRowNode<TData>[] | null;
-    /** Sorted children of this group. */
+    /** Sorted children of this group after aggregation filtering. `null` for leaf nodes. */
     childrenAfterSort: IRowNode<TData>[] | null;
-    /** Filtered children of this group. */
+    /** Filtered children of this group. `null` for leaf nodes. */
     childrenAfterFilter: IRowNode<TData>[] | null;
 
     /** `true` if row is a footer. Footers have `group = true` and `footer = true`. */
@@ -225,7 +239,29 @@ interface GroupRowNode<TData = any> {
     sibling: IRowNode<TData>;
 }
 
+/** The row ID of the root node (`'ROOT_NODE_ID'`). Use with `api.getRowNode(ROOT_NODE_ID)`. */
+export const ROOT_NODE_ID = 'ROOT_NODE_ID';
+
+/** Prefix for group total (footer) row IDs (`'rowGroupFooter_'`). A group total row ID is `GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id`. */
+export const GROUP_TOTAL_ROW_ID_PREFIX = 'rowGroupFooter_';
+
+/** Prefix for detail row IDs in master-detail grids (`'detail_'`). A detail row ID is `DETAIL_ROW_ID_PREFIX + masterRowNode.id`. */
+export const DETAIL_ROW_ID_PREFIX = 'detail_';
+
+/** The row ID of the grand total row (`'rowGroupFooter_ROOT_NODE_ID'`). Use with `api.getRowNode(GRAND_TOTAL_ROW_ID)`. */
+export const GRAND_TOTAL_ROW_ID = GROUP_TOTAL_ROW_ID_PREFIX + ROOT_NODE_ID;
+
 export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<TData> {
+    /**
+     * The primary (canonical) row node, resolving footer and pinned sibling relationships.
+     *
+     * - If this is a **footer** row, returns its parent group row.
+     * - If this is a **manually pinned** row, returns the source row in the main viewport.
+     * - If both (pinned footer), follows both links to the primary group row.
+     * - Otherwise, returns `this`.
+     */
+    readonly primaryRow: IRowNode<TData>;
+
     /**
      * Select (or deselect) the node.
      * @param newValue -`true` for selection, `false` for deselection.
@@ -314,20 +350,100 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     updateData(data: TData): void;
 
     /**
-     * Replaces the value on the `rowNode` for the specified column. When complete,
-     * the grid refreshes the rendered cell on the required row only.
-     * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
-     * **Note**: This method defers to EditModule if available and batches the edit when `fullRow` or `batchEdit` is enabled.
+     * Sets the value on the `rowNode` for the specified column and refreshes the rendered cell.
      *
-     * @param colKey The column where the value should be updated
-     * @param newValue The new value
-     * @param eventSource The source of the event
-     * @returns `true` if the value was changed, otherwise `false`.
+     * In **Read Only** mode, this fires `onCellEditRequest` instead of writing directly.
+     *
+     * In **Pivot Mode**, pivot columns on leaf rows resolve to their underlying value column.
+     *
+     * The `eventSource` parameter controls how the value is written:
+     *
+     * - `(default)` — Closes the active editor, writes to the pending batch if batching, otherwise writes to committed data.
+     * - `'edit'` — Writes directly into the active editor if present (via `refresh()` or recreation); falls back to pending batch or committed data.
+     * - `'batch'` — Leaves the active editor open, writes to the pending batch if batching, otherwise writes to committed data.
+     * - `'data'` — Leaves the active editor open, skips the pending batch, always writes to committed data.
+     *
+     * With `'edit'`, the active editor receives the new value via `refresh()` if implemented;
+     * otherwise the editor is recreated with focus preserved.
+     *
+     * @param colKey The column to update (field name, `colId`, or `Column` object)
+     * @param newValue The new value to set
+     * @param eventSource Controls how the value is written
+     * @returns `true` if the value changed, `false` otherwise
      */
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;
+
+    /**
+     * Returns the data value from the `rowNode` for the specified column.
+     *
+     * By default, returns committed data ignoring any pending edits. For group rows, returns
+     * aggregated values or the group key. For formula cells in `'data'` / `'value'` modes,
+     * returns the **computed result**; in `'edit'` / `'batch'` / `'data-raw'` modes, returns
+     * the **raw formula string** (so the edit pipeline can round-trip it).
+     *
+     * To get the **displayed** value (with formatting and value formatter applied), use `api.getCellValue()` instead.
+     *
+     * In **Pivot Mode**, pivot columns on leaf rows resolve to their underlying value column.
+     *
+     * The `from` parameter controls value resolution:
+     *
+     * - `'data'` (default) — Returns the aggregated value for group rows, otherwise committed data.
+     *   May return an `IAggFuncResult<TValue>` wrapper for aggregation columns; use `'value'` to unwrap.
+     *   Formulas are resolved to their computed value.
+     * - `'edit'` — Returns the active editor's value if editing, or the pending batch value if not editing,
+     *   then falls back to aggregation and committed data. **Formulas are NOT resolved** — returns the raw
+     *   formula string to mirror the edit-pipeline buffer.
+     * - `'batch'` — Returns the pending batch value if batching, then falls back to aggregation and committed
+     *   data. **Formulas are NOT resolved** — returns the raw formula string to mirror the edit-pipeline buffer.
+     * - `'value'` — Same as `'data'` but unwraps `IAggFuncResult` (e.g. from `avg` or `count`) to its scalar
+     *   value. Formulas are resolved to their computed value.
+     * - `'data-raw'` — Always returns committed data, skipping aggregation results (`rowNode.aggData`) and
+     *   formula resolution. For group rows this is typically `undefined` since group rows do not hold leaf data.
+     *
+     * @param colKey The column to read (field name, `colId`, or `Column` object)
+     * @param from Controls value resolution. Defaults to `'data'`.
+     * @returns The value, or `undefined` if the column is not found.
+     *   When `from` is omitted or `'data'`, aggregation columns may return an
+     *   `IAggFuncResult<TValue>` wrapper object instead of a plain `TValue`.
+     *   Pass `from: 'value'` to always receive a scalar `TValue`.
+     */
+    getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from: 'value' | 'data-raw' | 'edit' | 'batch'
+    ): TValue | null | undefined;
+    getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from?: 'data'
+    ): TValue | IAggFuncResult<TValue> | null | undefined;
+    getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from?: DataValueFrom
+    ): TValue | IAggFuncResult<TValue> | null | undefined;
 
     /**
      * Returns the route of the row node. If the Row Node does not have a key (i.e it's a leaf row inside a row group) returns undefined
      */
     getRoute(): string[] | undefined;
+
+    /**
+     * Returns children that contribute to the aggregation of this group RowNode.
+     *
+     * - For leaf groups (groups containing data rows): returns the data rows.
+     *   With pivot columns, only rows matching the pivot keys are included.
+     * - For non-leaf groups (groups containing other groups): returns the child groups.
+     * - For leaf (non-group) RowNodes: returns an empty array.
+     *
+     * When `recursive` is `true`, traverses the full group hierarchy and returns all descendant
+     * leaf (data) rows instead of the immediate children. This creates a new array on each call.
+     * Use with care on large datasets as it visits every descendant node.
+     *
+     * **Note:** Only supported with the Client-Side Row Model.
+     *
+     * @param colKey - The column key. Pass the pivot column to filter by pivot keys, or `null` to get all children.
+     * @param recursive - When `true`, returns all descendant leaf rows instead of only the immediate children.
+     *   Defaults to `false`.
+     * @returns An array of child `IRowNode` instances contributing to this group's aggregation.
+     *   When `recursive` is `false` (the default), the returned array must not be modified.
+     */
+    getAggregatedChildren(colKey: ColKey<TData> | null | undefined, recursive?: boolean): IRowNode<TData>[];
 }

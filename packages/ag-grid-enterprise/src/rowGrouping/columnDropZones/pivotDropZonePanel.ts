@@ -1,11 +1,13 @@
-import type { AgColumn, DragAndDropIcon, GridDraggingEvent } from 'ag-grid-community';
-import { _createIconNoSpan } from 'ag-grid-community';
+import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
+import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
+import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
+import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
-export class PivotDropZonePanel extends BaseDropZonePanel {
-    constructor(horizontal: boolean) {
-        super(horizontal, 'pivot');
+export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
+    constructor(horizontal: boolean, params?: ColumnStateUpdateParams, embedded = false) {
+        super(horizontal, 'pivot', params, embedded);
     }
 
     public postConstruct(): void {
@@ -19,6 +21,11 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
             title: title,
         });
 
+        // See RowGroupDropZonePanel — embedded drop zones defer tab hand-off to their host.
+        if (this.horizontal && !this.embedded) {
+            _addFocusableContainerListener(this.beans, this, this.getGui());
+        }
+
         this.addManagedEventListeners({
             newColumnsLoaded: this.refresh.bind(this),
             columnPivotChanged: this.refresh.bind(this),
@@ -30,19 +37,18 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
     protected getAriaLabel(): string {
         const translate = this.getLocaleTextFunc();
-        const label = translate('ariaPivotDropZonePanelLabel', 'Column Labels');
 
-        return label;
+        return translate('ariaPivotDropZonePanelLabel', 'Column Labels');
     }
 
-    private refresh(): void {
+    public refresh(): void {
         this.checkVisibility();
         this.refreshGui();
     }
 
     private checkVisibility(): void {
         const colModel = this.beans.colModel;
-        const pivotMode = colModel.isPivotMode();
+        const pivotMode = colModel.pivotMode;
 
         if (this.horizontal) {
             // what we do for horizontal (ie the pivot panel at the top) depends
@@ -63,21 +69,25 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
             }
         } else {
             // in toolPanel, the pivot panel is always shown when pivot mode is on
-            this.setDisplayed(pivotMode);
+            this.setDisplayed(this.beans.columnStateUpdateStrategy.getPivotMode(isDeferredMode(this.updateParams)));
         }
     }
 
     protected isItemDroppable(column: AgColumn, draggingEvent: GridDraggingEvent): boolean {
         // we never allow grouping of secondary columns
-        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gos.get('functionsReadOnly') || !column.primary) {
             return false;
         }
 
-        return column.isAllowPivot() && (!column.isPivotActive() || this.isSourceEventFromTarget(draggingEvent));
+        const isActive = this.beans.columnStateUpdateStrategy
+            .getPivotColumns(isDeferredMode(this.updateParams))
+            .includes(column);
+        return column.isAllowPivot() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]): void {
-        this.beans.pivotColsSvc?.setColumns(columns, 'toolPanelUi');
+        this.beans.columnStateUpdateStrategy.setPivotColumns(isDeferredMode(this.updateParams), columns, 'toolPanelUi');
+        refreshDeferredToolPanelUi(this.beans, this.updateParams);
     }
 
     protected getIconName(): DragAndDropIcon {
@@ -85,6 +95,10 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.beans.pivotColsSvc?.columns ?? [];
+        return this.beans.columnStateUpdateStrategy.getPivotColumns(isDeferredMode(this.updateParams));
+    }
+
+    public getFocusableContainerName(): 'pivotToolbar' {
+        return 'pivotToolbar';
     }
 }

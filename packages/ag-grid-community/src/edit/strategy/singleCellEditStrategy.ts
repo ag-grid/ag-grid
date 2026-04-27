@@ -28,13 +28,26 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return res;
         }
 
-        const { rowNode, column } = position || {};
+        const rowNode = position?.rowNode;
+        const column = position?.column;
+        const trackedRowNode = this.rowNode;
+        const trackedColumn = this.column;
 
-        if ((!this.rowNode || !this.column) && rowNode && column) {
-            return null;
+        if ((!trackedRowNode || !trackedColumn) && rowNode && column) {
+            return null; // no existing edit, so don't stop
         }
 
-        return this.rowNode !== rowNode || this.column !== column;
+        if (trackedRowNode !== rowNode || trackedColumn !== column) {
+            return true; // stop editing if moving to a different cell
+        }
+
+        // Both tracked and position cells are null/undefined (cells match after check above).
+        // Stop orphan editors from tabbing into empty cells.
+        if (!trackedRowNode && !trackedColumn) {
+            return this.model.hasEdits(undefined, { withOpenEditor: true });
+        }
+
+        return false; // continue editing the same cell
     }
 
     public override midBatchInputsAllowed(position?: EditPosition): boolean {
@@ -83,12 +96,19 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         };
     }
 
-    public override stop(cancel?: boolean, event?: Event | null): boolean {
-        super.stop(cancel, event);
+    public override stopCancelled(forceCancel: boolean): boolean {
+        super.stopCancelled(forceCancel);
+        return this.clearPosition();
+    }
 
+    public override stopCommitted(event: Event | null, commit: boolean): boolean {
+        super.stopCommitted(event, commit);
+        return this.clearPosition();
+    }
+
+    private clearPosition(): true {
         this.rowNode = undefined;
         this.column = undefined;
-
         return true;
     }
 
@@ -193,7 +213,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         const prevEditable = prevCell.isCellEditable();
         const nextEditable = nextCell.isCellEditable();
 
-        const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
+        const rowsMatch = prevPos.rowIndex === nextPos?.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
         if (prevEditable && !preventNavigation) {
             this.setFocusOutOnEditor(prevCell);
@@ -202,13 +222,21 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         // Don't start editing the next cell, focus only
         const suppressStartEditOnTab = this.gos.get('suppressStartEditOnTab');
 
+        let startEditingCalled = false;
         if (!rowsMatch && !preventNavigation) {
             super.cleanupEditors(nextCell, true);
 
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else {
-                this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
+                startEditingCalled = true;
+                this.editSvc.startEditing(nextCell, {
+                    startedEdit: true,
+                    event,
+                    source,
+                    ignoreEventKey: true,
+                    editable: nextEditable,
+                });
             }
         }
 
@@ -218,13 +246,17 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else if (!nextCell.comp?.getCellEditor()) {
-                // Two possibilities:
-                // * Editor should be visible (but was destroyed due to column virtualisation)
-                //   = we shouldn't re-emit a startEdit event, so stay silent
-                // * Editor wasn't created because edit came from API and didn't trigger EditService.startEditing
-                //   = shouldn't be silent
-                const alreadyEditing = this.editSvc?.isEditing(nextCell, { withOpenEditor: true });
-                _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true, silent: alreadyEditing });
+                // If startEditing was called above (cross-row navigation), the editor may not
+                // exist yet because React creates editor components asynchronously. In that case
+                // skip the redundant _setupEditor call to avoid overwriting the correctly-
+                // parameterised first call. Otherwise, the editor is genuinely missing (e.g.
+                // destroyed by column virtualisation while edit state remained open) and must
+                // be re-created — silently if the cell is already in editing state to avoid
+                // re-emitting cellEditingStarted.
+                if (!startEditingCalled) {
+                    const alreadyEditing = this.editSvc?.isEditing(nextCell, { withOpenEditor: true });
+                    _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true, silent: alreadyEditing });
+                }
                 this.setFocusInOnEditor(nextCell);
 
                 this.cleanupEditors(nextCell);

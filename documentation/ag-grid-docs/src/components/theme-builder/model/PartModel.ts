@@ -33,7 +33,7 @@ const partDocs: Record<string, string | undefined> = {
     inputStyle: 'The appearance of text input fields',
 };
 
-const quartzParts = new Set(_asThemeImpl(themeQuartz).parts);
+const quartzParts = new Set<Part>(_asThemeImpl(themeQuartz).parts);
 
 export class FeatureModel {
     readonly label: string;
@@ -90,6 +90,10 @@ export class PartModel {
     ) {
         this.label = titleCase(variantName);
         this.id = feature.featureName + '/' + variantName;
+    }
+
+    get exportName(): string {
+        return this.feature.featureName + this.variantName[0].toUpperCase() + this.variantName.slice(1);
     }
 }
 

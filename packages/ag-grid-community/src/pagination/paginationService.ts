@@ -1,9 +1,9 @@
-import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { IEditService } from '../interfaces/iEditService';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { PaginationSelector } from './paginationComp';
+
+const DEFAULT_PAGE_SIZE = 100;
 
 export class PaginationService extends BeanStub implements NamedBean {
     beanName = 'pagination' as const;
@@ -20,7 +20,6 @@ export class PaginationService extends BeanStub implements NamedBean {
     private pageSizeFromPageSizeSelector?: number; // When user selects page size from page size selector.
     private pageSizeFromInitialState?: number; // When the initial grid state is loaded, and a page size rehydrated
     private pageSizeFromGridOptions?: number; // When user sets gridOptions.paginationPageSize.
-    private readonly defaultPageSize: 100; // When nothing else set, default page size is 100.
 
     private totalPages: number;
     private currentPage = 0;
@@ -29,8 +28,6 @@ export class PaginationService extends BeanStub implements NamedBean {
     private bottomDisplayedRowIndex = 0;
 
     private masterRowCount: number = 0;
-
-    private readonly editSvc?: IEditService;
 
     public postConstruct() {
         const gos = this.gos;
@@ -150,21 +147,24 @@ export class PaginationService extends BeanStub implements NamedBean {
     }
 
     private get pageSize(): number {
+        const {
+            pageSizeAutoCalculated,
+            pageSizeFromInitialState,
+            pageSizeFromGridOptions,
+            pageSizeFromPageSizeSelector,
+            gos,
+        } = this;
+
         // Explicitly check for autosize status as this can be set to false before the calculated value is cleared.
         // Due to a race condition in when event listeners are added.
-        if (_exists(this.pageSizeAutoCalculated) && this.gos.get('paginationAutoPageSize')) {
-            return this.pageSizeAutoCalculated;
-        }
-        if (_exists(this.pageSizeFromPageSizeSelector)) {
-            return this.pageSizeFromPageSizeSelector;
-        }
-        if (_exists(this.pageSizeFromInitialState)) {
-            return this.pageSizeFromInitialState;
-        }
-        if (_exists(this.pageSizeFromGridOptions)) {
-            return this.pageSizeFromGridOptions;
-        }
-        return this.defaultPageSize;
+        const autoValue = gos.get('paginationAutoPageSize') ? pageSizeAutoCalculated : undefined;
+        return (
+            autoValue ??
+            pageSizeFromPageSizeSelector ??
+            pageSizeFromInitialState ??
+            pageSizeFromGridOptions ??
+            DEFAULT_PAGE_SIZE
+        );
     }
 
     public calculatePages(): void {

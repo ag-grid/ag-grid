@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom';
-
 import type { ColDef, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, createGrid } from 'ag-grid-community';
 

@@ -20,6 +20,7 @@ import type { ColumnModel, Maybe } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
 import type { VisibleColsService } from './visibleColsService';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BaseColsService extends BeanStub implements IColsService {
     protected colModel: ColumnModel;
     protected aggFuncSvc?: IAggFuncService;
@@ -123,7 +124,9 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             columnCallback(column, added, source);
         }
 
-        autoGroupsNeedBuilding && this.colModel.refreshCols(false, source);
+        if (autoGroupsNeedBuilding) {
+            this.colModel.refreshCols(false, source);
+        }
 
         this.visibleCols.refresh(source);
 
@@ -213,7 +216,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         // if default only, change only if new
         for (const col of primaryCols ?? []) {
             const colIsNew = !oldProvidedCols.includes(col);
-            const colDef = col.getColDef();
+            const colDef = col.colDef;
 
             const value = getValueFunc(colDef);
             const initialValue = getInitialValueFunc(colDef);
@@ -256,12 +259,16 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
             if (include) {
                 const useIndex = colIsNew ? index != null || initialIndex != null : index != null;
-                useIndex ? colsWithIndex.push(col) : colsWithValue.push(col);
+                if (useIndex) {
+                    colsWithIndex.push(col);
+                } else {
+                    colsWithValue.push(col);
+                }
             }
         }
 
         const getIndexForCol = (col: AgColumn): number => {
-            const colDef = col.getColDef();
+            const colDef = col.colDef;
             return getIndexFunc(colDef) ?? getInitialIndexFunc(colDef)!;
         };
 
@@ -344,7 +351,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         const allColIds = new Set(
             colList
                 .map((column) => {
-                    const colId = column.getColId();
+                    const colId = column.colId;
                     newColIds.delete(colId);
                     return colId;
                 })
@@ -354,7 +361,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         const colIdsInOriginalOrder: string[] = [];
         const originalOrderMap: { [colId: string]: number } = {};
         for (let i = 0; i < primaryCols.length; i++) {
-            const colId = primaryCols[i].getColId();
+            const colId = primaryCols[i].colId;
             if (allColIds.has(colId)) {
                 const len = colIdsInOriginalOrder.push(colId);
                 originalOrderMap[colId] = len - 1;
@@ -381,13 +388,13 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         };
 
         for (const column of colList) {
-            const colId = column.getColId();
+            const colId = column.colId;
             if (updatedColIds.has(colId)) {
                 // New col already exists. Add any other new cols that should be before it.
                 processPrecedingNewCols(colId);
                 incomingColumnState[colId][indexProp] = index++;
             } else {
-                const colDef = column.getColDef();
+                const colDef = column.colDef;
                 const missingIndex =
                     colDef[indexProp] === null || (colDef[indexProp] === undefined && colDef[initialIndexProp] == null);
                 if (missingIndex) {

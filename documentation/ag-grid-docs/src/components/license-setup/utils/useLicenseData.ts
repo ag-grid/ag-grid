@@ -127,6 +127,7 @@ const useLicenseState = ({
             }
         });
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing derived license state
         setLicenseState((prevLicenseState: LicenseState) => {
             return {
                 ...prevLicenseState,
@@ -134,6 +135,7 @@ const useLicenseState = ({
             };
         });
     }, [
+        library,
         userLicense,
         licensedProducts,
         isIntegratedCharts,
@@ -243,13 +245,14 @@ export const useLicenseData = ({ library }: { library: Library }) => {
         const isIntegrated = suppliedLicenseType === 'BOTH';
         const chartsEnterprise = suppliedLicenseType === 'CHARTS' || suppliedLicenseType === 'BOTH';
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing state from license details
         setLicensedProducts({
             grid: gridEnterprise,
             charts: chartsEnterprise,
         });
 
         updateIsIntegratedChartsWithUrlUpdate(isIntegrated);
-    }, [library, licenseDetails, chartsLicenseDetails]);
+    }, [library, licenseDetails, chartsLicenseDetails, updateIsIntegratedChartsWithUrlUpdate, userLicense]);
 
     const licenseInvalidErrors = useMemo(() => {
         return Object.entries(licenseState)

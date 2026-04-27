@@ -57,7 +57,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         const refresh = () => {
             const resize = this.column.isResizable();
-            const autoSize = !this.gos.get('suppressAutoSize') && !this.column.getColDef().suppressAutoSize;
+            const autoSize = !this.gos.get('suppressAutoSize') && !this.column.colDef.suppressAutoSize;
             const propertyChange = resize !== canResize || autoSize !== canAutosize;
             if (propertyChange) {
                 canResize = resize;

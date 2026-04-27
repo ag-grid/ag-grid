@@ -2,14 +2,11 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GridReadyEvent, IDatasource } from 'ag-grid-community';
-import { InfiniteRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
+import { InfiniteRowModelModule, ValidationModule } from 'ag-grid-community';
 import type { CustomCellRendererProps } from 'ag-grid-react';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-ModuleRegistry.registerModules([
-    InfiniteRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+const modules = [InfiniteRowModelModule, ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : [])];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -78,22 +75,24 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    rowBuffer={0}
-                    rowModelType={'infinite'}
-                    cacheBlockSize={100}
-                    cacheOverflowSize={2}
-                    maxConcurrentDatasourceRequests={1}
-                    infiniteInitialRowCount={1000}
-                    maxBlocksInCache={10}
-                    onGridReady={onGridReady}
-                />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        rowBuffer={0}
+                        rowModelType={'infinite'}
+                        cacheBlockSize={100}
+                        cacheOverflowSize={2}
+                        maxConcurrentDatasourceRequests={1}
+                        infiniteInitialRowCount={1000}
+                        maxBlocksInCache={10}
+                        onGridReady={onGridReady}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

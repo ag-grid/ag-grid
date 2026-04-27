@@ -52,6 +52,18 @@ export interface BaseCellEditor {
     getValidationErrors?(): string[] | null;
 }
 
+/**
+ * Internal protocol implemented by built-in cell editors that support in-place value
+ * updates (via `setDataValue(..., 'edit')`). Not part of the public `ICellEditor` API.
+ * Custom editors opt in by implementing `agSetEditValue`; without it the grid falls
+ * back to `refresh()` or editor recreation.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export interface AgBaseCellEditor<TValue = any> extends ICellEditor<TValue> {
+    agSetEditValue(value: TValue | null | undefined): void;
+}
+
 export interface ICellEditor<TValue = any> extends BaseCellEditor {
     /**
      * Mandatory - Return the final value. Called by the grid once after editing is complete.
@@ -90,7 +102,8 @@ export interface IErrorValidationParams<TData = any, TValue = any, TContext = an
     cellEditorParams: ICellEditorParams<TData, TValue, TContext>;
 }
 
-export interface ICellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
+export interface ICellEditorParamsShared<TData = any, TValue = any, TContext = any>
+    extends AgGridCommon<TData, TContext> {
     /** Current value of the cell */
     value: TValue | null | undefined;
     /** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable
@@ -121,11 +134,6 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
      *  This is the DOM element that gets browser focus when selecting cells. */
     eGridCell: HTMLElement;
 
-    /** Utility function to parse a value using the column's `colDef.valueParser` */
-    parseValue: (value: string) => TValue | null | undefined;
-    /** Utility function to format a value using the column's `colDef.valueFormatter` */
-    formatValue: (value: TValue | null | undefined) => string;
-
     /**
      * Optional validation callback that will override the `getValidationErrors()` of Provided Editors. Use this to return your own custom errors.
      * @returns An array of strings containing the editor error messages, or `null` if the editor is valid.
@@ -136,6 +144,14 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
      * Runs the Editor Validation.
      */
     validate(): void;
+}
+
+export interface ICellEditorParams<TData = any, TValue = any, TContext = any>
+    extends ICellEditorParamsShared<TData, TValue, TContext> {
+    /** Utility function to parse a value using the column's `colDef.valueParser` */
+    parseValue: (value: string) => TValue | null | undefined;
+    /** Utility function to format a value using the column's `colDef.valueFormatter` */
+    formatValue: (value: TValue | null | undefined) => string;
 }
 
 export interface ICellEditorComp<TData = any, TValue = any, TContext = any>

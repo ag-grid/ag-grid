@@ -34,12 +34,16 @@ interface AgTooltipShowEvent extends AgTooltipEvent<'tooltipShow'> {
 
 interface AgTooltipHideEvent extends AgTooltipEvent<'tooltipHide'> {}
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgStylesChangedEvent extends AgEvent<'stylesChanged'> {
     themeChanged?: boolean;
     listItemHeightChanged?: boolean;
 }
 
-/** Events required by AG Stack */
+/**
+ * Events required by AG Stack
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export interface BaseEvents {
     checkboxChanged: AgCheckboxChangedEvent;
     bodyScroll: AgBodyScrollEvent;

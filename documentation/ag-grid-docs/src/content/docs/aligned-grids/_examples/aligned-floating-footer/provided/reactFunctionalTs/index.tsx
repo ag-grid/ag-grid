@@ -6,17 +6,16 @@ import {
     AlignedGridsModule,
     ClientSideRowModelModule,
     ColumnAutoSizeModule,
-    ModuleRegistry,
     NumberFilterModule,
     RowStyleModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     TextFilterModule,
     NumberFilterModule,
     ColumnAutoSizeModule,
@@ -24,7 +23,7 @@ ModuleRegistry.registerModules([
     AlignedGridsModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const bottomData = [
     {
@@ -83,34 +82,36 @@ const GridExample = () => {
     const { data, loading } = useFetchJson('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} className="example-container">
-            <div style={{ flex: '1 1 auto' }}>
-                <AgGridReact
-                    ref={topGrid}
-                    alignedGrids={[bottomGrid]}
-                    rowData={data}
-                    loading={loading}
-                    defaultColDef={defaultColDef}
-                    columnDefs={columnDefs}
-                    suppressHorizontalScroll
-                    alwaysShowVerticalScroll
-                    autoSizeStrategy={autoSizeStrategy}
-                />
-            </div>
+        <AgGridProvider modules={modules}>
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} className="example-container">
+                <div style={{ flex: '1 1 auto' }}>
+                    <AgGridReact
+                        ref={topGrid}
+                        alignedGrids={[bottomGrid]}
+                        rowData={data}
+                        loading={loading}
+                        defaultColDef={defaultColDef}
+                        columnDefs={columnDefs}
+                        suppressHorizontalScroll
+                        alwaysShowVerticalScroll
+                        autoSizeStrategy={autoSizeStrategy}
+                    />
+                </div>
 
-            <div style={{ flex: 'none', height: '60px' }}>
-                <AgGridReact
-                    ref={bottomGrid}
-                    alignedGrids={[topGrid]}
-                    rowData={bottomData}
-                    defaultColDef={defaultColDef}
-                    columnDefs={columnDefs}
-                    headerHeight={0}
-                    alwaysShowVerticalScroll
-                    rowStyle={{ fontWeight: 'bold' }}
-                />
+                <div style={{ flex: 'none', height: '60px' }}>
+                    <AgGridReact
+                        ref={bottomGrid}
+                        alignedGrids={[topGrid]}
+                        rowData={bottomData}
+                        defaultColDef={defaultColDef}
+                        columnDefs={columnDefs}
+                        headerHeight={0}
+                        alwaysShowVerticalScroll
+                        rowStyle={{ fontWeight: 'bold' }}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

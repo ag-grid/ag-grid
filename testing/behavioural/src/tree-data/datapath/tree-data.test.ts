@@ -5,6 +5,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -87,6 +88,12 @@ describe('ag-grid tree data', () => {
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(true);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Organisation Hierarchy" width:200
+            └── groupType "Group Type" width:200
+        `);
     });
 
     test('ag-grid tree data', async () => {
@@ -142,6 +149,12 @@ describe('ag-grid tree data', () => {
 
         const rowsSnapshot = getRowsSnapshot(rows);
         expect(rowsSnapshot).toMatchObject(simpleHierarchyRowsSnapshot());
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Organisation Hierarchy" width:200
+            └── groupType "Group Type" width:200
+        `);
     });
 
     test('ag-grid tree data with inverted order', async () => {
@@ -374,16 +387,16 @@ describe('ag-grid tree data', () => {
         const gridRows = new GridRows(api, 'data');
 
         await gridRows.check(`
-                ROOT id:ROOT_NODE_ID
-                ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" x:"a"
-                │ └── B LEAF id:B ag-Grid-AutoColumn:"B" x:"a-b"
-                ├─┬ C GROUP id:C ag-Grid-AutoColumn:"C" x:"c"
-                │ └── D LEAF id:D ag-Grid-AutoColumn:"D" x:"c-d"
-                └─┬ E GROUP id:E ag-Grid-AutoColumn:"E" x:"e"
-                · └─┬ F GROUP id:F ag-Grid-AutoColumn:"F" x:"e-f"
-                · · └─┬ G GROUP id:G ag-Grid-AutoColumn:"G" x:"e-f-g"
-                · · · └── H LEAF id:H ag-Grid-AutoColumn:"H" x:"e-f-g-h"
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" x:"a"
+            │ └── B LEAF id:B ag-Grid-AutoColumn:"B" x:"a-b"
+            ├─┬ C GROUP id:C ag-Grid-AutoColumn:"C" x:"c"
+            │ └── D LEAF id:D ag-Grid-AutoColumn:"D" x:"c-d"
+            └─┬ E GROUP id:E ag-Grid-AutoColumn:"E" x:"e"
+            · └─┬ F GROUP id:F ag-Grid-AutoColumn:"F" x:"e-f"
+            · · └─┬ G GROUP id:G ag-Grid-AutoColumn:"G" x:"e-f-g"
+            · · · └── H LEAF id:H ag-Grid-AutoColumn:"H" x:"e-f-g-h"
+        `);
 
         api.updateGridOptions({
             columnDefs: [{ field: 'x' }, { field: 'id' }, { field: 'z' }],
@@ -391,32 +404,32 @@ describe('ag-grid tree data', () => {
         });
 
         await gridRows.check(`
-                ROOT id:ROOT_NODE_ID
-                ├─┬ A GROUP id:A ag-Grid-AutoColumn:"a" x:"a" id:"A" z:1
-                │ └── B LEAF id:B ag-Grid-AutoColumn:"a-b" x:"a-b" id:"B" z:2
-                ├─┬ C GROUP id:C ag-Grid-AutoColumn:"c" x:"c" id:"C" z:3
-                │ └── D LEAF id:D ag-Grid-AutoColumn:"c-d" x:"c-d" id:"D" z:4
-                └─┬ E GROUP id:E ag-Grid-AutoColumn:"e" x:"e" id:"E" z:5
-                · └─┬ F GROUP id:F ag-Grid-AutoColumn:"e-f" x:"e-f" id:"F" z:6
-                · · └─┬ G GROUP id:G ag-Grid-AutoColumn:"e-f-g" x:"e-f-g" id:"G" z:7
-                · · · └── H LEAF id:H ag-Grid-AutoColumn:"e-f-g-h" x:"e-f-g-h" id:"H" z:8
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP id:A ag-Grid-AutoColumn:"a" x:"a" id:"A" z:1
+            │ └── B LEAF id:B ag-Grid-AutoColumn:"a-b" x:"a-b" id:"B" z:2
+            ├─┬ C GROUP id:C ag-Grid-AutoColumn:"c" x:"c" id:"C" z:3
+            │ └── D LEAF id:D ag-Grid-AutoColumn:"c-d" x:"c-d" id:"D" z:4
+            └─┬ E GROUP id:E ag-Grid-AutoColumn:"e" x:"e" id:"E" z:5
+            · └─┬ F GROUP id:F ag-Grid-AutoColumn:"e-f" x:"e-f" id:"F" z:6
+            · · └─┬ G GROUP id:G ag-Grid-AutoColumn:"e-f-g" x:"e-f-g" id:"G" z:7
+            · · · └── H LEAF id:H ag-Grid-AutoColumn:"e-f-g-h" x:"e-f-g-h" id:"H" z:8
+        `);
 
         api.updateGridOptions({
             autoGroupColumnDef: { headerName: 'X', field: 'z' },
         });
 
         await gridRows.check(`
-                ROOT id:ROOT_NODE_ID
-                ├─┬ A GROUP id:A ag-Grid-AutoColumn:1 x:"a" id:"A" z:1
-                │ └── B LEAF id:B ag-Grid-AutoColumn:2 x:"a-b" id:"B" z:2
-                ├─┬ C GROUP id:C ag-Grid-AutoColumn:3 x:"c" id:"C" z:3
-                │ └── D LEAF id:D ag-Grid-AutoColumn:4 x:"c-d" id:"D" z:4
-                └─┬ E GROUP id:E ag-Grid-AutoColumn:5 x:"e" id:"E" z:5
-                · └─┬ F GROUP id:F ag-Grid-AutoColumn:6 x:"e-f" id:"F" z:6
-                · · └─┬ G GROUP id:G ag-Grid-AutoColumn:7 x:"e-f-g" id:"G" z:7
-                · · · └── H LEAF id:H ag-Grid-AutoColumn:8 x:"e-f-g-h" id:"H" z:8
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP id:A ag-Grid-AutoColumn:1 x:"a" id:"A" z:1
+            │ └── B LEAF id:B ag-Grid-AutoColumn:2 x:"a-b" id:"B" z:2
+            ├─┬ C GROUP id:C ag-Grid-AutoColumn:3 x:"c" id:"C" z:3
+            │ └── D LEAF id:D ag-Grid-AutoColumn:4 x:"c-d" id:"D" z:4
+            └─┬ E GROUP id:E ag-Grid-AutoColumn:5 x:"e" id:"E" z:5
+            · └─┬ F GROUP id:F ag-Grid-AutoColumn:6 x:"e-f" id:"F" z:6
+            · · └─┬ G GROUP id:G ag-Grid-AutoColumn:7 x:"e-f-g" id:"G" z:7
+            · · · └── H LEAF id:H ag-Grid-AutoColumn:8 x:"e-f-g-h" id:"H" z:8
+        `);
     });
 });
 
@@ -454,9 +467,9 @@ function hierarchyWithInvertedOrderRowSnapshot(): RowSnapshot[] {
             allChildrenCount: null,
             allLeafChildren: null,
             childIndex: 0,
-            childrenAfterFilter: [],
-            childrenAfterGroup: [],
-            childrenAfterSort: [],
+            childrenAfterFilter: null,
+            childrenAfterGroup: null,
+            childrenAfterSort: null,
             detail: undefined,
             displayed: true,
             expanded: false,
@@ -538,9 +551,9 @@ function hierarchyWithInvertedOrderRowSnapshot(): RowSnapshot[] {
             allChildrenCount: null,
             allLeafChildren: null,
             childIndex: 0,
-            childrenAfterFilter: [],
-            childrenAfterGroup: [],
-            childrenAfterSort: [],
+            childrenAfterFilter: null,
+            childrenAfterGroup: null,
+            childrenAfterSort: null,
             detail: undefined,
             displayed: true,
             expanded: false,

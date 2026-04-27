@@ -1,6 +1,7 @@
 import type {
     ComponentSelector,
     ElementParams,
+    FocusableContainer,
     ISideBar,
     IToolPanel,
     IToolPanelParams,
@@ -22,14 +23,15 @@ import {
     _isVisible,
     _removeFromParent,
     _setAriaControlsAndLabel,
+    _skipFocusableContainerListenerForAgGrid,
     _warn,
 } from 'ag-grid-community';
 
 import { findFocusableElementBeforeTabGuard, isTargetUnderManagedComponent } from '../misc/enterpriseFocusUtils';
-import { agSideBarCSS } from './agSideBar.css-GENERATED';
+import agSideBarCSS from './agSideBar.css';
 import type { AgSideBarButtons, SideBarButtonClickedEvent } from './agSideBarButtons';
 import { AgSideBarButtonsSelector } from './agSideBarButtons';
-import { parseOneComponent, parseSideBarDef } from './sideBarDefParser';
+import { parseSideBarDef } from './sideBarDefParser';
 import type { SideBarService } from './sideBarService';
 import { ToolPanelWrapper } from './toolPanelWrapper';
 
@@ -43,7 +45,7 @@ const AgSideBarElement: ElementParams = {
         },
     ],
 };
-class AgSideBar extends Component implements ISideBar {
+class AgSideBar extends Component implements ISideBar, FocusableContainer {
     private readonly sideBarButtons: AgSideBarButtons = RefPlaceholder;
     private toolPanelWrappers: ToolPanelWrapper[] = [];
     private sideBar: SideBarDef | undefined;
@@ -79,6 +81,10 @@ class AgSideBar extends Component implements ISideBar {
         this.addManagedPropertyListener('enableAdvancedFilter', this.onAdvancedFilterChanged.bind(this));
     }
 
+    public getFocusableContainerName(): 'sideBar' {
+        return 'sideBar';
+    }
+
     protected onTabKeyDown(e: KeyboardEvent) {
         if (e.defaultPrevented) {
             return;
@@ -93,11 +99,14 @@ class AgSideBar extends Component implements ISideBar {
         const backwards = e.shiftKey;
 
         if (!openPanel) {
-            if (_focusNextGridCoreContainer(beans, backwards)) {
+            if (_focusNextGridCoreContainer(beans, backwards, true)) {
                 e.preventDefault();
                 return true;
             }
-            return _focusNextGridCoreContainer(beans, backwards, true);
+            // avoid a second core-container evaluation from the generic focusable-container listener
+            // without blocking other ag grid keyboard handling for this event.
+            _skipFocusableContainerListenerForAgGrid(e);
+            return false;
         }
 
         if (sideBarGui.contains(activeElement)) {
@@ -314,6 +323,7 @@ class AgSideBar extends Component implements ISideBar {
         let wrapper: ToolPanelWrapper;
         if (existingToolPanelWrapper) {
             wrapper = existingToolPanelWrapper;
+            wrapper.setDefParent(def.parent ?? null);
         } else {
             wrapper = this.createBean(new ToolPanelWrapper());
 
@@ -330,19 +340,13 @@ class AgSideBar extends Component implements ISideBar {
         }
         wrapper.setDisplayed(false);
 
-        const wrapperGui = wrapper.getGui();
-        const parent = def.parent instanceof HTMLElement ? def.parent : this;
-        if (parent === def.parent) {
-            this.beans.environment.applyThemeClasses(parent, ['ag-external', 'ag-tool-panel-external']);
-            wrapperGui.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
-        }
-        parent.appendChild(wrapperGui);
+        this.renderToolPanelUnderParent(wrapper, def.parent);
 
         this.toolPanelWrappers.push(wrapper);
 
         const button = this.sideBarButtons.addButtonComp(def);
 
-        _setAriaControlsAndLabel(button.eToggleButton, wrapperGui);
+        _setAriaControlsAndLabel(button.eToggleButton, wrapper.getGui());
     }
 
     public refresh(): void {
@@ -351,18 +355,23 @@ class AgSideBar extends Component implements ISideBar {
         }
     }
 
-    private renderToolPanelUnderParent(key: string, parent: HTMLElement) {
-        const selfDefOrStr = this.sideBar?.toolPanels?.find((tp) => (typeof tp === 'string' ? tp : tp.id) === key);
-        // toolpanel def should exist, otherwise no way to find it by the key
-        if (selfDefOrStr) {
-            const panelDef = parseOneComponent(selfDefOrStr);
-            if (panelDef) {
-                const state = this.gos.get('initialState')?.sideBar?.toolPanels?.[panelDef.id];
-                panelDef.parent = parent;
-                const wrapper = this.toolPanelWrappers.find((wrapper) => wrapper.getToolPanelId() === key);
-                this.createToolPanelAndSideButton(panelDef, state, wrapper);
-            }
+    private renderToolPanelUnderParent(
+        wrapper: ToolPanelWrapper,
+        externalParent: HTMLElement | null | undefined
+    ): void {
+        const wrapperGui = wrapper.getGui();
+        if (externalParent) {
+            this.beans.environment.applyThemeClasses(externalParent, ['ag-external', 'ag-tool-panel-external']);
+            wrapperGui.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
         }
+        const correctParent = externalParent ?? wrapper.getDefParent() ?? this.getGui();
+        if (wrapperGui.parentElement !== correctParent) {
+            correctParent.appendChild(wrapperGui);
+        }
+    }
+
+    private getWrapper(key: string | null | undefined): ToolPanelWrapper | undefined {
+        return this.toolPanelWrappers.find((wrapper) => wrapper.getToolPanelId() === key);
     }
 
     public openToolPanel(
@@ -370,18 +379,20 @@ class AgSideBar extends Component implements ISideBar {
         source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api' = 'api',
         parent?: HTMLElement | null
     ): void {
-        if (parent && key) {
-            this.renderToolPanelUnderParent(key, parent);
-        }
-
         const currentlyOpenedKey = this.openedItem();
-        if (currentlyOpenedKey === key) {
-            return;
-        }
+        const switchingToolPanel = !!key && !!currentlyOpenedKey;
+        const skipAnimation = switchingToolPanel || source === 'sideBarInitializing';
 
         for (const wrapper of this.toolPanelWrappers) {
             const show = key === wrapper.getToolPanelId();
-            wrapper.setDisplayed(show);
+            if (show) {
+                this.renderToolPanelUnderParent(wrapper, parent ?? null);
+            }
+            if (skipAnimation) {
+                wrapper.setDisplayed(show);
+            } else {
+                wrapper.animateDisplayed(show);
+            }
         }
 
         const newlyOpenedKey = this.openedItem();
@@ -393,7 +404,7 @@ class AgSideBar extends Component implements ISideBar {
     }
 
     public getToolPanelInstance(key: string): IToolPanel | undefined {
-        const toolPanelWrapper = this.toolPanelWrappers.filter((toolPanel) => toolPanel.getToolPanelId() === key)[0];
+        const toolPanelWrapper = this.getWrapper(key);
 
         if (!toolPanelWrapper) {
             _warn(214, { key });
@@ -464,7 +475,7 @@ class AgSideBar extends Component implements ISideBar {
                 if (!existingToolPanelDef || toolPanelDef.toolPanel !== existingToolPanelDef.toolPanel) {
                     return;
                 }
-                const toolPanelWrapper = this.toolPanelWrappers.find((toolPanel) => toolPanel.getToolPanelId() === id);
+                const toolPanelWrapper = this.getWrapper(id);
                 if (!toolPanelWrapper) {
                     return;
                 }

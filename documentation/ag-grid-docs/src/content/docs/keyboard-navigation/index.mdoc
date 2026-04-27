@@ -55,31 +55,31 @@ Column Headers can be:
 
 While navigating Column Groups Headers, you can do the following:
 
-- If the current Column Group is expandable, pressing {% kbd "↵ Enter" /%} will toggle the expanded state of the group.
-- When [Column Cell Selection](./cell-selection/#selecting-cells-via-column-headers) is enabled:
-    - If the current Column Group is expandable, pressing {% kbd "⌥ Alt" /%}+{% kbd "↵ Enter" /%} will toggle the expanded state of the group.
-    - Press {% kbd "↵ Enter" /%} to select all visible cells in child columns of the focused column group.
-    - Press {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%} to select all visible cells in child columns of the focused column group without clearing existing cell ranges.
-    - Press {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible child columns between the previously selected column group and the focused column group.
-    - Press {% kbd "^ Ctrl" /%}+{% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible child columns between the previously selected column group and the focused column group, without clearing existing cell ranges.
+-   If the current Column Group is expandable, pressing {% kbd "↵ Enter" /%} will toggle the expanded state of the group.
+-   When [Column Cell Selection](./cell-selection/#selecting-cells-via-column-headers) is enabled:
+    -   If the current Column Group is expandable, pressing {% kbd "⌥ Alt" /%}+{% kbd "↵ Enter" /%} will toggle the expanded state of the group.
+    -   Press {% kbd "↵ Enter" /%} to select all visible cells in child columns of the focused column group.
+    -   Press {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%} to select all visible cells in child columns of the focused column group without clearing existing cell ranges.
+    -   Press {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible child columns between the previously selected column group and the focused column group.
+    -   Press {% kbd "^ Ctrl" /%}+{% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible child columns between the previously selected column group and the focused column group, without clearing existing cell ranges.
 
 ### Normal Column Headers
 
 Regular Column Headers may have selection checkboxes, sorting functions and menus, so to access all these functions while focusing a Column Header, you can do the following:
 
-- Press {% kbd "␣ Space" /%} to toggle the Column Header checkbox selection.
-- Press {% kbd "↵ Enter" /%} to toggle the sorting state of that column.
-- Press {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to toggle multi-sort for that column.
-- Press {% kbd "⌥ Alt" /%}+{% kbd "↓" /%} to open the menu for the focused Column Header.
-- Press {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%} to either open the filter for the focused Column Header (if `columnMenu = 'new'` - default behaviour) or open the menu for the focused Column Header (if `columnMenu = 'legacy'`).
-- When a menu is open, simply press {% kbd "⎋ Esc" /%} to close it and the focus will return to the Column Header.
-- When [Column Cell Selection](./cell-selection/#selecting-cells-via-column-headers) is enabled:
-    - Press {% kbd "↵ Enter" /%} to select all visible cells in the focused column.
-    - Press {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%} to select all visible cells in the focused column without clearing existing cell ranges.
-    - Press {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible columns between the previously selected column and the focused column.
-    - Press {% kbd "^ Ctrl" /%}+{% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible columns between the previously selected column and the focused column without clearing existing cell ranges.
-    - Press {% kbd "⌥ Alt" /%}+{% kbd "↵ Enter" /%} to toggle the sorting state of that column.
-    - Press {% kbd "⌥ Alt" /%}+{% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to toggle multi-sort for that column.
+-   Press {% kbd "␣ Space" /%} to toggle the Column Header checkbox selection.
+-   Press {% kbd "↵ Enter" /%} to toggle the sorting state of that column.
+-   Press {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to toggle multi-sort for that column.
+-   Press {% kbd "⌥ Alt" /%}+{% kbd "↓" /%} to open the menu for the focused Column Header.
+-   Press {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%} to either open the filter for the focused Column Header (if `columnMenu = 'new'` - default behaviour) or open the menu for the focused Column Header (if `columnMenu = 'legacy'`).
+-   When a menu is open, simply press {% kbd "⎋ Esc" /%} to close it and the focus will return to the Column Header.
+-   When [Column Cell Selection](./cell-selection/#selecting-cells-via-column-headers) is enabled:
+    -   Press {% kbd "↵ Enter" /%} to select all visible cells in the focused column.
+    -   Press {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%} to select all visible cells in the focused column without clearing existing cell ranges.
+    -   Press {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible columns between the previously selected column and the focused column.
+    -   Press {% kbd "^ Ctrl" /%}+{% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible columns between the previously selected column and the focused column without clearing existing cell ranges.
+    -   Press {% kbd "⌥ Alt" /%}+{% kbd "↵ Enter" /%} to toggle the sorting state of that column.
+    -   Press {% kbd "⌥ Alt" /%}+{% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to toggle multi-sort for that column.
 
 ### Floating Filter Headers
 
@@ -93,13 +93,14 @@ The example below has grouped headers, headers and floating filters to demonstra
 
 ## Custom Navigation
 
-Most people will be happy with the default navigation the grid does when you use the arrow keys and the {% kbd "⇥ Tab" /%} key. Some people will want to override this (e.g. you may want the {% kbd "⇥ Tab" /%} key to navigate to the cell below, not the cell to the right). To facilitate this, the grid offers four methods: `navigateToNextCell`, `tabToNextCell`, `navigateToNextHeader` and `tabToNextHeader`.
+Most people will be happy with the default navigation the grid does when you use the arrow keys and the {% kbd "⇥ Tab" /%} key. Some people will want to override this (e.g. you may want the {% kbd "⇥ Tab" /%} key to navigate to the cell below, not the cell to the right). To facilitate this, the grid offers five methods: `navigateToNextCell`, `tabToNextCell`, `navigateToNextHeader`, `tabToNextHeader` and `tabToNextGridContainer`.
 
-{% apiDocumentation source="grid-options/properties.json" section="nav" names=["focusGridInnerElement", "navigateToNextCell", "tabToNextCell", "navigateToNextHeader", "tabToNextHeader"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="nav" names=["focusGridInnerElement", "navigateToNextCell", "tabToNextCell", "navigateToNextHeader", "tabToNextHeader", "tabToNextGridContainer"] /%}
 
 {% note %}
 The `navigateToNextCell` and `tabToNextCell` are only called while navigating across grid cells, while
-`navigateToNextHeader` and `tabToNextHeader` are only called while navigating across grid headers.
+`navigateToNextHeader` and `tabToNextHeader` are only called while navigating across grid headers. The
+`tabToNextGridContainer` callback is called when tab navigation moves between core grid containers.
 If you need to navigate from one container to another, pass `rowIndex: -1` in `CellPosition`
 or `headerRowIndex: -1` in `HeaderPosition`.
 {% /note %}
@@ -146,7 +147,7 @@ myInput.addEventListener("keydown", event => {
     gridApi.ensureIndexVisible(0);
 
     // scrolls to the first column
-    const firstCol = api.getAllDisplayedColumns()[0];
+    const firstCol = gridApi.getAllDisplayedColumns()[0];
     gridApi.ensureColumnVisible(firstCol);
 
     // sets focus into the first grid cell
@@ -165,6 +166,19 @@ In the following example there are two input box provided to test tabbing into t
 -   When the last column is out of view due to horizontal scroll, shift tabbing into the grid will cause the grid to scroll to focus the last cell.
 
 {% gridExampleRunner title="Tabbing into the Grid" name="tabbing-into-grid" /%}
+
+### Custom Tabbing Between Grid Containers
+
+Use `tabToNextGridContainer` to override focus behaviour when tabbing between grid containers such as the grid body, pagination toolbar and external elements.
+
+In the following example:
+
+-   Tabbing out of the last grid cell is redirected to the pagination toolbar by returning `'pagination'`.
+-   Shift tabbing from the pagination toolbar back into the grid restores the last focused cell by returning a `CellPosition`.
+-   Tabbing forward from pagination returns `false`, allowing browser default behaviour to move focus outside the grid.
+-   All other transitions return `undefined`, which keeps the grid's default behaviour.
+
+{% gridExampleRunner title="Custom Tab to Next Grid Container" name="tab-to-next-grid-container" /%}
 
 ### Custom Tabbing into the Grid
 

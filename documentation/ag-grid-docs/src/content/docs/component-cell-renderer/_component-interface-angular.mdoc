@@ -1,11 +1,10 @@
 {% if isFramework("angular") %}
 A cell renderer is either:
-- A function returning an HTML string or a DOM object
-- A class implementing the [`ICellRendererAngularComp`](#api-reference) interface
+
+-   A function returning an HTML string or a DOM object
+-   A class implementing the [`ICellRendererAngularComp`](#api-reference) interface
 
 Use the function variant of a Cell Component if you have no refresh requirements.
-
-{% metaTag tags=["ICellRendererAngularComp"] /%}
 
 ```ts
 interface ICellRendererAngularComp {
@@ -13,7 +12,7 @@ interface ICellRendererAngularComp {
     agInit(params: ICellRendererParams): void;
 
     // Mandatory - Return true if you have managed the cell refresh yourself in this method, otherwise return false.
-    // If you return false, the grid will remove the component from the DOM and create a new component in its place 
+    // If you return false, the grid will remove the component from the DOM and create a new component in its place
     // with the new values.
     refresh(params: ICellRendererParams): boolean;
 }

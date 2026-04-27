@@ -1,18 +1,16 @@
-
 ## Mixed Theming Approaches
 
 In v33 the default approach to theming AG Grid has been updated to use the [Theming API](./theming). The error above is the result of a clash between the new default theme, as no explicit `theme` grid option has been provided, and the old approach of including the CSS file directly in the application.
-
 
 {% note %}
 For a comprehensive guide on migrating from v32 please see [Migrating to the Theming API](./theming-migration).
 {% /note %}
 
 There are two ways to resolve this error, either adopt the new Theming API or continue with the legacy themes.
-### Adopt the new Theming API 
+
+### Adopt the new Theming API
 
 To adopt the new Theming API follow the steps outlined in [Adopt the Theming API](./theming-migration/#adopt-the-theming-api).
-
 
 ### Continue with legacy Themes
 
@@ -26,6 +24,3 @@ import { provideGlobalGridOptions } from 'ag-grid-community';
 // Mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: "legacy" });
 ```
-
-
-

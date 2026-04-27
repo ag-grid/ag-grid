@@ -24,6 +24,7 @@ const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgP
 /**
  * A performant approach to _createColumnTree where the function assumes all defs have an ID.
  * Used for Pivoting.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _createColumnTreeWithIds(
     beans: BeanCollection,
@@ -62,7 +63,7 @@ export function _createColumnTreeWithIds(
         const colId = def.colId!;
 
         let column = colIdMap.get(colId);
-        const colDefMerged = _addColumnDefaultAndTypes(beans, def, column?.getColId() ?? colId);
+        const colDefMerged = _addColumnDefaultAndTypes(beans, def, column?.colId ?? colId);
         if (!column) {
             // no existing column, need to create one
             column = new AgColumn(colDefMerged, def, colId, primaryColumns);
@@ -92,6 +93,7 @@ export function _createColumnTreeWithIds(
     };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _createColumnTree(
     beans: BeanCollection,
     defs: (ColDef | ColGroupDef)[] | null | undefined = null,
@@ -217,7 +219,7 @@ function createColumn(
         column = new AgColumn(colDefMerged, colDef, colId, primaryColumns);
         beans.context.createBean(column);
     } else {
-        const colDefMerged = _addColumnDefaultAndTypes(beans, colDef, column.getColId());
+        const colDefMerged = _addColumnDefaultAndTypes(beans, colDef, column.colId);
         column.setColDef(colDefMerged, colDef, source);
         _updateColumnState(beans, column, colDefMerged, source);
     }
@@ -267,6 +269,7 @@ export function updateSomeColumnState(
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _updateColumnState(
     beans: BeanCollection,
     column: AgColumn,
@@ -339,6 +342,7 @@ function findExistingColumn(
     return undefined;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _addColumnDefaultAndTypes(
     beans: BeanCollection,
     colDef: ColDef,
@@ -385,7 +389,7 @@ export function _addColumnDefaultAndTypes(
     }
 
     dataTypeSvc?.postProcess(res);
-    dataTypeSvc?.validateColDef(res);
+    dataTypeSvc?.validateColDef(res, colDef, defaultColDef, colId);
 
     gos.validateColDef(res, colId, isAutoCol);
 

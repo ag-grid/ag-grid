@@ -2,6 +2,7 @@ import type {
     AgColumn,
     BaseCellDataType,
     BeanCollection,
+    BooleanAdvancedFilterModel,
     ColumnAdvancedFilterModel,
     ColumnModel,
     ColumnNameService,
@@ -35,14 +36,22 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     private colNames: ColumnNameService;
     private dataTypeSvc?: DataTypeService;
 
-    private readonly filterOperandGetters: Record<BaseCellDataType, (model: any) => string | null> = {
+    private readonly filterOperandGetters: Record<
+        BaseCellDataType,
+        (model: { filter?: string | number; colId: string }) => string | null
+    > = {
         number: (model) => _toStringOrNull(model.filter) ?? '',
+        bigint: (model) => _toStringOrNull(model.filter) ?? '',
         date: (model) => {
             const column = this.colModel.getColDefCol(model.colId);
             if (!column) {
                 return null;
             }
-            return this.valueSvc.formatValue(column, null, _parseDateTimeFromString(model.filter));
+            return this.valueSvc.formatValue(
+                column,
+                null,
+                _parseDateTimeFromString(_toStringOrNull(model.filter) ?? '')
+            );
         },
         dateTime: (model) => this.filterOperandGetters.date(model),
         dateString: (model) => {
@@ -52,7 +61,8 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             }
             const { filter } = model;
             const dateFormatFn = this.dataTypeSvc?.getDateFormatterFunction(column);
-            const dateStringStringValue = dateFormatFn?.(_parseDateTimeFromString(filter) ?? undefined) ?? filter;
+            const dateStringStringValue =
+                dateFormatFn?.(_parseDateTimeFromString(_toStringOrNull(model.filter) ?? '') ?? undefined) ?? filter;
             return this.valueSvc.formatValue(column, null, dateStringStringValue);
         },
         dateTimeString: (model) => this.filterOperandGetters.dateString(model),
@@ -66,9 +76,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | null
     > = {
         number: (operand) => (_exists(operand) ? Number(operand) : null),
+        bigint: (operand) => operand,
         date: (operand, column, baseCellDataType) =>
             _serialiseDate(
-                this.valueSvc.parseValue(column, null, operand, undefined),
+                this.valueSvc.parseValue(column, null, operand, undefined) as Date,
                 !!this.dataTypeSvc?.getDateIncludesTimeFlag(baseCellDataType)
             ),
         dateTime: (...args) => this.operandModelValueGetters.date(...args),
@@ -138,13 +149,15 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     public getOperandDisplayValue(model: ColumnAdvancedFilterModel, skipFormatting?: boolean): string {
-        const { filter } = model as any;
+        const { filter, filterType } = model as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>;
 
         if (filter == null) {
             return '';
         }
-        let operand1 = this.filterOperandGetters[model.filterType](model);
-        if (model.filterType !== 'number') {
+        let operand1 = this.filterOperandGetters[filterType](
+            model as Exclude<ColumnAdvancedFilterModel, BooleanAdvancedFilterModel>
+        );
+        if (filterType !== 'number' && filterType !== 'bigint') {
             operand1 ??= _toStringOrNull(filter) ?? '';
             if (!skipFormatting) {
                 operand1 = `"${operand1}"`;
@@ -199,12 +212,9 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         const entries: AutocompleteEntry[] = [];
         const includeHiddenColumns = this.gos.get('includeHiddenColumnsInAdvancedFilter');
         for (const column of columns) {
-            if (
-                column.getColDef().filter &&
-                (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())
-            ) {
+            if (column.colDef.filter && (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())) {
                 entries.push({
-                    key: column.getColId(),
+                    key: column.colId,
                     displayValue: this.colNames.getDisplayNameForColumn(column, 'advancedFilter')!,
                 });
             }
@@ -297,7 +307,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 break;
             case 'object':
                 // If there's a filter value getter, assume the value is already a string. Otherwise we need to format it.
-                if (column.getColDef().filterValueGetter) {
+                if (column.colDef.filterValueGetter) {
                     params = { valueConverter: (v: any) => v };
                 } else {
                     params = {
@@ -315,7 +325,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 params = { valueConverter: (v: any) => v };
                 break;
         }
-        const { filterParams } = column.getColDef();
+        const { filterParams } = column.colDef;
         if (filterParams) {
             ['caseSensitive', 'includeBlanksInEquals', 'includeBlanksInLessThan', 'includeBlanksInGreaterThan'].forEach(
                 (param: keyof FilterExpressionEvaluatorParams<ConvertedTValue, TValue>) => {
@@ -350,6 +360,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             boolean: new BooleanFilterExpressionOperators({ translate }),
             object: new TextFilterExpressionOperators<any>({ translate }),
             number: new ScalarFilterExpressionOperators<number>({ translate, equals: (v, o) => v === o }),
+            bigint: new ScalarFilterExpressionOperators<bigint>({ translate, equals: (v, o) => v === o }),
             date: new ScalarFilterExpressionOperators<Date>(dateOperatorsParams),
             dateString: new ScalarFilterExpressionOperators<Date, string>(dateOperatorsParams),
             dateTime: new ScalarFilterExpressionOperators<Date>(dateOperatorsParams),
@@ -369,7 +380,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     private getActiveOperators(column: AgColumn): string[] | undefined {
-        const filterOptions = column.getColDef().filterParams?.filterOptions;
+        const filterOptions = column.colDef.filterParams?.filterOptions;
         if (!filterOptions) {
             return undefined;
         }

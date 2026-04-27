@@ -5,23 +5,22 @@ import type { CellClassParams, CellClassRules, ColDef, ValueParserParams } from 
 import {
     CellStyleModule,
     ClientSideRowModelModule,
-    ModuleRegistry,
     NumberEditorModule,
     TextEditorModule,
     ValidationModule,
 } from 'ag-grid-community';
 import type { CustomCellRendererProps } from 'ag-grid-react';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     NumberEditorModule,
     TextEditorModule,
     CellStyleModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const ragCellClassRules: CellClassRules = {
     'rag-green-outer': (params) => params.value === 2008,
@@ -127,11 +126,18 @@ const GridExample = () => {
     const { data, loading } = useFetchJson('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact rowData={data} loading={loading} columnDefs={columnDefs} defaultColDef={defaultColDef} />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact
+                        rowData={data}
+                        loading={loading}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

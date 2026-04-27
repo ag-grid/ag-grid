@@ -1,9 +1,9 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 import { GridActions } from './utils';
 
 describe('Row Selection Grid Options', () => {
@@ -28,7 +28,7 @@ describe('Row Selection Grid Options', () => {
     }
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule],
+        modules: [RowSelectionModule, ClientSideRowModelModule],
     });
 
     beforeEach(() => {
@@ -69,18 +69,25 @@ describe('Row Selection Grid Options', () => {
         });
 
         await new GridRows(api).check(`
-    ROOT id:ROOT_NODE_ID
-    ├── LEAF id:0 sport:"football"
-    ├── LEAF id:6 sport:"rowing"
-    ├── LEAF id:1 sport:"rugby"
-    ├── LEAF id:2 sport:"tennis"
-    ├── LEAF selected id:3 sport:"cricket"
-    ├── LEAF selected id:4 sport:"golf"
-    └── LEAF selected id:5 sport:"swimming"
-    `);
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 sport:"football"
+            ├── LEAF id:6 sport:"rowing"
+            ├── LEAF id:1 sport:"rugby"
+            ├── LEAF id:2 sport:"tennis"
+            ├── LEAF selected id:3 sport:"cricket"
+            ├── LEAF selected id:4 sport:"golf"
+            └── LEAF selected id:5 sport:"swimming"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            LEFT
+            └── ag-Grid-SelectionColumn width:50 sort:asc sortIndex:0 !resizable suppressMovable lockPosition:left
+            CENTER
+            └── sport "Sport" width:200 sort:asc sortIndex:1
+        `);
     });
 
-    test('Selection column width and pinning is updated when `selectionColDef` changes', () => {
+    test('Selection column width and pinning is updated when `selectionColDef` changes', async () => {
         const [api] = createGrid({
             columnDefs,
             rowData,
@@ -101,5 +108,12 @@ describe('Row Selection Grid Options', () => {
         expect(api.isPinningRight()).toBe(true);
         expect(col?.isPinnedRight()).toBe(true);
         expect(col?.getActualWidth()).toBe(200);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── sport "Sport" width:200
+            RIGHT
+            └── ag-Grid-SelectionColumn width:200 !resizable !sortable suppressMovable lockPosition:left
+        `);
     });
 });

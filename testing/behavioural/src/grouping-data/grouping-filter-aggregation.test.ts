@@ -1,7 +1,16 @@
-import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    CsvExportModule,
+    ExternalFilterModule,
+    NumberFilterModule,
+    QuickFilterModule,
+    RowSelectionModule,
+    TextFilterModule,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -12,7 +21,16 @@ import {
 
 describe('ag-grid grouping filter aggregation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CsvExportModule, RowGroupingModule],
+        modules: [
+            ExternalFilterModule,
+            NumberFilterModule,
+            TextFilterModule,
+            RowSelectionModule,
+            QuickFilterModule,
+            ClientSideRowModelModule,
+            CsvExportModule,
+            RowGroupingModule,
+        ],
     });
 
     beforeEach(() => {
@@ -186,6 +204,15 @@ describe('ag-grid grouping filter aggregation', () => {
                  -> Portugal,,,6
                 ,2021,Soccer,6
             `);
+
+            await new GridColumns(api, 'columns').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── ag-Grid-AutoColumn "Country" width:200
+                ├── year "Year" width:200
+                ├── sport "Sport" width:200
+                └── gold "Gold" width:200 aggFunc:sum
+            `);
         }
     );
 
@@ -257,6 +284,14 @@ describe('ag-grid grouping filter aggregation', () => {
             ,Mario Rossi,Soccer,3
              -> France,,,1
             ,Jean Dupont,Tennis,1
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── gold "Gold" width:200 aggFunc:sum
         `);
     });
 

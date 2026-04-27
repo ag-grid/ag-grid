@@ -7,7 +7,7 @@ import {
     foregroundBackgroundMix,
     foregroundColor,
 } from '../../../agStack/theming/themeUtils';
-import { buttonStyleBaseCSS } from './button-style-base.css-GENERATED';
+import buttonStyleBaseCSS from './button-style-base.css';
 
 export type ButtonStyleParams = {
     /**
@@ -16,7 +16,7 @@ export type ButtonStyleParams = {
     buttonTextColor: ColorValue;
 
     /**
-     * Font weight of standard action buttons (e.g. "Reset" and "Apply")
+     * Font weight of text in standard action buttons (e.g. "Reset" and "Apply")
      */
     buttonFontWeight: FontWeightValue;
 
@@ -71,7 +71,7 @@ export type ButtonStyleParams = {
     buttonActiveBackgroundColor: ColorValue;
 
     /**
-     * Border around standard action buttons (e.g. "Reset" and "Apply") when being clicked.
+     * Border around standard action buttons (e.g. "Reset" and "Apply") when being clicked. Only has an effect if a border is enabled with `buttonBorder`.
      */
     buttonActiveBorder: BorderValue;
 

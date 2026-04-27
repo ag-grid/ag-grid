@@ -20,6 +20,7 @@ import { ColumnGroupService } from './columnGroupService';
 /**
  * @feature Columns -> Column Groups
  * @colGroupDef
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const ColumnGroupModule: _ModuleWithApi<_ColumnGroupGridApi> = {
     moduleName: 'ColumnGroup',

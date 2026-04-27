@@ -1,6 +1,7 @@
-import type { Component, HighlightTooltipEventType, RichSelectParams } from 'ag-grid-community';
+import type { Component, HighlightTooltipEventType, RichSelectParams, _VerticalDirection } from 'ag-grid-community';
 import {
     KeyCode,
+    _addOrRemoveAttribute,
     _createElement,
     _createIconNoSpan,
     _requestAnimationFrame,
@@ -10,6 +11,7 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
+import { resolveRichSelectValueFormatter } from './agRichSelect';
 import { RichSelectRow } from './agRichSelectRow';
 import { VirtualList } from './virtualList';
 
@@ -38,14 +40,18 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private loadingState = STATE_READY_FOR_INPUT;
     private eStateCompLabel: HTMLElement;
     private eLoadingIcon: Element | undefined;
+    private loadMoreRowsCallback?: (direction?: _VerticalDirection) => void;
+    private loadMoreRowsThreshold = 10;
+    private stateAnnouncementCallback?: (value: string) => void;
+    private readonly valueFormatter: (value: TValue | TValue[] | null | undefined) => string;
 
     constructor(
-        private readonly params: RichSelectParams,
+        private readonly params: RichSelectParams<TValue>,
         private readonly richSelectWrapper: HTMLElement,
         private readonly getSearchString: () => string
     ) {
         super({ cssIdentifier: 'rich-select' });
-        this.params = params;
+        this.valueFormatter = resolveRichSelectValueFormatter<TValue>(params.valueFormatter);
         this.setComponentCreator(this.createRowComponent.bind(this));
         /* nothing to update but method required to soft refresh */
         this.setComponentUpdater(() => {});
@@ -53,11 +59,13 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     public override postConstruct(): void {
         super.postConstruct();
-        const i18n = this.getLocaleTextFunc();
-        this.loadingLabel = i18n('loadingOoo', 'Loading...');
-        this.noMatchesLabel = i18n('noMatches', 'No matches to show');
+        const translate = this.getLocaleTextFunc();
+        this.loadingLabel = translate('loadingOoo', 'Loading...');
+        this.noMatchesLabel = translate('noMatches', 'No matches to show');
+
         this.eLoadingIcon = _createIconNoSpan('richSelectLoading', this.beans, null);
         this.eStateCompLabel = _createElement({ tag: 'span', cls: 'ag-loading-text', children: this.loadingLabel });
+
         this.eStateComp = _createElement({
             tag: 'div',
             cls: 'ag-rich-select-loading',
@@ -70,6 +78,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
                 { tag: 'span', cls: 'ag-loading-text', children: [() => this.eStateCompLabel] },
             ],
         });
+
         this.appendChild(this.eStateComp);
 
         const { cellRowHeight, pickerAriaLabelKey, pickerAriaLabelValue } = this.params;
@@ -86,13 +95,13 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             mouseout: this.onMouseOut.bind(this),
             mousedown: this.onMouseDown.bind(this),
             click: this.onClick.bind(this),
+            scroll: this.onGuiScroll.bind(this),
         });
 
         eGui.classList.add(LIST_COMPONENT_NAME);
 
         const listId = `${LIST_COMPONENT_NAME}-${this.getCompId()}`;
         eListAriaEl.setAttribute('id', listId);
-        const translate = this.getLocaleTextFunc();
         const ariaLabel = translate(pickerAriaLabelKey, pickerAriaLabelValue);
 
         _setAriaLabel(eListAriaEl, ariaLabel);
@@ -104,9 +113,16 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     private setLoadingState(state: AgRichSelectListState): void {
+        const hasChanged = this.loadingState !== state;
         this.loadingState = state;
         this.toggleStateComp();
         this.toggleVisibility();
+        if (hasChanged) {
+            const stateAnnouncement = this.getStateAnnouncementText(state);
+            if (stateAnnouncement) {
+                this.stateAnnouncementCallback?.(stateAnnouncement);
+            }
+        }
     }
 
     private toggleStateComp(): void {
@@ -147,6 +163,17 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         } else {
             _setDisplayed(eListGui, forceVisible);
         }
+        this.scheduleMaybeRequestMoreRows();
+    }
+
+    public setLoadMoreRowsCallback(callback?: (direction?: _VerticalDirection) => void, thresholdRows = 10): void {
+        this.loadMoreRowsCallback = callback;
+        this.loadMoreRowsThreshold = Math.max(thresholdRows, 1);
+        this.maybeRequestMoreRows();
+    }
+
+    public setStateAnnouncementCallback(callback?: (value: string) => void): void {
+        this.stateAnnouncementCallback = callback;
     }
 
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {
@@ -168,6 +195,9 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         super.drawVirtualRows(softRefresh);
 
         this.refreshSelectedItems();
+        if (this.lastRowHovered !== -1) {
+            this.updateRenderedHighlightState(this.lastRowHovered);
+        }
     }
 
     public highlightFilterMatch(searchString: string): void {
@@ -191,7 +221,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         });
     }
 
-    public selectValue(value?: TValue[] | TValue): boolean {
+    public selectValue(value?: TValue[] | TValue | null): boolean {
         if (!this.currentList || value == null) {
             return false;
         }
@@ -210,6 +240,10 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
 
         this.selectListItems(Array.isArray(value) ? value : [value]);
+
+        if (refresh) {
+            this.highlightIndex(selectedPositions[0], true);
+        }
 
         return refresh;
     }
@@ -247,6 +281,31 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         });
     }
 
+    public offsetHoveredIndexOnPrependedRows(prependedRowCount: number): void {
+        if (prependedRowCount <= 0 || this.lastRowHovered < 0) {
+            return;
+        }
+
+        this.lastRowHovered += prependedRowCount;
+    }
+
+    public restoreScrollOnPrependedRows(previousScrollTop: number, prependedRowCount: number): void {
+        if (prependedRowCount <= 0) {
+            return;
+        }
+
+        const eGui = this.getGui();
+        const rowHeight = this.getRowHeight();
+        const nextScrollTop = previousScrollTop + prependedRowCount * rowHeight;
+
+        this.awaitStable(() => {
+            if (!this.isAlive()) {
+                return;
+            }
+            eGui.scrollTop = nextScrollTop;
+        });
+    }
+
     public getSelectedItems(): Set<TValue> {
         return this.selectedItems;
     }
@@ -262,6 +321,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
         if (index < 0 || index >= this.currentList.length) {
             this.lastRowHovered = -1;
+            this.setActiveOption();
         } else {
             this.lastRowHovered = index;
 
@@ -272,47 +332,53 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             }
         }
 
+        this.updateRenderedHighlightState(index);
+    }
+
+    private updateRenderedHighlightState(index: number): void {
+        let activeOptionId: string | undefined;
+
         this.forEachRenderedRow((cmp: RichSelectRow<TValue>, idx: number) => {
             const highlighted = index === idx;
-
             cmp.toggleHighlighted(highlighted);
 
             if (highlighted) {
-                const idForParent = `${ROW_COMPONENT_NAME}-${cmp.getCompId()}`;
-                _setAriaActiveDescendant(this.richSelectWrapper, idForParent);
-                this.richSelectWrapper.setAttribute('data-active-option', idForParent);
+                activeOptionId = `${ROW_COMPONENT_NAME}-${cmp.getCompId()}`;
             }
         });
+
+        this.setActiveOption(activeOptionId);
     }
 
-    public getIndicesForValues(values?: TValue[] | TValue): number[] {
+    private setActiveOption(activeOptionId?: string): void {
+        _setAriaActiveDescendant(this.richSelectWrapper, activeOptionId ?? null);
+        _addOrRemoveAttribute(this.richSelectWrapper, 'data-active-option', activeOptionId);
+    }
+
+    public getIndicesForValues(values?: TValue[] | TValue | null): number[] {
         const { currentList } = this;
 
-        if (!currentList || currentList.length === 0 || values == null) {
+        if (!currentList || currentList.length === 0 || values === undefined) {
             return [];
         }
 
-        if (!Array.isArray(values)) {
-            values = [values] as TValue[];
-        }
+        const valuesToFind = Array.isArray(values) ? values : [values];
 
-        if (values.length === 0) {
+        if (valuesToFind.length === 0) {
             return [];
         }
 
-        const { valueFormatter } = this.params;
         const positions: number[] = [];
+        let formattedList: string[] | undefined;
 
-        const isObject = typeof values[0] === 'object';
-        const formattedList = currentList.map(valueFormatter!);
-
-        for (const value of values) {
-            let idx = -1;
-
-            if (isObject) {
-                idx = formattedList.indexOf(valueFormatter!(value));
-            } else {
-                idx = currentList.indexOf(value);
+        for (const value of valuesToFind) {
+            let idx = currentList.indexOf(value as TValue);
+            if (idx === -1 && value != null) {
+                formattedList ??= currentList.map((item) => this.valueFormatter(item));
+                // objects must go through the formatter, while primitives are compared by their raw string value
+                // so a primitive selected value (e.g. 'Blue') can still match a formatted object option in the list.
+                const formattedValue = this.getComparableFormattedValue(value as TValue | null | undefined);
+                idx = formattedList.indexOf(formattedValue);
             }
 
             if (idx >= 0) {
@@ -345,16 +411,22 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     private findItemInSelected(value: TValue): TValue | undefined {
         if (typeof value === 'object') {
-            const valueFormatter = this.params.valueFormatter!;
-            const valueFormatted = valueFormatter(value);
+            if (this.selectedItems.has(value)) {
+                return value;
+            }
+            const valueFormatted = this.valueFormatter(value);
             for (const item of this.selectedItems) {
-                if (valueFormatter(item) === valueFormatted) {
+                if (this.valueFormatter(item) === valueFormatted) {
                     return item;
                 }
             }
         } else {
             return this.selectedItems.has(value) ? value : undefined;
         }
+    }
+
+    private getComparableFormattedValue(value: TValue | null | undefined): string {
+        return value != null && typeof value === 'object' ? this.valueFormatter(value) : String(value ?? '');
     }
 
     private createRowComponent(
@@ -386,7 +458,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const scrollTop = this.getScrollTop();
         const mouseY = e.clientY - rect.top + scrollTop;
 
-        return Math.min(Math.floor(mouseY / this.getRowHeight()), this.model.getRowCount() - 1);
+        return Math.min(Math.max(Math.floor(mouseY / this.getRowHeight()), 0), this.model.getRowCount() - 1);
     }
 
     private onMouseMove(e: MouseEvent): void {
@@ -396,6 +468,59 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             this.lastRowHovered = row;
             this.highlightIndex(row, true);
         }
+    }
+
+    private onGuiScroll(): void {
+        this.maybeRequestMoreRows(true);
+    }
+
+    private scheduleMaybeRequestMoreRows(): void {
+        if (this.beans) {
+            _requestAnimationFrame(this.beans, () => this.maybeRequestMoreRows(false));
+            return;
+        }
+
+        this.maybeRequestMoreRows(false);
+    }
+
+    private maybeRequestMoreRows(fromScrollEvent = false): void {
+        const callback = this.loadMoreRowsCallback;
+        const currentList = this.currentList;
+
+        if (!callback || !currentList || this.loadingState === STATE_LOADING) {
+            return;
+        }
+
+        const eGui = this.getGui();
+        if (eGui.clientHeight <= 0) {
+            return;
+        }
+
+        const remainingPixels = eGui.scrollHeight - (eGui.scrollTop + eGui.clientHeight);
+        const remainingRows = remainingPixels / this.getRowHeight();
+        const rowsFromTop = eGui.scrollTop / this.getRowHeight();
+        const hasVerticalOverflow = eGui.scrollHeight > eGui.clientHeight;
+
+        // if there is no vertical overflow, a scroll event cannot happen, so allow layout checks
+        // to request previous rows while still preserving scroll-driven behaviour when overflow exists.
+        if (rowsFromTop <= this.loadMoreRowsThreshold && (fromScrollEvent || !hasVerticalOverflow)) {
+            callback('up');
+        }
+        if (remainingRows <= this.loadMoreRowsThreshold) {
+            callback('down');
+        }
+    }
+
+    private getStateAnnouncementText(state: AgRichSelectListState): string | undefined {
+        if (state === STATE_LOADING) {
+            return this.loadingLabel;
+        }
+
+        if (state === STATE_NO_RESULTS && this.params.allowNoResultsCopy) {
+            return this.noMatchesLabel;
+        }
+
+        return undefined;
     }
 
     private onMouseDown(e: MouseEvent): void {

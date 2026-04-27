@@ -1,11 +1,13 @@
-import type { AgColumn, DragAndDropIcon, GridDraggingEvent } from 'ag-grid-community';
-import { _createIconNoSpan } from 'ag-grid-community';
+import type { AgColumn, DragAndDropIcon, FocusableContainer, GridDraggingEvent } from 'ag-grid-community';
+import { _addFocusableContainerListener, _createIconNoSpan } from 'ag-grid-community';
 
+import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
+import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
-export class RowGroupDropZonePanel extends BaseDropZonePanel {
-    constructor(horizontal: boolean) {
-        super(horizontal, 'rowGroup');
+export class RowGroupDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
+    constructor(horizontal: boolean, params?: ColumnStateUpdateParams, embedded = false) {
+        super(horizontal, 'rowGroup', params, embedded);
     }
 
     public postConstruct(): void {
@@ -19,6 +21,13 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
             title,
         });
 
+        // Only the top (horizontal) drop zone participates in core grid container tabbing.
+        // When embedded in a parent focus container (e.g. the Toolbar), the parent handles
+        // tab hand-off across its items — registering here would make tab skip siblings.
+        if (this.horizontal && !this.embedded) {
+            _addFocusableContainerListener(this.beans, this, this.getGui());
+        }
+
         this.addManagedEventListeners({ columnRowGroupChanged: this.refreshGui.bind(this) });
     }
 
@@ -31,15 +40,23 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
     protected isItemDroppable(column: AgColumn, draggingEvent: GridDraggingEvent): boolean {
         // we never allow grouping of secondary columns or already-grouped columns
-        if (this.gos.get('functionsReadOnly') || !column.isPrimary() || column.colDef.showRowGroup) {
+        if (this.gos.get('functionsReadOnly') || !column.primary || column.colDef.showRowGroup) {
             return false;
         }
 
-        return column.isAllowRowGroup() && (!column.isRowGroupActive() || this.isSourceEventFromTarget(draggingEvent));
+        const isActive = this.beans.columnStateUpdateStrategy
+            .getRowGroupColumns(isDeferredMode(this.updateParams))
+            .includes(column);
+        return column.isAllowRowGroup() && (!isActive || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateItems(columns: AgColumn[]) {
-        this.beans.rowGroupColsSvc?.setColumns(columns, 'toolPanelUi');
+        this.beans.columnStateUpdateStrategy.setRowGroupColumns(
+            isDeferredMode(this.updateParams),
+            columns,
+            'toolPanelUi'
+        );
+        refreshDeferredToolPanelUi(this.beans, this.updateParams);
     }
 
     protected getIconName(): DragAndDropIcon {
@@ -47,6 +64,10 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.beans.rowGroupColsSvc?.columns ?? [];
+        return this.beans.columnStateUpdateStrategy.getRowGroupColumns(isDeferredMode(this.updateParams));
+    }
+
+    public getFocusableContainerName(): 'rowGroupToolbar' {
+        return 'rowGroupToolbar';
     }
 }

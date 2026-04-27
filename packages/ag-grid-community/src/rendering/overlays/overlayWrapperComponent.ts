@@ -13,7 +13,7 @@ import { _focusNextGridCoreContainer } from '../../utils/gridFocus';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { IOverlayComp } from './overlayComponent';
-import { overlayWrapperComponentCSS } from './overlayWrapperComponent.css-GENERATED';
+import overlayWrapperComponentCSS from './overlayWrapperComponent.css';
 
 const OverlayWrapperElement: ElementParams = {
     tag: 'div',
@@ -57,7 +57,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             return;
         }
 
-        let isFocused = false;
+        let isFocused: boolean;
         if (e.shiftKey) {
             isFocused = beans.focusSvc.focusGridView({
                 column: _last(beans.visibleCols.allCols),
@@ -143,9 +143,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             if (this.activePromise !== overlayComponentPromise) {
                 // Another promise was started, we need to cancel this old operation
                 if (this.activeOverlay !== comp) {
-                    // We can destroy the component as it will not be used
                     this.destroyBean(comp);
-                    comp = null;
                 }
                 return;
             }

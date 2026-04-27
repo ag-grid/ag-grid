@@ -22,7 +22,6 @@ export default [
             'no-irregular-whitespace': 'error',
             'prefer-const': ['error', { destructuring: 'all' }],
             'prefer-rest-params': 'error',
-            '@typescript-eslint/ban-types': 'error',
             '@typescript-eslint/no-unused-vars': 'error',
             '@typescript-eslint/no-var-requires': 'error',
             '@typescript-eslint/prefer-as-const': 'error',
@@ -58,6 +57,10 @@ export default [
                     message:
                         'Empty imports are not allowed. i.e import "ag-grid-community"; as it will cause warnings about being sideEffect free',
                 },
+                {
+                    selector: 'PropertyDefinition[static=true]',
+                    message: 'Static class properties prevent tree-shaking. Use an alternative if possible.',
+                },
             ],
             'no-restricted-imports': [
                 'error',
@@ -87,6 +90,16 @@ export default [
         },
     },
     {
-        ignores: ['webpack.config.js', 'jest.*.js', 'eslint.config.mjs', 'jest.jsdom-env.cjs', 'test-utils/mock.ts'],
+        ignores: [
+            'webpack.config.js',
+            'jest.*.js',
+            'eslint.config.mjs',
+            'jest.jsdom-env.cjs',
+            'test-utils/mock.ts',
+            'e2e/',
+            'playwright.config.ts',
+            'esbuildBuild.cjs',
+            'vitest.umd.config.ts',
+        ],
     },
 ];

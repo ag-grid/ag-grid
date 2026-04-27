@@ -1,4 +1,5 @@
 import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from 'ag-grid-community';
+import { _parseBigIntOrNull } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -187,11 +188,20 @@ class OperandParser implements Parser {
     private modelValue: number | string;
     private validationMessage: string | null = null;
 
-    private readonly filterValidationSetters: Record<BaseCellDataType, (modelValue: string | number | null) => any> = {
+    private readonly filterValidationSetters: Record<
+        BaseCellDataType,
+        (modelValue: string | number | bigint | null) => any
+    > = {
         number: () => {
             if (this.quotes || isNaN(this.modelValue as number)) {
                 this.valid = false;
                 this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotANumber');
+            }
+        },
+        bigint: () => {
+            if (this.quotes || _parseBigIntOrNull(this.modelValue) === null) {
+                this.valid = false;
+                this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotABigInt');
             }
         },
         date: (modelValue) => {
@@ -295,12 +305,24 @@ export class ColFilterExpressionParser {
     private operatorParser: OperatorParser | undefined;
     private operandParser: OperandParser | undefined;
 
-    private readonly operandValueGetters: Record<BaseCellDataType, (operand: any) => any> = {
+    private readonly operandValueGetters: {
+        number: (a: string) => number;
+        bigint: (a: string) => bigint;
+        date: (a: string) => Date;
+        dateString: (a: string) => Date;
+        dateTime: (a: string) => Date;
+        dateTimeString: (a: string) => Date;
+        boolean: (a: string) => string;
+        object: (a: string) => string;
+        text: (a: string) => string;
+    } = {
         number: Number,
-        date: (operand) => this.params.valueSvc.parseValue(this.columnParser!.column!, null, operand, undefined),
-        dateString: (...args) => this.operandValueGetters.date(...args),
-        dateTime: (...args) => this.operandValueGetters.date(...args),
-        dateTimeString: (...args) => this.operandValueGetters.date(...args),
+        bigint: (operand) => _parseBigIntOrNull(operand)!,
+        date: (operand) =>
+            this.params.valueSvc.parseValue(this.columnParser!.column!, null, operand, undefined) as Date,
+        dateString: (operand) => this.operandValueGetters.date(operand),
+        dateTime: (operand) => this.operandValueGetters.date(operand),
+        dateTimeString: (operand) => this.operandValueGetters.date(operand),
         boolean: (operand) => operand,
         object: (operand) => operand,
         text: (operand) => operand,
@@ -614,7 +636,7 @@ export class ColFilterExpressionParser {
     }
 
     private doesOperandNeedQuotes(baseCellDataType?: BaseCellDataType): boolean {
-        return baseCellDataType !== 'number';
+        return baseCellDataType !== 'number' && baseCellDataType !== 'bigint';
     }
 
     private addToListAndGetIndex<T>(list: T[], value: T): number {

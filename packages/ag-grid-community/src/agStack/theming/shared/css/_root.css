@@ -11,9 +11,10 @@
     -webkit-font-smoothing: antialiased;
     font-family: var(--ag-font-family);
     font-size: var(--ag-font-size);
+    font-weight: var(--ag-font-weight);
     color-scheme: var(--ag-browser-color-scheme);
     color: var(--ag-text-color);
-    background-color: var(--ag-background-color);
+    background-color: var(--ag-wrapper-background-color);
 
     --ag-indentation-level: 0;
 }

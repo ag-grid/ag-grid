@@ -1,8 +1,8 @@
 import type { MockInstance } from 'vitest';
 
 import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, PaginationModule, QuickFilterModule, RowSelectionModule } from 'ag-grid-community';
+import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import {
     TestGridsManager,
@@ -20,11 +20,17 @@ describe('Row Selection Grid API', () => {
     let consoleWarnSpy: MockInstance;
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ServerSideRowModelModule, RowGroupingModule, RowSelectionModule],
+        modules: [
+            ClientSideRowModelModule,
+            ServerSideRowModelModule,
+            ServerSideRowModelApiModule,
+            RowGroupingModule,
+            RowSelectionModule,
+        ],
     });
 
-    function createGrid(gridOptions: GridOptions): [GridApi, GridActions] {
-        const api = gridMgr.createGrid('myGrid', gridOptions);
+    function createGrid(gridOptions: GridOptions, params?: { modules?: any[] }): [GridApi, GridActions] {
+        const api = gridMgr.createGrid('myGrid', gridOptions, params);
         const actions = new GridActions(api, '#myGrid');
         return [api, actions];
     }
@@ -82,14 +88,17 @@ describe('Row Selection Grid API', () => {
 
             describe('selectAll("currentPage")', () => {
                 test('Cannot select all rows on current page', () => {
-                    const [api] = createGrid({
-                        columnDefs,
-                        rowData,
-                        rowSelection: { mode: 'singleRow' },
-                        pagination: true,
-                        paginationPageSize: 5,
-                        paginationPageSizeSelector: false,
-                    });
+                    const [api] = createGrid(
+                        {
+                            columnDefs,
+                            rowData,
+                            rowSelection: { mode: 'singleRow' },
+                            pagination: true,
+                            paginationPageSize: 5,
+                            paginationPageSizeSelector: false,
+                        },
+                        { modules: [PaginationModule] }
+                    );
 
                     api.selectAll('currentPage');
 
@@ -99,11 +108,14 @@ describe('Row Selection Grid API', () => {
 
             describe('selectAll("filtered")', () => {
                 test('Cannot select all filtered rows', () => {
-                    const [api] = createGrid({
-                        columnDefs,
-                        rowData,
-                        rowSelection: { mode: 'singleRow' },
-                    });
+                    const [api] = createGrid(
+                        {
+                            columnDefs,
+                            rowData,
+                            rowSelection: { mode: 'singleRow' },
+                        },
+                        { modules: [QuickFilterModule] }
+                    );
 
                     api.setGridOption('quickFilterText', 'ing');
 

@@ -1,7 +1,7 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, GRAND_TOTAL_ROW_ID, GROUP_TOTAL_ROW_ID_PREFIX } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping display types and footers', () => {
     const gridsManager = new TestGridsManager({
@@ -42,7 +42,7 @@ describe('ag-grid grouping display types and footers', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'group rows display', { checkDom: false }).check(`
+        await new GridRows(api, 'group rows display').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland gold:3
             │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing" gold:1
@@ -51,6 +51,13 @@ describe('ag-grid grouping display types and footers', () => {
             │ └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:3
             └─┬ LEAF_GROUP id:row-group-country-France gold:1
             · └── LEAF id:4 country:"France" athlete:"Jean Dupont" sport:"Tennis" gold:1
+        `);
+
+        await new GridColumns(api, 'group rows display').checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── gold "Gold" width:200 aggFunc:sum
         `);
     });
 
@@ -90,6 +97,13 @@ describe('ag-grid grouping display types and footers', () => {
             │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer" gold:2
             └─┬ LEAF_GROUP id:row-group-country-Italy gold:3
             · └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:3
+        `);
+
+        await new GridColumns(api, 'custom display type').checkColumns(`
+            CENTER
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            └── gold "Gold" width:200 aggFunc:sum
         `);
     });
 
@@ -134,6 +148,23 @@ describe('ag-grid grouping display types and footers', () => {
             · │ ├── LEAF id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer" gold:4 silver:3
             · │ └─ footer id:rowGroupFooter_row-group-country-Italy-year-2020 ag-Grid-AutoColumn:"Total 2020" gold:4 silver:3
             · └─ footer id:rowGroupFooter_row-group-country-Italy ag-Grid-AutoColumn:"Total Italy" gold:4 silver:3
+        `);
+
+        const irelandTotal = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'row-group-country-Ireland');
+        expect(irelandTotal?.footer).toBe(true);
+        expect(irelandTotal?.aggData?.gold).toBe(6);
+
+        const irelandYear2020Total = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + 'row-group-country-Ireland-year-2020');
+        expect(irelandYear2020Total?.footer).toBe(true);
+        expect(irelandYear2020Total?.aggData?.gold).toBe(3);
+
+        await new GridColumns(api, 'with group total rows').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country/Year" width:200
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200
+            ├── gold "Gold" width:200 aggFunc:sum
+            └── silver "Silver" width:200 aggFunc:sum
         `);
     });
 
@@ -205,6 +236,10 @@ describe('ag-grid grouping display types and footers', () => {
             │ └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:3
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " gold:6
         `);
+
+        const grandTotalNode = api.getRowNode(GRAND_TOTAL_ROW_ID);
+        expect(grandTotalNode?.footer).toBe(true);
+        expect(grandTotalNode?.aggData?.gold).toBe(6);
     });
 
     test('grouping with custom group ordering', async () => {

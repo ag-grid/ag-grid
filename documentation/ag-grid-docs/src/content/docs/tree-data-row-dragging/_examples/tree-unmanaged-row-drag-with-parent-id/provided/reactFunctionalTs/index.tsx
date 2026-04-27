@@ -3,13 +3,7 @@
 import React, { StrictMode, useCallback, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    RowApiModule,
-    RowDragModule,
-    ValidationModule,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, RowApiModule, RowDragModule, ValidationModule } from 'ag-grid-community';
 import type {
     GridOptions,
     RowDragEndEvent,
@@ -18,20 +12,20 @@ import type {
     ValueFormatterParams,
 } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
 import type { IFile } from './fileUtils';
 import { getFileDropPosition, moveFiles } from './fileUtils';
 import './style.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ClientSideRowModelModule,
     RowApiModule,
     RowDragModule,
     TreeDataModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const STATIC_GRID_OPTIONS: GridOptions<IFile> = {
     columnDefs: [
@@ -106,14 +100,16 @@ const DragAndDropGrid = () => {
     }, []);
 
     return (
-        <AgGridReact<IFile>
-            ref={gridRef}
-            gridOptions={STATIC_GRID_OPTIONS}
-            rowData={rowData}
-            onRowDragMove={onRowDragMove}
-            onRowDragEnd={onRowDragEnd}
-            onRowDragCancel={onRowDragCancel}
-        />
+        <AgGridProvider modules={modules}>
+            <AgGridReact<IFile>
+                ref={gridRef}
+                gridOptions={STATIC_GRID_OPTIONS}
+                rowData={rowData}
+                onRowDragMove={onRowDragMove}
+                onRowDragEnd={onRowDragEnd}
+                onRowDragCancel={onRowDragCancel}
+            />
+        </AgGridProvider>
     );
 };
 

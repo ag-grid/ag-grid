@@ -7,16 +7,15 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     ColumnAutoSizeModule,
-    ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ColumnApiModule,
     TextFilterModule,
     NumberFilterModule,
@@ -24,7 +23,7 @@ ModuleRegistry.registerModules([
     AlignedGridsModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const topGrid = useRef<AgGridReact>(null);
@@ -88,47 +87,49 @@ const GridExample = () => {
     };
 
     return (
-        <div className="container">
-            <div className="header">
-                <label>
-                    <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAthlete(event)} />
-                    Athlete
-                </label>
-                <label>
-                    <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAge(event)} />
-                    Age
-                </label>
-                <label>
-                    <input type="checkbox" defaultChecked={true} onChange={(event) => onCbCountry(event)} />
-                    Country
-                </label>
-            </div>
+        <AgGridProvider modules={modules}>
+            <div className="container">
+                <div className="header">
+                    <label>
+                        <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAthlete(event)} />
+                        Athlete
+                    </label>
+                    <label>
+                        <input type="checkbox" defaultChecked={true} onChange={(event) => onCbAge(event)} />
+                        Age
+                    </label>
+                    <label>
+                        <input type="checkbox" defaultChecked={true} onChange={(event) => onCbCountry(event)} />
+                        Country
+                    </label>
+                </div>
 
-            <div className="grid">
-                <AgGridReact
-                    ref={topGrid}
-                    alignedGrids={[bottomGrid]}
-                    rowData={data}
-                    loading={loading}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    autoSizeStrategy={autoSizeStrategy}
-                />
-            </div>
+                <div className="grid">
+                    <AgGridReact
+                        ref={topGrid}
+                        alignedGrids={[bottomGrid]}
+                        rowData={data}
+                        loading={loading}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        autoSizeStrategy={autoSizeStrategy}
+                    />
+                </div>
 
-            <div className="divider"></div>
+                <div className="divider"></div>
 
-            <div className="grid">
-                <AgGridReact
-                    ref={bottomGrid}
-                    alignedGrids={[topGrid]}
-                    rowData={data}
-                    loading={loading}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                />
+                <div className="grid">
+                    <AgGridReact
+                        ref={bottomGrid}
+                        alignedGrids={[topGrid]}
+                        rowData={data}
+                        loading={loading}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

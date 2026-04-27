@@ -5,6 +5,7 @@
     "emitDecoratorMetadata": false,
     "noImplicitAny": false,
     "module": "ES2022",
+    "useDefineForClassFields": false,
     "moduleResolution": "Node",
     "types": ["vitest/globals", "node"]
   },

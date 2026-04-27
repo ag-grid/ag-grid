@@ -2,6 +2,7 @@ import type { LocalEventService } from '../agStack/events/localEventService';
 import type { AgFrameworkOverrides } from '../agStack/interfaces/agFrameworkOverrides';
 import type { IFrameworkEventListenerService } from './iFrameworkEventListenerService';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IFrameworkOverrides extends AgFrameworkOverrides {
     /** Used for Angular event listener wrapping */
     createLocalEventListenerWrapper?(
@@ -50,4 +51,7 @@ export interface IFrameworkOverrides extends AgFrameworkOverrides {
      * Required for React to work with StrictMode from v19 with the current implementation of the CtrlsService.
      */
     runWhenReadyAsync?(): boolean;
+
+    /** True when modules are provided via AgGridProvider React context, used for accurate missing module error messages */
+    readonly usesAgGridProvider?: boolean;
 }

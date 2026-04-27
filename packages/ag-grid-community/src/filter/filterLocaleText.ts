@@ -8,6 +8,7 @@ const FILTER_LOCALE_TEXT = {
     cancelFilter: 'Cancel',
     textFilter: 'Text Filter',
     numberFilter: 'Number Filter',
+    bigintFilter: 'BigInt Filter',
     dateFilter: 'Date Filter',
     setFilter: 'Set Filter',
     filterOoo: 'Filter...',
@@ -48,6 +49,30 @@ const FILTER_LOCALE_TEXT = {
     filterSummaryLessThan: '<',
     filterSummaryLessThanOrEqual: '<=',
     filterSummaryInRange: 'between',
+
+    yesterday: 'Yesterday',
+    today: 'Today',
+    tomorrow: 'Tomorrow',
+    last7Days: 'Last 7 Days',
+    lastWeek: 'Last Week',
+    thisWeek: 'This Week',
+    nextWeek: 'Next Week',
+    last30Days: 'Last 30 Days',
+    lastMonth: 'Last Month',
+    thisMonth: 'This Month',
+    nextMonth: 'Next Month',
+    last90Days: 'Last 90 Days',
+    lastQuarter: 'Last Quarter',
+    thisQuarter: 'This Quarter',
+    nextQuarter: 'Next Quarter',
+    lastYear: 'Last Year',
+    thisYear: 'This Year',
+    yearToDate: 'Year To Date',
+    nextYear: 'Next Year',
+    last6Months: 'Last 6 Months',
+    last12Months: 'Last 12 Months',
+    last24Months: 'Last 24 Months',
+
     filterSummaryInRangeValues: (variableValues: string[]) => `(${variableValues[0]}, ${variableValues[1]})`,
     filterSummaryTextQuote: (variableValues: string[]) => `"${variableValues[0]}"`,
     minDateValidation: (variableValues: string[]) => `Date must be after ${variableValues[0]}`,
@@ -58,6 +83,7 @@ const FILTER_LOCALE_TEXT = {
 
 export type FilterLocaleTextKey = keyof typeof FILTER_LOCALE_TEXT;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function translateForFilter(
     bean: { getLocaleTextFunc(): LocaleTextFunc },
     key: keyof typeof FILTER_LOCALE_TEXT,

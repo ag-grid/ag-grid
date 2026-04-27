@@ -4,9 +4,11 @@ Not all column groups can open and close, so you should display open / close fea
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 const showExpandableIcons = this.params.columnGroup.isExpandable()
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -14,9 +16,11 @@ To check if a column group is open or closed, check the `isExpanded()` method on
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 const groupIsOpen = this.params.columnGroup.isExpanded();
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -24,12 +28,14 @@ To open / close a column group, use the `this.params.setExpanded(boolean)` metho
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 // this code toggles the expanded state
 const oldValue = this.params.columnGroup.isExpanded();
 const newValue = !oldValue;
 this.params.setExpanded(newValue);
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -37,6 +43,7 @@ To know if a group is expanded or collapsed, listen for the `expandedChanged` ev
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 // get a reference to the original column group
 const columnGroup = this.params.columnGroup.getProvidedColumnGroup();
@@ -48,4 +55,5 @@ columnGroup.addEventListener('expandedChanged', listener);
 // don't forget to remove the listener in your destroy method
 columnGroup.removeEventListener('expandedChanged', listener);
 ```
+
 {% /if %}

@@ -1,7 +1,7 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { PRIVACY_POLICY_URL } from '@ag-website-shared/constants';
 import { TRIAL_LICENCE_FORM_URL, ZI_FORM_ID } from '@constants';
 import { trackTrialLicenseFormError, trackTrialLicenseFormSuccess } from '@utils/analytics';
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { useCallback, useState } from 'react';
 import type { ChangeEventHandler, FormEventHandler, FunctionComponent } from 'react';
@@ -294,8 +294,8 @@ export const TrialLicenceFormAllFields: FunctionComponent = ({ submitUrl }: Prop
                 </button>
 
                 <p className={styles.privacyMessage}>
-                    By clicking "Request trial licence" you agree to our{' '}
-                    <a href={urlWithBaseUrl('/privacy/')}>Privacy Policy</a>.
+                    By clicking "Request trial licence" you agree to our <a href={PRIVACY_POLICY_URL}>Privacy Policy</a>
+                    .
                 </p>
 
                 {formState === 'success' && (

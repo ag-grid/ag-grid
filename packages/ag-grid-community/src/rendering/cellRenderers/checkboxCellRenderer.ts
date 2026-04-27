@@ -8,7 +8,7 @@ import type { ElementParams } from '../../utils/element';
 import { _stopPropagationForAgGrid } from '../../utils/gridEvent';
 import { Component } from '../../widgets/component';
 import type { GridCheckbox } from '../../widgets/gridWidgetTypes';
-import { checkboxCellRendererCSS } from './checkboxCellRenderer.css-GENERATED';
+import checkboxCellRendererCSS from './checkboxCellRenderer.css';
 import type { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 
 export interface ICheckboxCellRendererParams<TData = any, TContext = any>
@@ -30,6 +30,7 @@ const CheckboxCellRendererElement: ElementParams = {
     ],
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CheckboxCellRenderer extends Component implements ICellRenderer {
     private readonly eCheckbox: GridCheckbox = RefPlaceholder;
     private params: ICheckboxCellRendererParams;
@@ -95,7 +96,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
                 if (colId.startsWith(GROUP_AUTO_COLUMN_ID)) {
                     // if we're grouping by this column then the value is a string and we need to parse it
                     isSelected = value == null || (value as any) === '' ? undefined : (value as any) === 'true';
-                } else if (node.aggData && node.aggData[colId] !== undefined) {
+                } else if (node.aggData?.[colId] !== undefined) {
                     isSelected = value ?? undefined; // group with aggregation
                 } else if (node.sourceRowIndex >= 0) {
                     isSelected = value ?? undefined; // tree group with data

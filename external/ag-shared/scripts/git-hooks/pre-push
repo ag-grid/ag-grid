@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+#
+# pre-push - Protected branch guard
+#
+# Blocks non-interactive (agentic/CI) pushes to protected branches.
+# Checks both the current local branch and any explicitly targeted remote refs.
+# Prompts human developers for confirmation when a TTY is present.
+#
+# Git passes push refspec lines on stdin:
+#   <local-ref> <local-sha> <remote-ref> <remote-sha>
+#
+
+HOOKS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=_protected-branch.sh
+source "$HOOKS_DIR/_protected-branch.sh"
+# shellcheck source=_detect-agent.sh
+source "$HOOKS_DIR/_detect-agent.sh"
+# shellcheck source=_run-hook-chain.sh
+source "$HOOKS_DIR/_run-hook-chain.sh"
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+
+# Collect all refspec lines from stdin so we can both inspect them and
+# pass them on to any chained hook.
+STDIN_LINES=()
+while IFS= read -r line; do
+    STDIN_LINES+=("$line")
+done
+
+# Determine whether any push target is a protected branch.
+# Check 1: the current local branch itself.
+# Check 2: any remote-ref in the push refspecs that maps to a protected branch.
+PROTECTED_BRANCH=""
+
+if is_protected_branch "$BRANCH"; then
+    PROTECTED_BRANCH="$BRANCH"
+fi
+
+if [[ -z "$PROTECTED_BRANCH" ]]; then
+    for line in "${STDIN_LINES[@]}"; do
+        # remote-ref is the 3rd field, e.g. refs/heads/latest
+        read -r _ _ remote_ref _ <<< "$line"
+        # Strip refs/heads/ prefix
+        remote_branch="${remote_ref#refs/heads/}"
+        if is_protected_branch "$remote_branch"; then
+            PROTECTED_BRANCH="$remote_branch"
+            break
+        fi
+    done
+fi
+
+# Not targeting a protected branch — pass through
+if [[ -z "$PROTECTED_BRANCH" ]]; then
+    printf '%s\n' "${STDIN_LINES[@]}" | run_hook_chain "pre-push" "$@"
+    exit $?
+fi
+
+# Allow git-subrepo push operations — these are intentional pushes to the
+# subrepo's upstream branch and should not be blocked.
+if [[ -n "${GIT_SUBREPO_RUNNING:-}" && "${GIT_SUBREPO_COMMAND:-}" == "push" ]]; then
+    printf '%s\n' "${STDIN_LINES[@]}" | run_hook_chain "pre-push" "$@"
+    exit $?
+fi
+
+# On/targeting a protected branch — check for a known AI agent first
+if AGENT_NAME=$(detect_agent); then
+    agent_block_message "$AGENT_NAME" "push" "$PROTECTED_BRANCH"
+    exit 1
+fi
+
+# No known agent — fall back to TTY check
+if ! [ -t 0 ] && ! [ -t 1 ]; then
+    # No TTY on stdin or stdout: unknown agentic tool or CI — block the push
+    echo ""
+    echo "==========================================================================="
+    echo "BLOCKED: Push to protected branch '$PROTECTED_BRANCH'"
+    echo "==========================================================================="
+    echo "Direct pushes to protected branches from non-interactive"
+    echo "tools are not allowed."
+    echo ""
+    echo "Work on a feature branch and open a pull request instead."
+    echo "To bypass manually: git push --no-verify"
+    echo "==========================================================================="
+    echo ""
+    exit 1
+fi
+
+# TTY present — interactive confirmation
+echo ""
+echo "⚠  You are about to push to protected branch '$PROTECTED_BRANCH'."
+echo "   Direct pushes to this branch should only be made by release"
+echo "   engineers. Consider using a feature branch and pull request."
+echo ""
+read -p "   Continue with this push? [y/N] " -r REPLY </dev/tty
+echo ""
+
+if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
+    echo "Push aborted."
+    exit 1
+fi
+
+printf '%s\n' "${STDIN_LINES[@]}" | run_hook_chain "pre-push" "$@"
+exit $?

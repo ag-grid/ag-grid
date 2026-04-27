@@ -10,6 +10,10 @@ const AgNameValueElement: ElementParams = {
         { tag: 'span', ref: 'eValue', cls: 'ag-status-name-value-value' },
     ],
 };
+
+const MIN_SAFE_BIGINT = BigInt(Number.MIN_SAFE_INTEGER);
+const MAX_SAFE_BIGINT = BigInt(Number.MAX_SAFE_INTEGER);
+
 export class AgNameValue extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eValue: HTMLElement = RefPlaceholder;
@@ -28,9 +32,26 @@ export class AgNameValue extends Component {
         this.eLabel.textContent = this.getLocaleTextFunc()(key, defaultValue);
     }
 
-    public setValue(value: number, totalRows: number): void {
+    public setValue(value: number | bigint | null, totalRows: number): void {
+        let numericValue: number | null = null;
+        let bigintValue: bigint | undefined;
+
+        if (typeof value === 'bigint') {
+            bigintValue = value;
+            if (value >= MIN_SAFE_BIGINT && value <= MAX_SAFE_BIGINT) {
+                numericValue = Number(value);
+            }
+        } else {
+            numericValue = value;
+        }
+
         this.eValue.textContent = this.valueFormatter(
-            _addGridCommonParams(this.gos, { value, totalRows, key: this.key })
+            _addGridCommonParams(this.gos, {
+                value: numericValue,
+                bigintValue,
+                totalRows,
+                key: this.key,
+            })
         );
     }
 }

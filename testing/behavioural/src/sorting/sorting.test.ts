@@ -3,7 +3,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Sorting', () => {
     const gridMgr = new TestGridsManager({
@@ -46,6 +46,12 @@ describe('Sorting', () => {
             ├── LEAF id:cmp-u-2 primary:"ay" secondary:"a"
             └── LEAF id:cmp-u-1 primary:"ax" secondary:"b"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── primary "Primary" width:200 sort:asc
+            └── secondary "Secondary" width:200 sort:asc
+        `);
     });
 
     beforeAll(() => setupAgTestIds());
@@ -86,6 +92,14 @@ describe('Sorting', () => {
         await asyncSetTimeout(1);
 
         expect(listener).not.toHaveBeenCalled();
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── sport "Sport" width:200 !sortable
+            ├── year "Year" width:200
+            ├── amount "Amount" width:200
+            └── day "Day" width:200
+        `);
     });
 
     test('GridRows snapshot changes after column sort', async () => {
@@ -156,6 +170,60 @@ describe('Sorting', () => {
             ├── LEAF id:x value:17
             ├── LEAF id:z value:9
             └── LEAF id:y value:-4
+        `);
+    });
+
+    test('sorts bigint values ascending, descending, and absolute', async () => {
+        const api = gridMgr.createGrid('bigintSort', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    cellDataType: 'bigint',
+                    valueFormatter: (params) => (params.value == null ? '' : `${params.value}n`),
+                },
+            ],
+            rowData: [
+                { id: 'a', value: 9007199254740993n },
+                { id: 'b', value: -5n },
+                { id: 'c', value: 10n },
+            ],
+            getRowId: (params) => params.data?.id,
+        });
+
+        await new GridRows(api, 'bigint initial').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:a value:"9007199254740993n"
+            ├── LEAF id:b value:"-5n"
+            └── LEAF id:c value:"10n"
+        `);
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        await new GridRows(api, 'bigint asc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:b value:"-5n"
+            ├── LEAF id:c value:"10n"
+            └── LEAF id:a value:"9007199254740993n"
+        `);
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'desc' }] });
+
+        await new GridRows(api, 'bigint desc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:a value:"9007199254740993n"
+            ├── LEAF id:c value:"10n"
+            └── LEAF id:b value:"-5n"
+        `);
+
+        api.applyColumnState({
+            state: [{ colId: 'value', sort: 'asc', sortIndex: 0, sortType: 'absolute' }],
+        });
+
+        await new GridRows(api, 'bigint absolute asc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:b value:"-5n"
+            ├── LEAF id:c value:"10n"
+            └── LEAF id:a value:"9007199254740993n"
         `);
     });
 
@@ -306,43 +374,6 @@ describe('Sorting', () => {
             ├── LEAF id:negative value:-7
             ├── LEAF id:missing-null value:null
             └── LEAF id:missing-undefined
-        `);
-    });
-
-    test('delta sort keeps order', async () => {
-        const rowCount = 10;
-        const baseRowData = Array.from({ length: rowCount }, (_, i) => ({ id: `delta-${i}`, value: i }));
-
-        const api = gridMgr.createGrid('deltaSortThirtyPercent', {
-            columnDefs: [{ field: 'value' }],
-            deltaSort: true,
-            rowData: baseRowData,
-            getRowId: (params) => params.data?.id,
-        });
-
-        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
-
-        const updates = [
-            { id: 'delta-1', value: 42 },
-            { id: 'delta-4', value: -5 },
-            { id: 'delta-7', value: 30 },
-        ];
-        expect(updates).toHaveLength(Math.floor(rowCount * 0.3));
-
-        applyTransactionChecked(api, { update: updates });
-
-        await new GridRows(api, 'delta sort updates 30%').check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:delta-4 value:-5
-            ├── LEAF id:delta-0 value:0
-            ├── LEAF id:delta-2 value:2
-            ├── LEAF id:delta-3 value:3
-            ├── LEAF id:delta-5 value:5
-            ├── LEAF id:delta-6 value:6
-            ├── LEAF id:delta-8 value:8
-            ├── LEAF id:delta-9 value:9
-            ├── LEAF id:delta-7 value:30
-            └── LEAF id:delta-1 value:42
         `);
     });
 

@@ -28,7 +28,7 @@ import {
 } from 'ag-grid-community';
 
 import type { PillDragComp } from './pillDragComp';
-import { pillDropZonePanelCSS } from './pillDropZonePanel.css-GENERATED';
+import pillDropZonePanelCSS from './pillDropZonePanel.css';
 
 export interface PillDropZonePanelParams {
     emptyMessage?: string;
@@ -45,6 +45,7 @@ function _insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
 
     dest.splice(toIndex, 0, ...src);
 }
+
 const PillDropZonePanelElement: ElementParams = { tag: 'div', cls: 'ag-unselectable', role: 'presentation' };
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {
     private state: PillState = 'notDragging';
@@ -83,7 +84,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         horizontal: boolean
     ): TPill;
     protected abstract getItems(dragItem: DragItem<TItem>): TItem[];
-    protected abstract isInterestedIn(type: DragSourceType): boolean;
+    protected abstract isInterestedIn(type: DragSourceType, sourceElement: Element): boolean;
 
     constructor(protected readonly horizontal: boolean) {
         super(PillDropZonePanelElement);
@@ -135,6 +136,10 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         this.refreshGui();
         _setAriaLabel(this.ePillDropList, this.getAriaLabel());
+
+        this.addManagedElementListeners(this.getFocusableElement(), {
+            focusin: this.onFocusIn.bind(this),
+        });
     }
 
     private onTabKeyDown(e: KeyboardEvent): void {
@@ -153,7 +158,20 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const shouldAllowDefaultTab = len === 1 || (isFirstFocused && shiftKey) || (isLastFocused && !shiftKey);
 
         if (!shouldAllowDefaultTab) {
-            focusableElements[shiftKey ? 0 : len - 1].focus();
+            // We want tab to jump out of the container, not select the next item, so focus the last item
+            focusableElements[shiftKey ? 0 : len - 1].focus({ preventScroll: true });
+        }
+    }
+
+    private onFocusIn(e: FocusEvent): void {
+        const root = this.getFocusableElement();
+        if (root.contains(e.relatedTarget as Node | null)) {
+            // don't scroll when we focus the last item item in order to tab out of the container
+            return;
+        }
+        const target = e.target as HTMLElement | null;
+        if (target) {
+            _scrollContainerHorizontallyToShowChild(root, target);
         }
     }
 
@@ -179,10 +197,12 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         if (e.shiftKey) {
             this.moveFocusedItem(isPrevious);
         } else {
-            const el = _findNextFocusableElement(this.beans, this.getFocusableElement(), false, isPrevious);
+            const root = this.getFocusableElement();
+            const el = _findNextFocusableElement(this.beans, root, false, isPrevious);
 
             if (el) {
                 el.focus();
+                _scrollContainerHorizontallyToShowChild(root, el);
             }
         }
     }
@@ -413,6 +433,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     private removeItems(itemsToRemove: TItem[]): void {
         const newItemList = this.getExistingItems().filter((item) => !itemsToRemove.includes(item));
         this.updateItems(newItemList);
+        this.refreshGui();
     }
 
     private addItems(itemsToAdd: TItem[]): void {
@@ -423,12 +444,12 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const itemsToAddNoDuplicates = itemsToAdd.filter((item) => newItemList.indexOf(item) < 0);
         _insertArrayIntoArray(newItemList, itemsToAddNoDuplicates, this.insertIndex);
         this.updateItems(newItemList);
+        this.refreshGui();
     }
 
     public addItem(item: TItem): void {
         this.insertIndex = this.getExistingItems().length;
         this.addItems([item]);
-        this.refreshGui();
     }
 
     private rearrangeItems(itemsToAdd: TItem[], fromKeyboard?: boolean): boolean {
@@ -447,6 +468,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
 
         this.updateItems(newItemList);
+        this.refreshGui();
         return true;
     }
 
@@ -659,5 +681,19 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             this.addElementClasses(icon, 'cell-separator');
             eParent.appendChild(icon);
         }
+    }
+}
+
+// Like Element.scrollIntoView, but only scrolls the container not the page
+function _scrollContainerHorizontallyToShowChild(container: HTMLElement, target: HTMLElement): void {
+    if (target === _findFocusableElements(container, null, true)[0]) {
+        container.scrollLeft = 0;
+    }
+    const c = container.getBoundingClientRect();
+    const t = target.getBoundingClientRect();
+    if (t.left < c.left) {
+        container.scrollLeft -= c.left - t.left;
+    } else if (t.right > c.right) {
+        container.scrollLeft += t.right - c.right;
     }
 }

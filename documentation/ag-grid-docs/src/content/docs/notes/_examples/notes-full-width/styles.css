@@ -1,0 +1,55 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+}
+
+.example-header {
+    color: var(--ag-secondary-foreground-color);
+}
+
+#myGrid {
+    flex: 1 1 0;
+}
+
+.notes-full-width-row {
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: column;
+    gap: 6px;
+    height: 100%;
+    justify-content: center;
+    padding: 0 16px;
+    border: 1px solid transparent;
+    background: color-mix(in srgb, var(--ag-accent-color) 10%, var(--ag-background-color));
+}
+
+.notes-full-width-row__badge {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ag-secondary-foreground-color);
+}
+
+.notes-full-width-row__title {
+    font-size: calc(var(--ag-font-size) + 2px);
+    font-weight: 600;
+}
+
+.notes-full-width-row__details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: var(--ag-secondary-foreground-color);
+}
+
+.notes-full-width-row__hint {
+    color: var(--ag-secondary-foreground-color);
+    font-size: calc(var(--ag-font-size) - 1px);
+}
+
+.ag-row:focus .notes-full-width-row {
+    border-color: var(--ag-range-selection-border-color);
+}

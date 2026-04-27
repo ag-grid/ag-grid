@@ -21,6 +21,7 @@ import { _getHeaderClassesFromColDef } from '../cssClassApplier';
 import { GroupWidthFeature } from './groupWidthFeature';
 import type { IHeaderGroupComp, IHeaderGroupParams } from './headerGroupComp';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     setResizableDisplayed(displayed: boolean): void;
     setWidth(width: string): void;
@@ -31,6 +32,7 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     getUserCompInstance(): IHeaderGroupComp | undefined;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     IHeaderGroupCellComp,
     AgColumnGroup,
@@ -104,6 +106,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             cellSelectionChanged: () => this.refreshAnnouncement(),
         });
 
+        compBean.addManagedPropertyListener('cellSelection', () => this.refreshAnnouncement());
         compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners(compBean);
         // Make sure this is the last destroy func as it clears the gui and comp
@@ -315,6 +318,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
 
         this.refreshHeaderStyles();
+        this.refreshAnnouncement();
     }
 
     private addClasses(): void {
@@ -405,16 +409,22 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     private refreshAnnouncement(): void {
         let description: string | undefined;
-        const { gos, column, beans } = this;
+        const { gos, expandable } = this;
         const enableColumnSelection = _getEnableColumnSelection(gos);
+        const translate = this.getLocaleTextFunc();
 
-        if (enableColumnSelection) {
-            const translate = this.getLocaleTextFunc();
-            const colSelected = beans.rangeSvc?.isColumnInAnyRange(column);
+        if (enableColumnSelection && expandable) {
             description = translate(
-                'ariaColumnCellSelection',
-                `Press CTRL+SPACE to ${colSelected ? 'de' : ''}select all visible cells in this column group`
+                'ariaColumnGroupCellSelectionAndExpansion',
+                'Press Enter to toggle selection for all visible cells in this column group. Press ALT ENTER to expand or collapse this column group'
             );
+        } else if (enableColumnSelection) {
+            description = translate(
+                'ariaColumnGroupCellSelection',
+                'Press Enter to toggle selection for all visible cells in this column group'
+            );
+        } else if (expandable) {
+            description = translate('ariaColumnGroupExpansion', 'Press ENTER to expand or collapse this column group');
         }
 
         this.ariaAnnouncement = description;
@@ -450,9 +460,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         // if any child is fixed, then don't allow moving
         return (
             this.gos.get('suppressMovableColumns') ||
-            this.column
-                .getLeafColumns()
-                .some((column) => column.getColDef().suppressMovable || column.getColDef().lockPosition)
+            this.column.getLeafColumns().some((column) => column.colDef.suppressMovable || column.colDef.lockPosition)
         );
     }
 

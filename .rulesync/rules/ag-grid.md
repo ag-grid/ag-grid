@@ -5,6 +5,10 @@ description: 'AG Grid project overview and development guidelines'
 globs: ['**/*']
 ---
 
+## Ambiguity and confidence
+
+**NEVER guess:** This is the number one rule; if requirements, facts or details are ambiguous it is much better to admit this and ask for guidance (with context on why the ambiguity where possible) or do more research to ground things out, than to guess with a risk of being wrong.
+
 ## AI Agent Instructions
 
 This file provides guidance to AI Agents when working with code in this repository.
@@ -12,18 +16,20 @@ This file provides guidance to AI Agents when working with code in this reposito
 ### Quick Reference
 
 -   **Main branch:** `latest`
--   **Format:** `yarn nx format` (run before commits)
+-   **Format:** `yarn nx format --sort-root-tsconfig-paths=false` (run before commits)
 -   **Type-check:** `yarn nx build:types <package>` (run before commits)
 -   **Lint:** `yarn nx lint <package>` (run before commits)
 -   **Build:** `yarn nx build <package>`
 -   **Test:** `yarn nx test <package>`
 -   **E2E:** `yarn nx e2e ag-grid-docs`
--   **Dev server:** `yarn nx dev`
+-   **Dev server:** `yarn nx dev` (launches on https://localhost:4610/, check if it is already running before trying to run it)
+-   **NX daemon:** Always use `NX_DAEMON=false` for nx commands to avoid pipe hangs (set automatically via SessionStart hook)
 
 ### Content Locations
 
--   **Rulesync source:** `.rulesync/` (rules, commands, subagents)
--   **Shared prompts:** `external/ag-shared/prompts/` (symlinked into .rulesync)
+-   **Plugin marketplace:** Shared skills, subagents, commands, and guides are delivered via Claude Code plugins from [`ag-grid/ag-dev-prompts`](https://github.com/ag-grid/ag-dev-prompts) — `ag-core`, `ag-prodeng`, and `ag-grid` (enabled in `.claude/settings.json`). Invoke with the plugin prefix, e.g. `/ag-prodeng:pr-review`, `/ag-core:recall`.
+-   **Local overrides:** `.rulesync/` tracks repo-specific content that layers on top of the plugins. See the allowlist in `.rulesync/.gitignore` for what's tracked.
+-   **Generated tool configs:** `setup-prompts.sh` (run at `yarn` time) stages plugin content into `.rulesync/` and regenerates `.claude/`, `.cursor/`, `.codex/`, `.gemini/`, `.github/`, `AGENTS.md`, and `CLAUDE.md`. Never hand-edit those — edit `.rulesync/` and re-run.
 
 ---
 
@@ -33,12 +39,25 @@ This file provides guidance to AI Agents when working with code in this reposito
 -   **Main constraint:** Community and enterprise runtime bundles stay dependency-free beyond AG Grid code.
 -   **Default branch:** Target `latest`; follow release/JIRA naming conventions below for topic branches.
 -   **Build monitoring:** Check `node_modules/.cache/ag-watch-status.json` to monitor watch state (`yarn nx dev`) and build health (see [Development Server Guide](.rulesync/rules/dev-server.md)).
--   **Formatting:** Run `yarn nx format` from the repo root before proposing commits.
+-   **Self-review before committing:** Re-read your changes as if reviewing someone else's PR and verify: each new function/class has a single clear responsibility; names are meaningful; no unnecessary complexity; no copy-pasted logic that should be extracted; new code follows the patterns of the surrounding codebase.
+-   **Formatting:** Run `yarn nx format --sort-root-tsconfig-paths=false` from the repo root before proposing commits.
 -   **Typechecking:** Run `yarn nx build:types <package>` from the repo root before proposing commits.
 -   **Linting:** Run `yarn nx lint <package>` from the repo root before proposing commits.
 -   **Baseline verification:** Expect to run `yarn nx test ag-grid-community`, `yarn nx test ag-grid-enterprise`, and `yarn nx e2e ag-grid-docs` after meaningful grid changes.
 -   **Test verification patterns:** When writing or modifying tests, review similar tests to ensure consistent verification patterns (see [Testing Guide](.rulesync/rules/testing.md)).
 -   **Context docs:** Skim [technology-stack.md](.rulesync/rules/technology-stack.md) for stack or architectural decisions before introducing new patterns.
+
+### Tooling Health Check
+
+On the **first response** of a conversation, verify that project skills are available by checking the system-reminder skill list. If **any** of the canary skills are missing, display a one-time warning before doing anything else. Do not repeat the warning on subsequent responses.
+
+**Canary skills:** `example`, `dev-server`, `debug-trace`, `git-conventions`, `jira`
+
+**Warning to display (if any canary skill is missing):**
+
+> **Agentic tooling is not initialised.** Expected skills (example, dev-server, debug-trace, git-conventions, jira) are missing or incomplete. Run `yarn` from the repository root to set up AI tooling configuration, then restart your session. If you are in a worktree, ensure you ran `yarn` in the worktree directory (not just the main checkout).
+
+Continue assisting the user after displaying the warning.
 
 ### Specialized Guides
 
@@ -74,13 +93,24 @@ For detailed information about preferred technologies and architectural constrai
 -   `yarn install` – install dependencies after cloning or when the Yarn lockfile changes.
     -   `./external/ag-shared/scripts/install-for-cloud/install-for-cloud.sh` – install dependencies and tooling in a remote environment - use this in preference to `yarn install` to ensure all global tools are installed.
 -   `yarn nx clean` – purge all dist folders when switching branches or before packaging releases.
--   `yarn nx format` – format repo files; run from the project root before committing.
+-   `yarn nx format --sort-root-tsconfig-paths=false` – format repo files; run from the project root before committing.
 -   `yarn nx build <package>` – compile a specific package after code edits.
 -   `yarn nx build:types <package>` – regenerate declaration files when touching exported APIs.
 -   `yarn nx build:package <package>` – create ESM/CJS bundles to validate publishable output.
 -   `yarn nx build:umd <package>` – produce UMD bundles for browser distribution smoke-tests.
 -   `yarn nx run-many -t build` – rebuild all packages when changes span the dependency graph.
--   `yarn nx test <package>` – execute Jest suites for the affected package.
+-   `./behave.sh` – run behavioural tests in `testing/behavioural/` (primary test suite, uses Vitest).
+-   `./behave.sh "<file-pattern>"` – run specific behavioural test file.
+-   `./behave.sh "<file-pattern>" -t "<test-name>"` – run specific behavioural test by name.
+-   `./behave.sh --watch` – run behavioural tests in watch mode.
+-   `./behave.sh --update-grid-rows` – update GridRows inline snapshots after diagram format changes.
+-   `./behave.sh --update-grid-rows "<pattern>"` – update snapshots in matching test files only.
+-   `./behave.sh --update-grid-rows=dry` – dry run, shows what would change without writing files.
+-   `./benches.sh` – run behavioural benchmarks via `vitest bench` (non-watch by default).
+-   `./benches.sh "<file-pattern>"` – run benchmarks matching a file pattern.
+-   `./benches.sh "<file-pattern>" -t "<bench-name>"` – run a specific benchmark by name.
+-   `./benches.sh --watch` – run benchmarks in watch mode.
+-   `yarn nx test <package>` – execute Jest unit tests for the affected package.
 -   `yarn nx test <package> --testPathPattern="<file-name>"` - test specific test file
 -   `yarn nx test <package> --testPathPattern="<file-name>" --testNamePattern="<test-name>"` - test specific test name in a specific test file
 -   `yarn nx e2e <package>` – run Playwright flows when altering website behaviour.
@@ -90,12 +120,15 @@ For detailed information about preferred technologies and architectural constrai
 
 Run rulesync commands via slash notation:
 
--   `/pr-review` - Review pull requests
--   `/code-cleanup` - Reduce code bloat and productionize
--   `/code-fixup` - Fix build and lint errors
--   `/batch-lint-cleanup` - ESLint auto-fix tool
--   `/git-split` - Split large files preserving git history
--   `/git-bisect` - Find commits that introduced issues
+-   `/ag-prodeng:pr-review` - Review pull requests
+-   `/ag-prodeng:code-fixup` - Fix build and lint errors
+-   `/ag-prodeng:batch-lint-cleanup` - ESLint auto-fix tool
+-   `/ag-prodeng:git-split` - Split large files preserving git history
+-   `/ag-prodeng:git-bisect` - Find commits that introduced issues
+-   `/ag-core:remember` - Save branch context or project learnings as memory
+-   `/ag-core:recall` - Load branch context and browse project memory
+-   `/ag-prodeng:docs-review` - Review documentation pages for technical accuracy (auto-detects ag-grid; product config at `plugins/ag-prodeng/skills/docs-review/ag-grid/config.md`)
+-   `/ag-prodeng:release-docs-review` - Review all documentation changes between releases
 
 ### Architecture
 
@@ -128,11 +161,11 @@ Core dependency chain: `ag-grid-community` → `ag-grid-enterprise` → framewor
 
 For comprehensive testing information, see [Testing Guide](.rulesync/rules/testing.md).
 
-Key testing tools:
+**Behavioural tests are the primary test suite.** When verifying grid changes, run behavioural tests first. Key testing tools:
 
--   **Unit tests**: Jest with jsdom environment
+-   **Behavioural tests** (primary): `testing/behavioural/` for grid behaviour verification — use Vitest
+-   **Unit tests**: Jest with jsdom environment for package-level tests
 -   **E2E tests**: Playwright for website interaction testing
--   **Behavioural tests**: `testing/behavioural/` for grid behaviour verification
 -   **Accessibility tests**: `testing/accessibility/` for a11y compliance
 -   **Performance tests**: `testing/performance/` for performance regression testing
 
@@ -142,9 +175,15 @@ For code quality guidelines, see [Code Quality Guide](.rulesync/rules/code-quali
 
 Essential practices:
 
--   Run `yarn nx format` before committing
+-   Run `yarn nx format --sort-root-tsconfig-paths=false` before committing
 -   Self-review your changes before proposing commits
 -   Ensure tests exercise real implementations, not test helpers
+
+#### Styling
+
+The grid is in transition from Legacy Themes (.scss files written in Sass under `/community-modules/styles/`) to the Theming API (.css written in modern nested CSS under `/packages/`).
+
+While this transition is in progress, changes made to Theming API should be applied to Legacy Themes. When reviewing a PR with changes to the Theming API CSS, if the same PR does not have corresponding changes to Legacy Themes, this should be flagged as a P1 level issue.
 
 ### Common Development Tasks
 

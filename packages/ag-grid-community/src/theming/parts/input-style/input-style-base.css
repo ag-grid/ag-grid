@@ -60,15 +60,28 @@
     }
 }
 
-/* icon for search inputs */
-:where(
-        .ag-column-select-header-filter-wrapper,
-        .ag-filter-toolpanel-search,
-        .ag-mini-filter,
-        .ag-filter-filter,
-        .ag-filter-add-select,
-        .ag-floating-filter-search-icon
+/* stylelint-disable-next-line nesting-selector-no-missing-scoping-root -- RTI-3243 auto rtl doesn't
+   work for elements outside the grid, tactical fix until AG-16725 */
+&:where(.ag-ltr, .ag-rtl)
+    .ag-input-field-input:where(
+        input:not([type]),
+        input[type='text'],
+        input[type='number'],
+        input[type='tel'],
+        input[type='date'],
+        input[type='datetime-local'],
+        textarea
     ) {
+    padding: 0 var(--ag-input-padding-start);
+}
+
+/* icon for search inputs */
+:where(.ag-column-select-header-filter-wrapper),
+:where(.ag-filter-toolpanel-search),
+:where(.ag-mini-filter),
+:where(.ag-filter-filter),
+:where(.ag-filter-add-select),
+:where(.ag-floating-filter-search-icon) {
     .ag-input-wrapper::before {
         position: absolute;
         display: block;

@@ -1,8 +1,14 @@
 import type { GridOptions, Module } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextEditorModule, TextFilterModule, TooltipModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextEditorModule,
+    TextFilterModule,
+    TooltipModule,
+} from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /** Row numbers refresh on a debounced path (~10ms), so allow a small buffer before asserting the DOM. */
 const rowNumberRefreshBufferMs = 25;
@@ -10,6 +16,7 @@ const rowNumberRefreshBufferMs = 25;
 describe('ag-grid formulas sorting', () => {
     const gridsManager = new TestGridsManager({
         modules: [
+            NumberFilterModule,
             ClientSideRowModelModule,
             CellSelectionModule,
             FormulaModule,
@@ -91,6 +98,14 @@ describe('ag-grid formulas sorting', () => {
             ├── LEAF id:5 row-number:"2" A:4 B:"echo"
             └── LEAF id:2 row-number:"3" A:3 B:"bravo"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            ├── A width:200 sort:desc filter
+            └── B width:200
+        `);
     });
 
     test('TC1 Same row references remain correct when sorting without order change', async () => {
@@ -140,6 +155,14 @@ describe('ag-grid formulas sorting', () => {
             ├── LEAF id:3 row-number:"3" A:30 B:60
             ├── LEAF id:4 row-number:"4" A:40 B:80
             └── LEAF id:5 row-number:"5" A:50 B:100
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            ├── A width:200
+            └── B width:200 sort:asc
         `);
     });
 

@@ -10,6 +10,7 @@ import type { ChangedPath } from '../utils/changedPath';
 import type { IRowNode } from './iRowNode';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './selectionState';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ISelectionService {
     getSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | null;
     setSelectionState(
@@ -51,6 +52,7 @@ export interface ISelectionService {
     setDetailSelectionState(masterNode: RowNode, option: GridOptions, detailApi: GridApi): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ISetNodesSelectedParams {
     /** nodes to change selection of */
     nodes: readonly RowNode[];

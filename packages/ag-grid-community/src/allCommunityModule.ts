@@ -17,6 +17,7 @@ import {
     UndoRedoEditModule,
 } from './edit/editModule';
 import {
+    BigIntFilterModule,
     CustomFilterModule,
     DateFilterModule,
     ExternalFilterModule,
@@ -63,6 +64,7 @@ export const AllCommunityModule: _ModuleWithoutApi = {
         UndoRedoEditModule,
         TextFilterModule,
         NumberFilterModule,
+        BigIntFilterModule,
         DateFilterModule,
         CustomFilterModule,
         QuickFilterModule,

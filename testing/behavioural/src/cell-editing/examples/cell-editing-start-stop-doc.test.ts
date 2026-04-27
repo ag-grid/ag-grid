@@ -1,5 +1,4 @@
 import { getByTestId } from '@testing-library/dom';
-import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
 import type { GridOptions, ICellEditorParams } from 'ag-grid-community';
@@ -7,6 +6,7 @@ import {
     ClientSideRowModelModule,
     NumberEditorModule,
     PinnedRowModule,
+    ScrollApiModule,
     SelectEditorModule,
     TextEditorModule,
     agTestIdFor,
@@ -52,6 +52,7 @@ describe('Cell editing start/stop documentation examples', () => {
             TextEditorModule,
             SelectEditorModule,
             PinnedRowModule,
+            ScrollApiModule,
             BatchEditModule,
             CellSelectionModule,
             ColumnsToolPanelModule,
@@ -215,9 +216,11 @@ describe('Cell editing start/stop documentation examples', () => {
         expect(editableFirstNameCell).toHaveTextContent('Freddy');
 
         await new GridRows(api, 'cell editing start stop').check(`
+            PINNED_TOP id:t-0 firstName:"##" lastName:"##" gender:"##" mood:"##" country:"##" address:"##"
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 firstName:"Freddy" lastName:"Harrison" gender:"Male" age:21 mood:"Happy" country:"Ireland" address:"1197 Thunder Rd"
             └── LEAF id:1 firstName:"Mary" lastName:"Wilson" gender:"Female" age:19 mood:"Sad" country:"Ireland" address:"3685 Rocky Gld"
+            PINNED_BOTTOM id:b-1 firstName:"##" lastName:"##" gender:"##" mood:"##" country:"##" address:"##"
         `);
 
         const makeEventRows = (): EventRow[] => [
@@ -450,20 +453,8 @@ describe('Cell editing start/stop documentation examples', () => {
                 await eventsUser.dblClick(cell);
             },
             {
-                false: [
-                    ['isCancelBeforeStart', []],
-                    ['cellEditingStopped', { newValue: undefined, oldValue: 'Ali', value: 'Ali', valueChanged: false }],
-                    ['cellEditingStarted', { value: 'Ali' }],
-                ],
-                true: [
-                    ['isCancelBeforeStart', []],
-                    [
-                        'cellEditingStopped',
-                        { newValue: undefined, oldValue: undefined, value: 'Ali', valueChanged: false },
-                    ],
-                    ['cellEditingStopped', { newValue: undefined, oldValue: 'Ali', value: 'Ali', valueChanged: false }],
-                    ['cellEditingStarted', { value: 'Ali' }],
-                ],
+                false: [['isCancelBeforeStart', []]],
+                true: [['isCancelBeforeStart', []]],
             },
             {
                 beforeStart: true,
@@ -486,10 +477,6 @@ describe('Cell editing start/stop documentation examples', () => {
             {
                 false: [
                     ['isCancelBeforeStart', []],
-                    [
-                        'cellEditingStopped',
-                        { newValue: undefined, oldValue: undefined, value: 'Ali', valueChanged: false },
-                    ],
                     ['cellEditingStarted', { value: 'Ali' }],
                     ['isCancelAfterEnd', []],
                     ['cellEditingStopped', { newValue: undefined, oldValue: 'Ali', value: 'Ali', valueChanged: false }],

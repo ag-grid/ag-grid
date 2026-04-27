@@ -5,7 +5,7 @@ import type { GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 const rowNumberRefreshBufferMs = 25;
 
@@ -110,6 +110,13 @@ describe('ag-grid formulas general behaviour', () => {
             ├── LEAF id:"absolute-col-$a2" row-number:"12" value:50
             └── LEAF id:"absolute-both-$a$2" row-number:"13" value:50
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            └── value "Value" width:200
+        `);
     });
 
     test('arithmetic and comparison operators produce expected results', async () => {
@@ -166,6 +173,27 @@ describe('ag-grid formulas general behaviour', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:ops row-number:"1" A:5 B:2 C:"Hi" add:7 subtract:3 multiply:10 divide:2.5 exponent:25 concat:"Hi there" equal:false notEqual:true greaterThan:true lessThan:false greaterThanOrEqual:true lessThanOrEqual:false
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            LEFT
+            └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+            CENTER
+            ├── A width:200
+            ├── B width:200
+            ├── C width:200
+            ├── add "Add" width:200
+            ├── subtract "Subtract" width:200
+            ├── multiply "Multiply" width:200
+            ├── divide "Divide" width:200
+            ├── exponent "Exponent" width:200
+            ├── concat "Concat" width:200
+            ├── equal "Equal" width:200
+            ├── notEqual "Not Equal" width:200
+            ├── greaterThan "Greater Than" width:200
+            ├── lessThan "Less Than" width:200
+            ├── greaterThanOrEqual "Greater Than Or Equal" width:200
+            └── lessThanOrEqual "Less Than Or Equal" width:200
         `);
     });
 
@@ -250,6 +278,63 @@ describe('ag-grid formulas general behaviour', () => {
             ├── LEAF id:percent-b2 row-number:"16" value:0.2
             ├── LEAF id:power-b2-squared row-number:"17" value:400
             └── LEAF id:rand-fixed row-number:"18" value:0.123
+        `);
+    });
+
+    test('bigint formulas resolve and coerce values per column data type', async () => {
+        const rowData = [
+            { id: 'row-1', total: 11n, age: 12, name: 'A' },
+            { id: 'row-2', total: 3n, age: 13, name: 'B' },
+            { id: 'row-3', total: 36721673247624376423n, age: 25, name: 'C' },
+            {
+                id: 'sum-small',
+                total: '=REF(COLUMN("total"),ROW("row-1")) + REF(COLUMN("total"),ROW("row-2"))',
+            },
+            {
+                id: 'sum-big',
+                total: '=REF(COLUMN("total"),ROW("row-3")) + REF(COLUMN("total"),ROW("row-2"))',
+            },
+            {
+                id: 'sum-mixed',
+                total: '=REF(COLUMN("total"),ROW("row-3")) + REF(COLUMN("age"),ROW("row-2"))',
+            },
+            {
+                id: 'age-mixed',
+                age: '=REF(COLUMN("age"),ROW("row-1")) + REF(COLUMN("total"),ROW("row-2"))',
+            },
+            {
+                id: 'age-big',
+                age: '=REF(COLUMN("age"),ROW("row-1")) + REF(COLUMN("total"),ROW("row-3"))',
+            },
+        ];
+
+        const gridOptions: GridOptions = {
+            defaultColDef: {
+                allowFormula: true,
+            },
+            rowNumbers: true,
+            rowData,
+            getRowId: (params) => params.data?.id,
+            columnDefs: [
+                { field: 'total', cellDataType: 'bigint' },
+                { field: 'age', cellDataType: 'number' },
+                { field: 'name' },
+            ],
+        };
+
+        const api = gridsManager.createGrid('formulas-bigint', gridOptions);
+
+        const gridRows = new GridRows(api, 'bigint formulas');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:row-1 row-number:"1" total:"11n" age:12 name:"A"
+            ├── LEAF id:row-2 row-number:"2" total:"3n" age:13 name:"B"
+            ├── LEAF id:row-3 row-number:"3" total:"36721673247624376423n" age:25 name:"C"
+            ├── LEAF id:sum-small row-number:"4" total:"14n"
+            ├── LEAF id:sum-big row-number:"5" total:"36721673247624376426n"
+            ├── LEAF id:sum-mixed row-number:"6" total:"36721673247624376436n"
+            ├── LEAF id:age-mixed row-number:"7" age:15
+            └── LEAF id:age-big row-number:"8" age:36721673247624376000
         `);
     });
 

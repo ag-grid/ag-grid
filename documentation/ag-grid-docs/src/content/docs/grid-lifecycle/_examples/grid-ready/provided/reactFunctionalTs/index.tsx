@@ -2,17 +2,17 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GridReadyEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { ClientSideRowModelModule, ColumnApiModule, ValidationModule } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     ColumnApiModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
@@ -46,32 +46,34 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div className="test-container">
-                <div className="test-header">
-                    <div style={{ marginBottom: '1rem' }}>
-                        <input type="checkbox" id="pinFirstColumnOnLoad" />
-                        <label htmlFor="pinFirstColumnOnLoad">Pin first column on load</label>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="test-container">
+                    <div className="test-header">
+                        <div style={{ marginBottom: '1rem' }}>
+                            <input type="checkbox" id="pinFirstColumnOnLoad" />
+                            <label htmlFor="pinFirstColumnOnLoad">Pin first column on load</label>
+                        </div>
+
+                        <div style={{ marginBottom: '1rem' }}>
+                            <button id="reloadGridButton" onClick={reloadGrid}>
+                                Reload Grid
+                            </button>
+                        </div>
                     </div>
 
-                    <div style={{ marginBottom: '1rem' }}>
-                        <button id="reloadGridButton" onClick={reloadGrid}>
-                            Reload Grid
-                        </button>
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            key={gridKey}
+                            ref={gridRef}
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            onGridReady={onGridReady}
+                        />
                     </div>
-                </div>
-
-                <div style={gridStyle}>
-                    <AgGridReact
-                        key={gridKey}
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        onGridReady={onGridReady}
-                    />
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

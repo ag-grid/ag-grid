@@ -143,7 +143,10 @@
 
     .ag-column-panel-column-select {
         border-top: none;
-        border-bottom: 1px solid var(--ag-secondary-border-color);
+
+        &:not(.ag-last-visible-child) {
+            border-bottom: 1px solid var(--ag-secondary-border-color);
+        }
     }
 
     .ag-filter-toolpanel-search {
@@ -595,8 +598,7 @@
 
     .ag-layout-auto-height,
     .ag-layout-print {
-        .ag-center-cols-viewport,
-        .ag-center-cols-container {
+        .ag-center-cols-viewport {
             min-height: 150px;
         }
     }

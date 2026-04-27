@@ -5,7 +5,7 @@ import { hidePopupMenu, showColumnMenu } from './menuApi';
 import { MenuService } from './menuService';
 
 /**
- * @internal
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export const SharedMenuModule: _ModuleWithApi<_CommunityMenuGridApi> = {
     moduleName: 'SharedMenu',

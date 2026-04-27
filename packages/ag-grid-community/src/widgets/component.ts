@@ -7,12 +7,17 @@ import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { AgGridCommon } from '../interfaces/iCommon';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ComponentEvent = AgComponentEvent;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ComponentSelector<TComponent extends AgBaseComponent<BeanCollection> = AgBaseComponent<BeanCollection>> =
     AgComponentSelector<AgComponentSelectorType, BeanCollection, TComponent>;
 
-/** All the AG Grid components that are used within internal templates via <ag-autocomplete> syntax */
+/**
+ * All the AG Grid components that are used within internal templates via <ag-autocomplete> syntax
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export type AgComponentSelectorType =
     | AgWidgetSelectorType
     | 'AG-AUTOCOMPLETE'
@@ -26,7 +31,6 @@ export type AgComponentSelectorType =
     | 'AG-HEADER-ROOT'
     | 'AG-NAME-VALUE'
     | 'AG-OVERLAY-WRAPPER'
-    | 'AG-PAGE-SIZE-SELECTOR'
     | 'AG-PAGINATION'
     | 'AG-PRIMARY-COLS-HEADER'
     | 'AG-PRIMARY-COLS-LIST'
@@ -35,9 +39,11 @@ export type AgComponentSelectorType =
     | 'AG-SIDE-BAR-BUTTONS'
     | 'AG-SORT-INDICATOR'
     | 'AG-STATUS-BAR'
+    | 'AG-TOOLBAR'
     | 'AG-WATERMARK'
     | 'AG-FORMULA-INPUT-FIELD';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class Component<TLocalEvent extends string = AgComponentEvent> extends AgComponentStub<
     BeanCollection,
     GridOptionsWithDefaults,

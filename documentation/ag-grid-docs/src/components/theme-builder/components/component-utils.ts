@@ -40,6 +40,7 @@ export const combineClassNames = (...classNames: (string | undefined | false)[])
 
 export const useClickAwayListener = (onHide: () => void, ignoreElements: Array<Element | null | undefined>) => {
     const ignoreElementsRef = useRef(ignoreElements);
+    // eslint-disable-next-line react-hooks/refs -- intentionally keeping ref in sync with latest value
     ignoreElementsRef.current = ignoreElements;
 
     const ignore = useRef(false);

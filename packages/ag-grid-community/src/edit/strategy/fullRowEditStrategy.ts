@@ -6,40 +6,44 @@ import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from 
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
-import { _populateModelValidationErrors, _setupEditor, _sourceAndPendingDiffer } from '../utils/editors';
+import {
+    _destroyEditor,
+    _populateModelValidationErrors,
+    _setupEditor,
+    _sourceAndPendingDiffer,
+} from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
     override beanName = 'fullRow' as BeanName | undefined;
     private rowNode?: IRowNode;
-    private readonly startedRows: IRowNode[] = [];
+    private readonly startedRows = new Set<IRowNode>();
 
     public override shouldStop(
         position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui'
     ): boolean | null {
+        const { rowNode: currentRowNode, beans } = this;
         const { rowNode } = position || {};
-        const oldRowCtrl = _getRowCtrl(this.beans, {
-            rowNode: this.rowNode,
-        });
+        const oldRowCtrl = _getRowCtrl(beans, { rowNode: currentRowNode });
 
         if (!oldRowCtrl) {
             return true;
         }
 
-        const res = super.shouldStop({ rowNode: this.rowNode }, event, _source);
+        const res = super.shouldStop({ rowNode: currentRowNode }, event, _source);
         if (res !== null) {
             return res;
         }
 
-        if (!this.rowNode) {
+        if (!currentRowNode) {
             return false;
         }
 
         // stop editing if we've changed rows
-        return rowNode !== this.rowNode;
+        return rowNode !== currentRowNode;
     }
 
     public override midBatchInputsAllowed({ rowNode }: EditPosition): boolean {
@@ -57,11 +61,13 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     public override start(params: StartEditWithPositionParams): void {
         const { position, silent, startedEdit, event, ignoreEventKey } = params;
         const { rowNode } = position;
+        const { beans, model, startedRows } = this;
+
         if (this.rowNode !== rowNode) {
             super.cleanupEditors(position);
         }
 
-        const columns = this.beans.visibleCols.allCols;
+        const columns = beans.visibleCols.allCols;
         const cells: Required<EditPosition>[] = [];
 
         const editableColumns: AgColumn[] = [];
@@ -76,8 +82,14 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return;
         }
 
-        this.dispatchRowEvent({ rowNode }, 'rowEditingStarted', silent);
-        this.startedRows.push(rowNode);
+        // Guard against duplicate rowEditingStarted / startedRows entries for the same row.
+        // When column virtualisation recycles cells on the editing row (e.g. during horizontal
+        // scrolling), start() is re-invoked for the same rowNode. Without this guard,
+        // cleanupEditors would fire rowEditingStopped once per duplicate entry.
+        if (!startedRows.has(rowNode)) {
+            this.dispatchRowEvent({ rowNode }, 'rowEditingStarted', silent);
+            startedRows.add(rowNode);
+        }
 
         for (const column of editableColumns) {
             const position: Required<EditPosition> = {
@@ -86,9 +98,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             };
             cells.push(position);
 
-            if (!this.model.hasEdits(position)) {
-                this.model.start(position);
-            }
+            model.start(position);
         }
 
         this.rowNode = rowNode;
@@ -115,43 +125,56 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         };
     }
 
-    public override stop(cancel?: boolean, event?: Event | null): boolean {
-        const { rowNode } = this;
-        if (rowNode && !this.model.hasRowEdits(rowNode)) {
+    public override stopCancelled(forceCancel: boolean): boolean {
+        const { rowNode, model } = this;
+        if (rowNode && !model.hasEdits()) {
+            return false;
+        }
+
+        super.stopCancelled(forceCancel);
+
+        this.cleanupEditors({ rowNode }, true);
+        this.rowNode = undefined;
+
+        return true;
+    }
+
+    public override stopCommitted(event: Event | null, commit: boolean): boolean {
+        const { rowNode, beans, model, editSvc } = this;
+        if (rowNode && !model.hasEdits()) {
             return false;
         }
 
         const changedRows: IRowNode[] = [];
-        if (!cancel) {
-            this.model.getEditMap().forEach((rowEdits, rowNode) => {
-                if (!rowEdits || rowEdits.size === 0) {
-                    return;
-                }
+        model.getEditMap().forEach((rowEdits, rowNode) => {
+            if (!rowEdits || rowEdits.size === 0) {
+                return;
+            }
 
-                for (const edit of rowEdits.values()) {
-                    if (_sourceAndPendingDiffer(edit)) {
-                        changedRows.push(rowNode);
-                        // early return, we only need to know if there are any edits
-                        break;
-                    }
+            for (const edit of rowEdits.values()) {
+                if (_sourceAndPendingDiffer(edit)) {
+                    changedRows.push(rowNode);
+                    break;
                 }
-            });
-        }
+            }
+        });
 
-        // rerun validation, new values might have triggered row validations
-        _populateModelValidationErrors(this.beans);
-        if (!cancel && this.editSvc?.checkNavWithValidation({ rowNode }) === 'block-stop') {
+        _populateModelValidationErrors(beans);
+        if (editSvc.checkNavWithValidation({ rowNode }) === 'block-stop') {
             return false;
         }
 
-        super.stop(cancel, event);
+        super.stopCommitted(event, commit);
 
-        for (const rowNode of changedRows) {
-            this.dispatchRowEvent({ rowNode }, 'rowValueChanged');
+        // Only dispatch rowValueChanged when data is actually being committed.
+        // During batch row-to-row navigation, commit is false — values are pending, not persisted.
+        if (commit || !editSvc.isBatchEditing()) {
+            for (const rowNode of changedRows) {
+                this.dispatchRowEvent({ rowNode }, 'rowValueChanged');
+            }
         }
 
         this.cleanupEditors({ rowNode }, true);
-
         this.rowNode = undefined;
 
         return true;
@@ -165,15 +188,22 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return;
         }
 
-        const prevCell = _getCellCtrl(this.beans, prev);
+        const { beans, gos, model } = this;
 
-        const isBlock = this.gos.get('invalidEditValueMode') === 'block';
+        // allow range selection while editing without ending the row edit.
+        if (beans.editSvc?.isRangeSelectionEnabledWhileEditing()) {
+            return;
+        }
+
+        const prevCell = _getCellCtrl(beans, prev);
+
+        const isBlock = gos.get('invalidEditValueMode') === 'block';
 
         if (
             isBlock &&
             prevCell &&
-            (this.model.getCellValidationModel().getCellValidation(prevCell) ||
-                this.model.getRowValidationModel().getRowValidation(prevCell))
+            (model.getCellValidationModel().getCellValidation(prevCell) ||
+                model.getRowValidationModel().getRowValidation(prevCell))
         ) {
             return;
         }
@@ -183,10 +213,32 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
     public override cleanupEditors(position: EditRowPosition = {}, includeEditing?: boolean): void {
         super.cleanupEditors(position, includeEditing);
-        for (const rowNode of this.startedRows) {
+
+        const { startedRows } = this;
+        for (const rowNode of startedRows) {
             this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
+            this.destroyEditorsForRow(rowNode);
         }
-        this.startedRows.length = 0;
+        startedRows.clear();
+    }
+
+    /**
+     * Destroys all editors for a row that started full row editing, including editors
+     * that are not represented in the edit model (e.g. empty/unedited editors).
+     */
+    private destroyEditorsForRow(rowNode: IRowNode): void {
+        const rowCtrl = _getRowCtrl(this.beans, { rowNode });
+        if (!rowCtrl) {
+            return; // Row not rendered, no editors to destroy.
+        }
+
+        // Destroy every editor created for this row, including those without edit model entries.
+        const destroyParams = {};
+        for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
+            if (cellCtrl.comp?.getCellEditor()) {
+                _destroyEditor(this.beans, cellCtrl, destroyParams, cellCtrl);
+            }
+        }
     }
 
     // returns null if no navigation should be performed
@@ -197,6 +249,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         source: 'api' | 'ui' = 'ui',
         preventNavigation = false
     ): boolean | null {
+        const { beans, model, gos, editSvc } = this;
         const prevPos = prevCell.cellPosition;
 
         // find the next cell to start editing
@@ -204,9 +257,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         // fineNextCell in fullRow mode causes CellComps to initialise editors, this is
         // undesirable so we suspend the model while we find the next cell.
-        this.model.suspend(true);
+        model.suspend(true);
         try {
-            nextCell = this.beans.navigation?.findNextCellToFocusOn(prevPos, {
+            nextCell = beans.navigation?.findNextCellToFocusOn(prevPos, {
                 backwards,
                 startEditing: true,
                 // Default behaviour for fullRow is skip to the next cell,
@@ -217,7 +270,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 skipToNextEditableCell: false,
             }) as CellCtrl | false;
         } finally {
-            this.model.suspend(false);
+            model.suspend(false);
         }
 
         if (nextCell === false) {
@@ -232,7 +285,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const prevEditable = prevCell.isCellEditable();
         const nextEditable = nextCell.isCellEditable();
 
-        const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
+        const rowsMatch = prevPos.rowIndex === nextPos?.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
         if (prevEditable) {
             this.setFocusOutOnEditor(prevCell);
@@ -240,7 +293,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.restoreEditors();
 
-        const suppressStartEditOnTab = this.gos.get('suppressStartEditOnTab');
+        const suppressStartEditOnTab = gos.get('suppressStartEditOnTab');
 
         if (nextEditable && !preventNavigation) {
             if (suppressStartEditOnTab) {
@@ -249,7 +302,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 if (!nextCell.comp?.getCellEditor()) {
                     // editor missing because it was outside the viewport during creating phase,
                     // create it now
-                    _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true });
+                    _setupEditor(beans, nextCell, { event, cellStartedEdit: true });
                 }
                 this.setFocusInOnEditor(nextCell);
                 nextCell.focusCell(false, event);
@@ -262,13 +315,24 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         if (!rowsMatch && !preventNavigation) {
-            this.editSvc?.stopEditing({ rowNode: prevCell.rowNode }, { event });
-            this.cleanupEditors(nextCell, true);
+            // force a commit before row editing stops so cellValueChanged fires before rowEditingStopped.
+            editSvc?.stopEditing({ rowNode: prevCell.rowNode }, { event, forceStop: true });
+
+            // if nothing was committed, editors may still be open; close them to finish the row edit.
+            if (editSvc?.isRowEditing(prevCell.rowNode, { withOpenEditor: true })) {
+                this.cleanupEditors(nextCell, true);
+            }
 
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else {
-                this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
+                editSvc.startEditing(nextCell, {
+                    startedEdit: true,
+                    event,
+                    source,
+                    ignoreEventKey: true,
+                    editable: nextEditable || undefined,
+                });
             }
         }
 
@@ -278,21 +342,22 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     private restoreEditors(): void {
+        const { beans, model } = this;
         // check all cells that should have an editor have one - in the case of small viewports,
         // editors might have been destroyed along with their corresponding cellCtrl
-        this.model.getEditMap().forEach((rowEdits, rowNode) =>
+        model.getEditMap().forEach((rowEdits, rowNode) =>
             rowEdits.forEach(({ state }, column) => {
                 if (state !== 'editing') {
                     return;
                 }
 
-                const cellCtrl = _getCellCtrl(this.beans, {
+                const cellCtrl = _getCellCtrl(beans, {
                     rowNode,
                     column,
                 });
 
                 if (cellCtrl && !cellCtrl.comp?.getCellEditor()) {
-                    _setupEditor(this.beans, cellCtrl, { silent: true });
+                    _setupEditor(beans, cellCtrl, { silent: true });
                 }
             })
         );
@@ -301,6 +366,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     public override destroy(): void {
         super.destroy();
         this.rowNode = undefined;
-        this.startedRows.length = 0;
+        this.startedRows.clear();
     }
 }

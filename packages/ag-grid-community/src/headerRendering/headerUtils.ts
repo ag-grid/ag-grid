@@ -4,6 +4,7 @@ import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { HeaderRowCtrl } from './row/headerRowCtrl';
 
 // + gridPanel -> for resizing the body and setting top margin
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function getHeaderRowCount(colModel: ColumnModel): number {
     if (!colModel.cols) {
         return -1;
@@ -44,7 +45,7 @@ export function getGroupRowsHeight(beans: BeanCollection): number[] {
 }
 
 function getColumnGroupHeaderRowHeight(beans: BeanCollection, headerRowCtrl: HeaderRowCtrl): number {
-    const defaultHeight = beans.colModel.isPivotMode() ? getPivotGroupHeaderHeight(beans) : getGroupHeaderHeight(beans);
+    const defaultHeight = beans.colModel.pivotMode ? getPivotGroupHeaderHeight(beans) : getGroupHeaderHeight(beans);
     let maxDisplayedHeight = defaultHeight;
     const headerRowCellCtrls = headerRowCtrl.getHeaderCellCtrls();
     for (const headerCellCtrl of headerRowCellCtrls) {
@@ -58,7 +59,7 @@ function getColumnGroupHeaderRowHeight(beans: BeanCollection, headerRowCtrl: Hea
 }
 
 export function getColumnHeaderRowHeight(beans: BeanCollection): number {
-    const defaultHeight = beans.colModel.isPivotMode() ? getPivotHeaderHeight(beans) : getHeaderHeight(beans);
+    const defaultHeight = beans.colModel.pivotMode ? getPivotHeaderHeight(beans) : getHeaderHeight(beans);
     let maxDisplayedHeight = defaultHeight;
     beans.colModel.forAllCols((col) => {
         const height = col.getAutoHeaderHeight();
@@ -73,6 +74,7 @@ export function getHeaderHeight(beans: BeanCollection): number {
     return beans.gos.get('headerHeight') ?? beans.environment.getDefaultHeaderHeight();
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function getFloatingFiltersHeight(beans: BeanCollection): number {
     return beans.gos.get('floatingFiltersHeight') ?? getHeaderHeight(beans);
 }
@@ -91,4 +93,8 @@ function getPivotGroupHeaderHeight(beans: BeanCollection): number {
 
 export function isHeaderPositionEqual(headerPosA: HeaderPosition, headerPosB: HeaderPosition): boolean {
     return headerPosA.headerRowIndex === headerPosB.headerRowIndex && headerPosA.column === headerPosB.column;
+}
+
+export function isHeaderPosition(position: unknown): position is HeaderPosition {
+    return (position as HeaderPosition)?.headerRowIndex != null;
 }

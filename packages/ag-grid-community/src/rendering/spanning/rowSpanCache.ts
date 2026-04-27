@@ -61,7 +61,7 @@ export class CellSpan {
      * needs applied to the last row in the span.
      */
     public getLastNodeAutoHeight(): number | undefined {
-        const autoHeight = this.firstNode.__autoHeights?.[this.col.getColId()];
+        const autoHeight = this.firstNode.__autoHeights?.[this.col.colId];
         if (autoHeight == null) {
             return undefined;
         }
@@ -135,17 +135,16 @@ export class RowSpanCache extends BeanStub {
 
             // if level or key is different, cells do not span.
             if (
-                lastNode == null ||
-                node.level !== lastNode.level || // no span across groups
+                node.level !== lastNode?.level || // no span across groups
                 node.footer ||
                 (spanData && node.rowIndex - 1 !== spanData?.getLastNode().rowIndex) // no span if rows not contiguous (SSRM)
             ) {
-                setNewHead(node, valueSvc.getValue(column, node));
+                setNewHead(node, valueSvc.getValue(column, node, 'data'));
                 return;
             }
 
             // check value is equal, if not, no span
-            const value = valueSvc.getValue(column, node);
+            const value = valueSvc.getValue(column, node, 'data');
             if (isCustomCompare) {
                 const params: SpanRowsParams = _addGridCommonParams(gos, {
                     valueA: lastValue,

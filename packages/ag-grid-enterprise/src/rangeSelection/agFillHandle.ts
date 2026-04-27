@@ -350,10 +350,12 @@ export class AgFillHandle extends AbstractSelectionHandle {
             let skipValue: boolean = false;
 
             if (withinInitialRange) {
-                currentValue = valueSvc.getValue(col, rowNode);
+                currentValue = valueSvc.getValue(col, rowNode, 'edit');
                 initialValues.push(currentValue);
-                initialNonAggregatedValues.push(valueSvc.getValue(col, rowNode, true));
-                initialFormattedValues.push(valueSvc.getValueForDisplay({ column: col, node: rowNode }).valueFormatted);
+                initialNonAggregatedValues.push(valueSvc.getValue(col, rowNode, 'edit', true));
+                initialFormattedValues.push(
+                    valueSvc.getValueForDisplay({ column: col, node: rowNode, from: 'edit' }).valueFormatted
+                );
                 withinInitialRange = updateInitialSet();
             } else {
                 const { value, fromUserFunction, sourceCol, sourceRowNode } = this.processValues({
@@ -369,16 +371,17 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
                 currentValue = value;
                 if (col.isCellEditable(rowNode)) {
-                    const cellValue = valueSvc.getValue(col, rowNode);
+                    const cellValue = valueSvc.getValue(col, rowNode, 'edit');
 
                     if (!fromUserFunction) {
                         if (sourceCol) {
-                            const sourceColDef = sourceCol.getColDef();
+                            const sourceColDef = sourceCol.colDef;
                             if (sourceColDef.useValueFormatterForExport !== false && sourceColDef.valueFormatter) {
                                 const formattedValue = valueSvc.getValueForDisplay({
                                     column: sourceCol,
                                     node: sourceRowNode!,
                                     includeValueFormatted: true,
+                                    from: 'edit',
                                 }).valueFormatted;
 
                                 if (formattedValue != null) {
@@ -386,7 +389,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                                 }
                             }
                         }
-                        if (col.getColDef().useValueParserForImport !== false) {
+                        if (col.colDef.useValueParserForImport !== false) {
                             currentValue = valueSvc.parseValue(
                                 col,
                                 rowNode,
@@ -413,16 +416,23 @@ export class AgFillHandle extends AbstractSelectionHandle {
             }
         };
 
-        if (isVertical) {
-            initialRange.columns.forEach((col: AgColumn) => {
-                iterateAcrossCells(col);
-            });
-        } else {
-            const columns = (this.isLeft ? [...finalRange.columns].reverse() : finalRange.columns) as AgColumn[];
-            iterateAcrossCells(undefined, columns);
+        const { changeDetectionSvc } = this.beans;
+        changeDetectionSvc?.beginDeferred();
+        try {
+            if (isVertical) {
+                initialRange.columns.forEach((col: AgColumn) => {
+                    iterateAcrossCells(col);
+                });
+            } else {
+                const columns = (this.isLeft ? [...finalRange.columns].reverse() : finalRange.columns) as AgColumn[];
+                iterateAcrossCells(undefined, columns);
+            }
+            // Stop the editor inside the deferred block so the commit (if any) is included
+            // in the same doAggregate pass as the fill writes.
+            this.beans.editSvc?.stopEditing(undefined, { source: 'fillHandle' });
+        } finally {
+            changeDetectionSvc?.endDeferred();
         }
-
-        this.beans.editSvc?.stopEditing(undefined, { source: 'fillHandle' });
     }
 
     private clearCellsInRange(startRow: RowPosition, endRow: RowPosition, columns: AgColumn[]) {
@@ -432,7 +442,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             columns,
             startColumn: columns[0],
         };
-        this.beans.rangeSvc!.clearCellRangeCellValues({ cellRanges: [cellRange] });
+        this.beans.rangeSvc!.clearCellRangeCellValues({ cellRanges: [cellRange], restoreSourceInBatch: true });
     }
 
     private processValues(params: {
@@ -467,7 +477,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 initialNonAggregatedValues,
                 initialFormattedValues,
                 currentIndex: idx,
-                currentCellValue: valueSvc.getValue(col, rowNode),
+                currentCellValue: valueSvc.getValue(col, rowNode, 'edit'),
                 direction,
                 column: col,
                 rowNode: rowNode,
@@ -703,7 +713,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         for (const column of colsToMark) {
             let row: RowPosition = rangeStartRow;
-            let isLastRow = false;
+            let isLastRow: boolean;
 
             do {
                 isLastRow = _isSameRow(row, rangeEndRow);
@@ -744,7 +754,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         for (const column of colsToMark) {
             let row: RowPosition = rangeStartRow;
-            let isLastRow: boolean = false;
+            let isLastRow: boolean;
 
             do {
                 isLastRow = _isSameRow(row, rangeEndRow);

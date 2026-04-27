@@ -7,6 +7,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowAbove } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
@@ -24,7 +25,6 @@ import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams, RefreshRowsParams } from '../interfaces/iCellsParams';
-import type { IEditService } from '../interfaces/iEditService';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
@@ -47,6 +47,7 @@ interface RowNodeMap {
 
 const ROW_ANIMATION_TIMEOUT = 400;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowRenderer extends BeanStub implements NamedBean {
     beanName = 'rowRenderer' as const;
 
@@ -57,7 +58,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private focusSvc: FocusService;
     private rowContainerHeight: RowContainerHeightService;
     private ctrlsSvc: CtrlsService;
-    private editSvc?: IEditService;
+    private editSvc?: EditService;
 
     public wireBeans(beans: BeanCollection): void {
         this.pageBounds = beans.pageBounds;
@@ -885,6 +886,53 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.refreshFullWidth(params.rowNodes);
     }
 
+    /** O(1) lookup of a RowCtrl by its RowNode (O(k) for sticky rows, where k is the sticky row count). */
+    public getRowCtrlByNode(node: IRowNode): RowCtrl | undefined {
+        const rowIndex = node.rowIndex;
+        if (rowIndex == null) {
+            return undefined;
+        }
+        const rowPinned = node.rowPinned;
+        if (rowPinned === 'top') {
+            const ctrl = this.topRowCtrls[rowIndex];
+            return ctrl?.rowNode === node ? ctrl : undefined;
+        }
+        if (rowPinned === 'bottom') {
+            const ctrl = this.bottomRowCtrls[rowIndex];
+            return ctrl?.rowNode === node ? ctrl : undefined;
+        }
+        const ctrl = this.rowCtrlsByRowIndex[rowIndex];
+        if (ctrl?.rowNode === node) {
+            return ctrl;
+        }
+        return this.getStickyRowCtrlByNode(node);
+    }
+
+    private getStickyRowCtrlByNode(node: IRowNode): RowCtrl | undefined {
+        const stickyRowFeature = this.stickyRowFeature;
+        if (!stickyRowFeature) {
+            return undefined;
+        }
+        for (const c of stickyRowFeature.stickyTopRowCtrls) {
+            if (c.rowNode === node) {
+                return c;
+            }
+        }
+        for (const c of stickyRowFeature.stickyBottomRowCtrls) {
+            if (c.rowNode === node) {
+                return c;
+            }
+        }
+        return undefined;
+    }
+
+    /** Refreshes the rendered row for the given node if it is currently in the viewport. Null-safe: no-op when node is null or undefined. */
+    public refreshRowByNode(node: IRowNode | null | undefined): void {
+        if (node) {
+            this.getRowCtrlByNode(node)?.refreshRow();
+        }
+    }
+
     private refreshFullWidth(rowNodes?: IRowNode[]): void {
         if (!rowNodes) {
             return;
@@ -1354,7 +1402,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             const scrollFeature = this.ctrlsSvc.getScrollFeature();
             const suppressRowVirtualisation = this.gos.get('suppressRowVirtualisation');
 
-            let rowHeightsChanged = false;
+            let rowHeightsChanged: boolean;
             let firstPixel: number;
             let lastPixel: number;
             do {

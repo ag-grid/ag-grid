@@ -217,7 +217,7 @@
     }
 
     .ag-filter-menu .ag-set-filter-list {
-        min-width: 200px;
+        min-width: max(200px, 100%);
     }
 
     @include ag.keyboard-focus((ag-filter-virtual-list-item), 1px);
@@ -237,7 +237,11 @@
     }
 
     .ag-simple-filter-body-wrapper {
-        @include ag.vertical-widget-container();
+        display: flex;
+        flex-direction: column;
+        gap: var(--ag-widget-vertical-spacing);
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+        padding-bottom: var(--ag-widget-container-vertical-padding);
         overflow-y: auto;
         min-height: calc(
             var(--ag-list-item-height) + var(--ag-widget-container-vertical-padding) + var(--ag-widget-vertical-spacing)

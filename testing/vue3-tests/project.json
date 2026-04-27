@@ -1,0 +1,43 @@
+{
+  "name": "vue3-tests",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/vue3-tests/src",
+  "projectType": "application",
+  "targets": {
+    "setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx playwright install --with-deps chromium"],
+        "parallel": false,
+        "cwd": "testing/vue3-tests"
+      }
+    },
+    "dev": {
+      "command": "npx vite",
+      "options": {
+        "cwd": "testing/vue3-tests"
+      }
+    },
+    "build": {
+      "dependsOn": [
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package",
+        "ag-grid-enterprise:build:types",
+        "ag-grid-enterprise:build:package",
+        "ag-grid-vue3:build"
+      ],
+      "command": "npx vue-tsc && npx vite build",
+      "options": {
+        "cwd": "testing/vue3-tests"
+      }
+    },
+    "test:e2e": {
+      "dependsOn": ["^build", "build", "setup"],
+      "command": "npm run test:e2e",
+      "options": {
+        "cwd": "testing/vue3-tests"
+      }
+    }
+  },
+  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-vue3"]
+}

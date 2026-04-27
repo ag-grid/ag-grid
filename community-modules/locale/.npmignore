@@ -13,10 +13,10 @@ dist/**/*.test.*
 project.json
 jest.config.js
 jest.config.ts
+vitest.config.ts
 *.map
 .swcrc
 eslint.config.mjs
 tsconfig.types.test.json
 coverage
-
-
+.snyk

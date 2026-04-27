@@ -28,8 +28,7 @@ type KeysLike<U> = Exclude<GetPropKeys<GridOptions, U>, undefined>;
 type KeysWithType<U> = Exclude<GetPropKeys<GridOptions, U>, AnyGridOptions>;
 type CallbackKeys = KeysWithType<(any: AgGridCommon<any, any>) => any>;
 /** All function properties excluding those explicity match the common callback interface. */
-// eslint-disable-next-line @typescript-eslint/ban-types
-type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
+type FunctionKeys = Exclude<KeysLike<(...args: any[]) => any>, CallbackKeys>;
 
 /**
  * These keys are used for validating properties supplied on a gridOptions object, and for code generation.
@@ -57,6 +56,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'treeDataParentIdField',
     'colResizeDefault',
     'tooltipTrigger',
+    'noteTrigger',
     'serverSidePivotResultFieldSeparator',
     'columnMenu',
     'tooltipShowMode',
@@ -97,6 +97,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'activeOverlayParams',
     'popupParent',
     'themeStyleContainer',
+    'toolbar',
     'statusBar',
     'chartThemeOverrides',
     'customChartThemes',
@@ -107,6 +108,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'advancedFilterParams',
     'formulaDataSource',
     'formulaFuncs',
+    'notesDataSource',
     'initialState',
     'autoSizeStrategy',
     'selectionColumnDef',
@@ -127,6 +129,7 @@ const ARRAY_GRID_OPTIONS: KeysWithType<any[]>[] = [
     'chartThemes',
     'rowClass',
     'paginationPageSizeSelector',
+    'paginationPanels',
     'suppressOverlays',
 ];
 
@@ -149,7 +152,10 @@ export const _NUMBER_GRID_OPTIONS: KeysWithType<number>[] = [
     'maxBlocksInCache',
     'maxConcurrentDatasourceRequests',
     'tooltipShowDelay',
+    'tooltipSwitchShowDelay',
     'tooltipHideDelay',
+    'noteShowDelay',
+    'noteHideDelay',
     'cacheOverflowSize',
     'paginationPageSize',
     'cacheBlockSize',
@@ -174,6 +180,7 @@ const OTHER_GRID_OPTIONS: GridOptionKey[] = ['theme', 'rowSelection'];
 // Used by Angular to support the user setting these
 // as plain HTML attributes and us correctly mapping that to true
 // These are all of type boolean | something else
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'cellSelection',
     'sideBar',
@@ -252,6 +259,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'embedFullWidthRows',
     'suppressPaginationPanel',
     'groupHideOpenParents',
+    'groupHideColumnsUntilExpanded',
     'groupAllowUnbalanced',
     'pagination',
     'paginationAutoPageSize',
@@ -277,6 +285,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'rowMultiSelectWithClick',
     'suppressRowHoverHighlight',
     'suppressRowTransform',
+    'suppressContentVisibilityAuto',
     'suppressClipboardPaste',
     'suppressLastEmptyLineOnPaste',
     'enableCharts',
@@ -372,6 +381,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'tabToNextHeader',
     'navigateToNextCell',
     'tabToNextCell',
+    'tabToNextGridContainer',
     'processCellFromClipboard',
     'getDocument',
     'postProcessPopup',
@@ -409,6 +419,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
 // Vue Runtime prop changes
 // example generation
 // We define as a callback to help with tree shaking (esbuild)
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const _GET_ALL_GRID_OPTIONS: () => GridOptionKey[] = () => [
     ...ARRAY_GRID_OPTIONS,
     ...OBJECT_GRID_OPTIONS,
@@ -418,4 +429,14 @@ export const _GET_ALL_GRID_OPTIONS: () => GridOptionKey[] = () => [
     ..._BOOLEAN_GRID_OPTIONS,
     ..._BOOLEAN_MIXED_GRID_OPTIONS,
     ...OTHER_GRID_OPTIONS,
+];
+
+// Options that only need shallow (reference) watching (only Vue atm) — primitives and functions
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _GET_SHALLOW_GRID_OPTIONS: () => GridOptionKey[] = () => [
+    ...STRING_GRID_OPTIONS,
+    ..._NUMBER_GRID_OPTIONS,
+    ..._FUNCTION_GRID_OPTIONS,
+    ..._BOOLEAN_GRID_OPTIONS,
+    ..._BOOLEAN_MIXED_GRID_OPTIONS,
 ];

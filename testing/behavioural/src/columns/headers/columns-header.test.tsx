@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import React, { useMemo, useState } from 'react';
 

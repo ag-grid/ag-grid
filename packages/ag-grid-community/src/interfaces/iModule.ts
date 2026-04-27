@@ -16,6 +16,7 @@ type ModuleValidationInvalidResult = {
     message: string;
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type ModuleValidationResult = ModuleValidationValidResult | ModuleValidationInvalidResult;
 
 /** A Module contains all the code related to this feature to enable tree shaking when this module is not used. */
@@ -48,13 +49,27 @@ export interface Module {
     css?: string[];
 }
 
-/** Used to define a module that contains api functions. */
+/**
+ * Used to define a module that contains api functions.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export type _ModuleWithApi<TGridApi extends Readonly<Partial<GridApi>>> = Omit<Module, 'rowModels'> & {
     apiFunctions?: { [K in ApiFunctionName & keyof TGridApi]: ApiFunction<K> };
 };
-/** Used to define a module that does not contain api functions. */
+/**
+ * Used to define a module that does not contain api functions.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export type _ModuleWithoutApi = Module & {
     apiFunctions?: never;
+};
+
+/**
+ * Used by React to set the license key via React context if an enterprise module has been provided.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export type _ModuleWithLicenseManager = {
+    setLicenseKey: (licenseKey: string) => void;
 };
 
 type InternalModuleName =
@@ -63,10 +78,12 @@ type InternalModuleName =
     | 'Aria'
     | 'AutoWidth'
     | 'CellRendererFunction'
+    | 'ChangedPath'
     | 'ChangeDetection'
     | 'CheckboxCellRenderer'
-    | 'ClientSideRowModelFilter'
-    | 'ClientSideRowModelHierarchy'
+    | 'CsrmFilter'
+    | 'CsrmHierarchy'
+    | 'CsrmGroupStages'
     | 'ColumnDelayRender'
     | 'ColumnFilter'
     | 'ColumnFlex'
@@ -101,6 +118,7 @@ type InternalModuleName =
     | 'Popup'
     | 'QuickFilterCore'
     | 'SharedAggregation'
+    | 'SharedColumnStateUpdateStrategy'
     | 'SharedDragAndDrop'
     | 'SharedExport'
     | 'SharedMasterDetail'
@@ -143,6 +161,7 @@ export type CommunityModuleName =
     | 'Locale'
     | 'NumberEditor'
     | 'NumberFilter'
+    | 'BigIntFilter'
     | 'Pagination'
     | 'PinnedRow'
     | 'QuickFilter'
@@ -194,9 +213,12 @@ export type EnterpriseModuleName =
     | 'SideBar'
     | 'Sparklines'
     | 'StatusBar'
+    | 'Toolbar'
     | 'TreeData'
     | 'ViewportRowModel'
-    | 'Formula';
+    | 'Formula'
+    | 'Notes'
+    | 'RowGroupingEdit';
 
 /** The names of all publicly available AG Grid modules */
 export type AgModuleName =
@@ -220,12 +242,14 @@ export type AgModuleName =
     | 'EventApiModule'
     | 'ExternalFilterModule'
     | 'GridStateModule'
+    | 'RowGroupingEditModule'
     | 'HighlightChangesModule'
     | 'InfiniteRowModelModule'
     | 'LargeTextEditorModule'
     | 'LocaleModule'
     | 'NumberEditorModule'
     | 'NumberFilterModule'
+    | 'BigIntFilterModule'
     | 'PaginationModule'
     | 'PinnedRowModule'
     | 'QuickFilterModule'
@@ -275,9 +299,11 @@ export type AgModuleName =
     | 'SideBarModule'
     | 'SparklinesModule'
     | 'StatusBarModule'
+    | 'ToolbarModule'
     | 'TreeDataModule'
     | 'ViewportRowModelModule'
-    | 'FormulaModule';
+    | 'FormulaModule'
+    | 'NotesModule';
 
 // Types to ensure that our AgModuleName type with Module suffix is equivalent to the internal module names based on Community and Enterprise module names
 type AgModuleNameInternal = `${CommunityModuleName | EnterpriseModuleName}Module`;
@@ -287,7 +313,10 @@ type ModuleTypesEquivalent = ValidateTheSame | ValidateTheSame2 extends never ? 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const validateTheSame: ModuleTypesEquivalent = true;
 
-/** INTERNAL: All public and internal module names */
+/**
+ * INTERNAL: All public and internal module names
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export type ModuleName = InternalModuleName | CommunityModuleName | EnterpriseModuleName;
 
 /** These are the internal modules that we have mappings for to convert into exported modules */
@@ -321,11 +350,15 @@ export type ResolvableModuleName = Extract<
     | 'ColumnGroup'
     | 'Overlay'
     | 'PinnedColumn'
-    | 'ClientSideRowModelHierarchy'
+    | 'CsrmHierarchy'
+    | 'CsrmGroupStages'
     | 'SkeletonCellRenderer'
     | 'CheckboxCellRenderer'
     | 'SharedTreeData'
 >;
 
-/** These are the types that we can display validations for */
+/**
+ * These are the types that we can display validations for
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export type ValidationModuleName = CommunityModuleName | EnterpriseModuleName | ResolvableModuleName;

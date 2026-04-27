@@ -1,4 +1,5 @@
-import type { BeanCollection, CellRange } from 'ag-grid-community';
+import { isSpecialCol } from 'ag-grid-community';
+import type { AgColumn, BeanCollection, CellRange, IClientSideRowModel } from 'ag-grid-community';
 
 import { getRefTokenMatches, parseA1Ref } from '../formula/refUtils';
 
@@ -70,6 +71,17 @@ export const getCellRangeParams = (beans: BeanCollection, ref: string) => {
     const rowStartIndex = parseInt(startRow, 10) - 1;
     const rowEndIndex = endRow ? parseInt(endRow, 10) - 1 : rowStartIndex;
 
+    // guard against invalid rows so we don't tokenise refs outside the known row set.
+    if (rowStartIndex < 0 || rowEndIndex < 0) {
+        return null;
+    }
+
+    const rowModel = beans.rowModel as IClientSideRowModel | null;
+    // formulas run on the client-side row model, so use formula rows to validate.
+    if (!rowModel?.getFormulaRow(rowStartIndex) || !rowModel.getFormulaRow(rowEndIndex)) {
+        return null;
+    }
+
     return {
         rowStartIndex,
         rowEndIndex,
@@ -106,8 +118,8 @@ export const rangeToRef = (beans: BeanCollection, range: CellRange): string | nu
     const rowStartIndex = Math.min(startRow.rowIndex!, endRow.rowIndex!) + 1;
     const rowEndIndex = Math.max(startRow.rowIndex!, endRow.rowIndex!) + 1;
 
-    const columns = range.columns;
-
+    // ignore selection/row-number columns and any columns without A1 refs
+    const columns = range.columns?.filter((col) => !isSpecialCol(col) && !!formula.getColRef(col as AgColumn));
     if (!columns?.length) {
         return null;
     }
@@ -116,8 +128,8 @@ export const rangeToRef = (beans: BeanCollection, range: CellRange): string | nu
     const startCol = sorted[0];
     const endCol = sorted[sorted.length - 1];
 
-    const colStartRef = formula.getColRef(startCol as any);
-    const colEndRef = formula.getColRef(endCol as any);
+    const colStartRef = formula.getColRef(startCol as AgColumn);
+    const colEndRef = formula.getColRef(endCol as AgColumn);
 
     if (!colStartRef || !colEndRef) {
         return null;
@@ -134,8 +146,32 @@ export const rangeToRef = (beans: BeanCollection, range: CellRange): string | nu
 };
 
 type RefToken = { ref: string; index: number };
+type RefTokenMatch = { ref: string; start: number; end: number; index: number };
 
-export const getRefTokensFromText = (text: string): RefToken[] => {
+export const getRefTokenMatchesForFormula = (beans: BeanCollection, text: string): RefTokenMatch[] => {
+    const matches = getRefTokenMatches(text);
+    const { formula } = beans;
+
+    if (!formula) {
+        return matches;
+    }
+
+    const valid: RefTokenMatch[] = [];
+    let index = 0;
+
+    for (const match of matches) {
+        if (!getCellRangeParams(beans, match.ref)) {
+            continue;
+        }
+        valid.push({ ...match, index });
+        index += 1;
+    }
+
+    return valid;
+};
+
+export const getRefTokensFromText = (beans: BeanCollection, text: string): RefToken[] => {
     // Extract A1-style refs/ranges with their occurrence index (left-to-right).
-    return getRefTokenMatches(text).map(({ ref, index }) => ({ ref, index }));
+    const matches = getRefTokenMatchesForFormula(beans, text);
+    return matches.map(({ ref, index }) => ({ ref, index }));
 };

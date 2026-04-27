@@ -41,7 +41,7 @@ function tsNodeIsDocumentContentLoaded(node) {
                 node.arguments[0].text === 'DOMContentLoaded'
             );
         }
-    } catch (e) {
+    } catch {
         console.error('We found something which we do not understand', node);
         if (tsNodeIsFunctionCall(node)) {
             return (
@@ -369,6 +369,10 @@ function internalParser(
     };
 
     const tsConvertFunctionsIntoStringsStr = (property: any): string => {
+        // Handle shorthand property syntax: { valueFormatter } is equivalent to { valueFormatter: valueFormatter }
+        if (ts.isShorthandPropertyAssignment(property)) {
+            return `${property.name.text}: 'AG_LITERAL_${property.name.text}'`;
+        }
         if (ts.isIdentifier(property.initializer)) {
             return `${property.name.text}: 'AG_LITERAL_${property.initializer.escapedText}'`;
         } else if (ts.isFunctionLike(property.initializer)) {

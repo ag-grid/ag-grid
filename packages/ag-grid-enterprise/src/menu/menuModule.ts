@@ -2,6 +2,7 @@ import type { _ColumnChooserGridApi, _ContextMenuGridApi, _ModuleWithApi, _Modul
 import { _ColumnMoveModule, _PopupModule, _SharedDragAndDropModule, _SharedMenuModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { SharedColumnStateUpdateStrategyModule } from '../columnToolPanel/updates/columnStateUpdateStrategyModule';
 import { VERSION } from '../version';
 import { MenuItemModule } from '../widgets/menuItemModule';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
@@ -12,6 +13,7 @@ import { EnterpriseMenuFactory } from './enterpriseMenu';
 import { hideColumnChooser, showColumnChooser, showContextMenu } from './menuApi';
 import { MenuItemMapper } from './menuItemMapper';
 import { MenuUtils } from './menuUtils';
+import { ToolbarMenuBuilder } from './toolbarMenuBuilder';
 
 /**
  * @internal
@@ -19,7 +21,7 @@ import { MenuUtils } from './menuUtils';
 const MenuCoreModule: _ModuleWithoutApi = {
     moduleName: 'MenuCore',
     version: VERSION,
-    beans: [MenuItemMapper, ChartMenuItemMapper, MenuUtils],
+    beans: [MenuItemMapper, ChartMenuItemMapper, MenuUtils, ToolbarMenuBuilder],
     icons: {
         // context menu chart item
         chart: 'chart',
@@ -86,7 +88,7 @@ export const ColumnMenuModule: _ModuleWithApi<_ColumnChooserGridApi> = {
         showColumnChooser,
         hideColumnChooser,
     },
-    dependsOn: [MenuCoreModule, _SharedDragAndDropModule, _ColumnMoveModule],
+    dependsOn: [MenuCoreModule, SharedColumnStateUpdateStrategyModule, _SharedDragAndDropModule, _ColumnMoveModule],
 };
 
 /**

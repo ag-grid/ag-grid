@@ -82,9 +82,9 @@ callback.
 
 The example below changes the row height in the different ways described above.
 
-* **Top Level Groups:** The row height for the groups is changed by calling `api.resetRowHeights()`. This gets the grid to call `gridOptions.getRowHeight(params)` again for each row.
-* **Swimming Leaf Rows:** Same technique is used here as above. You will need to expand a group with swimming (e.g. United States) and the grid works out all row heights again.
-* **United States Leaf Rows:** The row height is set directly on the row node, and then the grid is told to reposition all rows again by calling `api.onRowHeightChanged()`.
+-   **Top Level Groups:** The row height for the groups is changed by calling `api.resetRowHeights()`. This gets the grid to call `gridOptions.getRowHeight(params)` again for each row.
+-   **Swimming Leaf Rows:** Same technique is used here as above. You will need to expand a group with swimming (e.g. United States) and the grid works out all row heights again.
+-   **United States Leaf Rows:** The row height is set directly on the row node, and then the grid is told to reposition all rows again by calling `api.onRowHeightChanged()`.
 
 Note that this example uses AG Grid Enterprise as it uses grouping. Setting the row
 height is an AG Grid Community feature; we just demonstrate it against groups and normal
@@ -101,11 +101,12 @@ If you want text to wrap inside cells rather than truncating, add the flag `wrap
 If you want greater control over text wrapping, or you want new line characters to be displayed, this can be done via setting the CSS property `white-space` (or `white-space-collapse` and `text-wrap-mode`) on the cell.
 
 The example below demonstrates a few of the possible methods of configuring wrapping and multi-line text:
-- The **Default Behaviour** column shows the default grid behaviour with no wrapping and truncated single line text.
-- The **wrapText = true** column demonstrates the `wrapText` Column Definition property.
-- The **Wrap Text** column applies the CSS `white-space: normal` to mimic the `wrapText` Column Definition property.
-- The **Maintain New Lines** column applies the CSS `white-space-collapse: preserve-breaks`, which maintains new lines, but does not wrap.
-- The **Wrap with New Lines** column applies the CSS `white-space: pre-line`, which maintains new lines and wraps the text.
+
+-   The **Default Behaviour** column shows the default grid behaviour with no wrapping and truncated single line text.
+-   The **wrapText = true** column demonstrates the `wrapText` Column Definition property.
+-   The **Wrap Text** column applies the CSS `white-space: normal` to mimic the `wrapText` Column Definition property.
+-   The **Maintain New Lines** column applies the CSS `white-space-collapse: preserve-breaks`, which maintains new lines, but does not wrap.
+-   The **Wrap with New Lines** column applies the CSS `white-space: pre-line`, which maintains new lines and wraps the text.
 
 {% gridExampleRunner title="Row Height Complex" name="row-height-complex" /%}
 
@@ -149,9 +150,9 @@ As the grid scrolls vertically and more rows are displayed, the height of those 
 
 This means the row heights and row positions are changing as the grid is scrolling vertically. This leads to the following behaviours:
 
-* The vertical scroll range (how much you can scroll over) will change dynamically to fit the rows. If scrolling by dragging the scroll thumb with the mouse, the scroll thumb will not follow the mouse. It will either lag behind or jump ahead, depending on whether the row height calculations are increasing or decreasing the vertical scroll range.
+-   The vertical scroll range (how much you can scroll over) will change dynamically to fit the rows. If scrolling by dragging the scroll thumb with the mouse, the scroll thumb will not follow the mouse. It will either lag behind or jump ahead, depending on whether the row height calculations are increasing or decreasing the vertical scroll range.
 
-* If scrolling up and showing rows for the first time (e.g. the user jumps to the bottom scroll position and then starts slowly scrolling up), then the row positions will jump as the rows coming into view at the top will get resized and the new height will impact the position of all rows beneath it. For example if the row gets resized to be 10 pixels taller, rows below it will get pushed down by 10 pixels. If scrolling down this isn't observed as rows below are not in view.
+-   If scrolling up and showing rows for the first time (e.g. the user jumps to the bottom scroll position and then starts slowly scrolling up), then the row positions will jump as the rows coming into view at the top will get resized and the new height will impact the position of all rows beneath it. For example if the row gets resized to be 10 pixels taller, rows below it will get pushed down by 10 pixels. If scrolling down this isn't observed as rows below are not in view.
 
 These behaviours are a necessary outcome of lazy height calculation. It is not possible to avoid these effects.
 
@@ -161,7 +162,7 @@ Row resizing is available as an option when showing [Row Numbers](./row-numbers/
 
 ## Height for Pinned Rows
 
-When pinning rows while `enableRowPinning = true`, the row height of pinned rows can be changed as [described above](#rownodesetrowheightheight-and-apionrowheightchanged). 
+When pinning rows while `enableRowPinning = true`, the row height of pinned rows can be changed as [described above](#rownodesetrowheightheight-and-apionrowheightchanged).
 Use `api.forEachPinnedRow` to get references to the row nodes of pinned rows.
 
 When setting pinned row data via `pinnedTopRowData` or `pinnedBottomRowData`, row height works exactly as for normal rows with one difference: it

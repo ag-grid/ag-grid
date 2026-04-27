@@ -32,8 +32,8 @@ When adding event listeners to a row, they will stay with the row until the row 
 
 To avoid memory leaks, when adding listeners to `rowNodes` in cell renderers, ensure that you remove the listener when the cell renderer is destroyed. You can cater for this as follows:
 
-
 {% if isFramework("javascript") %}
+
 ```js
 class MyCellRenderer {
 
@@ -58,6 +58,7 @@ class MyCellRenderer {
     }
 }
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
@@ -114,9 +115,11 @@ export class MyCellRenderer implements OnDestroy {
     }
 }
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
+
 ```js
 
 export default {
@@ -137,7 +140,7 @@ export default {
 };
 
 ```
-{% /if %}
 
+{% /if %}
 
 See [Row Events](./row-events) for a complete list of row events.

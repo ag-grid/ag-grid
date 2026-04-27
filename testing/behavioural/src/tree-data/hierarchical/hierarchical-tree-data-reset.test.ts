@@ -1,14 +1,14 @@
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid hierarchical tree data reset', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TreeDataModule],
+        modules: [RowSelectionModule, ClientSideRowModelModule, TreeDataModule],
     });
 
     let consoleWarnSpy: MockInstance;
@@ -84,6 +84,11 @@ describe('ag-grid hierarchical tree data reset', () => {
             └─┬ A GROUP id:A ag-Grid-AutoColumn:"A"
             · └── B LEAF id:B ag-Grid-AutoColumn:"B"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── ag-Grid-AutoColumn "Organisation Hierarchy" width:200
+        `);
     });
 
     test('tree data async loading', async () => {
@@ -118,6 +123,11 @@ describe('ag-grid hierarchical tree data reset', () => {
             ROOT id:ROOT_NODE_ID
             └─┬ C GROUP id:C ag-Grid-AutoColumn:"C"
             · └── D LEAF id:D ag-Grid-AutoColumn:"D"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── ag-Grid-AutoColumn "Organisation Hierarchy" width:200
         `);
     });
 

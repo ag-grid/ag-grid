@@ -9,6 +9,7 @@ import type {
     AgRowNodeEventListener,
     CellChangedEvent,
     DataChangedEvent,
+    DataValueFrom,
     IRowNode,
     RowNodeEvent,
     RowNodeEventType,
@@ -17,13 +18,18 @@ import type {
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
+import type { ColKey, IAggFuncResult } from './colDef';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const ROW_ID_PREFIX_ROW_GROUP = 'row-group-';
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const ROW_ID_PREFIX_TOP_PINNED = 't-';
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const ROW_ID_PREFIX_BOTTOM_PINNED = 'b-';
 
 let OBJECT_ID_SEQUENCE = 0;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowNode<TData = any>
     implements IEventEmitter<RowNodeEventType>, IAgEventEmitter<RowNodeEventType>, IRowNode<TData>
 {
@@ -66,7 +72,7 @@ export class RowNode<TData = any>
     /** When using group rows, contains the value without casting to string */
     public groupValue: any;
 
-    /** If using row grouping and aggregation, contains the aggregation data. */
+    /** If using row grouping and aggregation, contains the aggregation data. Created via `Object.create(null)` to avoid prototype conflicts. */
     public aggData: any;
 
     /**
@@ -131,6 +137,21 @@ export class RowNode<TData = any>
      */
     public pinnedSibling?: RowNode<TData>;
 
+    /** @inheritDoc */
+    public get primaryRow(): RowNode<TData> {
+        let node = (this.footer && this.sibling) || this;
+        if (node.rowPinned) {
+            const pinnedSibling = node.pinnedSibling;
+            if (pinnedSibling) {
+                node = pinnedSibling;
+                if (node.footer) {
+                    node = node.sibling ?? node;
+                }
+            }
+        }
+        return node as RowNode<TData>;
+    }
+
     /** When true, this row sticks to the top */
     public sticky: boolean;
 
@@ -191,19 +212,19 @@ export class RowNode<TData = any>
      * Children of this group. If multi levels of grouping, shows only immediate children.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
      */
-    public childrenAfterGroup: RowNode<TData>[] | null;
+    public childrenAfterGroup: RowNode<TData>[] | null = null;
 
     /** Filtered children of this group. */
-    public childrenAfterFilter: RowNode<TData>[] | null;
+    public childrenAfterFilter: RowNode<TData>[] | null = null;
 
     /** Aggregated and re-filtered children of this group. */
-    public childrenAfterAggFilter: RowNode<TData>[] | null;
+    public childrenAfterAggFilter: RowNode<TData>[] | null = null;
 
     /** Sorted children of this group. */
-    public childrenAfterSort: RowNode<TData>[] | null;
+    public childrenAfterSort: RowNode<TData>[] | null = null;
 
     /** Number of children and grand children. */
-    public allChildrenCount: number | null;
+    public allChildrenCount: number | null = null;
 
     /** Children mapped by the pivot columns or group key */
     public childrenMapped: { [key: string]: any } | null = null;
@@ -225,8 +246,23 @@ export class RowNode<TData = any>
     /** Server Side Row Model Only - the children are in an infinite cache. */
     public childStore: IServerSideStore | null;
 
-    /** `true` if group is expanded, otherwise `false`. */
-    public expanded: boolean;
+    /**
+     * Backing field for `expanded` property.
+     * - `true`/`false`: explicit expansion state.
+     * - `null`: triggers lazy evaluation — in CSRM, SSRM, getter resolves the default on first access and caches it.
+     * - `undefined`: uninitialized, means false.
+     */
+    public _expanded: boolean | null | undefined = undefined;
+
+    /** `true` if group or master row is expanded. */
+    public get expanded(): boolean {
+        const expansionSvc = this.beans.expansionSvc;
+        return expansionSvc ? expansionSvc.isExpanded(this) : this.level === -1 ? true : !!this._expanded;
+    }
+
+    public set expanded(value: boolean) {
+        this._expanded = value;
+    }
 
     /** If using footers, reference to the footer node for this group. */
     public sibling: RowNode;
@@ -496,25 +532,46 @@ export class RowNode<TData = any>
     }
 
     /**
-     * Replaces the value on the `rowNode` for the specified column. When complete,
-     * the grid refreshes the rendered cell on the required row only.
-     * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
-     * **Note**: This method defers to EditModule if available and batches the edit when `fullRow` or `batchEdit` is enabled.
+     * Sets the value on the `rowNode` for the specified column and refreshes the rendered cell.
      *
-     * @param colKey The column where the value should be updated
-     * @param newValue The new value
-     * @param eventSource The source of the event
-     * @returns `true` if the value was changed, otherwise `false`.
+     * In **Read Only** mode, this fires `onCellEditRequest` instead of writing directly.
+     *
+     * In **Pivot Mode**, pivot columns on leaf rows resolve to their underlying value column.
+     *
+     * The `eventSource` parameter controls how the value is written:
+     *
+     * - `(default)` — Closes the active editor, writes to the pending batch if batching, otherwise writes to committed data.
+     * - `'edit'` — Writes directly into the active editor if present (via `refresh()` or recreation); falls back to pending batch or committed data.
+     * - `'batch'` — Leaves the active editor open, writes to the pending batch if batching, otherwise writes to committed data.
+     * - `'data'` — Leaves the active editor open, skips the pending batch, always writes to committed data.
+     *
+     * With `'edit'`, the active editor receives the new value via `refresh()` if implemented;
+     * otherwise the editor is recreated with focus preserved.
+     *
+     * @param colKey The column to update (field name, `colId`, or `Column` object)
+     * @param newValue The new value to set
+     * @param eventSource Controls how the value is written
+     * @returns `true` if the value changed, `false` otherwise
      */
     public setDataValue(colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
         const { colModel, valueSvc, gos, editSvc } = this.beans;
 
-        // if in pivot mode, grid columns wont include primary columns
-        const column = typeof colKey !== 'string' ? colKey : colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
-        if (!column) {
-            return false;
+        if (colKey == null) {
+            return false; // no column
         }
-        const oldValue = valueSvc.getValueForDisplay({ column, node: this, source: 'api' }).value;
+
+        let column = colModel.getColOrColDefCol(colKey);
+        if (!column) {
+            return false; // column not found
+        }
+
+        // Resolve pivot result columns to their underlying value column for non-group, non-pinned rows.
+        const pivotValueColumn = column.colDef.pivotValueColumn;
+        if (!this.group && !this.rowPinned && pivotValueColumn) {
+            column = pivotValueColumn as AgColumn;
+        }
+
+        const oldValue = valueSvc.getValueForDisplay({ column, node: this, from: 'data' }).value;
 
         if (gos.get('readOnlyEdit')) {
             const {
@@ -540,7 +597,8 @@ export class RowNode<TData = any>
             return false;
         }
 
-        if (editSvc && !editSvc.committing) {
+        // 'data' source: bypass batch mode and edit state entirely, write directly to data
+        if (eventSource !== 'data' && editSvc && !editSvc.committing) {
             const result = editSvc.setDataValue({ rowNode: this, column }, newValue, eventSource);
 
             if (result != null) {
@@ -558,6 +616,75 @@ export class RowNode<TData = any>
         }
 
         return valueChanged;
+    }
+
+    public getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from: 'value' | 'data-raw' | 'edit' | 'batch'
+    ): TValue | null | undefined;
+    public getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from?: 'data'
+    ): TValue | IAggFuncResult<TValue> | null | undefined;
+    public getDataValue<TValue = any>(
+        colKey: ColKey<TValue>,
+        from: DataValueFrom | undefined
+    ): TValue | IAggFuncResult<TValue> | null | undefined {
+        // PERFORMANCE CRITICAL
+
+        const beans = this.beans;
+
+        const column = beans.colModel.getColOrColDefCol(colKey);
+        if (!column) {
+            return undefined;
+        }
+
+        let value: any;
+        if (from === 'data' || !from) {
+            value = beans.valueSvc.getValue(column, this, 'data', false);
+            if (value == null) {
+                return value;
+            }
+        } else {
+            // 'data-raw' skips aggData (aggregation results) and formula resolution, but still calls valueGetters
+            // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
+            const dataRaw = from === 'data-raw';
+            const resolvedFrom = dataRaw || from === 'value' ? 'data' : from;
+            value = beans.valueSvc.getValue(column, this, resolvedFrom, dataRaw);
+            if (dataRaw || value == null) {
+                return value;
+            }
+
+            // For 'value', 'edit', and 'batch' modes, resolve aggregation wrapper objects to their scalar
+            // value on agg columns. Matches the resolution pattern in dataTypeService: first try toNumber(),
+            // then fall back to .value property. `typeof` check precedes `aggFunc` to cheaply skip primitives.
+            if (typeof value === 'object' && column.aggFunc) {
+                if (typeof value.toNumber === 'function') {
+                    return value.toNumber();
+                }
+                if ('value' in value) {
+                    return value.value;
+                }
+            }
+
+            // 'edit' and 'batch' mirror the edit-pipeline buffer, which stores the raw formula string
+            // (see editService / editModelService `sourceValue` handling). Resolving formulas here would
+            // break symmetry between the read side and the write side: callers couldn't round-trip the
+            // formula through edits. Only 'value' continues to the formula tail — it is the "computed
+            // value" variant of 'data'.
+            if (from !== 'value') {
+                return value;
+            }
+        }
+
+        if (column.colDef.allowFormula) {
+            const formula = beans.formula;
+            if (formula?.isFormula(value) && column.isAllowFormula()) {
+                value = formula.resolveValue(column, this);
+            }
+        }
+
+        return value;
     }
 
     public updateHasChildren(): void {
@@ -638,6 +765,14 @@ export class RowNode<TData = any>
             }
         }
         callback(this);
+    }
+
+    public getAggregatedChildren(colKey: ColKey | null | undefined, recursive?: boolean): RowNode<TData>[] {
+        const beans = this.beans;
+        // Use getCol() instead of fallback to getColDefCol() because we need just pivot result columns for performance.
+        // getCol() searches in cols (which includes pivot result columns), whereas getColDefCol()
+        // only searches in colDefCols (user-defined columns, excluding generated pivot columns).
+        return beans.aggChildrenSvc?.getAggregatedChildren(this, beans.colModel.getCol(colKey), recursive) ?? [];
     }
 
     public dispatchRowEvent<T extends RowNodeEventType>(type: T): void {
@@ -797,6 +932,15 @@ export class RowNode<TData = any>
             return false;
         }
         this.destroyed = true;
+
+        // Unpin the pinned sibling when this source row is destroyed.
+        // Check pinnedSibling.rowPinned to ensure we're the source row (not a pinned clone being destroyed).
+        // This also prevents re-entrance when _destroyRowNodeSibling clears rowPinned before calling _destroy.
+        const pinnedSibling = this.pinnedSibling;
+        if (pinnedSibling?.rowPinned && !this.rowPinned) {
+            this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
+        }
+
         if (fadeOut) {
             this.clearRowTopAndRowIndex(); // so row renderer knows to fade row out (and not reposition it)
         } else {

@@ -25,9 +25,8 @@ export interface RowGroupBulkExpansionState {
     invertedRowGroupIds: string[];
 }
 
-export interface IExpansionService<
-    T extends RowGroupExpansionState | RowGroupBulkExpansionState = RowGroupExpansionState,
-> {
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface IExpansionService<T extends RowGroupExpansionState | RowGroupBulkExpansionState> {
     addExpandedCss(classes: string[], rowNode: RowNode): void;
 
     getRowExpandedListeners(rowCtrl: RowCtrl): {
@@ -39,12 +38,15 @@ export interface IExpansionService<
     getExpansionState(): T;
 
     expandAll(value: boolean): void;
+    resetExpansion(): void;
 
     onGroupExpandedOrCollapsed(): void;
 
     setExpanded(rowNode: RowNode, expanded: boolean, e?: MouseEvent | KeyboardEvent, forceSync?: boolean): void;
 
     isExpandable(rowNode: RowNode): boolean;
+
+    isExpanded(rowNode: RowNode): boolean;
 
     setDetailsExpansionState(detailGridApi: GridApi): void;
 }

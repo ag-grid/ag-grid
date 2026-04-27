@@ -1,14 +1,13 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('group order maintenance', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [QuickFilterModule, ClientSideRowModelModule, RowGroupingModule],
     });
 
-    beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
     test('new group is appended at end when groupMaintainOrder is true', async () => {
@@ -50,6 +49,12 @@ describe('group order maintenance', () => {
             │ └── LEAF id:3 country:"Italy" athlete:"It1"
             └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └── LEAF id:4 country:"France" athlete:"F1"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            └── athlete "Athlete" width:200
         `);
     });
 
@@ -95,6 +100,12 @@ describe('group order maintenance', () => {
             │ └── LEAF id:3 country:"Italy" athlete:"It1"
             └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └── LEAF id:4 country:"France" athlete:"F1"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            └── athlete "Athlete" width:200
         `);
     });
 
@@ -263,6 +274,16 @@ describe('group order maintenance', () => {
             getRowId: (p) => p.data.id,
         });
 
+        await new GridRows(api, 'initial unsorted').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └── LEAF id:1 country:"Ireland" athlete:"Z"
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:2 country:"Italy" athlete:"A"
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └── LEAF id:3 country:"France" athlete:"M"
+        `);
+
         // Force a group sort order first (desc): Italy, Ireland, France
         api.applyColumnState({ state: [{ colId: 'country', sort: 'desc' }] });
         await new GridRows(api, 'after group sort desc').check(`
@@ -305,14 +326,14 @@ describe('group order maintenance', () => {
         });
 
         await new GridRows(api, 'initial').check(`
-                ROOT id:ROOT_NODE_ID
-                ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-                │ └── LEAF id:1 country:"Ireland" athlete:"I1"
-                ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-                │ └── LEAF id:2 country:"Italy" athlete:"T1"
-                └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
-                · └── LEAF id:3 country:"France" athlete:"F1"
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └── LEAF id:1 country:"Ireland" athlete:"I1"
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:2 country:"Italy" athlete:"T1"
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └── LEAF id:3 country:"France" athlete:"F1"
+        `);
 
         // Filter out Italy group entirely
         api.setGridOption('quickFilterText', 'I1'); // shows only Ireland

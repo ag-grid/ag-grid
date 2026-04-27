@@ -42,6 +42,9 @@
     --ag-filter-panel-apply-button-color: var(--ag-material-primary-color);
     --ag-filter-panel-apply-button-background-color: transparent;
 
+    --ag-column-panel-apply-button-color: var(--ag-material-primary-color);
+    --ag-column-panel-apply-button-background-color: transparent;
+
     // derived colours (no color blending)
     --ag-range-selection-border-color: var(--ag-material-primary-color);
     --ag-checkbox-checked-color: var(--ag-material-accent-color);
@@ -87,6 +90,7 @@
         0 1px 5px 0 rgba(0, 0, 0, 0.12);
     --ag-card-radius: 2px;
     --ag-invalid-color: #e02525;
+    --ag-note-indicator-color: var(--ag-material-accent-color);
 }
 
 @mixin -dark-vars {
@@ -139,6 +143,21 @@
     --ag-row-loading-skeleton-effect-color: #{color.change(#cacbcc, $alpha: 0.4)};
 
     --ag-cell-batch-edit-text-color: #f3d0b3;
+
+    --ag-formula-token-1-color: #4da3e5;
+    --ag-formula-token-1-background-color: rgb(77 163 229 / 16%);
+    --ag-formula-token-2-color: #f55864;
+    --ag-formula-token-2-background-color: rgb(245 88 100 / 16%);
+    --ag-formula-token-3-color: #b688f2;
+    --ag-formula-token-3-background-color: rgb(182 136 242 / 16%);
+    --ag-formula-token-4-color: #24bb4a;
+    --ag-formula-token-4-background-color: rgb(36 187 74 / 16%);
+    --ag-formula-token-5-color: #e772ba;
+    --ag-formula-token-5-background-color: rgb(231 114 186 / 16%);
+    --ag-formula-token-6-color: #f69b5f;
+    --ag-formula-token-6-background-color: rgb(246 155 95 / 16%);
+    --ag-formula-token-7-color: #a3e6ff;
+    --ag-formula-token-7-background-color: rgb(163 230 255 / 16%);
 
     color-scheme: dark;
 }

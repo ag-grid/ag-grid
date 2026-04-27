@@ -243,7 +243,7 @@ export class ColumnFilterService
 
             // at this point, processedFields contains data for which we don't have a filter working yet
             modelKeys.forEach((colId) => {
-                const column = colModel.getColDefCol(colId) || colModel.getCol(colId);
+                const column = colModel.getColDefColOrCol(colId);
 
                 if (!column) {
                     _warn(62, { colId });
@@ -641,7 +641,7 @@ export class ColumnFilterService
     ): IFilterParams['getValue'] {
         const { filterValueSvc, colModel } = this.beans;
         return (rowNode, column) => {
-            const columnToUse = column ? colModel.getCol(column) : filterColumn;
+            const columnToUse = column ? colModel.getColDefColOrCol(column) : filterColumn;
             return columnToUse ? filterValueSvc!.getValue(columnToUse, rowNode, filterValueGetterOverride) : undefined;
         };
     }
@@ -827,7 +827,7 @@ export class ColumnFilterService
             getValue: this.createGetValue(column),
             doesRowPassOtherFilter: forFloatingFilter
                 ? () => true
-                : (node) => filterManager?.doesRowPassOtherFilters(column.getColId(), node as RowNode) ?? true,
+                : (node) => filterManager?.doesRowPassFilter(node as RowNode, column.getColId()) ?? true,
             // to avoid breaking changes to `filterParams` defined as functions
             // we need to provide the below options even though they are not valid for handlers
             rowModel,
@@ -1095,7 +1095,7 @@ export class ColumnFilterService
             column,
             getValue: this.createGetValue(column),
             doesRowPassOtherFilter: (node) =>
-                this.beans.filterManager?.doesRowPassOtherFilters(colId, node as RowNode) ?? true,
+                this.beans.filterManager?.doesRowPassFilter(node as RowNode, colId) ?? true,
             onModelChange: (newModel, additionalEventAttributes) => {
                 this.updateStoredModel(colId, newModel);
                 this.refreshHandlerAndUi(column, newModel, 'handler', false, additionalEventAttributes).then(() => {
@@ -1523,7 +1523,7 @@ export class ColumnFilterService
     }
 
     public getFilterInstance<TFilter extends IFilter>(key: string | AgColumn): Promise<TFilter | null | undefined> {
-        const column = this.beans.colModel.getColDefCol(key);
+        const column = this.beans.colModel.getColDefColOrCol(key);
 
         if (!column) {
             return Promise.resolve(undefined);

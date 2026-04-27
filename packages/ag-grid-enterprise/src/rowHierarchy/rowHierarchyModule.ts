@@ -6,13 +6,16 @@ import { PivotColsSvc } from '../pivot/pivotColsSvc';
 import { RowGroupColsSvc } from '../rowGrouping/rowGroupColsSvc';
 import { VERSION } from '../version';
 import { AutoColService } from './autoColService';
-import { ClientSideExpansionService } from './clientSideExpansionService';
+import { ChangedPathFactory } from './changedPathImpl/changedPathFactory';
+import { CsrmExpansionService } from './csrmExpansionService';
 import { FlattenStage } from './flattenStage';
 import { GroupEditService } from './groupEditService';
+import { GroupFilterStage } from './groupFilterStage';
+import { GroupSortStage } from './groupSortStage';
 import { GroupStage } from './groupStage';
 import { GroupCellRenderer } from './rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';
-import { groupCellStylesCSS } from './rendering/groupCellStyles.css-GENERATED';
+import groupCellStylesCSS from './rendering/groupCellStyles.css';
 import { ShowRowGroupColValueService } from './showRowGroupColValueService';
 import { ShowRowGroupColsService } from './showRowGroupColsService';
 import { StickyRowService } from './stickyRowService';
@@ -57,14 +60,38 @@ export const GroupColumnModule: _ModuleWithoutApi = {
 };
 
 /**
+ * Shared ChangedPath factory — not row-model restricted
  * @internal
  */
-export const ClientSideRowModelHierarchyModule: _ModuleWithoutApi = {
-    moduleName: 'ClientSideRowModelHierarchy',
+export const ChangedPathModule: _ModuleWithoutApi = {
+    moduleName: 'ChangedPath',
+    version: VERSION,
+    beans: [ChangedPathFactory],
+    dependsOn: [EnterpriseCoreModule],
+};
+
+/**
+ * @internal
+ */
+export const CsrmHierarchyModule: _ModuleWithoutApi = {
+    moduleName: 'CsrmHierarchy',
     version: VERSION,
     rowModels: ['clientSide'],
-    beans: [GroupStage, FlattenStage, ClientSideExpansionService],
-    dependsOn: [EnterpriseCoreModule],
+    beans: [FlattenStage, CsrmExpansionService],
+    dependsOn: [ChangedPathModule],
+};
+
+/**
+ * Hierarchical CSRM stages: grouping, deep filter/sort.
+ * Needed by RowGrouping, TreeData, and Pivot — not by MasterDetail.
+ * @internal
+ */
+export const CsrmGroupStagesModule: _ModuleWithoutApi = {
+    moduleName: 'CsrmGroupStages',
+    version: VERSION,
+    rowModels: ['clientSide'],
+    beans: [GroupStage, GroupFilterStage, GroupSortStage],
+    dependsOn: [CsrmHierarchyModule],
 };
 
 /**
@@ -83,5 +110,5 @@ export const GroupEditModule: _ModuleWithoutApi = {
     moduleName: 'GroupEdit',
     version: VERSION,
     beans: [GroupEditService],
-    dependsOn: [EnterpriseCoreModule, ClientSideRowModelHierarchyModule],
+    dependsOn: [CsrmHierarchyModule],
 };

@@ -101,7 +101,7 @@ export class CellPositionFeature extends BeanStub {
 
     private setupColSpan(): void {
         // if no col span is active, then we don't set it up, as it would be wasteful of CPU
-        if (this.column.getColDef().colSpan == null) {
+        if (this.column.colDef.colSpan == null) {
             return;
         }
 

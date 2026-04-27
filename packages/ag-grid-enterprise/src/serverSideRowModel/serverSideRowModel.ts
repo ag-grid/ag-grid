@@ -26,6 +26,9 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
+    GRAND_TOTAL_ROW_ID,
+    GROUP_TOTAL_ROW_ID_PREFIX,
+    ROOT_NODE_ID,
     RowNode,
     _debounce,
     _getRowHeightAsNumber,
@@ -54,6 +57,8 @@ export interface SSRMParams {
 
 export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSideRowModel {
     beanName = 'rowModel' as const;
+
+    public readonly hierarchical: boolean = true;
 
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
@@ -139,7 +144,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             ],
             resetListener
         );
-        this.addManagedPropertyListeners(['groupAllowUnbalanced', 'groupTotalRow'], () => this.onStoreUpdated());
+        this.addManagedPropertyListeners(['groupAllowUnbalanced', 'groupTotalRow', 'grandTotalRow'], () =>
+            this.onStoreUpdated()
+        );
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
         this.verifyProps();
 
@@ -369,7 +376,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                     id: col.getId(),
                     aggFunc: col.getAggFunc(),
                     displayName: this.colNames.getDisplayNameForColumn(col, 'model'),
-                    field: col.getColDef().field,
+                    field: col.colDef.field,
                 }) as ColumnVO
         );
     }
@@ -386,7 +393,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             valueCols: valueColumnVos,
             rowGroupCols: rowGroupColumnVos,
             pivotCols: pivotColumnVos,
-            pivotMode: this.colModel.isPivotMode(),
+            pivotMode: this.colModel.pivotMode,
 
             // sort and filter model
             filterModel: this.filterManager?.isAdvFilterEnabled()
@@ -654,15 +661,29 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public getRowNode(id: string): RowNode | undefined {
+        if (typeof id !== 'string') {
+            id = String(id);
+        }
+        if (id === GRAND_TOTAL_ROW_ID) {
+            return this.getRootStore()?.getGrandTotalNode();
+        }
         let result: RowNode | undefined;
         this.forEachNode((rowNode) => {
             if (rowNode.id === id) {
                 result = rowNode;
             }
-            if (rowNode.detailNode && rowNode.detailNode.id === id) {
+            if (rowNode.detailNode?.id === id) {
                 result = rowNode.detailNode;
             }
         });
+        if (id === ROOT_NODE_ID) {
+            return this.rootNode;
+        }
+        if (!result && id.startsWith(GROUP_TOTAL_ROW_ID_PREFIX)) {
+            const groupId = id.slice(GROUP_TOTAL_ROW_ID_PREFIX.length);
+            const groupNode = this.getRowNode(groupId);
+            result = groupNode?.sibling?.footer ? groupNode.sibling : undefined;
+        }
         return result;
     }
 

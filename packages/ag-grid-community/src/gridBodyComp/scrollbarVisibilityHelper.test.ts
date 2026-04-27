@@ -59,6 +59,27 @@ describe('scrollbarVisibilityHelper', () => {
         setSizes({ scrollHeight: 600, scrollWidth: 515 });
         expect(_shouldShowHorizontalScroll(element, element, scrollbarWidth)).toBe(true);
     });
+
+    test('scrollbar suppression respects scrollbar element visibility', () => {
+        const { element: horizontal } = createElementWithSizes({
+            clientWidth: 500,
+            scrollWidth: 508,
+        });
+        const { element: vertical } = createElementWithSizes({
+            clientHeight: 500,
+            scrollHeight: 508,
+        });
+        const { element: hScrollbar, setVisible: setHVisible } = createVisibilityElement(false);
+        const { element: vScrollbar, setVisible: setVVisible } = createVisibilityElement(true);
+
+        expect(_shouldShowHorizontalScroll(horizontal, vertical, scrollbarWidth, hScrollbar, vScrollbar)).toBe(true);
+
+        setHVisible(true);
+        expect(_shouldShowHorizontalScroll(horizontal, vertical, scrollbarWidth, hScrollbar, vScrollbar)).toBe(false);
+
+        setVVisible(false);
+        expect(_shouldShowHorizontalScroll(horizontal, vertical, scrollbarWidth, hScrollbar, vScrollbar)).toBe(true);
+    });
 });
 
 type ElementDimensions = {
@@ -90,6 +111,21 @@ function createElementWithSizes(initial: ElementDimensions) {
         element,
         setSizes(update: ElementDimensions) {
             Object.assign(sizes, update);
+        },
+    };
+}
+
+function createVisibilityElement(initiallyVisible: boolean) {
+    let visible = initiallyVisible;
+    const element = document.createElement('div') as HTMLElement & {
+        checkVisibility?: (options?: unknown) => boolean;
+    };
+    element.checkVisibility = () => visible;
+
+    return {
+        element,
+        setVisible(nextVisible: boolean) {
+            visible = nextVisible;
         },
     };
 }

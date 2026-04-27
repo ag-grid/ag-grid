@@ -1,5 +1,6 @@
+import { VERSION } from '../../version';
 import type { IEnvironment } from '../interfaces/iEnvironment';
-import { sharedCSS } from './shared/shared.css-GENERATED';
+import sharedCSS from './shared/shared.css';
 
 export const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
 
@@ -7,30 +8,31 @@ export const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.fo
 export const FORCE_LEGACY_THEMES = false;
 
 type InjectedStyle = {
-    css: string;
+    rawCss: string;
+    injectedCss: string;
     el: HTMLStyleElement;
     priority: number;
+    isParams: boolean;
 };
 
 export const _injectGlobalCSS = (
-    css: string,
+    rawCss: string,
     styleContainer: HTMLElement,
     debugId: string,
     layer: string | undefined,
     priority: number,
-    nonce: string | undefined
+    nonce: string | undefined,
+    isParams: boolean = false
 ) => {
-    if (IS_SSR) {
-        return;
-    }
-    if (FORCE_LEGACY_THEMES) {
+    if (IS_SSR || FORCE_LEGACY_THEMES) {
         return;
     }
 
+    let injectedCss = rawCss;
     if (layer) {
         // Layer names need regular ident escaping except that they may contain periods
         // https://drafts.csswg.org/css-cascade-5/#layer-names
-        css = `@layer ${CSS.escape(layer).replaceAll('\\.', '.')} { ${css} }`;
+        injectedCss = `@layer ${CSS.escape(layer).replaceAll('\\.', '.')} { ${rawCss} }`;
     }
 
     let injections = injectionState.map.get(styleContainer);
@@ -38,7 +40,7 @@ export const _injectGlobalCSS = (
         injections = [];
         injectionState.map.set(styleContainer, injections);
     }
-    if (injections.some((i) => i.css === css)) {
+    if (injections.some((i) => i.injectedCss === injectedCss)) {
         return;
     }
 
@@ -46,9 +48,10 @@ export const _injectGlobalCSS = (
     if (nonce) {
         el.setAttribute('nonce', nonce);
     }
-    el.dataset.agGlobalCss = debugId;
-    el.textContent = css;
-    const newInjection = { css, el, priority };
+    el.dataset.agCss = debugId;
+    el.dataset.agCssVersion = VERSION;
+    el.textContent = injectedCss;
+    const newInjection: InjectedStyle = { rawCss, injectedCss, el, priority, isParams };
 
     let insertAfter: InjectedStyle | undefined;
     for (const injection of injections) {
@@ -83,39 +86,113 @@ export const _injectCoreAndModuleCSS = (
     );
 };
 
-export const _registerInstanceUsingThemingAPI = (environment: IEnvironment) => {
-    injectionState.grids.add(environment);
+export const _useParamsCss = (
+    environment: IEnvironment,
+    paramsCss: string | null,
+    paramsDebugId: string | null,
+    styleContainer: HTMLElement,
+    layer: string | undefined,
+    nonce: string | undefined
+) => {
+    if (IS_SSR || FORCE_LEGACY_THEMES) {
+        return;
+    }
+
+    const gridState = injectionState.grids.get(environment);
+    if (!gridState) {
+        injectionState.grids.set(environment, { styleContainer, paramsCss });
+    } else {
+        gridState.paramsCss = paramsCss;
+    }
+
+    removeStaleParamsCss(styleContainer);
+
+    if (paramsCss && paramsDebugId) {
+        _injectGlobalCSS(paramsCss, styleContainer, paramsDebugId, layer, 2, nonce, true);
+    }
 };
+
 export const _unregisterInstanceUsingThemingAPI = (environment: IEnvironment) => {
+    const styleContainer = injectionState.grids.get(environment)?.styleContainer;
+    if (!styleContainer) {
+        return;
+    }
     injectionState.grids.delete(environment);
-    if (injectionState.grids.size === 0) {
-        injectionState.map = new WeakMap();
-        for (const style of document.head.querySelectorAll('style[data-ag-global-css]')) {
-            style.remove();
+
+    const containerStillInUse = Array.from(injectionState.grids.values()).some(
+        (gs) => gs.styleContainer === styleContainer
+    );
+    if (containerStillInUse) {
+        removeStaleParamsCss(styleContainer);
+    } else {
+        removeStaleParamsCss(styleContainer, true);
+        injectionState.map.delete(styleContainer);
+    }
+};
+
+const removeStaleParamsCss = (styleContainer: HTMLElement, deleteAll = false) => {
+    const neededCss = new Set();
+    for (const gs of injectionState.grids.values()) {
+        if (gs.styleContainer === styleContainer) {
+            neededCss.add(gs.paramsCss);
+        }
+    }
+
+    const injections = injectionState.map.get(styleContainer) ?? [];
+    for (let i = injections.length - 1; i >= 0; i--) {
+        if (deleteAll || (injections[i].isParams && !neededCss.has(injections[i].rawCss))) {
+            injections[i].el.remove();
+            injections.splice(i, 1);
         }
     }
 };
 
+type InjectedGridCssState = {
+    styleContainer: HTMLElement;
+    paramsCss: string | null;
+};
+
 type InjectionState = {
-    // Set of grids that are using the theming API
-    grids: Set<object>;
     // Map of style containers to injected styles
     map: WeakMap<HTMLElement, InjectedStyle[]>;
+    // Map of environments to their grid state
+    grids: Map<IEnvironment, InjectedGridCssState>;
+    // Counter for generating unique params class names
+    paramsId: number;
 };
 
+// IMPORTANT: this global API on the window object must remain constant across
+// versions. Each version is free to change the structure of InjectionState, but
+// the contract of "agStyleInjectionVersions" is that it is map of version to
+// that version's state.
 type WindowState = {
-    agStyleInjectionState?: InjectionState;
+    agStyleInjectionVersions?: Map<string, InjectionState>;
 };
 
-// AG-14716 - for customers using module federation, there may be many
-// instances of this module, but we want to ensure that there is only
-// one instance of the container to injection map per window otherwise
-// unmounting any grid instance will clear all styles from the page
-// resulting in unstyled grids
-const injectionState: InjectionState = ((typeof window === 'object'
-    ? (window as WindowState)
-    : {}
-).agStyleInjectionState ??= {
-    map: new WeakMap(),
-    grids: new Set(),
-});
+// When many copies of the grid are loaded (either due to module federation or
+// just multiple scripts each embedding a copy of the library), there may be
+// many instances of this module, which may be different versions or not. Our
+// requirement is that all grid instances sharing the same style context (the
+// main document or any one shadow DOM) must have exactly the same version. If
+// two independent modules share the same version, they will share the same
+// InjectionState and cooperate on inserting the correct styles. Different
+// versions get their own state, meaning that they will insert their own CSS.
+// Provided that different versions never share style contexts this will not
+// cause issues. If they do, both versions' styles will be injected and the
+// result will be obvious in development tools because of the
+// data-ag-css-version attribute on each style element.
+export const getInjectionState = (): InjectionState => {
+    const versionMap = ((globalThis as WindowState).agStyleInjectionVersions ??= new Map());
+    let state = versionMap.get(VERSION);
+    if (!state) {
+        state = {
+            map: new WeakMap(),
+            grids: new Map(),
+            paramsId: 0,
+        };
+        versionMap.set(VERSION, state);
+    }
+    return state;
+};
+
+const injectionState = getInjectionState();

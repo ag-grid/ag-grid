@@ -10,25 +10,41 @@ import {
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-type Region = 'East' | 'West' | 'North' | 'South';
-
-export interface GroupAssignment {
+interface Employee {
     id: string;
-    region: Region;
-    owner: string;
+    department: string;
+    team: string;
+    name: string;
+    role: string;
 }
 
-function getData(): GroupAssignment[] {
+const departments = ['Engineering', 'Sales', 'Marketing'];
+const teams: Record<string, string[]> = {
+    Engineering: ['Frontend', 'Backend', 'QA'],
+    Sales: ['Enterprise', 'SMB', 'Partners'],
+    Marketing: ['Content', 'Growth', 'Brand'],
+};
+const allTeams = Object.values(teams).flat();
+
+function getData(): Employee[] {
     return [
-        { id: 'g1', region: 'East', owner: 'Jamie' },
-        { id: 'g2', region: 'East', owner: 'Kira' },
-        { id: 'g3', region: 'East', owner: 'Lena' },
-        { id: 'g4', region: 'West', owner: 'Marco' },
-        { id: 'g5', region: 'West', owner: 'Gus' },
-        { id: 'g6', region: 'North', owner: 'Olive' },
-        { id: 'g7', region: 'North', owner: 'Seth' },
-        { id: 'g8', region: 'South', owner: 'Tara' },
-        { id: 'g9', region: 'South', owner: 'Uma' },
+        // Engineering
+        { id: '1', department: 'Engineering', team: 'Frontend', name: 'Alice', role: 'Developer' },
+        { id: '2', department: 'Engineering', team: 'Frontend', name: 'Bob', role: 'Developer' },
+        { id: '3', department: 'Engineering', team: 'Backend', name: 'Carol', role: 'Developer' },
+        { id: '4', department: 'Engineering', team: 'Backend', name: 'Dave', role: 'Tech Lead' },
+        { id: '5', department: 'Engineering', team: 'QA', name: 'Eve', role: 'Tester' },
+
+        // Sales
+        { id: '6', department: 'Sales', team: 'Enterprise', name: 'Frank', role: 'Account Exec' },
+        { id: '7', department: 'Sales', team: 'Enterprise', name: 'Grace', role: 'Account Exec' },
+        { id: '8', department: 'Sales', team: 'SMB', name: 'Hank', role: 'Sales Rep' },
+        { id: '9', department: 'Sales', team: 'Partners', name: 'Ivy', role: 'Partner Manager' },
+
+        // Marketing
+        { id: '10', department: 'Marketing', team: 'Content', name: 'Jack', role: 'Writer' },
+        { id: '11', department: 'Marketing', team: 'Growth', name: 'Kim', role: 'Analyst' },
+        { id: '12', department: 'Marketing', team: 'Brand', name: 'Leo', role: 'Designer' },
     ];
 }
 
@@ -41,25 +57,33 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-const gridOptions: GridOptions<GroupAssignment> = {
+const gridOptions: GridOptions<Employee> = {
     columnDefs: [
         {
-            field: 'region',
-            headerName: 'Region',
+            field: 'department',
             rowGroup: true,
             editable: true,
             cellEditor: 'agSelectCellEditor',
-            cellEditorParams: { values: ['East', 'West', 'North', 'South'] },
+            cellEditorParams: { values: departments },
         },
-        { field: 'owner' },
+        {
+            field: 'team',
+            rowGroup: true,
+            editable: true,
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: { values: allTeams },
+        },
+        { field: 'name' },
+        { field: 'role', editable: true },
     ],
     defaultColDef: {
+        flex: 1,
         sortable: true,
         resizable: true,
         filter: true,
     },
     autoGroupColumnDef: {
-        minWidth: 220,
+        minWidth: 250,
     },
     rowData: getData(),
     refreshAfterGroupEdit: true,

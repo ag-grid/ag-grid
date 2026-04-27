@@ -1,4 +1,4 @@
-import { type ColorValue, gridThemeLogger, paramValueToCss } from '@components/theme-builder/api';
+import { type ColorValue, paramValueToCss } from '@components/theme-builder/api';
 import styled from '@emotion/styled';
 import { FloatingPortal, autoPlacement, autoUpdate, offset, useFloating } from '@floating-ui/react';
 import { useEffect, useRef, useState } from 'react';
@@ -13,7 +13,7 @@ import { type ValueEditorProps } from './ValueEditorProps';
 export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps<ColorValue>) => (
     <ColorEditor
         preventTransparency={param.property === 'backgroundColor' || param.property === 'dataBackgroundColor'}
-        value={paramValueToCss(param.property, value, gridThemeLogger) || ''}
+        value={paramValueToCss(param.property, value, null) || ''}
         onChange={onChange}
     />
 );
@@ -44,10 +44,12 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
         ],
     });
 
+    // eslint-disable-next-line react-hooks/refs -- ref.current needed for click-away element list
     useClickAwayListener(() => setShowPicker(false), [elements.domReference, elements.floating, wrapperRef.current]);
 
     useEffect(() => {
         if (!showPicker) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- sync editor value from prop
             setEditorValue(hexValue || value);
         }
         // deliberately reduced dependencies array
@@ -99,6 +101,7 @@ export const ColorEditor = ({ preventTransparency, value, onChange }: ColorEdito
             </Wrapper>
             {showPicker && (
                 <FloatingPortal>
+                    {/* eslint-disable-next-line react-hooks/refs -- floating-ui callback ref pattern */}
                     <DropdownArea ref={refs.setFloating} style={floatingStyles}>
                         <div className="colorPickerWrapper">
                             <ColorPicker color={hexValue} onChange={(h) => handleInput(h.toUpperCase())} />

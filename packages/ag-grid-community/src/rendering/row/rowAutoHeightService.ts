@@ -11,6 +11,7 @@ import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import type { CellCtrl } from '../cell/cellCtrl';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowAutoHeightService extends BeanStub implements NamedBean {
     beanName = 'rowAutoHeight' as const;
 
@@ -40,7 +41,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
             let newRowHeight = _getRowHeightForNode(this.beans, row).height;
             for (const col of displayedAutoHeightCols) {
-                let cellHeight = autoHeights?.[col.getColId()];
+                let cellHeight = autoHeights?.[col.colId];
 
                 const spannedCell = rowSpanSvc?.getCellSpan(col, row);
                 if (spannedCell) {
@@ -232,7 +233,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             }
 
             for (const col of renderedAutoHeightCols) {
-                const cellHeight = rowNode.__autoHeights[col.getColId()];
+                const cellHeight = rowNode.__autoHeights[col.colId];
                 if (!cellHeight || rowNode.rowHeight! < cellHeight) {
                     return false;
                 }

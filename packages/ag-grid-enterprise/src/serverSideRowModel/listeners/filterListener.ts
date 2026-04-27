@@ -6,7 +6,7 @@ import type {
     NamedBean,
     StoreRefreshAfterParams,
 } from 'ag-grid-community';
-import { BeanStub, _isServerSideRowModel } from 'ag-grid-community';
+import { BeanStub, _isServerSideRowModel, _jsonEquals } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';
@@ -96,9 +96,7 @@ export class FilterListener extends BeanStub implements NamedBean {
         const res: string[] = [];
 
         for (const key of Object.keys(allColKeysMap)) {
-            const oldJson = JSON.stringify(oldModel[key]);
-            const newJson = JSON.stringify(newModel[key]);
-            const filterChanged = oldJson != newJson;
+            const filterChanged = !_jsonEquals(oldModel[key], newModel[key]);
             if (filterChanged) {
                 res.push(key);
             }

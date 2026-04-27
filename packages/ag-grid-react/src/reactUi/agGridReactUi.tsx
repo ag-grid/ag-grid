@@ -20,6 +20,7 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
+    Module,
     WrappableInterface,
 } from 'ag-grid-community';
 import {
@@ -27,6 +28,7 @@ import {
     GridCoreCreator,
     VanillaFrameworkOverrides,
     _combineAttributesAndGridOptions,
+    _findEnterpriseCoreModule,
     _getGridOption,
     _getGridRegisteredModules,
     _isClientSideRowModel,
@@ -53,6 +55,7 @@ import { warnReactiveCustomComponents } from '../shared/customComp/util';
 import type { AgGridReactProps, InternalAgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
+import { LicenseContext, ModulesContext } from './agGridProvider';
 import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
@@ -80,6 +83,10 @@ const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
 const deprecatedReactCompProps = new Set(Object.keys(deprecatedProps));
 
 export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
+    const modulesFromContext = useContext(ModulesContext);
+    const licenseKeyFromContext = useContext(LicenseContext);
+    const usesAgGridProvider = modulesFromContext !== null;
+
     const apiRef = useRef<GridApi<TData>>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const portalManager = useRef<PortalManager | null>(null);
@@ -126,6 +133,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         eGui.current = eRef;
         updateClassName(props.className);
         if (!eRef) {
+            ready.current = false;
             for (const f of destroyFuncs.current) {
                 f();
             }
@@ -133,7 +141,12 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             return;
         }
 
-        const modules = props.modules || [];
+        const modules: Module[] = [...(props.modules ?? []), ...(modulesFromContext ?? [])];
+        if (licenseKeyFromContext) {
+            // find the EnterpriseCore module which implements _ModuleWithLicenseManager
+            // if found, set the license key
+            _findEnterpriseCoreModule(modules)?.setLicenseKey(licenseKeyFromContext);
+        }
 
         if (!portalManager.current) {
             portalManager.current = new PortalManager(
@@ -165,7 +178,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             }
         };
 
-        const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates);
+        const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates, usesAgGridProvider);
         frameworkOverridesRef.current = frameworkOverrides;
         const renderStatus = new RenderStatusService();
         const gridParams: GridParams = {
@@ -491,7 +504,10 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     private queueUpdates = false;
     public override readonly renderingEngine = 'react';
 
-    constructor(private readonly processQueuedUpdates: () => void) {
+    constructor(
+        private readonly processQueuedUpdates: () => void,
+        public override readonly usesAgGridProvider: boolean
+    ) {
         super('react');
     }
 

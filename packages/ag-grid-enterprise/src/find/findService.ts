@@ -143,9 +143,12 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             pinnedRowDataChanged: refreshAndKeepActive,
             cellValueChanged: refreshAndKeepActiveDebounced,
             rowNodeDataChanged: refreshAndKeepActiveDebounced,
+            cellEditingStopped: refreshAndKeepActiveDebounced,
+            cellEditValuesChanged: refreshAndKeepActiveDebounced,
+            batchEditingStopped: refreshAndKeepActiveDebounced,
         });
         const rowSpanSvc = this.beans.rowSpanSvc;
-        if (rowSpanSvc) {
+        if (rowSpanSvc?.active) {
             this.addManagedListeners(rowSpanSvc, { spannedCellsUpdated: refreshAndKeepActiveDebounced });
         }
 
@@ -367,7 +370,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         const fullWidthCellRendererParams = gos.get('fullWidthCellRendererParams');
         const groupRowRendererParams = gos.get('groupRowRendererParams');
         const flattenDetails = _getFlattenDetails(gos);
-        const pivotMode = colModel.isPivotMode();
+        const pivotMode = colModel.pivotMode;
 
         let containerNumMatches = 0;
         let matches: Matches;
@@ -437,7 +440,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 let valueToFind: string | null;
                 const getFindText = (groupRowRendererParams as FindGroupRowRendererParams)?.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay({ node }).value;
+                    const value = valueSvc.getValueForDisplay({ node, from: 'batch' }).value;
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -449,6 +452,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                                 const { valueFormatted } = valueSvc.getValueForDisplay({
                                     node,
                                     includeValueFormatted: true,
+                                    from: 'batch',
                                 });
                                 return valueFormatted;
                             },
@@ -458,6 +462,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                     const { value, valueFormatted } = valueSvc.getValueForDisplay({
                         node,
                         includeValueFormatted: true,
+                        from: 'batch',
                     });
                     valueToFind = valueFormatted ?? value;
                 }
@@ -493,7 +498,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 const colDef = column.colDef;
                 const getFindText = colDef.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay({ column, node }).value;
+                    const value = valueSvc.getValueForDisplay({ column, node, from: 'batch' }).value;
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -506,6 +511,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                                     column,
                                     node,
                                     includeValueFormatted: true,
+                                    from: 'batch',
                                 });
                                 return valueFormatted;
                             },
@@ -516,6 +522,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                         column,
                         node,
                         includeValueFormatted: true,
+                        from: 'batch',
                     });
                     valueToFind = valueFormatted ?? value;
                 }
@@ -923,9 +930,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
 
     private getActiveMatchNum(node: IRowNode, column: Column | null): number {
         const activeMatch = this.activeMatch;
-        return activeMatch != null && activeMatch.node === node && activeMatch.column === column
-            ? activeMatch.numInMatch
-            : 0;
+        return activeMatch?.node === node && activeMatch.column === column ? activeMatch.numInMatch : 0;
     }
 
     public override destroy(): void {

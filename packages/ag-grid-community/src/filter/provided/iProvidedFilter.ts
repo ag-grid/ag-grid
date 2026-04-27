@@ -45,7 +45,7 @@ export interface IProvidedFilterParams {
 
 export interface IProvidedFilter extends IFilter {
     /** The type of filter. Matches the `filterType` property in the filter model */
-    readonly filterType: 'text' | 'number' | 'date' | 'set' | 'multi';
+    readonly filterType: 'text' | 'number' | 'bigint' | 'date' | 'set' | 'multi';
     /**
      * Applies the model shown in the UI (so that `getModel()` will now return what was in the UI
      * when `applyModel()` was called).

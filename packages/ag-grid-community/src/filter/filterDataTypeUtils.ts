@@ -1,4 +1,5 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
+import { _parseBigIntOrNull } from '../agStack/utils/bigInt';
 import { _getDateParts } from '../agStack/utils/date';
 import { _exists } from '../agStack/utils/generic';
 import type { BeanCollection, UserComponentName } from '../context/context';
@@ -12,6 +13,7 @@ import type {
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
 import type { ISetFilterParams } from '../interfaces/iSetFilter';
+import type { IBigIntFilterParams } from './provided/bigInt/iBigIntFilter';
 import type { IDateFilterParams } from './provided/date/iDateFilter';
 import type { ISimpleFilterParams } from './provided/iSimpleFilter';
 import type { INumberFilterParams } from './provided/number/iNumberFilter';
@@ -56,6 +58,24 @@ function setFilterNumberComparator<TValue = any>(a: TValue | null, b: TValue | n
     return Number.parseFloat(a as string) - Number.parseFloat(b as string);
 }
 
+function setFilterBigIntComparator<TValue = any>(a: TValue | null, b: TValue | null): number {
+    if (a == null) {
+        return -1;
+    }
+    if (b == null) {
+        return 1;
+    }
+    const valueA = _parseBigIntOrNull(a);
+    const valueB = _parseBigIntOrNull(b);
+    if (valueA != null && valueB != null) {
+        if (valueA === valueB) {
+            return 0;
+        }
+        return valueA > valueB ? 1 : -1;
+    }
+    return String(a).localeCompare(String(b));
+}
+
 function isValidDate(value: any): boolean {
     return value instanceof Date && !isNaN(value.getTime());
 }
@@ -72,6 +92,7 @@ type FilterParamCallback<P extends ISimpleFilterParams, V = string> = (
 
 type FilterParamsDefMap = CheckDataTypes<{
     number: FilterParamCallback<INumberFilterParams, number>;
+    bigint: FilterParamCallback<IBigIntFilterParams, bigint>;
     boolean: FilterParamCallback<ITextFilterParams, boolean>;
     date: FilterParamCallback<IDateFilterParams, Date>;
     dateString: FilterParamCallback<IDateFilterParams>;
@@ -84,6 +105,7 @@ type FilterParamsDefMap = CheckDataTypes<{
 // using an object here to enforce dev to not forget to implement new types as they are added
 const filterParamsForEachDataType: FilterParamsDefMap = {
     number: () => undefined,
+    bigint: () => undefined,
     boolean: () => ({
         maxNumConditions: 1,
         debounceMs: 0,
@@ -128,6 +150,7 @@ const filterParamsForEachDataType: FilterParamsDefMap = {
 // using an object here to enforce dev to not forget to implement new types as they are added
 const setFilterParamsForEachDataType: FilterParamsDefMap = {
     number: () => ({ comparator: setFilterNumberComparator }),
+    bigint: () => ({ comparator: setFilterBigIntComparator }),
     boolean: ({ t }) => ({
         valueFormatter: (params: ValueFormatterParams<any, boolean>) =>
             _exists(params.value) ? t(String(params.value), params.value ? 'True' : 'False') : t('blanks', '(Blanks)'),
@@ -186,6 +209,7 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
     text: () => undefined,
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getFilterParamsForDataType(
     filter: string,
     existingFilterParams: any,
@@ -195,17 +219,16 @@ export function _getFilterParamsForDataType(
     beans: BeanCollection,
     translate: LocaleTextFunc
 ): { filterParams?: any; filterValueGetter?: string | ValueGetterFunc } {
-    let filterParams: any = existingFilterParams;
     let filterValueGetter: string | ValueGetterFunc | undefined = existingFilterValueGetter;
     const usingSetFilter = filter === 'agSetColumnFilter';
     if (!filterValueGetter && dataTypeDefinition.baseDataType === 'object' && !usingSetFilter) {
         filterValueGetter = ({ column, node }: ValueGetterParams) =>
-            formatValue({ column, node, value: beans.valueSvc.getValue(column as AgColumn, node) });
+            formatValue({ column, node, value: beans.valueSvc.getValue(column as AgColumn, node, 'data') });
     }
     const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
     const filterParamsGetter = filterParamsMap[dataTypeDefinition.baseDataType];
     const newFilterParams = filterParamsGetter({ dataTypeDefinition, formatValue, t: translate });
-    filterParams =
+    const filterParams =
         typeof existingFilterParams === 'object'
             ? {
                   ...newFilterParams,
@@ -221,6 +244,7 @@ const defaultFilters: Record<BaseCellDataType, UserComponentName> = {
     dateString: 'agDateColumnFilter',
     dateTime: 'agDateColumnFilter',
     dateTimeString: 'agDateColumnFilter',
+    bigint: 'agBigIntColumnFilter',
     number: 'agNumberColumnFilter',
     object: 'agTextColumnFilter',
     text: 'agTextColumnFilter',
@@ -232,11 +256,13 @@ const defaultFloatingFilters: Record<BaseCellDataType, UserComponentName> = {
     dateString: 'agDateColumnFloatingFilter',
     dateTime: 'agDateColumnFloatingFilter',
     dateTimeString: 'agDateColumnFloatingFilter',
+    bigint: 'agBigIntColumnFloatingFilter',
     number: 'agNumberColumnFloatingFilter',
     object: 'agTextColumnFloatingFilter',
     text: 'agTextColumnFloatingFilter',
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getDefaultSimpleFilter(cellDataType?: BaseCellDataType, isFloating: boolean = false): string {
     const filterSet = isFloating ? defaultFloatingFilters : defaultFilters;
     return filterSet[cellDataType ?? 'text'];

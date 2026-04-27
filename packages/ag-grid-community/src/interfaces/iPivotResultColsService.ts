@@ -3,6 +3,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IPivotResultColsService {
     isPivotResultColsPresent(): boolean;
 
@@ -13,4 +14,8 @@ export interface IPivotResultColsService {
     getPivotResultCol(key: ColKey): AgColumn | null;
 
     setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void;
+
+    /** Returns pivot result columns ordered for aggregation: regular columns first, total columns after.
+     * Cached — only recomputed when pivot result columns change. */
+    getAggregationOrderedList(): AgColumn[] | null;
 }

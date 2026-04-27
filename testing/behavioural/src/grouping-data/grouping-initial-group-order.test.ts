@@ -3,6 +3,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -78,6 +79,12 @@ describe('ag-grid initialGroupOrderComparator', () => {
             · └─┬ LEAF_GROUP id:row-group-country-Ireland-sport-Tennis ag-Grid-AutoColumn:"Tennis"
             · · └── LEAF id:1 country:"Ireland" sport:"Tennis" athlete:"Jane"
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            └── athlete "Athlete" width:200
+        `);
     });
 
     test('two-level: load from scratch with ids', async () => {
@@ -140,6 +147,12 @@ describe('ag-grid initialGroupOrderComparator', () => {
             · │ └── LEAF id:1 country:"Ireland" sport:"Soccer" athlete:"John"
             · └─┬ LEAF_GROUP id:row-group-country-Ireland-sport-Tennis ag-Grid-AutoColumn:"Tennis"
             · · └── LEAF id:2 country:"Ireland" sport:"Tennis" athlete:"Jane"
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            └── athlete "Athlete" width:200
         `);
     });
 

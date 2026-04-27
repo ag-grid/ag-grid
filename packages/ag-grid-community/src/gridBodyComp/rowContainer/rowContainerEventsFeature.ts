@@ -2,10 +2,11 @@ import { KeyCode, _normaliseQwertyAzerty } from '../../agStack/constants/keyCode
 import { _isEventFromThisInstance, _isEventSupported } from '../../agStack/utils/event';
 import { _isEventFromPrintableCharacter } from '../../agStack/utils/keyboard';
 import { BeanStub } from '../../context/beanStub';
+import type { EditService } from '../../edit/editService';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getCtrlASelectsRows, _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
-import type { IEditService } from '../../interfaces/iEditService';
+import type { GetNoteParams } from '../../interfaces/notes';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from '../../rendering/renderUtils';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -15,7 +16,7 @@ import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboardEvent';
 import { _selectAllCells } from '../../utils/selection';
 
 export class RowContainerEventsFeature extends BeanStub {
-    private editSvc?: IEditService;
+    private editSvc?: EditService;
 
     constructor(public readonly element: HTMLElement) {
         super();
@@ -35,7 +36,12 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private addMouseListeners(): void {
-        const mouseDownEvent = _isEventSupported('touchstart') ? 'touchstart' : 'mousedown';
+        let mouseDownEvent = 'mousedown';
+        if (_isEventSupported('pointerdown')) {
+            mouseDownEvent = 'pointerdown';
+        } else if (_isEventSupported('touchstart')) {
+            mouseDownEvent = 'touchstart';
+        }
         const eventNames = ['dblclick', 'contextmenu', 'mouseover', 'mouseout', 'click', mouseDownEvent];
 
         for (const eventName of eventNames) {
@@ -127,42 +133,97 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private processFullWidthRowKeyboardEvent(rowCtrl: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
         const { rowNode } = rowCtrl;
-        const { focusSvc, navigation } = this.beans;
+        const { focusSvc, navigation, notesSvc } = this.beans;
         const focusedCell = focusSvc.getFocusedCell();
         const column = focusedCell?.column as AgColumn;
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
 
-        if (gridProcessingAllowed) {
-            const key = keyboardEvent.key;
-            if (eventName === 'keydown') {
-                switch (key) {
-                    case KeyCode.PAGE_HOME:
-                    case KeyCode.PAGE_END:
-                    case KeyCode.PAGE_UP:
-                    case KeyCode.PAGE_DOWN:
-                        navigation?.handlePageScrollingKey(keyboardEvent, true);
-                        break;
-
-                    case KeyCode.LEFT:
-                    case KeyCode.RIGHT:
-                        if (!this.gos.get('embedFullWidthRows')) {
-                            break;
-                        }
-                    /* eslint-ignore: no-fallthrough */
-                    case KeyCode.UP:
-                    case KeyCode.DOWN:
-                        rowCtrl.onKeyboardNavigate(keyboardEvent);
-                        break;
-                    case KeyCode.TAB:
-                        rowCtrl.onTabKeyDown(keyboardEvent);
-                        break;
-                    default:
-                }
-            }
+        if (gridProcessingAllowed && eventName === 'keydown') {
+            this.processFullWidthRowKeyDown(rowCtrl, keyboardEvent, column, navigation, notesSvc);
         }
 
         if (eventName === 'keydown') {
             this.eventSvc.dispatchEvent(rowCtrl.createRowEvent('cellKeyDown', keyboardEvent));
+        }
+    }
+
+    private processFullWidthRowKeyDown(
+        rowCtrl: RowCtrl,
+        keyboardEvent: KeyboardEvent,
+        focusedColumn: AgColumn | undefined,
+        navigation = this.beans.navigation,
+        notesSvc = this.beans.notesSvc
+    ): void {
+        switch (keyboardEvent.key) {
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
+            case KeyCode.PAGE_UP:
+            case KeyCode.PAGE_DOWN:
+                navigation?.handlePageScrollingKey(keyboardEvent, true);
+                return;
+
+            case KeyCode.LEFT:
+            case KeyCode.RIGHT:
+                if (!this.gos.get('embedFullWidthRows')) {
+                    return;
+                }
+            /* eslint-ignore: no-fallthrough */
+            case KeyCode.UP:
+            case KeyCode.DOWN:
+                rowCtrl.onKeyboardNavigate(keyboardEvent);
+                return;
+
+            case KeyCode.F2:
+                this.processFullWidthRowNoteShortcut(rowCtrl, keyboardEvent, focusedColumn, notesSvc);
+                return;
+
+            case KeyCode.TAB:
+                rowCtrl.onTabKeyDown(keyboardEvent);
+                return;
+
+            default:
+        }
+    }
+
+    private processFullWidthRowNoteShortcut(
+        rowCtrl: RowCtrl,
+        keyboardEvent: KeyboardEvent,
+        focusedColumn: AgColumn | undefined,
+        notesSvc = this.beans.notesSvc
+    ): void {
+        if (!keyboardEvent.shiftKey || !notesSvc?.hasDataSource()) {
+            return;
+        }
+
+        const rowNode = rowCtrl.rowNode;
+        const fullWidthInfo = rowCtrl.findFullWidthInfoForEvent(keyboardEvent);
+
+        let noteParams: GetNoteParams | undefined;
+
+        if (fullWidthInfo) {
+            const { pinned } = fullWidthInfo;
+            noteParams = {
+                rowNode,
+                location: 'fullWidthRow' as const,
+                pinned: pinned === 'left' || pinned === 'right' ? pinned : undefined,
+            };
+        } else if (focusedColumn) {
+            noteParams = { rowNode, column: focusedColumn };
+        }
+
+        if (!noteParams) {
+            return;
+        }
+
+        const access = notesSvc.getNoteAccess(noteParams);
+
+        if (!access) {
+            return;
+        }
+
+        if (!access.isSuppressed || access.canView) {
+            notesSvc.showNote(access.params, true);
+            keyboardEvent.preventDefault();
         }
     }
 

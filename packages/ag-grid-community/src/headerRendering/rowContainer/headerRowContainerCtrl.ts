@@ -12,6 +12,7 @@ import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeade
 import type { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;
     setViewportScrollLeft(left: number): void;
@@ -20,6 +21,7 @@ export interface IHeaderRowContainerComp {
     setCtrls(ctrls: HeaderRowCtrl[]): void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     public comp: IHeaderRowContainerComp;
     public hidden: boolean = false;

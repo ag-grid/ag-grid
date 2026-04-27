@@ -32,6 +32,7 @@ export abstract class CartesianChartProxy<
 > extends ChartProxy<AgCartesianChartOptions, TSeries> {
     protected crossFilteringAllPoints = new Set<string>();
     protected crossFilteringSelectedPoints: string[] = [];
+    protected isSingleSeries: boolean = false;
 
     protected abstract getAxes(
         params: UpdateParams,
@@ -210,7 +211,11 @@ export abstract class CartesianChartProxy<
     }
 
     private crossFilteringAddSelectedPoint(multiSelection: boolean, value: string): void {
-        multiSelection ? this.crossFilteringSelectedPoints.push(value) : (this.crossFilteringSelectedPoints = [value]);
+        if (multiSelection) {
+            this.crossFilteringSelectedPoints.push(value);
+        } else {
+            this.crossFilteringSelectedPoints = [value];
+        }
     }
 
     protected isHorizontal(commonChartOptions: AgCartesianChartOptions): boolean {
@@ -237,7 +242,7 @@ export abstract class CartesianChartProxy<
     protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides[TSeries] {
         return {
             series: {
-                highlight: getSeriesHighlight(this.crossFiltering),
+                highlight: getSeriesHighlight(this.crossFiltering, this.isSingleSeries),
             },
         };
     }

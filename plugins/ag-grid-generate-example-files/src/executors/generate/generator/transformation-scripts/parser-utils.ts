@@ -15,7 +15,7 @@ export function readAsJsFile(srcFile, internalFramework: InternalFramework) {
         tsFile = tsFile.replace(/import {((.|\n)*?)} from(?!(\s['"]\.\/)).*\n/g, '');
     } else {
         tsFile = tsFile.replace(/import ((.|\n)*?)from.*\n/g, '');
-        tsFile = tsFile.replace(/export /g, '');
+        tsFile = tsFile.replace(/^export /gm, '');
     }
 
     const jsFile = transform(tsFile, { transforms: ['typescript'], disableESTransforms: true }).code;
@@ -61,10 +61,8 @@ export function getFunctionName(code: string): string {
 export const convertFunctionToProperty = (code: string) =>
     code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\)(:[^{]+)?/, '$1 = ($2)$3 =>');
 
-export const convertFunctionToConstProperty = (code: string) =>
-    code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\)/, 'const $1 = ($2) =>');
 export const convertFunctionToConstPropertyTs = (code: string) => {
-    return code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\):(\s+[^{]*)/, 'const $1: ($2) => $3 = ($2) =>');
+    return code.replace(/(async\s+)?function\s+([^(\s]+)\s*\(([^)]*)\):(\s+[^{]*)/, 'const $2: ($3) => $4 = $1($3) =>');
 };
 
 export function isInstanceMethod(methods: string[], property: any): boolean {
@@ -85,13 +83,11 @@ export function tsCollect(tsTree, tsBindings: ParsedBindings, collectors, recurs
     ts.forEachChild(tsTree, (node: ts.Node) => {
         collectors
             .filter((c) => {
-                let res = false;
                 try {
-                    res = c.matches(node);
-                } catch (error) {
+                    return c.matches(node);
+                } catch {
                     return false;
                 }
-                return res;
             })
             .forEach((c) => {
                 try {

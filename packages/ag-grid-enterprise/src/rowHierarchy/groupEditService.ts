@@ -9,7 +9,6 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    ChangedPath,
     _ChangedRowNodes,
     _csrmFirstLeaf,
     _csrmReorderAllLeafs,
@@ -49,7 +48,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         if (!this.gos.get('refreshAfterGroupEdit')) {
             return false;
         }
-        return !!this.beans.rowGroupColsSvc?.columns?.length && !this.beans.colModel.isPivotMode();
+        return !!this.beans.rowGroupColsSvc?.columns?.length && !this.beans.colModel.pivotMode;
     }
 
     private initDraggingGroups(rowsDrop: _RowsDrop): void {
@@ -116,11 +115,13 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         }
 
         const sourceLevel = rowNode.group ? rowNode.level : currentParent.level ?? -1;
-        const targetLevel = target
-            ? target.group
-                ? target.level
-                : target.parent?.level ?? -1
-            : comparisonParent?.level ?? -1;
+
+        let targetLevel = -1;
+        if (target) {
+            targetLevel = target.group ? target.level : target.parent?.level ?? -1;
+        } else if (comparisonParent) {
+            targetLevel = comparisonParent.level;
+        }
 
         if (sourceLevel >= 0 && targetLevel >= 0 && targetLevel !== sourceLevel) {
             return false;
@@ -148,9 +149,9 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
 
         const rootNode = rowsDrop.rootNode as IRowNode;
         const rowModel = this.beans.rowModel;
-        const canStartGroup = target ? this.canDropStartGroup(target) : false;
 
-        this.updateDropTarget(canStartGroup ? target : null, fromNudge, rowsDrop);
+        const canStartGroup = this.canStartGroup(target, treeData);
+        this.updateDropTarget(rowsDrop, fromNudge, canStartGroup);
 
         const lastRowIndex = this.beans.pageBounds?.getLastRow?.() ?? rowModel.getRowCount() - 1;
         if (canSetParent) {
@@ -163,16 +164,9 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             if (!newParent) {
                 newParent = target?.parent ?? rootNode;
             }
+        }
 
-            if (
-                !fromNudge &&
-                target &&
-                canStartGroup &&
-                (!newParent || (!target.expanded && !!target.childrenAfterSort?.length))
-            ) {
-                this.startDropGroupDelay(target);
-            }
-        } else if (!fromNudge && target && canStartGroup) {
+        if (!fromNudge && target && canStartGroup && !(target.group && target.expanded)) {
             this.startDropGroupDelay(target);
         }
 
@@ -209,7 +203,9 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         }
     }
 
-    private updateDropTarget(target: IRowNode | null, canExpand: boolean, rowsDrop: _RowsDrop): void {
+    private updateDropTarget(rowsDrop: _RowsDrop, fromNudge: boolean, canStartGroup: boolean): void {
+        const target = canStartGroup ? rowsDrop.target : null;
+
         if (this.dropGroupTarget && this.dropGroupTarget !== target) {
             this.resetDragGroup();
         }
@@ -218,7 +214,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             return;
         }
 
-        if (canExpand && this.dropGroupThrottled && !target.expanded && target.isExpandable?.()) {
+        if (fromNudge && this.dropGroupThrottled && !target.expanded && target.isExpandable?.()) {
             target.setExpanded(true, undefined, true);
         }
 
@@ -309,7 +305,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         } while (nextRow?.footer);
 
         const childrenAfterGroup = this.draggingGroups?.get(target) ?? target.childrenAfterGroup;
-        if (nextRow && nextRow.parent === target && childrenAfterGroup?.length) {
+        if (nextRow?.parent === target && childrenAfterGroup?.length) {
             const rowsSet = new Set(rows);
             for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
                 const child = childrenAfterGroup[i];
@@ -403,14 +399,16 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         return true;
     }
 
-    public canDropStartGroup(candidate: IRowNode | null | undefined) {
-        return (
-            !!candidate &&
-            candidate.level >= 0 &&
-            !candidate.footer &&
-            !candidate.detail &&
-            (candidate.isExpandable?.() || !!candidate.childrenAfterSort?.length)
-        );
+    private canStartGroup(target: IRowNode | null, treeData: boolean): boolean {
+        if (!target || target.level < 0 || target.footer || target.detail) {
+            return false; // cannot group into root, footer, or detail rows
+        }
+
+        if (target.group) {
+            return true;
+        }
+
+        return treeData; // in tree data any leaf can become a group
     }
 
     /** Flushes any pending group edits for batch processing */
@@ -433,7 +431,6 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             step: 'group',
             keepRenderedRows: true,
             animate: !this.gos.get('suppressAnimationFrame'),
-            changedPath: new ChangedPath(false, rootNode),
             changedRowNodes,
         });
     }
@@ -446,7 +443,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         while (current && current.level >= 0) {
             const column: AgColumn | undefined = columns[current.level];
             if (column) {
-                const colId = column.getColId();
+                const colId = column.colId;
                 const level = current.level;
                 values[level] = current.groupData?.[colId] ?? current.key ?? undefined;
                 if (level > maxLevel) {
@@ -462,28 +459,32 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         if (maxLevel < 0) {
             return false;
         }
-        const { valueSvc, editSvc } = this.beans;
+        const { valueSvc, changeDetectionSvc } = this.beans;
         let changed = false;
-        for (let level = 0; level < columns.length; ++level) {
-            const column = columns[level];
-            if (!column || level > maxLevel) {
-                continue;
+        changeDetectionSvc?.beginDeferred();
+        try {
+            for (let level = 0; level < columns.length; ++level) {
+                const column = columns[level];
+                if (!column || level > maxLevel) {
+                    continue;
+                }
+                const newValue = values[level];
+                const currentValue = valueSvc.getValue(column, row, 'data');
+                if (currentValue === newValue || (currentValue == null && newValue == null)) {
+                    continue;
+                }
+                let valueToSet = newValue;
+                const parsedValue = valueSvc.parseValue(column, row, newValue, currentValue);
+                if (parsedValue !== undefined) {
+                    valueToSet = parsedValue;
+                }
+                const updated = row.setDataValue(column, valueToSet, 'rowDrag');
+                if (updated) {
+                    changed = true;
+                }
             }
-            const newValue = values[level];
-            const currentValue = valueSvc.getValue(column, row, false, 'api');
-            if (currentValue === newValue || (currentValue == null && newValue == null)) {
-                continue;
-            }
-            let valueToSet = newValue;
-            const parsedValue = valueSvc.parseValue(column, row, newValue, currentValue);
-            if (parsedValue !== undefined) {
-                valueToSet = parsedValue;
-            }
-            const result = editSvc?.setDataValue({ rowNode: row, column }, valueToSet, 'rowDrag');
-            const updated = result != null ? !!result : row.setDataValue(column, valueToSet, 'rowDrag');
-            if (updated) {
-                changed = true;
-            }
+        } finally {
+            changeDetectionSvc?.endDeferred();
         }
         return changed;
     }

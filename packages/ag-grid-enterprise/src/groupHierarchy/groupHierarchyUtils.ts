@@ -13,7 +13,7 @@ const getDate = (
     sourceCol: AgColumn,
     node: IRowNode | null
 ): Date | null => {
-    const innerValue = valueSvc.getValue(sourceCol, node);
+    const innerValue = valueSvc.getValue(sourceCol, node, 'data');
     let date: Date | null = null;
     if (innerValue instanceof Date) {
         date = innerValue;

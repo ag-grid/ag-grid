@@ -7,7 +7,7 @@ import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
 import { _createIcon } from '../utils/icon';
 import { Component } from '../widgets/component';
-import { dragAndDropImageComponentCSS } from './dragAndDropImageComponent.css-GENERATED';
+import dragAndDropImageComponentCSS from './dragAndDropImageComponent.css';
 import type { DragAndDropIcon, GridDragSource } from './dragAndDropService';
 import type { DragSource } from './rowDragTypes';
 
@@ -86,12 +86,10 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
 
         _clearElement(eIcon);
 
-        let eIconChild: Element | null = null;
-
         if (!iconName) {
             iconName = dragSource?.getDefaultIconName ? dragSource.getDefaultIconName() : 'notAllowed';
         }
-        eIconChild = dropIconMap[iconName];
+        const eIconChild = dropIconMap[iconName];
 
         eGhost.classList.toggle('ag-dnd-ghost-not-allowed', iconName === 'notAllowed');
         eIcon.classList.toggle('ag-shake-left-to-right', shake);

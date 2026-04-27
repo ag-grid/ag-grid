@@ -96,9 +96,13 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             this.onColumnsChangedPending = true;
             return;
         }
-        const pivotModeActive = this.colModel.isPivotMode();
+        const pivotModeActive = this.colModel.pivotMode;
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
-        shouldSyncColumnLayoutWithGrid ? this.syncFilterLayout() : this.buildTreeFromProvidedColumnDefs();
+        if (shouldSyncColumnLayoutWithGrid) {
+            this.syncFilterLayout();
+        } else {
+            this.buildTreeFromProvidedColumnDefs();
+        }
         this.refreshAriaLabel();
     }
 
@@ -276,7 +280,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     private shouldDisplayFilter(column: AgColumn) {
-        const suppressFiltersToolPanel = column.getColDef()?.suppressFiltersToolPanel;
+        const suppressFiltersToolPanel = column.colDef?.suppressFiltersToolPanel;
         return column.isFilterAllowed() && !suppressFiltersToolPanel;
     }
 
@@ -380,11 +384,15 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
                 return anyChildrenChanged;
             }
 
-            const colId = filterComp.getColumn().getColId();
+            const colId = filterComp.getColumn().colId;
             const updateFilterExpandState = !colIds || colIds.includes(colId);
 
             if (updateFilterExpandState) {
-                expand ? filterComp.expand() : filterComp.collapse();
+                if (expand) {
+                    filterComp.expand();
+                } else {
+                    filterComp.collapse();
+                }
                 updatedColIds.push(colId);
             }
 
@@ -421,7 +429,11 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
                 return;
             }
 
-            filterGroup.isExpanded() ? expandedCount++ : notExpandedCount++;
+            if (filterGroup.isExpanded()) {
+                expandedCount++;
+            } else {
+                notExpandedCount++;
+            }
 
             for (const child of filterGroup.getChildren()) {
                 if (child instanceof ToolPanelFilterGroupComp) {
@@ -546,7 +558,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
                     expandedGroupIds.push(groupId);
                 }
             } else if (filterComp.isExpanded()) {
-                expandedColIds.add(filterComp.getColumn().getColId());
+                expandedColIds.add(filterComp.getColumn().colId);
             }
         };
 

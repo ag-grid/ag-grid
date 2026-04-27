@@ -10,6 +10,7 @@ import type {
 } from './cellRenderers/iCellRenderer';
 import type { RowCtrl } from './row/rowCtrl';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _suppressCellMouseEvent(
     gos: GridOptionsService,
     column: Column,
@@ -68,12 +69,14 @@ function _getCtrlForEventTarget<T>(gos: GridOptionsService, eventTarget: EventTa
 
 export const DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getCellCtrlForEventTarget(gos: GridOptionsService, eventTarget: EventTarget | null): CellCtrl | null {
     return _getCtrlForEventTarget(gos, eventTarget, DOM_DATA_KEY_CELL_CTRL);
 }
 
 export const DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRowCtrlForEventTarget(gos: GridOptionsService, eventTarget: EventTarget | null): RowCtrl | null {
     return _getCtrlForEventTarget(gos, eventTarget, DOM_DATA_KEY_ROW_CTRL);
 }

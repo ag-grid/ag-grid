@@ -167,7 +167,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
     public getColGroupAtLevel(column: AgColumn, level: number): AgColumnGroup | null {
         // get group at same level as the one we are looking for
-        let groupPointer: AgColumnGroup = column.getParent()!;
+        let groupPointer: AgColumnGroup = column.parent!;
         let originalGroupLevel: number;
         let groupPointerLevel: number;
 
@@ -179,7 +179,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
             if (originalGroupLevel + groupPointerLevel <= level) {
                 break;
             }
-            groupPointer = groupPointer.getParent()!;
+            groupPointer = groupPointer.parent!;
         }
 
         return groupPointer;

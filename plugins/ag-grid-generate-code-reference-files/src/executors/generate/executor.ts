@@ -9,6 +9,7 @@ import {
     getGridOptions,
     getInterfaces,
     getRowNode,
+    getThemeParams,
 } from './generate-code-reference-files';
 
 type ExecutorOptions = { output: string };
@@ -39,6 +40,7 @@ async function generateFile(options: ExecutorOptions) {
     const gridApiFile = workspaceRoot + '/packages/ag-grid-community/src/api/gridApi.ts';
     const columnFile = workspaceRoot + '/packages/ag-grid-community/src/interfaces/iColumn.ts';
     const rowNodeFile = workspaceRoot + '/packages/ag-grid-community/src/interfaces/iRowNode.ts';
+    const themesFile = workspaceRoot + '/packages/ag-grid-community/src/theming/parts/theme/themes.ts';
 
     const distFolder = workspaceRoot + '/' + options.output;
 
@@ -50,35 +52,33 @@ async function generateFile(options: ExecutorOptions) {
         ...inputGlob(workspaceRoot + '/packages/ag-grid-enterprise/src'),
     ];
 
-    const generateMetaFiles = async () => {
-        await writeJSONFile(distFolder + '/grid-options.AUTO.json', getGridOptions(gridOpsFile));
-        await writeJSONFile(distFolder + '/grid-api.AUTO.json', getGridApi(gridApiFile));
-        await writeJSONFile(distFolder + '/row-node.AUTO.json', getRowNode(rowNodeFile));
-        await writeJSONFile(distFolder + '/column-options.AUTO.json', getColumnOptions(colDefFile, filterFile));
-        await writeJSONFile(
-            distFolder + '/column.AUTO.json',
-            getColumnTypes(columnFile, ['Column', 'IHeaderColumn', 'IProvidedColumn'])
-        );
-        await writeJSONFile(
-            distFolder + '/columnGroup.AUTO.json',
-            getColumnTypes(columnFile, ['ColumnGroup', 'IHeaderColumn'])
-        );
-        await writeJSONFile(
-            distFolder + '/providedColumnGroup.AUTO.json',
-            getColumnTypes(columnFile, ['ProvidedColumnGroup', 'IProvidedColumn'])
-        );
-        await writeJSONFile(distFolder + '/interfaces.AUTO.json', getInterfaces(INTERFACE_GLOBS));
-        await writeJSONFile(distFolder + '/doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
-    };
+    // Generate all reference data (CPU-bound TS parsing) then write files concurrently.
+    const gridOptions = getGridOptions(gridOpsFile);
+    const gridApi = getGridApi(gridApiFile);
+    const rowNode = getRowNode(rowNodeFile);
+    const columnOptions = getColumnOptions(colDefFile, filterFile);
+    const column = getColumnTypes(columnFile, ['Column', 'IHeaderColumn', 'IProvidedColumn']);
+    const columnGroup = getColumnTypes(columnFile, ['ColumnGroup', 'IHeaderColumn']);
+    const providedColumnGroup = getColumnTypes(columnFile, ['ProvidedColumnGroup', 'IProvidedColumn']);
+    const interfaces = getInterfaces(INTERFACE_GLOBS);
+    const docInterfaces = buildInterfaceProps(INTERFACE_GLOBS);
+    const themeParams = getThemeParams(themesFile);
 
-    console.log(`--------------------------------------------------------------------------------`);
-    console.log(`Generate docs reference files...`);
-    console.log('Using Typescript version: ', ts.version);
-
-    await generateMetaFiles();
+    await Promise.all([
+        writeJSONFile(distFolder + '/grid-options.AUTO.json', gridOptions),
+        writeJSONFile(distFolder + '/grid-api.AUTO.json', gridApi),
+        writeJSONFile(distFolder + '/row-node.AUTO.json', rowNode),
+        writeJSONFile(distFolder + '/column-options.AUTO.json', columnOptions),
+        writeJSONFile(distFolder + '/column.AUTO.json', column),
+        writeJSONFile(distFolder + '/columnGroup.AUTO.json', columnGroup),
+        writeJSONFile(distFolder + '/providedColumnGroup.AUTO.json', providedColumnGroup),
+        writeJSONFile(distFolder + '/interfaces.AUTO.json', interfaces),
+        writeJSONFile(distFolder + '/doc-interfaces.AUTO.json', docInterfaces),
+        writeJSONFile(distFolder + '/theming-api.AUTO.json', themeParams),
+    ]);
 
     console.log(`Generated OK.`);
-    console.log(`--------------------------------------------------------------------------------`);
+    console.log('-'.repeat(80));
 }
 
 // Run the executor for degugging

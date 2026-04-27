@@ -107,6 +107,7 @@ import type {
     FormulaDataSource,
     FormulaFuncs,
     FullWidthCellKeyDownEvent,
+    FullWidthNotesDataSource,
     GetBusinessKeyForNode,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -157,15 +158,19 @@ import type {
     NavigateToNextCell,
     NavigateToNextHeader,
     NewColumnsLoadedEvent,
+    NotesDataSource,
     OverlaySelectorFunc,
     OverlayType,
     PaginationChangedEvent,
     PaginationNumberFormatter,
+    PaginationPanel,
     PasteEndEvent,
     PasteStartEvent,
     PinnedRowDataChangedEvent,
     PinnedRowsChangedEvent,
+    PivotColumnGroupTotals,
     PivotMaxColumnsExceededEvent,
+    PivotRowTotals,
     PostProcessPopup,
     PostSortRows,
     ProcessCellForClipboard,
@@ -216,10 +221,12 @@ import type {
     StatusBar,
     StoreRefreshedEvent,
     TabToNextCell,
+    TabToNextGridContainer,
     TabToNextHeader,
     Theme,
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
+    Toolbar,
     TooltipHideEvent,
     TooltipShowEvent,
     TreeDataDisplayType,
@@ -405,6 +412,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public modules: Module[] | undefined;
 
     // @START@
+    /** Specifies the toolbar items to use in the toolbar.
+     * @agModule `ToolbarModule`
+     */
+    @Input() public toolbar: Toolbar | undefined = undefined;
     /** Specifies the status bar components to use in the status bar.
      * @agModule `StatusBarModule`
      */
@@ -460,6 +471,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TooltipModule`
      */
     @Input() public tooltipShowDelay: number | undefined = undefined;
+    /** The delay in milliseconds before a tooltip is shown when moving the pointer from one tooltip-enabled element to
+     * another while the previous tooltip is still visible or pending hide.
+     *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
+     * @default 200
+     * @agModule `TooltipModule`
+     */
+    @Input() public tooltipSwitchShowDelay: number | undefined = undefined;
     /** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
      *     **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
      * @default 10000
@@ -1089,7 +1107,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
      * Set to `false` to hide the page size selector.
      * @default true
-     * @initial
      * @agModule `PaginationModule`
      */
     @Input() public paginationPageSizeSelector: number[] | boolean | undefined = undefined;
@@ -1111,6 +1128,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `PaginationModule`
      */
     @Input({ transform: booleanAttribute }) public suppressPaginationPanel: boolean | undefined = undefined;
+    /** Controls which built-in components appear in the pagination panel and in what order.
+     * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+     * Components render in the order they appear in the array. Omitted components are hidden.
+     * An empty array hides the pagination panel entirely.
+     * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+     * @agModule `PaginationModule`
+     */
+    @Input() public paginationPanels: PaginationPanel[] | undefined = undefined;
     /** Set to `true` to enable pivot mode.
      * @default false
      * @agModule `PivotModule`
@@ -1136,11 +1161,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.
      * @agModule `PivotModule`
      */
-    @Input() public pivotColumnGroupTotals: 'before' | 'after' | undefined = undefined;
+    @Input() public pivotColumnGroupTotals: PivotColumnGroupTotals | undefined = undefined;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.
      * @agModule `PivotModule`
      */
-    @Input() public pivotRowTotals: 'before' | 'after' | undefined = undefined;
+    @Input() public pivotRowTotals: PivotRowTotals | undefined = undefined;
     /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column.
      * @default false
      * @initial
@@ -1169,6 +1194,29 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `FormulaModule`
      */
     @Input() public formulaDataSource: FormulaDataSource | undefined = undefined;
+    /** Provide a data source to control where notes are stored and retrieved.
+     * Can be updated to enable, disable, or replace Notes at runtime.
+     * @agModule `NotesModule`
+     */
+    @Input() public notesDataSource: NotesDataSource | FullWidthNotesDataSource | undefined = undefined;
+    /** Changes how existing notes are opened.
+     *  - `'hover'` - Existing notes open when hovering a noted cell or full width row.
+     *  - `'click'` - Existing notes open when clicking a noted cell or full width row.
+     * @default 'hover'
+     * @agModule `NotesModule`
+     */
+    @Input() public noteTrigger: 'hover' | 'click' | undefined = undefined;
+    /** The delay in milliseconds before a note is shown when hovering a noted cell.
+     * Only applies when `noteTrigger = 'hover'`.
+     * @default 180
+     * @agModule `NotesModule`
+     */
+    @Input() public noteShowDelay: number | undefined = undefined;
+    /** The delay in milliseconds before a note is hidden after the pointer leaves a noted cell or note popup.
+     * @default 220
+     * @agModule `NotesModule`
+     */
+    @Input() public noteHideDelay: number | undefined = undefined;
     /** A map of 'function name' to 'function' for custom functions that are used for formulas.
      * @initial
      * @agModule `FormulaModule`
@@ -1262,10 +1310,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowDragModule`
      */
     @Input({ transform: booleanAttribute }) public rowDragManaged: boolean | undefined = undefined;
-    /** When `true`, managed row dragging updates grouped column values so rows can move between groups. When `false`,
-     * managed dragging only reorders rows inside their existing group.
+    /** When `true`, the grid re-evaluates the grouping hierarchy after editing a grouped column value,
+     * moving the row to the correct group instantly. Also enables managed row dragging to update
+     * grouped column values so rows can move between groups.
      * @default false
-     * @agModule `RowDragModule`
+     * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public refreshAfterGroupEdit: boolean | undefined = undefined;
     /** Used if rowDragManaged is enabled and treeData is enabled,
@@ -1413,6 +1462,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule`
      */
     @Input({ transform: booleanAttribute }) public groupHideOpenParents: boolean | undefined = undefined;
+    /** When using `groupDisplayType='multipleColumns'` or `groupHideOpenParents=true`, hides group columns for levels
+     * that have not yet been expanded. Only the top-level group column is initially
+     * visible; each subsequent level becomes visible when at least one group at the
+     * preceding level is expanded. (Client Side Row Model only)
+     * @default false
+     * @agModule `RowGroupingModule`
+     */
+    @Input({ transform: booleanAttribute }) public groupHideColumnsUntilExpanded: boolean | undefined = undefined;
     /** Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and display the unbalanced nodes alongside group nodes.
      * @default false
      * @agModule `RowGroupingModule`
@@ -1788,6 +1845,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressRowTransform: boolean | undefined = undefined;
+    /** Set to `true` to suppress `content-visibility: auto` on the grid wrapper element. This degrades performance by causing the browser to render grids even when they are off screen, but may be necessary if your application depends on receiving resize events from hidden grids.
+     * @default false
+     * @initial
+     */
+    @Input({ transform: booleanAttribute }) public suppressContentVisibilityAuto: boolean | undefined = undefined;
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
      * @default false
      * @agModule `ColumnHoverModule`
@@ -1801,7 +1863,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input({ transform: booleanAttribute }) public deltaSort: boolean | undefined = undefined;
-    /**/
+    /** Specifies how tree data should be displayed.
+     *
+     * The options are:
+     *
+     * - `'auto'`: group column automatically added by the grid.
+     * - `'custom'`: informs the grid that group columns will be provided.
+     * @agModule `TreeDataModule`
+     */
     @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;
     /** @initial
      */
@@ -1931,6 +2000,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * or `false` to let the browser handle the tab behaviour.
      */
     @Input() public tabToNextCell: TabToNextCell<TData> | undefined = undefined;
+    /** Allows overriding the default behaviour when tabbing between core grid containers.
+     * Return a container name, a cell position, or a header position to focus that target,
+     * `true` to stay on the current focus, `false` to let the browser handle tab behaviour,
+     * or `undefined` to use the grid's default behaviour.
+     */
+    @Input() public tabToNextGridContainer: TabToNextGridContainer<TData> | undefined = undefined;
     /** A callback for localising text within the grid.
      * @initial
      * @agModule `LocaleModule`
@@ -2235,12 +2310,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public bulkEditingStopped: EventEmitter<BulkEditingStoppedEvent<TData>> = new EventEmitter<
         BulkEditingStoppedEvent<TData>
     >();
-    /** Batch editing has started (when batch editing is enabled).
+    /** Fired when the first edit is made after `api.startBatchEdit()` is called.
+     * This event fires lazily — not immediately on `api.startBatchEdit()`, but on the first cell value change or editor open within the batch session.
      */
     @Output() public batchEditingStarted: EventEmitter<BatchEditingStartedEvent<TData>> = new EventEmitter<
         BatchEditingStartedEvent<TData>
     >();
-    /** Batch editing has stopped (when batch editing is enabled).
+    /** Batch editing has stopped (when batch editing is enabled). Contains a list of edits if the batch was committed via `api.commitBatchEdit()`.
      */
     @Output() public batchEditingStopped: EventEmitter<BatchEditingStoppedEvent<TData>> = new EventEmitter<
         BatchEditingStoppedEvent<TData>

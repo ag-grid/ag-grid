@@ -18,6 +18,7 @@ import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCellComp, AgColumn> {
     private eButtonShowMainFilter: HTMLElement;
     private eFloatingFilterBody: HTMLElement;
@@ -97,7 +98,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupActive(): void {
-        const colDef = this.column.getColDef();
+        const colDef = this.column.colDef;
         const filterExists = !!colDef.filter;
         const floatingFilterExists = !!colDef.floatingFilter;
         this.active = filterExists && floatingFilterExists;
@@ -186,7 +187,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             if (!nextCol) {
                 break;
             }
-        } while (!nextCol.getColDef().filter || !nextCol.getColDef().floatingFilter);
+        } while (!nextCol.colDef.filter || !nextCol.colDef.floatingFilter);
 
         return nextCol;
     }
@@ -236,7 +237,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         if (notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             const lastFocusEvent = this.lastFocusEvent;
-            const fromTab = !!(lastFocusEvent && lastFocusEvent.key === KeyCode.TAB);
+            const fromTab = lastFocusEvent?.key === KeyCode.TAB;
 
             if (lastFocusEvent && fromTab) {
                 const shouldFocusLast = lastFocusEvent.shiftKey;
@@ -434,7 +435,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
                 if (this.gos.get('enableFilterHandlers')) {
                     params = {
                         ...params,
-                        model: _getFilterModel(this.beans.colFilter?.model ?? {}, this.column.getColId()),
+                        model: _getFilterModel(this.beans.colFilter?.model ?? {}, this.column.colId),
                         source,
                     };
                 }

@@ -2,7 +2,13 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked, executeTransactionsAsync } from '../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    executeTransactionsAsync,
+} from '../test-utils';
 
 describe('ag-grid grouping with transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -169,6 +175,12 @@ describe('ag-grid grouping with transactions', () => {
             · └─┬ LEAF_GROUP id:row-group-country-Germany-year-1902 ag-Grid-AutoColumn:1902
             · · └── LEAF id:6 name:"unknown 6" country:"Germany" year:1902
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── name "Name" width:200
+        `);
     });
 
     test('can change an entire group with async transactions', async () => {
@@ -249,6 +261,12 @@ describe('ag-grid grouping with transactions', () => {
             · │ └── LEAF id:1 name:"Ada Lovelace" country:"Germany" year:2000
             · └─┬ LEAF_GROUP id:row-group-country-Germany-year-2001 ag-Grid-AutoColumn:2001
             · · └── LEAF id:2 name:"Alan Turing" country:"Germany" year:2001
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── name "Name" width:200
         `);
     });
 

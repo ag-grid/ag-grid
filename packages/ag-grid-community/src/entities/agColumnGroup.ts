@@ -22,6 +22,7 @@ export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColu
     return col instanceof AgColumnGroup;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> implements ColumnGroup<TValue> {
     public readonly isColumn = false as const;
 
@@ -261,7 +262,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     }
 
     public getPaddingLevel(): number {
-        const parent = this.getParent();
+        const parent = this.parent;
 
         if (!this.isPadding() || !parent?.isPadding()) {
             return 0;
@@ -278,7 +279,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         // groups, where the expandable is actually the first parent that is not a padding group.
         let parentWithExpansion: AgColumnGroup | null = this;
         while (parentWithExpansion?.isPadding()) {
-            parentWithExpansion = parentWithExpansion.getParent();
+            parentWithExpansion = parentWithExpansion.parent;
         }
 
         const isExpandable = parentWithExpansion ? parentWithExpansion.getProvidedColumnGroup().isExpandable() : false;

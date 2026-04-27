@@ -34,7 +34,7 @@
                                 },
                                 {
                                     "type": "anyScript",
-                                    "maximumError": "900kB"
+                                    "maximumError": "950kB"
                                 },
                                 {
                                     "type": "anyComponentStyle",

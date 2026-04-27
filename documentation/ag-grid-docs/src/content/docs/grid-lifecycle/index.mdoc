@@ -15,9 +15,9 @@ The `gridReady` event fires upon grid initialisation but the grid may not be ful
 
 **Common Uses**
 
-* Customising Grid via API calls.
-* Event listener setup.
-* Grid-dependent setup code.
+-   Customising Grid via API calls.
+-   Event listener setup.
+-   Grid-dependent setup code.
 
 In this example, `gridReady` applies user pinning preferences before rendering data.
 
@@ -31,8 +31,7 @@ The `firstDataRendered` event fires the first time data is rendered into the gri
 
 The `rowDataUpdated` event fires every time the grid's data changes, by [Updating Row Data](./data-update-row-data/) or
 by applying [Transaction Updates](./data-update-transactions/). In the [Server Side Row Model](./server-side-model), use
-the [Model Updated Event](./grid-events/#reference-miscellaneous-modelUpdated) instead.
-
+the [Model Updated Event](./grid-events/#reference-gridLifecycle-modelUpdated) instead.
 
 In this example the time at which `firstDataRendered` and `rowDataUpdated` are fired is recorded above the grid. Note that `firstDataRendered` is only set on the initial load of the grid and is not updated when reloading data.
 
@@ -44,17 +43,20 @@ The `gridPreDestroyed` event fires just before the grid is destroyed and is remo
 
 **Common Uses**
 
-* Clean up resources.
-* Save grid state.
-* Disconnect other libraries.
+-   Clean up resources.
+-   Save grid state.
+-   Disconnect other libraries.
 
 The [Grid State Example](./grid-state/#saving-and-restoring-state) demonstrates how `gridPreDestroyed` can be used to save and restore grid state.
 
 {% if isFramework("angular") %}
+
 ### Angular PreDestroy Setup
+
 When using Angular, the `gridPreDestroyed` event handler must be registered via grid options instead of as an Output event handler to work correctly.
 
 For example:
+
 ```js
 this.gridOptions = {
     onGridPreDestroyed: () => {
@@ -62,5 +64,5 @@ this.gridOptions = {
     }
 };
 ```
-{% /if %}
 
+{% /if %}

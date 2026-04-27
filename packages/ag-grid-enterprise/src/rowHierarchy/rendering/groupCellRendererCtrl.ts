@@ -4,6 +4,7 @@ import type {
     GroupCellRendererParams,
     IGroupCellRenderer,
     IGroupCellRendererCtrl,
+    IRowNode,
     RowNode,
     UserCompDetails,
 } from 'ag-grid-community';
@@ -187,7 +188,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      */
     private setupExpand(): void {
         const { colModel } = this.beans;
-        const { eGridCell, column, suppressDoubleClickExpand } = this.params;
+        const { eGridCell, suppressDoubleClickExpand } = this.params;
 
         // Inserts the expand/collapse icons into the dom
         const addIconToDom = (iconName: 'groupExpanded' | 'groupContracted', element: HTMLElement) => {
@@ -208,11 +209,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                 return;
             }
 
-            const expanded = this.displayedNode.expanded;
+            const expanded = !!this.displayedNode.expanded;
             comp.setExpandedDisplayed(expanded);
             comp.setContractedDisplayed(!expanded);
 
-            _setAriaExpanded(eGridCell, !!this.displayedNode.expanded);
+            _setAriaExpanded(eGridCell, expanded);
         };
 
         const onExpandableChanged = () => {
@@ -222,10 +223,10 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             comp.toggleCss('ag-row-group', expandable);
 
             // indent non-expandable cells so they correctly indent with expandable cells
-            const pivotModeAndLeaf = !expandable && colModel.isPivotMode();
+            const pivotModeAndLeaf = !expandable && colModel.pivotMode;
             comp.toggleCss('ag-pivot-leaf-group', pivotModeAndLeaf);
             const normalModeNotTotalFooter =
-                !colModel.isPivotMode() && (!this.displayedNode.footer || this.displayedNode.level !== -1);
+                !colModel.pivotMode && (!this.displayedNode.footer || this.displayedNode.level !== -1);
             comp.toggleCss('ag-row-group-leaf-indent', !expandable && normalModeNotTotalFooter);
 
             // update the child count component
@@ -244,9 +245,8 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         };
 
         const setupListeners = () => {
-            // Cell double clicked
-            const isDoubleClickEdit = column?.isCellEditable(this.displayedNode) && this.gos.get('enableGroupEdit');
-            if (!isDoubleClickEdit && !suppressDoubleClickExpand) {
+            // Register dblclick for expand/collapse unless explicitly suppressed or the cell is group-editable
+            if (!suppressDoubleClickExpand && !this.isGroupCellEditable(this.displayedNode)) {
                 this.addManagedListeners(eGridCell, { dblclick: this.onCellDblClicked.bind(this) });
             }
             // Icons clicked
@@ -564,6 +564,16 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.cbComp = this.destroyBean(this.cbComp);
     }
 
+    /** Whether the group cell is editable via groupRowEditable or enableGroupEdit. */
+    private isGroupCellEditable(node: RowNode | IRowNode): boolean {
+        const column = this.params.column;
+        return (
+            !!column &&
+            (!!column.getColDef().groupRowEditable || this.gos.get('enableGroupEdit')) &&
+            column.isCellEditable(node)
+        );
+    }
+
     /**
      * Called when the expand / contract icon is clicked.
      */
@@ -588,9 +598,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return;
         }
 
-        const cellEditable = this.params.column?.isCellEditable(this.params.node);
-
-        if (cellEditable) {
+        if (this.isGroupCellEditable(this.params.node)) {
             return;
         }
 
@@ -618,7 +626,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     /**
-     * Called when expand or contract is attempted, to scroll the row and update the node state
+     * Called when expand or contract is attempted to update the node state
      * @param e originating event
      */
     private onExpandOrContract(e: MouseEvent | KeyboardEvent): void {
@@ -628,13 +636,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         const rowNode: RowNode = this.displayedNode;
-        const nextExpandState = !rowNode.expanded;
-
-        if (!nextExpandState && rowNode.sticky) {
-            this.beans.ctrlsSvc.getScrollFeature().setVerticalScrollPosition(rowNode.rowTop! - rowNode.stickyRowTop);
-        }
-
-        rowNode.setExpanded(nextExpandState, e);
+        rowNode.setExpanded(!rowNode.expanded, e);
     }
 
     public override destroy(): void {

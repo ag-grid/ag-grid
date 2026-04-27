@@ -12,8 +12,6 @@
     "syler.sass-indented",
     // shows the cost of each import
     "wix.vscode-import-cost",
-    // shows the cost of CSS properties
-    "kisstkondoros.csstriggers",
     // es6 string HTML highlight
     "tobermory.es6-string-html",
     // prettier
@@ -23,6 +21,8 @@
     // vitest test runner, used for behavioural tests
     "vitest.explorer",
     // Stylelint plugin used for linting CSS in the Theming API
-    "stylelint.vscode-stylelint"
+    "stylelint.vscode-stylelint",
+    // yaml
+    "redhat.vscode-yaml"
   ]
 }

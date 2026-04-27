@@ -247,7 +247,9 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
                 default:
                     cols = centerCols;
             }
-            cols && _removeFromArray(cols, column);
+            if (cols) {
+                _removeFromArray(cols, column);
+            }
         };
 
         const rowNumbersCol = this.beans.rowNumbersSvc?.getColumn(ROW_NUMBERS_COLUMN_ID);

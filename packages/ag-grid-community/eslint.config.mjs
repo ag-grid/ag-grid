@@ -22,7 +22,6 @@ export default [
             'no-irregular-whitespace': 'error',
             'prefer-const': ['error', { destructuring: 'all' }],
             'prefer-rest-params': 'error',
-            '@typescript-eslint/ban-types': 'error',
             '@typescript-eslint/no-unused-vars': 'error',
             '@typescript-eslint/no-var-requires': 'error',
             '@typescript-eslint/prefer-as-const': 'error',
@@ -43,6 +42,10 @@ export default [
                     selector: 'Literal[value=/^&(w*);$/i]',
                     message:
                         "Prefer unicode characters as they don't have to be parsed into HTML to display correctly.",
+                },
+                {
+                    selector: 'PropertyDefinition[static=true]',
+                    message: 'Static class properties prevent tree-shaking. Use an alternative if possible.',
                 },
             ],
             'no-restricted-properties': [
@@ -68,6 +71,14 @@ export default [
         },
     },
     {
-        ignores: ['webpack.config.js', 'jest.*.js', 'eslint.config.mjs', 'scripts/build-css.ts'],
+        ignores: [
+            'webpack.config.js',
+            'jest.*.js',
+            'eslint.config.mjs',
+            'e2e/',
+            'playwright.config.ts',
+            'esbuildBuild.cjs',
+            'vitest.umd.config.ts',
+        ],
     },
 ];

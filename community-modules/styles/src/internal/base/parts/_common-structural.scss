@@ -129,6 +129,7 @@
         white-space: normal;
 
         &.ag-layout-normal {
+            content-visibility: auto;
             height: 100%;
         }
     }
@@ -626,6 +627,28 @@
         }
     }
 
+    .ag-delay-render {
+        .ag-cell {
+            visibility: hidden;
+        }
+
+        .ag-row {
+            visibility: hidden;
+        }
+
+        .ag-spanned-cell-wrapper {
+            visibility: hidden;
+        }
+
+        .ag-header-cell {
+            visibility: hidden;
+        }
+
+        .ag-header-group-cell {
+            visibility: hidden;
+        }
+    }
+
     // /**
     //  ****************************
     //  * Column Panel
@@ -732,7 +755,8 @@
 
     .ag-column-drop.ag-column-drop-horizontal {
         white-space: nowrap;
-        overflow: hidden;
+        overflow: auto hidden;
+        scrollbar-width: thin;
     }
 
     .ag-column-drop-cell-button {
@@ -1132,6 +1156,14 @@
 
     .ag-sticky-bottom {
         box-sizing: content-box !important;
+
+        .ag-pinned-left-sticky-bottom,
+        .ag-sticky-bottom-container,
+        .ag-pinned-right-sticky-bottom {
+            // reset box-sizing as some customers override global box-sizing to
+            // "inherit" and we only want .ag-sticky-bottom to be content-box
+            box-sizing: border-box;
+        }
     }
 
     .ag-pinned-left-sticky-top,
@@ -1424,6 +1456,11 @@
         .ag-rich-select-loading {
             display: flex;
             min-height: 2rem;
+
+            .ag-loading-text {
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
     }
 
@@ -1445,6 +1482,47 @@
             text-overflow: ellipsis;
             &::placeholder {
                 opacity: 0.8;
+            }
+        }
+    }
+
+    .ag-rich-select-typing-multi {
+        .ag-picker-field-display {
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .ag-rich-select-pill-display {
+            display: flex;
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 100%;
+            align-items: center;
+            overflow: hidden;
+
+            .ag-pill-container {
+                flex: 0 1 auto;
+                min-width: 0;
+                max-width: 100%;
+                overflow: hidden;
+            }
+        }
+
+        .ag-rich-select-field-input {
+            flex: 0 0 auto;
+            min-width: 0;
+            max-width: 100%;
+
+            .ag-input-wrapper {
+                flex: 0 0 auto;
+                max-width: 100%;
+            }
+
+            .ag-input-field-input {
+                width: auto;
+                min-width: 1ch;
+                max-width: 100%;
             }
         }
     }
@@ -1519,9 +1597,7 @@
     //  ****************************
     // */
     .ag-tool-panel-wrapper {
-        display: flex;
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow: hidden;
         cursor: default;
         @include ag.selectable(none);
     }
@@ -1729,7 +1805,7 @@
 
     .ag-icon {
         display: block;
-        speak: none;
+        speak: never;
     }
 
     .ag-group {

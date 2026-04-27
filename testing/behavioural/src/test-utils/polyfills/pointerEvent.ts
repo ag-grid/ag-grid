@@ -247,6 +247,40 @@ function getTouchListConstructor(): TouchListConstructor {
     return (globalThis.TouchList as unknown as TouchListConstructor) ?? TouchListPolyfill;
 }
 
+/** Define `on<event>` handler properties on a prototype so that `'on<event>' in element` returns true. */
+function defineEventHandlerProps(proto: object, events: string[]): void {
+    for (const event of events) {
+        const prop = `on${event}`;
+        if (!(prop in proto)) {
+            Object.defineProperty(proto, prop, {
+                configurable: true,
+                enumerable: true,
+                get(this: any) {
+                    return this[`__${prop}`] ?? null;
+                },
+                set(this: any, value: any) {
+                    this[`__${prop}`] = value;
+                },
+            });
+        }
+    }
+}
+
+const POINTER_EVENTS = [
+    'pointerdown',
+    'pointermove',
+    'pointerup',
+    'pointercancel',
+    'pointerenter',
+    'pointerleave',
+    'pointerover',
+    'pointerout',
+    'gotpointercapture',
+    'lostpointercapture',
+];
+
+const TOUCH_EVENTS = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
+
 function ensurePointerEvent(): void {
     if (typeof (globalThis as any).PointerEvent !== 'function') {
         Object.defineProperty(globalThis, 'PointerEvent', {
@@ -254,6 +288,13 @@ function ensurePointerEvent(): void {
             writable: true,
             value: PointerEventPolyfill,
         });
+    }
+    // Ensure `'onpointerdown' in element` returns true (needed by _isEventSupported).
+    if (typeof HTMLElement !== 'undefined') {
+        defineEventHandlerProps(HTMLElement.prototype, POINTER_EVENTS);
+    }
+    if (typeof Document !== 'undefined') {
+        defineEventHandlerProps(Document.prototype, POINTER_EVENTS);
     }
 }
 
@@ -290,6 +331,14 @@ function ensureTouch(): void {
             writable: true,
             value: TouchEventPolyfill,
         });
+    }
+
+    // Ensure `'ontouchstart' in element` returns true (needed by _isEventSupported).
+    if (typeof HTMLElement !== 'undefined') {
+        defineEventHandlerProps(HTMLElement.prototype, TOUCH_EVENTS);
+    }
+    if (typeof Document !== 'undefined') {
+        defineEventHandlerProps(Document.prototype, TOUCH_EVENTS);
     }
 }
 

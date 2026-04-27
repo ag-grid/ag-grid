@@ -1,10 +1,26 @@
 {
     "_config_": {
-        "codeSrc": "grid-options.AUTO.json"
+        "codeSrc": "grid-options.AUTO.json",
+        "validate": true,
+        "excludeEvents": true,
+        "undocumentedProperties": {
+            "renderingMode": "React-only, so needs to be omitted from grid-options/properties.json (it is documented in grid-options/react-grid-options.json)",
+            "enableGroupEdit": "AG-2995 - 'Remove the grid option enableGroupEdit from docs API page to discourage its use'"
+        }
     },
     "accessories": {
         "meta": {
             "displayName": "Accessories"
+        },
+        "toolbar": {
+            "more": {
+                "name": "Toolbar",
+                "url": "./toolbar/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": ["IToolbarItemComp", "IconName"],
+                "include": []
+            }
         },
         "statusBar": {
             "more": {
@@ -217,37 +233,37 @@
         "headerHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "groupHeaderHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "floatingFiltersHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "pivotHeaderHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "pivotGroupHeaderHeight": {
             "more": {
                 "name": "Header Height",
-                "url": "./column-headers/#header-height"
+                "url": "./column-headers-styling/#header-height"
             }
         },
         "hidePaddedHeaderRows": {
             "more": {
                 "name": "Hiding Additional Header Rows",
-                "url": "./column-headers/#hide-padded-column-headers"
+                "url": "./column-groups/#hide-padded-header-rows"
             }
         }
     },
@@ -621,6 +637,39 @@
             }
         }
     },
+    "notes": {
+        "meta": {
+            "displayName": "Notes",
+            "page": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "notesDataSource": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteTrigger": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteShowDelay": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteHideDelay": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        }
+    },
     "charts": {
         "meta": {
             "displayName": "Integrated Charts",
@@ -990,6 +1039,12 @@
                 "name": "Custom Navigation",
                 "url": "./keyboard-navigation/#custom-navigation"
             }
+        },
+        "tabToNextGridContainer": {
+            "more": {
+                "name": "Custom Navigation",
+                "url": "./keyboard-navigation/#custom-tabbing-between-grid-containers"
+            }
         }
     },
     "pagination": {
@@ -1016,6 +1071,12 @@
             "more": {
                 "name": "Customising Pagination",
                 "url": "./row-pagination/#example-customising-pagination"
+            }
+        },
+        "paginationPanels": {
+            "more": {
+                "name": "Pagination Panel Layout",
+                "url": "./row-pagination/#pagination-panel-layout"
             }
         },
         "paginationNumberFormatter": {
@@ -1084,7 +1145,7 @@
         "suppressAggFilteredOnly": {
             "more": {
                 "name": "Aggregate Before Filtering",
-                "url": "./aggregation-custom-functions/"
+                "url": "./aggregation-filtering/"
             }
         },
         "groupAggFiltering": {
@@ -1144,6 +1205,12 @@
             "more": {
                 "name": "Pivot Row Totals",
                 "url": "./pivoting-totals/#row-totals"
+            }
+        },
+        "pivotColumnGroupTotals": {
+            "more": {
+                "name": "Pivot Column Group Totals",
+                "url": "./pivoting-totals/#column-group-totals"
             }
         },
         "pivotSuppressAutoColumn": {
@@ -1259,7 +1326,9 @@
                 "name": "Row Spanning",
                 "url": "./row-spanning/"
             }
-        }
+        },
+        "suppressRowTransform": {},
+        "suppressContentVisibilityAuto": {}
     },
     "rowDragging": {
         "meta": {
@@ -1352,6 +1421,12 @@
                 "name": "Embedded Full Width Rows",
                 "url": "./full-width-rows/#embedded-full-width-rows"
             }
+        },
+        "isFullWidthRow": {
+            "more": {
+                "name": "Full Width Rows",
+                "url": "./full-width-rows/"
+            }
         }
     },
     "rowGrouping": {
@@ -1398,6 +1473,12 @@
             "more": {
                 "name": "Hide Open Parents",
                 "url": "./grouping-multiple-group-columns/#hiding-expanded-parent-rows"
+            }
+        },
+        "groupHideColumnsUntilExpanded": {
+            "more": {
+                "name": "Hiding Group Columns Until Expanded",
+                "url": "./grouping-multiple-group-columns/#hiding-group-columns-until-expanded"
             }
         },
         "groupHideParentOfSingleChild": {
@@ -1524,6 +1605,7 @@
                 "url": "./tree-data/"
             }
         },
+        "treeDataDisplayType": {},
         "autoGroupColumnDef": {
             "more": {
                 "name": "Group Column Configuration",
@@ -1699,8 +1781,18 @@
                 "url": "./server-side-model-pivoting/#supplying-pivot-result-fields-simple"
             }
         },
-        "serverSideSortAllLevels": {},
-        "serverSideEnableClientSideSort": {},
+        "serverSideSortAllLevels": {
+            "more": {
+                "name": "Sorting All Levels",
+                "url": "./server-side-model-sorting/#sorting-all-levels"
+            }
+        },
+        "serverSideEnableClientSideSort": {
+            "more": {
+                "name": "Client-side Sorting",
+                "url": "./server-side-model-sorting/#client-side-sorting"
+            }
+        },
         "serverSideOnlyRefreshFilteredGroups": {
             "more": {
                 "name": "Filters",
@@ -2060,6 +2152,12 @@
             }
         },
         "tooltipShowDelay": {
+            "more": {
+                "name": "Tooltip Show and Hide Delay",
+                "url": "./tooltips/#show-and-hide-delay"
+            }
+        },
+        "tooltipSwitchShowDelay": {
             "more": {
                 "name": "Tooltip Show and Hide Delay",
                 "url": "./tooltips/#show-and-hide-delay"

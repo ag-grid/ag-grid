@@ -48,7 +48,7 @@ const gridOptions = {
             field: 'make',
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-                values: extractKeys(carMappings) 
+                values: extractKeys(carMappings)
             },
             // convert code to value
             valueFormatter: params => {
@@ -80,15 +80,15 @@ cellEditorParams: {
 
 The following example demonstrates how `Value Handlers` can be combined to work with reference data:
 
-* **'Make' Column:** uses the built-in `'select'` Cell Editor. Mapped names are displayed in the dropdown list and selections are saved as `'make'` codes in the underlying data.
+-   **'Make' Column:** uses the built-in `'select'` Cell Editor. Mapped names are displayed in the dropdown list and selections are saved as `'make'` codes in the underlying data.
 
-* **'Exterior Colour' Column:** uses the built-in `'richSelect'` Cell Editor. Mapped names are displayed in the dropdown list and selections are saved as `'colour'` codes in the underlying data.
+-   **'Exterior Colour' Column:** uses the built-in `'richSelect'` Cell Editor. Mapped names are displayed in the dropdown list and selections are saved as `'colour'` codes in the underlying data.
 
-* **'Interior Colour' Column:** uses a Text Cell Editor with `useFormatter=true`. Mapped names are displayed in the cells and edited values are saved as `'colour'` codes in the underlying data. (Note: a valid name must be entered or the value will be saved as undefined.)
+-   **'Interior Colour' Column:** uses a Text Cell Editor with `useFormatter=true`. Mapped names are displayed in the cells and edited values are saved as `'colour'` codes in the underlying data. (Note: a valid name must be entered or the value will be saved as undefined.)
 
-* **Set Filters:** display a list of names rather than codes.
+-   **Set Filters:** display a list of names rather than codes.
 
-* **'Price' Columns:** additionally demonstrate the use of `valueGetters` and `valueSetters`.
+-   **'Price' Columns:** additionally demonstrate the use of `valueGetters` and `valueSetters`.
 
 {% gridExampleRunner title="Value Handlers" name="ref-data-value-handler" /%}
 
@@ -122,14 +122,14 @@ Like in the previous example using Value Handlers, where the underlying data con
 
 The following example demonstrates how the `refData` property simplifies working with reference data:
 
-* **'Make' Column:** uses the built-in `'select'` Cell Editor with the `refData` property specified. Mapped names are displayed in the dropdown list and selections are saved as `'make'` codes in the underlying data.
+-   **'Make' Column:** uses the built-in `'select'` Cell Editor with the `refData` property specified. Mapped names are displayed in the dropdown list and selections are saved as `'make'` codes in the underlying data.
 
-* **'Exterior Colour' Column:** uses the built-in `'richSelect'` Cell Editor with the `refData` property specified. Mapped names are displayed in the dropdown list and selections are saved as `'colour'` codes in the underlying data.
+-   **'Exterior Colour' Column:** uses the built-in `'richSelect'` Cell Editor with the `refData` property specified. Mapped names are displayed in the dropdown list and selections are saved as `'colour'` codes in the underlying data.
 
-* **'Interior Colour' Column:** uses a Text Cell Editor (not recommended) with `refData`. Mapped names are displayed in the cells but when editing, colour codes (`cb`,`bw`,`fg`) must be entered directly. As users should not know codes, the Text Cell Editor is not recommended for use with `refData` in real world applications.
+-   **'Interior Colour' Column:** uses a Text Cell Editor (not recommended) with `refData`. Mapped names are displayed in the cells but when editing, colour codes (`cb`,`bw`,`fg`) must be entered directly. As users should not know codes, the Text Cell Editor is not recommended for use with `refData` in real world applications.
 
-* **Set Filters:** display a list of names rather than codes.
+-   **Set Filters:** display a list of names rather than codes.
 
-* **'Price' Columns:** additionally demonstrate the use of `valueGetters` and `valueSetters`.
+-   **'Price' Columns:** additionally demonstrate the use of `valueGetters` and `valueSetters`.
 
 {% gridExampleRunner title="Ref Data Property" name="ref-data-property" /%}

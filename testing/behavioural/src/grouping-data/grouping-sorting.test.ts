@@ -1,11 +1,11 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 
 describe('ag-grid grouping sorting', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [TextFilterModule, ClientSideRowModelModule, RowGroupingModule],
     });
 
     beforeEach(() => {
@@ -100,6 +100,14 @@ describe('ag-grid grouping sorting', () => {
             · ├── LEAF id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:4
             · └── LEAF id:5 country:"Italy" athlete:"Luigi Verdi" sport:"Football" gold:5
         `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── athlete "Athlete" width:200
+            ├── sport "Sport" width:200 sort:desc
+            └── gold "Gold" width:200 sort:asc
+        `);
     });
 
     test('grouping with sort and filter combined', async () => {
@@ -188,6 +196,14 @@ describe('ag-grid grouping sorting', () => {
             │ └── LEAF id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:4
             └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └── LEAF id:6 country:"France" athlete:"Jean Dupont" sport:"Soccer" gold:1
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            ├── athlete "Athlete" width:200 sort:asc
+            ├── sport "Sport" width:200
+            └── gold "Gold" width:200 sort:desc
         `);
     });
 
@@ -343,62 +359,6 @@ describe('ag-grid grouping sorting', () => {
             · │ └── LEAF id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer" gold:4
             · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
             · · └── LEAF id:5 country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football" gold:5
-        `);
-    });
-
-    test('delta sorting resorts grouped rows when only part of the data changes', async () => {
-        const rowData = [
-            { id: 'ire-a', country: 'Ireland', athlete: 'Aine', score: 40 },
-            { id: 'ire-b', country: 'Ireland', athlete: 'Brigid', score: 30 },
-            { id: 'esp-a', country: 'Spain', athlete: 'Carlos', score: 25 },
-            { id: 'esp-b', country: 'Spain', athlete: 'Diego', score: 10 },
-        ];
-
-        const rowById = Object.fromEntries(rowData.map((row) => [row.id, row])) as Record<
-            string,
-            (typeof rowData)[number]
-        >;
-
-        const api = gridsManager.createGrid('groupingDeltaSort', {
-            columnDefs: [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'athlete' },
-                { field: 'score', sortable: true, aggFunc: 'sum' },
-            ],
-            autoGroupColumnDef: { headerName: 'Country' },
-            animateRows: false,
-            groupDefaultExpanded: -1,
-            rowData,
-            deltaSort: true,
-            getRowId: (params) => params.data.id,
-        });
-
-        api.applyColumnState({ state: [{ colId: 'score', sort: 'desc' }] });
-
-        await new GridRows(api, 'group delta sort initial').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" score:70
-            │ ├── LEAF id:ire-a country:"Ireland" athlete:"Aine" score:40
-            │ └── LEAF id:ire-b country:"Ireland" athlete:"Brigid" score:30
-            └─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain" score:35
-            · ├── LEAF id:esp-a country:"Spain" athlete:"Carlos" score:25
-            · └── LEAF id:esp-b country:"Spain" athlete:"Diego" score:10
-        `);
-
-        const updateRow = (id: string, score: number) => ({ ...rowById[id], score });
-
-        applyTransactionChecked(api, {
-            update: [updateRow('esp-a', 80), updateRow('ire-b', 5)],
-        });
-
-        await new GridRows(api, 'group delta sort updated').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain" score:90
-            │ ├── LEAF id:esp-a country:"Spain" athlete:"Carlos" score:80
-            │ └── LEAF id:esp-b country:"Spain" athlete:"Diego" score:10
-            └─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" score:45
-            · ├── LEAF id:ire-a country:"Ireland" athlete:"Aine" score:40
-            · └── LEAF id:ire-b country:"Ireland" athlete:"Brigid" score:5
         `);
     });
 });

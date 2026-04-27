@@ -1,6 +1,6 @@
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { CONTACT_FORM_DATA, RECAPTCHA_SITE_KEY, RECAPTCHA_URL } from '@ag-website-shared/constants';
+import { CONTACT_FORM_DATA, PRIVACY_POLICY_URL, RECAPTCHA_SITE_KEY, RECAPTCHA_URL } from '@ag-website-shared/constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
 import type { FunctionComponent } from 'react';
@@ -207,7 +207,7 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
                 value="Send us a message"
             />
             <p className={styles.privacyMessage}>
-                By submitting this form you agree to our <a href="/privacy/">Privacy Policy</a>.
+                By submitting this form you agree to our <a href={PRIVACY_POLICY_URL}>Privacy Policy</a>.
             </p>
         </form>
     );

@@ -81,7 +81,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
         () =>
             getBootstrapSnippet({
                 framework,
-                license: (licenseState.chartsNoGridEnterpriseError ? '' : userLicense) || 'your License Key',
+                license: (licenseState.chartsNoGridEnterpriseError ? '' : userLicense) || 'YOUR_LICENSE_KEY',
                 isIntegratedCharts,
             }),
         [framework, licenseState, userLicense, isIntegratedCharts]
@@ -91,7 +91,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
             seedRepos.filter((seedRepo) => {
                 return seedRepo.framework === framework;
             }),
-        [seedRepos, isIntegratedCharts, framework]
+        [seedRepos, framework]
     );
     const productName = 'AG Grid';
 

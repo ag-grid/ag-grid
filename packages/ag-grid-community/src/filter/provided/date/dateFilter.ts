@@ -9,7 +9,7 @@ import { _warn } from '../../../validation/logging';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
-import { removeItems } from '../simpleFilterUtils';
+import { getNumberOfInputs, removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { mapValuesFromDateFilterModel } from './dateFilterUtils';
@@ -104,9 +104,11 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         const from = dateConditionFromComps[position];
         const to = dateConditionToComps[position];
 
+        const numberOfInputs = getNumberOfInputs(this.getConditionType(position), this.optionsFactory);
+
         const fromDate = from.getDate();
         const toDate = to.getDate();
-        const localeKey = getValidityMessageKey(fromDate, toDate, isFrom);
+        const localeKey = numberOfInputs >= 2 ? getRangeValidityMessageKey(fromDate, toDate, isFrom) : null;
         const message = localeKey ? this.translate(localeKey, [String(isFrom ? toDate : fromDate)]) : '';
 
         // FF seems to handle cursors/focus sufficiently well for the validation to be left as synchronous.
@@ -284,9 +286,10 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     protected createCondition(position: number): DateFilterModel {
         const type = this.getConditionType(position);
         const model: Partial<DateFilterModel> = {};
-
+        const { params, filterType } = this;
         const values = this.getValues(position);
-        const separator = this.params.useIsoSeparator ? 'T' : ' ';
+
+        const separator = params.useIsoSeparator ? 'T' : ' ';
         if (values.length > 0) {
             model.dateFrom = _serialiseDate(values[0], true, separator);
         }
@@ -297,7 +300,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         return {
             dateFrom: null,
             dateTo: null,
-            filterType: this.filterType,
+            filterType,
             type,
             ...model,
         };
@@ -355,7 +358,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     }
 }
 
-function getValidityMessageKey(
+function getRangeValidityMessageKey(
     fromDate: Date | null,
     toDate: Date | null,
     isFrom: boolean

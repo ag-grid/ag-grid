@@ -5,7 +5,7 @@ import { VueFrameworkOverrides } from '@/components/VueFrameworkOverrides';
 import type { Props } from '@/components/utils';
 import { debounce, deepToRaw, getProps } from '@/components/utils';
 import type { Ref } from 'vue';
-import { getCurrentInstance, markRaw, onMounted, onUnmounted, ref, toRaw, toRefs, useTemplateRef, watch } from 'vue';
+import { getCurrentInstance, markRaw, onMounted, onUnmounted, shallowRef, toRefs, useTemplateRef, watch } from 'vue';
 
 import type { AgEventType, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
@@ -14,6 +14,7 @@ import {
     RowApiModule,
     _PUBLIC_EVENT_HANDLERS_MAP,
     _GET_ALL_GRID_OPTIONS,
+    _GET_SHALLOW_GRID_OPTIONS,
     _combineAttributesAndGridOptions,
     _processOnChange,
     _warn,
@@ -24,36 +25,45 @@ const props = withDefaults(defineProps<Props<TData>>(), getProps());
 
 const rootRef = useTemplateRef<HTMLDivElement>('root');
 
-const api: Ref<GridApi | undefined> = ref(undefined);
-const gridCreated: Ref<boolean> = ref(false);
-const isDestroyed: Ref<boolean> = ref(false);
-const gridReadyFired: Ref<boolean> = ref(false);
-const batchChanges: Ref<{ [key: string]: any }> = ref({});
-const batchTimeout: Ref<number | null> = ref(null);
+// shallowRef avoids deep reactive proxying — grid API and simple flags only change at the top level
+const api: Ref<GridApi | undefined> = shallowRef(undefined);
+const gridCreated = shallowRef(false);
+const isDestroyed = shallowRef(false);
+const gridReadyFired = shallowRef(false);
+// transient batch state doesn't need Vue reactivity tracking
+let batchChanges: { [key: string]: any } = {};
+let batchScheduled = false;
 
 // setup up watches
 const propsAsRefs = toRefs<any>(props);
+// Per-option shallow vs deep watching — reduces overhead for options that don't need deep tracking
+const shallowOptions: Set<string> = new Set(_GET_SHALLOW_GRID_OPTIONS());
+
 _GET_ALL_GRID_OPTIONS()
     .filter((propertyName: string) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
     .forEach((propertyName: string) => {
+        const propRef = propsAsRefs[propertyName];
+        if (!propRef) return; // skip options not declared as Vue props
         watch(
-            () => propsAsRefs[propertyName],
-            (oldValue: any, newValue: any) => {
-                if((propertyName === "rowData" && !emittingRowData.value) ||
+            propRef,
+            (newValue: any, oldValue: any) => {
+                if ((propertyName === "rowData" && !emittingRowData.value) ||
                     propertyName !== "rowData") {
-                    processChanges(propertyName, oldValue, newValue);
+                    processChanges(propertyName, newValue, oldValue);
                 }
-                emittingRowData.value = false;
+                if (propertyName === "rowData") {
+                    emittingRowData.value = false;
+                }
             },
-            { deep: true }
+            shallowOptions.has(propertyName) ? undefined : { deep: true }
         );
     });
 
 // v-model code start
 const ROW_DATA_EVENTS: Set<string> = new Set(['rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
 const rowDataModel = defineModel<TData[]>();
-const rowDataUpdating: Ref<boolean> = ref(false);
-const emittingRowData: Ref<boolean> = ref(false);
+const rowDataUpdating = shallowRef(false);
+const emittingRowData = shallowRef(false);
 const emits = defineEmits<{
     'update:modelValue': [event: TData[]];
 }>();
@@ -129,22 +139,26 @@ const globalEventListenerFactory = (restrictToSyncOnly?: boolean) => {
     };
 };
 
-const processChanges = (propertyName: string, currentValue: any, previousValue: any) => {
+const processChanges = (propertyName: string, currentValue: any, _previousValue?: any) => {
     if (gridCreated.value) {
-        let value = currentValue.value || currentValue;
+        let value = currentValue;
         if (propertyName === 'rowData' && value != undefined) {
             // Prevent the grids internal edits from being reactive
             value = deepToRaw<TData[]>(value);
         }
 
-        batchChanges.value[propertyName] = value;
-        if (batchTimeout.value == null) {
-            batchTimeout.value = window.setTimeout(() => {
-                // Clear the timeout before processing the changes in case processChanges triggers another change.
-                batchTimeout.value = null;
-                _processOnChange(batchChanges.value, api.value!);
-                batchChanges.value = {};
-            }, 0);
+        batchChanges[propertyName] = value;
+        if (!batchScheduled) {
+            batchScheduled = true;
+            // queueMicrotask fires sooner than setTimeout(0) (microtask vs macrotask), reducing latency
+            queueMicrotask(() => {
+                batchScheduled = false;
+                // Guard against updates after grid destruction (microtask may fire after unmount)
+                if (!isDestroyed.value && api.value) {
+                    _processOnChange(batchChanges, api.value!);
+                }
+                batchChanges = {};
+            });
         }
     }
 };
@@ -189,6 +203,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (gridCreated.value) {
+    // Cancel pending debounced timer to prevent callbacks after grid destruction
+    emitRowModel.cancel();
     api?.value?.destroy();
     isDestroyed.value = true;
   }

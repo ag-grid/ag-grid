@@ -19,20 +19,24 @@
         "!{projectRoot}/vitest.config.ts",
         "{workspaceRoot}/external/ag-website-shared/**",
         "charts",
+        "{projectRoot}/.astro/cache/sitemap/**",
         { "env": "PUBLIC_PACKAGE_VERSION" }
       ],
       "cache": true,
-      "command": "astro build",
+      "command": "tsx ../../external/ag-website-shared/scripts/buildWithSitemapCache.ts --silent",
       "options": {
-        "cwd": "{projectRoot}",
-        "silent": true
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "staging": {},
-        "archive": {},
-        "production": {},
+        "archive": {
+          "args": "--clean-cache=true --run-second-build=true"
+        },
+        "production": {
+          "args": "--clean-cache=true --run-second-build=true"
+        },
         "verbose": {
-          "silent": null
+          "args": "--silent=false"
         }
       }
     },
@@ -61,7 +65,9 @@
     },
     "dev": {
       "dependsOn": [
-        "^build",
+        "^build:types",
+        "^build:package",
+        "^build:copy-styles",
         "generate-doc-references",
         "generate-examples",
         "^docs-resolved-interfaces",
@@ -117,7 +123,13 @@
     "test:vitest": {
       "command": "npx vitest",
       "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
-      "dependsOn": ["ag-grid-community:build:css", "ag-grid-enterprise:build:css", "generate-doc-references"],
+      "dependsOn": [
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package",
+        "ag-grid-enterprise:build:types",
+        "ag-grid-enterprise:build:package",
+        "generate-doc-references"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "config": "vitest.config.ts",

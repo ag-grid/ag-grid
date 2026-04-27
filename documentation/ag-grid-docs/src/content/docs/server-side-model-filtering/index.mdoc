@@ -62,13 +62,23 @@ For more details on properties and values used in these filters see the sections
 
 The example below demonstrates filtering using Simple Column Filters, note the following:
 
-* The **Athlete** column has a `'text'` filter defined using `filter: 'agTextColumnFilter'`.
-* The **Year** column has a `'number'` filter defined using `filter: 'agNumberColumnFilter'`.
-* The medals columns have a `'number'` filter defined using `filter: 'agNumberColumnFilter'` on the `'number'` column type.
-* The server uses the metadata contained in the `filterModel` to filter the rows.
-* Open the browser's dev console to view the `filterModel` supplied in the request to the datasource.
+-   The **Athlete** column has a `'text'` filter defined using `filter: 'agTextColumnFilter'`.
+-   The **Year** column has a `'number'` filter defined using `filter: 'agNumberColumnFilter'`.
+-   The medals columns have a `'number'` filter defined using `filter: 'agNumberColumnFilter'` on the `'number'` column type.
+-   The server uses the metadata contained in the `filterModel` to filter the rows.
+-   Open the browser's dev console to view the `filterModel` supplied in the request to the datasource.
 
 {% gridExampleRunner title="Server-Side Filtering" name="infinite-simple" /%}
+
+## Date Filters
+
+For more details on Date Filter model properties and available options see [Date Filter](./filter-date/) and [Filter Model](./filter-date/#filter-model).
+
+### Preset Date Range Filters
+
+When using a Date Filter with built-in date ranges (for example, Today or Last 7 Days), the Grid State model and the SSRM request model are identical. Both use the preset `type` and leave `dateFrom` and `dateTo` as `undefined`. Your server (or custom filtering code) must interpret the preset and apply the equivalent date range logic using its own time zone and locale rules.
+
+{% interfaceDocumentation interfaceName="PresetDateRangeFilterModel" config={"description":""} /%}
 
 ## Set Filtering
 
@@ -127,14 +137,14 @@ For more details on setting values, see [Supplying Filter Values](./filter-set-f
 
 The example below demonstrates Server-side Filtering using the Set Filter. Note the following:
 
-* The **Country** column has a Set Filter defined using `filter: 'agSetColumnFilter'`.
-* The **Sport** column has a [Multi Filter](./filter-multi/) defined using `filter: 'agMultiColumnFilter'`, it combines a Set Filter and a [Text Filter](./filter-text/).
-* Set Filter values are fetched asynchronously and supplied via the `params.success(values)` callback.
-* The filter for the **Country** column is using [complex objects](./filter-set-filter-list/#complex-objects). The country name is shown in the Filter List, but the `filterModel` (and request) use the country code.
-* The filter for the **Sport** column only shows the values which are available for the selected countries.
-  When the filter for the **Country** column is changed, the values for the **Sport** filter are updated.
-* The server uses the metadata contained in the `filterModel` to filter the rows.
-* Open the browser's dev console to view the `filterModel` supplied in the request to the datasource.
+-   The **Country** column has a Set Filter defined using `filter: 'agSetColumnFilter'`.
+-   The **Sport** column has a [Multi Filter](./filter-multi/) defined using `filter: 'agMultiColumnFilter'`, it combines a Set Filter and a [Text Filter](./filter-text/).
+-   Set Filter values are fetched asynchronously and supplied via the `params.success(values)` callback.
+-   The filter for the **Country** column is using [complex objects](./filter-set-filter-list/#complex-objects). The country name is shown in the Filter List, but the `filterModel` (and request) use the country code.
+-   The filter for the **Sport** column only shows the values which are available for the selected countries.
+    When the filter for the **Country** column is changed, the values for the **Sport** filter are updated.
+-   The server uses the metadata contained in the `filterModel` to filter the rows.
+-   Open the browser's dev console to view the `filterModel` supplied in the request to the datasource.
 
 {% gridExampleRunner title="Set Filter Server-Side Filtering" name="infinite-set" /%}
 
@@ -157,7 +167,3 @@ Note that [Cell Data Types](./cell-data-types/) must be supplied in order for th
 ## No Matching Rows Overlay
 
 When a filter model is applied and the data source returns no rows then the no-matching-rows overlay will automatically be displayed in the grid. See [Provided Overlays](./overlays-provided/#suppress-overlays) for more details and how to suppress the overlay.
-
-## Next Up
-
-Continue to the next section to learn about [SSRM Row Grouping](./server-side-model-grouping/).

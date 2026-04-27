@@ -3,71 +3,192 @@ title: 'Batch Editing'
 enterprise: true
 ---
 
-Batch editing allows you to edit multiple cells or rows in the grid before committing or reverting these edits. This is useful for scenarios where you want to make several edits at once without immediately updating the data source.
-
-{% note %}
-Batch editing is an advanced feature only available via the API to allow you to tailor it to your specific needs.
-{% /note %}
+Batch editing lets you queue edits across multiple cells or rows, then commit or discard them all at once.
 
 ## Enabling Batch Editing
 
-Batch Editing is enabled by calling the grid API method `startBatchEdit()`.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    onGridReady: (params) => {
-        params.api.startBatchEdit();
-    }
-}
-```
-
-Once enabled, `api.commitBatchEdit()` or `api.cancelBatchEdit()` can be called to complete the batch edit operation.
+1. **Start** — call `api.startBatchEdit()` to start a batch edit.
+2. **Edit** — make one or more edits. Pending values are displayed in the grid but not written to the data.
+3. **Commit or cancel** — call `api.commitBatchEdit()` to apply all pending edits to the data. To discard the pending edits and revert the display to the original data values call `api.cancelBatchEdit()`.
 
 {% note %}
-Batch Edit is only compatible with the [Client-Side Row Model](./row-models/).
+Batch editing is only available via the API and only compatible with the [Client-Side Row Model](./row-models/).
 {% /note %}
-
-## Batch Editing API
-
-Using the following API calls, you can build your own experience around AG Grid's batch editing functionality.
-
-The following example demonstrates a simple batch editing scenario: starting a batch, queuing edits and then either committing them or discarding them.
 
 {% gridExampleRunner title="Batch Editing API" name="batch-editing-api" exampleHeight=560 /%}
 
-The grid API methods `startEditingCell()` and `stopEditing()` can be used to control the editing state of individual cells. When you start editing a cell after enabling Batch Editing, the grid enters a batch editing mode where it can track changes. `isBatchEditing()` can be used to check if the grid is currently in batch editing mode. In this mode, `startEditingCell()` and `stopEditing()` affect only the cell editors, not the overall batch.
+## Batch Editing Lifecycle
 
-{% apiDocumentation source="grid-api/api.json" section="batch-editing" names=["isBatchEditing", "startBatchEdit", "commitBatchEdit", "cancelBatchEdit"] /%}
+Cell and row editing events (`cellEditingStarted`, `cellEditingStopped`, etc.) fire normally when editors open and close.
+
+The key difference is that `cellValueChanged` and `rowValueChanged` are deferred — they only fire when `commitBatchEdit()` is called. If `cancelBatchEdit()` is called instead, pending values are discarded and no value-changed events fire.
+
+Two batch-specific events are also available:
+
+{% apiDocumentation source="grid-events/events.json" section="editing" names=["batchEditingStarted", "batchEditingStopped"] /%}
+
+### Pending Values
+
+Edits made during a batch are stored as **pending values** — they are not applied to the data until committed.
+
+-   **Display features** (cell rendering, copy/paste, fill handle) reflect pending values immediately.
+-   **Data features** (sorting, filtering, grouping, aggregation) use committed data until the batch is committed.
+-   **Clipboard paste** — pasted values during a batch are staged as pending edits rather than being written to data.
+-   **On cancel**, all pending values are discarded and the grid reverts to the original data.
+
+## Reading Values
+
+There are two main APIs to read cell values but they differ in their default behaviour.
+
+-   **`rowNode.getDataValue()`** — defaults to `from: 'data'` (ignores pending edits). Use for data-facing reads.
+-   **`api.getCellValue()`** — defaults to `from: 'edit'` (shows pending edits). Use for UI-facing reads.
+
+### rowNode.getDataValue()
+
+{% apiDocumentation source="row-object/properties.json" section="data" names=["getDataValue"] /%}
+
+The table below shows the impact of the `from` parameter on the value that is returned. The first non-empty source reading left-to-right is used. The Aggregation column only applies to group rows with an `aggFunc`.
+
+| `from`             | Active Editor (if editing) | Pending Batch (if batching) | Aggregation (if present) | Committed Data |
+| ------------------ | -------------------------- | --------------------------- | ------------------------ | -------------- |
+| `'data'` (default) | —                          | —                           | Agg value                | Fallback       |
+| `'edit'`           | Used if present            | Used if no editor           | Agg value                | Fallback       |
+| `'batch'`          | —                          | Used if present             | Agg value                | Fallback       |
+| `'value'`          | —                          | —                           | Scalar (unwrapped)       | Fallback       |
+| `'data-raw'`       | —                          | —                           | —                        | Always used    |
+
+**Aggregate Values**
+
+-   **`'value'`** — same as `'data'`, but unwraps the aggregation result returned by `avg` and `count` to its scalar value.
+-   **`'data-raw'`** — same as `'data'` but skips aggregation results (`rowNode.aggData`). For group rows the valueGetter or field value is returned instead, which is typically `undefined` since group rows do not hold leaf data.
+
+**Formula Cells (`allowFormula: true`)**
+
+-   **`'data'` / `'value'`** — return the computed result.
+-   **`'edit'` / `'batch'` / `'data-raw'`** — return the raw formula string (e.g. `"=A1*2"`).
+
+### Example getDataValue()
+
+```js
+                                             // 42 (original value)
+api.startBatchEdit();                        // Start Batch
+
+rowNode.setDataValue('price', 99, 'batch');  // Edit value to 99
+
+rowNode.getDataValue('price')                // 42 (original data, default 'data')
+rowNode.getDataValue('price', 'batch');      // 99 (pending value)
+rowNode.getDataValue('price', 'edit');       // 99 (no editor open, same as 'batch')
+
+api.commitBatchEdit();                       // Commit Batch
+
+rowNode.getDataValue('price');               // 99 (now committed)
+```
+
+```js
+// Column 'revenue' uses aggFunc: 'avg' — average is 420 across 3 rows
+groupRowNode.getDataValue('revenue');             // aggregation result object
+groupRowNode.getDataValue('revenue', 'value');    // 420 (scalar)
+groupRowNode.getDataValue('revenue', 'data-raw'); // undefined (skips aggData; group row has no raw field)
+```
+
+### api.getCellValue()
+
+{% apiDocumentation source="grid-api/api.json" section="miscellaneous" names=["getCellValue"] /%}
+
+| `from`             | Active Editor   | Pending Batch     | Aggregation | Committed Data |
+| ------------------ | --------------- | ----------------- | ----------- | -------------- |
+| `'edit'` (default) | Used if present | Used if no editor | Agg value   | Fallback       |
+| `'batch'`          | —               | Used if present   | Agg value   | Fallback       |
+| `'data'`           | —               | —                 | Agg value   | Fallback       |
+
+### Example getCellValue()
+
+```js
+                                                              // 42 (original value)
+api.startBatchEdit();                                         // Start Batch
+api.startEditingCell({ rowIndex: 0, colKey: 'price' });       // Open editor
+
+// getCellValue reads the live editor value
+api.getCellValue({ rowNode, colKey: 'price', from: 'edit' }); // live editor value
+api.getCellValue({ rowNode, colKey: 'price', from: 'data' }); // 42 (original data)
+```
+
+## Writing Values
+
+### rowNode.setDataValue()
+
+`rowNode.setDataValue(colKey, newValue, eventSource?)` writes a value programmatically. The `eventSource` parameter controls how.
+
+| `eventSource` | Active Editor | Pending Batch        | Committed Data                 |
+| ------------- | ------------- | -------------------- | ------------------------------ |
+| (default)     | Closed        | Written              | Written if no batch            |
+| `'edit'`      | Written       | Written if no editor | Written if no editor, no batch |
+| `'batch'`     | Left open     | Written              | Written if no batch            |
+| `'data'`      | Left open     | —                    | Always written                 |
+
+With `'edit'`, the active editor receives the new value via `refresh()` if implemented; otherwise the editor is recreated with focus preserved.
+
+```js
+api.startBatchEdit();                                         // Start Batch
+api.startEditingCell({ rowIndex: 0, colKey: 'price' });       // Open editor
+
+rowNode.setDataValue('price', 99, 'edit');                    // Update open editor without closing
+api.getCellValue({ rowNode, colKey: 'price', from: 'edit' }); // 99 (live edit value)
+rowNode.data.price;                                           // 42 (unchanged)
+
+api.stopEditing();                                            // Close editor
+api.commitBatchEdit();                                        // Commit Batch
+rowNode.getDataValue('price');                                // 99 (committed)
+```
+
+```js
+api.startBatchEdit();                       // Start Batch
+rowNode.setDataValue('price', 99, 'batch'); // Update price
+rowNode.setDataValue('qty', 5, 'batch');    // Update qty
+
+rowNode.getDataValue('price');              // 42 (committed data)
+rowNode.getDataValue('price', 'batch');     // 99 (pending)
+
+api.commitBatchEdit();                      // Commit Batch
+rowNode.getDataValue('price');              // 99 (committed data)
+```
+
+```js
+api.startBatchEdit();                       // Start Batch
+rowNode.setDataValue('price', 99, 'data');  // 'data' — bypass batch, write immediately
+rowNode.data.price;                         // 99 (already committed)
+api.cancelBatchEdit();                      // 'data' writes are permanent
+```
+
+## Undo / Redo
+
+When [Undo / Redo](./undo-redo-edits/) is enabled, a committed batch is treated as a **single undo action**. Calling undo after `commitBatchEdit()` reverts all changes from that batch at once — no extra API calls are needed.
+
+If `cancelBatchEdit()` is called instead, the pending edits are discarded without touching the undo history. The undo stack remains unchanged, as though the batch never happened.
 
 ## Full Row Batch Editing
 
-[Full Row](./cell-editing-full-row/) is supported in Batch Editing, adding each cell's pending value to the batch.
+In [Full Row](./cell-editing-full-row/) Batch Editing, starting an edit in any cell opens all editors for the current row. When row editing is completed, only the changed cells are included in the pending batch edits.
 
 {% gridExampleRunner title="Batch Editing FullRow" name="batch-editing-fullrow" exampleHeight=560 /%}
-
-## Batch Editing Lifecycle
-
-As in default editing, cell and row editing events get fired as normal when edit starts and ends, following the lifecycle of the editors.
-
-When in Batch Editing, the `cellValueChanged`, `rowValueChanged` events are fired **after** the batch edit is committed.
 
 ## Customisation
 
 ### Custom Renderers & Editors
 
-The `ICellRendererComp` interface provides a means for your cell renderer to update when edits are batched, to reflect the pending nature of the values. The `refresh` method that the grid calls when the cell needs to be re-rendered. The parameters include the latest pending value.
+{% if isFramework("react") %}
+Custom cell renderers receive updated props whenever the pending value changes during a batch, triggering a re-render.
+{% /if %}
 
-{% interfaceDocumentation interfaceName="ICellRendererComp" names=["refresh"] /%}
-
-As with custom renderers, the `ICellEditor` interface includes the `refresh` method, which the grid calls when the cell needs to be re-rendered. The parameters include the latest pending value.
-
-{% interfaceDocumentation interfaceName="ICellEditor" names=["refresh"] /%}
+{% if isFramework("javascript","angular","vue") %}
+Implement `refresh()` in your custom cell renderers and editors to receive updated values during a batch. The `params` passed to `refresh()` include the latest pending value.
+{% /if %}
 
 {% gridExampleRunner title="Batch Editing Customization" name="batch-editing-custom" exampleHeight=560 /%}
 
 ### Styling
 
-Pending edit styles can be overridden using css, via the `.ag-cell-edit-color` and `.ag-row-batch-edit` classes.
+Pending edit styles can be overridden using CSS, via the `.ag-cell-batch-edit` and `.ag-row-batch-edit` classes.
 
 ```scss
 .ag-cell-batch-edit {
@@ -81,6 +202,16 @@ Pending edit styles can be overridden using css, via the `.ag-cell-edit-color` a
 }
 ```
 
-The following example demonstrates custom batch editing styling:
+The following example shows the custom batch styling:
+
+-   A batch is started automatically via `api.startBatchEdit()`
+-   Two rows have data updated via `rowNode.setDataValue()`
+-   Note how the styles are removed when the batch is committed or reverted
 
 {% gridExampleRunner title="Batch Editing Styles" name="batch-editing-styles" exampleHeight=560 /%}
+
+## API
+
+{% apiDocumentation source="grid-api/api.json" section="batch-editing" names=["isBatchEditing", "startBatchEdit", "commitBatchEdit", "cancelBatchEdit"] /%}
+
+{% apiDocumentation source="grid-api/api.json" section="editing" names=["getEditingCells", "getEditRowValues"] /%}

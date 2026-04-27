@@ -1,7 +1,8 @@
 {% if isFramework("javascript") %}
 A cell renderer is either:
-- A function returning an HTML string or a DOM object
-- A class implementing the [`ICellRendererComp`](#api-reference) interface
+
+-   A function returning an HTML string or a DOM object
+-   A class implementing the [`ICellRendererComp`](#api-reference) interface
 
 Use the function variant of a Cell Component if you have no refresh or cleanup requirements (ie you don't need to implement the refresh or destroy functions).
 
@@ -55,4 +56,5 @@ colDef.cellRenderer = params => {
     return eDiv;
 }
 ```
+
 {% /if %}

@@ -91,6 +91,7 @@ export const SITE_URL = import.meta.env?.SITE_URL || import.meta.env?.PUBLIC_SIT
 
 export const STAGING_SITE_URL = 'https://grid-staging.ag-grid.com';
 export const PRODUCTION_SITE_URLS = ['https://ag-grid.com', 'https://www.ag-grid.com'];
+export const PRODUCTION_SITE_URL = PRODUCTION_SITE_URLS[0];
 export const USE_PUBLISHED_PACKAGES = isTruthy(import.meta.env?.PUBLIC_USE_PUBLISHED_PACKAGES);
 
 export const URL_CONFIG: Record<'local' | 'staging' | 'production', { hosts: string[]; baseUrl?: string }> = {
@@ -132,6 +133,11 @@ export const FRAMEWORK_REDIRECT_PATH = 'data-grid';
  */
 export const CHARTS_ROBOTS_DISALLOW_JSON_URL = import.meta.env?.CHARTS_ROBOTS_DISALLOW_JSON_URL;
 
+/**
+ * Studio robots disallow json url for merging with grid
+ */
+export const STUDIO_ROBOTS_DISALLOW_JSON_URL = import.meta.env?.STUDIO_ROBOTS_DISALLOW_JSON_URL;
+
 export const PRODUCTION_CHARTS_SITE_URL = 'https://www.ag-grid.com/charts';
 export const LEGACY_CHARTS_SITE_URL = 'https://charts.ag-grid.com';
 
@@ -169,6 +175,8 @@ function calculateGridUrl() {
 }
 
 export const GRID_URL = calculateGridUrl();
+
+export const LIVE_SITEMAP_URL = import.meta.env?.LIVE_SITEMAP_URL;
 
 export const EXAMPLE_RANDOM_SEED = 'AG Grid Random Seed';
 

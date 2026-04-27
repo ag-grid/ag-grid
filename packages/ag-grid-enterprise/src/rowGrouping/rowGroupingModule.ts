@@ -3,15 +3,18 @@ import { _ColumnFilterModule, _PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { AggregationModule, SharedAggregationModule } from '../aggregation/aggregationModule';
+import { SharedColumnStateUpdateStrategyModule } from '../columnToolPanel/updates/columnStateUpdateStrategyModule';
 import { GroupHierarchyModule } from '../groupHierarchy/groupHierarchyModule';
 import {
-    ClientSideRowModelHierarchyModule,
+    CsrmGroupStagesModule,
+    CsrmHierarchyModule,
     GroupColumnModule,
     GroupEditModule,
     StickyRowModule,
 } from '../rowHierarchy/rowHierarchyModule';
 import { VERSION } from '../version';
 import { AgGridHeaderDropZonesSelector } from './columnDropZones/agGridHeaderDropZones';
+import { RowGroupPanelBuilder } from './columnDropZones/rowGroupPanelBuilder';
 import { GroupFilter, processGroupFilterParams } from './groupFilter/groupFilter';
 import { GroupFilterHandler } from './groupFilter/groupFilterHandler';
 import { GroupFilterService } from './groupFilter/groupFilterService';
@@ -56,7 +59,13 @@ export const RowGroupingModule: _ModuleWithoutApi = {
     version: VERSION,
     dynamicBeans: { groupStrategy: GroupStrategy },
     rowModels: ['clientSide'],
-    dependsOn: [SharedRowGroupingModule, AggregationModule, ClientSideRowModelHierarchyModule, GroupEditModule],
+    dependsOn: [
+        SharedRowGroupingModule,
+        AggregationModule,
+        CsrmHierarchyModule,
+        CsrmGroupStagesModule,
+        GroupEditModule,
+    ],
 };
 
 /**
@@ -65,6 +74,7 @@ export const RowGroupingModule: _ModuleWithoutApi = {
 export const RowGroupingPanelModule: _ModuleWithoutApi = {
     moduleName: 'RowGroupingPanel',
     version: VERSION,
+    beans: [RowGroupPanelBuilder],
     selectors: [AgGridHeaderDropZonesSelector],
     icons: {
         // identifies the pivot drop zone
@@ -76,7 +86,7 @@ export const RowGroupingPanelModule: _ModuleWithoutApi = {
         // version of panelDelimiter used in RTL mode
         panelDelimiterRtl: 'small-left',
     },
-    dependsOn: [EnterpriseCoreModule, _PopupModule],
+    dependsOn: [SharedColumnStateUpdateStrategyModule, _PopupModule],
 };
 
 /**

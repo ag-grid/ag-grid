@@ -1,4 +1,5 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
+import { _isEventSupported, preventEventDefault } from '../agStack/utils/event';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
@@ -17,6 +18,7 @@ const RowDragElement: ElementParams = {
 
 const SKIP_ARIA_HIDDEN = { skipAriaHidden: true };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowDragComp extends Component {
     private dragSource: GridDragSource<RowDraggingEvent> | null = null;
     private mouseDownListener: (() => void) | undefined;
@@ -170,11 +172,11 @@ export class RowDragComp extends Component {
         if (this.gos.get('enableCellTextSelection')) {
             this.removeMouseDownListener();
 
-            this.mouseDownListener = this.addManagedElementListeners(eGui, {
-                mousedown: (e) => {
-                    e?.preventDefault();
-                },
-            })[0];
+            const listeners: Record<string, (e: MouseEvent | PointerEvent) => void> = _isEventSupported('pointerdown')
+                ? { pointerdown: preventEventDefault }
+                : { mousedown: preventEventDefault };
+
+            this.mouseDownListener = this.addManagedElementListeners(eGui, listeners)[0];
         }
 
         const translate = this.getLocaleTextFunc();

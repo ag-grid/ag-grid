@@ -67,7 +67,7 @@ function CodeOptionSelector({
                 value={internalFramework}
                 onChange={(event) => {
                     onChange(event);
-                    tracking && tracking(event.target.value);
+                    tracking?.(event.target.value);
                 }}
                 onBlur={onChange}
             >

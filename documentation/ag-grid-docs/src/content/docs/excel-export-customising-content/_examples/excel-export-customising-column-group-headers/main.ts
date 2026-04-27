@@ -11,8 +11,6 @@ import {
     CsvExportModule,
     ModuleRegistry,
     NumberFilterModule,
-    ProcessCellForExportParams,
-    ProcessRowGroupForExportParams,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';

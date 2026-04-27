@@ -10,6 +10,7 @@ test.describe(`Demo Examples`, async () => {
 
     test.beforeEach(async ({ page }) => {
         errors = setupConsoleExpectations(page);
+        await page.route('**://cdn.cookielaw.org/**', (route) => route.abort());
     });
 
     test.afterEach(async () => {
@@ -22,7 +23,7 @@ test.describe(`Demo Examples`, async () => {
         await page.waitForTimeout(1000);
 
         await page.locator('button').filter({ hasText: 'Rows, 22 Cols' }).click();
-        await page.getByText('1,000 Rows, 22 Cols').click();
+        await page.getByRole('option', { name: '1,000 Rows, 22 Cols' }).click();
         await page.locator('button').filter({ hasText: 'Quartz' }).click();
         await page.getByText('Balham').click();
         await page.getByRole('textbox', { name: 'Filter:' }).click();

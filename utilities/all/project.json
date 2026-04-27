@@ -17,7 +17,9 @@
     },
     "build:styles": {
       "executor": "nx:noop",
-      "dependsOn": ["^build:styles"]
+      "dependsOn": ["^build:styles"],
+      "inputs": [],
+      "outputs": []
     },
     "lint": {
       "executor": "nx:noop",
@@ -140,6 +142,7 @@
         "startElapsedBuildTime",
         "^build:types",
         "^build:package",
+        "^build:umd",
         "generate-examples",
         "generate-doc-references"
       ],
@@ -166,12 +169,15 @@
         "commands": ["node external/ag-shared/scripts/watch/watch.js grid", "nx run ag-grid-docs:dev"]
       }
     },
+    "format-write": {
+      "command": "nx format:write --all --sort-root-tsconfig-paths=false"
+    },
     "format-check": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           {
-            "command": "nx format:check --all"
+            "command": "nx format:check --all --sort-root-tsconfig-paths=false"
           }
         ]
       }
@@ -224,10 +230,56 @@
     "unlink": {
       "command": "./scripts/removeLocalDeps.sh"
     },
-    "snykIgnore": {
+    "snyk:test": {
+      "command": "npx snyk test --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=high --exclude=.nx,project.json,dist,.claude --remote-repo-url=https://github.com/ag-grid/ag-grid",
+      "options": {
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "snyk:code": {
+      "command": "npx snyk code test",
+      "options": {
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "snyk:ignore": {
       "command": "node ./external/ag-shared/scripts/snyk/getSnykIgnore.mjs",
       "options": {
         "cwd": "{workspaceRoot}"
+      }
+    },
+    "snyk:clean": {
+      "cache": false,
+      "command": "node ./external/ag-shared/scripts/snyk/snykClean.mjs",
+      "options": {
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "snyk:test:json": {
+      "command": "mkdir -p tmp && { npx snyk test --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=high --exclude=.nx,project.json,dist,.claude --remote-repo-url=https://github.com/ag-grid/ag-grid --json > tmp/snyk.json; code=$?; [ $code -le 1 ]; }",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/yarn.lock", "{workspaceRoot}/**/.snyk"],
+      "outputs": ["{workspaceRoot}/tmp/snyk.json"],
+      "options": {
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "snyk:view": {
+      "command": "node ./external/ag-shared/scripts/snyk-viewer/index.mjs {args.file} --port {args.port} --name \"{args.name}\"",
+      "dependsOn": ["snyk:test:json"],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "file": "tmp/snyk.json",
+        "port": 4615,
+        "name": "AG Grid"
+      },
+      "configurations": {
+        "open": {
+          "args": ["--open"]
+        },
+        "watch": {
+          "command": "node --watch-path=./external/ag-shared/scripts/snyk-viewer ./external/ag-shared/scripts/snyk-viewer/index.mjs {args.file} --port {args.port} --name \"{args.name}\""
+        }
       }
     }
   },
@@ -245,7 +297,8 @@
     "testing/behavioural",
     "testing/accessibility",
     "testing/csp",
-    "ag-grid-generate-example-files"
+    "ag-grid-generate-example-files",
+    "stylelint-plugin-ag"
   ],
   "tags": []
 }

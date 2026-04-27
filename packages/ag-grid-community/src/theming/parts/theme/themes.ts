@@ -18,21 +18,34 @@ import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
 import type { CheckboxStyleParams } from '../checkbox-style/checkbox-styles';
 import { colorSchemeVariable } from '../color-scheme/color-schemes';
 import { columnDropStyleBordered, columnDropStylePlain } from '../column-drop-style/column-drop-styles';
+import type { FormulaStyleParams } from '../formula-style/formula-styles';
 import { iconSetBalham } from '../icon-set/balham/icon-set-balham';
 import { iconSetAlpine, iconSetMaterial, iconSetQuartzRegular } from '../icon-set/icon-sets';
 import type { InputStyleParams } from '../input-style/input-styles';
 import { inputStyleBordered, inputStyleUnderlined } from '../input-style/input-styles';
+import type { NoteStyleParams } from '../notes/note-styles';
 import type { TabStyleParams } from '../tab-style/tab-styles';
 import { tabStyleAlpine, tabStyleMaterial, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
-import { materialAdjustmentsCSS } from './material-adjustments.css-GENERATED';
+import materialAdjustmentsCSS from './material-adjustments.css';
 
 export type ThemeDefaultParams = CoreParams &
     ButtonStyleParams &
     CheckboxStyleParams &
     TabStyleParams &
     InputStyleParams &
-    BatchEditStyleParams;
+    BatchEditStyleParams &
+    FormulaStyleParams &
+    NoteStyleParams;
 
+/**
+ * Used as an entry point for collecting parameters for automated API
+ * documentation generation on the website and in Theme Builder
+ *
+ * @knipIgnore
+ */
+export type AllThemeParamsForAPIDocumentation = ThemeDefaultParams;
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const themeQuartzParams = () => ({
     fontFamily: [
         { googleFont: 'IBM Plex Sans' },
@@ -59,6 +72,7 @@ export const themeQuartz: Theme<ThemeDefaultParams> =
     /*#__PURE__*/
     makeThemeQuartzTreeShakeable();
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const themeAlpineParams = () => ({
     accentColor: '#2196f3',
     selectedRowBackgroundColor: accentMix(0.3),
@@ -116,6 +130,7 @@ export const themeAlpine: Theme<ThemeDefaultParams> =
     /*#__PURE__*/
     makeThemeAlpineTreeShakeable();
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const themeBalhamParams = () => ({
     accentColor: '#0091ea',
     borderColor: foregroundMix(0.2),
@@ -244,6 +259,8 @@ const makeStyleMaterialTreeShakeable = () => {
         advancedFilterBuilderButtonBarBorder: false,
         filterPanelApplyButtonColor: { ref: 'buttonTextColor' },
         filterPanelApplyButtonBackgroundColor: { ref: 'buttonBackgroundColor' },
+        columnPanelApplyButtonColor: { ref: 'buttonTextColor' },
+        columnPanelApplyButtonBackgroundColor: { ref: 'buttonBackgroundColor' },
         colorPickerThumbSize: 13,
         colorPickerTrackSize: 11,
         colorPickerThumbBorderWidth: 2,
@@ -291,9 +308,10 @@ const makeStyleMaterialTreeShakeable = () => {
 
 export const styleMaterial = /*#__PURE__*/ makeStyleMaterialTreeShakeable();
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const themeMaterialParams = () => ({
     rowHeight: {
-        calc: 'max(iconSize, dataFontSize) + spacing * 3.75 * rowVerticalPaddingScale',
+        calc: 'max(iconSize, cellFontSize) + spacing * 3.75 * rowVerticalPaddingScale',
     },
     headerHeight: {
         calc: 'max(iconSize, dataFontSize) + spacing * 4.75 * headerVerticalPaddingScale',

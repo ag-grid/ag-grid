@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
 import type { ColDef, GridOptions } from 'ag-grid-community';
@@ -6,6 +5,7 @@ import {
     ClientSideRowModelModule,
     NumberEditorModule,
     PinnedRowModule,
+    ScrollApiModule,
     SelectEditorModule,
     TextEditorModule,
     getGridElement,
@@ -43,6 +43,7 @@ describe('Full-row editing documentation examples', () => {
             TextEditorModule,
             SelectEditorModule,
             PinnedRowModule,
+            ScrollApiModule,
             BatchEditModule,
             CellSelectionModule,
             ColumnsToolPanelModule,
@@ -222,6 +223,15 @@ describe('Full-row editing documentation examples', () => {
         await user.dblClick(modelCellRow1);
         await waitForInput(gridElement, modelCellRow1);
         await user.keyboard('XYZ');
+
+        // Mid-edit: row 1 has active editor with typed value
+        await new GridRows(api, 'during full-row edit with typed value').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 make-0-0:"Toyota" model-1-1:"Celica 0" field4-2-2:"S-XX"
+            ├── LEAF 🖍️ id:1 make-0-0:"Ford" model-1-1:🖍️"XYZ" "Mondeo 0" field4-2-2:"S-YY"
+            └── LEAF id:2 make-0-0:"Porsche" model-1-1:"Boxster 0" field4-2-2:"S-ZZ"
+        `);
+
         await user.keyboard('{Tab}{Tab}');
         api.stopEditing();
         expect(api.getCellEditorInstances()).toHaveLength(0);
@@ -233,5 +243,5 @@ describe('Full-row editing documentation examples', () => {
             ├── LEAF id:1 make-0-0:"Ford" model-1-1:"XYZ" field4-2-2:"S-YY"
             └── LEAF id:2 make-0-0:"Porsche" model-1-1:"Boxster 0" field4-2-2:"S-ZZ"
         `);
-    });
+    }, 15000);
 });

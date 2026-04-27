@@ -6,7 +6,6 @@ import { createRoot } from 'react-dom/client';
 import {
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
-    ModuleRegistry,
     NewFiltersToolPanelModule,
     NumberFilterModule,
     PivotModule,
@@ -14,12 +13,12 @@ import {
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 import { useFetchJson } from './useFetchJson';
 
-ModuleRegistry.registerModules([
+const modules = [
     NumberFilterModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
@@ -28,7 +27,7 @@ ModuleRegistry.registerModules([
     PivotModule,
     TextFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 function addStyles(parentEl) {
     const contentClassnames = [...parentEl.querySelector('.content').classList].filter((e) => e !== 'content');
@@ -120,46 +119,48 @@ const GridExample = () => {
     }, [drawerRef, closePopup, filtersToolPanel]);
 
     return (
-        <div style={containerStyle}>
-            <div id="wrapper" className="example-wrapper">
-                <div className="example-header">
-                    <button onClick={openPopup}>Open Columns Tool Panel</button>
-                    <button onClick={openDrawer}>Open Filters Tool Panel</button>
-                </div>
-
-                <div style={gridStyle}>
-                    <AgGridReact
-                        enableFilterHandlers
-                        ref={gridRef}
-                        rowData={data}
-                        loading={loading}
-                        popupParent={popupParent}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        autoGroupColumnDef={autoGroupColumnDef}
-                        sideBar={sideBar}
-                    />
-                </div>
-            </div>
-
-            <div id="popup" ref={popupRef}>
-                <div className="inner">
-                    <div>
-                        <button onClick={closePopup}>Close</button>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div id="wrapper" className="example-wrapper">
+                    <div className="example-header">
+                        <button onClick={openPopup}>Open Columns Tool Panel</button>
+                        <button onClick={openDrawer}>Open Filters Tool Panel</button>
                     </div>
-                    <div className="content" ref={popupContentRef}></div>
-                </div>
-            </div>
 
-            <div id="drawer" ref={drawerRef}>
-                <div className="inner">
-                    <div>
-                        <button onClick={closeDrawer}>Close</button>
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            enableFilterHandlers
+                            ref={gridRef}
+                            rowData={data}
+                            loading={loading}
+                            popupParent={popupParent}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            autoGroupColumnDef={autoGroupColumnDef}
+                            sideBar={sideBar}
+                        />
                     </div>
-                    <div className="content" ref={drawerContentRef}></div>
+                </div>
+
+                <div id="popup" ref={popupRef}>
+                    <div className="inner">
+                        <div>
+                            <button onClick={closePopup}>Close</button>
+                        </div>
+                        <div className="content" ref={popupContentRef}></div>
+                    </div>
+                </div>
+
+                <div id="drawer" ref={drawerRef}>
+                    <div className="inner">
+                        <div>
+                            <button onClick={closeDrawer}>Close</button>
+                        </div>
+                        <div className="content" ref={drawerContentRef}></div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

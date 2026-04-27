@@ -17,6 +17,7 @@ import {
     foregroundMix,
 } from '../themeUtils';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface SharedThemeParams {
     /**
      * The 'brand color' for the grid, used wherever a non-neutral color is required. Selections, focus outlines and checkboxes use the accent color by default.
@@ -59,17 +60,17 @@ export interface SharedThemeParams {
     chromeBackgroundColor: ColorValue;
 
     /**
-     * Font size for data in grid rows
+     * Sets the default value for `cellFontSize` and is involved in the default calculation of `listItemHeight`
      */
     dataFontSize: LengthValue;
 
     /**
-     * Border color popup dialogs such as the integrated charts and the advanced filter builder.
+     * Border color popup dialogs such as the integrated charts panel and the advanced filter builder.
      */
     dialogBorder: BorderValue;
 
     /**
-     * Shadow for popup dialogs such as the integrated charts and the advanced filter builder.
+     * Shadow for popup dialogs such as the integrated charts panel and the advanced filter builder.
      */
     dialogShadow: ShadowValue;
 
@@ -84,12 +85,12 @@ export interface SharedThemeParams {
     dragAndDropImageBorder: BorderValue;
 
     /**
-     * Border color of the drag and drop image component element when dragging columns or rows
+     * Border color of the drag and drop image component element when dropping is not allowed
      */
     dragAndDropImageNotAllowedBorder: BorderValue;
 
     /**
-     * Shadow for the drag and drop image component element when dragging columns
+     * Shadow for the drag and drop image component element when dragging columns or rows
      */
     dragAndDropImageShadow: ShadowValue;
 
@@ -104,12 +105,12 @@ export interface SharedThemeParams {
     focusShadow: ShadowValue;
 
     /**
-     * 'Shadow around UI controls that have focus and contain validation errors e.g. text inputs, text-areas. The value must a valid CSS box-shadow.',
+     * Shadow around UI controls that have focus and contain validation errors e.g. text inputs, text-areas. The value must a valid CSS box-shadow.
      */
     focusErrorShadow: ShadowValue;
 
     /**
-     * Default font family for all text. Can be overridden by more specific parameters like `headerFontFamily`
+     * Default font family for all text. Can be overridden by more specific parameters like `headerFontFamily`.
      */
     fontFamily: FontFamilyValue;
 
@@ -117,6 +118,11 @@ export interface SharedThemeParams {
      * Default font size for text throughout the grid UI
      */
     fontSize: LengthValue;
+
+    /**
+     * Default font weight for text throughout the grid UI
+     */
+    fontWeight: FontWeightValue;
 
     /**
      * Default color for neutral UI elements. Most text, borders and backgrounds are defined as semi-transparent versions of this color, resulting in a blend between the background and foreground colours.
@@ -204,7 +210,7 @@ export interface SharedThemeParams {
     menuTextColor: ColorValue;
 
     /**
-     * Background color for panels and dialogs such as the integrated charts and the advanced filter builder.
+     * Background color for panels and dialogs such as the advanced filter builder. Note that for the integrated charts panel, the chart fully fills the panel so no background is visible behind it - set the chart theme to change its background.
      */
     panelBackgroundColor: ColorValue;
 
@@ -214,37 +220,37 @@ export interface SharedThemeParams {
     panelTitleBarHeight: LengthValue;
 
     /**
-     * Background color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     * Background color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.
      */
     panelTitleBarBackgroundColor: ColorValue;
 
     /**
-     * Text color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     * Text color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.
      */
     panelTitleBarTextColor: ColorValue;
 
     /**
-     * Icon color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     * Icon color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.
      */
     panelTitleBarIconColor: ColorValue;
 
     /**
-     * Font family for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     * Font family for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.
      */
     panelTitleBarFontFamily: FontFamilyValue;
 
     /**
-     * Size of text for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     * Size of text for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.
      */
     panelTitleBarFontSize: LengthValue;
 
     /**
-     * Font weight for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     * Font weight for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.
      */
     panelTitleBarFontWeight: FontWeightValue;
 
     /**
-     * Border below the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     * Border below the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.
      */
     panelTitleBarBorder: BorderValue;
 
@@ -357,6 +363,7 @@ export const defaultLightColorSchemeParams = {
     browserColorScheme: 'light',
 } as const;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const sharedDefaults: Readonly<SharedThemeParams> = {
     ...defaultLightColorSchemeParams,
     textColor: foregroundColor,
@@ -381,6 +388,7 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
     borderRadius: 4,
     spacing: 8,
     fontSize: 14,
+    fontWeight: 'inherit',
     focusShadow: {
         spread: 3,
         color: accentMix(0.5),

@@ -44,4 +44,8 @@ export class Dialog
     constructor(config: DialogOptions) {
         super(config, DIALOG_CALLBACKS);
     }
+
+    public getFocusableContainerName(): 'dialog' {
+        return 'dialog';
+    }
 }

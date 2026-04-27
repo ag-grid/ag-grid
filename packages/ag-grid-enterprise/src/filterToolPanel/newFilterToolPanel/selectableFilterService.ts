@@ -110,7 +110,7 @@ export class SelectableFilterService
                 if (typeof filterString === 'string') {
                     updatedName = translateForFilterPanel(this, `${filterString as ProvidedFilterType}DisplayName`);
                 } else {
-                    _warn(280, { colId: column.getColId() });
+                    _warn(280, { colId: column.colId });
                     updatedName = '';
                 }
             }
@@ -129,7 +129,7 @@ export class SelectableFilterService
 
         let index =
             overrideIndex ?? // provided override
-            this.selectedFilters.get(column.getColId()) ?? // UI selected value
+            this.selectedFilters.get(column.colId) ?? // UI selected value
             defaultFilterIndex ?? // col def value
             (!filters && _isSetFilterByDefault(gos) ? 1 : 0); // if using defaults, then respect set filter by default setting, else choose first
 

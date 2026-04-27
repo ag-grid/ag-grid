@@ -5,5 +5,5 @@
     "emitDeclarationOnly": true,
     "types": ["node"]
   },
-  "include": ["jest.config.ts", "jest.setup.ts", "src/main-test.ts", "**/*.test.ts", "**/test/**"]
+  "include": ["src/main-test.ts", "**/*.test.ts", "**/test/**"]
 }

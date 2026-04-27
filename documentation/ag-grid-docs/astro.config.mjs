@@ -8,11 +8,13 @@ import { loadEnv } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
 import svgr from 'vite-plugin-svgr';
 
+import agCacheSitemap from '../../external/ag-website-shared/plugins/agCacheSitemap';
 import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecker';
+import agMkcertPreview from '../../external/ag-website-shared/plugins/agMkcertPreview';
+import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
-import agMergeSitemap from './plugins/agMergeSitemap';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
 import { getSitemapConfig } from './src/utils/sitemap';
 import { urlWithBaseUrl } from './src/utils/urlWithBaseUrl';
@@ -110,6 +112,16 @@ const {
      * Charts robots.txt disallow json url to merge
      */
     CHARTS_ROBOTS_DISALLOW_JSON_URL,
+
+    /**
+     * Studio sitemap index to merge
+     */
+    STUDIO_SITEMAP_INDEX_URL,
+
+    /**
+     * Studio robots.txt disallow json url to merge
+     */
+    STUDIO_ROBOTS_DISALLOW_JSON_URL,
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -119,6 +131,7 @@ console.log(
             PORT,
             PUBLIC_SITE_URL,
             PUBLIC_BASE_URL,
+            PUBLIC_HTTPS_SERVER,
             PUBLIC_USE_PUBLISHED_PACKAGES,
             USE_PACKAGES,
             SHOW_DEBUG_LOGS,
@@ -129,6 +142,8 @@ console.log(
             DISABLE_EXAMPLE_RUNNER,
             CHARTS_SITEMAP_INDEX_URL,
             CHARTS_ROBOTS_DISALLOW_JSON_URL,
+            STUDIO_SITEMAP_INDEX_URL,
+            STUDIO_ROBOTS_DISALLOW_JSON_URL,
         },
         null,
         2
@@ -140,13 +155,26 @@ if (NODE_ENV !== 'test') {
     plugins.push(mkcert()); // mkcert is not necessary for tests
 }
 
+const httpsEnabled = !['0', 'false'].includes(PUBLIC_HTTPS_SERVER);
+
 // https://astro.build/config
 export default defineConfig({
     site: PUBLIC_SITE_URL,
     base: PUBLIC_BASE_URL,
-    experimental: {
-        // Prepare for Astro 6
-        preserveScriptOrder: true,
+    security: {
+        /**
+         * Allow cross-origin dev-server fetches from external example hosts.
+         *
+         * Astro 6's secFetchMiddleware runs before Vite's CORS middleware and
+         * returns 403 for unknown cross-origin subresource requests, so hosts
+         * have to be allowed here as well as in `vite.server.cors.origin` below.
+         */
+        allowedDomains: [
+            // Plunkr
+            { hostname: 'run.plnkr.co', protocol: 'https' },
+            // Codesandbox
+            { hostname: '**.csb.app', protocol: 'https' },
+        ],
     },
     devToolbar: {
         enabled: false,
@@ -154,7 +182,7 @@ export default defineConfig({
     vite: {
         plugins,
         server: {
-            https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER),
+            https: httpsEnabled,
             cors: {
                 /**
                  * CORS allow list for opening examples on external sites
@@ -167,8 +195,15 @@ export default defineConfig({
                 ],
             },
             headers: {
-                'Content-Security-Policy':
-                    "default-src 'self'; script-src 'self' https://*.ag-grid.com https://localhost:4610 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
+                'Content-Security-Policy': [
+                    "default-src 'self'",
+                    "script-src 'self' https://*.ag-grid.com https://localhost:4610 https://localhost:4611 https://www.googletagmanager.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'",
+                    "style-src 'self' https://fonts.googleapis.com 'unsafe-inline'",
+                    "font-src 'self' https://fonts.gstatic.com data:",
+                    "img-src 'self' data: blob: https:",
+                    "connect-src 'self' https:",
+                    "worker-src 'self' blob:",
+                ].join('; '),
                 'X-Content-Type-Options': 'nosniff',
             },
         },
@@ -198,15 +233,16 @@ export default defineConfig({
         buildTime(),
         react(),
         markdoc(),
-        sitemap(getSitemapConfig()),
+        sitemap(getSitemapConfig({ chartsSitemap: CHARTS_SITEMAP_INDEX_URL, studioSitemap: STUDIO_SITEMAP_INDEX_URL })),
         agHtaccessGen({ include: HTACCESS === 'true' }),
         agRedirectsChecker({
             skip: CHECK_REDIRECTS !== 'true',
         }),
         agLinkChecker({ include: CHECK_LINKS === 'true' }),
-        agMergeSitemap({
-            // Merge charts sitemap
-            sitemapIndexUrl: CHARTS_SITEMAP_INDEX_URL,
+
+        agCacheSitemap({
+            cacheFolder: SITEMAP_CACHE_DIR,
         }),
+        agMkcertPreview({ enabled: httpsEnabled }),
     ],
 });

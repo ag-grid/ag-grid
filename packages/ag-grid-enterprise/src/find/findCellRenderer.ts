@@ -18,6 +18,7 @@ export class FindCellRenderer extends Component implements ICellRenderer {
             column: column as AgColumn | undefined,
             node,
             includeValueFormatted: true,
+            from: 'edit',
         });
         const displayValue = valueFormatted ?? value ?? '';
         const eGui = this.getGui();

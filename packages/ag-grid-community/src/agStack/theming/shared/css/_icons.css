@@ -32,13 +32,31 @@
     background-repeat: no-repeat;
 }
 
-.ag-disabled,
-[disabled] {
-    .ag-icon {
-        opacity: 0.5;
+.ag-disabled .ag-icon,
+/* false positive bug, [disabled] is in ignore list */
+/* stylelint-disable-next-line selector-max-specificity */
+[disabled] .ag-icon {
+    opacity: 0.5;
+}
+
+.ag-icon-grip.ag-disabled,
+.ag-icon-grip[disabled] {
+    opacity: 0.35;
+}
+
+.ag-icon-loading {
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
     }
 
-    &.ag-icon-grip {
-        opacity: 0.35;
+    to {
+        transform: rotate(360deg);
     }
 }

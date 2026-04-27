@@ -8,6 +8,16 @@ globs: ['**/*.test.ts', '**/*.spec.ts', 'testing/**/*']
 
 This guide covers testing strategies and best practices for the AG Grid codebase.
 
+## Behavioural Tests — Primary Test Suite
+
+Behavioural tests in `testing/behavioural/` are the primary test suite for AG Grid. They test the grid as a **black box**, instantiating the full grid to verify complex behaviours and features.
+
+**Key principles:**
+
+-   The unit under test is a **behaviour**, not a function, class, method, or file
+-   **Avoid mocking** — prefer fakes instead (e.g., fake DOM)
+-   Test at the edges of the system to ensure real integration using public APIs
+
 ## Test Structure
 
 ### Directory Layout
@@ -35,7 +45,37 @@ packages/ag-grid-community/src/
 
 ## Running Tests
 
-### Unit Tests
+### Behavioural Tests (Vitest) – Primary Test Suite
+
+Behavioural tests in `testing/behavioural/` are the primary test suite for verifying grid behaviour. They use Vitest. Watch mode is disabled by default:
+
+```bash
+# Run all behavioural tests
+./behave.sh
+
+# Run specific test file
+./behave.sh "cell-editing-regression"
+
+# Run specific test by name
+./behave.sh "cell-editing-regression" -t "should handle"
+
+# Run in watch mode
+./behave.sh --watch
+```
+
+### Benchmarks
+
+```bash
+# Run all benchmarks
+./benches.sh
+
+# Run specific benchmark file (any positional arg is forwarded to `vitest bench`)
+./benches.sh "tree-data-path"
+```
+
+### Unit Tests (Jest)
+
+Unit tests in `packages/` use Jest. Use `--testPathPattern` and `--testNamePattern`:
 
 ```bash
 # Run all tests for a package
@@ -55,12 +95,7 @@ yarn nx test ag-grid-community --testPathPattern="featureName" --testNamePattern
 yarn nx e2e ag-grid-docs
 ```
 
-### Behavioural Tests
-
-```bash
-# Run behavioural test suite
-yarn nx test ag-behavioural-testing
-```
+**Note:** Vitest does not support `--testPathPattern` or `--testNamePattern`. Use positional arguments for file matching and `-t` for test name filtering.
 
 ## Test Patterns
 

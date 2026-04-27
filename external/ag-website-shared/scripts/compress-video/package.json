@@ -14,7 +14,7 @@
   "license": "MIT",
   "devDependencies": {
     "ffmpeg": "^0.0.4",
-    "tsx": "^4.7.2"
+    "tsx": "^4.21.0"
   },
   "dependencies": {
     "@types/prompts": "^2.4.9",

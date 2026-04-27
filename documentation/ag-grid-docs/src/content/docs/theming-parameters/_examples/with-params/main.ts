@@ -24,11 +24,19 @@ const gridOptions: GridOptions<IOlympicData> = {
     theme: myTheme,
     columnDefs,
     rowData,
+    rowSelection: { mode: 'multiRow' },
     defaultColDef: {
         editable: true,
         flex: 1,
         minWidth: 100,
         filter: true,
+    },
+    onFirstDataRendered: (params) => {
+        params.api.forEachNode((node) => {
+            if (node.rowIndex === 2 || node.rowIndex === 3 || node.rowIndex === 4) {
+                node.setSelected(true);
+            }
+        });
     },
 };
 

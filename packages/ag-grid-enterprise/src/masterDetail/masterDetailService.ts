@@ -10,6 +10,7 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
+    DETAIL_ROW_ID_PREFIX,
     RowNode,
     _exists,
     _getClientSideRowModel,
@@ -17,8 +18,6 @@ import {
     _isServerSideRowModel,
     _observeResize,
 } from 'ag-grid-community';
-
-import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
 
 export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {
     beanName: BeanName = 'masterDetailSvc' as const;
@@ -96,15 +95,14 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
             }
         }
 
-        const beans = this.beans;
         if (!treeData) {
             // Note that with treeData the initialization of the expansed state is delegated to treeGroupStrategy
-            if (newMaster && created) {
-                const level = beans.rowGroupColsSvc?.columns.length ?? 0;
-                row.expanded = _getRowDefaultExpanded(beans, row, level, false);
-            } else if (!newMaster && oldMaster) {
-                // if changing AWAY from master, then un-expand, otherwise next time it's shown it is expanded again
-                row.expanded = false;
+            if (
+                (newMaster && created) ||
+                // if changing AWAY from master, forget current state
+                (!newMaster && oldMaster)
+            ) {
+                row._expanded ??= null;
             }
         }
 
@@ -150,7 +148,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         detailNode.parent = masterNode;
 
         if (_exists(masterNode.id)) {
-            detailNode.id = 'detail_' + masterNode.id;
+            detailNode.id = DETAIL_ROW_ID_PREFIX + masterNode.id;
         }
 
         detailNode.data = masterNode.data;

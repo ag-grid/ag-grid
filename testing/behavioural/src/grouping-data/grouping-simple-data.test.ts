@@ -4,6 +4,7 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { RowSnapshot } from '../test-utils';
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -138,12 +139,12 @@ describe('ag-grid grouping simple data', () => {
                 rowIndex: 1,
             },
             {
-                allChildrenCount: undefined,
+                allChildrenCount: null,
                 allLeafChildren: null,
                 childIndex: 0,
-                childrenAfterFilter: undefined,
-                childrenAfterGroup: undefined,
-                childrenAfterSort: undefined,
+                childrenAfterFilter: null,
+                childrenAfterGroup: null,
+                childrenAfterSort: null,
                 detail: undefined,
                 displayed: true,
                 expanded: false,
@@ -166,12 +167,12 @@ describe('ag-grid grouping simple data', () => {
                 rowIndex: 2,
             },
             {
-                allChildrenCount: undefined,
+                allChildrenCount: null,
                 allLeafChildren: null,
                 childIndex: 1,
-                childrenAfterFilter: undefined,
-                childrenAfterGroup: undefined,
-                childrenAfterSort: undefined,
+                childrenAfterFilter: null,
+                childrenAfterGroup: null,
+                childrenAfterSort: null,
                 detail: undefined,
                 displayed: true,
                 expanded: false,
@@ -222,12 +223,12 @@ describe('ag-grid grouping simple data', () => {
                 rowIndex: 4,
             },
             {
-                allChildrenCount: undefined,
+                allChildrenCount: null,
                 allLeafChildren: null,
                 childIndex: 0,
-                childrenAfterFilter: undefined,
-                childrenAfterGroup: undefined,
-                childrenAfterSort: undefined,
+                childrenAfterFilter: null,
+                childrenAfterGroup: null,
+                childrenAfterSort: null,
                 detail: undefined,
                 displayed: true,
                 expanded: false,
@@ -306,12 +307,12 @@ describe('ag-grid grouping simple data', () => {
                 rowIndex: 7,
             },
             {
-                allChildrenCount: undefined,
+                allChildrenCount: null,
                 allLeafChildren: null,
                 childIndex: 0,
-                childrenAfterFilter: undefined,
-                childrenAfterGroup: undefined,
-                childrenAfterSort: undefined,
+                childrenAfterFilter: null,
+                childrenAfterGroup: null,
+                childrenAfterSort: null,
                 detail: undefined,
                 displayed: true,
                 expanded: false,
@@ -362,12 +363,12 @@ describe('ag-grid grouping simple data', () => {
                 rowIndex: 9,
             },
             {
-                allChildrenCount: undefined,
+                allChildrenCount: null,
                 allLeafChildren: null,
                 childIndex: 0,
-                childrenAfterFilter: undefined,
-                childrenAfterGroup: undefined,
-                childrenAfterSort: undefined,
+                childrenAfterFilter: null,
+                childrenAfterGroup: null,
+                childrenAfterSort: null,
                 detail: undefined,
                 displayed: true,
                 expanded: false,
@@ -392,6 +393,12 @@ describe('ag-grid grouping simple data', () => {
         ];
 
         expect(rowsSnapshot).toMatchObject(expectedRowsSnapshots);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── athlete "Athlete" width:200
+        `);
     });
 
     test('can change an entire group without row id', async () => {

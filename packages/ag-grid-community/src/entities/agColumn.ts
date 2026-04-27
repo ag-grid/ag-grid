@@ -65,6 +65,7 @@ const DEFAULT_ABSOLUTE_SORTING_ORDER: (SortDef | SortDirection)[] = [
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg ProvidedColumnGroup
 // can only appear in OriginalColumn tree).
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgColumn<TValue = any>
     extends BeanStub<ColumnEventName>
     implements Column, IAgEventEmitter<ColumnEventName>
@@ -128,7 +129,7 @@ export class AgColumn<TValue = any>
         // This is used in ColumnFactory
         public userProvidedColDef: ColDef<any, TValue> | null,
         public readonly colId: string,
-        private readonly primary: boolean
+        public readonly primary: boolean
     ) {
         super();
         this.colIdSanitised = _escapeString(colId)!;
@@ -604,8 +605,7 @@ export class AgColumn<TValue = any>
     }
 
     public isSpanHeaderHeight(): boolean {
-        const colDef = this.getColDef();
-        return !colDef.suppressSpanHeaderHeight;
+        return !this.colDef.suppressSpanHeaderHeight;
     }
 
     /**
@@ -620,7 +620,7 @@ export class AgColumn<TValue = any>
     }
 
     public getColumnGroupPaddingInfo(): { numberOfParents: number; isSpanningTotal: boolean } {
-        let parent = this.getParent();
+        let parent = this.parent;
 
         if (!parent?.isPadding()) {
             return { numberOfParents: 0, isSpanningTotal: false };
@@ -634,7 +634,7 @@ export class AgColumn<TValue = any>
                 isSpanningTotal = false;
                 break;
             }
-            parent = parent.getParent();
+            parent = parent.parent;
         }
 
         return { numberOfParents, isSpanningTotal };
@@ -804,6 +804,7 @@ export class AgColumn<TValue = any>
  *
  * If input is already a valid SortDef, we pluck the direction and type from it.
  * Otherwise, we normalise the direction and type from input.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getSortDefFromInput(input?: unknown): SortDef {
     if (_isSortDefValid(input)) {
@@ -812,10 +813,12 @@ export function _getSortDefFromInput(input?: unknown): SortDef {
     return { direction: _normalizeSortDirection(input), type: _normalizeSortType(input) };
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isSortDirectionValid(maybeSortDir: unknown): maybeSortDir is SortDirection {
     return maybeSortDir === 'asc' || maybeSortDir === 'desc' || maybeSortDir === null;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isSortTypeValid(maybeSortType: unknown): maybeSortType is SortType {
     return maybeSortType === 'default' || maybeSortType === 'absolute';
 }
@@ -829,6 +832,7 @@ export function _isSortDefValid(maybeSortDef: unknown): maybeSortDef is SortDef 
     return _isSortTypeValid(maybeSortDefT.type) && _isSortDirectionValid(maybeSortDefT.direction);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _areSortDefsEqual(sortDef1: SortDef | null | undefined, sortDef2: SortDef | null | undefined): boolean {
     if (!sortDef1) {
         return sortDef2 ? sortDef2.direction === null : true;
@@ -840,16 +844,24 @@ export function _areSortDefsEqual(sortDef1: SortDef | null | undefined, sortDef2
     return sortDef1.type === sortDef2.type && sortDef1.direction === sortDef2.direction;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _normalizeSortDirection(sortDirectionLike?: unknown): SortDirection {
     return _isSortDirectionValid(sortDirectionLike) ? sortDirectionLike : null;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _normalizeSortType(sortTypeLike?: unknown): SortType {
     return _isSortTypeValid(sortTypeLike) ? sortTypeLike : 'default';
 }
 
-export function _getDisplaySortForColumn(column: AgColumn, beans: BeanCollection) {
-    const sortDef = beans.sortSvc!.getDisplaySortForColumn(column);
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _getDisplaySortForColumn(
+    column: AgColumn,
+    beans: BeanCollection,
+    getSortDefOverride?: () => SortDef | null | undefined
+) {
+    const overrideSortDef = getSortDefOverride?.();
+    const sortDef = overrideSortDef ?? beans.sortSvc!.getDisplaySortForColumn(column);
     const type = _normalizeSortType(sortDef?.type);
     const direction = _normalizeSortDirection(sortDef?.direction);
     const allowedSortTypes = column.getAvailableSortTypes();

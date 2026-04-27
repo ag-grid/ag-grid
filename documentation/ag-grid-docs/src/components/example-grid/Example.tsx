@@ -32,6 +32,7 @@ import {
     RowNumbersModule,
     SetFilterModule,
     SideBarModule,
+    SparklinesModule,
     StatusBarModule,
 } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
@@ -49,7 +50,7 @@ import {
     smallDefaultCols,
 } from './config/colDefs';
 import { excelStyles } from './config/excelStyles';
-import { COUNTRY_CODES, colNames, countries, createRowItem } from './data';
+import { COUNTRY_CODES, countries, createRowItem, extraColumns } from './data';
 import { createDataSizeValue } from './utils';
 
 const IS_SSR = typeof window === 'undefined';
@@ -83,6 +84,7 @@ const modules = [
     PivotModule,
     RowNumbersModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
+    SparklinesModule.with(AgChartsEnterpriseModule),
 ];
 
 const staticGridOptions: GridOptions = {
@@ -135,7 +137,17 @@ const staticGridOptions: GridOptions = {
     ),
 };
 
-const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: string; isSmall: boolean }) => {
+const ExampleInner = ({
+    darkMode,
+    theme,
+    isSmall,
+    dataSizeStr,
+}: {
+    darkMode: boolean;
+    theme: string;
+    dataSizeStr: string | undefined;
+    isSmall: boolean;
+}) => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
     const [gridThemeStr, setGridThemeStr] = useState(theme);
@@ -209,6 +221,7 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
     const createData = (dataSize: string) => {
         loadInstance.current = loadInstance.current + 1;
         const loadInstanceCopy = loadInstance.current;
+        // eslint-disable-next-line react-hooks/purity -- Date.now() called at execution time, not during render
         const startTime = Date.now(); // Track when message display started
 
         const colCount = parseInt(dataSize?.split('x')[1] ?? '0', 10);
@@ -274,21 +287,28 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
         const defaultCols = isSmall ? smallDefaultCols : largeDefaultCols;
         const defaultColCount = isSmall ? smallColCount : largeColCount;
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing derived state from props
         setDefaultCols(defaultCols);
         setDefaultColCount(defaultColCount);
 
         const newRowsCols = [
             [100, defaultColCount],
-            [1000, defaultColCount],
+            [1_000, defaultColCount],
         ];
 
         if (!isSmall) {
-            newRowsCols.push([10000, 100], [50000, defaultColCount], [100000, defaultColCount]);
+            newRowsCols.push([10_000, 100], [50_000, defaultColCount], [100_000, defaultColCount]);
         }
 
-        setDataSize(createDataSizeValue(newRowsCols[0][0], newRowsCols[0][1]));
+        const defaultDataSize = dataSizeStr
+            ? newRowsCols.find(([r, c]) => createDataSizeValue(r, c) === dataSizeStr)
+                ? dataSizeStr
+                : createDataSizeValue(newRowsCols[1][0], newRowsCols[1][1])
+            : createDataSizeValue(newRowsCols[1][0], newRowsCols[1][1]);
+
+        setDataSize(defaultDataSize);
         setRowCols(newRowsCols);
-    }, [isSmall]);
+    }, [isSmall, dataSizeStr]);
 
     useEffect(() => {
         const flags: Record<string, any> = {};
@@ -315,18 +335,56 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
 
     const createCols = (colCount: number) => {
         // start with a copy of the default cols
-        const columns = defaultCols?.slice(0, colCount) ?? [];
+        const columns: (ColDef | ColGroupDef)[] = defaultCols?.slice(0, colCount) ?? [];
 
+        // Group extra columns by their group name
+        const groups = new Map<string, ColDef[]>();
         for (let col = defaultColCount; col < colCount; col++) {
-            const colName = colNames[col % colNames.length];
-            const colDef = {
-                headerName: colName,
+            const extraColIndex = col - defaultColCount;
+            const colConfig = extraColumns[extraColIndex % extraColumns.length];
+            const colDef: ColDef = {
+                headerName: colConfig.headerName,
                 field: 'col' + col,
-                width: 200,
+                width: 150,
                 editable: true,
-                filter: 'agTextColumnFilter',
             };
-            columns.push(colDef);
+            switch (colConfig.dataType) {
+                case 'currency':
+                    colDef.cellDataType = 'currency';
+                    colDef.filter = 'agNumberColumnFilter';
+                    colDef.width = 160;
+                    break;
+                case 'percent':
+                    colDef.filter = 'agNumberColumnFilter';
+                    colDef.valueFormatter = (params) => (params.value != null ? `${params.value.toFixed(1)}%` : '');
+                    colDef.width = 130;
+                    break;
+                case 'rating':
+                    colDef.filter = 'agNumberColumnFilter';
+                    colDef.width = 120;
+                    break;
+                case 'text':
+                    colDef.filter = 'agSetColumnFilter';
+                    colDef.width = 160;
+                    break;
+                case 'number':
+                default:
+                    colDef.filter = 'agNumberColumnFilter';
+                    colDef.width = 140;
+                    break;
+            }
+            const group = colConfig.group;
+            if (!groups.has(group)) {
+                groups.set(group, []);
+            }
+            groups.get(group)!.push(colDef);
+        }
+
+        for (const [groupName, children] of groups) {
+            columns.push({
+                headerName: groupName,
+                children,
+            });
         }
 
         return columns;
@@ -335,10 +393,12 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
     const createDataRef = useRef(createData);
     // Ensure we always use the latest createData function to avoid stale closures but without
     // triggering the createData function to be recreated on every render
+    // eslint-disable-next-line react-hooks/refs -- intentional ref update during render to avoid stale closure
     createDataRef.current = createData;
 
     useEffect(() => {
         if (dataSize) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional loading state before async data generation
             setIsLoading(true);
             setTimeout(() => {
                 createDataRef.current(dataSize);
@@ -389,12 +449,17 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
 
 const Example = () => {
     const [darkMode] = useDarkmode();
-    const [gridThemeStr] = useState<string>(() => new URLSearchParams(window.location.search).get('theme') ?? 'quartz');
+    const [gridThemeStr] = useState<string>(() =>
+        IS_SSR ? 'quartz' : new URLSearchParams(window.location.search).get('theme') ?? 'quartz'
+    );
+    const [dataSizeStr] = useState<string | undefined>(() =>
+        IS_SSR ? undefined : new URLSearchParams(window.location.search).get('dataSize') ?? undefined
+    );
     const [small] = useState(() =>
         IS_SSR ? false : document.documentElement.clientHeight <= 415 || document.documentElement.clientWidth < 768
     );
 
-    return <ExampleInner darkMode={darkMode ?? false} theme={gridThemeStr} isSmall={small} />;
+    return <ExampleInner darkMode={darkMode ?? false} theme={gridThemeStr} dataSizeStr={dataSizeStr} isSmall={small} />;
 };
 
 export default memo(Example);

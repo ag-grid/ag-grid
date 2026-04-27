@@ -33,9 +33,18 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     /** The root row containing all the rows */
     readonly rootNode: RowNode | null;
     readonly rowCountReady: boolean;
+    hierarchical: boolean;
 
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
+
     refreshModel(params: RefreshModelParams): void;
+
+    /**
+     * Executes the 'map' only if we are not already in the middle of a refresh or data update.
+     * Forces also that keepRenderedRows is set to false when 'map' is executed when refresh completes
+     */
+    reMapRows(): void;
+
     forEachLeafNode(callback: ForEachNodeCallback<TData>): void;
     forEachNodeAfterFilter(callback: ForEachNodeCallback<TData>, includeFooterNodes?: boolean): void;
     forEachNodeAfterFilterAndSort(callback: ForEachNodeCallback<TData>, includeFooterNodes?: boolean): void;
@@ -45,7 +54,7 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
         callback?: (res: RowNodeTransaction<TData>) => void
     ): void;
     flushAsyncTransactions(): void;
-    doAggregate(changedPath: ChangedPath): void;
+    doAggregate(changedPath: ChangedPath | undefined): void;
     getTopLevelNodes(): RowNode[] | null;
     getFormulaRow(index: number): RowNode;
 

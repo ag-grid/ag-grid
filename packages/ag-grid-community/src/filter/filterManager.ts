@@ -16,6 +16,7 @@ import { _warn } from '../validation/logging';
 import type { ColumnFilterService } from './columnFilterService';
 import type { QuickFilterService } from './quickFilterService';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FilterManager extends BeanStub implements NamedBean {
     beanName = 'filterManager' as const;
 
@@ -220,13 +221,8 @@ export class FilterManager extends BeanStub implements NamedBean {
 
     private shouldApplyQuickFilterAfterAgg(): boolean {
         return (
-            (this.aggFiltering || this.beans.colModel.isPivotMode()) &&
-            !this.gos.get('applyQuickFilterBeforePivotOrAgg')
+            (this.aggFiltering || this.beans.colModel.pivotMode) && !this.gos.get('applyQuickFilterBeforePivotOrAgg')
         );
-    }
-
-    public doesRowPassOtherFilters(colIdToSkip: string, rowNode: RowNode): boolean {
-        return this.doesRowPassFilter({ rowNode, colIdToSkip });
     }
 
     public doesRowPassAggregateFilters(params: { rowNode: RowNode; colIdToSkip?: string }): boolean {
@@ -249,9 +245,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         return true;
     }
 
-    public doesRowPassFilter(params: { rowNode: RowNode; colIdToSkip?: string }): boolean {
-        const { rowNode } = params;
-
+    public doesRowPassFilter(rowNode: RowNode, colIdToSkip?: string): boolean {
         if (this.alwaysPassFilter?.(rowNode)) {
             return true;
         }
@@ -270,7 +264,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         }
 
         // lastly, check column filter
-        if (this.isColumnFilterPresent() && !this.colFilter!.doFiltersPass(rowNode, params.colIdToSkip)) {
+        if (this.isColumnFilterPresent() && !this.colFilter!.doFiltersPass(rowNode, colIdToSkip)) {
             return false;
         }
 

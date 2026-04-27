@@ -1,12 +1,12 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule, TextFilterModule } from 'ag-grid-community';
 import type { GridOptions, IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../../test-utils';
 
 describe('ag-grid tree transactions', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TreeDataModule],
+        modules: [RowSelectionModule, TextFilterModule, ClientSideRowModelModule, TreeDataModule],
     });
 
     beforeEach(() => {
@@ -126,6 +126,12 @@ describe('ag-grid tree transactions', () => {
             const targetNode = api.getRowNode(targetRowId);
             applyTransactionChecked(api, { update: getRowsToUpdate(selectedNode, targetNode!.data.filePath) });
         }
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Files" width:330 flex:1
+            └── size "Size" width:200 flex:1 aggFunc:sum
+        `);
     });
 
     function getFileManagerGridOptions(): GridOptions {

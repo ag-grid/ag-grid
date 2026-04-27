@@ -1,6 +1,16 @@
 import type { GridApi, GridOptions, Module, Params } from 'ag-grid-community';
-import { AllCommunityModule, _doOnce, createGrid, getGridElement } from 'ag-grid-community';
-import { ServerSideRowModelApiModule } from 'ag-grid-enterprise';
+import {
+    CellApiModule,
+    ClientSideRowModelApiModule,
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    EventApiModule,
+    RowApiModule,
+    ValidationModule,
+    _doOnce,
+    createGrid,
+    getGridElement,
+} from 'ag-grid-community';
 
 import { mockGridLayout } from './polyfills/mockGridLayout';
 import { waitForEvent } from './test-utils-events';
@@ -13,6 +23,9 @@ export interface TestGridManagerOptions {
     includeDefaultModules?: boolean;
 
     mockGridLayout?: boolean;
+
+    /** When true, uses production-like grid defaults (virtualization on, ensureDomOrder off). Implies mockGridLayout: false. */
+    benchmark?: boolean;
 }
 
 const gridApiHtmlElementsMap = new WeakMap<GridApi, HTMLElement>();
@@ -37,17 +50,28 @@ export class TestGridsManager {
         ensureDomOrder: true,
     };
 
+    /** Production-like defaults for benchmarks: virtualization enabled, DOM order not maintained. */
+    public static benchmarkGridOptions: GridOptions = {
+        animateRows: false,
+        suppressRowVirtualisation: false,
+        suppressColumnVirtualisation: false,
+        ensureDomOrder: false,
+        debug: false,
+    };
+
     private gridsMap = new Map<HTMLElement, GridApi>();
     private includeDefaultModules: boolean = true;
     private modulesToRegister: Module[] | null | undefined;
+    private benchmark: boolean = false;
 
     public constructor(options: TestGridManagerOptions = {}) {
         this.modulesToRegister = options.modules;
+        this.benchmark = options.benchmark === true;
 
-        if (options.mockGridLayout !== false) {
+        if (this.benchmark ? options.mockGridLayout === true : options.mockGridLayout !== false) {
             mockGridLayout.init();
         }
-        if (options.includeDefaultModules === false) {
+        if (this.benchmark || options.includeDefaultModules === false) {
             this.includeDefaultModules = false;
         }
     }
@@ -63,7 +87,7 @@ export class TestGridsManager {
 
     /** Destroys all created grids, and eventually created html elements */
     public destroyAllGrids(): void {
-        for (const grid of this.getAllGrids()) {
+        for (const grid of this.gridsMap.values()) {
             grid.destroy();
         }
     }
@@ -106,16 +130,23 @@ export class TestGridsManager {
 
         ignoreConsoleLicenseKeyError();
 
-        let modules = unique(this.modulesToRegister ?? []).concat(params?.modules ?? []);
+        const modules = deduplicate([...(this.modulesToRegister ?? []), ...(params?.modules ?? [])]);
 
         if (this.includeDefaultModules) {
-            modules = modules.concat([AllCommunityModule, ServerSideRowModelApiModule]);
+            modules.push(
+                ClientSideRowModelModule,
+                ClientSideRowModelApiModule,
+                RowApiModule,
+                ColumnApiModule,
+                CellApiModule,
+                EventApiModule,
+                ValidationModule
+            );
         }
-        const api = createGrid(
-            element,
-            { ...TestGridsManager.defaultGridOptions, ...gridOptions },
-            { ...params, modules }
-        );
+        const baseOptions = this.benchmark
+            ? { ...TestGridsManager.defaultGridOptions, ...TestGridsManager.benchmarkGridOptions }
+            : TestGridsManager.defaultGridOptions;
+        const api = createGrid(element, { ...baseOptions, ...gridOptions }, { ...params, modules });
 
         this.gridsMap.set(element, api);
         gridApiHtmlElementsMap.set(api, element);
@@ -165,7 +196,15 @@ export class TestGridsManager {
     }
 }
 
-function unique<T>(xs: T[]): T[] {
-    const set = new Set(xs);
-    return Array.from(set);
+function deduplicate<T>(xs: T[]): T[] {
+    const seen = new Set<T>();
+    let writeIdx = 0;
+    for (let i = 0; i < xs.length; i++) {
+        if (!seen.has(xs[i])) {
+            seen.add(xs[i]);
+            xs[writeIdx++] = xs[i];
+        }
+    }
+    xs.length = writeIdx;
+    return xs;
 }

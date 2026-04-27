@@ -124,6 +124,12 @@
                     "name": "Find",
                     "path": "find",
                     "isEnterprise": true
+                },
+                {
+                    "moduleName": "NotesModule",
+                    "name": "Notes",
+                    "path": "notes",
+                    "isEnterprise": true
                 }
             ]
         },
@@ -147,6 +153,11 @@
                             "moduleName": "DateFilterModule",
                             "name": "Date Filter",
                             "path": "filter-date"
+                        },
+                        {
+                            "moduleName": "BigIntFilterModule",
+                            "name": "BigInt Filter",
+                            "path": "filter-bigint"
                         },
                         {
                             "moduleName": "SetFilterModule",
@@ -296,6 +307,12 @@
                     "path": "grouping-single-group-column/#inherit-row-grouped-columns-filters",
                     "name": "Group Filter",
                     "isEnterprise": true
+                },
+                {
+                    "moduleName": "RowGroupingEditModule",
+                    "name": "Editing and Updating Group Row Cells",
+                    "path": "grouping-edit",
+                    "isEnterprise": true
                 }
             ]
         },
@@ -388,6 +405,12 @@
                     "moduleName": "StatusBarModule",
                     "name": "Status Bar",
                     "path": "status-bar",
+                    "isEnterprise": true
+                },
+                {
+                    "moduleName": "ToolbarModule",
+                    "name": "Toolbar",
+                    "path": "toolbar",
                     "isEnterprise": true
                 }
             ]

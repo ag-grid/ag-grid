@@ -11,22 +11,21 @@ import type {
 } from 'ag-grid-community';
 import {
     InfiniteRowModelModule,
-    ModuleRegistry,
     RowApiModule,
     RowStyleModule,
     ScrollApiModule,
     ValidationModule,
 } from 'ag-grid-community';
 import type { CustomCellRendererProps } from 'ag-grid-react';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-ModuleRegistry.registerModules([
+const modules = [
     RowApiModule,
     ScrollApiModule,
     RowStyleModule,
     InfiniteRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const valueFormatter = function (params: ValueFormatterParams) {
     if (typeof params.value === 'number') {
@@ -208,40 +207,42 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <div style={{ marginBottom: '10px' }}>
-                    <button onClick={() => insertItemsAt2AndRefresh(5)}>Insert Rows</button>
-                    <button onClick={() => removeItem(3, 10)}>Delete Rows</button>
-                    <button onClick={setRowCountTo200}>Set Row Count</button>
-                    <button onClick={rowsAndMaxFound}>Print Info</button>
-                    <button onClick={jumpTo500}>Jump to 500</button>
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                    <button onClick={setPricesHigh}>Set Prices High</button>
-                    <button onClick={setPricesLow}>Set Prices Low</button>
-                    <button onClick={refreshCache}>Refresh Cache</button>
-                    <button onClick={purgeCache}>Purge Cache</button>
-                </div>
-                <div style={{ flexGrow: '1' }}>
-                    <div style={gridStyle}>
-                        <AgGridReact
-                            ref={gridRef}
-                            columnDefs={columnDefs}
-                            datasource={datasource}
-                            defaultColDef={defaultColDef}
-                            rowModelType={'infinite'}
-                            maxBlocksInCache={2}
-                            infiniteInitialRowCount={500}
-                            maxConcurrentDatasourceRequests={2}
-                            getRowId={getRowId}
-                            getRowStyle={getRowStyle}
-                            onGridReady={onGridReady}
-                        />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                    <div style={{ marginBottom: '10px' }}>
+                        <button onClick={() => insertItemsAt2AndRefresh(5)}>Insert Rows</button>
+                        <button onClick={() => removeItem(3, 10)}>Delete Rows</button>
+                        <button onClick={setRowCountTo200}>Set Row Count</button>
+                        <button onClick={rowsAndMaxFound}>Print Info</button>
+                        <button onClick={jumpTo500}>Jump to 500</button>
+                    </div>
+                    <div style={{ marginBottom: '10px' }}>
+                        <button onClick={setPricesHigh}>Set Prices High</button>
+                        <button onClick={setPricesLow}>Set Prices Low</button>
+                        <button onClick={refreshCache}>Refresh Cache</button>
+                        <button onClick={purgeCache}>Purge Cache</button>
+                    </div>
+                    <div style={{ flexGrow: '1' }}>
+                        <div style={gridStyle}>
+                            <AgGridReact
+                                ref={gridRef}
+                                columnDefs={columnDefs}
+                                datasource={datasource}
+                                defaultColDef={defaultColDef}
+                                rowModelType={'infinite'}
+                                maxBlocksInCache={2}
+                                infiniteInitialRowCount={500}
+                                maxConcurrentDatasourceRequests={2}
+                                getRowId={getRowId}
+                                getRowStyle={getRowStyle}
+                                onGridReady={onGridReady}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

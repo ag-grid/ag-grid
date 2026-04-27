@@ -15,7 +15,7 @@ interface FloatingFilterDisplay {
 
     // Gets called every time the popup is shown, after the GUI returned in
     // getGui is attached to the DOM. This is useful for any logic that requires attachment
-    // before executing, such as putting focus on a particular DOM element. 
+    // before executing, such as putting focus on a particular DOM element.
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 
     // Gets called when the column is destroyed. If your custom filter needs to do

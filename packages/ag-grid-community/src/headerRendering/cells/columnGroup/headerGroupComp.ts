@@ -14,6 +14,7 @@ import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _warn } from '../../../validation/logging';
 import { Component } from '../../../widgets/component';
+import { GroupStickyLabelFeature } from './groupStickyLabelFeature';
 
 export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column group the header is for. */
@@ -237,7 +238,9 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             this.agLabel.textContent = _toString(displayName);
         }
 
-        this.toggleCss('ag-sticky-label', !columnGroup.getColGroupDef()?.suppressStickyLabel);
+        if (!columnGroup.getColGroupDef()?.suppressStickyLabel) {
+            this.createManagedBean(new GroupStickyLabelFeature(this.getGui(), columnGroup as AgColumnGroup));
+        }
     }
 
     public override destroy(): void {

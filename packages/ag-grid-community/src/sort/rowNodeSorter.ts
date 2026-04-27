@@ -11,6 +11,7 @@ import type { SortOption } from '../interfaces/iSortOption';
 
 // this logic is used by both SSRM and CSRM
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
@@ -27,12 +28,14 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             this.updateOptions.bind(this)
         );
 
+        const updatePivotModeState = this.updatePivotModeState.bind(this);
         this.addManagedEventListeners({
-            columnPivotModeChanged: this.updatePivotModeState.bind(this),
+            columnPivotModeChanged: updatePivotModeState,
+            columnPivotChanged: updatePivotModeState,
         });
 
         this.updateOptions();
-        this.updatePivotModeState();
+        updatePivotModeState();
     }
 
     private updateOptions(): void {
@@ -122,7 +125,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             return;
         }
         // comparator on col get preference over everything else
-        return this.getComparatorFromColDef(primaryColumn.getColDef(), sortOption);
+        return this.getComparatorFromColDef(primaryColumn.colDef, sortOption);
     }
 
     private getComparatorFromColDef(colDef: ColDef, sortOption: SortOption): SortComparatorFn | undefined {
@@ -144,13 +147,13 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 return this.getGroupDataValue(node, column);
             }
 
-            if (node.group && column.getColDef().showRowGroup) {
+            if (node.group && column.colDef.showRowGroup) {
                 return undefined;
             }
         }
 
-        const value = beans.valueSvc.getValue(column, node, false, 'api');
-        if (column.isAllowFormula()) {
+        const value = beans.valueSvc.getValue(column, node, 'data');
+        if (column.colDef.allowFormula) {
             const formula = beans.formula;
             if (formula?.isFormula(value)) {
                 return formula.resolveValue(column, node);
@@ -162,9 +165,10 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     private getGroupDataValue(node: RowNode, column: AgColumn): any {
         // because they're group rows, no display cols exist, so groupData never populated.
         // instead delegate to getting value from leaf child.
+        // Formulas are currently not supported on row-group columns, so no formula resolution is needed here.
         if (_isGroupUseEntireRow(this.gos, this.pivotActive)) {
             const leafChild = this.firstLeaf(node);
-            return leafChild && this.beans.valueSvc.getValue(column, leafChild, false, 'api');
+            return leafChild && this.beans.valueSvc.getValue(column, leafChild, 'data');
         }
 
         const displayCol = this.beans.showRowGroupCols?.getShowRowGroupCol(column.getId());
@@ -194,9 +198,12 @@ const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
     }
 };
 
-const absoluteValueTransformer = (value: any): number | null => {
+const absoluteValueTransformer = (value: any): number | bigint | null => {
     if (!value) {
         return value;
+    }
+    if (typeof value === 'bigint') {
+        return value < 0n ? -value : value;
     }
     const numberValue = Number(value);
     return isNaN(numberValue) ? value : Math.abs(numberValue);

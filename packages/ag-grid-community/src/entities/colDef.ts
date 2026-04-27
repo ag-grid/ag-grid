@@ -11,7 +11,20 @@ import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { Icons } from '../utils/icon';
+import type {
+    BaseColDefOptionalDataParams,
+    BaseColDefParams,
+    ChangedValueParams,
+    ColumnFunctionCallbackParams,
+} from './colDef-base';
+import type {
+    GroupRowEditableCallback,
+    GroupRowValueSetterFunc,
+    GroupRowValueSetterOptions,
+} from './colDef-groupRowValueSetter';
 import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
+
+export type { BaseColDefParams, ColumnFunctionCallbackParams } from './colDef-base';
 
 export type { SortDirection, SortType, SortDef, DisplaySortDef } from '../agStack/utils/aria';
 
@@ -154,6 +167,28 @@ export type IAggFunc<TData = any, TValue = any, TContext = any> = (
 
 export type IAggFuncs<TData = any, TValue = any, TContext = any> = { [key: string]: IAggFunc<TData, TValue, TContext> };
 
+/**
+ * Wrapper returned by the built-in `avg` and `count` aggregation functions, and the recommended
+ * shape for custom agg functions that expose a scalar value alongside metadata (e.g. a count, used
+ * when re-aggregating across nested groups).
+ *
+ * - `avg` returns `{ value, count, toString(), toNumber() }`
+ * - `count` returns `{ value, toString(), toNumber() }`
+ *
+ * Other built-ins (`sum`, `min`, `max`, `first`, `last`) return plain scalars.
+ */
+export interface IAggFuncResult<TAggValue = number | bigint | null> {
+    /** The aggregated scalar value. */
+    value?: TAggValue;
+    /** The count of aggregated values. Present on `avg` results. */
+    count?: number;
+    /** Returns a string representation of the aggregated value. Used also for sorting. */
+    toString(): string;
+
+    /** Returns the numeric representation of the aggregated value. Used also for sorting. */
+    toNumber?(): TAggValue;
+}
+
 export interface IAggFuncParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Values to aggregate */
     values: (TValue | null)[];
@@ -167,6 +202,16 @@ export interface IAggFuncParams<TData = any, TValue = any, TContext = any> exten
     rowNode: IRowNode<TData>;
     /** data (if any) of the parent RowNode */
     data: TData;
+    /**
+     * The immediate children of rowNode that contribute to the aggregation.
+     *
+     * - For leaf groups (groups containing data rows): returns the data rows.
+     *   With pivot columns, only rows matching the pivot keys are included.
+     * - For non-leaf groups (groups containing other groups): returns the child groups.
+     *
+     * @see {@link IRowNode.getAggregatedChildren} to retrieve the same children programmatically.
+     */
+    aggregatedChildren: IRowNode<TData>[];
 }
 
 export type PivotComparatorFunc = (valueA: string, valueB: string) => number;
@@ -336,6 +381,14 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     suppressNavigable?: boolean | SuppressNavigableCallback<TData, TValue>;
     /**
+     * Set to `true` to suppress built-in note actions for this column.
+     * Existing notes remain viewable on hover and through `getNote()`.
+     * Can also be a callback function to suppress notes for specific rows.
+     * @default false
+     * @agModule `NotesModule`
+     */
+    suppressNoteActions?: boolean | SuppressNoteActionsCallback<TData, TValue>;
+    /**
      * Allows the user to suppress certain keyboard events in the grid cell.
      * @default false
      */
@@ -385,10 +438,50 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /**
      * Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable.
+     * When grouping, see `groupRowEditable` instead for group rows.
      * @default false
      */
     editable?: boolean | EditableCallback<TData, TValue>;
-    /** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */
+    /**
+     * Works like `editable`, but is evaluated only for group rows. When provided, group rows use
+     * this property instead of `editable`. Set to `true` to make group row cells editable, or use
+     * a callback to control editability per row.
+     *
+     * When `groupRowEditable` is defined and no explicit `groupRowValueSetter` is provided,
+     * the built-in {@link distributeGroupValue | distributeGroupValue} is used automatically.
+     *
+     * Columns with `groupRowEditable` or `groupRowValueSetter` do not require `field` or
+     * `valueSetter` — the group row value setter handles the edit entirely.
+     *
+     * Note: if `groupRowValueSetter` resolves to `false` or `null` (via `distribution: false`,
+     * a per-aggFunc record entry, or `groupRowValueSetter: false`), the cell is treated as not
+     * editable even when `groupRowEditable` is `true`.
+     *
+     * @agModule `RowGroupingEditModule`
+     */
+    groupRowEditable?: boolean | GroupRowEditableCallback<TData, TValue>;
+    /**
+     * Controls how a group row value edit is distributed to descendant rows.
+     *
+     * - **`true`**: Uses the built-in {@link distributeGroupValue | distributeGroupValue} with default settings.
+     *   Also enabled implicitly when `groupRowEditable` is defined and `groupRowValueSetter` is not set.
+     * - **`false`**: Explicitly disables group row value distribution and makes the cell not editable,
+     *   even if `groupRowEditable` is defined.
+     * - **Function**: A custom callback that receives a {@link GroupRowValueSetterParams} and pushes
+     *   edits down to descendants. The column does not need `field` or `valueSetter` — the callback
+     *   handles the edit entirely.
+     * - **Options object**: Uses the built-in distribution logic with a {@link GroupRowValueSetterOptions}
+     *   configuration. When `distribution` resolves to `false` or `null` for the column's aggFunc,
+     *   the cell is treated as not editable (overriding `groupRowEditable`).
+     *
+     * Fires for every `setDataValue` call when active, regardless of `groupRowEditable`.
+     *
+     * @agModule `RowGroupingEditModule`
+     */
+    groupRowValueSetter?: boolean | GroupRowValueSetterFunc<TData, TValue> | GroupRowValueSetterOptions<TData, TValue>;
+    /**
+     * Function or expression. Sets the value into your data for saving. Return `true` if the data changed.
+     */
     valueSetter?: string | ValueSetterFunc<TData, TValue>;
     /** Function or expression. Parses the value for saving. */
     valueParser?: string | ValueParserFunc<TData, TValue>;
@@ -927,18 +1020,6 @@ export type ColTypeDefs<TData = any, TValue = any> = { [key: string]: ColTypeDef
 /** Configuration options for reusable columns types in AG Grid. This includes all possible options from `ColDef` except the `type` and `cellDataType` fields. */
 export type ColTypeDef<TData = any, TValue = any> = Omit<ColDef<TData, TValue>, 'type' | 'cellDataType'>;
 
-export interface ColumnFunctionCallbackParams<TData = any, TValue = any, TContext = any>
-    extends AgGridCommon<TData, TContext> {
-    /** Row node for the given row */
-    node: IRowNode<TData>;
-    /** Data associated with the node. Will be `undefined` for group rows. */
-    data: TData | undefined;
-    /** Column for this callback */
-    column: Column<TValue>;
-    /** ColDef provided for this column */
-    colDef: ColDef<TData, TValue>;
-}
-
 export interface CheckboxSelectionCallbackParams<TData = any, TValue = any, TContext = any>
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type CheckboxSelectionCallback<TData = any, TValue = any, TContext = any> = (
@@ -969,6 +1050,20 @@ export interface EditableCallbackParams<TData = any, TValue = any, TContext = an
 export type EditableCallback<TData = any, TValue = any, TContext = any> = (
     params: EditableCallbackParams<TData, TValue, TContext>
 ) => boolean;
+export type {
+    GroupRowEditableCallback,
+    GroupRowEditableCallbackParams,
+    GroupRowValueSetterDistribution,
+    GroupRowValueSetterDistributionEntry,
+    DistributionGetValueParams,
+    DistributionSetValueParams,
+    GroupRowValueSetterDistributionOptions,
+    GroupRowValueSetterDistributionRecord,
+    GroupRowValueSetterFunc,
+    GroupRowValueSetterOptions,
+    GroupRowValueSetterParams,
+} from './colDef-groupRowValueSetter';
+
 export interface SuppressPasteCallbackParams<TData = any, TValue = any, TContext = any>
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type SuppressPasteCallback<TData = any, TValue = any, TContext = any> = (
@@ -978,6 +1073,11 @@ export interface SuppressNavigableCallbackParams<TData = any, TValue = any, TCon
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type SuppressNavigableCallback<TData = any, TValue = any, TContext = any> = (
     params: SuppressNavigableCallbackParams<TData, TValue, TContext>
+) => boolean;
+export interface SuppressNoteActionsCallbackParams<TData = any, TValue = any, TContext = any>
+    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
+export type SuppressNoteActionsCallback<TData = any, TValue = any, TContext = any> = (
+    params: SuppressNoteActionsCallbackParams<TData, TValue, TContext>
 ) => boolean;
 export interface HeaderCheckboxSelectionCallbackParams<TData = any, TValue = any, TContext = any>
     extends AgGridCommon<TData, TContext> {
@@ -1040,29 +1140,6 @@ export interface ColumnChooserParams {
     columnLayout?: (ColDef | ColGroupDef)[];
 }
 
-export interface BaseColDefParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** Row node for the given row */
-    node: IRowNode<TData> | null;
-    /** Data associated with the node */
-    data: TData;
-    /** Column for this callback */
-    column: Column<TValue>;
-    /** ColDef provided for this column */
-    colDef: ColDef<TData, TValue>;
-}
-
-interface BaseColDefOptionalDataParams<TData = any, TValue = any, TContext = any>
-    extends AgGridCommon<TData, TContext> {
-    /** Row node for the given row */
-    node: IRowNode<TData> | null;
-    /** Data associated with the node */
-    data: TData | undefined;
-    /** Column for this callback */
-    column: Column<TValue>;
-    /** ColDef provided for this column */
-    colDef: ColDef<TData, TValue>;
-}
-
 export type SpanRowsFunc<TData = any, TValue = any, TContext = any> = (
     params: SpanRowsParams<TData, TValue, TContext>
 ) => boolean;
@@ -1123,16 +1200,13 @@ export type TooltipValueGetterFunc<TData = any, TValue = any, TContext = any> = 
     params: ITooltipParams<TData, TValue, TContext>
 ) => string | any;
 
-// In the case of parsers, the old and new values are of different types
-interface ChangedValueParams<TData, TValueOld, TValueNew, TContext = any>
-    extends BaseColDefParams<TData, TValueOld, TContext> {
-    /** The value before the change */
-    oldValue: TValueOld;
-    /** The value after the change */
-    newValue: TValueNew;
-}
 export interface NewValueParams<TData = any, TValue = any, TContext = any>
-    extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined, TContext> {}
+    extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined, TContext> {
+    /** The raw value from the edit, before any value getter is applied. */
+    newRawValue: TValue | null | undefined;
+    /** The source of the value change, e.g. `'edit'`, `'paste'`, `'undo'`, `'redo'`, `'data'`. */
+    source: string | undefined;
+}
 
 export interface ValueSetterParams<TData = any, TValue = any, TContext = any>
     extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined, TContext> {}

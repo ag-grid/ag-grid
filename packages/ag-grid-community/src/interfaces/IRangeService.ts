@@ -10,6 +10,7 @@ import type { CellPosition } from './iCellPosition';
 import type { ICellRangeFeature } from './iCellRangeFeature';
 import type { RowPosition } from './iRowPosition';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRangeService {
     readonly autoScrollService: AutoScrollService;
     isEmpty(): boolean;
@@ -30,6 +31,7 @@ export interface IRangeService {
     getCellRanges(): CellRange[];
     setRangeToCell(cell: CellPosition, appendRange?: boolean): void;
     handleCellMouseDown(event: MouseEvent, cell: CellPosition): void;
+    handleCellKeyboardSelect(event: KeyboardEvent, cell: CellPosition): void;
     intersectLastRange(fromMouseClick?: boolean): void;
     setCellRange(params: CellRangeParams): void;
     addCellRange(params: CellRangeParams): CellRange | undefined;
@@ -116,4 +118,10 @@ export interface ClearCellRangeParams {
     dispatchWrapperEvents?: boolean;
     /** Source passed to `cellSelectionDeleteStart` and `cellSelectionDeleteEnd` events */
     wrapperEventSource?: 'deleteKey';
+    /**
+     * When `true` and in batch editing mode, cells with pending edits are restored to their
+     * original `sourceValue` instead of being cleared to `deleteValue`. This is used by
+     * fill-handle reduction to undo a fill rather than clearing cells.
+     */
+    restoreSourceInBatch?: boolean;
 }

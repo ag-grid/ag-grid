@@ -10,15 +10,9 @@ import type {
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
 } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    NumberEditorModule,
-    TextEditorModule,
-    ValidationModule,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule, ValidationModule } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, RichSelectModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IRow } from './data';
 import { getData } from './data';
@@ -26,7 +20,7 @@ import MoodEditor from './moodEditor';
 import NumericCellEditor from './numericCellEditor';
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     NumberEditorModule,
     TextEditorModule,
     ClientSideRowModelModule,
@@ -35,7 +29,7 @@ ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     RichSelectModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const cellEditorSelector: (params: ICellEditorParams<IRow>) => CellEditorSelectorResult | undefined = (
     params: ICellEditorParams<IRow>
@@ -99,19 +93,21 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div style={containerStyle}>
-            <div style={gridStyle}>
-                <AgGridReact<IRow>
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    onRowEditingStarted={onRowEditingStarted}
-                    onRowEditingStopped={onRowEditingStopped}
-                    onCellEditingStarted={onCellEditingStarted}
-                    onCellEditingStopped={onCellEditingStopped}
-                />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div style={gridStyle}>
+                    <AgGridReact<IRow>
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        onRowEditingStarted={onRowEditingStarted}
+                        onRowEditingStopped={onRowEditingStopped}
+                        onCellEditingStarted={onCellEditingStarted}
+                        onCellEditingStopped={onCellEditingStopped}
+                    />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

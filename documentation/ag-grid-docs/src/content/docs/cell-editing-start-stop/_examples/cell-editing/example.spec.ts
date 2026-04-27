@@ -326,24 +326,7 @@ test.agExample(import.meta, () => {
                                 ],
                             ]);
                         } else {
-                            expect(eventLog).toEqual([
-                                ['isCancelBeforeStart', []],
-                                [
-                                    'cellEditingStopped',
-                                    {
-                                        newValue: undefined,
-                                        oldValue: 'Alice',
-                                        value: 'Alice',
-                                        valueChanged: false,
-                                    },
-                                ],
-                                [
-                                    'cellEditingStarted',
-                                    {
-                                        value: 'Alice',
-                                    },
-                                ],
-                            ]);
+                            expect(eventLog).toEqual([['isCancelBeforeStart', []]]);
                         }
                     } else {
                         if (agFramework.startsWith('react')) {
@@ -356,14 +339,7 @@ test.agExample(import.meta, () => {
                                 ],
                             ]);
                         } else {
-                            expect(eventLog).toEqual([
-                                ['isCancelBeforeStart', []],
-                                [
-                                    'cellEditingStopped',
-                                    { newValue: undefined, oldValue: 'Alice', value: 'Alice', valueChanged: false },
-                                ],
-                                ['cellEditingStarted', { value: 'Alice' }],
-                            ]);
+                            expect(eventLog).toEqual([['isCancelBeforeStart', []]]);
                         }
 
                         await expect(cell).toHaveText('Alice');

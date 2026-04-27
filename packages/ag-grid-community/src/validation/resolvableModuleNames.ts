@@ -9,6 +9,7 @@ import type { RowModelType } from '../interfaces/iRowModel';
 const ALL_COLUMN_FILTERS = [
     'TextFilter',
     'NumberFilter',
+    'BigIntFilter',
     'DateFilter',
     'SetFilter',
     'MultiFilter',
@@ -31,7 +32,8 @@ const RESOLVABLE_MODULE_NAMES: Record<ResolvableModuleName, readonly (CommunityM
         'CustomEditor',
     ],
     CheckboxCellRenderer: ['AllCommunity'],
-    ClientSideRowModelHierarchy: ['RowGrouping', 'Pivot', 'TreeData'],
+    CsrmHierarchy: ['RowGrouping', 'Pivot', 'TreeData'],
+    CsrmGroupStages: ['RowGrouping', 'Pivot', 'TreeData'],
     ColumnFilter: ALL_COLUMN_FILTERS,
     ColumnGroupHeaderComp: ['AllCommunity'],
     ColumnGroup: ['AllCommunity'],

@@ -5,6 +5,8 @@ import type { ClassImp, IContext } from '../agStack/interfaces/iContext';
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
+import type { FilterStage } from '../clientSideRowModel/filterStage';
+import type { SortStage } from '../clientSideRowModel/sortStage';
 import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import type { ColumnAnimationService } from '../columnMove/columnAnimationService';
 import type { ColumnMoveService } from '../columnMove/columnMoveService';
@@ -29,6 +31,8 @@ import type { DragService } from '../dragAndDrop/dragService';
 import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeService';
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { RowDropHighlightService } from '../dragAndDrop/rowDropHighlightService';
+import type { EditModelService } from '../edit/editModelService';
+import type { EditService } from '../edit/editService';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
 import type { AgEventTypeParams, AgGlobalEventListener } from '../events';
@@ -46,20 +50,24 @@ import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader'
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
-import type { IFormulaDataService, IFormulaService } from '../interfaces/formulas';
+import type { IFormulaDataService, IFormulaInputManagerService, IFormulaService } from '../interfaces/formulas';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
+import type { IAggregatedChildrenSvc } from '../interfaces/iAggregatedChildrenSvc';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
+import type { IColumnStateUpdateStrategy } from '../interfaces/iColumnStateUpdateStrategy';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
-import type { IEditModelService } from '../interfaces/iEditModelService';
-import type { IEditService } from '../interfaces/iEditService';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
-import type { IExpansionService } from '../interfaces/iExpansionService';
+import type {
+    IExpansionService,
+    RowGroupBulkExpansionState,
+    RowGroupExpansionState,
+} from '../interfaces/iExpansionService';
 import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
@@ -73,6 +81,8 @@ import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
+import type { IRowGroupPanelBuilder } from '../interfaces/iRowGroupPanelBuilder';
+import type { IRowGroupingEditValueSvc } from '../interfaces/iRowGroupingEditValueSvc';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type {
     IRowNodeAggregationStage,
@@ -92,8 +102,10 @@ import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { ITestIdService } from '../interfaces/iTestIdService';
 import type { IWatermark } from '../interfaces/iWatermark';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
+import type { INotesDataService, INotesService } from '../interfaces/notes';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { IRowNumbersService } from '../interfaces/rowNumbers';
+import type { IChangedPathFactory } from '../main-internal';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
 import type { IconService } from '../misc/iconService';
@@ -131,6 +143,7 @@ import type { ValueCache } from '../valueService/valueCache';
 import type { ValueService } from '../valueService/valueService';
 import type { PopupService } from '../widgets/popupService';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface SingletonBean extends AgSingletonBeanClass<BeanCollection> {}
 
 export type DynamicBeanName =
@@ -152,9 +165,20 @@ export type DynamicBeanName =
     | 'agMultiColumnFilterHandler'
     | 'agGroupColumnFilterHandler'
     | 'agNumberColumnFilterHandler'
+    | 'agBigIntColumnFilterHandler'
     | 'agDateColumnFilterHandler'
     | 'agTextColumnFilterHandler';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type ToolbarItemComponentName =
+    | 'agButtonToolbarItem'
+    | 'agFindToolbarItem'
+    | 'agMenuToolbarItem'
+    | 'agPivotPanelToolbarItem'
+    | 'agQuickFilterToolbarItem'
+    | 'agRowGroupPanelToolbarItem';
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type StatusPanelComponentName =
     | 'agAggregationComponent'
     | 'agSelectedRowCountComponent'
@@ -180,10 +204,12 @@ export type UserComponentName =
     | 'agReadOnlyFloatingFilter'
     | 'agTextColumnFilter'
     | 'agNumberColumnFilter'
+    | 'agBigIntColumnFilter'
     | 'agDateColumnFilter'
     | 'agDateInput'
     | 'agTextColumnFloatingFilter'
     | 'agNumberColumnFloatingFilter'
+    | 'agBigIntColumnFloatingFilter'
     | 'agDateColumnFloatingFilter'
     | 'agMultiColumnFilter'
     | 'agMultiColumnFloatingFilter'
@@ -211,6 +237,7 @@ export type UserComponentName =
     | 'agDetailCellRenderer'
     | 'agSparklineCellRenderer'
     | StatusPanelComponentName
+    | ToolbarItemComponentName
     | 'agFindCellRenderer';
 
 interface ComponentMetaWithParams {
@@ -282,6 +309,7 @@ interface CoreBeanCollection
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
     eRootDiv: HTMLElement;
+    withinStudio?: boolean;
     pivotResultCols?: IPivotResultColsService;
     autoColSvc?: IColumnCollectionService;
     selectionColSvc?: SelectionColService;
@@ -318,24 +346,27 @@ interface CoreBeanCollection
     filterMenuFactory?: IMenuFactory;
     enterpriseMenuFactory?: IMenuFactory;
     contextMenuSvc?: IContextMenuService;
-    editSvc?: IEditService;
-    editModelSvc?: IEditModelService;
+    editSvc?: EditService;
+    editModelSvc?: EditModelService;
     alignedGridsSvc?: AlignedGridsService;
     paginationAutoPageSizeSvc?: PaginationAutoPageSizeService;
     pagination?: PaginationService;
     pageBounds: PageBoundsService;
     apiFunctionSvc: ApiFunctionService;
     gridDestroySvc: GridDestroyService;
-    expansionSvc?: IExpansionService;
+    expansionSvc?: IExpansionService<RowGroupExpansionState | RowGroupBulkExpansionState>;
     sideBar?: ISideBarService;
     ssrmTxnManager?: IServerSideTransactionManager;
     aggFuncSvc?: IAggFuncService;
     advancedFilter: IAdvancedFilterService;
-    filterStage?: IRowNodeFilterStage;
-    sortStage?: IRowNodeSortStage;
+    filterStage?: FilterStage;
+    sortStage?: SortStage;
+    groupFilterStage?: IRowNodeFilterStage;
+    groupSortStage?: IRowNodeSortStage;
     flattenStage?: IRowNodeFlattenStage;
     groupStage?: IRowNodeGroupStage;
     aggStage?: IRowNodeAggregationStage;
+    aggChildrenSvc?: IAggregatedChildrenSvc;
     pivotStage?: IRowNodePivotStage;
     filterAggStage?: IRowNodeFilterAggregateStage;
     rowNodeSorter?: RowNodeSorter;
@@ -346,6 +377,7 @@ interface CoreBeanCollection
     rowDropHighlightSvc?: RowDropHighlightService;
     rowDragSvc?: RowDragService;
     groupEditSvc?: IGroupEditService;
+    rowGroupingEditValueSvc?: IRowGroupingEditValueSvc;
     stickyRowSvc?: IStickyRowService;
     filterValueSvc?: FilterValueService;
     cellFlashSvc?: CellFlashService;
@@ -359,6 +391,7 @@ interface CoreBeanCollection
     rowSpanSvc?: RowSpanService;
     spannedRowRenderer?: SpannedRowRenderer;
     findSvc?: IFindService;
+    rowGroupPanelBuilder?: IRowGroupPanelBuilder;
     groupFilter?: IGroupFilterService;
     multiFilter?: IMultiFilterService;
     filterPanelSvc?: IFilterPanelService;
@@ -367,20 +400,28 @@ interface CoreBeanCollection
     colDelayRenderSvc?: ColumnDelayRenderService;
     gridSerializer?: GridSerializer;
     licenseManager?: IWatermark;
+    changedPathFactory?: IChangedPathFactory;
     changeDetectionSvc?: ChangeDetectionService;
     iconSvc: IconService;
     groupHierarchyColSvc?: IGroupHierarchyColService;
     formulaDataSvc?: IFormulaDataService;
     formula?: IFormulaService;
+    formulaInputManager?: IFormulaInputManagerService;
+    notesDataSvc?: INotesDataService;
+    notesSvc?: INotesService;
+    columnStateUpdateStrategy: IColumnStateUpdateStrategy;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type BeanCollection = CoreBeanCollection & {
     // `unknown | undefined` to make sure the type is handled correctly when used
     [key in UntypedBeanNames]?: unknown;
 };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type Context = IContext<BeanCollection>;
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type BeanName = keyof BeanCollection;
 
 /** Things used in enterprise or elsewhere that we haven't created interfaces for */
@@ -410,4 +451,5 @@ type UntypedBeanNames =
     | 'ssrmStoreUtils'
     | 'statusBarSvc'
     | 'testIdSvc'
+    | 'toolbarMenuBuilder'
     | 'formula';

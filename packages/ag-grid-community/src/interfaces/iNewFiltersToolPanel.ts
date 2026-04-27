@@ -15,7 +15,7 @@ export interface SelectableFilterDef {
     /**
      * Filter to use for this column.
      * - Set to `true` to use the default filter.
-     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
+     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
      * - Set to a `ColumnFilter`
      */
     filter: any;

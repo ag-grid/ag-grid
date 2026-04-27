@@ -2,11 +2,13 @@ import type { Component, ComponentSelector } from '../widgets/component';
 import type { SideBarState } from './gridState';
 import type { IToolPanel } from './iToolPanel';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ISideBarService {
     comp: ISideBar;
     getSelector(): ComponentSelector<Component>;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ISideBar {
     refresh(): void;
     setDisplayed(show: boolean): void;

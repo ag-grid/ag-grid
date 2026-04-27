@@ -4,6 +4,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions, RowDataTransaction } from 'ag-grid-community';
 
 import {
+    GridColumns,
     GridRows,
     TestGridsManager,
     applyTransactionChecked,
@@ -85,6 +86,11 @@ describe('ag-grid rows-ordering', () => {
             ├── LEAF id:2 x:4
             ├── LEAF id:3 x:7
             └── LEAF id:4 x:5
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── x "X" width:200
         `);
     });
 
@@ -187,6 +193,8 @@ describe('ag-grid rows-ordering', () => {
 
         consoleWarnSpy.mockRestore();
 
+        // checkDom: false — this test intentionally uses duplicate row IDs (id:9 appears twice),
+        // which causes DOM order validation to fail as the grid cannot distinguish the two DOM rows.
         await new GridRows(api, 'data', { checkDom: false }).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 x:2
@@ -198,6 +206,11 @@ describe('ag-grid rows-ordering', () => {
             ├── LEAF id:10 x:10
             ├── LEAF id:9 x:9
             └── LEAF id:8 x:80
+        `);
+
+        await new GridColumns(api, 'columns').checkColumns(`
+            CENTER
+            └── x "X" width:200
         `);
     });
 
@@ -756,6 +769,8 @@ describe('ag-grid rows-ordering', () => {
             expect(consoleWarnSpy).toHaveBeenCalled();
             consoleWarnSpy.mockReset();
 
+            // checkDom: false — this test intentionally uses duplicate row IDs (id:3 appears three times),
+            // which causes DOM order validation to fail as the grid cannot distinguish the DOM rows.
             await new GridRows(api, 'data', { checkDom: false }).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:1 x:1
@@ -785,6 +800,8 @@ describe('ag-grid rows-ordering', () => {
             expect(consoleWarnSpy).toHaveBeenCalled();
             consoleWarnSpy.mockReset();
 
+            // checkDom: false — this test intentionally uses duplicate row IDs (id:13 appears four times),
+            // which causes DOM order validation to fail as the grid cannot distinguish the DOM rows.
             await new GridRows(api, 'data', { checkDom: false }).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:1 x:1

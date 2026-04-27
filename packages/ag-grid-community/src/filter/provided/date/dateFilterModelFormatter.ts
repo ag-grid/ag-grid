@@ -1,6 +1,8 @@
 import { _dateToFormattedString, _parseDateTimeFromString } from '../../../agStack/utils/date';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SharedFilterParams } from '../../../interfaces/iFilter';
+import type { FilterLocaleTextKey } from '../../filterLocaleText';
+import { translateForFilter } from '../../filterLocaleText';
 import type { OptionsFactory } from '../optionsFactory';
 import { SCALAR_FILTER_TYPE_KEYS, SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
@@ -43,6 +45,10 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter<
 
         const formattedFrom = () => (dateFrom !== null ? formatDate(dateFrom) : 'null');
         const formattedTo = () => (dateTo !== null ? formatDate(dateTo) : 'null');
+
+        if (dateFrom == null && dateTo == null) {
+            return translateForFilter(this, type as FilterLocaleTextKey);
+        }
 
         if (forToolPanel) {
             const valueForToolPanel = this.conditionForToolPanel(

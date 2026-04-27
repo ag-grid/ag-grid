@@ -1,9 +1,10 @@
 import { _getSortDefFromInput } from '../../entities/agColumn';
-import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
+import type { DomLayoutType, GridOptions, PaginationPanel } from '../../entities/gridOptions';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
+import { buildAllValidNames } from '../validationTypes';
 import type { Deprecations, OptionsValidator, RequiredModule, Validations } from '../validationTypes';
 
 /**
@@ -126,18 +127,21 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     getMainMenuItems: 'ColumnMenu',
     getRowClass: 'RowStyle',
     getRowStyle: 'RowStyle',
-    groupTotalRow: 'SharedRowGrouping',
-    grandTotalRow: 'ClientSideRowModelHierarchy',
+    groupTotalRow: (_options, gridOptions) =>
+        gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'RowGrouping',
+    grandTotalRow: ['CsrmHierarchy', 'ServerSideRowModel'],
     initialState: 'GridState',
     isExternalFilterPresent: 'ExternalFilter',
     isRowPinnable: 'PinnedRow',
     isRowPinned: 'PinnedRow',
     localeText: 'Locale',
-    masterDetail: 'SharedMasterDetail',
+    masterDetail: (_options, gridOptions) =>
+        gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'MasterDetail',
+    notesDataSource: 'Notes',
     pagination: 'Pagination',
     pinnedBottomRowData: 'PinnedRow',
     pinnedTopRowData: 'PinnedRow',
-    pivotMode: 'SharedPivot',
+    pivotMode: (_options, gridOptions) => (gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'Pivot'),
     pivotPanelShow: 'RowGroupingPanel',
     quickFilterText: 'QuickFilter',
     rowClass: 'RowStyle',
@@ -147,12 +151,15 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     refreshAfterGroupEdit: ['RowGrouping', 'TreeData'],
     rowGroupPanelShow: 'RowGroupingPanel',
     rowNumbers: 'RowNumbers',
-    rowSelection: 'SharedRowSelection',
+    rowSelection: (_options, gridOptions) =>
+        gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'RowSelection',
     rowStyle: 'RowStyle',
     serverSideDatasource: 'ServerSideRowModel',
     sideBar: 'SideBar',
     statusBar: 'StatusBar',
-    treeData: 'SharedTreeData',
+    treeData: (_options, gridOptions) =>
+        gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'TreeData',
+    toolbar: 'Toolbar',
     undoRedoCellEditing: 'UndoRedoEdit',
     valueCache: 'ValueCache',
     viewportDatasource: 'ViewportRowModel',
@@ -204,6 +211,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 enableRangeSelection: { required: [true] },
             },
         },
+        enableCellSpan: {
+            supportedRowModels: ['clientSide', 'serverSide'],
+        },
         enableRangeSelection: {
             dependencies: {
                 rowDragEntireRow: { required: [false, undefined] },
@@ -246,10 +256,20 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         groupDefaultExpanded: {
             supportedRowModels: ['clientSide'],
         },
+        groupHideColumnsUntilExpanded: {
+            supportedRowModels: ['clientSide'],
+            validate({ groupHideColumnsUntilExpanded, groupHideOpenParents, groupDisplayType }) {
+                if (groupHideColumnsUntilExpanded && !groupHideOpenParents && groupDisplayType !== 'multipleColumns') {
+                    return "`groupHideColumnsUntilExpanded = true` requires either `groupDisplayType = 'multipleColumns'` or `groupHideOpenParents = true`";
+                }
+                return null;
+            },
+        },
         groupHideOpenParents: {
             supportedRowModels: ['clientSide', 'serverSide'],
             dependencies: {
                 groupTotalRow: { required: [undefined, 'bottom'] },
+                groupDisplayType: { required: [undefined, 'multipleColumns'] },
                 treeData: {
                     required: [undefined, false],
                     reason: "Tree Data has values at the group level so it doesn't make sense to hide them.",
@@ -347,6 +367,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        paginationPanels: {
+            validate: ({ paginationPanels }) => {
+                const validNames = new Set<PaginationPanel>(['pageSize', 'rowSummary', 'pageSummary']);
+                if (
+                    paginationPanels != null &&
+                    (!Array.isArray(paginationPanels) || paginationPanels.some((p) => !validNames.has(p)))
+                ) {
+                    return "'paginationPanels' expects an array of panel names: ['pageSize', 'rowSummary', 'pageSummary']";
+                }
+                return null;
+            },
+        },
         pivotMode: {
             dependencies: {
                 treeData: {
@@ -406,6 +438,30 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        notesDataSource: {
+            validate: ({ getRowId }) => {
+                if (!getRowId) {
+                    return `'getRowId' callback must be provided for Notes to work correctly.`;
+                }
+                return null;
+            },
+        },
+        noteHideDelay: {
+            validate: (options) => {
+                if (options.noteHideDelay != null && options.noteHideDelay < 0) {
+                    return 'noteHideDelay should not be lower than 0';
+                }
+                return null;
+            },
+        },
+        noteShowDelay: {
+            validate: (options) => {
+                if (options.noteShowDelay != null && options.noteShowDelay < 0) {
+                    return 'noteShowDelay should not be lower than 0';
+                }
+                return null;
+            },
+        },
         serverSideDatasource: {
             supportedRowModels: ['serverSide'],
         },
@@ -453,6 +509,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             validate: (options) => {
                 if (options.tooltipShowDelay && options.tooltipShowDelay < 0) {
                     return 'tooltipShowDelay should not be lower than 0';
+                }
+                return null;
+            },
+        },
+        tooltipSwitchShowDelay: {
+            validate: (options) => {
+                if (options.tooltipSwitchShowDelay && options.tooltipSwitchShowDelay < 0) {
+                    return 'tooltipSwitchShowDelay should not be lower than 0';
                 }
                 return null;
             },
@@ -566,11 +630,19 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
     return validations;
 };
 
-export const GRID_OPTIONS_VALIDATORS: () => Required<OptionsValidator<GridOptions>> = () => ({
-    objectName: 'gridOptions',
-    allProperties: [..._GET_ALL_GRID_OPTIONS(), ...Object.values(_PUBLIC_EVENT_HANDLERS_MAP)],
-    propertyExceptions: ['api'],
-    docsUrl: 'grid-options/',
-    deprecations: GRID_OPTION_DEPRECATIONS(),
-    validations: GRID_OPTION_VALIDATIONS(),
-});
+let _gridOptionsValidatorsCache: Required<OptionsValidator<GridOptions>> | undefined;
+export const GRID_OPTIONS_VALIDATORS: () => Required<OptionsValidator<GridOptions>> = () =>
+    (_gridOptionsValidatorsCache ??= (() => {
+        const allProperties = [..._GET_ALL_GRID_OPTIONS(), ...Object.values(_PUBLIC_EVENT_HANDLERS_MAP)];
+        const deprecations = GRID_OPTION_DEPRECATIONS();
+        const propertyExceptions = ['api'];
+        return {
+            objectName: 'gridOptions',
+            allProperties,
+            allValidNames: buildAllValidNames(allProperties, deprecations, propertyExceptions),
+            propertyExceptions,
+            docsUrl: 'grid-options/',
+            deprecations,
+            validations: GRID_OPTION_VALIDATIONS(),
+        };
+    })());

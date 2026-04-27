@@ -19,7 +19,7 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
-import { agPanelCSS } from './agPanel.css-GENERATED';
+import agPanelCSS from './agPanel.css';
 
 export interface AgPanelPostProcessPopupParams {
     type: string;
@@ -229,6 +229,10 @@ export class AgPanel<
 
     public getWidth(): number | undefined {
         return this.positionableFeature.getWidth();
+    }
+
+    public get isResizing(): boolean {
+        return this.positionableFeature.isResizing;
     }
 
     public setWidth(width: number | string): void {

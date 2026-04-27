@@ -22,5 +22,12 @@ jest.config.ts
 jest.setup.ts
 jest.setup.js
 jest.jsdom-env.cjs
+vitest.config.ts
+vitest.umd.config.ts
+vitest.setup.ts
 coverage
 .swcrc
+.snyk
+e2e/*
+playwright.config.ts
+esbuildBuild.cjs

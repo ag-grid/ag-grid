@@ -1,5 +1,6 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
 import { _isMacOsUserAgent } from '../../agStack/utils/browser';
+import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import { _populateModelValidationErrors } from '../../edit/utils/editors';
@@ -40,6 +41,15 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     public onKeyDown(event: KeyboardEvent): void {
         const key = event.key;
+
+        // delegate Enter on Row Number cells to the RowNumbersService
+        if (
+            key === KeyCode.ENTER &&
+            isRowNumberCol(this.cellCtrl.column) &&
+            this.beans.rowNumbersSvc?.handleKeyDownOnCell(this.cellCtrl.cellPosition, event)
+        ) {
+            return;
+        }
 
         switch (key) {
             case KeyCode.ENTER:
@@ -118,11 +128,13 @@ export class CellKeyboardListenerFeature extends BeanStub {
             !editSvc?.isEditing(cellCtrl, { withOpenEditor: true })
         ) {
             if (rangeSvc && _isCellSelectionEnabled(gos)) {
-                rangeSvc.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
+                rangeSvc.clearCellRangeCellValues({
+                    dispatchWrapperEvents: true,
+                    wrapperEventSource: 'deleteKey',
+                });
             } else if (cellCtrl.isCellEditable()) {
-                const { column } = cellCtrl;
-                const emptyValue = this.beans.valueSvc.getDeleteValue(column, rowNode);
-                rowNode.setDataValue(column, emptyValue, 'cellClear');
+                const deleteValue = beans.valueSvc.getDeleteValue(cellCtrl.column, rowNode);
+                rowNode.setDataValue(cellCtrl.column, deleteValue, 'cellClear');
             }
         } else if (!editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
             beans.editSvc?.startEditing(cellCtrl, { startedEdit: true, event });
@@ -200,10 +212,22 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private onF2KeyDown(event: KeyboardEvent): void {
         const {
             cellCtrl,
-            beans: { editSvc },
+            beans: { editSvc, notesSvc },
         } = this;
 
         const editing = editSvc?.isEditing();
+
+        if (event.shiftKey && notesSvc?.hasDataSource() && !editing) {
+            const access = notesSvc.getNoteAccess({ rowNode: this.rowNode, column: cellCtrl.column });
+
+            if (access) {
+                if (!access.isSuppressed || access.canView) {
+                    notesSvc.showNote(access.params, true);
+                    event.preventDefault();
+                    return;
+                }
+            }
+        }
 
         if (editing) {
             // re-run ALL validations, F2 is used to initiate a new edit. If we have one already in progress,
@@ -268,7 +292,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 return;
             }
 
-            editSvc?.startEditing(cellCtrl, { startedEdit: true, event, source: 'api' });
+            editSvc?.startEditing(cellCtrl, { startedEdit: true, event, source: 'api', editable: true });
             // if we don't prevent default, then the event also gets applied to the text field
             // (at least when doing the default editor), but we need to allow the editor to decide
             // what it wants to do. we only do this IF editing was started - otherwise it messes

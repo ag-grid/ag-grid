@@ -15,7 +15,6 @@ Each column in the grid is defined using a Column Definition (`ColDef`). Columns
 
 {% gridExampleRunner title="Simple Definitions" name="simple" exampleHeight=300 /%}
 
-
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -43,17 +42,19 @@ const gridOptions = {
 
 {% gridExampleRunner title="Default Col Def" name="default-col-def" exampleHeight=300 /%}
 
+## Cell Data Types
+
+The grid provides built-in [Cell Data Types](./cell-data-types/) for common data types such as `text`, `number`, `boolean`, `date` and more. By default these types are [inferred](./cell-data-types/#inferring-data-types) from the row data and configure appropriate rendering, editing, filtering, and sorting behaviour for each column without the need for explicit configuration via `columnDefs`.
 
 ## Column Types
 
 Use `columnTypes` to define a set of Column properties to be applied together. The properties in a column type are applied to a Column by setting its `type` property.
 
-
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     // Define column types
     columnTypes: {
-        currency: { 
+        currency: {
             width: 150,
             valueFormatter: CurrencyFormatter
         },
@@ -97,6 +98,10 @@ const gridOptions = {
 }
 ```
 
+{% note %}
+The provided column types use cell classes to apply styling. The `CellStyleModule` is required for these types to work correctly.
+{% /note %}
+
 ## Updating Columns
 
 Columns can be controlled by updating the column state, or updating the column definition.
@@ -131,6 +136,7 @@ In the example below, use the 'Sort Athlete' button to apply a column state.
 To update an attribute by [Updating Column Definitions](./column-updating-definitions/#changing-column-definition), pass a new array of [Column Definitions](./column-definitions/) to the grid options.
 
 {% if isFramework("javascript", "angular", "vue") %}
+
 ```{% frameworkTransform=false %}
 // Define new column definitions
 const updatedHeaderColumnDefs = [
@@ -142,9 +148,11 @@ const updatedHeaderColumnDefs = [
 // Supply new column definitions to the grid
 gridApi.setGridOption('columnDefs', updatedHeaderColumnDefs);
 ```
+
 {% /if %}
 
 {% if isFramework("react") %}
+
 ```{% frameworkTransform=false %}
 // Supply new column definitions to the grid
 setColumnDefs([
@@ -154,10 +162,9 @@ setColumnDefs([
   { field: 'sport', headerName: 'C4' },
 ]);
 ```
+
 {% /if %}
 
 In the example below, use the 'Update Header Names' button to update the column definitions.
 
 {% gridExampleRunner title="Column Definition Update" name="column-definition-update" exampleHeight=321 /%}
-## Next Up
-Continue to the next section: [Updating Definitions](./column-updating-definitions/).

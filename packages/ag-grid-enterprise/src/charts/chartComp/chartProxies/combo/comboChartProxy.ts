@@ -30,7 +30,7 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
         if (secondaryYKeys.length > 0) {
             secondaryYKeys.forEach((secondaryYKey: string) => {
                 const field = fieldsMap.get(secondaryYKey);
-                const secondaryAxisIsVisible = field && field.colId === secondaryYKey;
+                const secondaryAxisIsVisible = field?.colId === secondaryYKey;
                 if (!secondaryAxisIsVisible) {
                     return;
                 }
@@ -79,7 +79,11 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
             const colId = field.colId;
             const seriesChartType = seriesChartTypes.find((s) => s.colId === colId);
             if (seriesChartType) {
-                seriesChartType.secondaryAxis ? secondaryYKeys.push(colId) : primaryYKeys.push(colId);
+                if (seriesChartType.secondaryAxis) {
+                    secondaryYKeys.push(colId);
+                } else {
+                    primaryYKeys.push(colId);
+                }
             }
         }
 

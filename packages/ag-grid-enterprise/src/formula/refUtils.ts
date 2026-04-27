@@ -1,4 +1,4 @@
-const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?:?/g;
+const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?/g;
 const FULL_CELL_OR_RANGE_REGEX = /^(\$?)([A-Za-z]+)(\$?)([0-9]+)(?::(\$?)([A-Za-z]+)(\$?)([0-9]+))?$/;
 const WORD_CHAR_REGEX = /[A-Za-z0-9]/;
 
@@ -8,6 +8,18 @@ export const isFormulaIdentChar = (char: string | undefined): boolean => {
 
 export const isFormulaIdentStart = (char: string | undefined): boolean => {
     return !!char && /[A-Za-z]/.test(char);
+};
+
+export const isValidFunctionName = (name: string): boolean => {
+    if (!isFormulaIdentStart(name[0])) {
+        return false;
+    }
+    for (let i = 1, len = name.length; i < len; ++i) {
+        if (!isFormulaIdentChar(name[i])) {
+            return false;
+        }
+    }
+    return true;
 };
 
 type ParsedA1Ref = {
@@ -74,8 +86,13 @@ export const getRefTokenMatches = (text: string): RefTokenMatch[] => {
     let index = 0;
     CELL_OR_RANGE_REGEX.lastIndex = 0;
     while ((match = CELL_OR_RANGE_REGEX.exec(text)) != null) {
-        const ref = match[0];
+        let ref = match[0];
         const start = match.index ?? 0;
+        const endIndex = start + ref.length;
+        // Allow partial ranges (e.g. "A1:" or "A1:B2:") without relying on regex backtracking.
+        if (endIndex < text.length && text[endIndex] === ':') {
+            ref += ':';
+        }
         if (!isStandaloneRefToken(text, start, ref)) {
             continue;
         }

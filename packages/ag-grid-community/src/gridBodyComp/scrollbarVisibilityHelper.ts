@@ -1,4 +1,5 @@
 import { _getScrollbarWidth } from '../agStack/utils/browser';
+import { _isVisible } from '../agStack/utils/dom';
 
 const AXES = {
     horizontal: {
@@ -18,27 +19,49 @@ const AXES = {
 export function _shouldShowHorizontalScroll(
     horizontalElement: HTMLElement,
     verticalScrollElement?: HTMLElement,
-    scrollbarWidth: number = _getScrollbarWidth() || 0
+    scrollbarWidth: number = _getScrollbarWidth() || 0,
+    primaryScrollbarElement?: HTMLElement,
+    oppositeScrollbarElement?: HTMLElement
 ): boolean {
-    return shouldShowScroll(horizontalElement, verticalScrollElement, 'horizontal', scrollbarWidth);
+    return shouldShowScroll(
+        horizontalElement,
+        verticalScrollElement,
+        'horizontal',
+        scrollbarWidth,
+        primaryScrollbarElement,
+        oppositeScrollbarElement
+    );
 }
 
 export function _shouldShowVerticalScroll(
     verticalElement: HTMLElement,
     horizontalScrollElement?: HTMLElement,
-    scrollbarWidth: number = _getScrollbarWidth() || 0
+    scrollbarWidth: number = _getScrollbarWidth() || 0,
+    primaryScrollbarElement?: HTMLElement,
+    oppositeScrollbarElement?: HTMLElement
 ): boolean {
-    return shouldShowScroll(verticalElement, horizontalScrollElement, 'vertical', scrollbarWidth);
+    return shouldShowScroll(
+        verticalElement,
+        horizontalScrollElement,
+        'vertical',
+        scrollbarWidth,
+        primaryScrollbarElement,
+        oppositeScrollbarElement
+    );
 }
 
 function shouldShowScroll(
     primaryElement: HTMLElement,
     oppositeElement: HTMLElement | undefined,
     axis: 'horizontal' | 'vertical',
-    scrollbarWidth: number
+    scrollbarWidth: number,
+    primaryScrollbarElement: HTMLElement | undefined,
+    oppositeScrollbarElement: HTMLElement | undefined
 ): boolean {
     const primary = AXES[axis];
     const opposite = AXES[primary.opposite];
+    const primaryScrollbarShowing = primaryScrollbarElement ? _isVisible(primaryScrollbarElement) : true;
+    const oppositeScrollbarShowing = oppositeScrollbarElement ? _isVisible(oppositeScrollbarElement) : true;
 
     const primaryOverflow = primary.overflow(primaryElement);
     if (primaryOverflow <= 0) {
@@ -55,14 +78,16 @@ function shouldShowScroll(
     }
 
     if (primaryOverflow <= scrollbarWidth) {
-        const oppositeCausedByPrimary = isScrollbarCausedByOppositeAxis({
-            candidateOverflow: oppositeOverflow,
-            candidateScrollSize: opposite.scrollSize(oppositeElement),
-            candidateClientSize: opposite.clientSize(oppositeElement),
-            scrollbarWidth,
-        });
-
-        if (oppositeCausedByPrimary) {
+        if (
+            primaryScrollbarShowing &&
+            oppositeScrollbarShowing &&
+            isScrollbarCausedByOppositeAxis({
+                candidateOverflow: oppositeOverflow,
+                candidateScrollSize: opposite.scrollSize(oppositeElement),
+                candidateClientSize: opposite.clientSize(oppositeElement),
+                scrollbarWidth,
+            })
+        ) {
             // The opposite scrollbar only exists because of this one, so suppress this scrollbar.
             return false;
         }

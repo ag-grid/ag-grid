@@ -17,6 +17,8 @@ export function createTask(parentProject: string, srcRelativeInputPath: string):
                 '{workspaceRoot}/packages/ag-grid-community/dist/types/**/*.d.ts',
                 '{workspaceRoot}/plugins/ag-grid-generate-example-files/{dist,src}/**/*',
                 '{workspaceRoot}/documentation/ag-grid-docs/public/example-runner/**',
+                { env: 'AG_AI_API_URL' },
+                { env: 'AG_AI_API_DEV_TOKEN' },
             ],
             outputs: ['{options.outputPath}'],
             cache: true,
@@ -45,10 +47,14 @@ export const createDependencies: CreateDependencies = (opts, ctx) => {
 
     const result: ReturnType<CreateDependencies> = [];
     for (const [name, config] of Object.entries(projects)) {
-        if (!config.tags?.includes('type:generated-example')) continue;
+        if (!config.tags?.includes('type:generated-example')) {
+            continue;
+        }
 
         const parent = config.tags?.find((t) => t.startsWith('scope:'))?.split(':')[1];
-        if (!parent) continue;
+        if (!parent) {
+            continue;
+        }
 
         const dependency: RawProjectGraphDependency = {
             source: `${parent}`,

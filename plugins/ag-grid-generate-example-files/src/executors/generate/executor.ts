@@ -240,7 +240,9 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 files = result.files;
                 scriptFiles = result.scriptFiles;
             } catch (e) {
-                throw new Error(`Error generating files for ${internalFramework} in '${folderPath}': ${e}`);
+                throw new Error(`Error generating files for ${internalFramework} in '${folderPath}': ${e}`, {
+                    cause: e,
+                });
             }
         } else {
             scriptFiles = await processProvidedFiles(
@@ -284,6 +286,23 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         if (!exampleConfig.usesWebWorker) {
             scriptFiles = useAgRandom(scriptFiles);
             mergedFiles = useAgRandom(mergedFiles);
+        }
+
+        // Replace EXAMPLE_ENV placeholders from environment
+        const exampleEnvVars: Record<string, string | undefined> = {
+            AI_API_URL: process.env.AG_AI_API_URL,
+            AI_API_TOKEN: process.env.AG_AI_API_DEV_TOKEN,
+        };
+        for (const [fileName, content] of Object.entries(mergedFiles)) {
+            if (typeof content !== 'string') {
+                continue;
+            }
+            const updated = content.replace(/\{\{EXAMPLE_ENV:([^}]+)\}\}/g, (_match, key) => {
+                return exampleEnvVars[key] ?? '';
+            });
+            if (updated !== content) {
+                mergedFiles[fileName] = updated;
+            }
         }
 
         // Replace files with provided examples

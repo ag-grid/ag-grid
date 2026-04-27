@@ -3,18 +3,16 @@
 import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, ColDef, ModuleRegistry, ValidationModule } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { IOlympicData } from './interfaces';
 import { LazyCellLoader } from './lazyCellComp';
 import './styles.css';
 import { useFetchJson } from './useFetchJson';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+const modules = [ClientSideRowModelModule, ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : [])];
 
 const LazyCellRenderer = React.lazy(LazyCellLoader);
 
@@ -49,18 +47,20 @@ const GridExample = () => {
     const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div style={gridStyle}>
-                    <AgGridReact<IOlympicData>
-                        rowData={data}
-                        loading={loading}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                    />
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div style={gridStyle}>
+                        <AgGridReact<IOlympicData>
+                            rowData={data}
+                            loading={loading}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

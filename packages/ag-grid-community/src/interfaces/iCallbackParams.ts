@@ -3,9 +3,11 @@ import type { CellPosition } from './iCellPosition';
 import type { ChartToolbarMenuItemOptions, DefaultChartMenuItem } from './iChartOptions';
 import type { Column, ProvidedColumnGroup } from './iColumn';
 import type { AgGridCommon } from './iCommon';
+import type { FocusableContainerName } from './iFocusableContainer';
 import type { HeaderPosition } from './iHeaderPosition';
 import type { IRowNode, RowPinnedType } from './iRowNode';
 import type { DefaultMenuItem } from './menuItem';
+import type { GetNoteParams } from './notes';
 import type { ServerSideTransaction } from './serverSideTransaction';
 
 export interface GetContextMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -139,6 +141,22 @@ export interface TabToNextCellParams<TData = any, TContext = any> extends AgGrid
     previousCellPosition: CellPosition;
     /** The cell the grid would normally pick as the next cell for navigation.  */
     nextCellPosition: CellPosition | null;
+}
+
+export type GridContainerName = FocusableContainerName | 'external';
+export type TabToNextGridContainerTarget = CellPosition | HeaderPosition | FocusableContainerName;
+export type TabToNextGridContainer<TData = any, TContext = any> = (
+    params: TabToNextGridContainerParams<TData, TContext>
+) => TabToNextGridContainerTarget | boolean | undefined;
+export interface TabToNextGridContainerParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** True if the Shift key is also down. */
+    backwards: boolean;
+    /** The container that currently has focus. */
+    previousContainer: GridContainerName;
+    /** The container the grid would normally focus next. */
+    nextContainer: GridContainerName;
+    /** The target the grid would normally focus when moving to `nextContainer`, or `null` if it can't be represented. */
+    defaultTarget: TabToNextGridContainerTarget | null;
 }
 
 export type NavigateToNextCell<TData = any, TContext = any> = (
@@ -348,6 +366,8 @@ export interface IMenuActionParams<TData = any, TContext = any> extends AgGridCo
     node: IRowNode<TData> | null;
     /** The value, if a cell was clicked, otherwise null.  */
     value: any;
+    /** The note params for the cell or full width row that was clicked, if notes are enabled. */
+    noteParams?: GetNoteParams;
 }
 
 export type GetBusinessKeyForNode<TData = any> = (node: IRowNode<TData>) => string;

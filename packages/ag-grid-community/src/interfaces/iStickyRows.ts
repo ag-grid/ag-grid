@@ -2,6 +2,7 @@ import type { BeanStub } from '../context/beanStub';
 import type { RowNode } from '../entities/rowNode';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IStickyRowFeature {
     stickyTopRowCtrls: RowCtrl[];
 
@@ -22,6 +23,7 @@ export interface IStickyRowFeature {
     ensureRowHeightsValid(): boolean;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IStickyRowService {
     createStickyRowFeature(
         ctrl: BeanStub,

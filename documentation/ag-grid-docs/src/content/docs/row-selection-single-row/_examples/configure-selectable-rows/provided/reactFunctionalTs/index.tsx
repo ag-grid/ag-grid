@@ -1,17 +1,17 @@
-import React, { StrictMode, useMemo, useRef, useState } from 'react';
+import React, { StrictMode, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, ModuleRegistry, RowSelectionModule, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowSelectionModule, ValidationModule } from 'ag-grid-community';
 import type { ColDef, RowSelectionOptions } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     RowSelectionModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const grid = useRef<AgGridReact>(null);
@@ -48,24 +48,26 @@ const GridExample = () => {
     }
 
     return (
-        <div className="example-wrapper">
-            <div className="example-header">
-                <label>
-                    <span>Hide disabled checkboxes:</span>
-                    <input id="toggle-hide-checkbox" type="checkbox" defaultChecked onChange={toggleHideCheckbox} />
-                </label>
+        <AgGridProvider modules={modules}>
+            <div className="example-wrapper">
+                <div className="example-header">
+                    <label>
+                        <span>Hide disabled checkboxes:</span>
+                        <input id="toggle-hide-checkbox" type="checkbox" defaultChecked onChange={toggleHideCheckbox} />
+                    </label>
+                </div>
+                <div id="myGrid" className="grid">
+                    <AgGridReact
+                        ref={grid}
+                        rowData={data}
+                        loading={loading}
+                        defaultColDef={defaultColDef}
+                        columnDefs={columnDefs}
+                        rowSelection={rowSelection}
+                    />
+                </div>
             </div>
-            <div id="myGrid" className="grid">
-                <AgGridReact
-                    ref={grid}
-                    rowData={data}
-                    loading={loading}
-                    defaultColDef={defaultColDef}
-                    columnDefs={columnDefs}
-                    rowSelection={rowSelection}
-                />
-            </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

@@ -1,5 +1,7 @@
 import {
     ClientSideRowModelModule,
+    GridStateModule,
+    NumberEditorModule,
     RowDragModule,
     RowSelectionModule,
     TextEditorModule,
@@ -15,7 +17,7 @@ import {
     SideBarModule,
 } from 'ag-grid-enterprise';
 
-import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridColumns, GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 interface AthleteRow {
     id: string;
@@ -29,6 +31,8 @@ describe('row drag state persistence', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
+            GridStateModule,
+            NumberEditorModule,
             RowDragModule,
             RowSelectionModule,
             RowGroupingModule,
@@ -135,8 +139,8 @@ describe('row drag state persistence', () => {
             · │ ├─┬ LEAF_GROUP id:row-group-region-EU-country-FR-year-2008 ag-Grid-AutoColumn:2008
             · │ │ └── LEAF id:r-fra-08 region:"EU" country:"FR" year:2008 name:"Alain"
             · │ └─┬ LEAF_GROUP id:row-group-region-EU-country-FR-year-2012 ag-Grid-AutoColumn:2012
-            · │ · ├── LEAF id:r-usa-12 region:"EU" country:"FR" year:2012 name:"Missy"
-            · │ · └── LEAF id:r-fra-12 region:"EU" country:"FR" year:2012 name:"Camille"
+            · │ · ├── LEAF id:r-fra-12 region:"EU" country:"FR" year:2012 name:"Camille"
+            · │ · └── LEAF id:r-usa-12 region:"EU" country:"FR" year:2012 name:"Missy"
             · └─┬ filler id:row-group-region-EU-country-DE ag-Grid-AutoColumn:"DE"
             · · └─┬ LEAF_GROUP id:row-group-region-EU-country-DE-year-2012 ag-Grid-AutoColumn:2012
             · · · └── LEAF id:r-ger-12 region:"EU" country:"DE" year:2012 name:"Paul"
@@ -164,16 +168,13 @@ describe('row drag state persistence', () => {
             · │ ├─┬ LEAF_GROUP id:row-group-region-EU-country-FR-year-2008 ag-Grid-AutoColumn:2008
             · │ │ └── LEAF id:r-fra-08 region:"EU" country:"FR" year:2008 name:"Alain"
             · │ └─┬ LEAF_GROUP id:row-group-region-EU-country-FR-year-2012 ag-Grid-AutoColumn:2012
-            · │ · ├── LEAF id:r-usa-12 region:"EU" country:"FR" year:2012 name:"Missy"
-            · │ · └── LEAF id:r-fra-12 region:"EU" country:"FR" year:2012 name:"Camille"
-            · ├─┬ filler id:row-group-region-EU-country-DE ag-Grid-AutoColumn:"DE"
-            · │ └─┬ LEAF_GROUP id:row-group-region-EU-country-DE-year-2012 ag-Grid-AutoColumn:2012
-            · │ · └── LEAF id:r-ger-12 region:"EU" country:"DE" year:2012 name:"Paul"
-            · └─┬ filler id:row-group-region-EU-country-CA ag-Grid-AutoColumn:"CA"
-            · · ├─┬ LEAF_GROUP id:row-group-region-EU-country-CA-year-2012 ag-Grid-AutoColumn:2012
-            · · │ └── LEAF id:r-can-12 region:"EU" country:"CA" year:2012 name:"Penny"
-            · · └─┬ LEAF_GROUP id:row-group-region-EU-country-CA-year-2016 ag-Grid-AutoColumn:2016
-            · · · └── LEAF id:r-can-16 region:"EU" country:"CA" year:2016 name:"Andre"
+            · │ · ├── LEAF id:r-can-12 region:"EU" country:"FR" year:2012 name:"Penny"
+            · │ · ├── LEAF id:r-can-16 region:"EU" country:"FR" year:2012 name:"Andre"
+            · │ · ├── LEAF id:r-fra-12 region:"EU" country:"FR" year:2012 name:"Camille"
+            · │ · └── LEAF id:r-usa-12 region:"EU" country:"FR" year:2012 name:"Missy"
+            · └─┬ filler id:row-group-region-EU-country-DE ag-Grid-AutoColumn:"DE"
+            · · └─┬ LEAF_GROUP id:row-group-region-EU-country-DE-year-2012 ag-Grid-AutoColumn:2012
+            · · · └── LEAF id:r-ger-12 region:"EU" country:"DE" year:2012 name:"Paul"
         `);
 
         const collectRowData = (api: GridApi<AthleteRow>): AthleteRow[] => {
@@ -217,16 +218,20 @@ describe('row drag state persistence', () => {
             · │ ├─┬ LEAF_GROUP id:row-group-region-EU-country-FR-year-2008 ag-Grid-AutoColumn:2008
             · │ │ └── LEAF id:r-fra-08 region:"EU" country:"FR" year:2008 name:"Alain"
             · │ └─┬ LEAF_GROUP id:row-group-region-EU-country-FR-year-2012 ag-Grid-AutoColumn:2012
-            · │ · ├── LEAF id:r-usa-12 region:"EU" country:"FR" year:2012 name:"Missy"
-            · │ · └── LEAF id:r-fra-12 region:"EU" country:"FR" year:2012 name:"Camille"
-            · ├─┬ filler id:row-group-region-EU-country-DE ag-Grid-AutoColumn:"DE"
-            · │ └─┬ LEAF_GROUP id:row-group-region-EU-country-DE-year-2012 ag-Grid-AutoColumn:2012
-            · │ · └── LEAF id:r-ger-12 region:"EU" country:"DE" year:2012 name:"Paul"
-            · └─┬ filler id:row-group-region-EU-country-CA ag-Grid-AutoColumn:"CA"
-            · · ├─┬ LEAF_GROUP id:row-group-region-EU-country-CA-year-2012 ag-Grid-AutoColumn:2012
-            · · │ └── LEAF id:r-can-12 region:"EU" country:"CA" year:2012 name:"Penny"
-            · · └─┬ LEAF_GROUP id:row-group-region-EU-country-CA-year-2016 ag-Grid-AutoColumn:2016
-            · · · └── LEAF id:r-can-16 region:"EU" country:"CA" year:2016 name:"Andre"
+            · │ · ├── LEAF id:r-can-12 region:"EU" country:"FR" year:2012 name:"Penny"
+            · │ · ├── LEAF id:r-can-16 region:"EU" country:"FR" year:2012 name:"Andre"
+            · │ · ├── LEAF id:r-fra-12 region:"EU" country:"FR" year:2012 name:"Camille"
+            · │ · └── LEAF id:r-usa-12 region:"EU" country:"FR" year:2012 name:"Missy"
+            · └─┬ filler id:row-group-region-EU-country-DE ag-Grid-AutoColumn:"DE"
+            · · └─┬ LEAF_GROUP id:row-group-region-EU-country-DE-year-2012 ag-Grid-AutoColumn:2012
+            · · · └── LEAF id:r-ger-12 region:"EU" country:"DE" year:2012 name:"Paul"
+        `);
+
+        await new GridColumns(reloadApi, 'columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+            ├── ag-Grid-AutoColumn "Hierarchy" width:220 flex:1
+            └── name "Name" width:200 flex:1
         `);
     });
 });

@@ -2,7 +2,7 @@ import type { _FindApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-commun
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
-import { findCSS } from './find.css-GENERATED';
+import findCSS from './find.css';
 import {
     findClearActive,
     findGetActiveMatch,

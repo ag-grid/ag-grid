@@ -419,7 +419,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
                   rowStartPinned: undefined,
                   rowEndIndex: null,
                   rowEndPinned: undefined,
-                  columns: this.visibleCols.allCols.map((col) => col.getColId()),
+                  columns: this.visibleCols.allCols.map((col) => col.colId),
               }
             : cellRangeParams;
         const cellRange =

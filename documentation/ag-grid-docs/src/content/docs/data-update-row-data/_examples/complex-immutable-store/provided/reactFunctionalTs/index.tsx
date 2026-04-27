@@ -12,7 +12,6 @@ import {
     CellStyleModule,
     ClientSideRowModelModule,
     HighlightChangesModule,
-    ModuleRegistry,
     NumberFilterModule,
     RowSelectionModule,
     TextEditorModule,
@@ -20,11 +19,11 @@ import {
     ValidationModule,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     HighlightChangesModule,
     TextEditorModule,
     NumberFilterModule,
@@ -34,7 +33,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     RowGroupingModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const MIN_BOOK_COUNT = 10;
 const MAX_BOOK_COUNT = 20;
@@ -401,25 +400,27 @@ const GridExample = () => {
     useEffect(() => setRowData(globalRowData), [globalRowData]);
 
     return (
-        <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div style={{ marginBottom: '5px' }}>
-                    <button onClick={updateData}>Update</button>
-                </div>
+        <AgGridProvider modules={modules}>
+            <div style={containerStyle}>
+                <div className="example-wrapper">
+                    <div style={{ marginBottom: '5px' }}>
+                        <button onClick={updateData}>Update</button>
+                    </div>
 
-                <div style={gridStyle}>
-                    <AgGridReact
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                        autoGroupColumnDef={autoGroupColumnDef}
-                        rowSelection={rowSelection}
-                        suppressAggFuncInHeader={true}
-                        getRowId={getRowId}
-                    />
+                    <div style={gridStyle}>
+                        <AgGridReact
+                            rowData={rowData}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                            autoGroupColumnDef={autoGroupColumnDef}
+                            rowSelection={rowSelection}
+                            suppressAggFuncInHeader={true}
+                            getRowId={getRowId}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

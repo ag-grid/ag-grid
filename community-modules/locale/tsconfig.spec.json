@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
-    "types": ["jest", "node"],
+    "types": ["vitest/globals", "node"],
     "noEmit": true
   },
   "include": [

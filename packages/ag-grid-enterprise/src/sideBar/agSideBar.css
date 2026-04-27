@@ -1,8 +1,25 @@
 .ag-tool-panel-wrapper {
-    display: flex;
-    overflow: hidden auto;
+    overflow: hidden;
     user-select: none;
-    width: var(--ag-side-bar-panel-width);
+    width: var(--ag-horizontal-size, var(--ag-side-bar-panel-width));
+}
+
+.ag-tool-panel-content {
+    display: flex;
+    height: 100%;
+    overflow: hidden auto;
+}
+
+.ag-tool-panel-wrapper.ag-tool-panel-animating {
+    /* !important required to override .ag-hidden to tool panel remains visible while animating */
+    display: block !important;
+    transition: width var(--ag-side-bar-panel-animation-duration) ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ag-tool-panel-wrapper.ag-tool-panel-animating {
+        transition: none;
+    }
 }
 
 .ag-tool-panel-external {
@@ -24,10 +41,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-
-    > * {
-        flex: none;
-    }
 }
 
 .ag-tool-panel-horizontal-resize {
@@ -63,6 +76,8 @@
     background-color: var(--ag-side-button-bar-background-color);
     position: relative;
     padding-top: var(--ag-side-button-bar-top-padding);
+    overflow: hidden auto;
+    scrollbar-width: thin;
 }
 
 .ag-side-button {
@@ -75,34 +90,34 @@
     /* hide button border on top button if it's flush with container top, which
        has its own border */
     margin-top: -1px;
+}
 
-    &::before {
-        content: '';
-        display: block;
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: var(--ag-side-button-selected-underline-width);
-        background-color: transparent;
-        transition: background-color var(--ag-side-button-selected-underline-transition-duration);
-    }
+.ag-side-button::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--ag-side-button-selected-underline-width);
+    background-color: transparent;
+    transition: background-color var(--ag-side-button-selected-underline-transition-duration);
+}
 
-    &:hover {
-        background-color: var(--ag-side-button-hover-background-color);
-        color: var(--ag-side-button-hover-text-color);
-    }
+.ag-side-button:hover {
+    background-color: var(--ag-side-button-hover-background-color);
+    color: var(--ag-side-button-hover-text-color);
+}
 
-    &.ag-selected {
-        color: var(--ag-side-button-selected-text-color);
-        background-color: var(--ag-side-button-selected-background-color);
-        border-top: var(--ag-side-button-selected-border);
-        border-bottom: var(--ag-side-button-selected-border);
+.ag-side-button.ag-selected {
+    color: var(--ag-side-button-selected-text-color);
+    background-color: var(--ag-side-button-selected-background-color);
+    border-top: var(--ag-side-button-selected-border);
+    border-bottom: var(--ag-side-button-selected-border);
+}
 
-        &::before {
-            background-color: var(--ag-side-button-selected-underline-color);
-        }
-    }
+.ag-side-button.ag-selected::before {
+    background-color: var(--ag-side-button-selected-underline-color);
 }
 
 .ag-side-button-button {

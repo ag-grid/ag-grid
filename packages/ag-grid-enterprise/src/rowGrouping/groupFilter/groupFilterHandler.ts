@@ -98,7 +98,7 @@ export class GroupFilterHandler
             return;
         }
         const colId = eventColumn.getColId();
-        if (this.sourceColumns?.some((column) => column.getColId() === colId)) {
+        if (this.sourceColumns?.some((column) => column.colId === colId)) {
             // filter may already be getting recreated, so wait before updating
             setTimeout(() => {
                 if (this.isAlive()) {

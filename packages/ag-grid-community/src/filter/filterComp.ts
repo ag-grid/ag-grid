@@ -11,10 +11,14 @@ import { Component } from '../widgets/component';
 import type { FilterDisplayWrapper } from './columnFilterService';
 import { FilterWrapperComp } from './filterWrapperComp';
 import type { FilterRequestSource } from './iColumnFilter';
+import legacyFilterCSS from './legacyFilter.css';
 
 const FilterElement: ElementParams = { tag: 'div', cls: 'ag-filter' };
 
-/** Wraps column filters for use in menus, tool panel etc. */
+/**
+ * Wraps column filters for use in menus, tool panel etc.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export class FilterComp extends Component {
     private wrapper: AgPromise<FilterDisplayWrapper> | null = null;
     private comp?: FilterWrapperComp;
@@ -91,6 +95,7 @@ export class FilterComp extends Component {
                 this.comp = displayComp;
                 filterGui = displayComp.getGui();
             } else {
+                this.registerCSS(legacyFilterCSS);
                 filterGui = comp.getGui();
 
                 if (!_exists(filterGui)) {

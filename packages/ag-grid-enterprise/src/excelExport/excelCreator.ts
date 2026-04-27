@@ -1,6 +1,7 @@
 import type {
     AgColumn,
     AgColumnGroup,
+    ExcelCustomMetadata,
     ExcelExportMultipleSheetParams,
     ExcelExportParams,
     ExcelFactoryMode,
@@ -23,13 +24,17 @@ import { ExcelSerializingSession } from './excelSerializingSession';
 import {
     Workbook,
     XLSX_IMAGES,
+    XLSX_WORKSHEET_COMMENTS,
     XLSX_WORKSHEET_DATA_TABLES,
     XLSX_WORKSHEET_HEADER_FOOTER_IMAGES,
     XLSX_WORKSHEET_IMAGES,
+    createXlsxComments,
     createXlsxContentTypes,
     createXlsxCore,
+    createXlsxCustomProperties,
     createXlsxDrawing,
     createXlsxDrawingRel,
+    createXlsxNoteVmlDrawing,
     createXlsxRelationships,
     createXlsxRels,
     createXlsxSharedStrings,
@@ -47,11 +52,32 @@ import { ZipContainer } from './zipContainer/zipContainer';
 const createExcelXMLCoreFolderStructure = (zipContainer: ZipContainer): void => {
     zipContainer.addFolders(['_rels/', 'docProps/', 'xl/', 'xl/theme/', 'xl/_rels/', 'xl/worksheets/']);
 
+    if (
+        XLSX_IMAGES.size ||
+        XLSX_WORKSHEET_DATA_TABLES.size ||
+        XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.size ||
+        XLSX_WORKSHEET_COMMENTS.size
+    ) {
+        zipContainer.addFolders(['xl/worksheets/_rels']);
+    }
+
+    if (XLSX_IMAGES.size || XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.size || XLSX_WORKSHEET_COMMENTS.size) {
+        zipContainer.addFolders(['xl/drawings/']);
+    }
+
+    if (XLSX_IMAGES.size || XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.size) {
+        zipContainer.addFolders(['xl/drawings/_rels']);
+    }
+
+    if (XLSX_WORKSHEET_DATA_TABLES.size) {
+        zipContainer.addFolders(['xl/tables/']);
+    }
+
     if (!XLSX_IMAGES.size) {
         return;
     }
 
-    zipContainer.addFolders(['xl/worksheets/_rels', 'xl/drawings/', 'xl/drawings/_rels', 'xl/media/']);
+    zipContainer.addFolders(['xl/media/']);
 
     let imgCounter = 0;
 
@@ -63,9 +89,15 @@ const createExcelXMLCoreFolderStructure = (zipContainer: ZipContainer): void => 
     });
 };
 
-const createExcelXmlWorksheets = (zipContainer: ZipContainer, data: string[]): void => {
+const createExcelXmlWorksheets = (
+    zipContainer: ZipContainer,
+    data: string[],
+    author: string,
+    suppressPrependAuthorToNotes?: boolean
+): void => {
     let imageRelationCounter = 0;
-    let headerFooterImageCounter = 0;
+    let commentCounter = 0;
+    let vmlDrawingCounter = 0;
 
     for (let i = 0; i < data.length; i++) {
         const value = data[i];
@@ -74,14 +106,17 @@ const createExcelXmlWorksheets = (zipContainer: ZipContainer, data: string[]): v
         const hasImages = XLSX_IMAGES.size > 0 && XLSX_WORKSHEET_IMAGES.has(i);
         const tableData = XLSX_WORKSHEET_DATA_TABLES.size > 0 && XLSX_WORKSHEET_DATA_TABLES.get(i);
         const hasHeaderFooterImages = XLSX_IMAGES.size && XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.has(i);
+        const hasComments = !!XLSX_WORKSHEET_COMMENTS.get(i)?.length;
 
-        if (!hasImages && !tableData && !hasHeaderFooterImages) {
+        if (!hasImages && !tableData && !hasHeaderFooterImages && !hasComments) {
             continue;
         }
 
         let tableName: string | undefined;
         let drawingIndex: number | undefined;
-        let vmlDrawingIndex: number | undefined;
+        let noteVmlDrawingIndex: number | undefined;
+        let headerFooterVmlDrawingIndex: number | undefined;
+        let commentsIndex: number | undefined;
 
         if (hasImages) {
             createExcelXmlDrawings(zipContainer, i, imageRelationCounter);
@@ -89,10 +124,25 @@ const createExcelXmlWorksheets = (zipContainer: ZipContainer, data: string[]): v
             imageRelationCounter++;
         }
 
+        if (hasComments) {
+            createExcelXmlComments(
+                zipContainer,
+                i,
+                commentCounter,
+                vmlDrawingCounter,
+                author,
+                suppressPrependAuthorToNotes
+            );
+            commentsIndex = commentCounter;
+            noteVmlDrawingIndex = vmlDrawingCounter;
+            commentCounter++;
+            vmlDrawingCounter++;
+        }
+
         if (hasHeaderFooterImages) {
-            createExcelVmlDrawings(zipContainer, i, headerFooterImageCounter);
-            vmlDrawingIndex = headerFooterImageCounter;
-            headerFooterImageCounter++;
+            createExcelHeaderFooterVmlDrawings(zipContainer, i, vmlDrawingCounter);
+            headerFooterVmlDrawingIndex = vmlDrawingCounter;
+            vmlDrawingCounter++;
         }
 
         if (tableData) {
@@ -106,7 +156,9 @@ const createExcelXmlWorksheets = (zipContainer: ZipContainer, data: string[]): v
             createXlsxRelationships({
                 tableName,
                 drawingIndex,
-                vmlDrawingIndex,
+                noteVmlDrawingIndex,
+                headerFooterVmlDrawingIndex,
+                commentsIndex,
             })
         );
     }
@@ -121,7 +173,28 @@ const createExcelXmlDrawings = (zipContainer: ZipContainer, sheetIndex: number, 
     zipContainer.addFile(drawingFileName, createXlsxDrawing(sheetIndex));
 };
 
-const createExcelVmlDrawings = (zipContainer: ZipContainer, sheetIndex: number, drawingIndex: number): void => {
+const createExcelXmlComments = (
+    zipContainer: ZipContainer,
+    sheetIndex: number,
+    commentsIndex: number,
+    drawingIndex: number,
+    author: string,
+    suppressPrependAuthorToNotes?: boolean
+): void => {
+    const drawingFolder = 'xl/drawings';
+
+    zipContainer.addFile(
+        `xl/comments${commentsIndex + 1}.xml`,
+        createXlsxComments(sheetIndex, author, suppressPrependAuthorToNotes)
+    );
+    zipContainer.addFile(`${drawingFolder}/vmlDrawing${drawingIndex + 1}.vml`, createXlsxNoteVmlDrawing(sheetIndex));
+};
+
+const createExcelHeaderFooterVmlDrawings = (
+    zipContainer: ZipContainer,
+    sheetIndex: number,
+    drawingIndex: number
+): void => {
     const drawingFolder = 'xl/drawings';
     const drawingFileName = `${drawingFolder}/vmlDrawing${drawingIndex + 1}.vml`;
     const relFileName = `${drawingFolder}/_rels/vmlDrawing${drawingIndex + 1}.vml.rels`;
@@ -151,16 +224,25 @@ const createExcelXmlCoreSheets = (
     fontSize: number,
     author: string,
     sheetLen: number,
-    activeTab: number
+    activeTab: number,
+    customMetadata?: ExcelCustomMetadata
 ): void => {
+    const hasCustomMetadata =
+        !!customMetadata && Object.keys(customMetadata).some((key) => customMetadata[key] != null);
+
     zipContainer.addFile('xl/workbook.xml', createXlsxWorkbook(activeTab));
     zipContainer.addFile('xl/styles.xml', createXlsxStylesheet(fontSize));
     zipContainer.addFile('xl/sharedStrings.xml', createXlsxSharedStrings());
     zipContainer.addFile('xl/theme/theme1.xml', createXlsxTheme());
     zipContainer.addFile('xl/_rels/workbook.xml.rels', createXlsxWorkbookRels(sheetLen));
     zipContainer.addFile('docProps/core.xml', createXlsxCore(author));
-    zipContainer.addFile('[Content_Types].xml', createXlsxContentTypes(sheetLen));
-    zipContainer.addFile('_rels/.rels', createXlsxRels());
+
+    if (hasCustomMetadata) {
+        zipContainer.addFile('docProps/custom.xml', createXlsxCustomProperties(customMetadata));
+    }
+
+    zipContainer.addFile('[Content_Types].xml', createXlsxContentTypes(sheetLen, hasCustomMetadata));
+    zipContainer.addFile('_rels/.rels', createXlsxRels(hasCustomMetadata));
 };
 
 const createExcelFileForExcel = (
@@ -172,6 +254,8 @@ const createExcelFileForExcel = (
         fontSize?: number;
         author?: string;
         activeTab?: number;
+        customMetadata?: ExcelCustomMetadata;
+        suppressPrependAuthorToNotes?: boolean;
     } = {},
     workbook: Workbook
 ): boolean => {
@@ -183,15 +267,15 @@ const createExcelFileForExcel = (
 
     workbook.syncOrderWithSheetData(data);
 
-    const { fontSize = 11, author = 'AG Grid', activeTab = 0 } = options;
+    const { fontSize = 11, author = 'AG Grid', activeTab = 0, customMetadata, suppressPrependAuthorToNotes } = options;
 
     const len = data.length;
     const activeTabWithinBounds = Math.max(Math.min(activeTab, len - 1), 0);
 
     createExcelXMLCoreFolderStructure(zipContainer);
     createExcelXmlTables(zipContainer);
-    createExcelXmlWorksheets(zipContainer, data);
-    createExcelXmlCoreSheets(zipContainer, fontSize, author, len, activeTabWithinBounds);
+    createExcelXmlWorksheets(zipContainer, data, author, suppressPrependAuthorToNotes);
+    createExcelXmlCoreSheets(zipContainer, fontSize, author, len, activeTabWithinBounds, customMetadata);
 
     workbook.reset();
 
@@ -202,7 +286,7 @@ const getMultipleSheetsAsExcelCompressed = (
     params: ExcelExportMultipleSheetParams,
     workbook: Workbook = new Workbook()
 ): Promise<Blob | undefined> => {
-    const { data, fontSize, author, activeSheetIndex } = params;
+    const { data, fontSize, author, activeSheetIndex, customMetadata, suppressPrependAuthorToNotes } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     const zipContainer = new ZipContainer();
 
@@ -214,6 +298,8 @@ const getMultipleSheetsAsExcelCompressed = (
                 author,
                 fontSize,
                 activeTab: activeSheetIndex,
+                customMetadata,
+                suppressPrependAuthorToNotes,
             },
             workbook
         )
@@ -228,7 +314,14 @@ export const getMultipleSheetsAsExcel = (
     params: ExcelExportMultipleSheetParams,
     workbook: Workbook = new Workbook()
 ): Blob | undefined => {
-    const { data, fontSize, author, activeSheetIndex } = params;
+    const {
+        data,
+        fontSize,
+        author,
+        activeSheetIndex: activeTab,
+        customMetadata,
+        suppressPrependAuthorToNotes,
+    } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     const zipContainer = new ZipContainer();
 
@@ -239,7 +332,9 @@ export const getMultipleSheetsAsExcel = (
             {
                 author,
                 fontSize,
-                activeTab: activeSheetIndex,
+                activeTab,
+                customMetadata,
+                suppressPrependAuthorToNotes,
             },
             workbook
         )
@@ -285,11 +380,15 @@ export class ExcelCreator
             const mergedParams = this.getMergedParams(userParams);
             const data = this.getData(mergedParams);
 
+            const { fontSize, author, mimeType, customMetadata, suppressPrependAuthorToNotes } = mergedParams;
+
             const exportParams: ExcelExportMultipleSheetParams = {
                 data: [data],
-                fontSize: mergedParams.fontSize,
-                author: mergedParams.author,
-                mimeType: mergedParams.mimeType,
+                fontSize,
+                author,
+                mimeType,
+                customMetadata,
+                suppressPrependAuthorToNotes,
             };
 
             this.packageCompressedFile(exportParams).then((packageFile) => {
@@ -318,11 +417,15 @@ export class ExcelCreator
         const mergedParams = this.getMergedParams(params);
         const data = this.getData(mergedParams);
 
+        const { fontSize, author, mimeType, customMetadata, suppressPrependAuthorToNotes } = mergedParams;
+
         const exportParams: ExcelExportMultipleSheetParams = {
             data: [data],
-            fontSize: mergedParams.fontSize,
-            author: mergedParams.author,
-            mimeType: mergedParams.mimeType,
+            fontSize,
+            author,
+            mimeType,
+            customMetadata,
+            suppressPrependAuthorToNotes,
         };
 
         return this.packageFile(exportParams);
@@ -361,7 +464,9 @@ export class ExcelCreator
     }
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
-        const { colModel, colNames, rowGroupColsSvc, valueSvc, formula, gos } = this.beans;
+        const { colModel, colNames, rowGroupColsSvc, valueSvc, formula, gos, notesSvc } = this.beans;
+        const baseExcelStyles = gos.get('excelStyles') || [];
+        const styleLinker = this.createStyleLinker(baseExcelStyles);
 
         const config: ExcelGridSerializingParams = {
             ...params,
@@ -373,10 +478,11 @@ export class ExcelCreator
             gos,
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
-            baseExcelStyles: gos.get('excelStyles') || [],
+            baseExcelStyles,
             rightToLeft: params.rightToLeft ?? gos.get('enableRtl'),
-            styleLinker: this.styleLinker.bind(this),
+            styleLinker,
             headerRowCount: _getHeaderRowCount(colModel),
+            notesSvc,
             pivotModeActive: colModel.isPivotActive(),
             workbook: this.workbook,
         };
@@ -384,67 +490,76 @@ export class ExcelCreator
         return new ExcelSerializingSession(config);
     }
 
-    private styleLinker(params: StyleLinkerInterface): string[] {
-        const { rowType, rowIndex, value, column, columnGroup, node } = params;
-        const isHeader = rowType === 'HEADER';
-        const isGroupHeader = rowType === 'HEADER_GROUPING';
-        const col = (isHeader ? column : columnGroup) as AgColumn | AgColumnGroup | null;
-        let headerClasses: string[] = [];
+    private createStyleLinker(baseExcelStyles: ExcelStyle[]): (params: StyleLinkerInterface) => string[] {
+        const styleIds: string[] = [];
+        const styleIdsSet = new Set<string>();
+        const styleIdOrder = new Map<string, number>();
+
+        baseExcelStyles.forEach((it, idx) => {
+            styleIds.push(it.id);
+            styleIdsSet.add(it.id);
+            styleIdOrder.set(it.id, idx);
+        });
+
         const { gos, cellStyles } = this.beans;
 
-        if (isHeader || isGroupHeader) {
-            headerClasses.push('header');
-            if (isGroupHeader) {
-                headerClasses.push('headerGroup');
-            }
+        return (params) => {
+            const { rowType, rowIndex, value, column, columnGroup, node } = params;
+            const isHeader = rowType === 'HEADER';
+            const isGroupHeader = rowType === 'HEADER_GROUPING';
+            const col = (isHeader ? column : columnGroup) as AgColumn | AgColumnGroup | null;
+            let headerClasses: string[] = [];
 
-            if (col) {
-                headerClasses = headerClasses.concat(
-                    _getHeaderClassesFromColDef(
-                        col.getDefinition(),
-                        gos,
-                        (column as AgColumn) || null,
-                        (columnGroup as AgColumnGroup) || null
-                    )
-                );
-            }
-
-            return headerClasses;
-        }
-
-        const styles = gos.get('excelStyles');
-
-        const applicableStyles: string[] = ['cell'];
-
-        if (!styles?.length) {
-            return applicableStyles;
-        }
-
-        const styleIds: string[] = styles.map((it: ExcelStyle) => {
-            return it.id;
-        });
-
-        const colDef = (column as AgColumn).getDefinition();
-        cellStyles?.processAllCellClasses(
-            colDef,
-            _addGridCommonParams(gos, {
-                value,
-                data: node!.data,
-                node: node!,
-                colDef,
-                column: column!,
-                rowIndex: rowIndex,
-            }),
-            (className: string) => {
-                if (styleIds.indexOf(className) > -1) {
-                    applicableStyles.push(className);
+            if (isHeader || isGroupHeader) {
+                headerClasses.push('header');
+                if (isGroupHeader) {
+                    headerClasses.push('headerGroup');
                 }
-            }
-        );
 
-        return applicableStyles.sort((left: string, right: string): number => {
-            return styleIds.indexOf(left) < styleIds.indexOf(right) ? -1 : 1;
-        });
+                if (col) {
+                    headerClasses = headerClasses.concat(
+                        _getHeaderClassesFromColDef(
+                            col.getDefinition(),
+                            gos,
+                            (column as AgColumn) || null,
+                            (columnGroup as AgColumnGroup) || null
+                        )
+                    );
+                }
+
+                return headerClasses;
+            }
+
+            const applicableStyles: string[] = ['cell'];
+
+            if (!styleIds.length) {
+                return applicableStyles;
+            }
+
+            const colDef = (column as AgColumn).getDefinition();
+            cellStyles?.processAllCellClasses(
+                colDef,
+                _addGridCommonParams(gos, {
+                    value,
+                    data: node!.data,
+                    node: node!,
+                    colDef,
+                    column: column!,
+                    rowIndex: rowIndex,
+                }),
+                (className: string) => {
+                    if (styleIdsSet.has(className)) {
+                        applicableStyles.push(className);
+                    }
+                }
+            );
+
+            return applicableStyles.sort((left: string, right: string): number => {
+                const leftIdx = styleIdOrder.get(left) ?? -1;
+                const rightIdx = styleIdOrder.get(right) ?? -1;
+                return leftIdx === rightIdx ? 0 : leftIdx < rightIdx ? -1 : 1;
+            });
+        };
     }
 
     public isExportSuppressed(): boolean {

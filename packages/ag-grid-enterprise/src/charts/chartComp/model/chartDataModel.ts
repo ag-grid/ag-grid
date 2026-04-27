@@ -235,9 +235,7 @@ export class ChartDataModel extends BeanStub {
         // charts only group when the selected category is a group column
         const colIds = this.getSelectedDimensions().map(({ colId }) => colId);
         const displayedGroupCols = this.chartColSvc.getGroupDisplayColumns();
-        const groupDimensionSelected = displayedGroupCols
-            .map((col) => col.getColId())
-            .some((id) => colIds.includes(id));
+        const groupDimensionSelected = displayedGroupCols.map((col) => col.colId).some((id) => colIds.includes(id));
         return !!isGroupActive && groupDimensionSelected;
     }
 
@@ -285,7 +283,7 @@ export class ChartDataModel extends BeanStub {
         getDisplayName(column.getParent());
         if (attemptFallbackToColNames) {
             // one of the column groups doesn't have a name. Try and use the internal name map instead
-            const colNames = this.colNames[column.getColId()];
+            const colNames = this.colNames[column.colId];
             if (colNames) {
                 displayNames = colNames;
             }
@@ -303,7 +301,7 @@ export class ChartDataModel extends BeanStub {
 
     public getChartDataType(colId: string): string | undefined {
         const column = this.chartColSvc.getColumn(colId);
-        return column ? column.getColDef().chartDataType : undefined;
+        return column ? column.colDef.chartDataType : undefined;
     }
 
     public getConvertTime(colId: string): ((date: string | undefined) => Date | undefined) | undefined {
@@ -395,13 +393,13 @@ export class ChartDataModel extends BeanStub {
 
             const selected =
                 this.crossFiltering && this.aggFunc
-                    ? aggFuncDimension.getColId() === column.getColId()
+                    ? aggFuncDimension.getColId() === column.colId
                     : (this.useGroupColumnAsCategory && groupingActive && autoGroup) ||
                       ((!hasSelectedDimension || supportsMultipleDimensions) && allCols.has(column));
 
             this.dimensionColState.push({
                 column,
-                colId: column.getColId(),
+                colId: column.colId,
                 displayName: this.getColDisplayName(column),
                 selected,
                 order: order++,
@@ -433,7 +431,7 @@ export class ChartDataModel extends BeanStub {
 
             this.valueColState.push({
                 column,
-                colId: column.getColId(),
+                colId: column.colId,
                 displayName: this.getColDisplayName(column),
                 selected: allCols.has(column),
                 order: order++,
@@ -564,7 +562,7 @@ export class ChartDataModel extends BeanStub {
                     selectedValueCols.push(col);
                     numSelected++;
                 }
-            } else if (this.valueColState.some((colState) => colState.selected && colState.colId === col.getColId())) {
+            } else if (this.valueColState.some((colState) => colState.selected && colState.colId === col.colId)) {
                 selectedValueCols.push(col);
             }
         });
@@ -575,10 +573,10 @@ export class ChartDataModel extends BeanStub {
             if (this.valueColState.length > 0) {
                 orderedColIds = this.valueColState.map((c) => c.colId);
             } else {
-                colsInRange.forEach((c) => orderedColIds.push(c.getColId()));
+                colsInRange.forEach((c) => orderedColIds.push(c.colId));
             }
 
-            selectedValueCols.sort((a, b) => orderedColIds.indexOf(a.getColId()) - orderedColIds.indexOf(b.getColId()));
+            selectedValueCols.sort((a, b) => orderedColIds.indexOf(a.colId) - orderedColIds.indexOf(b.colId));
 
             this.valueCellRange = this.createCellRange(CellRangeType.VALUE, ...selectedValueCols);
         }
@@ -599,7 +597,7 @@ export class ChartDataModel extends BeanStub {
     }
 
     private updateSelectedDimensions(columns: AgColumn[]): void {
-        const colIdSet = new Set(columns.map((column) => column.getColId()));
+        const colIdSet = new Set(columns.map((column) => column.colId));
 
         // For non-hierarchical chart types, only one dimension can be selected
         const supportsMultipleDimensions = isHierarchical(getSeriesType(this.chartType));

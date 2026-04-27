@@ -1,6 +1,15 @@
 {
     "_config_": {
-        "codeSrc": "grid-api.AUTO.json"
+        "codeSrc": "grid-api.AUTO.json",
+        "validate": true,
+        "undocumentedProperties": {
+            "flushAllAnimationFrames": "Not recommended for users so not documented",
+            "flushServerSideAsyncTransactions": "Not recommended for users to not documented",
+            "dispatchEvent": "This is for internal use, purposefully undocumented",
+            "sortChanged": "Bug in the undocumentedProperties check, this is not an api method",
+            "filterChanged": "Bug in the undocumentedProperties check, this is not an api method",
+            "getColumnDef": "Duplicate, users can just use getColumnDefs."
+        }
     },
     "gridOptions": {
         "meta": {
@@ -323,6 +332,12 @@
             }
         },
         "refreshHeader": {},
+        "refreshFormulas": {
+            "more": {
+                "name": "Formula Caching",
+                "url": "./formulas/#caching"
+            }
+        },
         "flashCells": {
             "more": {
                 "name": "Flashing Cells",
@@ -611,7 +626,7 @@
         },
         "getStructuredSchema": {
             "more": {
-                "name": "CSV Export",
+                "name": "AI Toolkit",
                 "url": "./ai-toolkit/"
             }
         }
@@ -652,8 +667,24 @@
             "displayName": "Row Expand and Collapse",
             "description": "See [Row Grouping](./grouping-opening-groups/), [Master Detail](./master-detail/) or [Tree Data](./tree-data-opening-groups/) for more information"
         },
-        "expandAll": {},
-        "collapseAll": {},
+        "expandAll": {
+            "more": {
+                "name": "Expanding Groups",
+                "url": "./grouping-opening-groups/#api"
+            }
+        },
+        "collapseAll": {
+            "more": {
+                "name": "Expanding Groups",
+                "url": "./grouping-opening-groups/#api"
+            }
+        },
+        "resetRowGroupExpansion": {
+            "more": {
+                "name": "Reset Group Expansion",
+                "url": "./grouping-opening-groups/#reset-group-expansion"
+            }
+        },
         "setRowNodeExpanded": {
             "more": {
                 "name": "Expand to a Row",
@@ -778,24 +809,9 @@
         "meta": {
             "displayName": "Scrolling"
         },
-        "ensureIndexVisible": {
-            "more": {
-                "name": "firstDataRendered event",
-                "url": "./grid-events/#reference-miscellaneous-firstDataRendered"
-            }
-        },
-        "ensureNodeVisible": {
-            "more": {
-                "name": "firstDataRendered event",
-                "url": "./grid-events/#reference-miscellaneous-firstDataRendered"
-            }
-        },
-        "ensureColumnVisible": {
-            "more": {
-                "name": "firstDataRendered event",
-                "url": "./grid-events/#reference-miscellaneous-firstDataRendered"
-            }
-        },
+        "ensureIndexVisible": {},
+        "ensureNodeVisible": {},
+        "ensureColumnVisible": {},
         "getHorizontalPixelRange": {},
         "getVerticalPixelRange": {}
     },
@@ -1346,6 +1362,33 @@
             "more": {
                 "name": "Content to Search",
                 "url": "./find/#content-to-search"
+            }
+        }
+    },
+    "notes": {
+        "meta": {
+            "displayName": "Notes",
+            "page": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "getNote": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#api-reference"
+            }
+        },
+        "setNote": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#api-reference"
+            }
+        },
+        "refreshNotes": {
+            "more": {
+                "name": "Notes API",
+                "url": "./notes/#api-reference"
             }
         }
     }

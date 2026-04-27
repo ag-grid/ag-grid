@@ -19,11 +19,13 @@ import type {
 import { _addSafePassiveEventListener } from '../utils/event';
 import { _getLocaleTextFunc } from '../utils/locale';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AgBeanStubEvent = 'destroyed';
 type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanStubEvent;
 
 type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class AgBeanStub<
         TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,
@@ -265,7 +267,7 @@ export abstract class AgBeanStub<
             if (event.changeSet) {
                 // ChangeSet is only set when the property change is part of a group of changes from ComponentUtils
                 // Direct api calls should always be run as
-                if (event.changeSet && event.changeSet.id === this.lastChangeSetIdLookup[eventsKey]) {
+                if (event.changeSet?.id === this.lastChangeSetIdLookup[eventsKey]) {
                     // Already run the listener for this set of prop changes so don't run again
                     return;
                 }

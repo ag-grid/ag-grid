@@ -1,16 +1,13 @@
 import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+const modules = [ClientSideRowModelModule, ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : [])];
 
 interface IAthlete {
     athlete: string;
@@ -27,21 +24,25 @@ const GridExample = () => {
     const [rowData, setRowData] = useState<IAthlete[] | undefined>();
 
     return (
-        <div className="example-wrapper">
-            <div>
-                <label className="checkbox">
-                    <input type="checkbox" onChange={(e) => setLoading(e.target.checked)} checked={loading} />
-                    loading
-                </label>
+        <AgGridProvider modules={modules}>
+            <div className="example-wrapper">
+                <div>
+                    <label className="checkbox">
+                        <input type="checkbox" onChange={(e) => setLoading(e.target.checked)} checked={loading} />
+                        loading
+                    </label>
 
-                <button onClick={() => setRowData([])}>Clear rowData</button>
-                <button onClick={() => setRowData([{ athlete: 'Michael Phelps', country: 'US' }])}>Set rowData</button>
-            </div>
+                    <button onClick={() => setRowData([])}>Clear rowData</button>
+                    <button onClick={() => setRowData([{ athlete: 'Michael Phelps', country: 'US' }])}>
+                        Set rowData
+                    </button>
+                </div>
 
-            <div style={{ height: '100%' }}>
-                <AgGridReact loading={loading} rowData={rowData} columnDefs={columnDefs} />
+                <div style={{ height: '100%' }}>
+                    <AgGridReact loading={loading} rowData={rowData} columnDefs={columnDefs} />
+                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

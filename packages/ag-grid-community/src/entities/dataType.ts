@@ -27,6 +27,8 @@ export type ValueFormatterLiteFunc<TData, TValue, TContext = any> = (
  *
  * `'number'` is type `number`.
  *
+ * `'bigint'` is type `bigint`.
+ *
  * `'boolean'` is type `boolean`.
  *
  * `'date'` is type `Date`.
@@ -42,6 +44,7 @@ export type ValueFormatterLiteFunc<TData, TValue, TContext = any> = (
 export type BaseCellDataType =
     | 'text'
     | 'number'
+    | 'bigint'
     | 'boolean'
     | 'date'
     | 'dateString'
@@ -54,7 +57,8 @@ interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = an
     baseDataType: TValueType;
     /**
      * The data type that this extends. Either one of the pre-defined data types
-     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'`, `'dateTime'`, `'dateTimeString'` or  `'object'`)
+     * (`'text'`, `'number'`, `'bigint'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'`
+     * or `'object'`)
      * or another custom data type.
      */
     extendsDataType: string;
@@ -110,6 +114,10 @@ export interface TextDataTypeDefinition<TData = any, TContext = any>
 export interface NumberDataTypeDefinition<TData = any, TContext = any>
     extends BaseDataTypeDefinition<'number', TData, number, TContext> {}
 
+/** Represents a `'bigint'` data type (type `bigint`). */
+interface BigIntDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'bigint', TData, bigint, TContext> {}
+
 /** Represents a `'boolean'` data type (type `boolean`). */
 export interface BooleanDataTypeDefinition<TData = any, TContext = any>
     extends BaseDataTypeDefinition<'boolean', TData, boolean, TContext> {}
@@ -153,6 +161,7 @@ export type CheckDataTypes<Obj extends Record<K, any>, K extends keyof any = Bas
 export type DataTypeDefinition<TData = any, TValue = any, TContext = any> =
     | TextDataTypeDefinition<TData, TContext>
     | NumberDataTypeDefinition<TData, TContext>
+    | BigIntDataTypeDefinition<TData, TContext>
     | BooleanDataTypeDefinition<TData, TContext>
     | DateDataTypeDefinition<TData, TContext>
     | DateStringDataTypeDefinition<TData, TContext>

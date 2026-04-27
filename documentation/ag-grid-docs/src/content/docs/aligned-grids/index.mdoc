@@ -20,10 +20,11 @@ const gridTwo = useRef<AgGridReact>(null);
 return (
   <>
       <AgGridReact ref={gridOne} alignedGrids={[gridTwo]} />
-      <AgGridReact ref={gridTwo} alignedGrids={[gridOne]} />    
+      <AgGridReact ref={gridTwo} alignedGrids={[gridOne]} />
   </>
 );
 ```
+
 {% /if %}
 
 {% if isFramework("javascript") %}
@@ -42,6 +43,7 @@ gridOptionsSecond = {
 firstApi = createGrid(gridDiv1, gridOptionsFirst);
 secondApi = createGrid(gridDiv2, gridOptionsSecond);
 ```
+
 {% /if %}
 
 {% if isFramework("angular") %}
@@ -74,6 +76,7 @@ Alternatively it is possible to align grids via template variables in your compo
 <ag-grid-angular #secondGrid [alignedGrids]="[firstGrid]" ...>
 
 ```
+
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -101,22 +104,23 @@ Alternatively it is possible to align grids via refs in your component template.
 
 ```js
 // Link using template variables
-<ag-grid-vue 
+<ag-grid-vue
   ref="firstGrid" :alignedGrids="[this.$refs.secondGrid]" ...>
-<ag-grid-vue 
+<ag-grid-vue
   ref="secondGrid" :alignedGrids="[this.$refs.firstGrid]" ...>
 
 ```
+
 {% /if %}
 
 ## Example: Aligned Grids
 
 Below shows two grids, both aligned with the other (so any column change to one will be reflected in the other). The following should be noted:
 
-* When either grid is scrolled horizontally, the other grid follows.
-* Showing / hiding a column on either grid (via the checkbox) will show / hide the column on the other grid, despite the API being called on one grid only.
-* When a column is resized on either grid, the other grid follows.
-* When a column group is opened on either grid, the other grid follows.
+-   When either grid is scrolled horizontally, the other grid follows.
+-   Showing / hiding a column on either grid (via the checkbox) will show / hide the column on the other grid, despite the API being called on one grid only.
+-   When a column is resized on either grid, the other grid follows.
+-   When a column group is opened on either grid, the other grid follows.
 
 {% gridExampleRunner title="Aligned Grids" name="aligned-grids" /%}
 
@@ -124,12 +128,12 @@ Below shows two grids, both aligned with the other (so any column change to one 
 
 The events which are fired as part of the grid alignment relationship are as follows:
 
-* Horizontal Scroll
-* Column Hidden / Shown
-* Column Moved
-* Column Group Opened / Closed
-* Column Resized
-* Column Pinned
+-   Horizontal Scroll
+-   Column Hidden / Shown
+-   Column Moved
+-   Column Group Opened / Closed
+-   Column Resized
+-   Column Pinned
 
 ## Pivots
 
@@ -141,9 +145,9 @@ So why would you want to align grids like this? It's great for aligning grids th
 
 This example is a bit more useful. In the bottom grid, we show a summary row. Also note the following:
 
-* The top grid has no horizontal scroll bar, suppressed via a grid option.
-* The bottom grid has no header, suppressed via a grid option.
-* `autoSizeStrategy` is only passed to the top grid, the bottom grid receives the new column widths from the top grid.
+-   The top grid has no horizontal scroll bar, suppressed via a grid option.
+-   The bottom grid has no header, suppressed via a grid option.
+-   `autoSizeStrategy` is only passed to the top grid, the bottom grid receives the new column widths from the top grid.
 
 {% gridExampleRunner title="Aligned Grid as Footer" name="aligned-floating-footer" /%}
 

@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { _error } from '../validation/logging';
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ExpressionService extends BeanStub implements NamedBean {
     beanName = 'expressionSvc' as const;
 

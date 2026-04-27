@@ -1,7 +1,7 @@
 import type { _PinnedRowGridApi } from '../api/gridApi';
 import type { _ModuleWithApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
-import { manualPinnedRowCSS } from './manualPinnedRow.css-GENERATED';
+import manualPinnedRowCSS from './manualPinnedRow.css';
 import {
     forEachPinnedRow,
     getPinnedBottomRow,

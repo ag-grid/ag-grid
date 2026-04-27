@@ -28,6 +28,7 @@ import type {
     FocusGridInnerElement,
     FormulaDataSource,
     FormulaFuncs,
+    FullWidthNotesDataSource,
     GetBusinessKeyForNode,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -72,9 +73,13 @@ import type {
     MenuItemDef,
     NavigateToNextCell,
     NavigateToNextHeader,
+    NotesDataSource,
     OverlaySelectorFunc,
     OverlayType,
     PaginationNumberFormatter,
+    PaginationPanel,
+    PivotColumnGroupTotals,
+    PivotRowTotals,
     PostProcessPopup,
     PostSortRows,
     ProcessCellForClipboard,
@@ -101,8 +106,10 @@ import type {
     SortDirection,
     StatusBar,
     TabToNextCell,
+    TabToNextGridContainer,
     TabToNextHeader,
     Theme,
+    Toolbar,
     TreeDataDisplayType,
     UseGroupTotalRow
 } from 'ag-grid-community';
@@ -239,6 +246,10 @@ export interface Props<TData> {
      modules?: Module[] | undefined;
 
      // @START_PROPS@
+    /** Specifies the toolbar items to use in the toolbar.
+         * @agModule `ToolbarModule`
+         */
+    toolbar?: Toolbar,
     /** Specifies the status bar components to use in the status bar.
          * @agModule `StatusBarModule`
          */
@@ -294,6 +305,13 @@ export interface Props<TData> {
          * @agModule `TooltipModule`
          */
     tooltipShowDelay?: number,
+    /** The delay in milliseconds before a tooltip is shown when moving the pointer from one tooltip-enabled element to
+         * another while the previous tooltip is still visible or pending hide.
+         *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
+         * @default 200
+         * @agModule `TooltipModule`
+         */
+    tooltipSwitchShowDelay?: number,
     /** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
          *     **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
          * @default 10000
@@ -913,7 +931,6 @@ export interface Props<TData> {
          * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
          * Set to `false` to hide the page size selector.
          * @default true
-         * @initial
          * @agModule `PaginationModule`
          */
     paginationPageSizeSelector?: number[] | boolean,
@@ -935,6 +952,14 @@ export interface Props<TData> {
          * @agModule `PaginationModule`
          */
     suppressPaginationPanel?: boolean,
+    /** Controls which built-in components appear in the pagination panel and in what order.
+         * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+         * Components render in the order they appear in the array. Omitted components are hidden.
+         * An empty array hides the pagination panel entirely.
+         * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+         * @agModule `PaginationModule`
+         */
+    paginationPanels?: PaginationPanel[],
     /** Set to `true` to enable pivot mode.
          * @default false
          * @agModule `PivotModule`
@@ -960,11 +985,11 @@ export interface Props<TData> {
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.
          * @agModule `PivotModule`
          */
-    pivotColumnGroupTotals?: 'before' | 'after',
+    pivotColumnGroupTotals?: PivotColumnGroupTotals,
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.
          * @agModule `PivotModule`
          */
-    pivotRowTotals?: 'before' | 'after',
+    pivotRowTotals?: PivotRowTotals,
     /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column.
          * @default false
          * @initial
@@ -993,6 +1018,29 @@ export interface Props<TData> {
          * @agModule `FormulaModule`
          */
     formulaDataSource?: FormulaDataSource,
+    /** Provide a data source to control where notes are stored and retrieved.
+         * Can be updated to enable, disable, or replace Notes at runtime.
+         * @agModule `NotesModule`
+         */
+    notesDataSource?: NotesDataSource | FullWidthNotesDataSource,
+    /** Changes how existing notes are opened.
+         *  - `'hover'` - Existing notes open when hovering a noted cell or full width row.
+         *  - `'click'` - Existing notes open when clicking a noted cell or full width row.
+         * @default 'hover'
+         * @agModule `NotesModule`
+         */
+    noteTrigger?: 'hover' | 'click',
+    /** The delay in milliseconds before a note is shown when hovering a noted cell.
+         * Only applies when `noteTrigger = 'hover'`.
+         * @default 180
+         * @agModule `NotesModule`
+         */
+    noteShowDelay?: number,
+    /** The delay in milliseconds before a note is hidden after the pointer leaves a noted cell or note popup.
+         * @default 220
+         * @agModule `NotesModule`
+         */
+    noteHideDelay?: number,
     /** A map of 'function name' to 'function' for custom functions that are used for formulas.
          * @initial
          * @agModule `FormulaModule`
@@ -1085,10 +1133,11 @@ export interface Props<TData> {
          * @agModule `RowDragModule`
          */
     rowDragManaged?: boolean,
-    /** When `true`, managed row dragging updates grouped column values so rows can move between groups. When `false`,
-         * managed dragging only reorders rows inside their existing group.
+    /** When `true`, the grid re-evaluates the grouping hierarchy after editing a grouped column value,
+         * moving the row to the correct group instantly. Also enables managed row dragging to update
+         * grouped column values so rows can move between groups.
          * @default false
-         * @agModule `RowDragModule`
+         * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     refreshAfterGroupEdit?: boolean,
     /** Used if rowDragManaged is enabled and treeData is enabled,
@@ -1236,6 +1285,14 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule`
          */
     groupHideOpenParents?: boolean,
+    /** When using `groupDisplayType='multipleColumns'` or `groupHideOpenParents=true`, hides group columns for levels
+         * that have not yet been expanded. Only the top-level group column is initially
+         * visible; each subsequent level becomes visible when at least one group at the
+         * preceding level is expanded. (Client Side Row Model only)
+         * @default false
+         * @agModule `RowGroupingModule`
+         */
+    groupHideColumnsUntilExpanded?: boolean,
     /** Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and display the unbalanced nodes alongside group nodes.
          * @default false
          * @agModule `RowGroupingModule`
@@ -1609,6 +1666,11 @@ export interface Props<TData> {
          * @initial
          */
     suppressRowTransform?: boolean,
+    /** Set to `true` to suppress `content-visibility: auto` on the grid wrapper element. This degrades performance by causing the browser to render grids even when they are off screen, but may be necessary if your application depends on receiving resize events from hidden grids.
+         * @default false
+         * @initial
+         */
+    suppressContentVisibilityAuto?: boolean,
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
          * @default false
          * @agModule `ColumnHoverModule`
@@ -1622,7 +1684,14 @@ export interface Props<TData> {
          * @default false
          */
     deltaSort?: boolean,
-    /**/
+    /** Specifies how tree data should be displayed.
+         *
+         * The options are:
+         *
+         * - `'auto'`: group column automatically added by the grid.
+         * - `'custom'`: informs the grid that group columns will be provided.
+         * @agModule `TreeDataModule`
+         */
     treeDataDisplayType?: TreeDataDisplayType,
     /** @initial
          */
@@ -1752,6 +1821,12 @@ export interface Props<TData> {
          * or `false` to let the browser handle the tab behaviour.
          */
     tabToNextCell?: TabToNextCell<TData>,
+    /** Allows overriding the default behaviour when tabbing between core grid containers.
+         * Return a container name, a cell position, or a header position to focus that target,
+         * `true` to stay on the current focus, `false` to let the browser handle tab behaviour,
+         * or `undefined` to use the grid's default behaviour.
+         */
+    tabToNextGridContainer?: TabToNextGridContainer<TData>,
     /** A callback for localising text within the grid.
          * @initial
          * @agModule `LocaleModule`
@@ -1994,6 +2069,7 @@ export function getProps() {
           modules: [] as any,
 
           // @START_DEFAULTS@
+        toolbar: undefined,
         statusBar: undefined,
         sideBar: undefined,
         suppressContextMenu: undefined,
@@ -2004,6 +2080,7 @@ export function getProps() {
         enableBrowserTooltips: undefined,
         tooltipTrigger: undefined,
         tooltipShowDelay: undefined,
+        tooltipSwitchShowDelay: undefined,
         tooltipHideDelay: undefined,
         tooltipMouseTrack: undefined,
         tooltipShowMode: undefined,
@@ -2135,6 +2212,7 @@ export function getProps() {
         paginationAutoPageSize: undefined,
         paginateChildRows: undefined,
         suppressPaginationPanel: undefined,
+        paginationPanels: undefined,
         pivotMode: undefined,
         pivotPanelShow: undefined,
         pivotMaxGeneratedColumns: undefined,
@@ -2146,6 +2224,10 @@ export function getProps() {
         functionsReadOnly: undefined,
         aggFuncs: undefined,
         formulaDataSource: undefined,
+        notesDataSource: undefined,
+        noteTrigger: undefined,
+        noteShowDelay: undefined,
+        noteHideDelay: undefined,
         formulaFuncs: undefined,
         suppressAggFuncInHeader: undefined,
         alwaysAggregateAtRootLevel: undefined,
@@ -2193,6 +2275,7 @@ export function getProps() {
         groupRemoveSingleChildren: undefined,
         groupRemoveLowestSingleChildren: undefined,
         groupHideOpenParents: undefined,
+        groupHideColumnsUntilExpanded: undefined,
         groupAllowUnbalanced: undefined,
         rowGroupPanelShow: undefined,
         groupRowRenderer: undefined,
@@ -2270,6 +2353,7 @@ export function getProps() {
         rowClassRules: undefined,
         suppressRowHoverHighlight: undefined,
         suppressRowTransform: undefined,
+        suppressContentVisibilityAuto: undefined,
         columnHoverHighlight: undefined,
         gridId: undefined,
         deltaSort: undefined,
@@ -2300,6 +2384,7 @@ export function getProps() {
         tabToNextHeader: undefined,
         navigateToNextCell: undefined,
         tabToNextCell: undefined,
+        tabToNextGridContainer: undefined,
         getLocaleText: undefined,
         getDocument: undefined,
         paginationNumberFormatter: undefined,
@@ -2448,37 +2533,77 @@ export function getProps() {
 
 export const debounce = (func: () => void, delay: number) => {
      let timeout: number;
-     return () => {
-          const later = function () {
-               func();
-          };
+     const debounced = () => {
           window.clearTimeout(timeout);
-          timeout = window.setTimeout(later, delay);
+          timeout = window.setTimeout(func, delay);
      };
+     debounced.cancel = () => {
+          window.clearTimeout(timeout);
+     };
+     return debounced;
 };
 
 function isInputClass(input: any) {
-     return input &&
-          input.constructor &&
-          input.constructor.toString().substring(0, 5) === 'class';
+     if (!input || typeof input !== 'object' || Array.isArray(input)) {
+          return false;
+     }
+     const proto = Object.getPrototypeOf(input);
+     return proto !== null && proto !== Object.prototype;
 }
 
 // necessary for grid change detection to work - everything in vue is proxied
 export function deepToRaw<T extends Record<string, any>>(sourceObj: T): T {
+     // Fast path: primitives, null/undefined, and functions need no unwrapping
+     if (sourceObj === null || sourceObj === undefined || typeof sourceObj !== 'object') {
+          return sourceObj;
+     }
+
+     const seen = new WeakSet();
      const objectIterator = (input: any): any => {
+          // Primitives and functions pass through immediately
+          if (input === null || input === undefined || typeof input !== 'object') {
+               return input;
+          }
+          if (isRef(input)) {
+               return objectIterator(input.value);
+          }
+          if (isReactive(input) || isProxy(input)) {
+               return objectIterator(toRaw(input));
+          }
           if (isInputClass(input)) {
                return toRaw(input);
           }
           if (Array.isArray(input)) {
-               return input.map((item) => objectIterator(item));
+               // Check if any element needs unwrapping before allocating a new array
+               let needsCopy = false;
+               for (let i = 0; i < input.length; i++) {
+                    const item = input[i];
+                    if (item !== null && typeof item === 'object') {
+                         if (isRef(item) || isReactive(item) || isProxy(item)) {
+                              needsCopy = true;
+                              break;
+                         }
+                         // Nested object/array — need to recurse
+                         needsCopy = true;
+                         break;
+                    }
+               }
+               return needsCopy ? input.map((item) => objectIterator(item)) : input;
           }
-          if (isRef(input) || isReactive(input) || isProxy(input)) {
-               return objectIterator(toRaw(input));
+          if (seen.has(input)) {
+               return input;
           }
-          return input;
+          seen.add(input);
+          // Always create a shallow copy so the grid's reference equality check
+          // detects in-place mutations (AG-14654)
+          const keys = Object.keys(input);
+          const result: Record<string, any> = {};
+          for (let i = 0; i < keys.length; i++) {
+               result[keys[i]] = objectIterator(input[keys[i]]);
+          }
+          return result;
      };
 
      return objectIterator(sourceObj);
 }
 
-// export const convertToRaw = (value: any) => (value ? (Object.isFrozen(value) ? value : markRaw(toRaw(value))) : value);

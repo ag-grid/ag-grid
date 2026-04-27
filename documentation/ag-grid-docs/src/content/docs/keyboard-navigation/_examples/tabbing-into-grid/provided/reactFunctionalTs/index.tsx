@@ -4,25 +4,24 @@ import { createRoot } from 'react-dom/client';
 import type { ColDef, GridReadyEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
-    ModuleRegistry,
     NumberEditorModule,
     NumberFilterModule,
     TextEditorModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
+const modules = [
     NumberEditorModule,
     TextEditorModule,
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+];
 
 const GridExample = () => {
     const columnDefs = useMemo<ColDef[]>(
@@ -62,28 +61,30 @@ const GridExample = () => {
     );
 
     return (
-        <div style={{ width: '100%', height: '100%' }}>
-            <div className="test-container">
-                <div>
+        <AgGridProvider modules={modules}>
+            <div style={{ width: '100%', height: '100%' }}>
+                <div className="test-container">
+                    <div>
+                        <div className="form-container">
+                            <label>Input Above</label>
+                            <input type="text" />
+                        </div>
+                    </div>
+                    <div id="myGrid" style={{ height: '100%', width: '100%' }}>
+                        <AgGridReact
+                            rowData={data}
+                            loading={loading}
+                            columnDefs={columnDefs}
+                            defaultColDef={defaultColDef}
+                        />
+                    </div>
                     <div className="form-container">
-                        <label>Input Above</label>
+                        <label>Input Below</label>
                         <input type="text" />
                     </div>
                 </div>
-                <div id="myGrid" style={{ height: '100%', width: '100%' }}>
-                    <AgGridReact
-                        rowData={data}
-                        loading={loading}
-                        columnDefs={columnDefs}
-                        defaultColDef={defaultColDef}
-                    />
-                </div>
-                <div className="form-container">
-                    <label>Input Below</label>
-                    <input type="text" />
-                </div>
             </div>
-        </div>
+        </AgGridProvider>
     );
 };
 

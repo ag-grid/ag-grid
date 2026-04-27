@@ -45,6 +45,13 @@ describe('ag-grid parentId tree with master detail', () => {
             { key: 'A', level: 0 },
             { key: 'B', level: 1 },
         ]);
+
+        await new GridRows(api, 'nested expansion state').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ A GROUP id:A ag-Grid-AutoColumn:"A" id:"A"
+            · └─┬ B GROUP collapsed id:B ag-Grid-AutoColumn:"B" id:"B"
+            · · └── C master collapsed hidden id:C ag-Grid-AutoColumn:"C" id:"C"
+        `);
     });
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, TreeDataModule, MasterDetailModule],
@@ -248,6 +255,12 @@ describe('ag-grid parentId tree with master detail', () => {
         // With groupDefaultExpanded: 0, all groups are collapsed by default
         expect(api.getRowNode('A')?.expanded).toBe(false); // group/root 'A'
         expect(api.getRowNode('B')?.expanded).toBe(false); // leaf/master 'B'
+
+        await new GridRows(api, 'leaf master details groupDefaultExpanded=0').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ A master-GROUP collapsed id:A ag-Grid-AutoColumn:"A" id:"A"
+            · └── B LEAF hidden id:B ag-Grid-AutoColumn:"B" id:"B"
+        `);
     });
 
     test('group nodes use isGroupOpenByDefault callback', async () => {
@@ -275,6 +288,12 @@ describe('ag-grid parentId tree with master detail', () => {
         // Group node 'A' should be expanded by callback, leaf/master 'B' should not
         expect(api.getRowNode('A')?.expanded).toBe(true); // group 'A'
         expect(api.getRowNode('B')?.expanded).toBe(false); // leaf/master 'B'
+
+        await new GridRows(api, 'isGroupOpenByDefault expands group A').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ A GROUP id:A ag-Grid-AutoColumn:"A" id:"A"
+            · └── B master collapsed id:B ag-Grid-AutoColumn:"B" id:"B"
+        `);
     });
 
     test('group nodes fallback to groupDefaultExpanded if no callback', async () => {
@@ -301,5 +320,11 @@ describe('ag-grid parentId tree with master detail', () => {
         // With groupDefaultExpanded: 1, only top-level group is expanded, leaf/master is not
         expect(api.getRowNode('A')?.expanded).toBe(true); // group 'A'
         expect(api.getRowNode('B')?.expanded).toBe(false); // leaf/master 'B'
+
+        await new GridRows(api, 'groupDefaultExpanded=1 expands only top-level').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ A GROUP id:A ag-Grid-AutoColumn:"A" id:"A"
+            · └── B master collapsed id:B ag-Grid-AutoColumn:"B" id:"B"
+        `);
     });
 });

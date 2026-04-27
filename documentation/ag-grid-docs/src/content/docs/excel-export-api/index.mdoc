@@ -39,6 +39,10 @@ This page documents the Excel Export API and Interfaces.
 
 {% interfaceDocumentation interfaceName="ExcelCell" /%}
 
+### ExcelNote
+
+{% interfaceDocumentation interfaceName="ExcelNote" overrideSrc="excel-export-api/excel-api.json" /%}
+
 ### ExcelData
 
 {% interfaceDocumentation interfaceName="ExcelData" overrideSrc="excel-export-api/excel-api.json" /%}
@@ -103,12 +107,16 @@ This page documents the Excel Export API and Interfaces.
 
 {% interfaceDocumentation interfaceName="ExcelTableConfig" /%}
 
+### ProcessNoteForExportParams
+
+{% interfaceDocumentation interfaceName="ProcessNoteForExportParams" overrideSrc="excel-export-api/excel-api.json" /%}
+
 ## Types
 
 ### ExcelDataType
 
 ```ts
-type ExcelDataType = 
+type ExcelDataType =
     'String'   |
     'Formula'  |
     'Number'   |
@@ -120,7 +128,7 @@ type ExcelDataType =
 ### ExcelOOXMLDataType
 
 ```ts
-type ExcelOOXMLDataType = 
+type ExcelOOXMLDataType =
     'str'       |
     's'         |
     'f'         |

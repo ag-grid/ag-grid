@@ -2,6 +2,35 @@ const esbuild = require('esbuild');
 const { umdWrapper } = require('esbuild-plugin-umd-wrapper');
 const fs = require('fs/promises');
 const path = require('path');
+const postcss = require('postcss');
+const postcssPlugins = require('./postcss-plugins.cjs');
+
+/** @type {import('esbuild').Plugin} */
+const cssPlugin = {
+    name: 'css-plugin',
+    setup(build) {
+        build.onLoad({ filter: /\.css$/ }, async (args) => {
+            const rawCSS = await fs.readFile(args.path, 'utf8');
+            const isLegacyCSS = !args.path.includes('/src/');
+
+            // Legacy theme CSS is already processed through Sass, only source
+            // CSS (Theming API) needs PostCSS.
+            const outputCSS = isLegacyCSS
+                ? rawCSS
+                : (await postcss(postcssPlugins).process(rawCSS, { from: args.path, to: args.path })).css;
+
+            // UMD builds: non-source CSS (legacy themes) gets injected as <style> tags
+            const isUmd = /:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '');
+            if (isUmd && isLegacyCSS) {
+                return {
+                    contents: `(function(){if(typeof document!=="undefined"){var s=document.createElement("style");s.setAttribute("data-ag-scope","legacy");s.textContent=${JSON.stringify(outputCSS)};document.head.appendChild(s);}})();`,
+                    loader: 'js',
+                };
+            }
+            return { contents: outputCSS, loader: 'text' };
+        });
+    },
+};
 
 const exportedNames = {
     react: 'React',
@@ -94,9 +123,9 @@ if (typeof require === 'undefined') {
     },
 };
 
-const plugins = [];
+const plugins = [cssPlugin];
 let outExtension = {};
-if (process.env.NX_TASK_TARGET_TARGET?.endsWith('umd')) {
+if (/:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '')) {
     plugins.push(umdWrapperAdaptorPlugin);
     outExtension = {
         '.cjs': '.js',
@@ -108,7 +137,9 @@ if (process.env.NX_TASK_TARGET_TARGET?.endsWith('umd')) {
     };
 }
 
-plugins.push(postBuildMinificationPlugin);
+if (process.env.NX_TASK_TARGET_CONFIGURATION !== 'watch') {
+    plugins.push(postBuildMinificationPlugin);
+}
 
 /** @type {import('esbuild').BuildOptions} */
 const options = {
