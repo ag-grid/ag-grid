@@ -320,7 +320,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     // Origin `top right` means Maggie scales leftward into the gap between
     // the hero copy and the faces grid, instead of rightward into Mats's
     // column where she'd otherwise occlude him.
-    transform: scale(1.3);
+    transform: scale(1.15);
     transform-origin: top right;
 
     @media (min-width: 900px) {
@@ -328,24 +328,28 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 
     &:hover {
-        transform: scale(1.3) translateY(-4px);
+        transform: scale(1.15) translateY(-4px);
     }
 }
 
 .heroFace:nth-child(2) {
     max-height: 220px;
-    transform: translateY(56px);
+    // Mats is dropped well below Maggie/John to make the zigzag read as a
+    // deliberate compositional move rather than a small offset. ~200px on
+    // mobile and ~211px on desktop sits him almost a full face-height
+    // below the bookend portraits.
+    transform: translateY(200px);
 
     @media (min-width: 900px) {
-        max-height: 260px;
-        transform: translateY(84px);
+        max-height: 299px;
+        transform: translateY(211px);
     }
 
     &:hover {
-        transform: translateY(52px);
+        transform: translateY(196px);
 
         @media (min-width: 900px) {
-            transform: translateY(80px);
+            transform: translateY(207px);
         }
     }
 }
@@ -916,6 +920,15 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 // ─── Venue ───────────────────────────────────────────────────────────────────
 .venueSection {
     composes: section;
+
+    // Page-scoped container override (mirrors the same pattern used by `.hero`).
+    // The Savoy line drawing reads better at a generous size, so on wide
+    // screens we let the venue's `.container` stretch wider than the standard
+    // 1320px page container. Both class names live in this CSS module so the
+    // selector is hashed locally — no other section/page is affected.
+    .container {
+        max-width: 1480px;
+    }
 }
 
 // Single hero image of the venue. No card chrome — we want the line drawing
@@ -929,7 +942,10 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     position: relative;
     margin: 0;
     width: 100%;
-    max-width: 960px;
+    // Allow the figure to fill the (now wider) venue container all the way
+    // out to the section's max width. Previously capped at 960px, which
+    // looked dwarfed inside the page container.
+    max-width: 100%;
 }
 
 .venueImage {

@@ -102,7 +102,7 @@ const AGENDA_SECTIONS: AgendaSection[] = [
                 description:
                     "How do you build a dashboard you can't see? A behind-the-scenes look at AG Studio's multi-agent architecture and the client-side tools that let any LLM build reports it otherwise couldn't.",
             },
-            { time: '14:05 – 14:30', title: 'Customer Showcase', description: 'To be announced' },
+            { time: '14:05 – 14:30', title: 'Customer Showcase', description: 'TBA' },
             { time: '14:30 – 15:00', title: 'Coffee break', isBreak: true },
             {
                 time: '15:00 – 15:30',
@@ -117,7 +117,7 @@ const AGENDA_SECTIONS: AgendaSection[] = [
                 title: 'Panel Discussion',
                 speakers:
                     'Maggie Appleton (Staff Research Engineer, GitHub), Matt Pocock (Senior Developer Educator, AI Hero), & more',
-                description: 'To be announced',
+                description: 'TBA',
             },
             {
                 time: '16:15 – 16:45',
@@ -243,6 +243,18 @@ const VENUE_IMAGES: VenueImage[] = [
     html,
     body {
         background-color: #f2f2f2;
+    }
+
+    /*
+        Brand-coloured text selection. `::selection` is a pseudo-element and
+        can't be hashed by CSS Modules, so we route it through `is:global`
+        — but because this <style> block lives in a page component, it's
+        only emitted into the bundle for this route, so other pages keep
+        the browser default.
+    */
+    ::selection {
+        background-color: #f43800;
+        color: #fff;
     }
 </style>
 
