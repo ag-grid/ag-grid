@@ -2,23 +2,30 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-    SNYK-JS-VITE-15922242:
-        - astro@5.16.6 > vite@6.4.1:
+    SNYK-JS-H3-15745711:
+        - astro@6.1.8 > unstorage@1.17.5 > h3@1.15.5:
               reason: >-
                   The website is a static site, so server-side vulns are not relevant
               expires: 2026-06-08T00:00:00.000Z
-              created: 2026-04-14T15:40:05.793Z
-        - '@astrojs/react@4.4.2 > vite@6.4.1':
+              created: 2026-04-24T11:42:06.940Z
+    SNYK-JS-H3-15692482:
+        - astro@6.1.8 > unstorage@1.17.5 > h3@1.15.5:
               reason: >-
                   The website is a static site, so server-side vulns are not relevant
               expires: 2026-06-08T00:00:00.000Z
-              created: 2026-04-14T15:40:05.790Z
+              created: 2026-04-24T11:41:43.874Z
+    SNYK-JS-H3-15683856:
+        - astro@6.1.8 > unstorage@1.17.5 > h3@1.15.5:
+              reason: >-
+                  The website is a static site, so server-side vulns are not relevant
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:41:28.521Z
     SNYK-JS-DEFU-15914644:
-        - astro@5.16.6 > unstorage@1.17.3 > h3@1.15.5 > defu@6.1.4:
+        - astro@6.1.8 > unstorage@1.17.5 > h3@1.15.5 > defu@6.1.4:
               reason: >-
                   The website is a static site, so server-side vulns are not relevant
               expires: 2026-06-08T00:00:00.000Z
-              created: 2026-04-14T15:38:30.264Z
+              created: 2026-04-24T11:41:04.052Z
     SNYK-JS-AXIOS-15969258:
         - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
               reason: >-
@@ -37,121 +44,84 @@ ignore:
                   Used in build & dev - not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-04-14T13:46:02.658Z
-    SNYK-JS-ASTRO-15763371:
-        - astro@5.16.6:
-              reason: >-
-                  The website is a static site, so server-side vulns are not relevant
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-27T11:52:47.516Z
     SNYK-JS-PICOMATCH-15765511:
+        - astro@6.1.8 > unstorage@1.17.5 > anymatch@3.1.3 > picomatch@2.3.1:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:43:20.417Z
+        - astro@6.1.8 > vite@7.3.2 > tinyglobby@0.2.15 > picomatch@4.0.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:43:20.413Z
+        - astro@6.1.8 > vite@7.3.2 > picomatch@4.0.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:43:20.405Z
+        - astro@6.1.8 > @rollup/pluginutils@5.3.0 > picomatch@4.0.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:43:20.399Z
+        - astro@6.1.8 > @astrojs/internal-helpers@0.8.0 > picomatch@4.0.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:43:20.393Z
+        - astro@6.1.8 > tinyglobby@0.2.15 > picomatch@4.0.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:43:20.389Z
+        - astro@6.1.8 > picomatch@4.0.3:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:43:20.384Z
+        - '@astrojs/markdoc@1.0.3 > @astrojs/internal-helpers@0.8.0 > picomatch@4.0.3':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:43:18.157Z
+        - '@astrojs/react@5.0.3 > vite@7.3.2 > tinyglobby@0.2.15 > picomatch@4.0.3':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:43:16.244Z
+        - '@astrojs/react@5.0.3 > vite@7.3.2 > picomatch@4.0.3':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:43:16.239Z
+        - '@astrojs/react@5.0.3 > @astrojs/internal-helpers@0.8.0 > picomatch@4.0.3':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:43:16.236Z
+        - '@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > tinyglobby@0.2.15 > picomatch@4.0.3':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:43:15.253Z
         - vite-plugin-svgr@4.5.0 > @rollup/pluginutils@5.3.0 > picomatch@4.0.3:
               reason: >-
                   Used in build & dev - not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-27T11:43:45.855Z
-        - '@astrojs/react@4.4.2 > vite@6.4.1 > tinyglobby@0.2.15 > picomatch@4.0.3':
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-27T11:43:45.853Z
-        - '@astrojs/react@4.4.2 > vite@6.4.1 > picomatch@4.0.3':
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-27T11:43:45.850Z
-        - '@astrojs/check@0.9.6 > @astrojs/language-server@2.16.2 > fast-glob@3.3.3 > micromatch@4.0.8 > picomatch@2.3.1':
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-27T11:43:45.849Z
-        - astro@5.16.6 > vite@6.4.1 > tinyglobby@0.2.15 > picomatch@4.0.3:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-27T11:43:45.845Z
-        - astro@5.16.6 > tinyglobby@0.2.15 > picomatch@4.0.3:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-27T11:43:45.843Z
-        - astro@5.16.6 > @rollup/pluginutils@5.3.0 > picomatch@4.0.3:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-27T11:43:45.841Z
-        - astro@5.16.6 > vite@6.4.1 > picomatch@4.0.3:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-27T11:43:45.833Z
-        - astro@5.16.6 > picomatch@4.0.3:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-27T11:43:45.831Z
-        - astro@5.16.6 > unstorage@1.17.3 > anymatch@3.1.3 > picomatch@2.3.1:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-27T11:43:45.820Z
-    SNYK-JS-H3-15745711:
-        - astro@5.16.6 > unstorage@1.17.3 > h3@1.15.5:
-              reason: >-
-                  H3 is not used for production
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-23T10:14:33.937Z
-    SNYK-JS-H3-15692482:
-        - astro@5.16.6 > unstorage@1.17.3 > h3@1.15.5:
-              reason: >-
-                  H3 is not used for production
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-23T10:14:29.419Z
-    SNYK-JS-H3-15683856:
-        - astro@5.16.6 > unstorage@1.17.3 > h3@1.15.5:
-              reason: >-
-                  H3 is not used for production
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-23T10:14:25.461Z
-    SNYK-JS-SVGO-15423912:
-        - astro@5.16.6 > svgo@4.0.0:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-05T11:44:52.250Z
     SNYK-JS-IMMUTABLE-15423650:
         - sass@1.93.3 > immutable@5.1.4:
               reason: >-
                   Used in build & dev - not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-05T11:42:22.184Z
-    SNYK-JS-ASTRO-15338138:
-        - astro@5.16.6:
-              reason: >-
-                  The website is a static site, so server-side vulns are not relevant
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-02T12:07:58.710Z
-    SNYK-JS-ASTRO-15338137:
-        - astro@5.16.6:
-              reason: >-
-                  Dev server only - not exposed in production
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-02T12:03:29.735Z
     SNYK-JS-ROLLUP-15340920:
         - vitest@2.1.9 > vite@5.4.21 > rollup@4.52.5:
               reason: >-
                   Used in testing - not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-02T11:39:51.305Z
-        - astro@5.16.6 > vite@6.4.1 > rollup@4.52.5:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-02T11:39:51.300Z
-        - '@astrojs/react@4.4.2 > vite@6.4.1 > rollup@4.52.5':
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-02T11:39:51.288Z
     SNYK-JS-QS-15268416:
         - react-instantsearch@7.22.1 > instantsearch.js@4.86.1 > qs@6.14.1:
               reason: >-
@@ -159,16 +129,16 @@ ignore:
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-02T11:37:48.363Z
     SNYK-JS-AJV-15274295:
+        - '@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > volar-service-yaml@0.0.70 > yaml-language-server@1.20.0 > ajv@8.17.1':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2026-04-24T11:38:57.296Z
         - gif-frames@1.0.1 > get-pixels-frame-info-update@3.3.2 > request@2.88.2 > har-validator@5.1.5 > ajv@6.12.6:
               reason: >-
                   Used in build & dev - not included in final production build
               expires: 2026-06-08T00:00:00.000Z
               created: 2026-03-02T11:00:13.555Z
-        - '@astrojs/check@0.9.6 > @astrojs/language-server@2.16.2 > volar-service-yaml@0.0.67 > yaml-language-server@1.19.2 > ajv@8.17.1':
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-02T11:00:13.551Z
     SNYK-JS-JPEGJS-2859218:
         - gif-frames@1.0.1 > get-pixels-frame-info-update@3.3.2 > jpeg-js@0.4.0:
               reason: >-

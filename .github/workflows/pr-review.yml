@@ -1,5 +1,18 @@
 name: PR Review
 
+# Installs @ag-grid/dev-prompts from GitHub Packages and delegates to the
+# composite actions shipped inside the package. This is the consumer
+# counterpart to ag-grid/ag-dev-prompts's own dogfood workflow.
+#
+# Why npm instead of a reusable workflow: ag-dev-prompts is a private repo,
+# and GitHub Actions does not permit public-repo callers to consume
+# reusable workflows from private-repo hosts. The npm package route works
+# because GitHub Packages honours `GITHUB_TOKEN` + `packages: read` from any
+# repo in the same org, regardless of visibility.
+#
+# Channel: ag-grid tracks the `latest` dist-tag. ag-charts tracks `canary`
+# during the in-flight AG-17085 rollout.
+
 on:
     pull_request:
         types: [opened, ready_for_review]
@@ -12,60 +25,86 @@ on:
                 type: string
                 required: true
 
-env:
-    NX_NO_CLOUD: true
-
 permissions:
     contents: read
 
+env:
+    DEV_PROMPTS_CHANNEL: latest
+
 jobs:
-    # Check permissions for issue_comment events
-    check-permissions:
+    review:
         runs-on: ubuntu-latest
-        outputs:
-            allowed: ${{ steps.check.outputs.allowed }}
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-
-            - name: Check user permissions
-              id: check
-              uses: ./external/ag-shared/github/actions/check-issue-comment-permissions
-              with:
-                  command: '/pr-review'
-
-    # Run the Codex PR review
-    pr-review:
-        runs-on: ubuntu-latest
-        needs: check-permissions
+        # Top-level gating — keeps the runner from spinning up at all for
+        # events that would only short-circuit at a step-level `if:`:
+        # - pull_request: same-repo, non-draft (forks also blocked inside
+        #   pr-resolve-metadata as a second line of defence).
+        # - issue_comment: must be on a PR AND start with /pr-review.
+        # - workflow_dispatch: always eligible (caller has actions:write).
+        if: |
+            (github.event_name == 'pull_request' &&
+                github.event.pull_request.draft == false &&
+                github.event.pull_request.head.repo.full_name == github.repository) ||
+            github.event_name == 'workflow_dispatch' ||
+            (github.event_name == 'issue_comment' &&
+                github.event.issue.pull_request != null &&
+                startsWith(github.event.comment.body, '/pr-review'))
         permissions:
             contents: read
             pull-requests: write
             issues: write
+            actions: write
             packages: read
-        # Only run if permissions check passed and PR is not a draft
-        # For issue_comment, also verify it's on a PR (not a regular issue)
-        if: |
-            needs.check-permissions.result == 'success' && (
-                (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
-                github.event_name == 'workflow_dispatch' ||
-                (github.event_name == 'issue_comment' && needs.check-permissions.outputs.allowed == 'true' && github.event.issue.pull_request)
-            )
         steps:
             - name: Checkout
               uses: actions/checkout@v4
               with:
                   fetch-depth: 1
 
+            - name: Setup Node (GitHub Packages for @ag-grid scope)
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: package.json
+                  registry-url: https://npm.pkg.github.com
+                  scope: '@ag-grid'
+
+            - name: Install @ag-grid/dev-prompts
+              env:
+                  NODE_AUTH_TOKEN: ${{ github.token }}
+              run: |
+                  set -euo pipefail
+                  mkdir -p "$GITHUB_WORKSPACE/.ag-dev-prompts"
+                  cd "$GITHUB_WORKSPACE/.ag-dev-prompts"
+                  echo '{"name":"ag-dev-prompts-install","private":true}' > package.json
+                  npm install --no-save --silent "@ag-grid/dev-prompts@${DEV_PROMPTS_CHANNEL}"
+
+            # --- Comment trigger path (/pr-review) -----------------------------
+            - name: Handle /pr-review comment
+              if: github.event_name == 'issue_comment' && github.event.issue.pull_request
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/pr-review-comment-trigger
+              with:
+                  github-token: ${{ github.token }}
+
+            # --- Review path (pull_request + workflow_dispatch) ---------------
+            - name: Resolve PR metadata
+              id: pr-meta
+              if: |
+                  (github.event_name == 'pull_request' &&
+                      github.event.pull_request.head.repo.full_name == github.repository) ||
+                  github.event_name == 'workflow_dispatch'
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/pr-resolve-metadata
+              with:
+                  github-token: ${{ github.token }}
+                  pr-number: ${{ github.event.pull_request.number || inputs.pr_number }}
+
             - name: Run Codex PR Review
-              uses: ./external/ag-shared/github/actions/codex-pr-review
+              if: steps.pr-meta.outputs.pr-number != ''
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/codex-pr-review
               with:
                   codex-api-key: ${{ secrets.CODEX_API_KEY }}
-                  pr-number: ${{ github.event.pull_request.number || github.event.issue.number || inputs.pr_number }}
-                  base-ref: ${{ github.event.pull_request.base.ref || 'latest' }}
-                  head-ref: ${{ github.event.pull_request.head.ref || '' }}
-                  pr-title: ${{ github.event.pull_request.title || '' }}
-                  pr-author: ${{ github.event.pull_request.user.login || '' }}
+                  pr-number: ${{ steps.pr-meta.outputs.pr-number }}
+                  base-ref: ${{ steps.pr-meta.outputs.base-ref }}
+                  head-ref: ${{ steps.pr-meta.outputs.head-ref }}
+                  pr-title: ${{ steps.pr-meta.outputs.pr-title }}
+                  pr-author: ${{ steps.pr-meta.outputs.pr-author }}
                   github-token: ${{ github.token }}
-                  comment-id: ${{ github.event.comment.id }}
                   inline-comments: 'true'

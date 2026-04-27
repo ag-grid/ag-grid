@@ -9,7 +9,7 @@ Formulas let users enter spreadsheet-style expressions into grid cells so values
 
 ## Enabling Formulas
 
-To enable formulas, set the column property `allowFormula: true` on one or more columns and ensure your rows have [Row IDs](./row-ids/#row-ids).
+To enable formulas, set the column property `allowFormula: true` on one or more columns and ensure rows have [Row IDs](./row-ids/#row-ids).
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -34,7 +34,7 @@ const gridOptions = {
 
 ## Formula Editor Component
 
-The Formula Cell Editor is the default editor for `allowFormula: true` columns unless you provide a custom `cellEditor`. It tokenises references, highlights ranges, and provides function autocomplete while typing.
+The Formula Cell Editor is the default editor for `allowFormula: true` columns unless a custom `cellEditor` is provided. It tokenises references, highlights ranges, and provides function autocomplete while typing.
 
 To opt out, set a `cellEditor` on the column. Formulas still evaluate, but the formula editor features are disabled.
 
@@ -62,9 +62,9 @@ Relative references move as the grid changes. Absolute references stay fixed usi
 
 #### Long-Form References
 
-The grid stores formulas in a long-hand format using column and row IDs to preserve references across row/column changes while the grid is not open. The editor converts that back to shorthand when users edit a cell.
+The grid stores formulas in a long-hand format using column and row IDs so references remain valid across row and column changes that happen while the grid is not displaying the data. The editor converts them back to shorthand when users edit a cell.
 
-If you supply formulas directly in data, use the long-hand format to avoid row position drift. See the notes in [Formula Reference](./formula-reference/) for the conversion rules.
+If formulas are supplied directly in data, use the long-hand format to avoid row position drift. See the notes in [Formula Reference](./formula-reference/) for the conversion rules.
 
 ### Cell Ranges
 
@@ -72,7 +72,7 @@ Ranges refer to a block of cells using a top-left and bottom-right reference sep
 
 ### Functions
 
-Formulas support built-in functions such as `SUM`, `AVERAGE`, and `CONCAT`. See [Formula Reference](./formula-reference/) for the full list of supported functions, errors and operators.
+Formulas support built-in functions such as `SUM`, `AVERAGE`, and `CONCAT`. See [Formula Reference](./formula-reference/) for the full list of supported functions, errors, and operators.
 
 ## Feature Interactions / Compatibility
 
@@ -89,7 +89,7 @@ Formulas support built-in functions such as `SUM`, `AVERAGE`, and `CONCAT`. See 
 
 ## Formula Data Source
 
-You can back formulas with a custom data source. This example uses a Map-based store for formula values:
+Formulas can be backed by a custom data source. This example uses a Map-based store for formula values:
 
 ```{% frameworkTransform=true %}
 const formulaStore = new Map();
@@ -116,16 +116,26 @@ const gridOptions = {
 
 {% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=440 /%}
 
-A user-provided data source should provide the following interface:
+A user-provided data source should implement the following interface:
 
 {% interfaceDocumentation interfaceName="FormulaDataSource" config={ "description": "" } /%}
 
+### Caching
+
+When a data source is configured, `getFormula` is called lazily and the result is cached per cell. The cache is invalidated automatically when:
+
+-   A cell in the row is edited through the grid (cell editor, `rowNode.setDataValue`, or any update that dispatches `cellValueChanged`).
+-   The Client-Side Row Model refreshes the row (add, remove, update, reorder).
+-   Columns are added, removed, or reordered.
+
+If the formula store is mutated outside the grid (for example, syncing from a backend), call `api.refreshFormulas()` to invalidate every cached formula, or `api.refreshFormulas(rowNode)` / `api.refreshFormulas(rowId)` to invalidate a single row. Changes written only to the external store are not picked up until the cache is invalidated by one of the events above or by an explicit call.
+
 ## Exporting
 
-When performing a [CSV Export](./csv-export), the grid exports the evaluated values of any formulas. When performing an [Excel Export](./excel-export), the grid exports the formulas themselves so Excel can evaluate them.
+During a [CSV Export](./csv-export), the grid exports the evaluated values of any formulas. During an [Excel Export](./excel-export), the grid exports the formulas themselves so Excel can evaluate them.
 
 ## See also
 
 -   [Formula Editor Component](./formula-editor-component/) – The rich editing experience for formula cells, including autocomplete and range selection tools.
--   [Formula Reference](./formula-reference/) – Full reference for operators (+, -, \*, /, ^, &, comparisons), provided functions and errors.
+-   [Formula Reference](./formula-reference/) – Full reference for operators (+, -, \*, /, ^, &, comparisons), provided functions, and errors.
 -   [Custom Functions](./formula-custom-functions/) – How to register and implement custom functions for formulas.

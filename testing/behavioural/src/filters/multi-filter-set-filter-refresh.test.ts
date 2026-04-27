@@ -11,7 +11,7 @@ import {
 import type { MultiFilter, SetFilter } from 'ag-grid-enterprise';
 import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
 
 interface Row {
     name: string;
@@ -34,6 +34,14 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
                 {
                     field: 'name',
                     filter: 'agMultiColumnFilter',
+                    // Eliminate the 500ms floating-filter debounce so the test is deterministic
+                    // on slow CI runners. This test is about refresh behaviour, not debouncing.
+                    filterParams: {
+                        filters: [
+                            { filter: 'agTextColumnFilter', filterParams: { debounceMs: 1 } },
+                            { filter: 'agSetColumnFilter', filterParams: { debounceMs: 1 } },
+                        ],
+                    },
                     floatingFilter: true,
                 },
             ],
@@ -51,8 +59,7 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
         input.value = text;
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
-        // Filters are debounced; wait enough for debounce + async handler refresh.
-        await asyncSetTimeout(600);
+        await asyncSetTimeout(5);
     }
 
     /**
@@ -62,7 +69,7 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
      */
     async function openPopupAndGetDisplayedSetFilterKeys(api: GridApi<Row>): Promise<string[]> {
         api.showColumnFilter('name');
-        await asyncSetTimeout(0);
+        await asyncSetTimeout(5);
         const multiFilter = (await api.getColumnFilterInstance('name')) as MultiFilter | null | undefined;
         const setFilter = multiFilter?.getChildFilterInstance<SetFilter>(1);
         if (!setFilter) {
@@ -74,13 +81,15 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
 
     test('Scenario A: no popup opened — reopening popup shows filtered Set Filter list', async () => {
         const api = await createGrid();
-        await asyncSetTimeout(0);
+        // Allow the floating-filter cell to mount its inner text input before we query for it.
+        await asyncSetTimeout(5);
 
+        // Deterministic wait for the filter to settle — avoids polling races on slow CI runners.
+        const filterChanged = waitForEvent('filterChanged', api);
         await typeInFloatingFilter(api, 'michael');
+        await filterChanged;
 
-        await waitFor(() => {
-            expect(api.getDisplayedRowCount()).toBe(1);
-        });
+        expect(api.getDisplayedRowCount()).toBe(1);
 
         await waitFor(async () => {
             expect(await openPopupAndGetDisplayedSetFilterKeys(api)).toEqual(['michael']);
@@ -89,18 +98,18 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
 
     test('Scenario B: popup opened+closed before floating filter — reopening popup shows filtered Set Filter list', async () => {
         const api = await createGrid();
-        await asyncSetTimeout(0);
+        await asyncSetTimeout(5);
 
         api.showColumnFilter('name');
         await asyncSetTimeout(10);
         api.hideColumnFilter();
         await asyncSetTimeout(10);
 
+        const filterChanged = waitForEvent('filterChanged', api);
         await typeInFloatingFilter(api, 'michael');
+        await filterChanged;
 
-        await waitFor(() => {
-            expect(api.getDisplayedRowCount()).toBe(1);
-        });
+        expect(api.getDisplayedRowCount()).toBe(1);
 
         await waitFor(async () => {
             expect(await openPopupAndGetDisplayedSetFilterKeys(api)).toEqual(['michael']);

@@ -20,7 +20,16 @@ fi
 export AG_PREINSTALL_ACTIVE=1
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
+# REPO_ROOT defaults to the current working directory (yarn sets this to the
+# package root when running preinstall; claude-worktree-create.sh `cd`s into
+# the worktree before invoking). We only fall back to the BASH_SOURCE-derived
+# path if PWD does not contain a package.json — in which case the script was
+# likely invoked from an unexpected location.
+if [[ -f "$PWD/package.json" ]]; then
+    REPO_ROOT="$PWD"
+else
+    REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
+fi
 
 log_info() { echo "[preinstall-worktree] $*"; }
 log_error() { echo "[preinstall-worktree] ERROR: $*" >&2; }
@@ -206,6 +215,26 @@ fix_broken_external_symlinks() {
 
 clone_directory() {
     local src="$1" dest="$2"
+    src="${src%/}"
+    dest="${dest%/}"
+
+    # Fast path on macOS/APFS: a single clonefile(2) call clones the whole
+    # tree in O(1) metadata operations, much faster than `cp -cR` which
+    # invokes clonefile once per file. Requires dest to not exist.
+    if [[ "$(uname -s)" == "Darwin" ]] && command -v python3 >/dev/null 2>&1 && [[ ! -e "$dest" ]]; then
+        if python3 -c '
+import ctypes, ctypes.util, sys
+libc = ctypes.CDLL(ctypes.util.find_library("c"))
+libc.clonefile.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint32]
+libc.clonefile.restype = ctypes.c_int
+r = libc.clonefile(sys.argv[1].encode(), sys.argv[2].encode(), 0)
+sys.exit(0 if r == 0 else 1)
+' "$src" "$dest" 2>/dev/null; then
+            return 0
+        fi
+    fi
+
+    # Fallback: per-file clonefile via cp -cR, then plain rsync.
     if cp -cR "${src}/" "${dest}/" 2>/dev/null; then
         return 0
     fi
@@ -276,16 +305,134 @@ try_cow_clone_nx_cache() {
     fi
 
     if [[ ! -d "$source/.nx" ]]; then
-        return 0
+        return 1
     fi
 
     log_info "COW-cloning .nx cache from $source"
     if clone_directory "$source/.nx" "$REPO_ROOT/.nx"; then
         log_info "Successfully cloned .nx cache"
+        return 0
     else
         log_info "Failed to clone .nx cache, continuing without it"
         rm -rf "$REPO_ROOT/.nx"
+        return 1
     fi
+}
+
+# Validate that every source plugin with a `build` target has a corresponding
+# dist/. The fast path skips `yarn install`, which means `postinstall:plugin-
+# build` does not run. If the source was `yarn nx clean`ed before the worktree
+# was created, dists would be missing and subsequent Nx invocations in the
+# new worktree would need to rebuild them unexpectedly.
+source_has_all_plugin_dists() {
+    local source="$1"
+    shopt -s nullglob
+    local pj
+    for pj in "$source"/plugins/*/project.json; do
+        local plugin_dir
+        plugin_dir=$(dirname "$pj")
+        # Only require dist/ for plugins that declare a build target.
+        if node -e '
+            try {
+                const p = require(process.argv[1]);
+                process.exit(p.targets && p.targets.build ? 0 : 1);
+            } catch (e) { process.exit(1); }
+        ' "$pj" 2>/dev/null; then
+            if [[ ! -d "$plugin_dir/dist" ]]; then
+                log_info "Source missing expected plugin dist: ${plugin_dir#${source}/}/dist — fast path disabled"
+                shopt -u nullglob
+                return 1
+            fi
+        fi
+    done
+    shopt -u nullglob
+    return 0
+}
+
+# COW-clone gitignored plugin build outputs so `postinstall:plugin-build` can
+# be skipped on the fast path. Only runs after source_has_all_plugin_dists
+# has confirmed the source is fully built.
+try_cow_clone_plugin_dists() {
+    local source="$1"
+
+    shopt -s nullglob
+    local src_dist
+    for src_dist in "$source"/plugins/*/dist; do
+        [[ -d "$src_dist" ]] || continue
+        local rel="${src_dist#${source}/}"
+        local dest="$REPO_ROOT/$rel"
+
+        # Skip if target already exists (partial prior install).
+        if [[ -d "$dest" ]]; then
+            continue
+        fi
+
+        mkdir -p "$(dirname "$dest")"
+        if ! clone_directory "$src_dist" "$dest"; then
+            log_info "Failed to clone $rel"
+            rm -rf "$dest"
+            shopt -u nullglob
+            return 1
+        fi
+    done
+    shopt -u nullglob
+
+    log_info "COW-cloned plugin dist outputs from $source"
+    return 0
+}
+
+# Hash the set of workspace package.json files to detect when a worktree
+# has a different workspace topology (new/removed/renamed packages) than
+# the COW source. Lockfile parity alone misses this case because adding a
+# workspace package with no new external deps does not change yarn.lock.
+hash_workspace_layout() {
+    local root="$1"
+    [[ -f "$root/package.json" ]] || { echo "missing"; return; }
+
+    # Extract workspace globs from root package.json.
+    local globs
+    globs=$(node -e '
+        try {
+            const p = require(process.argv[1]);
+            const ws = p.workspaces;
+            const list = Array.isArray(ws) ? ws : (ws && ws.packages) || [];
+            process.stdout.write(list.join("\n"));
+        } catch (e) { process.exit(1); }
+    ' "$root/package.json" 2>/dev/null) || { echo "error"; return; }
+
+    # Expand each glob against the root, collect package.json paths, and
+    # hash the sorted list + each file's "name" field.
+    (
+        cd "$root" || exit 1
+        shopt -s nullglob
+        local pkg_paths=()
+        local glob
+        while IFS= read -r glob; do
+            [[ -z "$glob" ]] && continue
+            local expanded
+            for expanded in $glob/package.json; do
+                [[ -f "$expanded" ]] && pkg_paths+=("$expanded")
+            done
+        done <<<"$globs"
+        shopt -u nullglob
+
+        # Sort paths and concatenate with each file's name field.
+        printf '%s\n' "${pkg_paths[@]}" | sort | while IFS= read -r p; do
+            local name
+            name=$(node -e '
+                try { process.stdout.write(require(process.argv[1]).name || ""); }
+                catch (e) {}
+            ' "$p" 2>/dev/null)
+            printf '%s\t%s\n' "$p" "$name"
+        done | shasum -a 256 | awk '{print $1}'
+    )
+}
+
+workspace_layouts_match() {
+    local a_hash b_hash
+    a_hash=$(hash_workspace_layout "$1")
+    b_hash=$(hash_workspace_layout "$2")
+    [[ -n "$a_hash" ]] && [[ "$a_hash" == "$b_hash" ]]
 }
 
 # ---------------------------------------------------------------------------
@@ -304,11 +451,60 @@ EOF
 # Main
 # ---------------------------------------------------------------------------
 
+# Fast-path marker: signals that COW clone produced a state equivalent to
+# running `yarn install` from scratch, so callers (claude-worktree-create.sh)
+# can skip yarn install and most postinstall steps.
+FAST_PATH_MARKER="$REPO_ROOT/node_modules/.ag-worktree-fast-path-ok"
+
+clear_fast_path_marker() {
+    rm -f "$FAST_PATH_MARKER" 2>/dev/null || true
+}
+
+write_fast_path_marker() {
+    # Marker records the source path used for COW and a timestamp — handy
+    # for debugging stale fast paths.
+    if [[ -d "$REPO_ROOT/node_modules" ]]; then
+        {
+            echo "source=$1"
+            echo "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        } >"$FAST_PATH_MARKER" 2>/dev/null || true
+    fi
+}
+
+run_fast_path_setup() {
+    local source="$1"
+
+    # Workspace topology must match — a new package added in the worktree
+    # would be missing its node_modules/<name> symlink.
+    if ! workspace_layouts_match "$source" "$REPO_ROOT"; then
+        log_info "Workspace layout differs from source — fast path disabled"
+        return 1
+    fi
+
+    # Source must have every plugin dist built. Fast path skips
+    # postinstall:plugin-build, so missing dists would leave the worktree
+    # in a state inconsistent with a normal install.
+    if ! source_has_all_plugin_dists "$source"; then
+        return 1
+    fi
+
+    try_cow_clone_node_modules "$source" || return 1
+    try_cow_clone_nx_cache "$source" || return 1
+    try_cow_clone_plugin_dists "$source" || return 1
+
+    write_fast_path_marker "$source"
+    log_info "Fast-path marker written: $FAST_PATH_MARKER"
+    return 0
+}
+
 main() {
     local mode
     mode=$(detect_mode)
 
     log_info "Mode: ${mode} (REPO_ROOT=${REPO_ROOT})"
+
+    # Start from a clean slate — we only (re)write the marker on success.
+    clear_fast_path_marker
 
     case "$mode" in
         local)
@@ -320,8 +516,7 @@ main() {
             local source
             source=$(get_cow_source)
             if [[ -n "$source" ]]; then
-                try_cow_clone_node_modules "$source" || true
-                try_cow_clone_nx_cache "$source"
+                run_fast_path_setup "$source" || log_info "Fast path unavailable, continuing with regular install"
             fi
             ;;
         cloud)
@@ -336,8 +531,7 @@ main() {
             local source
             source=$(get_cow_source)
             if [[ -n "$source" ]]; then
-                try_cow_clone_node_modules "$source" || true
-                try_cow_clone_nx_cache "$source"
+                run_fast_path_setup "$source" || log_info "Fast path unavailable, continuing with regular install"
             fi
             ;;
     esac
