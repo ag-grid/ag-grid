@@ -819,22 +819,28 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
+// Orange knockout treatment. The card flips the brand colours so the
+// "At a glance" trio reads as a high-contrast strip — orange fills,
+// page-bg copy and icons. Inner ghost buttons get scoped overrides so
+// their default orange-on-cream styling doesn't collide with the card's
+// new background.
 .atAGlanceCard {
     display: flex;
     flex-direction: column;
     gap: 12px;
     padding: 32px;
-    background: var(--btp-card);
-    border: 1px solid var(--btp-border);
-    transition: border-color 0.2s ease;
+    background: var(--btp-orange);
+    border: 1px solid var(--btp-orange);
+    transition: background-color 0.2s ease;
 
     &:hover {
-        border-color: var(--btp-orange);
+        background: var(--btp-orange-dark);
+        border-color: var(--btp-orange-dark);
     }
 
     :global(.icon) {
         --icon-size: 24px;
-        --icon-color: var(--btp-orange);
+        --icon-color: var(--btp-bg);
     }
 
     h3 {
@@ -843,25 +849,46 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         font-weight: 500;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--btp-ink-muted);
+        color: var(--btp-bg);
+        opacity: 0.8;
     }
 
     .atAGlancePrimary {
         font-size: 22px;
         font-weight: 600;
         letter-spacing: -0.02em;
-        color: var(--btp-ink);
+        color: var(--btp-bg);
     }
 
     .atAGlanceDetail {
         font-size: 15px;
         line-height: 1.5;
-        color: var(--btp-ink-muted);
+        color: var(--btp-bg);
+        opacity: 0.85;
     }
 
     a {
         margin-top: auto;
         align-self: flex-start;
+    }
+
+    // Re-skin the ghost CTA so its default orange text + orange icon
+    // don't disappear into the new orange card background.
+    .btnGhost {
+        color: var(--btp-bg) !important;
+
+        :global(.icon) {
+            --icon-color: var(--btp-bg);
+        }
+
+        &:hover {
+            color: var(--btp-bg) !important;
+            opacity: 0.85;
+
+            :global(.icon) {
+                --icon-color: var(--btp-bg);
+            }
+        }
     }
 }
 
