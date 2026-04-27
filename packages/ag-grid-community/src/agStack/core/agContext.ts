@@ -47,7 +47,8 @@ export class AgContext<
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-> implements IContext<TBeanCollection> {
+> implements IContext<TBeanCollection>
+{
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: AgSingletonBean<TBeanCollection>[] = [];
     private readonly beanDestroyComparator?: BeanComparator<TBeanCollection>;

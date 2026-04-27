@@ -14,7 +14,8 @@ import { AgAbstractCellEditor } from './agAbstractCellEditor';
 import type { ISelectCellEditorParams } from './iSelectCellEditor';
 
 interface SelectCellEditorParams<TData = any, TValue = any, TContext = any>
-    extends ISelectCellEditorParams<TValue>, ICellEditorParams<TData, TValue, TContext> {}
+    extends ISelectCellEditorParams<TValue>,
+        ICellEditorParams<TData, TValue, TContext> {}
 
 const SelectCellElement: ElementParams = {
     tag: 'div',

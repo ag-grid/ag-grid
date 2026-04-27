@@ -118,4 +118,5 @@ export interface IToolbarItem<TData = any, TContext = any> {
 }
 
 export interface IToolbarItemComp<TData = any, TContext = any>
-    extends IToolbarItem<TData, TContext>, IComponent<IToolbarItemParams<TData, TContext>> {}
+    extends IToolbarItem<TData, TContext>,
+        IComponent<IToolbarItemParams<TData, TContext>> {}

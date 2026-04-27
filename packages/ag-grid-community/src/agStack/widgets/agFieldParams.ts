@@ -32,9 +32,8 @@ export interface AgInputFieldParams<TComponentSelectorType extends string> exten
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface AgCheckboxParams<
-    TComponentSelectorType extends string,
-> extends AgInputFieldParams<TComponentSelectorType> {
+export interface AgCheckboxParams<TComponentSelectorType extends string>
+    extends AgInputFieldParams<TComponentSelectorType> {
     readOnly?: boolean;
     passive?: boolean;
     name?: string;

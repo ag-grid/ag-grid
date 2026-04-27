@@ -60,7 +60,8 @@
     .ag-filter-toolpanel-header {
         @include ag.unthemed-rtl(
             (
-                padding-left: calc(
+                padding-left:
+                    calc(
                         var(--ag-filter-tool-panel-group-indent) * var(--ag-indentation-level, 0) + var(--ag-grid-size)
                     ),
             )
@@ -133,7 +134,8 @@
         .ag-set-filter-item {
             @include ag.unthemed-rtl(
                 (
-                    padding-left: calc(
+                    padding-left:
+                        calc(
                             var(--ag-widget-container-horizontal-padding) + var(--ag-indentation-level) *
                                 var(--ag-set-filter-indent-size)
                         ),

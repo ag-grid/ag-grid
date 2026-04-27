@@ -33,10 +33,8 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgCo
     allowNoResultsCopy?: boolean;
 }
 
-export interface RichCellEditorValuesCallbackParams<TData = any, TValue = any> extends RichCellEditorParams<
-    TData,
-    TValue
-> {
+export interface RichCellEditorValuesCallbackParams<TData = any, TValue = any>
+    extends RichCellEditorParams<TData, TValue> {
     /** The current search string entered by the user. Is always defined when async filtering is enabled. */
     search?: string;
 }
@@ -184,4 +182,5 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
 }
 
 export interface RichCellEditorParams<TData = any, TValue = any, TContext = any>
-    extends IRichCellEditorParams<TData, TValue>, ICellEditorParamsShared<TData, TValue, TContext> {}
+    extends IRichCellEditorParams<TData, TValue>,
+        ICellEditorParamsShared<TData, TValue, TContext> {}

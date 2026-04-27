@@ -9,9 +9,8 @@ import type {
 } from 'ag-grid-community';
 import { AgAbstractInputField } from 'ag-grid-community';
 
-export interface AgInputRangeParams<
-    TComponentSelectorType extends string,
-> extends AgInputFieldParams<TComponentSelectorType> {
+export interface AgInputRangeParams<TComponentSelectorType extends string>
+    extends AgInputFieldParams<TComponentSelectorType> {
     min?: number;
     max?: number;
     step?: number;

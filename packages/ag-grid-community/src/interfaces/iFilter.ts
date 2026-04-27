@@ -11,12 +11,8 @@ import type { IRowNode } from './iRowNode';
 export type IFilterType = string | (new () => IFilterComp) | boolean;
 export type IFloatingFilterType = string | (new () => IFloatingFilterComp);
 
-export interface DoesFilterPassParams<
-    TData = any,
-    TContext = any,
-    TModel = any,
-    TCustomParams = any,
-> extends IDoesFilterPassParams<TData> {
+export interface DoesFilterPassParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
+    extends IDoesFilterPassParams<TData> {
     model: TModel;
     /**
      * Utility params that would be passed to the handler, including `getValue` which provides access to the cell values.
@@ -24,12 +20,8 @@ export interface DoesFilterPassParams<
     handlerParams: FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams>;
 }
 
-export interface FilterHandlerBaseParams<
-    TData = any,
-    TContext = any,
-    TModel = any,
-    TCustomParams = any,
-> extends SharedFilterParams<TData, TContext> {
+export interface FilterHandlerBaseParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
+    extends SharedFilterParams<TData, TContext> {
     filterParams: TCustomParams;
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
     /**
@@ -48,12 +40,8 @@ export type AlwaysPassFilter<TData = any> = (rowNode: IRowNode<TData>) => boolea
 
 export type FilterHandlerSource = 'init' | 'ui' | 'api' | 'colDef' | 'floating' | 'handler';
 
-export interface FilterHandlerParams<
-    TData = any,
-    TContext = any,
-    TModel = any,
-    TCustomParams = any,
-> extends FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {
+export interface FilterHandlerParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
+    extends FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {
     model: TModel | null;
     source: FilterHandlerSource;
     /**
@@ -64,7 +52,8 @@ export interface FilterHandlerParams<
 }
 
 export interface FilterHandler<TData = any, TContext = any, TModel = any, TCustomParams = any>
-    extends SharedFilter, ReadOnlyFloatingFilterParent<TModel> {
+    extends SharedFilter,
+        ReadOnlyFloatingFilterParent<TModel> {
     /** Optional: Called once when the handler is created. */
     init?(params: FilterHandlerParams<TData, TContext, TModel, TCustomParams>): void;
     /** Optional: Called every time the handler is updated, e.g. when the model changes. */
@@ -89,10 +78,8 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
     destroy?(): void;
 }
 
-export interface CreateFilterHandlerFuncParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<
-    TData,
-    TContext
-> {
+export interface CreateFilterHandlerFuncParams<TData = any, TValue = any, TContext = any>
+    extends AgGridCommon<TData, TContext> {
     colDef: ColDef<TData, TValue>;
     column: Column<TValue>;
 }
@@ -251,7 +238,8 @@ export interface FilterDisplay<TData = any, TContext = any, TModel = any, TState
 export interface IFilterComp<TData = any> extends IComponent<IFilterParams<TData>>, IFilter {}
 
 export interface FilterDisplayComp<TData = any, TContext = any, TModel = any>
-    extends IComponent<FilterDisplayParams<TData, TContext, TModel>>, FilterDisplay<TData, TContext, TModel> {}
+    extends IComponent<FilterDisplayParams<TData, TContext, TModel>>,
+        FilterDisplay<TData, TContext, TModel> {}
 
 export interface IDoesFilterPassParams<TData = any> {
     /** The row node in question. */
@@ -359,12 +347,8 @@ export interface FilterDisplayState<TModel = any, TState = any> {
 
 export type FilterDisplaySource = 'init' | 'ui' | 'api' | 'colDef' | 'handler' | 'floating';
 
-export interface FilterDisplayParams<
-    TData = any,
-    TContext = any,
-    TModel = any,
-    TState = any,
-> extends SharedFilterParams<TData, TContext> {
+export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, TState = any>
+    extends SharedFilterParams<TData, TContext> {
     /** The current applied filter model for the component. */
     model: TModel | null;
     /** The current state to display in the component. */

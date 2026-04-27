@@ -26,11 +26,8 @@ interface SharedFloatingFilterParams<TData = any, TContext = any> extends AgGrid
     showParentFilter: () => void;
 }
 
-export interface IFloatingFilterParams<
-    P = InbuiltParentType,
-    TData = any,
-    TContext = any,
-> extends SharedFloatingFilterParams<TData, TContext> {
+export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TContext = any>
+    extends SharedFloatingFilterParams<TData, TContext> {
     /**
      * The params object passed to the filter.
      * This is to allow the floating filter access to the configuration of the parent filter.
@@ -66,12 +63,8 @@ export interface IFloatingFilterParams<
     parentFilterInstance: (callback: IFloatingFilterParentCallback<P>) => void;
 }
 
-export interface FloatingFilterDisplayParams<
-    TData = any,
-    TContext = any,
-    TModel = any,
-    TCustomParams = object,
-> extends SharedFloatingFilterParams<TData, TContext> {
+export interface FloatingFilterDisplayParams<TData = any, TContext = any, TModel = any, TCustomParams = object>
+    extends SharedFloatingFilterParams<TData, TContext> {
     /**
      * The params object passed to the filter.
      * This is to allow the floating filter access to the configuration of the parent filter.
@@ -125,12 +118,8 @@ export interface IFloatingFilter<P = any> extends BaseFloatingFilter {
     refresh?(params: IFloatingFilterParams<P>): void;
 }
 
-export interface FloatingFilterDisplay<
-    TData = any,
-    TContext = any,
-    TModel = any,
-    TCustomParams = object,
-> extends BaseFloatingFilter {
+export interface FloatingFilterDisplay<TData = any, TContext = any, TModel = any, TCustomParams = object>
+    extends BaseFloatingFilter {
     /** Called when the column definition or model is updated. */
     refresh(params: FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams>): void;
 }
@@ -138,6 +127,5 @@ export interface FloatingFilterDisplay<
 export interface IFloatingFilterComp<P = any> extends IFloatingFilter<P>, IComponent<IFloatingFilterParams<P>> {}
 
 export interface FloatingFilterDisplayComp<TData = any, TContext = any, TModel = any, TCustomParams = object>
-    extends
-        FloatingFilterDisplay<TData, TContext, TModel, TCustomParams>,
+    extends FloatingFilterDisplay<TData, TContext, TModel, TCustomParams>,
         IComponent<FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams>> {}

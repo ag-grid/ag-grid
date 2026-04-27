@@ -13,11 +13,9 @@ const TextCellEditorElement: ElementParams = {
     ref: 'eEditor',
     cls: 'ag-cell-editor',
 };
-class TextCellEditorInput<TValue = any> implements CellEditorInput<
-    TValue,
-    ITextCellEditorParams<any, TValue>,
-    GridInputTextField
-> {
+class TextCellEditorInput<TValue = any>
+    implements CellEditorInput<TValue, ITextCellEditorParams<any, TValue>, GridInputTextField>
+{
     private eEditor: GridInputTextField;
     private params: ITextCellEditorParams<any, TValue>;
 

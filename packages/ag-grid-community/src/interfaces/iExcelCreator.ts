@@ -599,10 +599,8 @@ export interface ExcelWorksheetConfigParams {
     processNoteCallback?: (params: ProcessNoteForExportParams) => ExcelNote | null | undefined;
 }
 
-export interface ProcessNoteForExportParams<TData = any, TContext = any> extends ProcessCellForExportParams<
-    TData,
-    TContext
-> {
+export interface ProcessNoteForExportParams<TData = any, TContext = any>
+    extends ProcessCellForExportParams<TData, TContext> {
     /**
      * The grid note resolved for the current cell, when the Notes feature is available.
      */

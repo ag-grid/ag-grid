@@ -12,7 +12,8 @@ export interface AdvancedFilterBuilderMoveEvent extends AdvancedFilterBuilderIte
     backwards: boolean;
 }
 
-export interface AdvancedFilterBuilderRemoveEvent extends AdvancedFilterBuilderItemEvent<'advancedFilterBuilderRemoved'> {}
+export interface AdvancedFilterBuilderRemoveEvent
+    extends AdvancedFilterBuilderItemEvent<'advancedFilterBuilderRemoved'> {}
 
 export interface AdvancedFilterBuilderItem {
     filterModel: AdvancedFilterModel | null;

@@ -146,7 +146,8 @@ export interface IMenuItem extends BaseMenuItem {
 }
 
 export interface IMenuItemComp<TData = any, TContext = any>
-    extends IComponent<IMenuItemParams<TData, TContext>>, IMenuItem {}
+    extends IComponent<IMenuItemParams<TData, TContext>>,
+        IMenuItem {}
 
 export type DefaultMenuItem =
     | 'pinSubMenu'

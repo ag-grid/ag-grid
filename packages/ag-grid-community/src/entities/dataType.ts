@@ -107,52 +107,28 @@ interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = an
 }
 
 /** Represents a `'text'` data type (type `string`). */
-export interface TextDataTypeDefinition<TData = any, TContext = any> extends BaseDataTypeDefinition<
-    'text',
-    TData,
-    string,
-    TContext
-> {}
+export interface TextDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'text', TData, string, TContext> {}
 
 /** Represents a `'number'` data type (type `number`). */
-export interface NumberDataTypeDefinition<TData = any, TContext = any> extends BaseDataTypeDefinition<
-    'number',
-    TData,
-    number,
-    TContext
-> {}
+export interface NumberDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'number', TData, number, TContext> {}
 
 /** Represents a `'bigint'` data type (type `bigint`). */
-interface BigIntDataTypeDefinition<TData = any, TContext = any> extends BaseDataTypeDefinition<
-    'bigint',
-    TData,
-    bigint,
-    TContext
-> {}
+interface BigIntDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'bigint', TData, bigint, TContext> {}
 
 /** Represents a `'boolean'` data type (type `boolean`). */
-export interface BooleanDataTypeDefinition<TData = any, TContext = any> extends BaseDataTypeDefinition<
-    'boolean',
-    TData,
-    boolean,
-    TContext
-> {}
+export interface BooleanDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'boolean', TData, boolean, TContext> {}
 
 /** Represents a `'date'` data type (type `Date`). */
-export interface DateDataTypeDefinition<TData = any, TContext = any> extends BaseDataTypeDefinition<
-    'date',
-    TData,
-    Date,
-    TContext
-> {}
+export interface DateDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'date', TData, Date, TContext> {}
 
 /** Represents a `'dateString'` data type (type `string` that represents a date). */
-export interface DateStringDataTypeDefinition<TData = any, TContext = any> extends BaseDataTypeDefinition<
-    'dateString',
-    TData,
-    string,
-    TContext
-> {
+export interface DateStringDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'dateString', TData, string, TContext> {
     /** Converts a date in `string` format to a `Date`. */
     dateParser?: (value: string | undefined) => Date | undefined;
     /** Converts a date in `Date` format to a `string`. */
@@ -160,20 +136,12 @@ export interface DateStringDataTypeDefinition<TData = any, TContext = any> exten
 }
 
 /** Represents a `'dateTime'` data type (type `Date`). */
-export interface DateTimeDataTypeDefinition<TData = any, TContext = any> extends BaseDataTypeDefinition<
-    'dateTime',
-    TData,
-    Date,
-    TContext
-> {}
+export interface DateTimeDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'dateTime', TData, Date, TContext> {}
 
 /** Represents a `'dateTimeString'` data type (type `string` that represents a dateTime). */
-export interface DateTimeStringDataTypeDefinition<TData = any, TContext = any> extends BaseDataTypeDefinition<
-    'dateTimeString',
-    TData,
-    string,
-    TContext
-> {
+export interface DateTimeStringDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'dateTimeString', TData, string, TContext> {
     /** Converts a date in `string` format to a `Date`. */
     dateParser?: (value: string | undefined) => Date | undefined;
     /** Converts a date in `Date` format to a `string`. */
@@ -181,12 +149,8 @@ export interface DateTimeStringDataTypeDefinition<TData = any, TContext = any> e
 }
 
 /** Represents an `'object'` data type (any type). */
-export interface ObjectDataTypeDefinition<TData, TValue, TContext> extends BaseDataTypeDefinition<
-    'object',
-    TData,
-    TValue,
-    TContext
-> {}
+export interface ObjectDataTypeDefinition<TData, TValue, TContext>
+    extends BaseDataTypeDefinition<'object', TData, TValue, TContext> {}
 
 /** Throws an error if not all keys K are present in Record Obj, as well as if Obj has extra keys (though only if you try to access properties) */
 export type CheckDataTypes<Obj extends Record<K, any>, K extends keyof any = BaseCellDataType> = keyof Obj extends K
