@@ -24,7 +24,7 @@ export default defineConfig({
         watch: false,
         reporters,
         outputFile: {
-            junit: 'reports/ag-grid-enterprise.xml',
+            junit: '../../reports/ag-grid-enterprise.xml',
         },
     },
 });

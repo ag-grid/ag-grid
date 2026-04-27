@@ -17,7 +17,7 @@ export default defineConfig({
         watch: false,
         reporters,
         outputFile: {
-            junit: 'reports/ag-grid-community.xml',
+            junit: '../../reports/ag-grid-community.xml',
         },
     },
 });

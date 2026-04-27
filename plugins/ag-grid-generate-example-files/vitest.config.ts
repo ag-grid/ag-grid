@@ -13,7 +13,7 @@ export default defineConfig({
         watch: false,
         reporters,
         outputFile: {
-            junit: 'reports/ag-grid-generate-example-files.xml',
+            junit: '../../reports/ag-grid-generate-example-files.xml',
         },
     },
 });

@@ -29,7 +29,8 @@ const Flip: React.FC<FlipProps> = ({ value }) => {
                 tick.current.destroy();
             }
         };
-    }, [value]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // update
     useEffect(() => {
