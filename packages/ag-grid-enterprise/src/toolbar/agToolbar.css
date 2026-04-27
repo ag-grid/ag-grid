@@ -67,7 +67,7 @@
     margin: 0 calc(var(--ag-spacing) * 2);
 }
 
-.ag-toolbar-input + .ag-toolbar-input {
+:where(.ag-toolbar-input) + :where(.ag-toolbar-input) {
     margin-inline-start: 0;
 }
 
