@@ -147,7 +147,11 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
             anyGridOptionsChanged
         ) {
             const pivotColumnGroupDefs = this.pivotColDefSvc.createPivotColumnDefs(this.uniqueValues);
-            this.pivotResultCols.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated', aggregationColumnsReordered);
+            this.pivotResultCols.setPivotResultCols(
+                pivotColumnGroupDefs,
+                'rowModelUpdated',
+                aggregationColumnsReordered
+            );
             // Because the secondary columns have changed, the aggregation needs to visit the whole
             // tree again, so signal the caller to deactivate the changedPath.
             this.lastTimeFailed = false;
