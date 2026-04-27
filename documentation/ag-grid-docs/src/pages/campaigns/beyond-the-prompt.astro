@@ -64,7 +64,7 @@ const AGENDA_SECTIONS: AgendaSection[] = [
             },
             {
                 time: '10:10 – 10:40',
-                title: 'Technical Keynote',
+                title: 'Goodbye slop; welcome determinism',
                 speakers: 'David Kourshid',
             },
             { time: '10:40 – 11:10', title: 'Coffee break', isBreak: true },
@@ -107,10 +107,8 @@ const AGENDA_SECTIONS: AgendaSection[] = [
             {
                 time: '15:00 – 15:30',
                 title: 'Product Roadmap',
-                speakers:
-                    'Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (AG Studio Product Lead, AG Grid)',
-                description:
-                    "A detailed look at our upcoming roadmap, covering AG Grid and Bryntum's suite of tools.",
+                speakers: 'Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (AG Studio Product Lead, AG Grid)',
+                description: "A detailed look at our upcoming roadmap, covering AG Grid and Bryntum's suite of tools.",
             },
             {
                 time: '15:30 – 16:15',
@@ -233,12 +231,14 @@ const VENUE_IMAGES: VenueImage[] = [
     rel="stylesheet"
 />
 
-{/*
+{
+    /*
     Page-only global override: the campaign uses a #F2F2F2 page background, but the
     html/body still default to white from the global design system so over-scroll
     (macOS bounce, mobile rubber-band) flashes white. Scope this to the page by
     only emitting it from this .astro file.
-*/}
+*/
+}
 <style is:global>
     html,
     body {
@@ -486,8 +486,8 @@ const VENUE_IMAGES: VenueImage[] = [
             </div>
             <div class={styles.container}>
                 <p class={styles.sectionLead}>
-                    A single track across the day, with breaks designed for conversation. Some sessions are still
-                    being finalised and speakers may be added.
+                    A single track across the day, with breaks designed for conversation. Some sessions are still being
+                    finalised and speakers may be added.
                 </p>
             </div>
 
@@ -504,13 +504,9 @@ const VENUE_IMAGES: VenueImage[] = [
                                         <div class={styles.agendaTime}>{item.time}</div>
                                         <div class={styles.agendaBody}>
                                             <h3 class={styles.agendaTitle}>{item.title}</h3>
-                                            {item.speakers && (
-                                                <p class={styles.agendaSpeakers}>{item.speakers}</p>
-                                            )}
+                                            {item.speakers && <p class={styles.agendaSpeakers}>{item.speakers}</p>}
                                         </div>
-                                        {item.description && (
-                                            <p class={styles.agendaDescription}>{item.description}</p>
-                                        )}
+                                        {item.description && <p class={styles.agendaDescription}>{item.description}</p>}
                                     </li>
                                 ))}
                             </ol>
@@ -547,12 +543,7 @@ const VENUE_IMAGES: VenueImage[] = [
                 </div>
 
                 <div class={styles.venueCta}>
-                    <a
-                        href={VENUE_MAP_HREF}
-                        class={styles.btnSecondary}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
+                    <a href={VENUE_MAP_HREF} class={styles.btnSecondary} target="_blank" rel="noopener noreferrer">
                         <Icon name="mapPin" />
                         IET London
                     </a>
