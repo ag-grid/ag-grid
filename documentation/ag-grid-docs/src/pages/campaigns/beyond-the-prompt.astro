@@ -30,6 +30,11 @@ type Speaker = {
     title: string;
     bio: string;
     image: string;
+    // Re-shaded variant designed for orange backgrounds. The ditherpattern
+    // and knockout values are tuned for #F43800; we crossfade to it on
+    // card hover (Speakers grid) and use it directly in the agenda hover
+    // overlay, where the row turns orange behind the portrait.
+    imageOrange?: string;
     // Some speaker SVGs are exported as full-figure portraits with very tall,
     // narrow aspect ratios (e.g. Mats 193×352, John 232×388). Using the
     // default `object-fit: cover` on a 4:5 box clips ~140px off the bottom.
@@ -141,30 +146,35 @@ const SPEAKERS: Speaker[] = [
         title: 'Co-founder, Inanimate',
         bio: "Matt is co-founder of Inanimate, consumer hardware bringing agents into the real world. Previously he has consulted with Google's AI research group, run startup accelerators with R/GA Ventures, and was CEO and co-founder of the design studio BERG which invented some of the world’s first internet-connected consumer products like Little Printer (and has work in the New York MoMA). He is co-author of Mind Hacks (O’Reilly, 2004). Since 2000 Matt has blogged at interconnected.org. He writes weekly+ on computing, design, and speculative futures. He lives in London.",
         image: 'images/campaigns/beyond-the-prompt/svg/mat-web.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/mat-web-orange-bg.svg',
     },
     {
         name: 'Stephen Cooper',
         title: 'Team Lead, AG Grid',
         bio: `Stephen is the Team Lead for AG Grid and loves sharing practical, experience-based tips, tricks, and case studies from years in the codebase. He's gone deep into grid performance and framework integrations, and has spent more time than he'd like profiling render cycles. Outside of work, life revolves around family, four kids and two dogs, and he's happiest when the whole crew is out together exploring in the park.`,
         image: 'images/campaigns/beyond-the-prompt/svg/stephen.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/stephen-orange-bg.svg',
     },
     {
         name: 'Maggie Appleton',
         title: 'Staff Research Engineer, GitHub',
         bio: `Maggie is a Staff Research Engineer at GitHub, where she works on tools for thinking, writing, and building with code. With a background in anthropology, she’s known for her visual essays that explore how developers understand systems, languages, and ideas. She’s a strong advocate for “digital gardens” over traditional publishing, and spends her time mapping out how knowledge grows on the web. Outside of work, she’s usually sketching concepts, writing, or connecting dots between code and culture.`,
         image: 'images/campaigns/beyond-the-prompt/svg/maggie.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/maggie-orange-bg.svg',
     },
     {
         name: 'David Khourshid',
         title: 'Founder, Stately.ai',
         bio: `David is the founder of Stately.ai and creator of XState, the most popular open-source state machine & statecharts library. He's a longtime advocate for event-driven modeling and visual diagramming as the foundation for reliable UIs and, increasingly, AI agents. When he's not at a computer keyboard, he's at a piano keyboard.`,
         image: 'images/campaigns/beyond-the-prompt/svg/david-kourshid.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/david-kourshid-orange-bg.svg',
     },
     {
         name: 'Mats Bryntse',
         title: 'Founder & CEO, Bryntum',
         bio: `Mats is the founder and CEO of Bryntum, where he and his team build advanced scheduling and project planning tools for modern web apps. For the past 15 years, he has obsessed over JavaScript performance, developer experience, and making complex UIs feel simple. He used to enjoy chess, badminton, and independent thought, until Claude entered his life and optimized those away.`,
         image: 'images/campaigns/beyond-the-prompt/svg/mats.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/mats-orange-bg.svg',
         imageFit: 'contain',
     },
     {
@@ -172,36 +182,42 @@ const SPEAKERS: Speaker[] = [
         title: 'Senior Developer Educator, AI Hero',
         bio: `Matt is a senior developer educator at AI Hero, a TypeScript author, and an educator passionate about bringing real software engineering rigour to the age of AI. He co-organizes the AI Coding for Real Engineers cohort, a community for experienced developers who want to build with AI tools without throwing away everything they already know. Outside of the keyboard, Matt enjoys long runs through the Oxfordshire countryside, loudly supporting Arsenal, and experimenting with new ways to make complex ideas click for developers everywhere.`,
         image: 'images/campaigns/beyond-the-prompt/svg/matt-pocock.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/matt-pocock-orange-bg.svg',
     },
     {
         name: 'Bernie Sumption',
         title: 'Engineer, AG Grid',
         bio: `Bernie is an engineer at AG Grid specialising in theming. "The other engineers make it work fast and well, I make it look pretty" he likes to say. Outside work he goes hiking, plays with his kids, and once made a tweeting cat flap that has 10x more social media followers than he does.`,
         image: 'images/campaigns/beyond-the-prompt/svg/bernie.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/bernie-orange-bg.svg',
     },
     {
         name: 'Josh Hobson',
         title: 'Developer, AG Grid',
         bio: `Josh is a developer at AG Grid, where he's been building AG Studio — a new dashboard library with multi-agent AI baked in. He's a mathematician by training and a maker by instinct, with a particular love for developer tooling, type systems, and intelligent interfaces. Outside of work, Josh can be found tinkering with 3D printers, ski touring in the Alps, or out on long walks with his dog.`,
         image: 'images/campaigns/beyond-the-prompt/svg/josh.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/josh-orange-bg.svg',
     },
     {
         name: 'Adam Wang',
         title: 'AG Studio Product Lead, AG Grid',
         bio: `Adam is the AG Studio Product Lead at AG Grid, with around 10 years of experience in product management across various disciplines. He previously worked on AG Grid Integrated Charts before focusing on AG Studio. He enjoys the creative process of product management and is keen to solve problems by truly understanding user needs. Outside of work, he's a spin instructor who loves to put together a fire playlist. He also collects coloured vinyl.`,
         image: 'images/campaigns/beyond-the-prompt/svg/adam.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/adam-orange-bg.svg',
     },
     {
         name: 'Johan Isaksson',
         title: 'Head of Engineering, Bryntum',
         bio: `Johan is responsible for architecture, gate keeping, performance and styling across all Bryntum products. When not checking pull requests, recording performance profiles or tweaking CSS he enjoys watching hockey and playing floorball.`,
         image: 'images/campaigns/beyond-the-prompt/svg/johan.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/johan-orange-bg.svg',
     },
     {
         name: 'John Masterson',
         title: 'CEO, AG Grid',
         bio: `John is the CEO of AG Grid, which he first joined in 2016 as employee number two. After a detour as CTO of a London health-tech startup, he returned in 2020 and stepped into the CEO role in 2024. He's spent fifteen years building software and leading engineering teams, and is determined to keep AG Grid the first choice for JavaScript developers. Outside of work, John can be found on his bike, in his headphones listening to a podcast, or picking up a guitar.`,
         image: 'images/campaigns/beyond-the-prompt/svg/john.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/john-orange-bg.svg',
         imageFit: 'contain',
     },
     {
@@ -209,8 +225,27 @@ const SPEAKERS: Speaker[] = [
         title: 'Event MC',
         bio: `With a passion for browser technologies, and the empowering properties of the web, Phil loves seeking out ingenuity and simplicity, especially in places where over-engineering is common. After 25 years of building web applications for companies such as Google, Apple, Nike, R/GA, and The London Stock Exchange, he has worked to challenge traditional technical architectures in favour of simplicity and effectiveness, working in Developer Experience at Netlify and Deno.`,
         image: 'images/campaigns/beyond-the-prompt/svg/phil.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/phil-orange-bg.svg',
     },
 ];
+
+// Map an agenda item's free-text `speakers` string to the matching SVG
+// portraits. We do a substring `includes` check against each canonical
+// `SPEAKERS[].name` so strings like
+//   "Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (...)"
+// resolve to multiple portraits. Iterating `SPEAKERS` (rather than
+// splitting the input string) keeps the render order stable across rows
+// even when the agenda lists speakers in a different sequence.
+//
+// We return the *orange-bg* variant here because the agenda overlay only
+// renders behind the row's hover state (which paints the row orange);
+// the orange-tuned dither pattern reads correctly there. Falls back to
+// the default illustration if a speaker hasn't been given an orange
+// variant yet.
+const getSpeakerImagesForItem = (speakers?: string): string[] => {
+    if (!speakers) return [];
+    return SPEAKERS.filter((s) => speakers.includes(s.name)).map((s) => s.imageOrange ?? s.image);
+};
 
 // Featured faces for the hero (use the SVG illustrations).
 // Order is intentional: the middle slot drops down in the layout to create a
@@ -506,6 +541,27 @@ const VENUE_IMAGES: VenueImage[] = [
                                         ]}
                                         loading="lazy"
                                     />
+                                    {/*
+                                        Re-shaded variant for the orange hover state. Sits on top of
+                                        the default illustration via `position: absolute` so the two
+                                        portraits crossfade in place when the card is hovered. The
+                                        wrap turns orange in CSS at the same time, so the orange-bg
+                                        SVG's dither/knockout reads correctly. Decorative — the
+                                        first <img> already carries the speaker's name as alt text.
+                                    */}
+                                    {speaker.imageOrange && (
+                                        <img
+                                            src={urlWithBaseUrl(speaker.imageOrange)}
+                                            alt=""
+                                            aria-hidden="true"
+                                            class:list={[
+                                                styles.speakerImage,
+                                                styles.speakerImageOrange,
+                                                speaker.imageFit === 'contain' && styles.speakerImageContain,
+                                            ]}
+                                            loading="lazy"
+                                        />
+                                    )}
                                 </div>
                                 <h3 class={styles.speakerName}>{speaker.name}</h3>
                                 <p class={styles.speakerTitle}>{speaker.title}</p>
@@ -538,16 +594,54 @@ const VENUE_IMAGES: VenueImage[] = [
                                 <p class={styles.agendaSectionLabel}>{section.label}</p>
                             </div>
                             <ol class={styles.agendaList}>
-                                {section.items.map((item) => (
-                                    <li class:list={[styles.agendaRow, { [styles.agendaBreak]: item.isBreak }]}>
-                                        <div class={styles.agendaTime}>{item.time}</div>
-                                        <div class={styles.agendaBody}>
-                                            <h3 class={styles.agendaTitle}>{item.title}</h3>
-                                            {item.speakers && <p class={styles.agendaSpeakers}>{item.speakers}</p>}
-                                        </div>
-                                        {item.description && <p class={styles.agendaDescription}>{item.description}</p>}
-                                    </li>
-                                ))}
+                                {section.items.map((item) => {
+                                    const speakerImages = getSpeakerImagesForItem(item.speakers);
+                                    // Render the wrap whenever a row has *either* a description or
+                                    // a matching speaker portrait — so sessions like the Opening
+                                    // Keynote (speakers but no copy) still get the hover reveal.
+                                    const hasOverlay = Boolean(item.description) || speakerImages.length > 0;
+                                    return (
+                                        <li class:list={[styles.agendaRow, { [styles.agendaBreak]: item.isBreak }]}>
+                                            <div class={styles.agendaTime}>{item.time}</div>
+                                            <div class={styles.agendaBody}>
+                                                <h3 class={styles.agendaTitle}>{item.title}</h3>
+                                                {item.speakers && (
+                                                    <p class={styles.agendaSpeakers}>{item.speakers}</p>
+                                                )}
+                                            </div>
+                                            {hasOverlay && (
+                                                <div class={styles.agendaDescriptionWrap}>
+                                                    {item.description && (
+                                                        <p class={styles.agendaDescription}>{item.description}</p>
+                                                    )}
+                                                    {/*
+                                                        Speaker portraits rise + fade in on row hover.
+                                                        They share the row's bounding box and the row
+                                                        clips overflow, so portraits can scale up past
+                                                        the cell without forcing a layout shift. Names
+                                                        already appear in the body column, so this
+                                                        layer is purely decorative.
+                                                    */}
+                                                    {speakerImages.length > 0 && (
+                                                        <div
+                                                            class={styles.agendaSpeakerStack}
+                                                            aria-hidden="true"
+                                                        >
+                                                            {speakerImages.map((src) => (
+                                                                <img
+                                                                    src={urlWithBaseUrl(src)}
+                                                                    alt=""
+                                                                    class={styles.agendaSpeakerImage}
+                                                                    loading="lazy"
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </li>
+                                    );
+                                })}
                             </ol>
                         </div>
                     </div>

@@ -890,12 +890,18 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 // (4:5 ratio) so the row reads at a consistent rhythm regardless of how
 // the underlying SVG was cropped. The image fills the box top-to-bottom
 // via `object-fit: cover`, anchored to the top so faces are never clipped.
+//
+// On hover the wrap paints orange and the orange-bg portrait crossfades
+// in on top — see `.speakerImageOrange` and the hover rule below.
 .speakerImageWrap {
     position: relative;
     width: 250px;
     aspect-ratio: 4 / 5;
     border-radius: 12px;
     overflow: hidden;
+    transition:
+        background-color 0.32s ease,
+        border-radius 0.32s ease;
 }
 
 .speakerImage {
@@ -906,14 +912,50 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     display: block;
 }
 
+// Re-shaded portrait used only on hover. Stacks directly on top of the
+// default illustration, sharing all sizing rules so swapping is a pure
+// opacity crossfade with no layout reflow. The dither pattern in this
+// variant is tuned for the #F43800 hover background.
+.speakerImageOrange {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.32s ease;
+}
+
 // Mats and John have unusually narrow/tall SVG viewBoxes (~0.55 / 0.60
 // aspect ratio vs. the 0.8 portrait box). With the default `cover` rule
 // above, the bottom ~140px of their figure clips off the frame. Switching
 // to `contain` and anchoring to the bottom keeps the whole figure visible
-// while maintaining a matching baseline with the other portraits.
+// while maintaining a matching baseline with the other portraits. Applied
+// to both the default and orange-bg images so the swap stays in register.
 .speakerImageContain {
     object-fit: contain;
     object-position: center bottom;
+}
+
+// Hover-driven crossfade. Gated on `(hover: hover)` so touch devices
+// (where there's no pointer to leave the card) don't latch into the
+// orange state with no obvious way to undo it.
+@media (hover: hover) {
+    .speakerCard:hover .speakerImageWrap {
+        background-color: var(--btp-orange);
+        // Square off the corners on hover so the orange-bg illustration
+        // reads as a hard editorial block rather than a soft avatar tile
+        // — matches the agenda hover treatment, which has no rounding.
+        border-radius: 0;
+    }
+
+    .speakerCard:hover .speakerImageOrange {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .speakerImageWrap,
+    .speakerImageOrange {
+        transition: none;
+    }
 }
 
 .speakerName {
@@ -1080,11 +1122,22 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 // the remaining width 50/50. When a row has no description (e.g. "Welcome",
 // "Coffee break"), the body simply fills the post-time area.
 .agendaRow {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding: 24px;
+    // Vertical padding intentionally tight — content sits close to the
+    // dividing hairline so the schedule reads as a dense table rather
+    // than a stack of generously-padded cards. Horizontal padding stays
+    // generous because rows are wide and need a visible inset.
+    padding: 16px 24px;
     border-bottom: 1px solid var(--btp-border);
+    // `overflow: hidden` lets the speaker portrait scale up past the cell on
+    // hover and bleed into the row's padding without affecting siblings.
+    overflow: hidden;
+    transition:
+        background-color 0.32s ease,
+        border-bottom-color 0.32s ease;
 
     &:last-child {
         border-bottom: 0;
@@ -1094,7 +1147,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         flex-direction: row;
         align-items: flex-start;
         gap: 32px;
-        padding: 28px 32px;
+        padding: 18px 32px;
     }
 }
 
@@ -1112,6 +1165,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     letter-spacing: 0.05em;
     color: var(--btp-orange);
     font-variant-numeric: tabular-nums;
+    transition: color 0.32s ease;
 
     @media (min-width: 720px) {
         flex: 0 0 160px;
@@ -1135,6 +1189,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     letter-spacing: -0.01em;
     color: var(--btp-ink);
     line-height: 1.3;
+    transition: color 0.32s ease;
 }
 
 .agendaSpeakers {
@@ -1144,16 +1199,125 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--btp-ink-muted);
+    transition: color 0.32s ease;
+}
+
+// `.agendaDescriptionWrap` is the flex item on desktop (the description
+// itself used to play that role). It exists so we can layer a speaker
+// portrait overlay (`.agendaSpeakerStack`) on top of the description and
+// swap between the two on row hover.
+//
+// `align-self: stretch` is what lets the overlay use the row's full
+// content height — important for short rows like the David Kourshid
+// keynote where there's no description and the wrap would otherwise
+// collapse to nothing.
+.agendaDescriptionWrap {
+    position: relative;
+
+    @media (min-width: 720px) {
+        flex: 1 1 0;
+        min-width: 0;
+        align-self: stretch;
+    }
 }
 
 .agendaDescription {
     font-size: 15px;
     line-height: 1.55;
     color: var(--btp-ink-muted);
+    transition:
+        opacity 0.32s ease,
+        color 0.32s ease;
+}
 
-    @media (min-width: 720px) {
-        flex: 1 1 0;
-        min-width: 0;
+// Speaker portrait overlay. Anchored to the right of the wrap and sized
+// taller than the row so the silhouette reads as a knockout that bleeds
+// into the cell padding. The row's `overflow: hidden` clips the bottom
+// edge — the user explicitly opted into this clipping over the previous
+// `object-fit: contain` (which kept portraits prim but tiny).
+//
+// On hover the stack rises 16px and fades in, choreographed with the
+// row's bg colour shift to feel like a single gesture.
+.agendaSpeakerStack {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+    // 24px feels right at the row scale: enough breathing room between
+    // two heads (e.g. Opening Keynote: John + Mats) that they read as
+    // distinct portraits, but tight enough that they still feel like a
+    // pair sharing the right column.
+    gap: 24px;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition:
+        opacity 0.32s ease,
+        transform 0.32s ease;
+}
+
+.agendaSpeakerImage {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    // `transform-origin: top right` keeps the head pinned at the top of
+    // the cell while the body extends downwards (and gets clipped). If
+    // we anchored bottom-right the head would shift up and out of frame.
+    transform: scale(1.4);
+    transform-origin: top right;
+}
+
+// Hover state. Gated on:
+//   1. `(hover: hover)` — touch devices would otherwise latch into the
+//      hover state on tap with no obvious way to undo it.
+//   2. `:has(.agendaSpeakerStack)` — rows without a matching speaker
+//      (`Welcome`, `Customer Showcase`) keep their default appearance,
+//      so we never fade copy out into nothing or flip a row to orange
+//      with no payoff.
+@media (hover: hover) {
+    .agendaRow:has(.agendaSpeakerStack):hover {
+        background-color: var(--btp-orange);
+        // Hide the hairline at the bottom of the hovered row so the
+        // orange block sits flush against the next row with no white-ish
+        // sliver showing through. The pair rule below kills the hairline
+        // above by retroactively dropping the *previous* row's border.
+        border-bottom-color: transparent;
+    }
+
+    // `:has(+ X)` is the closest CSS gets to a "previous sibling" selector.
+    // It matches a row whose immediate next sibling is the hovered orange
+    // row, letting us erase that neighbour's bottom border so the orange
+    // block extends right up to the row above it.
+    .agendaRow:has(+ .agendaRow:has(.agendaSpeakerStack):hover) {
+        border-bottom-color: transparent;
+    }
+
+    .agendaRow:has(.agendaSpeakerStack):hover .agendaTime,
+    .agendaRow:has(.agendaSpeakerStack):hover .agendaTitle,
+    .agendaRow:has(.agendaSpeakerStack):hover .agendaSpeakers,
+    .agendaRow:has(.agendaSpeakerStack):hover .agendaDescription {
+        color: var(--btp-bg);
+    }
+
+    .agendaRow:has(.agendaSpeakerStack):hover .agendaDescription {
+        opacity: 0;
+    }
+
+    .agendaRow:has(.agendaSpeakerStack):hover .agendaSpeakerStack {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .agendaRow,
+    .agendaTime,
+    .agendaTitle,
+    .agendaSpeakers,
+    .agendaDescription,
+    .agendaSpeakerStack {
+        transition: none;
     }
 }
 
