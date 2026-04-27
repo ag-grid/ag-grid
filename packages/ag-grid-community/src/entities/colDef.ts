@@ -183,7 +183,15 @@ export interface IAggFuncResult<TAggValue = number | bigint | null> {
     count?: number;
     /** Returns a string representation of the aggregated value */
     toString(): string;
-    /** Returns the numeric representation of the aggregated value */
+    /**
+     * Returns the numeric representation of the aggregated value.
+     *
+     * **Required for sorting:** the grid's default comparator unwraps `IAggFuncResult` wrappers via
+     * this method to compare the underlying scalar. Custom aggregation functions that omit
+     * `toNumber()` will not sort correctly under the default comparator — the wrapper is treated as
+     * an opaque object (`>` / `<` returns `false`), so the column appears unsorted. Either provide
+     * `toNumber()` or supply a custom `colDef.comparator`.
+     */
     toNumber?(): TAggValue;
 }
 

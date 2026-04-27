@@ -38,35 +38,26 @@ export const _jsonEquals = <T1, T2>(val1: T1, val2: T2): boolean => {
 };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+// PERFORMANCE CRITICAL — called per comparison during sort (O(n log n)). Any change here can have
+// a large impact across grouping, filtering, and rendering. Run the sort benchmark to verify.
 export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: boolean = false): number => {
+    // Unwrap `IAggFuncResult`-shaped wrappers (e.g. built-in `avg` / `count`) BEFORE the nullish
+    // check so wrappers carrying a nullish payload (`toNumber() => null` for empty aggregations)
+    // sort with bare nullish instead of being coerced to `0` by the `<` / `>` path.
+    // - `valueA !== null` is required because `typeof null === 'object'`.
+    // - Strict `typeof === 'function'` guards against truthy non-function `toNumber` properties.
+    if (typeof valueA === 'object' && valueA !== null && typeof valueA.toNumber === 'function') {
+        valueA = valueA.toNumber();
+    }
+    if (typeof valueB === 'object' && valueB !== null && typeof valueB.toNumber === 'function') {
+        valueB = valueB.toNumber();
+    }
+
     if (valueA == null) {
         return valueB == null ? 0 : -1;
     }
-
     if (valueB == null) {
         return 1;
-    }
-
-    // Unwrap `IAggFuncResult`-shaped objects (built-in avg/count as well as custom aggFuncs) so we
-    // compare the underlying scalar. Without this, `>`/`<` on objects returns false and the column
-    // silently fails to sort. `toNumber()` is preferred — avg/count provide it and it preserves
-    // precision. Fall back to `.value` for custom aggregation results that expose only the scalar
-    // property (e.g. `{ value: 300, label: '...' }`).
-    // Null / undefined are already short-circuited above, so `typeof === 'object'` is enough here.
-    if (typeof valueA === 'object') {
-        if (typeof valueA.toNumber === 'function') {
-            valueA = valueA.toNumber();
-        } else if ('value' in valueA) {
-            valueA = valueA.value;
-        }
-    }
-
-    if (typeof valueB === 'object') {
-        if (typeof valueB.toNumber === 'function') {
-            valueB = valueB.toNumber();
-        } else if ('value' in valueB) {
-            valueB = valueB.value;
-        }
     }
 
     if (!accentedCompare || typeof valueA !== 'string') {
@@ -79,6 +70,6 @@ export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: bo
         return 0;
     }
 
-    // using locale compare also allows chinese comparisons
+    // localeCompare also handles Chinese / accented collation.
     return valueA.localeCompare(valueB);
 };

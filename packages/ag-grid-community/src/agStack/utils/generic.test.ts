@@ -15,7 +15,15 @@ describe('_makeNull', () => {
 });
 
 describe('_defaultComparator', () => {
-    const sign = (n: number) => (n > 0 ? 1 : n < 0 ? -1 : 0);
+    const sign = (n: number) => {
+        if (n > 0) {
+            return 1;
+        }
+        if (n < 0) {
+            return -1;
+        }
+        return 0;
+    };
 
     describe('nullish handling', () => {
         it('returns 0 when both values are null', () => {
@@ -72,44 +80,42 @@ describe('_defaultComparator', () => {
             expect(sign(_defaultComparator(nine, ten))).toBe(-1); // numeric, not lexicographic
         });
 
-        it('unwraps a wrapper with only .value (custom aggFunc style)', () => {
-            // Custom aggregation functions may return `{ value: N, ...extra }` without toNumber.
-            // Previously `_defaultComparator` compared these as objects (>/< on objects => false),
-            // effectively breaking sort on those columns.
-            const a = { value: 5, label: 'a' };
-            const b = { value: 50, label: 'b' };
-            const c = { value: 9, label: 'c' };
-
-            expect(sign(_defaultComparator(a, b))).toBe(-1);
-            expect(sign(_defaultComparator(b, a))).toBe(1);
-            // numeric (9 < 50) — not lexicographic (where "50" < "9")
-            expect(sign(_defaultComparator(c, b))).toBe(-1);
-        });
-
-        it('prefers toNumber() over .value when both are present', () => {
-            // If both are defined and disagree, toNumber() wins — matches the priority ordering in
-            // dataTypeService's scalar-resolution logic.
-            const a = { toNumber: () => 1, value: 999, toString: () => '1' };
-            const b = { toNumber: () => 2, value: 0, toString: () => '2' };
-
-            expect(sign(_defaultComparator(a, b))).toBe(-1);
-        });
-
-        it('leaves plain objects without toNumber or .value unchanged', () => {
-            // A bare object with neither shape should not be unwrapped — `<`/`>` on objects coerces
-            // via `toString()`, yielding "[object Object]" on both sides → 0.
-            const a = { foo: 1 };
-            const b = { foo: 2 };
-            expect(_defaultComparator(a, b)).toBe(0);
-        });
-
-        it('handles a mix of wrapped and unwrapped values', () => {
-            // Group-level agg cell compared against a leaf scalar — common when sorting a column where
-            // only some rows have aggregated values.
-            const wrapped = { value: 10 };
+        it('compares wrapper against bare scalar via toNumber()', () => {
+            // Group-level agg cell compared against a leaf scalar — common when sorting a column
+            // where only some rows have aggregated values.
+            const wrapped = { toNumber: () => 10 };
             expect(sign(_defaultComparator(wrapped, 5))).toBe(1);
             expect(sign(_defaultComparator(5, wrapped))).toBe(-1);
             expect(_defaultComparator(wrapped, 10)).toBe(0);
+        });
+
+        it('does not unwrap arbitrary objects without toNumber()', () => {
+            // Domain objects exposed via valueGetter (e.g. `{ value: 5, label: 'High' }`) must NOT
+            // be silently unwrapped — they're treated as opaque, and `>`/`<` on objects coerces via
+            // toString to `"[object Object]"` on both sides, returning 0. Sort stability for such
+            // objects is the user's responsibility (custom comparator).
+            const a = { value: 5, label: 'High' };
+            const b = { value: 50, label: 'Low' };
+            expect(_defaultComparator(a, b)).toBe(0);
+        });
+
+        it('ignores a non-function `toNumber` property (defensive against truthy collisions)', () => {
+            // A user object where `toNumber` is a truthy non-function (e.g. a stale string) must not
+            // be invoked; treat the wrapper as opaque instead of throwing.
+            const a = { toNumber: 'oops', value: 1 };
+            const b = { toNumber: 'oops', value: 2 };
+            expect(_defaultComparator(a, b)).toBe(0);
+        });
+
+        it('treats wrapper whose toNumber() yields null as nullish (sorts before non-null)', () => {
+            // Empty groups commonly produce `{ toNumber: () => null, ... }`. Without the post-unwrap
+            // nullish recheck, the unwrapped null would be coerced to 0 by `<`/`>` and sort after
+            // negative numbers. The recheck restores the standard null-sorts-first ordering.
+            const wrapped = { toNumber: () => null, toString: () => '' };
+            expect(_defaultComparator(wrapped, null)).toBe(0);
+            expect(sign(_defaultComparator(wrapped, 5))).toBe(-1);
+            expect(sign(_defaultComparator(wrapped, -10))).toBe(-1);
+            expect(sign(_defaultComparator(wrapped, 0))).toBe(-1);
         });
     });
 });
