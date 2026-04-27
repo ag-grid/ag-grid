@@ -5,8 +5,8 @@
     border-bottom: var(--ag-header-row-border);
     min-height: var(--ag-header-height);
     line-height: 1.5;
-    background-color: var(--ag-header-background-color);
-    color: var(--ag-header-text-color);
+    background-color: var(--ag-toolbar-background-color);
+    color: var(--ag-toolbar-text-color);
     font-family: var(--ag-header-font-family);
     font-size: var(--ag-header-font-size);
     font-weight: var(--ag-header-font-weight);
@@ -29,7 +29,7 @@
     border: 0;
     border-radius: var(--ag-border-radius);
     background: transparent;
-    color: var(--ag-text-color);
+    color: var(--ag-toolbar-text-color);
     cursor: pointer;
     line-height: 1;
     white-space: nowrap;
@@ -75,7 +75,7 @@
     position: absolute;
     display: inline-flex;
     align-items: center;
-    color: var(--ag-text-color);
+    color: var(--ag-toolbar-text-color);
     opacity: 0.5;
     pointer-events: none;
     left: var(--ag-spacing);
@@ -114,7 +114,7 @@
     align-self: stretch;
     width: 0;
     margin: calc(var(--ag-spacing) * 1.75) 0;
-    border-left: solid var(--ag-border-width) var(--ag-border-color);
+    border-inline-start: var(--ag-toolbar-separator-border);
 }
 
 .ag-toolbar-find {
@@ -142,7 +142,7 @@
 .ag-toolbar-find-match-count {
     white-space: nowrap;
     font-size: var(--ag-font-size);
-    color: var(--ag-text-color);
+    color: inherit;
     opacity: 0.7;
     user-select: none;
     font-variant-numeric: tabular-nums;
