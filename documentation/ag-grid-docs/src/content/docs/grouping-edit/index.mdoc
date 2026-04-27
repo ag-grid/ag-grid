@@ -66,11 +66,11 @@ Editing is **disabled by default** for `count`, `min`, `max`, `first`, `last`, a
 **custom aggregation functions** because there is no single correct way to split an edited value
 back into children for these functions. To enable editing, you can:
 
--   Set `distribution` to `'overwrite'` to write the new value directly to every child.
--   Provide a per-aggFunc record entry with `'overwrite'`, `true`, or a custom callback function
-    that implements application-specific logic (see [Per-Aggregation Strategies](#per-aggregation-strategies)).
--   Assign a custom [callback function](#custom-distribution-with-a-callback) to `groupRowValueSetter`
-    for full control over the distribution.
+- Set `distribution` to `'overwrite'` to write the new value directly to every child.
+- Provide a per-aggFunc record entry with `'overwrite'`, `true`, or a custom callback function
+  that implements application-specific logic (see [Per-Aggregation Strategies](#per-aggregation-strategies)).
+- Assign a custom [callback function](#custom-distribution-with-a-callback) to `groupRowValueSetter`
+  for full control over the distribution.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -165,17 +165,17 @@ The built-in distribution handles standard aggregation functions. The following 
 demonstrates a mix of built-in strategies, non-aggregated columns, and custom callbacks.
 Double-click any group row cell to edit it:
 
--   **Salary** (`sum`): divides the new total equally among children, rounding to integers
-    (`precision: 0`). For example, editing a group total of 300 across 3 children produces 100 each.
--   **Bonus** (`avg`): overwrites every child with the edited value (the default for `avg`).
-    For example, editing the group average to 15 sets all children's bonus to 15.
--   **Projects** (no `aggFunc`): overwrites every child with the edited value (the default when
-    there is no aggregation). The group cell is blank but still editable.
--   **Rate %** (custom callback): reads each leaf child's salary and computes their bonus as
-    `salary × rate / 100`. For example, entering 20 sets each child's bonus to 20% of their
-    individual salary. Uses `allLeafChildren` to reach all descendant data rows directly.
--   **SumSq** (custom `sumOfSquares` aggFunc): uses a custom callback that computes
-    `√(newValue / count)` per child — the correct inverse of sum-of-squares.
+- **Salary** (`sum`): divides the new total equally among children, rounding to integers
+  (`precision: 0`). For example, editing a group total of 300 across 3 children produces 100 each.
+- **Bonus** (`avg`): overwrites every child with the edited value (the default for `avg`).
+  For example, editing the group average to 15 sets all children's bonus to 15.
+- **Projects** (no `aggFunc`): overwrites every child with the edited value (the default when
+  there is no aggregation). The group cell is blank but still editable.
+- **Rate %** (custom callback): reads each leaf child's salary and computes their bonus as
+  `salary × rate / 100`. For example, entering 20 sets each child's bonus to 20% of their
+  individual salary. Uses `allLeafChildren` to reach all descendant data rows directly.
+- **SumSq** (custom `sumOfSquares` aggFunc): uses a custom callback that computes
+  `√(newValue / count)` per child — the correct inverse of sum-of-squares.
 
 {% gridExampleRunner title="Multiple Aggregation Functions" name="distribute-group-value-all-agg" exampleHeight=540 /%}
 
@@ -310,12 +310,12 @@ cascade edited values down to descendant rows without manually traversing the ro
 
 The children returned by `aggregatedChildren` depend on the column and grid configuration:
 
--   **Regular value columns**: Returns direct children used for aggregation. This respects the
-    `suppressAggFilteredOnly` grid option and `groupAggFiltering` — when these cause aggregation to include
-    all children (not just filtered ones), `aggregatedChildren` returns all children accordingly.
--   **Pivot columns on leaf groups**: Returns only the children matching the column's pivot keys, since
-    pivot aggregation groups rows by pivot key values.
--   **Non-group rows**: Always returns an empty array — only group rows have aggregated children.
+- **Regular value columns**: Returns direct children used for aggregation. This respects the
+  `suppressAggFilteredOnly` grid option and `groupAggFiltering` — when these cause aggregation to include
+  all children (not just filtered ones), `aggregatedChildren` returns all children accordingly.
+- **Pivot columns on leaf groups**: Returns only the children matching the column's pivot keys, since
+  pivot aggregation groups rows by pivot key values.
+- **Non-group rows**: Always returns an empty array — only group rows have aggregated children.
 
 Alternatively, `rowNode.getAggregatedChildren(colKey)` can be called anywhere in code to retrieve the same
 children programmatically.
@@ -328,12 +328,12 @@ See [Retrieving Aggregated Children](./aggregation/#retrieving-aggregated-childr
 
 Key points for implementing cascading edits:
 
--   Calling `rowNode.setDataValue` on each child pushes updated figures down.
--   When a child is also a group that defines its own `groupRowValueSetter`, the cascade recurses further.
--   Parent aggregates refresh automatically because child `data` changes re-run the column `aggFunc`,
-    so editing a group row total instantly rebalances the children to reach that value.
--   Aggregation is batched automatically — all `setDataValue` calls within a single `groupRowValueSetter`
-    invocation are processed before re-aggregation runs.
+- Calling `rowNode.setDataValue` on each child pushes updated figures down.
+- When a child is also a group that defines its own `groupRowValueSetter`, the cascade recurses further.
+- Parent aggregates refresh automatically because child `data` changes re-run the column `aggFunc`,
+  so editing a group row total instantly rebalances the children to reach that value.
+- Aggregation is batched automatically — all `setDataValue` calls within a single `groupRowValueSetter`
+  invocation are processed before re-aggregation runs.
 
 {% note %}
 The `aggregatedChildren` parameter and `rowNode.getAggregatedChildren()` method are only supported
@@ -372,9 +372,9 @@ to read and `node.setDataValue(column, value, 'data')` to write.
 
 This is useful when:
 
--   Child values are stored in a different field or custom data structure.
--   You need to apply transformations or side effects during distribution.
--   The column's `valueSetter` or `valueGetter` don't match the distribution needs.
+- Child values are stored in a different field or custom data structure.
+- You need to apply transformations or side effects during distribution.
+- The column's `valueSetter` or `valueGetter` don't match the distribution needs.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -409,11 +409,11 @@ distributed uniformly among the children matching that pivot column's keys.
 For full control over pivot editing, use a custom `groupRowValueSetter` callback.
 In the following example:
 
--   The grid is pivoted by `product` (Electronics, Clothing, Food), grouped by `region` and `country`.
--   Double-clicking on any pivot column cell opens the editor for the aggregated value.
--   When editing a pivot cell (e.g., "Electronics" column on "Europe" row), the `aggregatedChildren` array
-    contains only the European rows selling Electronics — not all European rows.
--   The edit is distributed equally among just those matching children, leaving other product categories unchanged.
+- The grid is pivoted by `product` (Electronics, Clothing, Food), grouped by `region` and `country`.
+- Double-clicking on any pivot column cell opens the editor for the aggregated value.
+- When editing a pivot cell (e.g., "Electronics" column on "Europe" row), the `aggregatedChildren` array
+  contains only the European rows selling Electronics — not all European rows.
+- The edit is distributed equally among just those matching children, leaving other product categories unchanged.
 
 {% gridExampleRunner title="Custom Editable Pivot Totals" name="pivot-editable-totals-custom" exampleHeight=500 /%}
 

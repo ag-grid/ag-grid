@@ -333,7 +333,7 @@ export class JoinFilterExpressionParser {
             const updatedValuePart =
                 type === 'column'
                     ? this.params.advFilterExpSvc.getColumnValue(updateEntry)
-                    : updateEntry.displayValue ?? updateEntry.key;
+                    : (updateEntry.displayValue ?? updateEntry.key);
             return updateExpression(expression, this.startPosition, this.startPosition, updatedValuePart, true);
         }
 

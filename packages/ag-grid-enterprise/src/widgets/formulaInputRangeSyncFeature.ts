@@ -249,7 +249,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
 
     private trackRange(range: CellRange, ref: string, tokenIndex?: number | null): void {
         const existing = this.trackedRanges.get(range);
-        const nextTokenIndex = tokenIndex !== undefined ? tokenIndex : existing?.tokenIndex ?? null;
+        const nextTokenIndex = tokenIndex !== undefined ? tokenIndex : (existing?.tokenIndex ?? null);
 
         if (!existing) {
             this.addTrackedRef(ref);

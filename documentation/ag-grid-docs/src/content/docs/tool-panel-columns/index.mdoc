@@ -21,34 +21,34 @@ columns to the desired sections.
 
 Selecting columns means different things depending on whether the grid is in pivot mode or not as follows:
 
--   **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true`, you can drag a column from the tool panel onto the grid and it will become visible.
--   **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
+- **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true`, you can drag a column from the tool panel onto the grid and it will become visible.
+- **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
 ## Columns Tool Panel Sections
 
 The Columns Tool Panel is split into different sections as described from the top:
 
--   Top area
-    -   **Pivot Mode Section**: Enable the 'Pivot Mode' toggle to turn the grid into [Pivot Mode](./pivoting/). Disable to take the grid out of pivot mode.
-    -   **Expand / Collapse All**: Toggle to expand or collapse all column groups.
--   **Columns Section**
-    -   This section displays all columns, grouped by column groups, that are available to be displayed in the grid. By default the order of the columns is kept in sync with the order they are shown in the grid, but this behaviour can be disabled.
-    -   **Select / Unselect All**: Toggle to select or unselect all columns in the columns section.
-    -   **Select / Unselect Column (or Group)**: Each column can be individually selected. The [Selection Action](#selection-action) depends on pivot mode.
-    -   **Drag Handle**: Each column can be dragged either with the mouse or via touch on touch devices. The column can then be dragged to one of the following:
+- Top area
+    - **Pivot Mode Section**: Enable the 'Pivot Mode' toggle to turn the grid into [Pivot Mode](./pivoting/). Disable to take the grid out of pivot mode.
+    - **Expand / Collapse All**: Toggle to expand or collapse all column groups.
+- **Columns Section**
+    - This section displays all columns, grouped by column groups, that are available to be displayed in the grid. By default the order of the columns is kept in sync with the order they are shown in the grid, but this behaviour can be disabled.
+    - **Select / Unselect All**: Toggle to select or unselect all columns in the columns section.
+    - **Select / Unselect Column (or Group)**: Each column can be individually selected. The [Selection Action](#selection-action) depends on pivot mode.
+    - **Drag Handle**: Each column can be dragged either with the mouse or via touch on touch devices. The column can then be dragged to one of the following:
         1. Row Groups Section
         1. Values (Pivot) Section
         1. Column Labels Section
         1. Onto the grid (when `gridOptions.allowDragFromColumnsToolPanel=true`)
         1. Inside Columns Section to reorder columns (see [Suppress Column Reordering](./tool-panel-columns/#suppress-column-reordering))
--   **Row Groups Section**
-    -   Columns here will form the grid's [Row Grouping](./grouping/).
--   **Values Section**
-    -   Columns here will form the grid's [Aggregations](./aggregation/). The grid calls this function 'Aggregations', however for the UI we follow the Excel naming convention and call it 'Values'.
--   **Column Labels (Pivot) Section**
-    -   Columns here will form the grid's [Pivot](./pivoting/). The grid calls this function 'Pivot', however for the UI we follow the Excel naming convention and call it 'Column Labels'.
--   **Context Menu**
-    -   Each column can be right-clicked to display a context menu. The context menu displays menu items related to whether the column can be grouped, pivoted and aggregated. When not in pivot mode, the context menu for visible columns includes an item to scroll the column into view.
+- **Row Groups Section**
+    - Columns here will form the grid's [Row Grouping](./grouping/).
+- **Values Section**
+    - Columns here will form the grid's [Aggregations](./aggregation/). The grid calls this function 'Aggregations', however for the UI we follow the Excel naming convention and call it 'Values'.
+- **Column Labels (Pivot) Section**
+    - Columns here will form the grid's [Pivot](./pivoting/). The grid calls this function 'Pivot', however for the UI we follow the Excel naming convention and call it 'Column Labels'.
+- **Context Menu**
+    - Each column can be right-clicked to display a context menu. The context menu displays menu items related to whether the column can be grouped, pivoted and aggregated. When not in pivot mode, the context menu for visible columns includes an item to scroll the column into view.
 
 {% imageCaption imagePath="resources/screenshot.png" alt="AG Grid Tool Panel Section" centered=true constrained=true width="46rem" /%}
 
@@ -76,12 +76,12 @@ interface IColumnToolPanel {
 
 The example below demonstrates the suppress options / methods described above. Note the following:
 
--   The following sections are not present in the tool panel: Row Groups, Values, Column Labels, Pivot Mode, Side Buttons, Column Filter, Select / Unselect All, Expand / Collapse All.
--   The date column is hidden from the tool panel using: `colDef.suppressColumnsToolPanel=true`.
--   Clicking **Show Pivot Mode Section** invokes `setPivotModeSectionVisible(true)` on the Columns Tool Panel instance.
--   Clicking **Show Row Groups Section** invokes `setRowGroupsSectionVisible(true)` on the Columns Tool Panel instance.
--   Clicking **Show Values Section** invokes `setValuesSectionVisible(true)` on the Columns Tool Panel instance.
--   Clicking **Show Pivot Section** invokes `setPivotSectionVisible(true)` on the Columns Tool Panel instance.
+- The following sections are not present in the tool panel: Row Groups, Values, Column Labels, Pivot Mode, Side Buttons, Column Filter, Select / Unselect All, Expand / Collapse All.
+- The date column is hidden from the tool panel using: `colDef.suppressColumnsToolPanel=true`.
+- Clicking **Show Pivot Mode Section** invokes `setPivotModeSectionVisible(true)` on the Columns Tool Panel instance.
+- Clicking **Show Row Groups Section** invokes `setRowGroupsSectionVisible(true)` on the Columns Tool Panel instance.
+- Clicking **Show Values Section** invokes `setValuesSectionVisible(true)` on the Columns Tool Panel instance.
+- Clicking **Show Pivot Section** invokes `setPivotSectionVisible(true)` on the Columns Tool Panel instance.
 
 {% gridExampleRunner title="Section Visibility" name="section-visibility"  exampleHeight=630 /%}
 
@@ -122,8 +122,8 @@ separate properties.
 
 The following example demonstrates the results of enabling both of these properties. Note the following:
 
--   Moving columns in the grid won't reorder columns in the Columns Tool Panel as `suppressSyncLayoutWithGrid=true`.
--   It is not possible to reorder columns from the Columns Tool Panel as `suppressColumnMove=true`.
+- Moving columns in the grid won't reorder columns in the Columns Tool Panel as `suppressSyncLayoutWithGrid=true`.
+- It is not possible to reorder columns from the Columns Tool Panel as `suppressColumnMove=true`.
 
 {% gridExampleRunner title="Suppress Column Reordering" name="suppress-column-reordering"  exampleHeight=670 /%}
 
@@ -155,10 +155,10 @@ const gridOptions = {
 
 The example below demonstrates the Columns Tool Panel using a mixture of items explained above. Note the following:
 
--   The `country`, `year`, `date` and `sport` columns all have `enableRowGroup=true` and `enablePivot=true`. This means you can drag the columns to the group and pivot sections, but you cannot drag them to the values sections.
--   The `gold`, `silver` and `bronze` columns all have `enableValue=true`. This means you can drag the columns to the values section, but you cannot drag them to the group or pivot sections.
--   The `gold`, `silver` and `bronze` columns have style applied using `toolPanelClass`.
--   The country column uses a `headerValueGetter` to give the column a slightly different name dependent on where it appears using the `location` parameter.
+- The `country`, `year`, `date` and `sport` columns all have `enableRowGroup=true` and `enablePivot=true`. This means you can drag the columns to the group and pivot sections, but you cannot drag them to the values sections.
+- The `gold`, `silver` and `bronze` columns all have `enableValue=true`. This means you can drag the columns to the values section, but you cannot drag them to the group or pivot sections.
+- The `gold`, `silver` and `bronze` columns have style applied using `toolPanelClass`.
+- The country column uses a `headerValueGetter` to give the column a slightly different name dependent on where it appears using the `location` parameter.
 
 {% gridExampleRunner title="Tool Panel Styling" name="styling"  exampleHeight=610 /%}
 
@@ -203,11 +203,11 @@ Notice in the snippet above that it's possible to target individual column group
 
 The example below demonstrates these methods in action. Note the following:
 
--   When the grid is initialised, `collapseColumnGroups()` is invoked using the `onGridReady` callback to collapse all column groups in the tool panel.
--   Clicking **Expand All** expands all column groups using `expandColumnGroups()`.
--   Clicking **Collapse All** collapses all column groups using `collapseColumnGroups()`.
--   Clicking **Expand Athlete & Competition** expands only the 'Athlete' and 'Competition' column groups using `expandColumnGroups(['athleteGroupId', 'competitionGroupId'])`.
--   Clicking **Collapse Competition** collapses only the 'Competition' column group using `collapseColumnGroups(['competitionGroupId'])`.
+- When the grid is initialised, `collapseColumnGroups()` is invoked using the `onGridReady` callback to collapse all column groups in the tool panel.
+- Clicking **Expand All** expands all column groups using `expandColumnGroups()`.
+- Clicking **Collapse All** collapses all column groups using `collapseColumnGroups()`.
+- Clicking **Expand Athlete & Competition** expands only the 'Athlete' and 'Competition' column groups using `expandColumnGroups(['athleteGroupId', 'competitionGroupId'])`.
+- Clicking **Collapse Competition** collapses only the 'Competition' column group using `collapseColumnGroups(['competitionGroupId'])`.
 
 {% gridExampleRunner title="Expand / Collapse Column Groups" name="expand-collapse"  exampleHeight=640 /%}
 
@@ -219,9 +219,9 @@ Deferred Updates are enabled by including the **Apply** button in `toolPanelPara
 
 Note that in the example below:
 
--   Changes made in the Columns Tool Panel are staged as pending changes.
--   **Apply** commits all pending changes in a single operation.
--   **Cancel** discards all pending changes and restores the last applied state.
+- Changes made in the Columns Tool Panel are staged as pending changes.
+- **Apply** commits all pending changes in a single operation.
+- **Cancel** discards all pending changes and restores the last applied state.
 
 {% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode-csrm"  exampleHeight=830 /%}
 
@@ -301,11 +301,11 @@ When providing a custom layout it is recommended to enable both `suppressSyncLay
 
 The example below shows two custom layouts for the Columns Tool Panel. Note the following:
 
--   When the grid is initialised the column layout in the Columns Tool Panel matches what is supplied to the grid in `gridOptions.columnDefs`.
--   Clicking **Custom Sort Layout** invokes `setColumnLayout(colDefs)` with a list of column definitions arranged in ascending order.
--   Clicking **Custom Group Layout** invokes `setColumnLayout(colDefs)` with a list of column definitions containing groups that don't appear in the grid.
--   Moving columns in the grid won't affect the custom layouts as `suppressSyncLayoutWithGrid` is enabled.
--   Moving columns from within the Columns Tool Panel has been disabled as `suppressColumnMove` is enabled.
+- When the grid is initialised the column layout in the Columns Tool Panel matches what is supplied to the grid in `gridOptions.columnDefs`.
+- Clicking **Custom Sort Layout** invokes `setColumnLayout(colDefs)` with a list of column definitions arranged in ascending order.
+- Clicking **Custom Group Layout** invokes `setColumnLayout(colDefs)` with a list of column definitions containing groups that don't appear in the grid.
+- Moving columns in the grid won't affect the custom layouts as `suppressSyncLayoutWithGrid` is enabled.
+- Moving columns from within the Columns Tool Panel has been disabled as `suppressColumnMove` is enabled.
 
 {% gridExampleRunner title="Custom Column Layout" name="custom-layout"  exampleHeight=640 /%}
 

@@ -52,13 +52,13 @@ interface Position {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export abstract class BasePopupService<
-        TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-        TProperties extends BaseProperties,
-        TGlobalEvents extends BaseEvents,
-        TCommon,
-        TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-        TPopupPositionParams,
-    >
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TPopupPositionParams,
+>
     extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IPopupService<TPopupPositionParams>
 {

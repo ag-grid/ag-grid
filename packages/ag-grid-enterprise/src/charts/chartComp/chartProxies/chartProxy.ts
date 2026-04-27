@@ -182,7 +182,7 @@ export abstract class ChartProxy<
 
     private getCommonChartOptions(updatedOverrides?: AgChartThemeOverrides): TOptions & { mode: 'integrated' } {
         // Only apply active overrides if chart is initialised.
-        const existingOptions = (this.clearThemeOverrides ? {} : this.chart?.getOptions() ?? {}) as TOptions;
+        const existingOptions = (this.clearThemeOverrides ? {} : (this.chart?.getOptions() ?? {})) as TOptions;
         const formattingPanelOverrides = this.chart != null ? this.getActiveFormattingPanelOverrides() : undefined;
         this.clearThemeOverrides = false;
         const styleNonce = this.chartProxyParams.styleNonce;

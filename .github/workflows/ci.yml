@@ -326,15 +326,15 @@ jobs:
         with:
           cache_mode: ro
 
-#      - name: nx format:check
-#        id: format
-#        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-#        run: |
-#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-#            yarn nx format:check --all
-#          else
-#            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-#          fi
+      - name: nx format:check
+        id: format
+        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+        run: |
+          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+            yarn nx format:check --all
+          else
+            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+          fi
 
       - name: nx lint
         id: lint

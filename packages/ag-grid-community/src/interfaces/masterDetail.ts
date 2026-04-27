@@ -17,8 +17,7 @@ export interface IDetailCellRenderer<TData = any> {
 }
 
 export interface IDetailCellRendererParams<TData = any, TDetail = any>
-    extends ICellRendererParams<TData>,
-        FindDetailGridCellRendererParams<TData> {
+    extends ICellRendererParams<TData>, FindDetailGridCellRendererParams<TData> {
     /**
      * Provide Grid Options to use for the Detail Grid.
      */

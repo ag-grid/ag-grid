@@ -3202,16 +3202,22 @@ interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
 /**
  * Determines selection behaviour when only a single row can be selected at a time
  */
-export interface SingleRowSelectionOptions<TData = any, TValue = any, TContext = any>
-    extends CommonRowSelectionOptions<TData, TValue, TContext> {
+export interface SingleRowSelectionOptions<TData = any, TValue = any, TContext = any> extends CommonRowSelectionOptions<
+    TData,
+    TValue,
+    TContext
+> {
     mode: 'singleRow';
 }
 
 /**
  * Determines selection behaviour when multiple rows can be selected at once.
  */
-export interface MultiRowSelectionOptions<TData = any, TValue = any, TContext = any>
-    extends CommonRowSelectionOptions<TData, TValue, TContext> {
+export interface MultiRowSelectionOptions<TData = any, TValue = any, TContext = any> extends CommonRowSelectionOptions<
+    TData,
+    TValue,
+    TContext
+> {
     mode: 'multiRow';
     /**
      * Determine group selection behaviour

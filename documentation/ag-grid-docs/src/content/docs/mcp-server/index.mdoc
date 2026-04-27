@@ -52,9 +52,9 @@ The core feature of the AG MCP Server is an LLM optimized search tool which will
 
 More specifically, the AG MCP Server is made up of [Tools](#tools), [Prompts](#prompts) and [Resources](#resources-docs-api--example-search):
 
--   **Tools** - Schema defined interfaces that enable AI models to perform actions, including [searching the docs](#search-docs) and [detecting & setting the current AG Grid version](#detect-version).
--   **Prompts** - Pre-configured actions that allow you to perform common actions, such as [creating new grids](#create-a-new-grid), or [migrating to later versions](#migrate-to-a-new-version).
--   **Resources** - Documentation, examples, and API definitions/interfaces in condensed markdown.
+- **Tools** - Schema defined interfaces that enable AI models to perform actions, including [searching the docs](#search-docs) and [detecting & setting the current AG Grid version](#detect-version).
+- **Prompts** - Pre-configured actions that allow you to perform common actions, such as [creating new grids](#create-a-new-grid), or [migrating to later versions](#migrate-to-a-new-version).
+- **Resources** - Documentation, examples, and API definitions/interfaces in condensed markdown.
 
 Each of these components are available to your LLM whenever it needs more information on how to implement AG Grid features, and can also be accessed directly.
 
@@ -145,8 +145,8 @@ Prompts are pre-configured actions that allow you to perform common actions, suc
 
 AG MCP currently provides two prompts:
 
--   [`quick-start`](#create-a-new-grid) - Get started with AG Grid in any framework
--   [`upgrade-grid`](#migrate-to-a-new-version) - Migrate to a newer version of AG Grid
+- [`quick-start`](#create-a-new-grid) - Get started with AG Grid in any framework
+- [`upgrade-grid`](#migrate-to-a-new-version) - Migrate to a newer version of AG Grid
 
 ### Create a New Grid
 
@@ -217,9 +217,9 @@ Resources allow servers to share data that provides context to language models, 
 
 There are currently three sets of resources available:
 
--   `articles` - Access to the full AG Grid documentation at the correct version.
--   `definitions` - API definitions and interfaces
--   `examples` - A library of AG Grid implementation examples in your framework.
+- `articles` - Access to the full AG Grid documentation at the correct version.
+- `definitions` - API definitions and interfaces
+- `examples` - A library of AG Grid implementation examples in your framework.
 
 Your LLM can access these resources whenever it needs more information on how to implement AG Grid features.
 
@@ -262,10 +262,10 @@ Tools can be called manually by entering the tool name as a prompt into your LLM
 
 AG-MCP currently provides four tools:
 
--   [`search_docs`](#search-docs) - Search the documents for the currently installed version of AG Grid.
--   [`detect_version`](#detect-version) - Infers the version and framework of AG Grid installed in your repo.
--   [`set_version`](#set-version) - Manually set the version of your repo (useful in monorepos).
--   `list_versions` - List all available AG Grid versions from the API to see what versions are available for migration or reference.
+- [`search_docs`](#search-docs) - Search the documents for the currently installed version of AG Grid.
+- [`detect_version`](#detect-version) - Infers the version and framework of AG Grid installed in your repo.
+- [`set_version`](#set-version) - Manually set the version of your repo (useful in monorepos).
+- `list_versions` - List all available AG Grid versions from the API to see what versions are available for migration or reference.
 
 ### Search Docs
 

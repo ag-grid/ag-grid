@@ -30,8 +30,7 @@ import type { PivotModePanel } from './pivotModePanel';
 import { isDeferredMode } from './toolPanelDeferredUiUtils';
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
-    extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
-        IToolPanelColumnCompParams {}
+    extends IToolPanelParams<TData, TContext, ColumnToolPanelState>, IToolPanelColumnCompParams {}
 
 /** Captures full grid state for no-op detection (includes width to distinguish from resize). */
 interface GridStateSnapshot {

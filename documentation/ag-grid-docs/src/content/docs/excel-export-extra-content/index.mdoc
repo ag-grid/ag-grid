@@ -11,9 +11,9 @@ For compatibility with earlier versions of the Grid you can also pass a string, 
 
 Note the following:
 
--   You can check and uncheck the checkboxes to add extra content before and after the grid via the `prependContent` and `appendContent` properties.
+- You can check and uncheck the checkboxes to add extra content before and after the grid via the `prependContent` and `appendContent` properties.
 
--   With `prependContent=ExcelRow[]` or `appendContent=ExcelRow[]`, custom content will be inserted containing commas and quotes. These commas and quotes will be visible when opened in Excel because they have been escaped properly.
+- With `prependContent=ExcelRow[]` or `appendContent=ExcelRow[]`, custom content will be inserted containing commas and quotes. These commas and quotes will be visible when opened in Excel because they have been escaped properly.
 
 {% gridExampleRunner title="Excel Export - Prepend and Append Content" name="excel-export-prepend-append"  exampleHeight=815 /%}
 
@@ -31,14 +31,14 @@ You can set header and footer content via the `headerFooterConfig: ExcelHeaderFo
 
 The header and footer object accepts the following placeholders:
 
--   `&[Page]`: Prints the current page number.
--   `&[Pages]`: Prints the total number of pages.
--   `&[Date]`: Prints the current date.
--   `&[Time]`: Prints the current time.
--   `&[Tab]`: Prints the current sheet name.
--   `&[Path]`: Prints the file path.
--   `&[File]`: Prints the file name.
--   `&[Picture]`: Adds an image to the Header or Footer, see more [Adding Images to the Header or Footer](#adding-images-to-the-header-or-footer).
+- `&[Page]`: Prints the current page number.
+- `&[Pages]`: Prints the total number of pages.
+- `&[Date]`: Prints the current date.
+- `&[Time]`: Prints the current time.
+- `&[Tab]`: Prints the current sheet name.
+- `&[Path]`: Prints the file path.
+- `&[File]`: Prints the file name.
+- `&[Picture]`: Adds an image to the Header or Footer, see more [Adding Images to the Header or Footer](#adding-images-to-the-header-or-footer).
 
 {% gridExampleRunner title="Excel Export - Custom Header and Footer" name="excel-export-header-footer"  exampleHeight=815 /%}
 

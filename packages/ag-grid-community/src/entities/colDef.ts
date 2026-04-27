@@ -1006,18 +1006,27 @@ export type ColTypeDefs<TData = any, TValue = any> = { [key: string]: ColTypeDef
 /** Configuration options for reusable columns types in AG Grid. This includes all possible options from `ColDef` except the `type` and `cellDataType` fields. */
 export type ColTypeDef<TData = any, TValue = any> = Omit<ColDef<TData, TValue>, 'type' | 'cellDataType'>;
 
-export interface CheckboxSelectionCallbackParams<TData = any, TValue = any, TContext = any>
-    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
+export interface CheckboxSelectionCallbackParams<
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type CheckboxSelectionCallback<TData = any, TValue = any, TContext = any> = (
     params: CheckboxSelectionCallbackParams<TData, TValue, TContext>
 ) => boolean;
-export interface RowDragCallbackParams<TData = any, TValue = any, TContext = any>
-    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
+export interface RowDragCallbackParams<TData = any, TValue = any, TContext = any> extends ColumnFunctionCallbackParams<
+    TData,
+    TValue,
+    TContext
+> {}
 export type RowDragCallback<TData = any, TValue = any, TContext = any> = (
     params: RowDragCallbackParams<TData, TValue, TContext>
 ) => boolean;
-export interface DndSourceCallbackParams<TData = any, TValue = any, TContext = any>
-    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
+export interface DndSourceCallbackParams<
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 
 export type DndSourceOnRowDragFunc<TData = any, TContext = any> = (
     params: DndSourceOnRowDragParams<TData, TContext>
@@ -1031,8 +1040,11 @@ export interface DndSourceOnRowDragParams<TData = any, TContext = any> extends A
 export type DndSourceCallback<TData = any, TValue = any, TContext = any> = (
     params: DndSourceCallbackParams<TData, TValue, TContext>
 ) => boolean;
-export interface EditableCallbackParams<TData = any, TValue = any, TContext = any>
-    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
+export interface EditableCallbackParams<TData = any, TValue = any, TContext = any> extends ColumnFunctionCallbackParams<
+    TData,
+    TValue,
+    TContext
+> {}
 export type EditableCallback<TData = any, TValue = any, TContext = any> = (
     params: EditableCallbackParams<TData, TValue, TContext>
 ) => boolean;
@@ -1050,23 +1062,34 @@ export type {
     GroupRowValueSetterParams,
 } from './colDef-groupRowValueSetter';
 
-export interface SuppressPasteCallbackParams<TData = any, TValue = any, TContext = any>
-    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
+export interface SuppressPasteCallbackParams<
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type SuppressPasteCallback<TData = any, TValue = any, TContext = any> = (
     params: SuppressPasteCallbackParams<TData, TValue, TContext>
 ) => boolean;
-export interface SuppressNavigableCallbackParams<TData = any, TValue = any, TContext = any>
-    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
+export interface SuppressNavigableCallbackParams<
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type SuppressNavigableCallback<TData = any, TValue = any, TContext = any> = (
     params: SuppressNavigableCallbackParams<TData, TValue, TContext>
 ) => boolean;
-export interface SuppressNoteActionsCallbackParams<TData = any, TValue = any, TContext = any>
-    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
+export interface SuppressNoteActionsCallbackParams<
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 export type SuppressNoteActionsCallback<TData = any, TValue = any, TContext = any> = (
     params: SuppressNoteActionsCallbackParams<TData, TValue, TContext>
 ) => boolean;
-export interface HeaderCheckboxSelectionCallbackParams<TData = any, TValue = any, TContext = any>
-    extends AgGridCommon<TData, TContext> {
+export interface HeaderCheckboxSelectionCallbackParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<
+    TData,
+    TContext
+> {
     column: Column<TValue>;
     colDef: ColDef<TData, TValue>;
 }
@@ -1086,16 +1109,22 @@ interface GetTextParams<TData = any, TValue = any, TContext = any> extends AgGri
 export type GetQuickFilterText<TData = any, TValue = any, TContext = any> = (
     params: GetQuickFilterTextParams<TData, TValue, TContext>
 ) => string;
-export interface GetQuickFilterTextParams<TData = any, TValue = any, TContext = any>
-    extends GetTextParams<TData, TValue, TContext> {
+export interface GetQuickFilterTextParams<TData = any, TValue = any, TContext = any> extends GetTextParams<
+    TData,
+    TValue,
+    TContext
+> {
     /** Column for this callback. */
     column: Column<TValue>;
     /** ColDef provided for this column. */
     colDef: ColDef<TData, TValue>;
 }
 
-export interface GetFindTextParams<TData = any, TValue = any, TContext = any>
-    extends GetTextParams<TData, TValue, TContext> {
+export interface GetFindTextParams<TData = any, TValue = any, TContext = any> extends GetTextParams<
+    TData,
+    TValue,
+    TContext
+> {
     /** Column for this callback. `null` for `groupRows`. */
     column: Column<TValue> | null;
     /** ColDef provided for this column. `null` for `groupRows`. */
@@ -1144,8 +1173,11 @@ export interface SpanRowsParams<TData = any, TValue = any, TContext = any> exten
     colDef: ColDef<TData, TValue>;
 }
 
-export interface ValueGetterParams<TData = any, TValue = any, TContext = any>
-    extends BaseColDefOptionalDataParams<TData, TValue, TContext> {
+export interface ValueGetterParams<TData = any, TValue = any, TContext = any> extends BaseColDefOptionalDataParams<
+    TData,
+    TValue,
+    TContext
+> {
     /** A utility method for getting other column values */
     getValue: (field: string) => any;
 }
@@ -1163,8 +1195,10 @@ export type HeaderLocation =
     | 'model'
     | 'advancedFilter'
     | null;
-export interface HeaderValueGetterParams<TData = any, TValue = any, TContext = any>
-    extends AgGridCommon<TData, TContext> {
+export interface HeaderValueGetterParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<
+    TData,
+    TContext
+> {
     colDef: AbstractColDef<TData, TValue>;
     /** Column for this callback if applicable*/
     column?: Column<TValue> | null;
@@ -1186,27 +1220,42 @@ export type TooltipValueGetterFunc<TData = any, TValue = any, TContext = any> = 
     params: ITooltipParams<TData, TValue, TContext>
 ) => string | any;
 
-export interface NewValueParams<TData = any, TValue = any, TContext = any>
-    extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined, TContext> {
+export interface NewValueParams<TData = any, TValue = any, TContext = any> extends ChangedValueParams<
+    TData,
+    TValue | null | undefined,
+    TValue | null | undefined,
+    TContext
+> {
     /** The raw value from the edit, before any value getter is applied. */
     newRawValue: TValue | null | undefined;
     /** The source of the value change, e.g. `'edit'`, `'paste'`, `'undo'`, `'redo'`, `'data'`. */
     source: string | undefined;
 }
 
-export interface ValueSetterParams<TData = any, TValue = any, TContext = any>
-    extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined, TContext> {}
+export interface ValueSetterParams<TData = any, TValue = any, TContext = any> extends ChangedValueParams<
+    TData,
+    TValue | null | undefined,
+    TValue | null | undefined,
+    TContext
+> {}
 export type ValueSetterFunc<TData = any, TValue = any, TContext = any> = (
     params: ValueSetterParams<TData, TValue, TContext>
 ) => boolean;
-export interface ValueParserParams<TData = any, TValue = any, TContext = any>
-    extends ChangedValueParams<TData, TValue | null | undefined, string, TContext> {}
+export interface ValueParserParams<TData = any, TValue = any, TContext = any> extends ChangedValueParams<
+    TData,
+    TValue | null | undefined,
+    string,
+    TContext
+> {}
 export type ValueParserFunc<TData = any, TValue = any, TContext = any> = (
     params: ValueParserParams<TData, TValue, TContext>
 ) => TValue | null | undefined;
 
-export interface ValueFormatterParams<TData = any, TValue = any, TContext = any>
-    extends BaseColDefOptionalDataParams<TData, TValue, TContext> {
+export interface ValueFormatterParams<TData = any, TValue = any, TContext = any> extends BaseColDefOptionalDataParams<
+    TData,
+    TValue,
+    TContext
+> {
     /** Value for the cell. */
     value: TValue | null | undefined;
 }
@@ -1223,8 +1272,11 @@ export type EqualsFunc<TValue = any> = (
 export type KeyCreatorFunc<TData = any, TValue = any, TContext = any> = (
     params: KeyCreatorParams<TData, TValue, TContext>
 ) => string;
-export interface KeyCreatorParams<TData = any, TValue = any, TContext = any>
-    extends BaseColDefParams<TData, TValue, TContext> {
+export interface KeyCreatorParams<TData = any, TValue = any, TContext = any> extends BaseColDefParams<
+    TData,
+    TValue,
+    TContext
+> {
     /** Value for the cell. */
     value: TValue | null | undefined;
 }
@@ -1232,17 +1284,26 @@ export interface KeyCreatorParams<TData = any, TValue = any, TContext = any>
 export type ColSpanFunc<TData = any, TValue = any, TContext = any> = (
     params: ColSpanParams<TData, TValue, TContext>
 ) => number;
-export interface ColSpanParams<TData = any, TValue = any, TContext = any>
-    extends BaseColDefOptionalDataParams<TData, TValue, TContext> {}
+export interface ColSpanParams<TData = any, TValue = any, TContext = any> extends BaseColDefOptionalDataParams<
+    TData,
+    TValue,
+    TContext
+> {}
 
 export type RowSpanFunc<TData = any, TValue = any, TContext = any> = (
     params: RowSpanParams<TData, TValue, TContext>
 ) => number;
-export interface RowSpanParams<TData = any, TValue = any, TContext = any>
-    extends BaseColDefOptionalDataParams<TData, TValue, TContext> {}
+export interface RowSpanParams<TData = any, TValue = any, TContext = any> extends BaseColDefOptionalDataParams<
+    TData,
+    TValue,
+    TContext
+> {}
 
-export interface SuppressKeyboardEventParams<TData = any, TValue = any, TContext = any>
-    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {
+export interface SuppressKeyboardEventParams<
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends ColumnFunctionCallbackParams<TData, TValue, TContext> {
     /** The keyboard event the grid received */
     event: KeyboardEvent;
     /** Whether the cell is editing or not */
@@ -1256,8 +1317,10 @@ export type SuppressKeyboardEventFunc<TData = any, TValue = any, TContext = any>
 export type SuppressHeaderKeyboardEventFunc<TData = any, TValue = any, TContext = any> = (
     params: SuppressHeaderKeyboardEventParams<TData, TValue, TContext>
 ) => boolean;
-export interface SuppressHeaderKeyboardEventParams<TData = any, TValue = any, TContext = any>
-    extends AgGridCommon<TData, TContext> {
+export interface SuppressHeaderKeyboardEventParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<
+    TData,
+    TContext
+> {
     column: Column<TValue> | ColumnGroup;
     colDef: ColDef<TData, TValue> | ColGroupDef<TData> | null;
     /** The index of the header row of the current focused header */

@@ -223,10 +223,10 @@ const gridOptions = {
 
 The built-in `note` item expands based on the current cell state:
 
--   `Add Note` when the cell has no note and note creation is allowed.
--   `Edit Note` and `Remove Note` when the existing note is editable.
--   `View Note`, plus a disabled `Remove Note`, when the existing note is read-only.
--   Disabled note actions when the cell is suppressed. Existing suppressed notes still show `View Note`.
+- `Add Note` when the cell has no note and note creation is allowed.
+- `Edit Note` and `Remove Note` when the existing note is editable.
+- `View Note`, plus a disabled `Remove Note`, when the existing note is read-only.
+- Disabled note actions when the cell is suppressed. Existing suppressed notes still show `View Note`.
 
 ### Keyboard Shortcuts
 
@@ -242,10 +242,10 @@ Use the grid API to read, write, remove and refresh notes programmatically. This
 
 In the example below:
 
--   clicking a cell selects it and syncs the toolbar controls automatically.
--   `Save via API` updates the note with `setNote()`, including setting or clearing `readOnly`.
--   `Remove via API` clears the note
--   `Mutate Store Directly` plus `Refresh Notes` shows how to resync the grid after external store updates.
+- clicking a cell selects it and syncs the toolbar controls automatically.
+- `Save via API` updates the note with `setNote()`, including setting or clearing `readOnly`.
+- `Remove via API` clears the note
+- `Mutate Store Directly` plus `Refresh Notes` shows how to resync the grid after external store updates.
 
 {% gridExampleRunner title="Notes API" name="notes-api" exampleHeight=560 /%}
 

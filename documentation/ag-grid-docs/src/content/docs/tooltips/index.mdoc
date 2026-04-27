@@ -46,9 +46,9 @@ Tooltips are not shown for the missing values `undefined`, `null` and `""` (empt
 
 In the example below:
 
--   The data has missing values `undefined`, `null` and `''` (empty String) as the first three rows.
--   Column A uses `tooltipField`, no tooltip is shown.
--   Column B uses `tooltipValueGetter` to return an object, tooltip is shown.
+- The data has missing values `undefined`, `null` and `''` (empty String) as the first three rows.
+- Column A uses `tooltipField`, no tooltip is shown.
+- Column B uses `tooltipValueGetter` to return an object, tooltip is shown.
 
 {% gridExampleRunner title="Blank Values" name="blank-values" /%}
 
@@ -82,16 +82,16 @@ const gridOptions = {
 
 The example below enables Tooltip Interaction to demonstrate a scenario where tooltips will not disappear while hovered. Note following:
 
--   Tooltips will not disappear while being hovered.
--   Tooltips content can be selected and copied.
+- Tooltips will not disappear while being hovered.
+- Tooltips content can be selected and copied.
 
 {% gridExampleRunner title="Tooltip Interaction" name="tooltip-interaction" /%}
 
 The example below shows Tooltip Interaction with Custom Tooltips. Note the following:
 
--   Tooltip is enabled for the Athlete and Age columns.
--   Tooltips will not disappear while being hovered.
--   The custom tooltip displays a text input and a Submit button which when clicked, updates the value of the `Athlete` Column cell in the hovered row and then closes itself by calling `hideTooltipCallback()`.
+- Tooltip is enabled for the Athlete and Age columns.
+- Tooltips will not disappear while being hovered.
+- The custom tooltip displays a text input and a Submit button which when clicked, updates the value of the `Athlete` Column cell in the hovered row and then closes itself by calling `hideTooltipCallback()`.
 
 {% gridExampleRunner title="Custom Tooltip Interaction" name="custom-tooltip-interaction" /%}
 
@@ -101,8 +101,8 @@ The grid does not use the browser's default tooltip, instead it has a rich HTML 
 
 In the example below:
 
--   `tooltipComponent` is set on the Default Column Definition so it applies to all Columns.
--   `tooltipComponentParams` is set on the Athlete Column Definition to provide a Custom Property, in this instance setting the background color.
+- `tooltipComponent` is set on the Default Column Definition so it applies to all Columns.
+- `tooltipComponentParams` is set on the Athlete Column Definition to provide a Custom Property, in this instance setting the background color.
 
 {% gridExampleRunner title="Custom Tooltip Component" name="custom-tooltip-component" /%}
 

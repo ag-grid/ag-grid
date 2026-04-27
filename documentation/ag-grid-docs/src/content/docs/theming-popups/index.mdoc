@@ -6,24 +6,24 @@ Style UI elements that float above the main UI, including menus.
 
 ## Rounding corners
 
--   `borderRadius` sets the radius of most rectangular elements within the grid, including the grid itself.
--   `wrapperBorderRadius` sets the radius of the grid wrapper, if you want it to be different from `borderRadius`.
--   Radius on other elements can be set using css selectors, e.g. `.ag-menu { border-radius: 2px }` will set the radius of popup menus like the right-click context menu.
+- `borderRadius` sets the radius of most rectangular elements within the grid, including the grid itself.
+- `wrapperBorderRadius` sets the radius of the grid wrapper, if you want it to be different from `borderRadius`.
+- Radius on other elements can be set using css selectors, e.g. `.ag-menu { border-radius: 2px }` will set the radius of popup menus like the right-click context menu.
 
 ## Drop shadows
 
 The grid exposes several theme parameters for controlling shadows. Two master parameters control many shadows at once:
 
--   `popupShadow` - a large shadow used on elements that are supposed to appear floating above the grid and separate from it, e.g. drag/drop images and dialogs
--   `cardShadow` - a small shadow for elements that are supposed to appear above the grid but connected to it, like dropdowns and cell editors
+- `popupShadow` - a large shadow used on elements that are supposed to appear floating above the grid and separate from it, e.g. drag/drop images and dialogs
+- `cardShadow` - a small shadow for elements that are supposed to appear above the grid but connected to it, like dropdowns and cell editors
 
 And you can override shadows for individual elements using more specific parameters:
 
--   `menuShadow` - Shadow for menus e.g. column menu and right-click context menu
--   `dialogShadow` - Shadow for popup dialogs such as integrated charts and the advanced filter builder
--   `cellEditingShadow` - Shadow for cells being edited
--   `dragAndDropImageShadow` - Shadow for the drag and drop image component element when dragging columns
--   and more - search "shadow" in the "All Parameters" section of the [Theme Builder](/theme-builder/) or use typescript autocompletion in your IDE.
+- `menuShadow` - Shadow for menus e.g. column menu and right-click context menu
+- `dialogShadow` - Shadow for popup dialogs such as integrated charts and the advanced filter builder
+- `cellEditingShadow` - Shadow for cells being edited
+- `dragAndDropImageShadow` - Shadow for the drag and drop image component element when dragging columns
+- and more - search "shadow" in the "All Parameters" section of the [Theme Builder](/theme-builder/) or use typescript autocompletion in your IDE.
 
 Shadows can use the [extended syntax for shadow values](./theming-parameters/#shadow-values):
 
@@ -37,10 +37,10 @@ const myTheme = themeQuartz.withParams({
 
 In order of preference, these techniques can be used to style menus:
 
--   Use the `menuBorder`, `menuSeparatorColor`, `menuShadow` and `menuTextColor` parameters.
--   Use CSS rules targeting `.ag-menu` to provide default styles that apply to all menus - column menus, filter menus and right-click context menus.
--   Some menus have specific classes, e.g. `.ag-column-menu` and `.ag-filter-menu` that can be used to override their styles. Check the browser developer tools to find the menu class.
--   Sometimes you want to be more specific, for example to style the set filter menu but not other filter menus. For this you can use the CSS `:has()` selector to select menus containing a specific component, e.g. `.ag-menu:has(.ag-set-filter)`. Use the browser developer tools to find the component class.
+- Use the `menuBorder`, `menuSeparatorColor`, `menuShadow` and `menuTextColor` parameters.
+- Use CSS rules targeting `.ag-menu` to provide default styles that apply to all menus - column menus, filter menus and right-click context menus.
+- Some menus have specific classes, e.g. `.ag-column-menu` and `.ag-filter-menu` that can be used to override their styles. Check the browser developer tools to find the menu class.
+- Sometimes you want to be more specific, for example to style the set filter menu but not other filter menus. For this you can use the CSS `:has()` selector to select menus containing a specific component, e.g. `.ag-menu:has(.ag-set-filter)`. Use the browser developer tools to find the component class.
 
 ## Example
 

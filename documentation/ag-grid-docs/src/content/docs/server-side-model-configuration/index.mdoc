@@ -30,8 +30,8 @@ Several [Configurations](./server-side-model-api-reference/), such as `cacheBloc
 
 The example below demonstrates some configurations. Note the following:
 
--   The grid property `cacheBlockSize = 50`. This sets the block size to 50, thus rows are read back 50 at a time.
--   The grid property `maxBlocksInCache = 2`. This means the grid will keep two blocks in memory only. To see this in action, scroll past row 100 (which will require a third block to be loaded), then quickly scroll back to the start and you will observe the first block needs to be reloaded.
+- The grid property `cacheBlockSize = 50`. This sets the block size to 50, thus rows are read back 50 at a time.
+- The grid property `maxBlocksInCache = 2`. This means the grid will keep two blocks in memory only. To see this in action, scroll past row 100 (which will require a third block to be loaded), then quickly scroll back to the start and you will observe the first block needs to be reloaded.
 
 {% gridExampleRunner title="Cache Configurations" name="cache-configurations" /%}
 
@@ -41,11 +41,11 @@ It may be desirable to scroll through the entire dataset without the need for in
 
 The example below shows how debouncing block loading can be achieved. Note the following:
 
--   The response from the server sets the `rowCount` property so that the vertical scrollbars bounds are set such that the entire dataset can be scrolled through.
+- The response from the server sets the `rowCount` property so that the vertical scrollbars bounds are set such that the entire dataset can be scrolled through.
 
--   `blockLoadDebounceMillis = 1000` - loading of blocks is delayed by `1000ms`. This allows for skipping over blocks when scrolling to advanced positions.
+- `blockLoadDebounceMillis = 1000` - loading of blocks is delayed by `1000ms`. This allows for skipping over blocks when scrolling to advanced positions.
 
--   The grid property `debug = true`. This means the browser's dev console will show loading block details.
+- The grid property `debug = true`. This means the browser's dev console will show loading block details.
 
 {% gridExampleRunner title="Block Loading Debounce" name="block-load-debounce" /%}
 
@@ -57,9 +57,9 @@ It is possible to supply extra data to the grid outside of the datasource lifecy
 
 The example below demonstrates that the grid can be populated with data outside of the datasource flow. Note the following:
 
--   The first loading row never displays, as the first 100 rows are loaded by default
--   100 rows are provided by default, ignoring the `cacheBlockSize` property
--   The loading of these additional rows bypasses the `blockLoadDebounceMillis` and `maxConcurrentDatasourceRequests` properties.
+- The first loading row never displays, as the first 100 rows are loaded by default
+- 100 rows are provided by default, ignoring the `cacheBlockSize` property
+- The loading of these additional rows bypasses the `blockLoadDebounceMillis` and `maxConcurrentDatasourceRequests` properties.
 
 {% gridExampleRunner title="Additional Row Data" name="additional-row-data" /%}
 
@@ -74,9 +74,9 @@ It is important that the `serverSideInitialRowCount` property is set to a value 
 
 This is demonstrated in the example below, note the following:
 
--   The `serverSideInitialRowCount` property has been set to provide an initial length to the vertical scrollbars.
+- The `serverSideInitialRowCount` property has been set to provide an initial length to the vertical scrollbars.
 
--   After the datasource has been set `api.ensureIndexVisible(5000, 'top')` is called, causing the grid to scroll down to row `5000`.
+- After the datasource has been set `api.ensureIndexVisible(5000, 'top')` is called, causing the grid to scroll down to row `5000`.
 
 {% gridExampleRunner title="Initial Scroll Position" name="initial-scroll-position" /%}
 
@@ -128,7 +128,7 @@ When using the server-side row model it can be helpful to gather the state of ea
 
 In the example below, note the following:
 
--   The grid option `debug: true` has been enabled
--   When scrolling through the grid, block information is logged to the console
+- The grid option `debug: true` has been enabled
+- When scrolling through the grid, block information is logged to the console
 
 {% gridExampleRunner title="Cache Block State" name="cache-block-state" /%}

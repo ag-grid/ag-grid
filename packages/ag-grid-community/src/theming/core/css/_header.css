@@ -95,7 +95,8 @@
            be individually controlled and overlaid on top of each other.
            background-image can't be smoothly animated so instead define the
            colors as internal vars and transition them */
-    background-image: linear-gradient(var(--ag-internal-hover-color), var(--ag-internal-hover-color)),
+    background-image:
+        linear-gradient(var(--ag-internal-hover-color), var(--ag-internal-hover-color)),
         linear-gradient(var(--ag-internal-moving-color), var(--ag-internal-moving-color));
 
     --ag-internal-moving-color: transparent;

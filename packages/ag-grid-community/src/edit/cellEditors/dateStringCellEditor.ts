@@ -121,14 +121,14 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         const dataTypeSvc = this.getDataTypeService();
         return dataTypeSvc
             ? dataTypeSvc.getDateParserFunction(this.params.column as AgColumn)(value)
-            : _parseDateTimeFromString(value) ?? undefined;
+            : (_parseDateTimeFromString(value) ?? undefined);
     }
 
     private formatDate(value: Date | undefined): string | undefined {
         const dataTypeSvc = this.getDataTypeService();
         return dataTypeSvc
             ? dataTypeSvc.getDateFormatterFunction(this.params.column as AgColumn)(value)
-            : _serialiseDate(value ?? null, this.includeTime ?? false) ?? undefined;
+            : (_serialiseDate(value ?? null, this.includeTime ?? false) ?? undefined);
     }
 }
 

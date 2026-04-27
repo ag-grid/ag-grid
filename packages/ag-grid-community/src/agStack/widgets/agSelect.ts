@@ -16,11 +16,10 @@ import agSelectCSS from './agSelect.css';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface AgSelectParams<TComponentSelectorType extends string, TValue = string>
-    extends Omit<
-        AgPickerFieldParams<TComponentSelectorType>,
-        'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'
-    > {
+export interface AgSelectParams<TComponentSelectorType extends string, TValue = string> extends Omit<
+    AgPickerFieldParams<TComponentSelectorType>,
+    'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'
+> {
     options?: ListOption<TValue>[];
     pickerType?: string;
     pickerAriaLabelKey?: string;

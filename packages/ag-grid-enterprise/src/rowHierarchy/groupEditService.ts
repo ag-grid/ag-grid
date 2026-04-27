@@ -114,11 +114,11 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             return false;
         }
 
-        const sourceLevel = rowNode.group ? rowNode.level : currentParent.level ?? -1;
+        const sourceLevel = rowNode.group ? rowNode.level : (currentParent.level ?? -1);
 
         let targetLevel = -1;
         if (target) {
-            targetLevel = target.group ? target.level : target.parent?.level ?? -1;
+            targetLevel = target.group ? target.level : (target.parent?.level ?? -1);
         } else if (comparisonParent) {
             targetLevel = comparisonParent.level;
         }
@@ -374,7 +374,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
 
         const reorderPosition = position === 'inside' ? 'above' : position;
         const reorderTarget =
-            position === 'inside' ? this.findFirstLeafForParent(parentForValues, leafs) ?? target : target;
+            position === 'inside' ? (this.findFirstLeafForParent(parentForValues, leafs) ?? target) : target;
         let orderChanged = false;
         if (leafs.size && reorderPosition !== 'none') {
             orderChanged = _csrmReorderAllLeafs(rootNode._leafs, leafs, reorderTarget, reorderPosition === 'above');

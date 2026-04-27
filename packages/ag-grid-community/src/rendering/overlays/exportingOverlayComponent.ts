@@ -10,11 +10,17 @@ import type {
 } from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
 
-export interface IExportingOverlay<TData = any, TContext = any>
-    extends IOverlay<TData, TContext, IExportingOverlayParams<TData, TContext>> {}
+export interface IExportingOverlay<TData = any, TContext = any> extends IOverlay<
+    TData,
+    TContext,
+    IExportingOverlayParams<TData, TContext>
+> {}
 
-export interface IExportingOverlayComp<TData = any, TContext = any>
-    extends IOverlayComp<TData, TContext, IExportingOverlayParams<TData, TContext>> {}
+export interface IExportingOverlayComp<TData = any, TContext = any> extends IOverlayComp<
+    TData,
+    TContext,
+    IExportingOverlayParams<TData, TContext>
+> {}
 
 const ExportingOverlayElement: ElementParams = {
     tag: 'div',

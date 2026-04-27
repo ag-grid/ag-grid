@@ -46,9 +46,9 @@ Formulas are text strings that start with an equals sign (`=`) and can contain r
 
 ### Basics
 
--   `=` prefix indicates a formula.
--   Constants can be numbers (e.g. `3.14`, `-7`), strings (e.g. `"Hello"`), or booleans (`TRUE`, `FALSE`).
--   Standard operator precedence applies (BODMAS/PEMDAS).
+- `=` prefix indicates a formula.
+- Constants can be numbers (e.g. `3.14`, `-7`), strings (e.g. `"Hello"`), or booleans (`TRUE`, `FALSE`).
+- Standard operator precedence applies (BODMAS/PEMDAS).
 
 ### Cell References
 
@@ -56,9 +56,9 @@ Cell references use column letters plus row numbers (e.g. `A1`, `B2`). Rows are 
 
 Relative references move as the grid changes. Absolute references stay fixed using `$`:
 
--   `=$A$1` locks column and row.
--   `=A$1` locks the row only.
--   `=$A1` locks the column only.
+- `=$A$1` locks column and row.
+- `=A$1` locks the row only.
+- `=$A1` locks the column only.
 
 #### Long-Form References
 
@@ -124,9 +124,9 @@ A user-provided data source should implement the following interface:
 
 When a data source is configured, `getFormula` is called lazily and the result is cached per cell. The cache is invalidated automatically when:
 
--   A cell in the row is edited through the grid (cell editor, `rowNode.setDataValue`, or any update that dispatches `cellValueChanged`).
--   The Client-Side Row Model refreshes the row (add, remove, update, reorder).
--   Columns are added, removed, or reordered.
+- A cell in the row is edited through the grid (cell editor, `rowNode.setDataValue`, or any update that dispatches `cellValueChanged`).
+- The Client-Side Row Model refreshes the row (add, remove, update, reorder).
+- Columns are added, removed, or reordered.
 
 If the formula store is mutated outside the grid (for example, syncing from a backend), call `api.refreshFormulas()` to invalidate every cached formula, or `api.refreshFormulas(rowNode)` / `api.refreshFormulas(rowId)` to invalidate a single row. Changes written only to the external store are not picked up until the cache is invalidated by one of the events above or by an explicit call.
 
@@ -136,6 +136,6 @@ During a [CSV Export](./csv-export), the grid exports the evaluated values of an
 
 ## See also
 
--   [Formula Editor Component](./formula-editor-component/) – The rich editing experience for formula cells, including autocomplete and range selection tools.
--   [Formula Reference](./formula-reference/) – Full reference for operators (+, -, \*, /, ^, &, comparisons), provided functions, and errors.
--   [Custom Functions](./formula-custom-functions/) – How to register and implement custom functions for formulas.
+- [Formula Editor Component](./formula-editor-component/) – The rich editing experience for formula cells, including autocomplete and range selection tools.
+- [Formula Reference](./formula-reference/) – Full reference for operators (+, -, \*, /, ^, &, comparisons), provided functions, and errors.
+- [Custom Functions](./formula-custom-functions/) – How to register and implement custom functions for formulas.

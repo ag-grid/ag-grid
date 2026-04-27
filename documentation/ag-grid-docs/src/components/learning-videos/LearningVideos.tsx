@@ -25,7 +25,11 @@ const Video = ({ title, url, thumbnail, keyPoints, runningTime }: VideoData) => 
                     <span className={styles.title}>{title}</span>
                     <span className={styles.duration}>{runningTime}</span>
                 </div>
-                <ul>{keyPoints?.map((keyPoint: string) => <li key={keyPoint}>{keyPoint}</li>)}</ul>
+                <ul>
+                    {keyPoints?.map((keyPoint: string) => (
+                        <li key={keyPoint}>{keyPoint}</li>
+                    ))}
+                </ul>
             </div>
         </a>
     );

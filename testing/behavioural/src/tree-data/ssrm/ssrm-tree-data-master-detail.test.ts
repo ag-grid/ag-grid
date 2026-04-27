@@ -77,7 +77,7 @@ describe('ag-grid SSRM treeData with master detail', () => {
                 getRows: (params) => {
                     const parentNode = params.parentNode;
                     params.success({
-                        rowData: parentNode.parent ? parentNode.data?.children ?? [] : rowData,
+                        rowData: parentNode.parent ? (parentNode.data?.children ?? []) : rowData,
                     });
                 },
             },

@@ -102,8 +102,10 @@ export interface IErrorValidationParams<TData = any, TValue = any, TContext = an
     cellEditorParams: ICellEditorParams<TData, TValue, TContext>;
 }
 
-export interface ICellEditorParamsShared<TData = any, TValue = any, TContext = any>
-    extends AgGridCommon<TData, TContext> {
+export interface ICellEditorParamsShared<TData = any, TValue = any, TContext = any> extends AgGridCommon<
+    TData,
+    TContext
+> {
     /** Current value of the cell */
     value: TValue | null | undefined;
     /** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable
@@ -146,8 +148,11 @@ export interface ICellEditorParamsShared<TData = any, TValue = any, TContext = a
     validate(): void;
 }
 
-export interface ICellEditorParams<TData = any, TValue = any, TContext = any>
-    extends ICellEditorParamsShared<TData, TValue, TContext> {
+export interface ICellEditorParams<TData = any, TValue = any, TContext = any> extends ICellEditorParamsShared<
+    TData,
+    TValue,
+    TContext
+> {
     /** Utility function to parse a value using the column's `colDef.valueParser` */
     parseValue: (value: string) => TValue | null | undefined;
     /** Utility function to format a value using the column's `colDef.valueFormatter` */
@@ -155,8 +160,7 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any>
 }
 
 export interface ICellEditorComp<TData = any, TValue = any, TContext = any>
-    extends ICellEditor<TValue>,
-        IPopupComponent<ICellEditorParams<TData, TValue, TContext>> {}
+    extends ICellEditor<TValue>, IPopupComponent<ICellEditorParams<TData, TValue, TContext>> {}
 
 /** This is only used internally within the grid */
 export interface DefaultProvidedCellEditorParams {

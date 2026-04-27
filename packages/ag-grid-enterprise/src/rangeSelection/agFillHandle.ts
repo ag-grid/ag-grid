@@ -90,7 +90,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             rowStartIndex: rangeStartRow.rowIndex,
             rowStartPinned: rangeStartRow.rowPinned,
             columnStart: initialRange.columns[0],
-            rowEndIndex: this.dragAxis === 'x' ? initialRange.endRow?.rowIndex ?? null : lastRow.rowIndex,
+            rowEndIndex: this.dragAxis === 'x' ? (initialRange.endRow?.rowIndex ?? null) : lastRow.rowIndex,
             rowEndPinned: this.dragAxis === 'x' ? initialRange.endRow?.rowPinned : lastRow.rowPinned,
             columnEnd: this.dragAxis === 'x' ? _last(visibleCols.allCols) : _last(initialRange.columns),
         });

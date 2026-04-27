@@ -21,8 +21,8 @@ Alternatively, if you are not concerned about bundle size and you want access to
 
 The grid provides two module bundles for ease of use:
 
--   `AllCommunityModule` bundle contains all of the modules available in AG Grid Community.
--   `AllEnterpriseModule` bundle contains `AllCommunityModule` and all modules available in AG Grid Enterprise.
+- `AllCommunityModule` bundle contains all of the modules available in AG Grid Community.
+- `AllEnterpriseModule` bundle contains `AllCommunityModule` and all modules available in AG Grid Enterprise.
 
 Registering one of these bundles replicates the behaviour of the package versions of AG Grid prior to version 33:
 
@@ -223,8 +223,8 @@ Individually registering modules is most useful when you have multiple grids in 
 
 The steps required are:
 
--   Import Modules
--   Pass to Grid
+- Import Modules
+- Pass to Grid
 
 Using the same example from above (the `Client-Side Row Model` together with the `CSV`, `Excel` and `Master/Detail` features), how we register the modules is now different.
 
@@ -338,23 +338,23 @@ The following example shows how you can configure individual grids using a combi
 
 {% if isFramework("react") %}
 
--   Shared modules via `AgGridProvider`: `[ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule]`.
+- Shared modules via `AgGridProvider`: `[ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule]`.
 
 {% /if %}
 {% if isFramework("javascript", "angular", "vue") %}
 
--   Globally registered modules: `[ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule]`.
+- Globally registered modules: `[ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule]`.
 
 {% /if %}
 
--   Left Grid individually registers: `[ClipboardModule, CsvExportModule, SetFilterModule]`
--   Right Grid individually registers: `[CsvExportModule, ExcelExportModule, NumberFilterModule, TextFilterModule]`
+- Left Grid individually registers: `[ClipboardModule, CsvExportModule, SetFilterModule]`
+- Right Grid individually registers: `[CsvExportModule, ExcelExportModule, NumberFilterModule, TextFilterModule]`
 
 To see the difference in features open the context menu and open the column filter:
 
--   The left grid has options for clipboard and CSV export.
--   The right grid has options for CSV and Excel export.
--   The left grid uses the Set Filter while the right grid uses the Text Filter or Number Filter depending on the cell data type.
+- The left grid has options for clipboard and CSV export.
+- The right grid has options for CSV and Excel export.
+- The left grid uses the Set Filter while the right grid uses the Text Filter or Number Filter depending on the cell data type.
 
 {% gridExampleRunner title="Grids with Individual Registration" name="individual-registration" /%}
 

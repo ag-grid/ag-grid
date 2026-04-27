@@ -31,17 +31,17 @@ Two batch-specific events are also available:
 
 Edits made during a batch are stored as **pending values** — they are not applied to the data until committed.
 
--   **Display features** (cell rendering, copy/paste, fill handle) reflect pending values immediately.
--   **Data features** (sorting, filtering, grouping, aggregation) use committed data until the batch is committed.
--   **Clipboard paste** — pasted values during a batch are staged as pending edits rather than being written to data.
--   **On cancel**, all pending values are discarded and the grid reverts to the original data.
+- **Display features** (cell rendering, copy/paste, fill handle) reflect pending values immediately.
+- **Data features** (sorting, filtering, grouping, aggregation) use committed data until the batch is committed.
+- **Clipboard paste** — pasted values during a batch are staged as pending edits rather than being written to data.
+- **On cancel**, all pending values are discarded and the grid reverts to the original data.
 
 ## Reading Values
 
 There are two main APIs to read cell values but they differ in their default behaviour.
 
--   **`rowNode.getDataValue()`** — defaults to `from: 'data'` (ignores pending edits). Use for data-facing reads.
--   **`api.getCellValue()`** — defaults to `from: 'edit'` (shows pending edits). Use for UI-facing reads.
+- **`rowNode.getDataValue()`** — defaults to `from: 'data'` (ignores pending edits). Use for data-facing reads.
+- **`api.getCellValue()`** — defaults to `from: 'edit'` (shows pending edits). Use for UI-facing reads.
 
 ### rowNode.getDataValue()
 
@@ -59,13 +59,13 @@ The table below shows the impact of the `from` parameter on the value that is re
 
 **Aggregate Values**
 
--   **`'value'`** — same as `'data'`, but unwraps the aggregation result returned by `avg` and `count` to its scalar value.
--   **`'data-raw'`** — same as `'data'` but skips aggregation results (`rowNode.aggData`). For group rows the valueGetter or field value is returned instead, which is typically `undefined` since group rows do not hold leaf data.
+- **`'value'`** — same as `'data'`, but unwraps the aggregation result returned by `avg` and `count` to its scalar value.
+- **`'data-raw'`** — same as `'data'` but skips aggregation results (`rowNode.aggData`). For group rows the valueGetter or field value is returned instead, which is typically `undefined` since group rows do not hold leaf data.
 
 **Formula Cells (`allowFormula: true`)**
 
--   **`'data'` / `'value'`** — return the computed result.
--   **`'edit'` / `'batch'` / `'data-raw'`** — return the raw formula string (e.g. `"=A1*2"`).
+- **`'data'` / `'value'`** — return the computed result.
+- **`'edit'` / `'batch'` / `'data-raw'`** — return the raw formula string (e.g. `"=A1*2"`).
 
 ### Example getDataValue()
 
@@ -204,9 +204,9 @@ Pending edit styles can be overridden using CSS, via the `.ag-cell-batch-edit` a
 
 The following example shows the custom batch styling:
 
--   A batch is started automatically via `api.startBatchEdit()`
--   Two rows have data updated via `rowNode.setDataValue()`
--   Note how the styles are removed when the batch is committed or reverted
+- A batch is started automatically via `api.startBatchEdit()`
+- Two rows have data updated via `rowNode.setDataValue()`
+- Note how the styles are removed when the batch is committed or reverted
 
 {% gridExampleRunner title="Batch Editing Styles" name="batch-editing-styles" exampleHeight=560 /%}
 

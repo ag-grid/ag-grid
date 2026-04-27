@@ -18,9 +18,9 @@ this page focuses on areas that are of particular interest to this Server-Side v
 
 To enable Master / Detail, you should set the following grid options:
 
--   **masterDetail:** Set to `true` to inform the grid you want to allow expanding of rows to reveal detail grids.
--   **detailGridOptions:** The grid options to set for the detail grid. The detail grid is a fully featured instance of AG Grid, so any configuration can be set on it that you would set on any other grid.
--   **getDetailRowData:** A function you implement to provide the grid with rows for display in the detail grids.
+- **masterDetail:** Set to `true` to inform the grid you want to allow expanding of rows to reveal detail grids.
+- **detailGridOptions:** The grid options to set for the detail grid. The detail grid is a fully featured instance of AG Grid, so any configuration can be set on it that you would set on any other grid.
+- **getDetailRowData:** A function you implement to provide the grid with rows for display in the detail grids.
 
 These grid options are illustrated below:
 
@@ -56,9 +56,9 @@ Note that the nested detail grid can be configured to use any Row Model.
 
 This example shows a simple Master / Detail with the Server-Side Row Model. From this example notice the following:
 
--   **masterDetail** - is set to `true` in the master grid options.
--   **detailCellRendererParams** - specifies the `detailGridOptions` to use and `getDetailRowData` extracts the data for the detail row.
--   **cellRenderer: 'agGroupCellRenderer'** - is used to provide expand / collapse icons on the master rows.
+- **masterDetail** - is set to `true` in the master grid options.
+- **detailCellRendererParams** - specifies the `detailGridOptions` to use and `getDetailRowData` extracts the data for the detail row.
+- **cellRenderer: 'agGroupCellRenderer'** - is used to provide expand / collapse icons on the master rows.
 
 {% gridExampleRunner title="Infinite Scrolling with Master / Detail" name="infinite-scrolling"  exampleHeight=590 /%}
 
@@ -82,10 +82,10 @@ const gridOptions = {
 
 Below shows Row Grouping combined with Master / Detail. From the example you can notice the following:
 
--   **rowGroup** - is set to `true` on the 'country' column definition.
--   **masterDetail** - is set to `true` to enable Master / Detail.
--   **detailCellRendererParams** - specifies the `detailGridOptions` to use and `getDetailRowData` extracts the data for the detail row.
--   **autoGroupColumnDef** - is used to specify which column in the master row should be included in the group hierarchy.
+- **rowGroup** - is set to `true` on the 'country' column definition.
+- **masterDetail** - is set to `true` to enable Master / Detail.
+- **detailCellRendererParams** - specifies the `detailGridOptions` to use and `getDetailRowData` extracts the data for the detail row.
+- **autoGroupColumnDef** - is used to specify which column in the master row should be included in the group hierarchy.
 
 {% gridExampleRunner title="Row Grouping with Master Detail" name="row-grouping"  exampleHeight=590 /%}
 
@@ -123,8 +123,8 @@ This allows to display hierarchical (tree-structured) data, where each master ro
 
 To enable this, set both `treeData: true` and `masterDetail: true` in your grid options. You will also need to provide the required callbacks for tree data:
 
--   **isServerSideGroup(dataItem):** Returns `true` if the row is a group (has children).
--   **getServerSideGroupKey(dataItem):** Returns the key for the group node (e.g., an ID).
+- **isServerSideGroup(dataItem):** Returns `true` if the row is a group (has children).
+- **getServerSideGroupKey(dataItem):** Returns the key for the group node (e.g., an ID).
 
 The detail grid is configured using `detailCellRendererParams`, just as in other Master Detail scenarios.
 
@@ -215,8 +215,8 @@ If you are using dynamic row height, ensure `maxBlocksInCache` is not set.
 
 The following example explicitly sets detail row heights based on the number of detail rows. Note the following:
 
--   **getRowHeight()** - is implemented to size detail rows according to the number of records.
--   **node.detail** - is used to identify 'detail' row nodes.
+- **getRowHeight()** - is implemented to size detail rows according to the number of records.
+- **node.detail** - is used to identify 'detail' row nodes.
 
 {% gridExampleRunner title="Dynamic Detail Row Height" name="dynamic-detail-row-height"  exampleHeight=590 /%}
 

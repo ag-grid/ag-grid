@@ -101,7 +101,7 @@ export class GridRows<TData = any> {
     }
 
     public getIndexInRowNodes(row: IRowNode<TData> | null | undefined): number {
-        return row ? (this.#indexMap ??= this.#makeIndexMap()).get(row) ?? -1 : -1;
+        return row ? ((this.#indexMap ??= this.#makeIndexMap()).get(row) ?? -1) : -1;
     }
 
     public isDuplicateIdRow(row: IRowNode<TData> | null | undefined): boolean {

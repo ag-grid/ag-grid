@@ -12,8 +12,9 @@ import type { AgInputFieldParams } from './agFieldParams';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface AgInputTextFieldParams<TComponentSelectorType extends string>
-    extends AgInputFieldParams<TComponentSelectorType> {
+export interface AgInputTextFieldParams<
+    TComponentSelectorType extends string,
+> extends AgInputFieldParams<TComponentSelectorType> {
     allowedCharPattern?: string;
 }
 export type AgInputTextFieldEvent = AgAbstractInputFieldEvent;

@@ -9,15 +9,15 @@ This section describes how changing data through [Cell Editing](./cell-editing/)
 
 Row / Cell updates refers to any of the following:
 
--   All edits via the grid's UI such as [Cell Editing](./cell-editing/) and [Clipboard Operations](./clipboard/).
--   Using the grid's [Single Row / Cell Update API](./data-update-single-row-cell/) i.e. `rowNode.setData(data)` and `rowNode.setDataValue(col,value)` API methods.
+- All edits via the grid's UI such as [Cell Editing](./cell-editing/) and [Clipboard Operations](./clipboard/).
+- Using the grid's [Single Row / Cell Update API](./data-update-single-row-cell/) i.e. `rowNode.setData(data)` and `rowNode.setDataValue(col,value)` API methods.
 
 Filter Values will be refreshed when data is updated through any of these methods.
 
 Here are the rules that determine how Filter Values are selected:
 
--   **Filter Inactive**: Before the update 'all' values in the filter were selected (as the filter was inactive). The filter list will be updated reflecting the data change and all values will remain selected leaving the filter inactive
--   **Filter Active**: Before the update 'some' values in the filter were selected (as the filter was active). The filter list will be updated reflecting the data change, however previous selections will remain intact as long as the filter value still exists after any transaction(s). If the update resulted in a new filter value, the new filter value will not be selected.
+- **Filter Inactive**: Before the update 'all' values in the filter were selected (as the filter was inactive). The filter list will be updated reflecting the data change and all values will remain selected leaving the filter inactive
+- **Filter Active**: Before the update 'some' values in the filter were selected (as the filter was active). The filter list will be updated reflecting the data change, however previous selections will remain intact as long as the filter value still exists after any transaction(s). If the update resulted in a new filter value, the new filter value will not be selected.
 
 Cell editing does not re-execute filtering by default, so the row will not be filtered out even though the value in the cell is not selected in the filter. This default behaviour mimics how Excel works.
 
@@ -38,12 +38,12 @@ The following example demonstrates Cell Editing with the Set Filter. Try the fol
 
 **Without selecting any Filter Values:**
 
--   Change (Cell Edit) a `'B'` cell value to `'X'` and note it gets added to the filter list and is **selected**.
+- Change (Cell Edit) a `'B'` cell value to `'X'` and note it gets added to the filter list and is **selected**.
 
 **Click 'Reset' and deselect 'C' in the Filter List:**
 
--   Change (Cell Edit) a `'B'` cell value to `'X'` and notice it gets added to the Filter List but it is **not selected**.
--   Note that although `'X'` is not selected in the filter the row still appears in the grid. This is because grid filtering is not triggered for cell edits.
+- Change (Cell Edit) a `'B'` cell value to `'X'` and notice it gets added to the Filter List but it is **not selected**.
+- Note that although `'X'` is not selected in the filter the row still appears in the grid. This is because grid filtering is not triggered for cell edits.
 
 {% gridExampleRunner title="Cell Editing Updates" name="cell-editing-updates"  exampleHeight=480 /%}
 
@@ -51,17 +51,17 @@ The following example demonstrates Cell Editing with the Set Filter. Try the fol
 
 Transaction Updates refers to any of the following:
 
--   Updating data via [Transactions](./data-update-transactions/) API.
--   Updating data via [Async Transactions](./data-update-high-frequency/) API.
--   Changes to Row Data and providing [Row ID](./row-ids/) (as this uses Transactions underneath the hood).
+- Updating data via [Transactions](./data-update-transactions/) API.
+- Updating data via [Async Transactions](./data-update-high-frequency/) API.
+- Changes to Row Data and providing [Row ID](./row-ids/) (as this uses Transactions underneath the hood).
 
 Filter values are refreshed when data is updated using any of these methods.
 
 Here are the rules that determine how filter values are selected:
 
--   **Filter Inactive**: Before the update 'all' values in the filter were selected (as the filter was inactive). The filter list will be updated reflecting the data change and all values will remain selected leaving the filter inactive.
+- **Filter Inactive**: Before the update 'all' values in the filter were selected (as the filter was inactive). The filter list will be updated reflecting the data change and all values will remain selected leaving the filter inactive.
 
--   **Filter Active**: Before the update 'some' values in the filter were selected (as the filter was active). The filter list will be updated reflecting the data change, however previous selections will remain intact as long as the filter value still exists after any transaction(s). If the update resulted in a new filter value, the new filter value will not be selected.
+- **Filter Active**: Before the update 'some' values in the filter were selected (as the filter was active). The filter list will be updated reflecting the data change, however previous selections will remain intact as long as the filter value still exists after any transaction(s). If the update resulted in a new filter value, the new filter value will not be selected.
 
 Unlike [Cell Editing](#row--cell-updates), transaction updates will execute filtering in the grid.
 
@@ -69,14 +69,14 @@ The following example demonstrates these rules. Try the following:
 
 **Without selecting any filter values:**
 
--   Click **Update First Displayed Row**: this calls `api.applyTransaction()` and updates the value in the first row. Note `'AX'` now appears in the filter list and is **selected**.
--   Click **Add New 'D' Row**: this calls `api.applyTransaction()` and adds a new row to the grid. Note `'D'` has been added to the filter list and is **selected**.
+- Click **Update First Displayed Row**: this calls `api.applyTransaction()` and updates the value in the first row. Note `'AX'` now appears in the filter list and is **selected**.
+- Click **Add New 'D' Row**: this calls `api.applyTransaction()` and adds a new row to the grid. Note `'D'` has been added to the filter list and is **selected**.
 
 **Click 'Reset' and deselect 'C' in the Filter List:**
 
--   Click **Update First Displayed Row**: this calls `api.applyTransaction()` and updates the value in the first row. Note `'AX'` now appears in the filter list and is **not selected**.
--   Note that as `'AX'` is unselected in the filter list it has also been filtered out of the grid. This is because transaction updates also triggers grid filtering.
--   Click **Add New 'D' Row**: this calls `api.applyTransaction()` and adds a new row to the grid. Note `'D'` has been added to the filter list and is **not selected**.
+- Click **Update First Displayed Row**: this calls `api.applyTransaction()` and updates the value in the first row. Note `'AX'` now appears in the filter list and is **not selected**.
+- Note that as `'AX'` is unselected in the filter list it has also been filtered out of the grid. This is because transaction updates also triggers grid filtering.
+- Click **Add New 'D' Row**: this calls `api.applyTransaction()` and adds a new row to the grid. Note `'D'` has been added to the filter list and is **not selected**.
 
 {% gridExampleRunner title="Transaction Updates" name="transaction-updates"  exampleHeight=480 /%}
 
@@ -86,13 +86,13 @@ When `api.setGridOption('rowData', data)` is called existing filter selections a
 
 The following example demonstrates how `api.setGridOption('rowData', data)` affects filter selections. Try the following:
 
--   Deselect value 'A' from the set filter list and click the **Apply Data Update 1** button which calls `api.setGridOption('rowData', newData)` to add new data with extra rows to the grid.
+- Deselect value 'A' from the set filter list and click the **Apply Data Update 1** button which calls `api.setGridOption('rowData', newData)` to add new data with extra rows to the grid.
 
--   Notice 'A' remains deselected after new data is supplied to the grid.
+- Notice 'A' remains deselected after new data is supplied to the grid.
 
--   Clicking **Reset** invokes `api.setGridOption('rowData', origData)` to restore the original data but also clears any selections using `api.setFilterModel(null)`.
+- Clicking **Reset** invokes `api.setGridOption('rowData', origData)` to restore the original data but also clears any selections using `api.setFilterModel(null)`.
 
--   Apply the filters so only 'B' is selected and click **Apply Data Update 1**. Notice how 'B' is no longer a filter value and therefore no longer in the filter list.
-    Click **Apply Data Update 2** and notice how 'B' returns to the filter list but remains unselected.
+- Apply the filters so only 'B' is selected and click **Apply Data Update 1**. Notice how 'B' is no longer a filter value and therefore no longer in the filter list.
+  Click **Apply Data Update 2** and notice how 'B' returns to the filter list but remains unselected.
 
 {% gridExampleRunner title="Setting New Data" name="setting-new-data"  exampleHeight=500 /%}

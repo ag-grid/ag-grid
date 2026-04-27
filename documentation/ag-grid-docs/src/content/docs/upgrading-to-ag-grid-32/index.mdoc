@@ -66,15 +66,15 @@ This release includes the following deprecations:
 
 The following interfaces are deprecated and replaced with the equivalent interface suffixed with Event:
 
--   `ChartCreated`, use `ChartCreatedEvent` instead.
+- `ChartCreated`, use `ChartCreatedEvent` instead.
 
--   `ChartRangeSelectionChanged` deprecated, use `ChartRangeSelectionChangedEvent` instead.
+- `ChartRangeSelectionChanged` deprecated, use `ChartRangeSelectionChangedEvent` instead.
 
--   `ChartOptionsChanged` deprecated, use `ChartOptionsChangedEvent` instead.
+- `ChartOptionsChanged` deprecated, use `ChartOptionsChangedEvent` instead.
 
--   `ChartDestroyed` deprecated, use `ChartDestroyedEvent` instead.
+- `ChartDestroyed` deprecated, use `ChartDestroyedEvent` instead.
 
--   `AsyncTransactionsFlushed` deprecated, use `AsyncTransactionsFlushedEvent` instead.
+- `AsyncTransactionsFlushed` deprecated, use `AsyncTransactionsFlushedEvent` instead.
 
 ### GridOptions
 
@@ -119,132 +119,132 @@ The floating property has been removed from `CellFocusedEvent`. Use `rowPinned` 
 
 ### GridOptions
 
--   `suppressParentsInRowNode` removed without replacement.
--   `enterMovesDown` removed, use `enterNavigatesVertically` instead.
--   `enterMovesDownAfterEdit` removed, use `enterNavigatesVerticallyAfterEdit` instead.
--   `excludeHiddenColumnsFromQuickFilter` removed, use `includeHiddenColumnsInQuickFilter` instead.
--   `suppressAggAtRootLevel` removed, use `alwaysAggregateAtRootLevel` instead.
--   `serverSideFilterAllLevels` removed, use `serverSideOnlyRefreshFilteredGroups` instead.
--   `enableChartToolPanelsButton` removed, use `suppressChartToolPanelsButton` instead.
--   `functionsPassive` removed without replacement.
--   `onColumnRowGroupChangeRequest` removed without replacement.
--   `onColumnPivotChangeRequest` removed without replacement.
--   `onColumnValueChangeRequest` removed without replacement.
--   `onColumnAggFuncChangeRequest` removed without replacement.
+- `suppressParentsInRowNode` removed without replacement.
+- `enterMovesDown` removed, use `enterNavigatesVertically` instead.
+- `enterMovesDownAfterEdit` removed, use `enterNavigatesVerticallyAfterEdit` instead.
+- `excludeHiddenColumnsFromQuickFilter` removed, use `includeHiddenColumnsInQuickFilter` instead.
+- `suppressAggAtRootLevel` removed, use `alwaysAggregateAtRootLevel` instead.
+- `serverSideFilterAllLevels` removed, use `serverSideOnlyRefreshFilteredGroups` instead.
+- `enableChartToolPanelsButton` removed, use `suppressChartToolPanelsButton` instead.
+- `functionsPassive` removed without replacement.
+- `onColumnRowGroupChangeRequest` removed without replacement.
+- `onColumnPivotChangeRequest` removed without replacement.
+- `onColumnValueChangeRequest` removed without replacement.
+- `onColumnAggFuncChangeRequest` removed without replacement.
 
 ### Grid API
 
 The Grid API methods listed below have been removed. Please use Grid API methods `setGridOption` and `updateGridOptions` to set properties instead.
 
--   `setPivotMode`
--   `setPinnedTopRowData`
--   `setPinnedBottomRowData`
--   `setPopupParent`
--   `setSuppressModelUpdateAfterUpdateTransaction`
--   `setDataTypeDefinitions`
--   `setPagination`
--   `paginationSetPageSize`
--   `setSideBar`
--   `setSuppressClipboardPaste`
--   `setGroupRemoveSingleChildren`
--   `setGroupRemoveLowestSingleChildren`
--   `setGroupDisplayType`
--   `setGroupIncludeFooter`
--   `setGroupIncludeTotalFooter`
--   `setRowClass`
--   `setDeltaSort`
--   `setSuppressRowDrag`
--   `setSuppressMoveWhenRowDragging`
--   `setSuppressRowClickSelection`
--   `setEnableAdvancedFilter`
--   `setIncludeHiddenColumnsInAdvancedFilter`
--   `setAdvancedFilterParent`
--   `setAdvancedFilterBuilderParams`
--   `setQuickFilter`
--   `setExcludeHiddenColumnsFromQuickFilter`
--   `setIncludeHiddenColumnsInQuickFilter`
--   `setQuickFilterParser`
--   `setQuickFilterMatcher`
--   `setAlwaysShowHorizontalScroll`
--   `setAlwaysShowVerticalScroll`
--   `setFunctionsReadOnly`
--   `setColumnDefs`
--   `setAutoGroupColumnDef`
--   `setDefaultColDef`
--   `setColumnTypes`
--   `setTreeData`
--   `setServerSideDatasource`
--   `setCacheBlockSize`
--   `setDatasource`
--   `setViewportDatasource`
--   `setRowData`
--   `setEnableCellTextSelection`
--   `setHeaderHeight`
--   `setDomLayout`
--   `setFillHandleDirection`
--   `setGroupHeaderHeight`
--   `setFloatingFiltersHeight`
--   `setPivotHeaderHeight`
--   `setPivotGroupHeaderHeight`
--   `setAnimateRows`
--   `setIsExternalFilterPresent`
--   `setDoesExternalFilterPass`
--   `setNavigateToNextCell`
--   `setTabToNextCell`
--   `setTabToNextHeader`
--   `setNavigateToNextHeader`
--   `setRowGroupPanelShow`
--   `setGetGroupRowAgg`
--   `setGetBusinessKeyForNode`
--   `setGetChildCount`
--   `setProcessRowPostCreate`
--   `setGetRowId`
--   `setGetRowClass`
--   `setIsFullWidthRow`
--   `setIsRowSelectable`
--   `setIsRowMaster`
--   `setPostSortRows`
--   `setGetDocument`
--   `setGetContextMenuItems`
--   `setGetMainMenuItems`
--   `setProcessCellForClipboard`
--   `setSendToClipboard`
--   `setProcessCellFromClipboard`
--   `setProcessPivotResultColDef`
--   `setProcessPivotResultColGroupDef`
--   `setPostProcessPopup`
--   `setInitialGroupOrderComparator`
--   `setGetChartToolbarItems`
--   `setPaginationNumberFormatter`
--   `setGetServerSideGroupLevelParams`
--   `setIsServerSideGroupOpenByDefault`
--   `setIsApplyServerSideTransaction`
--   `setIsServerSideGroup`
--   `setGetServerSideGroupKey`
--   `setGetRowStyle`
--   `setGetRowHeight`
+- `setPivotMode`
+- `setPinnedTopRowData`
+- `setPinnedBottomRowData`
+- `setPopupParent`
+- `setSuppressModelUpdateAfterUpdateTransaction`
+- `setDataTypeDefinitions`
+- `setPagination`
+- `paginationSetPageSize`
+- `setSideBar`
+- `setSuppressClipboardPaste`
+- `setGroupRemoveSingleChildren`
+- `setGroupRemoveLowestSingleChildren`
+- `setGroupDisplayType`
+- `setGroupIncludeFooter`
+- `setGroupIncludeTotalFooter`
+- `setRowClass`
+- `setDeltaSort`
+- `setSuppressRowDrag`
+- `setSuppressMoveWhenRowDragging`
+- `setSuppressRowClickSelection`
+- `setEnableAdvancedFilter`
+- `setIncludeHiddenColumnsInAdvancedFilter`
+- `setAdvancedFilterParent`
+- `setAdvancedFilterBuilderParams`
+- `setQuickFilter`
+- `setExcludeHiddenColumnsFromQuickFilter`
+- `setIncludeHiddenColumnsInQuickFilter`
+- `setQuickFilterParser`
+- `setQuickFilterMatcher`
+- `setAlwaysShowHorizontalScroll`
+- `setAlwaysShowVerticalScroll`
+- `setFunctionsReadOnly`
+- `setColumnDefs`
+- `setAutoGroupColumnDef`
+- `setDefaultColDef`
+- `setColumnTypes`
+- `setTreeData`
+- `setServerSideDatasource`
+- `setCacheBlockSize`
+- `setDatasource`
+- `setViewportDatasource`
+- `setRowData`
+- `setEnableCellTextSelection`
+- `setHeaderHeight`
+- `setDomLayout`
+- `setFillHandleDirection`
+- `setGroupHeaderHeight`
+- `setFloatingFiltersHeight`
+- `setPivotHeaderHeight`
+- `setPivotGroupHeaderHeight`
+- `setAnimateRows`
+- `setIsExternalFilterPresent`
+- `setDoesExternalFilterPass`
+- `setNavigateToNextCell`
+- `setTabToNextCell`
+- `setTabToNextHeader`
+- `setNavigateToNextHeader`
+- `setRowGroupPanelShow`
+- `setGetGroupRowAgg`
+- `setGetBusinessKeyForNode`
+- `setGetChildCount`
+- `setProcessRowPostCreate`
+- `setGetRowId`
+- `setGetRowClass`
+- `setIsFullWidthRow`
+- `setIsRowSelectable`
+- `setIsRowMaster`
+- `setPostSortRows`
+- `setGetDocument`
+- `setGetContextMenuItems`
+- `setGetMainMenuItems`
+- `setProcessCellForClipboard`
+- `setSendToClipboard`
+- `setProcessCellFromClipboard`
+- `setProcessPivotResultColDef`
+- `setProcessPivotResultColGroupDef`
+- `setPostProcessPopup`
+- `setInitialGroupOrderComparator`
+- `setGetChartToolbarItems`
+- `setPaginationNumberFormatter`
+- `setGetServerSideGroupLevelParams`
+- `setIsServerSideGroupOpenByDefault`
+- `setIsApplyServerSideTransaction`
+- `setIsServerSideGroup`
+- `setGetServerSideGroupKey`
+- `setGetRowStyle`
+- `setGetRowHeight`
 
 ### Integrated Charts
 
--   Refer to [Upgrade to AG Charts 10](https://www.ag-grid.com/charts/javascript/upgrade-to-ag-charts-10/) for behaviour and breaking changes.
+- Refer to [Upgrade to AG Charts 10](https://www.ag-grid.com/charts/javascript/upgrade-to-ag-charts-10/) for behaviour and breaking changes.
 
--   The Integrated Charts Tool Panels button has been replaced with the new Chart Menu, from which the Chart Tool Panels can be launched (via the "Edit Chart" menu item).
+- The Integrated Charts Tool Panels button has been replaced with the new Chart Menu, from which the Chart Tool Panels can be launched (via the "Edit Chart" menu item).
 
--   The grid option `suppressChartToolPanelsButton` and the legacy hamburger menu for Integrated Charts have been removed and replaced with the new Chart Menu. As a result, the `getChartToolbarItems` grid option now uses the type `ChartToolbarMenuItemOptions` instead of `ChartMenuOptions`. The `ChartMenuOptions` type has been removed.
+- The grid option `suppressChartToolPanelsButton` and the legacy hamburger menu for Integrated Charts have been removed and replaced with the new Chart Menu. As a result, the `getChartToolbarItems` grid option now uses the type `ChartToolbarMenuItemOptions` instead of `ChartMenuOptions`. The `ChartMenuOptions` type has been removed.
 
--   Double click to edit has been removed for Integrated Chart titles. Titles can now be edited via the Chart Tool Panels.
+- Double click to edit has been removed for Integrated Chart titles. Titles can now be edited via the Chart Tool Panels.
 
 ### Interfaces
 
--   `ChangeDetectionStategyType` removed without replacement.
--   `ICellRendererParams.rowIndex` removed, used `ICellRendererParams.node.rowIndex` instead.
--   `Column`, `ColumnGroup` and `ProvidedColumnGroup` are now interfaces instead of classes. Some public methods that were part of the internal grid API were previously exposed on the classes, but are not exposed on the interfaces.
--   The `IProvidedColumn` interface has been removed in favour of `Column | ProvidedColumnGroup`. The `IHeaderColumn` interfaces has been removed in favour of `Column | ColumnGroup`. If previously using `instanceof` to differentiate, it is now possible to check the `isColumn` property, which can be used as a type differentiator.
+- `ChangeDetectionStategyType` removed without replacement.
+- `ICellRendererParams.rowIndex` removed, used `ICellRendererParams.node.rowIndex` instead.
+- `Column`, `ColumnGroup` and `ProvidedColumnGroup` are now interfaces instead of classes. Some public methods that were part of the internal grid API were previously exposed on the classes, but are not exposed on the interfaces.
+- The `IProvidedColumn` interface has been removed in favour of `Column | ProvidedColumnGroup`. The `IHeaderColumn` interfaces has been removed in favour of `Column | ColumnGroup`. If previously using `instanceof` to differentiate, it is now possible to check the `isColumn` property, which can be used as a type differentiator.
 
 ### Keyboard Navigation
 
--   Pressing the {% kbd "⇥ Tab" /%} key when focusing on a set filter list item or a column's tool panel list item takes focus out of the list. Navigating inside the list is possible with {% kbd "↑" /%}/{% kbd "↓" /%} Arrow keys.
--   The column menu is now opened by the {% kbd "⌥ Alt" /%}+{% kbd "↓" /%} keyboard combination, with the column filter opened by {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%}.
+- Pressing the {% kbd "⇥ Tab" /%} key when focusing on a set filter list item or a column's tool panel list item takes focus out of the list. Navigating inside the list is possible with {% kbd "↑" /%}/{% kbd "↓" /%} Arrow keys.
+- The column menu is now opened by the {% kbd "⌥ Alt" /%}+{% kbd "↓" /%} keyboard combination, with the column filter opened by {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%}.
 
 ### Localisation
 
@@ -266,10 +266,10 @@ Header and grid cells text wrapping uses `word-break:'break-word'` mode instead 
 
 ### Vue
 
--   Vue 2 is no longer supported. Please upgrade to Vue 3.
+- Vue 2 is no longer supported. Please upgrade to Vue 3.
 
--   Storing the grid API in a `ref` is no longer supported. It must instead be stored in a `shallowRef`.
+- Storing the grid API in a `ref` is no longer supported. It must instead be stored in a `shallowRef`.
 
--   `auto-params-refresh` / `autoParamsRefresh` removed.
+- `auto-params-refresh` / `autoParamsRefresh` removed.
 
 {% /if %}

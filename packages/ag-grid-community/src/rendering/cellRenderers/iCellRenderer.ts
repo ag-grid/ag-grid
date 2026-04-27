@@ -99,8 +99,10 @@ export interface EventCellRendererParams<TData = any, TValue = any, TContext = a
     suppressMouseEventHandling?: (params: SuppressMouseEventHandlingParams<TData, TValue, TContext>) => boolean;
 }
 
-export interface SuppressMouseEventHandlingParams<TData = any, TValue = any, TContext = any>
-    extends AgGridCommon<TData, TContext> {
+export interface SuppressMouseEventHandlingParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<
+    TData,
+    TContext
+> {
     /** Row node that the event was on. */
     node: IRowNode<TData>;
     /** Column that the event was on, or `undefined` for full width rows. */

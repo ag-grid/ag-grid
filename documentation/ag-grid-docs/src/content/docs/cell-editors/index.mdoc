@@ -98,9 +98,9 @@ cellEditorSelector: params => {
 
 Here is a full example:
 
--   The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
--   `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
--   Edit a cell by double clicking to observe the different editors used.
+- The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
+- `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
+- Edit a cell by double clicking to observe the different editors used.
 
 {% gridExampleRunner title="Dynamic Editor Component" name="dynamic-editor-component"  exampleHeight=450 /%}
 
@@ -137,10 +137,10 @@ cellEditorParams: params => {
 
 Below shows an example with dynamic props. The following can be noted:
 
--   Column **Gender** uses a Cell Component for both the grid and the editor.
--   Column **Country** allows country selection, with `cellHeight` being used to make each entry 50px tall. If the currently selected city for the row doesn't match a newly selected country, the city cell is cleared.
--   Column **City** uses dynamic parameters to display values for the selected country, and uses `formatValue` to add the selected city's country as a suffix.
--   Column **Address** uses the large text area editor.
+- Column **Gender** uses a Cell Component for both the grid and the editor.
+- Column **Country** allows country selection, with `cellHeight` being used to make each entry 50px tall. If the currently selected city for the row doesn't match a newly selected country, the city cell is cleared.
+- Column **City** uses dynamic parameters to display values for the selected country, and uses `formatValue` to add the selected city's country as a suffix.
+- Column **Address** uses the large text area editor.
 
 {% gridExampleRunner title="Dynamic Parameters" name="dynamic-parameters"  exampleHeight=520 /%}
 
@@ -271,10 +271,10 @@ if (instances.length > 0) {
 
 The example below shows using `getCellEditorInstances`. The following can be noted:
 
--   All cells are editable.
--   **First Name** and **Last Name** use the default editor.
--   All other columns use the provided `MySimpleCellEditor` editor.
--   The example sets an interval to print information from the active cell editor. There are three results: 1) No editing 2) Editing with default cell renderer and 3) editing with the custom cell editor. All results are printed to the developer console.
+- All cells are editable.
+- **First Name** and **Last Name** use the default editor.
+- All other columns use the provided `MySimpleCellEditor` editor.
+- The example sets an interval to print information from the active cell editor. There are three results: 1) No editing 2) Editing with default cell renderer and 3) editing with the custom cell editor. All results are printed to the developer console.
 
 {% gridExampleRunner title="Get Editor Instance" name="get-editor-instance" /%}
 

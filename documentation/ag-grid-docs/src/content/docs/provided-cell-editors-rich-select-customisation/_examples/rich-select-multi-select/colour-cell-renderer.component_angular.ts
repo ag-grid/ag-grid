@@ -15,7 +15,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
                     [ngStyle]="{
                         'background-color': backgroundColor(),
                         'border-color': value,
-                        'box-shadow': boxShadow()
+                        'box-shadow': boxShadow(),
                     }"
                     >{{ value }}</span
                 >

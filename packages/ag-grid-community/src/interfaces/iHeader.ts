@@ -95,5 +95,5 @@ export interface IInnerHeaderComponent<
     TData = any,
     TContext = any,
     TParams extends Readonly<IHeaderParams<TData, TContext>> = IHeaderParams<TData, TContext>,
-> extends IComponent<TParams>,
-        IHeader {}
+>
+    extends IComponent<TParams>, IHeader {}

@@ -1,8 +1,10 @@
 import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { AgGridCommon } from './iCommon';
 
-export interface ICellEditorRendererParams<TValue = any, TData = any, TContext = any>
-    extends AgGridCommon<TData, TContext> {
+export interface ICellEditorRendererParams<TValue = any, TData = any, TContext = any> extends AgGridCommon<
+    TData,
+    TContext
+> {
     /** The value to be rendered by the renderer */
     value: TValue[] | TValue | null;
     /** The value to be renderer by the renderer formatted by the editor */

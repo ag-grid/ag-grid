@@ -25,9 +25,9 @@ documentation/ag-grid-docs/src/content/docs/
 
 ## Language Conventions
 
--   **Documentation text**: UK/British English (e.g., "colour", "behaviour")
--   **API option names**: US English (e.g., "color", "behavior")
--   **Comments and JSDocs**: UK/British English
+- **Documentation text**: UK/British English (e.g., "colour", "behaviour")
+- **API option names**: US English (e.g., "color", "behavior")
+- **Comments and JSDocs**: UK/British English
 
 ## Creating New Pages
 

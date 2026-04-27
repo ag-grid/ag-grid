@@ -261,13 +261,12 @@ export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFu
 
 export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 
-interface CoreBeanCollection
-    extends AgCoreBeanCollection<
-        GridOptionsWithDefaults,
-        AgEventTypeParams,
-        AgGridCommon<any, any>,
-        GridOptionsService
-    > {
+interface CoreBeanCollection extends AgCoreBeanCollection<
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AgGridCommon<any, any>,
+    GridOptionsService
+> {
     pageBoundsListener: PageBoundsListener;
     environment: Environment;
     rowRenderer: RowRenderer;

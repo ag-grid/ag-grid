@@ -20,16 +20,15 @@ const MenuItemComponentType: ComponentType<IMenuItemComp> = {
     optionalMethods: ['setActive', 'select', 'setExpanded', 'configureDefaults'],
 };
 
-export interface MenuItemActivatedEvent
-    extends AgMenuItemActivatedEvent<
-        BeanCollection,
-        GridOptionsWithDefaults,
-        AgEventTypeParams,
-        AgGridCommon<any, any>,
-        GridOptionsService,
-        AgComponentSelectorType,
-        IMenuActionParams
-    > {}
+export interface MenuItemActivatedEvent extends AgMenuItemActivatedEvent<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AgGridCommon<any, any>,
+    GridOptionsService,
+    AgComponentSelectorType,
+    IMenuActionParams
+> {}
 
 export const MENU_ITEM_CALLBACKS: AgMenuItemCallbacks<BeanCollection, IMenuActionParams, AgGridCommon<any, any>> = {
     getMenuItemComp: (beans, def, params) => {

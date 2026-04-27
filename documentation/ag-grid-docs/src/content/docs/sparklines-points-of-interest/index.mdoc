@@ -7,9 +7,9 @@ This section covers customisation of Sparkline Points of Interest.
 
 Some data points in the sparklines are special and can be emphasised to allow for quick identification and comparisons across the values of a single sparkline or across multiple sparklines of the same type. These include:
 
--   First and Last
--   Minimum and Maximum
--   Positive and Negative
+- First and Last
+- Minimum and Maximum
+- Positive and Negative
 
 {% flex justifyContent="center" %}
 {% imageCaption imagePath="resources/line-sparkline.png" alt="Line sparkline" constrained=true width="250px" enableDarkModeFilter=true %}
@@ -25,14 +25,14 @@ Negative and positive
 
 These special points can be customised via the `styler` callback function to make them stand out from the rest of the data points which are using the global styles.
 
--   The styler is a callback function used to return formatting for individual data points based on the given parameters.
--   The styler receives an input parameter according to the sparkline type.
+- The styler is a callback function used to return formatting for individual data points based on the given parameters.
+- The styler receives an input parameter according to the sparkline type.
 
 Below are some examples demonstrating the different formatters for the three sparkline types:
 
--   [Line and Area Sparklines Points of Interest](./sparklines-points-of-interest/#line-and-area-sparklines-points-of-interest)
--   [Column and Bar Sparklines Points of Interest](./sparklines-points-of-interest/#column-and-bar-sparklines-points-of-interest)
--   [Full Example](./sparklines-points-of-interest/#example-points-of-interest)
+- [Line and Area Sparklines Points of Interest](./sparklines-points-of-interest/#line-and-area-sparklines-points-of-interest)
+- [Column and Bar Sparklines Points of Interest](./sparklines-points-of-interest/#column-and-bar-sparklines-points-of-interest)
+- [Full Example](./sparklines-points-of-interest/#example-points-of-interest)
 
 ## Line and Area Sparklines Points of Interest
 
@@ -51,16 +51,16 @@ The `itemStyler` callback function will receive an input parameter of type [`AgS
 
 The function return type should be [`AgSeriesMarkerStyle`](./sparklines-api-sparkline-options/#sparkline-item-styler), allowing the following attributes to be customised:
 
--   size
--   fill
--   stroke
--   strokeWidth
+- size
+- fill
+- stroke
+- strokeWidth
 
 The following sections outline how the attributes mentioned above can be customised for various special points of interest:
 
--   [First and Last](./sparklines-points-of-interest/#first-and-last)
--   [Minimum and Maximum](./sparklines-points-of-interest/#min-and-max)
--   [Positive and Negative](./sparklines-points-of-interest/#positive-and-negative)
+- [First and Last](./sparklines-points-of-interest/#first-and-last)
+- [Minimum and Maximum](./sparklines-points-of-interest/#min-and-max)
+- [Positive and Negative](./sparklines-points-of-interest/#positive-and-negative)
 
 ### First and Last
 
@@ -80,9 +80,9 @@ const itemStyler = (params: AgSeriesMarkerStylerParams): AgSeriesMarkerStyle => 
 }
 ```
 
--   In the snippet above, `first` and `last` boolean values are extracted from the params object and used to conditionally set the `size`, `fill` and `stroke` of the markers.
--   If the given data point is the first or last point i.e. if `first` or `last` is `true`, the `size` of the marker is set to `5`px. All other markers will be `3`px.
--   Similar conditional logic is applied to colorise the markers to distinguish the first and last points from the rest.
+- In the snippet above, `first` and `last` boolean values are extracted from the params object and used to conditionally set the `size`, `fill` and `stroke` of the markers.
+- If the given data point is the first or last point i.e. if `first` or `last` is `true`, the `size` of the marker is set to `5`px. All other markers will be `3`px.
+- Similar conditional logic is applied to colorise the markers to distinguish the first and last points from the rest.
 
 See the result of adding this styler in the sparklines on the right below, compared with the ones on the left which are using global styles in `marker` options:
 
@@ -120,8 +120,8 @@ const itemStyler = (params: AgSeriesMarkerStylerParams): AgSeriesMarkerStyle => 
 }
 ```
 
--   If the data point is a minimum or a maximum point – if `min` or `max` is `true` – the size is set to `5`px, otherwise it is set to`3`px.
--   If the marker represents a minimum point, the `fill` and `stroke` are set to red, if the marker represents a maximum point, the `fill` and `stroke` are set to green. Otherwise the fill and stroke are set to sky blue.
+- If the data point is a minimum or a maximum point – if `min` or `max` is `true` – the size is set to `5`px, otherwise it is set to`3`px.
+- If the marker represents a minimum point, the `fill` and `stroke` are set to red, if the marker represents a maximum point, the `fill` and `stroke` are set to green. Otherwise the fill and stroke are set to sky blue.
 
 See the result of adding this styler in the sparklines on the right below, compared with the ones on the left which are using global styles in `marker` options:
 
@@ -199,15 +199,15 @@ The `itemStyler` will receive an input parameter with values associated with the
 
 The function return type should be [`ItemStylerFormat`](./), allowing these attributes to be customised:
 
--   fill
--   stroke
--   strokeWidth
+- fill
+- stroke
+- strokeWidth
 
 The following sections outline how the attributes mentioned above can be customised for various special points of interest:
 
--   [First and Last](./sparklines-points-of-interest/#first-and-last-1)
--   [Minimum and Maximum](./sparklines-points-of-interest/#min-and-max-1)
--   [Positive and Negative](./sparklines-points-of-interest/#positive-and-negative-1)
+- [First and Last](./sparklines-points-of-interest/#first-and-last-1)
+- [Minimum and Maximum](./sparklines-points-of-interest/#min-and-max-1)
+- [Positive and Negative](./sparklines-points-of-interest/#positive-and-negative-1)
 
 ### First and Last
 
@@ -298,8 +298,8 @@ The example below shows formatting of special points for line, area and column s
 
 It should be noted that
 
--   The `highlighted` property on the `params` object is used to distinguish between highlighted and un-highlighted states.
--   The `itemStyler` for line and area sparklines is added to the `marker` options
--   The `size` property is returned from the area and line formatters to make certain special markers visible and the rest invisible.
+- The `highlighted` property on the `params` object is used to distinguish between highlighted and un-highlighted states.
+- The `itemStyler` for line and area sparklines is added to the `marker` options
+- The `size` property is returned from the area and line formatters to make certain special markers visible and the rest invisible.
 
 {% gridExampleRunner title="Sparkline Special Points" name="sparkline-special-points"  exampleHeight=585 /%}

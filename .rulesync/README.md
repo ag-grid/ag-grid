@@ -11,15 +11,15 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 
 **Loading behaviour:**
 
--   **Rules** load automatically based on file-pattern globs (e.g. editing a `.test.ts` file loads the `testing` rule). The root rule (`ag-grid`) loads for all files.
--   **Skills** load on-demand when invoked via `/skill-name`. Skills marked **(user)** are user-invocable only — the LLM should not invoke them autonomously via the Skill tool.
--   **Sub-agents** are spawned automatically by the AI when a task matches their speciality.
--   **Commands** are invoked explicitly via `/command-name`.
+- **Rules** load automatically based on file-pattern globs (e.g. editing a `.test.ts` file loads the `testing` rule). The root rule (`ag-grid`) loads for all files.
+- **Skills** load on-demand when invoked via `/skill-name`. Skills marked **(user)** are user-invocable only — the LLM should not invoke them autonomously via the Skill tool.
+- **Sub-agents** are spawned automatically by the AI when a task matches their speciality.
+- **Commands** are invoked explicitly via `/command-name`.
 
 **Provenance key:**
 
--   🟢 **Local** — ag-grid specific (normal file in `.rulesync/`)
--   🔵 **Shared** — reusable across AG products (symlink to `external/ag-shared/`)
+- 🟢 **Local** — ag-grid specific (normal file in `.rulesync/`)
+- 🔵 **Shared** — reusable across AG products (symlink to `external/ag-shared/`)
 
 ---
 

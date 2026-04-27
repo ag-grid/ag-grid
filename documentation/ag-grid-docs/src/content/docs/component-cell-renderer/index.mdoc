@@ -39,11 +39,11 @@ The example below shows adding images, hyperlinks, and buttons to a cell using C
 
 The grid comes with some built in Cell Components that cover some common cell rendering requirements.
 
--   [Group Cell Component](./grouping-single-group-column/#cell-component): For showing group details with expand and collapse functionality when using any of [Row Grouping](./grouping/), [Master Detail](./master-detail/) or [Tree Data](./tree-data/).
+- [Group Cell Component](./grouping-single-group-column/#cell-component): For showing group details with expand and collapse functionality when using any of [Row Grouping](./grouping/), [Master Detail](./master-detail/) or [Tree Data](./tree-data/).
 
--   [Animate Change Cell Renderers](./change-cell-renderers/#animated-cell-renderers): For animating changes when data is updated.
+- [Animate Change Cell Renderers](./change-cell-renderers/#animated-cell-renderers): For animating changes when data is updated.
 
--   [Checkbox Cell Renderer](./cell-data-types/#boolean): For displaying boolean values with a checkbox when `cellDataType` of Boolean is used.
+- [Checkbox Cell Renderer](./cell-data-types/#boolean): For displaying boolean values with a checkbox when `cellDataType` of Boolean is used.
 
 ## Custom Components
 
@@ -192,9 +192,9 @@ This following shows the selector choosing between Mood and Gender Cell Renderer
 
 The example below demonstrates the use of `cellRendererSelector` to dynamically select a Cell Component based on the row data.
 
--   The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
--   `colDef.cellRendererSelector` is a function that selects the renderer based on the row data.
--   The column 'Rendered Value' show the data rendered applying the component and params specified by `colDef.cellRendererSelector`
+- The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
+- `colDef.cellRendererSelector` is a function that selects the renderer based on the row data.
+- The column 'Rendered Value' show the data rendered applying the component and params specified by `colDef.cellRendererSelector`
 
 {% gridExampleRunner title="Dynamic Rendering Component" name="dynamic-rendering-component"  exampleHeight=335 /%}
 
@@ -229,7 +229,7 @@ When working with Custom Cell Renderers it is possible to register custom toolti
 
 The example below demonstrates a dynamic tooltip being displayed on Cell Components. The following can be noted:
 
--   The Athlete column uses the `shouldDisplayTooltip` callback to only display Tooltips when the text is not fully displayed.
+- The Athlete column uses the `shouldDisplayTooltip` callback to only display Tooltips when the text is not fully displayed.
 
 {% gridExampleRunner title="Dynamic Tooltips" name="dynamic-tooltips" /%}
 
@@ -250,10 +250,10 @@ Deferred components will be rendered after other cells and only after the grid h
 
 The example below demonstrates the use of `deferRender` to defer the rendering of an artificially slow cell component. The following can be noted when scrolling:
 
--   The column 'Slow Renderer' is deferred and shows the default skeleton cell loader.
--   The column 'Slow Renderer Custom' is deferred but uses a custom loading cell defined via `colDef.loadingCellRenderer`.
--   The column 'Fast Renderer' is a custom component but not deferred so renders immediately along with the other plain cells.
--   The `cellRendererSelector` only returns the Slow Cell Renderer for leaf nodes as an optimisation.
+- The column 'Slow Renderer' is deferred and shows the default skeleton cell loader.
+- The column 'Slow Renderer Custom' is deferred but uses a custom loading cell defined via `colDef.loadingCellRenderer`.
+- The column 'Fast Renderer' is a custom component but not deferred so renders immediately along with the other plain cells.
+- The `cellRendererSelector` only returns the Slow Cell Renderer for leaf nodes as an optimisation.
 
 {% gridExampleRunner title="Slow Cell Renderer" name="slow-cell-renderer" /%}
 
@@ -296,10 +296,10 @@ Note that this method will only return instances of the Cell Component that exis
 
 The example below demonstrates custom methods on Cell Components called by the application. The following can be noted:
 
--   The medal columns are all using the user defined `MedalCellRenderer`. The Cell Component has an arbitrary method `medalUserFunction()` which prints some data to the developer console.
--   The **Gold** button executes a method on all instances of the Cell Component in the gold column and prints the data to the developer console.
--   The **First Row Gold** button executes a method on the gold cell of the first row only and prints data to the developer console. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled far past the first row showing row virtualisation in action.
--   The **All Cells** button executes a method on all instances of all Cell Components and prints data to the developer console.
+- The medal columns are all using the user defined `MedalCellRenderer`. The Cell Component has an arbitrary method `medalUserFunction()` which prints some data to the developer console.
+- The **Gold** button executes a method on all instances of the Cell Component in the gold column and prints the data to the developer console.
+- The **First Row Gold** button executes a method on the gold cell of the first row only and prints data to the developer console. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled far past the first row showing row virtualisation in action.
+- The **All Cells** button executes a method on all instances of all Cell Components and prints data to the developer console.
 
 {% gridExampleRunner title="Get Cell Renderer" name="get-cell-renderer" /%}
 
@@ -313,13 +313,13 @@ In order to handle focus in your custom cell component, implement [Custom Cell C
 
 By default when a cell is clicked on, the grid will perform actions including:
 
--   Focusing the cell.
+- Focusing the cell.
 
--   Updating the cell selection, if [Cell Selection](./cell-selection/) is enabled.
+- Updating the cell selection, if [Cell Selection](./cell-selection/) is enabled.
 
--   Selecting the row, if [Row Selection](./row-selection/) is enabled.
+- Selecting the row, if [Row Selection](./row-selection/) is enabled.
 
--   Starting editing, if [Editing](./cell-editing/) is enabled.
+- Starting editing, if [Editing](./cell-editing/) is enabled.
 
 This behaviour may not be desirable for custom cell components, e.g. if they contain interactive elements. In this situation, the grid can be prevented from handling the mouse event (`'click'`, `'dblclick'`, `'mousedown'` or `'touchstart'`), by passing the `suppressMouseEventHandling` callback to `cellRendererParams`.
 
