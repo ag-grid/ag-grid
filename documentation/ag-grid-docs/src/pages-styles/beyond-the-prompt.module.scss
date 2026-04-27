@@ -1140,6 +1140,10 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     // would stop short of the row top/bottom, leaving a visible "padding
     // gap" above and below the speaker on hover.
     padding: 16px 24px;
+    // Belt-and-braces against any default `<li>` margin (some user agents
+    // / global resets add it) — without this, the hovered row's orange
+    // background would float on a sliver of cream between rows.
+    margin-bottom: 0;
     border-bottom: 1px solid var(--btp-border);
     // `overflow: hidden` lets the speaker portrait scale up past the cell on
     // hover and bleed into the row's padding without affecting siblings.
