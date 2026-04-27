@@ -5,7 +5,7 @@ import type {
     RowNode,
     _IRowNodeFlattenStage,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _getGrandTotalPinnedFloat } from 'ag-grid-community';
 
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../aggregation/footerUtils';
 import type { FlattenDetails } from './flattenUtils';
@@ -63,12 +63,11 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
 
         if (includeGrandTotalRow) {
             const footerNode = _createRowNodeFooter(rootNode, beans);
-            // want to not render the footer row here if pinned via grid options
-            if (grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop') {
-                this.beans.pinnedRowModel?.setGrandTotalPinned(grandTotalRow === 'pinnedBottom' ? 'bottom' : 'top');
+            const pinnedFloat = _getGrandTotalPinnedFloat(grandTotalRow);
+            if (pinnedFloat) {
+                this.beans.pinnedRowModel?.setGrandTotalPinned(pinnedFloat);
             } else {
-                const addToTop = grandTotalRow === 'top';
-                this.addRowNodeToRowsToDisplay(details, footerNode, result, 0, addToTop);
+                this.addRowNodeToRowsToDisplay(details, footerNode, result, 0, grandTotalRow === 'top');
             }
         }
 

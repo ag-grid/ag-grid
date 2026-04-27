@@ -341,7 +341,7 @@ export class RowNode<TData = any>
      * Replaces the data on the `rowNode`. When this method is called, the grid refreshes the entire rendered row if it is displayed.
      */
     public setData(data: TData): void {
-        this.setDataCommon(data, false);
+        this.setDataCommon(data, 'set');
     }
 
     // similar to setRowData, however it is expected that the data is the same data item. this
@@ -354,12 +354,23 @@ export class RowNode<TData = any>
      * Updates the data on the `rowNode`. When this method is called, the grid refreshes the entire rendered row if it is displayed.
      */
     public updateData(data: TData): void {
-        this.setDataCommon(data, true);
+        this.setDataCommon(data, 'update');
     }
 
-    private setDataCommon(data: TData, update: boolean): void {
+    /**
+     * Like {@link updateData}, but does NOT mirror the data onto `this.sibling`. Used for
+     * row nodes whose sibling must not share data — e.g. the SSRM grand total node, whose
+     * sibling is the root.
+     * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+     */
+    public _updateDataNoSibling(data: TData): void {
+        this.setDataCommon(data, 'updateNoSibling');
+    }
+
+    private setDataCommon(data: TData, mode: 'set' | 'update' | 'updateNoSibling'): void {
         const { valueCache, eventSvc } = this.beans;
         const oldData = this.data;
+        const update = mode !== 'set';
 
         this.data = data;
         valueCache?.onDataChanged();
@@ -369,10 +380,13 @@ export class RowNode<TData = any>
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
         this.__localEventService?.dispatchEvent(event);
 
-        if (this.sibling) {
-            this.sibling.data = data;
-            const event: DataChangedEvent<TData> = this.sibling.createDataChangedEvent(data, oldData, update);
-            this.sibling.__localEventService?.dispatchEvent(event);
+        if (mode !== 'updateNoSibling') {
+            const sibling = this.sibling;
+            if (sibling) {
+                sibling.data = data;
+                const event: DataChangedEvent<TData> = sibling.createDataChangedEvent(data, oldData, update);
+                sibling.__localEventService?.dispatchEvent(event);
+            }
         }
 
         eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: this });
