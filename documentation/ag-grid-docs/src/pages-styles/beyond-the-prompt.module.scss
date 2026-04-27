@@ -1,144 +1,450 @@
-@use 'design-system' as *;
+// Beyond the Prompt — fully isolated stylesheet for the conference landing page.
+// Intentionally does NOT import the design system; the page owns its own visual language.
+// Fonts (Geist + Geist Mono) are loaded via <link> tags in the page frontmatter so that
+// only this page pays the cost of importing them.
 
-.logoStrip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $spacing-size-4;
-    margin-bottom: $spacing-size-8;
+// ─── Brand tokens ────────────────────────────────────────────────────────────
+$btp-orange: #f43800;
+$btp-orange-dark: #c02c00;
+$btp-bg: #f2f2f2;
+$btp-bg-alt: #e9e9e9;
+// All copy uses brand orange. Hierarchy comes from size/weight, not colour.
+$btp-ink: #f43800;
+$btp-ink-muted: rgba(244, 56, 0, 0.75);
+$btp-border: rgba(244, 56, 0, 0.2);
+$btp-card: #ffffff;
 
-    @media screen and (min-width: $breakpoint-hero-large) {
-        justify-content: flex-start;
+// ─── Page wrapper ────────────────────────────────────────────────────────────
+.page {
+    --btp-orange: #{$btp-orange};
+    --btp-orange-dark: #{$btp-orange-dark};
+    --btp-bg: #{$btp-bg};
+    --btp-bg-alt: #{$btp-bg-alt};
+    --btp-ink: #{$btp-ink};
+    --btp-ink-muted: #{$btp-ink-muted};
+    --btp-border: #{$btp-border};
+    --btp-card: #{$btp-card};
+
+    background: var(--btp-bg);
+    color: var(--btp-ink);
+    font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    line-height: 1.55;
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+
+    // Reset link colour expectations from the global design system.
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--btp-ink);
+        margin: 0;
+    }
+
+    p {
+        margin: 0;
+        color: var(--btp-ink);
+    }
+
+    ul,
+    ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
     }
 }
 
-.logoDivider {
-    font-size: var(--text-fs-xl);
-    opacity: 0.6;
-    color: var(--color-white);
+// ─── Eyebrows (Geist Mono UPPERCASE) ─────────────────────────────────────────
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--btp-ink);
 }
 
-.logoAgGrid {
-    height: 38px;
-    width: auto;
+.eyebrowPill {
+    composes: eyebrow;
+    padding: 6px 14px;
+    border: 1px solid var(--btp-ink);
+    border-radius: 999px;
+    background: transparent;
 }
 
-.logoBryntum {
-    height: 24px;
-    width: auto;
+.eyebrowAccent {
+    composes: eyebrow;
+    color: var(--btp-orange);
 }
 
+// ─── Layout primitives ───────────────────────────────────────────────────────
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
+
+    @media (min-width: 768px) {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+}
+
+// ─── Hero ────────────────────────────────────────────────────────────────────
 .hero {
     position: relative;
-    background-image: linear-gradient(
-            135deg,
-            color-mix(in srgb, var(--color-util-brand-500) 92%, transparent) 0%,
-            color-mix(in srgb, var(--color-util-brand-500) 55%, transparent) 100%
-        ),
-        var(--hero-bg-image);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: var(--btp-bg);
+    padding: 48px 0 64px;
+    overflow: hidden;
 
-    #{$selector-darkmode} & {
-        background-image: linear-gradient(
-                135deg,
-                color-mix(in srgb, var(--color-util-gray-100) 90%, transparent) 0%,
-                color-mix(in srgb, var(--color-util-gray-100) 55%, transparent) 100%
-            ),
-            var(--hero-bg-image);
+    @media (min-width: 900px) {
+        padding: 72px 0 96px;
+    }
+}
+
+.heroInner {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+
+    @media (min-width: 900px) {
+        flex-direction: row;
+        align-items: center;
+        gap: 32px;
     }
 }
 
 .heroContent {
-    max-width: 720px;
-
-    @media screen and (min-width: $breakpoint-hero-large) {
-        max-width: 640px;
-    }
-}
-
-.sectionNav {
+    flex: 1 1 540px;
+    min-width: 0;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-.sectionNavLink {
-    &:not(:last-child)::after {
-        content: '•';
-        display: inline-block;
-        margin: 0 $spacing-size-3;
-        color: var(--color-fg-secondary);
-        pointer-events: none;
-    }
-}
-
-.eventMeta {
-    display: flex;
-    flex-wrap: wrap;
     flex-direction: column;
-    justify-content: center;
-    gap: $spacing-size-4 $spacing-size-6;
-    margin: 0 0 $spacing-size-8;
-    padding: 0;
-    list-style: none;
+    align-items: flex-start;
+    gap: 24px;
 
-    @media screen and (min-width: $breakpoint-hero-large) {
-        justify-content: flex-start;
+    @media (min-width: 900px) {
+        flex: 1 1 50%;
     }
+}
+
+.heroLogos {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.heroLogoAg {
+    height: 28px;
+    width: auto;
+}
+
+.heroLogoX {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--btp-ink-muted);
+}
+
+.heroLogoBryntum {
+    height: 22px;
+    width: auto;
+    // Bryntum master asset is white; invert it for the light page.
+    filter: invert(1);
+}
+
+.heroTitle {
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    font-weight: 600;
+    color: var(--btp-ink);
+}
+
+.heroTagline {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.4;
+    font-weight: 400;
+    color: var(--btp-ink-muted);
+    max-width: 30ch;
+}
+
+.heroMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    margin-top: 8px;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 
     li {
         display: flex;
         align-items: center;
-        gap: $spacing-size-2;
-        color: var(--color-white);
-        font-size: var(--text-fs-base);
+        gap: 8px;
+        color: var(--btp-ink);
 
         :global(.icon) {
-            --icon-size: 20px;
-            --icon-color: var(--color-white);
-            flex-shrink: 0;
+            --icon-size: 16px;
+            --icon-color: var(--btp-orange);
         }
     }
 }
 
-.intro {
-    text-align: center;
-    max-width: 70ch;
+.heroCtas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+}
 
-    h2 {
-        font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-2xl);
-        margin-bottom: $spacing-size-6;
-    }
+// ─── Hero faces (right side) ─────────────────────────────────────────────────
+.heroFaces {
+    flex: 1 1 50%;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    align-items: end;
 
-    p {
-        font-size: var(--text-fs-lg);
-        line-height: var(--text-lh-lg);
-        margin-bottom: $spacing-size-4;
+    @media (min-width: 900px) {
+        gap: 4px;
     }
 }
 
-.atAGlance {
+.heroFace {
     width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    object-position: bottom;
+    filter: drop-shadow(0 12px 24px rgba(244, 56, 0, 0.08));
+    transition: transform 0.4s ease;
 
-    h2 {
-        text-align: center;
-        font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-2xl);
-        margin-bottom: $spacing-size-8;
+    &:hover {
+        transform: translateY(-4px);
     }
+
+    // Stagger the heights for visual rhythm
+    &:nth-child(1) {
+        max-height: 220px;
+
+        @media (min-width: 900px) {
+            max-height: 320px;
+        }
+    }
+
+    &:nth-child(2) {
+        max-height: 280px;
+        transform: translateY(-12px);
+
+        @media (min-width: 900px) {
+            max-height: 400px;
+        }
+
+        &:hover {
+            transform: translateY(-16px);
+        }
+    }
+
+    &:nth-child(3) {
+        max-height: 240px;
+
+        @media (min-width: 900px) {
+            max-height: 360px;
+        }
+    }
+}
+
+// ─── Buttons (brand) ─────────────────────────────────────────────────────────
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 22px;
+    border-radius: 999px;
+    font-family: 'Geist', system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    line-height: 1;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+    white-space: nowrap;
+
+    :global(.icon) {
+        --icon-size: 16px;
+        transition: transform 0.2s ease;
+    }
+
+    &:hover :global(.icon) {
+        transform: translateX(2px);
+    }
+}
+
+.btnPrimary {
+    composes: btn;
+    background: var(--btp-orange);
+    color: #fff !important;
+    border-color: var(--btp-orange);
+
+    :global(.icon) {
+        --icon-color: #fff;
+    }
+
+    &:hover {
+        background: var(--btp-orange-dark);
+        border-color: var(--btp-orange-dark);
+    }
+}
+
+.btnSecondary {
+    composes: btn;
+    background: transparent;
+    color: var(--btp-ink) !important;
+    border-color: var(--btp-ink);
+
+    :global(.icon) {
+        --icon-color: var(--btp-ink);
+    }
+
+    &:hover {
+        background: var(--btp-ink);
+        color: #fff !important;
+
+        :global(.icon) {
+            --icon-color: #fff;
+        }
+    }
+}
+
+.btnGhost {
+    composes: btn;
+    background: transparent;
+    color: var(--btp-orange) !important;
+    border-color: transparent;
+    padding: 8px 0;
+
+    :global(.icon) {
+        --icon-color: var(--btp-orange);
+    }
+
+    &:hover {
+        color: var(--btp-orange-dark) !important;
+
+        :global(.icon) {
+            --icon-color: var(--btp-orange-dark);
+        }
+    }
+}
+
+// ─── Section nav ─────────────────────────────────────────────────────────────
+.sectionNav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 24px 0;
+    border-top: 1px solid var(--btp-border);
+    border-bottom: 1px solid var(--btp-border);
+    margin-bottom: 80px;
+
+    a {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--btp-ink);
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: var(--btp-orange);
+        }
+    }
+}
+
+// ─── Generic section ─────────────────────────────────────────────────────────
+.section {
+    padding: 64px 0;
+    scroll-margin-top: 32px;
+
+    @media (min-width: 900px) {
+        padding: 96px 0;
+    }
+}
+
+.sectionHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 48px;
+    max-width: 720px;
+}
+
+.sectionTitle {
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    font-weight: 600;
+}
+
+.sectionLead {
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--btp-ink-muted);
+}
+
+// ─── Intro ───────────────────────────────────────────────────────────────────
+.intro {
+    composes: section;
+    background: var(--btp-bg);
+}
+
+.introBody {
+    display: grid;
+    gap: 24px;
+    max-width: 70ch;
+
+    p {
+        font-size: 18px;
+        line-height: 1.65;
+        color: var(--btp-ink-muted);
+    }
+}
+
+// ─── At a glance ─────────────────────────────────────────────────────────────
+.atAGlance {
+    composes: section;
 }
 
 .atAGlanceGrid {
     display: grid;
-    gap: $spacing-size-4;
+    gap: 16px;
     grid-template-columns: 1fr;
 
-    @media screen and (min-width: $breakpoint-landing-page-medium) {
+    @media (min-width: 720px) {
         grid-template-columns: repeat(3, 1fr);
     }
 }
@@ -146,205 +452,65 @@
 .atAGlanceCard {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding: $spacing-size-6;
-    border: 1px solid var(--color-util-gray-200);
-    border-radius: 8px;
-    background-color: var(--color-bg-primary);
-    box-shadow: 0 2px 4px #0000001a;
+    gap: 12px;
+    padding: 32px;
+    background: var(--btp-card);
+    border: 1px solid var(--btp-border);
+    border-radius: 16px;
+    transition: border-color 0.2s ease;
 
-    #{$selector-darkmode} & {
-        border-color: var(--color-util-gray-300);
-        background-color: #192232;
+    &:hover {
+        border-color: var(--btp-orange);
     }
 
     :global(.icon) {
-        --icon-size: 28px;
-        --icon-color: var(--color-link);
-        margin-bottom: $spacing-size-3;
+        --icon-size: 24px;
+        --icon-color: var(--btp-orange);
     }
 
     h3 {
-        font-size: var(--text-fs-lg);
-        margin-bottom: $spacing-size-2;
-        color: var(--color-fg-primary);
+        font-size: 13px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--btp-ink-muted);
     }
 
-    p {
-        margin-bottom: $spacing-size-3;
+    .atAGlancePrimary {
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--btp-ink);
+    }
+
+    .atAGlanceDetail {
+        font-size: 15px;
         line-height: 1.5;
+        color: var(--btp-ink-muted);
     }
 
-    a:global(.button-tertiary) {
+    a {
         margin-top: auto;
-    }
-
-    a:not(:global(.button-tertiary)) {
-        color: var(--color-link);
-        display: inline-flex;
-        align-items: center;
-        gap: $spacing-size-1;
-
-        :global(.icon) {
-            --icon-size: 16px;
-            --icon-color: currentColor;
-            margin-bottom: 0;
-        }
+        align-self: flex-start;
     }
 }
 
-.agendaSection {
-    width: 100%;
-    scroll-margin-top: $spacing-size-16;
-
-    h2 {
-        text-align: center;
-        font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-2xl);
-        margin-bottom: $spacing-size-2;
-    }
-}
-
-.agendaIntro {
-    text-align: center;
-    color: var(--color-fg-secondary);
-    margin-bottom: $spacing-size-8;
-}
-
-.agenda {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    border: 1px solid var(--color-util-gray-200);
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: var(--color-bg-primary);
-
-    #{$selector-darkmode} & {
-        border-color: var(--color-util-gray-300);
-        background-color: #192232;
-    }
-}
-
-.agendaRow {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-size-1;
-    margin-bottom: 0;
-    padding: $spacing-size-4 $spacing-size-6;
-
-    @media screen and (min-width: $breakpoint-landing-page-medium) {
-        flex-direction: row;
-        gap: $spacing-size-6;
-        padding: $spacing-size-5 $spacing-size-8;
-    }
-
-    &:not(:last-child) {
-        border-bottom: 1px solid var(--color-util-gray-200);
-
-        #{$selector-darkmode} & {
-            border-bottom-color: var(--color-util-gray-300);
-        }
-    }
-}
-
-.agendaBreak {
-    background-color: color-mix(in srgb, var(--color-util-gray-100) 40%, transparent);
-    color: var(--color-fg-secondary);
-
-    #{$selector-darkmode} & {
-        background-color: color-mix(in srgb, var(--color-util-gray-200) 20%, transparent);
-    }
-
-    .agendaBody h3 {
-        font-weight: var(--text-regular);
-        color: var(--color-fg-secondary);
-    }
-}
-
-.agendaTime {
-    flex-shrink: 0;
-    font-variant-numeric: tabular-nums;
-    font-weight: var(--text-semibold);
-    color: var(--color-fg-secondary);
-
-    @media screen and (min-width: $breakpoint-landing-page-medium) {
-        width: 140px;
-        padding-top: 2px;
-    }
-}
-
-.agendaBody {
-    flex: 1;
-    min-width: 0;
-
-    h3 {
-        font-size: var(--text-fs-lg);
-        line-height: 1.3;
-        margin: 0 0 $spacing-size-1;
-        color: var(--color-fg-primary);
-    }
-}
-
-.agendaSpeakers {
-    margin: 0 0 $spacing-size-2;
-    font-size: var(--text-fs-sm);
-    color: var(--color-link);
-    font-weight: var(--text-semibold);
-}
-
-.agendaDescription {
-    margin: 0;
-    line-height: 1.5;
-}
-
+// ─── Speakers ────────────────────────────────────────────────────────────────
 .speakersSection {
-    width: 100%;
-    scroll-margin-top: $spacing-size-16;
-
-    h2 {
-        text-align: center;
-        font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-2xl);
-        margin-bottom: $spacing-size-2;
-    }
-}
-
-.speakersIntro {
-    text-align: center;
-    color: var(--color-fg-secondary);
-    margin-bottom: $spacing-size-8;
-}
-
-.speakersMore {
-    display: block;
-    text-align: center;
-    margin: $spacing-size-8 auto 0;
-    padding: $spacing-size-5 $spacing-size-6;
-    max-width: 640px;
-    border: 2px dashed var(--color-util-gray-300);
-    border-radius: 8px;
-    font-size: var(--text-fs-lg);
-    font-weight: var(--text-semibold);
-    color: var(--color-fg-primary);
-    background-color: color-mix(in srgb, var(--color-util-gray-100) 30%, transparent);
-
-    #{$selector-darkmode} & {
-        border-color: var(--color-util-gray-300);
-        background-color: color-mix(in srgb, var(--color-util-gray-200) 20%, transparent);
-    }
+    composes: section;
 }
 
 .speakerGrid {
     display: grid;
-    gap: $spacing-size-6;
+    gap: 32px 16px;
     grid-template-columns: 1fr;
 
-    @media screen and (min-width: $breakpoint-landing-page-medium) {
+    @media (min-width: 600px) {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    @media screen and (min-width: 960px) {
+    @media (min-width: 960px) {
         grid-template-columns: repeat(3, 1fr);
     }
 }
@@ -352,156 +518,238 @@
 .speakerCard {
     display: flex;
     flex-direction: column;
-    padding: $spacing-size-4;
-    border: 1px solid var(--color-util-gray-200);
-    border-radius: 8px;
-    background-color: var(--color-bg-primary);
+    gap: 12px;
+}
 
-    #{$selector-darkmode} & {
-        border-color: var(--color-util-gray-300);
-        background-color: #192232;
-    }
+.speakerImageWrap {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--btp-bg-alt);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
 }
 
 .speakerImage {
     width: 100%;
-    aspect-ratio: 1;
+    height: 100%;
     object-fit: cover;
-    border-radius: 6px;
-    margin-bottom: $spacing-size-4;
-    background-color: var(--color-util-gray-100);
+    object-position: center top;
+    display: block;
+}
+
+.speakerSvg {
+    width: 90%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom center;
+    display: block;
+    padding-top: 16px;
 }
 
 .speakerName {
-    font-size: var(--text-fs-lg);
-    line-height: 1.3;
-    margin: 0 0 $spacing-size-1;
-    color: var(--color-fg-primary);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--btp-ink);
+    margin-top: 4px;
 }
 
 .speakerTitle {
-    margin: 0 0 $spacing-size-3;
-    font-size: var(--text-fs-sm);
-    color: var(--color-link);
-    font-weight: var(--text-semibold);
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--btp-orange);
 }
 
 .speakerBio {
-    margin: 0;
-    line-height: 1.5;
-    color: var(--color-fg-secondary);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--btp-ink-muted);
 }
 
-.venueSection {
-    width: 100%;
-    scroll-margin-top: $spacing-size-16;
+.speakersMore {
+    margin-top: 48px;
+    padding: 24px;
+    text-align: center;
+    border: 1.5px dashed var(--btp-border);
+    border-radius: 12px;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--btp-ink-muted);
+}
 
-    h2 {
-        text-align: center;
-        font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-2xl);
-        margin-bottom: $spacing-size-2;
+// ─── Agenda ──────────────────────────────────────────────────────────────────
+.agendaSection {
+    composes: section;
+}
+
+.agenda {
+    border: 1px solid var(--btp-border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--btp-card);
+}
+
+.agendaRow {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 24px;
+    border-bottom: 1px solid var(--btp-border);
+
+    &:last-child {
+        border-bottom: 0;
+    }
+
+    @media (min-width: 720px) {
+        grid-template-columns: 160px 1fr;
+        gap: 32px;
+        padding: 28px 32px;
     }
 }
 
-.venueIntro {
-    text-align: center;
-    color: var(--color-fg-secondary);
-    margin-bottom: $spacing-size-8;
+.agendaBreak {
+    background: var(--btp-bg-alt);
+
+    .agendaTitle {
+        font-weight: 500;
+        color: var(--btp-ink-muted);
+    }
 }
 
-.venueCarousel {
-    position: relative;
-    width: 100%;
+.agendaTime {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--btp-orange);
+    font-variant-numeric: tabular-nums;
 }
 
-.venueTrack {
+.agendaBody {
     display: flex;
-    gap: $spacing-size-4;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: $spacing-size-2;
+    flex-direction: column;
+    gap: 6px;
+}
 
-    &::-webkit-scrollbar {
-        display: none;
+.agendaTitle {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--btp-ink);
+    line-height: 1.3;
+}
+
+.agendaSpeakers {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--btp-ink-muted);
+}
+
+.agendaDescription {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--btp-ink-muted);
+    margin-top: 4px;
+}
+
+// ─── Venue ───────────────────────────────────────────────────────────────────
+.venueSection {
+    composes: section;
+}
+
+.venueGrid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+
+    @media (min-width: 720px) {
+        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+
+        figure:first-child {
+            grid-row: span 2;
+        }
     }
 }
 
 .venueSlide {
-    flex: 0 0 100%;
-    scroll-snap-align: start;
+    position: relative;
     margin: 0;
-
-    @media screen and (min-width: $breakpoint-landing-page-medium) {
-        flex: 0 0 calc(50% - #{$spacing-size-2});
-    }
-
-    @media screen and (min-width: 960px) {
-        flex: 0 0 calc(33.333% - #{$spacing-size-3});
-    }
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--btp-bg-alt);
+    aspect-ratio: 4 / 3;
 }
 
 .venueImage {
     width: 100%;
-    aspect-ratio: 3 / 2;
+    height: 100%;
     object-fit: cover;
-    border-radius: 8px;
-    background-color: var(--color-util-gray-100);
     display: block;
 }
 
 .venueCaption {
-    margin-top: $spacing-size-2;
-    font-size: var(--text-fs-sm);
-    color: var(--color-fg-secondary);
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 999px;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--btp-ink);
+}
+
+// ─── Final CTA ───────────────────────────────────────────────────────────────
+.finalCta {
+    padding: 96px 0 128px;
     text-align: center;
 }
 
-.venueNav {
+.finalCtaInner {
+    max-width: 640px;
+    margin: 0 auto;
     display: flex;
-    justify-content: center;
-    gap: $spacing-size-2;
-    margin-top: $spacing-size-4;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
 }
 
-.venueNavButton {
-    --icon-size: 20px;
-    --icon-color: var(--color-fg-primary);
+.finalCtaTitle {
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    font-weight: 600;
+}
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border: 1px solid var(--color-util-gray-200);
-    border-radius: 50%;
-    background-color: var(--color-bg-primary);
-    cursor: pointer;
-    transition:
-        background-color 0.2s,
-        border-color 0.2s;
+.finalCtaBody {
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--btp-ink-muted);
 
-    &:hover {
-        background-color: var(--color-util-gray-100);
-        border-color: var(--color-util-gray-300);
-    }
-
-    &:focus-visible {
-        outline: 2px solid var(--color-link);
-        outline-offset: 2px;
-    }
-
-    #{$selector-darkmode} & {
-        --icon-color: var(--color-white);
-        border-color: var(--color-util-gray-300);
-        background-color: #192232;
+    a {
+        color: var(--btp-orange);
+        text-decoration: underline;
+        text-underline-offset: 2px;
 
         &:hover {
-            background-color: var(--color-util-gray-200);
+            color: var(--btp-orange-dark);
         }
     }
 }
