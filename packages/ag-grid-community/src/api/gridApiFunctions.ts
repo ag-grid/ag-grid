@@ -27,6 +27,7 @@ import type {
     _ExcelExportGridApi,
     _FilterGridApi,
     _FindApi,
+    _FormulaGridApi,
     _GridChartsGridApi,
     _HighlightChangesGridApi,
     _InfiniteRowModelGridApi,
@@ -369,6 +370,10 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         removeDetailGridInfo: 0,
         getDetailGridInfo: 0,
         forEachDetailGridInfo: 0,
+    }),
+
+    ...mod<_FormulaGridApi<any>>('Formula', {
+        refreshFormulas: 0,
     }),
 
     ...mod<_ContextMenuGridApi>('ContextMenu', {

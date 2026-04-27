@@ -2,6 +2,7 @@ import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { ToolbarItemComponentName } from '../context/context';
 import type { IconName } from '../utils/icon';
 import type { AgGridCommon } from './iCommon';
+import type { DefaultMenuItem, MenuItemDef } from './menuItem';
 
 export type Toolbar = {
     alignment?: 'left' | 'right';
@@ -58,14 +59,43 @@ export interface ToolbarButtonItemDef<TData = any, TContext = any> extends Toolb
     toolbarItemParams?: never;
 }
 
+/** Params accepted by the `agMenuToolbarItem` built-in toolbar item. */
+export interface ToolbarMenuItemParams<TData = any, TContext = any> {
+    /** Visible text rendered next to the icon. Omit to render an icon-only button. */
+    label?: string;
+    /** Hover tooltip and `aria-label`. Falls back to `label`, then to the locale "Menu" text. */
+    tooltip?: string;
+    /** Icon displayed on the button. Defaults to the `menu` icon. */
+    icon?: IconName;
+    /** Items shown in the dropdown. Accepts `MenuItemDef` objects or built-in string names (e.g. `'copy'`, `'export'`, `'separator'`). */
+    menuItems?: (MenuItemDef<TData, TContext> | DefaultMenuItem)[];
+}
+
 /**
- * Reference to a built-in toolbar item component (or `'separator'`).
+ * Reference to a built-in toolbar item component (or `'separator'`) that does not accept params.
  */
 export interface ToolbarBuiltInItemDef extends ToolbarItemDefBase {
     /** A built-in toolbar item component name, or `'separator'`. */
-    toolbarItem: ToolbarItemComponentName | 'separator';
-    /** Built-in items do not accept params. */
+    toolbarItem: Exclude<ToolbarItemComponentName, 'agMenuToolbarItem'> | 'separator';
+    /** Built-in items (other than `agMenuToolbarItem`) do not accept params. */
     toolbarItemParams?: never;
+    /** Not used for built-in items — use the Action Button variant for label/icon/action. */
+    label?: never;
+    /** Not used for built-in items — use the Action Button variant for label/icon/action. */
+    icon?: never;
+    /** Not used for built-in items — use the Action Button variant for label/icon/action. */
+    action?: never;
+}
+
+/**
+ * Reference to the `agMenuToolbarItem` built-in toolbar item — a button that opens a dropdown
+ * menu. Configure via {@link ToolbarMenuItemParams} on `toolbarItemParams`.
+ */
+export interface ToolbarMenuBuiltInItemDef<TData = any, TContext = any> extends ToolbarItemDefBase {
+    /** The `agMenuToolbarItem` built-in component. */
+    toolbarItem: 'agMenuToolbarItem';
+    /** Configuration for the menu button (label, tooltip, icon, menu items). */
+    toolbarItemParams?: ToolbarMenuItemParams<TData, TContext>;
     /** Not used for built-in items — use the Action Button variant for label/icon/action. */
     label?: never;
     /** Not used for built-in items — use the Action Button variant for label/icon/action. */
@@ -92,14 +122,16 @@ export interface ToolbarCustomItemDef<TParams = any, TCustom = any> extends Tool
 }
 
 /**
- * A toolbar item definition. One of three variants:
+ * A toolbar item definition. One of the following variants:
  * - {@link ToolbarButtonItemDef} — action button shorthand (`label`/`icon`/`action`)
  * - {@link ToolbarBuiltInItemDef} — reference to a built-in component or `'separator'`
+ * - {@link ToolbarMenuBuiltInItemDef} — reference to the `agMenuToolbarItem` dropdown menu button
  * - {@link ToolbarCustomItemDef} — reference to a custom component
  */
 export type ToolbarItemDef<TData = any, TContext = any, TParams = any, TCustom = any> =
     | ToolbarButtonItemDef<TData, TContext>
     | ToolbarBuiltInItemDef
+    | ToolbarMenuBuiltInItemDef<TData, TContext>
     | ToolbarCustomItemDef<TParams, TCustom>;
 
 export interface IToolbarItemParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

@@ -204,6 +204,7 @@ export type {
     _CsvExportGridApi,
     _ExcelExportGridApi,
     _FindApi,
+    _FormulaGridApi,
     _GridChartsGridApi,
     _InfiniteRowModelGridApi,
     _MasterDetailGridApi,

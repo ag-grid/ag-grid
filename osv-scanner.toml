@@ -63,20 +63,8 @@ name = "node-forge"
 ignore = true
 
 [[IgnoredVulns]]
-id = "GHSA-jr5f-v2jv-69x6"
-reason = "We only use axios in examples"
-
-[[IgnoredVulns]]
 id = "GHSA-3xgq-45jj-v275"
 reason = "cross-spawn is used in development/testing - it's not used in the final production build"
-
-[[IgnoredVulns]]
-id = "GHSA-4www-5p9h-95mh"
-reason = "middleware is used in development/testing - it's not used in the final production build"
-
-[[IgnoredVulns]]
-id = "GHSA-9gqv-wp59-fq42"
-reason = "middleware is used in development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
 id = "GHSA-593f-38f6-jp5m"
@@ -87,28 +75,8 @@ id = "GHSA-x2rg-q646-7m2v"
 reason = "middleware is used in development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
-id = "GHSA-p8p7-x288-28g6"
-reason = "Request calls are only used in our examples - not in the production code"
-
-[[IgnoredVulns]]
-id = "GHSA-9crc-q9x8-hgqq"
-reason = "We don't use vitest to visit non ag-grid/charts sites, only for testing/dev purposes"
-
-[[IgnoredVulns]]
-id = "GHSA-4v9v-hfq4-rm2v"
-reason = "We only use the dev server for development/testing - it's not used in the final production build"
-
-[[IgnoredVulns]]
-id = "GHSA-9jgg-88mc-972h"
-reason = "We only use the dev server for development/testing - it's not used in the final production build"
-
-[[IgnoredVulns]]
 id = "GHSA-xvf7-4v9q-58w6"
 reason = "We do not use form-data directly and where it is used is only for testing or examples"
-
-[[IgnoredVulns]]
-id = "GHSA-xffm-g5w8-qvg7"
-reason = "eslint is only used in development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
 id = "GHSA-4r6h-8v6p-xvw6"
@@ -119,20 +87,12 @@ id = "GHSA-5pgg-2g8v-p4x9"
 reason = "sheetjs is only used in development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
-id = "GHSA-grv7-fg5c-xmjg"
-reason = "braces is only used in development/testing - it's not used in the final production build"
-
-[[IgnoredVulns]]
 id = "GHSA-f886-m6hf-6m8v"
 reason = "brace-expansion is only used in development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
 id = "GHSA-fjxv-7rqg-78g4"
 reason = "We do not use form-data directly and where it is used is only for testing or examples"
-
-[[IgnoredVulns]]
-id = "GHSA-76c9-3jph-rj3q"
-reason = "We do not use on-headers directly and where it is used is only for testing or examples"
 
 [[IgnoredVulns]]
 id = "GHSA-4vvj-4cpr-p986"
@@ -147,20 +107,12 @@ id = "GHSA-jgmv-j7ww-jx2x"
 reason = "We do not use koa directly and where it is used is only for testing or dev use"
 
 [[IgnoredVulns]]
-id = "GHSA-v6h2-p8h4-qcjw"
-reason = "Low risk and determined to not be exploitable in our use case"
-
-[[IgnoredVulns]]
 id = "GHSA-52f5-9888-hmc6"
 reason = "Low risk and determined to not be exploitable in our use case"
 
 [[IgnoredVulns]]
 id = "GHSA-67mh-4wv8-2f99"
 reason = "Dev/build deps that don't appear in the libraries distributables"
-
-[[IgnoredVulns]]
-id = "GHSA-4hjh-wcwx-xvwj"
-reason = "We only use axios for build and testing"
 
 [[IgnoredVulns]]
 id = "GHSA-3p68-rc4w-qgx5"
@@ -203,10 +155,6 @@ id = "GHSA-jrmj-c5cx-3cw6"
 reason = "Angular version used determined by end user"
 
 [[IgnoredVulns]]
-id = "GHSA-xxjr-mmjv-4gpg"
-reason = "Lodash not used directly and not accessible to end users/external users"
-
-[[IgnoredVulns]]
 id = "GHSA-36hm-qxxp-pg3m"
 reason = "Preact not used directly and not accessible to end users/external users"
 
@@ -221,10 +169,6 @@ reason = "tar not used directly and not accessible to end users/external users"
 [[IgnoredVulns]]
 id = "GHSA-7h2j-956f-4vf2"
 reason = "braces-expansion not used directly and not accessible to end users/external users"
-
-[[IgnoredVulns]]
-id = "GHSA-wqch-xfxh-vrr4"
-reason = "used by expressjs which is only used for dev purposes"
 
 [[IgnoredVulns]]
 id = "GHSA-34x7-hfp2-rc4v"
@@ -343,10 +287,6 @@ id = "GHSA-qpx9-hpmf-5gmw"
 reason = "Dev/build deps that don't appear in the libraries distributables"
 
 [[IgnoredVulns]]
-id = "GHSA-g9mf-h72j-4rw9"
-reason = "Dev/build deps that don't appear in the libraries distributables"
-
-[[IgnoredVulns]]
 id = "GHSA-38r7-794h-5758"
 reason = "Dev/build deps that don't appear in the libraries distributables"
 
@@ -379,10 +319,6 @@ id = "GHSA-j47w-4g3g-c36v"
 reason = "Dev/build deps that don't appear in the libraries distributables"
 
 [[IgnoredVulns]]
-id = "GHSA-25h7-pfq9-p65f"
-reason = "Dev/build deps that don't appear in the libraries distributables"
-
-[[IgnoredVulns]]
 id = "GHSA-v8w9-8mx6-g223"
 reason = "Dev/build deps that don't appear in the libraries distributables"
 
@@ -391,40 +327,12 @@ id = "GHSA-9ppj-qmqm-q256"
 reason = "tar not used directly and not accessible to end users/external users"
 
 [[IgnoredVulns]]
-id = "GHSA-2mjp-6q6p-2qxm"
-reason = "Dev/build deps that don't appear in the libraries distributables"
-
-[[IgnoredVulns]]
-id = "GHSA-4992-7rv2-5pvq"
-reason = "Dev/build deps that don't appear in the libraries distributables"
-
-[[IgnoredVulns]]
-id = "GHSA-f269-vfmq-vjvj"
-reason = "Dev/build deps that don't appear in the libraries distributables"
-
-[[IgnoredVulns]]
-id = "GHSA-v9p9-hfj2-hcw8"
-reason = "Dev/build deps that don't appear in the libraries distributables"
-
-[[IgnoredVulns]]
-id = "GHSA-vrm6-8vpv-qv8q"
-reason = "Dev/build deps that don't appear in the libraries distributables"
-
-[[IgnoredVulns]]
-id = "GHSA-gmq8-994r-jv83"
-reason = "Dev/build deps that don't appear in the libraries distributables"
-
-[[IgnoredVulns]]
 id = "GHSA-92pp-h63x-v22m"
 reason = "Dev/build deps that don't appear in the libraries distributables"
 
 [[IgnoredVulns]]
 id = "GHSA-wh4c-j3r5-mjhp"
 reason = "Dev/build deps that don't appear in the libraries distributables"
-
-[[IgnoredVulns]]
-id = "GHSA-g735-7g2w-hh3f"
-reason = "Astro is used as a static site generator"
 
 [[IgnoredVulns]]
 id = "GHSA-22cc-p3c6-wpvm"
@@ -565,4 +473,24 @@ reason = "socket.io-parser is only used in testing tools"
 [[IgnoredVulns]]
 id = "GHSA-48c2-rrv3-qjmp"
 reason = "yaml is only used in dev tools"
+
+[[IgnoredVulns]]
+id = "GHSA-2v35-w6hq-6mfw"
+reason = "@xmldom/xmldom is used only at build time by @vusion/webfonts-generator for webfont generation - not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-f6ww-3ggp-fr8h"
+reason = "@xmldom/xmldom is used only at build time by @vusion/webfonts-generator for webfont generation - not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-j759-j44w-7fr8"
+reason = "@xmldom/xmldom is used only at build time by @vusion/webfonts-generator for webfont generation - not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-x6wf-f3px-wcqx"
+reason = "@xmldom/xmldom is used only at build time by @vusion/webfonts-generator for webfont generation - not included in the libraries distributables"
+
+[[IgnoredVulns]]
+id = "GHSA-w5hq-g745-h8pq"
+reason = "uuid is only used by dev/test tooling (jest-junit, jest-text-transformer, sockjs, request) - not included in the libraries distributables"
 

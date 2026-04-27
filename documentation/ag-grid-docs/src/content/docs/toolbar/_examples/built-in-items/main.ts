@@ -3,6 +3,7 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     ColumnAutoSizeModule,
+    CsvExportModule,
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
@@ -10,6 +11,7 @@ import {
     createGrid,
 } from 'ag-grid-community';
 import {
+    ContextMenuModule,
     ExcelExportModule,
     FindModule,
     RowGroupingModule,
@@ -23,6 +25,8 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnApiModule,
     ColumnAutoSizeModule,
+    ContextMenuModule,
+    CsvExportModule,
     ExcelExportModule,
     FindModule,
     RowGroupingModule,
@@ -67,6 +71,14 @@ const gridOptions: GridOptions<IOlympicData> = {
                 tooltip: 'Excel Export',
                 icon: 'excel',
                 action: (params) => params.api.exportDataAsExcel(),
+            },
+            {
+                toolbarItem: 'agMenuToolbarItem',
+                toolbarItemParams: {
+                    label: 'Export',
+                    icon: 'save',
+                    menuItems: ['csvExport', 'excelExport'],
+                },
             },
         ],
     },

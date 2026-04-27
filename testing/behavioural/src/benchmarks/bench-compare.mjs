@@ -538,15 +538,24 @@ function round(v, decimals) {
     return Math.round(v * f) / f;
 }
 
-// Sort by conservative delta magnitude
-comparisons.sort((a, b) => {
-    const ac = Math.abs(a.deltaConservative);
-    const bc = Math.abs(b.deltaConservative);
-    if (ac !== bc) {
-        return bc - ac;
+/**
+ * Sort worst-first, best-last. Uses the signed conservative delta as the primary key so
+ * confidence-interval-aware regressions rank above noisy non-changes, which rank above
+ * confidence-interval-aware improvements. Falls back to the signed raw delta, then name.
+ */
+function bySignedDeltaAsc(a, b) {
+    const diff = a.deltaConservative - b.deltaConservative;
+    if (diff !== 0) {
+        return diff;
     }
-    return Math.abs(b.delta) - Math.abs(a.delta);
-});
+    const rawDiff = a.delta - b.delta;
+    if (rawDiff !== 0) {
+        return rawDiff;
+    }
+    return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+}
+
+comparisons.sort(bySignedDeltaAsc);
 
 // ── Output ──
 
@@ -640,12 +649,8 @@ md += `rme = max(run-to-run std, mean within-run rme).\n\n`;
 //             delta is large enough to warrant investigation.
 const notableCertain = comparisons
     .filter((c) => !isNoisy(c) && Math.abs(c.deltaConservative) >= CERTAIN_MIN_PCT)
-    .slice()
-    .sort((a, b) => Math.abs(b.deltaConservative) - Math.abs(a.deltaConservative));
-const notableNoisy = comparisons
-    .filter((c) => isNoisy(c) && Math.abs(c.delta) >= NOISY_MIN_PCT)
-    .slice()
-    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+    .sort(bySignedDeltaAsc);
+const notableNoisy = comparisons.filter((c) => isNoisy(c) && Math.abs(c.delta) >= NOISY_MIN_PCT).sort(bySignedDeltaAsc);
 const notable = [...notableCertain, ...notableNoisy];
 
 function writeNotableTable(header, rows) {

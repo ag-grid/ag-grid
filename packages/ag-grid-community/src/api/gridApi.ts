@@ -1742,6 +1742,31 @@ export interface _ColumnChooserGridApi {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface _FormulaGridApi<TData = any> {
+    /**
+     * Invalidate the grid's formula cache so the next render re-queries
+     * `formulaDataSource.getFormula` and re-evaluates affected formulas.
+     *
+     * Call this when the formula store has been mutated outside the grid (e.g. synced from
+     * a backend). In-grid edits and Client-Side Row Model updates invalidate automatically.
+     *
+     * - No argument: invalidates every cached formula.
+     * - `RowNode`: invalidates that row and its pinned / group-footer siblings.
+     * - `string` (row id): resolved against the main row model, pinned-top and pinned-bottom.
+     *   Every match is invalidated — so if a statically-pinned row shares an id with a body
+     *   row, both are refreshed. An unknown id is a silent no-op.
+     *
+     * @returns `true` when a refresh was actually performed — i.e. the full cache was cleared
+     * (no-arg call) or at least one cache entry was dropped for any resolved row or its
+     * siblings. Returns `false` for no-op cases: formulas inactive, an unknown row id,
+     * or a row whose entire sibling chain had no cached formulas.
+     *
+     * @agModule `FormulaModule`
+     */
+    refreshFormulas(rowNode?: IRowNode<TData> | string): boolean;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _MasterDetailGridApi {
     /**
      * Register a detail grid with the master grid when it is created.
@@ -1996,6 +2021,7 @@ export interface GridApi<TData = any>
         _ContextMenuGridApi,
         _ColumnChooserGridApi,
         _MasterDetailGridApi,
+        _FormulaGridApi<TData>,
         _ExcelExportGridApi,
         _ClipboardGridApi,
         _GridChartsGridApi,

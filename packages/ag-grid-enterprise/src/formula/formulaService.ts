@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    CellValueChangedEvent,
     FormulaFunctionParams,
     IFormulaDataService,
     IFormulaService,
@@ -8,15 +9,21 @@ import type {
     _ChangedRowNodes,
     _ColumnCollections,
 } from 'ag-grid-community';
-import { BeanStub, _convertColumnEventSourceType, _isExpressionString, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    _convertColumnEventSourceType,
+    _isExpressionString,
+    _parseBigIntOrNull,
+    _warn,
+} from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
 import type { FormulaNode } from './ast/utils';
 import { FormulaError } from './ast/utils';
 import { CellFormula } from './cellFormula';
-import type { Addr } from './functions/resolver';
-import { evalAst, unresolvedDeps } from './functions/resolver';
+import type { Addr, FormulaResolver, FormulaVisitorContext } from './functions/resolver';
+import { evalAst, formulaVisitorSetVisited, formulaVisitorSetVisiting, unresolvedDeps } from './functions/resolver';
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
 import { shiftNode } from './functions/utils';
 import type { FormulaErrorId, FormulaErrorType } from './i18n';
@@ -25,13 +32,17 @@ import { isValidFunctionName } from './refUtils';
 /** Shared params object for `rowRenderer.refreshCells`, hoisted to avoid per-call allocation. */
 const REFRESH_CELLS_PARAMS = { suppressFlash: true, force: true } as const;
 
+/** A1-style column-label alphabet and its length (base 26). */
+const COL_REF_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const COL_REF_BASE = COL_REF_ALPHABET.length;
+
 interface FormulaFrame {
     address: Addr;
     ast: FormulaNode;
     unresolvedDepIterator: Generator<Addr>;
 }
 
-export class FormulaService extends BeanStub implements IFormulaService, NamedBean {
+export class FormulaService extends BeanStub implements IFormulaService, NamedBean, FormulaResolver {
     public readonly beanName = 'formula' as const;
 
     /**
@@ -56,50 +67,17 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * bounded because every destructive event purges destroyed entries explicitly
      * (`onRowsChanged`) or wipes the whole map (`refreshFormulas`).
      */
-    private readonly cachedResult: Map<RowNode, Map<AgColumn, CellFormula>> = new Map();
+    private readonly cachedResult: Map<RowNode, Map<AgColumn, CellFormula | null>> = new Map();
 
     /**
      * Stored at the class level so a `valueGetter` that resolves another formula cell (e.g. via
      * `api.getCellValue`) reuses the same cycle-detection state instead of hitting a false
      * positive. Read at the top of every `resolveValue` call; null outside of an active eval.
      */
-    private activeCtx: {
-        setVisiting: (r: RowNode, c: AgColumn) => void;
-        setVisited: (r: RowNode, c: AgColumn) => void;
-        errorAllVisitors: (source: unknown) => FormulaErrorType;
-    } | null = null;
+    private activeCtx: FormulaVisitorContext | null = null;
 
     /** Built-in operations (extendable via gridOptions.formulaFuncs). Read per function call. */
     private supportedOperations: Map<string, (params: FormulaFunctionParams) => unknown>;
-
-    /**
-     * Pre-bound view of `ensureCellFormula` that `unresolvedDeps` can invoke without allocating
-     * a fresh bound function for every frame push. Bound once during field init.
-     */
-    private readonly ensureCellFormulaBound = this.ensureCellFormula.bind(this);
-
-    /**
-     * Pre-bound callback passed to `evalAst` to resolve an `Addr` into a raw value (or throw a
-     * FormulaError if the referenced cell is not ready / errored). Defined as an arrow field so
-     * one closure exists per service instance instead of per-frame allocation.
-     */
-    private readonly resolveAddrRef = (addr: Addr): unknown => {
-        const { row, column } = addr;
-        const cachedRefFormula = this.ensureCellFormula(row, column);
-        if (cachedRefFormula) {
-            if (!cachedRefFormula.isValueReady()) {
-                throw new FormulaError(53);
-            }
-            // Cell is fresh; `buildError` skips the version check and allocates a FormulaError
-            // only if this cell actually holds an error.
-            const error = this.buildError(cachedRefFormula);
-            if (error) {
-                throw error;
-            }
-            return cachedRefFormula.getValue();
-        }
-        return this.fetchRawValue(column, row);
-    };
 
     /** Map "A", "B", ..., "AA" -> actual AgColumn. */
     private readonly colRefMap: Map<string, AgColumn> = new Map();
@@ -120,6 +98,10 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * enableCellExpressions toggle.
      */
     private formulaColumnsPresent = false;
+
+    public hasCachedRows(): boolean {
+        return this.cachedResult.size > 0;
+    }
 
     /**
      * Recompute `active`, the `formulaColumnsPresent` cache, and trigger a full formula refresh
@@ -183,10 +165,22 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         this.setupFunctions();
         this.formulaDataSvc = this.beans.formulaDataSvc;
 
-        const refreshFormulas = () => {
-            if (this.active) {
-                this.refreshFormulas(true);
+        const onCellValueChanged = (event: CellValueChangedEvent) => {
+            if (!this.active) {
+                return;
             }
+            // valueService fires this once for the edited node and once for its pinnedSibling.
+            // Skip the pinned-side event: refreshCells is sync, so running both repaints twice.
+            const node = event.node as RowNode;
+            if (node.rowPinned != null && node.pinnedSibling) {
+                return;
+            }
+            // Always bump: a formula in another row may REF a non-formula column here, whose
+            // cells never enter this cache — only the version bump invalidates those computed
+            // values. `dropRow` additionally evicts this row's and its pinned sibling's own
+            // CellFormula entries so their captured `formulaString` re-queries `getFormula`.
+            this.dropRow(node);
+            this.bumpValueCacheAndRefresh();
         };
         const onNewColumnsLoaded = () => {
             if (!this.active) {
@@ -208,7 +202,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             if (this.cachedResult.size === 0) {
                 return;
             }
-            // Column instances are stable across a reorder - only their positions changed. Parsed
+            // Column instances are stable across a reorder — only their positions changed. Parsed
             // ASTs keep referring to the right colIds; only absolute `COLUMN("A",true)` refs pick
             // up different columns via colRefMap. Bumping the value version re-evaluates surviving
             // cells while preserving their parsed ASTs.
@@ -219,6 +213,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             if (!this.active || cache.size === 0) {
                 return;
             }
+            // Do NOT use `dropRow` here: a pinned row's `pinnedSibling` points back to the
+            // unpinned main whose cache entry is still valid (absolute refs resolve via CSRM only).
+            // Drop only pinned entries and their group-footer sibling.
             let dropped = false;
             for (const row of cache.keys()) {
                 if (row.rowPinned) {
@@ -244,7 +241,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         });
 
         this.addManagedListeners(this.beans.eventSvc, {
-            cellValueChanged: refreshFormulas,
+            cellValueChanged: onCellValueChanged,
             newColumnsLoaded: onNewColumnsLoaded,
             columnMoved: onColumnMoved,
             pinnedRowDataChanged: onPinnedRowsChanged,
@@ -265,26 +262,25 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         this.formulaDataSvc = undefined;
     }
 
-    /**
-     * Evict a row from the cache. Pinned rows and group-feature siblings share the row's `data`
-     * object but live as distinct entries, each with its own captured formulaString — drop them
-     * all together.
-     */
-    private dropRow(row: RowNode): void {
+    /** Evict a row and its pinned / group-footer siblings from the cache. */
+    private dropRow(row: RowNode): boolean {
         const cache = this.cachedResult;
-        cache.delete(row);
+        let dropped = cache.delete(row);
         const sibling = row.sibling;
         if (sibling) {
-            cache.delete(sibling);
+            if (cache.delete(sibling)) {
+                dropped = true;
+            }
             const siblingPinnedSibling = sibling.pinnedSibling;
-            if (siblingPinnedSibling) {
-                cache.delete(siblingPinnedSibling);
+            if (siblingPinnedSibling && cache.delete(siblingPinnedSibling)) {
+                dropped = true;
             }
         }
         const pinnedSibling = row.pinnedSibling;
-        if (pinnedSibling) {
-            cache.delete(pinnedSibling);
+        if (pinnedSibling && cache.delete(pinnedSibling)) {
+            dropped = true;
         }
+        return dropped;
     }
 
     /**
@@ -329,8 +325,8 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     /**
-     * Bulk-invalidate every cached value (ASTs preserved) and repaint. Cheap O(1): just bumps the
-     * version counter so every entry becomes implicitly stale on next read.
+     * Bulk-invalidate every cached value via a version bump (ASTs preserved) and repaint.
+     * O(1); entries become stale on next read.
      */
     private bumpValueCacheAndRefresh(): void {
         this.valueCacheVersion++;
@@ -420,9 +416,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return;
         }
 
-        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const base = alphabet.length;
-
         let idx = 0;
         for (let i = 0, len = list.length; i < len; ++i) {
             const col = list[i];
@@ -433,11 +426,11 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             let n = idx++;
             // generate a column label (A, B, C, ..., Z, AA, AB, ...)
             while (true) {
-                label = alphabet[n % base] + label;
-                if (n < base) {
+                label = COL_REF_ALPHABET[n % COL_REF_BASE] + label;
+                if (n < COL_REF_BASE) {
                     break;
                 }
-                n = Math.floor(n / base) - 1;
+                n = Math.floor(n / COL_REF_BASE) - 1;
             }
             if (col.formulaRef !== label) {
                 col.formulaRef = label;
@@ -459,7 +452,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     /** Clear all cached results and re-render cells. */
-    public refreshFormulas(refreshCells: boolean) {
+    public refreshFormulas(refreshCells: boolean): void {
         this.cachedResult.clear();
         if (refreshCells) {
             this.beans.rowRenderer.refreshCells(REFRESH_CELLS_PARAMS);
@@ -467,8 +460,40 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     /**
-     * Is a value a formula string (starts with '=')
-     **/
+     * Drop a row's formula cache (with its sibling chain) and repaint. When given a string id,
+     * body / pinned-top / pinned-bottom are all consulted and every match is evicted. Returns
+     * `true` if anything was dropped.
+     */
+    public refreshRow(row: RowNode | string): boolean {
+        if (!this.active) {
+            return false;
+        }
+
+        let dropped = false;
+        if (typeof row === 'string') {
+            const { rowModel, pinnedRowModel } = this.beans;
+            const body = rowModel.getRowNode(row) as RowNode | undefined;
+            if (body && this.dropRow(body)) {
+                dropped = true;
+            }
+            const pinnedTop = pinnedRowModel?.getPinnedRowById(row, 'top');
+            if (pinnedTop && this.dropRow(pinnedTop)) {
+                dropped = true;
+            }
+            const pinnedBottom = pinnedRowModel?.getPinnedRowById(row, 'bottom');
+            if (pinnedBottom && this.dropRow(pinnedBottom)) {
+                dropped = true;
+            }
+        } else {
+            dropped = this.dropRow(row);
+        }
+
+        if (dropped) {
+            this.bumpValueCacheAndRefresh();
+        }
+        return dropped;
+    }
+
     public isFormula(value: unknown): value is `=${string}` {
         return this.active && _isExpressionString(value);
     }
@@ -487,72 +512,91 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     /**
-     * Return the current formula error for a cell, recomputing if the cached entry is stale.
-     *
-     * Called from rendering/tooltips where callers want the up-to-date error state. Delegates to
-     * `resolveValue` which is a no-op when the cell is already fresh (isValueReady check inside).
+     * Return the `formulaDataSource` formula for (row, col), or undefined. Raw-data `"=..."`
+     * values take a separate path via the standard field lookup + `isFormula` check.
      */
-    public getFormulaError(column: AgColumn, node: RowNode): FormulaError | null {
-        this.resolveValue(column, node);
-        const cell = this.cachedResult.get(node)?.get(column);
-        return cell ? this.buildError(cell) : null;
+    public getDataSourceFormula(row: RowNode, col: AgColumn): string | undefined {
+        if (!this.active || !this.formulaDataSvc?.hasDataSource()) {
+            return undefined;
+        }
+        const cf = this.ensureCellFormula(row, col);
+        return cf?.fromDataSource ? cf.formulaString : undefined;
     }
 
     /**
-     * Construct a FormulaError from a freshly-evaluated cell's stored error fields. The caller is
-     * responsible for having verified freshness (via `isValueReady()` or a prior `resolveValue`) -
-     * this method does not check the version. Returns null if the cell has no error.
-     *
-     * Lives on the service (not on CellFormula) so CellFormula stays a lean data holder and the
-     * FormulaError allocation is co-located with the other error-shaping logic.
+     * Return the current formula error for a cell, or null. Recomputes if the cached entry is
+     * stale. Short-circuits for non-formula cells (common in mostly-plain allowFormula columns).
      */
-    private buildError(cell: CellFormula): FormulaError | null {
+    public getFormulaError(column: AgColumn, node: RowNode): FormulaError | null {
+        const cell = this.ensureCellFormula(node, column);
+        if (!cell) {
+            return null;
+        }
+        if (!cell.isValueReady()) {
+            this.resolveValue(column, node);
+        }
         const errorType = cell.errorType;
         if (!errorType) {
             return null;
         }
         const errorId = cell.errorId;
-        if (errorId != null) {
-            return new FormulaError(errorId, cell.errorVariableValues ?? undefined, errorType);
-        }
-        return new FormulaError(cell.errorMessage, errorType);
+        return errorId != null
+            ? new FormulaError(errorId, cell.errorVariableValues ?? undefined, errorType)
+            : new FormulaError(cell.errorMessage, errorType);
     }
 
     /** Get a registered function by name (used by the evaluator). */
     public getFunction(name: string) {
-        return this.supportedOperations.get(name.toUpperCase());
+        const supportedOperations = this.supportedOperations;
+        return supportedOperations.get(name) ?? supportedOperations.get(name.toUpperCase());
     }
 
-    /** Ensure a CellFormula exists for (row,col) if it's a formula cell; returns null for non-formula. */
-    private ensureCellFormula(row: RowNode, col: AgColumn): CellFormula | null {
+    /**
+     * Ensure a `CellFormula` exists for (row, col), or null if the cell isn't a formula.
+     * Non-formula results are negatively cached (as `null`) so N dependent formulas referencing
+     * the same plain cell trigger one `getFormula` + `fetchRawValue` pair, not N.
+     */
+    public ensureCellFormula(row: RowNode, col: AgColumn): CellFormula | null {
+        if (!this.active || !col.isAllowFormula()) {
+            return null;
+        }
         const cache = this.cachedResult;
         let rowMap = cache.get(row);
         const cached = rowMap?.get(col);
-        if (cached) {
+        if (cached !== undefined) {
             return cached;
         }
-
-        const str = this.getFormulaFromDataSource(row, col) ?? this.fetchRawValue(col, row);
-        if (typeof str !== 'string' || str[0] !== '=') {
-            return null;
-        }
-
-        const cf = new CellFormula(row, col, str, this.beans, this);
         if (!rowMap) {
-            rowMap = new Map<AgColumn, CellFormula>();
+            rowMap = new Map<AgColumn, CellFormula | null>();
             cache.set(row, rowMap);
         }
-        rowMap.set(col, cf);
 
-        return cf;
-    }
+        // Block re-entry for this (row, col) while `ds.getFormula` / `fetchRawValue` runs —
+        // either may synchronously call back via api (e.g. a valueGetter hitting `api.getCellValue`).
+        rowMap.set(col, null);
 
-    private getFormulaFromDataSource(row: RowNode, col: AgColumn): string | undefined {
-        const dataSource = this.formulaDataSvc;
-        if (!dataSource?.hasDataSource()) {
-            return undefined;
+        try {
+            const dataSvc = this.formulaDataSvc;
+
+            const fromSource = dataSvc?.hasDataSource() ? dataSvc.getFormula({ column: col, rowNode: row }) : undefined;
+            if (_isExpressionString(fromSource)) {
+                const cellFormula = new CellFormula(row, col, fromSource, true, this.beans, this);
+                rowMap.set(col, cellFormula);
+                return cellFormula;
+            }
+
+            const str = this.fetchRawValue(col, row);
+            if (_isExpressionString(str)) {
+                const cellFormula = new CellFormula(row, col, str, false, this.beans, this);
+                rowMap.set(col, cellFormula);
+                return cellFormula;
+            }
+
+            return null;
+        } catch (e) {
+            rowMap.delete(col); // clear the negative cache to retry next time
+            throw e;
         }
-        return dataSource.getFormula({ column: col, rowNode: row });
     }
 
     private coerceFormulaValue(cell: CellFormula, value: unknown): unknown {
@@ -562,8 +606,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             cell.baseDataType = baseDataType;
         }
         if (baseDataType === 'bigint') {
-            const bigintValue = this.toBigIntValue(value);
-            return bigintValue ?? value;
+            return _parseBigIntOrNull(value) ?? value;
         }
         if (baseDataType === 'number' && typeof value === 'bigint') {
             const asNumber = Number(value);
@@ -572,102 +615,29 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         return value;
     }
 
-    private toBigIntValue(value: unknown): bigint | null {
-        if (typeof value === 'bigint') {
-            return value;
-        }
-        if (typeof value === 'number') {
-            if (!Number.isFinite(value) || !Number.isInteger(value)) {
-                return null;
-            }
-            return BigInt(value);
-        }
-        return null;
-    }
-
     /** Fetch a non-formula value from the grid without triggering nested formula calc. */
     private fetchRawValue(col: AgColumn, row: RowNode): unknown {
         return this.beans.valueSvc.getValue(col, row, 'data');
     }
 
     /**
-     * Lazily build (or reuse) the per-evaluation cycle-detection / error-propagation context.
-     * Reusing the existing `activeCtx` when nested evaluations occur (e.g. a `valueGetter`
-     * calling `api.getCellValue`) keeps one shared visiting set per outer call, so we don't
-     * raise false-positive cycle errors across nested eval boundaries.
+     * Resolve an `Addr` for `evalAst`. Throws a FormulaError if the cell isn't ready, or the
+     * `CellFormula` itself if it holds an error — the outer catch decomposes it, avoiding a
+     * FormulaError allocation on the eval hot path.
      */
-    private getVisitorContext() {
-        if (this.activeCtx) {
-            return this.activeCtx;
+    public resolveAddrRef(addr: Addr): unknown {
+        const { row, column } = addr;
+        const cachedRefFormula = this.ensureCellFormula(row, column);
+        if (cachedRefFormula) {
+            if (!cachedRefFormula.isValueReady()) {
+                throw new FormulaError(53);
+            }
+            if (cachedRefFormula.errorType) {
+                throw cachedRefFormula;
+            }
+            return cachedRefFormula.getValue();
         }
-        const stateByCell = new Map<RowNode, Set<AgColumn>>();
-        const setVisiting = (r: RowNode, c: AgColumn): void => {
-            let colSet = stateByCell.get(r);
-
-            const isVisiting = colSet?.has(c);
-            if (isVisiting) {
-                // already visiting, so we have a cycle.
-                throw new FormulaError(51);
-            }
-
-            if (!colSet) {
-                colSet = new Set<AgColumn>();
-                stateByCell.set(r, colSet);
-            }
-            colSet.add(c);
-        };
-
-        const setVisited = (r: RowNode, c: AgColumn): void => {
-            const colSet = stateByCell.get(r);
-            if (colSet) {
-                colSet.delete(c);
-                if (colSet.size === 0) {
-                    stateByCell.delete(r);
-                }
-            }
-        };
-
-        /**
-         * Stamp every still-visiting cell with the final error fields decomposed from `source`.
-         * Accepts the thrown value directly (CellFormula, FormulaError, or anything else) so the
-         * catch site stays a single call and decomposition happens exactly once per eval cycle.
-         * Returns the error type so the catch can use it as the return value.
-         */
-        const errorAllVisitors = (source: unknown): FormulaErrorType => {
-            let type: FormulaErrorType;
-            let errorId: FormulaErrorId | null;
-            let message: string;
-            let variableValues: string[] | null;
-            if (source instanceof CellFormula) {
-                // Throw sites only raise a CellFormula after stamping errorType; fall back to
-                // the generic error type rather than `null` if that invariant is ever violated.
-                type = source.errorType ?? '#ERROR!';
-                errorId = source.errorId;
-                message = source.errorMessage;
-                variableValues = source.errorVariableValues;
-            } else if (source instanceof FormulaError) {
-                type = source.type;
-                errorId = source.errorId;
-                message = source.message;
-                variableValues = source.variableValues ?? null;
-            } else {
-                type = '#ERROR!';
-                errorId = null;
-                message = String((source as { message?: unknown } | null | undefined)?.message ?? source);
-                variableValues = null;
-            }
-            // forEach on Map/Set avoids the per-step iterator/entry allocations that destructuring
-            // `for...of [row, cells]` pays. Hot on grids with many cascading errors.
-            stateByCell.forEach((cells, row) => {
-                cells.forEach((col) => {
-                    const cache = this.ensureCellFormula(row, col);
-                    cache?.setErrorFields(type, errorId, message, variableValues);
-                });
-            });
-            return type;
-        };
-
-        return (this.activeCtx = { setVisited, setVisiting, errorAllVisitors });
+        return this.fetchRawValue(column, row);
     }
 
     private makeFormulaFrame(address: Addr): FormulaFrame {
@@ -679,24 +649,20 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             throw new FormulaError(52);
         }
 
-        const unresolvedDepIterator = unresolvedDeps(this.beans, ast, this.ensureCellFormulaBound);
+        const unresolvedDepIterator = unresolvedDeps(this.beans, ast, this);
 
         return { address, ast, unresolvedDepIterator };
     }
 
     /**
-     * Evaluate a single cell's formula **iteratively** (no recursion to avoid large stack traces),
-     * caching dependency results into their own CellFormula entries.
-     *
+     * Evaluate a cell's formula iteratively (no recursion), caching dependency results.
      * Returns the computed value, or a '#...' string on error.
      */
     public resolveValue(column: AgColumn, node: RowNode): unknown {
-        // If start cell isn't a formula, return raw value.
+        // If start cell isn't a formula, return raw value. We don't route through the
+        // formatter here — that could loop back through the formula engine.
         const rootCachedCellFormula = this.ensureCellFormula(node, column);
         if (!rootCachedCellFormula) {
-            // if this isn't a formula shouldn't be resolving here.
-            // we don't try to return the formatted value as that could
-            // endlessly loop
             return this.fetchRawValue(column, node);
         }
 
@@ -705,16 +671,18 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return rootCachedCellFormula.getValue();
         }
 
-        const hadCtx = !!this.activeCtx; // top level call
-        const { setVisited, setVisiting, errorAllVisitors } = this.getVisitorContext();
+        // Reuse an existing ctx for nested evals (e.g. a valueGetter calling `api.getCellValue`)
+        // so they share the visiting set and don't raise false-positive cycle errors.
+        const existingCtx = this.activeCtx;
+        const ctx = existingCtx ?? (this.activeCtx = new Map());
 
         const evalStack: FormulaFrame[] = [];
 
         try {
-            // Seed the stack with the root formula cell.
-            // Dependencies will be added to tail, and the last item is picked each pass
-            // As items are removed from the tail, items at the head should become resolvable.
-            setVisiting(node, column);
+            // Seed the stack with the root formula cell. Dependencies are added to the tail and
+            // the last item is picked each pass — as items are removed from the tail, items at
+            // the head should become resolvable.
+            formulaVisitorSetVisiting(ctx, node, column);
             evalStack.push(this.makeFormulaFrame({ row: node, column }));
 
             while (evalStack.length) {
@@ -724,11 +692,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 // formula is guaranteed to exist for frames; check cache/error each pass.
                 const cachedCellFormula = this.ensureCellFormula(row, col)!;
 
-                // if not stale and cache ready, short circuit
                 if (cachedCellFormula.isValueReady()) {
-                    // value is ready, so set complete
                     evalStack.pop();
-                    setVisited(row, col);
+                    formulaVisitorSetVisited(ctx, row, col);
 
                     // Up-to-date but errored: rethrow the cell as its own error carrier. The outer
                     // catch reads the error fields directly off CellFormula so we avoid allocating
@@ -739,37 +705,36 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                     continue;
                 }
 
-                // pull next unresolved dependency
                 const depStep = unresolvedDepIterator.next();
                 if (!depStep.done) {
                     const depAddr = depStep.value;
                     const depCachedCellFormula = this.ensureCellFormula(depAddr.row, depAddr.column);
                     if (!depCachedCellFormula || depCachedCellFormula.isValueReady()) {
-                        continue; // skip if not formula or value ready
+                        continue;
                     }
 
-                    // value not ready, so mark as visiting before adding any dependencies to the stack
-                    setVisiting(depAddr.row, depAddr.column);
-                    evalStack.push(this.makeFormulaFrame(depAddr)); // push dependency to be resolved
+                    // value not ready — mark visiting before pushing so cycle detection fires on
+                    // the next setVisiting for this cell.
+                    formulaVisitorSetVisiting(ctx, depAddr.row, depAddr.column);
+                    evalStack.push(this.makeFormulaFrame(depAddr));
                     continue;
                 }
 
-                // all deps ready, evaluate this frame. Reuse the frame's `address` as the
+                // All deps ready — evaluate this frame. Reuse the frame's `address` as the
                 // current-cell arg rather than allocating a fresh `{ row, column }` each iteration.
-                const computed = evalAst(this.beans, ast, this.resolveAddrRef, address);
+                const computed = evalAst(this.beans, ast, this, address);
                 const coerced = this.coerceFormulaValue(cachedCellFormula, computed);
 
-                // An inner valueGetter might have errored via errorAllVisitors during evalAst above,
-                // which would have stamped errorType with the current cacheVersion. If so, rethrow
-                // the cell itself (no FormulaError allocation) instead of overwriting with the coerced value.
+                // An inner valueGetter might have errored via `errorAllVisitors` during evalAst
+                // above, stamping errorType at the current cacheVersion. If so, rethrow the cell
+                // itself (no FormulaError allocation) instead of overwriting with the coerced value.
                 if (cachedCellFormula.errorType && cachedCellFormula.isValueReady()) {
-                    setVisited(row, col);
+                    formulaVisitorSetVisited(ctx, row, col);
                     throw cachedCellFormula;
                 }
 
-                // cache result and mark as completed
                 cachedCellFormula.setComputedValue(coerced);
-                setVisited(row, col);
+                formulaVisitorSetVisited(ctx, row, col);
                 evalStack.pop();
             }
 
@@ -779,12 +744,46 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
             return rootCachedCellFormula.getValue();
         } catch (e) {
-            return errorAllVisitors(e);
+            return this.errorAllVisitors(ctx, e);
         } finally {
-            // clear out the active ctx to ensure fresh visiting tree
-            if (!hadCtx) {
+            // Only the outermost call clears the ctx, so nested evals keep sharing it.
+            if (!existingCtx) {
                 this.activeCtx = null;
             }
         }
+    }
+
+    /**
+     * Stamp every still-visiting cell with the final error fields decomposed from `source`.
+     * Accepts the thrown value directly (CellFormula, FormulaError, or anything else) so the
+     * catch site stays a single call and decomposition happens exactly once per eval cycle.
+     * Returns the error type so the catch can use it as the return value.
+     */
+    private errorAllVisitors(ctx: FormulaVisitorContext, source: unknown): FormulaErrorType {
+        let type: FormulaErrorType = '#ERROR!';
+        let errorId: FormulaErrorId | null = null;
+        let message: string;
+        let variableValues: string[] | null = null;
+        if (source instanceof CellFormula) {
+            // Throw sites only raise a CellFormula after stamping errorType; fall back to the
+            // generic error type rather than `null` if that invariant is ever violated.
+            type = source.errorType ?? '#ERROR!';
+            errorId = source.errorId;
+            message = source.errorMessage;
+            variableValues = source.errorVariableValues;
+        } else if (source instanceof FormulaError) {
+            type = source.type;
+            errorId = source.errorId;
+            message = source.message;
+            variableValues = source.variableValues ?? null;
+        } else {
+            message = String((source as { message?: unknown } | null | undefined)?.message ?? source);
+        }
+        ctx.forEach((cells, row) => {
+            for (const col of cells) {
+                this.ensureCellFormula(row, col)?.setErrorFields(type, errorId, message, variableValues);
+            }
+        });
+        return type;
     }
 }
