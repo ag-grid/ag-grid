@@ -10,7 +10,6 @@ test.agExample(import.meta, () => {
         const toolbarItems = toolbar.locator(':scope > .ag-toolbar-item');
         const toolbarButtons = toolbar.locator(':scope > .ag-toolbar-button');
 
-        // rowGroupPanel + search input + 2 action buttons + menu item as configured in main.ts
         await expect(toolbarItems).toHaveCount(5);
         await expect(toolbar.locator(':scope > .ag-toolbar-panel')).toHaveCount(1);
         await expect(toolbar.locator(':scope > .ag-toolbar-input')).toHaveCount(1);
