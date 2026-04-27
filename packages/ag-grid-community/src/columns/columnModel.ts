@@ -461,12 +461,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const previousSiblingPosMap: Map<AgColumn, AgColumn | AgColumn[]> = new Map();
 
         const { pivotColDefSvc } = this.beans;
-        const freshListIndex = new Map<AgColumn, number>();
-        for (let i = 0; i < cols.list.length; i++) {
-            freshListIndex.set(cols.list[i], i);
-        }
+        let freshListIndex: Map<AgColumn, number> | null = null;
 
         const getPreviousColInFreshList = (col: AgColumn): AgColumn | null => {
+            if (freshListIndex == null) {
+                freshListIndex = new Map<AgColumn, number>();
+                for (let i = 0; i < cols.list.length; i++) {
+                    freshListIndex.set(cols.list[i], i);
+                }
+            }
             const idx = freshListIndex.get(col)!;
             for (let i = idx - 1; i >= 0; i--) {
                 const candidate = cols.list[i];
