@@ -18,10 +18,10 @@ The only acceptable input for Phase 5 (diagnosis and fixing) is the **Playwright
 error output from a local test run against the worktree's dev server**. Nothing
 else is a substitute:
 
-- CI annotations and job logs tell you *what* failed, not *why*. They are not diagnostic input.
-- Reading `example.spec.ts` tells you what the test asserts, not why the assertion fails now.
-- Reading `main.ts` / `provided/*` tells you what the example does, not what broke.
-- `git log` on the example or the grid tells you what changed, not whether that change caused this failure.
+-   CI annotations and job logs tell you _what_ failed, not _why_. They are not diagnostic input.
+-   Reading `example.spec.ts` tells you what the test asserts, not why the assertion fails now.
+-   Reading `main.ts` / `provided/*` tells you what the example does, not what broke.
+-   `git log` on the example or the grid tells you what changed, not whether that change caused this failure.
 
 If you think you already know the cause from CI logs and source reading alone,
 you are guessing. That is exactly the failure mode this skill exists to prevent:
@@ -326,10 +326,10 @@ lsof -i :4610 | head -3 || echo "(nothing on 4610 — good)"
 Before moving to Phase 4, confirm all of the following. If any is missing,
 go back and finish Phase 2 or 3 before reading any source files:
 
-- Worktree exists at `$WORKTREE_PATH` and is on the repair branch.
-- Dev server is reachable on `https://localhost:${FREE_PORT}/` (curl returns).
-- State file has `WORKTREE_PATH`, `FREE_PORT`, `DEV_SERVER_PID`, `FAILING_EXAMPLES_FILE`, and the failing-examples file exists.
-- Nothing is listening on port 4610 (or you've confirmed it's a different dev server you don't care about).
+-   Worktree exists at `$WORKTREE_PATH` and is on the repair branch.
+-   Dev server is reachable on `https://localhost:${FREE_PORT}/` (curl returns).
+-   State file has `WORKTREE_PATH`, `FREE_PORT`, `DEV_SERVER_PID`, `FAILING_EXAMPLES_FILE`, and the failing-examples file exists.
+-   Nothing is listening on port 4610 (or you've confirmed it's a different dev server you don't care about).
 
 ---
 
@@ -347,9 +347,9 @@ not a test-name pattern. Example paths are stored in state as
 `.../toolbar/_examples/grid-options/example.spec.ts`. So the argument must
 match the `/_examples/` segment:
 
-| Stored path | Playwright arg |
-|---|---|
-| `toolbar/grid-options` | `toolbar/_examples/grid-options` |
+| Stored path                              | Playwright arg                                     |
+| ---------------------------------------- | -------------------------------------------------- |
+| `toolbar/grid-options`                   | `toolbar/_examples/grid-options`                   |
 | `aggregation-columns/enable-aggregation` | `aggregation-columns/_examples/enable-aggregation` |
 
 Do not try to batch examples with a `|`-separated alternation; nx re-shells
@@ -409,12 +409,12 @@ Split the failing examples into two buckets based on the local run:
    These are the only examples you should diagnose and fix in Phase 5.
 2. **Did not reproduce** — the test passes locally. Do **not** edit these.
    Investigate the cause instead:
-   - Re-run 2–3 times to rule out flakiness (timing, animation, network).
-   - Check `git log origin/latest --since="<CI run timestamp>"` for commits
-     that may have already fixed it on `latest` after the CI run.
-   - Check which framework job the CI failure came from (Safari/Firefox
-     failures won't reproduce under the default chromium run — re-run with
-     `FRAMEWORK=…` or the matching browser project).
+    - Re-run 2–3 times to rule out flakiness (timing, animation, network).
+    - Check `git log origin/latest --since="<CI run timestamp>"` for commits
+      that may have already fixed it on `latest` after the CI run.
+    - Check which framework job the CI failure came from (Safari/Firefox
+      failures won't reproduce under the default chromium run — re-run with
+      `FRAMEWORK=…` or the matching browser project).
 
 The loop above already wrote `/tmp/ag-doc-repair-reproduced` and
 `/tmp/ag-doc-repair-not-reproduced`. Those files are the source of truth for
@@ -423,7 +423,7 @@ the rest of the workflow — don't re-record the buckets in the state file.
 Report a short summary to the user: how many failures reproduced, how many
 did not, and your best guess at why (flake / already-fixed / framework-specific)
 for each that did not. Wait for the user to confirm the plan before moving to
-Phase 5. If *no* failures reproduce, stop and hand back to the user — there is
+Phase 5. If _no_ failures reproduce, stop and hand back to the user — there is
 nothing to fix.
 
 ---
@@ -440,23 +440,25 @@ Work through the reproduced failures one at a time. For each failure:
 1. Read the Playwright error — it includes the failing assertion, the test URL,
    and a stack trace pointing to the spec file line.
 2. The example source lives at:
-   ```
-   documentation/ag-grid-docs/src/content/docs/<page>/_examples/<example>/
-   ├── example.spec.ts     ← test assertions
-   ├── main.ts             ← vanilla JS implementation
-   ├── provided/angular/
-   ├── provided/react/
-   └── provided/vue3/
-   ```
+    ```
+    documentation/ag-grid-docs/src/content/docs/<page>/_examples/<example>/
+    ├── example.spec.ts     ← test assertions
+    ├── main.ts             ← vanilla JS implementation
+    ├── provided/angular/
+    ├── provided/react/
+    └── provided/vue3/
+    ```
 3. Make the fix in the **worktree** files (at `$WORKTREE_PATH/documentation/...`).
 4. Re-run that single example to confirm it passes before moving on.
 
 ### Common failure patterns
 
 **Renamed grid API method or ColDef property:**
+
 ```bash
 grep -r "oldName\|newName" packages/ag-grid-community/src/ --include="*.ts" -l
 ```
+
 Update all affected files under `_examples/` (main.ts and provided/ variants).
 
 **Locator broken (test ID or CSS class changed):**
