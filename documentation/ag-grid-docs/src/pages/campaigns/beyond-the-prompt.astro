@@ -266,8 +266,8 @@ const HERO_FACES = [
 
 const VENUE_IMAGES: VenueImage[] = [
     {
-        src: 'images/campaigns/beyond-the-prompt/venue/savoy.png',
-        srcMobile: 'images/campaigns/beyond-the-prompt/venue/savoy-mobile.png',
+        src: 'images/campaigns/beyond-the-prompt/venue/savoy.webp',
+        srcMobile: 'images/campaigns/beyond-the-prompt/venue/savoy-mobile.webp',
         alt: 'Line drawing of IET London at 2 Savoy Place',
     },
 ];
@@ -363,7 +363,7 @@ const VENUE_IMAGES: VenueImage[] = [
                             />
                             <span class={styles.heroLogoX} aria-hidden="true">×</span>
                             <img
-                                src={urlWithBaseUrl('images/campaigns/bryntum-logo.png')}
+                                src={urlWithBaseUrl('images/campaigns/bryntum-logo.webp')}
                                 alt="Bryntum"
                                 class={styles.heroLogoBryntum}
                             />
@@ -674,7 +674,7 @@ const VENUE_IMAGES: VenueImage[] = [
                                     `<picture>` lets the browser pick the
                                     narrow-viewport asset before the `<img>`
                                     fires a request, so phones never download
-                                    the full-width desktop PNG. We use the
+                                    the full-width desktop WebP. We use the
                                     same 720px breakpoint that switches the
                                     rest of the page into desktop layout.
                                 */}
