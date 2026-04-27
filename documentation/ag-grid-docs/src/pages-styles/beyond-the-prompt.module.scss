@@ -1167,15 +1167,14 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 .agendaBreak {
     .agendaTitle {
         // Break rows (Registration, Coffee break, Lunch, Networking) read
-        // as labels rather than session titles, so we drop them into the
-        // same uppercase mono treatment used by `.agendaSpeakers` and the
-        // section header label.
+        // as labels rather than session titles, so we drop them into an
+        // uppercase mono treatment. Kept at full ink colour (not muted)
+        // so the break still anchors the schedule visually.
         font-family: 'Geist Mono', ui-monospace, monospace;
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 500;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: var(--btp-ink-muted);
     }
 }
 
