@@ -58,6 +58,7 @@
     "test": {
       "command": "npx vitest run",
       "dependsOn": ["copySrcFilesForGeneration"],
+      "outputs": ["{workspaceRoot}/reports/ag-grid-generate-example-files.xml"],
       "options": {
         "cwd": "{projectRoot}"
       }

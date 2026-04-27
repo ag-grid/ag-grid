@@ -197,6 +197,7 @@
     },
     "test": {
       "command": "npx vitest run",
+      "outputs": ["{workspaceRoot}/reports/ag-grid-community.xml"],
       "options": {
         "cwd": "{projectRoot}"
       }
