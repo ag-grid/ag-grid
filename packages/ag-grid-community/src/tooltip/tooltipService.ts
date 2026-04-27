@@ -131,9 +131,10 @@ const resolveCellTooltip = ({
 }): ResolvedCellTooltip | null => {
     const { editSvc, formula, gos } = beans;
     const { column, rowNode } = ctrl;
+    const colDef = column.colDef;
 
     // 1) formula error tooltip has highest priority.
-    if (formula?.active && column.isAllowFormula()) {
+    if (colDef.allowFormula && formula?.active) {
         const error = formula.getFormulaError(column, rowNode);
         if (error) {
             return {
@@ -164,7 +165,6 @@ const resolveCellTooltip = ({
         return { value, location: 'cell', shouldDisplay: shouldDisplayCustomTooltip };
     }
 
-    const colDef = column.colDef;
     const data = rowNode.data;
 
     // 4) column tooltip field/valueGetter is the final fallback.

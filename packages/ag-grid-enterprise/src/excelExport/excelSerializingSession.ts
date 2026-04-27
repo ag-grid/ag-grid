@@ -438,7 +438,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                     )
                 );
             } else {
-                const isFormula = column.isAllowFormula() && this.formulaSvc?.isFormula(valueForCellString);
+                const isFormula = column.colDef.allowFormula && this.formulaSvc?.isFormula(valueForCellString);
                 const cell = this.createCell(
                     excelStyleId,
                     isFormula ? 'f' : this.getDataTypeForValue(rawValueForCell),

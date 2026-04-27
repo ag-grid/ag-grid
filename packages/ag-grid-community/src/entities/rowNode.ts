@@ -677,8 +677,6 @@ export class RowNode<TData = any>
             }
         }
 
-        // `isFormula` short-circuits on non-string values in a single typeof check — cheaper than
-        // the `isAllowFormula()` method call for the vast majority of cells.
         if (column.colDef.allowFormula) {
             const formula = beans.formula;
             if (formula?.isFormula(value) && column.isAllowFormula()) {

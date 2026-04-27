@@ -112,14 +112,13 @@ export class ValueService extends BeanStub implements NamedBean {
         const node = params.node;
         const showRowGroupColValueSvc = beans.showRowGroupColValueSvc;
         const isFullWidthGroup = !column && node.group;
-        const isGroupCol = column?.colDef.showRowGroup;
 
         // Tree data auto col acts as a traditional column, with the exception of footers, so only process footers with
         // showRowGroupColValueSvc
         const processTreeDataAsGroup = !this.isTreeData || node.footer;
 
         // handle group cell value
-        if (showRowGroupColValueSvc && processTreeDataAsGroup && (isFullWidthGroup || isGroupCol)) {
+        if (showRowGroupColValueSvc && processTreeDataAsGroup && (isFullWidthGroup || column?.colDef.showRowGroup)) {
             const groupValue = showRowGroupColValueSvc.getGroupValue(node, column, this.displayIgnoresAggData(node));
             if (groupValue == null) {
                 return {
@@ -148,7 +147,8 @@ export class ValueService extends BeanStub implements NamedBean {
         let valueToFormat = value;
 
         const formula = beans.formula;
-        if (column.isAllowFormula() && formula?.isFormula(value)) {
+        const colDef = column.colDef;
+        if (colDef.allowFormula && formula?.isFormula(value)) {
             if (params.useRawFormula) {
                 value = formula.normaliseFormula(value, true);
                 valueToFormat = formula.resolveValue(column, node as RowNode);
@@ -159,7 +159,7 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         const format =
-            params.includeValueFormatted && !(params.exporting && column.colDef.useValueFormatterForExport === false);
+            params.includeValueFormatted && !(params.exporting && colDef.useValueFormatterForExport === false);
         return {
             value,
             valueFormatted: format ? this.formatValue(column, node, valueToFormat) : null,
@@ -571,7 +571,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const { field, valueSetter } = colDef;
 
         const formulaSvc = this.beans.formula;
-        const isFormulaValue = column.isAllowFormula() && formulaSvc?.isFormula(newValue);
+        const isFormulaValue = column.colDef.allowFormula && formulaSvc?.isFormula(newValue);
         const hasExternalFormulaData = !!this.formulaDataSvc?.hasDataSource();
 
         if (_missing(field) && _missing(valueSetter) && !(hasExternalFormulaData && isFormulaValue)) {
@@ -602,7 +602,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const { column, rowNode, newValue, eventSource, setterParams } = args;
         const formulaSvc = this.beans.formula;
         const formulaDataSvc = this.formulaDataSvc;
-        if (!formulaDataSvc?.hasDataSource() || !column.isAllowFormula()) {
+        if (!column.colDef.allowFormula || !formulaDataSvc?.hasDataSource()) {
             return null;
         }
 
