@@ -410,10 +410,10 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     max-height: 220px;
     // Slot 2 is dropped well below the bookend portraits to make the zigzag
     // read as a deliberate compositional move rather than a small offset.
-    // Mobile gets a smaller drop (160px) than desktop (238px) — at the
-    // narrower viewport the portrait was sliding too far down past the
-    // bookends, breaking the visual rhythm.
-    transform: translateY(160px);
+    // Mobile uses a much smaller drop (100px) than desktop (238px) — at
+    // narrow viewports the portrait was sliding past the hero's bottom
+    // edge into the section nav, getting clipped.
+    transform: translateY(100px);
 
     @media (min-width: 900px) {
         max-height: 323px;
@@ -421,7 +421,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 
     &:hover {
-        transform: translateY(156px);
+        transform: translateY(96px);
 
         @media (min-width: 900px) {
             transform: translateY(234px);
