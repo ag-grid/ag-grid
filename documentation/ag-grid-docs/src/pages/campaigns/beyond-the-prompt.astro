@@ -315,6 +315,7 @@ const VENUE_IMAGES: VenueImage[] = [
     hideFooter={true}
     hidePageFromSearchEngines={true}
     overrideSocialImage={SOCIAL_IMAGE_URL}
+    showAnnouncementBanner={false}
 >
     <div class={styles.page}>
         {
@@ -610,9 +611,7 @@ const VENUE_IMAGES: VenueImage[] = [
                                             <div class={styles.agendaTime}>{item.time}</div>
                                             <div class={styles.agendaBody}>
                                                 <h3 class={styles.agendaTitle}>{item.title}</h3>
-                                                {item.speakers && (
-                                                    <p class={styles.agendaSpeakers}>{item.speakers}</p>
-                                                )}
+                                                {item.speakers && <p class={styles.agendaSpeakers}>{item.speakers}</p>}
                                             </div>
                                             {hasOverlay && (
                                                 <div class={styles.agendaDescriptionWrap}>
@@ -628,10 +627,7 @@ const VENUE_IMAGES: VenueImage[] = [
                                                         layer is purely decorative.
                                                     */}
                                                     {speakerImages.length > 0 && (
-                                                        <div
-                                                            class={styles.agendaSpeakerStack}
-                                                            aria-hidden="true"
-                                                        >
+                                                        <div class={styles.agendaSpeakerStack} aria-hidden="true">
                                                             {speakerImages.map((src) => (
                                                                 <img
                                                                     src={urlWithBaseUrl(src)}

@@ -24,12 +24,6 @@ interface Props {
     hideFooter?: boolean;
     hidePageFromSearchEngines?: boolean;
     showAnnouncementBanner?: boolean;
-    announcementBannerProps?: {
-        href: string;
-        title: string;
-        description: string;
-        ctaLabel: string;
-    };
     overrideSocialImage?: string;
 }
 
@@ -53,6 +47,7 @@ const {
     hideHeader,
     hideFooter,
     hidePageFromSearchEngines,
+    showAnnouncementBanner = true,
     overrideSocialImage,
 } = Astro.props;
 
@@ -203,7 +198,7 @@ const announcementBannerProps = {
         </script>
 
         {
-            !isArchive && (
+            !isArchive && showAnnouncementBanner && (
                 <AnnouncementBanner
                     href={announcementBannerProps.href}
                     title={announcementBannerProps.title}
