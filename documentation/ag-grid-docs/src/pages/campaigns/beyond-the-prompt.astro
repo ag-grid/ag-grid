@@ -40,6 +40,10 @@ type Speaker = {
 
 type VenueImage = {
     src: string;
+    // Optional narrow-viewport variant. When present we render a `<picture>`
+    // with a mobile `<source>` so portrait phones get a re-cropped/re-stacked
+    // version of the same illustration. Falls through to `src` on desktop.
+    srcMobile?: string;
     alt: string;
     caption?: string;
 };
@@ -208,16 +212,18 @@ const SPEAKERS: Speaker[] = [
 
 // Featured faces for the hero (use the SVG illustrations).
 // Order is intentional: the middle slot drops down in the layout to create a
-// small zigzag, so the strongest silhouettes (Maggie, John) bookend Mats.
+// small zigzag, so the bookend slots (1 and 3) sit at the natural top while
+// slot 2 takes the dropped position.
 const HERO_FACES = [
     { name: 'Maggie', src: 'images/campaigns/beyond-the-prompt/svg/maggie.svg' },
-    { name: 'Mats', src: 'images/campaigns/beyond-the-prompt/svg/mats.svg' },
-    { name: 'John', src: 'images/campaigns/beyond-the-prompt/svg/john.svg' },
+    { name: 'Stephen', src: 'images/campaigns/beyond-the-prompt/svg/stephen.svg' },
+    { name: 'Matt Pocock', src: 'images/campaigns/beyond-the-prompt/svg/matt-pocock.svg' },
 ];
 
 const VENUE_IMAGES: VenueImage[] = [
     {
         src: 'images/campaigns/beyond-the-prompt/venue/savoy.png',
+        srcMobile: 'images/campaigns/beyond-the-prompt/venue/savoy-mobile.png',
         alt: 'Line drawing of IET London at 2 Savoy Place',
     },
 ];
@@ -269,7 +275,36 @@ const VENUE_IMAGES: VenueImage[] = [
     overrideSocialImage={SOCIAL_IMAGE_URL}
 >
     <div class={styles.page}>
-        <section class={styles.hero}>
+        {/*
+            Sticky page nav. Hidden by default; revealed via `data-visible="true"`
+            once the hero scrolls fully out of view. The IntersectionObserver
+            script lives at the end of this file. Background matches the page
+            (var(--btp-bg) === #f2f2f2) so it reads as a continuation rather
+            than a chrome bar.
+        */}
+        <nav class={styles.stickyNav} data-sticky-nav aria-label="Beyond the Prompt page nav">
+            <div class={`${styles.container} ${styles.stickyNavInner}`}>
+                <a href="#top" class={styles.stickyNavBrand} aria-label="Back to top">
+                    <img
+                        src={urlWithBaseUrl('images/campaigns/beyond-the-prompt/logo-btp.svg')}
+                        alt=""
+                        aria-hidden="true"
+                        class={styles.stickyNavLogo}
+                        width="48"
+                        height="34"
+                    />
+                </a>
+                <a
+                    href={BOOK_TICKETS_HREF}
+                    class={`${styles.btnPrimary} ${styles.stickyNavCta}`}
+                    aria-label="Book tickets"
+                >
+                    Book tickets <Icon name="chevronRight" />
+                </a>
+            </div>
+        </nav>
+
+        <section class={styles.hero} data-sticky-trigger id="top">
             <div class={styles.container}>
                 <div class={styles.heroInner}>
                     <div class={styles.heroContent}>
@@ -530,12 +565,28 @@ const VENUE_IMAGES: VenueImage[] = [
                     {
                         VENUE_IMAGES.map((img) => (
                             <figure class={styles.venueSlide}>
-                                <img
-                                    src={urlWithBaseUrl(img.src)}
-                                    alt={img.alt}
-                                    class={styles.venueImage}
-                                    loading="lazy"
-                                />
+                                {/*
+                                    `<picture>` lets the browser pick the
+                                    narrow-viewport asset before the `<img>`
+                                    fires a request, so phones never download
+                                    the full-width desktop PNG. We use the
+                                    same 720px breakpoint that switches the
+                                    rest of the page into desktop layout.
+                                */}
+                                <picture>
+                                    {img.srcMobile && (
+                                        <source
+                                            media="(max-width: 719px)"
+                                            srcset={urlWithBaseUrl(img.srcMobile)}
+                                        />
+                                    )}
+                                    <img
+                                        src={urlWithBaseUrl(img.src)}
+                                        alt={img.alt}
+                                        class={styles.venueImage}
+                                        loading="lazy"
+                                    />
+                                </picture>
                                 {img.caption && <figcaption class={styles.venueCaption}>{img.caption}</figcaption>}
                             </figure>
                         ))
@@ -569,3 +620,23 @@ const VENUE_IMAGES: VenueImage[] = [
         </section>
     </div>
 </Layout>
+
+<script>
+    // Reveal the sticky nav once the hero has scrolled fully out of view.
+    // We watch the hero with `threshold: 0`; when `isIntersecting` flips
+    // to false, we set `data-visible="true"` on the nav. The state lives
+    // in a data-attribute (rather than a class) so it doesn't have to
+    // round-trip through CSS Modules name hashing.
+    const stickyNav = document.querySelector<HTMLElement>('[data-sticky-nav]');
+    const stickyTrigger = document.querySelector<HTMLElement>('[data-sticky-trigger]');
+
+    if (stickyNav && stickyTrigger && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                stickyNav.dataset.visible = entry.isIntersecting ? 'false' : 'true';
+            },
+            { threshold: 0 }
+        );
+        observer.observe(stickyTrigger);
+    }
+</script>

@@ -113,6 +113,77 @@ $btp-card: #ffffff;
     }
 }
 
+// ─── Sticky page nav ─────────────────────────────────────────────────────────
+// Hidden until the hero leaves the viewport, then slides down. The page-bg
+// colour is reused so the bar reads as a continuation of the page rather
+// than chrome — the only visual separator is the hairline brand-tinted
+// bottom border. Visibility is controlled via `data-visible="true"` set by
+// the IntersectionObserver script in the page (no CSS-Modules hash round-trip).
+.stickyNav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: var(--btp-bg);
+    border-bottom: 1px solid var(--btp-border);
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        transform 0.32s ease,
+        opacity 0.32s ease;
+
+    &[data-visible='true'] {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        transition: opacity 0.2s ease;
+        transform: none;
+    }
+}
+
+.stickyNavInner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.stickyNavBrand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--btp-ink);
+    min-width: 0;
+}
+
+.stickyNavLogo {
+    display: block;
+    width: 36px;
+    height: auto;
+
+    @media (min-width: 720px) {
+        width: 44px;
+    }
+}
+
+// Size overrides only — the actual primary-button visuals are layered on
+// at the markup level by combining `.btnPrimary` with this class. Avoids
+// composing forward across the file (CSS Modules' `composes` requires
+// the referenced class to be declared earlier in the module).
+.stickyNavCta {
+    padding: 10px 18px;
+    font-size: 14px;
+    text-decoration: none;
+}
+
 // ─── Hero ────────────────────────────────────────────────────────────────────
 .hero {
     position: relative;
@@ -181,7 +252,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     brightness(99%) contrast(108%);
 
 .heroLogoAg {
-    height: 28px;
+    height: 40px;
     width: auto;
     filter: $btp-logo-orange-filter;
 }
@@ -363,6 +434,88 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 
     &:hover {
         transform: translateY(-4px);
+    }
+}
+
+// ─── Hero entrance animation ─────────────────────────────────────────────────
+// A blur-rise stagger plays once on page load:
+//   • Left group  — `.heroContent > *` rise + un-blur sequentially.
+//   • Right group — the three `.heroFace` SVGs un-blur in place, slightly
+//     offset from the left so the eye finishes reading the copy as the
+//     portraits resolve. We only animate `opacity` and `filter` for the
+//     faces because each one already owns a bespoke `transform` (Maggie's
+//     `scale(1.15)`, Mats's `translateY(211px)` etc.) that we must not
+//     clobber. The existing `drop-shadow` is preserved in both keyframe
+//     stages so the filter function chain stays consistent and CSS can
+//     interpolate cleanly.
+//
+// `animation-fill-mode: both` is critical: it keeps each element in the
+// `from` state during its individual `animation-delay`, otherwise the
+// not-yet-started elements would flash visible before their turn.
+@keyframes btp-hero-rise {
+    from {
+        opacity: 0;
+        filter: blur(14px);
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+    }
+}
+
+@keyframes btp-hero-face-in {
+    from {
+        opacity: 0;
+        filter: drop-shadow(0 12px 24px rgba(244, 56, 0, 0.08)) blur(18px);
+    }
+    to {
+        opacity: 1;
+        filter: drop-shadow(0 12px 24px rgba(244, 56, 0, 0.08)) blur(0);
+    }
+}
+
+.heroContent > * {
+    animation: btp-hero-rise 720ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.heroContent > *:nth-child(1) {
+    animation-delay: 0ms;
+}
+.heroContent > *:nth-child(2) {
+    animation-delay: 90ms;
+}
+.heroContent > *:nth-child(3) {
+    animation-delay: 180ms;
+}
+.heroContent > *:nth-child(4) {
+    animation-delay: 270ms;
+}
+.heroContent > *:nth-child(5) {
+    animation-delay: 360ms;
+}
+
+.heroFace {
+    animation: btp-hero-face-in 820ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+// Right group lags the left group by a beat so the faces feel like they
+// resolve _into_ a finished hero, rather than racing the copy.
+.heroFace:nth-child(1) {
+    animation-delay: 220ms;
+}
+.heroFace:nth-child(2) {
+    animation-delay: 320ms;
+}
+.heroFace:nth-child(3) {
+    animation-delay: 420ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .heroContent > *,
+    .heroFace {
+        animation: none;
     }
 }
 
@@ -615,6 +768,20 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
+// On the Agenda section, `.sectionLead` lives in its own `.container` div
+// (separate from the cards), so the adjacent-sibling `+` rule above can't
+// reach across the wrapping containers. Mirror the same gap by pushing the
+// `.container` that immediately follows the lead's container down instead.
+// Speakers and Venue keep `.sectionLead` and their grids inside a single
+// `.container`, so that pattern continues to use the rule above.
+.container:has(> .sectionLead) + .container {
+    margin-top: 32px;
+
+    @media (min-width: 900px) {
+        margin-top: 48px;
+    }
+}
+
 // ─── Intro ───────────────────────────────────────────────────────────────────
 .intro {
     composes: section;
@@ -655,7 +822,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     padding: 32px;
     background: var(--btp-card);
     border: 1px solid var(--btp-border);
-    border-radius: 16px;
     transition: border-color 0.2s ease;
 
     &:hover {
@@ -808,12 +974,86 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     }
 }
 
+// "Morning" / "Afternoon" header strip inside each agenda card. We dress
+// it up with a subtle orange wash plus a pixel-art dither: a sparse
+// checker covers the whole strip, and a denser checker fades in from
+// the right edge so the eye lands there as a graphic accent. The label
+// sits above both layers via `isolation: isolate` + `z-index: -1` on the
+// pseudo-elements (no positioning needed on the <p> itself).
 .agendaSectionHeader {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     border-bottom: 1px solid var(--btp-border);
     padding: 18px 0;
+    background-color: rgba(244, 56, 0, 0.04);
 
     @media (min-width: 900px) {
         padding: 22px 0;
+    }
+
+    // Whisper-light checker across the whole strip. The two staggered
+    // 45deg gradients are the classic CSS checkerboard recipe — each
+    // gradient draws opposite triangles, and offsetting the second tile
+    // by half its size aligns them into squares.
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-image: linear-gradient(
+                45deg,
+                rgba(244, 56, 0, 0.55) 25%,
+                transparent 25%,
+                transparent 75%,
+                rgba(244, 56, 0, 0.55) 75%
+            ),
+            linear-gradient(
+                45deg,
+                rgba(244, 56, 0, 0.55) 25%,
+                transparent 25%,
+                transparent 75%,
+                rgba(244, 56, 0, 0.55) 75%
+            );
+        background-size: 4px 4px;
+        background-position:
+            0 0,
+            2px 2px;
+        opacity: 0.16;
+        pointer-events: none;
+    }
+
+    // Denser dither cluster anchored to the right edge. A horizontal
+    // mask-image fades the cluster out to the left so it reads as a
+    // pixel-art "fall-off" rather than a hard band.
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 240px;
+        z-index: -1;
+        background-image: linear-gradient(
+                45deg,
+                var(--btp-orange) 25%,
+                transparent 25%,
+                transparent 75%,
+                var(--btp-orange) 75%
+            ),
+            linear-gradient(45deg, var(--btp-orange) 25%, transparent 25%, transparent 75%, var(--btp-orange) 75%);
+        background-size: 5px 5px;
+        background-position:
+            0 0,
+            2.5px 2.5px;
+        opacity: 0.4;
+        mask-image: linear-gradient(to right, transparent, black 75%);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 75%);
+        pointer-events: none;
+
+        @media (min-width: 900px) {
+            width: 320px;
+        }
     }
 }
 
