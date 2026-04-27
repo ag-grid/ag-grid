@@ -1,5 +1,4 @@
 import { getByTestId } from '@testing-library/dom';
-import '@testing-library/jest-dom';
 
 import type { BatchEditingStartedEvent, BatchEditingStoppedEvent, CellValueChangedEvent } from 'ag-grid-community';
 import {

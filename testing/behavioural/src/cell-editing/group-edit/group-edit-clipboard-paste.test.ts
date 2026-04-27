@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom';
-
 import type { GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 import {

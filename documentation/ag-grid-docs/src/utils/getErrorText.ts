@@ -37,7 +37,7 @@ export function getErrorText({ errorCode, params = {} }: { errorCode: ErrorId; p
         const textOutputArray = typeof textOutput === 'string' ? [textOutput] : textOutput;
 
         return textOutputArray.filter(Boolean).join('\n');
-    } catch (_) {
+    } catch {
         // The `errorTextFn` can fail if the function requires params, that
         // don't exist during static render. Just return nothing in these cases
         return '';

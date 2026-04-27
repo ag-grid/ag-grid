@@ -6,7 +6,9 @@
         "./src/interfaces/iAgChartOptions.ts",
         "./src/theming/createTheme.ts",
         "./src/utils/debug.ts",
-        "./src/main-umd-styles.ts"
+        "./src/main-umd-styles.ts",
+        "./**/*.test.ts",
+        "./src/test-utils/**"
     ],
     "rules": {
         "unlisted": "off",

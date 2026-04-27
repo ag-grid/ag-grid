@@ -16,6 +16,7 @@ export const useFramework = () => {
     );
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing framework from store for SSR compatibility
         setFramework(getFrameworkFromInternalFramework(internalFramework));
     }, [internalFramework]);
 

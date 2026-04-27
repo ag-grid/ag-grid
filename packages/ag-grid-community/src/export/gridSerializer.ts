@@ -357,7 +357,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
         const isTreeData = gos.get('treeData');
 
-        let columnsToExport: AgColumn[] = [];
+        let columnsToExport: AgColumn[];
 
         if (allColumns && !isPivotMode) {
             columnsToExport = colModel.getCols();

@@ -150,7 +150,7 @@
     $selector-list: ();
     @each $selector in $selectors {
         $result: ();
-        @for $i from 1 through length($selector) {
+        @for $i from 1 through list.length($selector) {
             $item: list.nth($selector, $i);
             $result: list.append($result, $item);
             @if $i == 1 {

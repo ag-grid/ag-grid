@@ -377,7 +377,7 @@ export function extractInterfaces(
         console.warn(
             'AG Charts - Possible recursion error on type: ',
             definitionOrArray,
-            allDefs.map((x) => (typeof x === 'object' ? (x as any).name ?? x : x))
+            allDefs.map((x) => (typeof x === 'object' ? ((x as any).name ?? x) : x))
         );
         return allDefs;
     }

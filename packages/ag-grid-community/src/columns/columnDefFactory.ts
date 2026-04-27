@@ -11,6 +11,7 @@ import { SKIP_JS_BUILTINS } from '../utils/mergeDeep';
 // this is used for eg creating copies of Column Definitions, where we want to
 // deep copy all objects, but do not want to deep copy functions (eg when user provides
 // a function or class for colDef.cellRenderer)
+/** @knipIgnore Used in tests */
 export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined {
     if (!object) {
         return;
@@ -93,8 +94,6 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
             let pointer = col.getOriginalParent();
             let lastPointer: AgProvidedColumnGroup | null = null;
             while (pointer) {
-                let parentDef: ColGroupDef | null | undefined = null;
-
                 // we don't include padding groups, as the column groups provided
                 // by application didn't have these. the whole point of padding groups
                 // is to balance the column tree that the user provided.
@@ -114,7 +113,7 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
                     break;
                 }
 
-                parentDef = this.createDefFromGroup(pointer);
+                const parentDef = this.createDefFromGroup(pointer);
 
                 if (parentDef) {
                     parentDef.children = [childDef];

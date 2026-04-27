@@ -213,7 +213,7 @@ export class GridColumns<TData = any> {
         return null;
     }
 
-    #makeError(callerFn: Function, message = 'Grid columns errors:'): Error {
+    #makeError(callerFn: (...args: any[]) => any, message = 'Grid columns errors:'): Error {
         let diagram: string | undefined;
         try {
             diagram = this.makeDiagram(true);

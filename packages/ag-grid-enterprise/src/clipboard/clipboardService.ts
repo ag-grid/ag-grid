@@ -54,7 +54,7 @@ enum CellClearType {
     FocusedCell,
 }
 
-// This will parse a delimited string into an array of arrays.
+/** @knipIgnore Used in tests */
 export function stringToArray(strData: string, delimiter = ','): string[][] {
     const data: string[][] = [];
     const isNewline = (char: string) => char === '\r' || char === '\n';
@@ -600,7 +600,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private removeLastLineIfBlank(parsedData: string[][]): void {
         // remove last row if empty, excel puts empty last row in
         const lastLine = _last(parsedData);
-        const lastLineIsBlank = lastLine && lastLine.length === 1 && lastLine[0] === '';
+        const lastLineIsBlank = lastLine?.length === 1 && lastLine[0] === '';
 
         if (lastLineIsBlank) {
             // do not remove the last empty line when that is the only line pasted
@@ -1129,8 +1129,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         return csvCreator!.getDataAsCsv(exportParams, true);
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    private dispatchFlashCells(cellsToFlash: {}): void {
+    private dispatchFlashCells(cellsToFlash: Record<string, boolean>): void {
         window.setTimeout(() => {
             this.eventSvc.dispatchEvent({
                 type: 'flashCells',
@@ -1257,7 +1256,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         try {
             callbackNow(eTempInput);
-        } catch (err) {
+        } catch {
             _warn(42);
         }
 

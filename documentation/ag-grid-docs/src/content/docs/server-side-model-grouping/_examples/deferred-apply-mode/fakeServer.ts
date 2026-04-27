@@ -105,10 +105,10 @@ export function createFakeServer(allData: IOlympicData[]) {
                 return values.length;
             }
             case 'first': {
-                return values.length ? (values[0] as any) ?? null : null;
+                return values.length ? ((values[0] as any) ?? null) : null;
             }
             case 'last': {
-                return values.length ? (values[values.length - 1] as any) ?? null : null;
+                return values.length ? ((values[values.length - 1] as any) ?? null) : null;
             }
             default:
                 return values.reduce((sum, value) => sum + (toNumber(value) ?? 0), 0);

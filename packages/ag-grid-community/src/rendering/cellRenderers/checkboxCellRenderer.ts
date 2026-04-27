@@ -11,8 +11,11 @@ import type { GridCheckbox } from '../../widgets/gridWidgetTypes';
 import checkboxCellRendererCSS from './checkboxCellRenderer.css';
 import type { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 
-export interface ICheckboxCellRendererParams<TData = any, TContext = any>
-    extends ICellRendererParams<TData, boolean, TContext> {
+export interface ICheckboxCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<
+    TData,
+    boolean,
+    TContext
+> {
     /** Set to `true` for the input to be disabled. */
     disabled?: boolean;
 }
@@ -96,7 +99,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
                 if (colId.startsWith(GROUP_AUTO_COLUMN_ID)) {
                     // if we're grouping by this column then the value is a string and we need to parse it
                     isSelected = value == null || (value as any) === '' ? undefined : (value as any) === 'true';
-                } else if (node.aggData && node.aggData[colId] !== undefined) {
+                } else if (node.aggData?.[colId] !== undefined) {
                     isSelected = value ?? undefined; // group with aggregation
                 } else if (node.sourceRowIndex >= 0) {
                     isSelected = value ?? undefined; // tree group with data

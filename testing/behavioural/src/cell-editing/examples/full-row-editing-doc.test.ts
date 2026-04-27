@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
 import type { ColDef, GridOptions } from 'ag-grid-community';

@@ -122,10 +122,6 @@
   "devDependencies": {
     "ag-charts-community": "13.2.1-beta.20260426",
     "ag-charts-enterprise": "13.2.1-beta.20260426",
-    "@types/jest": "^29.5.0",
-    "jest": "^29.5.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "jest-canvas-mock": "2.5.2",
-    "canvas": "^3.2.1"
+    "canvas": "^3.2.3"
   }
 }

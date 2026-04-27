@@ -1,4 +1,4 @@
-const replace = require('replace-in-file');
+const { replaceInFile: replace } = require('replace-in-file');
 const fs = require('fs');
 const { EOL } = require('os');
 const ts = require('typescript');

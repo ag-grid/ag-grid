@@ -17,9 +17,9 @@ The Grid Options object is provided to the Detail Grid using the parameter `deta
 
 The example below shows configuring a Detail Grid with some additional Grid Options set. Note the following:
 
--   The `detailGridOptions` is provided inside the `detailCellRendererParams`.
--   The Detail Grid Options has the following properties set: `rowSelection={mode: 'multiRow', headerCheckbox: false}`, `pagination=true` and `paginationAutoPageSize=true`.
--   The Detail Grid Options is provided with a Default Column Definition (`defaultColDef`) that makes all columns use Flex for sizing.
+- The `detailGridOptions` is provided inside the `detailCellRendererParams`.
+- The Detail Grid Options has the following properties set: `rowSelection={mode: 'multiRow', headerCheckbox: false}`, `pagination=true` and `paginationAutoPageSize=true`.
+- The Detail Grid Options is provided with a Default Column Definition (`defaultColDef`) that makes all columns use Flex for sizing.
 
 {% gridExampleRunner title="Detail Grid Options" name="grid-options" /%}
 
@@ -45,8 +45,8 @@ This is done by providing a function to `detailCellRendererParams` that in turn 
 
 Below shows an example of this, where the Detail Grids are configured with different columns. Note the following:
 
--   Expanding rows 'Mila Smith' or 'Harper Johnson' will use a detail grid with the columns {Call ID, Number}.
--   Expanding all other rows will use a detail grid with the columns {Call ID, Direction, Duration, Switch Code}.
+- Expanding rows 'Mila Smith' or 'Harper Johnson' will use a detail grid with the columns {Call ID, Number}.
+- Expanding all other rows will use a detail grid with the columns {Call ID, Direction, Duration, Switch Code}.
 
 {% gridExampleRunner title="Dynamic Params" name="dynamic-params" /%}
 
@@ -83,10 +83,10 @@ api.forEachDetailGridInfo(detailGridInfo => {
 
 The following example shows flashing cells on the detail grids by using the Grid API `flashCells()`. Note the following:
 
--   The example is made more compact by a) setting Detail Row Height to 200 pixels and b) setting CSS to reduce padding around the Detail Grid.
--   The callback `getRowId` is implemented in the Master Grid to give each row an ID. In this instance the `account` attribute is used.
--   Button 'Flash Mila Smith' uses `getDetailGridInfo` to get access to the Grid API for the Mila Smith Detail Grid.
--   Button 'Flash All' uses `forEachDetailGridInfo` to access all existing Detail Grids.
+- The example is made more compact by a) setting Detail Row Height to 200 pixels and b) setting CSS to reduce padding around the Detail Grid.
+- The callback `getRowId` is implemented in the Master Grid to give each row an ID. In this instance the `account` attribute is used.
+- Button 'Flash Mila Smith' uses `getDetailGridInfo` to get access to the Grid API for the Mila Smith Detail Grid.
+- Button 'Flash All' uses `forEachDetailGridInfo` to access all existing Detail Grids.
 
 {% gridExampleRunner title="Detail Grid API" name="detail-grid-api"  exampleHeight=535 /%}
 
@@ -100,10 +100,10 @@ To prevent losing the context of Details Rows, the grid provides two properties 
 
 The example below demonstrates keeping Detail Rows. Note the following:
 
--   The Master Grid has property `keepDetailRows=true` to turn on keeping Detail Rows.
--   The Master Grid has property `keepDetailRowsCount=2` which sets the number of Details Rows to keep to 2.
--   All the Detail Grids allow moving and sorting columns. If you change the state of a Detail Grid (e.g. by sorting a Detail Grid), that state will be kept if you close the Parent Row and then open the Parent Row again.
--   The maximum number of Detail Rows kept is two. If you open three Detail Rows and apply sorting on each Detail Grid, then close all three Detail Rows (so none are showing) and then open all three again, only two of them will have the sort state kept.
+- The Master Grid has property `keepDetailRows=true` to turn on keeping Detail Rows.
+- The Master Grid has property `keepDetailRowsCount=2` which sets the number of Details Rows to keep to 2.
+- All the Detail Grids allow moving and sorting columns. If you change the state of a Detail Grid (e.g. by sorting a Detail Grid), that state will be kept if you close the Parent Row and then open the Parent Row again.
+- The maximum number of Detail Rows kept is two. If you open three Detail Rows and apply sorting on each Detail Grid, then close all three Detail Rows (so none are showing) and then open all three again, only two of them will have the sort state kept.
 
 {% gridExampleRunner title="Keep Detail Rows" name="keep-detail-rows"  exampleHeight=565 /%}
 

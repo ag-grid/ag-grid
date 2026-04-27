@@ -461,8 +461,10 @@ export class CellCtrl extends BeanStub {
      * @param value Whether to render the control in the specific context of the caller
      * @param allowManuallyPinned Whether manually pinned rows are permitted this form of control element
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    private isIncludeControl(value: boolean | Function | undefined, allowManuallyPinned = false): boolean {
+    private isIncludeControl(
+        value: boolean | ((...args: any[]) => any) | undefined,
+        allowManuallyPinned = false
+    ): boolean {
         const rowUnpinned = this.rowNode.rowPinned == null;
         return (rowUnpinned || (allowManuallyPinned && _isManualPinnedRow(this.rowNode))) && !!value;
     }

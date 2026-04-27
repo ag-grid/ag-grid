@@ -1,3 +1,5 @@
+import type { Mock, MockInstance, Mocked } from 'vitest';
+
 import { FocusService } from './focusService';
 import { GridCtrl } from './gridComp/gridCtrl';
 import type { GridOptionsService } from './gridOptionsService';
@@ -54,10 +56,10 @@ describe('Focus override callbacks', () => {
     describe('FocusService', () => {
         let focusSvc: FocusService;
         let focusSvcAny: any;
-        let gos: jest.Mocked<GridOptionsService>;
-        let getOption: jest.Mock<unknown, [string]>;
-        let getCallback: jest.Mock<unknown, [string]>;
-        let focusProvidedHeaderPosition: jest.SpyInstance;
+        let gos: Mocked<GridOptionsService>;
+        let getOption: Mock;
+        let getCallback: Mock;
+        let focusProvidedHeaderPosition: MockInstance;
         let rootDiv: HTMLElement;
 
         const currentHeader = createHeaderPosition('athlete', 0);
@@ -69,8 +71,8 @@ describe('Focus override callbacks', () => {
             focusSvcAny = focusSvc as any;
 
             gos = mock<GridOptionsService>('get', 'getCallback');
-            getOption = gos.get as unknown as jest.Mock<unknown, [string]>;
-            getCallback = gos.getCallback as unknown as jest.Mock<unknown, [string]>;
+            getOption = gos.get as unknown as Mock;
+            getCallback = gos.getCallback as unknown as Mock;
 
             getOption.mockImplementation((key) => {
                 if (key === 'suppressHeaderFocus') {
@@ -98,14 +100,14 @@ describe('Focus override callbacks', () => {
             };
             focusSvcAny.focusedHeader = currentHeader;
 
-            focusProvidedHeaderPosition = jest
+            focusProvidedHeaderPosition = vi
                 .spyOn(focusSvcAny, 'focusProvidedHeaderPosition')
                 .mockImplementation(() => true);
         });
 
         afterEach(() => {
             rootDiv.remove();
-            jest.restoreAllMocks();
+            vi.restoreAllMocks();
         });
 
         const mountContainers = (...containers: FocusableContainer[]): void => {
@@ -115,7 +117,7 @@ describe('Focus override callbacks', () => {
         };
 
         test('tabToNextHeader: false cancels header movement', () => {
-            const tabToNextHeader = jest.fn(() => false);
+            const tabToNextHeader = vi.fn(() => false);
             getCallback.mockImplementation((key) => (key === 'tabToNextHeader' ? tabToNextHeader : undefined));
 
             const result = focusSvc.focusHeaderPosition({
@@ -136,7 +138,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('tabToNextHeader: true keeps current header', () => {
-            const tabToNextHeader = jest.fn(() => true);
+            const tabToNextHeader = vi.fn(() => true);
             getCallback.mockImplementation((key) => (key === 'tabToNextHeader' ? tabToNextHeader : undefined));
 
             const result = focusSvc.focusHeaderPosition({
@@ -155,7 +157,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('navigateToNextHeader: returned header position is used', () => {
-            const navigateToNextHeader = jest.fn(() => userHeader);
+            const navigateToNextHeader = vi.fn(() => userHeader);
             getCallback.mockImplementation((key) =>
                 key === 'navigateToNextHeader' ? navigateToNextHeader : undefined
             );
@@ -184,7 +186,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('tabToNextHeader: returned header position is used', () => {
-            const tabToNextHeader = jest.fn(() => userHeader);
+            const tabToNextHeader = vi.fn(() => userHeader);
             getCallback.mockImplementation((key) => (key === 'tabToNextHeader' ? tabToNextHeader : undefined));
 
             const result = focusSvc.focusHeaderPosition({
@@ -209,7 +211,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('tabToNextHeader: callback is ignored when allowUserOverride is false', () => {
-            const tabToNextHeader = jest.fn(() => userHeader);
+            const tabToNextHeader = vi.fn(() => userHeader);
             getCallback.mockImplementation((key) => (key === 'tabToNextHeader' ? tabToNextHeader : undefined));
 
             const result = focusSvc.focusHeaderPosition({
@@ -229,7 +231,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('navigateToNextHeader: callback is ignored when allowUserOverride is false', () => {
-            const navigateToNextHeader = jest.fn(() => userHeader);
+            const navigateToNextHeader = vi.fn(() => userHeader);
             getCallback.mockImplementation((key) =>
                 key === 'navigateToNextHeader' ? navigateToNextHeader : undefined
             );
@@ -252,7 +254,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('navigateToNextHeader: callback is ignored when event is missing', () => {
-            const navigateToNextHeader = jest.fn(() => userHeader);
+            const navigateToNextHeader = vi.fn(() => userHeader);
             getCallback.mockImplementation((key) =>
                 key === 'navigateToNextHeader' ? navigateToNextHeader : undefined
             );
@@ -273,7 +275,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('navigateToNextHeader: null result keeps focus on current header (handled)', () => {
-            const navigateToNextHeader = jest.fn(() => null);
+            const navigateToNextHeader = vi.fn(() => null);
             getCallback.mockImplementation((key) =>
                 key === 'navigateToNextHeader' ? navigateToNextHeader : undefined
             );
@@ -306,7 +308,7 @@ describe('Focus override callbacks', () => {
         test('tabToNextGridContainer default target: backwards into gridBody returns a real cell target', () => {
             const column = createColumn('athlete');
             const columnAny = column as any;
-            columnAny.isSuppressNavigable = jest.fn(() => false);
+            columnAny.isSuppressNavigable = vi.fn(() => false);
 
             const { gui, container } = createContainer('gridBody');
             const focusable = createFocusableButton();
@@ -315,7 +317,7 @@ describe('Focus override callbacks', () => {
             focusSvcAny.visibleCols = { allCols: [column] };
             focusSvcAny.beans.rowModel = {
                 getRowCount: () => 1,
-                getRow: jest.fn(() => ({ id: 'row-0' })),
+                getRow: vi.fn(() => ({ id: 'row-0' })),
             };
             focusSvcAny.beans.pageBounds = {
                 getFirstRow: () => 0,
@@ -325,7 +327,7 @@ describe('Focus override callbacks', () => {
                 getPinnedTopRowCount: () => 0,
                 getPinnedBottomRowCount: () => 0,
             };
-            focusSvcAny.rowRenderer = { getRowByPosition: jest.fn() };
+            focusSvcAny.rowRenderer = { getRowByPosition: vi.fn() };
 
             const target = focusSvc.getDefaultTabToNextGridContainerTarget({
                 backwards: true,
@@ -372,11 +374,11 @@ describe('Focus override callbacks', () => {
         test('tabToNextGridContainer default target: forward into gridBody should align with header-first default', () => {
             const column = createColumn('athlete');
             const columnAny = column as any;
-            columnAny.isSuppressNavigable = jest.fn(() => false);
+            columnAny.isSuppressNavigable = vi.fn(() => false);
             focusSvcAny.visibleCols = { allCols: [column] };
             focusSvcAny.beans.rowModel = {
                 getRowCount: () => 1,
-                getRow: jest.fn(() => ({ id: 'row-0' })),
+                getRow: vi.fn(() => ({ id: 'row-0' })),
             };
             focusSvcAny.beans.pageBounds = {
                 getFirstRow: () => 0,
@@ -386,7 +388,7 @@ describe('Focus override callbacks', () => {
                 getPinnedTopRowCount: () => 0,
                 getPinnedBottomRowCount: () => 0,
             };
-            focusSvcAny.rowRenderer = { getRowByPosition: jest.fn() };
+            focusSvcAny.rowRenderer = { getRowByPosition: vi.fn() };
 
             const target = focusSvc.getDefaultTabToNextGridContainerTarget({
                 backwards: false,
@@ -405,7 +407,7 @@ describe('Focus override callbacks', () => {
         test('tabToNextGridContainer default target: when gridBody target is unavailable, continue to next container', () => {
             const column = createColumn('athlete');
             const columnAny = column as any;
-            columnAny.isSuppressNavigable = jest.fn(() => true);
+            columnAny.isSuppressNavigable = vi.fn(() => true);
             getOption.mockImplementation((key) => (key === 'suppressHeaderFocus' ? true : undefined));
 
             const { container: gridBody } = createContainer('gridBody');
@@ -416,7 +418,7 @@ describe('Focus override callbacks', () => {
             focusSvcAny.visibleCols = { allCols: [column] };
             focusSvcAny.beans.rowModel = {
                 getRowCount: () => 1,
-                getRow: jest.fn(() => ({ id: 'row-0' })),
+                getRow: vi.fn(() => ({ id: 'row-0' })),
             };
             focusSvcAny.beans.pageBounds = {
                 getFirstRow: () => 0,
@@ -426,7 +428,7 @@ describe('Focus override callbacks', () => {
                 getPinnedTopRowCount: () => 0,
                 getPinnedBottomRowCount: () => 0,
             };
-            focusSvcAny.rowRenderer = { getRowByPosition: jest.fn() };
+            focusSvcAny.rowRenderer = { getRowByPosition: vi.fn() };
 
             const target = focusSvc.getDefaultTabToNextGridContainerTarget({
                 backwards: false,
@@ -441,9 +443,9 @@ describe('Focus override callbacks', () => {
     describe('NavigationService', () => {
         let navigationSvc: NavigationService;
         let navigationSvcAny: any;
-        let gos: jest.Mocked<GridOptionsService>;
-        let getOption: jest.Mock<unknown, [string]>;
-        let getCallback: jest.Mock<unknown, [string]>;
+        let gos: Mocked<GridOptionsService>;
+        let getOption: Mock;
+        let getCallback: Mock;
         let colA: Column;
         let colB: Column;
 
@@ -452,8 +454,8 @@ describe('Focus override callbacks', () => {
             navigationSvcAny = navigationSvc as any;
 
             gos = mock<GridOptionsService>('get', 'getCallback');
-            getOption = gos.get as unknown as jest.Mock<unknown, [string]>;
-            getCallback = gos.getCallback as unknown as jest.Mock<unknown, [string]>;
+            getOption = gos.get as unknown as Mock;
+            getCallback = gos.getCallback as unknown as Mock;
 
             getOption.mockImplementation((key) => {
                 if (key === 'enableRtl') {
@@ -472,32 +474,30 @@ describe('Focus override callbacks', () => {
             navigationSvcAny.beans = {
                 gos,
                 cellNavigation: {
-                    getNextTabbedCell: jest.fn(),
-                    getNextCellToFocus: jest.fn(),
+                    getNextTabbedCell: vi.fn(),
+                    getNextCellToFocus: vi.fn(),
                 },
                 focusSvc: {
-                    focusHeaderPosition: jest.fn(),
+                    focusHeaderPosition: vi.fn(),
                 },
                 rowRenderer: {
-                    getRowByPosition: jest.fn(),
+                    getRowByPosition: vi.fn(),
                 },
                 ctrlsSvc: {
                     getHeaderRowContainerCtrl: () => ({ getRowCount: () => 2 }),
                 },
             };
 
-            jest.spyOn(navigationSvcAny, 'getLastCellOfColSpan').mockImplementation(
-                (position: CellPosition) => position
-            );
-            jest.spyOn(navigationSvcAny, 'isValidNavigateCell').mockReturnValue(true);
+            vi.spyOn(navigationSvcAny, 'getLastCellOfColSpan').mockImplementation((position: CellPosition) => position);
+            vi.spyOn(navigationSvcAny, 'isValidNavigateCell').mockReturnValue(true);
         });
 
         afterEach(() => {
-            jest.restoreAllMocks();
+            vi.restoreAllMocks();
         });
 
         test('tabToNextCell: false cancels tab navigation', () => {
-            const tabToNextCell = jest.fn(() => false);
+            const tabToNextCell = vi.fn(() => false);
             getCallback.mockImplementation((key) => (key === 'tabToNextCell' ? tabToNextCell : undefined));
 
             const previousPosition: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
@@ -519,7 +519,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('tabToNextCell: custom rowIndex -1 result moves focus to header', () => {
-            const tabToNextCell = jest.fn(() => ({ rowIndex: -1, rowPinned: null, column: colA }));
+            const tabToNextCell = vi.fn(() => ({ rowIndex: -1, rowPinned: null, column: colA }));
             getCallback.mockImplementation((key) => (key === 'tabToNextCell' ? tabToNextCell : undefined));
             navigationSvcAny.beans.cellNavigation.getNextTabbedCell.mockReturnValue(null);
 
@@ -537,11 +537,11 @@ describe('Focus override callbacks', () => {
         });
 
         test('navigateToNextCell: null result from callback stops navigation', () => {
-            const navigateToNextCell = jest.fn(() => null);
+            const navigateToNextCell = vi.fn(() => null);
             getCallback.mockImplementation((key) => (key === 'navigateToNextCell' ? navigateToNextCell : undefined));
 
-            const focusPositionSpy = jest.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
-            jest.spyOn(navigationSvcAny, 'getNormalisedPosition').mockImplementation(() => null);
+            const focusPositionSpy = vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
+            vi.spyOn(navigationSvcAny, 'getNormalisedPosition').mockImplementation(() => null);
 
             const current: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
             const next: CellPosition = { rowIndex: 1, rowPinned: null, column: colB };
@@ -561,12 +561,12 @@ describe('Focus override callbacks', () => {
 
         test('navigateToNextCell: callback override position is focused', () => {
             const userResult: CellPosition = { rowIndex: 2, rowPinned: null, column: colB };
-            const navigateToNextCell = jest.fn(() => userResult);
+            const navigateToNextCell = vi.fn(() => userResult);
             getCallback.mockImplementation((key) => (key === 'navigateToNextCell' ? navigateToNextCell : undefined));
 
             const normalised = { ...userResult };
-            jest.spyOn(navigationSvcAny, 'getNormalisedPosition').mockReturnValue(normalised);
-            const focusPositionSpy = jest.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
+            vi.spyOn(navigationSvcAny, 'getNormalisedPosition').mockReturnValue(normalised);
+            const focusPositionSpy = vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
 
             const current: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
             const defaultNext: CellPosition = { rowIndex: 0, rowPinned: null, column: colB };
@@ -579,7 +579,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('tabToNextCell: callback receives editing=true when tabbing from edit mode', () => {
-            const tabToNextCell = jest.fn(() => false);
+            const tabToNextCell = vi.fn(() => false);
             getCallback.mockImplementation((key) => (key === 'tabToNextCell' ? tabToNextCell : undefined));
 
             const previousPosition: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
@@ -601,7 +601,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('tabToNextCell: callback receives null nextCellPosition at grid edge', () => {
-            const tabToNextCell = jest.fn(() => false);
+            const tabToNextCell = vi.fn(() => false);
             getCallback.mockImplementation((key) => (key === 'tabToNextCell' ? tabToNextCell : undefined));
 
             const previousPosition: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
@@ -623,7 +623,7 @@ describe('Focus override callbacks', () => {
 
         test('navigateToNextCell: callback is ignored when allowUserOverride is false', () => {
             const userResult: CellPosition = { rowIndex: 2, rowPinned: null, column: colB };
-            const navigateToNextCell = jest.fn(() => userResult);
+            const navigateToNextCell = vi.fn(() => userResult);
             getCallback.mockImplementation((key) => (key === 'navigateToNextCell' ? navigateToNextCell : undefined));
 
             const current: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
@@ -631,8 +631,8 @@ describe('Focus override callbacks', () => {
             navigationSvcAny.beans.cellNavigation.getNextCellToFocus.mockReturnValue(defaultNext);
 
             const normalised = { ...defaultNext };
-            jest.spyOn(navigationSvcAny, 'getNormalisedPosition').mockReturnValue(normalised);
-            const focusPositionSpy = jest.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
+            vi.spyOn(navigationSvcAny, 'getNormalisedPosition').mockReturnValue(normalised);
+            const focusPositionSpy = vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
 
             navigationSvc.navigateToNextCell(null, 'ArrowRight', current, false);
 
@@ -641,7 +641,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('navigateToNextCell: callback rowIndex -1 routes focus to header using callback column', () => {
-            const navigateToNextCell = jest.fn(() => ({ rowIndex: -1, rowPinned: null, column: colB }));
+            const navigateToNextCell = vi.fn(() => ({ rowIndex: -1, rowPinned: null, column: colB }));
             getCallback.mockImplementation((key) => (key === 'navigateToNextCell' ? navigateToNextCell : undefined));
 
             const current: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
@@ -665,13 +665,13 @@ describe('Focus override callbacks', () => {
         });
 
         test('navigateToNextCell: callback receives null nextCellPosition at edge', () => {
-            const navigateToNextCell = jest.fn(() => null);
+            const navigateToNextCell = vi.fn(() => null);
             getCallback.mockImplementation((key) => (key === 'navigateToNextCell' ? navigateToNextCell : undefined));
 
             const current: CellPosition = { rowIndex: 0, rowPinned: null, column: colA };
             navigationSvcAny.beans.cellNavigation.getNextCellToFocus.mockReturnValue(null);
 
-            const focusPositionSpy = jest.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
+            const focusPositionSpy = vi.spyOn(navigationSvcAny, 'focusPosition').mockImplementation(() => undefined);
             navigationSvc.navigateToNextCell(null, 'ArrowRight', current, true);
 
             expect(navigateToNextCell).toHaveBeenCalledWith({
@@ -687,9 +687,9 @@ describe('Focus override callbacks', () => {
     describe('GridCtrl', () => {
         let gridCtrl: GridCtrl;
         let gridCtrlAny: any;
-        let gos: jest.Mocked<GridOptionsService>;
-        let getOption: jest.Mock<unknown, [string]>;
-        let getCallback: jest.Mock<unknown, [string]>;
+        let gos: Mocked<GridOptionsService>;
+        let getOption: Mock;
+        let getCallback: Mock;
         let gridBodyContainer: FocusableContainer;
         let paginationContainer: FocusableContainer;
         let rootDiv: HTMLElement;
@@ -705,8 +705,8 @@ describe('Focus override callbacks', () => {
             gridCtrlAny = gridCtrl as any;
 
             gos = mock<GridOptionsService>('get', 'getCallback');
-            getOption = gos.get as unknown as jest.Mock<unknown, [string]>;
-            getCallback = gos.getCallback as unknown as jest.Mock<unknown, [string]>;
+            getOption = gos.get as unknown as Mock;
+            getCallback = gos.getCallback as unknown as Mock;
 
             getOption.mockImplementation((key) => {
                 if (key === 'headerHeight') {
@@ -734,21 +734,21 @@ describe('Focus override callbacks', () => {
             gridCtrlAny.gos = gos;
             gridCtrlAny.view = {
                 getFocusableContainers: () => [gridBodyContainer, paginationContainer],
-                forceFocusOutOfContainer: jest.fn(),
+                forceFocusOutOfContainer: vi.fn(),
             };
             gridCtrlAny.beans = {
                 gos,
                 eRootDiv: rootDiv,
                 navigation: {
-                    ensureCellVisible: jest.fn(),
+                    ensureCellVisible: vi.fn(),
                 },
                 focusSvc: {
-                    getDefaultTabToNextGridContainerTarget: jest.fn(() => 'pagination'),
-                    setFocusedCell: jest.fn(),
-                    isCellFocused: jest.fn(() => true),
-                    focusHeaderPosition: jest.fn(),
-                    focusFirstHeader: jest.fn(() => true),
-                    focusGridView: jest.fn(() => true),
+                    getDefaultTabToNextGridContainerTarget: vi.fn(() => 'pagination'),
+                    setFocusedCell: vi.fn(),
+                    isCellFocused: vi.fn(() => true),
+                    focusHeaderPosition: vi.fn(),
+                    focusFirstHeader: vi.fn(() => true),
+                    focusGridView: vi.fn(() => true),
                 },
                 visibleCols: {
                     allCols: [],
@@ -758,11 +758,11 @@ describe('Focus override callbacks', () => {
 
         afterEach(() => {
             rootDiv.remove();
-            jest.restoreAllMocks();
+            vi.restoreAllMocks();
         });
 
         test('focusGridInnerElement: user callback returning true short-circuits default flow', () => {
-            const focusGridInnerElement = jest.fn(() => true);
+            const focusGridInnerElement = vi.fn(() => true);
             getCallback.mockImplementation((key) =>
                 key === 'focusGridInnerElement' ? focusGridInnerElement : undefined
             );
@@ -774,7 +774,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('tabToNextGridContainer: callback receives default routing metadata', () => {
-            const tabToNextGridContainer = jest.fn(() => false);
+            const tabToNextGridContainer = vi.fn(() => false);
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -810,7 +810,7 @@ describe('Focus override callbacks', () => {
                 }
             );
 
-            const tabToNextGridContainer = jest.fn(() => false);
+            const tabToNextGridContainer = vi.fn(() => false);
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -834,7 +834,7 @@ describe('Focus override callbacks', () => {
             const focusSvc = gridCtrlAny.beans.focusSvc;
             focusSvc.getDefaultTabToNextGridContainerTarget.mockReturnValue(null);
 
-            const tabToNextGridContainer = jest.fn(() => false);
+            const tabToNextGridContainer = vi.fn(() => false);
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -860,7 +860,7 @@ describe('Focus override callbacks', () => {
             const focusSvc = gridCtrlAny.beans.focusSvc;
             focusSvc.getDefaultTabToNextGridContainerTarget.mockImplementation(() => 'pagination');
 
-            const tabToNextGridContainer = jest.fn(() => false);
+            const tabToNextGridContainer = vi.fn(() => false);
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -885,7 +885,7 @@ describe('Focus override callbacks', () => {
             const focusSvc = gridCtrlAny.beans.focusSvc;
             focusSvc.getDefaultTabToNextGridContainerTarget.mockReturnValue(targetCell);
 
-            const tabToNextGridContainer = jest.fn(() => false);
+            const tabToNextGridContainer = vi.fn(() => false);
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -915,7 +915,7 @@ describe('Focus override callbacks', () => {
 
         test('tabToNextGridContainer: callback undefined keeps grid default flow', () => {
             const paginationButton = appendFocusableButton(paginationContainer);
-            const tabToNextGridContainer = jest.fn(() => undefined);
+            const tabToNextGridContainer = vi.fn(() => undefined);
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -951,7 +951,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('tabToNextGridContainer: callback true preserves current focus', () => {
-            const tabToNextGridContainer = jest.fn(() => true);
+            const tabToNextGridContainer = vi.fn(() => true);
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -970,7 +970,7 @@ describe('Focus override callbacks', () => {
                 rowPinned: null,
                 column: createColumn('country'),
             };
-            const tabToNextGridContainer = jest.fn(() => targetCell);
+            const tabToNextGridContainer = vi.fn(() => targetCell);
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -990,7 +990,7 @@ describe('Focus override callbacks', () => {
                 rowPinned: null,
                 column: createColumn('country'),
             };
-            const tabToNextGridContainer = jest.fn(() => targetCell);
+            const tabToNextGridContainer = vi.fn(() => targetCell);
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -1009,7 +1009,7 @@ describe('Focus override callbacks', () => {
                 headerRowIndex: 0,
                 column: createColumn('country'),
             };
-            const tabToNextGridContainer = jest.fn(() => targetHeader);
+            const tabToNextGridContainer = vi.fn(() => targetHeader);
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -1027,7 +1027,7 @@ describe('Focus override callbacks', () => {
                 headerRowIndex: 0,
                 column: createColumn('country'),
             };
-            const tabToNextGridContainer = jest.fn(() => targetHeader);
+            const tabToNextGridContainer = vi.fn(() => targetHeader);
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -1046,7 +1046,7 @@ describe('Focus override callbacks', () => {
             rootDiv.appendChild(statusBarGui);
             gridCtrlAny.view.getFocusableContainers = () => [gridBodyContainer, statusBar, paginationContainer];
 
-            const tabToNextGridContainer = jest.fn(() => 'statusBar');
+            const tabToNextGridContainer = vi.fn(() => 'statusBar');
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -1075,7 +1075,7 @@ describe('Focus override callbacks', () => {
                     paginationContainer,
                 ];
 
-                const tabToNextGridContainer = jest.fn(() => containerName);
+                const tabToNextGridContainer = vi.fn(() => containerName);
                 getCallback.mockImplementation((key) =>
                     key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
                 );
@@ -1092,7 +1092,7 @@ describe('Focus override callbacks', () => {
             rootDiv.appendChild(statusBarGui);
             gridCtrlAny.view.getFocusableContainers = () => [gridBodyContainer, statusBar, paginationContainer];
 
-            const tabToNextGridContainer = jest.fn(() => 'statusBar');
+            const tabToNextGridContainer = vi.fn(() => 'statusBar');
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -1103,8 +1103,8 @@ describe('Focus override callbacks', () => {
         });
 
         test('tabToNextGridContainer: callback container name warns and returns undefined when target container is absent', () => {
-            const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-            const tabToNextGridContainer = jest.fn(() => 'statusBar');
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const tabToNextGridContainer = vi.fn(() => 'statusBar');
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -1126,7 +1126,7 @@ describe('Focus override callbacks', () => {
         });
 
         test('tabToNextGridContainer: callback gridBody target follows header-first forward default', () => {
-            const tabToNextGridContainer = jest.fn(() => 'gridBody');
+            const tabToNextGridContainer = vi.fn(() => 'gridBody');
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -1166,7 +1166,7 @@ describe('Focus override callbacks', () => {
             const lastColumn = createColumn('sport');
             gridCtrlAny.beans.visibleCols.allCols = [lastColumn];
 
-            const tabToNextGridContainer = jest.fn(() => 'gridBody');
+            const tabToNextGridContainer = vi.fn(() => 'gridBody');
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -1224,7 +1224,7 @@ describe('Focus override callbacks', () => {
                 }
             );
 
-            const tabToNextGridContainer = jest.fn(() => false);
+            const tabToNextGridContainer = vi.fn(() => false);
             getCallback.mockImplementation((key) =>
                 key === 'tabToNextGridContainer' ? tabToNextGridContainer : undefined
             );
@@ -1293,19 +1293,19 @@ describe('Focus override callbacks', () => {
     describe('GridHeaderCtrl', () => {
         let headerCtrl: GridHeaderCtrl;
         let headerCtrlAny: any;
-        let gos: jest.Mocked<GridOptionsService>;
-        let getOption: jest.Mock<unknown, [string]>;
+        let gos: Mocked<GridOptionsService>;
+        let getOption: Mock;
         let gridCtrl: {
-            focusNextInnerContainer: jest.Mock<boolean | undefined, [boolean]>;
-            forceFocusOutOfContainer: jest.Mock<void, [boolean?]>;
-            isDetailGrid: jest.Mock<boolean, []>;
-            isFocusInsideGridBody: jest.Mock<boolean, []>;
+            focusNextInnerContainer: Mock;
+            forceFocusOutOfContainer: Mock;
+            isDetailGrid: Mock;
+            isFocusInsideGridBody: Mock;
         };
         let headerNavigation: {
-            navigateHorizontally: jest.Mock<boolean, [string, boolean, KeyboardEvent]>;
+            navigateHorizontally: Mock;
         };
         let focusSvc: {
-            focusOverlay: jest.Mock<boolean, [boolean?]>;
+            focusOverlay: Mock;
         };
 
         const createTabEvent = (shiftKey = false): KeyboardEvent =>
@@ -1316,21 +1316,21 @@ describe('Focus override callbacks', () => {
             headerCtrlAny = headerCtrl as any;
 
             gos = mock<GridOptionsService>('get');
-            getOption = gos.get as unknown as jest.Mock<unknown, [string]>;
+            getOption = gos.get as unknown as Mock;
             getOption.mockImplementation((key) => (key === 'enableRtl' ? false : undefined));
 
             gridCtrl = {
-                focusNextInnerContainer: jest.fn((_backwards: boolean) => undefined),
-                forceFocusOutOfContainer: jest.fn(),
-                isDetailGrid: jest.fn(() => false),
-                isFocusInsideGridBody: jest.fn(() => true),
+                focusNextInnerContainer: vi.fn((_backwards: boolean) => undefined),
+                forceFocusOutOfContainer: vi.fn(),
+                isDetailGrid: vi.fn(() => false),
+                isFocusInsideGridBody: vi.fn(() => true),
             };
 
             headerNavigation = {
-                navigateHorizontally: jest.fn((_direction: string, _fromTab: boolean, _event: KeyboardEvent) => false),
+                navigateHorizontally: vi.fn((_direction: string, _fromTab: boolean, _event: KeyboardEvent) => false),
             };
             focusSvc = {
-                focusOverlay: jest.fn(() => false),
+                focusOverlay: vi.fn(() => false),
             };
 
             headerCtrlAny.gos = gos;
@@ -1339,13 +1339,13 @@ describe('Focus override callbacks', () => {
                 headerNavigation,
                 focusSvc,
                 ctrlsSvc: {
-                    get: jest.fn(() => gridCtrl),
+                    get: vi.fn(() => gridCtrl),
                 },
             };
         });
 
         afterEach(() => {
-            jest.restoreAllMocks();
+            vi.restoreAllMocks();
         });
 
         test('tab from header: successful core-container move prevents default once', () => {
@@ -1422,15 +1422,15 @@ describe('Focus override callbacks', () => {
     describe('Grid focus container flow', () => {
         test('tabToNextGridContainer: false from grid body should not force focus out', () => {
             const gridCtrl = {
-                focusNextInnerContainer: jest.fn(() => false),
-                forceFocusOutOfContainer: jest.fn(),
-                isDetailGrid: jest.fn(() => false),
-                isFocusInsideGridBody: jest.fn(() => true),
+                focusNextInnerContainer: vi.fn(() => false),
+                forceFocusOutOfContainer: vi.fn(),
+                isDetailGrid: vi.fn(() => false),
+                isFocusInsideGridBody: vi.fn(() => true),
             };
 
             const beans = {
                 ctrlsSvc: {
-                    get: jest.fn(() => gridCtrl),
+                    get: vi.fn(() => gridCtrl),
                 },
             } as any;
 
@@ -1443,15 +1443,15 @@ describe('Focus override callbacks', () => {
 
         test('focus flow: unresolved forward movement in grid body forces focus out', () => {
             const gridCtrl = {
-                focusNextInnerContainer: jest.fn(() => undefined),
-                forceFocusOutOfContainer: jest.fn(),
-                isDetailGrid: jest.fn(() => false),
-                isFocusInsideGridBody: jest.fn(() => true),
+                focusNextInnerContainer: vi.fn(() => undefined),
+                forceFocusOutOfContainer: vi.fn(),
+                isDetailGrid: vi.fn(() => false),
+                isFocusInsideGridBody: vi.fn(() => true),
             };
 
             const beans = {
                 ctrlsSvc: {
-                    get: jest.fn(() => gridCtrl),
+                    get: vi.fn(() => gridCtrl),
                 },
             } as any;
 
@@ -1464,15 +1464,15 @@ describe('Focus override callbacks', () => {
 
         test('focus flow: unresolved forward movement outside grid body does not force focus out', () => {
             const gridCtrl = {
-                focusNextInnerContainer: jest.fn(() => undefined),
-                forceFocusOutOfContainer: jest.fn(),
-                isDetailGrid: jest.fn(() => false),
-                isFocusInsideGridBody: jest.fn(() => false),
+                focusNextInnerContainer: vi.fn(() => undefined),
+                forceFocusOutOfContainer: vi.fn(),
+                isDetailGrid: vi.fn(() => false),
+                isFocusInsideGridBody: vi.fn(() => false),
             };
 
             const beans = {
                 ctrlsSvc: {
-                    get: jest.fn(() => gridCtrl),
+                    get: vi.fn(() => gridCtrl),
                 },
             } as any;
 
@@ -1485,15 +1485,15 @@ describe('Focus override callbacks', () => {
 
         test('force-out path still attempts next inner container to allow overrides', () => {
             const gridCtrl = {
-                focusNextInnerContainer: jest.fn(() => undefined),
-                forceFocusOutOfContainer: jest.fn(),
-                isDetailGrid: jest.fn(() => false),
-                isFocusInsideGridBody: jest.fn(() => true),
+                focusNextInnerContainer: vi.fn(() => undefined),
+                forceFocusOutOfContainer: vi.fn(),
+                isDetailGrid: vi.fn(() => false),
+                isFocusInsideGridBody: vi.fn(() => true),
             };
 
             const beans = {
                 ctrlsSvc: {
-                    get: jest.fn(() => gridCtrl),
+                    get: vi.fn(() => gridCtrl),
                 },
             } as any;
 
@@ -1505,15 +1505,15 @@ describe('Focus override callbacks', () => {
 
         test('tabToNextGridContainer: false should always preserve browser-default flow, including forceOut path', () => {
             const gridCtrl = {
-                focusNextInnerContainer: jest.fn(() => false),
-                forceFocusOutOfContainer: jest.fn(),
-                isDetailGrid: jest.fn(() => false),
-                isFocusInsideGridBody: jest.fn(() => true),
+                focusNextInnerContainer: vi.fn(() => false),
+                forceFocusOutOfContainer: vi.fn(),
+                isDetailGrid: vi.fn(() => false),
+                isFocusInsideGridBody: vi.fn(() => true),
             };
 
             const beans = {
                 ctrlsSvc: {
-                    get: jest.fn(() => gridCtrl),
+                    get: vi.fn(() => gridCtrl),
                 },
             } as any;
 

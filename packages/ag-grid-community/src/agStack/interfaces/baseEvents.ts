@@ -15,8 +15,9 @@ interface AgBodyScrollEvent extends AgEvent<'bodyScroll'> {
     top: number;
 }
 
-interface AgBaseDragEvent<TEventType extends 'dragStarted' | 'dragStopped' | 'dragCancelled'>
-    extends AgEvent<TEventType> {
+interface AgBaseDragEvent<
+    TEventType extends 'dragStarted' | 'dragStopped' | 'dragCancelled',
+> extends AgEvent<TEventType> {
     target: Element;
 }
 

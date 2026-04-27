@@ -20,9 +20,9 @@ export const ExampleStyle = ({ rootSelector, extraStyles }: { rootSelector?: str
             left: 0;
             padding: 0;
             overflow: auto;
-            font-family: -apple-system, 'system-ui', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-                'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-                'Noto Color Emoji';
+            font-family:
+                -apple-system, 'system-ui', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans',
+                sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
         }
 
         body {

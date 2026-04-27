@@ -36,8 +36,8 @@ If you are providing a Comparator that depends on the row data and you are using
 
 The following example demonstrates sorting Set Filter values using a comparator. Note the following:
 
--   The **Age (no Comparator)** filter values are sorted using the default string order: `1, 10, 100...`
--   The **Age (with Comparator)** filter has a custom Comparator supplied in the `filterParams` that sorts the ages by numeric value: `1, 2, 3...`
+- The **Age (no Comparator)** filter values are sorted using the default string order: `1, 10, 100...`
+- The **Age (with Comparator)** filter has a custom Comparator supplied in the `filterParams` that sorts the ages by numeric value: `1, 2, 3...`
 
 {% gridExampleRunner title="Sorting Filter Lists" name="sorting-set-filter-values"  exampleHeight=720 /%}
 
@@ -87,9 +87,9 @@ If the data contains [Missing Values](#missing-values), the Value Formatter will
 
 The following example shows how Set Filter values are formatted using a Value Formatter. Note the following:
 
--   **No Value Formatter** does not have a Value Formatter supplied to the Set Filter. The column is supplied a Value Formatter through `colDef.valueFormatter = countryValueFormatter`.
--   **With Value Formatter** has the same Value Formatter supplied to the Column and Set Filter. The Set Filter is supplied the value formatter through `filterParams.valueFormatter = countryValueFormatter`.
--   Click **Print Filter Model** with a filter applied and note the logged Filter Model (dev console) has not been modified.
+- **No Value Formatter** does not have a Value Formatter supplied to the Set Filter. The column is supplied a Value Formatter through `colDef.valueFormatter = countryValueFormatter`.
+- **With Value Formatter** has the same Value Formatter supplied to the Column and Set Filter. The Set Filter is supplied the value formatter through `filterParams.valueFormatter = countryValueFormatter`.
+- Click **Print Filter Model** with a filter applied and note the logged Filter Model (dev console) has not been modified.
 
 {% gridExampleRunner title="Filter List Value Formatters" name="filter-list-value-formatter"  exampleHeight=745 /%}
 
@@ -126,9 +126,9 @@ A custom [Cell Renderer Component](./component-cell-renderer/) can also be suppl
 
 The following example shows how Set Filter values are rendered using a Cell Renderer. Note the following:
 
--   **No Cell Renderer** does not have a Cell Renderer supplied to the Set Filter. The Column has a Cell Renderer supplied to the Column using `colDef.cellRenderer = countryCellRenderer`.
--   **With Cell Renderer** uses the same Cell Renderer to format the cells and filter values. The Set Filter is supplied the Cell Renderer using `filterParams.cellRenderer = countryCellRenderer`.
--   Click **Print Filter Model** with a filter applied and note the logged filter model (dev console) has not been modified.
+- **No Cell Renderer** does not have a Cell Renderer supplied to the Set Filter. The Column has a Cell Renderer supplied to the Column using `colDef.cellRenderer = countryCellRenderer`.
+- **With Cell Renderer** uses the same Cell Renderer to format the cells and filter values. The Set Filter is supplied the Cell Renderer using `filterParams.cellRenderer = countryCellRenderer`.
+- Click **Print Filter Model** with a filter applied and note the logged filter model (dev console) has not been modified.
 
 {% gridExampleRunner title="Filter List Cell Renderers" name="filter-list-cell-renderer"  exampleHeight=745 /%}
 
@@ -167,10 +167,10 @@ When providing filter values which are already sorted it is often useful to disa
 
 The following example demonstrates providing filter values using `filterParams.values`. Note the following:
 
--   The **Days (Values Not Provided)** set filter obtains values from the row data to populate the filter list and as `'Saturday'` and `'Sunday'` are not present in the data they do not appear in the filter list.
--   As the **Days (Values Not Provided)** filter values come from the row data they are sorted using a [Custom Sort Comparator](./filter-set-filter-list/#sorting-filter-lists) to ensure the days are ordered according to the week day.
--   The **Days (Values Provided)** set filter is given values using `filterParams.values`. As all days are supplied the filter list also contains `'Saturday'` and `'Sunday'`.
--   As the **Days (Values Provided)** filter values are provided in the correct order, the default filter list sorting is turned off using: `filterParams.suppressSorting=true`.
+- The **Days (Values Not Provided)** set filter obtains values from the row data to populate the filter list and as `'Saturday'` and `'Sunday'` are not present in the data they do not appear in the filter list.
+- As the **Days (Values Not Provided)** filter values come from the row data they are sorted using a [Custom Sort Comparator](./filter-set-filter-list/#sorting-filter-lists) to ensure the days are ordered according to the week day.
+- The **Days (Values Provided)** set filter is given values using `filterParams.values`. As all days are supplied the filter list also contains `'Saturday'` and `'Sunday'`.
+- As the **Days (Values Provided)** filter values are provided in the correct order, the default filter list sorting is turned off using: `filterParams.suppressSorting=true`.
 
 {% gridExampleRunner title="Providing Filter Values" name="providing-filter-values"  exampleHeight=720 /%}
 
@@ -213,9 +213,9 @@ If you are providing values to the Set Filter asynchronously, when setting the m
 
 The following example demonstrates loading set filter values asynchronously. Note the following:
 
--   `filterParams.values` is assigned a callback function that loads the filter values after a 3 second delay using the callback supplied in the params: `params.success(['value1', 'value2'])`.
--   Opening the set filter shows a loading message before the values are set. See the [Localisation](./localisation/) section for details on how to change this message.
--   The callback is only invoked the first time the filter is opened. The next time the filter is opened the values are not loaded again.
+- `filterParams.values` is assigned a callback function that loads the filter values after a 3 second delay using the callback supplied in the params: `params.success(['value1', 'value2'])`.
+- Opening the set filter shows a loading message before the values are set. See the [Localisation](./localisation/) section for details on how to change this message.
+- The callback is only invoked the first time the filter is opened. The next time the filter is opened the values are not loaded again.
 
 {% gridExampleRunner title="Callback/Async" name="callback-async"  exampleHeight=510 /%}
 
@@ -257,11 +257,11 @@ Additionally, if all the new values are selected (and the filter was previously 
 
 The following example demonstrates refreshing values. Note the following:
 
--   The Values Array column has values provided as an array. Clicking the buttons to change the values will update the values in the array provided to the filter and call `refreshFilterValues()` to immediately refresh the filter for the column.
--   The Values Callback column has values provided as a callback and is configured with `'refreshValuesOnOpen = true'`. Clicking the buttons to change the values will update the values that will be returned the next time the callback is called. Note that the values are not updated until the next time the filter is opened.
--   If you select `'Elephant'` and change the values, it will stay selected as it is present in both lists.
--   If you select any of the other options, that selection will be lost when you change to different values.
--   A filter is re-applied after values have been refreshed.
+- The Values Array column has values provided as an array. Clicking the buttons to change the values will update the values in the array provided to the filter and call `refreshFilterValues()` to immediately refresh the filter for the column.
+- The Values Callback column has values provided as a callback and is configured with `'refreshValuesOnOpen = true'`. Clicking the buttons to change the values will update the values that will be returned the next time the callback is called. Note that the values are not updated until the next time the filter is opened.
+- If you select `'Elephant'` and change the values, it will stay selected as it is present in both lists.
+- If you select any of the other options, that selection will be lost when you change to different values.
+- A filter is re-applied after values have been refreshed.
 
 {% gridExampleRunner title="Refreshing Values" name="refreshing-values"  exampleHeight=755 /%}
 
@@ -291,10 +291,10 @@ The `caseSensitive` option also affects [Mini-Filter](./filter-set-mini-filter/#
 
 The following example demonstrates the difference in behaviour between `caseSensitive: false` (the default) and `caseSensitive: true`:
 
--   The case insensitive column's Filter List has seven distinct values with unique colours.
-    -   Typing `black` into the Mini Filter will match `Black`.
--   The case sensitive column's Filter List has 21 distinct values, although there are only seven distinct colours ignoring case.
-    -   Typing `black` into the Mini Filter will match only `black`, but not `Black` or `BLACK`.
+- The case insensitive column's Filter List has seven distinct values with unique colours.
+    - Typing `black` into the Mini Filter will match `Black`.
+- The case sensitive column's Filter List has 21 distinct values, although there are only seven distinct colours ignoring case.
+    - Typing `black` into the Mini Filter will match only `black`, but not `Black` or `BLACK`.
 
 {% gridExampleRunner title="Enabling SetFilter Case-Sensitivity" name="case-sensitive-set-filter-list"  exampleHeight=720 /%}
 
@@ -343,11 +343,11 @@ If [Supplied Values](#supplying-filter-values) are used for the Filter List, the
 
 The following example shows the Key Creator handling complex objects for the Set Filter. Note the following:
 
--   **Country** column is supplied a complex object through `colDef.field`.
-    -   A Key Creator is supplied to the filter using `colDef.filterParams.keyCreator = countryCodeKeyCreator` which extracts the `code` property for the Set Filter.
-    -   A value formatter is supplied to the filter using `colDef.filterParams.valueFormatter = countryValueFormatter` which extracts the `name` property for the Filter List.
-    -   A value formatter is supplied to the column using `colDef.valueFormatter = countryValueFormatter` which extracts the `name` property for the cell values.
--   Click **Print Filter Model** with a filter active on **Country** and note the logged Filter Model (dev console) uses the `code` property from the complex object.
+- **Country** column is supplied a complex object through `colDef.field`.
+    - A Key Creator is supplied to the filter using `colDef.filterParams.keyCreator = countryCodeKeyCreator` which extracts the `code` property for the Set Filter.
+    - A value formatter is supplied to the filter using `colDef.filterParams.valueFormatter = countryValueFormatter` which extracts the `name` property for the Filter List.
+    - A value formatter is supplied to the column using `colDef.valueFormatter = countryValueFormatter` which extracts the `name` property for the cell values.
+- Click **Print Filter Model** with a filter active on **Country** and note the logged Filter Model (dev console) uses the `code` property from the complex object.
 
 {% gridExampleRunner title="Complex Objects" name="complex-objects"  exampleHeight=720 /%}
 
@@ -357,12 +357,12 @@ Sometimes you might wish to support multiple values in a single cell, for exampl
 
 The example below demonstrates this in action. Note the following:
 
--   The **Animals (array)** column uses an array in the data containing multiple values.
--   The **Animals (string)** column uses a single string in the data to represent multiple values, with a [Value Getter](./value-getters/) used to extract an array of values from the data.
--   The **Animals (objects)** column retrieves values from an array of objects, using a [Key Creator](#complex-objects). The Key Creator is applied to the elements within the array (as is the Value Formatter).
--   For all scenarios, the Set Filter displays a list of all the individual, unique values present from the data.
--   Selecting values in the Set Filter will show rows where the data for that row contains **any** of the selected values.
--   The first row contains empty arrays for the **Animals (array)** and **Animals (objects)** columns, and an empty string for the **Animals (string)** column which is converted to an empty array. These all appear in the Filter List as `(Blanks)`.
+- The **Animals (array)** column uses an array in the data containing multiple values.
+- The **Animals (string)** column uses a single string in the data to represent multiple values, with a [Value Getter](./value-getters/) used to extract an array of values from the data.
+- The **Animals (objects)** column retrieves values from an array of objects, using a [Key Creator](#complex-objects). The Key Creator is applied to the elements within the array (as is the Value Formatter).
+- For all scenarios, the Set Filter displays a list of all the individual, unique values present from the data.
+- Selecting values in the Set Filter will show rows where the data for that row contains **any** of the selected values.
+- The first row contains empty arrays for the **Animals (array)** and **Animals (objects)** columns, and an empty string for the **Animals (string)** column which is converted to an empty array. These all appear in the Filter List as `(Blanks)`.
 
 {% gridExampleRunner title="Multiple Values" name="multiple-values" /%}
 
@@ -392,9 +392,9 @@ Note that the default state cannot be changed if [Excel Mode](./filter-set-excel
 
 The following example demonstrates different default states. Note the following:
 
--   The Athlete column has everything selected when the Set Filter is first opened, which is the default
--   The Country column has nothing selected by default, as `defaultToNothingSelected = true`.
--   When the Set Filter for the Country column is opened, the grid is not filtered until at least one value has been selected.
+- The Athlete column has everything selected when the Set Filter is first opened, which is the default
+- The Country column has nothing selected by default, as `defaultToNothingSelected = true`.
+- When the Set Filter for the Country column is opened, the grid is not filtered until at least one value has been selected.
 
 {% gridExampleRunner title="Default State" name="default-state" /%}
 
@@ -420,9 +420,9 @@ The default tooltip component will be used unless a [Custom Tooltip Component](.
 
 The following example demonstrates tooltips in the Set Filter. Note the following:
 
--   Filter values are automatically truncated with ellipses when the values are too long.
--   **Col A** does not have Set Filter Tooltips enabled.
--   **Col B** has Set Filter Tooltips enabled via `filterParams.showTooltips=true`.
--   **Col C** has Set Filter Tooltips enabled and is supplied a Custom Tooltip Component.
+- Filter values are automatically truncated with ellipses when the values are too long.
+- **Col A** does not have Set Filter Tooltips enabled.
+- **Col B** has Set Filter Tooltips enabled via `filterParams.showTooltips=true`.
+- **Col C** has Set Filter Tooltips enabled and is supplied a Custom Tooltip Component.
 
 {% gridExampleRunner title="Filter Value Tooltips" name="filter-value-tooltips"  exampleHeight=500 /%}

@@ -24,8 +24,10 @@ export interface AgPropertyChangedEvent<TProperties extends BaseProperties> exte
 export type AgPropertyKey<TProperties extends BaseProperties> = keyof TProperties & string;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface AgPropertyValueChangedEvent<TProperties extends BaseProperties, K extends AgPropertyKey<TProperties>>
-    extends AgEvent {
+export interface AgPropertyValueChangedEvent<
+    TProperties extends BaseProperties,
+    K extends AgPropertyKey<TProperties>,
+> extends AgEvent {
     type: K;
     changeSet: AgPropertyChangeSet<TProperties> | undefined;
     currentValue: TProperties[K];

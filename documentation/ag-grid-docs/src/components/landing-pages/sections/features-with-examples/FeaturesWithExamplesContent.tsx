@@ -43,6 +43,7 @@ export const FeaturesWithExamplesContent: React.FC<FeaturesWithExamplesContentPr
     useEffect(() => {
         const target = document.getElementById('landing-page-features-content-target');
         if (target) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- DOM element lookup after mount
             setContentTarget(target);
         }
     }, []);

@@ -35,11 +35,11 @@
   "dependencies": {},
   "devDependencies": {
     "typescript": "^5.4.5",
-    "glob": "8.0.3",
-    "@nx/devkit": "^18.3.5",
-    "@types/yargs": "^17.0.32",
-    "@swc/helpers": "0.5.3",
-    "tinypool": "^1.0.2",
+    "glob": "^11.1.0",
+    "@nx/devkit": "^20.8.4",
+    "@types/yargs": "^17.0.35",
+    "@swc/helpers": "0.5.21",
+    "tinypool": "^2.1.0",
     "process": "0.11.10",
     "xml-js": "^1.6.11"
   },

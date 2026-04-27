@@ -63,7 +63,6 @@ There are 2 ways to update this shared repository:
 
 1. Check out the [ag-website-shared](https://github.com/ag-grid/ag-website-shared) repository and git push/pull as normal
 1. Backport changes from the container repository back to this shared repository:
-
     1. Make commits to the container respository as normal.
 
         It doesn't matter if there are changes not related to the shared repository in the same commit, as they will be filtered out. However, it is good practice to make shared repository changes in separate commits.

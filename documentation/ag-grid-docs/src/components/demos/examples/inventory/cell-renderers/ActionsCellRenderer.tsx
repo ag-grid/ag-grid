@@ -17,11 +17,14 @@ export const ActionsCellRenderer: FunctionComponent<CustomCellRendererProps> = (
         const isPaused = rowData.status === 'paused';
         const isOutOfStock = rowData.available <= 0;
 
-        // Modify the status property
-        rowData.status = !isPaused ? 'paused' : !isOutOfStock ? 'active' : 'outOfStock';
+        // Create updated copy with the new status
+        const updatedRowData = {
+            ...rowData,
+            status: !isPaused ? 'paused' : !isOutOfStock ? 'active' : 'outOfStock',
+        };
 
         // Refresh the row to reflect the changes
-        api.applyTransaction({ update: [rowData] });
+        api.applyTransaction({ update: [updatedRowData] });
     }, [node, api]);
 
     return (

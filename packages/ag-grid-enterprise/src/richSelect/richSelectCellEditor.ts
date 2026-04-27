@@ -371,7 +371,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 const focusableEl = richSelect.getFocusableElement() as HTMLInputElement;
                 focusableEl.focus();
 
-                if (allowTyping && (!eventKey || eventKey.length !== 1)) {
+                if (allowTyping && eventKey?.length !== 1) {
                     focusableEl.select();
                 }
             }

@@ -277,8 +277,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
              * Suppress event in full async mode when item is selected to prevent redundant async filtering call for valid options.
              */
             const inputValue = isTypingMultiSelect
-                ? initialInputValue ?? this.eInput.getValue() ?? ''
-                : initialInputValue ?? (value === '' ? '' : valueFormatted);
+                ? (initialInputValue ?? this.eInput.getValue() ?? '')
+                : (initialInputValue ?? (value === '' ? '' : valueFormatted));
             this.eInput.setValue(inputValue, !!fromPicker && !!onSearch);
 
             if (!isTypingMultiSelect) {

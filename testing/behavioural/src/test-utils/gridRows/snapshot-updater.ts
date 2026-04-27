@@ -50,7 +50,7 @@ function getUpdatesArray(): SnapshotMismatch[] | undefined {
  * Called from GridRows.check() when update mode is active.
  */
 export function recordSnapshotMismatch(
-    callerFn: Function,
+    callerFn: (...args: any[]) => any,
     actualDiagram: string,
     label: string,
     methodName?: string
@@ -80,7 +80,7 @@ export function recordSnapshotMismatch(
  * Matches both `test-utils/gridRows/` and `test-utils/gridColumns/`. */
 const GRID_TEST_UTILS_DIR = path.join('test-utils', 'grid');
 
-function captureCallSite(callerFn: Function): { file: string; line: number; column: number } | null {
+function captureCallSite(callerFn: (...args: any[]) => any): { file: string; line: number; column: number } | null {
     const err: { stack?: string } = {};
     Error.captureStackTrace(err, callerFn);
     const stack = err.stack;

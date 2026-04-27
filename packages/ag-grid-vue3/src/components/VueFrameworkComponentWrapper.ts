@@ -19,7 +19,6 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
     }
 
     protected createWrapper(component: any): WrappableInterface {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
 
         class DynamicComponent extends VueComponent<any> implements WrappableInterface {

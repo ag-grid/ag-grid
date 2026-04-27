@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import type { BeanCollection, CellCtrl, INoteAccess } from 'ag-grid-community';
 
 import { AgFullWidthRowNotesFeature, AgNotesFeature } from './agNotesFeature';
@@ -13,9 +15,9 @@ describe('AgNotesFeature', () => {
         CellCtrl,
         'addManagedElementListeners' | 'column' | 'comp' | 'eGui' | 'isNoteHoverSuppressed' | 'rowNode'
     >;
-    let listeners: Record<string, (event: any) => void>;
-    let popup: { hide: jest.Mock; focusEditor: jest.Mock; hasFocus: jest.Mock };
-    let context: { createBean: jest.Mock; destroyBean: jest.Mock };
+    let listeners: Record<string, (event: PointerEvent) => void>;
+    let popup: { hide: Mock; focusEditor: Mock; hasFocus: Mock };
+    let context: { createBean: Mock; destroyBean: Mock };
     let access: INoteAccess;
     let noteTrigger: 'hover' | 'click';
     let notesSvc: Pick<
@@ -24,37 +26,37 @@ describe('AgNotesFeature', () => {
     >;
 
     beforeEach(() => {
-        jest.useFakeTimers();
+        vi.useFakeTimers();
 
         listeners = {};
         popup = {
-            hide: jest.fn(),
-            focusEditor: jest.fn(),
-            hasFocus: jest.fn(() => false),
+            hide: vi.fn(),
+            focusEditor: vi.fn(),
+            hasFocus: vi.fn(() => false),
         };
         noteTrigger = 'hover';
         context = {
-            createBean: jest.fn(() => popup),
-            destroyBean: jest.fn(),
+            createBean: vi.fn(() => popup),
+            destroyBean: vi.fn(),
         };
 
         ctrl = {
             eGui: document.createElement('div'),
             rowNode: { id: '1', rowIndex: 0, rowPinned: null } as unknown as CellCtrl['rowNode'],
             column: { getColId: () => 'athlete' } as unknown as CellCtrl['column'],
-            comp: { toggleCss: jest.fn() } as unknown as CellCtrl['comp'],
-            addManagedElementListeners: jest.fn((_element, managedListeners) => {
+            comp: { toggleCss: vi.fn() } as unknown as CellCtrl['comp'],
+            addManagedElementListeners: vi.fn((_element, managedListeners) => {
                 listeners = managedListeners as typeof listeners;
             }),
-            isNoteHoverSuppressed: jest.fn(() => false),
+            isNoteHoverSuppressed: vi.fn(() => false),
         };
         otherCtrl = {
             eGui: document.createElement('div'),
             rowNode: { id: '2', rowIndex: 1, rowPinned: null } as unknown as CellCtrl['rowNode'],
             column: { getColId: () => 'country' } as unknown as CellCtrl['column'],
-            comp: { toggleCss: jest.fn() } as unknown as CellCtrl['comp'],
-            addManagedElementListeners: jest.fn(),
-            isNoteHoverSuppressed: jest.fn(() => false),
+            comp: { toggleCss: vi.fn() } as unknown as CellCtrl['comp'],
+            addManagedElementListeners: vi.fn(),
+            isNoteHoverSuppressed: vi.fn(() => false),
         };
 
         access = {
@@ -72,7 +74,7 @@ describe('AgNotesFeature', () => {
 
         beans = {
             gos: {
-                get: jest.fn((key: string) => {
+                get: vi.fn((key: string) => {
                     switch (key) {
                         case 'noteTrigger':
                             return noteTrigger;
@@ -89,21 +91,21 @@ describe('AgNotesFeature', () => {
             },
             context,
             focusSvc: {
-                setFocusedCell: jest.fn(),
+                setFocusedCell: vi.fn(),
             },
         } as unknown as BeanCollection;
 
         notesSvc = {
-            getNoteAccess: jest.fn(() => access),
-            getHoverGeneration: jest.fn(() => 0),
-            replaceActivePopupOwner: jest.fn(() => undefined),
-            clearActivePopupOwner: jest.fn(),
-            setNote: jest.fn(),
+            getNoteAccess: vi.fn(() => access),
+            getHoverGeneration: vi.fn(() => 0),
+            replaceActivePopupOwner: vi.fn(() => undefined),
+            clearActivePopupOwner: vi.fn(),
+            setNote: vi.fn(),
         };
     });
 
     afterEach(() => {
-        jest.useRealTimers();
+        vi.useRealTimers();
     });
 
     it('uses noteShowDelay before opening a note on hover', () => {
@@ -112,10 +114,10 @@ describe('AgNotesFeature', () => {
 
         listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
 
-        jest.advanceTimersByTime(24);
+        vi.advanceTimersByTime(24);
         expect(context.createBean).not.toHaveBeenCalled();
 
-        jest.advanceTimersByTime(1);
+        vi.advanceTimersByTime(1);
         expect(context.createBean).toHaveBeenCalledTimes(1);
     });
 
@@ -126,7 +128,7 @@ describe('AgNotesFeature', () => {
         feature.initialise();
 
         listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
-        jest.advanceTimersByTime(25);
+        vi.advanceTimersByTime(25);
 
         expect(context.createBean).not.toHaveBeenCalled();
     });
@@ -188,7 +190,7 @@ describe('AgNotesFeature', () => {
 
     it('does not open a note on click when note display is suppressed', () => {
         noteTrigger = 'click';
-        (ctrl.isNoteHoverSuppressed as jest.Mock).mockReturnValue(true);
+        (ctrl.isNoteHoverSuppressed as Mock).mockReturnValue(true);
 
         const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
         feature.initialise();
@@ -205,10 +207,10 @@ describe('AgNotesFeature', () => {
         feature.show();
         listeners.pointerleave?.({ pointerType: 'mouse' } as PointerEvent);
 
-        jest.advanceTimersByTime(39);
+        vi.advanceTimersByTime(39);
         expect(popup.hide).not.toHaveBeenCalled();
 
-        jest.advanceTimersByTime(1);
+        vi.advanceTimersByTime(1);
         expect(popup.hide).toHaveBeenCalledWith(true);
     });
 
@@ -221,10 +223,10 @@ describe('AgNotesFeature', () => {
         listeners.click?.({ button: 0, ctrlKey: false } as MouseEvent);
         listeners.pointerleave?.({ pointerType: 'mouse' } as PointerEvent);
 
-        jest.advanceTimersByTime(39);
+        vi.advanceTimersByTime(39);
         expect(popup.hide).not.toHaveBeenCalled();
 
-        jest.advanceTimersByTime(1);
+        vi.advanceTimersByTime(1);
         expect(popup.hide).toHaveBeenCalledWith(true);
     });
 
@@ -237,20 +239,20 @@ describe('AgNotesFeature', () => {
         feature.show({ focusEditor: true });
         listeners.pointerleave?.({ pointerType: 'mouse' } as PointerEvent);
 
-        jest.advanceTimersByTime(40);
+        vi.advanceTimersByTime(40);
         expect(popup.hide).not.toHaveBeenCalled();
     });
 
     it('suppresses hover opens and hides the earmark when note hover is suppressed', () => {
-        (ctrl.isNoteHoverSuppressed as jest.Mock).mockReturnValue(true);
+        (ctrl.isNoteHoverSuppressed as Mock).mockReturnValue(true);
 
         const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
         feature.initialise();
 
-        expect(ctrl.comp.toggleCss as jest.Mock).toHaveBeenCalledWith('ag-has-cell-notes', false);
+        expect(ctrl.comp.toggleCss as Mock).toHaveBeenCalledWith('ag-has-cell-notes', false);
 
         listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
-        jest.advanceTimersByTime(25);
+        vi.advanceTimersByTime(25);
 
         expect(context.createBean).not.toHaveBeenCalled();
     });
@@ -260,16 +262,16 @@ describe('AgNotesFeature', () => {
         feature.initialise();
 
         listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
-        (ctrl.isNoteHoverSuppressed as jest.Mock).mockReturnValue(true);
+        (ctrl.isNoteHoverSuppressed as Mock).mockReturnValue(true);
 
         feature.refresh();
-        jest.advanceTimersByTime(25);
+        vi.advanceTimersByTime(25);
 
         expect(context.createBean).not.toHaveBeenCalled();
     });
 
     it('still allows explicit note opens when hover is suppressed', () => {
-        (ctrl.isNoteHoverSuppressed as jest.Mock).mockReturnValue(true);
+        (ctrl.isNoteHoverSuppressed as Mock).mockReturnValue(true);
 
         const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
         feature.initialise();
@@ -299,21 +301,21 @@ describe('AgNotesFeature', () => {
 
     it('closes the current popup when another owner opens after a same-owner reopen transition', () => {
         let activeOwner: unknown;
-        const createdPopups: { hide: jest.Mock; focusEditor: jest.Mock }[] = [];
+        const createdPopups: { hide: Mock; focusEditor: Mock }[] = [];
 
-        context.createBean = jest.fn((popupComp: any) => {
+        context.createBean = vi.fn((popupComp: any) => {
             const createdPopup = {
-                hide: jest.fn((_save = true) => {
+                hide: vi.fn((_save = true) => {
                     popupComp.params.onClosed(false, undefined);
                 }),
-                focusEditor: jest.fn(),
-                hasFocus: jest.fn(() => false),
+                focusEditor: vi.fn(),
+                hasFocus: vi.fn(() => false),
             };
             createdPopups.push(createdPopup);
             return createdPopup;
         });
 
-        notesSvc.replaceActivePopupOwner = jest.fn((owner) => {
+        notesSvc.replaceActivePopupOwner = vi.fn((owner) => {
             const previousOwner = activeOwner;
             if (previousOwner === owner) {
                 return undefined;
@@ -322,13 +324,13 @@ describe('AgNotesFeature', () => {
             return previousOwner as any;
         });
 
-        notesSvc.clearActivePopupOwner = jest.fn((owner) => {
+        notesSvc.clearActivePopupOwner = vi.fn((owner) => {
             if (activeOwner === owner) {
                 activeOwner = undefined;
             }
         });
 
-        notesSvc.getNoteAccess = jest.fn((params) => ({
+        notesSvc.getNoteAccess = vi.fn((params) => ({
             ...access,
             params,
             rowNode: params.rowNode,
@@ -357,8 +359,8 @@ describe('AgNotesFeature', () => {
 
 describe('AgFullWidthRowNotesFeature', () => {
     let beans: BeanCollection;
-    let context: { createBean: jest.Mock; destroyBean: jest.Mock };
-    let popup: { hide: jest.Mock; focusEditor: jest.Mock; hasFocus: jest.Mock };
+    let context: { createBean: Mock; destroyBean: Mock };
+    let popup: { hide: Mock; focusEditor: Mock; hasFocus: Mock };
     let guiListeners = new Map<HTMLElement, Record<string, (event: any) => void>>();
     let leftElement: HTMLElement;
     let centerElement: HTMLElement;
@@ -375,13 +377,13 @@ describe('AgFullWidthRowNotesFeature', () => {
         noteTrigger = 'click';
         guiListeners = new Map();
         popup = {
-            hide: jest.fn(),
-            focusEditor: jest.fn(),
-            hasFocus: jest.fn(() => false),
+            hide: vi.fn(),
+            focusEditor: vi.fn(),
+            hasFocus: vi.fn(() => false),
         };
         context = {
-            createBean: jest.fn(() => popup),
-            destroyBean: jest.fn(),
+            createBean: vi.fn(() => popup),
+            destroyBean: vi.fn(),
         };
 
         leftElement = document.createElement('div');
@@ -389,30 +391,30 @@ describe('AgFullWidthRowNotesFeature', () => {
 
         leftGui = {
             element: leftElement,
-            rowComp: { toggleCss: jest.fn() },
+            rowComp: { toggleCss: vi.fn() },
         };
         centerGui = {
             element: centerElement,
-            rowComp: { toggleCss: jest.fn() },
+            rowComp: { toggleCss: vi.fn() },
         };
 
         rowCtrl = {
             rowNode: { id: '1', rowIndex: 0, rowPinned: null },
-            isFullWidth: jest.fn(() => true),
-            forEachGui: jest.fn((_pinned: any, callback: any) => {
+            isFullWidth: vi.fn(() => true),
+            forEachGui: vi.fn((_pinned: any, callback: any) => {
                 callback(leftGui);
                 callback(centerGui);
             }),
-            addManagedGuiElementListeners: jest.fn((gui: any, listeners: Record<string, (event: any) => void>) => {
+            addManagedGuiElementListeners: vi.fn((gui: any, listeners: Record<string, (event: any) => void>) => {
                 guiListeners.set(gui.element, listeners);
             }),
-            getPinnedForFullWidth: jest.fn((gui: any) => (gui === leftGui ? 'left' : null)),
-            getColumnForFullWidth: jest.fn((gui: any) => ({ getColId: () => (gui === leftGui ? 'athlete' : 'sport') })),
+            getPinnedForFullWidth: vi.fn((gui: any) => (gui === leftGui ? 'left' : null)),
+            getColumnForFullWidth: vi.fn((gui: any) => ({ getColId: () => (gui === leftGui ? 'athlete' : 'sport') })),
         };
 
         beans = {
             gos: {
-                get: jest.fn((key: string) => {
+                get: vi.fn((key: string) => {
                     switch (key) {
                         case 'noteTrigger':
                             return noteTrigger;
@@ -429,16 +431,16 @@ describe('AgFullWidthRowNotesFeature', () => {
             },
             context,
             focusSvc: {
-                setFocusedCell: jest.fn(),
+                setFocusedCell: vi.fn(),
             },
         } as unknown as BeanCollection;
 
         notesSvc = {
-            getNoteAccess: jest.fn((params) => ({
+            getNoteAccess: vi.fn((params) => ({
                 params,
                 rowNode: params.rowNode,
                 column: { getColId: () => ('column' in params ? params.column.getColId() : 'athlete') },
-                note: { text: `note-${'pinned' in params ? params.pinned ?? 'center' : 'cell'}` },
+                note: { text: `note-${'pinned' in params ? (params.pinned ?? 'center') : 'cell'}` },
                 isReadOnly: false,
                 isSuppressed: false,
                 canView: true,
@@ -446,10 +448,10 @@ describe('AgFullWidthRowNotesFeature', () => {
                 canEdit: true,
                 canDelete: true,
             })),
-            getHoverGeneration: jest.fn(() => 0),
-            replaceActivePopupOwner: jest.fn(() => undefined),
-            clearActivePopupOwner: jest.fn(),
-            setNote: jest.fn(),
+            getHoverGeneration: vi.fn(() => 0),
+            replaceActivePopupOwner: vi.fn(() => undefined),
+            clearActivePopupOwner: vi.fn(),
+            setNote: vi.fn(),
         };
     });
 

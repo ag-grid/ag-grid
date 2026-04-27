@@ -56,15 +56,11 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "command": "npx vitest run",
       "dependsOn": ["copySrcFilesForGeneration"],
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}",
-        "{workspaceRoot}/reports/ag-grid-generate-example-files.xml"
-      ],
-      "parallelism": false,
+      "outputs": ["{workspaceRoot}/reports/ag-grid-generate-example-files.xml"],
       "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts"
+        "cwd": "{projectRoot}"
       }
     }
   },

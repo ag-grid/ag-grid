@@ -149,9 +149,9 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
 
     private getFunctionAutocompleteEntries(): AutocompleteEntry[] {
         const formula = this.beans.formula;
-        const names = formula?.active ? formula.getFunctionNames?.() ?? [] : [];
+        const names = formula?.active ? (formula.getFunctionNames?.() ?? []) : [];
 
-        if (!this.functionAutocompleteEntries || this.functionAutocompleteEntries.length !== names.length) {
+        if (this.functionAutocompleteEntries?.length !== names.length) {
             this.functionAutocompleteEntries = names.map((name) => ({ key: name }));
         }
 

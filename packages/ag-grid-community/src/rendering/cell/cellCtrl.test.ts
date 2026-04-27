@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
@@ -10,16 +12,16 @@ describe('CellCtrl', () => {
 
         (ctrl as unknown as { column: AgColumn }).column = {} as AgColumn;
         (ctrl as unknown as { rowNode: RowNode }).rowNode = {} as RowNode;
-        (ctrl as unknown as { editSvc: { isEditing: jest.Mock } }).editSvc = {
-            isEditing: jest.fn(() => editing),
+        (ctrl as unknown as { editSvc: { isEditing: Mock } }).editSvc = {
+            isEditing: vi.fn(() => editing),
         };
         (ctrl as unknown as { beans: Partial<BeanCollection> }).beans = {
             formula: {
-                getFormulaError: jest.fn(() => (formulaError ? { message: 'Formula error' } : null)),
+                getFormulaError: vi.fn(() => (formulaError ? { message: 'Formula error' } : null)),
             },
             editModelSvc: {
                 getCellValidationModel: () => ({
-                    hasCellValidation: jest.fn(() => cellValidationError),
+                    hasCellValidation: vi.fn(() => cellValidationError),
                 }),
             },
         };

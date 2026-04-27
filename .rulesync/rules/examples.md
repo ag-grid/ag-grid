@@ -31,18 +31,18 @@ documentation/ag-grid-docs/src/content/docs/feature-name/
 
 All public documentation examples MUST work across all frameworks:
 
--   Vanilla JavaScript/TypeScript
--   React
--   Angular
--   Vue 3
+- Vanilla JavaScript/TypeScript
+- React
+- Angular
+- Vue 3
 
 ### Writing Framework-Compatible Examples
 
--   Use `document.getElementById('myGrid')` or `document.querySelector('#myGrid')` for grid container references
--   Store options in top-level variables
--   Keep event handlers as simple function calls
--   Avoid complex DOM manipulation
--   No external library dependencies
+- Use `document.getElementById('myGrid')` or `document.querySelector('#myGrid')` for grid container references
+- Store options in top-level variables
+- Keep event handlers as simple function calls
+- Avoid complex DOM manipulation
+- No external library dependencies
 
 ## Validation
 

@@ -16,8 +16,8 @@ export interface AgComponent<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TLocalEventType extends string = AgComponentEvent,
-> extends AgBaseComponent<TBeanCollection>,
-        AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType> {
+>
+    extends AgBaseComponent<TBeanCollection>, AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType> {
     getCompId(): number;
 
     getFocusableElement(): HTMLElement;

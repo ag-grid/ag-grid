@@ -41,7 +41,7 @@ function tsNodeIsDocumentContentLoaded(node) {
                 node.arguments[0].text === 'DOMContentLoaded'
             );
         }
-    } catch (e) {
+    } catch {
         console.error('We found something which we do not understand', node);
         if (tsNodeIsFunctionCall(node)) {
             return (

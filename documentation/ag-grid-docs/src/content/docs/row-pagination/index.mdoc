@@ -25,9 +25,9 @@ The pagination panel can be styled with CSS, use the class `ag-paging-panel` to 
 
 The pagination panel is composed of three built-in components that can be individually reordered or hidden via the `paginationPanels` grid option:
 
--   `pageSize` — the page size selector dropdown.
--   `rowSummary` — the row range summary (e.g. `1 to 10 of 50`).
--   `pageSummary` — the current page indicator and navigation buttons (first, previous, next, last).
+- `pageSize` — the page size selector dropdown.
+- `rowSummary` — the row range summary (e.g. `1 to 10 of 50`).
+- `pageSummary` — the current page indicator and navigation buttons (first, previous, next, last).
 
 The default order is: `['pageSize', 'rowSummary', 'pageSummary']`.
 
@@ -46,8 +46,8 @@ When a panel is omitted from `paginationPanels`, its accessibility announcements
 
 The numbers within the Paging Toolbar can be formatted in two ways:
 
--   For thousand and decimal separator changes, customise [Localisation](./localisation/).
--   For full control over each number's rendering, use the `paginationNumberFormatter` callback — see [Example: Customising Pagination](#example-customising-pagination).
+- For thousand and decimal separator changes, customise [Localisation](./localisation/).
+- For full control over each number's rendering, use the `paginationNumberFormatter` callback — see [Example: Customising Pagination](#example-customising-pagination).
 
 ## Example: Auto Page Size
 
@@ -68,11 +68,11 @@ and the option `paginationPageSizeSelector` will be ignored.
 
 In this example the default pagination settings are changed. Note the following:
 
--   `paginationPageSizeSelector` is set to `[200, 500, 1000]`
--   `paginationPageSize` is set to `500`
--   `paginationPanels` is set to `['pageSummary', 'rowSummary', 'pageSize']` to reorder the pagination controls, placing the page navigation first.
--   The numbers in the pagination panel are formatted differently using the grid callback `paginationNumberFormatter` and putting the numbers into square brackets i.e. \[x].
--   `api.paginationGoToPage(4)` is called to go to page 4 (0 based, so the 5th page)
+- `paginationPageSizeSelector` is set to `[200, 500, 1000]`
+- `paginationPageSize` is set to `500`
+- `paginationPanels` is set to `['pageSummary', 'rowSummary', 'pageSize']` to reorder the pagination controls, placing the page navigation first.
+- The numbers in the pagination panel are formatted differently using the grid callback `paginationNumberFormatter` and putting the numbers into square brackets i.e. \[x].
+- `api.paginationGoToPage(4)` is called to go to page 4 (0 based, so the 5th page)
 
 {% gridExampleRunner title="Custom Paging" name="custom-paging" /%}
 
@@ -102,8 +102,8 @@ This mode is typically best suited for Row Grouping as children are always displ
 
 In the example below, note the following:
 
--   Each page will always contain exactly 10 groups.
--   Expanding a group will not push rows to the next page.
+- Each page will always contain exactly 10 groups.
+- Expanding a group will not push rows to the next page.
 
 {% gridExampleRunner title="Grouping Normal" name="grouping-normal"  exampleHeight=530 /%}
 
@@ -117,8 +117,8 @@ To enable pagination on all rows, including children, set grid property `paginat
 
 In the example below, note the following:
 
--   Each page will always contain exactly 10 rows (not groups).
--   Expanding a group will push rows to the next page to limit the total number of rows to 10.
+- Each page will always contain exactly 10 rows (not groups).
+- Expanding a group will push rows to the next page to limit the total number of rows to 10.
 
 {% note %}
 When `paginateChildRows=true` the Grid automatically disables Group Rows Sticky, see: [suppressGroupRowsSticky](./grid-options/#reference-rowGrouping-suppressGroupRowsSticky).
@@ -130,8 +130,8 @@ When `paginateChildRows=true` the Grid automatically disables Group Rows Sticky,
 
 If using either of the following features, the grid will be forced to use the second mode:
 
--   [Hide Open Parents](./grouping-multiple-group-columns/#hiding-expanded-parent-rows)
--   [Hiding Parents of Individual Rows](./grouping-data/#hiding-parents-of-individual-rows)
+- [Hide Open Parents](./grouping-multiple-group-columns/#hiding-expanded-parent-rows)
+- [Hiding Parents of Individual Rows](./grouping-data/#hiding-parents-of-individual-rows)
 
 This is because both of these features remove top level rows (group rows and master rows) from the displayed rows, making it impossible to paginate based on the top level rows only.
 

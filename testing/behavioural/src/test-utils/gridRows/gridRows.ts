@@ -101,7 +101,7 @@ export class GridRows<TData = any> {
     }
 
     public getIndexInRowNodes(row: IRowNode<TData> | null | undefined): number {
-        return row ? (this.#indexMap ??= this.#makeIndexMap()).get(row) ?? -1 : -1;
+        return row ? ((this.#indexMap ??= this.#makeIndexMap()).get(row) ?? -1) : -1;
     }
 
     public isDuplicateIdRow(row: IRowNode<TData> | null | undefined): boolean {
@@ -323,7 +323,7 @@ export class GridRows<TData = any> {
         return new Map(this.rowNodes.map((row, index) => [row, index]));
     }
 
-    #makeError(callerFn: Function, message = 'Grid errors:'): Error {
+    #makeError(callerFn: (...args: any[]) => any, message = 'Grid errors:'): Error {
         let diagram: string | undefined;
         try {
             diagram = this.makeDiagram(true);

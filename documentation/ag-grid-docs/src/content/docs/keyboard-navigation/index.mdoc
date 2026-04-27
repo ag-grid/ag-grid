@@ -48,38 +48,38 @@ The grid header supports full keyboard navigation, however the behaviour may dif
 
 Column Headers can be:
 
--   Moved by pressing {% kbd "⇧ Shift" /%} + {% kbd "←" /%} / {% kbd "→" /%}.
--   Resized by pressing {% kbd "⌥ Alt" /%} + {% kbd "←" /%} / {% kbd "→" /%}.
+- Moved by pressing {% kbd "⇧ Shift" /%} + {% kbd "←" /%} / {% kbd "→" /%}.
+- Resized by pressing {% kbd "⌥ Alt" /%} + {% kbd "←" /%} / {% kbd "→" /%}.
 
 ### Column Group Headers
 
 While navigating Column Groups Headers, you can do the following:
 
--   If the current Column Group is expandable, pressing {% kbd "↵ Enter" /%} will toggle the expanded state of the group.
--   When [Column Cell Selection](./cell-selection/#selecting-cells-via-column-headers) is enabled:
-    -   If the current Column Group is expandable, pressing {% kbd "⌥ Alt" /%}+{% kbd "↵ Enter" /%} will toggle the expanded state of the group.
-    -   Press {% kbd "↵ Enter" /%} to select all visible cells in child columns of the focused column group.
-    -   Press {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%} to select all visible cells in child columns of the focused column group without clearing existing cell ranges.
-    -   Press {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible child columns between the previously selected column group and the focused column group.
-    -   Press {% kbd "^ Ctrl" /%}+{% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible child columns between the previously selected column group and the focused column group, without clearing existing cell ranges.
+- If the current Column Group is expandable, pressing {% kbd "↵ Enter" /%} will toggle the expanded state of the group.
+- When [Column Cell Selection](./cell-selection/#selecting-cells-via-column-headers) is enabled:
+    - If the current Column Group is expandable, pressing {% kbd "⌥ Alt" /%}+{% kbd "↵ Enter" /%} will toggle the expanded state of the group.
+    - Press {% kbd "↵ Enter" /%} to select all visible cells in child columns of the focused column group.
+    - Press {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%} to select all visible cells in child columns of the focused column group without clearing existing cell ranges.
+    - Press {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible child columns between the previously selected column group and the focused column group.
+    - Press {% kbd "^ Ctrl" /%}+{% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible child columns between the previously selected column group and the focused column group, without clearing existing cell ranges.
 
 ### Normal Column Headers
 
 Regular Column Headers may have selection checkboxes, sorting functions and menus, so to access all these functions while focusing a Column Header, you can do the following:
 
--   Press {% kbd "␣ Space" /%} to toggle the Column Header checkbox selection.
--   Press {% kbd "↵ Enter" /%} to toggle the sorting state of that column.
--   Press {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to toggle multi-sort for that column.
--   Press {% kbd "⌥ Alt" /%}+{% kbd "↓" /%} to open the menu for the focused Column Header.
--   Press {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%} to either open the filter for the focused Column Header (if `columnMenu = 'new'` - default behaviour) or open the menu for the focused Column Header (if `columnMenu = 'legacy'`).
--   When a menu is open, simply press {% kbd "⎋ Esc" /%} to close it and the focus will return to the Column Header.
--   When [Column Cell Selection](./cell-selection/#selecting-cells-via-column-headers) is enabled:
-    -   Press {% kbd "↵ Enter" /%} to select all visible cells in the focused column.
-    -   Press {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%} to select all visible cells in the focused column without clearing existing cell ranges.
-    -   Press {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible columns between the previously selected column and the focused column.
-    -   Press {% kbd "^ Ctrl" /%}+{% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible columns between the previously selected column and the focused column without clearing existing cell ranges.
-    -   Press {% kbd "⌥ Alt" /%}+{% kbd "↵ Enter" /%} to toggle the sorting state of that column.
-    -   Press {% kbd "⌥ Alt" /%}+{% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to toggle multi-sort for that column.
+- Press {% kbd "␣ Space" /%} to toggle the Column Header checkbox selection.
+- Press {% kbd "↵ Enter" /%} to toggle the sorting state of that column.
+- Press {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to toggle multi-sort for that column.
+- Press {% kbd "⌥ Alt" /%}+{% kbd "↓" /%} to open the menu for the focused Column Header.
+- Press {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%} to either open the filter for the focused Column Header (if `columnMenu = 'new'` - default behaviour) or open the menu for the focused Column Header (if `columnMenu = 'legacy'`).
+- When a menu is open, simply press {% kbd "⎋ Esc" /%} to close it and the focus will return to the Column Header.
+- When [Column Cell Selection](./cell-selection/#selecting-cells-via-column-headers) is enabled:
+    - Press {% kbd "↵ Enter" /%} to select all visible cells in the focused column.
+    - Press {% kbd "^ Ctrl" /%}+{% kbd "↵ Enter" /%} to select all visible cells in the focused column without clearing existing cell ranges.
+    - Press {% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible columns between the previously selected column and the focused column.
+    - Press {% kbd "^ Ctrl" /%}+{% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to select all cells in visible columns between the previously selected column and the focused column without clearing existing cell ranges.
+    - Press {% kbd "⌥ Alt" /%}+{% kbd "↵ Enter" /%} to toggle the sorting state of that column.
+    - Press {% kbd "⌥ Alt" /%}+{% kbd "⇧ Shift" /%}+{% kbd "↵ Enter" /%} to toggle multi-sort for that column.
 
 ### Floating Filter Headers
 
@@ -111,13 +111,13 @@ The example below shows how to use `navigateToNextCell`, `tabToNextCell`, `navig
 
 Note the following:
 
--   `navigateToNextCell` swaps the up and down arrow keys.
--   `tabToNextCell` uses tabbing to go up and down rather than right and left.
--   `navigateToNextHeader` swaps the up and down arrow keys.
--   `tabToNextHeader` uses tabbing to go up and down rather than right and left.
--   When a cell in the first grid row is focused, pressing the down arrow will navigate to the header by passing `rowIndex: -1`.
--   When a header cell in the last header row is focused, pressing the up arrow will navigate to the first grid row by passing `headerRowIndex: -1`.
--   Tabbing/Shift tabbing will move the focus until the first header or the last grid row, but focus will not leave the grid.
+- `navigateToNextCell` swaps the up and down arrow keys.
+- `tabToNextCell` uses tabbing to go up and down rather than right and left.
+- `navigateToNextHeader` swaps the up and down arrow keys.
+- `tabToNextHeader` uses tabbing to go up and down rather than right and left.
+- When a cell in the first grid row is focused, pressing the down arrow will navigate to the header by passing `rowIndex: -1`.
+- When a header cell in the last header row is focused, pressing the up arrow will navigate to the first grid row by passing `headerRowIndex: -1`.
+- Tabbing/Shift tabbing will move the focus until the first header or the last grid row, but focus will not leave the grid.
 
 {% gridExampleRunner title="Custom Keyboard Navigation" name="custom-keyboard-navigation" /%}
 
@@ -160,10 +160,10 @@ myInput.addEventListener("keydown", event => {
 
 In the following example there are two input box provided to test tabbing into the grid. Notice the following:
 
--   Tabbing out of the input above the grid will focus the first grid header.
--   When the first cell is out of view due to either scrolling down (rows) or across (columns), the grid will scroll back to the left to display the first column.
--   Tabbing out of the input below the grid with shift pressed will focus the last cell of the grid.
--   When the last column is out of view due to horizontal scroll, shift tabbing into the grid will cause the grid to scroll to focus the last cell.
+- Tabbing out of the input above the grid will focus the first grid header.
+- When the first cell is out of view due to either scrolling down (rows) or across (columns), the grid will scroll back to the left to display the first column.
+- Tabbing out of the input below the grid with shift pressed will focus the last cell of the grid.
+- When the last column is out of view due to horizontal scroll, shift tabbing into the grid will cause the grid to scroll to focus the last cell.
 
 {% gridExampleRunner title="Tabbing into the Grid" name="tabbing-into-grid" /%}
 
@@ -173,10 +173,10 @@ Use `tabToNextGridContainer` to override focus behaviour when tabbing between gr
 
 In the following example:
 
--   Tabbing out of the last grid cell is redirected to the pagination toolbar by returning `'pagination'`.
--   Shift tabbing from the pagination toolbar back into the grid restores the last focused cell by returning a `CellPosition`.
--   Tabbing forward from pagination returns `false`, allowing browser default behaviour to move focus outside the grid.
--   All other transitions return `undefined`, which keeps the grid's default behaviour.
+- Tabbing out of the last grid cell is redirected to the pagination toolbar by returning `'pagination'`.
+- Shift tabbing from the pagination toolbar back into the grid restores the last focused cell by returning a `CellPosition`.
+- Tabbing forward from pagination returns `false`, allowing browser default behaviour to move focus outside the grid.
+- All other transitions return `undefined`, which keeps the grid's default behaviour.
 
 {% gridExampleRunner title="Custom Tab to Next Grid Container" name="tab-to-next-grid-container" /%}
 
@@ -184,8 +184,8 @@ In the following example:
 
 The `focusGridInnerElement` callback can be used to change the element focused by the grid when receiving focus from outside . Notice the following:
 
--   Tabbing out of the input above the grid will focus the last focused cell if the grid was previously focused and the element is still in the DOM or otherwise the header.
--   Shift Tabbing out of the input below the grid will focus the last focused cell if the grid was previously focused and the element is still in the DOM or otherwise the last cell in the bottom row.
+- Tabbing out of the input above the grid will focus the last focused cell if the grid was previously focused and the element is still in the DOM or otherwise the header.
+- Shift Tabbing out of the input below the grid will focus the last focused cell if the grid was previously focused and the element is still in the DOM or otherwise the last cell in the bottom row.
 
 {% gridExampleRunner title="Custom tabbing into the Grid" name="custom-tabbing-into-grid" /%}
 
@@ -203,8 +203,8 @@ The grid events wrap the DOM events and provides additional information such as 
 
 The example below shows processing grid cell keyboard events. The following can be noted:
 
--   Each time a `cellKeyDown` is fired, the details of the event are logged to the console.
--   When the user hits {% kbd "S" /%} on a row, the row selection is toggled.
+- Each time a `cellKeyDown` is fired, the details of the event are logged to the console.
+- When the user hits {% kbd "S" /%} on a row, the row selection is toggled.
 
 {% gridExampleRunner title="Keyboard Events" name="keyboard-events" /%}
 
@@ -226,31 +226,31 @@ The callback is available as a [column callback](./column-properties/#reference-
 
 The example below demonstrates suppressing the following keyboard events:
 
--   On the Athlete column cells only:
-    -   {% kbd "↵ Enter" /%} will not start or stop editing.
--   On the Country column cells only:
-    -   {% kbd "↑" /%} {% kbd "↓" /%} arrow keys are allowed. This is the only column that allows navigation from the grid to the header.
--   On all cells (including the cells of the Athlete Column):
-    -   {% kbd "^ Ctrl" /%}+{% kbd "A" /%} will not select all cells into a range.
-    -   {% kbd "^ Ctrl" /%}+{% kbd "C" /%} will not copy to clipboard.
-    -   {% kbd "^ Ctrl" /%}+{% kbd "V" /%} will not paste from clipboard.
-    -   {% kbd "^ Ctrl" /%}+{% kbd "D" /%} will not copy range down.
-    -   {% kbd "Page Up" /%} and {% kbd "Page Down" /%} will not get handled by the grid.
-    -   {% kbd "Home" /%} will not focus top left cell.
-    -   {% kbd "End" /%} will not focus bottom right cell.
-    -   {% kbd "←" /%} {% kbd "↑" /%} {% kbd "→" /%} {% kbd "↓" /%} Arrow keys will not navigate focused cell.
-    -   {% kbd "F2" /%} will not start editing.
-    -   {% kbd "Delete" /%} will not start editing.
-    -   {% kbd "⌫ Backspace" /%} will not start editing.
-    -   {% kbd "⎋ Escape" /%} will not cancel editing.
-    -   {% kbd "␣ Space" /%} will not select current row.
-    -   {% kbd "⇥ Tab" /%} will not be handled by the grid.
--   On the Country header only:
-    -   Navigation is blocked from the left to right using arrows but is allowed using {% kbd "⇥ Tab" /%}.
-    -   Navigation up and down is allowed. This is the only header that allows navigation from the header to the grid cells.
-    -   {% kbd "↵ Enter" /%} is blocked. This is the only header that blocks sorting / opening menu via keyboard.
--   On all headers (excluding country):
-    -   Navigation is blocked up and down, but navigation left / right is allowed using arrows and {% kbd "⇥ Tab" /%}.
+- On the Athlete column cells only:
+    - {% kbd "↵ Enter" /%} will not start or stop editing.
+- On the Country column cells only:
+    - {% kbd "↑" /%} {% kbd "↓" /%} arrow keys are allowed. This is the only column that allows navigation from the grid to the header.
+- On all cells (including the cells of the Athlete Column):
+    - {% kbd "^ Ctrl" /%}+{% kbd "A" /%} will not select all cells into a range.
+    - {% kbd "^ Ctrl" /%}+{% kbd "C" /%} will not copy to clipboard.
+    - {% kbd "^ Ctrl" /%}+{% kbd "V" /%} will not paste from clipboard.
+    - {% kbd "^ Ctrl" /%}+{% kbd "D" /%} will not copy range down.
+    - {% kbd "Page Up" /%} and {% kbd "Page Down" /%} will not get handled by the grid.
+    - {% kbd "Home" /%} will not focus top left cell.
+    - {% kbd "End" /%} will not focus bottom right cell.
+    - {% kbd "←" /%} {% kbd "↑" /%} {% kbd "→" /%} {% kbd "↓" /%} Arrow keys will not navigate focused cell.
+    - {% kbd "F2" /%} will not start editing.
+    - {% kbd "Delete" /%} will not start editing.
+    - {% kbd "⌫ Backspace" /%} will not start editing.
+    - {% kbd "⎋ Escape" /%} will not cancel editing.
+    - {% kbd "␣ Space" /%} will not select current row.
+    - {% kbd "⇥ Tab" /%} will not be handled by the grid.
+- On the Country header only:
+    - Navigation is blocked from the left to right using arrows but is allowed using {% kbd "⇥ Tab" /%}.
+    - Navigation up and down is allowed. This is the only header that allows navigation from the header to the grid cells.
+    - {% kbd "↵ Enter" /%} is blocked. This is the only header that blocks sorting / opening menu via keyboard.
+- On all headers (excluding country):
+    - Navigation is blocked up and down, but navigation left / right is allowed using arrows and {% kbd "⇥ Tab" /%}.
 
 {% gridExampleRunner title="Suppress Keys" name="suppress-keys" /%}
 
@@ -262,8 +262,8 @@ Adding support for keyboard navigation and focus requires a custom `suppressKeyb
 
 An example of this is shown below, enabling keyboard navigation through the custom cell elements when pressing {% kbd "⇥ Tab" /%} and {% kbd "⇧ Shift" /%}+{% kbd "⇥ Tab" /%}:
 
--   Click on the top left `Natalie Coughlin` cell, press the {% kbd "⇥ Tab" /%} key and notice that the button, textbox and link can be tabbed into. At the end of the cell elements, the tab focus moves to the next cell in the next row
--   Use {% kbd "⇧ Shift" /%}+{% kbd "⇥ Tab" /%} to navigate in the reverse direction
+- Click on the top left `Natalie Coughlin` cell, press the {% kbd "⇥ Tab" /%} key and notice that the button, textbox and link can be tabbed into. At the end of the cell elements, the tab focus moves to the next cell in the next row
+- Use {% kbd "⇧ Shift" /%}+{% kbd "⇥ Tab" /%} to navigate in the reverse direction
 
 The `suppressKeyboardEvent` callback is used to capture tab events and determine if the user is tabbing forward or backwards. It also suppresses the default behaviour of moving to the next cell if tabbing within the child elements.
 

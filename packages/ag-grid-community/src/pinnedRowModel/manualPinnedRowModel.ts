@@ -343,7 +343,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 _destroyRowNodeSibling(pinnedSibling);
                 container.delete(pinnedSibling);
             }
-            if (!container || container.floating !== float) {
+            if (container?.floating !== float) {
                 const newPinnedSibling = _createPinnedSibling(beans, sibling, float);
                 this.getContainer(float).add(newPinnedSibling);
             }

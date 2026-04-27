@@ -11,8 +11,8 @@ The argument should be a doc page name (e.g., `aggregation-total-rows`) or path.
 
 ## Prerequisites
 
--   The dev server must be running (`yarn nx dev`). Check `node_modules/.cache/ag-watch-status.json` for status.
--   Playwright browsers must be installed. If not, run: `npx playwright install --with-deps chromium` from `documentation/ag-grid-docs/`.
+- The dev server must be running (`yarn nx dev`). Check `node_modules/.cache/ag-watch-status.json` for status.
+- Playwright browsers must be installed. If not, run: `npx playwright install --with-deps chromium` from `documentation/ag-grid-docs/`.
 
 ## STEP 1: Discover and Plan
 
@@ -20,17 +20,17 @@ The argument should be a doc page name (e.g., `aggregation-total-rows`) or path.
 
 Find the doc page directory under `documentation/ag-grid-docs/src/content/docs/`. The argument `${ARGUMENTS}` may be:
 
--   A page name: `aggregation-total-rows`
--   A path fragment: `docs/aggregation-total-rows`
--   A full path to the directory
+- A page name: `aggregation-total-rows`
+- A path fragment: `docs/aggregation-total-rows`
+- A full path to the directory
 
 ### 1b. Read the index.mdoc
 
 Read the page's `index.mdoc` to understand:
 
--   **Page topic:** What feature area does this page document?
--   **Example references:** Find all `{% gridExampleRunner ... %}` tags. Each has a `title` and `name` attribute. The `name` maps to a folder in `_examples/`.
--   **Surrounding prose:** What does the documentation say each example demonstrates? This context is critical for knowing what to test.
+- **Page topic:** What feature area does this page document?
+- **Example references:** Find all `{% gridExampleRunner ... %}` tags. Each has a `title` and `name` attribute. The `name` maps to a folder in `_examples/`.
+- **Surrounding prose:** What does the documentation say each example demonstrates? This context is critical for knowing what to test.
 
 ### 1c. Enumerate all examples
 
@@ -40,15 +40,15 @@ List all subdirectories under the page's `_examples/` directory. Each subdirecto
 
 For **each** example, read:
 
--   `main.ts` — the primary source. Understand:
-    -   **Column definitions** (fields, `rowGroup`, `aggFunc`, `valueGetter`, `cellRenderer`, etc.)
-    -   **Grid options** (`grandTotalRow`, `groupTotalRow`, `getRowId`, `rowSelection`, etc.)
-    -   **Data source** — inline data, `fetch()` URL, or `data.ts` import
-    -   **Interactive controls** — buttons, dropdowns, or other UI that trigger grid API calls
-    -   **Custom functions** — custom `aggFunc`, `valueFormatter`, `cellRenderer`, etc.
--   `data.ts` (if present) — understand the data shape and sample values
--   `styles.css` (if present) — any relevant custom styling
--   `index.html` — check for external buttons/controls outside the grid
+- `main.ts` — the primary source. Understand:
+    - **Column definitions** (fields, `rowGroup`, `aggFunc`, `valueGetter`, `cellRenderer`, etc.)
+    - **Grid options** (`grandTotalRow`, `groupTotalRow`, `getRowId`, `rowSelection`, etc.)
+    - **Data source** — inline data, `fetch()` URL, or `data.ts` import
+    - **Interactive controls** — buttons, dropdowns, or other UI that trigger grid API calls
+    - **Custom functions** — custom `aggFunc`, `valueFormatter`, `cellRenderer`, etc.
+- `data.ts` (if present) — understand the data shape and sample values
+- `styles.css` (if present) — any relevant custom styling
+- `index.html` — check for external buttons/controls outside the grid
 
 If the example fetches remote data (e.g., from `ag-grid.com/example-assets/`), read the corresponding file from `documentation/ag-grid-docs/public/example-assets/` to understand the data shape and calculate expected values.
 
@@ -56,18 +56,18 @@ If the example fetches remote data (e.g., from `ag-grid.com/example-assets/`), r
 
 For each example, check if `example.spec.ts` already exists and whether it is:
 
--   **Placeholder** — contains `PLACEHOLDER` comment or only calls `ensureGridReady`/`waitForGridContent`/`clickAllButtons`
--   **Real test** — has meaningful assertions with `agIdFor`, `expect`, etc.
+- **Placeholder** — contains `PLACEHOLDER` comment or only calls `ensureGridReady`/`waitForGridContent`/`clickAllButtons`
+- **Real test** — has meaningful assertions with `agIdFor`, `expect`, etc.
 
 ### 1f. Build the plan
 
 Create a plan listing each example that needs a test written or updated. For each example include:
 
--   **Example name** and path
--   **What it demonstrates** (from index.mdoc context + source code analysis)
--   **Key behaviours to verify** — specific assertions to make, interactions to perform
--   **Data expectations** — expected cell values, group names, aggregation results (calculated from source data)
--   **Status** — new test, replacing placeholder, or extending existing test
+- **Example name** and path
+- **What it demonstrates** (from index.mdoc context + source code analysis)
+- **Key behaviours to verify** — specific assertions to make, interactions to perform
+- **Data expectations** — expected cell values, group names, aggregation results (calculated from source data)
+- **Status** — new test, replacing placeholder, or extending existing test
 
 Present this plan to the user before proceeding. Wait for approval.
 
@@ -93,10 +93,10 @@ cd documentation/ag-grid-docs && FRAMEWORK=typescript npx playwright test --proj
 
 **Important:**
 
--   Always run from the `documentation/ag-grid-docs/` directory (Playwright config is there).
--   Use the example folder name as the filter (e.g., `"aggregation-overview"`), NOT a glob pattern with `**/` (Playwright treats `*` as regex).
--   Start with `FRAMEWORK=typescript` for a quick single-framework check.
--   To test all frameworks, remove the `FRAMEWORK` env var.
+- Always run from the `documentation/ag-grid-docs/` directory (Playwright config is there).
+- Use the example folder name as the filter (e.g., `"aggregation-overview"`), NOT a glob pattern with `**/` (Playwright treats `*` as regex).
+- Start with `FRAMEWORK=typescript` for a quick single-framework check.
+- To test all frameworks, remove the `FRAMEWORK` env var.
 
 ## STEP 4: Iterate
 
@@ -109,16 +109,16 @@ If a test fails, diagnose the failure, fix it, and re-run. Common fixes:
 
 ### Interpreting Failures
 
--   **Strict mode violation (resolved to N elements):** Use `.first()` on the locator (see Pitfall 1 in Test Reference).
--   **Timeout waiting for element:** The row may not be visible — check if it needs expanding, scrolling, or if the row ID is correct.
--   **Expected text not found:** Recalculate expected values from the data source. Check aggFunc logic carefully.
+- **Strict mode violation (resolved to N elements):** Use `.first()` on the locator (see Pitfall 1 in Test Reference).
+- **Timeout waiting for element:** The row may not be visible — check if it needs expanding, scrolling, or if the row ID is correct.
+- **Expected text not found:** Recalculate expected values from the data source. Check aggFunc logic carefully.
 
 ## Definition of Done
 
--   Every example on the page has an `example.spec.ts` with meaningful assertions (no placeholders).
--   All tests pass with `FRAMEWORK=typescript` against chromium.
--   Assertions cover the behaviours described in the documentation for each example.
--   Tests follow existing conventions (see nearby `example.spec.ts` files for style).
+- Every example on the page has an `example.spec.ts` with meaningful assertions (no placeholders).
+- All tests pass with `FRAMEWORK=typescript` against chromium.
+- Assertions cover the behaviours described in the documentation for each example.
+- Tests follow existing conventions (see nearby `example.spec.ts` files for style).
 
 ---
 
@@ -148,21 +148,21 @@ The `agIdFor` object wraps AG Grid test IDs into Playwright locators. Key method
 
 **Rows and Cells:**
 
--   `agIdFor.rowNode(rowId)` — locator for a row
--   `agIdFor.cell(rowId, colId)` — locator for a cell
--   `agIdFor.autoGroupCell(rowId)` — shorthand for `cell(rowId, 'ag-Grid-AutoColumn')`
+- `agIdFor.rowNode(rowId)` — locator for a row
+- `agIdFor.cell(rowId, colId)` — locator for a cell
+- `agIdFor.autoGroupCell(rowId)` — shorthand for `cell(rowId, 'ag-Grid-AutoColumn')`
 
 **Group Expand/Collapse:**
 
--   `agIdFor.groupContracted(rowId, colId)` — the expand icon for a collapsed group
--   `agIdFor.groupExpanded(rowId, colId)` — the collapse icon for an expanded group
--   `agIdFor.autoGroupContracted(rowId)` — shorthand for auto group column
--   `agIdFor.autoGroupExpanded(rowId)` — shorthand for auto group column
+- `agIdFor.groupContracted(rowId, colId)` — the expand icon for a collapsed group
+- `agIdFor.groupExpanded(rowId, colId)` — the collapse icon for an expanded group
+- `agIdFor.autoGroupContracted(rowId)` — shorthand for auto group column
+- `agIdFor.autoGroupExpanded(rowId)` — shorthand for auto group column
 
 **Headers:**
 
--   `agIdFor.headerCell(colId)` — header cell
--   `agIdFor.headerGroupCell(colId)` — header group cell
+- `agIdFor.headerCell(colId)` — header cell
+- `agIdFor.headerGroupCell(colId)` — header group cell
 
 **Full API:** See `packages/ag-grid-community/src/testing/testIdUtils.ts` for all available selectors.
 
@@ -225,10 +225,10 @@ await agIdFor.autoGroupContracted('row-group-country-Netherlands').click();
 
 #### Pitfall 4: Aggregation Display Values
 
--   **`sum`**: displays the raw number (e.g., `'35'`).
--   **`avg`**: the display may be a long decimal (e.g., `'1.2580645161290323'`). Use `toContainText` with a stable prefix (e.g., `'1.258'`) rather than matching the full number.
--   **`count`**: returns an object whose `toString()` outputs the count.
--   **Custom aggFuncs**: check the implementation in `main.ts` to understand the return value.
+- **`sum`**: displays the raw number (e.g., `'35'`).
+- **`avg`**: the display may be a long decimal (e.g., `'1.2580645161290323'`). Use `toContainText` with a stable prefix (e.g., `'1.258'`) rather than matching the full number.
+- **`count`**: returns an object whose `toString()` outputs the count.
+- **Custom aggFuncs**: check the implementation in `main.ts` to understand the return value.
 
 #### Pitfall 5: Use `toContainText` over `toHaveText` for Robustness
 

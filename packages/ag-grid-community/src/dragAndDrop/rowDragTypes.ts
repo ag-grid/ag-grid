@@ -134,15 +134,18 @@ export interface IsRowValidDropPositionParams<TData = any, TContext = any> exten
 
 /** This is used internally instead of `GridDraggingEvent` to type `dropTarget` for row dragging */
 export interface RowDraggingEvent<TData = any, TContext = any>
-    extends AgDraggingEvent<DragSourceType, DragItem, DragAndDropIcon, RowDraggingEvent, RowsDrop<TData, TContext>>,
+    extends
+        AgDraggingEvent<DragSourceType, DragItem, DragAndDropIcon, RowDraggingEvent, RowsDrop<TData, TContext>>,
         AgGridCommon<TData, TContext> {}
 
 /**
  * This is only used internally
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export interface RowsDrop<TData = any, TContext = any>
-    extends Omit<IsRowValidDropPositionParams<TData, TContext>, 'draggingEvent'> {
+export interface RowsDrop<TData = any, TContext = any> extends Omit<
+    IsRowValidDropPositionParams<TData, TContext>,
+    'draggingEvent'
+> {
     /** The dragging event that originated this drop operation */
     draggingEvent: RowDraggingEvent<TData, TContext> | null;
 

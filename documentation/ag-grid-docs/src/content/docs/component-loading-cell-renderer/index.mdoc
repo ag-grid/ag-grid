@@ -8,10 +8,10 @@ The Loading Component is displayed for a row to show data is loading.
 
 The example below demonstrates replacing the Provided Loading Component with a Custom Loading Component.
 
--   **Custom Loading Component** is supplied by name via `gridOptions.loadingCellRenderer`.
--   **Custom Loading Component Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
--   Example simulates a long delay to display the spinner clearly.
--   Scrolling the grid will request more rows and again display the loading cell renderer.
+- **Custom Loading Component** is supplied by name via `gridOptions.loadingCellRenderer`.
+- **Custom Loading Component Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
+- Example simulates a long delay to display the spinner clearly.
+- Scrolling the grid will request more rows and again display the loading cell renderer.
 
 {% gridExampleRunner title="Custom Loading Cell Renderer" name="custom-loading-cell-renderer" /%}
 
@@ -36,9 +36,9 @@ When using a Custom Loading Component, you can add handling for loading failures
 
 In the example below, note that:
 
--   **Custom Loading Component** is supplied by name via `gridOptions.loadingCellRenderer`.
--   **Custom Loading Component Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
--   The example simulates a long delay to display the spinner clearly and simulates a loading failure.
+- **Custom Loading Component** is supplied by name via `gridOptions.loadingCellRenderer`.
+- **Custom Loading Component Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
+- The example simulates a long delay to display the spinner clearly and simulates a loading failure.
 
 {% gridExampleRunner title="Custom Loading Cell Renderer Failed" name="custom-loading-cell-renderer-failed" /%}
 
@@ -85,6 +85,6 @@ const gridOptions = {
 
 The above example demonstrates the following:
 
--   `suppressServerSideFullWidthLoadingRow` is enabled, preventing the grid from defaulting to full width loading.
--   `loadingCellRenderer` is configured on the _Athlete_ column, allowing a loading spinner to be displayed for just this column.
--   `loadingCellRenderer` is configured on the `defaultColDef` providing an empty cell renderer in order to prevent the default grid loading renderer from displaying on other columns.
+- `suppressServerSideFullWidthLoadingRow` is enabled, preventing the grid from defaulting to full width loading.
+- `loadingCellRenderer` is configured on the _Athlete_ column, allowing a loading spinner to be displayed for just this column.
+- `loadingCellRenderer` is configured on the `defaultColDef` providing an empty cell renderer in order to prevent the default grid loading renderer from displaying on other columns.

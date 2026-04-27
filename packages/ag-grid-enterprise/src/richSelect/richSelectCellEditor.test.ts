@@ -1,3 +1,5 @@
+import type { MockInstance } from 'vitest';
+
 import type { RichCellEditorParams } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
@@ -19,10 +21,10 @@ function createBaseParams(
         data: {},
         rowIndex: 0,
         cellStartedEdit: false,
-        onKeyDown: jest.fn(),
-        stopEditing: jest.fn(),
+        onKeyDown: vi.fn(),
+        stopEditing: vi.fn(),
         eGridCell: document.createElement('div'),
-        validate: jest.fn(),
+        validate: vi.fn(),
         ...overrides,
     } as RichCellEditorParams<any, TestValue>;
 }
@@ -32,7 +34,7 @@ function createEditor(params?: Partial<RichCellEditorParams<any, TestValue>>) {
     editor.params = createBaseParams(params);
     editor.gos = {
         addCommon: (value: any) => value,
-        get: jest.fn(() => undefined),
+        get: vi.fn(() => undefined),
     };
     editor.getLocaleTextFunc = () => (_key: string, defaultValue: string) => defaultValue;
     return editor as any;
@@ -48,28 +50,26 @@ function createRichSelectMock() {
     let loadMoreCallback: ((direction?: 'up' | 'down') => void) | undefined;
     let useAsyncSearch = false;
 
-    const setValueList = jest.fn();
-    const setIsLoading = jest.fn();
-    const setLoadMoreRowsCallback = jest.fn(
-        (callback?: (direction?: 'up' | 'down') => void, _thresholdRows?: number) => {
-            loadMoreCallback = callback;
-        }
-    );
+    const setValueList = vi.fn();
+    const setIsLoading = vi.fn();
+    const setLoadMoreRowsCallback = vi.fn((callback?: (direction?: 'up' | 'down') => void, _thresholdRows?: number) => {
+        loadMoreCallback = callback;
+    });
 
     const richSelect = {
-        addCss: jest.fn(),
-        showPicker: jest.fn(),
-        getFocusableElement: jest.fn(() => document.createElement('input')),
+        addCss: vi.fn(),
+        showPicker: vi.fn(),
+        getFocusableElement: vi.fn(() => document.createElement('input')),
         setValueList,
         setIsLoading,
-        setSearchStringCreator: jest.fn(),
+        setSearchStringCreator: vi.fn(),
         setLoadMoreRowsCallback,
-        searchTextFromString: jest.fn((value?: string | null) => {
+        searchTextFromString: vi.fn((value?: string | null) => {
             if (useAsyncSearch) {
                 asyncRequests?.onSearch(value ?? '');
             }
         }),
-        setAsyncValuesSource: jest.fn((params: any) => {
+        setAsyncValuesSource: vi.fn((params: any) => {
             asyncRequests?.destroy();
             useAsyncSearch = !!params.useAsyncSearch;
             asyncRequests = new RichSelectAsyncRequestsFeature<TestValue>({
@@ -88,7 +88,7 @@ function createRichSelectMock() {
                 setLoadMoreRowsCallback(undefined);
             }
         }),
-        resetAsyncValues: jest.fn((searchString = '') => asyncRequests?.resetValuesPage(searchString)),
+        resetAsyncValues: vi.fn((searchString = '') => asyncRequests?.resetValuesPage(searchString)),
     };
 
     return {
@@ -102,19 +102,19 @@ function createRichSelectMock() {
 }
 
 function initialiseEditorWithRichSelect(editor: any, richSelect: any): void {
-    editor.createManagedBean = jest.fn(() => richSelect);
-    editor.appendChild = jest.fn();
-    editor.addManagedListeners = jest.fn();
+    editor.createManagedBean = vi.fn(() => richSelect);
+    editor.appendChild = vi.fn();
+    editor.addManagedListeners = vi.fn();
     editor.initialiseEditor(editor.params);
 }
 
 describe('RichSelectCellEditor', () => {
-    let warnSpy: jest.SpyInstance;
-    let errorSpy: jest.SpyInstance;
+    let warnSpy: MockInstance;
+    let errorSpy: MockInstance;
 
     beforeEach(() => {
-        warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-        errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     });
 
     afterEach(() => {
@@ -170,7 +170,7 @@ describe('RichSelectCellEditor', () => {
     });
 
     it('keeps typing enabled for multi-select while preserving full-async search wiring', () => {
-        const valuesFn = jest.fn(() => Promise.resolve([] as TestValue[]));
+        const valuesFn = vi.fn(() => Promise.resolve([] as TestValue[]));
         const editor = createEditor({
             values: valuesFn as any,
             allowTyping: true,
@@ -188,7 +188,7 @@ describe('RichSelectCellEditor', () => {
     });
 
     it('handles async search promise rejection by returning empty results for the latest request', async () => {
-        const values = jest.fn(() => Promise.reject(new Error('boom')));
+        const values = vi.fn(() => Promise.reject(new Error('boom')));
         const editor = createEditor({
             values: values as any,
             allowTyping: true,
@@ -209,7 +209,7 @@ describe('RichSelectCellEditor', () => {
     });
 
     it('handles sync throws from values callback by clearing results for the latest request', () => {
-        const values = jest.fn(() => {
+        const values = vi.fn(() => {
             throw new Error('sync boom');
         });
         const editor = createEditor({
@@ -232,7 +232,7 @@ describe('RichSelectCellEditor', () => {
     it('ignores stale async search responses when a newer request exists', async () => {
         let firstResolve: ((values: TestValue[]) => void) | undefined;
         let secondResolve: ((values: TestValue[]) => void) | undefined;
-        const values = jest
+        const values = vi
             .fn()
             .mockImplementationOnce(() => new Promise<TestValue[]>((resolve) => (firstResolve = resolve)))
             .mockImplementationOnce(() => new Promise<TestValue[]>((resolve) => (secondResolve = resolve)));
@@ -263,7 +263,7 @@ describe('RichSelectCellEditor', () => {
     it('passes an immutable search value per request to async values callback', () => {
         let firstParams: any;
         let secondParams: any;
-        const values = jest
+        const values = vi
             .fn()
             .mockImplementationOnce((params) => {
                 firstParams = params;
@@ -304,22 +304,22 @@ describe('RichSelectCellEditor', () => {
     });
 
     it('processes event key when one-time async values reject during initialise', async () => {
-        const values = jest.fn(() => Promise.reject(new Error('load failed')));
+        const values = vi.fn(() => Promise.reject(new Error('load failed')));
         const editor = createEditor({
             values: values as any,
             eventKey: 'A',
         });
 
         const richSelect = {
-            addCss: jest.fn(),
-            showPicker: jest.fn(),
-            setValueList: jest.fn(),
-            setAsyncValuesSource: jest.fn(),
-            resetAsyncValues: jest.fn(),
-            setSearchStringCreator: jest.fn(),
-            searchTextFromString: jest.fn(),
+            addCss: vi.fn(),
+            showPicker: vi.fn(),
+            setValueList: vi.fn(),
+            setAsyncValuesSource: vi.fn(),
+            resetAsyncValues: vi.fn(),
+            setSearchStringCreator: vi.fn(),
+            searchTextFromString: vi.fn(),
         };
-        const processEventKeySpy = jest.spyOn(editor as any, 'processEventKey');
+        const processEventKeySpy = vi.spyOn(editor as any, 'processEventKey');
         initialiseEditorWithRichSelect(editor, richSelect);
         await flushMicrotasks();
 
@@ -327,7 +327,7 @@ describe('RichSelectCellEditor', () => {
     });
 
     it('loads initial paged values and wires load-more callback', async () => {
-        const valuesPage = jest.fn().mockReturnValue({
+        const valuesPage = vi.fn().mockReturnValue({
             values: [{ id: 1, label: 'one' }],
             cursor: 'next',
         });
@@ -356,7 +356,7 @@ describe('RichSelectCellEditor', () => {
 
     it('replays initial event key once after the first paged load in non-full-async mode', async () => {
         let resolveFirstPage: ((result: { values: TestValue[]; cursor: string }) => void) | undefined;
-        const valuesPage = jest
+        const valuesPage = vi
             .fn()
             .mockImplementationOnce(
                 () =>
@@ -380,10 +380,10 @@ describe('RichSelectCellEditor', () => {
         const { richSelect, getLoadMoreCallback } = createRichSelectMock();
         initialiseEditorWithRichSelect(editor, richSelect);
 
-        jest.useFakeTimers();
+        vi.useFakeTimers();
         try {
             (editor as any).afterGuiAttached();
-            jest.runOnlyPendingTimers();
+            vi.runOnlyPendingTimers();
 
             expect(richSelect.searchTextFromString).toHaveBeenCalledTimes(0);
 
@@ -401,12 +401,12 @@ describe('RichSelectCellEditor', () => {
 
             expect(richSelect.searchTextFromString).toHaveBeenCalledTimes(1);
         } finally {
-            jest.useRealTimers();
+            vi.useRealTimers();
         }
     });
 
     it('processes initial event key once in full-async paged mode', async () => {
-        const valuesPage = jest.fn().mockReturnValue({
+        const valuesPage = vi.fn().mockReturnValue({
             values: [{ id: 1, label: 'one' }],
             lastRow: 1,
         });
@@ -422,21 +422,21 @@ describe('RichSelectCellEditor', () => {
         const { richSelect } = createRichSelectMock();
         initialiseEditorWithRichSelect(editor, richSelect);
 
-        jest.useFakeTimers();
+        vi.useFakeTimers();
         try {
             (editor as any).afterGuiAttached();
-            jest.runOnlyPendingTimers();
+            vi.runOnlyPendingTimers();
             await flushMicrotasks();
 
             expect(richSelect.searchTextFromString).toHaveBeenCalledTimes(1);
             expect(richSelect.searchTextFromString).toHaveBeenCalledWith('A');
         } finally {
-            jest.useRealTimers();
+            vi.useRealTimers();
         }
     });
 
     it('shows the picker only once for full-async editors when editing starts', () => {
-        const values = jest.fn(() => Promise.resolve([{ id: 1, label: 'one' }] as TestValue[]));
+        const values = vi.fn(() => Promise.resolve([{ id: 1, label: 'one' }] as TestValue[]));
         const editor = createEditor({
             values: values as any,
             allowTyping: true,
@@ -447,20 +447,20 @@ describe('RichSelectCellEditor', () => {
         const { richSelect } = createRichSelectMock();
         initialiseEditorWithRichSelect(editor, richSelect);
 
-        jest.useFakeTimers();
+        vi.useFakeTimers();
         try {
             (editor as any).afterGuiAttached();
-            jest.runOnlyPendingTimers();
+            vi.runOnlyPendingTimers();
 
             expect(richSelect.showPicker).toHaveBeenCalledTimes(1);
         } finally {
-            jest.useRealTimers();
+            vi.useRealTimers();
         }
     });
 
     it('supports custom initial start row for paged values and continues from that offset', async () => {
-        const valuesPageInitialStartRow = jest.fn(() => 10);
-        const valuesPage = jest
+        const valuesPageInitialStartRow = vi.fn(() => 10);
+        const valuesPage = vi
             .fn()
             .mockReturnValueOnce({
                 values: [
@@ -508,7 +508,7 @@ describe('RichSelectCellEditor', () => {
 
     it('loads previous pages when initial paged load starts after row zero', async () => {
         const dataset = Array.from({ length: 40 }, (_, id) => ({ id, label: `value-${id}` }));
-        const valuesPage = jest.fn().mockImplementation((request: any) => ({
+        const valuesPage = vi.fn().mockImplementation((request: any) => ({
             values: dataset.slice(request.startRow, request.endRow),
             lastRow: dataset.length,
         }));
@@ -565,7 +565,7 @@ describe('RichSelectCellEditor', () => {
     });
 
     it('appends additional pages when load-more callback is invoked', async () => {
-        const valuesPage = jest
+        const valuesPage = vi
             .fn()
             .mockReturnValueOnce({
                 values: [
@@ -621,7 +621,7 @@ describe('RichSelectCellEditor', () => {
     });
 
     it('continues loading pages when cursor is undefined but page is full', async () => {
-        const valuesPage = jest
+        const valuesPage = vi
             .fn()
             .mockReturnValueOnce({
                 values: [
@@ -664,7 +664,7 @@ describe('RichSelectCellEditor', () => {
 
     it('ignores stale paged responses after a newer search reset', async () => {
         const pendingResolvers: Record<string, Array<(result: { values: TestValue[]; lastRow?: number }) => void>> = {};
-        const valuesPage = jest.fn().mockImplementation((params: { search: string }) => {
+        const valuesPage = vi.fn().mockImplementation((params: { search: string }) => {
             return new Promise<{ values: TestValue[]; lastRow?: number }>((resolve) => {
                 (pendingResolvers[params.search] ??= []).push(resolve);
             });

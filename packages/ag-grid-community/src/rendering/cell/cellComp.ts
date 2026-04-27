@@ -532,7 +532,7 @@ export class CellComp extends Component {
 
         // see if position provided by colDef, if not then check old way of method on cellComp
         const positionToUse: 'over' | 'under' | undefined =
-            position != null ? position : cellEditor!.getPopupPosition?.() ?? 'over';
+            position != null ? position : (cellEditor!.getPopupPosition?.() ?? 'over');
         const isRtl = gos.get('enableRtl');
 
         const positionParams: AgComponentPopupPositionParams<PopupPositionParams> = {

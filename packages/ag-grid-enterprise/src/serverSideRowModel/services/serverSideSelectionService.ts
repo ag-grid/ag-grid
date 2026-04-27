@@ -79,8 +79,6 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             return 0;
         }
 
-        let updatedRows = 0;
-
         const selection = this.inferNodeSelections(rowNode, event.shiftKey, event.metaKey || event.ctrlKey, source);
 
         if (selection == null) {
@@ -89,6 +87,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
         this.selectionCtx.selectAll = false;
 
+        let updatedRows: number;
         if ('select' in selection) {
             if (selection.reset) {
                 this.selectionStrategy.deselectAllRowNodes({ source: 'api' });

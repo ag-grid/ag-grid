@@ -263,7 +263,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         this.lastMouseEvent = mouseEvent;
 
         const isMouseAndStartInPinned = (position: string) =>
-            lastCellHovered && lastCellHovered.rowPinned === position && newestRangeStartCell!.rowPinned === position;
+            lastCellHovered?.rowPinned === position && newestRangeStartCell!.rowPinned === position;
 
         const skipVerticalScroll = isMouseAndStartInPinned('top') || isMouseAndStartInPinned('bottom');
 
@@ -1114,7 +1114,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             const range = ranges[i];
             const hasCols = columns.every((c) => range.columns.includes(c));
 
-            let condition = false;
+            let condition: boolean;
             if (matchOnly) {
                 condition = _isSameRow(range.startRow, startRow) && _isSameRow(range.endRow, endRow);
             } else {

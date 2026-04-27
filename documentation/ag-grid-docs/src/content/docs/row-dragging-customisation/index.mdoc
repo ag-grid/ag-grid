@@ -12,9 +12,9 @@ When using row dragging it is also possible to reorder rows by clicking and drag
 
 The example above demonstrates entire row dragging with [Multi-Row Dragging](./row-dragging-managed/#multi-row-dragging). Note the following:
 
--   Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` is enabled.
--   Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `rowSelection.mode = 'multiRow'`.
--   Row Drag Managed is being used, but it is not a requirement for Entire Row Dragging.
+- Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` is enabled.
+- Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `rowSelection.mode = 'multiRow'`.
+- Row Drag Managed is being used, but it is not a requirement for Entire Row Dragging.
 
 To enable entire row dragging, set the `rowDragEntireRow` property to `true` in the `gridOptions` as shown below:
 
@@ -43,7 +43,7 @@ When a row drag starts, a "floating" DOM element is created to indicate which ro
 
 The example above shows dragging with custom text. The following can be noted:
 
--   When you drag a row of the year 2012, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
+- When you drag a row of the year 2012, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
 
 To enable custom row drag text, set the `rowDragText` callback in the `gridOptions` as shown below:
 
@@ -77,9 +77,9 @@ If the grid has more than one column set with `rowDrag=true`, the `rowDragText` 
 
 The example above shows dragging with custom text and multiple column draggers. The following can be noted:
 
--   When you drag a row with a year of 2012 by the country row dragger, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
+- When you drag a row with a year of 2012 by the country row dragger, the `rowDragText` callback will add **(London Olympics)** to the floating drag element.
 
--   When you drag the row by the athlete row dragger, the `rowDragText` callback in the `gridOptions` will be overridden by the one in the `colDef` and will display the number of **athletes selected**.
+- When you drag the row by the athlete row dragger, the `rowDragText` callback in the `gridOptions` will be overridden by the one in the `colDef` and will display the number of **athletes selected**.
 
 To enable custom row drag text per column dragger, set the `rowDragText` callback in the `colDef` as shown below:
 
@@ -116,7 +116,7 @@ Due to the complexity of some applications, it could be handy to render the Row 
 
 The example above shows a custom cell renderer using the`registerRowDragger` callback to render the Row Dragger inside itself.
 
--   When you hover the cells, an arrow will appear, and this arrow can be used to **drag** the rows.
+- When you hover the cells, an arrow will appear, and this arrow can be used to **drag** the rows.
 
 To register a custom row dragger inside a custom cell renderer, use the `registerRowDragger` method from the `ICellRendererParams` as shown below:
 

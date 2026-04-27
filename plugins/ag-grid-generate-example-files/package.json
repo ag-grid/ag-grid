@@ -5,15 +5,15 @@
   "dependencies": {
     "ag-shared": "0.0.1",
     "ag-grid-community": "35.2.1-beta.20260419.2046",
-    "glob": "8.0.3",
+    "glob": "^11.1.0",
     "typescript": "~5.4.5",
-    "cheerio": "^1.0.0",
+    "cheerio": "^1.2.0",
     "sucrase": "^3.35.1",
     "json5": "2.2.3",
-    "@nx/devkit": "17.2.6",
-    "@swc/helpers": "0.5.3",
-    "prettier": "3.2.5",
-    "tinypool": "^1.0.2"
+    "@nx/devkit": "20.8.4",
+    "@swc/helpers": "0.5.21",
+    "prettier": "3.8.3",
+    "tinypool": "^2.1.0"
   },
   "type": "commonjs",
   "main": "./dist/src/index.js",

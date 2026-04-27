@@ -32,16 +32,6 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
     const mailtoBody = '';
     const mailto = `mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`;
 
-    // Check if countdown has ended on component mount
-    useEffect(() => {
-        const searchParams = window.location.search;
-        const hasEndedParam = new URLSearchParams(searchParams).get('hasEnded') === 'true';
-        const now = new Date();
-        if (now > END_DATE || hasEndedParam) {
-            updateContentOnCountdownEnd();
-        }
-    }, []);
-
     const updateContentOnCountdownEnd = () => {
         setHeroTitle(
             <>
@@ -56,6 +46,17 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
         setShowCountdownText(false);
         setIsCountdownEnded(true);
     };
+
+    // Check if countdown has ended on component mount
+    useEffect(() => {
+        const searchParams = window.location.search;
+        const hasEndedParam = new URLSearchParams(searchParams).get('hasEnded') === 'true';
+        const now = new Date();
+        if (now > END_DATE || hasEndedParam) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time mount check to sync content state
+            updateContentOnCountdownEnd();
+        }
+    }, []);
 
     return (
         <div className={`layout-max-width-small ${isCountdownEnded ? styles.countdownEnded : ''}`}>

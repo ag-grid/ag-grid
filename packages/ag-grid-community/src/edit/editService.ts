@@ -342,16 +342,14 @@ export class EditService extends BeanStub implements NamedBean {
         this.stopping = true;
 
         let res = false;
-        let { edits } = context;
 
         try {
             const outcome = this.processStopRequest(context);
             res ||= outcome.res;
-            edits = outcome.edits;
 
             this.finishStopEditing({
                 ...context,
-                edits,
+                edits: outcome.edits,
                 params,
                 position,
                 res,

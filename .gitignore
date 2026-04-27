@@ -1,5 +1,6 @@
 .idea
 .vscode
+.junie
 
 vite.config.ts.timestamp-*.mjs
 vite.config.mts.timestamp-*.mjs

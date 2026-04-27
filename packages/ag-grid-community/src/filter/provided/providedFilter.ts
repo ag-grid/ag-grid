@@ -37,11 +37,11 @@ type ProvidedFilterDisplayParams<M extends ProvidedFilterModel> = IProvidedFilte
  * @param V type of value managed by the concrete sub-class that extends this type
  */
 export abstract class ProvidedFilter<
-        M extends ProvidedFilterModel,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        V,
-        P extends ProvidedFilterDisplayParams<M> = ProvidedFilterDisplayParams<M>,
-    >
+    M extends ProvidedFilterModel,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    V,
+    P extends ProvidedFilterDisplayParams<M> = ProvidedFilterDisplayParams<M>,
+>
     extends Component
     implements IProvidedFilter, IFilterComp
 {

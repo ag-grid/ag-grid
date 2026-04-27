@@ -240,7 +240,9 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
                 files = result.files;
                 scriptFiles = result.scriptFiles;
             } catch (e) {
-                throw new Error(`Error generating files for ${internalFramework} in '${folderPath}': ${e}`);
+                throw new Error(`Error generating files for ${internalFramework} in '${folderPath}': ${e}`, {
+                    cause: e,
+                });
             }
         } else {
             scriptFiles = await processProvidedFiles(

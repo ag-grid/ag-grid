@@ -114,7 +114,7 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     }
 }
 
-export class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStrategy {
+class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStrategy {
     private lastPivotColIds: string[] = [];
 
     constructor(private readonly beans: StrategyBeans) {}
@@ -380,7 +380,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                         }
                         const previousPivotColIds = stateSvc?.getState().pivot?.pivotColIds ?? currentPivotColIds;
                         const pivotColIds = operation.pivotMode
-                            ? this.state.pivot?.colIds ?? this.lastPivotColIds
+                            ? (this.state.pivot?.colIds ?? this.lastPivotColIds)
                             : previousPivotColIds;
                         stateSvc?.setState(
                             {

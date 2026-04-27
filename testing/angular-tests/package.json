@@ -13,16 +13,16 @@
     "@angular/platform-browser-dynamic": "^21.0.0",
     "ag-grid-angular": "35.2.1-beta.20260419.2046",
     "ag-grid-community": "35.2.1-beta.20260419.2046",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
+    "rxjs": "~7.8.2",
+    "tslib": "^2.8.1",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
     "@angular/compiler-cli": "^21.0.0",
-    "@types/jest": "^29.5.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "jest-preset-angular": "^14.0.0",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "jest-preset-angular": "^16.0.0",
     "typescript": "~5.6.2"
   }
 }

@@ -17,7 +17,6 @@ export type ToolbarItemShorthand =
     | ToolbarItemComponentName
     | 'separator'
     // Preserve the literal-union autocomplete while still allowing arbitrary registered component names
-    // eslint-disable-next-line @typescript-eslint/ban-types
     | (string & {});
 
 /**
@@ -148,5 +147,4 @@ export interface IToolbarItem<TData = any, TContext = any> {
 }
 
 export interface IToolbarItemComp<TData = any, TContext = any>
-    extends IToolbarItem<TData, TContext>,
-        IComponent<IToolbarItemParams<TData, TContext>> {}
+    extends IToolbarItem<TData, TContext>, IComponent<IToolbarItemParams<TData, TContext>> {}

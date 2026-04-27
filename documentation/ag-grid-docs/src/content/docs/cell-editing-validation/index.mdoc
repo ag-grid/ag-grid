@@ -7,9 +7,9 @@ title: 'Cell Editing Validation'
 The Grid provides built-in validation for all [Provided Cell Editors](./provided-cell-editors/), such as the Text, Large Text, Number and Date editors.
 These editors support validation automatically by checking the constraints defined in the column configuration. For example:
 
--   `Text` and `Large Text` editors will respect the `maxLength` property.
--   `Number` editors validate against min and max constraints.
--   `Date` editors ensure the value is a valid date string.
+- `Text` and `Large Text` editors will respect the `maxLength` property.
+- `Number` editors validate against min and max constraints.
+- `Date` editors ensure the value is a valid date string.
 
 Validation is performed when editing ends, and the Grid will handle invalid values based on the selected [Validation Modes](#validation-modes).
 
@@ -45,8 +45,8 @@ If the callback returns errors, the Grid will show the errors in a tooltip when 
 
 This is demonstrated in the following example, note that:
 
--   `Athlete` has to be at least `3` characters.
--   `Age` has to be different than `18`.
+- `Athlete` has to be at least `3` characters.
+- `Age` has to be different than `18`.
 
 {% gridExampleRunner title="Cell Editor Validation Override" name="cell-editor-validation-override" /%}
 
@@ -95,9 +95,9 @@ A row edit will only complete successfully if **both** the individual cell edito
 
 This is demonstrated in the following example. Note the following validation rules:
 
--   `Weight` has to be a positive value below `500`.
--   `Height` has to be a positive value below `300`.
--   **Full Row Edit Validation** ensures that the Body Mass Index (BMI), calculated using height and weight, is between `10` and `80`.
+- `Weight` has to be a positive value below `500`.
+- `Height` has to be a positive value below `300`.
+- **Full Row Edit Validation** ensures that the Body Mass Index (BMI), calculated using height and weight, is between `10` and `80`.
 
 {% gridExampleRunner title="Full Row Editing Validation" name="full-row-editing-validation" /%}
 

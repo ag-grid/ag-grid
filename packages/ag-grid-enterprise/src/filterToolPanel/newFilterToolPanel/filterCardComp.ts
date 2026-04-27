@@ -96,7 +96,7 @@ export class FilterCardComp extends Component {
 
         _setDisplayed(eEditing, isEditing);
 
-        if (!oldState || expanded !== oldState.expanded) {
+        if (expanded !== oldState?.expanded) {
             this.toggleExpand(newState);
         }
 

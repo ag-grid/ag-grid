@@ -10,9 +10,11 @@ export interface CustomParams {
     color: string;
 }
 
-export class NumberFloatingFilterComponent
-    implements FloatingFilterDisplayComp<any, any, NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>>
-{
+export class NumberFloatingFilterComponent implements FloatingFilterDisplayComp<
+    any,
+    any,
+    NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>
+> {
     eGui!: HTMLDivElement;
     eFilterInput!: HTMLInputElement;
     params!: FloatingFilterDisplayParams<any, any, NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>> &

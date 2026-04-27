@@ -131,19 +131,9 @@
       }
     },
     "testx": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "command": "npx vitest run --config vitest.config.ts",
       "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts",
-        "passWithNoTests": false
-      },
-      "configurations": {
-        "watch": {
-          "watch": true
-        },
-        "update": {
-          "updateSnapshot": true
-        }
+        "cwd": "{projectRoot}"
       },
       "dependsOn": ["build:test"]
     },

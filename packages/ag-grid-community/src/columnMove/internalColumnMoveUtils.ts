@@ -53,7 +53,7 @@ function getColsToMove(allMovingColumns: AgColumn[]): AgColumn[] {
         let movingGroup: AgColumnGroup | null = null;
 
         let parent = col.parent;
-        while (parent != null && parent.getDisplayedLeafColumns().length === 1) {
+        while (parent?.getDisplayedLeafColumns().length === 1) {
             movingGroup = parent;
             parent = parent.parent;
         }

@@ -1,7 +1,7 @@
 .ag-aria-description-container {
     z-index: 9999;
     border: 0;
-    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
     height: 1px;
     width: 1px;
     position: absolute;
@@ -385,7 +385,7 @@ always be 0 and then making a row sticky causes the grid to scroll. */
 
 .ag-cell-wrap-text {
     white-space: normal;
-    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 :where(.ag-cell) .ag-icon {

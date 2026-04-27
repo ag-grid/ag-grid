@@ -1,4 +1,4 @@
-import algoliasearch from 'algoliasearch';
+import { algoliasearch } from 'algoliasearch';
 import fs from 'fs';
 import { dirname } from 'path';
 
@@ -51,26 +51,27 @@ export const updateAlgolia = async (indexName: string, records: Record<string, a
     }
 
     const algoliaClient = algoliasearch(process.env.PUBLIC_ALGOLIA_APP_ID!, process.env.ALGOLIA_ADMIN_KEY!);
-    const index = algoliaClient.initIndex(indexName);
 
-    index.setSettings({
-        // attributes used for searching, earlier properties rank higher
-        searchableAttributes: ['title', 'heading', 'subHeading', 'codeWords'],
-        disableExactOnAttributes: ['text'], // don't allow "exact matches" in the text
-        attributesToSnippet: ['text:40'], // configure snippet length shown in results
-        distinct: 1, // only allow each page to appear in the results once
-        attributeForDistinct: 'breadcrumb', // configure what is used to decide if a page is the same
-        customRanking: ['asc(rank)', 'asc(positionInPage)'], // custom tweaks to the ranking
-        camelCaseAttributes: ['heading', 'subHeading'], // split camelCased text so it can match regular text
-        indexLanguages: ['en'], // enable English stemming at index time
-        queryLanguages: ['en'], // enable English stemming at query time
-        hitsPerPage: 10, // how many results should be returned per page
-        snippetEllipsisText: '…', // the character used when truncating content for snippets
+    await algoliaClient.setSettings({
+        indexName,
+        indexSettings: {
+            searchableAttributes: ['title', 'heading', 'subHeading', 'codeWords'],
+            disableExactOnAttributes: ['text'],
+            attributesToSnippet: ['text:40'],
+            distinct: 1,
+            attributeForDistinct: 'breadcrumb',
+            customRanking: ['asc(rank)', 'asc(positionInPage)'],
+            camelCaseAttributes: ['heading', 'subHeading'],
+            indexLanguages: ['en'],
+            queryLanguages: ['en'],
+            hitsPerPage: 10,
+            snippetEllipsisText: '…',
+        },
     });
 
     try {
-        await index.clearObjects();
-        const result = await index.saveObjects(records);
+        await algoliaClient.clearObjects({ indexName });
+        const result = await algoliaClient.saveObjects({ indexName, objects: records });
 
         console.log(`Response from Algolia:`, result);
     } catch (e) {

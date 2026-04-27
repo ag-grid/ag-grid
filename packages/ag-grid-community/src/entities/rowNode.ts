@@ -201,7 +201,7 @@ export class RowNode<TData = any>
     /** CSRM only - do not use this property internally, this is exposed to the end user only. Use `_leafs` instead. */
     public get allLeafChildren(): RowNode<TData>[] | null {
         const leafs = this._leafs;
-        return leafs === undefined ? this.beans.groupStage?.loadLeafs?.(this) ?? null : leafs;
+        return leafs === undefined ? (this.beans.groupStage?.loadLeafs?.(this) ?? null) : leafs;
     }
 
     public set allLeafChildren(value: RowNode<TData>[] | null | undefined) {

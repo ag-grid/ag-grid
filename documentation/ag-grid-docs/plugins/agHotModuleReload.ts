@@ -14,7 +14,7 @@ export default function createAgHotModuleReload(): Plugin {
             }
 
             const filesToWatch = [BUILD_QUEUE_EMPTY_FILE];
-            let timeout: NodeJS.Timeout | undefined;
+            let timeout: ReturnType<typeof setTimeout> | undefined;
             const fullReload = (path: string) => {
                 clearTimeout(timeout);
                 timeout = setTimeout(() => {

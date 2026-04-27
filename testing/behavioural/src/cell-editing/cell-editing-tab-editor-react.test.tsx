@@ -1,5 +1,4 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
-import '@testing-library/jest-dom';
 import { cleanup, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import React from 'react';

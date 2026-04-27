@@ -12,9 +12,9 @@ This example does not maintain conversation state. If the LLM responds with a qu
 
 Suggested prompts:
 
--   "Show me all the gold medals won by the USA"
--   "Sort the competitors with the youngest first"
--   "Group by country and show the total number of medals won"
+- "Show me all the gold medals won by the USA"
+- "Sort the competitors with the youngest first"
+- "Group by country and show the total number of medals won"
 
 {% gridExampleRunner title="Natural Language Grid State Management" name="natural-language-grid-state" exampleHeight=600 /%}
 
@@ -26,13 +26,13 @@ The AI Toolkit provides a `getStructuredSchema` API that generates a structured 
 
 The schema is made up of a series of "features", each representing a different aspect of the grid that can be manipulated. The following features are currently supported:
 
--   [Filtering](./filtering/)
--   [Sorting](./row-sorting/)
--   [Aggregation](./aggregation/)
--   [Pivoting](./pivoting/)
--   [Row Grouping](./grouping/)
--   [Column Visibility](./column-properties/#reference-display-hide/)
--   [Column Sizing](./column-sizing/)
+- [Filtering](./filtering/)
+- [Sorting](./row-sorting/)
+- [Aggregation](./aggregation/)
+- [Pivoting](./pivoting/)
+- [Row Grouping](./grouping/)
+- [Column Visibility](./column-properties/#reference-display-hide/)
+- [Column Sizing](./column-sizing/)
 
 ### Architecture
 
@@ -41,7 +41,6 @@ At a high level, the AI Toolkit works as follows:
 1. **User Input Capture:** End user enters a natural language query.
 
 2. **Prompt Construction (Client/Server):** The application gathers three elements:
-
     1. The user query
     2. The current grid state, via `gridApi.getState()`
     3. The structured schema of grid state, via `gridApi.getStructuredSchema()`
@@ -62,10 +61,10 @@ If you wish to integrate with an LLM that does not support structured data nativ
 
 To get started you'll need:
 
--   API Key for your chosen LLM
--   Existing AG Grid implementation
--   Input for user queries
--   Knowledge of making requests to an LLM
+- API Key for your chosen LLM
+- Existing AG Grid implementation
+- Input for user queries
+- Knowledge of making requests to an LLM
 
 ### Creating a Schema
 
@@ -102,9 +101,9 @@ The `getStructuredSchema()` API returns a narrow representation of what can be a
 
 The `schema` contains several properties for the LLM to populate:
 
--   `gridState` a structured output representation of grid state.
--   `propertiesToIgnore` a list of grid state properties which have been unchanged, to ensure they are not overridden when updating grid state (optional, but recommended).
--   `explanation` a string the LLM can use to provide human-readable context to the user about the changes that have been applied (optional, but recommended).
+- `gridState` a structured output representation of grid state.
+- `propertiesToIgnore` a list of grid state properties which have been unchanged, to ensure they are not overridden when updating grid state (optional, but recommended).
+- `explanation` a string the LLM can use to provide human-readable context to the user about the changes that have been applied (optional, but recommended).
 
 ### Modifying State with Any LLM
 
@@ -167,8 +166,8 @@ const gridStateStructuredSchema = gridApi.getStructuredSchema(
 
 Occasionally the LLM will need more information than can be provided by the grid alone. As such, you can pass in options for each column defining extra context.
 
--   `description` - This provides a description of what the column contains to the LLM inline in the schema. This might include details such as the type or format of the data, to aid it when filtering or aggregating.
--   `includeSetValues` - When using the Set Filter, the LLM must be provided with the allowed values for it to correctly set those it wishes to filter. However, some Set Filters contain many values which lead to a schema which is too large for your LLM to process. By default we do not include the Set Filter values, however if you set this property to true then they will be included. Refer to the [Handling Schema Size Limits](#handling-schema-size-limits) for more information.
+- `description` - This provides a description of what the column contains to the LLM inline in the schema. This might include details such as the type or format of the data, to aid it when filtering or aggregating.
+- `includeSetValues` - When using the Set Filter, the LLM must be provided with the allowed values for it to correctly set those it wishes to filter. However, some Set Filters contain many values which lead to a schema which is too large for your LLM to process. By default we do not include the Set Filter values, however if you set this property to true then they will be included. Refer to the [Handling Schema Size Limits](#handling-schema-size-limits) for more information.
 
 ```ts
 const gridStateStructuredSchema = gridApi.getStructuredSchema({ columns: {
@@ -192,11 +191,11 @@ The AI Toolkit does not include any prompting logic, as this will vary depending
 
 In our testing we have found a few things that help get the best results from LLMs when prompting them to generate grid state changes:
 
--   Include the current state of the grid in the prompt. This helps the LLM understand what the grid currently looks like, and what changes are being requested.
--   Request the LLM to only return the grid state changes, and nothing else. This helps ensure that the response can be passed directly to `setState()`.
--   You may wish to provide the LLM with a few rows of data from the grid, to help it understand the data it is working with. This is especially useful if your grid contains domain-specific data that the LLM may not be familiar with. If you have a small dataset, you can even include the entire dataset in the prompt by using `exportToCsv()`.
--   If you have any domain specific knowledge or terminology that you want the LLM to be aware of, include that in the prompt as well. e.g. "In this dataset, a 'medal' refers to any of gold, silver or bronze medals won at the Olympic games".
--   Including a list of available features also helps the LLM understand what it can and cannot do.
+- Include the current state of the grid in the prompt. This helps the LLM understand what the grid currently looks like, and what changes are being requested.
+- Request the LLM to only return the grid state changes, and nothing else. This helps ensure that the response can be passed directly to `setState()`.
+- You may wish to provide the LLM with a few rows of data from the grid, to help it understand the data it is working with. This is especially useful if your grid contains domain-specific data that the LLM may not be familiar with. If you have a small dataset, you can even include the entire dataset in the prompt by using `exportToCsv()`.
+- If you have any domain specific knowledge or terminology that you want the LLM to be aware of, include that in the prompt as well. e.g. "In this dataset, a 'medal' refers to any of gold, silver or bronze medals won at the Olympic games".
+- Including a list of available features also helps the LLM understand what it can and cannot do.
 
 Below is an example prompt you can use as a starting point:
 
@@ -253,11 +252,11 @@ If you choose to do this, make sure that the result is still a valid `GridState`
 
 **Recommendations**:
 
--   Enable `includeSetValues` selectively on low-cardinality columns only.
+- Enable `includeSetValues` selectively on low-cardinality columns only.
 
--   Consider truncating to the top N most frequent values plus an "OTHER" hint.
+- Consider truncating to the top N most frequent values plus an "OTHER" hint.
 
--   Monitor total prompt size; keep within your model’s context window with a buffer for the model’s response.
+- Monitor total prompt size; keep within your model’s context window with a buffer for the model’s response.
 
 ## Example: AI Chat Assistant
 
