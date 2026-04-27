@@ -831,7 +831,9 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     padding: 32px;
     background: var(--btp-orange);
     border: 1px solid var(--btp-orange);
-    transition: background-color 0.2s ease;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
 
     &:hover {
         background: var(--btp-orange-dark);
@@ -841,6 +843,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     :global(.icon) {
         --icon-size: 24px;
         --icon-color: var(--btp-bg);
+        transition: --icon-color 0.2s ease;
     }
 
     h3 {
@@ -851,6 +854,9 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         text-transform: uppercase;
         color: var(--btp-bg);
         opacity: 0.8;
+        transition:
+            color 0.2s ease,
+            opacity 0.2s ease;
     }
 
     .atAGlancePrimary {
@@ -858,6 +864,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         font-weight: 600;
         letter-spacing: -0.02em;
         color: var(--btp-bg);
+        transition: color 0.2s ease;
     }
 
     .atAGlanceDetail {
@@ -865,6 +872,9 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         line-height: 1.5;
         color: var(--btp-bg);
         opacity: 0.85;
+        transition:
+            color 0.2s ease,
+            opacity 0.2s ease;
     }
 
     a {
@@ -889,6 +899,35 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
                 --icon-color: var(--btp-bg);
             }
         }
+    }
+}
+
+// First two cards (When + Where) are informational, not CTAs — instead of
+// deepening to orange-dark on hover like the Tickets card, they flip to a
+// clean white surface with no border and revert text/icon colours back to
+// the page's default ink + orange. Specificity is `:nth-child + :hover`
+// (0,3,0) which beats the bare `.atAGlanceCard:hover` rule above (0,2,0).
+.atAGlanceCard:nth-child(1):hover,
+.atAGlanceCard:nth-child(2):hover {
+    background: var(--btp-card);
+    border-color: transparent;
+
+    :global(.icon) {
+        --icon-color: var(--btp-orange);
+    }
+
+    h3 {
+        color: var(--btp-ink-muted);
+        opacity: 1;
+    }
+
+    .atAGlancePrimary {
+        color: var(--btp-ink);
+    }
+
+    .atAGlanceDetail {
+        color: var(--btp-ink-muted);
+        opacity: 1;
     }
 }
 
