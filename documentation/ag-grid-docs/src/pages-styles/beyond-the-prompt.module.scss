@@ -1126,10 +1126,15 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     display: flex;
     flex-direction: column;
     gap: 4px;
-    // Vertical padding intentionally tight — content sits close to the
-    // dividing hairline so the schedule reads as a dense table rather
-    // than a stack of generously-padded cards. Horizontal padding stays
-    // generous because rows are wide and need a visible inset.
+    // Mobile keeps the classic outer padding — the row stacks vertically
+    // and there's no portrait overlay to fight with, so a unified inset
+    // reads as expected. On desktop the vertical padding moves onto the
+    // inner columns (see `.agendaTime` / `.agendaBody` / `.agendaDescription`)
+    // so the speaker portrait overlay can fill the row's full height. If
+    // we kept the padding on the row itself, the orange hover background
+    // would render correctly but the portrait inside `.agendaDescriptionWrap`
+    // would stop short of the row top/bottom, leaving a visible "padding
+    // gap" above and below the speaker on hover.
     padding: 16px 24px;
     border-bottom: 1px solid var(--btp-border);
     // `overflow: hidden` lets the speaker portrait scale up past the cell on
@@ -1147,7 +1152,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         flex-direction: row;
         align-items: flex-start;
         gap: 32px;
-        padding: 18px 32px;
+        padding: 0 32px;
     }
 }
 
@@ -1169,6 +1174,9 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 
     @media (min-width: 720px) {
         flex: 0 0 160px;
+        // Vertical padding lives on the column (not the row) so the speaker
+        // overlay in `.agendaDescriptionWrap` can stretch the full row height.
+        padding: 18px 0;
     }
 }
 
@@ -1180,6 +1188,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     @media (min-width: 720px) {
         flex: 1 1 0;
         min-width: 0;
+        padding: 18px 0;
     }
 }
 
@@ -1228,6 +1237,14 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     transition:
         opacity 0.32s ease,
         color 0.32s ease;
+
+    // Match the vertical inset that used to live on `.agendaRow`. Padding
+    // is on the text, not on `.agendaDescriptionWrap`, so the wrap itself
+    // can stretch the full row height and the speaker overlay (`inset: 0`
+    // of the wrap) covers the whole row top-to-bottom.
+    @media (min-width: 720px) {
+        padding: 18px 0;
+    }
 }
 
 // Speaker portrait overlay. Anchored to the right of the wrap and sized
