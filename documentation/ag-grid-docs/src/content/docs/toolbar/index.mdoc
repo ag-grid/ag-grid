@@ -45,6 +45,7 @@ The following built-in items are available:
 -   `agPivotPanelToolbarItem`: Embeds the [Pivot Panel](./pivoting/) in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `pivotPanelShow` grid option — if both are set, both will render.
 -   `agRowGroupPanelToolbarItem`: Embeds the [Row Group Panel](./grouping-group-panel/) in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `rowGroupPanelShow` grid option — if both are set, both will render.
 -   `agQuickFilterToolbarItem`: A text input that filters grid rows using the [Quick Filter](./filter-quick/). Requires `QuickFilterModule`.
+-   `agMenuToolbarItem`: A button that opens a dropdown menu of [Menu Items](./component-menu-item/). Requires `ContextMenuModule` or `ColumnMenuModule`. Supply `menuItems` via `toolbarItemParams`, along with an optional `label`, `tooltip`, and `icon`. `menuItems` accepts the same entries as the [Context Menu](./context-menu/#built-in-menu-items) — `MenuItemDef` objects or built-in string names such as `'copy'`, `'export'`, or `'separator'`.
 
 Built-in items require their corresponding modules to be registered. If a required module is not registered, the item will not render and a console warning will be logged.
 
@@ -56,11 +57,11 @@ Each entry in `items` is either a built-in item name or an item object. Items ar
 
 An item object supports the following properties:
 
--   `key`: a unique identifier for the item.
--   `alignment`: `'left'` or `'right'`. See [Default Alignment](#default-alignment).
--   `toolbarItem`: a built-in item name or a reference to a [Custom Component](#custom-components).
--   `toolbarItemParams`: additional props forwarded to the component.
--   `label`, `tooltip`, `icon`, `action`: shorthand for rendering an [Action Button](#action-buttons) without a component.
+- `key`: a unique identifier for the item.
+- `alignment`: `'left'` or `'right'`. See [Default Alignment](#default-alignment).
+- `toolbarItem`: a built-in item name or a reference to a [Custom Component](#custom-components).
+- `toolbarItemParams`: additional props forwarded to the component.
+- `label`, `tooltip`, `icon`, `action`: shorthand for rendering an [Action Button](#action-buttons) without a component.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

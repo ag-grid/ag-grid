@@ -59,6 +59,7 @@ export const USER_COMP_MODULES: Record<UserComponentName, ValidationModuleName> 
     agFindCellRenderer: 'Find',
     agButtonToolbarItem: 'Toolbar',
     agFindToolbarItem: 'Toolbar',
+    agMenuToolbarItem: 'Toolbar',
     agPivotPanelToolbarItem: 'Toolbar',
     agQuickFilterToolbarItem: 'Toolbar',
     agRowGroupPanelToolbarItem: 'Toolbar',

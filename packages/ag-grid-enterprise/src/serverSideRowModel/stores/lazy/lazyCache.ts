@@ -933,6 +933,13 @@ export class LazyCache extends BeanStub {
             lazyNodesAfterStoreEnd.forEach((lazyNode) => this.destroyRowAtIndex(lazyNode.index));
         }
 
+        // Sort here — before fireStoreUpdatedEvent — so the grid sees sorted data in a single
+        // update. Other sort entry points (transactions in lazyStore.applyServerSideTransaction,
+        // sort changes in lazyStore.refreshAfterSort) stay as they are.
+        if (this.gos.get('serverSideEnableClientSideSort') && this.isStoreFullyLoaded()) {
+            this.clientSideSortRows();
+        }
+
         this.fireStoreUpdatedEvent();
 
         // Happens after store updated, as store updating can clear our excess rows.
@@ -962,37 +969,31 @@ export class LazyCache extends BeanStub {
     /**
      * @returns true if all rows are loaded
      */
-    public isStoreFullyLoaded() {
+    public isStoreFullyLoaded(): boolean {
         const knowsSize = this.isLastRowKnown;
         const hasCorrectRowCount = this.nodeMap.getSize() === this.numberOfRows;
         if (!knowsSize || !hasCorrectRowCount) {
-            return;
+            return false;
         }
 
         if (this.nodesToRefresh.size > 0) {
-            return;
+            return false;
         }
 
-        // nodeMap find cancels early when it finds a matching record.
-        // better to use this than forEach
-        let index = -1;
-        const firstOutOfPlaceNode = this.nodeMap.find((lazyNode) => {
-            index += 1;
-            // node not contiguous, nodes must be missing
-            if (lazyNode.index !== index) {
-                return true;
+        // Walk by index rather than iterating the nodeMap: after moves/restores during
+        // a non-purge refresh, insertion order no longer matches index order, so a
+        // forEach/find comparison against a running counter falsely reports "out of place".
+        for (let i = 0; i < this.numberOfRows; i++) {
+            const lazyNode = this.nodeMap.getBy('index', i);
+            if (!lazyNode) {
+                return false;
             }
-            // node data is out of date
-            if (lazyNode.node.__needsRefreshWhenVisible) {
-                return true;
+            const { node } = lazyNode;
+            if (node.__needsRefreshWhenVisible || node.stub) {
+                return false;
             }
-            // node not yet loaded
-            if (lazyNode.node.stub) {
-                return true;
-            }
-            return false;
-        });
-        return firstOutOfPlaceNode == null;
+        }
+        return true;
     }
 
     public isLastRowIndexKnown() {
