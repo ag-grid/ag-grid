@@ -316,7 +316,7 @@ export type { Environment } from './environment';
 export { _GET_ALL_EVENTS, _PUBLIC_EVENTS, ALWAYS_SYNC_GLOBAL_EVENTS } from './eventTypes';
 export { BaseCreator } from './export/baseCreator';
 export { BaseGridSerializingSession } from './export/baseGridSerializingSession';
-export { _downloadFile } from './export/downloader';
+export { _downloadFile } from './agStack/utils/download';
 export {
     _getFilterModel,
     _refreshFilterUi,
