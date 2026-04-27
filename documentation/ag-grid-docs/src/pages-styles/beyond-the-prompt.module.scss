@@ -284,10 +284,13 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     display: block;
     width: 100%;
     max-width: 420px;
-    height: auto;
+    // Fixed mobile height so the logomark renders at a consistent size
+    // regardless of the SVG's intrinsic aspect ratio at narrow widths.
+    height: 172px;
 
     @media (min-width: 900px) {
         max-width: 480px;
+        height: auto;
     }
 }
 
