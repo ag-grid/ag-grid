@@ -11,7 +11,7 @@ import {
 import type { MultiFilter, SetFilter } from 'ag-grid-enterprise';
 import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 interface Row {
     name: string;
@@ -84,12 +84,11 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
         // Allow the floating-filter cell to mount its inner text input before we query for it.
         await asyncSetTimeout(5);
 
-        // Deterministic wait for the filter to settle — avoids polling races on slow CI runners.
-        const filterChanged = waitForEvent('filterChanged', api);
         await typeInFloatingFilter(api, 'michael');
-        await filterChanged;
 
-        expect(api.getDisplayedRowCount()).toBe(1);
+        await waitFor(() => {
+            expect(api.getDisplayedRowCount()).toBe(1);
+        });
 
         await waitFor(async () => {
             expect(await openPopupAndGetDisplayedSetFilterKeys(api)).toEqual(['michael']);
@@ -105,11 +104,11 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
         api.hideColumnFilter();
         await asyncSetTimeout(10);
 
-        const filterChanged = waitForEvent('filterChanged', api);
         await typeInFloatingFilter(api, 'michael');
-        await filterChanged;
 
-        expect(api.getDisplayedRowCount()).toBe(1);
+        await waitFor(() => {
+            expect(api.getDisplayedRowCount()).toBe(1);
+        });
 
         await waitFor(async () => {
             expect(await openPopupAndGetDisplayedSetFilterKeys(api)).toEqual(['michael']);
