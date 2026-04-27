@@ -122,6 +122,10 @@
   "devDependencies": {
     "ag-charts-community": "13.2.1-beta.20260419",
     "ag-charts-enterprise": "13.2.1-beta.20260419",
-    "canvas": "^3.2.3"
+    "blob-polyfill": "^9.0.20240710",
+    "canvas": "^3.2.3",
+    "compression-streams-polyfill": "^0.1.7",
+    "text-encoding-polyfill": "^0.6.7",
+    "web-streams-polyfill": "^4.2.0"
   }
 }
