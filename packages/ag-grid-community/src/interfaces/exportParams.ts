@@ -166,11 +166,19 @@ export type ProcessCellFromClipboard<TData = any, TContext = any> = (
 ) => any;
 
 export interface ProcessCellForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The raw cell value before any formatting or processing. */
     value: any;
+    /**
+     * The zero-based row index in the exported output, including any prepended content rows.
+     * Only populated for file export flows (`'excel'`, `'csv'`); omitted for clipboard flows.
+     */
     accumulatedRowIndex?: number;
+    /** The row node for the cell. May be `null` or `undefined` for clipboard flows when no row is associated. */
     node?: IRowNode<TData> | null;
+    /** The column for the cell. */
     column: Column;
-    type: string; // clipboard, dragCopy (ctrl+D), export
+    /** The operation that triggered the callback */
+    type: string;
     /** Utility function to parse a value using the column's `colDef.valueParser` */
     parseValue: (value: string) => any;
     /** Utility function to format a value using the column's `colDef.valueFormatter` */
@@ -181,6 +189,7 @@ export type ProcessHeaderForClipboard<TData = any, TContext = any> = (
     params: ProcessHeaderForExportParams<TData, TContext>
 ) => any;
 export interface ProcessHeaderForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The grid column */
     column: Column;
 }
 
@@ -188,10 +197,13 @@ export type ProcessGroupHeaderForClipboard<TData = any, TContext = any> = (
     params: ProcessGroupHeaderForExportParams<TData, TContext>
 ) => any;
 export interface ProcessGroupHeaderForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The grid column group */
     columnGroup: ColumnGroup;
 }
 
 export interface ProcessRowGroupForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** Row node. */
     node: IRowNode<TData>;
+    /** The grid column */
     column?: Column;
 }

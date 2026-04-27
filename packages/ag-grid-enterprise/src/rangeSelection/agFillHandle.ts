@@ -713,7 +713,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         for (const column of colsToMark) {
             let row: RowPosition = rangeStartRow;
-            let isLastRow = false;
+            let isLastRow: boolean;
 
             do {
                 isLastRow = _isSameRow(row, rangeEndRow);
@@ -754,7 +754,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         for (const column of colsToMark) {
             let row: RowPosition = rangeStartRow;
-            let isLastRow: boolean = false;
+            let isLastRow: boolean;
 
             do {
                 isLastRow = _isSameRow(row, rangeEndRow);

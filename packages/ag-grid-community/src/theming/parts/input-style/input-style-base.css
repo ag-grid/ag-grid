@@ -60,8 +60,8 @@
     }
 }
 
-/* RTI-3243 auto rtl doesn't work for elements outside the grid, this is a
-   tactical fix and can be removed when we fix the underlying issue in AG-16725 */
+/* stylelint-disable-next-line nesting-selector-no-missing-scoping-root -- RTI-3243 auto rtl doesn't
+   work for elements outside the grid, tactical fix until AG-16725 */
 &:where(.ag-ltr, .ag-rtl)
     .ag-input-field-input:where(
         input:not([type]),

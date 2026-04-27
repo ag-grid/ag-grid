@@ -50,23 +50,14 @@ suite('formulas - flat grid evaluation', () => {
     }
 
     let api!: GridApi;
-    const coldBenchOptions: BenchOptions = {
-        throws: true,
-        setup: () => {
-            api ??= createFlatGrid();
-        },
-        teardown: () => {
-            gridsManager.reset();
-            api = undefined!;
-        },
-    };
-
-    const warmBenchOptions: BenchOptions = {
+    let toggle = 0;
+    const benchOptions: BenchOptions = {
         throws: true,
         setup: () => {
             if (!api) {
                 api = createFlatGrid();
                 evaluateAll(api);
+                toggle = 0;
             }
         },
         teardown: () => {
@@ -75,11 +66,22 @@ suite('formulas - flat grid evaluation', () => {
         },
     };
 
-    bench(`cold: evaluate sum/product/branch for ${rowCount} rows`, () => evaluateAll(api), coldBenchOptions);
     bench(
-        `warm: re-read sum/product/branch for ${rowCount} rows (cache hits)`,
-        () => evaluateAll(api),
-        warmBenchOptions
+        `cold: invalidate then evaluate sum/product/branch for ${rowCount} rows`,
+        () => {
+            toggle = toggle === 0 ? 1 : 0;
+            api.applyTransaction({ update: [{ id: 'r0', a: 1 + toggle, b: 1 }] });
+            evaluateAll(api);
+        },
+        benchOptions
+    );
+
+    bench(
+        `warm: re-read sum/product/branch for ${rowCount} rows (no invalidation)`,
+        () => {
+            evaluateAll(api);
+        },
+        benchOptions
     );
 });
 
@@ -104,14 +106,16 @@ suite('formulas - dependent re-evaluation on update', () => {
     const benchOptions: BenchOptions = {
         throws: true,
         setup: () => {
-            api ??= gridsManager.createGrid('G', {
-                columnDefs: [{ field: 'value' }],
-                defaultColDef: { allowFormula: true },
-                rowData,
-                getRowId: ({ data }) => data.id as string,
-            });
-            resolveColumnForAllRows(api, 'value');
-            sourceValue = 10;
+            if (!api) {
+                api = gridsManager.createGrid('G', {
+                    columnDefs: [{ field: 'value' }],
+                    defaultColDef: { allowFormula: true },
+                    rowData,
+                    getRowId: ({ data }) => data.id as string,
+                });
+                resolveColumnForAllRows(api, 'value');
+                sourceValue = 10;
+            }
         },
         teardown: () => {
             gridsManager.reset();
@@ -161,10 +165,16 @@ suite('formulas - large range aggregate', () => {
     }
 
     let api!: GridApi;
+    let toggle = 0;
     const benchOptions: BenchOptions = {
         throws: true,
         setup: () => {
-            api ??= createRangeGrid();
+            if (!api) {
+                api = createRangeGrid();
+                const aggNode = api.getRowNode('agg')!;
+                api.getCellValue({ rowNode: aggNode, colKey: 'total', useFormatter: false });
+                toggle = 0;
+            }
         },
         teardown: () => {
             gridsManager.reset();
@@ -173,10 +183,86 @@ suite('formulas - large range aggregate', () => {
     };
 
     bench(
-        `SUM over ${rowCount * colCount} cells (first read)`,
+        `cold: invalidate then SUM over ${rowCount * colCount} cells`,
+        () => {
+            toggle = toggle === 0 ? 1 : 0;
+            api.applyTransaction({ update: [{ id: 'r0', c0: toggle }] });
+            const rowNode = api.getRowNode('agg')!;
+            api.getCellValue({ rowNode, colKey: 'total', useFormatter: false });
+        },
+        benchOptions
+    );
+
+    bench(
+        `warm: re-read SUM over ${rowCount * colCount} cells (no invalidation)`,
         () => {
             const rowNode = api.getRowNode('agg')!;
             api.getCellValue({ rowNode, colKey: 'total', useFormatter: false });
+        },
+        benchOptions
+    );
+});
+
+suite('formulas - column reorder', () => {
+    const gridsManager = new TestGridsManager({ benchmark: true, modules: FORMULA_MODULES });
+    const rowCount = 3000;
+
+    // Two formula cols: one relative (immune to column order), one absolute (needs re-eval on reorder).
+    const rowData = Array.from({ length: rowCount }, (_, i) => ({
+        id: `r${i}`,
+        a: i + 1,
+        b: (i % 50) + 1,
+        rel: `=REF(COLUMN("a"),ROW("r${i}"))*2`,
+        abs: `=REF(COLUMN("A",true),ROW("r${i}"))+1`,
+    }));
+
+    const orderForward = [{ colId: 'a' }, { colId: 'b' }, { colId: 'rel' }, { colId: 'abs' }];
+    const orderReversed = [{ colId: 'b' }, { colId: 'a' }, { colId: 'rel' }, { colId: 'abs' }];
+
+    function createGrid(): GridApi {
+        return gridsManager.createGrid('G', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'rel' }, { field: 'abs' }],
+            defaultColDef: { allowFormula: true },
+            rowData,
+            getRowId: ({ data }) => data.id,
+        });
+    }
+
+    function evaluateAll(api: GridApi): void {
+        resolveColumnForAllRows(api, 'rel');
+        resolveColumnForAllRows(api, 'abs');
+    }
+
+    let api!: GridApi;
+    let forward = true;
+    const benchOptions: BenchOptions = {
+        throws: true,
+        setup: () => {
+            if (!api) {
+                api = createGrid();
+                evaluateAll(api); // prime cache: ASTs parsed, values cached
+                forward = true;
+            }
+        },
+        teardown: () => {
+            gridsManager.reset();
+            api = undefined!;
+        },
+    };
+
+    // Measures columnMoved cost: swap first two columns, then re-resolve every formula. The key
+    // benefit of the granular `columnMoved` handler is that parsed ASTs are preserved, so this
+    // becomes (rebuild colRefMap + version bump + pure recompute) instead of (full wipe + re-parse
+    // + recompute) on every reorder.
+    bench(
+        `swap columns then re-evaluate ${rowCount * 2} formulas`,
+        () => {
+            forward = !forward;
+            api.applyColumnState({
+                state: forward ? orderForward : orderReversed,
+                applyOrder: true,
+            });
+            evaluateAll(api);
         },
         benchOptions
     );

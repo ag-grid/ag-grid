@@ -1,5 +1,4 @@
 import { getByTestId } from '@testing-library/dom';
-import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
 import {
@@ -64,6 +63,27 @@ describe('RowNode.getDataValue', () => {
 
             const rowNode = api.getRowNode('1')!;
             expect(rowNode.getDataValue('nonexistent')).toBeUndefined();
+        });
+
+        test('getDataValue returns undefined for nullish colKey', async () => {
+            // Defensive call sites pass `colKey` from configuration that may be null/undefined.
+            // The implementation relies on `colModel.getColOrColDefCol`'s internal `key == null`
+            // short-circuit rather than re-checking — this test pins that contract so any future
+            // change to the lookup surface fails loudly here instead of in a runtime error path.
+            const api = await gridsManager.createGridAndWait('nullish-colkey', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ id: '1', name: 'Alice' }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const rowNode = api.getRowNode('1')!;
+            expect(rowNode.getDataValue(null as any)).toBeUndefined();
+            expect(rowNode.getDataValue(undefined as any)).toBeUndefined();
+            // Same for non-default `from` modes — the lookup happens before the from-branching.
+            expect(rowNode.getDataValue(null as any, 'edit')).toBeUndefined();
+            expect(rowNode.getDataValue(null as any, 'batch')).toBeUndefined();
+            expect(rowNode.getDataValue(null as any, 'value')).toBeUndefined();
+            expect(rowNode.getDataValue(null as any, 'data-raw')).toBeUndefined();
         });
 
         test('getDataValue returns null for null cell value', async () => {
@@ -509,6 +529,199 @@ describe('RowNode.getDataValue', () => {
             // getDataValue always returns the resolved formula value
             expect(formulaNode.getDataValue('value')).toBe(50);
             expect(formulaNode.getDataValue('value')).toBe(api.getCellValue({ rowNode: formulaNode, colKey: 'value' }));
+        });
+
+        test("getDataValue returns raw formula string for 'edit' and 'batch' (mirrors edit-pipeline buffer)", async () => {
+            const formulaString = '=REF(COLUMN("value"),ROW("raw"))*3';
+            const api = await gridsManager.createGridAndWait('formula-edit-batch-raw', {
+                defaultColDef: { allowFormula: true },
+                rowNumbers: true,
+                columnDefs: [{ field: 'value' }],
+                rowData: [
+                    { id: 'raw', value: 7 },
+                    { id: 'formula', value: formulaString },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            const formulaNode = api.getRowNode('formula')!;
+
+            // 'data' / 'value' / default: resolved — computed value
+            expect(formulaNode.getDataValue('value')).toBe(21); // 7 * 3
+            expect(formulaNode.getDataValue('value', 'data')).toBe(21);
+            expect(formulaNode.getDataValue('value', 'value')).toBe(21);
+
+            // 'edit' / 'batch': raw formula string (edit pipeline round-trips the formula as-is)
+            expect(formulaNode.getDataValue('value', 'edit')).toBe(formulaString);
+            expect(formulaNode.getDataValue('value', 'batch')).toBe(formulaString);
+
+            // 'data-raw': already documented as raw (no formula resolution)
+            expect(formulaNode.getDataValue('value', 'data-raw')).toBe(formulaString);
+        });
+
+        test('getDataValue does NOT evaluate "=..." when allowFormula is false', async () => {
+            const notAFormula = '=1+2';
+            const api = await gridsManager.createGridAndWait('formula-disabled', {
+                // allowFormula omitted — defaults to false
+                columnDefs: [{ field: 'value' }],
+                rowData: [{ id: 'row1', value: notAFormula }],
+                getRowId: (params) => params.data.id,
+            });
+
+            const node = api.getRowNode('row1')!;
+
+            // Every `from` must return the raw string; no evaluation gate must fire without allowFormula.
+            expect(node.getDataValue('value')).toBe(notAFormula);
+            expect(node.getDataValue('value', 'data')).toBe(notAFormula);
+            expect(node.getDataValue('value', 'value')).toBe(notAFormula);
+            expect(node.getDataValue('value', 'edit')).toBe(notAFormula);
+            expect(node.getDataValue('value', 'batch')).toBe(notAFormula);
+            expect(node.getDataValue('value', 'data-raw')).toBe(notAFormula);
+        });
+
+        test('getDataValue returns error string when formula evaluation fails', async () => {
+            const api = await gridsManager.createGridAndWait('formula-error', {
+                defaultColDef: { allowFormula: true },
+                rowNumbers: true,
+                columnDefs: [{ field: 'value' }],
+                rowData: [
+                    // Reference a non-existent column — evaluator returns a "#REF!"-style error string
+                    { id: 'bad', value: '=REF(COLUMN("nonexistent"),ROW("bad"))' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            const node = api.getRowNode('bad')!;
+            const resolved = node.getDataValue('value');
+
+            // Formula evaluation error surfaces as a string beginning with '#' — not the raw "=..." source
+            expect(typeof resolved).toBe('string');
+            expect(resolved as string).toMatch(/^#/);
+            expect(resolved).not.toBe(node.data!.value);
+        });
+
+        test('getDataValue round-trips formula through setDataValue', async () => {
+            const api = await gridsManager.createGridAndWait('formula-roundtrip', {
+                defaultColDef: { allowFormula: true, editable: true },
+                rowNumbers: true,
+                columnDefs: [{ field: 'value' }],
+                rowData: [
+                    { id: 'source', value: 10 },
+                    { id: 'target', value: 1 },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            const target = api.getRowNode('target')!;
+
+            // Write a formula via setDataValue
+            const formulaString = '=REF(COLUMN("value"),ROW("source"))*4';
+            target.setDataValue('value', formulaString);
+
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            // 'data' resolves to computed value; 'edit'/'batch'/'data-raw' preserve the raw string
+            expect(target.getDataValue('value')).toBe(40); // 10 * 4
+            expect(target.getDataValue('value', 'edit')).toBe(formulaString);
+            expect(target.getDataValue('value', 'batch')).toBe(formulaString);
+            expect(target.getDataValue('value', 'data-raw')).toBe(formulaString);
+        });
+
+        test('getDataValue during batch edit of a formula column', async () => {
+            const originalFormula = '=REF(COLUMN("value"),ROW("a"))+1';
+            const api = await gridsManager.createGridAndWait('formula-batch-edit', {
+                defaultColDef: { allowFormula: true, editable: true },
+                rowNumbers: true,
+                columnDefs: [{ field: 'value' }],
+                rowData: [
+                    { id: 'a', value: 5 },
+                    { id: 'b', value: originalFormula },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            const b = api.getRowNode('b')!;
+
+            // Baseline: formula evaluates to 6
+            expect(b.getDataValue('value')).toBe(6);
+            expect(b.getDataValue('value', 'edit')).toBe(originalFormula);
+
+            // Stage a new formula via batch edit
+            const newFormula = '=REF(COLUMN("value"),ROW("a"))*10';
+            api.startBatchEdit();
+            try {
+                b.setDataValue('value', newFormula, 'batch');
+
+                // 'data' still sees the committed (original) formula resolved
+                expect(b.getDataValue('value', 'data')).toBe(6);
+                expect(b.getDataValue('value', 'data-raw')).toBe(originalFormula);
+
+                // 'batch' returns the staged raw formula string (not evaluated)
+                expect(b.getDataValue('value', 'batch')).toBe(newFormula);
+            } finally {
+                api.cancelBatchEdit();
+            }
+
+            // After cancelling, state reverts to the original formula
+            expect(b.getDataValue('value')).toBe(6);
+            expect(b.getDataValue('value', 'batch')).toBe(originalFormula);
+        });
+
+        test('getDataValue evaluates chained formula references', async () => {
+            const api = await gridsManager.createGridAndWait('formula-chain', {
+                defaultColDef: { allowFormula: true },
+                rowNumbers: true,
+                columnDefs: [{ field: 'value' }],
+                rowData: [
+                    { id: 'a', value: 2 },
+                    { id: 'b', value: '=REF(COLUMN("value"),ROW("a"))*3' }, // 6
+                    { id: 'c', value: '=REF(COLUMN("value"),ROW("b"))+1' }, // 7
+                ],
+                getRowId: (params) => params.data.id,
+            });
+
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            // Each formula in the chain is resolved via the previous one's computed value.
+            expect(api.getRowNode('a')!.getDataValue('value')).toBe(2);
+            expect(api.getRowNode('b')!.getDataValue('value')).toBe(6);
+            expect(api.getRowNode('c')!.getDataValue('value')).toBe(7);
+        });
+
+        test('getDataValue on formula returning null/undefined operands', async () => {
+            const api = await gridsManager.createGridAndWait('formula-null', {
+                defaultColDef: { allowFormula: true },
+                rowNumbers: true,
+                columnDefs: [{ field: 'value' }],
+                rowData: [
+                    { id: 'nullCell', value: null },
+                    // Summing null with 5 — result depends on evaluator coercion rules; at minimum, should not
+                    // throw and should return a defined result (scalar or a '#...' error marker).
+                    { id: 'sum', value: '=REF(COLUMN("value"),ROW("nullCell"))+5' },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+
+            await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+            const nullNode = api.getRowNode('nullCell')!;
+            const sumNode = api.getRowNode('sum')!;
+
+            // Raw null passes through unchanged on the nullCell row
+            expect(nullNode.getDataValue('value')).toBeNull();
+
+            // The formula resolves without throwing — exact value depends on the evaluator's null handling,
+            // but it must not be the raw formula string (i.e. resolution did run).
+            const sumResolved = sumNode.getDataValue('value');
+            expect(sumResolved).not.toBe(sumNode.data!.value);
         });
     });
 

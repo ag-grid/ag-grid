@@ -36,7 +36,7 @@ export class GridColumnsErrors {
         this.get(col).add(error);
     }
 
-    public throwIfAny(callerFn: Function = this.throwIfAny): void {
+    public throwIfAny(callerFn: (...args: any[]) => any = this.throwIfAny): void {
         if (this.totalErrorsCount > 0) {
             const error = new Error('❌ Grid columns errors:\n' + this.toString());
             Error.captureStackTrace(error, callerFn);

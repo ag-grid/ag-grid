@@ -1393,7 +1393,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             const scrollFeature = this.ctrlsSvc.getScrollFeature();
             const suppressRowVirtualisation = this.gos.get('suppressRowVirtualisation');
 
-            let rowHeightsChanged = false;
+            let rowHeightsChanged: boolean;
             let firstPixel: number;
             let lastPixel: number;
             do {

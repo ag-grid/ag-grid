@@ -159,6 +159,73 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
         });
     });
 
+    describe('embedded drop zone focus behaviour', () => {
+        test('Tab inside a toolbar row group panel does not force the next grid container', async () => {
+            // The standalone (above-grid) drop zones register their own focus container
+            // listener that intercepts Tab and moves to the next grid container when no
+            // next focusable element is found inside the panel. That hand-off is wrong
+            // when the drop zone is embedded in the Toolbar — it would skip subsequent
+            // toolbar items. Embedded drop zones must leave Tab to native flow.
+            const api = gridMgr.createGrid('embedded-rowgroup-tab', {
+                columnDefs: [{ field: 'name', enableRowGroup: true, rowGroup: true, hide: true }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: [
+                        'agRowGroupPanelToolbarItem',
+                        { key: 'after', label: 'After', icon: 'maximize', action: () => {} },
+                    ],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+            const panel = toolbar.querySelector<HTMLElement>('.ag-column-drop')!;
+
+            const event = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+            panel.dispatchEvent(event);
+
+            // The embedded panel no longer hijacks Tab to jump to the next grid container.
+            // Without preventDefault, native tab flow moves focus to the next focusable
+            // element in DOM — which, inside the toolbar, is the following action button.
+            expect(event.defaultPrevented).toBe(false);
+        });
+
+        test('Tab inside a toolbar pivot panel does not force the next grid container', async () => {
+            // Pivot toolbar item has its own wiring around pivot mode / visibility; verify
+            // the embedded flag reaches it too. A rowGroup column + value column are
+            // required for pivotMode to produce any rows — without them the pivot output
+            // is empty and `firstDataRendered` never fires.
+            const api = gridMgr.createGrid('embedded-pivot-tab', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'name', enablePivot: true, pivot: true },
+                    { field: 'value', enableValue: true, aggFunc: 'sum' },
+                ],
+                rowData: [{ country: 'US', name: 'Alice', value: 1 }],
+                pivotMode: true,
+                toolbar: {
+                    items: [
+                        'agPivotPanelToolbarItem',
+                        { key: 'after', label: 'After', icon: 'maximize', action: () => {} },
+                    ],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+            const panel = toolbar.querySelector<HTMLElement>('.ag-column-drop')!;
+
+            const event = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+            panel.dispatchEvent(event);
+
+            expect(event.defaultPrevented).toBe(false);
+        });
+    });
+
     describe('console warnings for missing feature modules', () => {
         const minimalGridMgr = new TestGridsManager({
             modules: [ClientSideRowModelModule, ToolbarModule],

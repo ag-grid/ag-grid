@@ -141,6 +141,33 @@ describe('Toolbar keyboard navigation', () => {
         expect(document.activeElement).toBe(buttons[2]);
     });
 
+    test('focusing a toolbar item scrolls it into view', async () => {
+        // The toolbar clips overflow, so focusing a clipped item would look like focus was lost.
+        const api = gridMgr.createGrid('kbd-focusin-scroll', {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }],
+            toolbar: {
+                items: [
+                    { key: 'one', label: 'One', icon: 'maximize', action: () => {} },
+                    { key: 'two', label: 'Two', icon: 'maximize', action: () => {} },
+                ],
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+        const button = toolbar.querySelector<HTMLButtonElement>('.ag-toolbar-button')!;
+
+        const scrollIntoViewSpy = vitest.fn();
+        (button as any).scrollIntoView = scrollIntoViewSpy;
+
+        button.focus();
+
+        expect(scrollIntoViewSpy).toHaveBeenCalledWith({ block: 'nearest', inline: 'nearest' });
+    });
+
     test('arrow keys inside an input toolbar item do not move toolbar focus', async () => {
         const api = gridMgr.createGrid('kbd-input-bailout', {
             columnDefs: [{ field: 'name' }],

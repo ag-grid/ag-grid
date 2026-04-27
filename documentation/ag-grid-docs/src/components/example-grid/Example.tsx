@@ -221,6 +221,7 @@ const ExampleInner = ({
     const createData = (dataSize: string) => {
         loadInstance.current = loadInstance.current + 1;
         const loadInstanceCopy = loadInstance.current;
+        // eslint-disable-next-line react-hooks/purity -- Date.now() called at execution time, not during render
         const startTime = Date.now(); // Track when message display started
 
         const colCount = parseInt(dataSize?.split('x')[1] ?? '0', 10);
@@ -286,6 +287,7 @@ const ExampleInner = ({
         const defaultCols = isSmall ? smallDefaultCols : largeDefaultCols;
         const defaultColCount = isSmall ? smallColCount : largeColCount;
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing derived state from props
         setDefaultCols(defaultCols);
         setDefaultColCount(defaultColCount);
 
@@ -391,10 +393,12 @@ const ExampleInner = ({
     const createDataRef = useRef(createData);
     // Ensure we always use the latest createData function to avoid stale closures but without
     // triggering the createData function to be recreated on every render
+    // eslint-disable-next-line react-hooks/refs -- intentional ref update during render to avoid stale closure
     createDataRef.current = createData;
 
     useEffect(() => {
         if (dataSize) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional loading state before async data generation
             setIsLoading(true);
             setTimeout(() => {
                 createDataRef.current(dataSize);

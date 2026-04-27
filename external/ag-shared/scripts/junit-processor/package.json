@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/ag-grid/ag-website-shared#readme",
   "devDependencies": {
-    "tsx": "^4.7.2"
+    "tsx": "^4.21.0"
   },
   "dependencies": {}
 }

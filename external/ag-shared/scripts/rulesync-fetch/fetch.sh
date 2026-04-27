@@ -33,9 +33,24 @@ if [[ -n "${AG_DEV_PROMPTS_REPO:-}" ]]; then
     AUTH_MODE="override"
 elif [[ -n "${GITHUB_TOKEN:-}" ]]; then
     AUTH_MODE="token"
-elif command -v gh >/dev/null 2>&1 && GITHUB_TOKEN="$(gh auth token 2>/dev/null)" && [[ -n "$GITHUB_TOKEN" ]]; then
-    export GITHUB_TOKEN
-    AUTH_MODE="gh"
+elif command -v gh >/dev/null 2>&1 && _gh_token="$(gh auth token 2>/dev/null)" && [[ -n "$_gh_token" ]]; then
+    # Match the git URL scheme to gh's configured git protocol so we exercise
+    # the same auth path the developer already uses for git operations. This
+    # avoids HTTPS failures when the user authenticated gh with SSH protocol
+    # but never ran `gh auth setup-git` to wire the token into git's
+    # credential helper.
+    # Query the github.com-specific protocol. `gh auth status` reports every
+    # configured host, so grepping its output could pick up SSH from an
+    # unrelated host and flip github.com onto SSH incorrectly. `gh config get`
+    # is scoped to a host and returns exactly 'ssh' or 'https'.
+    if [[ "$(gh config get -h github.com git_protocol 2>/dev/null)" == "ssh" ]]; then
+        AUTH_MODE="gh-ssh"
+    else
+        GITHUB_TOKEN="$_gh_token"
+        export GITHUB_TOKEN
+        AUTH_MODE="gh"
+    fi
+    unset _gh_token
 else
     AUTH_MODE="https"
 fi
@@ -58,6 +73,7 @@ fi
 resolve_repo_url() {
     case "$AUTH_MODE" in
         override) echo "$AG_DEV_PROMPTS_REPO" ;;
+        gh-ssh)   echo "git@github.com:${REPO_SLUG}.git" ;;
         *)        echo "https://github.com/${REPO_SLUG}.git" ;;
     esac
 }
@@ -84,13 +100,19 @@ To fix, pick one:
   A. Install GitHub CLI and authenticate — easiest path, no tokens to manage:
        brew install gh                 # or: https://cli.github.com/
        gh auth login --hostname github.com --git-protocol https --web
+       gh auth setup-git               # wire gh token into git's credential helper
        yarn                            # re-run install to retry the fetch
 
-  B. Export a Personal Access Token with repo scope for this session:
+  B. Already logged in to gh but git still prompts? Git's credential helper
+     isn't wired to gh. Run:
+       gh auth setup-git
+       yarn
+
+  C. Export a Personal Access Token with repo scope for this session:
        export GITHUB_TOKEN=ghp_...
        yarn
 
-  C. If you prefer SSH and your key is registered with GitHub:
+  D. If you prefer SSH and your key is registered with GitHub:
        export AG_DEV_PROMPTS_REPO=git@github.com:${REPO_SLUG}.git
        yarn
 
@@ -100,23 +122,51 @@ EOF
             ;;
         gh)
             cat >&2 <<EOF
-Auth path: token sourced from \`gh auth token\`.
+Auth path: token sourced from \`gh auth token\` (gh configured for https git ops).
 
 The token was accepted by gh but rejected by GitHub for ${REPO_SLUG}.
 
 Common causes:
-  * gh session expired — re-authenticate:
+  * gh session expired or missing scopes — refresh:
       gh auth refresh -h github.com -s repo
+      gh auth setup-git
       yarn
   * gh account lacks access to ${REPO_SLUG}. Log in with an account that
     has access, or switch accounts:
       gh auth switch
       yarn
+  * Org enforces SAML SSO and the token isn't authorized for ag-grid — open
+    the SSO link printed by \`gh auth refresh\` above, then retry.
 
 Verify the token directly:
   curl -sSf -H "Authorization: Bearer \$(gh auth token)" \\
     https://api.github.com/repos/${REPO_SLUG} >/dev/null \\
     && echo "token OK" || echo "token rejected"
+EOF
+            ;;
+        gh-ssh)
+            cat >&2 <<EOF
+Auth path: SSH via gh (gh is configured for ssh git operations for github.com).
+
+SSH clone was attempted from $REPO_URL and failed. Likely causes:
+
+  * SSH key not loaded into ssh-agent:
+      ssh-add -l
+      ssh-add ~/.ssh/id_ed25519     # or your key path
+
+  * SSH key not registered with GitHub, or missing SAML SSO authorization
+    for the ag-grid org:
+      gh ssh-key list
+      # Register:  https://github.com/settings/keys
+      # Authorize: https://github.com/organizations/ag-grid/sso
+
+  * Prefer HTTPS? Switch gh's git protocol and re-run:
+      gh config set -h github.com git_protocol https
+      gh auth setup-git
+      yarn
+
+Verify SSH access directly:
+  ssh -T git@github.com
 EOF
             ;;
         token)

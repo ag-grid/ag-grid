@@ -628,41 +628,59 @@ export class RowNode<TData = any>
     ): TValue | IAggFuncResult<TValue> | null | undefined;
     public getDataValue<TValue = any>(
         colKey: ColKey<TValue>,
-        from: DataValueFrom = 'data'
+        from: DataValueFrom | undefined
     ): TValue | IAggFuncResult<TValue> | null | undefined {
-        const { colModel, valueSvc, formula } = this.beans;
+        // PERFORMANCE CRITICAL
 
-        if (colKey == null) {
-            return undefined;
-        }
+        const beans = this.beans;
 
-        const column = colModel.getColOrColDefCol(colKey);
+        const column = beans.colModel.getColOrColDefCol(colKey);
         if (!column) {
             return undefined;
         }
 
-        // 'data-raw' skips aggData (aggregation results) and formula resolution, but still calls valueGetters
-        // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
-        const dataRaw = from === 'data-raw';
-        const resolvedFrom = dataRaw || from === 'value' ? 'data' : from;
-        let value = valueSvc.getValue(column, this, resolvedFrom, dataRaw);
-
-        if (!dataRaw) {
-            // Resolve formulas to their computed value (skip for 'data-raw')
-            if (formula && column.isAllowFormula() && formula.isFormula(value)) {
-                value = formula.resolveValue(column, this);
+        let value: any;
+        if (from === 'data' || !from) {
+            value = beans.valueSvc.getValue(column, this, 'data', false);
+            if (value == null) {
+                return value;
+            }
+        } else {
+            // 'data-raw' skips aggData (aggregation results) and formula resolution, but still calls valueGetters
+            // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
+            const dataRaw = from === 'data-raw';
+            const resolvedFrom = dataRaw || from === 'value' ? 'data' : from;
+            value = beans.valueSvc.getValue(column, this, resolvedFrom, dataRaw);
+            if (dataRaw || value == null) {
+                return value;
             }
 
-            // For 'value', 'edit', and 'batch' modes, resolve aggregation wrapper objects to their scalar value
-            // on agg columns. Matches the resolution pattern in dataTypeService:
-            // first try toNumber(), then fall back to .value property.
-            if (from !== 'data' && column.getAggFunc() && typeof value === 'object' && value != null) {
+            // For 'value', 'edit', and 'batch' modes, resolve aggregation wrapper objects to their scalar
+            // value on agg columns. Matches the resolution pattern in dataTypeService: first try toNumber(),
+            // then fall back to .value property. `typeof` check precedes `aggFunc` to cheaply skip primitives.
+            if (typeof value === 'object' && column.aggFunc) {
                 if (typeof value.toNumber === 'function') {
                     return value.toNumber();
                 }
                 if ('value' in value) {
                     return value.value;
                 }
+            }
+
+            // 'edit' and 'batch' mirror the edit-pipeline buffer, which stores the raw formula string
+            // (see editService / editModelService `sourceValue` handling). Resolving formulas here would
+            // break symmetry between the read side and the write side: callers couldn't round-trip the
+            // formula through edits. Only 'value' continues to the formula tail — it is the "computed
+            // value" variant of 'data'.
+            if (from !== 'value') {
+                return value;
+            }
+        }
+
+        if (column.colDef.allowFormula) {
+            const formula = beans.formula;
+            if (formula?.isFormula(value) && column.isAllowFormula()) {
+                value = formula.resolveValue(column, this);
             }
         }
 

@@ -243,7 +243,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         const beans = this.beans;
         const currentIndex = focusedHeader.headerRowIndex;
 
-        let nextFocusedCol: AgColumn | null = null;
+        let nextFocusedCol: AgColumn | null;
         let nextRowIndex: number;
 
         const headerRowCount = getFocusHeaderRowCount(beans);

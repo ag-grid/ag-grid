@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "ag-grid-community": "35.2.1-beta.20260419.2046",
-    "tslib": "^2.3.0"
+    "tslib": "^2.8.1"
   },
   "repository": {
     "type": "git",

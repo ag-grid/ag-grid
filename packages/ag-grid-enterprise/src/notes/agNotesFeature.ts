@@ -6,6 +6,7 @@ import type {
     INotesFeature,
     Note,
     RowCtrl,
+    RowGui,
 } from 'ag-grid-community';
 
 import { AgNotesPopup } from './agNotesPopup';
@@ -68,12 +69,23 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
         this.closeNotePopup(false);
     }
 
+    protected getNoteTrigger(): 'hover' | 'click' {
+        return this.beans.gos.get('noteTrigger') === 'click' ? 'click' : 'hover';
+    }
+
     protected onPointerEnter(target: NoteTarget | undefined, event: PointerEvent): void {
         if (event.pointerType !== 'mouse') {
             return;
         }
 
         if (this.suppressHoverUntilPointerLeave) {
+            return;
+        }
+
+        if (this.getNoteTrigger() !== 'hover') {
+            if (target && this.matchesActiveTarget(target)) {
+                this.cancelHide();
+            }
             return;
         }
 
@@ -119,6 +131,24 @@ abstract class BaseNotesFeature implements INotesFeature, INotePopupOwner {
     protected onContextMenu(): void {
         this.suppressHoverUntilPointerLeave = true;
         this.closeNotePopup();
+    }
+
+    protected onClick(target: NoteTarget | undefined, event: MouseEvent): void {
+        if (
+            this.getNoteTrigger() !== 'click' ||
+            _isStopPropagationForAgGrid(event) ||
+            _interpretAsRightClick(this.beans, event)
+        ) {
+            return;
+        }
+
+        const access = target && this.notesSvc.getNoteAccess(target.noteParams);
+        if (!target || !access?.canView) {
+            return;
+        }
+
+        this.suppressHoverUntilPointerLeave = false;
+        this.openPopup(target);
     }
 
     protected abstract refreshHasNotesStyling(): void;
@@ -262,6 +292,13 @@ export class AgNotesFeature extends BaseNotesFeature {
                 this.onPointerEnter(this.getTarget(), event);
             },
             pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
+            click: (event: MouseEvent) => {
+                if (this.ctrl.isNoteHoverSuppressed()) {
+                    return;
+                }
+
+                this.onClick(this.getTarget(), event);
+            },
             contextmenu: () => this.onContextMenu(),
         });
         this.refresh();

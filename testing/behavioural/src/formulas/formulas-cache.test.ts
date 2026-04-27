@@ -442,4 +442,33 @@ describe('ag-grid formulas cache behaviour', () => {
             └── LEAF id:y row-number:"2" value:111
         `);
     });
+
+    test('appending rows re-evaluates formulas with previously out-of-bounds absolute row refs', async () => {
+        const api = gridsManager.createGrid('formulas-cache-append-absolute-row', {
+            defaultColDef: { allowFormula: true },
+            rowData: [
+                { id: 'r1', value: 10 },
+                { id: 'dep', value: '=REF(COLUMN("A",true),ROW("3",true))' },
+            ],
+            getRowId: (params) => params.data?.id,
+            columnDefs: [{ field: 'value' }],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        await new GridRows(api, 'before append', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" value:10
+            └── LEAF id:dep row-number:"2" value:"#REF!"
+        `);
+
+        applyTransactionChecked(api, { add: [{ id: 'r3', value: 77 }] });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        await new GridRows(api, 'after append', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" value:10
+            ├── LEAF id:dep row-number:"2" value:77
+            └── LEAF id:r3 row-number:"3" value:77
+        `);
+    });
 });

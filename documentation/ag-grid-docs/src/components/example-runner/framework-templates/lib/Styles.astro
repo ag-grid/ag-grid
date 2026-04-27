@@ -1,0 +1,12 @@
+---
+import { pathJoin } from '@utils/pathJoin';
+
+interface Props {
+    baseUrl: string;
+    files?: string[];
+}
+
+const { baseUrl, files = [] } = Astro.props as Props;
+---
+
+{files.map((file) => <link rel="stylesheet" href={pathJoin(baseUrl, file)} />)}

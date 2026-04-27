@@ -51,7 +51,6 @@ export function getAllPotentialTypesFromString(type: string): string[] {
         }
     }
     addType(set, token);
-    token = '';
     return Array.from(set);
 }
 

@@ -246,6 +246,7 @@ export const Property: FunctionComponent<{
         const hashId = location.hash.slice(1); // Remove the '#' symbol
 
         if (idName === hashId) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- expand property when URL hash matches
             setExpanded(true);
             propertyRef.current?.scrollIntoView();
         }

@@ -22,7 +22,6 @@ export default [
             'no-irregular-whitespace': 'error',
             'prefer-const': ['error', { destructuring: 'all' }],
             'prefer-rest-params': 'error',
-            '@typescript-eslint/ban-types': 'error',
             '@typescript-eslint/no-unused-vars': 'error',
             '@typescript-eslint/no-var-requires': 'error',
             '@typescript-eslint/prefer-as-const': 'error',
@@ -79,6 +78,7 @@ export default [
             'e2e/',
             'playwright.config.ts',
             'esbuildBuild.cjs',
+            'vitest.umd.config.ts',
         ],
     },
 ];

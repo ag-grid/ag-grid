@@ -9,6 +9,7 @@ export const useIsSsr = () => {
 
     useEffect(() => {
         didHydrate = true;
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional hydration pattern
         setIsSsr(false);
     }, []);
 

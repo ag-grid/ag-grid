@@ -3,7 +3,6 @@ import type { Part } from './part';
 import type { Feature, WithParamTypes } from './themeTypes';
 
 // string & {} used to preserve auto-complete from string union but allow any string
-// eslint-disable-next-line @typescript-eslint/ban-types
 type AnyString = string & {};
 // This utility type is a no-op (Expand<T> === T) but it changes the display of
 // the type in the IDE so that it shows something like Part<{myColor: ColorValue}>

@@ -5,6 +5,7 @@ import { Checkmark, Copy, Upload } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useStore } from 'jotai';
+import type { ChangeEvent, KeyboardEvent, RefObject } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { type RenderedThemeInfo, useRenderedThemeInfo } from '../../model/rendered-theme';
@@ -32,7 +33,7 @@ export const ThemeImportExportDialog = ({ close, initialTab = 'Export' }: ThemeI
         dialogRef.current?.focus();
     }, []);
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'a' && activeTab === 'Export' && codeRef.current) {
             e.preventDefault();
             window.getSelection()?.selectAllChildren(codeRef.current);
@@ -82,7 +83,7 @@ const HelpText = () => (
     </Paragraph>
 );
 
-const ExportTabContent = ({ codeRef }: { codeRef: React.RefObject<HTMLDivElement | null> }) => {
+const ExportTabContent = ({ codeRef }: { codeRef: RefObject<HTMLDivElement | null> }) => {
     const theme = useRenderedThemeInfo();
     const codeSample = useMemo(() => renderThemeCodeSample(theme), [theme]);
     const downloadLink = `data:text/javascript;charset=utf-8,${encodeURIComponent(codeSample)}`;
@@ -162,7 +163,7 @@ const ImportTabContentWrapper = ({ code, onCodeChange, close }: ImportTabContent
         }
     };
 
-    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
             loadFile(file).then((result) => {

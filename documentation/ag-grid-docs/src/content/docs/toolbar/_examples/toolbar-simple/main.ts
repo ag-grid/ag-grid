@@ -13,7 +13,7 @@ import {
     ColumnMenuModule,
     ColumnsToolPanelModule,
     ExcelExportModule,
-    FiltersToolPanelModule,
+    NewFiltersToolPanelModule,
     SideBarModule,
     ToolbarModule,
 } from 'ag-grid-enterprise';
@@ -29,7 +29,7 @@ ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     CsvExportModule,
     ExcelExportModule,
-    FiltersToolPanelModule,
+    NewFiltersToolPanelModule,
     SideBarModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
@@ -53,15 +53,17 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         filter: true,
     },
-    sideBar: { toolPanels: ['columns', 'filters'], defaultToolPanel: '' },
+    enableFilterHandlers: true,
+    sideBar: { toolPanels: ['columns', 'filters-new'] },
     toolbar: {
         alignment: 'right',
         items: [
             {
                 toolbarItem: CustomToolbarButton,
                 key: 'columnChooser',
+                alignment: 'left',
                 toolbarItemParams: {
-                    label: 'Choose Columns',
+                    title: 'Choose Columns',
                     icon: 'columns',
                     onClick: (api: GridApi) => api.showColumnChooser(),
                 },
@@ -69,28 +71,31 @@ const gridOptions: GridOptions<IOlympicData> = {
             {
                 toolbarItem: CustomToolbarButton,
                 key: 'filtersPanel',
+                alignment: 'left',
                 toolbarItemParams: {
-                    label: 'Filters Panel',
+                    title: 'Filters Panel',
                     icon: 'filter',
                     onClick: (api: GridApi) =>
-                        api.getOpenedToolPanel() === 'filters' ? api.closeToolPanel() : api.openToolPanel('filters'),
+                        api.getOpenedToolPanel() === 'filters-new'
+                            ? api.closeToolPanel()
+                            : api.openToolPanel('filters-new'),
                 },
             },
             {
                 toolbarItem: CustomToolbarButton,
                 key: 'excelExport',
+                alignment: 'left',
                 toolbarItemParams: {
-                    label: 'Excel Export',
+                    title: 'Excel Export',
                     icon: 'excel',
                     onClick: (api: GridApi) => api.exportDataAsExcel(),
                 },
             },
-            'separator',
             {
                 toolbarItem: CustomToolbarButton,
                 key: 'autoSizeAll',
                 toolbarItemParams: {
-                    label: 'Auto Size All',
+                    title: 'Auto Size All',
                     icon: 'maximize',
                     onClick: (api: GridApi) => api.autoSizeAllColumns(),
                 },
@@ -99,7 +104,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 toolbarItem: CustomToolbarButton,
                 key: 'columnsPanel',
                 toolbarItemParams: {
-                    label: 'Columns Panel',
+                    title: 'Columns Panel',
                     icon: 'columns',
                     onClick: (api: GridApi) =>
                         api.getOpenedToolPanel() === 'columns' ? api.closeToolPanel() : api.openToolPanel('columns'),
@@ -109,7 +114,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 toolbarItem: CustomToolbarButton,
                 key: 'csvExport',
                 toolbarItemParams: {
-                    label: 'CSV Export',
+                    title: 'CSV Export',
                     icon: 'csv',
                     onClick: (api: GridApi) => api.exportDataAsCsv(),
                 },
@@ -118,7 +123,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 toolbarItem: CustomToolbarButton,
                 key: 'resetColumns',
                 toolbarItemParams: {
-                    label: 'Reset Columns',
+                    title: 'Reset Columns',
                     icon: 'minimize',
                     onClick: (api: GridApi) => api.resetColumnState(),
                 },

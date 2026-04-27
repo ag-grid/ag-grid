@@ -29,8 +29,8 @@ describe('Edit API', () => {
         getColDef: () => ({ editable: true }),
         isColumnFunc: () => false,
     } as unknown as Column;
-    const cellCtrl1 = { rowNode: rowNode1, focusCell: jest.fn(), onEditorAttachedFuncs: [] } as unknown as CellCtrl;
-    const cellCtrl2 = { rowNode: rowNode2, focusCell: jest.fn(), onEditorAttachedFuncs: [] } as unknown as CellCtrl;
+    const cellCtrl1 = { rowNode: rowNode1, focusCell: vi.fn(), onEditorAttachedFuncs: [] } as unknown as CellCtrl;
+    const cellCtrl2 = { rowNode: rowNode2, focusCell: vi.fn(), onEditorAttachedFuncs: [] } as unknown as CellCtrl;
 
     const getCellCtrl = (column: Column) => {
         if (column.getColId() === 'col1') {
@@ -60,15 +60,15 @@ describe('Edit API', () => {
         editMap = new Map();
         beans = {
             editModelSvc: {
-                getEditMap: jest.fn(() => editMap),
-                setEditMap: jest.fn((em) => {
+                getEditMap: vi.fn(() => editMap),
+                setEditMap: vi.fn((em) => {
                     editMap?.clear();
                     em.forEach((value, key) => editMap!.set(key, value));
                 }),
-                hasEdits: jest.fn(() => editMap && editMap.size > 0),
+                hasEdits: vi.fn(() => editMap && editMap.size > 0),
             } as unknown as EditModelService,
             colModel: {
-                getCol: jest.fn((col: Column | string) => {
+                getCol: vi.fn((col: Column | string) => {
                     const colId = typeof col === 'string' ? col : col.getColId();
                     if (colId === 'col1') {
                         return column1;
@@ -79,7 +79,7 @@ describe('Edit API', () => {
                 }),
             },
             rowRenderer: {
-                getRowByPosition: jest.fn((position: CellPosition) => {
+                getRowByPosition: vi.fn((position: CellPosition) => {
                     if (position.rowIndex === 0) {
                         return rowCtrl1;
                     } else if (position.rowIndex === 1) {
@@ -87,7 +87,7 @@ describe('Edit API', () => {
                     }
                     return undefined;
                 }),
-                getRowCtrlByNode: jest.fn((node: IRowNode) => {
+                getRowCtrlByNode: vi.fn((node: IRowNode) => {
                     if (node === rowNode1) {
                         return rowCtrl1;
                     } else if (node === rowNode2) {
@@ -95,11 +95,11 @@ describe('Edit API', () => {
                     }
                     return undefined;
                 }),
-                refreshCells: jest.fn(),
-                getRowCtrls: jest.fn(() => [rowCtrl1, rowCtrl2]),
+                refreshCells: vi.fn(),
+                getRowCtrls: vi.fn(() => [rowCtrl1, rowCtrl2]),
             } as unknown as RowRenderer,
             valueSvc: {
-                getValue: jest.fn((col: Column, rowNode: IRowNode, _ignoreAggData: boolean, _source: string) => {
+                getValue: vi.fn((col: Column, rowNode: IRowNode, _ignoreAggData: boolean, _source: string) => {
                     if (col.getColId() === 'col1' && rowNode.rowIndex === 0) {
                         return 'old1';
                     } else if (col.getColId() === 'col2' && rowNode.rowIndex === 0) {
@@ -113,10 +113,10 @@ describe('Edit API', () => {
                 }),
             } as unknown as ValueService,
             registry: {
-                createDynamicBean: jest.fn(),
+                createDynamicBean: vi.fn(),
             },
             rowModel: {
-                getRow: jest.fn((index: number) => {
+                getRow: vi.fn((index: number) => {
                     if (index === 0) {
                         return rowNode1;
                     } else if (index === 1) {
@@ -143,13 +143,13 @@ describe('Edit API', () => {
         editSvc['strategy']['model'] = beans.editModelSvc!;
         editSvc['strategy']['editSvc'] = editSvc;
         editSvc['strategy']['beans'] = beans;
-        editSvc['strategy'].start = jest.fn();
+        editSvc['strategy'].start = vi.fn();
 
         setEditingCells = (beans, cells: any[], params?: any) => editSvc.setEditingCells(cells, params);
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         editMap = undefined;
     });
 
@@ -293,7 +293,7 @@ describe('Edit API', () => {
 
     describe('setEditingCells', () => {
         test('does not set edits when not in batch editing mode', () => {
-            editSvc!.isBatchEditing = jest.fn().mockReturnValue(false);
+            editSvc!.isBatchEditing = vi.fn().mockReturnValue(false);
             const cells = [
                 { colId: 'col1', rowIndex: 0, rowPinned: undefined, newValue: 'new1', state: 'editing' },
             ] as EditingCellPosition[];
@@ -320,7 +320,7 @@ describe('Edit API', () => {
         });
 
         test('sets edits in batch editing mode, using colId', () => {
-            editSvc!.isBatchEditing = jest.fn().mockReturnValue(true);
+            editSvc!.isBatchEditing = vi.fn().mockReturnValue(true);
             const cells = [
                 { colId: 'col1', rowIndex: 0, rowPinned: undefined, newValue: 'new1', state: 'editing' },
                 { colId: 'col2', rowIndex: 1, rowPinned: undefined, newValue: 'new2', state: 'changed' },
@@ -363,7 +363,7 @@ describe('Edit API', () => {
         });
 
         test('sets edits in batch editing mode, using colKey:string', () => {
-            editSvc!.isBatchEditing = jest.fn().mockReturnValue(true);
+            editSvc!.isBatchEditing = vi.fn().mockReturnValue(true);
             const cells = [
                 { colKey: 'col1', rowIndex: 0, rowPinned: undefined, newValue: 'new1', state: 'editing' },
                 { colKey: 'col2', rowIndex: 1, rowPinned: undefined, newValue: 'new2', state: 'changed' },
@@ -406,7 +406,7 @@ describe('Edit API', () => {
         });
 
         test('sets edits in batch editing mode, using colKey:column', () => {
-            editSvc!.isBatchEditing = jest.fn().mockReturnValue(true);
+            editSvc!.isBatchEditing = vi.fn().mockReturnValue(true);
             const cells = [
                 { colKey: column1, rowIndex: 0, rowPinned: undefined, newValue: 'new1', state: 'editing' },
                 { colKey: column2, rowIndex: 1, rowPinned: undefined, newValue: 'new2', state: 'changed' },
@@ -449,7 +449,7 @@ describe('Edit API', () => {
         });
 
         test('sets edits in batch editing mode, using column', () => {
-            editSvc!.isBatchEditing = jest.fn().mockReturnValue(true);
+            editSvc!.isBatchEditing = vi.fn().mockReturnValue(true);
             const cells = [
                 { column: column1, rowIndex: 0, rowPinned: undefined, newValue: 'new1', state: 'editing' },
                 { column: column2, rowIndex: 1, rowPinned: undefined, newValue: 'new2', state: 'changed' },
@@ -492,7 +492,7 @@ describe('Edit API', () => {
         });
 
         test('sets edits in batch editing mode, using all three column options', () => {
-            editSvc!.isBatchEditing = jest.fn().mockReturnValue(true);
+            editSvc!.isBatchEditing = vi.fn().mockReturnValue(true);
             const cells = [
                 {
                     colId: 'col1',
@@ -561,7 +561,7 @@ describe('Edit API', () => {
         });
 
         test('updates existing edits when update flag is true (append)', () => {
-            editSvc!.isBatchEditing = jest.fn().mockReturnValue(true);
+            editSvc!.isBatchEditing = vi.fn().mockReturnValue(true);
             const cells = [
                 { colId: 'col2', rowIndex: 1, rowPinned: undefined, newValue: 'new2', state: 'changed' },
             ] as EditingCellPosition[];
@@ -587,7 +587,7 @@ describe('Edit API', () => {
         });
 
         test('updates existing edits when update flag is true (replace)', () => {
-            editSvc!.isBatchEditing = jest.fn().mockReturnValue(true);
+            editSvc!.isBatchEditing = vi.fn().mockReturnValue(true);
             editMap!.set(
                 rowNode1,
                 new Map([

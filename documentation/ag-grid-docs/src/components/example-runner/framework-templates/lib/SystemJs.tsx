@@ -131,16 +131,21 @@ export const SystemJs = ({
 }: Props) => {
     const systemJsPath = pathJoin(boilerplatePath, `systemjs.config${isDev ? '.dev' : ''}.js`);
 
-    let configuration = isUsingPublishedPackages() ? publishedConfiguration : localBuildAndArchiveConfiguration;
+    let configuration: Configuration = isUsingPublishedPackages()
+        ? publishedConfiguration
+        : localBuildAndArchiveConfiguration;
 
     if (isDev) {
-        configuration.gridMap = {
-            ...configuration.gridMap,
-            'ag-charts-core': `${localPrefix}/ag-charts-core`,
-            'ag-charts-community': `${localPrefix}/ag-charts-community`,
-            'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise`,
-            'ag-charts-types': `${localPrefix}/ag-charts-types`,
-            '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale`,
+        configuration = {
+            ...configuration,
+            gridMap: {
+                ...configuration.gridMap,
+                'ag-charts-core': `${localPrefix}/ag-charts-core`,
+                'ag-charts-community': `${localPrefix}/ag-charts-community`,
+                'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise`,
+                'ag-charts-types': `${localPrefix}/ag-charts-types`,
+                '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale`,
+            },
         };
     }
     configuration = getRelevantConfig(configuration, internalFramework);

@@ -180,12 +180,8 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         }
 
         for (const part of groupHierarchy) {
-            let colDef: ColDef | null = null;
-            if (typeof part === 'string') {
-                colDef = this.createColDefForPart(part, sourceCol, sourceColDef);
-            } else {
-                colDef = part;
-            }
+            const colDef: ColDef | null =
+                typeof part === 'string' ? this.createColDefForPart(part, sourceCol, sourceColDef) : part;
             if (colDef) {
                 colDefs.push(colDef);
             }

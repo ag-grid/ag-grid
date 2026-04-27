@@ -114,7 +114,7 @@ export class ColumnStateUpdateExecutionStrategy extends BeanStub implements ICol
     }
 }
 
-export class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStrategy {
+class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStrategy {
     private lastPivotColIds: string[] = [];
 
     constructor(private readonly beans: StrategyBeans) {}

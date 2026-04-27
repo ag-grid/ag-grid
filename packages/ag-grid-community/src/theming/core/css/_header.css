@@ -184,7 +184,7 @@
 .ag-header-cell-text {
     overflow: hidden;
     text-overflow: ellipsis;
-    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .ag-header-cell-comp-wrapper {
@@ -275,6 +275,7 @@
 .ag-header-highlight-after::after {
     right: 0;
 
+    /* stylelint-disable-next-line selector-max-specificity */
     :where(.ag-grid-pinned-left-cells) & {
         right: 1px;
     }

@@ -48,6 +48,7 @@ export function _fuzzySuggestions(params: {
  *
  * This function is often being called, so it must be performant.
  * {@link|https://github.com/ag-grid/ag-grid/issues/12473}
+ * @knipIgnore Used in tests
  */
 export function _getLevenshteinSimilarityDistance(source: string, target: string): number {
     const sourceLength = source.length;

@@ -37,7 +37,7 @@ const createAggregationSnapshot = (
     (comp as any).avgAggregationComp = avgAggregationComp;
     (comp as any).countAggregationComp = countAggregationComp;
 
-    const column = { getId: () => 'value' };
+    const column = { getId: () => 'value', colDef: {} };
     const rowNodes = values.map((value, index) => ({ data: { value }, rowIndex: index }));
 
     const rowModel = {

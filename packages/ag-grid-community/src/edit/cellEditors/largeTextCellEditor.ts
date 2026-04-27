@@ -49,7 +49,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
 
             if (eventKey === KeyCode.BACKSPACE || eventKey === KeyCode.DELETE) {
                 startValue = '';
-            } else if (eventKey && eventKey.length === 1) {
+            } else if (eventKey?.length === 1) {
                 startValue = eventKey;
             } else {
                 startValue = this.getStartValue(params);

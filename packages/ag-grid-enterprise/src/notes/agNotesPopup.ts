@@ -107,6 +107,7 @@ class AgNotesPopupContent extends Component {
     }
 }
 
+/** @knipIgnore Used in tests */
 export function buildEditedNote(note: Note | undefined, nextText: string | null | undefined): Note | undefined {
     const text = nextText?.trim();
     if (!text) {
@@ -261,6 +262,7 @@ export class AgNotesPopup extends BeanStub {
     }
 }
 
+/** @knipIgnore Used in tests */
 export function findNotesPopupPosition(params: NotesPopupPositionParams): { x: number; y: number } {
     const { anchorRect, parentRect, popupSize, placementMode, enableRtl } = params;
     const referenceRect = _toRelativeRect(anchorRect, parentRect);
@@ -286,6 +288,7 @@ export function findNotesPopupPosition(params: NotesPopupPositionParams): { x: n
     });
 }
 
+/** @knipIgnore Used in tests */
 export function getNotesPopupPlacements(mode: NotesPopupPlacementMode, enableRtl?: boolean): _Alignment[] {
     const placements = mode === 'fullWidthRow' ? FULL_WIDTH_ROW_PLACEMENTS : CELL_PLACEMENTS;
     return _getEffectivePlacements(placements, enableRtl);

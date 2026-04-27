@@ -28,7 +28,7 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
             return;
         }
 
-        const panel = this.createManagedBean(builder.createPivotDropZone(true));
+        const panel = this.createManagedBean(builder.createPivotDropZone(true, true));
         this.getGui().appendChild(panel.getGui());
 
         // Keep the inner panel always visible — the wrapper controls visibility

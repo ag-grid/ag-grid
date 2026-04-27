@@ -651,6 +651,12 @@
                 "url": "./notes/"
             }
         },
+        "noteTrigger": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
         "noteShowDelay": {
             "more": {
                 "name": "Notes",

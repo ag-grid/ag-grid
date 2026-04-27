@@ -377,7 +377,9 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * Returns the data value from the `rowNode` for the specified column.
      *
      * By default, returns committed data ignoring any pending edits. For group rows, returns
-     * aggregated values or the group key. For formula cells, returns the computed result.
+     * aggregated values or the group key. For formula cells in `'data'` / `'value'` modes,
+     * returns the **computed result**; in `'edit'` / `'batch'` / `'data-raw'` modes, returns
+     * the **raw formula string** (so the edit pipeline can round-trip it).
      *
      * To get the **displayed** value (with formatting and value formatter applied), use `api.getCellValue()` instead.
      *
@@ -387,12 +389,16 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *
      * - `'data'` (default) — Returns the aggregated value for group rows, otherwise committed data.
      *   May return an `IAggFuncResult<TValue>` wrapper for aggregation columns; use `'value'` to unwrap.
+     *   Formulas are resolved to their computed value.
      * - `'edit'` — Returns the active editor's value if editing, or the pending batch value if not editing,
-     *   then falls back to aggregation and committed data.
-     * - `'batch'` — Returns the pending batch value if batching, then falls back to aggregation and committed data.
-     * - `'value'` — Same as `'data'` but unwraps `IAggFuncResult` (e.g. from `avg` or `count`) to its scalar value.
-     * - `'data-raw'` — Always returns committed data, skipping aggregation results (`rowNode.aggData`).
-     *   For group rows this is typically `undefined` since group rows do not hold leaf data.
+     *   then falls back to aggregation and committed data. **Formulas are NOT resolved** — returns the raw
+     *   formula string to mirror the edit-pipeline buffer.
+     * - `'batch'` — Returns the pending batch value if batching, then falls back to aggregation and committed
+     *   data. **Formulas are NOT resolved** — returns the raw formula string to mirror the edit-pipeline buffer.
+     * - `'value'` — Same as `'data'` but unwraps `IAggFuncResult` (e.g. from `avg` or `count`) to its scalar
+     *   value. Formulas are resolved to their computed value.
+     * - `'data-raw'` — Always returns committed data, skipping aggregation results (`rowNode.aggData`) and
+     *   formula resolution. For group rows this is typically `undefined` since group rows do not hold leaf data.
      *
      * @param colKey The column to read (field name, `colId`, or `Column` object)
      * @param from Controls value resolution. Defaults to `'data'`.

@@ -1,11 +1,11 @@
 import type { GridApi, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
 
 export interface CustomToolbarButtonParams extends IToolbarItemParams {
-    label: string;
+    label?: string;
+    title?: string;
     icon: string;
     onClick: (api: GridApi) => void;
 }
-
 export class CustomToolbarButton implements IToolbarItemComp {
     params!: CustomToolbarButtonParams;
     eGui!: HTMLButtonElement;
@@ -14,11 +14,13 @@ export class CustomToolbarButton implements IToolbarItemComp {
     init(params: CustomToolbarButtonParams) {
         this.params = params;
 
+        const title = params.title ?? params.label ?? '';
+
         this.eGui = document.createElement('button');
         this.eGui.type = 'button';
         this.eGui.className = 'ag-toolbar-item ag-toolbar-button';
-        this.eGui.title = params.label;
-        this.eGui.setAttribute('aria-label', params.label);
+        this.eGui.title = title;
+        this.eGui.setAttribute('aria-label', title);
 
         const eIcon = document.createElement('span');
         eIcon.className = `ag-icon ag-icon-${params.icon}`;

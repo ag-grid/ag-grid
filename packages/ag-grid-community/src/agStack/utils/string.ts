@@ -29,7 +29,9 @@ export function _escapeString(toEscape?: string | null): string | null {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isExpressionString(value: unknown): value is `=${string}` {
-    return typeof value === 'string' && value.startsWith('=') && value.length > 1;
+    // 61 = '='.codePointAt(0). Direct integer read is cheaper than `startsWith('=')`, which pays
+    // for argument-length and UTF-16 boundary handling on a single-char prefix.
+    return typeof value === 'string' && value.length > 1 && value.codePointAt(0) === 61;
 }
 
 /**

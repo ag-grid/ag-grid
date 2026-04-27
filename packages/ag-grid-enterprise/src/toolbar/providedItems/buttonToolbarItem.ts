@@ -5,16 +5,9 @@ import type {
     IconName,
     ToolbarItemActionParams,
 } from 'ag-grid-community';
-import {
-    Component,
-    RefPlaceholder,
-    _addGridCommonParams,
-    _addOrRemoveAttribute,
-    _clearElement,
-    _createIconNoSpan,
-    _setAriaLabel,
-    _setDisplayed,
-} from 'ag-grid-community';
+import { Component, RefPlaceholder, _addGridCommonParams } from 'ag-grid-community';
+
+import { renderToolbarButtonContents } from './toolbarItemUtils';
 
 interface ButtonToolbarItemParams extends IToolbarItemParams {
     label?: string;
@@ -56,25 +49,14 @@ export class ButtonToolbarItem extends Component implements IToolbarItemComp {
 
     private applyParams(params: ButtonToolbarItemParams): void {
         this.params = params;
-        const eGui = this.getGui();
-
-        _clearElement(this.eIcon);
-        const hasIcon = !!params.icon;
-        if (hasIcon) {
-            const eIconEl = _createIconNoSpan(params.icon!, this.beans);
-            if (eIconEl) {
-                this.eIcon.appendChild(eIconEl);
-            }
-        }
-        _setDisplayed(this.eIcon, hasIcon);
-
-        const hasLabel = !!params.label;
-        this.eLabel.textContent = params.label ?? '';
-        _setDisplayed(this.eLabel, hasLabel);
-
-        const hoverText = params.tooltip ?? params.label;
-        _setAriaLabel(eGui, hoverText);
-        _addOrRemoveAttribute(eGui, 'title', hoverText);
+        renderToolbarButtonContents(this.beans, {
+            eIcon: this.eIcon,
+            eLabel: this.eLabel,
+            eGui: this.getGui(),
+            icon: params.icon,
+            label: params.label,
+            hoverText: params.tooltip ?? params.label,
+        });
     }
 
     private invokeAction(): void {

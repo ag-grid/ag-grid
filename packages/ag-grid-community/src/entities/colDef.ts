@@ -168,22 +168,24 @@ export type IAggFunc<TData = any, TValue = any, TContext = any> = (
 export type IAggFuncs<TData = any, TValue = any, TContext = any> = { [key: string]: IAggFunc<TData, TValue, TContext> };
 
 /**
- * Wrapper object returned by built-in aggregation functions `avg` and `count` on group rows.
+ * Wrapper returned by the built-in `avg` and `count` aggregation functions, and the recommended
+ * shape for custom agg functions that expose a scalar value alongside metadata (e.g. a count, used
+ * when re-aggregating across nested groups).
  *
- * - `avg` returns `{ value: number | bigint | null, count: number, toString(), toNumber() }`
- * - `count` returns `{ value: number, toString(), toNumber() }`
+ * - `avg` returns `{ value, count, toString(), toNumber() }`
+ * - `count` returns `{ value, toString(), toNumber() }`
  *
- * Other built-in agg functions (`sum`, `min`, `max`, `first`, `last`) return plain scalar values.
- * Custom aggregation functions may return any value.
+ * Other built-ins (`sum`, `min`, `max`, `first`, `last`) return plain scalars.
  */
 export interface IAggFuncResult<TAggValue = number | bigint | null> {
-    /** The aggregated scalar value */
+    /** The aggregated scalar value. */
     value?: TAggValue;
     /** The count of aggregated values. Present on `avg` results. */
     count?: number;
-    /** Returns a string representation of the aggregated value */
+    /** Returns a string representation of the aggregated value. Used also for sorting. */
     toString(): string;
-    /** Returns the numeric representation of the aggregated value */
+
+    /** Returns the numeric representation of the aggregated value. Used also for sorting. */
     toNumber?(): TAggValue;
 }
 

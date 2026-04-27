@@ -477,7 +477,7 @@
             const list = document.getElementById('vuln-list');
             const countBar = document.getElementById('count-bar');
 
-            let html = '';
+            let html;
             if (state.groupBy === 'vuln') html = renderByVuln(filtered);
             else if (state.groupBy === 'package') html = renderByPackage(filtered);
             else html = renderByProject(filtered);

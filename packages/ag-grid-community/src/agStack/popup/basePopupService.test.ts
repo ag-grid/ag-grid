@@ -60,10 +60,10 @@ function createService(
     const svc = Object.create(TestPopupService.prototype) as TestPopupService;
     (svc as any).popupList = [];
 
-    jest.spyOn(svc, 'getParentRect').mockReturnValue(parentRect);
+    vi.spyOn(svc, 'getParentRect').mockReturnValue(parentRect);
     (svc as any).gos = {
-        get: jest.fn((key: string) => (key === 'enableRtl' ? enableRtl : undefined)),
-        getCallback: jest.fn(() => undefined),
+        get: vi.fn((key: string) => (key === 'enableRtl' ? enableRtl : undefined)),
+        getCallback: vi.fn(() => undefined),
     };
 
     return svc;
@@ -74,7 +74,7 @@ describe('BasePopupService', () => {
     const parentRect = { top: 0, left: 0, right: 800, bottom: 600 };
 
     afterEach(() => {
-        jest.restoreAllMocks();
+        vi.restoreAllMocks();
     });
 
     describe('positionPopupByComponent', () => {
@@ -98,7 +98,7 @@ describe('BasePopupService', () => {
             const eventSource = createMockElement(params.sourceRect);
             const ePopup = createMockElement({}, { offsetWidth: params.popupWidth, offsetHeight: params.popupHeight });
 
-            const spy = jest.spyOn(svc, 'positionPopup').mockImplementation(() => {});
+            const spy = vi.spyOn(svc, 'positionPopup').mockImplementation(() => {});
 
             svc.positionPopupByComponent({
                 ePopup,
@@ -297,9 +297,9 @@ describe('BasePopupService', () => {
             );
 
             // keepXYWithinBounds is DOM-heavy; passthrough for y
-            jest.spyOn(svc as any, 'keepXYWithinBounds').mockImplementation((_el: HTMLElement, pos: number) => pos);
+            vi.spyOn(svc as any, 'keepXYWithinBounds').mockImplementation((_el: HTMLElement, pos: number) => pos);
 
-            const spy = jest.spyOn(svc, 'positionPopup').mockImplementation(() => {});
+            const spy = vi.spyOn(svc, 'positionPopup').mockImplementation(() => {});
 
             svc.positionPopupForMenu({ ePopup, eventSource });
 

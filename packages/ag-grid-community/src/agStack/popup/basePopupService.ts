@@ -594,7 +594,7 @@ export abstract class BasePopupService<
         const popup = this.popupList[popupIndex];
 
         if (popup.stopAnchoringPromise) {
-            popup.stopAnchoringPromise.then((destroyFunc) => destroyFunc && destroyFunc());
+            popup.stopAnchoringPromise.then((destroyFunc) => destroyFunc?.());
         }
 
         popup.stopAnchoringPromise = undefined;

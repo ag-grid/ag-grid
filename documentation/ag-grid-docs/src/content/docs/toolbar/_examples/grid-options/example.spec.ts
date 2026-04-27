@@ -1,24 +1,37 @@
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Toolbar presets switch correctly', async ({ page }) => {
+    test.eachFramework('Toggling toolbar items adds and removes them at runtime', async ({ page }) => {
         await waitForGridContent(page);
 
-        const toolbarItems = page.locator('.ag-toolbar-item');
+        const findItem = page.locator('.ag-toolbar-find');
+        // .ag-toolbar-find and quickFilter both carry .ag-toolbar-input, so select the
+        // quickFilter node directly via the absence of .ag-toolbar-find.
+        const quickFilterInput = page.locator('.ag-toolbar .ag-toolbar-input:not(.ag-toolbar-find)');
+        const toggleFind = page.locator('button', { hasText: 'Toggle Find' });
+        const toggleQuickFilter = page.locator('button', { hasText: 'Toggle Quick Filter' });
+        const full = page.locator('button', { hasText: 'Full' });
 
-        // Initial state is Full (row group panel + find + quick filter = 3 items)
-        await expect(toolbarItems).toHaveCount(3);
+        // Initial state: both find and quick filter are present
+        await expect(findItem).toHaveCount(1);
+        await expect(quickFilterInput).toHaveCount(1);
 
-        // Find Only (1 item)
-        await page.locator('button', { hasText: 'Find Only' }).click();
-        await expect(toolbarItems).toHaveCount(1);
+        // Toggle removes each item independently
+        await toggleFind.click();
+        await expect(findItem).toHaveCount(0);
+        await expect(quickFilterInput).toHaveCount(1);
 
-        // Quick Filter Only (1 item)
-        await page.locator('button', { hasText: 'Quick Filter Only' }).click();
-        await expect(toolbarItems).toHaveCount(1);
+        await toggleQuickFilter.click();
+        await expect(findItem).toHaveCount(0);
+        await expect(quickFilterInput).toHaveCount(0);
 
-        // Back to Full
-        await page.locator('button', { hasText: 'Full' }).click();
-        await expect(toolbarItems).toHaveCount(3);
+        // Toggling brings them back
+        await toggleFind.click();
+        await expect(findItem).toHaveCount(1);
+
+        // Full restores both
+        await full.click();
+        await expect(findItem).toHaveCount(1);
+        await expect(quickFilterInput).toHaveCount(1);
     });
 });

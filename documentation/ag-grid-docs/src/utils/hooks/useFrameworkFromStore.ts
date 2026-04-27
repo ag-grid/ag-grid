@@ -19,8 +19,10 @@ export function useFrameworkFromStore() {
         const newFramework = getFrameworkFromInternalFramework(internalFramework);
 
         if (newFramework !== framework) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing framework from store for SSR compatibility
             setFramework(newFramework);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally omitting framework to avoid infinite loop
     }, [internalFramework]);
 
     return framework;

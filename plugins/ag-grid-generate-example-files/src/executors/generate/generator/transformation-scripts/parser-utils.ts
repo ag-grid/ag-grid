@@ -83,13 +83,11 @@ export function tsCollect(tsTree, tsBindings: ParsedBindings, collectors, recurs
     ts.forEachChild(tsTree, (node: ts.Node) => {
         collectors
             .filter((c) => {
-                let res = false;
                 try {
-                    res = c.matches(node);
-                } catch (error) {
+                    return c.matches(node);
+                } catch {
                     return false;
                 }
-                return res;
             })
             .forEach((c) => {
                 try {

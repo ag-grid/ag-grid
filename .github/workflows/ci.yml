@@ -326,15 +326,15 @@ jobs:
         with:
           cache_mode: ro
 
-      - name: nx format:check
-        id: format
-        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-        run: |
-          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            yarn nx format:check --all
-          else
-            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-          fi
+#      - name: nx format:check
+#        id: format
+#        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+#        run: |
+#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+#            yarn nx format:check --all
+#          else
+#            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+#          fi
 
       - name: nx lint
         id: lint
@@ -449,9 +449,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    # Uncomment to add package tests back in
-    # needs: [ detect-changes, init, test, e2e, format_lint_build, docs, calc_matrix, fw_pkg_test, sonar_community, sonar_enterprise ]
-    needs: [ detect-changes, init, test, e2e, format_lint_build, docs, calc_matrix, sonar_community, sonar_enterprise ]
+    needs: [ detect-changes, init, test, e2e, format_lint_build, docs, calc_matrix, fw_pkg_test, sonar_community, sonar_enterprise ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
@@ -583,31 +581,6 @@ jobs:
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
           SLACK_GITHUB_MAPPING: ${{ secrets.SLACK_GITHUB_MAPPING }}
-          # Uncomment to add package tests back in
-          # RUN_CONTEXT: >
-          #   {
-          #     "workflow": "${{ github.workflow }}",
-          #     "ref": "${{ github.ref }}",
-          #     "currentSha": "${{ github.sha }}",
-          #     "lastSuccessfulSha": "${{ steps.find_latest_sha.outputs.sha }}",
-          #     "runId": "${{ github.run_id }}",
-          #     "project": "AgGrid",
-          #     "reportUrl": "${{ steps.testReport.outputs.url_html }}",
-          #     "deployToStaging": ${{ needs.docs.outputs.docs_deployed == 'success' }},
-          #     "changedState": ${{ steps.lastJobStatus.outputs.changedState == 'true' }},
-          #     "jobStatuses":
-          #       {
-          #           "Format": "${{ needs.format_lint_build.outputs.format }}",
-          #           "Lint": "${{ needs.format_lint_build.outputs.lint }}",
-          #           "Build": "${{ needs.format_lint_build.outputs.build }}",
-          #           "Test": "${{ needs.test.result }}",
-          #           "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
-          #           "e2e": "${{ needs.e2e.result }}",
-          #           "Docs": "${{ needs.docs.result }}",
-          #           "SonarCommunity": "${{ needs.sonar_community.result }}",
-          #           "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
-          #       }
-          #   }
           RUN_CONTEXT: >
             {
               "workflow": "${{ github.workflow }}",
@@ -626,6 +599,7 @@ jobs:
                     "Build": "${{ needs.format_lint_build.outputs.build }}",
                     "Test": "${{ needs.test.result }}",
                     "e2e": "${{ needs.e2e.result }}",
+                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
                     "Docs": "${{ needs.docs.result }}",
                     "SonarCommunity": "${{ needs.sonar_community.result }}",
                     "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"

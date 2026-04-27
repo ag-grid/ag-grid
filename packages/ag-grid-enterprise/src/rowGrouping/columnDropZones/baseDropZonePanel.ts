@@ -10,12 +10,16 @@ import { DropZoneColumnComp } from './dropZoneColumnComp';
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
+    protected readonly embedded: boolean;
+
     constructor(
         horizontal: boolean,
         private readonly dropZonePurpose: TDropZone,
-        protected readonly updateParams?: ColumnStateUpdateParams
+        protected readonly updateParams?: ColumnStateUpdateParams,
+        embedded = false
     ) {
         super(horizontal);
+        this.embedded = embedded;
         this.addElementClasses(this.getGui(), this.dropZonePurpose.toLowerCase());
     }
 

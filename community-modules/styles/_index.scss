@@ -4,11 +4,11 @@
 //
 
 @use 'sass:map';
+@use 'sass:math';
 @use 'sass:list';
 @use 'sass:meta';
 @use 'sass:string';
 @use 'sass:color';
-@use 'sass:math';
 @use './css-content';
 @use './icon-font-codes' as *;
 
@@ -672,7 +672,7 @@ $-non-variable-param-types: (
 }
 
 @function -validate-length($value) {
-    @return meta.type-of($value) == 'number' and (unit($value) != '' or $value == 0);
+    @return meta.type-of($value) == 'number' and (math.unit($value) != '' or $value == 0);
 }
 
 $border-styles: (none, hidden, dotted, dashed, solid, double, groove, ridge, inset, outset, initial);
@@ -682,7 +682,7 @@ $border-styles: (none, hidden, dotted, dashed, solid, double, groove, ridge, ins
 }
 
 @function -validate-duration($value) {
-    @return meta.type-of($value) == 'number' and (unit($value) == 's' or unit($value) == 'ms' or $value == 0);
+    @return meta.type-of($value) == 'number' and (math.unit($value) == 's' or math.unit($value) == 'ms' or $value == 0);
 }
 
 @function -validate-display($value) {

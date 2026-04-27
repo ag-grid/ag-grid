@@ -160,7 +160,9 @@ export class AggregationComp extends Component implements IStatusPanelComp {
      */
     private onCellSelectionChanged(): void {
         const beans = this.beans;
-        const { rangeSvc, valueSvc } = beans;
+        const valueSvc = beans.valueSvc;
+        const formulaSvc = beans.formula;
+        const rangeSvc = beans.rangeSvc;
         const cellRanges = rangeSvc?.getCellRanges();
 
         let sum = 0;
@@ -254,7 +256,13 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                             return;
                         }
 
-                        let value = valueSvc.getValue(col, rowNode, 'data');
+                        // Direct `valueSvc.getValue` + inline formula resolution — `rowNode.getDataValue`
+                        // would pay an extra `colModel.getColOrColDefCol` lookup per cell on this hot
+                        // path (called for every cell across the selected ranges on each selection change).
+                        let value: any = valueSvc.getValue(col, rowNode, 'data');
+                        if (col.colDef.allowFormula && formulaSvc?.isFormula(value)) {
+                            value = formulaSvc.resolveValue(col, rowNode);
+                        }
 
                         // if empty cell, skip it, doesn't impact count or anything
                         if (_missing(value) || value === '') {

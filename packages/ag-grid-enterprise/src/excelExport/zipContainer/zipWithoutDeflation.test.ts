@@ -1,5 +1,3 @@
-import { describe, expect, it } from '@jest/globals';
-
 import { ZipContainer } from './zipContainer';
 
 describe('When adding a file to a zip container without deflation', () => {

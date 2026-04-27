@@ -24,16 +24,16 @@ describe('AgSideBar focus overrides', () => {
                 sideBarButton.focus();
 
                 const gridCtrl = {
-                    focusNextInnerContainer: jest.fn((_backwards: boolean) => focusResult),
-                    forceFocusOutOfContainer: jest.fn(),
-                    isDetailGrid: jest.fn(() => false),
-                    isFocusInsideGridBody: jest.fn(() => true),
+                    focusNextInnerContainer: vi.fn((_backwards: boolean) => focusResult),
+                    forceFocusOutOfContainer: vi.fn(),
+                    isDetailGrid: vi.fn(() => false),
+                    isFocusInsideGridBody: vi.fn(() => true),
                 };
 
                 const beans = {
                     eRootDiv: rootDiv,
                     ctrlsSvc: {
-                        get: jest.fn(() => gridCtrl),
+                        get: vi.fn(() => gridCtrl),
                     },
                 };
 

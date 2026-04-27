@@ -13,6 +13,7 @@ import { getApiPaths } from '@utils/apiMenuPath';
 import { SITE_BASE_URL, PUBLIC_GTM_ID, PUBLIC_GTM_AUTH, PUBLIC_GTM_PREVIEW } from '@constants';
 import GoogleTagManager from '@ag-website-shared/components/google-tag-manager/GoogleTagManager.astro';
 import GoogleTagManagerBody from '@ag-website-shared/components/google-tag-manager/GoogleTagManagerBody.astro';
+import AnnouncementBanner from '@components/announcement-banner/AnnouncementBanner.astro';
 
 interface Props {
     title: string;
@@ -22,6 +23,13 @@ interface Props {
     hideHeader?: boolean;
     hideFooter?: boolean;
     hidePageFromSearchEngines?: boolean;
+    showAnnouncementBanner?: boolean;
+    announcementBannerProps?: {
+        href: string;
+        title: string;
+        description: string;
+        ctaLabel: string;
+    };
 }
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
@@ -53,6 +61,13 @@ const lightModeCSSUrl = `url("${urlWithBaseUrl('/images/sun.svg')}")`;
 const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
 
 const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.replaceAll('/', '');
+
+const announcementBannerProps = {
+    href: urlWithBaseUrl('/campaigns/beyond-the-prompt/'),
+    title: 'Beyond the Prompt',
+    description: 'A one-day AG Grid & Bryntum conference • 19th May 26',
+    ctaLabel: 'Learn more',
+};
 ---
 
 <!doctype html>
@@ -168,7 +183,22 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
                 });
             });
             observer.observe(htmlEl, { attributes: true });
+
+            if (localStorage.getItem('documentation:announcement-banner-dismissed') !== 'true') {
+                document.documentElement.dataset.showAnnouncement = 'true';
+            }
         </script>
+
+        {
+            !isArchive && (
+                <AnnouncementBanner
+                    href={announcementBannerProps.href}
+                    title={announcementBannerProps.title}
+                    description={announcementBannerProps.description}
+                    ctaLabel={announcementBannerProps.ctaLabel}
+                />
+            )
+        }
 
         <div id="mainContainer" class:list={styles.mainContainer}>
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}

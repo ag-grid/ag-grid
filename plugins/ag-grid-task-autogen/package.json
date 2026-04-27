@@ -3,9 +3,9 @@
   "version": "35.2.1-beta.20260419.2046",
   "private": true,
   "dependencies": {
-    "@nx/devkit": "20.3.1",
-    "nx": "20.3.1",
-    "tslib": "^2.3.0"
+    "@nx/devkit": "20.8.4",
+    "nx": "20.8.4",
+    "tslib": "^2.8.1"
   },
   "type": "module",
   "main": "./src/index.ts",
