@@ -129,7 +129,11 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         return result;
     }
 
-    public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
+    public setPivotResultCols(
+        colDefs: (ColDef | ColGroupDef)[] | null,
+        source: ColumnEventType,
+        useGeneratedOrder: boolean = false
+    ): void {
         this.aggOrderedList = undefined; // Invalidate cached aggregation order
         if (!this.colModel.ready) {
             return;
@@ -164,7 +168,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
             }
             const hasPreviousCols = !!this.previousPivotResultCols;
             this.previousPivotResultCols = null;
-            this.colModel.refreshCols(!hasPreviousCols, source);
+            this.colModel.refreshCols(!hasPreviousCols, source, useGeneratedOrder);
         } else {
             this.previousPivotResultCols = this.pivotResultCols ? this.pivotResultCols.tree : null;
             this.pivotResultCols = null;

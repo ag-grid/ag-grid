@@ -141,4 +141,20 @@ describe('pivotRowTotals + value column toggling', () => {
         ]);
         expect(rowTotalsArePositionedBeforePivotCols(gridApi)).toBe(true);
     });
+
+    test('setValueColumns reorder updates generated pivot column order', () => {
+        const gridApi = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData,
+            pivotMode: true,
+        });
+
+        gridApi.setValueColumns(['bronze', 'gold', 'silver']);
+
+        expect(getColumnOrder(gridApi, 'center').filter((id) => id.startsWith('pivot_year_2000_'))).toEqual([
+            'pivot_year_2000_bronze',
+            'pivot_year_2000_gold',
+            'pivot_year_2000_silver',
+        ]);
+    });
 });
