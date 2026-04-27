@@ -1257,6 +1257,10 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
         transform 0.32s ease;
 }
 
+// Multi-speaker rows keep the flex layout — two portraits laid out
+// side-by-side with the 24px gap from `.agendaSpeakerStack`. Scale stays
+// modest here so John+Mats / Johan+Adam / Maggie+Matt P don't overlap
+// or fight each other for space.
 .agendaSpeakerImage {
     height: 100%;
     width: auto;
@@ -1266,6 +1270,19 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     // we anchored bottom-right the head would shift up and out of frame.
     transform: scale(1.4);
     transform-origin: top right;
+}
+
+// Solo-speaker rows. Most of these have short or no descriptions, so the
+// row's content height is dictated by the title + speakers column on the
+// left and `height: 100%` ends up tiny. Pop out of the flex layout, scale
+// hard, and lift up so the portrait dominates the right side of the row
+// — the row's `overflow: hidden` then clips whatever overflows.
+.agendaSpeakerImage:only-child {
+    position: absolute;
+    top: -20px;
+    right: 0;
+    transform: scale(2.4);
+    transform-origin: top;
 }
 
 // Hover state. Gated on:
