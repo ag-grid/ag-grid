@@ -67,11 +67,16 @@ describe('pivotRowTotals + value column toggling', () => {
         expect(rowTotalsArePositionedBeforePivotCols(gridApi)).toBe(true);
 
         gridApi.addValueColumns(['silver']);
-        expect(rowTotalIds(gridApi)).toEqual(['PivotRowTotal_pivot_year__gold', 'PivotRowTotal_pivot_year__silver']);
+        const rowTotalIdsAfterReAddingSilver = rowTotalIds(gridApi);
+        expect(rowTotalIdsAfterReAddingSilver).toEqual([
+            'PivotRowTotal_pivot_year__gold',
+            'PivotRowTotal_pivot_year__silver',
+        ]);
         expect(rowTotalsArePositionedBeforePivotCols(gridApi)).toBe(true);
 
         gridApi.addValueColumns(['bronze']);
-        expect(rowTotalIds(gridApi)).toEqual([
+        const rowTotalIdsAfterReAddingBronze = rowTotalIds(gridApi);
+        expect(rowTotalIdsAfterReAddingBronze).toEqual([
             'PivotRowTotal_pivot_year__gold',
             'PivotRowTotal_pivot_year__silver',
             'PivotRowTotal_pivot_year__bronze',
@@ -101,11 +106,16 @@ describe('pivotRowTotals + value column toggling', () => {
         expect(rowTotalsArePositionedAfterPivotCols()).toBe(true);
 
         gridApi.addValueColumns(['silver']);
-        expect(rowTotalIds(gridApi)).toEqual(['PivotRowTotal_pivot_year__gold', 'PivotRowTotal_pivot_year__silver']);
+        const rowTotalIdsAfterReAddingSilver = rowTotalIds(gridApi);
+        expect(rowTotalIdsAfterReAddingSilver).toEqual([
+            'PivotRowTotal_pivot_year__gold',
+            'PivotRowTotal_pivot_year__silver',
+        ]);
         expect(rowTotalsArePositionedAfterPivotCols()).toBe(true);
 
         gridApi.addValueColumns(['bronze']);
-        expect(rowTotalIds(gridApi)).toEqual([
+        const rowTotalIdsAfterReAddingBronze = rowTotalIds(gridApi);
+        expect(rowTotalIdsAfterReAddingBronze).toEqual([
             'PivotRowTotal_pivot_year__gold',
             'PivotRowTotal_pivot_year__silver',
             'PivotRowTotal_pivot_year__bronze',
@@ -129,12 +139,17 @@ describe('pivotRowTotals + value column toggling', () => {
 
         // Drag silver back in
         gridApi.setValueColumns(['gold', 'silver']);
-        expect(rowTotalIds(gridApi)).toEqual(['PivotRowTotal_pivot_year__gold', 'PivotRowTotal_pivot_year__silver']);
+        const rowTotalIdsAfterReAddingSilver = rowTotalIds(gridApi);
+        expect(rowTotalIdsAfterReAddingSilver).toEqual([
+            'PivotRowTotal_pivot_year__gold',
+            'PivotRowTotal_pivot_year__silver',
+        ]);
         expect(rowTotalsArePositionedBeforePivotCols(gridApi)).toBe(true);
 
         // Drag bronze back in
         gridApi.setValueColumns(['gold', 'silver', 'bronze']);
-        expect(rowTotalIds(gridApi)).toEqual([
+        const rowTotalIdsAfterReAddingBronze = rowTotalIds(gridApi);
+        expect(rowTotalIdsAfterReAddingBronze).toEqual([
             'PivotRowTotal_pivot_year__gold',
             'PivotRowTotal_pivot_year__silver',
             'PivotRowTotal_pivot_year__bronze',
