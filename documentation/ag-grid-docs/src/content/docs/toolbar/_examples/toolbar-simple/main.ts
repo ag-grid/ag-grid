@@ -63,7 +63,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 key: 'columnChooser',
                 alignment: 'left',
                 toolbarItemParams: {
-                    title: 'Choose Columns',
+                    label: 'Choose Columns',
                     icon: 'columns',
                     onClick: (api: GridApi) => api.showColumnChooser(),
                 },
@@ -73,7 +73,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 key: 'filtersPanel',
                 alignment: 'left',
                 toolbarItemParams: {
-                    title: 'Filters Panel',
+                    label: 'Filters Panel',
                     icon: 'filter',
                     onClick: (api: GridApi) =>
                         api.getOpenedToolPanel() === 'filters-new'
@@ -86,7 +86,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 key: 'excelExport',
                 alignment: 'left',
                 toolbarItemParams: {
-                    title: 'Excel Export',
+                    label: 'Excel Export',
                     icon: 'excel',
                     onClick: (api: GridApi) => api.exportDataAsExcel(),
                 },
