@@ -1,8 +1,31 @@
 @use 'design-system' as *;
 
 .banner {
-    display: block;
+    display: none;
+    position: relative;
+    overflow: hidden;
+    max-height: 200px;
     background-color: var(--color-brand-900);
+    z-index: 10005;
+    transition:
+        max-height $transition-default-timing,
+        transform $transition-default-timing,
+        opacity $transition-default-timing;
+
+    &:global(.is-dismissing) {
+        max-height: 0;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-100%);
+    }
+}
+
+:global(html[data-show-announcement='true']) .banner {
+    display: block;
+}
+
+.link {
+    display: block;
     color: var(--color-white);
     text-decoration: none;
     transition: background-color $transition-default-timing;
@@ -34,12 +57,53 @@
     gap: $spacing-size-3;
     max-width: calc(var(--layout-max-width) + var(--layout-horizontal-margins) * 2);
     margin: 0 auto;
-    padding: $spacing-size-2 var(--layout-horizontal-margins);
+    padding: $spacing-size-2 calc(var(--layout-horizontal-margins) + #{$spacing-size-6}) $spacing-size-2
+        var(--layout-horizontal-margins);
     line-height: 1.3;
     text-align: center;
 
     @media screen and (min-width: $breakpoint-site-header-small) {
         gap: $spacing-size-4;
+    }
+}
+
+.close {
+    position: absolute;
+    top: 50%;
+    right: $spacing-size-2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0 0 0 2px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-white);
+    opacity: 0.8;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition:
+        opacity $transition-default-timing,
+        background-color $transition-default-timing;
+
+    &:hover {
+        opacity: 1;
+        background-color: rgb(255 255 255 / 10%);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-button-primary-shadow-focus);
+        outline-offset: -2px;
+        opacity: 1;
+    }
+
+    :global(.icon) {
+        --icon-size: 16px;
+        --icon-color: var(--color-white);
+
+        fill: var(--color-white);
     }
 }
 

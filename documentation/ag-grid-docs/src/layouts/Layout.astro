@@ -53,8 +53,6 @@ const {
     hideHeader,
     hideFooter,
     hidePageFromSearchEngines,
-    showAnnouncementBanner,
-    announcementBannerProps,
     overrideSocialImage,
 } = Astro.props;
 
@@ -65,6 +63,13 @@ const lightModeCSSUrl = `url("${urlWithBaseUrl('/images/sun.svg')}")`;
 const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
 
 const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.replaceAll('/', '');
+
+const announcementBannerProps = {
+    href: urlWithBaseUrl('/campaigns/beyond-the-prompt/'),
+    title: 'Beyond the Prompt',
+    description: 'A one-day AG Grid & Bryntum conference • 19th May 26',
+    ctaLabel: 'Learn more',
+};
 ---
 
 <!doctype html>
@@ -191,10 +196,14 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
                 });
             });
             observer.observe(htmlEl, { attributes: true });
+
+            if (localStorage.getItem('documentation:announcement-banner-dismissed') !== 'true') {
+                document.documentElement.dataset.showAnnouncement = 'true';
+            }
         </script>
 
         {
-            showAnnouncementBanner && announcementBannerProps && (
+            !isArchive && (
                 <AnnouncementBanner
                     href={announcementBannerProps.href}
                     title={announcementBannerProps.title}
@@ -203,6 +212,7 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
                 />
             )
         }
+
         <div id="mainContainer" class:list={styles.mainContainer}>
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}
             <slot />
