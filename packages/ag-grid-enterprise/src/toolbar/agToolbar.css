@@ -22,7 +22,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--ag-spacing);
-    padding: var(--ag-spacing);
+    padding: calc(var(--ag-spacing) * 2.5);
     border: 0;
     border-radius: var(--ag-border-radius);
     background: transparent;
@@ -41,7 +41,11 @@
 }
 
 .ag-toolbar-button:focus-visible {
+    outline: solid calc(var(--ag-border-width) * 2) var(--ag-accent-color);
+    outline-offset: calc(var(--ag-border-width) * -2);
     box-shadow: var(--ag-focus-shadow);
+    position: relative;
+    z-index: 1;
 }
 
 .ag-toolbar-button:disabled {
@@ -103,17 +107,18 @@
 }
 
 .ag-toolbar-separator {
+    width: var(--ag-border-width);
     align-self: stretch;
-    width: 0;
-    margin: 0 var(--ag-spacing);
-    border-left: solid var(--ag-border-width) var(--ag-border-color);
+    background: var(--ag-border-color);
+    flex-shrink: 0;
+    margin: calc(var(--ag-spacing) * 2) calc(var(--ag-spacing) * 0.5);
 }
 
 .ag-toolbar-find {
     gap: calc(var(--ag-spacing) * 0.5);
     border: solid var(--ag-border-width) var(--ag-border-color);
     border-radius: var(--ag-border-radius);
-    width: 240px;
+    min-width: 240px;
 }
 
 .ag-toolbar-find:focus-within {
