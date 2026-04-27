@@ -6,8 +6,8 @@ import type {
     INotesFeature,
     Note,
     RowCtrl,
-    RowGui,
 } from 'ag-grid-community';
+import { _interpretAsRightClick, _isStopPropagationForAgGrid } from 'ag-grid-community';
 
 import { AgNotesPopup } from './agNotesPopup';
 import type { INotePopupOwner, INotesFeatureSupport, NoteTarget } from './notesShared';
