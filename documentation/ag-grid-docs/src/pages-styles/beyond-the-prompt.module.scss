@@ -1302,6 +1302,18 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     transform-origin: top;
 }
 
+// Per-row opt-out for solo-speaker cells that are already tall (e.g.
+// David Khourshid's row, which has a long description). Reverts the
+// portrait to the default flex layout + 1.4x scale so the heavy 2.4x
+// crop doesn't clip the head off the top and right edges.
+.agendaSpeakerImage:only-child.agendaSpeakerImageDefaultScale {
+    position: static;
+    top: auto;
+    right: auto;
+    transform: scale(1.4);
+    transform-origin: top right;
+}
+
 // Hover state. Gated on:
 //   1. `(hover: hover)` — touch devices would otherwise latch into the
 //      hover state on tap with no obvious way to undo it.

@@ -16,6 +16,10 @@ type AgendaItem = {
     speakers?: string;
     description?: string;
     isBreak?: boolean;
+    // Solo-speaker rows normally get a heavy 2.4x portrait on hover to fill
+    // the otherwise short cell. Set this on rows that are already tall (long
+    // description) where the heavy scale clips the head awkwardly.
+    keepDefaultPortraitScale?: boolean;
 };
 
 // The schedule is grouped into named blocks (Morning / Afternoon) so each
@@ -77,6 +81,7 @@ const AGENDA_SECTIONS: AgendaSection[] = [
                 speakers: 'David Khourshid',
                 description:
                     'Vibe coding feels productive until you have to maintain it. Behind the agent "thinking..." you ignore and the code you never opened lies a growing pile of wasted tokens, nondeterministic behavior, and compounding errors hiding in plain sight. This talk pushes back on the status quo: elaborate agent architectures, "prompting astrology", overnight automation loops burning through context windows and credit cards. Come for the critique, leave with a framework for using AI to build software you actually understand.',
+                keepDefaultPortraitScale: true,
             },
             { time: '10:40 – 11:10', title: 'Coffee break', isBreak: true },
             {
@@ -631,7 +636,11 @@ const VENUE_IMAGES: VenueImage[] = [
                                                                 <img
                                                                     src={urlWithBaseUrl(src)}
                                                                     alt=""
-                                                                    class={styles.agendaSpeakerImage}
+                                                                    class:list={[
+                                                                        styles.agendaSpeakerImage,
+                                                                        item.keepDefaultPortraitScale &&
+                                                                            styles.agendaSpeakerImageDefaultScale,
+                                                                    ]}
                                                                     loading="lazy"
                                                                 />
                                                             ))}
