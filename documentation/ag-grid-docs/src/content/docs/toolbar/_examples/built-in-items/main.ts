@@ -6,6 +6,7 @@ import {
     CsvExportModule,
     ModuleRegistry,
     NumberFilterModule,
+    QuickFilterModule,
     TextFilterModule,
     ValidationModule,
     createGrid,
@@ -28,6 +29,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     CsvExportModule,
     ExcelExportModule,
+    QuickFilterModule,
     FindModule,
     RowGroupingModule,
     RowGroupingPanelModule,
@@ -58,8 +60,8 @@ const gridOptions: GridOptions<IOlympicData> = {
         alignment: 'right',
         items: [
             { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'left' },
+            'agQuickFilterToolbarItem',
             'separator',
-            'agFindToolbarItem',
             {
                 key: 'autoSizeAll',
                 label: 'Auto Size All',
@@ -67,10 +69,10 @@ const gridOptions: GridOptions<IOlympicData> = {
                 action: (params) => params.api.autoSizeAllColumns(),
             },
             {
-                key: 'excelExport',
-                tooltip: 'Excel Export',
-                icon: 'excel',
-                action: (params) => params.api.exportDataAsExcel(),
+                key: 'resetColumns',
+                label: 'Reset Columns',
+                icon: 'columnMoveLeft',
+                action: (params) => params.api.resetColumnState(),
             },
             {
                 toolbarItem: 'agMenuToolbarItem',

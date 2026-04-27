@@ -6,11 +6,19 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     ColumnAutoSizeModule,
+    CsvExportModule,
     NumberFilterModule,
+    QuickFilterModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
+import {
+    ContextMenuModule,
+    ExcelExportModule,
+    RowGroupingModule,
+    RowGroupingPanelModule,
+    ToolbarModule,
+} from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 const modules = [
@@ -19,7 +27,10 @@ const modules = [
     ClientSideRowModelModule,
     ColumnApiModule,
     ColumnAutoSizeModule,
-    FindModule,
+    ContextMenuModule,
+    CsvExportModule,
+    ExcelExportModule,
+    QuickFilterModule,
     RowGroupingModule,
     RowGroupingPanelModule,
     ToolbarModule,
@@ -64,7 +75,8 @@ const GridExample = () => {
             alignment: 'right',
             items: [
                 { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'left' },
-                'agFindToolbarItem',
+                'agQuickFilterToolbarItem',
+                'separator',
                 {
                     key: 'autoSizeAll',
                     label: 'Auto Size All',
@@ -73,9 +85,17 @@ const GridExample = () => {
                 },
                 {
                     key: 'resetColumns',
-                    tooltip: 'Reset Columns',
-                    icon: 'minimize',
+                    label: 'Reset Columns',
+                    icon: 'columnMoveLeft',
                     action: (params) => params.api.resetColumnState(),
+                },
+                {
+                    toolbarItem: 'agMenuToolbarItem',
+                    toolbarItemParams: {
+                        label: 'Export',
+                        icon: 'save',
+                        menuItems: ['csvExport', 'excelExport'],
+                    },
                 },
             ],
         }),

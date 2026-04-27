@@ -2,6 +2,15 @@
     display: flex;
     align-items: center;
     overflow: hidden;
+    border-bottom: var(--ag-header-row-border);
+    min-height: var(--ag-header-height);
+    line-height: 1.5;
+    background-color: var(--ag-header-background-color);
+    color: var(--ag-header-text-color);
+    font-family: var(--ag-header-font-family);
+    font-size: var(--ag-header-font-size);
+    font-weight: var(--ag-header-font-weight);
+    white-space: nowrap;
 }
 
 .ag-toolbar-right-start {
@@ -27,11 +36,8 @@
 }
 
 .ag-toolbar-button:hover {
-    background-color: var(--ag-row-hover-color);
-}
-
-.ag-toolbar-button:active {
-    background-color: var(--ag-range-selection-background-color);
+    background-color: var(--ag-icon-button-hover-background-color);
+    color: var(--ag-icon-button-hover-color);
 }
 
 .ag-toolbar-button:focus-visible {
@@ -48,13 +54,21 @@
     display: inline-flex;
     flex: 1;
     min-width: 235px;
+    max-width: 300px;
+    padding: 0 calc(var(--ag-spacing) * 2);
 }
 
 .ag-toolbar-input {
     position: relative;
     display: inline-flex;
     align-items: center;
-    min-width: 140px;
+    min-width: 200px;
+    max-width: 250px;
+    margin: 0 calc(var(--ag-spacing) * 2);
+}
+
+:where(.ag-toolbar-input) + :where(.ag-toolbar-input) {
+    margin-inline-start: 0;
 }
 
 .ag-toolbar-input-icon {
@@ -99,7 +113,7 @@
 .ag-toolbar-separator {
     align-self: stretch;
     width: 0;
-    margin: calc(var(--ag-spacing) * 1.75) calc(var(--ag-spacing) * 0.5);
+    margin: calc(var(--ag-spacing) * 1.75) 0;
     border-left: solid var(--ag-border-width) var(--ag-border-color);
 }
 
@@ -107,7 +121,6 @@
     gap: calc(var(--ag-spacing) * 0.5);
     border: solid var(--ag-border-width) var(--ag-border-color);
     border-radius: var(--ag-border-radius);
-    min-width: 240px;
     width: 280px;
 }
 
@@ -115,24 +128,11 @@
     box-shadow: var(--ag-focus-shadow);
 }
 
-/*
- * Within the Find pill the icon renders as a flex sibling rather than an
- * absolute overlay, so the input's bounding rect does not span the icon.
- * This keeps the VoiceOver focus indicator aligned with the visible input.
- */
-:where(.ag-toolbar-find) .ag-toolbar-input-icon {
-    position: static;
-    padding-inline-start: var(--ag-spacing);
-}
-
 /* stylelint-disable-next-line no-descending-specificity */
 :where(.ag-toolbar-find) .ag-toolbar-input-field {
     border: 0;
     border-radius: 0;
-    padding-left: 0;
     padding-right: 0;
-    flex: 1;
-    min-width: 0;
 }
 
 :where(.ag-toolbar-find) .ag-toolbar-input-field:focus {
@@ -140,21 +140,14 @@
 }
 
 .ag-toolbar-find-match-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-end;
-    align-self: stretch;
     white-space: nowrap;
     font-size: var(--ag-font-size);
     color: var(--ag-text-color);
     opacity: 0.7;
     user-select: none;
     font-variant-numeric: tabular-nums;
-    cursor: text;
-}
-
-:where(.ag-toolbar-find-match-count):not(:empty) {
-    padding-inline-start: calc(var(--ag-spacing) * 0.5);
+    min-width: 11ch;
+    text-align: end;
 }
 
 .ag-toolbar-find-button {

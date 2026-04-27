@@ -7,15 +7,17 @@ test.agExample(import.meta, () => {
         const toolbar = page.locator('.ag-toolbar');
         await expect(toolbar).toBeVisible();
 
-        // rowGroupPanel + find + 2 action buttons + menu item as configured in main.ts
-        await expect(toolbar.locator('.ag-toolbar-item')).toHaveCount(5);
-        await expect(toolbar.locator('.ag-toolbar-panel')).toHaveCount(1);
-        await expect(toolbar.locator('.ag-toolbar-find')).toHaveCount(1);
-        await expect(toolbar.locator('.ag-toolbar-button')).toHaveCount(3);
-        // Separator between rowGroupPanel and find
-        await expect(toolbar.locator('.ag-toolbar-separator')).toHaveCount(1);
+        const toolbarItems = toolbar.locator(':scope > .ag-toolbar-item');
+        const toolbarButtons = toolbar.locator(':scope > .ag-toolbar-button');
+
+        await expect(toolbarItems).toHaveCount(5);
+        await expect(toolbar.locator(':scope > .ag-toolbar-panel')).toHaveCount(1);
+        await expect(toolbar.locator(':scope > .ag-toolbar-input')).toHaveCount(1);
+        await expect(toolbarButtons).toHaveCount(3);
+        // Separator between rowGroupPanel and the search input
+        await expect(toolbar.locator(':scope > .ag-toolbar-separator')).toHaveCount(1);
 
         // Action button invokes its configured callback
-        await toolbar.locator('.ag-toolbar-button', { hasText: 'Auto Size All' }).click();
+        await toolbarButtons.filter({ hasText: 'Auto Size All' }).click();
     });
 });
