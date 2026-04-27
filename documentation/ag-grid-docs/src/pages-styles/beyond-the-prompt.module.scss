@@ -27,7 +27,12 @@ $btp-card: #ffffff;
 
     background: var(--btp-bg);
     color: var(--btp-ink);
-    font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-family:
+        'Geist',
+        system-ui,
+        -apple-system,
+        'Segoe UI',
+        sans-serif;
     font-feature-settings: 'cv11', 'ss01';
     line-height: 1.55;
     min-height: 100vh;
@@ -44,7 +49,12 @@ $btp-card: #ffffff;
     h2,
     h3,
     h4 {
-        font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        font-family:
+            'Geist',
+            system-ui,
+            -apple-system,
+            'Segoe UI',
+            sans-serif;
         font-weight: 600;
         letter-spacing: -0.02em;
         color: var(--btp-ink);
@@ -92,7 +102,7 @@ $btp-card: #ffffff;
 // ─── Layout primitives ───────────────────────────────────────────────────────
 .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1320px;
     margin: 0 auto;
     padding-left: 24px;
     padding-right: 24px;
@@ -113,6 +123,14 @@ $btp-card: #ffffff;
     @media (min-width: 900px) {
         padding: 72px 0 96px;
     }
+
+    // Page-scoped widening: only the hero's container gets the extra room so
+    // the logomark and the speaker portraits can spread out comfortably across
+    // wide screens. All other sections keep the standard 1320px page width.
+    // Both classes live in this CSS module so the selector is hashed locally.
+    .container {
+        max-width: 1480px;
+    }
 }
 
 .heroInner {
@@ -120,10 +138,20 @@ $btp-card: #ffffff;
     flex-direction: column;
     gap: 48px;
 
+    // The first hero face (Maggie) is rendered at `scale(1.3)` with
+    // `transform-origin: top right`, so its rendered box overflows ~30% of
+    // its column-width to the LEFT, into the corridor between this flex
+    // column and the heroContent text. We need this gap to be wider than
+    // that overflow so the text never sits beneath the SVG. 64–96px clears
+    // it comfortably on every desktop width.
     @media (min-width: 900px) {
         flex-direction: row;
         align-items: center;
-        gap: 32px;
+        gap: 64px;
+    }
+
+    @media (min-width: 1200px) {
+        gap: 96px;
     }
 }
 
@@ -147,9 +175,15 @@ $btp-card: #ffffff;
     margin-bottom: 8px;
 }
 
+// Recolour brand logos to match the page's brand orange (#f43800).
+// Filter chain via https://codepen.io/sosuke/pen/Pjoqqp.
+$btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) saturate(3924%) hue-rotate(7deg)
+    brightness(99%) contrast(108%);
+
 .heroLogoAg {
     height: 28px;
     width: auto;
+    filter: $btp-logo-orange-filter;
 }
 
 .heroLogoX {
@@ -162,24 +196,48 @@ $btp-card: #ffffff;
 .heroLogoBryntum {
     height: 22px;
     width: auto;
-    // Bryntum master asset is white; invert it for the light page.
-    filter: invert(1);
+    filter: $btp-logo-orange-filter;
 }
 
-.heroTitle {
-    font-size: clamp(48px, 7vw, 96px);
-    line-height: 0.95;
-    letter-spacing: -0.035em;
-    font-weight: 600;
-    color: var(--btp-ink);
+// The hero title is rendered as an SVG logomark wrapped in an <h1> for SEO/a11y.
+// We zero out the typographic chrome that would otherwise add space around the
+// inline image, and let `.heroTitleLogo` control the visual size.
+.page .heroTitle {
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+    color: inherit;
 }
 
-.heroTagline {
+.heroTitleLogo {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+
+    @media (min-width: 900px) {
+        max-width: 480px;
+    }
+}
+
+// Nested under `.page` so the weight wins over the generic `.page h2` reset.
+.page .heroTagline {
+    font-family:
+        'Geist',
+        system-ui,
+        -apple-system,
+        'Segoe UI',
+        sans-serif;
     font-size: clamp(18px, 1.6vw, 22px);
     line-height: 1.4;
     font-weight: 400;
+    letter-spacing: -0.005em;
     color: var(--btp-ink-muted);
-    max-width: 30ch;
+    max-width: 42ch;
+}
+
+.noWrap {
+    white-space: nowrap;
 }
 
 .heroMeta {
@@ -213,16 +271,20 @@ $btp-card: #ffffff;
 }
 
 // ─── Hero faces (right side) ─────────────────────────────────────────────────
+// Three same-sized portraits laid out with a clear gap. They share a single
+// `max-height` so the heads read at a uniform scale; the only variation is
+// vertical start position — the middle slot drops down a touch to create a
+// gentle zigzag (up / down / up) rather than a flat baseline.
 .heroFaces {
     flex: 1 1 50%;
     position: relative;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    align-items: end;
+    gap: 16px;
+    align-items: start;
 
     @media (min-width: 900px) {
-        gap: 4px;
+        gap: 28px;
     }
 }
 
@@ -231,42 +293,72 @@ $btp-card: #ffffff;
     height: auto;
     display: block;
     object-fit: contain;
-    object-position: bottom;
+    object-position: top;
     filter: drop-shadow(0 12px 24px rgba(244, 56, 0, 0.08));
     transition: transform 0.4s ease;
 
     &:hover {
         transform: translateY(-4px);
     }
+}
 
-    // Stagger the heights for visual rhythm
-    &:nth-child(1) {
-        max-height: 220px;
+// Per-face calibration. The three SVG canvases were exported at very
+// different head-to-frame ratios:
+//   • Maggie  (322 × 361) — head + shoulders, head only ~40% of canvas
+//   • Mats    (193 × 352) — head-only crop, head ~75% of canvas
+//   • John    (232 × 388) — head-only crop, head ~75% of canvas
+// A single `max-height` therefore renders the heads at very different
+// visible scales. To equalise:
+//   1. Give all three the same `max-height` budget for a consistent baseline.
+//   2. Up-scale Maggie via `transform: scale()` to compensate for her
+//      surrounding whitespace (the parent `.heroFaces` has no overflow
+//      clipping so the visual overflow into adjacent columns is fine).
+//   3. Drop the middle face down to create the alternating zigzag.
 
-        @media (min-width: 900px) {
-            max-height: 320px;
-        }
+.heroFace:nth-child(1) {
+    max-height: 220px;
+    // Origin `top right` means Maggie scales leftward into the gap between
+    // the hero copy and the faces grid, instead of rightward into Mats's
+    // column where she'd otherwise occlude him.
+    transform: scale(1.3);
+    transform-origin: top right;
+
+    @media (min-width: 900px) {
+        max-height: 260px;
     }
 
-    &:nth-child(2) {
-        max-height: 280px;
-        transform: translateY(-12px);
+    &:hover {
+        transform: scale(1.3) translateY(-4px);
+    }
+}
 
-        @media (min-width: 900px) {
-            max-height: 400px;
-        }
+.heroFace:nth-child(2) {
+    max-height: 220px;
+    transform: translateY(56px);
 
-        &:hover {
-            transform: translateY(-16px);
-        }
+    @media (min-width: 900px) {
+        max-height: 260px;
+        transform: translateY(84px);
     }
 
-    &:nth-child(3) {
-        max-height: 240px;
+    &:hover {
+        transform: translateY(52px);
 
         @media (min-width: 900px) {
-            max-height: 360px;
+            transform: translateY(80px);
         }
+    }
+}
+
+.heroFace:nth-child(3) {
+    max-height: 220px;
+
+    @media (min-width: 900px) {
+        max-height: 260px;
+    }
+
+    &:hover {
+        transform: translateY(-4px);
     }
 }
 
@@ -358,17 +450,80 @@ $btp-card: #ffffff;
     }
 }
 
+// ─── Roll-up text animation ──────────────────────────────────────────────────
+// Wraps a button label in two stacked copies of the same text. On hover both
+// layers translate up by exactly one row with a per-character stagger so the
+// front text rolls out the top while an identical copy rolls in from below —
+// the classic editorial-style "filmstrip" hover.
+.btnRoll {
+    position: relative;
+    display: inline-flex;
+    overflow: hidden;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.btnRollLayer {
+    display: inline-flex;
+}
+
+// Stack the second layer directly on top of the first so the two rows occupy
+// the same horizontal slot; the per-char `translateY(100%)` below pushes its
+// glyphs out of the visible row, ready to roll up on hover.
+.btnRollLayer + .btnRollLayer {
+    position: absolute;
+    inset: 0;
+}
+
+.btnRollChar {
+    display: inline-block;
+    transition: transform 0.45s cubic-bezier(0.7, 0, 0.2, 1);
+    transition-delay: calc(var(--btn-roll-i, 0) * 22ms);
+    will-change: transform;
+}
+
+// Back layer starts one row below the visible area.
+.btnRollLayer + .btnRollLayer .btnRollChar {
+    transform: translateY(100%);
+}
+
+// On hover the whole filmstrip advances by exactly one row, in both
+// directions, so unhover plays the animation in reverse for free.
+.btn:hover .btnRollLayer:first-child .btnRollChar,
+.btn:focus-visible .btnRollLayer:first-child .btnRollChar {
+    transform: translateY(-100%);
+}
+
+.btn:hover .btnRollLayer + .btnRollLayer .btnRollChar,
+.btn:focus-visible .btnRollLayer + .btnRollLayer .btnRollChar {
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btnRollChar {
+        transition: none;
+    }
+}
+
 // ─── Section nav ─────────────────────────────────────────────────────────────
+// Full-width jump nav. Lives outside `.container` in the markup (matching the
+// `.sectionRule` blocks) so the top/bottom rules span the viewport edge to
+// edge. Padding/spacing is kept in sync with `.sectionRule` so the rhythm of
+// horizontal lines down the page reads as one consistent system.
 .sectionNav {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: 24px;
-    padding: 24px 0;
+    padding: 18px 0;
     border-top: 1px solid var(--btp-border);
     border-bottom: 1px solid var(--btp-border);
     margin-bottom: 80px;
+
+    @media (min-width: 900px) {
+        padding: 22px 0;
+    }
 
     a {
         font-family: 'Geist Mono', ui-monospace, monospace;
@@ -403,17 +558,57 @@ $btp-card: #ffffff;
     max-width: 720px;
 }
 
-.sectionTitle {
-    font-size: clamp(32px, 4vw, 48px);
+// Nested under `.page` to win specificity over the generic `.page h2` reset.
+.page .sectionTitle {
+    font-size: 56px;
     line-height: 1.05;
     letter-spacing: -0.025em;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .sectionLead {
     font-size: 18px;
     line-height: 1.55;
     color: var(--btp-ink-muted);
+    max-width: 720px;
+}
+
+// ─── Full-width section title rule ───────────────────────────────────────────
+// Editorial banner that replaces the large `.sectionTitle` heading on the
+// At a glance / Speakers / Full schedule / The venue sections. Top + bottom
+// borders span the full viewport width; the label uses Geist Mono uppercase
+// to echo the section nav at the top of the page.
+.sectionRule {
+    border-top: 1px solid var(--btp-border);
+    border-bottom: 1px solid var(--btp-border);
+    padding: 18px 0;
+    margin-bottom: 48px;
+
+    @media (min-width: 900px) {
+        padding: 22px 0;
+        margin-bottom: 64px;
+    }
+}
+
+.page .sectionRuleTitle {
+    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--btp-ink);
+    text-align: center;
+    margin: 0;
+}
+
+// When a `.sectionLead` follows the full-width rule, it lives inside the
+// container directly and needs its own bottom spacing before the section grid.
+.sectionLead + * {
+    margin-top: 32px;
+
+    @media (min-width: 900px) {
+        margin-top: 48px;
+    }
 }
 
 // ─── Intro ───────────────────────────────────────────────────────────────────
@@ -521,16 +716,16 @@ $btp-card: #ffffff;
     gap: 12px;
 }
 
+// Fixed-size portrait box — every speaker gets the same 250×312 frame
+// (4:5 ratio) so the row reads at a consistent rhythm regardless of how
+// the underlying SVG was cropped. The image fills the box top-to-bottom
+// via `object-fit: cover`, anchored to the top so faces are never clipped.
 .speakerImageWrap {
     position: relative;
+    width: 250px;
     aspect-ratio: 4 / 5;
-    width: 100%;
-    overflow: hidden;
     border-radius: 12px;
-    background: var(--btp-bg-alt);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
+    overflow: hidden;
 }
 
 .speakerImage {
@@ -541,13 +736,14 @@ $btp-card: #ffffff;
     display: block;
 }
 
-.speakerSvg {
-    width: 90%;
-    height: 100%;
+// Mats and John have unusually narrow/tall SVG viewBoxes (~0.55 / 0.60
+// aspect ratio vs. the 0.8 portrait box). With the default `cover` rule
+// above, the bottom ~140px of their figure clips off the frame. Switching
+// to `contain` and anchoring to the bottom keeps the whole figure visible
+// while maintaining a matching baseline with the other portraits.
+.speakerImageContain {
     object-fit: contain;
-    object-position: bottom center;
-    display: block;
-    padding-top: 16px;
+    object-position: center bottom;
 }
 
 .speakerName {
@@ -592,16 +788,56 @@ $btp-card: #ffffff;
     composes: section;
 }
 
+// Each Morning / Afternoon block is its own white card with hard corners.
+// The section label sits inside the card as a banner, sharing the same hairline
+// border that separates the rows below it, so the whole thing reads as one
+// continuous slab rather than a card with a floating header above it.
 .agenda {
     border: 1px solid var(--btp-border);
-    border-radius: 16px;
     overflow: hidden;
     background: var(--btp-card);
+
+    // When two agenda cards stack (Morning then Afternoon), give them a small
+    // breathing gap so the borders don't double-up into a heavy 2px line.
+    & + & {
+        margin-top: 24px;
+    }
 }
 
+.agendaSectionHeader {
+    border-bottom: 1px solid var(--btp-border);
+    padding: 18px 0;
+
+    @media (min-width: 900px) {
+        padding: 22px 0;
+    }
+}
+
+.page .agendaSectionLabel {
+    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--btp-ink);
+    text-align: center;
+    margin: 0;
+}
+
+.agendaList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+// Three-column flex layout per row: [time] [title + speakers] [description].
+// On mobile the columns stack in document order. On ≥720px the row becomes a
+// flex row, with the time pinned at 160px and the body / description sharing
+// the remaining width 50/50. When a row has no description (e.g. "Welcome",
+// "Coffee break"), the body simply fills the post-time area.
 .agendaRow {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 4px;
     padding: 24px;
     border-bottom: 1px solid var(--btp-border);
@@ -611,15 +847,14 @@ $btp-card: #ffffff;
     }
 
     @media (min-width: 720px) {
-        grid-template-columns: 160px 1fr;
+        flex-direction: row;
+        align-items: flex-start;
         gap: 32px;
         padding: 28px 32px;
     }
 }
 
 .agendaBreak {
-    background: var(--btp-bg-alt);
-
     .agendaTitle {
         font-weight: 500;
         color: var(--btp-ink-muted);
@@ -633,12 +868,21 @@ $btp-card: #ffffff;
     letter-spacing: 0.05em;
     color: var(--btp-orange);
     font-variant-numeric: tabular-nums;
+
+    @media (min-width: 720px) {
+        flex: 0 0 160px;
+    }
 }
 
 .agendaBody {
     display: flex;
     flex-direction: column;
     gap: 6px;
+
+    @media (min-width: 720px) {
+        flex: 1 1 0;
+        min-width: 0;
+    }
 }
 
 .agendaTitle {
@@ -662,7 +906,11 @@ $btp-card: #ffffff;
     font-size: 15px;
     line-height: 1.55;
     color: var(--btp-ink-muted);
-    margin-top: 4px;
+
+    @media (min-width: 720px) {
+        flex: 1 1 0;
+        min-width: 0;
+    }
 }
 
 // ─── Venue ───────────────────────────────────────────────────────────────────
@@ -670,50 +918,37 @@ $btp-card: #ffffff;
     composes: section;
 }
 
+// Single hero image of the venue. No card chrome — we want the line drawing
+// to read as a piece of editorial illustration sitting directly on the page.
 .venueGrid {
-    display: grid;
-    gap: 16px;
-    grid-template-columns: 1fr;
-
-    @media (min-width: 720px) {
-        grid-template-columns: 2fr 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
-
-        figure:first-child {
-            grid-row: span 2;
-        }
-    }
+    display: flex;
+    justify-content: center;
 }
 
 .venueSlide {
     position: relative;
     margin: 0;
-    overflow: hidden;
-    border-radius: 12px;
-    background: var(--btp-bg-alt);
-    aspect-ratio: 4 / 3;
+    width: 100%;
+    max-width: 960px;
 }
 
 .venueImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
     display: block;
+    width: 100%;
+    height: auto;
 }
 
-.venueCaption {
-    position: absolute;
-    left: 16px;
-    bottom: 16px;
-    padding: 6px 12px;
-    background: rgba(255, 255, 255, 0.92);
-    border-radius: 999px;
-    font-family: 'Geist Mono', ui-monospace, monospace;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--btp-ink);
+// The "IET London" CTA sits directly under the illustration and links out to
+// Google Maps. Centred and given breathing room so it reads as a deliberate
+// closing beat for the section rather than a footer afterthought.
+.venueCta {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+
+    @media (min-width: 900px) {
+        margin-top: 40px;
+    }
 }
 
 // ─── Final CTA ───────────────────────────────────────────────────────────────
