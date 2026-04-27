@@ -10,9 +10,8 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 const MAILTO_HREF = 'mailto:info@ag-grid.com?subject=Beyond the Prompt enquiry';
 const BOOK_TICKETS_HREF = 'https://maglo.co.uk/event/ag-grid/ag-grid-bryntum';
 const VENUE_MAP_HREF = 'https://maps.app.goo.gl/GRcWV6LPBoXJwDLu6';
-
-// Hero background (full-bleed venue photo with brand-colour overlay)
 const HERO_BG_URL = urlWithBaseUrl('images/campaigns/beyond-the-prompt/iet-savoy.webp');
+const SOCIAL_IMAGE_URL = urlWithBaseUrl('images/campaigns/beyond-the-prompt/social-card.png');
 
 type AgendaItem = {
     time: string;
@@ -216,6 +215,7 @@ const VENUE_IMAGES: VenueImage[] = [
     showDocsNav={false}
     showSearchBar={true}
     hidePageFromSearchEngines={true}
+    overrideSocialImage={SOCIAL_IMAGE_URL}
 >
     <div class:list={[styles.homepageHero, pageStyles.hero]} style={`--hero-bg-image: url('${HERO_BG_URL}')`}>
         <div class:list={[styles.heroInner, 'layout-max-width-small']}>
