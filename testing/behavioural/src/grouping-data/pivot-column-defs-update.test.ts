@@ -40,9 +40,6 @@ describe('pivot column identity across columnDefs updates', () => {
             field: col.getColDef().field,
         }));
 
-    // Baseline pivot grid output for `baseColumnDefs` + `olympicLikeRows`. Reused
-    // across tests since the round-trip / context update / direct mutation never
-    // changes the rendered tree — only the colDef contents.
     const checkDefaultRows = (api: ReturnType<typeof gridsManager.createGrid>, label: string) =>
         new GridRows(api, label).check(`
             ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
@@ -88,15 +85,10 @@ describe('pivot column identity across columnDefs updates', () => {
         const beforeIds = snapshotCols(api.getPivotResultColumns());
         expect(beforeIds.length).toBeGreaterThan(0);
 
-        // Sanity: every pivot result colDef.field must equal its colId so that the
-        // default valueGetter (which reads `params.data[params.colDef.field]`) finds
-        // values keyed by colId.
         for (const { colId, field } of beforeIds) {
             expect(field).toBe(colId);
         }
 
-        // Round-trip the same columnDefs reference. This re-fires colDefChanged on
-        // primary cols, which triggers recreateColDef on every pivot result col.
         api.setGridOption('columnDefs', baseColumnDefs);
 
         const afterIds = snapshotCols(api.getPivotResultColumns());
@@ -111,9 +103,6 @@ describe('pivot column identity across columnDefs updates', () => {
     });
 
     test('setGridOption(columnDefs) preserves pivot total result colIds and field/colId consistency', async () => {
-        // addExpandablePivotGroups creates "Total" cols with pivotTotalColumnIds set
-        // but totalColumn=false. recreateColDef previously used !!pivotTotalColumnIds
-        // to flip totalColumn=true on regeneration, breaking field consistency.
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: baseColumnDefs,
             pivotMode: true,
@@ -262,12 +251,6 @@ describe('pivot column identity across columnDefs updates', () => {
     });
 
     test('custom properties attached directly to a pivot result colDef are NOT preserved across recreate', async () => {
-        // recreateColDef rebuilds the pivot result colDef from the value column's
-        // colDef and only carries over a fixed set of fields (colId, field,
-        // valueGetter, aggFunc, pivotTotalColumnIds, columnGroupShow). Custom
-        // properties added by directly mutating the pivot result colDef are lost.
-        // To attach persistent metadata, attach it to the value col's colDef
-        // (Object.assign carries it through) or use processPivotResultColDef.
         type ColDefWithCustom = ColDef & { myCustomProp?: string };
 
         const api = gridsManager.createGrid('myGrid', {
@@ -293,5 +276,33 @@ describe('pivot column identity across columnDefs updates', () => {
 
         await checkDefaultRows(api, 'rows after mutation');
         await checkDefaultCols(api, 'cols after mutation');
+    });
+
+    test('in-place mutation of a value column colDef propagates to pivot result colDefs', async () => {
+        const liveDefs: ColDef[] = [
+            { field: 'country', rowGroup: true },
+            { field: 'sport', pivot: true },
+            { field: 'year', pivot: true },
+            { field: 'gold', aggFunc: 'sum', headerName: 'Gold' },
+        ];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: liveDefs,
+            pivotMode: true,
+            groupDefaultExpanded: -1,
+            pivotDefaultExpanded: -1,
+        });
+        applyTransactionChecked(api, { add: olympicLikeRows });
+
+        for (const col of api.getPivotResultColumns() ?? []) {
+            expect(col.getColDef().headerName).toBe('Gold');
+        }
+
+        liveDefs[3].headerName = 'Gold Medals';
+        api.setGridOption('columnDefs', liveDefs);
+
+        for (const col of api.getPivotResultColumns() ?? []) {
+            expect(col.getColDef().headerName).toBe('Gold Medals');
+        }
     });
 });
