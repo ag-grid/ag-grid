@@ -1,38 +1,65 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
-
 ignore:
-    SNYK-JS-BRACEEXPANSION-15789759:
-        - glob@8.0.3 > minimatch@5.1.6 > brace-expansion@2.0.2:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-27T11:48:29.529Z
-        - '@nx/devkit@17.2.6 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.0.2':
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-27T11:48:29.075Z
-    SNYK-JS-MINIMATCH-15353389:
-        - '@nx/devkit@17.2.6 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-02T10:14:06.159Z
-        - glob@8.0.3 > minimatch@5.1.6:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-02T10:14:06.157Z
-    SNYK-JS-MINIMATCH-15309438:
-        - '@nx/devkit@17.2.6 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-02T09:16:09.215Z
-        - glob@8.0.3 > minimatch@5.1.6:
-              reason: >-
-                  Used in build & dev - not included in final production build
-              expires: 2026-06-08T00:00:00.000Z
-              created: 2026-03-02T09:16:09.209Z
+  SNYK-JS-BRACEEXPANSION-15789759:
+    - glob@8.0.3 > minimatch@5.1.6 > brace-expansion@2.0.2:
+        reason: Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-03-27T11:48:29.529Z
+    - '@nx/devkit@20.8.4 > minimatch@9.0.3 > brace-expansion@2.0.2':
+        reason: Not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T12:12:51.000Z
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.0.2':
+        reason: Not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T12:12:51.000Z
+  SNYK-JS-MINIMATCH-15353389:
+    - glob@8.0.3 > minimatch@5.1.6:
+        reason: Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-03-02T10:14:06.157Z
+    - "@nx/devkit@20.8.4 > minimatch@9.0.3":
+        reason: Used in build & dev - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T11:46:21.570Z
+    - glob@11.1.0 > minimatch@10.1.1:
+        reason: Used in build & dev - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T11:46:21.570Z
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+        reason: Build dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T12:12:51.000Z
+  SNYK-JS-MINIMATCH-15309438:
+    - glob@8.0.3 > minimatch@5.1.6:
+        reason: Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-03-02T09:16:09.209Z
+    - "@nx/devkit@20.8.4 > minimatch@9.0.3":
+        reason: Used in build & dev - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T11:46:21.570Z
+    - glob@11.1.0 > minimatch@10.1.1:
+        reason: Used in build & dev - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T11:46:21.570Z
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6':
+        reason: Build dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T12:12:51.000Z
+  SNYK-JS-MINIMATCH-15353387:
+    - "@nx/devkit@20.8.4 > minimatch@9.0.3":
+        reason: Used in build & dev - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T11:46:21.570Z
+    - glob@11.1.0 > minimatch@10.1.1:
+        reason: Used in build & dev - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T11:46:21.570Z
+  SNYK-JS-ISAACSBRACEEXPANSION-15208653:
+    - 'glob@11.1.0 > minimatch@10.1.1 > @isaacs/brace-expansion@5.0.0':
+        reason: Not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T12:12:51.000Z
 patch: {}
