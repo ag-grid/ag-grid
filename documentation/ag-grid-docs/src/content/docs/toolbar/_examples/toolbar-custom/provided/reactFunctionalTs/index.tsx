@@ -96,21 +96,9 @@ const GridExample = () => {
                     },
                 },
                 {
-                    key: 'excelExport',
-                    alignment: 'left',
-                    label: 'Excel Export',
-                    icon: 'excelExport',
-                    action: ({ api }: ToolbarItemActionParams) => api.exportDataAsExcel(),
-                },
-                {
-                    key: 'autoSizeAll',
-                    tooltip: 'Auto Size All',
-                    icon: 'maximize',
-                    action: ({ api }: ToolbarItemActionParams) => api.autoSizeAllColumns(),
-                },
-                {
                     toolbarItem: CustomToolbarToggle,
                     key: 'columnsPanel',
+                    alignment: 'left',
                     toolbarItemParams: {
                         title: 'Columns Panel',
                         icon: 'columns',
@@ -120,6 +108,17 @@ const GridExample = () => {
                                 ? api.closeToolPanel()
                                 : api.openToolPanel('columns'),
                     },
+                },
+                {
+                    key: 'excelExport',
+                    icon: 'excelExport',
+                    action: ({ api }: ToolbarItemActionParams) => api.exportDataAsExcel(),
+                },
+                {
+                    key: 'autoSizeAll',
+                    tooltip: 'Auto Size All',
+                    icon: 'maximize',
+                    action: ({ api }: ToolbarItemActionParams) => api.autoSizeAllColumns(),
                 },
                 {
                     key: 'csvExport',

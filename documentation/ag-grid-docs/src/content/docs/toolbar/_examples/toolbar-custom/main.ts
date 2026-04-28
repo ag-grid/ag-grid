@@ -66,21 +66,9 @@ const gridOptions: GridOptions<IOlympicData> = {
                 },
             },
             {
-                key: 'excelExport',
-                alignment: 'left',
-                action: ({ api }: ToolbarItemActionParams) => api.exportDataAsExcel(),
-                label: 'Excel Export',
-                icon: 'excelExport',
-            },
-            {
-                key: 'autoSizeAll',
-                action: ({ api }: ToolbarItemActionParams) => api.autoSizeAllColumns(),
-                tooltip: 'Auto Size All',
-                icon: 'maximize',
-            },
-            {
                 toolbarItem: CustomToolbarToggle,
                 key: 'columnsPanel',
+                alignment: 'left',
                 toolbarItemParams: {
                     title: 'Columns Panel',
                     icon: 'columns',
@@ -88,6 +76,17 @@ const gridOptions: GridOptions<IOlympicData> = {
                     onClick: (api: GridApi) =>
                         api.getOpenedToolPanel() === 'columns' ? api.closeToolPanel() : api.openToolPanel('columns'),
                 },
+            },
+            {
+                key: 'excelExport',
+                action: ({ api }: ToolbarItemActionParams) => api.exportDataAsExcel(),
+                icon: 'excelExport',
+            },
+            {
+                key: 'autoSizeAll',
+                action: ({ api }: ToolbarItemActionParams) => api.autoSizeAllColumns(),
+                tooltip: 'Auto Size All',
+                icon: 'maximize',
             },
             {
                 key: 'csvExport',
