@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "deny": [
-      "Read(.env.local)",
-      "Read(credentials/)"
-    ]
-  }
-}
