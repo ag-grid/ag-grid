@@ -22,6 +22,10 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
     protected readonly eEditor: GridInputTextArea = RefPlaceholder;
     private focusAfterAttached: boolean;
     private highlightAllOnFocus: boolean;
+    /** Last raw input passed to `params.parseValue`. Initialised to `this` as an "uncached" sentinel — a DOM raw value can never equal the editor instance, so the first cache check always misses. */
+    private cachedRaw: unknown = this;
+    /** Memoised parse result for `cachedRaw`. Returned by `getValue()` when the raw input is unchanged across repeated validation/sync passes within an edit session. */
+    private cachedParsed: any;
 
     constructor() {
         super(LargeTextCellElement, [AgInputTextAreaSelector]);
@@ -120,7 +124,13 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         if (!_exists(editorValue) && !_exists(value)) {
             return value;
         }
-        return params.parseValue(editorValue!);
+        if (Object.is(this.cachedRaw, editorValue)) {
+            return this.cachedParsed;
+        }
+        const parsed = params.parseValue(editorValue!);
+        this.cachedRaw = editorValue;
+        this.cachedParsed = parsed;
+        return parsed;
     }
 
     public getValidationElement(): HTMLElement | HTMLInputElement {

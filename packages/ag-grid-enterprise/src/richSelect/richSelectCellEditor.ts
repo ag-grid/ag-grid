@@ -25,6 +25,10 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     protected eEditor: AgRichSelect<TValue>;
     private pendingInitialEventKey: string | null = null;
     private initialEventKeyProcessed = false;
+    /** Last raw input passed to `params.parseValue`. Initialised to `this` as an "uncached" sentinel — a DOM raw value can never equal the editor instance, so the first cache check always misses. */
+    private cachedRaw: unknown = this;
+    /** Memoised parse result for `cachedRaw`. Returned by `getValue()` when the raw input is unchanged across repeated validation/sync passes within an edit session. */
+    private cachedParsed: any;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
@@ -417,10 +421,14 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     }
 
     public getValue(): any {
-        const { params } = this;
         const value = this.eEditor.getValue();
-
-        return params.parseValue?.(value) ?? value;
+        if (Object.is(this.cachedRaw, value)) {
+            return this.cachedParsed;
+        }
+        const parsed = this.params.parseValue?.(value) ?? value;
+        this.cachedRaw = value;
+        this.cachedParsed = parsed;
+        return parsed;
     }
 
     public override isPopup(): boolean {
