@@ -11,17 +11,16 @@ import { TestGridsManager } from '../test-utils';
  */
 class RatioResult implements IAggFuncResult<number> {
     constructor(
-        readonly value: number,
         readonly gold: number,
         readonly silver: number
     ) {}
 
     toNumber() {
-        return this.value;
+        return this.gold / this.silver;
     }
 
     toString() {
-        return Number.isFinite(this.value) ? this.value.toFixed(2) : '';
+        return this.silver ? this.toNumber().toFixed(2) : '';
     }
 }
 
@@ -36,10 +35,10 @@ interface MedalRow {
 function leafRatioValueGetter(params: ValueGetterParams<MedalRow>): RatioResult | undefined {
     if (!params.data) return undefined;
     const { gold, silver } = params.data;
-    return new RatioResult(gold / silver, gold, silver);
+    return new RatioResult(gold, silver);
 }
 
-function ratioAggFunc(params: IAggFuncParams<MedalRow>): RatioResult | null {
+function ratioAggFunc(params: IAggFuncParams<MedalRow>): RatioResult {
     let gold = 0;
     let silver = 0;
     for (const child of params.aggregatedChildren) {
@@ -49,7 +48,7 @@ function ratioAggFunc(params: IAggFuncParams<MedalRow>): RatioResult | null {
             silver += ratio.silver;
         }
     }
-    return silver ? new RatioResult(gold / silver, gold, silver) : null;
+    return new RatioResult(gold, silver);
 }
 
 function findGroupRow(api: GridApi, key: string): IRowNode {
@@ -98,17 +97,61 @@ describe('ratio-of-sums aggregation via IAggFuncResult wrapper', () => {
         expect(year2000).toBeInstanceOf(RatioResult);
         expect(year2000.gold).toBe(4);
         expect(year2000.silver).toBe(2);
-        expect(year2000.value).toBe(2);
+        expect(year2000.toNumber()).toBe(2);
         expect(year2004.gold).toBe(6);
         expect(year2004.silver).toBe(2);
-        expect(year2004.value).toBe(3);
+        expect(year2004.toNumber()).toBe(3);
 
         // Country-level sums the year wrappers (not the year ratios).
         const ireland = findGroupRow(api, 'Ireland').aggData?.goldSilverRatio;
         expect(ireland.gold).toBe(10);
         expect(ireland.silver).toBe(4);
-        expect(ireland.value).toBe(2.5);
         expect(ireland.toNumber()).toBe(2.5);
         expect(ireland.toString()).toBe('2.50');
+    });
+
+    test('child group with zero silver still contributes its gold to the parent total', () => {
+        const api = gridsManager.createGrid('ratio-zero-silver-child', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                {
+                    headerName: 'Gold to Silver',
+                    colId: 'goldSilverRatio',
+                    aggFunc: 'ratio',
+                    valueGetter: leafRatioValueGetter,
+                },
+            ],
+            aggFuncs: { ratio: ratioAggFunc },
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+            rowData: [
+                // 2000: gold-only — every child's silver is 0.
+                { id: '1', country: 'Ireland', year: 2000, gold: 5, silver: 0 },
+                { id: '2', country: 'Ireland', year: 2000, gold: 2, silver: 0 },
+                // 2004: has silver. Country-level rollup must combine both years.
+                { id: '3', country: 'Ireland', year: 2004, gold: 0, silver: 5 },
+            ] satisfies MedalRow[],
+        });
+
+        const year2000 = findGroupRow(api, '2000').aggData?.goldSilverRatio;
+        expect(year2000).toBeInstanceOf(RatioResult);
+        expect(year2000.gold).toBe(7);
+        expect(year2000.silver).toBe(0);
+        expect(Number.isFinite(year2000.toNumber())).toBe(false);
+        expect(year2000.toString()).toBe('');
+
+        const year2004 = findGroupRow(api, '2004').aggData?.goldSilverRatio;
+        expect(year2004.gold).toBe(0);
+        expect(year2004.silver).toBe(5);
+        expect(year2004.toNumber()).toBe(0);
+
+        // Parent sums both years' gold and silver — would have been 0/5 if the zero-silver
+        // year had returned null instead of a RatioResult.
+        const ireland = findGroupRow(api, 'Ireland').aggData?.goldSilverRatio;
+        expect(ireland).toBeInstanceOf(RatioResult);
+        expect(ireland.gold).toBe(7);
+        expect(ireland.silver).toBe(5);
+        expect(ireland.toNumber()).toBe(7 / 5);
     });
 });

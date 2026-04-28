@@ -68,12 +68,10 @@ above the leaves.
 
 The fix is to return an [`IAggFuncResult`](./row-object/#reference-data-getDataValue) that carries
 any auxiliary fields the parent needs to recompute. Sub-group children expose the wrapper to the
-parent via `getDataValue(colKey, 'data')`; leaf children expose their raw value via the same call.
+parent via `getDataValue(colKey, 'data')`; leaf children expose their value via the same call — a primitive when the column reads from a `field`, or a wrapper when a `valueGetter` returns one.
 Every child reads the same way at every level.
 
-A class is a natural fit: `toNumber` and `toString` live on the prototype, and `instanceof` (or a
-`typeof` check for leaves) makes it trivial to tell a sub-group's wrapper apart from a leaf's raw
-number.
+A class is a natural fit: `toNumber` and `toString` live on the prototype, and `instanceof` (paired with a `typeof` check when leaves expose a primitive) makes it trivial to identify a wrapper.
 
 {% gridExampleRunner title="Multiple Group Levels" name="multi-group-levels" /%}
 
@@ -124,25 +122,24 @@ also gives the leaf cells something to display, and reduces the aggFunc to a sin
 ```ts
 class RatioResult implements IAggFuncResult<number> {
     constructor(
-        readonly value: number,
         readonly gold: number,
         readonly silver: number,
     ) {}
 
-    toNumber() { return this.value; }
-    toString() { return Number.isFinite(this.value) ? this.value.toFixed(2) : ''; }
+    toNumber() { return this.gold / this.silver; }
+    toString() { return this.silver ? this.toNumber().toFixed(2) : ''; }
 }
 
 // Every leaf returns a `RatioResult` so the aggFunc reads each child the same way. Rows with no
-// silvers produce a non-finite ratio that `toString` blanks out, while `gold`/`silver` are still
-// preserved for the parent group's running totals. Footer/filler rows have no `data`; return
-// undefined so the cell is left empty.
+// silvers carry `silver: 0` — `toString` blanks the cell, while `gold`/`silver` stay available
+// for the parent group's running totals. Footer/filler rows have no `data`; return undefined
+// so the cell is left empty.
 function leafRatioValueGetter(params) {
     if (!params.data) {
         return undefined;
     }
     const { gold, silver } = params.data;
-    return new RatioResult(gold / silver, gold, silver);
+    return new RatioResult(gold, silver);
 }
 
 function ratioAggFunc(params) {
@@ -155,7 +152,7 @@ function ratioAggFunc(params) {
             silver += ratio.silver;
         }
     }
-    return silver ? new RatioResult(gold / silver, gold, silver) : null;
+    return new RatioResult(gold, silver);
 }
 ```
 

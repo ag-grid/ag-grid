@@ -18,20 +18,19 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-/** Carries `gold`/`silver` totals alongside the scalar ratio so the parent recomputes in `O(N)`. */
+/** Carries `gold`/`silver` running totals; the ratio is derived so the wrapper can't go inconsistent. */
 class RatioResult implements IAggFuncResult<number> {
     constructor(
-        readonly value: number,
         readonly gold: number,
         readonly silver: number
     ) {}
 
     toNumber() {
-        return this.value;
+        return this.gold / this.silver;
     }
 
     toString() {
-        return Number.isFinite(this.value) ? this.value.toFixed(2) : '';
+        return this.silver ? this.toNumber().toFixed(2) : '';
     }
 }
 
@@ -63,18 +62,18 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 // Leaf rows always expose a `RatioResult` so the aggFunc reads every child uniformly.
-// Rows with no silvers produce a non-finite ratio value — `toString` blanks the cell out,
-// while `gold`/`silver` are still preserved for the parent group's running totals.
+// Rows with no silvers carry `silver: 0` — `toString` blanks the cell, while `gold`/`silver`
+// stay available for the parent group's running totals.
 // Footer/filler rows have no `data`; return undefined so the cell is left empty.
 function leafRatioValueGetter(params: ValueGetterParams<IOlympicData>): RatioResult | undefined {
     if (!params.data) {
         return undefined;
     }
     const { gold, silver } = params.data;
-    return new RatioResult(gold / silver, gold, silver);
+    return new RatioResult(gold, silver);
 }
 
-function ratioAggFunc(params: IAggFuncParams<IOlympicData>): RatioResult | null {
+function ratioAggFunc(params: IAggFuncParams<IOlympicData>): RatioResult {
     let gold = 0;
     let silver = 0;
     for (const child of params.aggregatedChildren) {
@@ -86,7 +85,7 @@ function ratioAggFunc(params: IAggFuncParams<IOlympicData>): RatioResult | null 
             silver += ratio.silver;
         }
     }
-    return silver ? new RatioResult(gold / silver, gold, silver) : null;
+    return new RatioResult(gold, silver);
 }
 
 // setup the grid after the page has finished loading
