@@ -79,7 +79,7 @@ describe('Toolbar', () => {
         expect(toolbarIndex).toBeLessThan(bodyIndex);
     });
 
-    describe('getToolbarInstance', () => {
+    describe('getToolbarItemInstance', () => {
         test('returns undefined when no toolbar is configured', async () => {
             const api = gridMgr.createGrid('get-instance-no-toolbar', {
                 columnDefs: [{ field: 'name' }],
@@ -88,7 +88,7 @@ describe('Toolbar', () => {
 
             await waitForEvent('firstDataRendered', api);
 
-            expect(api.getToolbarInstance('agQuickFilterToolbarItem')).toBeUndefined();
+            expect(api.getToolbarItemInstance('agQuickFilterToolbarItem')).toBeUndefined();
         });
 
         test('returns undefined for an unknown key', async () => {
@@ -100,7 +100,7 @@ describe('Toolbar', () => {
 
             await waitForEvent('firstDataRendered', api);
 
-            expect(api.getToolbarInstance('nonExistentKey')).toBeUndefined();
+            expect(api.getToolbarItemInstance('nonExistentKey')).toBeUndefined();
         });
 
         test('returns the built-in item instance by auto-generated key', async () => {
@@ -114,7 +114,7 @@ describe('Toolbar', () => {
 
             await waitForEvent('firstDataRendered', api);
 
-            const instance = api.getToolbarInstance('myFilter');
+            const instance = api.getToolbarItemInstance('myFilter');
             expect(instance).toBeDefined();
         });
 
@@ -129,11 +129,11 @@ describe('Toolbar', () => {
 
             await waitForEvent('firstDataRendered', api);
 
-            expect(api.getToolbarInstance('myFilter')).toBeDefined();
+            expect(api.getToolbarItemInstance('myFilter')).toBeDefined();
 
             api.setGridOption('toolbar', { items: [] });
 
-            expect(api.getToolbarInstance('myFilter')).toBeUndefined();
+            expect(api.getToolbarItemInstance('myFilter')).toBeUndefined();
         });
     });
 

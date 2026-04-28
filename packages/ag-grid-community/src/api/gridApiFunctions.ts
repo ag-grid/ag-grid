@@ -1,7 +1,6 @@
 import type { ValidationModuleName } from '../interfaces/iModule';
 import type {
     GridApi,
-    ToolbarGridApi,
     _AdvancedFilterGridApi,
     _AggregationGridApi,
     _AiToolkitGridApi,
@@ -450,8 +449,8 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getSideBar: 0,
     }),
 
-    ...mod<ToolbarGridApi>('Toolbar', {
-        getToolbarInstance: 0,
+    ...mod<_ToolbarGridApi>('Toolbar', {
+        getToolbarItemInstance: 0,
     }),
 
     ...mod<_StatusBarGridApi>('StatusBar', {

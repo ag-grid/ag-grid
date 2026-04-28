@@ -129,9 +129,13 @@ export type ToolbarItemDef<TData = any, TContext = any, TParams = any, TCustom =
     | ToolbarMenuBuiltInItemDef<TData, TContext>
     | ToolbarCustomItemDef<TParams, TCustom>;
 
-export interface IToolbarItemParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    key: string;
-}
+export type IToolbarItemParams<TData = any, TContext = any, TParams = any, TCustom = any> = ToolbarItemDef<
+    TData,
+    TContext,
+    TParams,
+    TCustom
+> &
+    AgGridCommon<TData, TContext>;
 
 export interface IToolbarItem<TData = any, TContext = any> {
     /**

@@ -1434,12 +1434,12 @@ export interface _SideBarGridApi<TData> {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface ToolbarGridApi<TData = any> {
+export interface _ToolbarGridApi<TData = any> {
     /**
      * Gets the toolbar item instance corresponding to the supplied `key`.
      * @agModule `ToolbarModule`
      */
-    getToolbarInstance<TToolbarItem = IToolbarItem<TData>>(key: string): TToolbarItem | undefined;
+    getToolbarItemInstance<TToolbarItem = IToolbarItem<TData>>(key: string): TToolbarItem | undefined;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -2021,7 +2021,7 @@ export interface GridApi<TData = any>
         _SsrmInfiniteSharedGridApi,
         _ClientSideRowModelGridApi<TData>,
         _SideBarGridApi<TData>,
-        ToolbarGridApi<TData>,
+        _ToolbarGridApi<TData>,
         _StatusBarGridApi<TData>,
         _InfiniteRowModelGridApi,
         _CsvExportGridApi,

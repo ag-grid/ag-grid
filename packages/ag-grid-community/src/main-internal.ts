@@ -215,7 +215,7 @@ export type {
     _ServerSideRowModelGridApi,
     _SideBarGridApi,
     _StatusBarGridApi,
-    ToolbarGridApi,
+    _ToolbarGridApi,
 } from './api/gridApi';
 export type { INoteAccess, INotesFeature, INotesDataService, INotesService } from './interfaces/notes';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';

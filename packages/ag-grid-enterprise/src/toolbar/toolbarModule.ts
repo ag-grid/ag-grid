@@ -1,4 +1,4 @@
-import type { ToolbarGridApi, ToolbarItemComponentName, _ModuleWithApi } from 'ag-grid-community';
+import type { ToolbarItemComponentName, _ModuleWithApi, _ToolbarGridApi } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
@@ -9,14 +9,14 @@ import { MenuToolbarItem } from './providedItems/menuToolbarItem';
 import { PivotPanelToolbarItem } from './providedItems/pivotPanelToolbarItem';
 import { QuickFilterToolbarItem } from './providedItems/quickFilterToolbarItem';
 import { RowGroupPanelToolbarItem } from './providedItems/rowGroupPanelToolbarItem';
-import { getToolbarInstance } from './toolbarApi';
+import { getToolbarItemInstance } from './toolbarApi';
 import { ToolbarService } from './toolbarService';
 
 /**
  * @feature Accessories -> Toolbar
  * @gridOption toolbar
  */
-export const ToolbarModule: _ModuleWithApi<ToolbarGridApi<any>> = {
+export const ToolbarModule: _ModuleWithApi<_ToolbarGridApi<any>> = {
     moduleName: 'Toolbar',
     version: VERSION,
     beans: [ToolbarService],
@@ -33,7 +33,7 @@ export const ToolbarModule: _ModuleWithApi<ToolbarGridApi<any>> = {
     },
     selectors: [AgToolbarSelector],
     apiFunctions: {
-        getToolbarInstance,
+        getToolbarItemInstance,
     },
     dependsOn: [EnterpriseCoreModule],
 };

@@ -1,7 +1,7 @@
 import type { BeanCollection, IToolbarItem } from 'ag-grid-community';
 import { _unwrapUserComp } from 'ag-grid-community';
 
-export function getToolbarInstance<TToolbarItem = IToolbarItem>(
+export function getToolbarItemInstance<TToolbarItem = IToolbarItem>(
     beans: BeanCollection,
     key: string
 ): TToolbarItem | undefined {
