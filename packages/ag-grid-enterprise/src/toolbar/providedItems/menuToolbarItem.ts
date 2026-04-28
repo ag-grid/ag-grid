@@ -1,4 +1,10 @@
-import type { ElementParams, IToolbarItemComp, IToolbarItemParams, ToolbarMenuItemParams } from 'ag-grid-community';
+import type {
+    AgGridCommon,
+    ElementParams,
+    IToolbarItemComp,
+    IToolbarItemParams,
+    ToolbarMenuBuiltInItemDef,
+} from 'ag-grid-community';
 import {
     Component,
     RefPlaceholder,
@@ -13,7 +19,7 @@ import {
 import type { ToolbarMenuBuilder } from '../../menu/toolbarMenuBuilder';
 import { renderToolbarButtonContents } from './toolbarItemUtils';
 
-type MenuToolbarItemInitParams = IToolbarItemParams & ToolbarMenuItemParams;
+type MenuParams = ToolbarMenuBuiltInItemDef & AgGridCommon<any, any>;
 
 const MenuToolbarItemElement: ElementParams = {
     tag: 'button',
@@ -30,26 +36,26 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eChevron: HTMLElement = RefPlaceholder;
-    private params!: MenuToolbarItemInitParams;
+    private params!: MenuParams;
 
     constructor() {
         super(MenuToolbarItemElement);
     }
 
-    public init(params: MenuToolbarItemInitParams): void {
+    public init(params: IToolbarItemParams): void {
         const eChevronIcon = _createIconNoSpan('selectOpen', this.beans);
         if (eChevronIcon) {
             this.eChevron.appendChild(eChevronIcon);
         }
         this.beans.gos.assertModuleRegistered(['ContextMenu', 'ColumnMenu'], `AG Grid toolbar item: agMenuToolbarItem`);
-        this.applyParams(params);
+        this.applyParams(params as MenuParams);
         this.addManagedElementListeners(this.getGui(), {
             click: () => this.showMenu(),
         });
     }
 
-    public refresh(params: MenuToolbarItemInitParams): boolean {
-        this.applyParams(params);
+    public refresh(params: IToolbarItemParams): boolean {
+        this.applyParams(params as MenuParams);
         return true;
     }
 
@@ -58,7 +64,7 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
         return tooltip ?? label ?? this.getLocaleTextFunc()('toolbarMenu', 'Menu');
     }
 
-    private applyParams(params: MenuToolbarItemInitParams): void {
+    private applyParams(params: MenuParams): void {
         this.params = params;
         const eGui = this.getGui();
 
@@ -71,7 +77,8 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
             hoverText: this.getAccessibleName(),
         });
 
-        const hasMenuItems = !!params.menuItems?.length;
+        const menuItems = params.toolbarItemParams?.menuItems;
+        const hasMenuItems = !!menuItems?.length;
         _setDisplayed(this.eChevron, hasMenuItems);
         _setDisabled(eGui, !hasMenuItems);
         _setAriaHasPopup(eGui, hasMenuItems ? 'menu' : false);
@@ -83,7 +90,7 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
     }
 
     private showMenu(): void {
-        const menuItems = this.params.menuItems;
+        const menuItems = this.params.toolbarItemParams?.menuItems;
         if (!menuItems?.length) {
             return;
         }

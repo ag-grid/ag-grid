@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-import type { GridApi, IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
+import type { IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
 
-interface CustomToolbarToggleProps extends IToolbarItemParams {
-    label?: string;
-    title?: string;
-    icon: string;
-    panelId: string;
-    onClick: (api: GridApi) => void;
-}
-
-export default (props: CustomToolbarToggleProps) => {
-    const { api, label, title, icon, panelId, onClick } = props;
+export default (props: IToolbarItemParams) => {
+    const { api } = props;
+    const { label, title, icon, panelId, onClick } = props.toolbarItemParams;
     const [active, setActive] = useState(false);
     const tooltip = title ?? label ?? '';
 

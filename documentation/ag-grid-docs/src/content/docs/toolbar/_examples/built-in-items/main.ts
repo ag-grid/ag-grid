@@ -8,7 +8,7 @@ import {
     NumberFilterModule,
     QuickFilterModule,
     TextFilterModule,
-    ToolbarItemActionParams,
+    type ToolbarItemActionParams,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';

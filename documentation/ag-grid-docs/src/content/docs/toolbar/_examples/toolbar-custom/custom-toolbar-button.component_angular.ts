@@ -1,15 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 
 import type { IToolbarItemAngularComp } from 'ag-grid-angular';
-import type { GridApi, IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
-
-interface CustomToolbarToggleParams extends IToolbarItemParams {
-    label?: string;
-    title?: string;
-    icon: string;
-    panelId: string;
-    onClick: (api: GridApi) => void;
-}
+import type { IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
 
 @Component({
     standalone: true,
@@ -31,30 +23,31 @@ interface CustomToolbarToggleParams extends IToolbarItemParams {
     `,
 })
 export class CustomToolbarToggle implements IToolbarItemAngularComp, OnDestroy {
-    private params!: CustomToolbarToggleParams;
+    private params!: IToolbarItemParams;
     label = '';
     tooltip = '';
     icon = '';
     active = false;
 
     private panelListener = ({ key, visible }: ToolPanelVisibleChangedEvent) => {
-        if (key === this.params.panelId) {
+        if (key === this.params.toolbarItemParams.panelId) {
             this.active = visible;
         } else if (visible) {
             this.active = false;
         }
     };
 
-    agInit(params: CustomToolbarToggleParams): void {
+    agInit(params: IToolbarItemParams): void {
         this.params = params;
-        this.label = params.label ?? '';
-        this.tooltip = params.title ?? params.label ?? '';
-        this.icon = params.icon;
+        const { label, title, icon } = params.toolbarItemParams;
+        this.label = label ?? '';
+        this.tooltip = title ?? label ?? '';
+        this.icon = icon;
         params.api.addEventListener('toolPanelVisibleChanged', this.panelListener);
     }
 
     onClick(): void {
-        this.params.onClick(this.params.api);
+        this.params.toolbarItemParams.onClick(this.params.api);
     }
 
     ngOnDestroy(): void {

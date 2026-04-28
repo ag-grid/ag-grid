@@ -93,6 +93,8 @@ const gridOptions = {
             'agQuickFilterToolbarItem',
             'separator',
             'agFindToolbarItem',
+            { toolbarItem: 'separator', alignment: 'right' }, // set alignment explicitly
+            { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'right' },
         ]
     }
 }
@@ -147,7 +149,7 @@ const gridOptions = {
 
 ### Custom Component
 
-For anything beyond a button — custom markup, external state, or composed controls — set `toolbarItem` to a component reference. The grid instantiates the component once per item; each instance receives the standard `IToolbarItemParams` merged with whatever is passed via `toolbarItemParams`.
+For anything beyond a button — custom markup, external state, or composed controls — set `toolbarItem` to a component reference. The grid instantiates the component once per item; each instance receives `IToolbarItemParams`, with the object passed via `toolbarItemParams` available as `params.toolbarItemParams`.
 
 The example below defines a single `CustomToolbarToggle` component and reuses it across the toolbar with different params to open tool panels, export data, auto-size columns, and reset column state.
 

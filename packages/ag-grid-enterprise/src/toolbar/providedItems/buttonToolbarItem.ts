@@ -1,20 +1,16 @@
 import type {
+    AgGridCommon,
     ElementParams,
     IToolbarItemComp,
     IToolbarItemParams,
-    IconName,
+    ToolbarButtonItemDef,
     ToolbarItemActionParams,
 } from 'ag-grid-community';
 import { Component, RefPlaceholder, _addGridCommonParams } from 'ag-grid-community';
 
 import { renderToolbarButtonContents } from './toolbarItemUtils';
 
-interface ButtonToolbarItemParams extends IToolbarItemParams {
-    label?: string;
-    tooltip?: string;
-    icon?: IconName;
-    action?: (params: ToolbarItemActionParams) => void;
-}
+type ButtonParams = ToolbarButtonItemDef & AgGridCommon<any, any>;
 
 const ButtonToolbarItemElement: ElementParams = {
     tag: 'button',
@@ -29,25 +25,25 @@ const ButtonToolbarItemElement: ElementParams = {
 export class ButtonToolbarItem extends Component implements IToolbarItemComp {
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
-    private params!: ButtonToolbarItemParams;
+    private params!: ButtonParams;
 
     constructor() {
         super(ButtonToolbarItemElement);
     }
 
-    public init(params: ButtonToolbarItemParams): void {
-        this.applyParams(params);
+    public init(params: IToolbarItemParams): void {
+        this.applyParams(params as ButtonParams);
         this.addManagedElementListeners(this.getGui(), {
             click: () => this.invokeAction(),
         });
     }
 
-    public refresh(params: ButtonToolbarItemParams): boolean {
-        this.applyParams(params);
+    public refresh(params: IToolbarItemParams): boolean {
+        this.applyParams(params as ButtonParams);
         return true;
     }
 
-    private applyParams(params: ButtonToolbarItemParams): void {
+    private applyParams(params: ButtonParams): void {
         this.params = params;
         renderToolbarButtonContents(this.beans, {
             eIcon: this.eIcon,
@@ -64,7 +60,7 @@ export class ButtonToolbarItem extends Component implements IToolbarItemComp {
         if (!action) {
             return;
         }
-        const actionParams: ToolbarItemActionParams = _addGridCommonParams(this.gos, { key });
+        const actionParams: ToolbarItemActionParams = _addGridCommonParams(this.gos, { key: key! });
         action(actionParams);
     }
 }
