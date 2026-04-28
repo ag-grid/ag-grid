@@ -982,6 +982,14 @@ export interface GridOptions<TData = any> {
      * @default undefined
      */
     loading?: boolean;
+    /**
+     * Replaces the loading overlay with skeleton loading indicators rendered within individual cells.
+     * Works with Client-Side Row Model only.
+     *
+     * Set to `true` to enable with defaults, or provide an object to configure:
+     * - `rowCount`: number of skeleton rows to display (default: `1`)
+     */
+    enableSkeletonLoadingCells?: boolean | SkeletonLoadingCellsOptions;
 
     /**
      * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
@@ -2958,7 +2966,18 @@ export type TreeDataDisplayType = 'auto' | 'custom';
 
 export type GetDataPath<TData = any> = (data: TData) => string[];
 
-export type IsServerSideGroup = (dataItem: any) => boolean;
+/**
+ * Return type for the `isServerSideGroup` callback.
+ * Return `true`/`false` for simple group detection, or an object to also supply a child-count hint
+ * that the grid uses to size loading row placeholders when the group is expanded.
+ */
+export interface IsServerSideGroupResult {
+    /** Whether this row has children. */
+    hasChildren: boolean;
+    /** Optional hint for how many child rows exist. Used to size loading row placeholders. */
+    childCount?: number;
+}
+export type IsServerSideGroup = (dataItem: any) => boolean | IsServerSideGroupResult;
 
 export type IsRowFilterable<TData = any, TContext = any> = (
     params: GetGroupAggFilteringParams<TData, TContext>
@@ -3341,3 +3360,8 @@ export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary';
 
 export type PivotColumnGroupTotals = 'before' | 'after';
 export type PivotRowTotals = 'before' | 'after';
+
+export interface SkeletonLoadingCellsOptions {
+    /** Number of skeleton rows to display while loading. Default: `1`. */
+    rowCount?: number;
+}

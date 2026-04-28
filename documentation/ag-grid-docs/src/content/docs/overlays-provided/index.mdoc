@@ -20,6 +20,16 @@ The loading overlay is displayed when the grid property `loading` is set to `tru
 
 {% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading"] /%}
 
+### Skeleton Loading Cells
+
+Set `enableSkeletonLoadingCells` to replace the loading overlay with per-cell skeleton rows rendered inline in the grid. This works with the Client-Side Row Model only.
+
+Pass an object to configure the number of skeleton rows shown while loading.
+
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["enableSkeletonLoadingCells"] /%}
+
+{% gridExampleRunner title="Skeleton Loading Cells" name="skeleton-loading" exampleHeight=300 /%}
+
 ## No Rows
 
 When there are no rows the grid automatically displays the no-rows overlay.

@@ -923,6 +923,12 @@
                 "url": "./overlays-provided/#loading"
             }
         },
+        "enableSkeletonLoadingCells": {
+            "more": {
+                "name": "Skeleton Loading Cells",
+                "url": "./overlays-provided/#skeleton-loading-cells"
+            }
+        },
         "overlayComponent": {
             "more": {
                 "name": "Overlay Component",

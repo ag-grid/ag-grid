@@ -1,7 +1,7 @@
 import { _debounce } from '../agStack/utils/function';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { GridOptions } from '../entities/gridOptions';
+import type { GridOptions, SkeletonLoadingCellsOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import type { FilterChangedEvent, StylesChangedEvent } from '../events';
 import { _getGroupSelectsDescendants, _getRowHeightForNode, _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
@@ -92,6 +92,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     /** True after the first time row nodes have been created or data has been set. Used to determine when to fire rowCountReady. */
     private rowNodesCountReady: boolean = false;
+
+    /** Stub RowNodes shown in place of the loading overlay when `enableSkeletonLoadingCells` is `true`. */
+    private skeletonRows: RowNode[] | null = null;
 
     /** Maps a property name to the index in this.stages array */
     private readonly stagesRefreshProps = new Map<keyof GridOptions, number>();
@@ -190,6 +193,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
+
+        this.addManagedPropertyListeners(['loading', 'enableSkeletonLoadingCells'], () => {
+            if (this.getSkeletonOptions()) {
+                this.refreshModel({ step: 'map' });
+            }
+        });
     }
 
     public start(): void {
@@ -205,6 +214,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const rowData = this.gos.get('rowData');
         if (rowData) {
             this.onPropChange(['rowData']);
+        } else if (this.isSkeletonLoadingActive()) {
+            this.refreshModel({ step: 'map' });
         }
     }
 
@@ -719,6 +730,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public getOverlayType(): OverlayType | null {
+        if (this.isSkeletonLoadingActive()) {
+            return null;
+        }
+
         const { beans, gos } = this;
 
         if (this.rootNode?._leafs?.length) {
@@ -804,7 +819,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public getRowIndexAtPixel(pixelToMatch: number): number {
         const rowsToDisplay = this.rowsToDisplay;
         const rowsToDisplayLen = rowsToDisplay.length;
-        if (this.isEmpty() || rowsToDisplayLen === 0) {
+        if (rowsToDisplayLen === 0) {
             return -1;
         }
 
@@ -1148,8 +1163,57 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
     }
 
+    private getSkeletonOptions(): SkeletonLoadingCellsOptions | null {
+        const val = this.gos.get('enableSkeletonLoadingCells');
+        if (!val) return null;
+        return val === true ? {} : val;
+    }
+
+    private isSkeletonLoadingActive(): boolean {
+        if (!this.getSkeletonOptions()) {
+            return false;
+        }
+        const loading = this.gos.get('loading');
+        if (loading === true) {
+            return true;
+        }
+        return loading === undefined && !this.rowNodesCountReady;
+    }
+
+    private getOrCreateSkeletonRows(): RowNode[] {
+        const count = this.getSkeletonOptions()?.rowCount ?? 1;
+        if (!this.skeletonRows || this.skeletonRows.length !== count) {
+            this.destroySkeletonRows();
+            this.skeletonRows = [];
+            for (let i = 0; i < count; i++) {
+                const node = new RowNode(this.beans);
+                node.stub = true;
+                node.id = `ag-skeleton-${i}`;
+                node.setUiLevel(0);
+                this.skeletonRows.push(node);
+            }
+        }
+        return this.skeletonRows;
+    }
+
+    private destroySkeletonRows(): void {
+        if (this.skeletonRows) {
+            for (const node of this.skeletonRows) {
+                node.clearRowTopAndRowIndex();
+            }
+            this.skeletonRows = null;
+        }
+    }
+
     /** 'map' stage */
     private doRowsToDisplay(): void {
+        if (this.isSkeletonLoadingActive()) {
+            this.rowsToDisplay = this.getOrCreateSkeletonRows();
+            return;
+        }
+
+        this.destroySkeletonRows();
+
         const { rootNode, beans } = this;
 
         if (beans.formula?.active) {
@@ -1234,6 +1298,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.started = false;
         this.rootNode = null;
         this.rowsToDisplay = [];
+        this.destroySkeletonRows();
         this.asyncTransactions = null;
         this.stages = null;
         this.stagesRefreshProps.clear();

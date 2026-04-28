@@ -83,10 +83,15 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     public postConstruct() {
-        let numberOfRows = 1;
+        let numberOfRows: number;
         if (this.level === 0) {
             numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
+        } else {
+            // Use child count hint from isServerSideGroup if available, otherwise default to 1
+            numberOfRows = this.parentRowNode.serverSideChildCount ?? 1;
+        }
 
+        if (this.level === 0) {
             this.eventSvc.dispatchEventOnce({
                 type: 'rowCountReady',
             });

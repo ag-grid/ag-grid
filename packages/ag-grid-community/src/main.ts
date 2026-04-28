@@ -812,6 +812,7 @@ export type {
     SelectAllMode,
     SelectionColumnDef,
     SingleRowSelectionOptions,
+    SkeletonLoadingCellsOptions,
     TreeDataDisplayType,
     UseGroupFooter,
     UseGroupTotalRow,

@@ -89,7 +89,7 @@ export class StoreUtils extends BeanStub implements NamedBean {
     }
 
     public getServerSideInitialRowCount(): number | null {
-        return this.gos.get('serverSideInitialRowCount');
+        return this.gos.get('serverSideInitialRowCount') ?? null;
     }
 
     public isServerSideSortAllLevels() {

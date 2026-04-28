@@ -103,6 +103,7 @@ import type {
     SelectionColumnDef,
     SendToClipboard,
     SideBarDef,
+    SkeletonLoadingCellsOptions,
     SortDirection,
     StatusBar,
     TabToNextCell,
@@ -846,6 +847,13 @@ export interface Props<TData> {
          * @default undefined
          */
     loading?: boolean,
+    /** Replaces the loading overlay with skeleton loading indicators rendered within individual cells.
+         * Works with Client-Side Row Model only.
+         *
+         * Set to `true` to enable with defaults, or provide an object to configure:
+         * - `rowCount`: number of skeleton rows to display (default: `1`)
+         */
+    enableSkeletonLoadingCells?: boolean | SkeletonLoadingCellsOptions,
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
          *
          * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
@@ -2192,6 +2200,7 @@ export function getProps() {
         suppressChangeDetection: undefined,
         debug: undefined,
         loading: undefined,
+        enableSkeletonLoadingCells: undefined,
         overlayLoadingTemplate: undefined,
         loadingOverlayComponent: undefined,
         loadingOverlayComponentParams: undefined,

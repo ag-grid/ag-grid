@@ -215,6 +215,7 @@ import type {
     SelectionColumnDef,
     SendToClipboard,
     SideBarDef,
+    SkeletonLoadingCellsOptions,
     SortChangedEvent,
     SortDirection,
     StateUpdatedEvent,
@@ -1022,6 +1023,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default undefined
      */
     @Input({ transform: booleanAttribute }) public loading: boolean | undefined = undefined;
+    /** Replaces the loading overlay with skeleton loading indicators rendered within individual cells.
+     * Works with Client-Side Row Model only.
+     *
+     * Set to `true` to enable with defaults, or provide an object to configure:
+     * - `rowCount`: number of skeleton rows to display (default: `1`)
+     */
+    @Input() public enableSkeletonLoadingCells: boolean | SkeletonLoadingCellsOptions | undefined = undefined;
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
      *
      * -     **Prefer `overlayComponent` / `overlayComponentSelector`**

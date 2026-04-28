@@ -175,6 +175,8 @@ export class RowNode<TData = any>
 
     /** Used by server-side row model. `true` if this row node is a stub. A stub is a placeholder row with loading icon while waiting from row to be loaded. */
     public stub: boolean | undefined;
+    /** Child-count hint returned by `isServerSideGroup`. Used to size loading row placeholders when the group is expanded. */
+    public serverSideChildCount?: number;
 
     /** Used by server side row model, true if this row node failed a load */
     public failedLoad: boolean | undefined;

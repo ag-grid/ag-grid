@@ -54,13 +54,14 @@ It's possible to determine what Loading Cell Renderer to use dynamically - i.e. 
 
 ## Skeleton Loading
 
-The grid can be configured to instead display loading indicators in cells, by enabling `suppressServerSideFullWidthLoadingRow`.
+The grid can be configured to instead display loading indicators in cells, by enabling `suppressServerSideFullWidthLoadingRow`. The number of skeleton rows shown while each block loads defaults to `cacheBlockSize`.
 
 {% gridExampleRunner title="Skeleton Loading Cell Renderer" name="skeleton-loading-cell-renderer" /%}
 
 ```
 const gridOptions = {
     suppressServerSideFullWidthLoadingRow: true,
+    cacheBlockSize: 5,
 };
 ```
 
