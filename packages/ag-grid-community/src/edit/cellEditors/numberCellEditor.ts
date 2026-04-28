@@ -119,10 +119,10 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
                 result = null;
             } else {
                 const numeric = Number(parsedValue);
-                result = isNaN(numeric) ? null : numeric;
+                result = Number.isNaN(numeric) ? null : numeric;
             }
         } else {
-            result = isNaN(parsedValue) ? null : parsedValue;
+            result = Number.isNaN(parsedValue) ? null : parsedValue;
         }
         this.cachedRaw = value;
         this.cachedParsed = result;
