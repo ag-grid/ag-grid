@@ -1045,7 +1045,7 @@
                 "url": "./tool-panel-columns/#expand--collapse-column-groups"
             }
         },
-        "getToolbarInstance": {
+        "getToolbarItemInstance": {
             "more": {
                 "name": "Toolbar",
                 "url": "./toolbar/"
