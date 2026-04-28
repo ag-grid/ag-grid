@@ -2,6 +2,10 @@
 export function _downloadFile(fileName: string, content: Blob) {
     const win = document.defaultView || window;
 
+    if(!win) {
+        return;
+    }
+
     const element = document.createElement('a');
     const url = win.URL.createObjectURL(content);
     element.setAttribute('href', url);
