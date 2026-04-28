@@ -722,6 +722,10 @@
     max-width: 100%;
     font-size: 16px;
     line-height: 1.6;
+
+    p {
+        padding-top: $spacing-size-4;
+    }
 }
 
 .contactEmail {
