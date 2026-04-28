@@ -78,11 +78,6 @@ const gridOptions: GridOptions<IOlympicData> = {
                 },
             },
             {
-                key: 'excelExport',
-                action: ({ api }: ToolbarItemActionParams) => api.exportDataAsExcel(),
-                icon: 'excelExport',
-            },
-            {
                 key: 'autoSizeAll',
                 action: ({ api }: ToolbarItemActionParams) => api.autoSizeAllColumns(),
                 tooltip: 'Auto Size All',

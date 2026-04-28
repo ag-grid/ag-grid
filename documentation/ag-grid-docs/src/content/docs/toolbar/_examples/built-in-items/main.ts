@@ -72,7 +72,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             {
                 key: 'resetColumns',
                 label: 'Reset Columns',
-                icon: 'columnMoveLeft',
+                icon: 'minimize',
                 action: (params: ToolbarItemActionParams) => params.api.resetColumnState(),
             },
             {

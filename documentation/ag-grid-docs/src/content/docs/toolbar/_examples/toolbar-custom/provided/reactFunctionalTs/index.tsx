@@ -110,11 +110,6 @@ const GridExample = () => {
                     },
                 },
                 {
-                    key: 'excelExport',
-                    icon: 'excelExport',
-                    action: ({ api }: ToolbarItemActionParams) => api.exportDataAsExcel(),
-                },
-                {
                     key: 'autoSizeAll',
                     tooltip: 'Auto Size All',
                     icon: 'maximize',
