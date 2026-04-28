@@ -8,7 +8,3 @@ export function getToolbarItemInstance<TToolbarItem = IToolbarItem>(
     const comp = beans.toolbar?.comp?.getToolbarItemInstance(key);
     return _unwrapUserComp(comp) as any;
 }
-
-export function getToolbarItemKeys(beans: BeanCollection): string[] {
-    return beans.toolbar?.comp?.getToolbarItemKeys() ?? [];
-}

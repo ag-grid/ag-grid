@@ -451,7 +451,6 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
 
     ...mod<_ToolbarGridApi>('Toolbar', {
         getToolbarItemInstance: 0,
-        getToolbarItemKeys: 0,
     }),
 
     ...mod<_StatusBarGridApi>('StatusBar', {

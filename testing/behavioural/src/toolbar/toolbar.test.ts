@@ -137,55 +137,6 @@ describe('Toolbar', () => {
         });
     });
 
-    describe('getToolbarItemKeys', () => {
-        test('returns empty array when no toolbar is configured', async () => {
-            const api = gridMgr.createGrid('get-keys-no-toolbar', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            expect(api.getToolbarItemKeys()).toEqual([]);
-        });
-
-        test('returns keys in DOM order including separators', async () => {
-            const api = gridMgr.createGrid('get-keys-order', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: {
-                    items: [
-                        { toolbarItem: 'agQuickFilterToolbarItem', key: 'filter' },
-                        'separator',
-                        { toolbarItem: 'agQuickFilterToolbarItem', key: 'filter2' },
-                    ],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            expect(api.getToolbarItemKeys()).toEqual(['filter', 'separator', 'filter2']);
-        });
-
-        test('updates after setGridOption toolbar change', async () => {
-            const api = gridMgr.createGrid('get-keys-update', {
-                columnDefs: [{ field: 'name' }],
-                rowData: [{ name: 'Alice' }],
-                toolbar: {
-                    items: [{ toolbarItem: 'agQuickFilterToolbarItem', key: 'filter' }],
-                },
-            });
-
-            await waitForEvent('firstDataRendered', api);
-
-            expect(api.getToolbarItemKeys()).toEqual(['filter']);
-
-            api.setGridOption('toolbar', { items: [] });
-
-            expect(api.getToolbarItemKeys()).toEqual([]);
-        });
-    });
-
     describe('runtime updates via setGridOption', () => {
         test('adds items when toolbar items are populated at runtime', async () => {
             // Start with an empty items array so the AG-TOOLBAR element is registered up-front
