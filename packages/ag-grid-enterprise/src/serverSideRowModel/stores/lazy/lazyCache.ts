@@ -1075,15 +1075,12 @@ export class LazyCache extends BeanStub {
         });
     }
 
-    /**
-     * Creates or updates the grand total row node from server response data.
-     * Uses _createRowNodeFooter with the same sibling pattern as CSRM.
-     */
-    public createOrUpdateGrandTotalNode(data: any): void {
+    /** Creates the grand total row node, or applies new data to the existing one. */
+    public createOrUpdateGrandTotalNode(data: any): RowNode {
         const existingNode = this.store.getGrandTotalNode();
         if (existingNode) {
-            this.blockUtils.updateDataIntoRowNode(existingNode, data);
-            return;
+            existingNode._updateDataNoSibling(data);
+            return existingNode;
         }
 
         const parentNode = this.store.getParentNode();
@@ -1096,6 +1093,7 @@ export class LazyCache extends BeanStub {
         newNode.setRowHeight(rowHeight.height, rowHeight.estimated);
 
         this.nodeManager.addRowNode(newNode);
+        return newNode;
     }
 
     public getOrderedNodeMap() {
@@ -1144,7 +1142,7 @@ export class LazyCache extends BeanStub {
                 store.grandTotalData = data;
                 const grandTotalNode = store.getGrandTotalNode();
                 if (grandTotalNode) {
-                    blockUtils.updateDataIntoRowNode(grandTotalNode, data);
+                    grandTotalNode._updateDataNoSibling(data);
                     updatedNodes.push(grandTotalNode);
                 }
                 continue;

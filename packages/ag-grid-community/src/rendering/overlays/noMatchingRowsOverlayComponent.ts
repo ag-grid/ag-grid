@@ -8,10 +8,16 @@ import type {
 } from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
 
-export interface INoMatchingRowsOverlay<TData = any, TContext = any>
-    extends IOverlay<TData, TContext, INoMatchingRowsOverlayParams<TData, TContext>> {}
-export interface INoMatchingRowsOverlayComp<TData = any, TContext = any>
-    extends IOverlayComp<TData, TContext, INoMatchingRowsOverlayParams<TData, TContext>> {}
+export interface INoMatchingRowsOverlay<TData = any, TContext = any> extends IOverlay<
+    TData,
+    TContext,
+    INoMatchingRowsOverlayParams<TData, TContext>
+> {}
+export interface INoMatchingRowsOverlayComp<TData = any, TContext = any> extends IOverlayComp<
+    TData,
+    TContext,
+    INoMatchingRowsOverlayParams<TData, TContext>
+> {}
 
 const NoMatchingRowsOverlayElement: ElementParams = { tag: 'span', cls: 'ag-overlay-no-matching-rows-center' };
 

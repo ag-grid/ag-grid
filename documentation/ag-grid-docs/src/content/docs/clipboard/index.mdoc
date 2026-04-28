@@ -20,9 +20,9 @@ Multiple cell ranges can be selected at once using {% kbd "^ Ctrl" /%} and dragg
 
 In the below example try:
 
--   Select a cell range with click & drag
--   Copy with {% kbd "^ Ctrl" /%}+{% kbd "C" /%}
--   Paste into an external program / text editor.
+- Select a cell range with click & drag
+- Copy with {% kbd "^ Ctrl" /%}+{% kbd "C" /%}
+- Paste into an external program / text editor.
 
 {% gridExampleRunner title="Copying Cell Ranges" name="copy-range" /%}
 
@@ -43,10 +43,10 @@ const gridOptions = {
 The below example demonstrates copying rows. Initially, pressing {% kbd "^ Ctrl" /%}+C will select the focused cell, regardless of which rows have been selected.
 You can change this behaviour by toggling the "Copy Selected Rows" checkbox to enable the `copySelectedRows` flag:
 
--   Toggle the "Copy Selected Rows" checkbox on
--   Select one or more rows in the example below and press {% kbd "^ Ctrl" /%}+C
--   Paste copied content in a text editor
--   When the "Copy Selected Rows" checkbox is toggled on, the pasted content includes all selected rows. When the "Copy Selected Rows" checkbox is toggled off, the pasted content includes only the focussed cell.
+- Toggle the "Copy Selected Rows" checkbox on
+- Select one or more rows in the example below and press {% kbd "^ Ctrl" /%}+C
+- Paste copied content in a text editor
+- When the "Copy Selected Rows" checkbox is toggled on, the pasted content includes all selected rows. When the "Copy Selected Rows" checkbox is toggled off, the pasted content includes only the focussed cell.
 
 {% gridExampleRunner title="Copying Rows" name="copy-row" /%}
 
@@ -64,9 +64,9 @@ const gridOptions = {
 
 In the below example try:
 
--   Select a cell range with click & drag
--   Copy with {% kbd "^ Ctrl" /%}+{% kbd "C" /%}
--   Paste into an external program / text editor, note that the column headers were also copied.
+- Select a cell range with click & drag
+- Copy with {% kbd "^ Ctrl" /%}+{% kbd "C" /%}
+- Paste into an external program / text editor, note that the column headers were also copied.
 
 {% gridExampleRunner title="Copying Cell Ranges and Headers" name="copy-range-with-headers" /%}
 
@@ -103,8 +103,8 @@ const gridOptions = {
 
 This is demonstrated in the example below. Note the following:
 
--   Selecting a cell and pressing {% kbd "^ Ctrl" /%}+{% kbd "X" /%} will not `copy` or `cut` the data.
--   The context menu will not show an option to `Cut`.
+- Selecting a cell and pressing {% kbd "^ Ctrl" /%}+{% kbd "X" /%} will not `copy` or `cut` the data.
+- The context menu will not show an option to `Cut`.
 
 {% gridExampleRunner title="Clipboard Suppress Cut" name="suppress-cut" /%}
 
@@ -114,8 +114,8 @@ Paste is enabled by default in the enterprise version and is possible as long as
 
 The behaviour of paste changes depending on whether you have a single cell or a range selected:
 
--   When a **single cell is selected**. The paste will proceed starting at the selected cell if multiple cells are to be pasted.
--   When a **range of cells selected**. If the selected range being pasted is larger than copied range, it will repeat if it fits evenly, otherwise it will just copy the cells into the start of the range.
+- When a **single cell is selected**. The paste will proceed starting at the selected cell if multiple cells are to be pasted.
+- When a **range of cells selected**. If the selected range being pasted is larger than copied range, it will repeat if it fits evenly, otherwise it will just copy the cells into the start of the range.
 
 ## Disabling Paste
 
@@ -139,10 +139,10 @@ The interfaces and parameters for processing individual cells are as follows:
 
 These three callbacks above are demonstrated in the example below. Note the following:
 
--   When cells are copied to the clipboard, values are prefixed with 'C-'. Cells can be copied by dragging a range with the mouse and hitting {% kbd "^ Ctrl" /%}+{% kbd "C" /%}.
--   When cells are pasted from the clipboard, values are prefixed with 'Z-'. Cells can be pasted by hitting {% kbd "^ Ctrl" /%}+{% kbd "V" /%}.
--   When headers are copied to the clipboard, values are prefixed with 'H-'. Headers can be copied by using the context menu.
--   When group headers are copied to the clipboard, values are prefixed with 'GH-'. Headers can be copied by using the context menu.
+- When cells are copied to the clipboard, values are prefixed with 'C-'. Cells can be copied by dragging a range with the mouse and hitting {% kbd "^ Ctrl" /%}+{% kbd "C" /%}.
+- When cells are pasted from the clipboard, values are prefixed with 'Z-'. Cells can be pasted by hitting {% kbd "^ Ctrl" /%}+{% kbd "V" /%}.
+- When headers are copied to the clipboard, values are prefixed with 'H-'. Headers can be copied by using the context menu.
+- When group headers are copied to the clipboard, values are prefixed with 'GH-'. Headers can be copied by using the context menu.
 
 {% gridExampleRunner title="Example Process" name="process" /%}
 
@@ -154,10 +154,10 @@ To have complete control of processing clipboard data when pasting, you can use 
 
 The following example shows custom code to process the data from the clipboard:
 
--   The cells are coloured based on the colour that the cell content starts with
--   Copy a cell range in the grid which includes a cell value that starts with `Red`. Pasting into the grid will paste a custom 4x4 cell grid.
--   Copy a cell range in the grid which includes a cell value that starts with `Yellow` and **doesn’t** include any `Red` cell values. Pasting this copied cell range will cancel the paste action and not paste anything
--   Any other copied cell data will be pasted as-is
+- The cells are coloured based on the colour that the cell content starts with
+- Copy a cell range in the grid which includes a cell value that starts with `Red`. Pasting into the grid will paste a custom 4x4 cell grid.
+- Copy a cell range in the grid which includes a cell value that starts with `Yellow` and **doesn’t** include any `Red` cell values. Pasting this copied cell range will cancel the paste action and not paste anything
+- Any other copied cell data will be pasted as-is
 
 {% gridExampleRunner title="Example Process Data" name="process-all" /%}
 
@@ -169,10 +169,10 @@ In order to insert all the copied rows in the grid, a custom `processDataFromCli
 
 The example below uses a custom `processDataFromClipboard` function to add new rows to the grid, to fit all the copied rows:
 
--   Select the top 3 rows in the grid using {% kbd "⇧ Shift" /%} + click
--   Press {% kbd "^ Ctrl" /%}+{% kbd "C" /%} to copy the selected rows
--   Select the `Ryan Lochte` cell on the last row and press {% kbd "^ Ctrl" /%}+{% kbd "V" /%} to paste the copied rows
--   Notice that the `Ryan Lochte` row has been overwritten and 2 extra rows are created at the bottom of the grid to accommodate the additional 2 rows pasted
+- Select the top 3 rows in the grid using {% kbd "⇧ Shift" /%} + click
+- Press {% kbd "^ Ctrl" /%}+{% kbd "C" /%} to copy the selected rows
+- Select the `Ryan Lochte` cell on the last row and press {% kbd "^ Ctrl" /%}+{% kbd "V" /%} to paste the copied rows
+- Notice that the `Ryan Lochte` row has been overwritten and 2 extra rows are created at the bottom of the grid to accommodate the additional 2 rows pasted
 
 {% gridExampleRunner title="Paste New Rows" name="pasting-extra-rows" /%}
 
@@ -194,9 +194,9 @@ By default, the grid will use `\t` (tab) as the field delimiter. This is to keep
 
 The grid's selection and copy features replace the built-in browser behaviour for selecting and copying text. If you want to use the normal browser behaviour instead, you should set `enableCellTextSelection=true` in the gridOptions. Note the following:
 
--   When `enableCellTextSelection=true`, pressing {% kbd "^ Ctrl" /%}+{% kbd "C" /%} doesn’t copy the focused cell value, but only the selected text inside the grid cell. When using AG Grid Enterprise, the user can copy the entire cell value by right-clicking the grid cell to show the [context menu](./context-menu/) and clicking the any of the Copy menu items.
+- When `enableCellTextSelection=true`, pressing {% kbd "^ Ctrl" /%}+{% kbd "C" /%} doesn’t copy the focused cell value, but only the selected text inside the grid cell. When using AG Grid Enterprise, the user can copy the entire cell value by right-clicking the grid cell to show the [context menu](./context-menu/) and clicking the any of the Copy menu items.
 
--   When `enableCellTextSelection=true`, the option `ensureDomOrder=true` needs to be set for correct accessibility support. See [Ensure DOM Element order](./accessibility/#ensure-dom-element-order).
+- When `enableCellTextSelection=true`, the option `ensureDomOrder=true` needs to be set for correct accessibility support. See [Ensure DOM Element order](./accessibility/#ensure-dom-element-order).
 
 {% note %}
 This is not an enterprise config and can be used at any time to enable cell text selection.
@@ -204,11 +204,11 @@ This is not an enterprise config and can be used at any time to enable cell text
 
 See this behaviour shown in the example below:
 
--   Focus a grid cell and press {% kbd "^ Ctrl" /%}+{% kbd "C" /%}. The cell value will not be copied because no text is selected.
+- Focus a grid cell and press {% kbd "^ Ctrl" /%}+{% kbd "C" /%}. The cell value will not be copied because no text is selected.
 
--   Click a cell and drag across its value to select the text. Press {% kbd "^ Ctrl" /%}+{% kbd "C" /%} and the value will be copied.
+- Click a cell and drag across its value to select the text. Press {% kbd "^ Ctrl" /%}+{% kbd "C" /%} and the value will be copied.
 
--   This sample is using AG Grid Community version, so the context menu is not available to copy the focused cell value. In AG Grid Enterprise the context menu will be available to copy the entire focused cell value without having to select it as text.
+- This sample is using AG Grid Community version, so the context menu is not available to copy the focused cell value. In AG Grid Enterprise the context menu will be available to copy the entire focused cell value without having to select it as text.
 
 {% gridExampleRunner title="Using Browser text selection" name="cellTextSelection" /%}
 

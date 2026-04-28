@@ -663,7 +663,7 @@ describe('ag-grid formulas filtering', () => {
             }
 
             public setModel(model: any): void {
-                const nextModel = typeof model === 'string' ? model : model ?? null;
+                const nextModel = typeof model === 'string' ? model : (model ?? null);
                 if (nextModel === this.model) {
                     return;
                 }

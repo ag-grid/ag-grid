@@ -15,8 +15,11 @@ import type { BaseColDefOptionalDataParams, ColumnFunctionCallbackParams } from 
  * };
  * ```
  */
-export interface GroupRowEditableCallbackParams<TData = any, TValue = any, TContext = any>
-    extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
+export interface GroupRowEditableCallbackParams<
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 
 /**
  * Callback that determines whether a group row cell is editable.
@@ -131,8 +134,11 @@ export type GroupRowValueSetterFunc<TData = any, TValue = any, TContext = any> =
  * getValue: (params) => params.data?.weight ?? 0,
  * ```
  */
-export interface DistributionGetValueParams<TData = any, TValue = any, TContext = any>
-    extends BaseColDefOptionalDataParams<TData, TValue, TContext> {
+export interface DistributionGetValueParams<
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends BaseColDefOptionalDataParams<TData, TValue, TContext> {
     /** The child RowNode whose value is being read. */
     node: IRowNode<TData>;
 
@@ -150,8 +156,11 @@ export interface DistributionGetValueParams<TData = any, TValue = any, TContext 
  *     params.node.setDataValue(params.column, Math.max(0, Number(params.value)), 'data'),
  * ```
  */
-export interface DistributionSetValueParams<TData = any, TValue = any, TContext = any>
-    extends DistributionGetValueParams<TData, TValue, TContext> {
+export interface DistributionSetValueParams<
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends DistributionGetValueParams<TData, TValue, TContext> {
     /** The distributed value to write to this child. */
     value: unknown;
 }
@@ -373,8 +382,10 @@ export interface GroupRowValueSetterDistributionOptions {
  *
  * @agModule `RowGroupingEditModule`
  */
-export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext = any>
-    extends Omit<GroupRowValueSetterDistributionOptions, 'distribution'> {
+export interface GroupRowValueSetterOptions<TData = any, TValue = any, TContext = any> extends Omit<
+    GroupRowValueSetterDistributionOptions,
+    'distribution'
+> {
     /**
      * Distribution strategy or per-aggregation-function strategy map.
      *

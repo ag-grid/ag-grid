@@ -17,14 +17,14 @@ const gridOptions = {
 
 The following example demonstrates the Advanced Filter:
 
--   Start typing `athlete` into the Advanced Filter input. As you type, the list of suggested column names will be filtered down.
--   Select the `Athlete` entry by pressing {% kbd "↵ Enter" /%} or {% kbd "⇥ Tab" /%}, or using the mouse to click on the entry.
--   Select the `contains` entry in a similar way.
--   After the quote, type `michael` followed by an end quote (`"`).
--   Press {% kbd "↵ Enter" /%} or click the `Apply` button to execute the filter.
--   The rows are now filtered to contain only **Athlete**s with names containing `michael`.
--   Try out each of the columns to see how the different [Cell Data Types](./cell-data-types/) are handled.
--   Complex filter expressions can be built up by using `AND` and `OR` along with brackets - `(` and `)`.
+- Start typing `athlete` into the Advanced Filter input. As you type, the list of suggested column names will be filtered down.
+- Select the `Athlete` entry by pressing {% kbd "↵ Enter" /%} or {% kbd "⇥ Tab" /%}, or using the mouse to click on the entry.
+- Select the `contains` entry in a similar way.
+- After the quote, type `michael` followed by an end quote (`"`).
+- Press {% kbd "↵ Enter" /%} or click the `Apply` button to execute the filter.
+- The rows are now filtered to contain only **Athlete**s with names containing `michael`.
+- Try out each of the columns to see how the different [Cell Data Types](./cell-data-types/) are handled.
+- Complex filter expressions can be built up by using `AND` and `OR` along with brackets - `(` and `)`.
 
 {% gridExampleRunner title="Advanced Filter" name="advanced-filter" /%}
 
@@ -40,11 +40,11 @@ The Advanced Filter Builder can be launched by clicking the `Builder` button nex
 
 The following example demonstrates the Advanced Filter Builder:
 
--   Click on any of the dropdown pills to change the join operators, columns and filter options.
--   Click on the value pills to change the filter values.
--   Use the drag handles to move the filter conditions or groups around.
--   Use the add and remove buttons to create new conditions or delete existing ones.
--   If the filter is valid (and does not match the already applied filter), click the `Apply` button to apply the filter.
+- Click on any of the dropdown pills to change the join operators, columns and filter options.
+- Click on the value pills to change the filter values.
+- Use the drag handles to move the filter conditions or groups around.
+- Use the add and remove buttons to create new conditions or delete existing ones.
+- If the filter is valid (and does not match the already applied filter), click the `Apply` button to apply the filter.
 
 {% gridExampleRunner title="Advanced Filter Builder" name="advanced-filter-builder" /%}
 
@@ -56,12 +56,12 @@ The type of the filter options displayed is based on the [Cell Data Type](./cell
 
 The different properties that can be set for each column are explained in the sections below, and demonstrated in the following example:
 
--   The **Age** column is not available in the filter as `filter = false`.
--   The **Sport** column is not available in the filter by default as hidden columns are excluded.
--   After clicking **Include Hidden Columns**, the **Sport** column is available in the filter.
--   The **Group** column does not appear in the filter, but its underlying column - **Country** - always appears.
--   The **Athlete** column has Filter Params defined, so that it only shows the `contains` option and is case sensitive.
--   The **Gold**, **Silver** and **Bronze** columns in the **Medals (-)** column group have a `headerValueGetter` defined and use the `location` property to have a different name in the filter (with a `(-)` suffix).
+- The **Age** column is not available in the filter as `filter = false`.
+- The **Sport** column is not available in the filter by default as hidden columns are excluded.
+- After clicking **Include Hidden Columns**, the **Sport** column is available in the filter.
+- The **Group** column does not appear in the filter, but its underlying column - **Country** - always appears.
+- The **Athlete** column has Filter Params defined, so that it only shows the `contains` option and is case sensitive.
+- The **Gold**, **Silver** and **Bronze** columns in the **Medals (-)** column group have a `headerValueGetter` defined and use the `location` property to have a different name in the filter (with a `(-)` suffix).
 
 {% gridExampleRunner title="Configuring Columns" name="configuring-columns" /%}
 
@@ -143,9 +143,9 @@ For `text` and `object` Cell Data Types, `caseSensitive = true` can be set to en
 
 For `number`, `date`, `dateString`, `dateTime` and `dateTimeString` Cell Data Types, the following properties can be set to include blank values for the relevant options:
 
--   `includeBlanksInEquals = true`
--   `includeBlanksInLessThan = true`
--   `includeBlanksInGreaterThan = true`
+- `includeBlanksInEquals = true`
+- `includeBlanksInLessThan = true`
+- `includeBlanksInGreaterThan = true`
 
 These settings only apply when using the Client-Side Row Model. You need to implement support for these in your server-side filtering logic when using the Server-Side Row Model.
 
@@ -200,10 +200,10 @@ The Advanced Filter Model can be saved and restored as part of [Grid State](./gr
 
 The Advanced Filter Model and API methods are demonstrated in the following example:
 
--   Clicking `Save Advanced Filter Model` will save the current Advanced Filter.
--   Clicking `Restore Advanced Filter Model` will restore the previously saved Advanced Filter.
--   Clicking `Set Custom Advanced Filter Model` will set `[Gold] >= 1`.
--   Clicking `Clear Advanced Filter` will clear the current Advanced Filter.
+- Clicking `Save Advanced Filter Model` will save the current Advanced Filter.
+- Clicking `Restore Advanced Filter Model` will restore the previously saved Advanced Filter.
+- Clicking `Set Custom Advanced Filter Model` will set `[Gold] >= 1`.
+- Clicking `Clear Advanced Filter` will clear the current Advanced Filter.
 
 {% gridExampleRunner title="Advanced Filter Model / API" name="advanced-filter-model-api" /%}
 
@@ -221,8 +221,8 @@ The params can be set via the grid option `advancedFilterParams`:
 
 The following example demonstrates configuring the Advanced Filter:
 
--   The `Builder` button has been removed, and the Advanced Filter Builder must now be opened via the API.
--   The `buttons` have been configured to add the Clear and Reset buttons.
+- The `Builder` button has been removed, and the Advanced Filter Builder must now be opened via the API.
+- The `buttons` have been configured to add the Clear and Reset buttons.
 
 {% gridExampleRunner title="Configuring Advanced Filter" name="configuring-advanced-filter" /%}
 
@@ -238,8 +238,8 @@ The [Popup Parent](./context-menu/#popup-parent) must also be set to an element 
 
 The following example demonstrates displaying the Advanced Filter outside of the grid:
 
--   The Advanced Filter parent is set using an element directly above the grid.
--   Popup Parent is set to the document body.
+- The Advanced Filter parent is set using an element directly above the grid.
+- Popup Parent is set to the document body.
 
 {% gridExampleRunner title="External Parent" name="external-parent" /%}
 
@@ -263,9 +263,9 @@ When the Advanced Filter Builder is shown or hidden, the `advancedFilterBuilderV
 
 The following example demonstrates configuring the Advanced Filter Builder:
 
--   The `Advanced Filter Builder` button displays the Advanced Filter Builder via the API method `showAdvancedFilterBuilder`.
--   The `advancedFilterBuilderVisibleChanged` event is used to toggle the disabled status of the `Advanced Filter Builder` button.
--   The `showMoveButtons` param is set in the `advancedFilterBuilderParams`, which displays buttons allowing the filter rows to be moved up and down (including via keyboard navigation).
+- The `Advanced Filter Builder` button displays the Advanced Filter Builder via the API method `showAdvancedFilterBuilder`.
+- The `advancedFilterBuilderVisibleChanged` event is used to toggle the disabled status of the `Advanced Filter Builder` button.
+- The `showMoveButtons` param is set in the `advancedFilterBuilderParams`, which displays buttons allowing the filter rows to be moved up and down (including via keyboard navigation).
 
 {% gridExampleRunner title="Configuring Advanced Filter Builder" name="configuring-advanced-filter-builder" /%}
 
@@ -273,13 +273,13 @@ The following example demonstrates configuring the Advanced Filter Builder:
 
 All of the [Cell Data Types](./cell-data-types) are supported in the Advanced Filter. The behaviour of each is described below.
 
--   **Text** - The value in the input is compared against the cell value before any [Value Formatters](./value-formatters/) are applied (similar to the [Text Filter](./filter-text/)). To change the value being compared against, a [Filter Value Getter](./filter-text/#text-filter-values) can be used.
--   **Number** - The value in the input is compared against the cell value (like in the [Number Filter](./filter-number/)).
--   **BigInt** - The value in the input is parsed as a `bigint` (decimal integer syntax only, optional trailing `n`) and compared against the cell value (like in the [BigInt Filter](./filter-bigint/)).
--   **Boolean** - No values are displayed for booleans as the filter option is used instead.
--   **Date** and **Date Time** - The value in the input is converted to a `Date` via the [Value Parser](./value-parsers/#value-parser).
--   **Date String** and **Date Time String** - The value in the input is converted to a `Date` using the [Value Parser](./value-parsers/#value-parser) and the [Date Parser](./cell-data-types/#date-as-string). This is compared against the cell values, which are also converted using the Date Parser.
--   **Object** - The value in the input is compared against the values returned by the [Filter Value Getter](./column-properties/#reference-filtering-filterValueGetter) if one is provided. Otherwise, the cell values are converted using the [Value Formatter](./value-formatters/).
+- **Text** - The value in the input is compared against the cell value before any [Value Formatters](./value-formatters/) are applied (similar to the [Text Filter](./filter-text/)). To change the value being compared against, a [Filter Value Getter](./filter-text/#text-filter-values) can be used.
+- **Number** - The value in the input is compared against the cell value (like in the [Number Filter](./filter-number/)).
+- **BigInt** - The value in the input is parsed as a `bigint` (decimal integer syntax only, optional trailing `n`) and compared against the cell value (like in the [BigInt Filter](./filter-bigint/)).
+- **Boolean** - No values are displayed for booleans as the filter option is used instead.
+- **Date** and **Date Time** - The value in the input is converted to a `Date` via the [Value Parser](./value-parsers/#value-parser).
+- **Date String** and **Date Time String** - The value in the input is converted to a `Date` using the [Value Parser](./value-parsers/#value-parser) and the [Date Parser](./cell-data-types/#date-as-string). This is compared against the cell values, which are also converted using the Date Parser.
+- **Object** - The value in the input is compared against the values returned by the [Filter Value Getter](./column-properties/#reference-filtering-filterValueGetter) if one is provided. Otherwise, the cell values are converted using the [Value Formatter](./value-formatters/).
 
 ## Aggregation / Pivoting
 

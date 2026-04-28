@@ -13,9 +13,9 @@ Once you have access to the required Row Node, you can update its data with the 
 
 There are two ways to read cell values:
 
--   **`rowNode.getDataValue(colKey)`** — returns the underlying data value for a column. This includes resolved valueGetters, aggregation on group rows, and computed formulas, but excludes any pending edits. Use this when you need the raw data (e.g. for calculations or external updates).
+- **`rowNode.getDataValue(colKey)`** — returns the underlying data value for a column. This includes resolved valueGetters, aggregation on group rows, and computed formulas, but excludes any pending edits. Use this when you need the raw data (e.g. for calculations or external updates).
 
--   **`api.getCellValue({ rowNode, colKey })`** — returns the display value as shown in the grid, including pending edits and group column display logic. Pass `useFormatter: true` to get the formatted string. Use this when you need the value as the user sees it.
+- **`api.getCellValue({ rowNode, colKey })`** — returns the display value as shown in the grid, including pending edits and group column display logic. Pass `useFormatter: true` to get the formatted string. Use this when you need the value as the user sees it.
 
 Both methods accept an optional `from` parameter to control how pending edits are resolved — see [Batch Editing - Reading Values](./cell-editing-batch/#reading-values) for details.
 
@@ -37,15 +37,15 @@ If you want the grid to automatically update sorting, filter or grouping then yo
 
 The example below demonstrates the following:
 
--   **Set Price on Toyota:** The price value is updated on the Toyota row and the grid refreshes the cell.
+- **Set Price on Toyota:** The price value is updated on the Toyota row and the grid refreshes the cell.
 
--   **Set Data on Ford:** The entire data is set on the Ford row and the grid refreshes the entire row. Updated cells do not flash (even though `enableCellChangeFlash = true`).
+- **Set Data on Ford:** The entire data is set on the Ford row and the grid refreshes the entire row. Updated cells do not flash (even though `enableCellChangeFlash = true`).
 
--   **Update Data on Ford:** The entire data is updated on the Ford row and the grid refreshes the changed values in the row. Updated cells flash (as `enableCellChangeFlash = true`).
+- **Update Data on Ford:** The entire data is updated on the Ford row and the grid refreshes the changed values in the row. Updated cells flash (as `enableCellChangeFlash = true`).
 
--   **Sort:** Re-runs the sort in the Client-Side Row Model - to see this in action, sort the data first, then edit the data so the sort is broken, then hit this button to fix the sort.
+- **Sort:** Re-runs the sort in the Client-Side Row Model - to see this in action, sort the data first, then edit the data so the sort is broken, then hit this button to fix the sort.
 
--   **Filter:** Re-runs the filter in the Client-Side Row Model - to see this in action, filter the data first, then
-    edit the data so the filter is broken (i.e. a row is present that should not be present), then hit this button to fix the filter.
+- **Filter:** Re-runs the filter in the Client-Side Row Model - to see this in action, filter the data first, then
+  edit the data so the filter is broken (i.e. a row is present that should not be present), then hit this button to fix the filter.
 
 {% gridExampleRunner title="Updating Row Nodes" name="updating-row-nodes" /%}

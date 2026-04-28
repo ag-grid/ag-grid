@@ -41,9 +41,9 @@ export class PolarChartProxy extends ChartProxy<
             return {
                 type: this.standaloneChartType satisfies AgPolarSeriesOptions['type'],
                 angleKey: radialBar ? f.colId : category.id,
-                angleName: radialBar ? f.displayName ?? undefined : category.name,
+                angleName: radialBar ? (f.displayName ?? undefined) : category.name,
                 radiusKey: radialBar ? category.id : f.colId,
-                radiusName: radialBar ? category.name : f.displayName ?? undefined,
+                radiusName: radialBar ? category.name : (f.displayName ?? undefined),
                 ...seriesGroupTypeOptions,
             } satisfies Omit<AgPolarSeriesOptions, 'type'> as AgPolarSeriesOptions;
         });

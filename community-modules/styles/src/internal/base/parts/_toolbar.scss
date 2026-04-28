@@ -4,13 +4,16 @@
     .ag-toolbar {
         display: flex;
         align-items: center;
-        gap: var(--ag-spacing);
         overflow: hidden;
         border-bottom: var(--ag-header-row-border);
-        padding-right: calc(var(--ag-spacing) * 2);
-        padding-left: calc(var(--ag-spacing) * 2);
         min-height: var(--ag-header-height);
         line-height: 1.5;
+        background-color: var(--ag-header-background-color);
+        color: var(--ag-header-text-color);
+        font-family: var(--ag-header-font-family);
+        font-size: var(--ag-header-font-size);
+        font-weight: var(--ag-header-font-weight);
+        white-space: nowrap;
     }
 
     .ag-toolbar-right-start {
@@ -25,7 +28,7 @@
         display: inline-flex;
         align-items: center;
         gap: var(--ag-spacing);
-        padding: var(--ag-spacing);
+        padding: calc(var(--ag-spacing) * 2);
         border: 0;
         border-radius: var(--ag-border-radius);
         background: transparent;
@@ -36,11 +39,8 @@
     }
 
     .ag-toolbar-button:hover {
-        background-color: var(--ag-row-hover-color);
-    }
-
-    .ag-toolbar-button:active {
-        background-color: var(--ag-range-selection-background-color);
+        background-color: var(--ag-icon-button-hover-background-color);
+        color: var(--ag-icon-button-hover-color);
     }
 
     .ag-toolbar-button:focus-visible {
@@ -57,13 +57,21 @@
         display: inline-flex;
         flex: 1;
         min-width: 235px;
+        max-width: 300px;
+        padding: 0 calc(var(--ag-spacing) * 2);
     }
 
     .ag-toolbar-input {
         position: relative;
         display: inline-flex;
         align-items: center;
-        min-width: 140px;
+        min-width: 200px;
+        max-width: 250px;
+        margin: 0 calc(var(--ag-spacing) * 2);
+    }
+
+    :where(.ag-toolbar-input) + :where(.ag-toolbar-input) {
+        margin-inline-start: 0;
     }
 
     .ag-toolbar-input-icon {
@@ -117,7 +125,7 @@
     .ag-toolbar-separator {
         align-self: stretch;
         width: 0;
-        margin: 0 var(--ag-spacing);
+        margin: calc(var(--ag-spacing) * 1.75) 0;
         @include ag.unthemed-rtl(
             (
                 border-left: solid var(--ag-border-width) var(--ag-border-color),

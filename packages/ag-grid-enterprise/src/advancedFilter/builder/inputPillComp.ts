@@ -159,6 +159,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
      */
     private createEditorComp(type: BaseCellDataType): GridInputTextField {
         const [Comp, postConstruct] = inputComponentDescriptors[type];
+        // eslint-disable-next-line sonarjs/new-operator-misuse -- false positive: Comp is a class constructor from inputComponentDescriptors
         const instance = this.createBean(new Comp());
         postConstruct?.(instance);
         return instance;

@@ -6,7 +6,7 @@ import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entiti
 import type { RowNode } from '../entities/rowNode';
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
 import type { StylesChangedEvent } from '../events';
-import { _getRowHeightForNode } from '../gridOptionsUtils';
+import { _getGrandTotalPinnedFloat, _getRowHeightForNode } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
@@ -84,8 +84,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         });
 
         this.addManagedPropertyListener('grandTotalRow', ({ currentValue }) => {
-            this._grandTotalPinned =
-                currentValue === 'pinnedBottom' ? 'bottom' : currentValue === 'pinnedTop' ? 'top' : null;
+            this._grandTotalPinned = _getGrandTotalPinnedFloat(currentValue);
         });
 
         this.addManagedPropertyListener('isRowPinned', runIsRowPinned);
@@ -130,8 +129,14 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             // on the root node.
             if (level === -1) {
                 this._grandTotalPinned = float;
-                // We need to refresh the model, but only if we are not already refreshing.
-                this.csrm?.reMapRows();
+                // CSRM goes through reMapRows so the modelUpdated listener picks up the
+                // change; SSRM has no model-update path so we apply it directly.
+                const csrm = this.csrm;
+                if (csrm) {
+                    csrm.reMapRows();
+                } else if (this.ssrm) {
+                    this.pinGrandTotalRow();
+                }
                 return;
             }
         }

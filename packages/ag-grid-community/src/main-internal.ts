@@ -367,6 +367,7 @@ export {
     _getCheckboxLocation,
     _getEnableColumnSelection,
     _getFillHandle,
+    _getGrandTotalPinnedFloat,
     _getGrandTotalRow,
     _getGridOption,
     _getGroupAggFiltering,

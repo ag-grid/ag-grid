@@ -70,8 +70,8 @@ export interface IInnerHeaderGroupComponent<
     TData = any,
     TContext = any,
     TParams extends Readonly<IHeaderGroupParams<TData, TContext>> = IHeaderGroupParams<TData, TContext>,
-> extends IComponent<TParams>,
-        IHeaderGroup {}
+>
+    extends IComponent<TParams>, IHeaderGroup {}
 
 const HeaderGroupCompElement: ElementParams = {
     tag: 'div',

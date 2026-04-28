@@ -235,6 +235,22 @@ export function _getGrandTotalRow(gos: GridOptionsService): GridOptions['grandTo
     return gos.get('grandTotalRow');
 }
 
+/**
+ * Maps a `grandTotalRow` option to the floating side the grand total should be pinned to,
+ * or `null` when it should render inline (or is disabled).
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getGrandTotalPinnedFloat(grandTotalRow: GridOptions['grandTotalRow']): 'top' | 'bottom' | null {
+    switch (grandTotalRow) {
+        case 'pinnedTop':
+            return 'top';
+        case 'pinnedBottom':
+            return 'bottom';
+        default:
+            return null;
+    }
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getGroupTotalRowCallback(
     gos: GridOptionsService
@@ -408,7 +424,7 @@ export function _getSuppressMultiRanges(gos: GridOptionsService): boolean {
         return gos.get('suppressMultiRangeSelection');
     }
 
-    return typeof selection !== 'boolean' ? selection?.suppressMultiRanges ?? false : false;
+    return typeof selection !== 'boolean' ? (selection?.suppressMultiRanges ?? false) : false;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -461,7 +477,7 @@ function _getEnableClickSelection(gos: GridOptionsService): NonNullable<RowSelec
     }
 
     return selection.mode === 'singleRow' || selection.mode === 'multiRow'
-        ? selection.enableClickSelection ?? false
+        ? (selection.enableClickSelection ?? false)
         : false;
 }
 
@@ -569,7 +585,7 @@ export function _getCtrlASelectsRows(gos: GridOptionsService): boolean {
     if (typeof rowSelection === 'string') {
         return false;
     }
-    return rowSelection?.mode === 'multiRow' ? rowSelection.ctrlASelectsRows ?? false : false;
+    return rowSelection?.mode === 'multiRow' ? (rowSelection.ctrlASelectsRows ?? false) : false;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

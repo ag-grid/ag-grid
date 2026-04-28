@@ -7,18 +7,18 @@ Managed dragging is enabled with the property `rowDragManaged=true`.
 
 The example below shows simple managed dragging. The following can be noted:
 
--   The first column has `rowDrag=true` which results in a draggable area being included in the cell.
--   The property `rowDragManaged` is set, to tell the grid to move the row as the row is dragged.
--   If a sort (click on the header) or filter (open up the column menu) is applied to the column, the draggable icon for row dragging is disabled. This is consistent with the constraints explained after the example.
+- The first column has `rowDrag=true` which results in a draggable area being included in the cell.
+- The property `rowDragManaged` is set, to tell the grid to move the row as the row is dragged.
+- If a sort (click on the header) or filter (open up the column menu) is applied to the column, the draggable icon for row dragging is disabled. This is consistent with the constraints explained after the example.
 
 {% gridExampleRunner title="Row Drag Simple Managed" name="simple-managed" /%}
 
 The logic for managed dragging is simple and has the following constraints:
 
--   Works with [Client-Side](./row-models/#client-side) row model only; not with the [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) or [Viewport](./viewport/) row models.
--   Does not work if [Pagination](./row-pagination/) is enabled.
--   Does not work when sorting is applied. This is because the sort order of the rows depends on the data and moving the data would break the sort order.
--   Does not work when filtering is applied. This is because a filter removes rows making it impossible to know the 'real' order of rows when some are missing.
+- Works with [Client-Side](./row-models/#client-side) row model only; not with the [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) or [Viewport](./viewport/) row models.
+- Does not work if [Pagination](./row-pagination/) is enabled.
+- Does not work when sorting is applied. This is because the sort order of the rows depends on the data and moving the data would break the sort order.
+- Does not work when filtering is applied. This is because a filter removes rows making it impossible to know the 'real' order of rows when some are missing.
 
 These constraints can be bypassed by using [Unmanaged Row Dragging](./row-dragging-unmanaged).
 
@@ -40,8 +40,8 @@ It is possible to drag multiple rows at the same time, when `rowDragMultiRow` is
 
 For this example note the following:
 
--   When you select multiple items and drag one of them, all items in the selection will be dragged.
--   When you drag an item that is not selected while other items are selected, only the unselected item will be dragged.
+- When you select multiple items and drag one of them, all items in the selection will be dragged.
+- When you drag an item that is not selected while other items are selected, only the unselected item will be dragged.
 
 {% gridExampleRunner title="Row Drag with Multi-Row Drag" name="managed-with-multi-row-drag" /%}
 
@@ -51,9 +51,9 @@ You can hide the draggable area by setting the grid option `suppressRowDrag = tr
 
 The example below is almost identical to the [Managed Dragging](./row-dragging-managed) example with the following differences:
 
--   The **Suppress** button will hide the drag icons.
--   The **Remove Suppress** button will un-hide the drag icons.
--   Applying a sort or a filter or entering pivot mode will disable the drag icons.
+- The **Suppress** button will hide the drag icons.
+- The **Remove Suppress** button will un-hide the drag icons.
+- Applying a sort or a filter or entering pivot mode will disable the drag icons.
 
 {% gridExampleRunner title="Suppress Row Drag" name="suppress-row-drag" /%}
 

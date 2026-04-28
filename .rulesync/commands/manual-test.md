@@ -82,15 +82,15 @@ export const gridOptions: GridOptions<RowData> = {
 
 Port the example into this structure:
 
--   **Match module registration:** The template registers `AllCommunityModule` and `AllEnterpriseModule`. If the source example registers specific modules instead (e.g. `ClientSideRowModelModule`, `ColumnsToolPanelModule`, `SideBarModule`), update the `ModuleRegistry.registerModules()` call to register the same specific modules. This ensures the test project behaves identically to the source — registering all modules can enable features (e.g. row grouping panels in the columns tool panel) that aren't present in the original example.
--   Define `RowData` interface matching the data shape from the example
--   Port `columnDefs` with proper `ColDef<RowData>` typing
--   Port `rowData` — if the example uses inline data, include it directly; if it fetches from a URL, keep the fetch pattern but adapt it to work with the template
--   Port `defaultColDef` if present (export it separately)
--   Port all other grid options into the `gridOptions` object
--   Add necessary imports from `ag-grid-community` and `ag-grid-enterprise` as needed
--   If the example uses `data.ts`, incorporate its exports (inline the data or re-export)
--   Port any utility functions, value formatters, cell class rules etc. that are defined in `main.ts`
+- **Match module registration:** The template registers `AllCommunityModule` and `AllEnterpriseModule`. If the source example registers specific modules instead (e.g. `ClientSideRowModelModule`, `ColumnsToolPanelModule`, `SideBarModule`), update the `ModuleRegistry.registerModules()` call to register the same specific modules. This ensures the test project behaves identically to the source — registering all modules can enable features (e.g. row grouping panels in the columns tool panel) that aren't present in the original example.
+- Define `RowData` interface matching the data shape from the example
+- Port `columnDefs` with proper `ColDef<RowData>` typing
+- Port `rowData` — if the example uses inline data, include it directly; if it fetches from a URL, keep the fetch pattern but adapt it to work with the template
+- Port `defaultColDef` if present (export it separately)
+- Port all other grid options into the `gridOptions` object
+- Add necessary imports from `ag-grid-community` and `ag-grid-enterprise` as needed
+- If the example uses `data.ts`, incorporate its exports (inline the data or re-export)
+- Port any utility functions, value formatters, cell class rules etc. that are defined in `main.ts`
 
 **Important:** The `gridOptions` export must not include `columnDefs` or `rowData` as literal values — they should be referenced as the separately exported constants (this allows framework wrappers to bind them independently).
 
@@ -98,8 +98,8 @@ Port the example into this structure:
 
 Check the example source for elements that go beyond grid configuration:
 
--   **Custom controls** in `index.html`: buttons, dropdowns, inputs with `onclick` handlers that call grid API methods
--   **Custom components** in `provided/` directory: cell renderers, cell editors, filters, overlays, etc.
+- **Custom controls** in `index.html`: buttons, dropdowns, inputs with `onclick` handlers that call grid API methods
+- **Custom components** in `provided/` directory: cell renderers, cell editors, filters, overlays, etc.
 
 If none are needed, skip this step.
 

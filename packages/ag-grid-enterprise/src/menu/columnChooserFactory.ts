@@ -75,7 +75,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
         const beans = this.beans;
         const { visibleCols, focusSvc, menuUtils } = beans;
         const columnIndex = visibleCols.allCols.indexOf(column as AgColumn);
-        const headerPosition = column ? focusSvc.focusedHeader ?? providedHeaderPosition ?? null : null;
+        const headerPosition = column ? (focusSvc.focusedHeader ?? providedHeaderPosition ?? null) : null;
 
         this.activeColumnChooserDialog = this.createBean(
             new Dialog({

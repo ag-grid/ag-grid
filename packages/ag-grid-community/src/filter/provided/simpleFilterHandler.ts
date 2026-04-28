@@ -19,10 +19,10 @@ import type { SimpleFilterModelFormatter } from './simpleFilterModelFormatter';
 import { evaluateCustomFilter } from './simpleFilterUtils';
 
 export abstract class SimpleFilterHandler<
-        TModel extends ISimpleFilterModel,
-        TValue,
-        TParams extends ISimpleFilterParams,
-    >
+    TModel extends ISimpleFilterModel,
+    TValue,
+    TParams extends ISimpleFilterParams,
+>
     extends BeanStub
     implements FilterHandler<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
 {

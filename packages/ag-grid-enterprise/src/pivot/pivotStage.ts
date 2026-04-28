@@ -44,6 +44,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
     private uniqueValues: Map<string, any> = new Map();
 
     private aggregationColumnsHashLastTime: string | null;
+    private aggregationColumnIdsLastTime: string[] | null;
     private aggregationFuncsHashLastTime: string;
     private pivotOrderLastTime: string[] = [];
 
@@ -64,6 +65,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
     private executePivotOff(): boolean {
         this.aggregationColumnsHashLastTime = null;
+        this.aggregationColumnIdsLastTime = null;
         this.pivotOrderLastTime = [];
         this.uniqueValues = new Map();
         if (this.pivotResultCols.isPivotResultColsPresent()) {
@@ -105,14 +107,21 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
         const aggregationColumns = valueColsSvc?.columns ?? [];
+        const aggregationColumnIds = aggregationColumns.map((column) => column.getId());
         const aggregationColumnsHash = aggregationColumns
             .map((column) => `${column.getId()}-${column.colDef.headerName}`)
             .join('#');
         const aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc()!.toString()).join('#');
 
         const aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
+        const aggregationColumnsReordered =
+            this.aggregationColumnIdsLastTime != null &&
+            !_areEqual(this.aggregationColumnIdsLastTime, aggregationColumnIds) &&
+            this.aggregationColumnIdsLastTime.length === aggregationColumnIds.length &&
+            this.aggregationColumnIdsLastTime.every((id) => aggregationColumnIds.includes(id));
         const aggregationFuncsChanged = this.aggregationFuncsHashLastTime !== aggregationFuncsHash;
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
+        this.aggregationColumnIdsLastTime = aggregationColumnIds;
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
 
         const groupColumnsHash = (rowGroupColsSvc?.columns ?? []).map((column) => column.getId()).join('#');
@@ -138,7 +147,11 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
             anyGridOptionsChanged
         ) {
             const pivotColumnGroupDefs = this.pivotColDefSvc.createPivotColumnDefs(this.uniqueValues);
-            this.pivotResultCols.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
+            this.pivotResultCols.setPivotResultCols(
+                pivotColumnGroupDefs,
+                'rowModelUpdated',
+                aggregationColumnsReordered
+            );
             // Because the secondary columns have changed, the aggregation needs to visit the whole
             // tree again, so signal the caller to deactivate the changedPath.
             this.lastTimeFailed = false;

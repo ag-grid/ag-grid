@@ -28,12 +28,8 @@ export enum DragSourceType {
 
 /** This is used internally. `DragSource` is used for external-facing things */
 export interface GridDragSource<
-    TDraggingEvent extends AgDraggingEvent<
-        DragSourceType,
-        DragItem,
-        DragAndDropIcon,
-        TDraggingEvent
-    > = GridDraggingEvent,
+    TDraggingEvent extends AgDraggingEvent<DragSourceType, DragItem, DragAndDropIcon, TDraggingEvent> =
+        GridDraggingEvent,
 > extends AgDragSource<DragSourceType, DragItem, DragAndDropIcon, TDraggingEvent> {
     /** Callback for entering the grid */
     onGridEnter?: (dragItem: DragItem | null) => void;
@@ -45,7 +41,8 @@ export interface DropTarget extends AgDropTarget<DragSourceType, DragItem, DragA
 
 /** This is used internally. `DraggingEvent` is used for external-facing things */
 export interface GridDraggingEvent<TData = any, TContext = any>
-    extends AgDraggingEvent<DragSourceType, DragItem, DragAndDropIcon, GridDraggingEvent>,
+    extends
+        AgDraggingEvent<DragSourceType, DragItem, DragAndDropIcon, GridDraggingEvent>,
         AgGridCommon<TData, TContext> {}
 
 export type DragAndDropIcon =

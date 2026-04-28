@@ -127,7 +127,7 @@ export abstract class BaseSelectionService extends BeanStub {
                 ? // If row node is pinned sibling, copy selectable status over from sibling row node
                   rowNode.pinnedSibling.selectable
                 : // otherwise calculate selectable state directly
-                  this.isRowSelectable?.(rowNode) ?? true;
+                  (this.isRowSelectable?.(rowNode) ?? true);
 
         this.setRowSelectable(rowNode, selectable, suppressSelectionUpdate);
         return selectable;

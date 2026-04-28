@@ -48,9 +48,9 @@ e.g. `['Argentina', '2012']`.
 
 The example below demonstrates server-side Row Grouping. Note the following:
 
--   **Country** and **Sport** columns have `rowGroup=true` defined on their column definitions. This tells the grid there are two levels of grouping, one for Country and one for Sport.
--   The `rowGroupCols` and `groupKeys` properties in the request are used by the server to perform grouping.
--   Open the browser's dev console to view the request supplied to the datasource.
+- **Country** and **Sport** columns have `rowGroup=true` defined on their column definitions. This tells the grid there are two levels of grouping, one for Country and one for Sport.
+- The `rowGroupCols` and `groupKeys` properties in the request are used by the server to perform grouping.
+- Open the browser's dev console to view the request supplied to the datasource.
 
 {% gridExampleRunner title="Row Grouping" name="row-grouping"  exampleHeight=590 /%}
 
@@ -79,13 +79,13 @@ It may also be helpful to use the [Row Node](./row-object/) API `getRoute()` to 
 
 Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note the following:
 
--   The callback opens the following routes as soon as those routes are loaded:
-    -   **\[Zimbabwe]**
-    -   **\[Zimbabwe, Swimming]**
-    -   **\[United States, Swimming]**
--   Note **\[Zimbabwe]** and **\[Zimbabwe, Swimming]** are visibly open by default.
--   Note **\[United States, Swimming]** is not visibly open by default, as the parent group 'United States' is not open. However when 'United States' is opened, it's 'Swimming' group is opened by default.
--   Selecting a group row and clicking 'Route of Selected' prints the route to the selected node to the developer console.
+- The callback opens the following routes as soon as those routes are loaded:
+    - **\[Zimbabwe]**
+    - **\[Zimbabwe, Swimming]**
+    - **\[United States, Swimming]**
+- Note **\[Zimbabwe]** and **\[Zimbabwe, Swimming]** are visibly open by default.
+- Note **\[United States, Swimming]** is not visibly open by default, as the parent group 'United States' is not open. However when 'United States' is opened, it's 'Swimming' group is opened by default.
+- Selecting a group row and clicking 'Route of Selected' prints the route to the selected node to the developer console.
 
 {% gridExampleRunner title="Open by Default" name="open-by-default" /%}
 
@@ -109,9 +109,9 @@ When `grandTotalRow` is set, the `needsGrandTotal` hint on `getRows` params will
 
 The `grandTotalData` field on the `success` callback params controls the grand total row:
 
--   Pass the **grand total data object** to set or update the grand total row.
--   Pass `null` to explicitly remove an existing grand total row.
--   Leave it `undefined` (or omit the field entirely) to keep the grand total unchanged — the grid will continue to show whatever grand total is already cached. This lets paged block requests return data rows without having to re-send the grand total every time.
+- Pass the **grand total data object** to set or update the grand total row.
+- Pass `null` to explicitly remove an existing grand total row.
+- Leave it `undefined` (or omit the field entirely) to keep the grand total unchanged — the grid will continue to show whatever grand total is already cached. This lets paged block requests return data rows without having to re-send the grand total every time.
 
 The example below shows a grouped grid with aggregations on the medal columns. Note how the grand total is recomputed server-side when filters change (reflecting the filtered totals), and that changing an aggregation function via the column menu triggers a fresh request for both data and grand total:
 
@@ -123,9 +123,9 @@ Alternatively, if `getRowId` is configured, a row with ID `GRAND_TOTAL_ROW_ID` (
 
 The grand total row can be updated, added, or removed via `applyServerSideTransaction`:
 
--   **Update**: Include the grand total data in the `update` array. The `getRowId` must return `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) for this row.
--   **Add**: Include the grand total data in the `add` array. If a grand total already exists, it will be updated.
--   **Remove**: Include a row whose `getRowId` returns `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) in the `remove` array to remove it.
+- **Update**: Include the grand total data in the `update` array. The `getRowId` must return `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) for this row.
+- **Add**: Include the grand total data in the `add` array. If a grand total already exists, it will be updated.
+- **Remove**: Include a row whose `getRowId` returns `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) in the `remove` array to remove it.
 
 This is useful when the grand total comes from a different endpoint than the paged data — for example, when computing totals is more expensive than loading rows and should be done in a separate, independently cancellable request.
 
@@ -137,8 +137,8 @@ The example below demonstrates that pattern on a flat grid. Each `getRows` call 
 
 Both the grand total and individual group total rows can be retrieved by ID using `api.getRowNode()`. Two constants, exported from `ag-grid-community`, define the ID format:
 
--   `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) — the ID of the grand total row.
--   `GROUP_TOTAL_ROW_ID_PREFIX` (`'rowGroupFooter_'`) — the prefix for group total row IDs. A group total row ID is `GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id`.
+- `GRAND_TOTAL_ROW_ID` (`'rowGroupFooter_ROOT_NODE_ID'`) — the ID of the grand total row.
+- `GROUP_TOTAL_ROW_ID_PREFIX` (`'rowGroupFooter_'`) — the prefix for group total row IDs. A group total row ID is `GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id`.
 
 ```js
 // Retrieve the grand total row node
@@ -182,10 +182,10 @@ Group rows can be expanded or collapsed using the `expandAll()` and `collapseAll
 
 The example below demonstrates this feature, note the following:
 
--   First button expands all loaded group rows
--   Checking the checkbox enables `ssrmExpandAllAffectsAllRows` in the grid options
--   Now clicking the first button expands all group rows, including those not yet loaded
--   Second button collapses all group rows
+- First button expands all loaded group rows
+- Checking the checkbox enables `ssrmExpandAllAffectsAllRows` in the grid options
+- Now clicking the first button expands all group rows, including those not yet loaded
+- Second button collapses all group rows
 
 {% gridExampleRunner title="expand-all-affects-all-rows" name="expand-all-affects-all-rows"  exampleHeight=540 /%}
 
@@ -202,11 +202,11 @@ api.forEachNode(node => {
 
 The example below demonstrates these techniques. Note the following:
 
--   Clicking 'Expand All' expands all loaded group rows. Doing this when the grid initially loads expands all Year groups. Clicking it a second time (after Year groups have loaded) causes all Year groups as well as their children Country groups to be expanded - this is a heavier operation with 100's of rows to expand.
+- Clicking 'Expand All' expands all loaded group rows. Doing this when the grid initially loads expands all Year groups. Clicking it a second time (after Year groups have loaded) causes all Year groups as well as their children Country groups to be expanded - this is a heavier operation with 100's of rows to expand.
 
--   Clicking 'Collapse All' collapses all rows.
+- Clicking 'Collapse All' collapses all rows.
 
--   Clicking 'Expand Top Level Only' expands Years only, even if more group rows are loaded.
+- Clicking 'Expand Top Level Only' expands Years only, even if more group rows are loaded.
 
 {% gridExampleRunner title="Expand All" name="expand-all" /%}
 
@@ -257,9 +257,9 @@ By default, changing filters fully purges the grid. Though, it can be configured
 
 In the example below, note the following:
 
--   Filtering by `Gold`, `Silver` or `Bronze` fully purges the grid, this is because they have aggregations applied.
--   Applying a filter to the `Year` column does not purge the entire grid, and instead only refreshes the `Year` group rows.
--   The example enables `serverSideOnlyRefreshFilteredGroups`, note that if you apply a filter to `Year` with the value `1900`, no leaf rows exist in any group.
+- Filtering by `Gold`, `Silver` or `Bronze` fully purges the grid, this is because they have aggregations applied.
+- Applying a filter to the `Year` column does not purge the entire grid, and instead only refreshes the `Year` group rows.
+- The example enables `serverSideOnlyRefreshFilteredGroups`, note that if you apply a filter to `Year` with the value `1900`, no leaf rows exist in any group.
 
 {% gridExampleRunner title="Filtering" name="filtering"  exampleHeight=590 /%}
 
@@ -271,9 +271,9 @@ Deferred Updates are enabled by including the **Apply** button in `toolPanelPara
 
 Note that in the example below:
 
--   Changes made in the Columns Tool Panel are staged as pending changes.
--   **Apply** commits all pending changes in a single operation.
--   **Cancel** discards all pending changes and restores the last applied state.
+- Changes made in the Columns Tool Panel are staged as pending changes.
+- **Apply** commits all pending changes in a single operation.
+- **Cancel** discards all pending changes and restores the last applied state.
 
 {% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode"  exampleHeight=830 /%}
 

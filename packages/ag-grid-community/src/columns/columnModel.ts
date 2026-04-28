@@ -174,7 +174,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // setPivotMode, applyColumnState,
     // functionColsService.setPrimaryColList, functionColsService.updatePrimaryColList,
     // pivotResultCols.setPivotResultCols
-    public refreshCols(newColDefs: boolean, source: ColumnEventType): void {
+    public refreshCols(newColDefs: boolean, source: ColumnEventType, useGeneratedOrder: boolean = false): void {
         if (!this.colDefCols) {
             return;
         }
@@ -206,7 +206,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols, source);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
-        if (!newColDefs || shouldSortNewColDefs) {
+        if (!useGeneratedOrder && (!newColDefs || shouldSortNewColDefs)) {
             this.restoreColOrder(cols);
         }
 
@@ -460,23 +460,57 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // in results array
         const previousSiblingPosMap: Map<AgColumn, AgColumn | AgColumn[]> = new Map();
 
+        const { pivotColDefSvc } = this.beans;
+        let freshListIndex: Map<AgColumn, number> | null = null;
+
+        const getPreviousColInFreshList = (col: AgColumn): AgColumn | null => {
+            if (freshListIndex == null) {
+                freshListIndex = new Map<AgColumn, number>();
+                for (let i = 0; i < cols.list.length; i++) {
+                    freshListIndex.set(cols.list[i], i);
+                }
+            }
+            const idx = freshListIndex.get(col)!;
+            for (let i = idx - 1; i >= 0; i--) {
+                const candidate = cols.list[i];
+                if (colPositionMap.has(candidate)) {
+                    return candidate;
+                }
+            }
+            return null;
+        };
+
+        const addColAfter = (anchor: AgColumn, col: AgColumn): void => {
+            const prev = previousSiblingPosMap.get(anchor);
+            if (prev === undefined) {
+                previousSiblingPosMap.set(anchor, col);
+            } else if (Array.isArray(prev)) {
+                prev.push(col);
+            } else {
+                // if we have a single col, then we need to add the new col to the array
+                previousSiblingPosMap.set(anchor, [prev, col]);
+            }
+        };
+
         // for each new col, find the col it needs inserted after and store for when array is constructed
         for (const col of additionalCols) {
+            if (pivotColDefSvc?.isPivotRowTotalColumn(col.colDef)) {
+                const anchor = getPreviousColInFreshList(col);
+                if (anchor == null) {
+                    noSiblingsAvailable.push(col);
+                } else {
+                    addColAfter(anchor, col);
+                }
+                continue;
+            }
+
             const prevSiblingIdx = getPreviousSibling(col, null);
             if (prevSiblingIdx == null) {
                 noSiblingsAvailable.push(col);
                 continue;
             }
 
-            const prev = previousSiblingPosMap.get(prevSiblingIdx);
-            if (prev === undefined) {
-                previousSiblingPosMap.set(prevSiblingIdx, col);
-            } else if (Array.isArray(prev)) {
-                prev.push(col);
-            } else {
-                // if we have a single col, then we need to add the new col to the array
-                previousSiblingPosMap.set(prevSiblingIdx, [prev, col]);
-            }
+            addColAfter(prevSiblingIdx, col);
         }
 
         // the following code starts at the tail of the array and works backwards.
@@ -486,6 +520,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const result = new Array(cols.list.length);
         let resultPointer = result.length - 1;
+
         // work backwards, first adding no siblings to end
         for (let i = noSiblingsAvailable.length - 1; i >= 0; i--) {
             result[resultPointer--] = noSiblingsAvailable[i];
@@ -507,6 +542,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             }
             result[resultPointer--] = nextCol;
         }
+
         cols.list = result;
     }
 

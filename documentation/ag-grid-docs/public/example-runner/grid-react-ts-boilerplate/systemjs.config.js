@@ -3,7 +3,7 @@
     const config = {
         // Suggested defaults: 19.2.1 or 18.2.0
         version: urlParams.get('version') ?? '19.2.1',
-        prod: urlParams.get('prod') === 'false' ? false : urlParams.get('prod') ?? true,
+        prod: urlParams.get('prod') === 'false' ? false : (urlParams.get('prod') ?? true),
     };
 
     process = { env: { NODE_ENV: 'development' } };

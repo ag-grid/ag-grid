@@ -13,9 +13,9 @@ other grid cell, i.e. columns are configured with a `field` attribute or [Value 
 
 The data supplied to sparklines can be in the following formats:
 
--   [Array of Numbers](./sparklines-data/#array-of-numbers)
--   [Array of Tuples](./sparklines-data/#array-of-tuples)
--   [Array of Objects](./sparklines-data/#array-of-objects)
+- [Array of Numbers](./sparklines-data/#array-of-numbers)
+- [Array of Tuples](./sparklines-data/#array-of-tuples)
+- [Array of Objects](./sparklines-data/#array-of-objects)
 
 In each of the formats above, Y values must be of type `number`, whereas X values can be a `number`, `string`, `Date` or
 objects with a `toString` method, if they are provided.
@@ -30,11 +30,11 @@ configuration, simply provide the array of numbers to the grid for that specific
 
 Alternatively, a `valueGetter` can be added to return an array of numbers for each cell in the sparkline column.
 
--   The numbers in the data array correspond to Y values.
+- The numbers in the data array correspond to Y values.
 
--   The X value for each data point will be the index of the value in the data array. For this reason, the data points will be evenly spaced out along the width of the sparkline.
+- The X value for each data point will be the index of the value in the data array. For this reason, the data points will be evenly spaced out along the width of the sparkline.
 
--   Note that the data for the `rateOfChange` field in the data.js file is a `number[]`.
+- Note that the data for the `rateOfChange` field in the data.js file is a `number[]`.
 
 {% gridExampleRunner title="Sparkline Data - Array of Numbers" name="sparkline-data-number-array"  exampleHeight=585 /%}
 
@@ -42,9 +42,9 @@ Alternatively, a `valueGetter` can be added to return an array of numbers for ea
 
 Another supported format is the tuples array. In this format, each tuple in the array can contain two values, X and Y.
 
--   At index 0 will be the X value and index 1, the Y value.
--   The Y value should be a `number` whereas the X can be a `number`, `string`, `Date` or an object with a `toString` method.
--   The `rateOfChange` field is of type `[Date, number][]`, where X values are `Date` objects.
+- At index 0 will be the X value and index 1, the Y value.
+- The Y value should be a `number` whereas the X can be a `number`, `string`, `Date` or an object with a `toString` method.
+- The `rateOfChange` field is of type `[Date, number][]`, where X values are `Date` objects.
 
 {% gridExampleRunner title="Sparkline Data - Array of Tuples" name="sparkline-data-tuple-array"  exampleHeight=585 /%}
 
@@ -75,9 +75,9 @@ const gridOptions = {
 
 Note in the example below:
 
--   The data is an array of objects with the `xVal` and `yVal` keys.
--   `xKey` and `yKey` can be any `string` value as long as they are specified in the options.
--   By default, the `xKey` and `yKey` are `'x'` and `'y'` respectively, so data objects with `'x'` and `'y'` keys would work fine without further configuration.
+- The data is an array of objects with the `xVal` and `yVal` keys.
+- `xKey` and `yKey` can be any `string` value as long as they are specified in the options.
+- By default, the `xKey` and `yKey` are `'x'` and `'y'` respectively, so data objects with `'x'` and `'y'` keys would work fine without further configuration.
 
 {% gridExampleRunner title="Sparkline Data - Array of Objects" name="sparkline-data-object-array"  exampleHeight=585 /%}
 
@@ -89,8 +89,8 @@ The formatted data from `valueGetter` will be supplied to the sparkline automati
 
 The following example demonstrates how data can be formatted using `valueGetter`.
 
--   In this example, the data for the `rateOfChange` field is an object with `x` and `y` keys, both containing an array of numbers.
--   A `valueGetter` is used to format this data into `[number, number][]`, entering the values for X and Y at each index in two arrays for the `rateOfChange` object.
+- In this example, the data for the `rateOfChange` field is an object with `x` and `y` keys, both containing an array of numbers.
+- A `valueGetter` is used to format this data into `[number, number][]`, entering the values for X and Y at each index in two arrays for the `rateOfChange` object.
 
 {% gridExampleRunner title="Formatting Sparkline Data" name="formatting-sparkline-data"  exampleHeight=585 /%}
 

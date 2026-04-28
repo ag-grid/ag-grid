@@ -13,7 +13,11 @@ export interface IPivotResultColsService {
 
     getPivotResultCol(key: ColKey): AgColumn | null;
 
-    setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void;
+    setPivotResultCols(
+        colDefs: (ColDef | ColGroupDef)[] | null,
+        source: ColumnEventType,
+        useGeneratedOrder?: boolean
+    ): void;
 
     /** Returns pivot result columns ordered for aggregation: regular columns first, total columns after.
      * Cached — only recomputed when pivot result columns change. */

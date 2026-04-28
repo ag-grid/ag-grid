@@ -77,14 +77,14 @@ export interface IOverlayComp<
     TData = any,
     TContext = any,
     TParams extends Readonly<IOverlayParams<TData, TContext>> = IOverlayParams<TData, TContext>,
-> extends IComponent<TParams>,
-        IOverlay<TData, TContext, TParams> {}
+>
+    extends IComponent<TParams>, IOverlay<TData, TContext, TParams> {}
 
 export abstract class OverlayComponent<
-        TData = any,
-        TContext = any,
-        TParams extends Readonly<IOverlayParams<TData, TContext>> = IOverlayParams<TData, TContext>,
-    >
+    TData = any,
+    TContext = any,
+    TParams extends Readonly<IOverlayParams<TData, TContext>> = IOverlayParams<TData, TContext>,
+>
     extends Component
     implements IOverlayComp<TData, TContext, TParams>
 {

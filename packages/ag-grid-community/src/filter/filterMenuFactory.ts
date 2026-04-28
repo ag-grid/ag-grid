@@ -134,7 +134,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         const afterGuiDetached = () => comp?.afterGuiDetached();
 
         const anchorToElement = _isColumnMenuAnchoringEnabled(this.gos)
-            ? eventSource ?? this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody
+            ? (eventSource ?? this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody)
             : undefined;
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             _setColMenuVisible(column, false, 'contextMenu');

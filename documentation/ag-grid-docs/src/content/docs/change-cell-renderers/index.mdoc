@@ -8,9 +8,9 @@ Highlight changes by flashing or animating cells.
 
 The example above shows changing values:
 
--   Columns A and B use [Flashing Cells](./change-cell-renderers/#flashing-cells).
--   Columns C and D use the [Animate Show Change](./change-cell-renderers/#animate-show-changed-cells) cell renderer.
--   Columns E and F use the [Animate Slide Cell](./change-cell-renderers/#animate-slide-cells) cell renderer.
+- Columns A and B use [Flashing Cells](./change-cell-renderers/#flashing-cells).
+- Columns C and D use the [Animate Show Change](./change-cell-renderers/#animate-show-changed-cells) cell renderer.
+- Columns E and F use the [Animate Slide Cell](./change-cell-renderers/#animate-slide-cells) cell renderer.
 
 ## Flashing Cells
 
@@ -24,8 +24,8 @@ Set Column attribute `enableCellChangeFlash=true` to flash the cells when data c
 
 In the example above:
 
--   All columns have `enableCellChangeFlash=true` so changes to the cell values will flash the cell.
--   Clicking **Update Some Data** will randomly update some data. The grid will then flash the cells where data has changed.
+- All columns have `enableCellChangeFlash=true` so changes to the cell values will flash the cell.
+- Clicking **Update Some Data** will randomly update some data. The grid will then flash the cells where data has changed.
 
 To change the length of the effect, use the grid options `cellFlashDuration` and `cellFadeDuration`.
 
@@ -43,9 +43,9 @@ When calling `flashCells()`, pass the `flashDuration` and `fadeDuration` values 
 
 In the example above, all three buttons use the `flashCells(params)` API. Note the following:
 
--   Clicking **Flash One Cell** uses parameters with one column and one row to flash the intersecting cell.
--   Clicking **Flash Two Rows** uses parameters consisting of two row nodes, causing those rows to flash.
--   Clicking **Flash Two Columns** uses parameters consisting of two columns, causing those columns to flash.
+- Clicking **Flash One Cell** uses parameters with one column and one row to flash the intersecting cell.
+- Clicking **Flash Two Rows** uses parameters consisting of two row nodes, causing those rows to flash.
+- Clicking **Flash Two Columns** uses parameters consisting of two columns, causing those columns to flash.
 
 ### Customise Flash Colour
 
@@ -67,10 +67,10 @@ The difference between the previous and new value is temporarily shown beside th
 
 The example above demonstrates the following:
 
--   Columns A, B are editable.
--   Columns C and D are updated via clicking the button.
--   Changes to any of the first 4 columns results in animations in the Total and Average column.
--   This can be set as a cell renderer in the column definitions:
+- Columns A, B are editable.
+- Columns C and D are updated via clicking the button.
+- Changes to any of the first 4 columns results in animations in the Total and Average column.
+- This can be set as a cell renderer in the column definitions:
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
@@ -89,10 +89,10 @@ The previous value is shown in a faded fashion and slides, giving a ghosting eff
 
 The example above demonstrates the following:
 
--   Columns A, B are editable.
--   Columns C and D are updated via clicking the button.
--   Changes to any of the first 4 columns results in animations in the Total and Average column.
--   This can be set as a cell renderer in the column definitions:
+- Columns A, B are editable.
+- Columns C and D are updated via clicking the button.
+- Changes to any of the first 4 columns results in animations in the Total and Average column.
+- This can be set as a cell renderer in the column definitions:
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {

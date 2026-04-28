@@ -26,8 +26,8 @@ If you do not enable the grid option `enableFilterHandlers`, it is still possibl
 
 Implementing a custom filter requires two parts:
 
--   The custom filter component which will be displayed to the user.
--   The logic to run the filter.
+- The custom filter component which will be displayed to the user.
+- The logic to run the filter.
 
 {% if isFramework("react") %}
 Custom filter components are controlled components, which receive a filter model as part of the props, and pass model updates back to the grid via the `onModelChange` callback.
@@ -95,8 +95,8 @@ The following callbacks can be passed to the `useGridFilterDisplay` hook (`Custo
 
 The logic to run the filter can be provided in one of two ways:
 
--   As a `doesFilterPass` callback for simple filter cases.
--   As a filter handler object for more complex filter cases.
+- As a `doesFilterPass` callback for simple filter cases.
+- As a filter handler object for more complex filter cases.
 
 The logic is passed via the `filter` property along with the custom component as a `ColumnFilter` object.
 
@@ -169,9 +169,9 @@ It is possible to use the [Filter Buttons](./filter-applying/) for grid-provided
 
 The example above demonstrates using filters with buttons via the same custom filter component:
 
--   The **Year Default** column does not use buttons.
--   The **Year Apply** column uses the apply button, and additionally closes the filter popup on apply.
--   The **Year Reset** column uses the reset button, which will set the filter back to the default model and apply it.
+- The **Year Default** column does not use buttons.
+- The **Year Apply** column uses the apply button, and additionally closes the filter popup on apply.
+- The **Year Reset** column uses the reset button, which will set the filter back to the default model and apply it.
 
 The buttons are configured by passing additional parameters to the filter (interface `FilterWrapperParams`).
 
@@ -196,9 +196,9 @@ Sometimes you will need to create custom components for your filters that also c
 
 There are two ways you can get fix this problem:
 
--   Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.
-    This is the best solution, but you can only do this if you are writing the component yourself.
--   Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](./filter-date/#custom-selection-component)
+- Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.
+  This is the best solution, but you can only do this if you are writing the component yourself.
+- Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](./filter-date/#custom-selection-component)
 
 ## Using Custom Filters with Grid-Provided Filter Logic
 
@@ -220,10 +220,10 @@ const gridOptions = {
 
 The grid-provided handlers are:
 
--   `'agTextColumnFilterHandler'` - [Text Filter](./filter-text/) handler.
--   `'agNumberColumnFilterHandler'` - [Number Filter](./filter-number/) handler.
--   `'agBigIntColumnFilterHandler'` - [BigInt Filter](./filter-bigint/) handler.
--   `'agDateColumnFilterHandler'` - [Date Filter](./filter-date/) handler.
+- `'agTextColumnFilterHandler'` - [Text Filter](./filter-text/) handler.
+- `'agNumberColumnFilterHandler'` - [Number Filter](./filter-number/) handler.
+- `'agBigIntColumnFilterHandler'` - [BigInt Filter](./filter-bigint/) handler.
+- `'agDateColumnFilterHandler'` - [Date Filter](./filter-date/) handler.
 
 {% note %}
 [Set Filter](./filter-set/) and [Multi Filter](./filter-multi/) are not supported when using custom filters with grid-provided filter logic.

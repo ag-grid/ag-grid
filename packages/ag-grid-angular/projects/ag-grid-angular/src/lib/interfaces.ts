@@ -56,23 +56,23 @@ export interface IHeaderAngularComp extends AgFrameworkComponent<IHeaderParams>,
 export interface IInnerHeaderAngularComp extends AgFrameworkComponent<IHeaderParams>, IHeader {}
 
 export interface IFloatingFilterAngularComp<P = any>
-    extends AgFrameworkComponent<IFloatingFilterParams<P>>,
-        IFloatingFilter {}
+    extends AgFrameworkComponent<IFloatingFilterParams<P>>, IFloatingFilter {}
 
 export interface IFloatingFilterDisplayAngularComp<TData = any, TContext = any, TModel = any, TCustomParams = object>
-    extends AgFrameworkComponent<FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams>>,
+    extends
+        AgFrameworkComponent<FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams>>,
         FloatingFilterDisplay<TData, TContext, TModel, TCustomParams> {}
 
 export interface IDateAngularComp extends AgFrameworkComponent<IDateParams>, IDate {}
 
 export interface IDragAndDropImageAngularComponent
-    extends AgFrameworkComponent<IDragAndDropImageParams>,
-        IDragAndDropImage {}
+    extends AgFrameworkComponent<IDragAndDropImageParams>, IDragAndDropImage {}
 
 export interface IFilterAngularComp extends AgFrameworkComponent<IFilterParams>, IFilter {}
 
 export interface IFilterDisplayAngularComp<TData = any, TContext = any, TModel = any, TState = any>
-    extends AgFrameworkComponent<FilterDisplayParams<TData, TContext, TModel, TState>>,
+    extends
+        AgFrameworkComponent<FilterDisplayParams<TData, TContext, TModel, TState>>,
         FilterDisplay<TData, TContext, TModel, TState> {}
 
 export interface ICellRendererAngularComp extends AgFrameworkComponent<ICellRendererParams>, ICellRenderer {}
@@ -95,13 +95,11 @@ export interface IOverlayAngularComp extends AgFrameworkComponent<IOverlayParams
 
 export interface ILoadingOverlayAngularComp extends AgFrameworkComponent<ILoadingOverlayParams>, ILoadingOverlay {}
 export interface IExportingOverlayAngularComp
-    extends AgFrameworkComponent<IExportingOverlayParams>,
-        IExportingOverlay {}
+    extends AgFrameworkComponent<IExportingOverlayParams>, IExportingOverlay {}
 
 export interface INoRowsOverlayAngularComp extends AgFrameworkComponent<INoRowsOverlayParams>, INoRowsOverlay {}
 export interface INoMatchingRowsOverlayAngularComp
-    extends AgFrameworkComponent<INoMatchingRowsOverlayParams>,
-        INoMatchingRowsOverlay {}
+    extends AgFrameworkComponent<INoMatchingRowsOverlayParams>, INoMatchingRowsOverlay {}
 
 export interface IStatusPanelAngularComp extends AgFrameworkComponent<IStatusPanelParams>, IStatusPanel {}
 

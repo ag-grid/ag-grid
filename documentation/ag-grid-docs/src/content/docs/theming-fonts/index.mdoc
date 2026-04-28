@@ -8,9 +8,9 @@ Altering typography within the grid
 
 The grid provides many [Theme Parameters](./theming-parameters/) for controlling fonts, the key ones are:
 
--   `fontFamily`, `fontSize` and `fontWeight` set the default font for all text in the grid
--   `headerFontFamily`, `headerFontSize` and `headerFontWeight` optionally override the font for the header
--   `cellFontFamily`, `cellFontSize` and `cellFontWeight` optionally override the font used in data cells
+- `fontFamily`, `fontSize` and `fontWeight` set the default font for all text in the grid
+- `headerFontFamily`, `headerFontSize` and `headerFontWeight` optionally override the font for the header
+- `cellFontFamily`, `cellFontSize` and `cellFontWeight` optionally override the font used in data cells
 
 ```js
 const myTheme = themeQuartz.withParams({
@@ -46,8 +46,8 @@ Font family parameters can accept the following value types:
 
 To prevent potential licensing and privacy implications, the grid will not load Google fonts unless requested to. If your theme uses Google fonts you should either:
 
--   set the `loadThemeGoogleFonts` grid option to `true`, and the grid will load the font from Google's CDN
--   load the font yourself using a `@font-face` rule in your application's CSS
+- set the `loadThemeGoogleFonts` grid option to `true`, and the grid will load the font from Google's CDN
+- load the font yourself using a `@font-face` rule in your application's CSS
 
 If the font has not been loaded through either of the above methods, the theme will fall back to the most appropriate font available on the system.
 

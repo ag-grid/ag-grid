@@ -13,9 +13,9 @@ By default column headers and group column headers are included in the Excel exp
 
 Note the following:
 
--   By default, all grouped column header rows and the column header row are exported.
--   Group Headers will be skipped if Skip Column Group Headers is checked.
--   Normal headers will be skipped if Skip Column Headers is checked.
+- By default, all grouped column header rows and the column header row are exported.
+- Group Headers will be skipped if Skip Column Group Headers is checked.
+- Normal headers will be skipped if Skip Column Headers is checked.
 
 {% gridExampleRunner title="Excel Export - Column Headers" name="excel-export-column-headers"  exampleHeight=815 /%}
 
@@ -25,8 +25,8 @@ By default, hidden columns are not included in the export. If you need all colum
 
 Note the following:
 
--   By default, **only visible columns will be exported**. The bronze, silver and gold columns will not.
--   If `All Columns` is checked, the bronze, silver and gold columns will be included in the exported file.
+- By default, **only visible columns will be exported**. The bronze, silver and gold columns will not.
+- If `All Columns` is checked, the bronze, silver and gold columns will be included in the exported file.
 
 {% gridExampleRunner title="Excel Export - Hidden Columns" name="excel-export-hidden-columns"  exampleHeight=815 /%}
 
@@ -42,9 +42,9 @@ Note the following:
 
 In the example below, export the grid to Excel, open the exported Excel document and note the following:
 
--   The columns **Gold**, **Silver**, **Bronze** will appear as a collapsible column group in the exported Excel document.
+- The columns **Gold**, **Silver**, **Bronze** will appear as a collapsible column group in the exported Excel document.
 
--   The exported Excel document will also contain the Total column, but this column will not be included in the "collapsible" group.
+- The exported Excel document will also contain the Total column, but this column will not be included in the "collapsible" group.
 
 {% note %}
 When using pivoting to export [Pivot Result Columns](./pivoting-result-columns/), only currently visible columns are exported as grouped. Collapsed pivot result columns aren’t exported at all, even when the [ExcelExportParams](./excel-export-api/#excelexportparams) option `allColumns:true` is set.

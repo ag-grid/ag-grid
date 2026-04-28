@@ -62,16 +62,16 @@ to an aggregation function when grouping.
 
 The example below demonstrates `valueGetter`. The following can be noted from the demo:
 
--   Columns A and B are simple columns using `field`
+- Columns A and B are simple columns using `field`
 
--   Value Getters are used in all subsequent columns as follows:
-    -   Column 'ID #' prints the row number, taken from the [Row Node](./row-object/).
-    -   Column 'A+B' adds A and B.
-    -   Column 'A \* 1000' multiplies A by 1000.
-    -   Column 'B \* 137' multiplies B by 137.
-    -   Column 'Random' doesn't take any value from the data, rather it returns a random value.
-    -   Column 'Chain' takes the value 'A+B' and works on it further, thus chaining value getters.
-    -   Column 'Const' returns back the same value for each column.
+- Value Getters are used in all subsequent columns as follows:
+    - Column 'ID #' prints the row number, taken from the [Row Node](./row-object/).
+    - Column 'A+B' adds A and B.
+    - Column 'A \* 1000' multiplies A by 1000.
+    - Column 'B \* 137' multiplies B by 137.
+    - Column 'Random' doesn't take any value from the data, rather it returns a random value.
+    - Column 'Chain' takes the value 'A+B' and works on it further, thus chaining value getters.
+    - Column 'Const' returns back the same value for each column.
 
 {% gridExampleRunner title="Value Getters" name="value-getters" /%}
 

@@ -450,10 +450,10 @@ const ExampleInner = ({
 const Example = () => {
     const [darkMode] = useDarkmode();
     const [gridThemeStr] = useState<string>(() =>
-        IS_SSR ? 'quartz' : new URLSearchParams(window.location.search).get('theme') ?? 'quartz'
+        IS_SSR ? 'quartz' : (new URLSearchParams(window.location.search).get('theme') ?? 'quartz')
     );
     const [dataSizeStr] = useState<string | undefined>(() =>
-        IS_SSR ? undefined : new URLSearchParams(window.location.search).get('dataSize') ?? undefined
+        IS_SSR ? undefined : (new URLSearchParams(window.location.search).get('dataSize') ?? undefined)
     );
     const [small] = useState(() =>
         IS_SSR ? false : document.documentElement.clientHeight <= 415 || document.documentElement.clientWidth < 768

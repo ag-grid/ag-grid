@@ -28,7 +28,7 @@ export function createAgChartTheme(
 
     const rootTheme = stockTheme
         ? { baseTheme: themeName as AgChartThemeName }
-        : lookupCustomChartTheme(chartProxyParams, themeName) ?? {};
+        : (lookupCustomChartTheme(chartProxyParams, themeName) ?? {});
 
     const gridOptionsThemeOverrides = chartProxyParams.getGridOptionsChartThemeOverrides();
     const apiThemeOverrides = chartProxyParams.apiChartThemeOverrides;

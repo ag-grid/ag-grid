@@ -96,7 +96,7 @@ const getFirstDayOfWeek = (): number => {
     }
 
     let firstDay: number | undefined;
-    const locale = typeof navigator === 'undefined' ? undefined : navigator.languages?.[0] ?? navigator.language;
+    const locale = typeof navigator === 'undefined' ? undefined : (navigator.languages?.[0] ?? navigator.language);
 
     if (locale && typeof Intl !== 'undefined' && typeof (Intl as any).Locale === 'function') {
         try {

@@ -7,5 +7,9 @@ export interface PanelPostProcessPopupParams extends AgPanelPostProcessPopupPara
     rowNode?: IRowNode | null;
 }
 
-export interface PanelOptions
-    extends AgPanelOptions<BeanCollection, GridOptionsWithDefaults, AgEventTypeParams, PanelPostProcessPopupParams> {}
+export interface PanelOptions extends AgPanelOptions<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    PanelPostProcessPopupParams
+> {}

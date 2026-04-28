@@ -56,11 +56,11 @@ api.setFilterModel(null);
 
 The example below shows getting and setting all the filter models in action.
 
--   `Save Filter Model` saves the current filter state, which will then be displayed.
--   `Restore Saved Filter Model` restores the saved filter state back into the grid.
--   `Set Custom Filter Model` takes a custom hard-coded filter model and applies it to the grid.
--   `Reset Filters` will clear all active filters.
--   `Destroy Filter` destroys the filter for the **Athlete** column by calling `gridApi.destroyFilter('athlete')`. This removes any active filter from that column, and will cause the filter to be created with new initialisation values the next time it is interacted with.
+- `Save Filter Model` saves the current filter state, which will then be displayed.
+- `Restore Saved Filter Model` restores the saved filter state back into the grid.
+- `Set Custom Filter Model` takes a custom hard-coded filter model and applies it to the grid.
+- `Reset Filters` will clear all active filters.
+- `Destroy Filter` destroys the filter for the **Athlete** column by calling `gridApi.destroyFilter('athlete')`. This removes any active filter from that column, and will cause the filter to be created with new initialisation values the next time it is interacted with.
 
 (Note: the example uses the Enterprise-only [Set Filter](./filter-set/)).
 
@@ -104,10 +104,10 @@ api.onFilterChanged();
 
 The example below shows getting and setting an individual filter model in action.
 
--   `Save Filter Model` saves the **Athlete** filter state, which will then be displayed.
--   `Restore Saved Filter Model` restores the saved **Athlete** filter state back into the grid.
--   `Set Custom Filter Model` takes a custom hard-coded **Athlete** filter model and applies it to the grid.
--   `Reset Filter` will clear the **Athlete** filter.
+- `Save Filter Model` saves the **Athlete** filter state, which will then be displayed.
+- `Restore Saved Filter Model` restores the saved **Athlete** filter state back into the grid.
+- `Set Custom Filter Model` takes a custom hard-coded **Athlete** filter model and applies it to the grid.
+- `Reset Filter` will clear the **Athlete** filter.
 
 {% gridExampleRunner title="Individual Filter Model" name="filter-model-individual"  exampleHeight=587 /%}
 
@@ -138,9 +138,9 @@ If using a custom filter, any other methods you have added will also be present,
 
 The example below shows how you can interact with an individual filter instance, using the Set Filter as an example.
 
--   `Get Mini Filter Text` will print the text from the Set Filter's Mini Filter to the console.
--   `Save Mini Filter Text` will save the Mini Filter text.
--   `Restore Mini Filter Text` will restore the Mini Filter text from the saved state.
+- `Get Mini Filter Text` will print the text from the Set Filter's Mini Filter to the console.
+- `Save Mini Filter Text` will save the Mini Filter text.
+- `Restore Mini Filter Text` will restore the Mini Filter text from the saved state.
 
 (Note: the example uses the Enterprise-only [Set Filter](./filter-set/)).
 
@@ -166,17 +166,17 @@ const gridOptions = {
 
 The following example demonstrates all of the Provided Filters with `readOnly: true` enabled:
 
--   Simple Filters have a read-only display with no buttons; if there is no 2nd condition set then the join operator and 2nd condition are hidden:
-    -   `athlete` column demonstrates [Text Filter](./filter-text/).
-    -   `age` and `year` columns demonstrate [Number Filter](./filter-number/).
-    -   `date` column demonstrates [Date Filter](./filter-date/).
--   [Set Filter](./filter-set/) allows Mini Filter searching of values, but value inclusion/exclusion cannot be toggled; buttons are also hidden, and pressing enter in the Mini Filter input has no effect:
-    -   `country`, `gold`, `silver` and `bronze` columns demonstrate [Set Filter](./filter-set/).
--   [Multi Filter](./filter-multi/) has no direct behaviour change, sub-filters need to be individually made read-only. `readOnly: true` is needed to affect any associated [Floating Filters](./floating-filters/).
-    -   `sport` column demonstrates [Multi Filter](./filter-multi/).
--   [Floating Filters](./floating-filters/) are enabled and inherit `readOnly: true` from their parent, disabling any UI input.
--   Buttons above the grid provide API interactions to configure the filters.
--   `Print Country` button prints the country model to the developer console.
+- Simple Filters have a read-only display with no buttons; if there is no 2nd condition set then the join operator and 2nd condition are hidden:
+    - `athlete` column demonstrates [Text Filter](./filter-text/).
+    - `age` and `year` columns demonstrate [Number Filter](./filter-number/).
+    - `date` column demonstrates [Date Filter](./filter-date/).
+- [Set Filter](./filter-set/) allows Mini Filter searching of values, but value inclusion/exclusion cannot be toggled; buttons are also hidden, and pressing enter in the Mini Filter input has no effect:
+    - `country`, `gold`, `silver` and `bronze` columns demonstrate [Set Filter](./filter-set/).
+- [Multi Filter](./filter-multi/) has no direct behaviour change, sub-filters need to be individually made read-only. `readOnly: true` is needed to affect any associated [Floating Filters](./floating-filters/).
+    - `sport` column demonstrates [Multi Filter](./filter-multi/).
+- [Floating Filters](./floating-filters/) are enabled and inherit `readOnly: true` from their parent, disabling any UI input.
+- Buttons above the grid provide API interactions to configure the filters.
+- `Print Country` button prints the country model to the developer console.
 
 {% gridExampleRunner title="Read-only Filter UI" name="filter-api-readonly"  exampleHeight=624 /%}
 
@@ -190,10 +190,10 @@ The filter can also be launched via `api.showColumnFilter(columnKey)` and hidden
 
 The following example demonstrates launching the filter:
 
--   The **Athlete** column has a filter button in the header to launch the filter.
--   The **Age** column has a floating filter, so the header button is automatically hidden.
--   The **Country** column has the filter button hidden via `colDef.suppressHeaderFilterButton`. The filter can still be opened via the API by clicking the `Open Country Filter` button.
--   The **Year** column has a floating filter and the header button is also suppressed, so has a slightly different display style when the filter is active.
+- The **Athlete** column has a filter button in the header to launch the filter.
+- The **Age** column has a floating filter, so the header button is automatically hidden.
+- The **Country** column has the filter button hidden via `colDef.suppressHeaderFilterButton`. The filter can still be opened via the API by clicking the `Open Country Filter` button.
+- The **Year** column has a floating filter and the header button is also suppressed, so has a slightly different display style when the filter is active.
 
 {% gridExampleRunner title="Launching Filters" name="launching-filters" /%}
 

@@ -378,7 +378,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                         }
                         const previousPivotColIds = stateSvc?.getState().pivot?.pivotColIds ?? currentPivotColIds;
                         const pivotColIds = operation.pivotMode
-                            ? this.state.pivot?.colIds ?? this.lastPivotColIds
+                            ? (this.state.pivot?.colIds ?? this.lastPivotColIds)
                             : previousPivotColIds;
                         stateSvc?.setState(
                             {

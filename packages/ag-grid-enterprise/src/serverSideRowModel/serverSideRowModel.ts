@@ -398,7 +398,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             // sort and filter model
             filterModel: this.filterManager?.isAdvFilterEnabled()
                 ? this.filterManager?.getAdvFilterModel()
-                : this.filterManager?.getFilterModel() ?? {},
+                : (this.filterManager?.getFilterModel() ?? {}),
             sortModel: this.sortSvc?.getSortModel() ?? [],
 
             datasource: this.datasource,

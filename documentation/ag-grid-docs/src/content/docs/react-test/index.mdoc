@@ -15,13 +15,13 @@ This example demonstrates the ability to re-order multiple AG Grid instances wit
 
 This example tests the rendering behavior of AG Grid when updating row data without specifying `rowId` properties. This has lead to collapsing cells in the past and now there is a difference between renderingModes.
 
--   `renderingMode: 'legacy'` - There is no flashing of rows, but when throttling the CPU, then after some time the grid crashes with an error.
+- `renderingMode: 'legacy'` - There is no flashing of rows, but when throttling the CPU, then after some time the grid crashes with an error.
 
 ```
 Uncaught Error: Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.
 ```
 
--   `renderingMode: 'default'` - The grid does not crash, but there is flashing of rows when the data is updated.
+- `renderingMode: 'default'` - The grid does not crash, but there is flashing of rows when the data is updated.
 
 {% note %}
 When `getRowId` is provided both work as expected, without flashing and without crashing.
