@@ -208,6 +208,6 @@ The following example switches between three toolbar configurations using button
 
 ## Accessing Item Instances
 
-Use `getToolbarItemInstance(key)` to retrieve a toolbar item component instance by its key. This is useful for programmatically interacting with a custom component after the grid has been created.
+Use `getToolbarItemKeys()` to get the keys of all current toolbar items in DOM order, then `getToolbarItemInstance(key)` to retrieve the component instance for a given key. The key is either set explicitly in the item definition or derived from the item type when not specified.
 
-{% apiDocumentation source="grid-api/api.json" section="accessories" names=["getToolbarItemInstance"] /%}
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["getToolbarItemKeys", "getToolbarItemInstance"] /%}

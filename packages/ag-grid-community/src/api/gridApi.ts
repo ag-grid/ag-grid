@@ -1436,10 +1436,17 @@ export interface _SideBarGridApi<TData> {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _ToolbarGridApi<TData = any> {
     /**
-     * Gets the toolbar item instance corresponding to the supplied `key`.
+     * Gets the toolbar item instance for the given `key`. The key is either explicitly set in the item
+     * definition or derived from the item type when not specified.
      * @agModule `ToolbarModule`
      */
     getToolbarItemInstance<TToolbarItem = IToolbarItem<TData>>(key: string): TToolbarItem | undefined;
+    /**
+     * Returns all toolbar item keys in DOM order. Includes separator keys. Use in combination with
+     * `getToolbarItemInstance` to iterate over rendered items.
+     * @agModule `ToolbarModule`
+     */
+    getToolbarItemKeys(): string[];
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

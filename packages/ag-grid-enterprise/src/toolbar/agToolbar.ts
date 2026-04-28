@@ -86,6 +86,7 @@ const AgToolbarElement: ElementParams = {
 
 class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
     private readonly toolbarItems: Map<string, IToolbarItemComp> = new Map();
+    private toolbarItemKeyOrder: string[] = [];
     private customKeyCounter: number = 0;
     // Incremented on each rebuild so stale async resolves from a previous generation can be discarded
     private generation: number = 0;
@@ -137,6 +138,10 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
 
     public getToolbarItemInstance(key: string): IToolbarItem | undefined {
         return this.toolbarItems.get(key);
+    }
+
+    public getToolbarItemKeys(): string[] {
+        return [...this.toolbarItemKeyOrder];
     }
 
     private onTabKeyDown(_e: KeyboardEvent): void {
@@ -239,7 +244,9 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
         }
 
         const generation = ++this.generation;
-        this.createAndRenderComponents([...leftItems, ...rightItems], leftItems.length, generation);
+        const orderedItems = [...leftItems, ...rightItems];
+        this.toolbarItemKeyOrder = orderedItems.map((item) => item.key);
+        this.createAndRenderComponents(orderedItems, leftItems.length, generation);
     }
 
     private updateToolbar(): void {
@@ -261,6 +268,7 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
             this.destroyBean(comp);
         }
         this.toolbarItems.clear();
+        this.toolbarItemKeyOrder = [];
     }
 
     private createSeparator(): HTMLElement {

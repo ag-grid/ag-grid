@@ -9,7 +9,7 @@ import { MenuToolbarItem } from './providedItems/menuToolbarItem';
 import { PivotPanelToolbarItem } from './providedItems/pivotPanelToolbarItem';
 import { QuickFilterToolbarItem } from './providedItems/quickFilterToolbarItem';
 import { RowGroupPanelToolbarItem } from './providedItems/rowGroupPanelToolbarItem';
-import { getToolbarItemInstance } from './toolbarApi';
+import { getToolbarItemInstance, getToolbarItemKeys } from './toolbarApi';
 import { ToolbarService } from './toolbarService';
 
 /**
@@ -34,6 +34,7 @@ export const ToolbarModule: _ModuleWithApi<_ToolbarGridApi<any>> = {
     selectors: [AgToolbarSelector],
     apiFunctions: {
         getToolbarItemInstance,
+        getToolbarItemKeys,
     },
     dependsOn: [EnterpriseCoreModule],
 };
