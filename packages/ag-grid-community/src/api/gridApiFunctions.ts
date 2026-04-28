@@ -51,6 +51,7 @@ import type {
     _SsrmInfiniteSharedGridApi,
     _StateGridApi,
     _StatusBarGridApi,
+    _ToolbarGridApi,
     _UndoRedoGridApi,
     _ValueApi,
     _ValueCacheApi,

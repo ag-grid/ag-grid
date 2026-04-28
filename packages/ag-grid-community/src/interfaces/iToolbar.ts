@@ -60,12 +60,6 @@ export interface ToolbarButtonItemDef<TData = any, TContext = any> extends Toolb
 
 /** Params accepted by the `agMenuToolbarItem` built-in toolbar item. */
 export interface ToolbarMenuItemParams<TData = any, TContext = any> {
-    /** Visible text rendered next to the icon. Omit to render an icon-only button. */
-    label?: string;
-    /** Hover tooltip and `aria-label`. Falls back to `label`, then to the locale "Menu" text. */
-    tooltip?: string;
-    /** Icon displayed on the button. Defaults to the `menu` icon. */
-    icon?: IconName;
     /** Items shown in the dropdown. Accepts `MenuItemDef` objects or built-in string names (e.g. `'copy'`, `'export'`, `'separator'`). */
     menuItems?: (MenuItemDef<TData, TContext> | DefaultMenuItem)[];
 }
