@@ -10,6 +10,7 @@ import type {
     Toolbar,
     ToolbarButtonItemDef,
     ToolbarItemDef,
+    ToolbarMenuBuiltInItemDef,
 } from 'ag-grid-community';
 import {
     Component,
@@ -52,6 +53,11 @@ function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): No
         if (action != null || label != null || icon != null) {
             toolbarItem = 'agButtonToolbarItem';
             toolbarItemParams = { ...(toolbarItemParams ?? {}), label, tooltip, icon, action };
+        }
+    } else if (toolbarItem === 'agMenuToolbarItem') {
+        const { label, tooltip, icon } = item as ToolbarMenuBuiltInItemDef;
+        if (label != null || tooltip != null || icon != null) {
+            toolbarItemParams = { ...(toolbarItemParams ?? {}), label, tooltip, icon };
         }
     }
 
