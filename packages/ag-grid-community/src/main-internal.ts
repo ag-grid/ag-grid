@@ -215,6 +215,7 @@ export type {
     _ServerSideRowModelGridApi,
     _SideBarGridApi,
     _StatusBarGridApi,
+    _ToolbarGridApi,
 } from './api/gridApi';
 export type { INoteAccess, INotesFeature, INotesDataService, INotesService } from './interfaces/notes';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
@@ -471,6 +472,7 @@ export type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsSer
 export type { GroupValueResult, IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
 export type { ISideBar, ISideBarService } from './interfaces/iSideBar';
 export type { SortOption } from './interfaces/iSortOption';
+export type { IToolbarComp, IToolbarService } from './interfaces/iToolbar';
 export type { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
 export type { ComponentType, UserCompDetails } from './interfaces/iUserCompDetails';
 export type { IWatermark } from './interfaces/iWatermark';

@@ -148,3 +148,13 @@ export interface IToolbarItem<TData = any, TContext = any> {
 
 export interface IToolbarItemComp<TData = any, TContext = any>
     extends IToolbarItem<TData, TContext>, IComponent<IToolbarItemParams<TData, TContext>> {}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface IToolbarService {
+    comp: IToolbarComp;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface IToolbarComp {
+    getToolbarItemInstance(key: string): IToolbarItem | undefined;
+}

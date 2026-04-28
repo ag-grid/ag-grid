@@ -1,17 +1,19 @@
-import type { GridApi, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
+import type { GridApi, IToolbarItemComp, IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
 
-export interface CustomToolbarButtonParams extends IToolbarItemParams {
+export interface CustomToolbarToggleParams extends IToolbarItemParams {
     label?: string;
     title?: string;
     icon: string;
+    panelId: string;
     onClick: (api: GridApi) => void;
 }
-export class CustomToolbarButton implements IToolbarItemComp {
-    params!: CustomToolbarButtonParams;
+export class CustomToolbarToggle implements IToolbarItemComp {
+    params!: CustomToolbarToggleParams;
     eGui!: HTMLButtonElement;
     buttonListener: any;
+    panelListener: any;
 
-    init(params: CustomToolbarButtonParams) {
+    init(params: CustomToolbarToggleParams) {
         this.params = params;
 
         const title = params.title ?? params.label ?? '';
@@ -35,6 +37,17 @@ export class CustomToolbarButton implements IToolbarItemComp {
 
         this.buttonListener = () => this.params.onClick(this.params.api);
         this.eGui.addEventListener('click', this.buttonListener);
+
+        this.panelListener = ({ key, visible }: ToolPanelVisibleChangedEvent) => {
+            if (key === params.panelId && !visible) {
+                this.eGui.style.background = '';
+            } else if (key === params.panelId && visible) {
+                this.eGui.style.background = 'var(--ag-button-background-color)';
+            } else if (visible) {
+                this.eGui.style.background = '';
+            }
+        };
+        params.api.addEventListener('toolPanelVisibleChanged', this.panelListener);
     }
 
     getGui() {
@@ -43,5 +56,6 @@ export class CustomToolbarButton implements IToolbarItemComp {
 
     destroy() {
         this.eGui.removeEventListener('click', this.buttonListener);
+        this.params.api.removeEventListener('toolPanelVisibleChanged', this.panelListener);
     }
 }

@@ -3,6 +3,8 @@ import type {
     ComponentType,
     ElementParams,
     FocusableContainer,
+    IToolbarComp,
+    IToolbarItem,
     IToolbarItemComp,
     IToolbarItemParams,
     Toolbar,
@@ -69,7 +71,7 @@ const AgToolbarElement: ElementParams = {
     role: 'toolbar',
 };
 
-class AgToolbar extends Component implements FocusableContainer {
+class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
     private readonly toolbarItems: Map<string, IToolbarItemComp> = new Map();
     private customKeyCounter: number = 0;
     // Incremented on each rebuild so stale async resolves from a previous generation can be discarded
@@ -82,6 +84,8 @@ class AgToolbar extends Component implements FocusableContainer {
 
     public postConstruct(): void {
         const eGui = this.getGui();
+
+        (this.beans.toolbar as { comp: IToolbarComp }).comp = this;
 
         this.processToolbarItems();
         this.addManagedPropertyListeners(['toolbar'], this.updateToolbar.bind(this));
@@ -116,6 +120,10 @@ class AgToolbar extends Component implements FocusableContainer {
 
     public getFocusableContainerName(): 'toolbar' {
         return 'toolbar';
+    }
+
+    public getToolbarItemInstance(key: string): IToolbarItem | undefined {
+        return this.toolbarItems.get(key);
     }
 
     private onTabKeyDown(_e: KeyboardEvent): void {
