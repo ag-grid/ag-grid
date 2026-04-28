@@ -297,10 +297,6 @@ ignore:
         reason: angular/downstream dependency
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-02-23T00:00:00.000Z
-    - "@angular-devkit/build-angular@18.2.21 > copy-webpack-plugin@12.0.2 > schema-utils@4.3.3 > ajv@8.12.0":
-        reason: angular/downstream dependency
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-02-23T00:00:00.000Z
     - "@angular-devkit/build-angular@19.2.19 > @angular-devkit/architect@0.1902.19 > @angular-devkit/core@19.2.19 > ajv-formats@3.0.1 > ajv@8.17.1":
         reason: angular/downstream dependency
         expires: 2026-06-08T00:00:00.000Z
@@ -310,14 +306,6 @@ ignore:
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-02-23T00:00:00.000Z
     - "@angular-devkit/build-angular@19.2.19 > babel-loader@9.2.1 > schema-utils@4.3.3 > ajv-formats@2.1.1 > ajv@8.17.1":
-        reason: angular/downstream dependency
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-02-23T00:00:00.000Z
-    - "@angular-devkit/build-angular@18.2.21 > webpack@5.94.0 > schema-utils@3.3.0 > ajv@6.12.6":
-        reason: angular/downstream dependency
-        expires: 2026-06-08T00:00:00.000Z
-        created: 2026-02-23T00:00:00.000Z
-    - ng-packagr@18.2.1 > ajv@8.17.1:
         reason: angular/downstream dependency
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-02-23T00:00:00.000Z
