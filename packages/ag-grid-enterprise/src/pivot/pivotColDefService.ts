@@ -401,10 +401,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         const newColDef = this.createColDef(pivotValueColumn as AgColumn, headerName, pivotKeys, !!pivotTotalColumnIds);
 
-        // preserve pivot-result identity from the old colDef. `field` must mirror
-        // `colId` (the default valueGetter reads `data[field]`); `createColDef`
-        // regenerates `field` from a fresh id that can diverge from the original
-        // when `totalColumn` differs.
+        // preserve pivot-result identity from the old colDef.
         newColDef.columnGroupShow = columnGroupShow;
         newColDef.colId = colId;
         newColDef.field = field;

@@ -1,8 +1,7 @@
-import type { ColDef, Column, GridOptions } from 'ag-grid-community';
+import type { ColDef, Column } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../test-utils';
 import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('pivot column identity across columnDefs updates', () => {
@@ -41,49 +40,50 @@ describe('pivot column identity across columnDefs updates', () => {
             field: col.getColDef().field,
         }));
 
-    const gridRowsOptions: GridRowsOptions = {
-        forcedColumns: [
-            'ag-Grid-AutoColumn',
-            'pivot_sport-year_Gymnastics-2008_gold',
-            'pivot_sport-year_Gymnastics-2012_gold',
-            'pivot_sport-year_Gymnastics_gold',
-            'pivot_sport-year_Swimming-2008_gold',
-            'pivot_sport-year_Swimming-2012_gold',
-            'pivot_sport-year_Swimming_gold',
-        ],
-        printHiddenRows: false,
-    };
-
-    test('setGridOption(columnDefs) preserves pivot result colIds and field/colId consistency', async () => {
-        const gridOptions: GridOptions = {
-            columnDefs: baseColumnDefs,
-            pivotMode: true,
-        };
-
-        const api = gridsManager.createGrid('myGrid', gridOptions);
-        applyTransactionChecked(api, { add: olympicLikeRows });
-
-        await new GridRows(api, 'rows before round-trip', gridRowsOptions).check(`
+    // Baseline pivot grid output for `baseColumnDefs` + `olympicLikeRows`. Reused
+    // across tests since the round-trip / context update / direct mutation never
+    // changes the rendered tree — only the colDef contents.
+    const checkDefaultRows = (api: ReturnType<typeof gridsManager.createGrid>, label: string) =>
+        new GridRows(api, label).check(`
             ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-            ├── LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
+            │ ├── LEAF hidden id:0 pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:3 pivot_sport-year_Gymnastics_gold:3 pivot_sport-year_Swimming-2008_gold:3 pivot_sport-year_Swimming-2012_gold:3 pivot_sport-year_Swimming_gold:3
+            │ └── LEAF hidden id:1 pivot_sport-year_Gymnastics-2008_gold:1 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:1 pivot_sport-year_Swimming-2008_gold:1 pivot_sport-year_Swimming-2012_gold:1 pivot_sport-year_Swimming_gold:1
+            └─┬ LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
+            · ├── LEAF hidden id:2 pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:4 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:4 pivot_sport-year_Swimming-2012_gold:4 pivot_sport-year_Swimming_gold:4
+            · ├── LEAF hidden id:3 pivot_sport-year_Gymnastics-2008_gold:2 pivot_sport-year_Gymnastics-2012_gold:2 pivot_sport-year_Gymnastics_gold:2 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:2 pivot_sport-year_Swimming_gold:2
+            · └── LEAF hidden id:4 pivot_sport-year_Gymnastics-2008_gold:5 pivot_sport-year_Gymnastics-2012_gold:5 pivot_sport-year_Gymnastics_gold:5 pivot_sport-year_Swimming-2008_gold:5 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:5
         `);
-        await new GridColumns(api, 'cols before round-trip').checkColumns(`
+
+    const checkDefaultCols = (api: ReturnType<typeof gridsManager.createGrid>, label: string) =>
+        new GridColumns(api, label).checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn "Group" width:200
-            ├─┬ "Gymnastics" GROUP closed
-            │ ├─┬ "2008" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open hidden
-            │ ├─┬ "2012" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open hidden
-            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed
-            └─┬ "Swimming" GROUP closed
-              ├─┬ "2008" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2012" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed
+            ├─┬ "Gymnastics" GROUP open
+            │ ├─┬ "2008" GROUP
+            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open
+            │ ├─┬ "2012" GROUP
+            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open
+            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed hidden
+            └─┬ "Swimming" GROUP open
+              ├─┬ "2008" GROUP
+              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open
+              ├─┬ "2012" GROUP
+              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open
+              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed hidden
         `);
+
+    test('setGridOption(columnDefs) preserves pivot result colIds and field/colId consistency', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: baseColumnDefs,
+            pivotMode: true,
+            groupDefaultExpanded: -1,
+            pivotDefaultExpanded: -1,
+        });
+        applyTransactionChecked(api, { add: olympicLikeRows });
+
+        await checkDefaultRows(api, 'rows before round-trip');
+        await checkDefaultCols(api, 'cols before round-trip');
 
         const beforeIds = snapshotCols(api.getPivotResultColumns());
         expect(beforeIds.length).toBeGreaterThan(0);
@@ -106,62 +106,24 @@ describe('pivot column identity across columnDefs updates', () => {
             expect(field).toBe(colId);
         }
 
-        await new GridRows(api, 'rows after round-trip', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-            ├── LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-        `);
-        await new GridColumns(api, 'cols after round-trip').checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            ├─┬ "Gymnastics" GROUP closed
-            │ ├─┬ "2008" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open hidden
-            │ ├─┬ "2012" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open hidden
-            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed
-            └─┬ "Swimming" GROUP closed
-              ├─┬ "2008" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2012" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed
-        `);
+        await checkDefaultRows(api, 'rows after round-trip');
+        await checkDefaultCols(api, 'cols after round-trip');
     });
 
     test('setGridOption(columnDefs) preserves pivot total result colIds and field/colId consistency', async () => {
         // addExpandablePivotGroups creates "Total" cols with pivotTotalColumnIds set
         // but totalColumn=false. recreateColDef previously used !!pivotTotalColumnIds
         // to flip totalColumn=true on regeneration, breaking field consistency.
-        const gridOptions: GridOptions = {
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: baseColumnDefs,
             pivotMode: true,
-        };
-
-        const api = gridsManager.createGrid('myGrid', gridOptions);
+            groupDefaultExpanded: -1,
+            pivotDefaultExpanded: -1,
+        });
         applyTransactionChecked(api, { add: olympicLikeRows });
 
-        await new GridRows(api, 'rows before round-trip (totals)', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-            ├── LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-        `);
-        await new GridColumns(api, 'cols before round-trip (totals)').checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            ├─┬ "Gymnastics" GROUP closed
-            │ ├─┬ "2008" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open hidden
-            │ ├─┬ "2012" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open hidden
-            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed
-            └─┬ "Swimming" GROUP closed
-              ├─┬ "2008" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2012" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed
-        `);
+        await checkDefaultRows(api, 'rows before round-trip (totals)');
+        await checkDefaultCols(api, 'cols before round-trip (totals)');
 
         const beforeAll = api.getPivotResultColumns() ?? [];
         const totalColsBefore = beforeAll.filter((col) => col.getColDef().pivotTotalColumnIds !== undefined);
@@ -189,59 +151,21 @@ describe('pivot column identity across columnDefs updates', () => {
             expect(def.colId).toBe(col.getColId());
         }
 
-        await new GridRows(api, 'rows after round-trip (totals)', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-            ├── LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-        `);
-        await new GridColumns(api, 'cols after round-trip (totals)').checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            ├─┬ "Gymnastics" GROUP closed
-            │ ├─┬ "2008" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open hidden
-            │ ├─┬ "2012" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open hidden
-            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed
-            └─┬ "Swimming" GROUP closed
-              ├─┬ "2008" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2012" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed
-        `);
+        await checkDefaultRows(api, 'rows after round-trip (totals)');
+        await checkDefaultCols(api, 'cols after round-trip (totals)');
     });
 
     test('setGridOption(columnDefs) preserves the pivot result Column instances', async () => {
-        const gridOptions: GridOptions = {
+        const api = gridsManager.createGrid('myGrid', {
             columnDefs: baseColumnDefs,
             pivotMode: true,
-        };
-
-        const api = gridsManager.createGrid('myGrid', gridOptions);
+            groupDefaultExpanded: -1,
+            pivotDefaultExpanded: -1,
+        });
         applyTransactionChecked(api, { add: olympicLikeRows });
 
-        await new GridRows(api, 'rows before instance check', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-            ├── LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-        `);
-        await new GridColumns(api, 'cols before instance check').checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            ├─┬ "Gymnastics" GROUP closed
-            │ ├─┬ "2008" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open hidden
-            │ ├─┬ "2012" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open hidden
-            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed
-            └─┬ "Swimming" GROUP closed
-              ├─┬ "2008" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2012" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed
-        `);
+        await checkDefaultRows(api, 'rows before instance check');
+        await checkDefaultCols(api, 'cols before instance check');
 
         const beforeCols = api.getPivotResultColumns() ?? [];
         expect(beforeCols.length).toBeGreaterThan(0);
@@ -256,27 +180,8 @@ describe('pivot column identity across columnDefs updates', () => {
             expect(beforeById.get(col.getColId())).toBe(col);
         }
 
-        await new GridRows(api, 'rows after instance check', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-            ├── LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-        `);
-        await new GridColumns(api, 'cols after instance check').checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            ├─┬ "Gymnastics" GROUP closed
-            │ ├─┬ "2008" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open hidden
-            │ ├─┬ "2012" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open hidden
-            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed
-            └─┬ "Swimming" GROUP closed
-              ├─┬ "2008" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2012" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed
-        `);
+        await checkDefaultRows(api, 'rows after instance check');
+        await checkDefaultCols(api, 'cols after instance check');
     });
 
     test('updated context on the value column propagates to pivot result colDefs', async () => {
@@ -293,30 +198,13 @@ describe('pivot column identity across columnDefs updates', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: initialDefs,
             pivotMode: true,
+            groupDefaultExpanded: -1,
+            pivotDefaultExpanded: -1,
         });
         applyTransactionChecked(api, { add: olympicLikeRows });
 
-        await new GridRows(api, 'rows before context update', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-            ├── LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-        `);
-        await new GridColumns(api, 'cols before context update').checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            ├─┬ "Gymnastics" GROUP closed
-            │ ├─┬ "2008" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open hidden
-            │ ├─┬ "2012" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open hidden
-            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed
-            └─┬ "Swimming" GROUP closed
-              ├─┬ "2008" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2012" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed
-        `);
+        await checkDefaultRows(api, 'rows before context update');
+        await checkDefaultCols(api, 'cols before context update');
 
         for (const col of api.getPivotResultColumns() ?? []) {
             expect(col.getColDef().context).toEqual({ version: 1 });
@@ -333,27 +221,8 @@ describe('pivot column identity across columnDefs updates', () => {
             expect(col.getColDef().context).toEqual({ version: 2 });
         }
 
-        await new GridRows(api, 'rows after context update', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-            ├── LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-        `);
-        await new GridColumns(api, 'cols after context update').checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            ├─┬ "Gymnastics" GROUP closed
-            │ ├─┬ "2008" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open hidden
-            │ ├─┬ "2012" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open hidden
-            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed
-            └─┬ "Swimming" GROUP closed
-              ├─┬ "2008" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2012" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed
-        `);
+        await checkDefaultRows(api, 'rows after context update');
+        await checkDefaultCols(api, 'cols after context update');
     });
 
     test('processPivotResultColDef can attach pivot-col-specific context on every recreate', async () => {
@@ -367,31 +236,14 @@ describe('pivot column identity across columnDefs updates', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: baseColumnDefs,
             pivotMode: true,
+            groupDefaultExpanded: -1,
+            pivotDefaultExpanded: -1,
             processPivotResultColDef: stamp,
         });
         applyTransactionChecked(api, { add: olympicLikeRows });
 
-        await new GridRows(api, 'rows before callback recheck', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-            ├── LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-        `);
-        await new GridColumns(api, 'cols before callback recheck').checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            ├─┬ "Gymnastics" GROUP closed
-            │ ├─┬ "2008" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open hidden
-            │ ├─┬ "2012" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open hidden
-            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed
-            └─┬ "Swimming" GROUP closed
-              ├─┬ "2008" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2012" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed
-        `);
+        await checkDefaultRows(api, 'rows before callback recheck');
+        await checkDefaultCols(api, 'cols before callback recheck');
 
         const beforeCols = api.getPivotResultColumns() ?? [];
         expect(beforeCols.length).toBeGreaterThan(0);
@@ -405,27 +257,8 @@ describe('pivot column identity across columnDefs updates', () => {
             expect(col.getColDef().context).toEqual({ byColId: col.getColId() });
         }
 
-        await new GridRows(api, 'rows after callback recheck', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-            ├── LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-        `);
-        await new GridColumns(api, 'cols after callback recheck').checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            ├─┬ "Gymnastics" GROUP closed
-            │ ├─┬ "2008" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open hidden
-            │ ├─┬ "2012" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open hidden
-            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed
-            └─┬ "Swimming" GROUP closed
-              ├─┬ "2008" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2012" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed
-        `);
+        await checkDefaultRows(api, 'rows after callback recheck');
+        await checkDefaultCols(api, 'cols after callback recheck');
     });
 
     test('custom properties attached directly to a pivot result colDef are NOT preserved across recreate', async () => {
@@ -435,66 +268,30 @@ describe('pivot column identity across columnDefs updates', () => {
         // properties added by directly mutating the pivot result colDef are lost.
         // To attach persistent metadata, attach it to the value col's colDef
         // (Object.assign carries it through) or use processPivotResultColDef.
+        type ColDefWithCustom = ColDef & { myCustomProp?: string };
+
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: baseColumnDefs,
             pivotMode: true,
+            groupDefaultExpanded: -1,
+            pivotDefaultExpanded: -1,
         });
         applyTransactionChecked(api, { add: olympicLikeRows });
 
-        await new GridRows(api, 'rows before mutation', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-            ├── LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-        `);
-        await new GridColumns(api, 'cols before mutation').checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            ├─┬ "Gymnastics" GROUP closed
-            │ ├─┬ "2008" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open hidden
-            │ ├─┬ "2012" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open hidden
-            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed
-            └─┬ "Swimming" GROUP closed
-              ├─┬ "2008" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2012" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed
-        `);
+        await checkDefaultRows(api, 'rows before mutation');
+        await checkDefaultCols(api, 'cols before mutation');
 
-        const targetCol = api.getPivotResultColumns()?.[0];
-        expect(targetCol).toBeDefined();
-        const targetColId = targetCol!.getColId();
-
-        (targetCol!.getColDef() as ColDef & { myCustomProp?: string }).myCustomProp = 'foo';
+        const targetCol = api.getPivotResultColumns()![0];
+        const targetColId = targetCol.getColId();
+        (targetCol.getColDef() as ColDefWithCustom).myCustomProp = 'foo';
 
         api.setGridOption('columnDefs', baseColumnDefs);
 
         const afterCol = api.getPivotResultColumns()!.find((col) => col.getColId() === targetColId);
         expect(afterCol).toBeDefined();
-        expect((afterCol!.getColDef() as ColDef & { myCustomProp?: string }).myCustomProp).toBeUndefined();
+        expect((afterCol!.getColDef() as ColDefWithCustom).myCustomProp).toBeUndefined();
 
-        await new GridRows(api, 'rows after mutation', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID pivot_sport-year_Gymnastics-2008_gold:7 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:8 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-            ├── LEAF_GROUP collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" pivot_sport-year_Gymnastics-2008_gold:3 pivot_sport-year_Gymnastics-2012_gold:1 pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:null pivot_sport-year_Swimming-2012_gold:null pivot_sport-year_Swimming_gold:null
-            └── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_sport-year_Gymnastics-2008_gold:4 pivot_sport-year_Gymnastics-2012_gold:null pivot_sport-year_Gymnastics_gold:4 pivot_sport-year_Swimming-2008_gold:2 pivot_sport-year_Swimming-2012_gold:5 pivot_sport-year_Swimming_gold:7
-        `);
-        await new GridColumns(api, 'cols after mutation').checkColumns(`
-            CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200
-            ├─┬ "Gymnastics" GROUP closed
-            │ ├─┬ "2008" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2008_gold "Gold" width:200 columnGroupShow:open hidden
-            │ ├─┬ "2012" GROUP hidden
-            │ │ └── pivot_sport-year_Gymnastics-2012_gold "Gold" width:200 columnGroupShow:open hidden
-            │ └── pivot_sport-year_Gymnastics_gold "Gold" width:200 columnGroupShow:closed
-            └─┬ "Swimming" GROUP closed
-              ├─┬ "2008" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2008_gold "Gold" width:200 columnGroupShow:open hidden
-              ├─┬ "2012" GROUP hidden
-              │ └── pivot_sport-year_Swimming-2012_gold "Gold" width:200 columnGroupShow:open hidden
-              └── pivot_sport-year_Swimming_gold "Gold" width:200 columnGroupShow:closed
-        `);
+        await checkDefaultRows(api, 'rows after mutation');
+        await checkDefaultCols(api, 'cols after mutation');
     });
 });
