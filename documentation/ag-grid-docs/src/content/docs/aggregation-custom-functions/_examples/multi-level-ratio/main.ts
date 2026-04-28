@@ -19,18 +19,23 @@ ModuleRegistry.registerModules([
 ]);
 
 /** Carries `gold`/`silver` running totals; the ratio is derived so the wrapper can't go inconsistent. */
-class RatioResult implements IAggFuncResult<number> {
+class RatioResult implements IAggFuncResult<number | null> {
+    readonly value: number | null;
+
     constructor(
         readonly gold: number,
         readonly silver: number
-    ) {}
+    ) {
+        this.value = silver ? gold / silver : null;
+    }
 
-    toNumber() {
-        return this.gold / this.silver;
+    toNumber(): number | null {
+        return this.value;
     }
 
     toString() {
-        return this.silver ? this.toNumber().toFixed(2) : '';
+        const value = this.value;
+        return value === null ? '' : value.toFixed(2);
     }
 }
 
@@ -64,7 +69,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 // Leaf rows always expose a `RatioResult` so the aggFunc reads every child uniformly.
 // Rows with no silvers carry `silver: 0` — `toString` blanks the cell, while `gold`/`silver`
 // stay available for the parent group's running totals.
-// Footer/filler rows have no `data`; return undefined so the cell is left empty.
 function leafRatioValueGetter(params: ValueGetterParams<IOlympicData>): RatioResult | undefined {
     if (!params.data) {
         return undefined;

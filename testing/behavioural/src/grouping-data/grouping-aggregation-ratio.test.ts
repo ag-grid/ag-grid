@@ -9,18 +9,23 @@ import { TestGridsManager } from '../test-utils';
  * produce a `RatioResult` for both leaves and groups, so the aggFunc reads each child the
  * same way at every level.
  */
-class RatioResult implements IAggFuncResult<number> {
+class RatioResult implements IAggFuncResult<number | null> {
+    readonly value: number | null;
+
     constructor(
         readonly gold: number,
         readonly silver: number
-    ) {}
+    ) {
+        this.value = silver ? gold / silver : null;
+    }
 
-    toNumber() {
-        return this.gold / this.silver;
+    toNumber(): number | null {
+        return this.value;
     }
 
     toString() {
-        return this.silver ? this.toNumber().toFixed(2) : '';
+        const value = this.value;
+        return value === null ? '' : value.toFixed(2);
     }
 }
 
@@ -33,7 +38,9 @@ interface MedalRow {
 }
 
 function leafRatioValueGetter(params: ValueGetterParams<MedalRow>): RatioResult | undefined {
-    if (!params.data) return undefined;
+    if (!params.data) {
+        return undefined;
+    }
     const { gold, silver } = params.data;
     return new RatioResult(gold, silver);
 }
@@ -54,9 +61,13 @@ function ratioAggFunc(params: IAggFuncParams<MedalRow>): RatioResult {
 function findGroupRow(api: GridApi, key: string): IRowNode {
     let found: IRowNode | undefined;
     api.forEachNode((node) => {
-        if (node.group && node.key === key && !found) found = node;
+        if (node.group && node.key === key && !found) {
+            found = node;
+        }
     });
-    if (!found) throw new Error(`Group row '${key}' not found`);
+    if (!found) {
+        throw new Error(`Group row '${key}' not found`);
+    }
     return found;
 }
 
@@ -138,7 +149,9 @@ describe('ratio-of-sums aggregation via IAggFuncResult wrapper', () => {
         expect(year2000).toBeInstanceOf(RatioResult);
         expect(year2000.gold).toBe(7);
         expect(year2000.silver).toBe(0);
-        expect(Number.isFinite(year2000.toNumber())).toBe(false);
+        // No denominator — wrapper exposes `null` to sort/filter/chart paths, blank to display.
+        expect(year2000.value).toBeNull();
+        expect(year2000.toNumber()).toBeNull();
         expect(year2000.toString()).toBe('');
 
         const year2004 = findGroupRow(api, '2004').aggData?.goldSilverRatio;

@@ -120,14 +120,18 @@ also gives the leaf cells something to display, and reduces the aggFunc to a sin
 {% gridExampleRunner title="Ratio Across Levels" name="multi-level-ratio" /%}
 
 ```ts
-class RatioResult implements IAggFuncResult<number> {
+class RatioResult implements IAggFuncResult<number | null> {
+    readonly value: number | null;
+
     constructor(
         readonly gold: number,
         readonly silver: number,
-    ) {}
+    ) {
+        this.value = silver ? gold / silver : null;
+    }
 
-    toNumber() { return this.gold / this.silver; }
-    toString() { return this.silver ? this.toNumber().toFixed(2) : ''; }
+    toNumber() { return this.value; }
+    toString() { const v = this.value; return v === null ? '' : v.toFixed(2); }
 }
 
 // Every leaf returns a `RatioResult` so the aggFunc reads each child the same way. Rows with no
