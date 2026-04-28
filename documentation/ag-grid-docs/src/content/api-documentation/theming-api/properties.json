@@ -387,6 +387,18 @@
         "sideButtonSelectedUnderlineTransitionDuration": {},
         "toolPanelSeparatorBorder": {}
     },
+    "toolbar": {
+        "meta": {
+            "displayName": "Toolbar",
+            "page": {
+                "name": "Quick Access Toolbar",
+                "url": "./toolbar/"
+            }
+        },
+        "toolbarBackgroundColor": {},
+        "toolbarTextColor": {},
+        "toolbarSeparatorBorder": {}
+    },
     "colorPicker": {
         "meta": {
             "displayName": "Color Picker",
