@@ -100,7 +100,7 @@ const GridExample = () => {
                     key: 'columnsPanel',
                     alignment: 'left',
                     toolbarItemParams: {
-                        title: 'Columns Panel',
+                        label: 'Columns Panel',
                         icon: 'columns',
                         panelId: 'columns',
                         onClick: (api: GridApi) =>
