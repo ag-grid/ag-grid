@@ -8,6 +8,7 @@ import {
     NumberFilterModule,
     QuickFilterModule,
     TextFilterModule,
+    ToolbarItemActionParams,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
@@ -66,19 +67,19 @@ const gridOptions: GridOptions<IOlympicData> = {
                 key: 'autoSizeAll',
                 label: 'Auto Size All',
                 icon: 'maximize',
-                action: (params) => params.api.autoSizeAllColumns(),
+                action: (params: ToolbarItemActionParams) => params.api.autoSizeAllColumns(),
             },
             {
                 key: 'resetColumns',
                 label: 'Reset Columns',
                 icon: 'columnMoveLeft',
-                action: (params) => params.api.resetColumnState(),
+                action: (params: ToolbarItemActionParams) => params.api.resetColumnState(),
             },
             {
                 toolbarItem: 'agMenuToolbarItem',
+                label: 'Export',
+                icon: 'save',
                 toolbarItemParams: {
-                    label: 'Export',
-                    icon: 'save',
                     menuItems: ['csvExport', 'excelExport'],
                 },
             },

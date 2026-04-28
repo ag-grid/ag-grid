@@ -79,6 +79,64 @@ describe('Toolbar', () => {
         expect(toolbarIndex).toBeLessThan(bodyIndex);
     });
 
+    describe('getToolbarInstance', () => {
+        test('returns undefined when no toolbar is configured', async () => {
+            const api = gridMgr.createGrid('get-instance-no-toolbar', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            expect(api.getToolbarInstance('agQuickFilterToolbarItem')).toBeUndefined();
+        });
+
+        test('returns undefined for an unknown key', async () => {
+            const api = gridMgr.createGrid('get-instance-unknown-key', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['agQuickFilterToolbarItem'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            expect(api.getToolbarInstance('nonExistentKey')).toBeUndefined();
+        });
+
+        test('returns the built-in item instance by auto-generated key', async () => {
+            const api = gridMgr.createGrid('get-instance-builtin', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: [{ toolbarItem: 'agQuickFilterToolbarItem', key: 'myFilter' }],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const instance = api.getToolbarInstance('myFilter');
+            expect(instance).toBeDefined();
+        });
+
+        test('returns undefined after toolbar items are cleared at runtime', async () => {
+            const api = gridMgr.createGrid('get-instance-after-clear', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: [{ toolbarItem: 'agQuickFilterToolbarItem', key: 'myFilter' }],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            expect(api.getToolbarInstance('myFilter')).toBeDefined();
+
+            api.setGridOption('toolbar', { items: [] });
+
+            expect(api.getToolbarInstance('myFilter')).toBeUndefined();
+        });
+    });
+
     describe('runtime updates via setGridOption', () => {
         test('adds items when toolbar items are populated at runtime', async () => {
             // Start with an empty items array so the AG-TOOLBAR element is registered up-front

@@ -13,7 +13,7 @@ import {
 import type { ToolbarMenuBuilder } from '../../menu/toolbarMenuBuilder';
 import { renderToolbarButtonContents } from './toolbarItemUtils';
 
-interface MenuToolbarItemInitParams extends IToolbarItemParams, ToolbarMenuItemParams {}
+type MenuToolbarItemInitParams = IToolbarItemParams & ToolbarMenuItemParams;
 
 const MenuToolbarItemElement: ElementParams = {
     tag: 'button',

@@ -88,18 +88,20 @@ export interface ToolbarBuiltInItemDef extends ToolbarItemDefBase {
 
 /**
  * Reference to the `agMenuToolbarItem` built-in toolbar item — a button that opens a dropdown
- * menu. Configure via {@link ToolbarMenuItemParams} on `toolbarItemParams`.
+ * menu. Configure `label`, `icon`, `tooltip` at the top level (shorthand) or via `toolbarItemParams`; `toolbarItemParams` values take precedence.
  */
 export interface ToolbarMenuBuiltInItemDef<TData = any, TContext = any> extends ToolbarItemDefBase {
     /** The `agMenuToolbarItem` built-in component. */
     toolbarItem: 'agMenuToolbarItem';
-    /** Configuration for the menu button (label, tooltip, icon, menu items). */
+    /** Configuration for the menu button (menu items). */
     toolbarItemParams?: ToolbarMenuItemParams<TData, TContext>;
-    /** Not used for built-in items — use the Action Button variant for label/icon/action. */
-    label?: never;
-    /** Not used for built-in items — use the Action Button variant for label/icon/action. */
-    icon?: never;
-    /** Not used for built-in items — use the Action Button variant for label/icon/action. */
+    /** Visible text rendered next to the icon. Omit to render an icon-only button. */
+    label?: string;
+    /** Hover tooltip and `aria-label`. Falls back to `label`, then to the locale "Menu" text. */
+    tooltip?: string;
+    /** Icon displayed on the button. Defaults to the `menu` icon. */
+    icon?: IconName;
+    /** Not used for menu items. */
     action?: never;
 }
 
@@ -148,3 +150,13 @@ export interface IToolbarItem<TData = any, TContext = any> {
 
 export interface IToolbarItemComp<TData = any, TContext = any>
     extends IToolbarItem<TData, TContext>, IComponent<IToolbarItemParams<TData, TContext>> {}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface IToolbarService {
+    comp: IToolbarComp;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface IToolbarComp {
+    getToolbarItemInstance(key: string): IToolbarItem | undefined;
+}

@@ -3,11 +3,14 @@ import type {
     ComponentType,
     ElementParams,
     FocusableContainer,
+    IToolbarComp,
+    IToolbarItem,
     IToolbarItemComp,
     IToolbarItemParams,
     Toolbar,
     ToolbarButtonItemDef,
     ToolbarItemDef,
+    ToolbarMenuBuiltInItemDef,
 } from 'ag-grid-community';
 import {
     Component,
@@ -51,6 +54,12 @@ function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): No
             toolbarItem = 'agButtonToolbarItem';
             toolbarItemParams = { ...(toolbarItemParams ?? {}), label, tooltip, icon, action };
         }
+    } else if (toolbarItem === 'agMenuToolbarItem') {
+        const { label, tooltip, icon } = item as ToolbarMenuBuiltInItemDef;
+        if (label != null || tooltip != null || icon != null) {
+            // toolbarItemParams takes precedence over top-level shorthand values
+            toolbarItemParams = { label, tooltip, icon, ...(toolbarItemParams ?? {}) };
+        }
     }
 
     const key = item.key ?? (typeof toolbarItem === 'string' ? toolbarItem : nextKey());
@@ -69,7 +78,7 @@ const AgToolbarElement: ElementParams = {
     role: 'toolbar',
 };
 
-class AgToolbar extends Component implements FocusableContainer {
+class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
     private readonly toolbarItems: Map<string, IToolbarItemComp> = new Map();
     private customKeyCounter: number = 0;
     // Incremented on each rebuild so stale async resolves from a previous generation can be discarded
@@ -82,6 +91,8 @@ class AgToolbar extends Component implements FocusableContainer {
 
     public postConstruct(): void {
         const eGui = this.getGui();
+
+        (this.beans.toolbar as { comp: IToolbarComp }).comp = this;
 
         this.processToolbarItems();
         this.addManagedPropertyListeners(['toolbar'], this.updateToolbar.bind(this));
@@ -116,6 +127,10 @@ class AgToolbar extends Component implements FocusableContainer {
 
     public getFocusableContainerName(): 'toolbar' {
         return 'toolbar';
+    }
+
+    public getToolbarItemInstance(key: string): IToolbarItem | undefined {
+        return this.toolbarItems.get(key);
     }
 
     private onTabKeyDown(_e: KeyboardEvent): void {
