@@ -125,11 +125,6 @@
     max-width: none;
 }
 
-:where(.ag-toolbar-find) .ag-toolbar-input-icon {
-    position: static;
-    padding-inline-start: var(--ag-spacing);
-}
-
 .ag-toolbar-find:focus-within {
     box-shadow: var(--ag-focus-shadow);
 }
