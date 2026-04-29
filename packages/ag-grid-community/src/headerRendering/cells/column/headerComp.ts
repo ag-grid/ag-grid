@@ -2,7 +2,6 @@ import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
 import { _removeFromParent, _setDisplayed } from '../../../agStack/utils/dom';
 import { _toString } from '../../../agStack/utils/string';
 import { _getInnerHeaderCompDetails } from '../../../components/framework/userCompUtils';
-import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { AgColumn } from '../../../entities/agColumn';
 import { _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { IHeaderComp, IHeaderParams, IInnerHeaderComponent } from '../../../interfaces/iHeader';
@@ -79,7 +78,9 @@ export class HeaderComp extends Component implements IHeaderComp {
     public params: IHeaderParams;
 
     private currentDisplayName: string;
-    private currentTemplate: ElementParams | string | null | undefined;
+    private currentTemplateCustom: string | undefined;
+    private currentFormulaActive: boolean;
+    private currentHasSortIndicator: boolean;
     private currentShowMenu: boolean;
     private currentSuppressMenuHide: boolean;
     private currentSort: boolean | undefined;
@@ -91,19 +92,29 @@ export class HeaderComp extends Component implements IHeaderComp {
     private mouseListener?: HeaderCellMouseListenerFeature;
 
     public refresh(params: IHeaderParams): boolean {
-        const oldParams = this.params;
+        const {
+            beans: { formula, sortSvc },
+            currentTemplateCustom,
+            currentFormulaActive,
+            currentShowMenu,
+            currentHasSortIndicator,
+            currentSort,
+            currentSuppressMenuHide,
+            params: oldParams,
+        } = this;
         this.params = params;
 
-        // if template changed, then recreate the whole comp, the code required to manage
-        // a changing template is to difficult for what it's worth.
+        // if template changed, then recreate the whole comp
         if (
-            this.workOutTemplate(params, !!this.beans?.sortSvc) != this.currentTemplate ||
-            this.workOutShowMenu() != this.currentShowMenu ||
-            params.enableSorting != this.currentSort ||
-            (params.column as AgColumn).formulaRef != this.currentRef ||
-            (this.currentSuppressMenuHide != null && this.shouldSuppressMenuHide() != this.currentSuppressMenuHide) ||
+            !!formula?.active !== currentFormulaActive ||
+            !!sortSvc !== currentHasSortIndicator ||
+            params.enableSorting != currentSort ||
             oldParams.enableFilterButton != params.enableFilterButton ||
-            oldParams.enableFilterIcon != params.enableFilterIcon
+            oldParams.enableFilterIcon != params.enableFilterIcon ||
+            (params.column as AgColumn).formulaRef != this.currentRef ||
+            (params.template?.trim?.() ?? params.template) !== currentTemplateCustom ||
+            this.workOutShowMenu() != currentShowMenu ||
+            (currentSuppressMenuHide != null && this.shouldSuppressMenuHide() != currentSuppressMenuHide)
         ) {
             return false;
         }
@@ -112,7 +123,9 @@ export class HeaderComp extends Component implements IHeaderComp {
             // Mimic the merging of params that happens during init of _getInnerHeaderCompDetails(userCompFactory, params, params);
             const mergedParams = { ...params };
             _mergeDeep(mergedParams, params.innerHeaderComponentParams);
-            this.innerHeaderComponent.refresh?.(mergedParams);
+            if (this.innerHeaderComponent.refresh?.(mergedParams) === false) {
+                this.replaceInnerHeaderComponent(params);
+            }
         } else {
             this.setDisplayName(params);
         }
@@ -133,10 +146,13 @@ export class HeaderComp extends Component implements IHeaderComp {
     public init(params: IHeaderParams): void {
         this.params = params;
 
-        const { sortSvc, touchSvc, rowNumbersSvc, userCompFactory } = this.beans;
+        const { sortSvc, touchSvc, rowNumbersSvc, formula } = this.beans;
         const sortComp = sortSvc?.getSortIndicatorSelector();
-        this.currentTemplate = this.workOutTemplate(params, !!sortComp);
-        this.setTemplate(this.currentTemplate, sortComp ? [sortComp] : undefined);
+        const template = this.workOutTemplate(params, !!sortComp);
+        this.currentTemplateCustom = params.template?.trim?.() ?? params.template;
+        this.currentFormulaActive = !!formula?.active;
+        this.currentHasSortIndicator = !!sortComp;
+        this.setTemplate(template, sortComp ? [sortComp] : undefined);
 
         if (this.eLabel) {
             this.mouseListener ??= this.createManagedBean(
@@ -152,11 +168,12 @@ export class HeaderComp extends Component implements IHeaderComp {
         rowNumbersSvc?.setupForHeader(this);
         this.setupFilterIcon();
         this.setupFilterButton();
-        this.workOutInnerHeaderComponent(userCompFactory, params);
+        this.workOutInnerHeaderComponent(params);
         this.setDisplayName(params);
     }
 
-    private workOutInnerHeaderComponent(userCompFactory: UserComponentFactory, params: IHeaderParams): void {
+    private workOutInnerHeaderComponent(params: IHeaderParams): void {
+        const userCompFactory = this.beans.userCompFactory;
         const userCompDetails = _getInnerHeaderCompDetails(userCompFactory, params, params);
 
         if (!userCompDetails) {
@@ -174,13 +191,18 @@ export class HeaderComp extends Component implements IHeaderComp {
 
             if (this.isAlive()) {
                 this.innerHeaderComponent = comp;
-                if (this.eText) {
-                    this.eText.appendChild(comp.getGui());
-                }
+                this.eText?.appendChild(comp.getGui());
             } else {
                 this.destroyBean(comp);
             }
         });
+    }
+
+    private replaceInnerHeaderComponent(params: IHeaderParams): void {
+        const oldGui = this.innerHeaderComponent!.getGui();
+        _removeFromParent(oldGui);
+        this.innerHeaderComponent = this.destroyBean(this.innerHeaderComponent);
+        this.workOutInnerHeaderComponent(params);
     }
 
     private setDisplayName(params: IHeaderParams) {
