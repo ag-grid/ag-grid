@@ -111,6 +111,10 @@
         box-shadow: var(--ag-focus-shadow);
     }
 
+    .ag-toolbar-input-field::placeholder {
+        color: var(--ag-input-placeholder-text-color);
+    }
+
     .ag-toolbar-panel .ag-column-drop-horizontal {
         background-color: transparent;
         border-bottom: none;
