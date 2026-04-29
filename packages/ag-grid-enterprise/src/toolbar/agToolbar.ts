@@ -98,7 +98,7 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
     public postConstruct(): void {
         const eGui = this.getGui();
 
-        (this.beans.toolbar as { comp: IToolbarComp }).comp = this;
+        this.beans.toolbar!.setToolbar(this);
 
         this.processToolbarItems();
         this.addManagedPropertyListeners(['toolbar'], this.updateToolbar.bind(this));
@@ -253,6 +253,7 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
     public override destroy(): void {
         this.generation++;
         this.destroyToolbarItems();
+        this.beans.toolbar?.clearToolbar(this);
         super.destroy();
     }
 

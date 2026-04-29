@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, ToolbarItemActionParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
@@ -8,7 +8,6 @@ import {
     NumberFilterModule,
     QuickFilterModule,
     TextFilterModule,
-    type ToolbarItemActionParams,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';

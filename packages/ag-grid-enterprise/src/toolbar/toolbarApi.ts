@@ -5,6 +5,6 @@ export function getToolbarItemInstance<TToolbarItem = IToolbarItem>(
     beans: BeanCollection,
     key: string
 ): TToolbarItem | undefined {
-    const comp = beans.toolbar?.comp?.getToolbarItemInstance(key);
+    const comp = beans.toolbar?.getToolbarItemInstance(key);
     return _unwrapUserComp(comp) as any;
 }

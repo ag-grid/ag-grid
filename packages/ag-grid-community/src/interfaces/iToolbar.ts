@@ -82,7 +82,8 @@ export interface ToolbarBuiltInItemDef extends ToolbarItemDefBase {
 
 /**
  * Reference to the `agMenuToolbarItem` built-in toolbar item — a button that opens a dropdown
- * menu. Configure `label`, `icon`, `tooltip` at the top level (shorthand) or via `toolbarItemParams`; `toolbarItemParams` values take precedence.
+ * menu. Configure `label`, `icon`, and `tooltip` at the top level; `toolbarItemParams` carries
+ * the menu contents.
  */
 export interface ToolbarMenuBuiltInItemDef<TData = any, TContext = any> extends ToolbarItemDefBase {
     /** The `agMenuToolbarItem` built-in component. */
@@ -147,11 +148,14 @@ export interface IToolbarItem<TData = any, TContext = any> {
 }
 
 export interface IToolbarItemComp<TData = any, TContext = any>
-    extends IToolbarItem<TData, TContext>, IComponent<IToolbarItemParams<TData, TContext>> {}
+    extends IToolbarItem<TData, TContext>,
+        IComponent<IToolbarItemParams<TData, TContext>> {}
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IToolbarService {
-    comp: IToolbarComp;
+    setToolbar(toolbar: IToolbarComp): void;
+    clearToolbar(toolbar: IToolbarComp): void;
+    getToolbarItemInstance(key: string): IToolbarItem | undefined;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
