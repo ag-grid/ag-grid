@@ -41,6 +41,10 @@ function getStubRowCount(): number {
     return document.querySelectorAll('.ag-row-loading').length;
 }
 
+function getFullWidthStubRowCount(): number {
+    return document.querySelectorAll('.ag-row-loading.ag-full-width-row').length;
+}
+
 describe('SSRM loading row count', () => {
     const gridManager = new TestGridsManager({
         modules: [ServerSideRowModelModule, ServerSideRowModelApiModule, ValidationModule],
@@ -248,6 +252,98 @@ describe('SSRM loading row count', () => {
 
             // no childCount hint → falls back to 1
             expect(getStubRowCount()).toBe(1);
+        });
+    });
+
+    describe('SSRM legacy API compatibility — skeletonRows must not change stub rendering', () => {
+        test('SSRM stubs are full-width rows by default', () => {
+            gridManager.createGrid('myGrid', {
+                columnDefs,
+                rowModelType: 'serverSide',
+                serverSideDatasource: createHangingDatasource(),
+            });
+
+            expect(getStubRowCount()).toBe(1);
+            expect(getFullWidthStubRowCount()).toBe(1);
+        });
+
+        test('skeletonRows alone does not suppress full-width SSRM stubs', () => {
+            gridManager.createGrid('myGrid', {
+                columnDefs,
+                rowModelType: 'serverSide',
+                skeletonRows: { rowCount: 3 },
+                serverSideDatasource: createHangingDatasource(),
+            });
+
+            expect(getStubRowCount()).toBe(3);
+            expect(getFullWidthStubRowCount()).toBe(3);
+        });
+
+        test('suppressServerSideFullWidthLoadingRow still suppresses full-width stubs independently', () => {
+            gridManager.createGrid('myGrid', {
+                columnDefs,
+                rowModelType: 'serverSide',
+                suppressServerSideFullWidthLoadingRow: true,
+                serverSideDatasource: createHangingDatasource(),
+            });
+
+            expect(getStubRowCount()).toBe(1);
+            expect(getFullWidthStubRowCount()).toBe(0);
+        });
+
+        test('skeletonRows.rowCount takes precedence over serverSideInitialRowCount', () => {
+            gridManager.createGrid('myGrid', {
+                columnDefs,
+                rowModelType: 'serverSide',
+                serverSideInitialRowCount: 10,
+                skeletonRows: { rowCount: 3 },
+                serverSideDatasource: createHangingDatasource(),
+            });
+
+            expect(getStubRowCount()).toBe(3);
+        });
+
+        test('serverSideInitialRowCount still controls stub count without skeletonRows', () => {
+            gridManager.createGrid('myGrid', {
+                columnDefs,
+                rowModelType: 'serverSide',
+                serverSideInitialRowCount: 7,
+                serverSideDatasource: createHangingDatasource(),
+            });
+
+            expect(getStubRowCount()).toBe(7);
+            expect(getFullWidthStubRowCount()).toBe(7);
+        });
+    });
+
+    describe('skeletonRows.columns for SSRM', () => {
+        test('skeleton columns start the grid before real columnDefs arrive', () => {
+            const skeletonCols = [{ field: 'name' }, { field: 'age' }];
+            gridManager.createGrid('myGrid', {
+                rowModelType: 'serverSide',
+                skeletonRows: { columns: skeletonCols },
+                serverSideDatasource: createHangingDatasource(),
+            });
+
+            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(2);
+            expect(getStubRowCount()).toBe(1);
+        });
+
+        test('real columnDefs replace skeleton columns when they arrive', async () => {
+            // 1 skeleton column → 3 real columns, so header cell count changes on transition
+            const skeletonCols = [{ field: 'placeholder' }];
+            const realCols = [{ field: 'name' }, { field: 'age' }, { field: 'country' }];
+            const api = gridManager.createGrid('myGrid', {
+                rowModelType: 'serverSide',
+                skeletonRows: { columns: skeletonCols },
+                serverSideDatasource: createHangingDatasource(),
+            });
+
+            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(1);
+
+            api.setGridOption('columnDefs', realCols);
+
+            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(3);
         });
     });
 });
