@@ -22,3 +22,9 @@ export async function getSitemapIgnorePaths() {
 
     return folderPaths.concat(urlWithBaseUrl('/404'));
 }
+
+export async function getSitemapAllowPaths() {
+    const allowPaths = [urlWithBaseUrl('/campaigns/beyond-the-prompt')];
+
+    return allowPaths.map(addTrailingSlash);
+}
