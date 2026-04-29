@@ -1,20 +1,7 @@
-import type {
-    ElementParams,
-    IToolbarItemComp,
-    IToolbarItemParams,
-    IconName,
-    ToolbarItemActionParams,
-} from 'ag-grid-community';
+import type { ElementParams, IToolbarItemComp, IToolbarItemParams, ToolbarItemActionParams } from 'ag-grid-community';
 import { Component, RefPlaceholder, _addGridCommonParams } from 'ag-grid-community';
 
 import { renderToolbarButtonContents } from './toolbarItemUtils';
-
-interface ButtonToolbarItemParams extends IToolbarItemParams {
-    label?: string;
-    tooltip?: string;
-    icon?: IconName;
-    action?: (params: ToolbarItemActionParams) => void;
-}
 
 const ButtonToolbarItemElement: ElementParams = {
     tag: 'button',
@@ -29,25 +16,25 @@ const ButtonToolbarItemElement: ElementParams = {
 export class ButtonToolbarItem extends Component implements IToolbarItemComp {
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
-    private params!: ButtonToolbarItemParams;
+    private params!: IToolbarItemParams;
 
     constructor() {
         super(ButtonToolbarItemElement);
     }
 
-    public init(params: ButtonToolbarItemParams): void {
+    public init(params: IToolbarItemParams): void {
         this.applyParams(params);
         this.addManagedElementListeners(this.getGui(), {
             click: () => this.invokeAction(),
         });
     }
 
-    public refresh(params: ButtonToolbarItemParams): boolean {
+    public refresh(params: IToolbarItemParams): boolean {
         this.applyParams(params);
         return true;
     }
 
-    private applyParams(params: ButtonToolbarItemParams): void {
+    private applyParams(params: IToolbarItemParams): void {
         this.params = params;
         renderToolbarButtonContents(this.beans, {
             eIcon: this.eIcon,

@@ -41,9 +41,9 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 items: [
                     {
                         toolbarItem: 'agMenuToolbarItem',
+                        label: 'Export',
+                        icon: 'save',
                         toolbarItemParams: {
-                            label: 'Export',
-                            icon: 'save',
                             menuItems: [{ name: 'One', action: () => {} }],
                         },
                     },
@@ -77,9 +77,9 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 items: [
                     {
                         toolbarItem: 'agMenuToolbarItem',
+                        label: 'Export',
+                        icon: 'save',
                         toolbarItemParams: {
-                            label: 'Export',
-                            icon: 'save',
                             menuItems: [],
                         },
                     },
@@ -108,8 +108,8 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 items: [
                     {
                         toolbarItem: 'agMenuToolbarItem',
+                        label: 'Export',
                         toolbarItemParams: {
-                            label: 'Export',
                             menuItems: [
                                 { name: 'CSV', action: () => {} },
                                 { name: 'Excel', action: () => {} },
@@ -146,8 +146,8 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 items: [
                     {
                         toolbarItem: 'agMenuToolbarItem',
+                        label: 'Export',
                         toolbarItemParams: {
-                            label: 'Export',
                             menuItems: [{ name: 'CSV', action: () => {} }],
                         },
                     },
@@ -180,8 +180,8 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 items: [
                     {
                         toolbarItem: 'agMenuToolbarItem',
+                        label: 'Export',
                         toolbarItemParams: {
-                            label: 'Export',
                             menuItems: [{ name: 'CSV', action: () => {} }],
                         },
                     },
@@ -212,8 +212,8 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
                 items: [
                     {
                         toolbarItem: 'agMenuToolbarItem',
+                        label: 'Export',
                         toolbarItemParams: {
-                            label: 'Export',
                             menuItems: [],
                         },
                     },
@@ -231,8 +231,8 @@ describe('Toolbar menu item (agMenuToolbarItem)', () => {
             items: [
                 {
                     toolbarItem: 'agMenuToolbarItem',
+                    label: 'Export',
                     toolbarItemParams: {
-                        label: 'Export',
                         menuItems: [{ name: 'CSV', action: () => {} }],
                     },
                 },
@@ -269,8 +269,8 @@ describe('Toolbar menu item (agMenuToolbarItem) without a menu module', () => {
                 items: [
                     {
                         toolbarItem: 'agMenuToolbarItem',
+                        label: 'Export',
                         toolbarItemParams: {
-                            label: 'Export',
                             menuItems: [{ name: 'CSV', action: () => {} }],
                         },
                     },
@@ -306,8 +306,8 @@ describe('Toolbar menu item (agMenuToolbarItem) with ColumnMenuModule only', () 
                 items: [
                     {
                         toolbarItem: 'agMenuToolbarItem',
+                        label: 'Export',
                         toolbarItemParams: {
-                            label: 'Export',
                             menuItems: [{ name: 'CSV', action: () => {} }],
                         },
                     },

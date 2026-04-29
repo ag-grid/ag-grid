@@ -1,15 +1,21 @@
 {% if isFramework("react") %}
 
 ```jsx
+{/* CustomToolbarToggle is the custom component defined above. */}
+{/* Its toolbarItemParams are accessible via props.toolbarItemParams inside the component. */}
 <AgGridReact
     toolbar={{
         items: [
             {
-                key: 'autoSizeAll',
-                toolbarItem: CustomToolbarButton,
+                key: 'columnsPanel',
+                toolbarItem: CustomToolbarToggle,
                 toolbarItemParams: {
-                    label: 'Auto Size All',
-                    onClick: (api) => api.autoSizeAllColumns(),
+                    title: 'Columns Panel',
+                    icon: 'columns',
+                    onClick: (api) =>
+                        api.getOpenedToolPanel() === 'columns'
+                            ? api.closeToolPanel()
+                            : api.openToolPanel('columns'),
                 },
             },
             'agQuickFilterToolbarItem',

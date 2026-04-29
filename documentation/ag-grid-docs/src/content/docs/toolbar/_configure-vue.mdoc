@@ -1,15 +1,20 @@
 {% if isFramework("vue") %}
 
 ```js
+// toolbarItemParams are accessible via this.params.toolbarItemParams inside the component.
 this.gridOptions = {
     toolbar: {
         items: [
             {
-                key: 'autoSizeAll',
-                toolbarItem: 'customToolbarButton',
+                key: 'columnsPanel',
+                toolbarItem: 'customToolbarToggle',
                 toolbarItemParams: {
-                    label: 'Auto Size All',
-                    onClick: (api) => api.autoSizeAllColumns(),
+                    title: 'Columns Panel',
+                    icon: 'columns',
+                    onClick: (api) =>
+                        api.getOpenedToolPanel() === 'columns'
+                            ? api.closeToolPanel()
+                            : api.openToolPanel('columns'),
                 },
             },
             'agQuickFilterToolbarItem',

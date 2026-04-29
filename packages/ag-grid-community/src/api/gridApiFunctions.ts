@@ -50,6 +50,7 @@ import type {
     _SsrmInfiniteSharedGridApi,
     _StateGridApi,
     _StatusBarGridApi,
+    _ToolbarGridApi,
     _UndoRedoGridApi,
     _ValueApi,
     _ValueCacheApi,
@@ -446,6 +447,10 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         isToolPanelShowing: 0,
         getToolPanelInstance: 0,
         getSideBar: 0,
+    }),
+
+    ...mod<_ToolbarGridApi>('Toolbar', {
+        getToolbarItemInstance: 0,
     }),
 
     ...mod<_StatusBarGridApi>('StatusBar', {

@@ -46,7 +46,7 @@ The following built-in items are available:
 - `agPivotPanelToolbarItem`: Embeds the [Pivot Panel](./pivoting/) in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `pivotPanelShow` grid option — if both are set, both will render.
 - `agRowGroupPanelToolbarItem`: Embeds the [Row Group Panel](./grouping-group-panel/) in the toolbar. Requires `RowGroupingPanelModule`. Configured independently of the `rowGroupPanelShow` grid option — if both are set, both will render.
 - `agQuickFilterToolbarItem`: A text input that filters grid rows using the [Quick Filter](./filter-quick/). Requires `QuickFilterModule`.
-- `agMenuToolbarItem`: A button that opens a dropdown menu of [Menu Items](./component-menu-item/). Requires `ContextMenuModule` or `ColumnMenuModule`. Supply `menuItems` via `toolbarItemParams`, along with an optional `label`, `tooltip`, and `icon`. `menuItems` accepts the same entries as the [Context Menu](./context-menu/#built-in-menu-items) — `MenuItemDef` objects or built-in string names such as `'copy'`, `'export'`, or `'separator'`.
+- `agMenuToolbarItem`: A button that opens a dropdown menu of [Menu Items](./component-menu-item/). Requires `ContextMenuModule` or `ColumnMenuModule`. Set `label`, `tooltip`, and `icon` at the item level; supply `menuItems` via `toolbarItemParams`. `menuItems` accepts the same entries as the [Context Menu](./context-menu/#built-in-menu-items) — `MenuItemDef` objects or built-in string names such as `'copy'`, `'export'`, or `'separator'`.
 
 Built-in items require their corresponding modules to be registered. If a required module is not registered, the item will not render and a console warning will be logged.
 
@@ -93,6 +93,8 @@ const gridOptions = {
             'agQuickFilterToolbarItem',
             'separator',
             'agFindToolbarItem',
+            { toolbarItem: 'separator', alignment: 'right' }, // set alignment explicitly
+            { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'right' },
         ]
     }
 }
@@ -147,11 +149,11 @@ const gridOptions = {
 
 ### Custom Component
 
-For anything beyond a button — custom markup, external state, or composed controls — set `toolbarItem` to a component reference. The grid instantiates the component once per item; each instance receives the standard `IToolbarItemParams` merged with whatever is passed via `toolbarItemParams`.
+For anything beyond a button — custom markup, external state, or composed controls — set `toolbarItem` to a component reference. The grid instantiates the component once per item; each instance receives `IToolbarItemParams`, with the object passed via `toolbarItemParams` available as `params.toolbarItemParams`.
 
-The example below defines a single `CustomToolbarButton` component and reuses it across the toolbar with different params to open tool panels, export data, auto-size columns, and reset column state.
+The example below defines a single `CustomToolbarToggle` component and reuses it across the toolbar with different params to open tool panels, export data, auto-size columns, and reset column state.
 
-{% gridExampleRunner title="Custom Toolbar Item" name="toolbar-simple" /%}
+{% gridExampleRunner title="Custom Toolbar Item" name="toolbar-custom" /%}
 
 The `toolbarItem` property accepts the following values:
 
@@ -203,3 +205,9 @@ Use `setGridOption('toolbar', ...)` to change the toolbar configuration after th
 The following example switches between three toolbar configurations using buttons, each showing a different set of toolbar items.
 
 {% gridExampleRunner title="Updating at Runtime" name="grid-options" /%}
+
+## Accessing Item Instances
+
+Use `getToolbarItemInstance(key)` to retrieve a toolbar item component instance by its key. The key is either set explicitly in the item definition or derived from the item type when not specified.
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["getToolbarItemInstance"] /%}

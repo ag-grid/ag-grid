@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, ToolbarItemActionParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
@@ -18,22 +18,8 @@ import {
     ToolbarModule,
 } from 'ag-grid-enterprise';
 
-import { CustomToolbarButton } from './customToolbarItem_typescript';
-
-ModuleRegistry.registerModules([
-    TextFilterModule,
-    ClientSideRowModelModule,
-    ColumnApiModule,
-    ColumnAutoSizeModule,
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    CsvExportModule,
-    ExcelExportModule,
-    NewFiltersToolPanelModule,
-    SideBarModule,
-    ToolbarModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-]);
+import { CustomToolbarToggle } from './customToolbarItem_typescript';
+import './style.css';
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -59,22 +45,20 @@ const gridOptions: GridOptions<IOlympicData> = {
         alignment: 'right',
         items: [
             {
-                toolbarItem: CustomToolbarButton,
                 key: 'columnChooser',
                 alignment: 'left',
-                toolbarItemParams: {
-                    label: 'Choose Columns',
-                    icon: 'columns',
-                    onClick: (api: GridApi) => api.showColumnChooser(),
-                },
+                label: 'Choose Columns',
+                icon: 'columns',
+                action: ({ api }: ToolbarItemActionParams) => api.showColumnChooser(),
             },
             {
-                toolbarItem: CustomToolbarButton,
+                toolbarItem: CustomToolbarToggle,
                 key: 'filtersPanel',
                 alignment: 'left',
                 toolbarItemParams: {
                     label: 'Filters Panel',
                     icon: 'filter',
+                    panelId: 'filters-new',
                     onClick: (api: GridApi) =>
                         api.getOpenedToolPanel() === 'filters-new'
                             ? api.closeToolPanel()
@@ -82,51 +66,34 @@ const gridOptions: GridOptions<IOlympicData> = {
                 },
             },
             {
-                toolbarItem: CustomToolbarButton,
-                key: 'excelExport',
+                toolbarItem: CustomToolbarToggle,
+                key: 'columnsPanel',
                 alignment: 'left',
                 toolbarItemParams: {
-                    label: 'Excel Export',
-                    icon: 'excel',
-                    onClick: (api: GridApi) => api.exportDataAsExcel(),
-                },
-            },
-            {
-                toolbarItem: CustomToolbarButton,
-                key: 'autoSizeAll',
-                toolbarItemParams: {
-                    title: 'Auto Size All',
-                    icon: 'maximize',
-                    onClick: (api: GridApi) => api.autoSizeAllColumns(),
-                },
-            },
-            {
-                toolbarItem: CustomToolbarButton,
-                key: 'columnsPanel',
-                toolbarItemParams: {
-                    title: 'Columns Panel',
+                    label: 'Columns Panel',
                     icon: 'columns',
+                    panelId: 'columns',
                     onClick: (api: GridApi) =>
                         api.getOpenedToolPanel() === 'columns' ? api.closeToolPanel() : api.openToolPanel('columns'),
                 },
             },
             {
-                toolbarItem: CustomToolbarButton,
-                key: 'csvExport',
-                toolbarItemParams: {
-                    title: 'CSV Export',
-                    icon: 'csv',
-                    onClick: (api: GridApi) => api.exportDataAsCsv(),
-                },
+                key: 'autoSizeAll',
+                action: ({ api }: ToolbarItemActionParams) => api.autoSizeAllColumns(),
+                tooltip: 'Auto Size All',
+                icon: 'maximize',
             },
             {
-                toolbarItem: CustomToolbarButton,
+                key: 'csvExport',
+                tooltip: 'CSV Export',
+                icon: 'csvExport',
+                action: ({ api }: ToolbarItemActionParams) => api.exportDataAsCsv(),
+            },
+            {
                 key: 'resetColumns',
-                toolbarItemParams: {
-                    title: 'Reset Columns',
-                    icon: 'minimize',
-                    onClick: (api: GridApi) => api.resetColumnState(),
-                },
+                tooltip: 'Reset Columns',
+                icon: 'minimize',
+                action: ({ api }: ToolbarItemActionParams) => api.resetColumnState(),
             },
         ],
     },

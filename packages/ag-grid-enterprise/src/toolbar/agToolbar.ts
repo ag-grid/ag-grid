@@ -3,11 +3,16 @@ import type {
     ComponentType,
     ElementParams,
     FocusableContainer,
+    IToolbarComp,
+    IToolbarItem,
     IToolbarItemComp,
     IToolbarItemParams,
+    IconName,
     Toolbar,
     ToolbarButtonItemDef,
+    ToolbarItemActionParams,
     ToolbarItemDef,
+    ToolbarMenuBuiltInItemDef,
 } from 'ag-grid-community';
 import {
     Component,
@@ -32,9 +37,13 @@ import agToolbarCSS from './agToolbar.css';
  */
 interface NormalisedToolbarItem {
     toolbarItem?: unknown;
-    toolbarItemParams?: any;
+    toolbarItemParams?: unknown;
     alignment?: 'left' | 'right';
     key: string;
+    label?: string;
+    tooltip?: string;
+    icon?: IconName;
+    action?: (params: ToolbarItemActionParams) => void;
 }
 
 function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): NormalisedToolbarItem {
@@ -43,19 +52,25 @@ function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): No
     }
 
     let toolbarItem: unknown = item.toolbarItem;
-    let toolbarItemParams: any = item.toolbarItemParams;
+    let toolbarItemParams: unknown = item.toolbarItemParams;
+    let label: string | undefined;
+    let tooltip: string | undefined;
+    let icon: IconName | undefined;
+    let action: ((params: ToolbarItemActionParams) => void) | undefined;
 
     if (toolbarItem == null) {
-        const { label, tooltip, icon, action } = item as ToolbarButtonItemDef;
+        ({ label, tooltip, icon, action } = item as ToolbarButtonItemDef);
         if (action != null || label != null || icon != null) {
             toolbarItem = 'agButtonToolbarItem';
-            toolbarItemParams = { ...(toolbarItemParams ?? {}), label, tooltip, icon, action };
+            toolbarItemParams = undefined;
         }
+    } else if (toolbarItem === 'agMenuToolbarItem') {
+        ({ label, tooltip, icon } = item as ToolbarMenuBuiltInItemDef);
     }
 
     const key = item.key ?? (typeof toolbarItem === 'string' ? toolbarItem : nextKey());
 
-    return { toolbarItem, toolbarItemParams, alignment: item.alignment, key };
+    return { toolbarItem, toolbarItemParams, alignment: item.alignment, key, label, tooltip, icon, action };
 }
 
 const ToolbarItemComponent: ComponentType = {
@@ -69,7 +84,7 @@ const AgToolbarElement: ElementParams = {
     role: 'toolbar',
 };
 
-class AgToolbar extends Component implements FocusableContainer {
+class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
     private readonly toolbarItems: Map<string, IToolbarItemComp> = new Map();
     private customKeyCounter: number = 0;
     // Incremented on each rebuild so stale async resolves from a previous generation can be discarded
@@ -82,6 +97,8 @@ class AgToolbar extends Component implements FocusableContainer {
 
     public postConstruct(): void {
         const eGui = this.getGui();
+
+        this.beans.toolbar!.setToolbar(this);
 
         this.processToolbarItems();
         this.addManagedPropertyListeners(['toolbar'], this.updateToolbar.bind(this));
@@ -116,6 +133,10 @@ class AgToolbar extends Component implements FocusableContainer {
 
     public getFocusableContainerName(): 'toolbar' {
         return 'toolbar';
+    }
+
+    public getToolbarItemInstance<T = IToolbarItem>(key: string): T | undefined {
+        return this.toolbarItems.get(key) as T | undefined;
     }
 
     private onTabKeyDown(_e: KeyboardEvent): void {
@@ -187,10 +208,8 @@ class AgToolbar extends Component implements FocusableContainer {
     }
 
     private createItemParams(itemConfig: NormalisedToolbarItem, key: string): IToolbarItemParams {
-        return _addGridCommonParams(this.gos, {
-            ...(itemConfig.toolbarItemParams ?? {}),
-            key,
-        });
+        const { toolbarItem: _, ...rest } = itemConfig;
+        return _addGridCommonParams(this.gos, { ...rest, key }) as IToolbarItemParams;
     }
 
     private processToolbarItems(): void {
@@ -234,6 +253,7 @@ class AgToolbar extends Component implements FocusableContainer {
     public override destroy(): void {
         this.generation++;
         this.destroyToolbarItems();
+        this.beans.toolbar?.clearToolbar(this);
         super.destroy();
     }
 

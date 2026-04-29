@@ -1045,6 +1045,12 @@
                 "url": "./tool-panel-columns/#expand--collapse-column-groups"
             }
         },
+        "getToolbarItemInstance": {
+            "more": {
+                "name": "Toolbar",
+                "url": "./toolbar/"
+            }
+        },
         "getStatusPanel": {
             "more": {
                 "name": "Accessing Status Bar Panel Instances",
