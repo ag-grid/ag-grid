@@ -85,7 +85,16 @@ export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon
 }
 
 export interface IHeader {
-    /** Get the header to refresh. Gets called whenever Column Defs are updated. */
+    /**
+     * Called whenever Column Defs are updated. Return `true` to indicate the component handled
+     * the update in-place. Return `false` to signal that the component cannot handle the new
+     * params and must be recreated.
+     *
+     * The scope of recreation depends on where the component is used:
+     * - **`headerComponent`** — returning `false` destroys and recreates the entire header cell.
+     * - **`innerHeaderComponent`** — returning `false` destroys and recreates only the inner
+     *   component; the outer `HeaderComp` wrapper remains alive.
+     */
     refresh(params: IHeaderParams): boolean;
 }
 
