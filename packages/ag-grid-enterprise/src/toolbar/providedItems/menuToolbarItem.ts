@@ -1,10 +1,4 @@
-import type {
-    AgGridCommon,
-    ElementParams,
-    IToolbarItemComp,
-    IToolbarItemParams,
-    ToolbarMenuBuiltInItemDef,
-} from 'ag-grid-community';
+import type { ElementParams, IToolbarItemComp, IToolbarItemParams, ToolbarMenuItemParams } from 'ag-grid-community';
 import {
     Component,
     RefPlaceholder,
@@ -19,7 +13,7 @@ import {
 import type { ToolbarMenuBuilder } from '../../menu/toolbarMenuBuilder';
 import { renderToolbarButtonContents } from './toolbarItemUtils';
 
-type MenuParams = ToolbarMenuBuiltInItemDef & AgGridCommon<any, any>;
+type MenuItemParams = IToolbarItemParams<any, any, ToolbarMenuItemParams>;
 
 const MenuToolbarItemElement: ElementParams = {
     tag: 'button',
@@ -36,7 +30,7 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eChevron: HTMLElement = RefPlaceholder;
-    private params!: MenuParams;
+    private params!: MenuItemParams;
 
     constructor() {
         super(MenuToolbarItemElement);
@@ -48,14 +42,14 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
             this.eChevron.appendChild(eChevronIcon);
         }
         this.beans.gos.assertModuleRegistered(['ContextMenu', 'ColumnMenu'], `AG Grid toolbar item: agMenuToolbarItem`);
-        this.applyParams(params as MenuParams);
+        this.applyParams(params as MenuItemParams);
         this.addManagedElementListeners(this.getGui(), {
             click: () => this.showMenu(),
         });
     }
 
     public refresh(params: IToolbarItemParams): boolean {
-        this.applyParams(params as MenuParams);
+        this.applyParams(params as MenuItemParams);
         return true;
     }
 
@@ -64,7 +58,7 @@ export class MenuToolbarItem extends Component implements IToolbarItemComp {
         return tooltip ?? label ?? this.getLocaleTextFunc()('toolbarMenu', 'Menu');
     }
 
-    private applyParams(params: MenuParams): void {
+    private applyParams(params: MenuItemParams): void {
         this.params = params;
         const eGui = this.getGui();
 

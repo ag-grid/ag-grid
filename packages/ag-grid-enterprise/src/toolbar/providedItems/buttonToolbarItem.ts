@@ -1,16 +1,7 @@
-import type {
-    AgGridCommon,
-    ElementParams,
-    IToolbarItemComp,
-    IToolbarItemParams,
-    ToolbarButtonItemDef,
-    ToolbarItemActionParams,
-} from 'ag-grid-community';
+import type { ElementParams, IToolbarItemComp, IToolbarItemParams, ToolbarItemActionParams } from 'ag-grid-community';
 import { Component, RefPlaceholder, _addGridCommonParams } from 'ag-grid-community';
 
 import { renderToolbarButtonContents } from './toolbarItemUtils';
-
-type ButtonParams = ToolbarButtonItemDef & AgGridCommon<any, any>;
 
 const ButtonToolbarItemElement: ElementParams = {
     tag: 'button',
@@ -25,25 +16,25 @@ const ButtonToolbarItemElement: ElementParams = {
 export class ButtonToolbarItem extends Component implements IToolbarItemComp {
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
-    private params!: ButtonParams;
+    private params!: IToolbarItemParams;
 
     constructor() {
         super(ButtonToolbarItemElement);
     }
 
     public init(params: IToolbarItemParams): void {
-        this.applyParams(params as ButtonParams);
+        this.applyParams(params);
         this.addManagedElementListeners(this.getGui(), {
             click: () => this.invokeAction(),
         });
     }
 
     public refresh(params: IToolbarItemParams): boolean {
-        this.applyParams(params as ButtonParams);
+        this.applyParams(params);
         return true;
     }
 
-    private applyParams(params: ButtonParams): void {
+    private applyParams(params: IToolbarItemParams): void {
         this.params = params;
         renderToolbarButtonContents(this.beans, {
             eIcon: this.eIcon,
@@ -60,7 +51,7 @@ export class ButtonToolbarItem extends Component implements IToolbarItemComp {
         if (!action) {
             return;
         }
-        const actionParams: ToolbarItemActionParams = _addGridCommonParams(this.gos, { key: key! });
+        const actionParams: ToolbarItemActionParams = _addGridCommonParams(this.gos, { key });
         action(actionParams);
     }
 }

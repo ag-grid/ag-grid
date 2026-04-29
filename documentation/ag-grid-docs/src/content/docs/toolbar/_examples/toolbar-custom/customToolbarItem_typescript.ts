@@ -1,10 +1,10 @@
-import type { GridApi, IToolbarItemComp, IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
+import type { IToolbarItemComp, IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
 
 export class CustomToolbarToggle implements IToolbarItemComp {
     private params!: IToolbarItemParams;
     eGui!: HTMLButtonElement;
-    buttonListener: any;
-    panelListener: any;
+    buttonListener!: () => void;
+    panelListener!: (event: ToolPanelVisibleChangedEvent) => void;
 
     init(params: IToolbarItemParams) {
         this.params = params;
@@ -33,15 +33,17 @@ export class CustomToolbarToggle implements IToolbarItemComp {
         this.eGui.addEventListener('click', this.buttonListener);
 
         this.panelListener = ({ key, visible }: ToolPanelVisibleChangedEvent) => {
-            if (key === panelId && !visible) {
-                this.eGui.style.background = '';
-            } else if (key === panelId && visible) {
-                this.eGui.style.background = 'var(--ag-button-background-color)';
+            if (key === panelId) {
+                this.setActive(visible);
             } else if (visible) {
-                this.eGui.style.background = '';
+                this.setActive(false);
             }
         };
         params.api.addEventListener('toolPanelVisibleChanged', this.panelListener);
+    }
+
+    private setActive(active: boolean) {
+        this.eGui.style.backgroundColor = active ? 'var(--ag-button-background-color)' : '';
     }
 
     getGui() {
