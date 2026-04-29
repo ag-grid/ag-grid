@@ -127,6 +127,7 @@
     border-radius: var(--ag-border-radius);
     width: 280px;
     max-width: none;
+    min-width: 220px;
 }
 
 .ag-toolbar-find:focus-within {
