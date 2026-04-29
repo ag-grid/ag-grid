@@ -1,7 +1,7 @@
 import { _debounce } from '../agStack/utils/function';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { GridOptions, SkeletonLoadingCellsOptions } from '../entities/gridOptions';
+import type { GridOptions, SkeletonRowsOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import type { FilterChangedEvent, StylesChangedEvent } from '../events';
 import { _getGroupSelectsDescendants, _getRowHeightForNode, _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
@@ -93,7 +93,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     /** True after the first time row nodes have been created or data has been set. Used to determine when to fire rowCountReady. */
     private rowNodesCountReady: boolean = false;
 
-    /** Stub RowNodes shown in place of the loading overlay when `enableSkeletonLoadingCells` is `true`. */
+    /** Stub RowNodes shown in place of the loading overlay when `skeletonRows` is `true`. */
     private skeletonRows: RowNode[] | null = null;
 
     /** Maps a property name to the index in this.stages array */
@@ -194,7 +194,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
 
-        this.addManagedPropertyListeners(['loading', 'enableSkeletonLoadingCells'], () => {
+        this.addManagedPropertyListeners(['loading', 'skeletonRows'], () => {
             if (this.getSkeletonOptions()) {
                 this.refreshModel({ step: 'map' });
             }
@@ -1163,8 +1163,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
     }
 
-    private getSkeletonOptions(): SkeletonLoadingCellsOptions | null {
-        const val = this.gos.get('enableSkeletonLoadingCells');
+    private getSkeletonOptions(): SkeletonRowsOptions | null {
+        const val = this.gos.get('skeletonRows');
         if (!val) return null;
         return val === true ? {} : val;
     }
@@ -1181,7 +1181,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private getOrCreateSkeletonRows(): RowNode[] {
-        const count = this.getSkeletonOptions()?.rowCount ?? 1;
+        const rowCount = this.getSkeletonOptions()?.rowCount;
+        const count =
+            typeof rowCount === 'function'
+                ? rowCount(this.gos.addCommon({ parentNode: null, level: 0 }))
+                : (rowCount ?? 1);
         if (!this.skeletonRows || this.skeletonRows.length !== count) {
             this.destroySkeletonRows();
             this.skeletonRows = [];

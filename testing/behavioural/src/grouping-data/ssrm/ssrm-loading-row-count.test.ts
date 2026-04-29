@@ -98,6 +98,101 @@ describe('SSRM loading row count', () => {
         });
     });
 
+    describe('skeletonRows rowCount override for SSRM', () => {
+        test('rowCount number overrides serverSideInitialRowCount for top-level stubs', () => {
+            gridManager.createGrid('myGrid', {
+                columnDefs,
+                rowModelType: 'serverSide',
+                serverSideInitialRowCount: 10,
+                skeletonRows: { rowCount: 3 },
+                serverSideDatasource: createHangingDatasource(),
+            });
+
+            expect(getStubRowCount()).toBe(3);
+        });
+
+        test('rowCount callback receives parentNode=null and level=0 for top-level SSRM store', () => {
+            let capturedParams: any;
+            gridManager.createGrid('myGrid', {
+                columnDefs,
+                rowModelType: 'serverSide',
+                skeletonRows: {
+                    rowCount: (params) => {
+                        capturedParams = params;
+                        return 6;
+                    },
+                },
+                serverSideDatasource: createHangingDatasource(),
+            });
+
+            expect(getStubRowCount()).toBe(6);
+            expect(capturedParams).toBeDefined();
+            expect(capturedParams.parentNode).toBeNull();
+            expect(capturedParams.level).toBe(0);
+            expect(capturedParams.api).toBeDefined();
+        });
+
+        test('rowCount callback receives parentNode and level=1 for child SSRM store', async () => {
+            const capturedCalls: { parentNode: any; level: number }[] = [];
+            const api = gridManager.createGrid('myGrid', {
+                columnDefs,
+                rowModelType: 'serverSide',
+                treeData: true,
+                isServerSideGroup: (dataItem: any) => dataItem.id === 'parent-1',
+                getServerSideGroupKey: (dataItem: any) => dataItem.id,
+                skeletonRows: {
+                    rowCount: (params) => {
+                        capturedCalls.push({ parentNode: params.parentNode, level: params.level });
+                        return params.level === 0 ? 2 : 5;
+                    },
+                },
+                serverSideDatasource: createOnceRespondingDatasource([{ id: 'parent-1', name: 'Parent' }]),
+            });
+
+            await waitForNoLoadingRows(api);
+
+            let parentNode: any;
+            api.forEachNode((node) => {
+                if (node.data?.id === 'parent-1') {
+                    parentNode = node;
+                }
+            });
+            expect(parentNode).toBeDefined();
+
+            parentNode.setExpanded(true);
+            await asyncSetTimeout(0);
+
+            expect(getStubRowCount()).toBe(5);
+            const childCall = capturedCalls.find((c) => c.level === 1);
+            expect(childCall).toBeDefined();
+            expect(childCall!.parentNode).toBe(parentNode);
+        });
+
+        test('rowCount callback is used on purge-refresh', async () => {
+            let callCount = 0;
+            const api = gridManager.createGrid('myGrid', {
+                columnDefs,
+                rowModelType: 'serverSide',
+                skeletonRows: {
+                    rowCount: () => {
+                        callCount++;
+                        return 4;
+                    },
+                },
+                serverSideDatasource: createOnceRespondingDatasource([{ name: 'Alice' }, { name: 'Bob' }]),
+            });
+
+            await waitForNoLoadingRows(api);
+            expect(getStubRowCount()).toBe(0);
+
+            api.refreshServerSide({ purge: true });
+            await asyncSetTimeout(0);
+
+            expect(getStubRowCount()).toBe(4);
+            expect(callCount).toBeGreaterThan(1);
+        });
+    });
+
     describe('isServerSideGroup childCount hint (AG-6003)', () => {
         test('childCount from isServerSideGroup sets child store stub count on expansion', async () => {
             const api = gridManager.createGrid('myGrid', {

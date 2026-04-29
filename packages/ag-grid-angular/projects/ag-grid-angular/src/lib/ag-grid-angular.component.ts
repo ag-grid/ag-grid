@@ -215,7 +215,7 @@ import type {
     SelectionColumnDef,
     SendToClipboard,
     SideBarDef,
-    SkeletonLoadingCellsOptions,
+    SkeletonRowsOptions,
     SortChangedEvent,
     SortDirection,
     StateUpdatedEvent,
@@ -1029,7 +1029,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Set to `true` to enable with defaults, or provide an object to configure:
      * - `rowCount`: number of skeleton rows to display (default: `1`)
      */
-    @Input() public enableSkeletonLoadingCells: boolean | SkeletonLoadingCellsOptions | undefined = undefined;
+    @Input() public skeletonRows: boolean | SkeletonRowsOptions | undefined = undefined;
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
      *
      * -     **Prefer `overlayComponent` / `overlayComponentSelector`**

@@ -989,7 +989,7 @@ export interface GridOptions<TData = any> {
      * Set to `true` to enable with defaults, or provide an object to configure:
      * - `rowCount`: number of skeleton rows to display (default: `1`)
      */
-    enableSkeletonLoadingCells?: boolean | SkeletonLoadingCellsOptions;
+    skeletonRows?: boolean | SkeletonRowsOptions;
 
     /**
      * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
@@ -3361,7 +3361,20 @@ export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary';
 export type PivotColumnGroupTotals = 'before' | 'after';
 export type PivotRowTotals = 'before' | 'after';
 
-export interface SkeletonLoadingCellsOptions {
-    /** Number of skeleton rows to display while loading. Default: `1`. */
-    rowCount?: number;
+export interface SkeletonRowsCountParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The parent row node whose children are loading. `null` for the top-level store. */
+    parentNode: IRowNode<TData> | null;
+    /** The nesting level of the loading store (0 for top-level). */
+    level: number;
+}
+
+export interface SkeletonRowsOptions {
+    /** Number of skeleton rows to display while loading, or a callback that returns the count. Default: `1`. */
+    rowCount?: number | ((params: SkeletonRowsCountParams) => number);
+    /**
+     * Placeholder column definitions shown while real `columnDefs` are loading.
+     * When provided and `columnDefs` is absent at startup, the grid starts immediately with these columns
+     * so skeleton rows are visible before real column definitions arrive.
+     */
+    columns?: ColDef[];
 }

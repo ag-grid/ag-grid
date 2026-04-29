@@ -3,9 +3,9 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TestGridsManager, isAgHtmlElementVisible, setRowDataChecked } from '../test-utils';
 
 /**
- * Tests for skeleton loading cells (enableSkeletonLoadingCells).
+ * Tests for skeleton loading cells (skeletonRows).
  *
- * AG-12723: enableSkeletonLoadingCells — CSRM shows per-cell shimmer rows instead of the
+ * AG-12723: skeletonRows — CSRM shows per-cell shimmer rows instead of the
  *           full-screen loading overlay. Accepts boolean or { rowCount, columns } object.
  */
 
@@ -32,11 +32,11 @@ describe('CSRM skeleton loading cells', () => {
         gridsManager.reset();
     });
 
-    describe('enableSkeletonLoadingCells', () => {
+    describe('skeletonRows', () => {
         test('shows 1 skeleton row by default when no rowData is provided', () => {
             gridsManager.createGrid('myGrid', {
                 columnDefs,
-                enableSkeletonLoadingCells: true,
+                skeletonRows: true,
             });
 
             expect(getSkeletonRows()).toHaveLength(1);
@@ -45,7 +45,7 @@ describe('CSRM skeleton loading cells', () => {
         test('loading overlay is suppressed when skeleton is active', () => {
             gridsManager.createGrid('myGrid', {
                 columnDefs,
-                enableSkeletonLoadingCells: true,
+                skeletonRows: true,
             });
 
             expect(hasLoadingOverlay()).toBeFalsy();
@@ -55,7 +55,7 @@ describe('CSRM skeleton loading cells', () => {
         test('skeleton rows are Normal row type (per-cell, not full-width)', () => {
             gridsManager.createGrid('myGrid', {
                 columnDefs,
-                enableSkeletonLoadingCells: true,
+                skeletonRows: true,
             });
 
             const rows = getSkeletonRows();
@@ -68,7 +68,7 @@ describe('CSRM skeleton loading cells', () => {
         test('skeleton rows shown when loading=true, even with rowData present', () => {
             gridsManager.createGrid('myGrid', {
                 columnDefs,
-                enableSkeletonLoadingCells: true,
+                skeletonRows: true,
                 loading: true,
                 rowData: [{ name: 'Alice', age: 30 }],
             });
@@ -80,7 +80,7 @@ describe('CSRM skeleton loading cells', () => {
         test('skeleton rows replaced by real rows when rowData is set', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
-                enableSkeletonLoadingCells: true,
+                skeletonRows: true,
             });
 
             expect(getSkeletonRows()).toHaveLength(1);
@@ -97,7 +97,7 @@ describe('CSRM skeleton loading cells', () => {
         test('skeleton rows removed when loading set to false', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
-                enableSkeletonLoadingCells: true,
+                skeletonRows: true,
                 loading: true,
             });
 
@@ -108,7 +108,7 @@ describe('CSRM skeleton loading cells', () => {
             expect(getSkeletonRows()).toHaveLength(0);
         });
 
-        test('without enableSkeletonLoadingCells the standard loading overlay is used', () => {
+        test('without skeletonRows the standard loading overlay is used', () => {
             gridsManager.createGrid('myGrid', { columnDefs });
 
             expect(hasLoadingOverlay()).toBeTruthy();
@@ -120,7 +120,7 @@ describe('CSRM skeleton loading cells', () => {
         test('shows N skeleton rows when rowCount=N', () => {
             gridsManager.createGrid('myGrid', {
                 columnDefs,
-                enableSkeletonLoadingCells: { rowCount: 5 },
+                skeletonRows: { rowCount: 5 },
             });
 
             expect(getSkeletonRows()).toHaveLength(5);
@@ -130,7 +130,7 @@ describe('CSRM skeleton loading cells', () => {
         test('shows no skeleton rows and no overlay when rowCount=0', () => {
             gridsManager.createGrid('myGrid', {
                 columnDefs,
-                enableSkeletonLoadingCells: { rowCount: 0 },
+                skeletonRows: { rowCount: 0 },
             });
 
             expect(getSkeletonRows()).toHaveLength(0);
@@ -140,14 +140,105 @@ describe('CSRM skeleton loading cells', () => {
         test('updating rowCount via setGridOption refreshes skeleton row count', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
-                enableSkeletonLoadingCells: { rowCount: 3 },
+                skeletonRows: { rowCount: 3 },
             });
 
             expect(getSkeletonRows()).toHaveLength(3);
 
-            api.setGridOption('enableSkeletonLoadingCells', { rowCount: 7 });
+            api.setGridOption('skeletonRows', { rowCount: 7 });
 
             expect(getSkeletonRows()).toHaveLength(7);
+        });
+
+        test('rowCount callback receives parentNode=null and level=0 for CSRM', () => {
+            let capturedParams: any;
+            gridsManager.createGrid('myGrid', {
+                columnDefs,
+                skeletonRows: {
+                    rowCount: (params) => {
+                        capturedParams = params;
+                        return 4;
+                    },
+                },
+            });
+
+            expect(getSkeletonRows()).toHaveLength(4);
+            expect(capturedParams).toBeDefined();
+            expect(capturedParams.parentNode).toBeNull();
+            expect(capturedParams.level).toBe(0);
+            expect(capturedParams.api).toBeDefined();
+        });
+    });
+
+    describe('object form — columns', () => {
+        test('skeleton columns are used when columnDefs is absent at startup', () => {
+            const skeletonCols = [
+                { field: 'name', width: 200 },
+                { field: 'age', width: 100 },
+            ];
+            gridsManager.createGrid('myGrid', {
+                skeletonRows: { columns: skeletonCols },
+            });
+
+            expect(getSkeletonRows()).toHaveLength(1);
+            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(2);
+        });
+
+        test('real columnDefs take priority over skeleton columns at startup', () => {
+            const skeletonCols = [{ field: 'name', width: 200 }];
+            gridsManager.createGrid('myGrid', {
+                columnDefs,
+                skeletonRows: { columns: skeletonCols },
+            });
+
+            // Two real columns, not one skeleton column
+            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(2);
+        });
+
+        test('setting real columnDefs after startup replaces skeleton columns', () => {
+            const skeletonCols = [{ field: 'name', width: 200 }];
+            const api = gridsManager.createGrid('myGrid', {
+                skeletonRows: { columns: skeletonCols },
+            });
+
+            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(1);
+
+            api.setGridOption('columnDefs', columnDefs);
+
+            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(2);
+        });
+
+        test('skeleton columns are only used as initial placeholder: real columns persist through loading state', () => {
+            // 1 skeleton column, 2 real columns — used to distinguish which column set is active
+            const skeletonCols = [{ field: 'skeleton' }];
+            const api = gridsManager.createGrid('myGrid', {
+                skeletonRows: { columns: skeletonCols },
+            });
+
+            // Phase 1: skeleton columns active, skeleton rows shown
+            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(1);
+            expect(getSkeletonRows()).toHaveLength(1);
+
+            // Phase 2: real columnDefs arrive — real columns replace skeleton columns
+            api.setGridOption('columnDefs', columnDefs);
+
+            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(2);
+            expect(getSkeletonRows()).toHaveLength(1); // still loading (no rowData yet)
+
+            // Phase 3: rowData arrives — skeleton rows cleared
+            setRowDataChecked(api, [
+                { name: 'Alice', age: 30 },
+                { name: 'Bob', age: 25 },
+            ]);
+
+            expect(getSkeletonRows()).toHaveLength(0);
+            expect(api.getDisplayedRowCount()).toBe(2);
+
+            // Phase 4: loading=true — skeleton rows return with REAL columns, not skeleton columns
+            api.setGridOption('loading', true);
+
+            expect(getSkeletonRows()).toHaveLength(1);
+            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(2);
         });
     });
 });

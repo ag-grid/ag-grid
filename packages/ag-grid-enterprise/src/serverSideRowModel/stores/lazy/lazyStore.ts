@@ -82,14 +82,24 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.info = {};
     }
 
-    public postConstruct() {
-        let numberOfRows: number;
-        if (this.level === 0) {
-            numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
-        } else {
-            // Use child count hint from isServerSideGroup if available, otherwise default to 1
-            numberOfRows = this.parentRowNode.serverSideChildCount ?? 1;
+    private resolveInitialRowCount(): number {
+        const skeletonOpt = this.gos.get('skeletonRows');
+        const skeletonRowCount = skeletonOpt && typeof skeletonOpt === 'object' ? skeletonOpt.rowCount : undefined;
+        if (skeletonRowCount != null) {
+            const parentNode = this.level > 0 ? this.parentRowNode : null;
+            return typeof skeletonRowCount === 'function'
+                ? skeletonRowCount(this.gos.addCommon({ parentNode, level: this.level }))
+                : skeletonRowCount;
         }
+        if (this.level === 0) {
+            return this.storeUtils.getServerSideInitialRowCount() ?? 1;
+        }
+        // Use child count hint from isServerSideGroup if available, otherwise default to 1
+        return this.parentRowNode.serverSideChildCount ?? 1;
+    }
+
+    public postConstruct() {
+        const numberOfRows = this.resolveInitialRowCount();
 
         if (this.level === 0) {
             this.eventSvc.dispatchEventOnce({
@@ -717,7 +727,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             this.grandTotalData = undefined;
             this.destroyGrandTotalRow();
             this.destroyBean(this.cache);
-            this.cache = this.createManagedBean(new LazyCache(this, 1, false, this.storeParams));
+            this.cache = this.createManagedBean(
+                new LazyCache(this, this.resolveInitialRowCount(), false, this.storeParams)
+            );
             this.fireStoreUpdatedEvent();
             return;
         }

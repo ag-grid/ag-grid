@@ -21,7 +21,13 @@ export class SyncService extends BeanStub implements NamedBean {
             if (columnDefs) {
                 this.setColumnsAndData(columnDefs);
             } else {
-                this.waitingForColumns = true;
+                const skeletonOpt = this.gos.get('skeletonRows');
+                const skeletonCols = skeletonOpt && typeof skeletonOpt === 'object' ? skeletonOpt.columns : undefined;
+                if (skeletonCols) {
+                    this.setColumnsAndData(skeletonCols);
+                } else {
+                    this.waitingForColumns = true;
+                }
             }
             this.gridReady();
         });

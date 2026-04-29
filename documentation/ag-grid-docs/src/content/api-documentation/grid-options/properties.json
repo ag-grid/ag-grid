@@ -923,9 +923,9 @@
                 "url": "./overlays-provided/#loading"
             }
         },
-        "enableSkeletonLoadingCells": {
+        "skeletonRows": {
             "more": {
-                "name": "Skeleton Loading Cells",
+                "name": "Skeleton Rows",
                 "url": "./overlays-provided/#skeleton-loading-cells"
             }
         },

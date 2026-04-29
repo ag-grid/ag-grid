@@ -15,7 +15,7 @@ let gridApi: GridApi<IAthlete>;
 
 const gridOptions: GridOptions<IAthlete> = {
     columnDefs: [{ field: 'athlete' }, { field: 'country' }],
-    enableSkeletonLoadingCells: { rowCount: 5 },
+    skeletonRows: { rowCount: 5 },
 };
 
 function setLoading(value: boolean) {

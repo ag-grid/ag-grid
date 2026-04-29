@@ -454,8 +454,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             gos,
             beans: { colModel },
         } = this;
-        const suppressFullWidthLoading =
-            gos.get('suppressServerSideFullWidthLoadingRow') || gos.get('enableSkeletonLoadingCells');
+        const suppressFullWidthLoading = gos.get('suppressServerSideFullWidthLoadingRow') || gos.get('skeletonRows');
         const groupHideOpenParents = gos.get('groupHideOpenParents');
         const isStub = rowNode.stub && !suppressFullWidthLoading && !groupHideOpenParents;
         const isFullWidthCell = this.isNodeFullWidthCell();
