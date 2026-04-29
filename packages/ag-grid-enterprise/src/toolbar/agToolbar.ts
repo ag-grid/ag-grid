@@ -135,8 +135,8 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
         return 'toolbar';
     }
 
-    public getToolbarItemInstance(key: string): IToolbarItem | undefined {
-        return this.toolbarItems.get(key);
+    public getToolbarItemInstance<T = IToolbarItem>(key: string): T | undefined {
+        return this.toolbarItems.get(key) as T | undefined;
     }
 
     private onTabKeyDown(_e: KeyboardEvent): void {

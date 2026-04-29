@@ -18,7 +18,7 @@ export class ToolbarService extends BeanStub implements NamedBean, IToolbarServi
         }
     }
 
-    public getToolbarItemInstance(key: string): IToolbarItem | undefined {
-        return this.comp?.getToolbarItemInstance(key);
+    public getToolbarItemInstance<T = IToolbarItem>(key: string): T | undefined {
+        return this.comp?.getToolbarItemInstance<T>(key);
     }
 }

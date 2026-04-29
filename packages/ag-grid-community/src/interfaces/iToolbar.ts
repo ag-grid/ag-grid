@@ -155,10 +155,10 @@ export interface IToolbarItemComp<TData = any, TContext = any>
 export interface IToolbarService {
     setToolbar(toolbar: IToolbarComp): void;
     clearToolbar(toolbar: IToolbarComp): void;
-    getToolbarItemInstance(key: string): IToolbarItem | undefined;
+    getToolbarItemInstance<T = IToolbarItem>(key: string): T | undefined;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IToolbarComp {
-    getToolbarItemInstance(key: string): IToolbarItem | undefined;
+    getToolbarItemInstance<T = IToolbarItem>(key: string): T | undefined;
 }

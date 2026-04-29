@@ -1440,7 +1440,7 @@ export interface _ToolbarGridApi<TData = any> {
      * definition or derived from the item type when not specified.
      * @agModule `ToolbarModule`
      */
-    getToolbarItemInstance<TToolbarItem = IToolbarItem<TData>>(key: string): TToolbarItem | undefined;
+    getToolbarItemInstance<T = IToolbarItem<TData>>(key: string): T | undefined;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
