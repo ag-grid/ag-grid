@@ -54,7 +54,6 @@
     display: inline-flex;
     flex: 1;
     min-width: 235px;
-    max-width: 300px;
     padding: 0 calc(var(--ag-spacing) * 2);
 }
 
