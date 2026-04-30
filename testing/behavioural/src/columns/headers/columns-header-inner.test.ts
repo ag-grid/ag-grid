@@ -65,6 +65,58 @@ class TrackingInnerHeader {
     }
 }
 
+class AlternativeInnerHeader {
+    static initCount = 0;
+    static destroyCount = 0;
+
+    static reset(): void {
+        AlternativeInnerHeader.initCount = 0;
+        AlternativeInnerHeader.destroyCount = 0;
+    }
+
+    private readonly gui = document.createElement('span');
+
+    init(_params: IHeaderParams): void {
+        AlternativeInnerHeader.initCount++;
+    }
+
+    refresh(_params: IHeaderParams): boolean {
+        return true;
+    }
+
+    getGui(): HTMLElement {
+        return this.gui;
+    }
+
+    destroy(): void {
+        AlternativeInnerHeader.destroyCount++;
+    }
+}
+
+class NoRefreshInnerHeader {
+    static initCount = 0;
+    static destroyCount = 0;
+
+    static reset(): void {
+        NoRefreshInnerHeader.initCount = 0;
+        NoRefreshInnerHeader.destroyCount = 0;
+    }
+
+    private readonly gui = document.createElement('span');
+
+    init(_params: IHeaderParams): void {
+        NoRefreshInnerHeader.initCount++;
+    }
+
+    getGui(): HTMLElement {
+        return this.gui;
+    }
+
+    destroy(): void {
+        NoRefreshInnerHeader.destroyCount++;
+    }
+}
+
 class RejectingInnerHeader {
     static initCount = 0;
     static destroyCount = 0;
@@ -111,6 +163,8 @@ describe('header component lifecycle', () => {
     beforeEach(() => {
         TrackingHeaderComp.reset();
         TrackingInnerHeader.reset();
+        AlternativeInnerHeader.reset();
+        NoRefreshInnerHeader.reset();
         RejectingInnerHeader.reset();
     });
 
@@ -160,6 +214,354 @@ describe('header component lifecycle', () => {
         // Outer headerComp on the adjacent column must not have been remounted
         expect(TrackingHeaderComp.initCount).toBe(1);
         expect(TrackingHeaderComp.destroyCount).toBe(0);
+
+        api.destroy();
+    });
+
+    test('innerHeaderComponent is replaced when the configured component class changes', () => {
+        const eGridDiv = document.createElement('div');
+        const api = createGrid(
+            eGridDiv,
+            {
+                columnDefs: [
+                    {
+                        field: 'b',
+                        sortable: false,
+                        headerComponentParams: { innerHeaderComponent: TrackingInnerHeader },
+                    },
+                ],
+                rowData,
+            },
+            { modules: [ClientSideRowModelModule] }
+        );
+
+        expect(TrackingInnerHeader.initCount).toBe(1);
+        expect(AlternativeInnerHeader.initCount).toBe(0);
+
+        api.setGridOption('columnDefs', [
+            { field: 'b', sortable: false, headerComponentParams: { innerHeaderComponent: AlternativeInnerHeader } },
+        ]);
+
+        // Old component should be destroyed and the new class initialised in its place
+        expect(TrackingInnerHeader.destroyCount).toBe(1);
+        expect(AlternativeInnerHeader.initCount).toBe(1);
+
+        api.destroy();
+    });
+
+    test('innerHeaderComponent without refresh is recreated on column def update, consistent with cell renderer behaviour', () => {
+        const eGridDiv = document.createElement('div');
+        const noRefreshDefs: ColDef[] = [
+            { field: 'b', sortable: false, headerComponentParams: { innerHeaderComponent: NoRefreshInnerHeader } },
+        ];
+        const api = createGrid(
+            eGridDiv,
+            { columnDefs: noRefreshDefs, rowData },
+            { modules: [ClientSideRowModelModule] }
+        );
+
+        expect(NoRefreshInnerHeader.initCount).toBe(1);
+
+        api.setGridOption('columnDefs', [...noRefreshDefs]);
+
+        expect(NoRefreshInnerHeader.destroyCount).toBe(1);
+        expect(NoRefreshInnerHeader.initCount).toBe(2);
+
+        api.destroy();
+    });
+
+    test('innerHeaderComponent.refresh() receives updated params when column def changes', () => {
+        let refreshedDisplayName: string | undefined;
+
+        class CapturingRefreshInner {
+            private readonly gui = document.createElement('span');
+            init(_params: IHeaderParams): void {}
+            refresh(params: IHeaderParams): boolean {
+                refreshedDisplayName = params.displayName;
+                return true;
+            }
+            getGui(): HTMLElement {
+                return this.gui;
+            }
+        }
+
+        const eGridDiv = document.createElement('div');
+        const api = createGrid(
+            eGridDiv,
+            {
+                columnDefs: [
+                    {
+                        field: 'b',
+                        headerName: 'Before',
+                        sortable: false,
+                        headerComponentParams: { innerHeaderComponent: CapturingRefreshInner },
+                    },
+                ],
+                rowData,
+            },
+            { modules: [ClientSideRowModelModule] }
+        );
+
+        api.setGridOption('columnDefs', [
+            {
+                field: 'b',
+                headerName: 'After',
+                sortable: false,
+                headerComponentParams: { innerHeaderComponent: CapturingRefreshInner },
+            },
+        ]);
+
+        expect(refreshedDisplayName).toBe('After');
+
+        api.destroy();
+    });
+
+    test('innerHeaderComponent without refresh receives updated params in init() when recreated', () => {
+        let lastInitDisplayName: string | undefined;
+
+        class NoRefreshCapturingInner {
+            private readonly gui = document.createElement('span');
+            init(params: IHeaderParams): void {
+                lastInitDisplayName = params.displayName;
+            }
+            getGui(): HTMLElement {
+                return this.gui;
+            }
+        }
+
+        const eGridDiv = document.createElement('div');
+        const api = createGrid(
+            eGridDiv,
+            {
+                columnDefs: [
+                    {
+                        field: 'b',
+                        headerName: 'Before',
+                        sortable: false,
+                        headerComponentParams: { innerHeaderComponent: NoRefreshCapturingInner },
+                    },
+                ],
+                rowData,
+            },
+            { modules: [ClientSideRowModelModule] }
+        );
+
+        expect(lastInitDisplayName).toBe('Before');
+
+        api.setGridOption('columnDefs', [
+            {
+                field: 'b',
+                headerName: 'After',
+                sortable: false,
+                headerComponentParams: { innerHeaderComponent: NoRefreshCapturingInner },
+            },
+        ]);
+
+        expect(lastInitDisplayName).toBe('After');
+
+        api.destroy();
+    });
+
+    test('innerHeaderComponent receives updated params in init() when recreated after refresh returns false', () => {
+        let lastInitDisplayName: string | undefined;
+
+        class RejectingCapturingInner {
+            private gui = document.createElement('span');
+            init(params: IHeaderParams): void {
+                lastInitDisplayName = params.displayName;
+                this.gui = document.createElement('span');
+            }
+            refresh(_params: IHeaderParams): boolean {
+                return false;
+            }
+            getGui(): HTMLElement {
+                return this.gui;
+            }
+        }
+
+        const eGridDiv = document.createElement('div');
+        const api = createGrid(
+            eGridDiv,
+            {
+                columnDefs: [
+                    {
+                        field: 'b',
+                        headerName: 'Before',
+                        sortable: false,
+                        headerComponentParams: { innerHeaderComponent: RejectingCapturingInner },
+                    },
+                ],
+                rowData,
+            },
+            { modules: [ClientSideRowModelModule] }
+        );
+
+        expect(lastInitDisplayName).toBe('Before');
+
+        api.setGridOption('columnDefs', [
+            {
+                field: 'b',
+                headerName: 'After',
+                sortable: false,
+                headerComponentParams: { innerHeaderComponent: RejectingCapturingInner },
+            },
+        ]);
+
+        expect(lastInitDisplayName).toBe('After');
+
+        api.destroy();
+    });
+
+    test('innerHeaderComponent.refresh() receives updated innerHeaderComponentParams', () => {
+        let refreshedLabel: string | undefined;
+
+        class CapturingRefreshInnerWithLabel {
+            private readonly gui = document.createElement('span');
+            init(_params: IHeaderParams): void {}
+            refresh(params: IHeaderParams): boolean {
+                refreshedLabel = (params as any).customLabel;
+                return true;
+            }
+            getGui(): HTMLElement {
+                return this.gui;
+            }
+        }
+
+        const eGridDiv = document.createElement('div');
+        const api = createGrid(
+            eGridDiv,
+            {
+                columnDefs: [
+                    {
+                        field: 'b',
+                        sortable: false,
+                        headerComponentParams: {
+                            innerHeaderComponent: CapturingRefreshInnerWithLabel,
+                            innerHeaderComponentParams: { customLabel: 'Before' },
+                        },
+                    },
+                ],
+                rowData,
+            },
+            { modules: [ClientSideRowModelModule] }
+        );
+
+        api.setGridOption('columnDefs', [
+            {
+                field: 'b',
+                sortable: false,
+                headerComponentParams: {
+                    innerHeaderComponent: CapturingRefreshInnerWithLabel,
+                    innerHeaderComponentParams: { customLabel: 'After' },
+                },
+            },
+        ]);
+
+        expect(refreshedLabel).toBe('After');
+
+        api.destroy();
+    });
+
+    test('innerHeaderComponent without refresh receives updated innerHeaderComponentParams in init() when recreated', () => {
+        let lastInitLabel: string | undefined;
+
+        class NoRefreshCapturingInnerWithLabel {
+            private readonly gui = document.createElement('span');
+            init(params: IHeaderParams): void {
+                lastInitLabel = (params as any).customLabel;
+            }
+            getGui(): HTMLElement {
+                return this.gui;
+            }
+        }
+
+        const eGridDiv = document.createElement('div');
+        const api = createGrid(
+            eGridDiv,
+            {
+                columnDefs: [
+                    {
+                        field: 'b',
+                        sortable: false,
+                        headerComponentParams: {
+                            innerHeaderComponent: NoRefreshCapturingInnerWithLabel,
+                            innerHeaderComponentParams: { customLabel: 'Before' },
+                        },
+                    },
+                ],
+                rowData,
+            },
+            { modules: [ClientSideRowModelModule] }
+        );
+
+        expect(lastInitLabel).toBe('Before');
+
+        api.setGridOption('columnDefs', [
+            {
+                field: 'b',
+                sortable: false,
+                headerComponentParams: {
+                    innerHeaderComponent: NoRefreshCapturingInnerWithLabel,
+                    innerHeaderComponentParams: { customLabel: 'After' },
+                },
+            },
+        ]);
+
+        expect(lastInitLabel).toBe('After');
+
+        api.destroy();
+    });
+
+    test('innerHeaderComponent receives updated innerHeaderComponentParams in init() when recreated after refresh returns false', () => {
+        let lastInitLabel: string | undefined;
+
+        class RejectingCapturingInnerWithLabel {
+            private gui = document.createElement('span');
+            init(params: IHeaderParams): void {
+                lastInitLabel = (params as any).customLabel;
+                this.gui = document.createElement('span');
+            }
+            refresh(_params: IHeaderParams): boolean {
+                return false;
+            }
+            getGui(): HTMLElement {
+                return this.gui;
+            }
+        }
+
+        const eGridDiv = document.createElement('div');
+        const api = createGrid(
+            eGridDiv,
+            {
+                columnDefs: [
+                    {
+                        field: 'b',
+                        sortable: false,
+                        headerComponentParams: {
+                            innerHeaderComponent: RejectingCapturingInnerWithLabel,
+                            innerHeaderComponentParams: { customLabel: 'Before' },
+                        },
+                    },
+                ],
+                rowData,
+            },
+            { modules: [ClientSideRowModelModule] }
+        );
+
+        expect(lastInitLabel).toBe('Before');
+
+        api.setGridOption('columnDefs', [
+            {
+                field: 'b',
+                sortable: false,
+                headerComponentParams: {
+                    innerHeaderComponent: RejectingCapturingInnerWithLabel,
+                    innerHeaderComponentParams: { customLabel: 'After' },
+                },
+            },
+        ]);
+
+        expect(lastInitLabel).toBe('After');
 
         api.destroy();
     });

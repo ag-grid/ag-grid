@@ -9,6 +9,10 @@ let headerMountCount = 0;
 let headerUnmountCount = 0;
 let innerMountCount = 0;
 let innerUnmountCount = 0;
+let innerMountCount2 = 0;
+let innerUnmountCount2 = 0;
+let lastInnerDisplayName: string | undefined;
+let lastCustomLabel: string | undefined;
 
 const CustomHeader = () => {
     useEffect(() => {
@@ -28,6 +32,36 @@ const CustomInnerHeader = () => {
         };
     }, []);
     return <span className="custom-inner-header">inner</span>;
+};
+
+const CustomLabelInnerHeader = (params: IHeaderParams & { customLabel: string }) => {
+    lastCustomLabel = params.customLabel;
+    return <span className="custom-label">{params.customLabel}</span>;
+};
+
+const PropsCapturingInnerHeader = ({ displayName }: IHeaderParams) => {
+    lastInnerDisplayName = displayName;
+    return <span className="props-capturing">{displayName}</span>;
+};
+
+const CustomInnerHeader2 = ({ displayName }: IHeaderParams) => {
+    const [count, setCount] = React.useState(0);
+
+    useEffect(() => {
+        innerMountCount2++;
+        const interval = setInterval(() => setCount((prev) => prev + 1), 1000);
+        return () => {
+            innerUnmountCount2++;
+            clearInterval(interval);
+        };
+    }, []);
+
+    return (
+        <div className="custom-inner-header-2">
+            <span>{displayName}</span>
+            <span>{count}</span>
+        </div>
+    );
 };
 
 // Vanilla JS inner header component that signals it cannot handle a refresh.
@@ -86,6 +120,16 @@ const GridApp = ({ defs }: { defs: ColDef[] }) => {
     );
 };
 
+const SwitchingGridApp = ({ defs1, defs2 }: { defs1: ColDef[]; defs2: ColDef[] }) => {
+    const [cols, setCols] = useState<ColDef[]>(defs1);
+    return (
+        <>
+            <button onClick={() => setCols(defs2)}>Switch Cols</button>
+            <AgGridReact rowData={rowData} columnDefs={cols} modules={[AllCommunityModule]} />
+        </>
+    );
+};
+
 describe('React header component lifecycle', () => {
     beforeEach(() => {
         cleanup();
@@ -93,6 +137,10 @@ describe('React header component lifecycle', () => {
         headerUnmountCount = 0;
         innerMountCount = 0;
         innerUnmountCount = 0;
+        innerMountCount2 = 0;
+        innerUnmountCount2 = 0;
+        lastInnerDisplayName = undefined;
+        lastCustomLabel = undefined;
         RejectingInnerHeader.reset();
     });
 
@@ -145,5 +193,96 @@ describe('React header component lifecycle', () => {
         // Outer headerComp (CustomHeader on the adjacent column) must not have been remounted
         expect(headerMountCount).toBe(1);
         expect(headerUnmountCount).toBe(0);
+    });
+
+    it('innerHeaderComponent is replaced when the configured component class changes', async () => {
+        const defs1: ColDef[] = [
+            { field: 'b', sortable: false, headerComponentParams: { innerHeaderComponent: CustomInnerHeader } },
+        ];
+        const defs2: ColDef[] = [
+            { field: 'b', sortable: false, headerComponentParams: { innerHeaderComponent: CustomInnerHeader2 } },
+        ];
+
+        render(<SwitchingGridApp defs1={defs1} defs2={defs2} />);
+
+        await waitFor(() => expect(innerMountCount).toBe(1));
+        expect(innerMountCount2).toBe(0);
+
+        fireEvent.click(screen.getByRole('button', { name: 'Switch Cols' }));
+
+        await act(async () => {
+            await new Promise<void>((resolve) => setTimeout(resolve));
+        });
+
+        // Old component should be unmounted and the new component mounted in its place
+        expect(innerUnmountCount).toBe(1);
+        expect(innerMountCount2).toBe(1);
+        expect(innerUnmountCount2).toBe(0);
+    });
+
+    it('innerHeaderComponent re-renders with updated props when column def changes', async () => {
+        const defs1: ColDef[] = [
+            {
+                field: 'b',
+                headerName: 'Before',
+                sortable: false,
+                headerComponentParams: { innerHeaderComponent: PropsCapturingInnerHeader },
+            },
+        ];
+        const defs2: ColDef[] = [
+            {
+                field: 'b',
+                headerName: 'After',
+                sortable: false,
+                headerComponentParams: { innerHeaderComponent: PropsCapturingInnerHeader },
+            },
+        ];
+
+        render(<SwitchingGridApp defs1={defs1} defs2={defs2} />);
+
+        await waitFor(() => expect(lastInnerDisplayName).toBe('Before'));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Switch Cols' }));
+
+        await act(async () => {
+            await new Promise<void>((resolve) => setTimeout(resolve));
+        });
+
+        expect(lastInnerDisplayName).toBe('After');
+    });
+
+    it('innerHeaderComponent re-renders with updated innerHeaderComponentParams', async () => {
+        const defs1: ColDef[] = [
+            {
+                field: 'b',
+                sortable: false,
+                headerComponentParams: {
+                    innerHeaderComponent: CustomLabelInnerHeader,
+                    innerHeaderComponentParams: { customLabel: 'Before' },
+                },
+            },
+        ];
+        const defs2: ColDef[] = [
+            {
+                field: 'b',
+                sortable: false,
+                headerComponentParams: {
+                    innerHeaderComponent: CustomLabelInnerHeader,
+                    innerHeaderComponentParams: { customLabel: 'After' },
+                },
+            },
+        ];
+
+        render(<SwitchingGridApp defs1={defs1} defs2={defs2} />);
+
+        await waitFor(() => expect(lastCustomLabel).toBe('Before'));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Switch Cols' }));
+
+        await act(async () => {
+            await new Promise<void>((resolve) => setTimeout(resolve));
+        });
+
+        expect(lastCustomLabel).toBe('After');
     });
 });

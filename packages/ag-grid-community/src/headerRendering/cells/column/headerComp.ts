@@ -87,6 +87,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private currentRef: string | null;
 
     private innerHeaderComponent: IInnerHeaderComponent | undefined;
+    private currentInnerHeaderComponent: any;
     private isLoadingInnerComponent: boolean = false;
 
     private mouseListener?: HeaderCellMouseListenerFeature;
@@ -123,7 +124,10 @@ export class HeaderComp extends Component implements IHeaderComp {
             // Mimic the merging of params that happens during init of _getInnerHeaderCompDetails(userCompFactory, params, params);
             const mergedParams = { ...params };
             _mergeDeep(mergedParams, params.innerHeaderComponentParams);
-            if (this.innerHeaderComponent.refresh?.(mergedParams) === false) {
+            if (
+                params.innerHeaderComponent !== this.currentInnerHeaderComponent ||
+                !this.innerHeaderComponent.refresh?.(mergedParams)
+            ) {
                 this.replaceInnerHeaderComponent(params);
             }
         } else {
@@ -173,6 +177,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private workOutInnerHeaderComponent(params: IHeaderParams): void {
+        this.currentInnerHeaderComponent = params.innerHeaderComponent;
         const userCompFactory = this.beans.userCompFactory;
         const userCompDetails = _getInnerHeaderCompDetails(userCompFactory, params, params);
 
