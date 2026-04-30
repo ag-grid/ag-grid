@@ -3,151 +3,70 @@ import { ClientSideRowModelModule, createGrid } from 'ag-grid-community';
 
 const rowData = [{ a: 1, b: 10 }];
 
-class TrackingHeaderComp {
-    static initCount = 0;
-    static destroyCount = 0;
-    static refreshCount = 0;
-
-    static reset(): void {
-        TrackingHeaderComp.initCount = 0;
-        TrackingHeaderComp.destroyCount = 0;
-        TrackingHeaderComp.refreshCount = 0;
-    }
-
-    private readonly gui = document.createElement('div');
-
-    init(_params: IHeaderParams): void {
-        TrackingHeaderComp.initCount++;
-    }
-
-    refresh(_params: IHeaderParams): boolean {
-        TrackingHeaderComp.refreshCount++;
-        return true;
-    }
-
-    getGui(): HTMLElement {
-        return this.gui;
-    }
-
-    destroy(): void {
-        TrackingHeaderComp.destroyCount++;
-    }
+interface TrackedClass {
+    initCount: number;
+    destroyCount: number;
+    refreshCount: number;
+    reset(): void;
+    new (): TrackedInstance;
 }
 
-class TrackingInnerHeader {
-    static initCount = 0;
-    static destroyCount = 0;
-    static refreshCount = 0;
-
-    static reset(): void {
-        TrackingInnerHeader.initCount = 0;
-        TrackingInnerHeader.destroyCount = 0;
-        TrackingInnerHeader.refreshCount = 0;
-    }
-
-    private readonly gui = document.createElement('span');
-
-    init(_params: IHeaderParams): void {
-        TrackingInnerHeader.initCount++;
-    }
-
-    refresh(_params: IHeaderParams): boolean {
-        TrackingInnerHeader.refreshCount++;
-        return true;
-    }
-
-    getGui(): HTMLElement {
-        return this.gui;
-    }
-
-    destroy(): void {
-        TrackingInnerHeader.destroyCount++;
-    }
+interface TrackedInstance {
+    init(params: IHeaderParams): void;
+    refresh?(params: IHeaderParams): boolean;
+    getGui(): HTMLElement;
+    destroy(): void;
 }
 
-class AlternativeInnerHeader {
-    static initCount = 0;
-    static destroyCount = 0;
+function makeTrackedInnerHeader(refreshBehaviour?: 'accept' | 'reject' | 'none'): TrackedClass {
+    class TrackedComp {
+        static initCount = 0;
+        static destroyCount = 0;
+        static refreshCount = 0;
 
-    static reset(): void {
-        AlternativeInnerHeader.initCount = 0;
-        AlternativeInnerHeader.destroyCount = 0;
+        static reset(): void {
+            TrackedComp.initCount = 0;
+            TrackedComp.destroyCount = 0;
+            TrackedComp.refreshCount = 0;
+        }
+
+        protected gui = document.createElement('span');
+
+        init(_params: IHeaderParams): void {
+            TrackedComp.initCount++;
+            this.gui = document.createElement('span');
+        }
+
+        getGui(): HTMLElement {
+            return this.gui;
+        }
+
+        destroy(): void {
+            TrackedComp.destroyCount++;
+        }
     }
 
-    private readonly gui = document.createElement('span');
-
-    init(_params: IHeaderParams): void {
-        AlternativeInnerHeader.initCount++;
+    if (refreshBehaviour === 'accept') {
+        (TrackedComp.prototype as any).refresh = function (_params: IHeaderParams): boolean {
+            TrackedComp.refreshCount++;
+            return true;
+        };
+    } else if (refreshBehaviour === 'reject') {
+        (TrackedComp.prototype as any).refresh = function (_params: IHeaderParams): boolean {
+            TrackedComp.refreshCount++;
+            return false;
+        };
     }
+    // 'none': no refresh method at all
 
-    refresh(_params: IHeaderParams): boolean {
-        return true;
-    }
-
-    getGui(): HTMLElement {
-        return this.gui;
-    }
-
-    destroy(): void {
-        AlternativeInnerHeader.destroyCount++;
-    }
+    return TrackedComp as unknown as TrackedClass;
 }
 
-class NoRefreshInnerHeader {
-    static initCount = 0;
-    static destroyCount = 0;
-
-    static reset(): void {
-        NoRefreshInnerHeader.initCount = 0;
-        NoRefreshInnerHeader.destroyCount = 0;
-    }
-
-    private readonly gui = document.createElement('span');
-
-    init(_params: IHeaderParams): void {
-        NoRefreshInnerHeader.initCount++;
-    }
-
-    getGui(): HTMLElement {
-        return this.gui;
-    }
-
-    destroy(): void {
-        NoRefreshInnerHeader.destroyCount++;
-    }
-}
-
-class RejectingInnerHeader {
-    static initCount = 0;
-    static destroyCount = 0;
-    static refreshCount = 0;
-
-    static reset(): void {
-        RejectingInnerHeader.initCount = 0;
-        RejectingInnerHeader.destroyCount = 0;
-        RejectingInnerHeader.refreshCount = 0;
-    }
-
-    private gui = document.createElement('span');
-
-    init(_params: IHeaderParams): void {
-        RejectingInnerHeader.initCount++;
-        this.gui = document.createElement('span');
-    }
-
-    refresh(_params: IHeaderParams): boolean {
-        RejectingInnerHeader.refreshCount++;
-        return false;
-    }
-
-    getGui(): HTMLElement {
-        return this.gui;
-    }
-
-    destroy(): void {
-        RejectingInnerHeader.destroyCount++;
-    }
-}
+const TrackingHeaderComp = makeTrackedInnerHeader('accept');
+const TrackingInnerHeader = makeTrackedInnerHeader('accept');
+const AlternativeInnerHeader = makeTrackedInnerHeader('accept');
+const NoRefreshInnerHeader = makeTrackedInnerHeader('none');
+const RejectingInnerHeader = makeTrackedInnerHeader('reject');
 
 const columnDefs: ColDef[] = [
     { field: 'a', headerComponent: TrackingHeaderComp },
@@ -245,6 +164,34 @@ describe('header component lifecycle', () => {
         // Old component should be destroyed and the new class initialised in its place
         expect(TrackingInnerHeader.destroyCount).toBe(1);
         expect(AlternativeInnerHeader.initCount).toBe(1);
+
+        api.destroy();
+    });
+
+    test('removing innerHeaderComponent restores display name text in the header cell', () => {
+        const eGridDiv = document.createElement('div');
+        const api = createGrid(
+            eGridDiv,
+            {
+                columnDefs: [
+                    {
+                        field: 'b',
+                        headerName: 'My Header',
+                        sortable: false,
+                        headerComponentParams: { innerHeaderComponent: TrackingInnerHeader },
+                    },
+                ],
+                rowData,
+            },
+            { modules: [ClientSideRowModelModule] }
+        );
+
+        expect(TrackingInnerHeader.initCount).toBe(1);
+
+        api.setGridOption('columnDefs', [{ field: 'b', headerName: 'My Header', sortable: false }]);
+
+        expect(TrackingInnerHeader.destroyCount).toBe(1);
+        expect(eGridDiv.querySelector('.ag-header-cell-text')?.textContent).toBe('My Header');
 
         api.destroy();
     });

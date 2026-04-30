@@ -87,7 +87,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private currentRef: string | null;
 
     private innerHeaderComponent: IInnerHeaderComponent | undefined;
-    private currentInnerHeaderComponent: any;
+    private currentInnerHeaderComponent: IHeaderParams['innerHeaderComponent'];
     private isLoadingInnerComponent: boolean = false;
 
     private mouseListener?: HeaderCellMouseListenerFeature;
@@ -108,7 +108,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         // if template changed, then recreate the whole comp
         if (
             !!formula?.active !== currentFormulaActive ||
-            !!sortSvc !== currentHasSortIndicator ||
+            !!sortSvc?.getSortIndicatorSelector() !== currentHasSortIndicator ||
             params.enableSorting != currentSort ||
             oldParams.enableFilterButton != params.enableFilterButton ||
             oldParams.enableFilterIcon != params.enableFilterIcon ||
@@ -208,6 +208,11 @@ export class HeaderComp extends Component implements IHeaderComp {
         _removeFromParent(oldGui);
         this.innerHeaderComponent = this.destroyBean(this.innerHeaderComponent);
         this.workOutInnerHeaderComponent(params);
+        if (!this.currentInnerHeaderComponent && this.eText) {
+            // innerHeaderComponent removed — restore plain text, bypassing the
+            // oldDisplayName === displayName early-exit in setDisplayName
+            this.eText.textContent = _toString(params.displayName);
+        }
     }
 
     private setDisplayName(params: IHeaderParams) {

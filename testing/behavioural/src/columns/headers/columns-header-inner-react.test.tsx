@@ -5,6 +5,11 @@ import type { ColDef, IHeaderParams } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
+const flushPortalUpdates = () =>
+    act(async () => {
+        await new Promise<void>((resolve) => setTimeout(resolve));
+    });
+
 let headerMountCount = 0;
 let headerUnmountCount = 0;
 let innerMountCount = 0;
@@ -159,9 +164,7 @@ describe('React header component lifecycle', () => {
 
         // Flush any pending portal updates — PortalManager batches via setTimeout, so a
         // resolved setTimeout scheduled after the click will run after those callbacks.
-        await act(async () => {
-            await new Promise<void>((resolve) => setTimeout(resolve));
-        });
+        await flushPortalUpdates();
 
         expect(headerMountCount).toBe(1);
         expect(headerUnmountCount).toBe(0);
@@ -181,9 +184,7 @@ describe('React header component lifecycle', () => {
 
         // RejectingInnerHeader lifecycle is synchronous (vanilla JS, no portal), so counts
         // are available immediately. Flush setTimeout for the portal-based CustomHeader.
-        await act(async () => {
-            await new Promise<void>((resolve) => setTimeout(resolve));
-        });
+        await flushPortalUpdates();
 
         // Inner component signalled it cannot handle the update — it should be replaced
         expect(RejectingInnerHeader.refreshCount).toBe(1);
@@ -210,9 +211,7 @@ describe('React header component lifecycle', () => {
 
         fireEvent.click(screen.getByRole('button', { name: 'Switch Cols' }));
 
-        await act(async () => {
-            await new Promise<void>((resolve) => setTimeout(resolve));
-        });
+        await flushPortalUpdates();
 
         // Old component should be unmounted and the new component mounted in its place
         expect(innerUnmountCount).toBe(1);
@@ -244,9 +243,7 @@ describe('React header component lifecycle', () => {
 
         fireEvent.click(screen.getByRole('button', { name: 'Switch Cols' }));
 
-        await act(async () => {
-            await new Promise<void>((resolve) => setTimeout(resolve));
-        });
+        await flushPortalUpdates();
 
         expect(lastInnerDisplayName).toBe('After');
     });
@@ -279,10 +276,31 @@ describe('React header component lifecycle', () => {
 
         fireEvent.click(screen.getByRole('button', { name: 'Switch Cols' }));
 
-        await act(async () => {
-            await new Promise<void>((resolve) => setTimeout(resolve));
-        });
+        await flushPortalUpdates();
 
         expect(lastCustomLabel).toBe('After');
+    });
+
+    it('removing innerHeaderComponent restores display name text in the header cell', async () => {
+        const defs1: ColDef[] = [
+            {
+                field: 'b',
+                headerName: 'My Header',
+                sortable: false,
+                headerComponentParams: { innerHeaderComponent: CustomInnerHeader },
+            },
+        ];
+        const defs2: ColDef[] = [{ field: 'b', headerName: 'My Header', sortable: false }];
+
+        const { container } = render(<SwitchingGridApp defs1={defs1} defs2={defs2} />);
+
+        await waitFor(() => expect(innerMountCount).toBe(1));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Switch Cols' }));
+
+        await flushPortalUpdates();
+
+        expect(innerUnmountCount).toBe(1);
+        expect(container.querySelector('.ag-header-cell-text')?.textContent).toBe('My Header');
     });
 });
