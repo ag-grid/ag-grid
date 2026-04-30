@@ -36,7 +36,6 @@ import {
     _addGridCommonParams,
     _getRowHeightForNode,
     _isAnimateRows,
-    _isClientSideRowModel,
     _isDomLayout,
     _isFullWidthGroupRow,
     _isGetRowHeightFunction,
@@ -455,9 +454,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             gos,
             beans: { colModel },
         } = this;
-        const suppressFullWidthLoading =
-            gos.get('suppressServerSideFullWidthLoadingRow') ||
-            (_isClientSideRowModel(gos) && !!gos.get('skeletonRows'));
+        const suppressFullWidthLoading = gos.get('suppressServerSideFullWidthLoadingRow') || !!gos.get('skeletonRows');
         const groupHideOpenParents = gos.get('groupHideOpenParents');
         const isStub = rowNode.stub && !suppressFullWidthLoading && !groupHideOpenParents;
         const isFullWidthCell = this.isNodeFullWidthCell();
