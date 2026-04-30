@@ -1,7 +1,9 @@
 import type {
+    AgColumn,
     ChangedPath,
     ClientSideRowModelStage,
     GridOptions,
+    GridOptionsService,
     NamedBean,
     RowNode,
     SortOption,
@@ -13,6 +15,7 @@ import {
     _doDeltaSort,
     _forEachChangedGroupDepthFirst,
     _isColumnsSortingCoupledToGroup,
+    _reuseArrayIfEqual,
     _updateRowNodeAfterSort,
 } from 'ag-grid-community';
 
@@ -37,63 +40,56 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             // rolling out to everyone.
             gos.get('deltaSort');
 
-        const groupMaintainOrder = gos.get('groupMaintainOrder');
-        const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());
-        const groupCols = rowGroupColsSvc?.columns;
+        const shouldMaintainGroupOrder =
+            gos.get('groupMaintainOrder') &&
+            !!rowGroupColsSvc?.columns.length &&
+            !shouldSortContainsGroupCols(gos, sortOptions);
 
         const isPivotMode = colModel.pivotMode;
         const postSortFunc = gos.getCallback('postSortRows');
 
         let hasAnyFirstChildChanged = false;
-        let sortContainsGroupColumns: boolean | undefined;
 
         const callback = (rowNode: RowNode) => {
-            // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
-            const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
+            const leafGroup = rowNode.leafGroup;
+            // It's pointless to sort rows which aren't being displayed. In pivot mode we don't sort leaf group children.
+            const skipSortingPivotLeafs = isPivotMode && leafGroup;
+            const skipSortingGroups = shouldMaintainGroupOrder && !leafGroup;
 
-            let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup;
-            if (skipSortingGroups) {
-                sortContainsGroupColumns ??= this.shouldSortContainsGroupCols(sortOptions);
-                skipSortingGroups &&= !sortContainsGroupColumns;
-            }
-
-            let newChildrenAfterSort: RowNode[] | null = null;
-            if (skipSortingGroups) {
-                // Maintain previous visual order in O(n).
-
-                let wasSortExplicitlyRemoved = false;
-                if (groupCols) {
-                    const nextGroupIndex = rowNode.level + 1;
-                    if (nextGroupIndex < groupCols.length) {
-                        wasSortExplicitlyRemoved = groupCols[nextGroupIndex].wasSortExplicitlyRemoved;
-                    }
+            const prevSort = rowNode.childrenAfterSort;
+            let newChildrenAfterSort: RowNode[];
+            if (!skipSortingGroups && sortOptions?.length && !skipSortingPivotLeafs) {
+                if (useDeltaSort && changedRowNodes) {
+                    newChildrenAfterSort = _doDeltaSort(
+                        rowNodeSorter!,
+                        rowNode,
+                        changedRowNodes,
+                        changedPath,
+                        sortOptions
+                    );
+                } else {
+                    newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(
+                        rowNode.childrenAfterAggFilter!.slice(),
+                        sortOptions
+                    );
                 }
-
-                if (!wasSortExplicitlyRemoved) {
-                    newChildrenAfterSort = preserveGroupOrder(rowNode);
-                }
-            } else if (!sortOptions?.length || skipSortingPivotLeafs) {
-                // if there's no sort to make, skip this step
-            } else if (useDeltaSort && changedRowNodes) {
-                newChildrenAfterSort = _doDeltaSort(rowNodeSorter!, rowNode, changedRowNodes, changedPath, sortOptions);
             } else {
-                newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(
-                    rowNode.childrenAfterAggFilter!.slice(),
-                    sortOptions
-                );
+                // No sort to apply (groupMaintainOrder, no sort options, or pivot leaf): use the
+                // filter result. `childrenAfterAggFilter` is in `childrenAfterGroup` order, which
+                // the grouping stage keeps stable across transactions and filter cycles — so no
+                // separate "previous visual order" tracking is needed to honour `groupMaintainOrder`.
+                // `postSortRows` (if configured) runs below on every refresh and reapplies the
+                // user's customisation on top of this baseline.
+                newChildrenAfterSort = _reuseArrayIfEqual(prevSort, rowNode.childrenAfterAggFilter);
             }
 
-            newChildrenAfterSort ||= rowNode.childrenAfterAggFilter?.slice() ?? [];
-
-            hasAnyFirstChildChanged ||= rowNode.childrenAfterSort?.[0] !== newChildrenAfterSort[0];
+            hasAnyFirstChildChanged ||= prevSort?.[0] !== newChildrenAfterSort[0];
 
             rowNode.childrenAfterSort = newChildrenAfterSort;
 
             _updateRowNodeAfterSort(rowNode);
 
-            if (postSortFunc) {
-                postSortFunc({ nodes: rowNode.childrenAfterSort });
-            }
+            postSortFunc?.({ nodes: rowNode.childrenAfterSort });
         };
 
         _forEachChangedGroupDepthFirst(rowModel.rootNode, true, changedPath, callback);
@@ -108,72 +104,29 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             }
         }
     }
+}
 
-    private shouldSortContainsGroupCols(sortOptions: SortOption[] | undefined): boolean {
-        const sortOptionsLen = sortOptions?.length;
-        if (!sortOptionsLen) {
-            return false;
-        }
+const shouldSortContainsGroupCols = (gos: GridOptionsService, sortOptions: SortOption[] | undefined): boolean => {
+    const sortOptionsLen = sortOptions?.length;
+    if (!sortOptionsLen) {
+        return false;
+    }
 
-        if (_isColumnsSortingCoupledToGroup(this.gos)) {
-            for (let i = 0; i < sortOptionsLen; ++i) {
-                const column = sortOptions[i].column;
-                if (column.isPrimary() && column.isRowGroupActive()) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
+    if (_isColumnsSortingCoupledToGroup(gos)) {
         for (let i = 0; i < sortOptionsLen; ++i) {
-            if (sortOptions[i].column.getColDef().showRowGroup) {
+            const column = sortOptions[i].column as AgColumn;
+            if (column.primary && column.rowGroupActive) {
                 return true;
             }
         }
         return false;
     }
-}
 
-/**
- * O(n) merge preserving previous visual order and appending new items in current order.
- */
-const preserveGroupOrder = (node: RowNode): RowNode[] | null => {
-    const childrenAfterSort = node.childrenAfterSort;
-    const childrenAfterAggFilter = node.childrenAfterAggFilter;
-
-    const childrenAfterSortLen = childrenAfterSort?.length;
-    const childrenAfterAggFilterLen = childrenAfterAggFilter?.length;
-
-    if (!childrenAfterSortLen || !childrenAfterAggFilterLen) {
-        return null;
-    }
-
-    const result = new Array<RowNode>(childrenAfterAggFilterLen);
-
-    // Track all present nodes.
-    const processed = new Set<RowNode>();
-    for (let i = 0; i < childrenAfterAggFilterLen; ++i) {
-        processed.add(childrenAfterAggFilter[i]);
-    }
-
-    // Keep nodes that are still present, in previous visual order.
-    let writeIdx = 0;
-    for (let i = 0; i < childrenAfterSortLen; ++i) {
-        const node = childrenAfterSort[i];
-        if (processed.delete(node)) {
-            result[writeIdx++] = node;
+    for (let i = 0; i < sortOptionsLen; ++i) {
+        const column = sortOptions[i].column as AgColumn;
+        if (column.colDef.showRowGroup) {
+            return true;
         }
     }
-
-    if (processed.size === 0 && writeIdx === childrenAfterSortLen) {
-        return childrenAfterSort; // No change, return the previous array
-    }
-
-    // Add new nodes
-    for (const newNode of processed) {
-        result[writeIdx++] = newNode;
-    }
-
-    result.length = writeIdx;
-    return result;
+    return false;
 };
