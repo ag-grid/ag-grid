@@ -196,6 +196,40 @@ describe('header component lifecycle', () => {
         api.destroy();
     });
 
+    test('adding innerHeaderComponent when it was not originally present correctly renderers new innerHeaderComponent', () => {
+        const eGridDiv = document.createElement('div');
+        const api = createGrid(
+            eGridDiv,
+            {
+                columnDefs: [
+                    {
+                        field: 'b',
+                        headerName: 'My Header',
+                        sortable: false,
+                        // headerComponentParams: { innerHeaderComponent: TrackingInnerHeader },
+                    },
+                ],
+                rowData,
+            },
+            { modules: [ClientSideRowModelModule] }
+        );
+
+        api.setGridOption('columnDefs', [
+            {
+                field: 'b',
+                headerName: 'My Header',
+                sortable: false,
+                headerComponentParams: { innerHeaderComponent: TrackingInnerHeader },
+            },
+        ]);
+
+        expect(TrackingInnerHeader.initCount).toBe(1);
+        expect(TrackingInnerHeader.destroyCount).toBe(0);
+        expect(eGridDiv.querySelector('.ag-header-cell-text')?.textContent).toBe('My Header');
+
+        api.destroy();
+    });
+
     test('innerHeaderComponent without refresh is recreated on column def update, consistent with cell renderer behaviour', () => {
         const eGridDiv = document.createElement('div');
         const noRefreshDefs: ColDef[] = [

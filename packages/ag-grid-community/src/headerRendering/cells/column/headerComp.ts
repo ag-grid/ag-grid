@@ -78,12 +78,9 @@ export class HeaderComp extends Component implements IHeaderComp {
     public params: IHeaderParams;
 
     private currentDisplayName: string;
-    private currentTemplateCustom: string | undefined;
-    private currentFormulaActive: boolean;
-    private currentHasSortIndicator: boolean;
+    private currentFormulaActive: boolean | undefined;
     private currentShowMenu: boolean;
     private currentSuppressMenuHide: boolean;
-    private currentSort: boolean | undefined;
     private currentRef: string | null;
 
     private innerHeaderComponent: IInnerHeaderComponent | undefined;
@@ -93,40 +90,21 @@ export class HeaderComp extends Component implements IHeaderComp {
     private mouseListener?: HeaderCellMouseListenerFeature;
 
     public refresh(params: IHeaderParams): boolean {
-        const {
-            beans: { formula, sortSvc },
-            currentTemplateCustom,
-            currentFormulaActive,
-            currentShowMenu,
-            currentHasSortIndicator,
-            currentSort,
-            currentSuppressMenuHide,
-            params: oldParams,
-        } = this;
+        const oldParams = this.params;
         this.params = params;
 
         // if template changed, then recreate the whole comp
-        if (
-            !!formula?.active !== currentFormulaActive ||
-            !!sortSvc?.getSortIndicatorSelector() !== currentHasSortIndicator ||
-            params.enableSorting != currentSort ||
-            oldParams.enableFilterButton != params.enableFilterButton ||
-            oldParams.enableFilterIcon != params.enableFilterIcon ||
-            (params.column as AgColumn).formulaRef != this.currentRef ||
-            (params.template?.trim?.() ?? params.template) !== currentTemplateCustom ||
-            this.workOutShowMenu() != currentShowMenu ||
-            (currentSuppressMenuHide != null && this.shouldSuppressMenuHide() != currentSuppressMenuHide)
-        ) {
+        if (this.anythingChanged(oldParams, params)) {
             return false;
         }
 
-        if (this.innerHeaderComponent) {
+        if (this.innerHeaderComponent || params.innerHeaderComponent) {
             // Mimic the merging of params that happens during init of _getInnerHeaderCompDetails(userCompFactory, params, params);
             const mergedParams = { ...params };
             _mergeDeep(mergedParams, params.innerHeaderComponentParams);
             if (
                 params.innerHeaderComponent !== this.currentInnerHeaderComponent ||
-                !this.innerHeaderComponent.refresh?.(mergedParams)
+                !this.innerHeaderComponent?.refresh?.(mergedParams)
             ) {
                 this.replaceInnerHeaderComponent(params);
             }
@@ -137,14 +115,38 @@ export class HeaderComp extends Component implements IHeaderComp {
         return true;
     }
 
-    private workOutTemplate(params: IHeaderParams, isSorting: boolean): string | ElementParams {
-        const { formula } = this.beans;
+    private anythingChanged(oldParams: IHeaderParams, newParams: IHeaderParams): boolean {
+        const {
+            beans,
+            currentFormulaActive,
+            currentRef: currentFormulaRef,
+            currentShowMenu,
+            currentSuppressMenuHide,
+        } = this;
+
+        return (
+            oldParams.enableSorting != newParams.enableSorting ||
+            oldParams.enableFilterButton != newParams.enableFilterButton ||
+            oldParams.enableFilterIcon != newParams.enableFilterIcon ||
+            oldParams.template != newParams.template ||
+            currentFormulaActive !== beans.formula?.active ||
+            currentFormulaRef != (newParams.column as AgColumn).formulaRef ||
+            currentShowMenu != this.workOutShowMenu() ||
+            (currentSuppressMenuHide != null && this.shouldSuppressMenuHide() != currentSuppressMenuHide)
+        );
+    }
+
+    private workOutTemplate(
+        params: IHeaderParams,
+        isSorting: boolean,
+        isFormulaActive: boolean
+    ): string | ElementParams {
         const paramsTemplate = params.template;
         if (paramsTemplate) {
             // take account of any newlines & whitespace before/after the actual template
             return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
         }
-        return getHeaderCompElementParams(!!formula?.active, isSorting);
+        return getHeaderCompElementParams(isFormulaActive, isSorting);
     }
 
     public init(params: IHeaderParams): void {
@@ -152,10 +154,8 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         const { sortSvc, touchSvc, rowNumbersSvc, formula } = this.beans;
         const sortComp = sortSvc?.getSortIndicatorSelector();
-        const template = this.workOutTemplate(params, !!sortComp);
-        this.currentTemplateCustom = params.template?.trim?.() ?? params.template;
-        this.currentFormulaActive = !!formula?.active;
-        this.currentHasSortIndicator = !!sortComp;
+        this.currentFormulaActive = formula?.active;
+        const template = this.workOutTemplate(params, !!sortComp, !!this.currentFormulaActive);
         this.setTemplate(template, sortComp ? [sortComp] : undefined);
 
         if (this.eLabel) {
@@ -204,9 +204,11 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private replaceInnerHeaderComponent(params: IHeaderParams): void {
-        const oldGui = this.innerHeaderComponent!.getGui();
-        _removeFromParent(oldGui);
-        this.innerHeaderComponent = this.destroyBean(this.innerHeaderComponent);
+        const curr = this.innerHeaderComponent;
+        if (curr) {
+            _removeFromParent(curr.getGui());
+            this.destroyBean(curr);
+        }
         this.workOutInnerHeaderComponent(params);
         if (!this.currentInnerHeaderComponent && this.eText) {
             // innerHeaderComponent removed — restore plain text, bypassing the
@@ -309,7 +311,6 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
         const { enableSorting, column } = this.params;
-        this.currentSort = enableSorting;
 
         // eSortIndicator will not be present when customers provided custom header
         // templates, in that case, we need to look for provided sort elements and
@@ -341,7 +342,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         // we set up the indicator prior to the check for whether this column is sortable, as it allows the indicator to
         // set up the multi sort indicator which can appear irrelevant of whether this column can itself be sorted.
         // this can occur in the case of a non-sortable group display column.
-        if (!this.currentSort) {
+        if (!enableSorting) {
             return;
         }
 
