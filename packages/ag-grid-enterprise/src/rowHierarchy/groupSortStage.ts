@@ -83,14 +83,20 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
                 newChildrenAfterSort = _reuseArrayIfEqual(prevSort, rowNode.childrenAfterAggFilter);
             }
 
+            // Capture the previous first child by value: when _reuseArrayIfEqual returns prevSort,
+            // newChildrenAfterSort and prevSort point to the same array, so a postSortRows in-place
+            // reorder below would otherwise hide the change.
+            const prevFirstChild = prevSort?.[0];
+
             rowNode.childrenAfterSort = newChildrenAfterSort;
 
-            // postSortRows may mutate the array, so capture the final first child and refresh
-            // child position metadata afterwards.
+            // postSortRows runs first so the array reflects the user's customisation; only then
+            // do we sync child position metadata + fire firstChild/lastChild/childIndex events,
+            // ensuring those flags and events always describe the actually-displayed order.
             postSortFunc?.({ nodes: newChildrenAfterSort });
             _updateRowNodeAfterSort(rowNode);
 
-            hasAnyFirstChildChanged ||= prevSort?.[0] !== newChildrenAfterSort[0];
+            hasAnyFirstChildChanged ||= prevFirstChild !== newChildrenAfterSort[0];
         };
 
         _forEachChangedGroupDepthFirst(rowModel.rootNode, true, changedPath, callback);

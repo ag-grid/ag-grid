@@ -212,11 +212,11 @@ describe('group order maintenance', () => {
         `);
     });
 
-    test('postSortRows reorder updates firstChild / lastChild / childIndex on each row', async () => {
-        // Child position metadata must reflect the order produced by postSortRows, not the order
-        // of the array as it was passed in. If _updateRowNodeAfterSort runs before postSortRows,
-        // these flags go stale and downstream paths (e.g. groupHideOpenParents refresh) read
-        // the wrong node as the first/last child.
+    test('firstChild / lastChild / childIndex flags reflect the order produced by postSortRows', async () => {
+        // The deprecated firstChild/lastChild/childIndex flags must describe the actually-displayed
+        // order. _updateRowNodeAfterSort therefore has to run AFTER postSortRows, otherwise it
+        // syncs flags + fires firstChildChanged/lastChildChanged/childIndexChanged events for the
+        // pre-mutation order and then the array is silently reordered, leaving the flags stale.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },
@@ -245,16 +245,57 @@ describe('group order maintenance', () => {
             expect(node.firstChild).toBe(idx === 0);
             expect(node.lastChild).toBe(idx === groupNodes.length - 1);
         });
+    });
 
-        await new GridRows(api, 'postSort: reversed order').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
-            │ └── LEAF id:3 country:"Tesla" athlete:"T"
-            ├─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
-            │ └── LEAF id:2 country:"BMW" athlete:"B"
-            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
-            · └── LEAF id:1 country:"Audi" athlete:"A"
-        `);
+    test('postSortRows reorder survives a sort refresh on the reused-array path', async () => {
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'A' },
+            { id: '2', country: 'BMW', athlete: 'B' },
+            { id: '3', country: 'Tesla', athlete: 'T' },
+        ];
+
+        let promoteKey: string | null = null;
+        const api = gridsManager.createGrid('grid-postsort-reuse', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+            postSortRows: (params) => {
+                if (!promoteKey) return;
+                const idx = params.nodes.findIndex((n) => n.key === promoteKey);
+                if (idx > 0) {
+                    const [promoted] = params.nodes.splice(idx, 1);
+                    params.nodes.unshift(promoted);
+                }
+            },
+        });
+
+        const topLevelKeys = () => {
+            const root = api.getRowNode('ROOT_NODE_ID');
+            return (root?.childrenAfterSort ?? []).map((n) => n.key);
+        };
+
+        expect(topLevelKeys()).toEqual(['Audi', 'BMW', 'Tesla']);
+
+        // Force the sort stage to re-run with structurally identical childrenAfterAggFilter so
+        // _reuseArrayIfEqual returns the previous reference. postSortRows then mutates that array.
+        promoteKey = 'Tesla';
+        api.refreshClientSideRowModel('sort');
+
+        expect(topLevelKeys()).toEqual(['Tesla', 'Audi', 'BMW']);
+
+        // Run another refresh on the now-reordered array — postSortRows still applies on top.
+        api.refreshClientSideRowModel('sort');
+        expect(topLevelKeys()).toEqual(['Tesla', 'Audi', 'BMW']);
+
+        // Switching the promoted key takes effect on the next refresh — the new ordering is
+        // produced from the structural baseline ([Audi, BMW, Tesla]) and then BMW is unshifted.
+        promoteKey = 'BMW';
+        api.refreshClientSideRowModel('sort');
+        expect(topLevelKeys()).toEqual(['BMW', 'Audi', 'Tesla']);
     });
 
     test('pivot mode + groupMaintainOrder: filter cycle preserves group order', async () => {
