@@ -34,6 +34,7 @@ import {
     SideBarModule,
     SparklinesModule,
     StatusBarModule,
+    ToolbarModule,
 } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -83,6 +84,7 @@ const modules = [
     StatusBarModule,
     PivotModule,
     RowNumbersModule,
+    ToolbarModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
     SparklinesModule.with(AgChartsEnterpriseModule),
 ];
@@ -116,7 +118,14 @@ const staticGridOptions: GridOptions = {
         return 0;
     },
     enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
-    pivotPanelShow: 'always',
+    toolbar: {
+        alignment: 'right',
+        items: [
+            { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'left' },
+            { toolbarItem: 'agPivotPanelToolbarItem', alignment: 'left' },
+            'agQuickFilterToolbarItem',
+        ],
+    },
 
     enableCharts: true,
     undoRedoCellEditing: true,
@@ -434,7 +443,6 @@ const ExampleInner = ({
                                 sideBar={sideBar}
                                 columnTypes={columnTypes}
                                 dataTypeDefinitions={dataTypeDefinitions}
-                                rowGroupPanelShow={isSmall ? undefined : 'always'}
                                 defaultCsvExportParams={defaultExportParams as CsvExportParams}
                                 defaultExcelExportParams={defaultExportParams as ExcelExportParams}
                                 onGridReady={onGridReady}
