@@ -110,11 +110,8 @@ describe('group order maintenance', () => {
     });
 
     test('group order is stable across rowData reorder (immutable mode, getRowId)', async () => {
-        // Reviewer concern: with groupMaintainOrder=true, returning childrenAfterAggFilter as-is
-        // could "silently reshuffle groups" if upstream regrouping reorders cAG. Verifies that
-        // group-level cAG is in fact stable across a setRowData reorder — sortGroupChildren in
-        // the grouping stage sorts filler nodes by __objectId (creation order), so existing groups
-        // keep their relative order even when the new rowData is in a different sequence.
+        // Existing groups keep their creation-order positions when rowData is reapplied in a
+        // different sequence; only new keys would land at the end.
         let rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },
@@ -149,7 +146,6 @@ describe('group order maintenance', () => {
         ];
         api.setGridOption('rowData', rowData);
 
-        // Group order remains [Audi, BMW, Tesla] (creation order via __objectId), not [Tesla, BMW, Audi].
         await new GridRows(api, 'reorder: groups stay in creation order').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
@@ -162,10 +158,8 @@ describe('group order maintenance', () => {
     });
 
     test('postSortRows + groupMaintainOrder: customisation reapplies through filter cycles', async () => {
-        // Reviewer concern: returning childrenAfterAggFilter as the input to postSortRows could
-        // erase a previous customisation applied via postSortRows. In practice it doesn't, because
-        // postSortRows runs on every refresh and reapplies its logic to the new input. This test
-        // locks that in: a callback that "moves Tesla to top" survives a filter cycle.
+        // A postSortRows callback that pins one group to the top must keep doing so after any
+        // filter cycle.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },
@@ -218,11 +212,53 @@ describe('group order maintenance', () => {
         `);
     });
 
+    test('postSortRows reorder updates firstChild / lastChild / childIndex on each row', async () => {
+        // Child position metadata must reflect the order produced by postSortRows, not the order
+        // of the array as it was passed in. If _updateRowNodeAfterSort runs before postSortRows,
+        // these flags go stale and downstream paths (e.g. groupHideOpenParents refresh) read
+        // the wrong node as the first/last child.
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'A' },
+            { id: '2', country: 'BMW', athlete: 'B' },
+            { id: '3', country: 'Tesla', athlete: 'T' },
+        ];
+
+        const api = gridsManager.createGrid('grid-postsort-flags', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+            postSortRows: (params) => {
+                // Reverse the array — every node's first/last/index changes.
+                params.nodes.reverse();
+            },
+        });
+
+        const groupKeys = ['Tesla', 'BMW', 'Audi'];
+        const groupNodes = groupKeys.map((key) => api.getRowNode(`row-group-country-${key}`)!);
+
+        groupNodes.forEach((node, idx) => {
+            expect(node.childIndex).toBe(idx);
+            expect(node.firstChild).toBe(idx === 0);
+            expect(node.lastChild).toBe(idx === groupNodes.length - 1);
+        });
+
+        await new GridRows(api, 'postSort: reversed order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            │ └── LEAF id:3 country:"Tesla" athlete:"T"
+            ├─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            │ └── LEAF id:2 country:"BMW" athlete:"B"
+            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            · └── LEAF id:1 country:"Audi" athlete:"A"
+        `);
+    });
+
     test('pivot mode + groupMaintainOrder: filter cycle preserves group order', async () => {
-        // Reviewer concern: pivot mode may interact differently with the new no-sort fallback.
-        // It does not. In pivot mode, country groups are leaf groups, so the dispatcher routes
-        // them via skipSortingPivotLeafs (which already used aggFilter as the input pre-PR);
-        // _keepOrSlice returns the same content, just with the zero-allocation fast path added.
+        // Group order survives a filter cycle when pivot mode is on.
         const rowData = [
             { id: '1', country: 'Audi', year: 2020, sales: 10 },
             { id: '2', country: 'BMW', year: 2020, sales: 20 },
@@ -461,8 +497,8 @@ describe('group order maintenance', () => {
     });
 
     test('clearing a filter restores the original group order', async () => {
-        // Regression: with a non-first group surviving a filter, clearing the filter used to
-        // leave that group at the end instead of in its original slot.
+        // After a filter narrows the data to a single non-first group, clearing the filter must
+        // restore every group to its original slot, not move the surviving group to the end.
         const rowData = [
             { id: '1', country: 'Ireland', athlete: 'I1' },
             { id: '2', country: 'Italy', athlete: 'T1' },
@@ -621,8 +657,7 @@ describe('group order maintenance', () => {
             · └── LEAF id:1 country:"Tesla" athlete:"Tim"
         `);
 
-        // The grouping stage re-runs the comparator on each transaction, so Acura lands at the
-        // alphabetical start, not at the end of insertion order.
+        // A transaction-added group is placed at its comparator position, not appended at the end.
         applyTransactionChecked(api, { add: [{ id: '4', country: 'Acura', athlete: 'Alex' }] });
         await new GridRows(api, 'comparator: add Acura via transaction — sorted alphabetically').check(`
             ROOT id:ROOT_NODE_ID

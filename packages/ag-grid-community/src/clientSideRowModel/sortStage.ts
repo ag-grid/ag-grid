@@ -74,12 +74,13 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
         }
 
         rootNode.childrenAfterSort = newChildrenAfterSort;
-        updateRowNodeAfterSort(rootNode);
 
+        // postSortRows may mutate the array, so refresh child position metadata afterwards.
         const postSortFunc = this.gos.getCallback('postSortRows');
         if (postSortFunc) {
-            const params: WithoutGridCommon<PostSortRowsParams> = { nodes: rootNode.childrenAfterSort };
+            const params: WithoutGridCommon<PostSortRowsParams> = { nodes: newChildrenAfterSort };
             postSortFunc(params);
         }
+        updateRowNodeAfterSort(rootNode);
     }
 }
