@@ -10,6 +10,9 @@ test.agExample(import.meta, () => {
     test.eachFramework(
         'Tab from input above focuses first header by default (no prior focus)',
         async ({ page, agIdFor }) => {
+            // Wait for grid data to load so the headers are tab-stops
+            await expect(agIdFor.cell('0', 'athlete')).toBeVisible();
+
             const inputAbove = page.locator('input').first();
             await inputAbove.click();
             await expect(inputAbove).toBeFocused();

@@ -7,6 +7,9 @@ test.agExample(import.meta, () => {
     // From docs: tabbing into the grid focuses the first column header (rowNum).
 
     test.eachFramework('Tab from input above grid focuses first column header', async ({ page, agIdFor }) => {
+        // Wait for grid data to load so the headers are tab-stops
+        await expect(agIdFor.cell('0', 'athlete')).toBeVisible();
+
         const inputAbove = page.locator('input').first();
         await inputAbove.click();
         await expect(inputAbove).toBeFocused();
@@ -108,7 +111,10 @@ test.agExample(import.meta, () => {
         await expect(page.locator('[row-index="0"] [col-id="athlete"]')).toHaveClass(/ag-cell-focus/);
     });
 
-    test.eachFramework('Shift+Tab from input below grid focuses last cell', async ({ page }) => {
+    test.eachFramework('Shift+Tab from input below grid focuses last cell', async ({ page, agIdFor }) => {
+        // Wait for grid data to load so a cell exists to receive focus
+        await expect(agIdFor.cell('0', 'athlete')).toBeVisible();
+
         const inputBelow = page.locator('input').last();
         await inputBelow.click();
         await expect(inputBelow).toBeFocused();

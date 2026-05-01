@@ -7,6 +7,9 @@ test.agExample(import.meta, () => {
     // HTML has "Input Above" and "Input Below" surrounding the grid.
 
     test.eachFramework('Tab from input above focuses first column header', async ({ page, agIdFor }) => {
+        // Wait for grid data to load so the headers are tab-stops
+        await expect(agIdFor.cell('0', 'athlete')).toBeVisible();
+
         const inputAbove = page.locator('input').first();
         await inputAbove.click();
         await expect(inputAbove).toBeFocused();
@@ -86,7 +89,12 @@ test.agExample(import.meta, () => {
         await expect(targetCell).toHaveClass(/ag-cell-focus/);
     });
 
-    test.eachFramework('Tab from pagination exits grid to next external element', async ({ page }) => {
+    test.eachFramework('Tab from pagination exits grid to next external element', async ({ page, agIdFor }) => {
+        // Wait for grid data to load so the pagination toolbar has its enabled buttons.
+        // Without this, the test races the async data fetch — when the grid is still empty,
+        // all pagination buttons are disabled and Shift+Tab from inputBelow skips past the toolbar.
+        await expect(agIdFor.cell('0', 'athlete')).toBeVisible();
+
         // Land on the last focusable element of the pagination toolbar.
         // Shift+Tab from inputBelow lands on the last button before inputBelow in DOM order
         // (pressing Tab once from any earlier pagination element only moves focus within the toolbar).
