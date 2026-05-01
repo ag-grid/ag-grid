@@ -22,10 +22,10 @@ import {
     _addGridCommonParams,
     _clearElement,
     _createElement,
+    _error,
     _findFocusableElements,
     _getActiveDomElement,
     _removeFromParent,
-    _error,
 } from 'ag-grid-community';
 
 import agToolbarCSS from './agToolbar.css';
