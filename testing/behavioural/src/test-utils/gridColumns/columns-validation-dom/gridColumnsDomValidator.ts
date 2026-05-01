@@ -571,28 +571,6 @@ export class GridColumnsDomValidator {
 }
 
 /**
- * Effective displayed sort indicator for a column. Mirrors `SortService.getDisplaySortForColumn`
- * using public API only:
- * - If the column has its own sort, that wins.
- * - Otherwise, for auto-display columns (`colDef.showRowGroup` set), the indicator mirrors the
- *   linked source rowGroup column's sort (single linked source) or returns `'mixed'` when linked
- *   sources disagree (multi-source display column with diverging sorts).
- * - When sort coupling is disabled (custom `autoGroupColumnDef.comparator` or `treeData`),
- *   the auto-display column's indicator does NOT track linked sources — it shows only its own
- *   sort, so `null` here means no displayed sort. This mirrors `_isColumnsSortingCoupledToGroup`.
- * - When the auto-display column has its own data (`field` or `valueGetter`) it participates in
- *   the equality check alongside linked sources — an own-null vs linked-asc combination renders
- *   as `'mixed'`, matching `getDisplaySortForColumn`'s `columnHasUniqueData` branch.
- *
- * Returns `null` when no sort is displayed.
- *
- * NOTE: this duplication of `SortService.getDisplaySortForColumn` / `_isColumnsSortingCoupledToGroup`
- * logic is INTENTIONAL. The validator is a black-box check on the rendered DOM — it must compute
- * the "what should be displayed" answer independently from the production code, otherwise both the
- * validator and the implementation would silently agree on the same bug. Keep this in sync with
- * the production helpers when their displayed-sort rules change.
- */
-/**
  * Grid-wide context for `getDisplayedSort`, computed once per validation pass:
  * - `rowGroupCols`: the current rowGroup columns, or `null` when the SharedRowGrouping module is
  *   not registered (e.g. tree-data-only tests). `getRowGroupColumns` is part of that module.
@@ -616,6 +594,28 @@ function buildDisplayedSortContext(api: GridApi): DisplayedSortContext {
     return { rowGroupCols, isSortingCoupled };
 }
 
+/**
+ * Effective displayed sort indicator for a column. Mirrors `SortService.getDisplaySortForColumn`
+ * using public API only:
+ * - If the column has its own sort, that wins.
+ * - Otherwise, for auto-display columns (`colDef.showRowGroup` set), the indicator mirrors the
+ *   linked source rowGroup column's sort (single linked source) or returns `'mixed'` when linked
+ *   sources disagree (multi-source display column with diverging sorts).
+ * - When sort coupling is disabled (custom `autoGroupColumnDef.comparator` or `treeData`),
+ *   the auto-display column's indicator does NOT track linked sources — it shows only its own
+ *   sort, so `null` here means no displayed sort. This mirrors `_isColumnsSortingCoupledToGroup`.
+ * - When the auto-display column has its own data (`field` or `valueGetter`) it participates in
+ *   the equality check alongside linked sources — an own-null vs linked-asc combination renders
+ *   as `'mixed'`, matching `getDisplaySortForColumn`'s `columnHasUniqueData` branch.
+ *
+ * Returns `null` when no sort is displayed.
+ *
+ * NOTE: this duplication of `SortService.getDisplaySortForColumn` / `_isColumnsSortingCoupledToGroup`
+ * logic is INTENTIONAL. The validator is a black-box check on the rendered DOM — it must compute
+ * the "what should be displayed" answer independently from the production code, otherwise both the
+ * validator and the implementation would silently agree on the same bug. Keep this in sync with
+ * the production helpers when their displayed-sort rules change.
+ */
 function getDisplayedSort(col: Column, ctx: DisplayedSortContext): SortDirection | 'mixed' | null {
     const ownSort = col.getSort() ?? null;
     if (ownSort) {

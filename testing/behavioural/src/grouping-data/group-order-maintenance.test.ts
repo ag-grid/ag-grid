@@ -1912,4 +1912,95 @@ describe('group order maintenance', () => {
             · └── LEAF id:5 country:"Spain" athlete:"Aldo"
         `);
     });
+
+    // 6-row leaf group used by the deltaSort tests below. ≥5 rows is required to exercise the
+    // _doDeltaSort merge path (it falls back to full sort for unsortedRowsLen ≤ MIN_DELTA_SORT_ROWS=4).
+    const ITALY_SIX_ROWS = [
+        { id: '1', country: 'Italy', athlete: 'Mark' },
+        { id: '2', country: 'Italy', athlete: 'Anna' },
+        { id: '3', country: 'Italy', athlete: 'Carl' },
+        { id: '4', country: 'Italy', athlete: 'Bob' },
+        { id: '5', country: 'Italy', athlete: 'Zed' },
+        { id: '6', country: 'Italy', athlete: 'David' },
+    ] as const;
+
+    const ITALY_SIX_ROWS_ASC = `
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:2 country:"Italy" athlete:"Anna"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · ├── LEAF id:1 country:"Italy" athlete:"Mark"
+            · └── LEAF id:5 country:"Italy" athlete:"Zed"
+        `;
+
+    const createDeltaSortItalyGrid = (gridName: string) =>
+        gridsManager.createGrid(gridName, {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            deltaSort: true,
+            rowData: ITALY_SIX_ROWS.map((r) => ({ ...r })),
+            getRowId: (p: any) => p.data.id,
+        });
+
+    test('deltaSort + filter cycle on a 6-row leaf group: re-entered rows are correctly placed', async () => {
+        const api = createDeltaSortItalyGrid('grid-delta-large-leaf');
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+        await new GridRows(api, 'delta-large: initial sorted').check(ITALY_SIX_ROWS_ASC);
+
+        // Filter to 'r' — matches Carl + Mark only (2 rows → full-sort fallback path).
+        api.setGridOption('quickFilterText', 'r');
+        await new GridRows(api, 'delta-large: filter to 2 rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · └── LEAF id:1 country:"Italy" athlete:"Mark"
+        `);
+
+        // Clear filter — re-entered rows are NOT in changedRowNodes; they must still land in
+        // the correct sorted positions on the merge path.
+        api.setGridOption('quickFilterText', undefined);
+        await new GridRows(api, 'delta-large: clear filter — all 6 rows correctly sorted').check(ITALY_SIX_ROWS_ASC);
+    });
+
+    test('deltaSort: changing sort direction triggers full sort, then transactions use the fresh baseline', async () => {
+        // Sort-option changes refresh WITHOUT a transaction → full-sort path rebuilds the
+        // baseline under the new options. The next transaction then engages delta sort with a
+        // baseline that matches the current sortOptionsForLevel.
+        const api = createDeltaSortItalyGrid('grid-delta-direction-flip');
+
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+        await new GridRows(api, 'delta-direction: initial asc').check(ITALY_SIX_ROWS_ASC);
+
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'desc' }] });
+        await new GridRows(api, 'delta-direction: flipped to desc').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" athlete:"Zed"
+            · ├── LEAF id:1 country:"Italy" athlete:"Mark"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · └── LEAF id:2 country:"Italy" athlete:"Anna"
+        `);
+
+        // Add a row — delta sort engages with the desc baseline. Eric must land between Mark
+        // and David in desc order (after Mark, before David).
+        applyTransactionChecked(api, { add: [{ id: '7', country: 'Italy', athlete: 'Eric' }] });
+        await new GridRows(api, 'delta-direction: add Eric — placed in desc slot').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" athlete:"Zed"
+            · ├── LEAF id:1 country:"Italy" athlete:"Mark"
+            · ├── LEAF id:7 country:"Italy" athlete:"Eric"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · └── LEAF id:2 country:"Italy" athlete:"Anna"
+        `);
+    });
 });

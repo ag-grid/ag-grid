@@ -48,16 +48,17 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             gos.get('deltaSort');
 
         // levelSortOptions: per-level subset of sortOptions; `null` means "use full sortOptions
-        // for every level". See buildLevelSortOptions for targeting rules and the no-sort branch
-        // below for the structural-baseline / reuse-array note. Tree data is excluded — it has no
-        // rowGroupCols (so no per-level isolation could apply) and the JSDoc on
-        // `groupMaintainOrder` documents "no effect on tree data".
+        // for every level". Tree data is excluded — `groupMaintainOrder` has no effect on tree
+        // data per its JSDoc.
         const groupColsByLevel = rowGroupColsSvc?.columns;
         const numLevels = groupColsByLevel?.length ?? 0;
-        const levelSortOptions: SortOption[][] | null =
+        const levelSortOptions: (SortOption[] | undefined)[] | null =
             hasSortOptions && numLevels > 0 && !groupStage?.treeData && gos.get('groupMaintainOrder')
                 ? buildLevelSortOptions(sortOptions, groupColsByLevel!)
                 : null;
+        // Fallback for nodes when per-level isolation is off — undefined when there's nothing
+        // to sort either, so the per-node check collapses to a single truthy guard.
+        const fallbackSortOptions = !levelSortOptions && hasSortOptions ? sortOptions : undefined;
 
         const isPivotMode = colModel.pivotMode;
         const postSortFunc = gos.getCallback('postSortRows');
@@ -65,21 +66,24 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         let hasAnyFirstChildChanged = false;
 
         function sortGroupChildren(rowNode: RowNode): void {
-            // Pivot leaf children aren't part of the displayed pivoted output.
-            const skipPivotLeafs = isPivotMode && rowNode.leafGroup;
-            // Per-level isolation: each level sorts with only the options targeting it. The
-            // `level + 1` indexing maps root (level=-1) → bucket 0 (top group level), …,
-            // leaf-group node (level=numLevels-1) → bucket numLevels (leaf-row bucket). The
-            // `?? sortOptions` fallback is defensive: if a future hierarchy node lands outside
-            // the expected range, fall back to the full sort options rather than crashing on a
-            // `.length` access.
-            const sortOptionsForLevel = levelSortOptions
-                ? (levelSortOptions[rowNode.level + 1] ?? sortOptions)
-                : sortOptions;
+            // Index map: root (level=-1) -> bucket 0, ..., leaf-group (level=numLevels-1) -> bucket
+            // numLevels (leaf-row bucket).
+            const isPivotLeaf = isPivotMode && rowNode.leafGroup;
+            let sortOptionsForLevel: SortOption[] | undefined;
+            if (!isPivotLeaf) {
+                if (levelSortOptions) {
+                    const level = rowNode.level;
+                    if (level < numLevels) {
+                        sortOptionsForLevel = levelSortOptions[level + 1];
+                    }
+                } else {
+                    sortOptionsForLevel = fallbackSortOptions;
+                }
+            }
 
             const prevSort = rowNode.childrenAfterSort;
             let newChildrenAfterSort: RowNode[];
-            if (sortOptionsForLevel.length > 0 && !skipPivotLeafs) {
+            if (sortOptionsForLevel) {
                 if (useDeltaSort && changedRowNodes) {
                     newChildrenAfterSort = _doDeltaSort(
                         rowNodeSorter!,
@@ -151,14 +155,17 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
  * is a no-op under the default comparator but can reorder them under a custom one, which violates
  * per-level isolation.
  */
-const buildLevelSortOptions = (sortOptions: SortOption[], groupColsByLevel: AgColumn[]): SortOption[][] => {
+const buildLevelSortOptions = (
+    sortOptions: SortOption[],
+    groupColsByLevel: AgColumn[]
+): (SortOption[] | undefined)[] => {
     const sortLen = sortOptions.length;
     const numLevels = groupColsByLevel.length;
     const leafIndex = numLevels;
 
-    // Single map keyed by both AgColumn ref AND colId string. AgColumn objects and strings never
-    // collide (different types), so one Map keeps allocations / lookups minimal. `showRowGroup`
-    // is documented to accept the source rowGroup column's colId, which is what we look up here.
+    // Single map keyed by both AgColumn ref AND colId string. They never collide (different
+    // types), so one Map keeps allocations / lookups minimal. `showRowGroup` accepts the source
+    // rowGroup column's colId.
     const levelByKey = new Map<AgColumn | string, number>();
     for (let j = 0; j < numLevels; ++j) {
         const groupCol = groupColsByLevel[j];
@@ -166,10 +173,12 @@ const buildLevelSortOptions = (sortOptions: SortOption[], groupColsByLevel: AgCo
         levelByKey.set(groupCol.colId, j);
     }
 
-    const result: SortOption[][] = new Array(numLevels + 1);
-    for (let j = 0; j <= numLevels; ++j) {
-        result[j] = [];
-    }
+    // Lazy buckets: empty levels stay `undefined` so the caller's truthy check is sufficient
+    // (no `.length` probe in the hot loop). Most levels are empty in typical grids.
+    const result: (SortOption[] | undefined)[] = new Array(numLevels + 1);
+    const push = (idx: number, opt: SortOption): void => {
+        (result[idx] ??= []).push(opt);
+    };
 
     for (let i = 0; i < sortLen; ++i) {
         const sortOption = sortOptions[i];
@@ -181,21 +190,17 @@ const buildLevelSortOptions = (sortOptions: SortOption[], groupColsByLevel: AgCo
             // singleColumn shared display: cascade to every group level. With own data ALSO route
             // to the leaf bucket so leaf rows are ordered by the column's data.
             for (let j = 0; j < numLevels; ++j) {
-                result[j].push(sortOption);
+                push(j, sortOption);
             }
             if (colDef.field != null || colDef.valueGetter != null) {
-                result[leafIndex].push(sortOption);
+                push(leafIndex, sortOption);
             }
             continue;
         }
 
         const level =
             levelByKey.get(column) ?? (typeof showRowGroup === 'string' ? levelByKey.get(showRowGroup) : undefined);
-        if (level !== undefined) {
-            result[level].push(sortOption);
-        } else {
-            result[leafIndex].push(sortOption);
-        }
+        push(level ?? leafIndex, sortOption);
     }
 
     return result;
