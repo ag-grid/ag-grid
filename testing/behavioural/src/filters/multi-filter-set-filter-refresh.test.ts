@@ -56,9 +56,22 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
             gridDiv,
             agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'name', index: 0 })
         );
+
+        // Register a one-shot filterChanged listener BEFORE dispatching so we deterministically
+        // wait for the (debounced) text filter to apply, instead of polling getDisplayedRowCount.
+        const filterApplied = new Promise<void>((resolve) => {
+            const handler = () => {
+                api.removeEventListener('filterChanged', handler);
+                resolve();
+            };
+            api.addEventListener('filterChanged', handler);
+        });
+
         input.value = text;
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
+
+        await filterApplied;
     }
 
     /**
@@ -80,14 +93,12 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
     test('Scenario A: no popup opened — reopening popup shows filtered Set Filter list', async () => {
         const api = await createGrid();
 
-        // findByTestId inside typeInFloatingFilter retries until the input is mounted. The
-        // outer waitFor retries the dispatch on the freshest input each iteration, so we
-        // don't depend on a fixed mount-delay sleep before typing.
-        await waitFor(async () => {
-            await typeInFloatingFilter(api, 'michael');
-            expect(api.getDisplayedRowCount()).toBe(1);
-        });
+        // typeInFloatingFilter awaits filterChanged so the post-debounce row state is deterministic.
+        await typeInFloatingFilter(api, 'michael');
+        expect(api.getDisplayedRowCount()).toBe(1);
 
+        // The Set Filter's display value model refreshes asynchronously after filterChanged; the
+        // popup show + child filter resolution path also has its own microtask hops, so retry here.
         await waitFor(async () => {
             expect(await openPopupAndGetDisplayedSetFilterKeys(api)).toEqual(['michael']);
         });
@@ -99,10 +110,8 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
         api.showColumnFilter('name');
         api.hideColumnFilter();
 
-        await waitFor(async () => {
-            await typeInFloatingFilter(api, 'michael');
-            expect(api.getDisplayedRowCount()).toBe(1);
-        });
+        await typeInFloatingFilter(api, 'michael');
+        expect(api.getDisplayedRowCount()).toBe(1);
 
         await waitFor(async () => {
             expect(await openPopupAndGetDisplayedSetFilterKeys(api)).toEqual(['michael']);

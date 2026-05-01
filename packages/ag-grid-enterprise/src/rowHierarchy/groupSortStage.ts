@@ -47,16 +47,18 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             // rolling out to everyone.
             gos.get('deltaSort');
 
+        const groupColsByLevel = rowGroupColsSvc?.columns;
         // levelSortOptions[i] = sort options targeting group level i. null = "every level uses the
         // full sortOptions array" — covers maintain-order off and the singleColumn shared-display
         // case (one display column represents every level). Per-level filtering keeps a sort on
         // level L from tie-breaking with options targeting other levels (e.g. [country asc, year
         // desc] must not let `year` reorder country siblings whose comparator returns 0).
-        // Tree data is excluded — treeData and row grouping cannot currently coexist.
-        const groupColsByLevel = rowGroupColsSvc?.columns;
-        const numLevels = groupColsByLevel?.length ?? 0;
+        // Tree data cannot have `groupMaintainOrder` and has no rowGroupCols (no groupColsByLevel), no per-level isolation.
+        // The explicit treeData guard is defensive — it ensures we keep falling through.
+        // The `_reuseArrayIfEqual` reuse on the no-sort branch (below) is a memory-only optimisation
+        // to avoid creating a new array when no changes.
         const levelSortOptions: SortOption[][] | null =
-            numLevels > 0 && hasSortOptions && !groupStage?.treeData && gos.get('groupMaintainOrder')
+            hasSortOptions && groupColsByLevel?.length && !groupStage?.treeData && gos.get('groupMaintainOrder')
                 ? buildLevelSortOptions(sortOptions, groupColsByLevel!)
                 : null;
 
@@ -69,7 +71,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             const level = rowNode.level;
             // Pivot leaf children aren't part of the displayed pivoted output.
             const skipPivotLeafs = isPivotMode && rowNode.leafGroup;
-            // Per-level isolation: each level (including the leaf-row bucket at index numLevels)
+            // Per-level isolation: each level (including the leaf-row bucket)
             // sorts with only the options targeting it. Group-column sorts never reach data rows
             // (custom comparators on group cols can otherwise reorder rows that share the group
             // key); leaf-only sorts never reach group siblings (so a leaf sort can't tiebreak a
