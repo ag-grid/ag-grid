@@ -18,7 +18,7 @@ interface TrackedInstance {
     destroy(): void;
 }
 
-function makeTrackedInnerHeader(refreshBehaviour?: 'accept' | 'reject' | 'none'): TrackedClass {
+function makeTrackedInnerHeader(refreshBehaviour: 'accept' | 'reject' | 'none'): TrackedClass {
     class TrackedComp {
         static initCount = 0;
         static destroyCount = 0;

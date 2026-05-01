@@ -77,7 +77,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     public params: IHeaderParams;
 
-    private currentDisplayName: string;
+    private currentDisplayName: string | undefined;
     private currentFormulaActive: boolean | undefined;
     private currentShowMenu: boolean;
     private currentSuppressMenuHide: boolean;
@@ -99,7 +99,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             return false;
         }
 
-        if (this.innerHeaderComponent || params.innerHeaderComponent) {
+        if (this.innerHeaderComponent || params.innerHeaderComponent || this.isLoadingInnerComponent) {
             // Mimic the merging of params that happens during init of _getInnerHeaderCompDetails(userCompFactory, params, params);
             const mergedParams = { ...params };
             _mergeDeep(mergedParams, params.innerHeaderComponentParams);
@@ -179,15 +179,15 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private workOutInnerHeaderComponent(params: IHeaderParams): void {
         this.currentInnerHeaderComponent = params.innerHeaderComponent;
-        const userCompFactory = this.beans.userCompFactory;
-        const userCompDetails = _getInnerHeaderCompDetails(userCompFactory, params, params);
+        const generation = ++this.innerComponentGeneration;
+        const userCompDetails = _getInnerHeaderCompDetails(this.beans.userCompFactory, params, params);
 
         if (!userCompDetails) {
+            this.isLoadingInnerComponent = false;
             return;
         }
 
         this.isLoadingInnerComponent = true;
-        const generation = ++this.innerComponentGeneration;
 
         userCompDetails.newAgStackInstance().then((comp) => {
             this.isLoadingInnerComponent = false;
@@ -208,15 +208,17 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private replaceInnerHeaderComponent(params: IHeaderParams): void {
         const curr = this.innerHeaderComponent;
+        this.innerHeaderComponent = undefined;
         if (curr) {
             _removeFromParent(curr.getGui());
             this.destroyBean(curr);
         }
         this.workOutInnerHeaderComponent(params);
-        if (!this.currentInnerHeaderComponent && this.eText) {
+        if (!this.currentInnerHeaderComponent) {
             // innerHeaderComponent removed — restore plain text, bypassing the
             // oldDisplayName === displayName early-exit in setDisplayName
-            this.eText.textContent = _toString(params.displayName);
+            this.currentDisplayName = undefined;
+            this.setDisplayName(params);
         }
     }
 
