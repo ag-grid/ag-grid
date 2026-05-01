@@ -1,22 +1,21 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
-    CsvExportModule,
     ModuleRegistry,
-    QuickFilterModule,
     TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ContextMenuModule, ExcelExportModule, ToolbarModule } from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule, NewFiltersToolPanelModule, SideBarModule, ToolbarModule } from 'ag-grid-enterprise';
+
+import { CustomPanelToggle } from './customToolbarItem_typescript';
 
 ModuleRegistry.registerModules([
     TextFilterModule,
     ClientSideRowModelModule,
-    ContextMenuModule,
-    CsvExportModule,
-    ExcelExportModule,
-    QuickFilterModule,
+    ColumnsToolPanelModule,
+    NewFiltersToolPanelModule,
+    SideBarModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -39,21 +38,39 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         filter: true,
     },
+    enableFilterHandlers: true,
+    sideBar: { toolPanels: ['columns', 'filters-new'] },
     toolbar: {
         items: [
-            'agQuickFilterToolbarItem',
             {
-                toolbarItem: 'agMenuToolbarItem',
-                label: 'Export',
-                icon: 'save',
-                alignment: 'right',
+                toolbarItem: CustomPanelToggle,
+                key: 'columnsPanel',
                 toolbarItemParams: {
-                    menuItems: ['csvExport', 'excelExport'],
+                    label: 'Columns',
+                    icon: 'columns',
+                    panelId: 'columns',
+                },
+            },
+            {
+                toolbarItem: CustomPanelToggle,
+                key: 'filtersPanel',
+                toolbarItemParams: {
+                    label: 'Filters',
+                    icon: 'filter',
+                    panelId: 'filters-new',
                 },
             },
         ],
     },
 };
+
+function toggleColumnsPanel() {
+    gridApi.getToolbarItemInstance<CustomPanelToggle>('columnsPanel')?.toggle();
+}
+
+function toggleFiltersPanel() {
+    gridApi.getToolbarItemInstance<CustomPanelToggle>('filtersPanel')?.toggle();
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

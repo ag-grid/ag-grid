@@ -1,49 +1,69 @@
 import type { IToolbarItemComp, IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
 
-export class CustomToolbarToggle implements IToolbarItemComp {
+const OPTIONS = [
+    { value: 'filters-new', label: 'Filters' },
+    { value: 'columns', label: 'Columns' },
+    { value: 'none', label: 'None' },
+] as const;
+
+export class ToolPanelRadio implements IToolbarItemComp {
     private params!: IToolbarItemParams;
-    eGui!: HTMLButtonElement;
-    buttonListener!: () => void;
-    panelListener!: (event: ToolPanelVisibleChangedEvent) => void;
+    private inputs: Record<string, HTMLInputElement> = {};
+    eGui!: HTMLElement;
+    private changeListener!: (event: Event) => void;
+    private panelListener!: (event: ToolPanelVisibleChangedEvent) => void;
 
     init(params: IToolbarItemParams) {
         this.params = params;
-        const { label, title, icon, panelId, onClick } = params.toolbarItemParams;
 
-        const tooltip = title ?? label ?? '';
+        this.eGui = document.createElement('div');
+        this.eGui.className = 'ag-toolbar-item';
+        this.eGui.setAttribute('role', 'radiogroup');
+        this.eGui.setAttribute('aria-label', 'Tool panel');
 
-        this.eGui = document.createElement('button');
-        this.eGui.type = 'button';
-        this.eGui.className = 'ag-toolbar-item ag-toolbar-button';
-        this.eGui.title = tooltip;
-        this.eGui.setAttribute('aria-label', tooltip);
+        const groupName = `tool-panel-${params.key}`;
+        for (const option of OPTIONS) {
+            const eLabel = document.createElement('label');
+            eLabel.style.marginRight = '8px';
 
-        const eIcon = document.createElement('span');
-        eIcon.className = `ag-icon ag-icon-${icon}`;
-        eIcon.setAttribute('aria-hidden', 'true');
-        this.eGui.appendChild(eIcon);
+            const eInput = document.createElement('input');
+            eInput.type = 'radio';
+            eInput.name = groupName;
+            eInput.value = option.value;
+            eInput.style.marginRight = '4px';
 
-        if (label) {
-            const eLabel = document.createElement('span');
-            eLabel.textContent = label;
+            eLabel.appendChild(eInput);
+            eLabel.appendChild(document.createTextNode(option.label));
             this.eGui.appendChild(eLabel);
+            this.inputs[option.value] = eInput;
         }
 
-        this.buttonListener = () => onClick(this.params.api);
-        this.eGui.addEventListener('click', this.buttonListener);
+        this.setSelected('none');
+
+        this.changeListener = (event: Event) => {
+            const value = (event.target as HTMLInputElement).value;
+            if (value === 'none') {
+                this.params.api.closeToolPanel();
+            } else {
+                this.params.api.openToolPanel(value);
+            }
+        };
+        this.eGui.addEventListener('change', this.changeListener);
 
         this.panelListener = ({ key, visible }: ToolPanelVisibleChangedEvent) => {
-            if (key === panelId) {
-                this.setActive(visible);
-            } else if (visible) {
-                this.setActive(false);
+            if (visible) {
+                this.setSelected(key);
+            } else if (this.inputs[key]?.checked) {
+                this.setSelected('none');
             }
         };
         params.api.addEventListener('toolPanelVisibleChanged', this.panelListener);
     }
 
-    private setActive(active: boolean) {
-        this.eGui.style.backgroundColor = active ? 'var(--ag-button-background-color)' : '';
+    private setSelected(value: string) {
+        for (const option of OPTIONS) {
+            this.inputs[option.value].checked = option.value === value;
+        }
     }
 
     getGui() {
@@ -51,7 +71,7 @@ export class CustomToolbarToggle implements IToolbarItemComp {
     }
 
     destroy() {
-        this.eGui.removeEventListener('click', this.buttonListener);
+        this.eGui.removeEventListener('change', this.changeListener);
         this.params.api.removeEventListener('toolPanelVisibleChanged', this.panelListener);
     }
 }

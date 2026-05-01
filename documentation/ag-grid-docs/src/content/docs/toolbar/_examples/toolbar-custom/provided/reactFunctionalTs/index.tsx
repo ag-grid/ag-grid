@@ -1,41 +1,14 @@
 import React, { StrictMode, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GridApi, Toolbar, ToolbarItemActionParams } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    ColumnApiModule,
-    ColumnAutoSizeModule,
-    CsvExportModule,
-    TextFilterModule,
-    ValidationModule,
-} from 'ag-grid-community';
-import {
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    ExcelExportModule,
-    NewFiltersToolPanelModule,
-    SideBarModule,
-    ToolbarModule,
-} from 'ag-grid-enterprise';
+import type { ColDef, Toolbar } from 'ag-grid-community';
+import { AllCommunityModule } from 'ag-grid-community';
+import { ColumnsToolPanelModule, NewFiltersToolPanelModule, SideBarModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import CustomToolbarToggle from './customToolbarItem';
+import ToolPanelRadio from './customToolbarItem';
 
-const modules = [
-    TextFilterModule,
-    ClientSideRowModelModule,
-    ColumnApiModule,
-    ColumnAutoSizeModule,
-    ColumnMenuModule,
-    ColumnsToolPanelModule,
-    CsvExportModule,
-    ExcelExportModule,
-    NewFiltersToolPanelModule,
-    SideBarModule,
-    ToolbarModule,
-    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+const modules = [AllCommunityModule, ColumnsToolPanelModule, NewFiltersToolPanelModule, SideBarModule, ToolbarModule];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -72,62 +45,7 @@ const GridExample = () => {
     const sideBar = useMemo(() => ({ toolPanels: ['columns', 'filters-new'] }), []);
     const toolbar = useMemo<Toolbar>(
         () => ({
-            alignment: 'right',
-            items: [
-                {
-                    key: 'columnChooser',
-                    alignment: 'left',
-                    label: 'Choose Columns',
-                    icon: 'columns',
-                    action: ({ api }: ToolbarItemActionParams) => api.showColumnChooser(),
-                },
-                {
-                    toolbarItem: CustomToolbarToggle,
-                    key: 'filtersPanel',
-                    alignment: 'left',
-                    toolbarItemParams: {
-                        label: 'Filters Panel',
-                        icon: 'filter',
-                        panelId: 'filters-new',
-                        onClick: (api: GridApi) =>
-                            api.getOpenedToolPanel() === 'filters-new'
-                                ? api.closeToolPanel()
-                                : api.openToolPanel('filters-new'),
-                    },
-                },
-                {
-                    toolbarItem: CustomToolbarToggle,
-                    key: 'columnsPanel',
-                    alignment: 'left',
-                    toolbarItemParams: {
-                        label: 'Columns Panel',
-                        icon: 'columns',
-                        panelId: 'columns',
-                        onClick: (api: GridApi) =>
-                            api.getOpenedToolPanel() === 'columns'
-                                ? api.closeToolPanel()
-                                : api.openToolPanel('columns'),
-                    },
-                },
-                {
-                    key: 'autoSizeAll',
-                    tooltip: 'Auto Size All',
-                    icon: 'maximize',
-                    action: ({ api }: ToolbarItemActionParams) => api.autoSizeAllColumns(),
-                },
-                {
-                    key: 'csvExport',
-                    tooltip: 'CSV Export',
-                    icon: 'csvExport',
-                    action: ({ api }: ToolbarItemActionParams) => api.exportDataAsCsv(),
-                },
-                {
-                    key: 'resetColumns',
-                    tooltip: 'Reset Columns',
-                    icon: 'minimize',
-                    action: ({ api }: ToolbarItemActionParams) => api.resetColumnState(),
-                },
-            ],
+            items: [{ toolbarItem: ToolPanelRadio, key: 'toolPanel' }],
         }),
         []
     );

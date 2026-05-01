@@ -2,35 +2,47 @@ import React, { useEffect, useState } from 'react';
 
 import type { IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
 
+const OPTIONS = [
+    { value: 'filters-new', label: 'Filters' },
+    { value: 'columns', label: 'Columns' },
+    { value: 'none', label: 'None' },
+] as const;
+
 export default (props: IToolbarItemParams) => {
-    const { api } = props;
-    const { label, title, icon, panelId, onClick } = props.toolbarItemParams;
-    const [active, setActive] = useState(false);
-    const tooltip = title ?? label ?? '';
+    const { api, key } = props;
+    const [opened, setOpened] = useState<string>('none');
 
     useEffect(() => {
-        const handler = ({ key, visible }: ToolPanelVisibleChangedEvent) => {
-            if (key === panelId) {
-                setActive(visible);
-            } else if (visible) {
-                setActive(false);
-            }
+        const handler = ({ key: panelKey, visible }: ToolPanelVisibleChangedEvent) => {
+            setOpened((prev) => (visible ? panelKey : prev === panelKey ? 'none' : prev));
         };
         api.addEventListener('toolPanelVisibleChanged', handler);
         return () => api.removeEventListener('toolPanelVisibleChanged', handler);
-    }, [api, panelId]);
+    }, [api]);
+
+    const onChange = (value: string) => {
+        if (value === 'none') {
+            api.closeToolPanel();
+        } else {
+            api.openToolPanel(value);
+        }
+    };
 
     return (
-        <button
-            className="ag-toolbar-item ag-toolbar-button"
-            type="button"
-            onClick={() => onClick(api)}
-            title={tooltip}
-            aria-label={tooltip}
-            style={active ? { backgroundColor: 'var(--ag-button-background-color)' } : undefined}
-        >
-            <span className={`ag-icon ag-icon-${icon}`} aria-hidden="true"></span>
-            {label && <span>{label}</span>}
-        </button>
+        <div className="ag-toolbar-item" role="radiogroup" aria-label="Tool panel">
+            {OPTIONS.map((option) => (
+                <label key={option.value} style={{ marginRight: 8 }}>
+                    <input
+                        type="radio"
+                        name={`tool-panel-${key}`}
+                        value={option.value}
+                        checked={opened === option.value}
+                        onChange={() => onChange(option.value)}
+                        style={{ marginRight: 4 }}
+                    />
+                    {option.label}
+                </label>
+            ))}
+        </div>
     );
 };
