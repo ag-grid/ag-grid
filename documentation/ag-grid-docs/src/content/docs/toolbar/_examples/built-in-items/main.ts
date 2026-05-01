@@ -1,8 +1,6 @@
-import type { GridApi, GridOptions, ToolbarItemActionParams } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
-    ColumnApiModule,
-    ColumnAutoSizeModule,
     CsvExportModule,
     ModuleRegistry,
     NumberFilterModule,
@@ -11,28 +9,16 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import {
-    ContextMenuModule,
-    ExcelExportModule,
-    FindModule,
-    RowGroupingModule,
-    RowGroupingPanelModule,
-    ToolbarModule,
-} from 'ag-grid-enterprise';
+import { ContextMenuModule, ExcelExportModule, ToolbarModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
-    ColumnApiModule,
-    ColumnAutoSizeModule,
     ContextMenuModule,
     CsvExportModule,
     ExcelExportModule,
     QuickFilterModule,
-    FindModule,
-    RowGroupingModule,
-    RowGroupingPanelModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -41,42 +27,22 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'athlete', minWidth: 200 },
-        { field: 'country', minWidth: 200, enableRowGroup: true },
-        { field: 'sport', minWidth: 200, enableRowGroup: true },
-        { field: 'year', filter: 'agNumberColumnFilter' },
+        { field: 'athlete' },
+        { field: 'country' },
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },
-        { field: 'total' },
     ],
     defaultColDef: {
-        flex: 1,
         minWidth: 100,
         filter: true,
     },
-    autoGroupColumnDef: { minWidth: 200 },
     toolbar: {
         alignment: 'right',
         items: [
-            { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'left' },
-            'agQuickFilterToolbarItem',
-            'separator',
-            {
-                key: 'autoSizeAll',
-                label: 'Auto Size All',
-                icon: 'maximize',
-                action: (params: ToolbarItemActionParams) => params.api.autoSizeAllColumns(),
-            },
-            {
-                key: 'resetColumns',
-                label: 'Reset Columns',
-                icon: 'minimize',
-                action: (params: ToolbarItemActionParams) => params.api.resetColumnState(),
-            },
+            { toolbarItem: 'agQuickFilterToolbarItem', alignment: 'left' },
             {
                 toolbarItem: 'agMenuToolbarItem',
-                label: 'Export',
                 icon: 'save',
                 toolbarItemParams: {
                     menuItems: ['csvExport', 'excelExport'],

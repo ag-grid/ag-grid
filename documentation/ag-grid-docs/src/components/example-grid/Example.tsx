@@ -12,6 +12,7 @@ import type {
     GridReadyEvent,
     SideBarDef,
     Theme,
+    Toolbar as ToolbarConfig,
 } from 'ag-grid-community';
 import { AllCommunityModule, themeAlpine, themeBalham, themeMaterial, themeQuartz } from 'ag-grid-community';
 import {
@@ -118,14 +119,6 @@ const staticGridOptions: GridOptions = {
         return 0;
     },
     enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
-    toolbar: {
-        alignment: 'right',
-        items: [
-            { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'left' },
-            { toolbarItem: 'agPivotPanelToolbarItem', alignment: 'left' },
-            'agQuickFilterToolbarItem',
-        ],
-    },
 
     enableCharts: true,
     undoRedoCellEditing: true,
@@ -217,6 +210,21 @@ const ExampleInner = ({
             position: 'right',
             defaultToolPanel: 'columns',
             hiddenByDefault: isSmall,
+        }),
+        [isSmall]
+    );
+    const toolbar = useMemo<ToolbarConfig>(
+        () => ({
+            alignment: 'right',
+            items: [
+                ...(isSmall
+                    ? []
+                    : [
+                          { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'left' as const },
+                          { toolbarItem: 'agPivotPanelToolbarItem', alignment: 'left' as const },
+                      ]),
+                'agQuickFilterToolbarItem',
+            ],
         }),
         [isSmall]
     );
@@ -441,6 +449,7 @@ const ExampleInner = ({
                                 loading={isLoading}
                                 defaultColDef={defaultColDef}
                                 sideBar={sideBar}
+                                toolbar={toolbar}
                                 columnTypes={columnTypes}
                                 dataTypeDefinitions={dataTypeDefinitions}
                                 defaultCsvExportParams={defaultExportParams as CsvExportParams}
