@@ -46,6 +46,8 @@ export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: rea
     if (!current) {
         return [];
     }
+    // Equality check is inlined for hot-path perf — used in sort stages which call this once per
+    // group node per refresh; `_areEqual`'s extra function call and guards add up.
     if (!prev || prev === current) {
         return current.slice();
     }
@@ -53,8 +55,6 @@ export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: rea
     if (prev.length !== len) {
         return current.slice();
     }
-    // Equality check is inlined for hot-path perf — used in sort stages which call this once per
-    // group node per refresh; `_areEqual`'s extra function call and guards add up.
     for (let i = 0; i < len; ++i) {
         if (prev[i] !== current[i]) {
             return current.slice();

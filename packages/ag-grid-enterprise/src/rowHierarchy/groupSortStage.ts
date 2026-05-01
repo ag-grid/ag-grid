@@ -185,22 +185,43 @@ const buildLevelSortOptions = (
         const column = sortOption.column as AgColumn;
         const colDef = column.colDef;
         const showRowGroup = colDef.showRowGroup;
+        const hasOwnData = colDef.field != null || colDef.valueGetter != null;
 
+        // Source rowGroup column matched by reference: per-level isolation excludes the leaf
+        // bucket (siblings inside one leaf group share the group key — sorting them by it is a
+        // no-op under the default comparator and can violate isolation under a custom one).
+        const sourceLevel = levelByKey.get(column);
+        if (sourceLevel !== undefined) {
+            push(sourceLevel, sortOption);
+            continue;
+        }
+
+        // Auto-display column. With own data (`field` / `valueGetter`), the sort ALSO reaches
+        // the leaf bucket so leaf rows are ordered by that data.
         if (showRowGroup === true) {
-            // singleColumn shared display: cascade to every group level. With own data ALSO route
-            // to the leaf bucket so leaf rows are ordered by the column's data.
+            // Shared singleColumn display — cascade to every group level.
             for (let j = 0; j < numLevels; ++j) {
                 push(j, sortOption);
             }
-            if (colDef.field != null || colDef.valueGetter != null) {
+            if (hasOwnData) {
                 push(leafIndex, sortOption);
             }
             continue;
         }
 
-        const level =
-            levelByKey.get(column) ?? (typeof showRowGroup === 'string' ? levelByKey.get(showRowGroup) : undefined);
-        push(level ?? leafIndex, sortOption);
+        if (typeof showRowGroup === 'string') {
+            const displayLevel = levelByKey.get(showRowGroup);
+            if (displayLevel !== undefined) {
+                push(displayLevel, sortOption);
+                if (hasOwnData) {
+                    push(leafIndex, sortOption);
+                }
+                continue;
+            }
+        }
+
+        // Regular leaf column (or showRowGroup pointing to an unknown colId).
+        push(leafIndex, sortOption);
     }
 
     return result;

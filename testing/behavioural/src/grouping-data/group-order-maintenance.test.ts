@@ -2003,4 +2003,84 @@ describe('group order maintenance', () => {
             · └── LEAF id:2 country:"Italy" athlete:"Anna"
         `);
     });
+
+    test('deltaSort + leaf group fully filtered out, mutated while hidden, then re-shown: leaves still correctly sorted', async () => {
+        // Filter out every row in the only leaf group, mutate a hidden row via transaction, then
+        // clear the filter. ≥5 rows after re-show ensures the merge path runs in _doDeltaSort.
+        const api = createDeltaSortItalyGrid('grid-delta-fully-filtered');
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+        await new GridRows(api, 'fully-filtered: initial sorted').check(ITALY_SIX_ROWS_ASC);
+
+        // Filter to a substring no row matches — Italy group becomes fully filtered out.
+        api.setGridOption('quickFilterText', 'NO-MATCH-TOKEN');
+        await new GridRows(api, 'fully-filtered: nothing visible').check(`
+            ROOT id:ROOT_NODE_ID
+        `);
+
+        // Mutate a hidden row's athlete: 'Anna' → 'Yvette' (was first asc, becomes near-last).
+        applyTransactionChecked(api, { update: [{ id: '2', country: 'Italy', athlete: 'Yvette' }] });
+
+        // Clear filter — all 6 rows reappear, sorted asc with Yvette in its new position.
+        api.setGridOption('quickFilterText', undefined);
+        await new GridRows(api, 'fully-filtered: re-shown — leaves sorted with mutation applied').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · ├── LEAF id:1 country:"Italy" athlete:"Mark"
+            · ├── LEAF id:2 country:"Italy" athlete:"Yvette"
+            · └── LEAF id:5 country:"Italy" athlete:"Zed"
+        `);
+    });
+
+    test('manual showRowGroup + own field: leaves reorder by the column own data', async () => {
+        // A consumer-defined display column with `showRowGroup: '<colId>'` AND its own `field`
+        // (or valueGetter). The sort option reaches BOTH the matched group level (so a custom
+        // comparator could reorder groups) AND the leaf bucket — without the leaf-bucket route,
+        // leaf rows would stay in structural order even though the column's displayed values
+        // differ per leaf row. With the default comparator and no own data on group rows, group
+        // order stays structural and leaves reorder by `label`.
+        const rowData = [
+            { id: '1', country: 'Italy', athlete: 'A1', label: 'M' },
+            { id: '2', country: 'Italy', athlete: 'A2', label: 'A' },
+            { id: '3', country: 'France', athlete: 'B1', label: 'Z' },
+        ];
+
+        const api = gridsManager.createGrid('grid-manual-showrowgroup-own-data', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                {
+                    colId: 'manualDisplay',
+                    headerName: 'Manual',
+                    showRowGroup: 'country',
+                    field: 'label',
+                    sortable: true,
+                    cellRenderer: 'agGroupCellRenderer',
+                    cellRendererParams: { suppressCount: true },
+                },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'manualDisplay', sort: 'asc' }] });
+
+        // Leaves inside Italy reorder by `label` asc: id:2 ('A') before id:1 ('M'). If the
+        // leaf-bucket route were missing, leaves would stay in data-insertion order [M, A].
+        // Country groups stay in structural order (no own data on group rows → default
+        // comparator ties).
+        await new GridRows(api, 'manual showRowGroup + own field: leaves reorder by label').check(`
+            ROOT id:ROOT_NODE_ID manualDisplay:null
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" manualDisplay:"Italy"
+            │ ├── LEAF id:2 country:"Italy" athlete:"A2" manualDisplay:"A"
+            │ └── LEAF id:1 country:"Italy" athlete:"A1" manualDisplay:"M"
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" manualDisplay:"France"
+            · └── LEAF id:3 country:"France" athlete:"B1" manualDisplay:"Z"
+        `);
+    });
 });
