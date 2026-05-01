@@ -212,7 +212,7 @@ describe('group order maintenance', () => {
         `);
     });
 
-    test('postSortRows reorder leaves childIndex / firstChild / lastChild stale (legacy AG-309 behaviour)', async () => {
+    test('grouped GroupSortStage: postSortRows reorder leaves childIndex / firstChild / lastChild stale (legacy AG-309 behaviour)', async () => {
         // Locks in the legacy AG-309 (Feb 2018) behaviour: _updateRowNodeAfterSort runs BEFORE
         // postSortRows, so a callback that mutates params.nodes leaves childIndex/firstChild/
         // lastChild based on the pre-mutation order. This is intentional — callbacks that read
@@ -290,12 +290,21 @@ describe('group order maintenance', () => {
     });
 
     test('reused-array postSortRows mutation does not corrupt the structural baseline', async () => {
-        // Locks in the invariant that `_reuseArrayIfEqual` returning `prevSort` (i.e.
-        // `rowNode.childrenAfterSort`) is safe even when `postSortRows` mutates that array
-        // in place: `prevSort` and `childrenAfterAggFilter` are separate property values
-        // backed by separate array instances, so a mutation to the former never bleeds into
-        // the latter. End-to-end proof: toggling the postSortRows reorder off restores the
-        // structural order — which is only possible if the structural baseline survived.
+        // Locks in TWO invariants:
+        //
+        // (1) Reference safety: when `_reuseArrayIfEqual` returns `prevSort` (i.e.
+        //     `rowNode.childrenAfterSort`), `prevSort` and `childrenAfterAggFilter` are still
+        //     separate array instances, so an in-place `postSortRows` mutation never bleeds
+        //     into the structural baseline.
+        //
+        // (2) Order recovery: when a stateful `postSortRows` reorders childrenAfterSort and
+        //     a later refresh disables that reorder, the next `_reuseArrayIfEqual` sees
+        //     prevSort (mutated order) ≠ childrenAfterAggFilter (structural) and falls back
+        //     to a fresh slice — `_areEqual` is element-wise *by position*, not by set
+        //     membership, so identical sets in different orders are correctly NOT reused.
+        //
+        // The third refresh (toggling reverse off) is the load-bearing assertion: structural
+        // order is only restorable if both invariants hold.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },

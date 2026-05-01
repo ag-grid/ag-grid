@@ -35,10 +35,15 @@ export function _areEqual<T>(
 }
 
 /**
- * Returns `prev` (same reference, shared with caller) when it has the same elements as `current`,
- * otherwise a fresh slice of `current` (or `[]` if `current` is null/undefined). Lets pipelines
- * keep a stable reference when nothing changed; mutations to the returned array on the reuse
- * branch also mutate `prev`.
+ * Returns `prev` (same reference, shared with caller) when it has the same elements as `current`
+ * **at the same positions** — i.e. the equality check is element-wise by index, not by set
+ * membership. Otherwise returns a fresh copy of `current` (or `[]` if `current` is null/undefined).
+ *
+ * Lets pipelines keep a stable reference when nothing changed; mutations to the returned array
+ * on the reuse branch also mutate `prev`. A reordered `prev` (same elements, different positions)
+ * is treated as changed and triggers a fresh copy — important so a downstream callback that
+ * mutated `prev` into a custom order does not silently get reused as the baseline on the next
+ * refresh.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: readonly T[] | null | undefined): T[] {
