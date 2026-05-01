@@ -78,9 +78,8 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
         }
 
         rootNode.childrenAfterSort = newChildrenAfterSort;
-        // Legacy ordering since AG-309 (Feb 2018): _updateRowNodeAfterSort runs BEFORE
-        // postSortRows, leaving the deprecated firstChild/lastChild/childIndex flags stale
-        // when the callback reorders. Changing this is a breaking change — see release notes.
+        // AG-309 (Feb 2018) legacy: _updateRowNodeAfterSort intentionally runs BEFORE
+        // postSortRows and never after. Users may rely on this, we can't change the behaviour.
         updateRowNodeAfterSort(rootNode);
 
         const postSortFunc = this.gos.getCallback('postSortRows');

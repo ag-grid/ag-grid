@@ -662,8 +662,9 @@ describe('SortService', () => {
     });
 
     describe('post-sort row metadata', () => {
-        // Locks in the legacy AG-309 (Feb 2018) behaviour: updateRowNodeAfterSort runs BEFORE
-        // postSortRows, and not after.
+        // AG-309 (Feb 2018) legacy ordering: updateRowNodeAfterSort runs BEFORE postSortRows.
+        // Out of scope to flip — callers may read childIndex/firstChild/lastChild from inside
+        // postSortRows and rely on the input-order values.
         test('flat SortStage: postSortRows reorder leaves childIndex / firstChild / lastChild stale (legacy AG-309 behaviour)', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [{ colId: 'a', field: 'a', sort: 'asc' }],

@@ -213,8 +213,9 @@ describe('group order maintenance', () => {
     });
 
     test('grouped GroupSortStage: postSortRows reorder leaves childIndex / firstChild / lastChild stale (legacy AG-309 behaviour)', async () => {
-        // Locks the legacy AG-309 ordering: _updateRowNodeAfterSort runs before postSortRows,
-        // so a callback that mutates params.nodes leaves the flags reflecting the input order.
+        // Locks the AG-309 (Feb 2018) ordering: _updateRowNodeAfterSort runs BEFORE postSortRows.
+        // The flags reflecting the pre-mutation order is intentional and out of scope to flip —
+        // changing it would break callers reading those flags during postSortRows.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },

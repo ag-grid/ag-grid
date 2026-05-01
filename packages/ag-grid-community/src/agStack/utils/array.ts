@@ -38,18 +38,30 @@ export function _areEqual<T>(
  * Returns `prev` (same reference) when it is element-wise equal to `current` at the same
  * positions; otherwise a fresh copy of `current` (or `[]` if `current` is nullish).
  *
- * Equality is by-position: a reordered `prev` triggers a fresh copy so a
- * downstream mutation of `prev` is never silently reused as the next baseline. Callers must
- * pass distinct references — `current` is `readonly` to enforce that the returned mutable
- * handle never aliases the input.
+ * Equality is by-position: a reordered `prev` triggers a fresh copy so a downstream mutation
+ * of `prev` is never silently reused as the next baseline. The `prev !== current` guard
+ * prevents aliasing — a caller passing the same array for both would otherwise get a mutable
+ * handle to its readonly input.
+ *
+ * Equality check is inlined (rather than calling `_areEqual`) to skip its redundant `a === b`
+ * and null-guard branches and bail on the first mismatch.
  *
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: readonly T[] | null | undefined): T[] {
-    if (prev && _areEqual(prev, current)) {
-        return prev;
+    if (!current) {
+        return [];
     }
-    return current ? current.slice() : [];
+    const len = current.length;
+    if (!prev || prev === current || prev.length !== len) {
+        return current.slice();
+    }
+    for (let i = 0; i < len; ++i) {
+        if (prev[i] !== current[i]) {
+            return current.slice();
+        }
+    }
+    return prev;
 }
 
 /**

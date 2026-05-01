@@ -101,15 +101,19 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
                 newChildrenAfterSort = _reuseArrayIfEqual(prevSort, rowNode.childrenAfterAggFilter);
             }
 
-            // Capture by value: if _reuseArrayIfEqual returned prevSort, postSortRows' in-place
-            // mutation below would otherwise hide the change from the comparison further down.
+            // prevFirstChild is captured BY VALUE before postSortRows runs — the comparison
+            // below is safe under all paths (prevSort=null first run; reused-array where
+            // newChildrenAfterSort === prevSort and postSortRows mutates head; fresh-slice
+            // where postSortRows reorders). prevSort?.[0] is undefined on first run, so any
+            // new head triggers refresh. The check post-dates postSortRows so a callback-only
+            // reorder is detected. groupHideOpenParents keys on childrenAfterSort[0], not on
+            // the deprecated flags — stale flags don't affect the bulk refresh.
             const prevFirstChild = prevSort?.[0];
 
             rowNode.childrenAfterSort = newChildrenAfterSort;
 
-            // Legacy ordering since AG-309 (Feb 2018): _updateRowNodeAfterSort runs BEFORE
-            // postSortRows, leaving the deprecated firstChild/lastChild/childIndex flags stale
-            // when the callback reorders. Changing this is a breaking change — see release notes.
+            // AG-309 (Feb 2018) legacy: _updateRowNodeAfterSort intentionally runs BEFORE
+            // postSortRows and never after. Users may rely on this, we can't change the behaviour.
             _updateRowNodeAfterSort(rowNode);
 
             postSortFunc?.({ nodes: newChildrenAfterSort });
