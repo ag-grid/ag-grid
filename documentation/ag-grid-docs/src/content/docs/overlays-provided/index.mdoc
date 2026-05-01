@@ -24,7 +24,7 @@ The loading overlay is displayed when the grid property `loading` is set to `tru
 
 Set `skeletonRows` to replace the loading overlay with per-cell skeleton rows rendered inline in the grid. This works with the Client-Side Row Model only.
 
-Pass an object to configure the number of skeleton rows shown while loading.
+Pass a number to show that many skeleton rows, or a function to dynamically calculate the count based on the current grid state.
 
 {% apiDocumentation source="grid-options/properties.json" section="overlays" names=["skeletonRows"] /%}
 

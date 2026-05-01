@@ -1,7 +1,7 @@
 import { _debounce } from '../agStack/utils/function';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { GridOptions, SkeletonRowsOptions } from '../entities/gridOptions';
+import type { GridOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import type { FilterChangedEvent, StylesChangedEvent } from '../events';
 import { _getGroupSelectsDescendants, _getRowHeightForNode, _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
@@ -195,7 +195,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
 
         this.addManagedPropertyListeners(['loading', 'skeletonRows'], () => {
-            if (this.getSkeletonOptions()) {
+            if (this.gos.get('skeletonRows')) {
                 this.refreshModel({ step: 'map' });
             }
         });
@@ -1163,14 +1163,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
     }
 
-    private getSkeletonOptions(): SkeletonRowsOptions | null {
-        const val = this.gos.get('skeletonRows');
-        if (!val) return null;
-        return val === true ? {} : val;
-    }
-
     private isSkeletonLoadingActive(): boolean {
-        if (!this.getSkeletonOptions()) {
+        if (!this.gos.get('skeletonRows')) {
             return false;
         }
         const loading = this.gos.get('loading');
@@ -1180,22 +1174,28 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return loading === undefined && !this.rowNodesCountReady;
     }
 
+    private resolveSkeletonRowCount(): number {
+        const skeletonRows = this.gos.get('skeletonRows');
+        if (!skeletonRows || skeletonRows === true) {
+            return 1;
+        }
+        const currentRowCount = this.rowsToDisplay?.length ?? 0;
+        return typeof skeletonRows === 'function'
+            ? skeletonRows(this.gos.addCommon({ currentRowCount }))
+            : skeletonRows;
+    }
+
     private getOrCreateSkeletonRows(): RowNode[] {
-        const rowCount = this.getSkeletonOptions()?.rowCount;
-        const count =
-            typeof rowCount === 'function'
-                ? rowCount(this.gos.addCommon({ parentNode: null, level: 0 }))
-                : (rowCount ?? 1);
-        if (!this.skeletonRows || this.skeletonRows.length !== count) {
-            this.destroySkeletonRows();
+        const count = this.resolveSkeletonRowCount();
+        if (!this.skeletonRows) {
             this.skeletonRows = [];
-            for (let i = 0; i < count; i++) {
-                const node = new RowNode(this.beans);
-                node.stub = true;
-                node.id = `ag-skeleton-${i}`;
-                node.setUiLevel(0);
-                this.skeletonRows.push(node);
-            }
+        }
+        while (this.skeletonRows.length < count) {
+            const node = new RowNode(this.beans);
+            node.stub = true;
+            node.id = `ag-skeleton-${this.skeletonRows.length}`;
+            node.setUiLevel(0);
+            this.skeletonRows.push(node);
         }
         return this.skeletonRows;
     }

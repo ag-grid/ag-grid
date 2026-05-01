@@ -403,6 +403,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'isApplyServerSideTransaction',
     'getServerSideGroupLevelParams',
     'isServerSideGroupOpenByDefault',
+    'serverSideLoadingRowCount',
     'isGroupOpenByDefault',
     'initialGroupOrderComparator',
     'loadingCellRendererSelector',

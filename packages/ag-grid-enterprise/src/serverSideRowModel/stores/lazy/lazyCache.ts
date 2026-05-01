@@ -920,8 +920,9 @@ export class LazyCache extends BeanStub {
             this.numberOfRows = firstRowIndex + dataRowCount;
             this.isLastRowKnown = true;
         } else if (!this.isLastRowKnown) {
-            // add 1 for loading row, as we don't know the last row
-            const lastInferredRow = firstRowIndex + dataRowCount + 1;
+            // add probe rows — if serverSideLoadingRowCount is set use its value, otherwise 1
+            const probeCount = this.store.resolveLoadingRowCount();
+            const lastInferredRow = firstRowIndex + dataRowCount + probeCount;
             if (lastInferredRow > this.numberOfRows) {
                 this.numberOfRows = lastInferredRow;
             }

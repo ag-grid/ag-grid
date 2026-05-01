@@ -82,14 +82,22 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.info = {};
     }
 
+    /**
+     * Resolves the `serverSideLoadingRowCount` option for this store.
+     * Returns `1` when the option is not set (preserves the default probe behaviour).
+     * Called by `lazyCache` for both initial stub count and per-block probe count.
+     */
+    public resolveLoadingRowCount(): number {
+        const loadingRowCount = this.gos.get('serverSideLoadingRowCount') ?? 1;
+        if (typeof loadingRowCount === 'number') return loadingRowCount;
+        const parentNode = this.level > 0 ? this.parentRowNode : null;
+        const blockSize = this.gos.get('cacheBlockSize') ?? 100;
+        return loadingRowCount(this.gos.addCommon({ parentNode, level: this.level, blockSize }));
+    }
+
     private resolveInitialRowCount(): number {
-        const skeletonOpt = this.gos.get('skeletonRows');
-        const skeletonRowCount = skeletonOpt && typeof skeletonOpt === 'object' ? skeletonOpt.rowCount : undefined;
-        if (skeletonRowCount != null) {
-            const parentNode = this.level > 0 ? this.parentRowNode : null;
-            return typeof skeletonRowCount === 'function'
-                ? skeletonRowCount(this.gos.addCommon({ parentNode, level: this.level }))
-                : skeletonRowCount;
+        if (this.gos.get('serverSideLoadingRowCount') != null) {
+            return this.resolveLoadingRowCount();
         }
         if (this.level === 0) {
             return this.storeUtils.getServerSideInitialRowCount() ?? 1;

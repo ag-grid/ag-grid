@@ -9,9 +9,11 @@ import { TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../../t
 /**
  * Tests for SSRM loading row count behaviour.
  *
- * The number of stub rows shown while loading defaults to `cacheBlockSize` (capped at 100).
+ * The number of stub rows shown while loading defaults to `serverSideInitialRowCount` (default: 1).
  * AG-6003: `isServerSideGroup` may return `{ hasChildren, childCount }` to hint the child store
- *          stub count; boolean return is still supported (falls back to cacheBlockSize).
+ *          stub count; boolean return is still supported (falls back to 1).
+ * AG-6750: `serverSideLoadingRowCount` configures stub count per store; callback receives
+ *          `blockSize` so users can match the request size with `(p) => p.blockSize`.
  */
 
 const columnDefs = [{ field: 'name' }];
@@ -22,7 +24,7 @@ function createHangingDatasource(): IServerSideDatasource {
 }
 
 /**
- * Datasource that responds synchronously on the first call then hangs on all subsequent calls.
+ * Datasource that responds synchronously on the first call (with rowCount) then hangs.
  * Use this to let initial data load, then verify stub counts after a purge-refresh.
  */
 function createOnceRespondingDatasource(rowData: object[]): IServerSideDatasource {
@@ -33,6 +35,23 @@ function createOnceRespondingDatasource(rowData: object[]): IServerSideDatasourc
                 params.success({ rowData, rowCount: rowData.length });
             }
             // subsequent calls hang, keeping new stubs visible
+        },
+    };
+}
+
+/**
+ * Datasource that responds synchronously on the first call WITHOUT rowCount, then hangs.
+ * This triggers the probe-row logic: the grid adds probe stubs after the response to check
+ * whether more rows exist, then makes a second request that hangs.
+ */
+function createOnceRespondingNoCountDatasource(rowData: object[]): IServerSideDatasource {
+    let callCount = 0;
+    return {
+        getRows: (params: IServerSideGetRowsParams) => {
+            if (++callCount === 1) {
+                params.success({ rowData }); // no rowCount — probe logic fires
+            }
+            // second call hangs — probe stubs remain visible
         },
     };
 }
@@ -102,29 +121,28 @@ describe('SSRM loading row count', () => {
         });
     });
 
-    describe('skeletonRows rowCount override for SSRM', () => {
-        test('rowCount number overrides serverSideInitialRowCount for top-level stubs', () => {
+    describe('serverSideLoadingRowCount for SSRM', () => {
+        test('number overrides serverSideInitialRowCount for top-level stubs', () => {
             gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
                 serverSideInitialRowCount: 10,
-                skeletonRows: { rowCount: 3 },
+                serverSideLoadingRowCount: 3,
                 serverSideDatasource: createHangingDatasource(),
             });
 
             expect(getStubRowCount()).toBe(3);
         });
 
-        test('rowCount callback receives parentNode=null and level=0 for top-level SSRM store', () => {
+        test('callback receives parentNode=null, level=0, and blockSize for top-level SSRM store', () => {
             let capturedParams: any;
             gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
-                skeletonRows: {
-                    rowCount: (params) => {
-                        capturedParams = params;
-                        return 6;
-                    },
+                cacheBlockSize: 50,
+                serverSideLoadingRowCount: (params) => {
+                    capturedParams = params;
+                    return 6;
                 },
                 serverSideDatasource: createHangingDatasource(),
             });
@@ -133,22 +151,25 @@ describe('SSRM loading row count', () => {
             expect(capturedParams).toBeDefined();
             expect(capturedParams.parentNode).toBeNull();
             expect(capturedParams.level).toBe(0);
+            expect(capturedParams.blockSize).toBe(50);
             expect(capturedParams.api).toBeDefined();
         });
 
-        test('rowCount callback receives parentNode and level=1 for child SSRM store', async () => {
-            const capturedCalls: { parentNode: any; level: number }[] = [];
+        test('callback receives parentNode and level=1 for child SSRM store', async () => {
+            const capturedCalls: { parentNode: any; level: number; blockSize: number }[] = [];
             const api = gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
                 treeData: true,
                 isServerSideGroup: (dataItem: any) => dataItem.id === 'parent-1',
                 getServerSideGroupKey: (dataItem: any) => dataItem.id,
-                skeletonRows: {
-                    rowCount: (params) => {
-                        capturedCalls.push({ parentNode: params.parentNode, level: params.level });
-                        return params.level === 0 ? 2 : 5;
-                    },
+                serverSideLoadingRowCount: (params) => {
+                    capturedCalls.push({
+                        parentNode: params.parentNode,
+                        level: params.level,
+                        blockSize: params.blockSize,
+                    });
+                    return params.level === 0 ? 2 : 5;
                 },
                 serverSideDatasource: createOnceRespondingDatasource([{ id: 'parent-1', name: 'Parent' }]),
             });
@@ -170,18 +191,17 @@ describe('SSRM loading row count', () => {
             const childCall = capturedCalls.find((c) => c.level === 1);
             expect(childCall).toBeDefined();
             expect(childCall!.parentNode).toBe(parentNode);
+            expect(childCall!.blockSize).toBeGreaterThan(0);
         });
 
-        test('rowCount callback is used on purge-refresh', async () => {
+        test('callback is used on purge-refresh', async () => {
             let callCount = 0;
             const api = gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
-                skeletonRows: {
-                    rowCount: () => {
-                        callCount++;
-                        return 4;
-                    },
+                serverSideLoadingRowCount: () => {
+                    callCount++;
+                    return 4;
                 },
                 serverSideDatasource: createOnceRespondingDatasource([{ name: 'Alice' }, { name: 'Bob' }]),
             });
@@ -194,6 +214,59 @@ describe('SSRM loading row count', () => {
 
             expect(getStubRowCount()).toBe(4);
             expect(callCount).toBeGreaterThan(1);
+        });
+
+        test('(p) => p.blockSize matches the request size', () => {
+            gridManager.createGrid('myGrid', {
+                columnDefs,
+                rowModelType: 'serverSide',
+                cacheBlockSize: 20,
+                serverSideLoadingRowCount: (p) => p.blockSize,
+                serverSideDatasource: createHangingDatasource(),
+            });
+
+            expect(getStubRowCount()).toBe(20);
+        });
+
+        test('callback controls probe stub count for subsequent requests (unknown rowCount)', async () => {
+            // First response has no rowCount → grid infers (dataCount + probeCount) total rows
+            // and requests the probe range. The probe count should equal serverSideLoadingRowCount
+            // so subsequent requests cover the right range.
+            const requests: { startRow: number; endRow: number }[] = [];
+            let resolveSecondCall!: () => void;
+            const secondCallFired = new Promise<void>((resolve) => {
+                resolveSecondCall = resolve;
+            });
+
+            gridManager.createGrid('myGrid', {
+                columnDefs,
+                rowModelType: 'serverSide',
+                cacheBlockSize: 10,
+                serverSideLoadingRowCount: 4,
+                serverSideDatasource: {
+                    getRows(params: IServerSideGetRowsParams) {
+                        requests.push({
+                            startRow: params.request.startRow,
+                            endRow: params.request.endRow,
+                        });
+                        if (requests.length === 1) {
+                            // Respond with 3 rows and no rowCount — probe logic fires
+                            params.success({ rowData: [{ name: 'A' }, { name: 'B' }, { name: 'C' }] });
+                        } else {
+                            resolveSecondCall();
+                            // hang — stubs remain visible
+                        }
+                    },
+                },
+            });
+
+            // Wait for the probe request to actually fire (lazyBlockLoadingService is async)
+            await secondCallFired;
+
+            // First request: rows 0-9 (cacheBlockSize=10)
+            expect(requests[0]).toEqual({ startRow: 0, endRow: 10 });
+            // Probe added 4 rows → store thinks it has 7 rows → second request starts at row 3
+            expect(requests[1].startRow).toBe(3);
         });
     });
 
@@ -255,7 +328,7 @@ describe('SSRM loading row count', () => {
         });
     });
 
-    describe('SSRM legacy API compatibility — skeletonRows must not change stub rendering', () => {
+    describe('SSRM loading row rendering', () => {
         test('SSRM stubs are full-width rows by default', () => {
             gridManager.createGrid('myGrid', {
                 columnDefs,
@@ -267,19 +340,7 @@ describe('SSRM loading row count', () => {
             expect(getFullWidthStubRowCount()).toBe(1);
         });
 
-        test('skeletonRows alone does not suppress full-width SSRM stubs', () => {
-            gridManager.createGrid('myGrid', {
-                columnDefs,
-                rowModelType: 'serverSide',
-                skeletonRows: { rowCount: 3 },
-                serverSideDatasource: createHangingDatasource(),
-            });
-
-            expect(getStubRowCount()).toBe(3);
-            expect(getFullWidthStubRowCount()).toBe(3);
-        });
-
-        test('suppressServerSideFullWidthLoadingRow still suppresses full-width stubs independently', () => {
+        test('suppressServerSideFullWidthLoadingRow suppresses full-width stubs', () => {
             gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
@@ -291,19 +352,19 @@ describe('SSRM loading row count', () => {
             expect(getFullWidthStubRowCount()).toBe(0);
         });
 
-        test('skeletonRows.rowCount takes precedence over serverSideInitialRowCount', () => {
+        test('serverSideLoadingRowCount takes precedence over serverSideInitialRowCount', () => {
             gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
                 serverSideInitialRowCount: 10,
-                skeletonRows: { rowCount: 3 },
+                serverSideLoadingRowCount: 3,
                 serverSideDatasource: createHangingDatasource(),
             });
 
             expect(getStubRowCount()).toBe(3);
         });
 
-        test('serverSideInitialRowCount still controls stub count without skeletonRows', () => {
+        test('serverSideInitialRowCount still controls stub count without serverSideLoadingRowCount', () => {
             gridManager.createGrid('myGrid', {
                 columnDefs,
                 rowModelType: 'serverSide',
@@ -313,37 +374,6 @@ describe('SSRM loading row count', () => {
 
             expect(getStubRowCount()).toBe(7);
             expect(getFullWidthStubRowCount()).toBe(7);
-        });
-    });
-
-    describe('skeletonRows.columns for SSRM', () => {
-        test('skeleton columns start the grid before real columnDefs arrive', () => {
-            const skeletonCols = [{ field: 'name' }, { field: 'age' }];
-            gridManager.createGrid('myGrid', {
-                rowModelType: 'serverSide',
-                skeletonRows: { columns: skeletonCols },
-                serverSideDatasource: createHangingDatasource(),
-            });
-
-            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(2);
-            expect(getStubRowCount()).toBe(1);
-        });
-
-        test('real columnDefs replace skeleton columns when they arrive', async () => {
-            // 1 skeleton column → 3 real columns, so header cell count changes on transition
-            const skeletonCols = [{ field: 'placeholder' }];
-            const realCols = [{ field: 'name' }, { field: 'age' }, { field: 'country' }];
-            const api = gridManager.createGrid('myGrid', {
-                rowModelType: 'serverSide',
-                skeletonRows: { columns: skeletonCols },
-                serverSideDatasource: createHangingDatasource(),
-            });
-
-            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(1);
-
-            api.setGridOption('columnDefs', realCols);
-
-            expect(document.querySelectorAll('.ag-header-cell')).toHaveLength(3);
         });
     });
 });

@@ -43,7 +43,7 @@ const LoadingOverlayDef: OverlayDef = {
     compKey: 'loadingOverlayComponent',
     paramsKey: 'loadingOverlayComponentParams',
     isSuppressed: (gos: GridOptionsService) => {
-        if (gos.get('skeletonRows')) {
+        if (_isClientSideRowModel(gos) && gos.get('skeletonRows')) {
             return true;
         }
         const isLoading = gos.get('loading');

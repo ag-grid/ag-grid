@@ -471,6 +471,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return toConstrainedNum('serverSideInitialRowCount', serverSideInitialRowCount, 1);
             },
         },
+        serverSideLoadingRowCount: {
+            supportedRowModels: ['serverSide'],
+        },
         serverSideOnlyRefreshFilteredGroups: {
             supportedRowModels: ['serverSide'],
         },

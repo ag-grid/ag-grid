@@ -983,13 +983,14 @@ export interface GridOptions<TData = any> {
      */
     loading?: boolean;
     /**
-     * Replaces the loading overlay with skeleton loading indicators rendered within individual cells.
-     * Works with Client-Side Row Model only.
+     * Shows skeleton loading indicators rendered within individual cells instead of the full-screen
+     * loading overlay. Works with the Client-Side Row Model only.
      *
-     * Set to `true` to enable with defaults, or provide an object to configure:
-     * - `rowCount`: number of skeleton rows to display (default: `1`)
+     * - `true` — enable with 1 skeleton row (default)
+     * - `number` — enable with that many skeleton rows; use `-1` to fill the visible viewport
+     * - `function` — callback `(params: SkeletonRowsCountParams) => number` called at load/re-load time
      */
-    skeletonRows?: boolean | SkeletonRowsOptions;
+    skeletonRows?: boolean | number | ((params: SkeletonRowsCountParams) => number);
 
     /**
      * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
@@ -1715,6 +1716,20 @@ export interface GridOptions<TData = any> {
      * @agModule `ServerSideRowModelModule`
      */
     serverSideInitialRowCount?: number;
+
+    /**
+     * Controls how many loading rows are shown while waiting for server-side data. Applies to the
+     * root store and to child stores when a group row is expanded.
+     *
+     * - `number` — always show that many loading rows
+     * - `function` — callback `(params: ServerSideLoadingRowCountParams) => number` called per store;
+     *   use `(p) => p.blockSize` to match the number of rows in the current request
+     *
+     * When not set the grid falls back to `serverSideInitialRowCount` (root store) or
+     * `isServerSideGroup` child-count hint, defaulting to `1`.
+     * @agModule `ServerSideRowModelModule`
+     */
+    serverSideLoadingRowCount?: number | ((params: ServerSideLoadingRowCountParams) => number);
 
     /**
      * When `true`, the Server-side Row Model will not use a full width loading renderer, instead using the colDef `loadingCellRenderer` if present.
@@ -3362,19 +3377,15 @@ export type PivotColumnGroupTotals = 'before' | 'after';
 export type PivotRowTotals = 'before' | 'after';
 
 export interface SkeletonRowsCountParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** The parent row node whose children are loading. `null` for the top-level store. */
-    parentNode: IRowNode<TData> | null;
-    /** The nesting level of the loading store (0 for top-level). */
-    level: number;
+    /** Number of rows displayed before the loading state started. `0` on initial load. */
+    currentRowCount: number;
 }
 
-export interface SkeletonRowsOptions {
-    /** Number of skeleton rows to display while loading, or a callback that returns the count. Default: `1`. */
-    rowCount?: number | ((params: SkeletonRowsCountParams) => number);
-    /**
-     * Placeholder column definitions shown while real `columnDefs` are loading.
-     * When provided and `columnDefs` is absent at startup, the grid starts immediately with these columns
-     * so skeleton rows are visible before real column definitions arrive.
-     */
-    columns?: ColDef[];
+export interface ServerSideLoadingRowCountParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The parent row node whose children are loading. `null` for the top-level store. */
+    parentNode: IRowNode<TData> | null;
+    /** The nesting level of the loading store (`0` for top-level). */
+    level: number;
+    /** Number of rows per block (`cacheBlockSize`). Use `(p) => p.blockSize` to match request size. */
+    blockSize: number;
 }
