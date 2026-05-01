@@ -19,9 +19,8 @@ import { RETURN_URLS } from './constants';
 
 const contactFormData = LIBRARY === 'studio' ? STUDIO_FORM_DATA : CONTACT_FORM_DATA;
 
-const { actionUrl, orgId, textAreaId, leadSource, formLocationId, captchaSettingsKeyName } = getIsProduction()
-    ? contactFormData.production
-    : contactFormData.default;
+const { actionUrl, orgId, textAreaId, leadSource, messagePlaceholder, formLocationId, captchaSettingsKeyName } =
+    getIsProduction() ? contactFormData.production : contactFormData.default;
 
 const isDev = getIsDev();
 
@@ -201,7 +200,7 @@ export const ContactForm: FunctionComponent<Props> = ({
                         id={textAreaId}
                         rows={3}
                         wrap="soft"
-                        placeholder="Tell us about your interest in AG Studio"
+                        placeholder={messagePlaceholder}
                         {...register(textAreaId as keyof FormValues, {
                             required: !hideMessage && 'Message is required',
                         })}
