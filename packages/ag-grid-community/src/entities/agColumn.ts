@@ -65,6 +65,11 @@ const DEFAULT_ABSOLUTE_SORTING_ORDER: (SortDef | SortDirection)[] = [
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg ProvidedColumnGroup
 // can only appear in OriginalColumn tree).
+//
+// INTERNAL CALLERS: prefer direct property access (column.colDef, column.primary, column.rowGroupActive,
+// etc.) over the equivalent getter methods (getColDef(), isPrimary(), isRowGroupActive(), …) on hot paths.
+// The getters are kept for the public Column interface; internally the fields are public and reading them
+// directly avoids method-call indirection in tight loops (sort, filter, render).
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgColumn<TValue = any>
     extends BeanStub<ColumnEventName>

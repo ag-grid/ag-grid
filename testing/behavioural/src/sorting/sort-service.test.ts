@@ -661,6 +661,45 @@ describe('SortService', () => {
         });
     });
 
+    describe('post-sort row metadata', () => {
+        // Regression: the root SortStage must call updateRowNodeAfterSort so that the deprecated
+        // firstChild / lastChild / childIndex flags (and their corresponding row events) reflect
+        // the sorted order. Without that call, the flags stay stuck at insertion order, producing
+        // stale ag-row-first / ag-row-last styling and stale event payloads after every sort.
+        test('firstChild / lastChild / childIndex reflect the sorted order on a flat CSRM', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'a', field: 'a', sort: 'desc' }],
+                rowData: [
+                    { id: '1', a: 'a' },
+                    { id: '2', a: 'b' },
+                    { id: '3', a: 'c' },
+                ],
+                getRowId: (p) => p.data.id,
+            });
+
+            // Sorted desc, expected order is [c, b, a] → ids [3, 2, 1].
+            const sortedIds = ['3', '2', '1'];
+            const nodes = sortedIds.map((id) => api.getRowNode(id)!);
+
+            nodes.forEach((node, idx) => {
+                expect(node.childIndex).toBe(idx);
+                expect(node.firstChild).toBe(idx === 0);
+                expect(node.lastChild).toBe(idx === nodes.length - 1);
+            });
+
+            // Reverse the sort and re-check that the metadata moves with the rows.
+            api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+            const reverseIds = ['1', '2', '3'];
+            const reverseNodes = reverseIds.map((id) => api.getRowNode(id)!);
+
+            reverseNodes.forEach((node, idx) => {
+                expect(node.childIndex).toBe(idx);
+                expect(node.firstChild).toBe(idx === 0);
+                expect(node.lastChild).toBe(idx === reverseNodes.length - 1);
+            });
+        });
+    });
+
     describe('postSortRows callback', () => {
         test('postSortRows reorders rows after sort', async () => {
             const api = gridMgr.createGrid('g', {

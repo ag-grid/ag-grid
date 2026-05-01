@@ -212,6 +212,39 @@ describe('group order maintenance', () => {
         `);
     });
 
+    test('firstChild / lastChild / childIndex reflect the sorted group order', async () => {
+        // Regression: the enterprise GroupSortStage must call _updateRowNodeAfterSort so that the
+        // deprecated firstChild / lastChild / childIndex flags (and their corresponding row events)
+        // reflect the displayed group order. Without that call, the flags stay stuck at insertion
+        // order, producing stale ag-row-first / ag-row-last styling and stale event payloads.
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'A' },
+            { id: '2', country: 'BMW', athlete: 'B' },
+            { id: '3', country: 'Tesla', athlete: 'T' },
+        ];
+
+        const api = gridsManager.createGrid('grid-group-sort-flags', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true, sortable: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        // Sort groups descending — order becomes [Tesla, BMW, Audi].
+        api.applyColumnState({ state: [{ colId: 'country', sort: 'desc' }] });
+
+        const sortedKeys = ['Tesla', 'BMW', 'Audi'];
+        const groupNodes = sortedKeys.map((key) => api.getRowNode(`row-group-country-${key}`)!);
+
+        groupNodes.forEach((node, idx) => {
+            expect(node.childIndex).toBe(idx);
+            expect(node.firstChild).toBe(idx === 0);
+            expect(node.lastChild).toBe(idx === groupNodes.length - 1);
+        });
+    });
+
     test('postSortRows reorder survives a sort refresh on the reused-array path', async () => {
         // Exercises the path where _reuseArrayIfEqual returns the previous childrenAfterSort by
         // reference and postSortRows then mutates the same array in place. hasAnyFirstChildChanged
