@@ -49,6 +49,11 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             // rolling out to everyone.
             gos.get('deltaSort');
 
+        // Skip the group-level sort (and use the structural filter baseline instead) only when:
+        //  - the user opted in via `groupMaintainOrder`,
+        //  - this is row grouping, not tree data (public-API contract — see grid options docs),
+        //  - there are active row group columns, and
+        //  - no sort option targets a group column (a group-column sort always takes precedence).
         const shouldMaintainGroupOrder =
             gos.get('groupMaintainOrder') &&
             !groupStage?.treeData &&
@@ -68,6 +73,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
 
             const prevSort = rowNode.childrenAfterSort;
             let newChildrenAfterSort: RowNode[];
+            // Two paths: actually sort the children, or use the filter result as the baseline.
             if (!skipSortingGroups && sortOptions?.length && !skipSortingPivotLeafs) {
                 if (useDeltaSort && changedRowNodes) {
                     newChildrenAfterSort = _doDeltaSort(
@@ -106,6 +112,8 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
 
             postSortFunc?.({ nodes: newChildrenAfterSort });
 
+            // Tracks whether the displayed first child changed at any group level, which drives
+            // the groupHideOpenParents refresh below.
             hasAnyFirstChildChanged ||= prevFirstChild !== newChildrenAfterSort[0];
         };
 

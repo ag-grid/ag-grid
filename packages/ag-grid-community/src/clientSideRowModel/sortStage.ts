@@ -70,6 +70,8 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
                 );
             }
         } else {
+            // _reuseArrayIfEqual may return prevSort by reference, so postSortRows can mutate
+            // the array in place. Safe here in the flat sorting — unlike GroupSortStage
             newChildrenAfterSort = _reuseArrayIfEqual(prevSort, rootNode.childrenAfterAggFilter);
         }
 
