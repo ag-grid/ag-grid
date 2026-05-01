@@ -87,6 +87,18 @@ const gridOptions = {
 };
 ```
 
+## Pivot Panel in the Toolbar
+
+The Pivot Panel can be embedded in the [Quick Access Toolbar](./toolbar/) using the `agPivotPanelToolbarItem` built-in item, configured independently of `pivotPanelShow`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: ['agPivotPanelToolbarItem'],
+    },
+}
+```
+
 ## Pivot Mode vs Pivot Active
 
 It is possible to have pivot mode turned on even though there is no pivot active, on the grid. A pivot is active when one or more of the pivot columns is used as a column label. In this scenario, the grid will display the data as normal but will strip out columns that have no grouping or value active.
@@ -116,4 +128,3 @@ Pivoting can be controlled using the following grid API methods:
 ## See Also
 
 - [Editing Groups](./grouping-edit/) for editing pivot aggregated values with cascading updates to children
-- [Quick Access Toolbar](./toolbar/) for embedding the Pivot Panel in the toolbar using the `pivotPanel` built-in item

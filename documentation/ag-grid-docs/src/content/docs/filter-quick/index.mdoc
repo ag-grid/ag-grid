@@ -139,6 +139,18 @@ The following example demonstrates the difference in filtering behaviour with `a
 
 {% gridExampleRunner title="Quick Filter Pivot / Aggregation" name="quick-filter-pivot-agg" /%}
 
+## Quick Access Toolbar
+
+In Enterprise, the recommended way to add a Quick Filter input above the grid is the [Quick Access Toolbar](./toolbar/). Add `agQuickFilterToolbarItem` to the toolbar's `items` array.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: ['agQuickFilterToolbarItem'],
+    },
+}
+```
+
 ## Server-Side Data
 
 The Quick Filter is only supported with the [Client-Side Row Model](./row-models/#client-side). For the other row models you would need to implement your own server-side filtering to replicate Quick Filter functionality.

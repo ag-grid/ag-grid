@@ -85,6 +85,18 @@ The following example demonstrates performing a case sensitive search, and findi
 
 {% gridExampleRunner title="Customising Find" name="customising-find" /%}
 
+## Quick Access Toolbar
+
+The recommended way to display the Find input is as a [Quick Access Toolbar](./toolbar/) item. Add `agFindToolbarItem` to the toolbar's `items` array.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: ['agFindToolbarItem'],
+    },
+}
+```
+
 ## Find with Master / Detail
 
 When using [Master / Detail](./master-detail/), Find will not search within detail rows by default (either [Detail Grids](./master-detail-grids/) or [Custom Details](./master-detail-custom-detail/)). To enable Find to search within detail rows, set `searchDetail` within `findOptions` to `true`:
