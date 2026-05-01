@@ -10,6 +10,44 @@ describe('group order maintenance', () => {
 
     afterEach(() => gridsManager.reset());
 
+    test('per-level sort isolation: secondary sort cannot tie-break a non-targeted level', async () => {
+        const rowData = [
+            { id: '1', country: 'Alpha', sales: 10 },
+            { id: '2', country: 'Bravo', sales: 20 },
+            { id: '3', country: 'Charlie', sales: 30 },
+        ];
+
+        const api = gridsManager.createGrid('grid-isolation', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true, sortable: true, comparator: () => 0 },
+                { field: 'sales', aggFunc: 'sum', sortable: true },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({
+            state: [
+                { colId: 'country', sort: 'asc', sortIndex: 0 },
+                { colId: 'sales', sort: 'desc', sortIndex: 1 },
+            ],
+        });
+
+        await new GridRows(api, 'isolation: country in structural order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Alpha ag-Grid-AutoColumn:"Alpha" sales:10
+            │ └── LEAF id:1 country:"Alpha" sales:10
+            ├─┬ LEAF_GROUP id:row-group-country-Bravo ag-Grid-AutoColumn:"Bravo" sales:20
+            │ └── LEAF id:2 country:"Bravo" sales:20
+            └─┬ LEAF_GROUP id:row-group-country-Charlie ag-Grid-AutoColumn:"Charlie" sales:30
+            · └── LEAF id:3 country:"Charlie" sales:30
+        `);
+    });
+
     test('new group is appended at end when groupMaintainOrder is true', async () => {
         const rowData = [
             { id: '1', country: 'Ireland', athlete: 'I1' },

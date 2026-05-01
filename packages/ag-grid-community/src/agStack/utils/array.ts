@@ -35,16 +35,9 @@ export function _areEqual<T>(
 }
 
 /**
- * Returns `prev` (same reference) when it is element-wise equal to `current` at the same
- * positions; otherwise a fresh copy of `current` (or `[]` if `current` is nullish).
- *
- * Equality is by-position: a reordered `prev` triggers a fresh copy so a downstream mutation
- * of `prev` is never silently reused as the next baseline. The `prev !== current` guard
- * prevents aliasing — a caller passing the same array for both would otherwise get a mutable
- * handle to its readonly input.
- *
- * Equality check is inlined (rather than calling `_areEqual`) to skip its redundant `a === b`
- * and null-guard branches and bail on the first mismatch.
+ * Returns `prev` when element-wise equal to `current`; otherwise a fresh copy of `current` (or
+ * `[]` when nullish). Equality check is inlined for hot-path perf — sort stage calls this once
+ * per group node per refresh, where `_areEqual`'s extra function call and guards add up.
  *
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */

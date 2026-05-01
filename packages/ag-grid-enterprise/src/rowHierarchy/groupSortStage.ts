@@ -47,17 +47,18 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             // rolling out to everyone.
             gos.get('deltaSort');
 
+        // levelSortOptions[i] = sort options targeting group level i. null = "every level uses the
+        // full sortOptions array" — covers maintain-order off and the singleColumn shared-display
+        // case (one display column represents every level). Per-level filtering keeps a sort on
+        // level L from tie-breaking with options targeting other levels (e.g. [country asc, year
+        // desc] must not let `year` reorder country siblings whose comparator returns 0).
         // Tree data is excluded — treeData and row grouping cannot currently coexist.
-        const maintainGroupOrder =
-            gos.get('groupMaintainOrder') && !groupStage?.treeData && !!rowGroupColsSvc?.columns.length;
-
-        // levelSortTargeted[i] = "is level i targeted?". null = "every level targeted" — covers
-        // both maintain-order off and the singleColumn shared-display case (one display column
-        // represents every level).
         const groupColsByLevel = rowGroupColsSvc?.columns;
-        const levelSortTargeted: boolean[] | null =
-            maintainGroupOrder && hasSortOptions && groupColsByLevel
-                ? buildLevelSortTargeted(sortOptions, groupColsByLevel)
+        const numLevels = groupColsByLevel?.length ?? 0;
+        const leafLevelIndex = numLevels - 1;
+        const levelSortOptions: SortOption[][] | null =
+            numLevels > 0 && hasSortOptions && !groupStage?.treeData && gos.get('groupMaintainOrder')
+                ? buildLevelSortOptions(sortOptions, groupColsByLevel!)
                 : null;
 
         const isPivotMode = colModel.pivotMode;
@@ -66,30 +67,32 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         let hasAnyFirstChildChanged = false;
 
         function sortGroupChildren(rowNode: RowNode): void {
-            const leafGroup = rowNode.leafGroup;
+            const level = rowNode.level;
             // Pivot leaf children aren't part of the displayed pivoted output.
-            const skipPivotLeafs = isPivotMode && leafGroup;
-            // Leaf groups always sort their rows (docs: "only the rows within each group are
-            // sorted") — group-only sorts are a stable no-op at the leaf level. Non-leaf
-            // levels sort only when targeted.
-            const sortAtThisLevel =
-                hasSortOptions && (leafGroup || !levelSortTargeted || levelSortTargeted[rowNode.level + 1]);
+            const skipPivotLeafs = isPivotMode && rowNode.leafGroup;
+            // Level-based leaf detection rather than the `leafGroup` flag — guards empty leaf
+            // groups (where `leafGroup` may not be set) by still applying the full sort options.
+            // Leaf level always sorts with the full options (leaves are data rows). Non-leaf
+            // levels sort only with options targeting that level, so a sort on level L cannot
+            // tiebreak via options targeting other levels.
+            const sortOptionsForLevel =
+                !levelSortOptions || level === leafLevelIndex ? sortOptions : levelSortOptions[level + 1];
 
             const prevSort = rowNode.childrenAfterSort;
             let newChildrenAfterSort: RowNode[];
-            if (sortAtThisLevel && !skipPivotLeafs) {
+            if (sortOptionsForLevel.length > 0 && !skipPivotLeafs) {
                 if (useDeltaSort && changedRowNodes) {
                     newChildrenAfterSort = _doDeltaSort(
                         rowNodeSorter!,
                         rowNode,
                         changedRowNodes,
                         changedPath,
-                        sortOptions
+                        sortOptionsForLevel
                     );
                 } else {
                     newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(
                         rowNode.childrenAfterAggFilter!.slice(),
-                        sortOptions
+                        sortOptionsForLevel
                     );
                 }
             } else {
@@ -125,36 +128,51 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
 }
 
 /**
- * Per-level "is this level targeted by the sort?". Matches source rowGroup columns by ref and
- * auto-display columns by `colDef.showRowGroup` (level colId, or `true` for the single shared
- * display column → every level matches). Both forms reach `sortOptions` — `setSortForColumn`
- * cascades to source columns, `applyColumnState` does not.
+ * Per-level subset of `sortOptions`. Matches source rowGroup columns by ref and auto-display
+ * columns by `colDef.showRowGroup` (level colId, or `true` for the single shared display column →
+ * the option targets every level). Both forms reach `sortOptions` — `setSortForColumn` cascades to
+ * source columns, `applyColumnState` does not.
  *
- * Returns `null` when every level is targeted (singleColumn shared display) — the caller treats
- * `null` as "no per-level skipping", saving an array allocation.
+ * Returns `null` when every option targets every level (singleColumn shared display only) — the
+ * caller treats `null` as "use the full `sortOptions` at every level", saving the per-level walk.
  */
-const buildLevelSortTargeted = (sortOptions: SortOption[], groupColsByLevel: AgColumn[]): boolean[] | null => {
+const buildLevelSortOptions = (sortOptions: SortOption[], groupColsByLevel: AgColumn[]): SortOption[][] | null => {
     const sortLen = sortOptions.length;
+    const numLevels = groupColsByLevel.length;
 
-    const sortKeys = new Set<AgColumn | string>();
+    // Source col ref + colId → level index, for O(1) lookup per sort option.
+    const levelByKey = new Map<AgColumn | string, number>();
+    for (let j = 0; j < numLevels; ++j) {
+        const groupCol = groupColsByLevel[j];
+        levelByKey.set(groupCol, j);
+        levelByKey.set(groupCol.colId, j);
+    }
+
+    const result: SortOption[][] = new Array(numLevels);
+    for (let j = 0; j < numLevels; ++j) {
+        result[j] = [];
+    }
+
+    let onlySharedDisplayOptions = true;
     for (let i = 0; i < sortLen; ++i) {
-        const column = sortOptions[i].column as AgColumn;
+        const sortOption = sortOptions[i];
+        const column = sortOption.column as AgColumn;
         const showRowGroup = column.colDef.showRowGroup;
 
         if (showRowGroup === true) {
-            return null;
+            // singleColumn shared display — sort applies to every level.
+            for (let j = 0; j < numLevels; ++j) {
+                result[j].push(sortOption);
+            }
+            continue;
         }
-        sortKeys.add(column);
-        if (typeof showRowGroup === 'string') {
-            sortKeys.add(showRowGroup);
+        onlySharedDisplayOptions = false;
+        const level =
+            levelByKey.get(column) ?? (typeof showRowGroup === 'string' ? levelByKey.get(showRowGroup) : undefined);
+        if (level !== undefined) {
+            result[level].push(sortOption);
         }
     }
 
-    const numLevels = groupColsByLevel.length;
-    const result = new Array<boolean>(numLevels);
-    for (let j = 0; j < numLevels; ++j) {
-        const groupCol = groupColsByLevel[j];
-        result[j] = sortKeys.has(groupCol) || sortKeys.has(groupCol.colId);
-    }
-    return result;
+    return onlySharedDisplayOptions ? null : result;
 };
