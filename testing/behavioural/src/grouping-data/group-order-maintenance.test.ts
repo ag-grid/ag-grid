@@ -684,6 +684,97 @@ describe('group order maintenance', () => {
         `);
     });
 
+    test('multi-level groupMaintainOrder: sort on inner level keeps outer level in structural order', async () => {
+        // With multi-level row grouping (country / year), sorting `year` should:
+        //  - re-order year groups within each country (year sort directly targets that level)
+        //  - leave country groups in their structural order (country sort is not active)
+        // Pre-fix behaviour reordered country groups by their first-leaf year — that's the bug
+        // this test locks against.
+        const rowData = [
+            { id: '1', country: 'Italy', year: 2021, sales: 100 },
+            { id: '2', country: 'Italy', year: 2020, sales: 50 },
+            { id: '3', country: 'France', year: 2019, sales: 200 },
+            { id: '4', country: 'France', year: 2022, sales: 30 },
+            { id: '5', country: 'USA', year: 2018, sales: 70 },
+        ];
+
+        const api = gridsManager.createGrid('grid-multi-level-inner-sort', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'sales' },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'year', sort: 'asc' }] });
+
+        const root = () => api.getRowNode('ROOT_NODE_ID')!;
+        const countryKeys = () => (root().childrenAfterSort ?? []).map((n) => n.key);
+        const yearKeysFor = (country: string) => {
+            const node = api.getRowNode(`row-group-country-${country}`)!;
+            return (node.childrenAfterSort ?? []).map((n) => n.key);
+        };
+
+        // Country groups stay in structural (data-insertion) order: Italy, France, USA.
+        expect(countryKeys()).toEqual(['Italy', 'France', 'USA']);
+
+        // Year groups within each country are sorted ascending by year.
+        expect(yearKeysFor('Italy')).toEqual(['2020', '2021']);
+        expect(yearKeysFor('France')).toEqual(['2019', '2022']);
+        expect(yearKeysFor('USA')).toEqual(['2018']);
+    });
+
+    test('multi-level groupMaintainOrder: sort on outer level reorders only outer level', async () => {
+        // Counterpart to the test above: sorting `country` should re-order country groups but
+        // leave year groups within each country in structural (data-insertion) order.
+        const rowData = [
+            { id: '1', country: 'Italy', year: 2021, sales: 100 },
+            { id: '2', country: 'Italy', year: 2020, sales: 50 },
+            { id: '3', country: 'France', year: 2019, sales: 200 },
+            { id: '4', country: 'France', year: 2022, sales: 30 },
+            { id: '5', country: 'USA', year: 2018, sales: 70 },
+        ];
+
+        const api = gridsManager.createGrid('grid-multi-level-outer-sort', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'sales' },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] });
+
+        const root = () => api.getRowNode('ROOT_NODE_ID')!;
+        const countryKeys = () => (root().childrenAfterSort ?? []).map((n) => n.key);
+        const yearKeysFor = (country: string) => {
+            const node = api.getRowNode(`row-group-country-${country}`)!;
+            return (node.childrenAfterSort ?? []).map((n) => n.key);
+        };
+
+        // Country groups are sorted ascending alphabetically.
+        expect(countryKeys()).toEqual(['France', 'Italy', 'USA']);
+
+        // Year groups within each country stay in structural (data-insertion) order.
+        // Italy was inserted as 2021, then 2020 → structural is [2021, 2020].
+        // France was inserted as 2019, then 2022 → structural is [2019, 2022].
+        expect(yearKeysFor('Italy')).toEqual(['2021', '2020']);
+        expect(yearKeysFor('France')).toEqual(['2019', '2022']);
+        expect(yearKeysFor('USA')).toEqual(['2018']);
+    });
+
     test('clearing a filter restores the original group order', async () => {
         // After a filter narrows the data to a single non-first group, clearing the filter must
         // restore every group to its original slot, not move the surviving group to the end.

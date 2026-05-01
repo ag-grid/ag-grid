@@ -70,14 +70,17 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
                 );
             }
         } else {
-            // _reuseArrayIfEqual may return prevSort by reference, so postSortRows can mutate
-            // the array in place. Safe here in the flat sorting — unlike GroupSortStage
+            // No sort: fall back to the structural filter baseline. Reuses prevSort by reference
+            // only when element-wise equal — a postSortRows-reordered prevSort triggers a fresh
+            // slice instead. Same end result as the old unconditional slice, plus the no-change
+            // fast path.
             newChildrenAfterSort = _reuseArrayIfEqual(prevSort, rootNode.childrenAfterAggFilter);
         }
 
         rootNode.childrenAfterSort = newChildrenAfterSort;
-        // _updateRowNodeAfterSort runs before postSortRows since AG-309 (Feb 2018, when postSortRows was introduced).
-        // This leaves childIndex and first last child out of sync, but is a legacy behaviour that we cannot change without causing a breaking change.
+        // Legacy ordering since AG-309 (Feb 2018): _updateRowNodeAfterSort runs BEFORE
+        // postSortRows, leaving the deprecated firstChild/lastChild/childIndex flags stale
+        // when the callback reorders. Changing this is a breaking change — see release notes.
         updateRowNodeAfterSort(rootNode);
 
         const postSortFunc = this.gos.getCallback('postSortRows');

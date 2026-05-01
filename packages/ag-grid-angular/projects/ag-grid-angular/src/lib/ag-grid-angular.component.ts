@@ -1396,6 +1396,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * across filter changes and transactions. If a group column was sorted via `colDef.sort`
      * and the user later explicitly clears that sort, the structural order is restored.
      *
+     * With multi-level row grouping, the order is maintained per level: a sort on a group
+     * column at one level only re-orders that level's groups; sibling levels keep their
+     * structural order.
+     *
      * Applies to row grouping only. Has no effect on tree data, where row order is determined
      * by the tree structure.
      * @default false
