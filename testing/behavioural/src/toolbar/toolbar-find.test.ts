@@ -81,8 +81,8 @@ describe('Toolbar find item', () => {
             minimalGridMgr.reset();
         });
 
-        test('hides find and logs warning when FindModule is not registered', async () => {
-            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+        test('hides find and logs error when FindModule is not registered', async () => {
+            const errorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
             const api = minimalGridMgr.createGrid('find-no-module', {
                 columnDefs: [{ field: 'name' }],
@@ -97,13 +97,13 @@ describe('Toolbar find item', () => {
             expect(item).not.toBeNull();
             expect(item!.classList.contains('ag-hidden')).toBe(true);
 
-            expect(warnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #302'),
+            expect(errorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('error #302'),
                 expect.stringContaining('agFindToolbarItem'),
                 expect.anything()
             );
 
-            warnSpy.mockRestore();
+            errorSpy.mockRestore();
         });
     });
 });
