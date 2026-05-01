@@ -12,3 +12,7 @@ export function getFocusedColId(api: GridApi): string | null {
 export function getFocusedRowIndex(api: GridApi): number | null {
     return api.getFocusedCell()?.rowIndex ?? null;
 }
+
+export function getFocusedRowPinned(api: GridApi): string | null | undefined {
+    return api.getFocusedCell()?.rowPinned;
+}
