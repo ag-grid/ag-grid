@@ -159,11 +159,11 @@ export class CellCtrl extends BeanStub {
 
         this.createCellPosition();
         this.updateAndFormatValue(false);
+        this.positionFeature = new CellPositionFeature(this, beans);
     }
 
     private addFeatures(): void {
         const { beans } = this;
-        this.positionFeature = new CellPositionFeature(this, beans);
         this.customStyleFeature = beans.cellStyles?.createCellCustomStyleFeature(this);
         this.editStyleFeature = beans.editSvc?.createCellStyleFeature(this);
         this.mouseListener = new CellMouseListenerFeature(this, beans, this.column);
@@ -195,7 +195,6 @@ export class CellCtrl extends BeanStub {
 
     private removeFeatures(): void {
         const context = this.beans.context;
-        this.positionFeature = context.destroyBean(this.positionFeature);
         this.editorTooltipFeature = context.destroyBean(this.editorTooltipFeature);
         this.customStyleFeature = context.destroyBean(this.customStyleFeature);
         this.editStyleFeature = context.destroyBean(this.editStyleFeature);
@@ -1053,6 +1052,9 @@ export class CellCtrl extends BeanStub {
         }
 
         super.destroy();
+
+        this.beans.context.destroyBean(this.positionFeature);
+        this.positionFeature = undefined;
     }
 
     public hasBrowserFocus(): boolean {
