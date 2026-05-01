@@ -100,14 +100,13 @@ describe('group order maintenance', () => {
         // `valueGetter` of its own has unique data — its sort participates in the displayed-sort
         // mix as the column itself. `buildLevelSortOptions` cascades the option to every group
         // level AND adds it to the leaf bucket, so leaf rows are ordered by the column's data
-        // and group rows can be reordered too (matching pre-PR behaviour).
+        // and group rows can be reordered too.
         //
         // Test fixture: group columns have a comparator returning 0 (so the source rowGroup col
         // can't reorder countries). The auto-display column has its own field `displayLabel`
-        // and is sorted asc. We verify BOTH effects: leaf rows reorder by displayLabel, AND
-        // groups reorder by displayLabel of their first leaf (since the displayCol's value is
-        // resolved per row — group rows return undefined for `displayLabel` under the coupled
-        // path, so the group ordering here is driven by the source-col tie-breaker).
+        // and is sorted asc. We verify: leaf rows reorder by displayLabel; group rows return
+        // undefined for `displayLabel` under the coupled path, so they tie and country order
+        // stays structural.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A1', displayLabel: 'Z-display' },
             { id: '2', country: 'Audi', athlete: 'A2', displayLabel: 'A-display' },
@@ -1582,10 +1581,10 @@ describe('group order maintenance', () => {
     });
 
     test('deltaSort + postSortRows-pinned group + transactions: per-level baseline integrity', async () => {
-        // Reviewer P1 [DA]: _doDeltaSort consumes rowNode.childrenAfterSort as its prior baseline.
-        // After this PR, group levels with no sort options use _reuseArrayIfEqual to publish the
-        // structural baseline; postSortRows may then mutate that array in place to pin a group,
-        // leaving childrenAfterSort in non-structural (visual) order. On the NEXT refresh:
+        // _doDeltaSort consumes rowNode.childrenAfterSort as its prior baseline. Group levels
+        // with no sort options use _reuseArrayIfEqual to publish the structural baseline;
+        // postSortRows may then mutate that array in place to pin a group, leaving
+        // childrenAfterSort in non-structural (visual) order. On the NEXT refresh:
         //   - For the no-sort group level: the comparison `prev !== aggFilter` causes
         //     _reuseArrayIfEqual to fall back to a fresh slice of aggFilter, restoring the
         //     structural baseline (then postSortRows reapplies the pin on top).
@@ -1724,13 +1723,13 @@ describe('group order maintenance', () => {
     });
 
     test('treeData + groupMaintainOrder: per-level isolation does not apply, sort still runs', async () => {
-        // Reviewer P1: `groupMaintainOrder` docs state "Has no effect on tree data". This test
-        // pins that contract: with treeData=true and groupMaintainOrder=true, a sort on a leaf
-        // column reorders ALL rows (groups and leaves) just as it would without
-        // groupMaintainOrder — per-level isolation is bypassed. Tree data has no rowGroupCols
-        // (numLevels=0) and the explicit treeData guard inside GroupSortStage falls through to
-        // the pre-PR full-sort behaviour. The `_reuseArrayIfEqual` helper used on the no-sort
-        // branch is a memory optimisation only; it does not change behaviour.
+        // `groupMaintainOrder` docs state "Has no effect on tree data". This test pins that
+        // contract: with treeData=true and groupMaintainOrder=true, a sort on a leaf column
+        // reorders ALL rows (groups and leaves) just as it would without groupMaintainOrder —
+        // per-level isolation is bypassed. Tree data has no rowGroupCols (numLevels=0) and the
+        // explicit treeData guard inside GroupSortStage falls through to the full-sort path. The
+        // `_reuseArrayIfEqual` helper used on the no-sort branch is a memory optimisation only;
+        // it does not change behaviour.
         const rowData = [
             { id: '1', path: ['Audi'], name: 'Audi' },
             { id: '2', path: ['Audi', 'A2'], name: 'A2' },

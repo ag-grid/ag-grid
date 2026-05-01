@@ -135,14 +135,16 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
  * entries: indices `[0, numLevels)` hold the options targeting each group level, and index
  * `numLevels` holds the options that apply to data rows inside leaf groups.
  *
- * Targeting rules (match `sortService.getDisplaySortForColumn` semantics):
- * - Source rowGroup columns target their level by ref.
- * - Auto-display columns with `colDef.showRowGroup === true` (singleColumn shared display) cascade
- *   to every group level. If the column also has its own data (`field` or `valueGetter`) the sort
- *   ALSO reaches the leaf bucket so leaf rows are ordered by that data — preserving the pre-PR
- *   behaviour where sorting a visible auto-display column reordered both group rows and leaves.
- * - Auto-display columns with `colDef.showRowGroup === '<colId>'` target the matching level.
- * - Anything else (regular leaf columns) goes to the leaf bucket.
+ * Targeting rules:
+ * - Source rowGroup column -> its own level (by reference).
+ * - Auto-display column with `showRowGroup === '<colId>'` -> the matching level (by colId).
+ * - Auto-display column with `showRowGroup === true` (singleColumn shared display) -> cascades to
+ *   every group level. With own data (`field` / `valueGetter`) ALSO reaches the leaf bucket so a
+ *   header click on the visible auto-display column reorders both group rows and leaves. Group
+ *   rows naturally tie on undefined values under the default comparator (group rows have no
+ *   `data`); a custom `autoGroupColumnDef.comparator` can still reorder them — the documented
+ *   escape hatch for the uncoupled mode.
+ * - Anything else (regular leaf columns) -> leaf bucket only.
  *
  * Why the leaf bucket excludes group-column sorts (rowGroup-by-ref / showRowGroup-by-colId):
  * leaf rows in one leaf group all share the same group key, so sorting them by the group column
@@ -154,7 +156,11 @@ const buildLevelSortOptions = (sortOptions: SortOption[], groupColsByLevel: AgCo
     const numLevels = groupColsByLevel.length;
     const leafIndex = numLevels;
 
-    // Source col ref + colId → level index, for O(1) lookup per sort option.
+    // Single map keyed by both AgColumn ref AND colId string. AgColumn objects and colId strings
+    // never collide (different types), so one Map keeps allocations / lookups minimal. The
+    // call site below uses `levelByKey.get(column)` for source rowGroup matches and
+    // `levelByKey.get(showRowGroup)` (when showRowGroup is a string) for auto-display column
+    // matches — the same Map serves both lookups.
     const levelByKey = new Map<AgColumn | string, number>();
     for (let j = 0; j < numLevels; ++j) {
         const groupCol = groupColsByLevel[j];
@@ -174,8 +180,8 @@ const buildLevelSortOptions = (sortOptions: SortOption[], groupColsByLevel: AgCo
         const showRowGroup = colDef.showRowGroup;
 
         if (showRowGroup === true) {
-            // Cascade to every group level. With own data, ALSO reach the leaf bucket so leaf
-            // rows are ordered by the column's data (matches pre-PR behaviour).
+            // singleColumn shared display: cascade to every group level. With own data ALSO route
+            // to the leaf bucket so leaf rows are ordered by the column's data.
             for (let j = 0; j < numLevels; ++j) {
                 result[j].push(sortOption);
             }
@@ -184,6 +190,7 @@ const buildLevelSortOptions = (sortOptions: SortOption[], groupColsByLevel: AgCo
             }
             continue;
         }
+
         const level =
             levelByKey.get(column) ?? (typeof showRowGroup === 'string' ? levelByKey.get(showRowGroup) : undefined);
         if (level !== undefined) {
