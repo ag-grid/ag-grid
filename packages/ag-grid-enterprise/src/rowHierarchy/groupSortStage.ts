@@ -38,6 +38,8 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         const sortOptions = sortSvc?.getSortOptions() ?? [];
         const hasSortOptions = sortOptions.length > 0;
 
+        // Gated on `changedRowNodes` (transactions only) - sort/grouping changes refresh
+        // without a transaction and rebuild the baseline via full sort.
         const useDeltaSort =
             hasSortOptions &&
             !!changedRowNodes &&

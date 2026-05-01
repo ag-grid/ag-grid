@@ -943,7 +943,13 @@ describe('group order maintenance', () => {
         `);
     });
 
-    test('toggle from group sort to leaf sort preserves last group order', async () => {
+    test('adding a leaf sort while a group sort is active: each level sorts with its own options', async () => {
+        // `applyColumnState` with only `state` (no `defaultState`) does NOT clear sorts on
+        // unmentioned columns — so after these two calls BOTH country.sort='desc' AND
+        // athlete.sort='asc' are active. Per-level isolation routes each option to its bucket:
+        // the country level reorders by country desc, leaf rows reorder by athlete asc within
+        // their (single-row) groups. Group order persists because country desc is still
+        // applied, NOT because of any "preserve last visual order" baseline.
         const rowData = [
             { id: '1', country: 'Ireland', athlete: 'Z' },
             { id: '2', country: 'Italy', athlete: 'A' },

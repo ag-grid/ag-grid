@@ -633,25 +633,31 @@ function getDisplayedSort(col: Column, ctx: DisplayedSortContext): SortDirection
         return null;
     }
 
-    const linkedSources =
-        showRowGroup === true
-            ? ctx.rowGroupCols
-            : typeof showRowGroup === 'string'
-              ? ctx.rowGroupCols.filter((c) => c.getColId() === showRowGroup)
-              : [];
-
-    if (linkedSources.length === 0) {
-        return null;
-    }
-
     // `columnHasUniqueData` mirror: when the auto-display column has its own field/valueGetter
     // it participates in the mix-check alongside linked sources. ownSort is null at this point;
     // any non-null linked source therefore renders as 'mixed'.
     const columnHasUniqueData = colDef.field != null || colDef.valueGetter != null;
-    const sortableColumns = columnHasUniqueData ? [col, ...linkedSources] : linkedSources;
 
-    let firstSort: SortDirection | null | undefined;
-    for (const linked of sortableColumns) {
+    // String form: at most one matching rowGroup column — direct find avoids allocating a
+    // filtered array on every column validation pass.
+    if (typeof showRowGroup === 'string') {
+        const match = ctx.rowGroupCols.find((c) => c.getColId() === showRowGroup);
+        if (!match) {
+            return null;
+        }
+        const matchSort = match.getSort() ?? null;
+        return columnHasUniqueData && matchSort !== null ? 'mixed' : matchSort;
+    }
+
+    // `showRowGroup === true` (singleColumn cascade): walk every rowGroup column and check that
+    // their sorts agree. Initialise `firstSort` to `null` when the display column has its own
+    // data (it participates in the mix-check with its own — necessarily null at this point —
+    // sort), otherwise leave undefined so the first linked source seeds the comparison.
+    if (ctx.rowGroupCols.length === 0) {
+        return null;
+    }
+    let firstSort: SortDirection | null | undefined = columnHasUniqueData ? null : undefined;
+    for (const linked of ctx.rowGroupCols) {
         const s = linked.getSort() ?? null;
         if (firstSort === undefined) {
             firstSort = s;
