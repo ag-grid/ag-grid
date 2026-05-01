@@ -662,6 +662,43 @@ describe('SortService', () => {
     });
 
     describe('post-sort row metadata', () => {
+        // Locks in the legacy AG-309 (Feb 2018) behaviour: updateRowNodeAfterSort runs BEFORE
+        // postSortRows, so a callback that mutates params.nodes leaves childIndex/firstChild/
+        // lastChild based on the pre-mutation order. This is intentional — callbacks that read
+        // those flags during postSortRows expect them to match the input array. If this test
+        // fails, someone changed the long-standing ordering, and that requires a deliberate
+        // breaking-change decision (see groupSortStage.ts comment).
+        test('postSortRows reorder leaves childIndex / firstChild / lastChild stale (legacy AG-309 behaviour)', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'a', field: 'a', sort: 'asc' }],
+                rowData: [
+                    { id: '1', a: 'a' },
+                    { id: '2', a: 'b' },
+                    { id: '3', a: 'c' },
+                ],
+                getRowId: (p) => p.data.id,
+                postSortRows: (params) => {
+                    // Reverse the input. After this, childrenAfterSort is [c, b, a] but the
+                    // flags were already written for the input order [a, b, c].
+                    params.nodes.reverse();
+                },
+            });
+
+            const root = api.getRowNode('ROOT_NODE_ID');
+            // Display order reflects the post-mutation array.
+            expect(root?.childrenAfterSort?.map((n) => n.id)).toEqual(['3', '2', '1']);
+
+            // Flags reflect the pre-mutation (input) order — node id=1 was first in input,
+            // node id=3 was last, even though they're now at the opposite ends of the display.
+            expect(api.getRowNode('1')!.childIndex).toBe(0);
+            expect(api.getRowNode('1')!.firstChild).toBe(true);
+            expect(api.getRowNode('1')!.lastChild).toBe(false);
+
+            expect(api.getRowNode('3')!.childIndex).toBe(2);
+            expect(api.getRowNode('3')!.firstChild).toBe(false);
+            expect(api.getRowNode('3')!.lastChild).toBe(true);
+        });
+
         // Regression: the root SortStage must call updateRowNodeAfterSort so that the deprecated
         // firstChild / lastChild / childIndex flags (and their corresponding row events) reflect
         // the sorted order. Without that call, the flags stay stuck at insertion order, producing

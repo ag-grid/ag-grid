@@ -212,6 +212,50 @@ describe('group order maintenance', () => {
         `);
     });
 
+    test('postSortRows reorder leaves childIndex / firstChild / lastChild stale (legacy AG-309 behaviour)', async () => {
+        // Locks in the legacy AG-309 (Feb 2018) behaviour: _updateRowNodeAfterSort runs BEFORE
+        // postSortRows, so a callback that mutates params.nodes leaves childIndex/firstChild/
+        // lastChild based on the pre-mutation order. This is intentional — callbacks that read
+        // those flags during postSortRows expect them to match the input array. If this test
+        // fails, someone changed the long-standing ordering, and that requires a deliberate
+        // breaking-change decision.
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'A' },
+            { id: '2', country: 'BMW', athlete: 'B' },
+            { id: '3', country: 'Tesla', athlete: 'T' },
+        ];
+
+        const api = gridsManager.createGrid('grid-group-postsort-stale', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (p) => p.data.id,
+            postSortRows: (params) => {
+                // Reverse the input. After this, childrenAfterSort is [Tesla, BMW, Audi] but
+                // the flags were already written for the input order [Audi, BMW, Tesla].
+                params.nodes.reverse();
+            },
+        });
+
+        const root = api.getRowNode('ROOT_NODE_ID');
+        // Display order reflects the post-mutation array.
+        expect(root?.childrenAfterSort?.map((n) => n.key)).toEqual(['Tesla', 'BMW', 'Audi']);
+
+        // Flags reflect the pre-mutation (input) order — Audi was first in input, Tesla was
+        // last, even though they're now at the opposite ends of the display.
+        const audi = api.getRowNode('row-group-country-Audi')!;
+        expect(audi.childIndex).toBe(0);
+        expect(audi.firstChild).toBe(true);
+        expect(audi.lastChild).toBe(false);
+
+        const tesla = api.getRowNode('row-group-country-Tesla')!;
+        expect(tesla.childIndex).toBe(2);
+        expect(tesla.firstChild).toBe(false);
+        expect(tesla.lastChild).toBe(true);
+    });
+
     test('firstChild / lastChild / childIndex reflect the sorted group order', async () => {
         // Regression: the enterprise GroupSortStage must call _updateRowNodeAfterSort so that the
         // deprecated firstChild / lastChild / childIndex flags (and their corresponding row events)
