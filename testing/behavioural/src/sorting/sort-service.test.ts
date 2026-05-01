@@ -663,11 +663,7 @@ describe('SortService', () => {
 
     describe('post-sort row metadata', () => {
         // Locks in the legacy AG-309 (Feb 2018) behaviour: updateRowNodeAfterSort runs BEFORE
-        // postSortRows, so a callback that mutates params.nodes leaves childIndex/firstChild/
-        // lastChild based on the pre-mutation order. This is intentional — callbacks that read
-        // those flags during postSortRows expect them to match the input array. If this test
-        // fails, someone changed the long-standing ordering, and that requires a deliberate
-        // breaking-change decision (see groupSortStage.ts comment).
+        // postSortRows, and not after.
         test('postSortRows reorder leaves childIndex / firstChild / lastChild stale (legacy AG-309 behaviour)', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [{ colId: 'a', field: 'a', sort: 'asc' }],
@@ -699,10 +695,6 @@ describe('SortService', () => {
             expect(api.getRowNode('3')!.lastChild).toBe(true);
         });
 
-        // Regression: the root SortStage must call updateRowNodeAfterSort so that the deprecated
-        // firstChild / lastChild / childIndex flags (and their corresponding row events) reflect
-        // the sorted order. Without that call, the flags stay stuck at insertion order, producing
-        // stale ag-row-first / ag-row-last styling and stale event payloads after every sort.
         test('firstChild / lastChild / childIndex reflect the sorted order on a flat CSRM', async () => {
             const api = gridMgr.createGrid('g', {
                 columnDefs: [{ colId: 'a', field: 'a', sort: 'desc' }],

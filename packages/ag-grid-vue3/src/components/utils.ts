@@ -1218,6 +1218,9 @@ export interface Props<TData> {
          * (data-insertion order, or `initialGroupOrderComparator` if configured) and is preserved
          * across filter changes and transactions. If a group column was sorted via `colDef.sort`
          * and the user later explicitly clears that sort, the structural order is restored.
+         *
+         * Applies to row grouping only. Has no effect on tree data, where row order is determined
+         * by the tree structure.
          * @default false
          * @agModule `RowGroupingModule`
          */

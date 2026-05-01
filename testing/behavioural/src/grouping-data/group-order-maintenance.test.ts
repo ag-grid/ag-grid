@@ -289,6 +289,53 @@ describe('group order maintenance', () => {
         });
     });
 
+    test('reused-array postSortRows mutation does not corrupt the structural baseline', async () => {
+        // Locks in the invariant that `_reuseArrayIfEqual` returning `prevSort` (i.e.
+        // `rowNode.childrenAfterSort`) is safe even when `postSortRows` mutates that array
+        // in place: `prevSort` and `childrenAfterAggFilter` are separate property values
+        // backed by separate array instances, so a mutation to the former never bleeds into
+        // the latter. End-to-end proof: toggling the postSortRows reorder off restores the
+        // structural order — which is only possible if the structural baseline survived.
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'A' },
+            { id: '2', country: 'BMW', athlete: 'B' },
+            { id: '3', country: 'Tesla', athlete: 'T' },
+        ];
+
+        let reverse = false;
+        const api = gridsManager.createGrid('grid-baseline-integrity', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+            postSortRows: (params) => {
+                if (reverse) {
+                    params.nodes.reverse();
+                }
+            },
+        });
+
+        const sortKeys = () => (api.getRowNode('ROOT_NODE_ID')?.childrenAfterSort ?? []).map((n) => n.key);
+
+        // Initial state: postSortRows is a no-op, in structural order.
+        expect(sortKeys()).toEqual(['Audi', 'BMW', 'Tesla']);
+
+        // Refresh with reverse=true. The reused-array branch fires and postSortRows mutates
+        // the previous array in place — childrenAfterSort flips.
+        reverse = true;
+        api.refreshClientSideRowModel('sort');
+        expect(sortKeys()).toEqual(['Tesla', 'BMW', 'Audi']);
+
+        // Refresh with reverse=false. Structural order returns. If the baseline had been
+        // corrupted by the previous mutation, the structural order could not be restored here.
+        reverse = false;
+        api.refreshClientSideRowModel('sort');
+        expect(sortKeys()).toEqual(['Audi', 'BMW', 'Tesla']);
+    });
+
     test('postSortRows reorder survives a sort refresh on the reused-array path', async () => {
         // Exercises the path where _reuseArrayIfEqual returns the previous childrenAfterSort by
         // reference and postSortRows then mutates the same array in place. hasAnyFirstChildChanged
