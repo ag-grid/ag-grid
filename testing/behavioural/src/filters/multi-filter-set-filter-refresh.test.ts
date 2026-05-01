@@ -57,13 +57,21 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
             agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'name', index: 0 })
         );
 
-        // Register a one-shot filterChanged listener BEFORE dispatching so we deterministically
-        // wait for the (debounced) text filter to apply, instead of polling getDisplayedRowCount.
+        // Wait for filterChanged after dispatching, so the post-debounce row state is observable.
+        // A short timeout fallback prevents a hang if the filter model is unchanged (no event
+        // emitted) or the debounced apply is dropped — the filter has debounceMs:1, so 200ms is
+        // generous on any CI. The caller asserts row count after this returns, so a stale wait is
+        // detected by the assertion rather than masked.
         const filterApplied = new Promise<void>((resolve) => {
             const handler = () => {
+                clearTimeout(fallback);
                 api.removeEventListener('filterChanged', handler);
                 resolve();
             };
+            const fallback = setTimeout(() => {
+                api.removeEventListener('filterChanged', handler);
+                resolve();
+            }, 200);
             api.addEventListener('filterChanged', handler);
         });
 

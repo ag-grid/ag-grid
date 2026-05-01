@@ -612,9 +612,11 @@ function getDisplayedSort(api: GridApi, col: Column): SortDirection | 'mixed' | 
     }
 
     // RowGroupingModule may not be registered (e.g. tree-data tests, already excluded above) —
-    // `getRowGroupColumns` throws in that case, so guard.
-    const isModuleRegistered = api.isModuleRegistered as (name: string) => boolean;
-    if (!isModuleRegistered('SharedRowGrouping')) {
+    // `getRowGroupColumns` throws in that case, so guard. `isModuleRegistered` may also be absent
+    // on partial GridApi shapes / test doubles, in which case we conservatively skip the row-group
+    // path and return null (no displayed sort).
+    const isModuleRegistered = api.isModuleRegistered;
+    if (typeof isModuleRegistered !== 'function' || !isModuleRegistered.call(api, 'SharedRowGrouping')) {
         return null;
     }
 
