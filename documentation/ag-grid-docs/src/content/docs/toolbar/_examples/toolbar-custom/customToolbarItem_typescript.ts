@@ -78,7 +78,7 @@ export class ToolPanelRadio implements IToolbarItemComp {
         this.eGui = document.createElement('div');
         this.eGui.className = 'ag-toolbar-item';
         this.eGui.setAttribute('role', 'radiogroup');
-        this.eGui.style.cssText = 'display: flex; gap: 12px; padding: 8px;';
+        this.eGui.style.cssText = 'display: flex; gap: 12px; padding: 10px;';
 
         const groupName = `tool-panel-${params.key}`;
         for (const { value, label } of PANELS) {

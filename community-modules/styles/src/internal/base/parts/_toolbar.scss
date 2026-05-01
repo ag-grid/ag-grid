@@ -64,7 +64,7 @@
         display: inline-flex;
         align-items: center;
         min-width: 200px;
-        max-width: 250px;
+        max-width: none;
         margin: 0 calc(var(--ag-spacing) * 2);
     }
 
@@ -87,8 +87,7 @@
     }
 
     .ag-toolbar-input-field {
-        border: solid var(--ag-border-width) var(--ag-border-color);
-        border-radius: var(--ag-border-radius);
+        border: none;
         background: transparent;
         color: var(--ag-text-color);
         font-size: var(--ag-font-size);

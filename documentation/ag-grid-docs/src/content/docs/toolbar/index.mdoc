@@ -54,7 +54,7 @@ Built-in items require their corresponding modules to be registered. If a requir
 
 ### Dropdown Menus
 
-`agMenuToolbarItem` renders a button that opens a dropdown of [Menu Items](./component-menu-item/). Set `label`, `tooltip`, and `icon` on the item and supply `menuItems` via `toolbarItemParams`. Each entry is either a [`MenuItemDef`](#reference-MenuItemDef) object or one of the built-in [`DefaultMenuItem`](#reference-DefaultMenuItem) string names — the same set accepted by the [Context Menu](./context-menu/#built-in-menu-items).
+`agMenuToolbarItem` renders a button that opens a dropdown of [Menu Items](./component-menu-item/). Set `label`, `tooltip`, and `icon` on the item and supply `menuItems` via `toolbarItemParams`. Each entry is either a [`MenuItemDef`](#reference-MenuItemDef) object or one of the built-in string names accepted by the [Context Menu](./context-menu/#built-in-menu-items).
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -71,8 +71,6 @@ const gridOptions = {
     },
 }
 ```
-
-{% interfaceDocumentation interfaceName="DefaultMenuItem" config={"asCode":true} /%}
 
 ## Action Buttons
 
@@ -157,5 +155,7 @@ The toolbar exposes the following [Theme Parameters](./theming-parameters/):
 {% apiDocumentation source="grid-options/properties.json" section="accessories" names=["toolbar"] /%}
 
 {% interfaceDocumentation interfaceName="IToolbarItemParams" /%}
+
+`getToolbarItemInstance` is demonstrated in the [Custom Components](#custom-components) example, where it's used to keep a toolbar radio in sync with side bar tool panel changes.
 
 {% apiDocumentation source="grid-api/api.json" section="accessories" names=["getToolbarItemInstance"] /%}

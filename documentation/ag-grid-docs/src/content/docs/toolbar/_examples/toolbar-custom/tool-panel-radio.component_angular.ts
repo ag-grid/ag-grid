@@ -13,7 +13,7 @@ const PANELS = [
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div class="ag-toolbar-item" role="radiogroup" style="display: flex; gap: 12px; padding: 8px;">
+        <div class="ag-toolbar-item" role="radiogroup" style="display: flex; gap: 12px; padding: 10px;">
             @for (option of options; track option.value) {
                 <label style="padding: 0 4px;">
                     <input
