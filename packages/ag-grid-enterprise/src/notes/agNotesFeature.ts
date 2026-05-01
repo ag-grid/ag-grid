@@ -341,6 +341,7 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
                 pointerenter: (event: PointerEvent) =>
                     this.onPointerEnter(this.getTargetForElement(event.target), event),
                 pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
+                click: (event: MouseEvent) => this.onClick(this.getTargetForElement(event.target), event),
                 contextmenu: () => this.onContextMenu(),
             });
         }
