@@ -18,7 +18,7 @@
                 "url": "./toolbar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IToolbarItemComp", "IconName"],
+                "exclude": ["IToolbarItemComp", "IconName", "MenuItemDef", "IMenuActionParams", "DefaultMenuItem"],
                 "include": []
             }
         },

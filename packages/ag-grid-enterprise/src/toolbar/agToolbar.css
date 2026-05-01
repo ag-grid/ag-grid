@@ -27,7 +27,6 @@
     gap: var(--ag-spacing);
     padding: calc(var(--ag-spacing) * 2);
     border: 0;
-    border-radius: var(--ag-border-radius);
     background: transparent;
     color: var(--ag-toolbar-text-color);
     cursor: pointer;
