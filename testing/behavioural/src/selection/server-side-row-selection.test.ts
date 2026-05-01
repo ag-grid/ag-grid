@@ -2,7 +2,7 @@ import type { MockInstance } from 'vitest';
 
 import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ServerSideRowModelModule, StatusBarModule } from 'ag-grid-enterprise';
 
 import {
     TestGridsManager,
@@ -42,8 +42,25 @@ describe('Row Selection Grid Options', () => {
     }
 
     const gridMgr = new TestGridsManager({
-        modules: [RowSelectionModule, ClientSideRowModelModule, RowGroupingModule, ServerSideRowModelModule],
+        modules: [
+            RowSelectionModule,
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            ServerSideRowModelModule,
+            StatusBarModule,
+        ],
     });
+
+    function getStatusBarValue(api: GridApi, label: string): string | null {
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        const items = Array.from(gridDiv.querySelectorAll<HTMLElement>('.ag-status-name-value'));
+        for (const item of items) {
+            if (item.querySelector('span')?.textContent === label) {
+                return item.querySelector<HTMLElement>('.ag-status-name-value-value')?.textContent ?? null;
+            }
+        }
+        return null;
+    }
 
     beforeEach(() => {
         gridMgr.reset();
@@ -1452,6 +1469,26 @@ describe('Row Selection Grid Options', () => {
 
                 actions.toggleHeaderCheckboxByIndex(0);
                 assertSelectedRowElementsById(['1', '2', '3', '4', '5', '6'], api);
+            });
+
+            test('selected row count status panel shows known total after select-all', async () => {
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: { mode: 'multiRow', headerCheckbox: true },
+                    statusBar: { statusPanels: [{ statusPanel: 'agSelectedRowCountComponent' }] },
+                });
+
+                actions.toggleHeaderCheckboxByIndex(0);
+                expect(getStatusBarValue(api, 'Selected')).toBe('7');
+
+                actions.toggleCheckboxByIndex(2);
+                expect(getStatusBarValue(api, 'Selected')).toBe('6');
             });
         });
 

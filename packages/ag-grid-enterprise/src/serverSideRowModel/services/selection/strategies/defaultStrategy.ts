@@ -188,10 +188,19 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     }
 
     public getSelectionCount(): number {
-        if (this.selectedState.selectAll) {
-            return -1;
+        const { selectAll, toggledNodes } = this.selectedState;
+        if (!selectAll) {
+            return toggledNodes.size;
         }
-        return this.selectedState.toggledNodes.size;
+        // When the dataset's full row count is known and no filters are constraining the
+        // visible set, "select all" represents `rowCount - deselected` rows. Otherwise the
+        // count is genuinely unknown (lazy data, filter context) and `-1` signals that.
+        const { filterManager, rowModel } = this.beans;
+        const filterPresent = filterManager?.isAnyFilterPresent();
+        if (!filterPresent && rowModel.isLastRowIndexKnown()) {
+            return Math.max(0, rowModel.getRowCount() - toggledNodes.size);
+        }
+        return -1;
     }
 
     public isEmpty(): boolean {
