@@ -1,23 +1,22 @@
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Tool panel radio toggles tool panels', async ({ page }) => {
+    test.eachFramework('Custom toggles apply and clear column filters', async ({ page }) => {
         await waitForGridContent(page);
 
         const toolbar = page.locator('.ag-toolbar');
         await expect(toolbar).toBeVisible();
 
-        const radios = toolbar.locator('input[type="radio"]');
-        await expect(radios).toHaveCount(3);
+        const checkboxes = toolbar.locator('input[type="checkbox"]');
+        await expect(checkboxes).toHaveCount(2);
 
-        await toolbar.getByLabel('Columns').check();
-        await expect(page.locator('.ag-column-tool-panel')).toBeVisible();
+        await checkboxes.nth(0).check();
+        await expect(page.locator('.ag-header-cell[col-id="gold"] .ag-filter-active')).toBeVisible();
 
-        await toolbar.getByLabel('Filters').check();
-        await expect(page.locator('.ag-filter-panel')).toBeVisible();
+        await checkboxes.nth(1).check();
+        await expect(page.locator('.ag-header-cell[col-id="silver"] .ag-filter-active')).toBeVisible();
 
-        await toolbar.getByLabel('None').check();
-        await expect(page.locator('.ag-filter-panel')).toBeHidden();
-        await expect(page.locator('.ag-column-tool-panel')).toBeHidden();
+        await checkboxes.nth(0).uncheck();
+        await expect(page.locator('.ag-header-cell[col-id="gold"] .ag-filter-active')).toBeHidden();
     });
 });

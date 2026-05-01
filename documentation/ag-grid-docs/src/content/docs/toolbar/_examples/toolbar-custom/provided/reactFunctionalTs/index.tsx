@@ -3,12 +3,12 @@ import { createRoot } from 'react-dom/client';
 
 import type { ColDef, Toolbar } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
-import { ColumnsToolPanelModule, NewFiltersToolPanelModule, SideBarModule, ToolbarModule } from 'ag-grid-enterprise';
+import { ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import ToolPanelRadio from './customToolbarItem';
+import WinnersToggle from './customToolbarItem';
 
-const modules = [AllCommunityModule, ColumnsToolPanelModule, NewFiltersToolPanelModule, SideBarModule, ToolbarModule];
+const modules = [AllCommunityModule, ToolbarModule];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -23,29 +23,23 @@ const GridExample = () => {
 
     const columnDefs = useMemo<ColDef[]>(
         () => [
-            { field: 'athlete', minWidth: 200 },
-            { field: 'country', minWidth: 200 },
-            { field: 'sport', minWidth: 200 },
-            { field: 'year' },
-            { field: 'gold' },
-            { field: 'silver' },
+            { field: 'athlete' },
+            { field: 'country' },
+            { field: 'gold', filter: 'agNumberColumnFilter' },
+            { field: 'silver', filter: 'agNumberColumnFilter' },
             { field: 'bronze' },
-            { field: 'total' },
         ],
         []
     );
     const defaultColDef = useMemo<ColDef>(
         () => ({
-            flex: 1,
             minWidth: 100,
-            filter: true,
         }),
         []
     );
-    const sideBar = useMemo(() => ({ toolPanels: ['columns', 'filters-new'] }), []);
     const toolbar = useMemo<Toolbar>(
         () => ({
-            items: [{ toolbarItem: ToolPanelRadio, key: 'toolPanel' }],
+            items: [{ toolbarItem: WinnersToggle, key: 'winners' }],
         }),
         []
     );
@@ -58,8 +52,6 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        enableFilterHandlers
-                        sideBar={sideBar}
                         toolbar={toolbar}
                     />
                 </div>

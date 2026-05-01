@@ -1,69 +1,53 @@
-import type { IToolbarItemComp, IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
+import type { FilterChangedEvent, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
 
-const OPTIONS = [
-    { value: 'filters-new', label: 'Filters' },
-    { value: 'columns', label: 'Columns' },
-    { value: 'none', label: 'None' },
-] as const;
+const COLUMNS = [
+    { column: 'gold', label: 'Gold winners only' },
+    { column: 'silver', label: 'Silver winners only' },
+];
 
-export class ToolPanelRadio implements IToolbarItemComp {
+export class WinnersToggle implements IToolbarItemComp {
     private params!: IToolbarItemParams;
+    eGui!: HTMLDivElement;
     private inputs: Record<string, HTMLInputElement> = {};
-    eGui!: HTMLElement;
     private changeListener!: (event: Event) => void;
-    private panelListener!: (event: ToolPanelVisibleChangedEvent) => void;
+    private filterListener!: (event: FilterChangedEvent) => void;
 
     init(params: IToolbarItemParams) {
         this.params = params;
 
         this.eGui = document.createElement('div');
         this.eGui.className = 'ag-toolbar-item';
-        this.eGui.setAttribute('role', 'radiogroup');
-        this.eGui.setAttribute('aria-label', 'Tool panel');
+        this.eGui.style.cssText = 'display: flex; gap: 12px; padding: 8px;';
 
-        const groupName = `tool-panel-${params.key}`;
-        for (const option of OPTIONS) {
+        for (const { column, label } of COLUMNS) {
             const eLabel = document.createElement('label');
-            eLabel.style.marginRight = '8px';
+            eLabel.style.padding = '0 4px';
 
             const eInput = document.createElement('input');
-            eInput.type = 'radio';
-            eInput.name = groupName;
-            eInput.value = option.value;
+            eInput.type = 'checkbox';
+            eInput.dataset.column = column;
             eInput.style.marginRight = '4px';
 
             eLabel.appendChild(eInput);
-            eLabel.appendChild(document.createTextNode(option.label));
+            eLabel.appendChild(document.createTextNode(label));
             this.eGui.appendChild(eLabel);
-            this.inputs[option.value] = eInput;
+            this.inputs[column] = eInput;
         }
 
-        this.setSelected('none');
-
         this.changeListener = (event: Event) => {
-            const value = (event.target as HTMLInputElement).value;
-            if (value === 'none') {
-                this.params.api.closeToolPanel();
-            } else {
-                this.params.api.openToolPanel(value);
-            }
+            const target = event.target as HTMLInputElement;
+            const column = target.dataset.column!;
+            const model = target.checked ? { type: 'greaterThan', filter: 0 } : null;
+            params.api.setColumnFilterModel(column, model).then(() => params.api.onFilterChanged());
         };
         this.eGui.addEventListener('change', this.changeListener);
 
-        this.panelListener = ({ key, visible }: ToolPanelVisibleChangedEvent) => {
-            if (visible) {
-                this.setSelected(key);
-            } else if (this.inputs[key]?.checked) {
-                this.setSelected('none');
+        this.filterListener = () => {
+            for (const { column } of COLUMNS) {
+                this.inputs[column].checked = params.api.getColumnFilterModel(column) != null;
             }
         };
-        params.api.addEventListener('toolPanelVisibleChanged', this.panelListener);
-    }
-
-    private setSelected(value: string) {
-        for (const option of OPTIONS) {
-            this.inputs[option.value].checked = option.value === value;
-        }
+        params.api.addEventListener('filterChanged', this.filterListener);
     }
 
     getGui() {
@@ -72,6 +56,6 @@ export class ToolPanelRadio implements IToolbarItemComp {
 
     destroy() {
         this.eGui.removeEventListener('change', this.changeListener);
-        this.params.api.removeEventListener('toolPanelVisibleChanged', this.panelListener);
+        this.params.api.removeEventListener('filterChanged', this.filterListener);
     }
 }

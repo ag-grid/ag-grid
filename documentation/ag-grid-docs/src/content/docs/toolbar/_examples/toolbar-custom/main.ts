@@ -1,39 +1,26 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry, createGrid } from 'ag-grid-community';
-import { ColumnsToolPanelModule, NewFiltersToolPanelModule, SideBarModule, ToolbarModule } from 'ag-grid-enterprise';
+import { ToolbarModule } from 'ag-grid-enterprise';
 
-import { ToolPanelRadio } from './customToolbarItem_typescript';
+import { WinnersToggle } from './customToolbarItem_typescript';
 
-ModuleRegistry.registerModules([
-    AllCommunityModule,
-    ColumnsToolPanelModule,
-    NewFiltersToolPanelModule,
-    SideBarModule,
-    ToolbarModule,
-]);
+ModuleRegistry.registerModules([AllCommunityModule, ToolbarModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'athlete', minWidth: 200 },
-        { field: 'country', minWidth: 200 },
-        { field: 'sport', minWidth: 200 },
-        { field: 'year' },
-        { field: 'gold' },
-        { field: 'silver' },
+        { field: 'athlete' },
+        { field: 'country' },
+        { field: 'gold', filter: 'agNumberColumnFilter' },
+        { field: 'silver', filter: 'agNumberColumnFilter' },
         { field: 'bronze' },
-        { field: 'total' },
     ],
     defaultColDef: {
-        flex: 1,
         minWidth: 100,
-        filter: true,
     },
-    enableFilterHandlers: true,
-    sideBar: { toolPanels: ['columns', 'filters-new'] },
     toolbar: {
-        items: [{ toolbarItem: ToolPanelRadio, key: 'toolPanel' }],
+        items: [{ toolbarItem: WinnersToggle, key: 'winners' }],
     },
 };
 

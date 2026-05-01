@@ -3,6 +3,7 @@ import {
     ClientSideRowModelModule,
     CsvExportModule,
     ModuleRegistry,
+    NumberFilterModule,
     QuickFilterModule,
     TextFilterModule,
     ValidationModule,
@@ -12,6 +13,7 @@ import { ContextMenuModule, ExcelExportModule, ToolbarModule } from 'ag-grid-ent
 
 ModuleRegistry.registerModules([
     TextFilterModule,
+    NumberFilterModule,
     ClientSideRowModelModule,
     ContextMenuModule,
     CsvExportModule,
@@ -25,28 +27,23 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'athlete', minWidth: 200 },
-        { field: 'country', minWidth: 200 },
-        { field: 'sport', minWidth: 200 },
-        { field: 'year' },
+        { field: 'athlete' },
+        { field: 'country' },
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },
-        { field: 'total' },
     ],
     defaultColDef: {
-        flex: 1,
         minWidth: 100,
         filter: true,
     },
     toolbar: {
+        alignment: 'right',
         items: [
-            'agQuickFilterToolbarItem',
+            { toolbarItem: 'agQuickFilterToolbarItem', alignment: 'left' },
             {
                 toolbarItem: 'agMenuToolbarItem',
-                label: 'Export',
                 icon: 'save',
-                alignment: 'right',
                 toolbarItemParams: {
                     menuItems: ['csvExport', 'excelExport'],
                 },

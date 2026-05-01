@@ -1,46 +1,45 @@
 import React, { useEffect, useState } from 'react';
 
-import type { IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
+import type { FilterChangedEvent, IToolbarItemParams } from 'ag-grid-community';
 
-const OPTIONS = [
-    { value: 'filters-new', label: 'Filters' },
-    { value: 'columns', label: 'Columns' },
-    { value: 'none', label: 'None' },
-] as const;
+const COLUMNS = [
+    { column: 'gold', label: 'Gold winners only' },
+    { column: 'silver', label: 'Silver winners only' },
+];
 
 export default (props: IToolbarItemParams) => {
-    const { api, key } = props;
-    const [opened, setOpened] = useState<string>('none');
+    const { api } = props;
+    const [checked, setChecked] = useState<Record<string, boolean>>({ gold: false, silver: false });
 
     useEffect(() => {
-        const handler = ({ key: panelKey, visible }: ToolPanelVisibleChangedEvent) => {
-            setOpened((prev) => (visible ? panelKey : prev === panelKey ? 'none' : prev));
+        const handler = (_event: FilterChangedEvent) => {
+            const next: Record<string, boolean> = {};
+            for (const { column } of COLUMNS) {
+                next[column] = api.getColumnFilterModel(column) != null;
+            }
+            setChecked(next);
         };
-        api.addEventListener('toolPanelVisibleChanged', handler);
-        return () => api.removeEventListener('toolPanelVisibleChanged', handler);
+        api.addEventListener('filterChanged', handler);
+        return () => api.removeEventListener('filterChanged', handler);
     }, [api]);
 
-    const onChange = (value: string) => {
-        if (value === 'none') {
-            api.closeToolPanel();
-        } else {
-            api.openToolPanel(value);
-        }
+    const onChange = (column: string, event: React.ChangeEvent<HTMLInputElement>) => {
+        const next = event.target.checked;
+        const model = next ? { type: 'greaterThan', filter: 0 } : null;
+        api.setColumnFilterModel(column, model).then(() => api.onFilterChanged());
     };
 
     return (
-        <div className="ag-toolbar-item" role="radiogroup" aria-label="Tool panel">
-            {OPTIONS.map((option) => (
-                <label key={option.value} style={{ marginRight: 8 }}>
+        <div className="ag-toolbar-item" style={{ display: 'flex', gap: 12, padding: 8 }}>
+            {COLUMNS.map(({ column, label }) => (
+                <label key={column} style={{ padding: '0 4px' }}>
                     <input
-                        type="radio"
-                        name={`tool-panel-${key}`}
-                        value={option.value}
-                        checked={opened === option.value}
-                        onChange={() => onChange(option.value)}
+                        type="checkbox"
+                        checked={checked[column] ?? false}
+                        onChange={(event) => onChange(column, event)}
                         style={{ marginRight: 4 }}
                     />
-                    {option.label}
+                    {label}
                 </label>
             ))}
         </div>

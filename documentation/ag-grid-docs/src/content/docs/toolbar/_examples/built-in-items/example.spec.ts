@@ -1,7 +1,7 @@
 import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.eachFramework('Quick filter input and export menu render', async ({ page }) => {
+    test.eachFramework('Quick filter and export menu render', async ({ page }) => {
         await waitForGridContent(page);
 
         const toolbar = page.locator('.ag-toolbar');
@@ -9,8 +9,5 @@ test.agExample(import.meta, () => {
 
         await expect(toolbar.locator(':scope > .ag-toolbar-input')).toHaveCount(1);
         await expect(toolbar.locator(':scope > .ag-toolbar-button')).toHaveCount(1);
-
-        const exportButton = toolbar.locator('button').filter({ hasText: 'Export' });
-        await expect(exportButton).toBeVisible();
     });
 });

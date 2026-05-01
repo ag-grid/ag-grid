@@ -3,7 +3,7 @@ title: "Quick Access Toolbar"
 enterprise: true
 ---
 
-The Toolbar appears above the grid and provides quick access to common grid actions.
+The Toolbar appears above the grid and provides quick access to common grid actions. It supports built-in items such as quick filter and find inputs, dropdown menus, and embedded panels — and can be extended with [Action Buttons](#action-buttons) or [Custom Components](#custom-components).
 
 {% gridExampleRunner title="Built-in Items" name="built-in-items" exampleHeight=590 /%}
 
@@ -14,14 +14,7 @@ Set the `toolbar` grid option to a [Toolbar](#reference-Toolbar) object. The `it
 ```{% frameworkTransform=true %}
 const gridOptions = {
     toolbar: {
-        items: [
-            {
-                key: 'excelExport',
-                tooltip: 'Excel Export',
-                icon: 'excel',
-                action: (params) => params.api.exportDataAsExcel(),
-            },
-        ],
+        items: ['agQuickFilterToolbarItem'],
     },
 
     // other grid options ...
@@ -29,8 +22,6 @@ const gridOptions = {
 ```
 
 Updating the toolbar configuration with `setGridOption('toolbar', ...)` re-renders the toolbar automatically.
-
-{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["toolbar"] /%}
 
 ### Alignment
 
@@ -52,14 +43,14 @@ const gridOptions = {
 
 Built-in items require their corresponding modules to be registered. If a required module is not registered, the item is hidden and a console warning is logged.
 
-| Item                                   | Description                                                                                             | Required Module                           |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| `agQuickFilterToolbarItem`             | Text input that filters grid rows using the [Quick Filter](./filter-quick/).                            | `QuickFilterModule`                       |
-| `agFindToolbarItem`                    | Text input that searches within grid cells using [Find](./find/).                                       | `FindModule`                              |
-| `agRowGroupPanelToolbarItem`           | Embeds the [Row Group Panel](./grouping-group-panel/). Configured independently of `rowGroupPanelShow`. | `RowGroupingPanelModule`                  |
-| `agPivotPanelToolbarItem`              | Embeds the [Pivot Panel](./pivoting/). Configured independently of `pivotPanelShow`.                    | `RowGroupingPanelModule`                  |
-| [`agMenuToolbarItem`](#dropdown-menus) | Button that opens a [dropdown menu](#dropdown-menus).                                                   | `ContextMenuModule` or `ColumnMenuModule` |
-| `'separator'`                          | Vertical divider used to group items visually. Has no behaviour of its own.                             | —                                         |
+| Item                                   | Required Modules                          | Description                                                                                             |
+| -------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `agQuickFilterToolbarItem`             | `QuickFilterModule`                       | Text input that filters grid rows using the [Quick Filter](./filter-quick/).                            |
+| `agFindToolbarItem`                    | `FindModule`                              | Text input that searches within grid cells using [Find](./find/).                                       |
+| `agRowGroupPanelToolbarItem`           | `RowGroupingPanelModule`                  | Embeds the [Row Group Panel](./grouping-group-panel/). Configured independently of `rowGroupPanelShow`. |
+| `agPivotPanelToolbarItem`              | `RowGroupingPanelModule`                  | Embeds the [Pivot Panel](./pivoting/). Configured independently of `pivotPanelShow`.                    |
+| [`agMenuToolbarItem`](#dropdown-menus) | `ContextMenuModule` or `ColumnMenuModule` | Button that opens a [dropdown menu](#dropdown-menus).                                                   |
+| `'separator'`                          | —                                         | Vertical divider used to group items visually. Has no behaviour of its own.                             |
 
 ### Dropdown Menus
 
@@ -71,7 +62,6 @@ const gridOptions = {
         items: [
             {
                 toolbarItem: 'agMenuToolbarItem',
-                label: 'Export',
                 icon: 'save',
                 toolbarItemParams: {
                     menuItems: ['csvExport', 'excelExport'],
@@ -105,9 +95,9 @@ const gridOptions = {
 
 ## Custom Components
 
-For controls beyond a button — toggles, composed widgets, or anything stateful — set `toolbarItem` to a component reference. The grid instantiates the component once per item; each instance receives `IToolbarItemParams`, with the object passed via `toolbarItemParams` available as `params.toolbarItemParams`.
+For controls beyond a button — toggles, inputs, or any stateful UI — set `toolbarItem` to a component reference. Custom components can render arbitrary HTML and call any grid API, so they suit cases that the [Action Button](#action-buttons) shorthand cannot express.
 
-The example below defines a `CustomFilterToggle` component that applies a grid filter when activated and clears it when deactivated. The toolbar reuses the component to filter the grid by gold, silver, or bronze medal winners.
+The example below defines a single toggle input that, when checked, applies a column filter; unchecking clears it. The same pattern fits any "apply state to the grid" control such as a custom filter, sort toggle, or visibility switch.
 
 {% gridExampleRunner title="Custom Toolbar Item" name="toolbar-custom" /%}
 
@@ -150,18 +140,6 @@ The `toolbarItem` property accepts the following values:
 {% partial file="./_component-interface-react.mdoc" /%}
 {% partial file="./_component-interface-vue.mdoc" /%}
 
-{% interfaceDocumentation interfaceName="IToolbarItemParams" /%}
-
-## Accessing Item Instances
-
-Use `getToolbarItemInstance(key)` to retrieve a toolbar item component instance by its key. The key is either set explicitly in the item definition or derived from the item type when not specified.
-
-The example below registers two custom toolbar items that mirror the [Columns Tool Panel](./tool-panel-columns/) and [Filters Tool Panel](./tool-panel-filters/) toggles. External buttons call `getToolbarItemInstance` to drive each item programmatically.
-
-{% gridExampleRunner title="Accessing Item Instances" name="accessing-instances" /%}
-
-{% apiDocumentation source="grid-api/api.json" section="accessories" names=["getToolbarItemInstance"] /%}
-
 ## Theme Parameters
 
 The toolbar exposes the following [Theme Parameters](./theming-parameters/):
@@ -171,3 +149,11 @@ The toolbar exposes the following [Theme Parameters](./theming-parameters/):
 | `toolbarBackgroundColor` | Background colour of the toolbar. Defaults to the header background colour. |
 | `toolbarTextColor`       | Text colour in the toolbar. Defaults to the header text colour.             |
 | `toolbarSeparatorBorder` | Border style for the vertical separator between toolbar items.              |
+
+## API Reference
+
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["toolbar"] /%}
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["getToolbarItemInstance"] /%}
+
+{% interfaceDocumentation interfaceName="IToolbarItemParams" /%}
