@@ -1,14 +1,14 @@
-import React, { StrictMode, useEffect, useMemo, useState } from 'react';
+import React, { StrictMode, useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, Toolbar } from 'ag-grid-community';
+import type { ColDef, ToolPanelVisibleChangedEvent, Toolbar } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
-import { ToolbarModule } from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule, FiltersToolPanelModule, SideBarModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import WinnersToggle from './customToolbarItem';
+import { ToolPanelRadio, type ToolPanelRadioHandle, WinnersToggle } from './customToolbarItem';
 
-const modules = [AllCommunityModule, ToolbarModule];
+const modules = [AllCommunityModule, ColumnsToolPanelModule, FiltersToolPanelModule, SideBarModule, ToolbarModule];
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -34,15 +34,24 @@ const GridExample = () => {
     const defaultColDef = useMemo<ColDef>(
         () => ({
             minWidth: 100,
+            filter: true,
         }),
         []
     );
+    const sideBar = useMemo(() => ({ toolPanels: ['columns', 'filters'] }), []);
     const toolbar = useMemo<Toolbar>(
         () => ({
-            items: [{ toolbarItem: WinnersToggle, key: 'winners' }],
+            items: [
+                { toolbarItem: WinnersToggle, key: 'winners' },
+                { toolbarItem: ToolPanelRadio, key: 'toolPanel', alignment: 'right' },
+            ],
         }),
         []
     );
+    const onToolPanelVisibleChanged = useCallback((event: ToolPanelVisibleChangedEvent) => {
+        const radio = event.api.getToolbarItemInstance<ToolPanelRadioHandle>('toolPanel');
+        radio?.setSelected(event.visible ? event.key : 'none');
+    }, []);
 
     return (
         <AgGridProvider modules={modules}>
@@ -52,7 +61,9 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
+                        sideBar={sideBar}
                         toolbar={toolbar}
+                        onToolPanelVisibleChanged={onToolPanelVisibleChanged}
                     />
                 </div>
             </div>

@@ -1,10 +1,16 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry, createGrid } from 'ag-grid-community';
-import { ToolbarModule } from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule, FiltersToolPanelModule, SideBarModule, ToolbarModule } from 'ag-grid-enterprise';
 
-import { WinnersToggle } from './customToolbarItem_typescript';
+import { ToolPanelRadio, WinnersToggle } from './customToolbarItem_typescript';
 
-ModuleRegistry.registerModules([AllCommunityModule, ToolbarModule]);
+ModuleRegistry.registerModules([
+    AllCommunityModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+    SideBarModule,
+    ToolbarModule,
+]);
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -18,9 +24,18 @@ const gridOptions: GridOptions<IOlympicData> = {
     ],
     defaultColDef: {
         minWidth: 100,
+        filter: true,
     },
+    sideBar: { toolPanels: ['columns', 'filters'] },
     toolbar: {
-        items: [{ toolbarItem: WinnersToggle, key: 'winners' }],
+        items: [
+            { toolbarItem: WinnersToggle, key: 'winners' },
+            { toolbarItem: ToolPanelRadio, key: 'toolPanel', alignment: 'right' },
+        ],
+    },
+    onToolPanelVisibleChanged: (event: ToolPanelVisibleChangedEvent) => {
+        const radio = event.api.getToolbarItemInstance<ToolPanelRadio>('toolPanel');
+        radio?.setSelected(event.visible ? event.key : 'none');
     },
 };
 

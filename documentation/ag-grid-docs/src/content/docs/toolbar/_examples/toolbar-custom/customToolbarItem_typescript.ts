@@ -59,3 +59,70 @@ export class WinnersToggle implements IToolbarItemComp {
         this.params.api.removeEventListener('filterChanged', this.filterListener);
     }
 }
+
+const PANELS = [
+    { value: 'filters', label: 'Filters' },
+    { value: 'columns', label: 'Columns' },
+    { value: 'none', label: 'None' },
+];
+
+export class ToolPanelRadio implements IToolbarItemComp {
+    eGui!: HTMLDivElement;
+    private params!: IToolbarItemParams;
+    private inputs: Record<string, HTMLInputElement> = {};
+    private changeListener!: (event: Event) => void;
+
+    init(params: IToolbarItemParams) {
+        this.params = params;
+
+        this.eGui = document.createElement('div');
+        this.eGui.className = 'ag-toolbar-item';
+        this.eGui.setAttribute('role', 'radiogroup');
+        this.eGui.style.cssText = 'display: flex; gap: 12px; padding: 8px;';
+
+        const groupName = `tool-panel-${params.key}`;
+        for (const { value, label } of PANELS) {
+            const eLabel = document.createElement('label');
+            eLabel.style.padding = '0 4px';
+
+            const eInput = document.createElement('input');
+            eInput.type = 'radio';
+            eInput.name = groupName;
+            eInput.value = value;
+            eInput.checked = value === 'none';
+            eInput.style.marginRight = '4px';
+
+            eLabel.appendChild(eInput);
+            eLabel.appendChild(document.createTextNode(label));
+            this.eGui.appendChild(eLabel);
+            this.inputs[value] = eInput;
+        }
+
+        this.changeListener = (event: Event) => {
+            const value = (event.target as HTMLInputElement).value;
+            if (value === 'none') {
+                params.api.closeToolPanel();
+            } else {
+                params.api.openToolPanel(value);
+            }
+        };
+        this.eGui.addEventListener('change', this.changeListener);
+    }
+
+    // Public method, called externally via api.getToolbarItemInstance(key) when a tool panel
+    // is opened or closed by anything other than this component.
+    setSelected(value: string) {
+        const target = this.inputs[value] ?? this.inputs['none'];
+        if (target && !target.checked) {
+            target.checked = true;
+        }
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+
+    destroy() {
+        this.eGui.removeEventListener('change', this.changeListener);
+    }
+}

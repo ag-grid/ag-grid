@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
 import type { FilterChangedEvent, IToolbarItemParams } from 'ag-grid-community';
 
@@ -7,7 +7,7 @@ const COLUMNS = [
     { column: 'silver', label: 'Silver winners only' },
 ];
 
-export default (props: IToolbarItemParams) => {
+export const WinnersToggle = (props: IToolbarItemParams) => {
     const { api } = props;
     const [checked, setChecked] = useState<Record<string, boolean>>({ gold: false, silver: false });
 
@@ -45,3 +45,46 @@ export default (props: IToolbarItemParams) => {
         </div>
     );
 };
+
+const PANELS = [
+    { value: 'filters', label: 'Filters' },
+    { value: 'columns', label: 'Columns' },
+    { value: 'none', label: 'None' },
+];
+
+export interface ToolPanelRadioHandle {
+    setSelected(value: string): void;
+}
+
+export const ToolPanelRadio = forwardRef<ToolPanelRadioHandle, IToolbarItemParams>((props, ref) => {
+    const { api, key } = props;
+    const [selected, setSelected] = useState('none');
+
+    useImperativeHandle(ref, () => ({ setSelected }), []);
+
+    const onChange = (value: string) => {
+        if (value === 'none') {
+            api.closeToolPanel();
+        } else {
+            api.openToolPanel(value);
+        }
+    };
+
+    return (
+        <div className="ag-toolbar-item" role="radiogroup" style={{ display: 'flex', gap: 12, padding: 8 }}>
+            {PANELS.map(({ value, label }) => (
+                <label key={value} style={{ padding: '0 4px' }}>
+                    <input
+                        type="radio"
+                        name={`tool-panel-${key}`}
+                        value={value}
+                        checked={selected === value}
+                        onChange={() => onChange(value)}
+                        style={{ marginRight: 4 }}
+                    />
+                    {label}
+                </label>
+            ))}
+        </div>
+    );
+});

@@ -50,11 +50,11 @@ Built-in items require their corresponding modules to be registered. If a requir
 | `agRowGroupPanelToolbarItem`           | `RowGroupingPanelModule`                  | Embeds the [Row Group Panel](./grouping-group-panel/). Configured independently of `rowGroupPanelShow`. |
 | `agPivotPanelToolbarItem`              | `RowGroupingPanelModule`                  | Embeds the [Pivot Panel](./pivoting/). Configured independently of `pivotPanelShow`.                    |
 | [`agMenuToolbarItem`](#dropdown-menus) | `ContextMenuModule` or `ColumnMenuModule` | Button that opens a [dropdown menu](#dropdown-menus).                                                   |
-| `'separator'`                          | —                                         | Vertical divider used to group items visually. Has no behaviour of its own.                             |
+| `separator`                            | —                                         | Vertical divider used to group items visually. Has no behaviour of its own.                             |
 
 ### Dropdown Menus
 
-`agMenuToolbarItem` renders a button that opens a dropdown of [Menu Items](./component-menu-item/). Set `label`, `tooltip`, and `icon` on the item and supply `menuItems` via `toolbarItemParams`. `menuItems` accepts the same entries as the [Context Menu](./context-menu/#built-in-menu-items) — `MenuItemDef` objects or built-in string names such as `'copy'`, `'export'`, or `'separator'`.
+`agMenuToolbarItem` renders a button that opens a dropdown of [Menu Items](./component-menu-item/). Set `label`, `tooltip`, and `icon` on the item and supply `menuItems` via `toolbarItemParams`. Each entry is either a [`MenuItemDef`](#reference-MenuItemDef) object or one of the built-in [`DefaultMenuItem`](#reference-DefaultMenuItem) string names — the same set accepted by the [Context Menu](./context-menu/#built-in-menu-items).
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -71,6 +71,8 @@ const gridOptions = {
     },
 }
 ```
+
+{% interfaceDocumentation interfaceName="DefaultMenuItem" config={"asCode":true} /%}
 
 ## Action Buttons
 
@@ -97,7 +99,7 @@ const gridOptions = {
 
 For controls beyond a button — toggles, inputs, or any stateful UI — set `toolbarItem` to a component reference. Custom components can render arbitrary HTML and call any grid API, so they suit cases that the [Action Button](#action-buttons) shorthand cannot express.
 
-The example below defines a single toggle input that, when checked, applies a column filter; unchecking clears it. The same pattern fits any "apply state to the grid" control such as a custom filter, sort toggle, or visibility switch.
+The example below defines two custom items: checkbox toggles that apply column filters on the left, and a radio group that opens [Side Bar](./tool-panel/) tool panels on the right. The radio group exposes a `setSelected` method, called from the grid's `onToolPanelVisibleChanged` callback via [`getToolbarItemInstance`](#reference-getToolbarItemInstance) to keep its state in sync when a panel is opened or closed elsewhere — for example, by clicking a side bar tab.
 
 {% gridExampleRunner title="Custom Toolbar Item" name="toolbar-custom" /%}
 
@@ -154,6 +156,6 @@ The toolbar exposes the following [Theme Parameters](./theming-parameters/):
 
 {% apiDocumentation source="grid-options/properties.json" section="accessories" names=["toolbar"] /%}
 
-{% apiDocumentation source="grid-api/api.json" section="accessories" names=["getToolbarItemInstance"] /%}
-
 {% interfaceDocumentation interfaceName="IToolbarItemParams" /%}
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["getToolbarItemInstance"] /%}
