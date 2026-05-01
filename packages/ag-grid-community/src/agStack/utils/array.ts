@@ -36,8 +36,17 @@ export function _areEqual<T>(
 
 /**
  * Returns `prev` when element-wise equal to `current`; otherwise a fresh copy of `current` (or
- * `[]` when nullish). Equality check is inlined for hot-path perf — sort stage calls this once
- * per group node per refresh, where `_areEqual`'s extra function call and guards add up.
+ * `[]` when nullish).
+ *
+ * Aliasing exception: when `prev === current`, returns a fresh copy — the helper is meant to
+ * publish a derived array, so handing back the readonly input would let callers mutate the source.
+ *
+ * Identity semantics: when contents are unchanged the SAME `prev` reference is returned. Callers
+ * that mutate the returned array should expect those mutations to persist into the next call's
+ * `prev`. Callers that need fresh-array identity per call should slice manually.
+ *
+ * Equality check is inlined for hot-path perf — used in sort stages which call this once per
+ * group node per refresh; `_areEqual`'s extra function call and guards add up.
  *
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
@@ -45,8 +54,11 @@ export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: rea
     if (!current) {
         return [];
     }
+    if (!prev || prev === current) {
+        return current.slice();
+    }
     const len = current.length;
-    if (!prev || prev === current || prev.length !== len) {
+    if (prev.length !== len) {
         return current.slice();
     }
     for (let i = 0; i < len; ++i) {

@@ -48,6 +48,146 @@ describe('group order maintenance', () => {
         `);
     });
 
+    test('leaf rows are not reordered by a custom group-column comparator (data-row sort isolation)', async () => {
+        // Per-level isolation extends to data rows too: a sort on a group column must NOT reorder
+        // leaf rows inside a single leaf group (all rows there share the group key). With a custom
+        // comparator that returns a non-zero result for "equal" rows, the old code would reorder
+        // leaf rows on every group-column sort. The fix routes group-column sort options to the
+        // group-level buckets only; data rows see only the leaf-targeted options.
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'Z' },
+            { id: '2', country: 'Audi', athlete: 'A' },
+            { id: '3', country: 'BMW', athlete: 'M' },
+        ];
+
+        const api = gridsManager.createGrid('grid-leaf-isolation', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    rowGroup: true,
+                    hide: true,
+                    sortable: true,
+                    // Comparator that always returns 1 — even rows that share the group key would
+                    // get reordered if this option reached the data-row sort.
+                    comparator: () => 1,
+                },
+                { field: 'athlete' },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] });
+
+        // Inside Audi, athletes [Z, A] must remain in data order; the country comparator must
+        // NOT bubble down to data rows. Old behaviour would have reordered them.
+        await new GridRows(api, 'leaf isolation: data rows in data order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ ├── LEAF id:1 country:"Audi" athlete:"Z"
+            │ └── LEAF id:2 country:"Audi" athlete:"A"
+            └─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            · └── LEAF id:3 country:"BMW" athlete:"M"
+        `);
+    });
+
+    test('display column with own data: sort applies to that data, not cascaded to group levels', async () => {
+        // Per `sortService.getDisplaySortForColumn`: an auto-display column with `field` or
+        // `valueGetter` of its own has unique data — its sort participates in the displayed-sort
+        // mix as the column itself, not as a cascade to source group levels. `buildLevelSortOptions`
+        // mirrors that: the option goes to the leaf bucket, not to every group level.
+        //
+        // Test fixture: group columns have a comparator returning 0 (all equal). Auto-display
+        // column has its own field (`displayLabel`) and is sorted asc. If the sort cascaded to
+        // every level, the comparator-equal countries would have no tiebreaker and stay in data
+        // order. We verify the OPPOSITE: the sort acts on `displayLabel` and reorders data rows
+        // within each leaf group accordingly.
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'A1', displayLabel: 'Z-display' },
+            { id: '2', country: 'Audi', athlete: 'A2', displayLabel: 'A-display' },
+            { id: '3', country: 'BMW', athlete: 'B1', displayLabel: 'M-display' },
+        ];
+
+        const api = gridsManager.createGrid('grid-display-data', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true, comparator: () => 0 }, { field: 'athlete' }],
+            autoGroupColumnDef: {
+                headerName: 'Group',
+                showRowGroup: true,
+                field: 'displayLabel',
+                sortable: true,
+            },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        // Sort on the auto-display column. With own data, the sort applies to leaf rows, not to
+        // group levels. Inside Audi, [Z-display, A-display] should reorder to [A-display, Z-display].
+        api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
+
+        await new GridRows(api, 'display-data: leaf rows reordered by displayLabel').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ ├── LEAF id:2 ag-Grid-AutoColumn:"A-display" country:"Audi" athlete:"A2"
+            │ └── LEAF id:1 ag-Grid-AutoColumn:"Z-display" country:"Audi" athlete:"A1"
+            └─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            · └── LEAF id:3 ag-Grid-AutoColumn:"M-display" country:"BMW" athlete:"B1"
+        `);
+    });
+
+    test('empty leaf group: leaf-column sort is applied when data is later added by transaction', async () => {
+        // Reviewer concern (P1 #6): empty leaf groups whose `leafGroup` flag may not be reliable.
+        // After a transaction adds data, the new rows must show in leaf-sort order, not raw data
+        // order. The level-based detection (level === leafLevelIndex) plus per-level isolation
+        // ensures the leaf-row bucket is applied even on the transactional path.
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'A1', total: 5 },
+            { id: '2', country: 'BMW', athlete: 'B1', total: 8 },
+        ];
+
+        const api = gridsManager.createGrid('grid-empty-leaf', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                { field: 'total', sortable: true },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'total', sort: 'desc' }] });
+
+        // Transaction adds two rows to a brand-new "Tesla" leaf group. They should appear in
+        // total-desc order (not data-insertion order) inside Tesla.
+        applyTransactionChecked(api, {
+            add: [
+                { id: '3', country: 'Tesla', athlete: 'T1', total: 4 },
+                { id: '4', country: 'Tesla', athlete: 'T2', total: 9 },
+            ],
+        });
+
+        await new GridRows(api, 'empty-leaf: new rows in leaf-sort order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:1 country:"Audi" athlete:"A1" total:5
+            ├─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            │ └── LEAF id:2 country:"BMW" athlete:"B1" total:8
+            └─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            · ├── LEAF id:4 country:"Tesla" athlete:"T2" total:9
+            · └── LEAF id:3 country:"Tesla" athlete:"T1" total:4
+        `);
+    });
+
     test('new group is appended at end when groupMaintainOrder is true', async () => {
         const rowData = [
             { id: '1', country: 'Ireland', athlete: 'I1' },

@@ -583,6 +583,12 @@ export class GridColumnsDomValidator {
  *   as `'mixed'`, matching `getDisplaySortForColumn`'s `columnHasUniqueData` branch.
  *
  * Returns `null` when no sort is displayed.
+ *
+ * NOTE: this duplication of `SortService.getDisplaySortForColumn` / `_isColumnsSortingCoupledToGroup`
+ * logic is INTENTIONAL. The validator is a black-box check on the rendered DOM — it must compute
+ * the "what should be displayed" answer independently from the production code, otherwise both the
+ * validator and the implementation would silently agree on the same bug. Keep this in sync with
+ * the production helpers when their displayed-sort rules change.
  */
 function getDisplayedSort(api: GridApi, col: Column): SortDirection | 'mixed' | null {
     const ownSort = col.getSort() ?? null;
