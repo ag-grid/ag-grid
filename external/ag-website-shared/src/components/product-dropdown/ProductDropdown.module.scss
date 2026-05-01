@@ -97,7 +97,7 @@
 .customContent {
     position: absolute;
     top: 52px;
-    width: calc(100% - #{$spacing-size-3 * 2});
+    right: $spacing-size-3;
     left: $spacing-size-3;
     padding: $spacing-size-2;
     border-radius: var(--radius-md);
@@ -150,11 +150,6 @@
     padding: 8px;
     border-radius: var(--radius-md);
     transition: 0.5s all;
-}
-
-.itemsWrapper:first-child {
-    display: flex;
-    margin-bottom: $spacing-size-3;
 }
 
 .productsWrapper {
