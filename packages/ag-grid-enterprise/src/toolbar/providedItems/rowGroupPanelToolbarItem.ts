@@ -1,5 +1,7 @@
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _warn } from 'ag-grid-community';
+import { Component } from 'ag-grid-community';
+
+import { getRowGroupPanelBuilder } from './toolbarItemUtils';
 
 export class RowGroupPanelToolbarItem extends Component implements IToolbarItemComp {
     constructor() {
@@ -7,13 +9,8 @@ export class RowGroupPanelToolbarItem extends Component implements IToolbarItemC
     }
 
     public init(_params: IToolbarItemParams): void {
-        const builder = this.beans.rowGroupPanelBuilder;
+        const builder = getRowGroupPanelBuilder(this.beans, 'agRowGroupPanelToolbarItem');
         if (!builder) {
-            _warn(302, {
-                itemName: 'agRowGroupPanelToolbarItem',
-                moduleName: 'RowGroupingPanel',
-                ...this.gos.getModuleErrorParams(),
-            });
             this.setDisplayed(false);
             return;
         }
