@@ -4,8 +4,8 @@ import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 
 import { ignoreConsoleLicenseKeyError } from '../test-utils';
-import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
 import { renderNavGrid } from './navigation-react-test-utils';
+import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
 
 interface RowData {
     a: string;

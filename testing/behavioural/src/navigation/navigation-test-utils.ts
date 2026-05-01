@@ -2,7 +2,10 @@ import type { GridApi } from 'ag-grid-community';
 
 export function dispatchKeyDown(key: string, opts?: KeyboardEventInit): void {
     const el = document.activeElement as HTMLElement | null;
-    el?.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...opts }));
+    if (!el) {
+        throw new Error('Expected active element before dispatching keyboard event');
+    }
+    el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...opts }));
 }
 
 export function getFocusedColId(api: GridApi): string | null {

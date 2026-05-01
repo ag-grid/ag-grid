@@ -125,13 +125,11 @@ describe('suppressNavigable Navigation', () => {
             expect(getFocusedRowIndex(api)).toBe(1);
         });
 
-        test('down arrow moves through non-navigable cell to next row', () => {
-            // Column b is navigable on row 1; navigating down from (row 0, b) skips to
-            // the first navigable cell below, which is (row 1, b)
-            api.setFocusedCell(0, 'a');
+        test('down arrow from a non-navigable cell moves to the same column on the next row', () => {
+            // column b is non-navigable on row 0 but navigable on row 1
+            api.setFocusedCell(0, 'b');
             dispatchKeyDown(KeyCode.DOWN);
-            // column b is navigable on row 1, so down from (row 0, a) → (row 1, a)
-            expect(getFocusedColId(api)).toBe('a');
+            expect(getFocusedColId(api)).toBe('b');
             expect(getFocusedRowIndex(api)).toBe(1);
         });
     });
