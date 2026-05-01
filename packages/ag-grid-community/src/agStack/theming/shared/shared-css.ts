@@ -363,25 +363,23 @@ export const defaultLightColorSchemeParams = {
     browserColorScheme: 'light',
 } as const;
 
-export const defaultFontFamily = () => [
-    '-apple-system',
-    'BlinkMacSystemFont',
-    'Segoe UI',
-    'Roboto',
-    'Oxygen-Sans',
-    'Ubuntu',
-    'Cantarell',
-    'Helvetica Neue',
-    'sans-serif',
-];
-
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const sharedDefaults: Readonly<SharedThemeParams> = {
     ...defaultLightColorSchemeParams,
     textColor: foregroundColor,
     accentColor: '#2196f3',
     invalidColor: '#e02525',
-    fontFamily: defaultFontFamily(),
+    fontFamily: [
+        '-apple-system',
+        'BlinkMacSystemFont',
+        'Segoe UI',
+        'Roboto',
+        'Oxygen-Sans',
+        'Ubuntu',
+        'Cantarell',
+        'Helvetica Neue',
+        'sans-serif',
+    ],
     subtleTextColor: {
         ref: 'textColor',
         mix: 0.5,

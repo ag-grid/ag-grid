@@ -59,7 +59,7 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
         input.value = text;
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
-        await asyncSetTimeout(5);
+        await asyncSetTimeout(12);
     }
 
     /**
@@ -69,7 +69,7 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
      */
     async function openPopupAndGetDisplayedSetFilterKeys(api: GridApi<Row>): Promise<string[]> {
         api.showColumnFilter('name');
-        await asyncSetTimeout(5);
+        await asyncSetTimeout(12);
         const multiFilter = (await api.getColumnFilterInstance('name')) as MultiFilter | null | undefined;
         const setFilter = multiFilter?.getChildFilterInstance<SetFilter>(1);
         if (!setFilter) {
@@ -82,7 +82,7 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
     test('Scenario A: no popup opened — reopening popup shows filtered Set Filter list', async () => {
         const api = await createGrid();
         // Allow the floating-filter cell to mount its inner text input before we query for it.
-        await asyncSetTimeout(5);
+        await asyncSetTimeout(12);
 
         await typeInFloatingFilter(api, 'michael');
 
@@ -97,12 +97,12 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
 
     test('Scenario B: popup opened+closed before floating filter — reopening popup shows filtered Set Filter list', async () => {
         const api = await createGrid();
-        await asyncSetTimeout(5);
+        await asyncSetTimeout(12);
 
         api.showColumnFilter('name');
-        await asyncSetTimeout(10);
+        await asyncSetTimeout(12);
         api.hideColumnFilter();
-        await asyncSetTimeout(10);
+        await asyncSetTimeout(12);
 
         await typeInFloatingFilter(api, 'michael');
 

@@ -1,11 +1,11 @@
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('group order maintenance', () => {
     const gridsManager = new TestGridsManager({
-        modules: [QuickFilterModule, ClientSideRowModelModule, RowGroupingModule],
+        modules: [QuickFilterModule, ClientSideRowModelModule, RowGroupingModule, PivotModule],
     });
 
     afterEach(() => gridsManager.reset());
@@ -107,6 +107,205 @@ describe('group order maintenance', () => {
             ├── ag-Grid-AutoColumn "Country" width:200
             └── athlete "Athlete" width:200
         `);
+    });
+
+    test('group order is stable across rowData reorder (immutable mode, getRowId)', async () => {
+        // Existing groups keep their creation-order positions when rowData is reapplied in a
+        // different sequence; only new keys would land at the end.
+        let rowData = [
+            { id: '1', country: 'Audi', athlete: 'A' },
+            { id: '2', country: 'BMW', athlete: 'B' },
+            { id: '3', country: 'Tesla', athlete: 'T' },
+        ];
+
+        const api = gridsManager.createGrid('grid-reorder', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        await new GridRows(api, 'reorder: initial').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:1 country:"Audi" athlete:"A"
+            ├─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            │ └── LEAF id:2 country:"BMW" athlete:"B"
+            └─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            · └── LEAF id:3 country:"Tesla" athlete:"T"
+        `);
+
+        // Reorder rowData: Tesla, BMW, Audi.
+        rowData = [
+            { id: '3', country: 'Tesla', athlete: 'T' },
+            { id: '2', country: 'BMW', athlete: 'B' },
+            { id: '1', country: 'Audi', athlete: 'A' },
+        ];
+        api.setGridOption('rowData', rowData);
+
+        await new GridRows(api, 'reorder: groups stay in creation order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:1 country:"Audi" athlete:"A"
+            ├─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            │ └── LEAF id:2 country:"BMW" athlete:"B"
+            └─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            · └── LEAF id:3 country:"Tesla" athlete:"T"
+        `);
+    });
+
+    test('postSortRows + groupMaintainOrder: customisation reapplies through filter cycles', async () => {
+        // A postSortRows callback that pins one group to the top must keep doing so after any
+        // filter cycle.
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'A' },
+            { id: '2', country: 'BMW', athlete: 'B' },
+            { id: '3', country: 'Tesla', athlete: 'T' },
+        ];
+
+        const api = gridsManager.createGrid('grid-postsort', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+            postSortRows: (params) => {
+                const teslaIdx = params.nodes.findIndex((n) => n.key === 'Tesla');
+                if (teslaIdx > 0) {
+                    const [tesla] = params.nodes.splice(teslaIdx, 1);
+                    params.nodes.unshift(tesla);
+                }
+            },
+        });
+
+        await new GridRows(api, 'postSort: initial — Tesla pinned to top').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            │ └── LEAF id:3 country:"Tesla" athlete:"T"
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:1 country:"Audi" athlete:"A"
+            └─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            · └── LEAF id:2 country:"BMW" athlete:"B"
+        `);
+
+        api.setGridOption('quickFilterText', 'BMW');
+        await new GridRows(api, 'postSort: filtered to BMW only').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            · └── LEAF id:2 country:"BMW" athlete:"B"
+        `);
+
+        api.setGridOption('quickFilterText', undefined);
+        await new GridRows(api, 'postSort: clear filter — Tesla pinned again').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            │ └── LEAF id:3 country:"Tesla" athlete:"T"
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:1 country:"Audi" athlete:"A"
+            └─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            · └── LEAF id:2 country:"BMW" athlete:"B"
+        `);
+    });
+
+    test('postSortRows reorder survives a sort refresh on the reused-array path', async () => {
+        // Exercises the path where _reuseArrayIfEqual returns the previous childrenAfterSort by
+        // reference and postSortRows then mutates the same array in place. hasAnyFirstChildChanged
+        // must capture the previous first child by value before postSortRows runs, otherwise the
+        // before/after comparison reads from one shared array and silently misses the change.
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'A' },
+            { id: '2', country: 'BMW', athlete: 'B' },
+            { id: '3', country: 'Tesla', athlete: 'T' },
+        ];
+
+        let promoteKey: string | null = null;
+        const api = gridsManager.createGrid('grid-postsort-reuse', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+            postSortRows: (params) => {
+                if (!promoteKey) {
+                    return;
+                }
+                const idx = params.nodes.findIndex((n) => n.key === promoteKey);
+                if (idx > 0) {
+                    const [promoted] = params.nodes.splice(idx, 1);
+                    params.nodes.unshift(promoted);
+                }
+            },
+        });
+
+        const topLevelKeys = () => {
+            const root = api.getRowNode('ROOT_NODE_ID');
+            return (root?.childrenAfterSort ?? []).map((n) => n.key);
+        };
+
+        expect(topLevelKeys()).toEqual(['Audi', 'BMW', 'Tesla']);
+
+        // Force the sort stage to re-run with structurally identical childrenAfterAggFilter so
+        // _reuseArrayIfEqual returns the previous reference. postSortRows then mutates that array.
+        promoteKey = 'Tesla';
+        api.refreshClientSideRowModel('sort');
+
+        expect(topLevelKeys()).toEqual(['Tesla', 'Audi', 'BMW']);
+
+        // Run another refresh on the now-reordered array — postSortRows still applies on top.
+        api.refreshClientSideRowModel('sort');
+        expect(topLevelKeys()).toEqual(['Tesla', 'Audi', 'BMW']);
+
+        // Switching the promoted key takes effect on the next refresh — the new ordering is
+        // produced from the structural baseline ([Audi, BMW, Tesla]) and then BMW is unshifted.
+        promoteKey = 'BMW';
+        api.refreshClientSideRowModel('sort');
+        expect(topLevelKeys()).toEqual(['BMW', 'Audi', 'Tesla']);
+    });
+
+    test('pivot mode + groupMaintainOrder: filter cycle preserves group order', async () => {
+        // Group order survives a filter cycle when pivot mode is on.
+        const rowData = [
+            { id: '1', country: 'Audi', year: 2020, sales: 10 },
+            { id: '2', country: 'BMW', year: 2020, sales: 20 },
+            { id: '3', country: 'Tesla', year: 2021, sales: 30 },
+        ];
+
+        const api = gridsManager.createGrid('grid-pivot', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'sales', aggFunc: 'sum' },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            pivotMode: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        const initialOrder = ['Audi', 'BMW', 'Tesla'];
+        const renderedKeys = () =>
+            api
+                .getRenderedNodes()
+                .filter((n) => n.level === 0 && n.group)
+                .map((n) => n.key);
+
+        expect(renderedKeys()).toEqual(initialOrder);
+
+        api.setGridOption('quickFilterText', 'BMW');
+        expect(renderedKeys()).toEqual(['BMW']);
+
+        api.setGridOption('quickFilterText', undefined);
+        expect(renderedKeys()).toEqual(initialOrder);
     });
 
     test('updating a row without changing group does not change group order (groupMaintainOrder=false)', async () => {
@@ -308,6 +507,183 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"France" athlete:"M"
         `);
     });
+
+    test('clearing a filter restores the original group order', async () => {
+        // After a filter narrows the data to a single non-first group, clearing the filter must
+        // restore every group to its original slot, not move the surviving group to the end.
+        const rowData = [
+            { id: '1', country: 'Ireland', athlete: 'I1' },
+            { id: '2', country: 'Italy', athlete: 'T1' },
+            { id: '3', country: 'France', athlete: 'F1' },
+            { id: '4', country: 'Spain', athlete: 'S1' },
+        ];
+
+        const api = gridsManager.createGrid('grid-filter-reset', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.setGridOption('quickFilterText', 'T1');
+        await new GridRows(api, 'after filter to Italy only').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └── LEAF id:2 country:"Italy" athlete:"T1"
+        `);
+
+        api.setGridOption('quickFilterText', undefined);
+        await new GridRows(api, 'after clearing filter — original order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └── LEAF id:1 country:"Ireland" athlete:"I1"
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:2 country:"Italy" athlete:"T1"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:3 country:"France" athlete:"F1"
+            └─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
+            · └── LEAF id:4 country:"Spain" athlete:"S1"
+        `);
+    });
+
+    test('filter cycle interleaved with add / update / remove transactions', async () => {
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'Anna' },
+            { id: '2', country: 'BMW', athlete: 'Bert' },
+            { id: '3', country: 'Tesla', athlete: 'Tim' },
+        ];
+
+        const api = gridsManager.createGrid('grid-stress', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        await new GridRows(api, 'stress: initial').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:1 country:"Audi" athlete:"Anna"
+            ├─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            │ └── LEAF id:2 country:"BMW" athlete:"Bert"
+            └─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            · └── LEAF id:3 country:"Tesla" athlete:"Tim"
+        `);
+
+        api.setGridOption('quickFilterText', 'Tim');
+        await new GridRows(api, 'stress: filter Tesla').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            · └── LEAF id:3 country:"Tesla" athlete:"Tim"
+        `);
+
+        applyTransactionChecked(api, { add: [{ id: '4', country: 'Volvo', athlete: 'Timmy' }] });
+        await new GridRows(api, 'stress: add Volvo (visible) while filtered').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            │ └── LEAF id:3 country:"Tesla" athlete:"Tim"
+            └─┬ LEAF_GROUP id:row-group-country-Volvo ag-Grid-AutoColumn:"Volvo"
+            · └── LEAF id:4 country:"Volvo" athlete:"Timmy"
+        `);
+
+        applyTransactionChecked(api, { update: [{ id: '1', country: 'Audi', athlete: 'Anna-upd' }] });
+        await new GridRows(api, 'stress: update hidden Audi while filtered').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            │ └── LEAF id:3 country:"Tesla" athlete:"Tim"
+            └─┬ LEAF_GROUP id:row-group-country-Volvo ag-Grid-AutoColumn:"Volvo"
+            · └── LEAF id:4 country:"Volvo" athlete:"Timmy"
+        `);
+
+        applyTransactionChecked(api, { remove: [{ id: '2', country: 'BMW', athlete: 'Bert' }] });
+        await new GridRows(api, 'stress: remove hidden BMW while filtered').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            │ └── LEAF id:3 country:"Tesla" athlete:"Tim"
+            └─┬ LEAF_GROUP id:row-group-country-Volvo ag-Grid-AutoColumn:"Volvo"
+            · └── LEAF id:4 country:"Volvo" athlete:"Timmy"
+        `);
+
+        api.setGridOption('quickFilterText', undefined);
+        await new GridRows(api, 'stress: clear filter — original positions restored').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:1 country:"Audi" athlete:"Anna-upd"
+            ├─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            │ └── LEAF id:3 country:"Tesla" athlete:"Tim"
+            └─┬ LEAF_GROUP id:row-group-country-Volvo ag-Grid-AutoColumn:"Volvo"
+            · └── LEAF id:4 country:"Volvo" athlete:"Timmy"
+        `);
+    });
+
+    test('initialGroupOrderComparator + groupMaintainOrder + filter cycle', async () => {
+        // Data order is Tesla, BMW, Audi — the comparator should override it to alphabetical.
+        const rowData = [
+            { id: '1', country: 'Tesla', athlete: 'Tim' },
+            { id: '2', country: 'BMW', athlete: 'Bert' },
+            { id: '3', country: 'Audi', athlete: 'Anna' },
+        ];
+
+        const api = gridsManager.createGrid('grid-comparator', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            initialGroupOrderComparator: ({ nodeA, nodeB }) => (nodeA.key! < nodeB.key! ? -1 : 1),
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        await new GridRows(api, 'comparator: initial alphabetical order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:3 country:"Audi" athlete:"Anna"
+            ├─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            │ └── LEAF id:2 country:"BMW" athlete:"Bert"
+            └─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            · └── LEAF id:1 country:"Tesla" athlete:"Tim"
+        `);
+
+        api.setGridOption('quickFilterText', 'Tim');
+        await new GridRows(api, 'comparator: filter Tesla only').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            · └── LEAF id:1 country:"Tesla" athlete:"Tim"
+        `);
+
+        api.setGridOption('quickFilterText', undefined);
+        await new GridRows(api, 'comparator: clear filter — alphabetical order restored').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:3 country:"Audi" athlete:"Anna"
+            ├─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            │ └── LEAF id:2 country:"BMW" athlete:"Bert"
+            └─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            · └── LEAF id:1 country:"Tesla" athlete:"Tim"
+        `);
+
+        // A transaction-added group is placed at its comparator position, not appended at the end.
+        applyTransactionChecked(api, { add: [{ id: '4', country: 'Acura', athlete: 'Alex' }] });
+        await new GridRows(api, 'comparator: add Acura via transaction — sorted alphabetically').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Acura ag-Grid-AutoColumn:"Acura"
+            │ └── LEAF id:4 country:"Acura" athlete:"Alex"
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:3 country:"Audi" athlete:"Anna"
+            ├─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            │ └── LEAF id:2 country:"BMW" athlete:"Bert"
+            └─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            · └── LEAF id:1 country:"Tesla" athlete:"Tim"
+        `);
+    });
+
     test('after filtering removes a group, adding a new group appends at end', async () => {
         const rowData = [
             { id: '1', country: 'Ireland', athlete: 'I1' },

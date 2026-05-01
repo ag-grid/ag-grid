@@ -1,3 +1,4 @@
+import { _reuseArrayIfEqual } from '../agStack/utils/array';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
@@ -51,7 +52,8 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
 
         const useDeltaSort = sortOptions.length > 0 && !!changedRowNodes && this.gos.get('deltaSort');
 
-        let newChildrenAfterSort: RowNode[] | null = null;
+        const prevSort = rootNode.childrenAfterSort;
+        let newChildrenAfterSort: RowNode[];
         if (sortOptions.length > 0) {
             if (useDeltaSort && changedRowNodes) {
                 newChildrenAfterSort = doDeltaSort(
@@ -67,15 +69,16 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
                     sortOptions
                 );
             }
+        } else {
+            newChildrenAfterSort = _reuseArrayIfEqual(prevSort, rootNode.childrenAfterAggFilter);
         }
 
-        newChildrenAfterSort ||= rootNode.childrenAfterAggFilter?.slice() ?? [];
         rootNode.childrenAfterSort = newChildrenAfterSort;
-        updateRowNodeAfterSort(rootNode);
-
+        // updateRowNodeAfterSort runs before postSortRows — same ordering as AG-309 (Feb 2018,
+        // when postSortRows was introduced). Callbacks see flags consistent with params.nodes.
         const postSortFunc = this.gos.getCallback('postSortRows');
         if (postSortFunc) {
-            const params: WithoutGridCommon<PostSortRowsParams> = { nodes: rootNode.childrenAfterSort };
+            const params: WithoutGridCommon<PostSortRowsParams> = { nodes: newChildrenAfterSort };
             postSortFunc(params);
         }
     }

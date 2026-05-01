@@ -1213,8 +1213,11 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     autoGroupColumnDef?: AutoGroupColumnDef<TData>,
-    /** When `true`, preserves the current group order when sorting on non-group columns.
-         * If a user explicitly resets the current group sort direction, then the current group column order is not preserved.
+    /** When `true`, sorting on non-group columns does not reorder groups; only the rows within
+         * each group are sorted. Group order remains the structural order set at grouping time
+         * (data-insertion order, or `initialGroupOrderComparator` if configured) and is preserved
+         * across filter changes and transactions. If a group column was sorted via `colDef.sort`
+         * and the user later explicitly clears that sort, the structural order is restored.
          * @default false
          * @agModule `RowGroupingModule`
          */
