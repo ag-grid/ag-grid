@@ -23,6 +23,7 @@ interface Props {
     hideHeader?: boolean;
     hideFooter?: boolean;
     hidePageFromSearchEngines?: boolean;
+    showMicrosoftMessage?: boolean;
     showAnnouncementBanner?: boolean;
     announcementBannerProps?: {
         href: string;
@@ -52,6 +53,7 @@ const {
     hideHeader,
     hideFooter,
     hidePageFromSearchEngines,
+    showMicrosoftMessage,
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -209,7 +211,7 @@ const announcementBannerProps = {
             !hideFooter && (
                 <Footer
                     client:load
-                    showMicrosoftMessage={path === SITE_BASE_URL || path === undefined}
+                    showMicrosoftMessage={showMicrosoftMessage || path === SITE_BASE_URL || path === undefined}
                     footerItems={footerItems}
                 />
             )

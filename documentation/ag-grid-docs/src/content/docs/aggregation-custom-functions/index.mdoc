@@ -61,56 +61,120 @@ const gridOptions = {
 
 ## Multiple Group Levels
 
-When aggregations are applied across multiple levels of grouping, the aggregation function is called recursively.
-This has the effect where some groups aggregate the results of other aggregations, causing incorrect results.
+With multiple levels of grouping, an aggregation function runs once per group at every level. Above
+the leaf groups, `params.values` holds the already-aggregated results from the level below — not
+the raw leaf values — so a function written only against `params.values` produces wrong results
+above the leaves.
 
-To handle this, the aggregation function should return an object containing relevant meta data for the next level of aggregation,
-and a `"value"` field representing the result for this level.
+The fix is to return an [`IAggFuncResult`](./row-object/#reference-data-getDataValue) that carries
+any auxiliary fields the parent needs to recompute. Sub-group children expose the wrapper to the
+parent via `getDataValue(colKey, 'data')`; leaf children expose their value via the same call — a primitive when the column reads from a `field`, or a wrapper when a `valueGetter` returns one.
+Every child reads the same way at every level.
+
+A class is a natural fit: `toNumber` and `toString` live on the prototype, and `instanceof` (paired with a `typeof` check when leaves expose a primitive) makes it trivial to identify a wrapper.
 
 {% gridExampleRunner title="Multiple Group Levels" name="multi-group-levels" /%}
+
+```ts
+/** Carries `min`/`max` alongside the scalar `value` so the parent recomputes in O(N). */
+class RangeResult implements IAggFuncResult<number> {
+    constructor(
+        readonly value: number,
+        readonly min: number,
+        readonly max: number,
+    ) {}
+
+    toNumber() { return this.value; }
+    toString() { return this.value.toFixed(2); }
+}
+
+function rangeAggFunc(params) {
+    // Read each immediate child via `getDataValue(col, 'data')`:
+    //  - leaf children return the raw `total` number
+    //  - sub-group children return the RangeResult this function produced one
+    //    level down — its `min`/`max` let the parent recompute the range
+    //    without re-walking descendant leaves.
+    let min = Infinity;
+    let max = -Infinity;
+    for (const child of params.aggregatedChildren) {
+        const childValue = child.getDataValue(params.column, 'data');
+        if (typeof childValue === 'number') {
+            min = Math.min(min, childValue);
+            max = Math.max(max, childValue);
+        } else if (childValue instanceof RangeResult) {
+            min = Math.min(min, childValue.min);
+            max = Math.max(max, childValue.max);
+        }
+    }
+    return Number.isFinite(min) ? new RangeResult(max - min, min, max) : null;
+}
+```
+
+`'data'` mode returns the stored wrapper as-is. `'value'` would unwrap it via `toNumber()` to its
+scalar.
+
+A ratio uses the same wrapper pattern — carry the two running sums (`gold` and `silver`) so the
+parent divides at every level. Giving leaf rows the same `RatioResult` shape via a `valueGetter`
+also gives the leaf cells something to display, and reduces the aggFunc to a single branch:
+
+{% gridExampleRunner title="Ratio Across Levels" name="multi-level-ratio" /%}
+
+```ts
+class RatioResult implements IAggFuncResult<number | null> {
+    readonly value: number | null;
+
+    constructor(
+        readonly gold: number,
+        readonly silver: number,
+    ) {
+        this.value = silver ? gold / silver : null;
+    }
+
+    toNumber() { return this.value; }
+    toString() { const v = this.value; return v === null ? '' : v.toFixed(2); }
+}
+
+// Every leaf returns a `RatioResult` so the aggFunc reads each child the same way. Rows with no
+// silvers carry `silver: 0` — `toString` blanks the cell, while `gold`/`silver` stay available
+// for the parent group's running totals. Footer/filler rows have no `data`; return undefined
+// so the cell is left empty.
+function leafRatioValueGetter(params) {
+    if (!params.data) {
+        return undefined;
+    }
+    const { gold, silver } = params.data;
+    return new RatioResult(gold, silver);
+}
+
+function ratioAggFunc(params) {
+    let gold = 0;
+    let silver = 0;
+    for (const child of params.aggregatedChildren) {
+        const ratio = child.getDataValue(params.column, 'data');
+        if (ratio instanceof RatioResult) {
+            gold += ratio.gold;
+            silver += ratio.silver;
+        }
+    }
+    return new RatioResult(gold, silver);
+}
+```
+
+This pattern works whenever each child can be summarised by a few numbers that the parent combines:
+
+- **Range** — carry `min` and `max`; the parent takes the lowest `min` and highest `max`.
+- **Weighted average** — carry `sum` and `count`; the parent adds them up, then divides.
+- **Standard deviation** — carry `sum`, `sum-of-squares`, and `count`; the parent adds all three.
+- **Ratio of sums** — carry the two running sums; the parent adds and divides.
+
+The pattern requires that the child summaries can be combined into the parent summary without
+revisiting the leaves — the auxiliary fields must be enough on their own. Aggregations like median
+or percentile do not have that property: a parent's median is not derivable from its children's
+medians. For those, walk every descendant leaf directly via
+`params.rowNode.getAggregatedChildren(params.column, true)`.
 
 {% note %}
 Custom aggregation functions can also be used with [Editing Group Rows](./grouping-edit/).
 When a group row is edited, the built-in distribution automatically handles `sum`, `avg`, `min`, `max`, `first`, and `last`.
 For custom aggregation functions, define a per-aggregation distribution strategy or provide a custom `groupRowValueSetter` callback.
 {% /note %}
-
-The above example demonstrates the following configuration to apply a custom `"range"` function which works with multiple
-levels of row grouping:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-      { field: 'total', aggFunc: 'range' },
-      // ... other column definitions
-    ],
-    aggFuncs: {
-      range: params => {
-        const values = params.values;
-        // aggregate leaf rows
-        if (params.rowNode.leafGroup) {
-            const max = Math.max(...values);
-            const min = Math.min(...values);
-            return {
-                max: max,
-                min: min,
-                value: max - min,
-            }
-        }
-
-        // aggregate group rows
-        let max = values[0].max;
-        let min = values[0].min;
-        values.forEach(groupResult => {
-            max = Math.max(max, groupResult.max);
-            min = Math.min(min, groupResult.min);
-        });
-        return {
-            max: max,
-            min: min,
-            value: max - min,
-        };
-      }
-    },
-}
-```

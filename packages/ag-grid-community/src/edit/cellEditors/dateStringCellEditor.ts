@@ -19,6 +19,10 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     private eEditor: GridInputDateField;
     private params: IDateStringCellEditorParams;
     private includeTime: boolean | undefined;
+    /** Last raw input passed to `params.parseValue`. Initialised to `this` as an "uncached" sentinel — a DOM raw value can never equal the editor instance, so the first cache check always misses. */
+    private cachedRaw: unknown = this;
+    /** Memoised parse result for `cachedRaw`. Returned by `getValue()` when the raw input is unchanged across repeated validation/sync passes within an edit session. */
+    private cachedParsed: string | null | undefined;
 
     constructor(
         private readonly getDataTypeService: () => DataTypeService | undefined,
@@ -106,11 +110,21 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
 
     public getValue(): string | null | undefined {
         const { params, eEditor } = this;
+        // Key the cache on the formatted date string — the exact input to parseValue —
+        // so the cache cannot diverge from what the parser would actually receive.
         const value = this.formatDate(eEditor.getDate());
-        if (!_exists(value) && !_exists(params.value)) {
-            return params.value;
+        if (Object.is(this.cachedRaw, value)) {
+            return this.cachedParsed;
         }
-        return params.parseValue(value ?? '');
+        let parsed: string | null | undefined;
+        if (!_exists(value) && !_exists(params.value)) {
+            parsed = params.value;
+        } else {
+            parsed = params.parseValue(value ?? '');
+        }
+        this.cachedRaw = value;
+        this.cachedParsed = parsed;
+        return parsed;
     }
 
     public getStartValue(): string | null | undefined {

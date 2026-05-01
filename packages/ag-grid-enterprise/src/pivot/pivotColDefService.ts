@@ -389,6 +389,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             pivotTotalColumnIds,
             columnGroupShow,
             colId,
+            field,
             valueGetter,
             aggFunc,
         } = colDef;
@@ -400,9 +401,10 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         const newColDef = this.createColDef(pivotValueColumn as AgColumn, headerName, pivotKeys, !!pivotTotalColumnIds);
 
-        // don't overwrite these
+        // preserve pivot-result identity from the old colDef.
         newColDef.columnGroupShow = columnGroupShow;
         newColDef.colId = colId;
+        newColDef.field = field;
         newColDef.valueGetter = valueGetter;
         newColDef.aggFunc = aggFunc;
         newColDef.pivotTotalColumnIds = pivotTotalColumnIds;

@@ -1,6 +1,6 @@
+import { _downloadFile } from '../agStack/utils/download';
 import type { NamedBean } from '../context/bean';
 import { BaseCreator } from '../export/baseCreator';
-import { _downloadFile } from '../export/downloader';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { CsvCustomContent, CsvExportParams } from '../interfaces/exportParams';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';

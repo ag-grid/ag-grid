@@ -79,6 +79,90 @@ describe('Toolbar', () => {
         expect(toolbarIndex).toBeLessThan(bodyIndex);
     });
 
+    describe('getToolbarItemInstance', () => {
+        test('returns undefined when no toolbar is configured', async () => {
+            const api = gridMgr.createGrid('get-instance-no-toolbar', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            expect(api.getToolbarItemInstance('agQuickFilterToolbarItem')).toBeUndefined();
+        });
+
+        test('returns undefined for an unknown key', async () => {
+            const api = gridMgr.createGrid('get-instance-unknown-key', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['agQuickFilterToolbarItem'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            expect(api.getToolbarItemInstance('nonExistentKey')).toBeUndefined();
+        });
+
+        test('returns the built-in item instance by explicit key', async () => {
+            const api = gridMgr.createGrid('get-instance-builtin-explicit-key', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: [{ toolbarItem: 'agQuickFilterToolbarItem', key: 'myFilter' }],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const instance = api.getToolbarItemInstance('myFilter');
+            expect(instance).toBeDefined();
+        });
+
+        test('returns the built-in item instance by derived key when string form is used', async () => {
+            const api = gridMgr.createGrid('get-instance-builtin-string-form', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['agQuickFilterToolbarItem'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            expect(api.getToolbarItemInstance('agQuickFilterToolbarItem')).toBeDefined();
+        });
+
+        test('returns the built-in item instance by derived key when no explicit key is given', async () => {
+            const api = gridMgr.createGrid('get-instance-builtin-derived-key', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: [{ toolbarItem: 'agQuickFilterToolbarItem' }],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            expect(api.getToolbarItemInstance('agQuickFilterToolbarItem')).toBeDefined();
+        });
+
+        test('returns undefined after toolbar items are cleared at runtime', async () => {
+            const api = gridMgr.createGrid('get-instance-after-clear', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: [{ toolbarItem: 'agQuickFilterToolbarItem', key: 'myFilter' }],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            expect(api.getToolbarItemInstance('myFilter')).toBeDefined();
+
+            api.setGridOption('toolbar', { items: [] });
+
+            expect(api.getToolbarItemInstance('myFilter')).toBeUndefined();
+        });
+    });
+
     describe('runtime updates via setGridOption', () => {
         test('adds items when toolbar items are populated at runtime', async () => {
             // Start with an empty items array so the AG-TOOLBAR element is registered up-front

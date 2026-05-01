@@ -50,3 +50,5 @@ documentation/ag-grid-docs/src/components/ZoomInfo.astro
 
 # External subrepo (managed separately)
 external/ag-shared/
+
+.rulesync

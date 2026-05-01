@@ -1,0 +1,13 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+ignore:
+  SNYK-JS-AJV-15274295:
+    - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv@8.17.1':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T12:12:51.000Z
+    - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv-formats@3.0.1 > ajv@8.17.1':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-04-28T12:12:51.000Z
+patch: {}

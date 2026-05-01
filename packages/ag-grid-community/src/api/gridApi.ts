@@ -64,6 +64,7 @@ import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '
 import type { SideBarDef } from '../interfaces/iSideBar';
 import type { IStatusPanel } from '../interfaces/iStatusPanel';
 import type { IToolPanel } from '../interfaces/iToolPanel';
+import type { IToolbarItem } from '../interfaces/iToolbar';
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import type { GetNoteParams, Note, RefreshNotesParams, SetNoteParams } from '../interfaces/notes';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
@@ -1433,6 +1434,16 @@ export interface _SideBarGridApi<TData> {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface _ToolbarGridApi<TData = any> {
+    /**
+     * Gets the toolbar item instance for the given `key`. The key is either explicitly set in the item
+     * definition or derived from the item type when not specified.
+     * @agModule `ToolbarModule`
+     */
+    getToolbarItemInstance<T = IToolbarItem<TData>>(key: string): T | undefined;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _StatusBarGridApi<TData = any> {
     /**
      * Gets the status panel instance corresponding to the supplied `id`.
@@ -2011,6 +2022,7 @@ export interface GridApi<TData = any>
         _SsrmInfiniteSharedGridApi,
         _ClientSideRowModelGridApi<TData>,
         _SideBarGridApi<TData>,
+        _ToolbarGridApi<TData>,
         _StatusBarGridApi<TData>,
         _InfiniteRowModelGridApi,
         _CsvExportGridApi,

@@ -1,15 +1,20 @@
 import { CHARTS_ROBOTS_DISALLOW_JSON_URL, SITE_URL, STUDIO_ROBOTS_DISALLOW_JSON_URL } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import { pathJoin } from '@utils/pathJoin';
-import { getSitemapIgnorePaths } from '@utils/sitemapPages';
+import { getSitemapAllowPaths, getSitemapIgnorePaths } from '@utils/sitemapPages';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 const disallowAllRobotsTxt = () => 'User-agent: * Disallow: /';
 
-const productionRobotsTxt = (disallowPaths: string[] = []) => `User-agent: *
+const productionRobotsTxt = (allowPaths: string[] = [], disallowPaths: string[] = []) => `User-agent: *
 Allow: ${urlWithBaseUrl('/')}
 Allow: ${urlWithBaseUrl('/charts/')}
 Allow: ${urlWithBaseUrl('/studio/')}
+${allowPaths
+    .map((path) => {
+        return `Allow: ${path}`;
+    })
+    .join('\n')}
 ${disallowPaths
     .map((path) => {
         return `Disallow: ${path}`;
@@ -54,7 +59,8 @@ export async function GET() {
             STUDIO_ROBOTS_DISALLOW_JSON_URL,
         ]);
         const ignorePaths = gridIgnorePaths.concat(otherIgnorePaths);
-        output = productionRobotsTxt(ignorePaths);
+        const allowPaths = await getSitemapAllowPaths();
+        output = productionRobotsTxt(allowPaths, ignorePaths);
     }
 
     return new Response(output, {

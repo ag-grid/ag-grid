@@ -576,6 +576,21 @@ export interface CoreParams extends SharedThemeParams {
     sideButtonVerticalPadding: LengthValue;
 
     /**
+     * Background color of the toolbar. Defaults to the header background color.
+     */
+    toolbarBackgroundColor: ColorValue;
+
+    /**
+     * Text color in the toolbar. Defaults to the header text color.
+     */
+    toolbarTextColor: ColorValue;
+
+    /**
+     * Border style for the vertical separator between toolbar items.
+     */
+    toolbarSeparatorBorder: BorderValue;
+
+    /**
      * The dividing line between sections of menus e.g. column menu and right-click context menu
      */
     toolPanelSeparatorBorder: BorderValue;
@@ -759,6 +774,13 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     columnSelectIndentSize: {
         ref: 'iconSize',
     },
+    toolbarBackgroundColor: {
+        ref: 'headerBackgroundColor',
+    },
+    toolbarTextColor: {
+        ref: 'headerTextColor',
+    },
+    toolbarSeparatorBorder: true,
     toolPanelSeparatorBorder: true,
     columnDropCellBackgroundColor: foregroundMix(0.07),
     columnDropCellTextColor: {

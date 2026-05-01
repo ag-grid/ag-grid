@@ -11,6 +11,10 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
 > {
     protected eEditor: AgFormulaInputField = RefPlaceholder;
     private focusAfterAttached = false;
+    /** Last raw input passed to `params.parseValue`. Initialised to `this` as an "uncached" sentinel — a DOM raw value can never equal the editor instance, so the first cache check always misses. */
+    private cachedRaw: unknown = this;
+    /** Memoised parse result for `cachedRaw`. Returned by `getValue()` when the raw input is unchanged across repeated validation/sync passes within an edit session. */
+    private cachedParsed: any;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
@@ -125,7 +129,13 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
             return value;
         }
 
-        return parseValue(String(rawValue));
+        if (Object.is(this.cachedRaw, rawValue)) {
+            return this.cachedParsed;
+        }
+        const parsed = parseValue(String(rawValue));
+        this.cachedRaw = rawValue;
+        this.cachedParsed = parsed;
+        return parsed;
     }
 
     public getValidationElement(): HTMLElement | HTMLInputElement {

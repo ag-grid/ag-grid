@@ -20,6 +20,11 @@
 
         --ag-header-background-color: transparent;
 
+        --ag-toolbar-background-color: var(--ag-header-background-color);
+        --ag-toolbar-text-color: var(--ag-foreground-color);
+        --ag-toolbar-separator-color: var(--ag-border-color);
+        --ag-toolbar-separator-width: 1px;
+
         --ag-tooltip-background-color: transparent;
 
         --ag-tooltip-error-background-color: color-mix(

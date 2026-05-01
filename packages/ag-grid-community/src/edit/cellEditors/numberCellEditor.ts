@@ -17,6 +17,10 @@ const NumberCellElement: ElementParams = {
 class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, GridInputNumberField> {
     private eEditor: GridInputNumberField;
     private params: INumberCellEditorParams;
+    /** Last raw input passed to `params.parseValue`. Initialised to `this` as an "uncached" sentinel — a DOM raw value can never equal the editor instance, so the first cache check always misses. */
+    private cachedRaw: unknown = this;
+    /** Memoised parse result for `cachedRaw`. Returned by `getValue()` when the raw input is unchanged across repeated validation/sync passes within an edit session. */
+    private cachedParsed: number | null | undefined;
 
     constructor(private readonly getLocaleTextFunc: () => LocaleTextFunc) {}
 
@@ -103,17 +107,26 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         if (!_exists(value) && !_exists(params.value)) {
             return params.value;
         }
-        let parsedValue = params.parseValue(value!);
+        if (Object.is(this.cachedRaw, value)) {
+            return this.cachedParsed;
+        }
+        const parsedValue = params.parseValue(value!);
+        let result: number | null | undefined;
         if (parsedValue == null) {
-            return parsedValue;
-        }
-        if (typeof parsedValue === 'string') {
+            result = parsedValue;
+        } else if (typeof parsedValue === 'string') {
             if (parsedValue === '') {
-                return null;
+                result = null;
+            } else {
+                const numeric = Number(parsedValue);
+                result = Number.isNaN(numeric) ? null : numeric;
             }
-            parsedValue = Number(parsedValue);
+        } else {
+            result = Number.isNaN(parsedValue) ? null : parsedValue;
         }
-        return isNaN(parsedValue) ? null : parsedValue;
+        this.cachedRaw = value;
+        this.cachedParsed = result;
+        return result;
     }
 
     public getStartValue(): string | null | undefined {
