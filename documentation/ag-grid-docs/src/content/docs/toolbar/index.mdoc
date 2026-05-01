@@ -129,10 +129,17 @@ The example below defines two custom items: checkbox toggles that apply column f
 
 When defining a custom component, provide the `toolbarItem` with:
 
-{% if isFramework("javascript","angular", "react") %}
+{% if isFramework("javascript") %}
 
 1. `String`: the name of a registered Toolbar Item Component. See [Registering Custom Components](./components/#registering-custom-components).
 2. `Class`: a direct reference to a Toolbar Item Component.
+
+{% /if %}
+
+{% if isFramework("react", "angular") %}
+
+1. `String`: the name of a registered Toolbar Item Component. See [Registering Custom Components](./components/#registering-custom-components).
+2. `Component`: a direct reference to a Toolbar Item Component.
 
 {% /if %}
 
