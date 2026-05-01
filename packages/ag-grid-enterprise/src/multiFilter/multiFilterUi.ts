@@ -62,7 +62,7 @@ export class MultiFilterUi
         return new AgPromise<void>((resolve) => {
             AgPromise.all(filterPromises).then((filters) => {
                 if (!this.isAlive()) {
-                    this.destroyFilters();
+                    this.destroyBeans(filters ?? []);
                     resolve();
                     return;
                 }
@@ -116,16 +116,8 @@ export class MultiFilterUi
         return this.filters.length;
     }
 
-    private destroyFilters() {
-        for (const filter of this.filters) {
-            this.destroyBean(filter);
-        }
-
-        this.filters.length = 0;
-    }
-
     public override destroy(): void {
-        this.destroyFilters();
+        this.filters = this.destroyBeans(this.filters);
 
         super.destroy();
     }
