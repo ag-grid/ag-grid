@@ -1,4 +1,4 @@
-import { getByTestId, waitFor } from '@testing-library/dom';
+import { findByTestId, waitFor } from '@testing-library/dom';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -11,7 +11,7 @@ import {
 import type { MultiFilter, SetFilter } from 'ag-grid-enterprise';
 import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager } from '../test-utils';
 
 interface Row {
     name: string;
@@ -34,8 +34,6 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
                 {
                     field: 'name',
                     filter: 'agMultiColumnFilter',
-                    // Eliminate the 500ms floating-filter debounce so the test is deterministic
-                    // on slow CI runners. This test is about refresh behaviour, not debouncing.
                     filterParams: {
                         filters: [
                             { filter: 'agTextColumnFilter', filterParams: { debounceMs: 1 } },
@@ -52,14 +50,15 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
 
     async function typeInFloatingFilter(api: GridApi<Row>, text: string): Promise<void> {
         const gridDiv = getGridElement(api)! as HTMLElement;
-        const input = getByTestId<HTMLInputElement>(
+        // findByTestId retries internally — handles the slow-CI window where the floating-filter
+        // input is briefly detached/remounted after a popup show/hide cycle (Scenario B).
+        const input = await findByTestId<HTMLInputElement>(
             gridDiv,
             agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'name', index: 0 })
         );
         input.value = text;
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
-        await asyncSetTimeout(5);
     }
 
     /**
@@ -69,7 +68,6 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
      */
     async function openPopupAndGetDisplayedSetFilterKeys(api: GridApi<Row>): Promise<string[]> {
         api.showColumnFilter('name');
-        await asyncSetTimeout(5);
         const multiFilter = (await api.getColumnFilterInstance('name')) as MultiFilter | null | undefined;
         const setFilter = multiFilter?.getChildFilterInstance<SetFilter>(1);
         if (!setFilter) {
@@ -81,12 +79,12 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
 
     test('Scenario A: no popup opened — reopening popup shows filtered Set Filter list', async () => {
         const api = await createGrid();
-        // Allow the floating-filter cell to mount its inner text input before we query for it.
-        await asyncSetTimeout(5);
 
-        await typeInFloatingFilter(api, 'michael');
-
-        await waitFor(() => {
+        // findByTestId inside typeInFloatingFilter retries until the input is mounted. The
+        // outer waitFor retries the dispatch on the freshest input each iteration, so we
+        // don't depend on a fixed mount-delay sleep before typing.
+        await waitFor(async () => {
+            await typeInFloatingFilter(api, 'michael');
             expect(api.getDisplayedRowCount()).toBe(1);
         });
 
@@ -97,16 +95,12 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
 
     test('Scenario B: popup opened+closed before floating filter — reopening popup shows filtered Set Filter list', async () => {
         const api = await createGrid();
-        await asyncSetTimeout(5);
 
         api.showColumnFilter('name');
-        await asyncSetTimeout(10);
         api.hideColumnFilter();
-        await asyncSetTimeout(10);
 
-        await typeInFloatingFilter(api, 'michael');
-
-        await waitFor(() => {
+        await waitFor(async () => {
+            await typeInFloatingFilter(api, 'michael');
             expect(api.getDisplayedRowCount()).toBe(1);
         });
 

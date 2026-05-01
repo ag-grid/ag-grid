@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     ChangedPath,
     ClientSideRowModelStage,
     GridOptions,
@@ -12,7 +13,7 @@ import {
     BeanStub,
     _doDeltaSort,
     _forEachChangedGroupDepthFirst,
-    _isColumnsSortingCoupledToGroup,
+    _reuseArrayIfEqual,
     _updateRowNodeAfterSort,
 } from 'ag-grid-community';
 
@@ -23,13 +24,22 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'groupDisplayType', 'accentedSort'];
 
     public execute(changedPath: ChangedPath | undefined, changedRowNodes: _ChangedRowNodes | undefined): void {
-        const { gos, colModel, rowGroupColsSvc, rowModel, rowNodeSorter, rowRenderer, sortSvc, showRowGroupCols } =
-            this.beans;
-        const sortOptions = sortSvc?.getSortOptions();
+        const {
+            gos,
+            colModel,
+            groupStage,
+            rowGroupColsSvc,
+            rowModel,
+            rowNodeSorter,
+            rowRenderer,
+            sortSvc,
+            showRowGroupCols,
+        } = this.beans;
+        const sortOptions = sortSvc?.getSortOptions() ?? [];
+        const hasSortOptions = sortOptions.length > 0;
 
         const useDeltaSort =
-            sortOptions &&
-            sortOptions.length > 0 &&
+            hasSortOptions &&
             !!changedRowNodes &&
             // in time we can remove this check, so that delta sort is always
             // on if transactions are present. it's off for now so that we can
@@ -37,70 +47,80 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             // rolling out to everyone.
             gos.get('deltaSort');
 
-        const groupMaintainOrder = gos.get('groupMaintainOrder');
-        const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());
-        const groupCols = rowGroupColsSvc?.columns;
+        // groupMaintainOrder is honoured per level: if a sort targets level N's group column,
+        // only level N re-orders; sibling levels keep their structural order. Tree data is
+        // excluded — treeData and row grouping cannot currently coexist.
+        const shouldMaintainGroupOrderBase =
+            hasSortOptions &&
+            gos.get('groupMaintainOrder') &&
+            !groupStage?.treeData &&
+            !!rowGroupColsSvc?.columns.length;
+
+        // Precomputed once per execute: levelSortTargeted[i] === true when the sort targets
+        // groupColsByLevel[i]. Avoids per-row recomputation in the callback below.
+        const groupColsByLevel = rowGroupColsSvc?.columns;
+        const levelSortTargeted: boolean[] | null =
+            shouldMaintainGroupOrderBase && groupColsByLevel
+                ? buildLevelSortTargeted(sortOptions, groupColsByLevel)
+                : null;
 
         const isPivotMode = colModel.pivotMode;
         const postSortFunc = gos.getCallback('postSortRows');
 
         let hasAnyFirstChildChanged = false;
-        let sortContainsGroupColumns: boolean | undefined;
 
-        const callback = (rowNode: RowNode) => {
-            // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
-            const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
+        const sortGroupChildren = (rowNode: RowNode) => {
+            const leafGroup = rowNode.leafGroup;
+            // Pivot leaf group children aren't part of the displayed pivoted output — skip them.
+            const skipPivotLeafs = isPivotMode && leafGroup;
+            // True when this level should run the sort: leaf groups always sort, non-leaf levels
+            // sort only when groupMaintainOrder isn't excluding them (i.e. either no per-level
+            // skip is active, or the active sort directly targets THIS level's group column).
+            const sortAtThisLevel = leafGroup || !levelSortTargeted || levelSortTargeted[rowNode.level + 1];
 
-            let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup;
-            if (skipSortingGroups) {
-                sortContainsGroupColumns ??= this.shouldSortContainsGroupCols(sortOptions);
-                skipSortingGroups &&= !sortContainsGroupColumns;
-            }
-
-            let newChildrenAfterSort: RowNode[] | null = null;
-            if (skipSortingGroups) {
-                // Maintain previous visual order in O(n).
-
-                let wasSortExplicitlyRemoved = false;
-                if (groupCols) {
-                    const nextGroupIndex = rowNode.level + 1;
-                    if (nextGroupIndex < groupCols.length) {
-                        wasSortExplicitlyRemoved = groupCols[nextGroupIndex].wasSortExplicitlyRemoved;
-                    }
+            const prevSort = rowNode.childrenAfterSort;
+            let newChildrenAfterSort: RowNode[];
+            if (sortAtThisLevel && !skipPivotLeafs && hasSortOptions) {
+                if (useDeltaSort && changedRowNodes) {
+                    newChildrenAfterSort = _doDeltaSort(
+                        rowNodeSorter!,
+                        rowNode,
+                        changedRowNodes,
+                        changedPath,
+                        sortOptions
+                    );
+                } else {
+                    newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(
+                        rowNode.childrenAfterAggFilter!.slice(),
+                        sortOptions
+                    );
                 }
-
-                if (!wasSortExplicitlyRemoved) {
-                    newChildrenAfterSort = preserveGroupOrder(rowNode);
-                }
-            } else if (!sortOptions?.length || skipSortingPivotLeafs) {
-                // if there's no sort to make, skip this step
-            } else if (useDeltaSort && changedRowNodes) {
-                newChildrenAfterSort = _doDeltaSort(rowNodeSorter!, rowNode, changedRowNodes, changedPath, sortOptions);
             } else {
-                newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(
-                    rowNode.childrenAfterAggFilter!.slice(),
-                    sortOptions
-                );
+                // childrenAfterAggFilter follows childrenAfterGroup's structural order, kept
+                // stable by the grouping stage. postSortRows reapplies on top per refresh.
+                newChildrenAfterSort = _reuseArrayIfEqual(prevSort, rowNode.childrenAfterAggFilter);
             }
 
-            newChildrenAfterSort ||= rowNode.childrenAfterAggFilter?.slice() ?? [];
-
-            hasAnyFirstChildChanged ||= rowNode.childrenAfterSort?.[0] !== newChildrenAfterSort[0];
+            // Capture by value: if _reuseArrayIfEqual returned prevSort, postSortRows' in-place
+            // mutation below would otherwise hide the change from the comparison further down.
+            const prevFirstChild = prevSort?.[0];
 
             rowNode.childrenAfterSort = newChildrenAfterSort;
 
+            // Legacy ordering since AG-309 (Feb 2018): _updateRowNodeAfterSort runs BEFORE
+            // postSortRows, leaving the deprecated firstChild/lastChild/childIndex flags stale
+            // when the callback reorders. Changing this is a breaking change — see release notes.
             _updateRowNodeAfterSort(rowNode);
 
-            if (postSortFunc) {
-                postSortFunc({ nodes: rowNode.childrenAfterSort });
-            }
+            postSortFunc?.({ nodes: newChildrenAfterSort });
+
+            hasAnyFirstChildChanged ||= prevFirstChild !== newChildrenAfterSort[0];
         };
 
-        _forEachChangedGroupDepthFirst(rowModel.rootNode, true, changedPath, callback);
+        _forEachChangedGroupDepthFirst(rowModel.rootNode, true, changedPath, sortGroupChildren);
 
-        // if using group hide open parents and a sort has happened, refresh the group cells as the first child
-        // displays the parent grouping - it's cheaper here to refresh all cells in col rather than fire events for every potential
-        // child cell
+        // groupHideOpenParents shows the parent group key on the first child row — refresh
+        // those cells in bulk when the displayed first child changed at any level.
         if (hasAnyFirstChildChanged && gos.get('groupHideOpenParents')) {
             const columns = showRowGroupCols?.columns;
             if (columns?.length) {
@@ -108,72 +128,47 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             }
         }
     }
-
-    private shouldSortContainsGroupCols(sortOptions: SortOption[] | undefined): boolean {
-        const sortOptionsLen = sortOptions?.length;
-        if (!sortOptionsLen) {
-            return false;
-        }
-
-        if (_isColumnsSortingCoupledToGroup(this.gos)) {
-            for (let i = 0; i < sortOptionsLen; ++i) {
-                const column = sortOptions[i].column;
-                if (column.isPrimary() && column.isRowGroupActive()) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        for (let i = 0; i < sortOptionsLen; ++i) {
-            if (sortOptions[i].column.getColDef().showRowGroup) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
 
 /**
- * O(n) merge preserving previous visual order and appending new items in current order.
+ * Per-level lookup of "is this level's group column targeted by the sort?". Handles both:
+ * - source rowGroup columns (sort applied directly to the hidden field column);
+ * - auto-display columns with `colDef.showRowGroup` set to a level's colId, or to `true`
+ *   (single shared display column → every level matches).
+ *
+ * Both forms can appear in `sortOptions` regardless of coupling — `setSortForColumn` cascades
+ * to source columns, but `applyColumnState` does not, so display columns can land here on their
+ * own.
  */
-const preserveGroupOrder = (node: RowNode): RowNode[] | null => {
-    const childrenAfterSort = node.childrenAfterSort;
-    const childrenAfterAggFilter = node.childrenAfterAggFilter;
+const buildLevelSortTargeted = (sortOptions: SortOption[], groupColsByLevel: AgColumn[]): boolean[] => {
+    const sortLen = sortOptions.length;
+    const numLevels = groupColsByLevel.length;
+    const result = new Array<boolean>(numLevels).fill(false);
 
-    const childrenAfterSortLen = childrenAfterSort?.length;
-    const childrenAfterAggFilterLen = childrenAfterAggFilter?.length;
+    for (let i = 0; i < sortLen; ++i) {
+        const column = sortOptions[i].column as AgColumn;
 
-    if (!childrenAfterSortLen || !childrenAfterAggFilterLen) {
-        return null;
-    }
+        // Direct match: column IS a source rowGroup column at some level.
+        const sourceIdx = groupColsByLevel.indexOf(column);
+        if (sourceIdx >= 0) {
+            result[sourceIdx] = true;
+            continue;
+        }
 
-    const result = new Array<RowNode>(childrenAfterAggFilterLen);
-
-    // Track all present nodes.
-    const processed = new Set<RowNode>();
-    for (let i = 0; i < childrenAfterAggFilterLen; ++i) {
-        processed.add(childrenAfterAggFilter[i]);
-    }
-
-    // Keep nodes that are still present, in previous visual order.
-    let writeIdx = 0;
-    for (let i = 0; i < childrenAfterSortLen; ++i) {
-        const node = childrenAfterSort[i];
-        if (processed.delete(node)) {
-            result[writeIdx++] = node;
+        // Display column: match via colDef.showRowGroup.
+        const showRowGroup = column.colDef.showRowGroup;
+        if (showRowGroup === true) {
+            result.fill(true);
+            return result;
+        }
+        if (typeof showRowGroup === 'string') {
+            for (let j = 0; j < numLevels; ++j) {
+                if (groupColsByLevel[j].colId === showRowGroup) {
+                    result[j] = true;
+                    break;
+                }
+            }
         }
     }
-
-    if (processed.size === 0 && writeIdx === childrenAfterSortLen) {
-        return childrenAfterSort; // No change, return the previous array
-    }
-
-    // Add new nodes
-    for (const newNode of processed) {
-        result[writeIdx++] = newNode;
-    }
-
-    result.length = writeIdx;
     return result;
 };

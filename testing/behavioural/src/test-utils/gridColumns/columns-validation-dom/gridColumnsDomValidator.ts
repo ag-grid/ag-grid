@@ -1,4 +1,4 @@
-import type { Column, ColumnGroup } from 'ag-grid-community';
+import type { Column, ColumnGroup, GridApi, SortDirection } from 'ag-grid-community';
 
 import { getGridHTMLElement } from '../../gridRows/gridHtmlRows';
 import type { GridColumnsErrors } from '../columns-validation/gridColumnsErrors';
@@ -151,23 +151,30 @@ export class GridColumnsDomValidator {
             // ── aria-sort attribute ─────────────────────────────────────────
             // The grid sets aria-sort only when the column is sortable (headerCellCtrl.refreshAriaSort).
             // When !sortable, aria-sort is removed from DOM regardless of model sort state.
-            const sort = col.getSort();
+            // Source of truth is the *displayed* sort, which for auto-display columns mirrors the
+            // linked source rowGroup column in coupled-sort mode — see getDisplayedSort below.
+            const displayedSort = getDisplayedSort(gridColumns.api, col);
             const isSortable = col.isSortable();
             const ariaSort = headerCell.getAttribute('aria-sort');
 
             if (isSortable) {
-                // Sortable column — aria-sort should reflect the current sort state
-                if (sort === 'asc' && ariaSort !== 'ascending') {
+                // Sortable column — aria-sort should reflect the displayed sort.
+                if (displayedSort === 'asc' && ariaSort !== 'ascending') {
                     colErrors.add(
-                        `Sortable column with sort "asc" has aria-sort="${ariaSort ?? 'null'}", expected "ascending".`
+                        `Sortable column with displayed sort "asc" has aria-sort="${ariaSort ?? 'null'}", expected "ascending".`
                     );
-                } else if (sort === 'desc' && ariaSort !== 'descending') {
+                } else if (displayedSort === 'desc' && ariaSort !== 'descending') {
                     colErrors.add(
-                        `Sortable column with sort "desc" has aria-sort="${ariaSort ?? 'null'}", expected "descending".`
+                        `Sortable column with displayed sort "desc" has aria-sort="${ariaSort ?? 'null'}", expected "descending".`
                     );
-                } else if (!sort && ariaSort != null && ariaSort !== 'none') {
+                } else if (displayedSort === 'mixed' && ariaSort !== 'other') {
+                    // Coupled-sort group display column with diverging linked-source sorts.
                     colErrors.add(
-                        `Sortable column with no sort has aria-sort="${ariaSort}", expected "none" or absent.`
+                        `Sortable column with mixed displayed sort has aria-sort="${ariaSort ?? 'null'}", expected "other".`
+                    );
+                } else if (!displayedSort && ariaSort != null && ariaSort !== 'none') {
+                    colErrors.add(
+                        `Sortable column with no displayed sort has aria-sort="${ariaSort}", expected "none" or absent.`
                     );
                 }
             } else if (ariaSort != null && ariaSort !== 'none') {
@@ -559,4 +566,56 @@ export class GridColumnsDomValidator {
         visit(tree);
         return groups;
     }
+}
+
+/**
+ * Effective displayed sort indicator for a column. Mirrors `SortService.getDisplaySortForColumn`
+ * using public API only:
+ * - If the column has its own sort, that wins.
+ * - Otherwise, for auto-display columns (`colDef.showRowGroup` set), the indicator mirrors the
+ *   linked source rowGroup column's sort (single linked source) or returns `'mixed'` when linked
+ *   sources disagree (multi-source display column with diverging sorts).
+ *
+ * Returns `null` when no sort is displayed.
+ */
+function getDisplayedSort(api: GridApi, col: Column): SortDirection | 'mixed' | null {
+    const ownSort = col.getSort() ?? null;
+    if (ownSort) {
+        return ownSort;
+    }
+
+    const showRowGroup = col.getColDef().showRowGroup;
+    if (showRowGroup == null) {
+        return null;
+    }
+
+    // RowGroupingModule may not be registered (e.g. tree-data tests) — `getRowGroupColumns`
+    // throws in that case, so guard.
+    const isModuleRegistered = api.isModuleRegistered as (name: string) => boolean;
+    if (!isModuleRegistered('SharedRowGrouping')) {
+        return null;
+    }
+
+    const rowGroupCols = api.getRowGroupColumns();
+    const linkedSources =
+        showRowGroup === true
+            ? rowGroupCols
+            : typeof showRowGroup === 'string'
+              ? rowGroupCols.filter((c) => c.getColId() === showRowGroup)
+              : [];
+
+    if (linkedSources.length === 0) {
+        return null;
+    }
+
+    let firstSort: SortDirection | null | undefined;
+    for (const linked of linkedSources) {
+        const s = linked.getSort() ?? null;
+        if (firstSort === undefined) {
+            firstSort = s;
+        } else if (firstSort !== s) {
+            return 'mixed';
+        }
+    }
+    return firstSort ?? null;
 }

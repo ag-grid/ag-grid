@@ -661,6 +661,143 @@ describe('SortService', () => {
         });
     });
 
+    describe('post-sort row metadata', () => {
+        // Locks in the legacy AG-309 (Feb 2018) behaviour: updateRowNodeAfterSort runs BEFORE
+        // postSortRows, and not after.
+        test('flat SortStage: postSortRows reorder leaves childIndex / firstChild / lastChild stale (legacy AG-309 behaviour)', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'a', field: 'a', sort: 'asc' }],
+                rowData: [
+                    { id: '1', a: 'a' },
+                    { id: '2', a: 'b' },
+                    { id: '3', a: 'c' },
+                ],
+                getRowId: (p) => p.data.id,
+                postSortRows: (params) => {
+                    // Reverse the input. After this, childrenAfterSort is [c, b, a] but the
+                    // flags were already written for the input order [a, b, c].
+                    params.nodes.reverse();
+                },
+            });
+
+            // Display order reflects the post-mutation array.
+            await new GridRows(api, 'AG-309 stale flags: displayed order is post-mutation').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:3 a:"c"
+                ├── LEAF id:2 a:"b"
+                └── LEAF id:1 a:"a"
+            `);
+
+            // Deprecated flags reflect the pre-mutation (input) order — node id=1 was first in
+            // input, node id=3 was last, even though they're now at the opposite ends of the display.
+            expect(api.getRowNode('1')!.childIndex).toBe(0);
+            expect(api.getRowNode('1')!.firstChild).toBe(true);
+            expect(api.getRowNode('1')!.lastChild).toBe(false);
+
+            expect(api.getRowNode('3')!.childIndex).toBe(2);
+            expect(api.getRowNode('3')!.firstChild).toBe(false);
+            expect(api.getRowNode('3')!.lastChild).toBe(true);
+        });
+
+        test('firstChild / lastChild / childIndex reflect the sorted order on a flat CSRM', async () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'a', field: 'a', sort: 'desc' }],
+                rowData: [
+                    { id: '1', a: 'a' },
+                    { id: '2', a: 'b' },
+                    { id: '3', a: 'c' },
+                ],
+                getRowId: (p) => p.data.id,
+            });
+
+            // Sorted desc, expected order is [c, b, a] → ids [3, 2, 1].
+            await new GridRows(api, 'sort desc').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:3 a:"c"
+                ├── LEAF id:2 a:"b"
+                └── LEAF id:1 a:"a"
+            `);
+
+            const sortedIds = ['3', '2', '1'];
+            const nodes = sortedIds.map((id) => api.getRowNode(id)!);
+
+            nodes.forEach((node, idx) => {
+                expect(node.childIndex).toBe(idx);
+                expect(node.firstChild).toBe(idx === 0);
+                expect(node.lastChild).toBe(idx === nodes.length - 1);
+            });
+
+            // Reverse the sort and re-check that the metadata moves with the rows.
+            api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+            await new GridRows(api, 'sort asc — flags follow').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 a:"a"
+                ├── LEAF id:2 a:"b"
+                └── LEAF id:3 a:"c"
+            `);
+
+            const reverseIds = ['1', '2', '3'];
+            const reverseNodes = reverseIds.map((id) => api.getRowNode(id)!);
+
+            reverseNodes.forEach((node, idx) => {
+                expect(node.childIndex).toBe(idx);
+                expect(node.firstChild).toBe(idx === 0);
+                expect(node.lastChild).toBe(idx === reverseNodes.length - 1);
+            });
+        });
+
+        test('flat SortStage: reused-array postSortRows mutation does not corrupt the structural baseline', async () => {
+            // Flat-path mirror of the GroupSortStage baseline-integrity test. The reverse=false
+            // refresh is the load-bearing assertion — structural order is only restorable if
+            // _reuseArrayIfEqual is by-position AND prevSort/childrenAfterAggFilter are distinct refs.
+            let reverse = false;
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [{ colId: 'a', field: 'a' }],
+                rowData: [
+                    { id: '1', a: 'a' },
+                    { id: '2', a: 'b' },
+                    { id: '3', a: 'c' },
+                ],
+                getRowId: (p) => p.data.id,
+                postSortRows: (params) => {
+                    if (reverse) {
+                        params.nodes.reverse();
+                    }
+                },
+            });
+
+            // Initial: postSortRows is a no-op, structural order.
+            await new GridRows(api, 'flat baseline: structural order').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 a:"a"
+                ├── LEAF id:2 a:"b"
+                └── LEAF id:3 a:"c"
+            `);
+
+            // Refresh with reverse=true. _reuseArrayIfEqual returns prevSort by reference and
+            // postSortRows mutates that array in place — childrenAfterSort flips.
+            reverse = true;
+            api.refreshClientSideRowModel('sort');
+            await new GridRows(api, 'flat baseline: postSortRows reverses').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:3 a:"c"
+                ├── LEAF id:2 a:"b"
+                └── LEAF id:1 a:"a"
+            `);
+
+            // Refresh with reverse=false. Structural order returns. If the baseline had been
+            // corrupted by the previous mutation, the structural order could not be restored here.
+            reverse = false;
+            api.refreshClientSideRowModel('sort');
+            await new GridRows(api, 'flat baseline: structural order restored').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 a:"a"
+                ├── LEAF id:2 a:"b"
+                └── LEAF id:3 a:"c"
+            `);
+        });
+    });
+
     describe('postSortRows callback', () => {
         test('postSortRows reorders rows after sort', async () => {
             const api = gridMgr.createGrid('g', {

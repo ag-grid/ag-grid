@@ -131,7 +131,14 @@ export {
     _setAriaSort,
 } from './agStack/utils/aria';
 export type { AriaSortState } from './agStack/utils/aria';
-export { _areEqual, _flatten, _last, _removeAllFromArray, _removeFromArray } from './agStack/utils/array';
+export {
+    _areEqual,
+    _flatten,
+    _last,
+    _removeAllFromArray,
+    _removeFromArray,
+    _reuseArrayIfEqual,
+} from './agStack/utils/array';
 export { _parseBigIntOrNull } from './agStack/utils/bigInt';
 export { _isBrowserFirefox, _isBrowserSafari, _isIOSUserAgent } from './agStack/utils/browser';
 export { _getDateParts, MONTHS as _MONTHS, _parseDateTimeFromString, _serialiseDate } from './agStack/utils/date';

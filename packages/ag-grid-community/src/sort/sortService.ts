@@ -299,7 +299,7 @@ export class SortService extends BeanStub implements NamedBean {
             comp.toggleCss('ag-header-cell-sorted-abs-desc', type === 'absolute' && direction === 'desc');
             comp.toggleCss('ag-header-cell-sorted-none', !direction);
 
-            if (column.getColDef().showRowGroup) {
+            if (column.colDef.showRowGroup) {
                 const sourceColumns = this.beans.showRowGroupCols?.getSourceColumnsForGroupColumn(column);
                 // this == is intentional, as it allows null and undefined to match, which are both unsorted states
                 const sortDirectionsMatch = sourceColumns?.every(

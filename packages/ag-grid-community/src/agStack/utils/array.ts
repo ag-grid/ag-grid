@@ -35,6 +35,24 @@ export function _areEqual<T>(
 }
 
 /**
+ * Returns `prev` (same reference) when it is element-wise equal to `current` at the same
+ * positions; otherwise a fresh copy of `current` (or `[]` if `current` is nullish).
+ *
+ * Equality is by-position: a reordered `prev` triggers a fresh copy so a
+ * downstream mutation of `prev` is never silently reused as the next baseline. Callers must
+ * pass distinct references — `current` is `readonly` to enforce that the returned mutable
+ * handle never aliases the input.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: readonly T[] | null | undefined): T[] {
+    if (prev && _areEqual(prev, current)) {
+        return prev;
+    }
+    return current ? current.slice() : [];
+}
+
+/**
  * Utility that uses the fastest looping approach to apply a callback to each element of the array
  * https://jsperf.app/for-for-of-for-in-foreach-comparison
  * If callback returns true, exit early.
