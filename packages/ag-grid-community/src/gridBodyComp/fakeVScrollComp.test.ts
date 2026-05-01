@@ -33,9 +33,9 @@ describe('FakeVScrollComp', () => {
             eViewport,
             eContainer,
             getGui: () => eGui,
-            toggleCss: jest.fn(),
-            setDisplayed: jest.fn(),
-            queueContainerHeightSync: jest.fn(),
+            toggleCss: vi.fn(),
+            setDisplayed: vi.fn(),
+            queueContainerHeightSync: vi.fn(),
         } as unknown as FakeVScrollComp;
 
         (FakeVScrollComp.prototype as unknown as { setScrollVisible: () => void }).setScrollVisible.call(fakeComp);

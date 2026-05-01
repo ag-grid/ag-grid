@@ -1,26 +1,28 @@
+import type { Mock } from 'vitest';
+
 import { _observeResize, _requestAnimationFrame } from '../agStack/utils/dom';
 import { ViewportSizeFeature } from './viewportSizeFeature';
 
-jest.mock('../agStack/utils/dom', () => {
-    const actual = jest.requireActual('../agStack/utils/dom');
+vi.mock('../agStack/utils/dom', async () => {
+    const actual = await vi.importActual('../agStack/utils/dom');
     return {
         ...actual,
-        _observeResize: jest.fn(),
-        _requestAnimationFrame: jest.fn((_beans: unknown, callback: () => void) => callback()),
+        _observeResize: vi.fn(),
+        _requestAnimationFrame: vi.fn((_beans: unknown, callback: () => void) => callback()),
     };
 });
 
 describe('ViewportSizeFeature', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     function createFakeFeature(params: {
         centerContainer: HTMLDivElement;
         centerViewport: HTMLDivElement;
-        registerViewportResizeListener: jest.Mock;
-        onCenterViewportResized: jest.Mock;
-        refreshScrollVisible: jest.Mock;
+        registerViewportResizeListener: Mock;
+        onCenterViewportResized: Mock;
+        refreshScrollVisible: Mock;
     }): ViewportSizeFeature {
         return Object.assign(Object.create(ViewportSizeFeature.prototype), {
             beans: {},
@@ -35,7 +37,7 @@ describe('ViewportSizeFeature', () => {
             gridBodyCtrl: {
                 eGridViewport: params.centerViewport,
             },
-            addDestroyFunc: jest.fn(),
+            addDestroyFunc: vi.fn(),
             onCenterViewportResized: params.onCenterViewportResized,
             centerViewportResizeQueued: false,
             scrollVisibilityRefreshQueued: false,
@@ -45,14 +47,14 @@ describe('ViewportSizeFeature', () => {
     test('listens to center container resize and refreshes scroll visibility', () => {
         let resizeCallback: (() => void) | undefined;
 
-        (_observeResize as jest.Mock).mockImplementation((_beans: unknown, _element: Element, callback: () => void) => {
+        (_observeResize as Mock).mockImplementation((_beans: unknown, _element: Element, callback: () => void) => {
             resizeCallback = callback;
-            return jest.fn();
+            return vi.fn();
         });
 
-        const onCenterViewportResized = jest.fn();
-        const refreshScrollVisible = jest.fn();
-        const registerViewportResizeListener = jest.fn();
+        const onCenterViewportResized = vi.fn();
+        const refreshScrollVisible = vi.fn();
+        const registerViewportResizeListener = vi.fn();
 
         const centerContainer = document.createElement('div');
         const centerViewport = document.createElement('div');

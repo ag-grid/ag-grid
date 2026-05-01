@@ -698,12 +698,10 @@ describe('Focus override callbacks', () => {
             navigationSvcAny.beans.visibleCols = { allCols: [colA, colB] };
 
             const rowCtrl = Object.create(RowCtrl.prototype) as RowCtrl;
-            (rowCtrl as any).getRowPosition = jest.fn(() => ({ rowIndex: 3, rowPinned: null }));
-            (rowCtrl as any).getNavigationColumn = jest.fn(() => colA);
+            (rowCtrl as any).getRowPosition = vi.fn(() => ({ rowIndex: 3, rowPinned: null }));
+            (rowCtrl as any).getNavigationColumn = vi.fn(() => colA);
 
-            const findNextCellToFocusOnSpy = jest
-                .spyOn(navigationSvcAny, 'findNextCellToFocusOn')
-                .mockReturnValue(false);
+            const findNextCellToFocusOnSpy = vi.spyOn(navigationSvcAny, 'findNextCellToFocusOn').mockReturnValue(false);
 
             navigationSvcAny.moveToNextCellNotEditing(rowCtrl, false);
 

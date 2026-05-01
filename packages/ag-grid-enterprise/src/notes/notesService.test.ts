@@ -291,9 +291,9 @@ describe('NotesService', () => {
     });
 
     it('refreshes matching full width rows through row refresh', () => {
-        (beans.rowRenderer!.getAllRowCtrls as jest.Mock).mockReturnValue([
+        (beans.rowRenderer!.getAllRowCtrls as Mock).mockReturnValue([
             rowCtrl,
-            { isFullWidth: () => false, rowNode, refreshRow: jest.fn() },
+            { isFullWidth: () => false, rowNode, refreshRow: vi.fn() },
         ]);
 
         service.refreshNotes({ rowNodes: [rowNode], columns: ['athlete'] });

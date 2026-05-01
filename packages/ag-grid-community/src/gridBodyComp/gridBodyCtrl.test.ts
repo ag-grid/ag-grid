@@ -1,7 +1,7 @@
 import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
 
 function createCtrl(alwaysShowVerticalScroll: boolean) {
-    const setAlwaysVerticalScrollClass = jest.fn();
+    const setAlwaysVerticalScrollClass = vi.fn();
 
     const ctrl = {
         gos: {

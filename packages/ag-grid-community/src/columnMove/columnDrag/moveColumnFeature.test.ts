@@ -63,9 +63,9 @@ describe('MoveColumnFeature', () => {
         };
 
         feature.gridBodyCon = { eGridViewport };
-        feature.checkCenterForScrolling = jest.fn();
-        feature.handleColumnDragWhileSuppressingMovement = jest.fn();
-        feature.handleColumnDragWhileAllowingMovement = jest.fn();
+        feature.checkCenterForScrolling = vi.fn();
+        feature.handleColumnDragWhileSuppressingMovement = vi.fn();
+        feature.handleColumnDragWhileAllowingMovement = vi.fn();
         feature.lastDraggingEvent = null;
 
         return feature;
