@@ -85,8 +85,11 @@ test.agExample(import.meta, () => {
 
     test.eachFramework('ArrowDown from column header enters first cell', async ({ page, agIdFor }) => {
         await agIdFor.headerCell('athlete').click();
+        await expect(agIdFor.headerCell('athlete')).toBeFocused();
+
         await page.keyboard.press('ArrowDown');
-        await expect(agIdFor.cell('0', 'athlete')).toHaveClass(/ag-cell-focus/);
+        // Click sorts the column so use row-index to find the first displayed row rather than row ID '0'
+        await expect(page.locator('[row-index="0"] [col-id="athlete"]')).toHaveClass(/ag-cell-focus/);
     });
 
     test.eachFramework('Tab right through column headers', async ({ page, agIdFor }) => {

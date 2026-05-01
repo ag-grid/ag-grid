@@ -46,9 +46,11 @@ test.agExample(import.meta, () => {
         // Verify the grid received focus in the cells row (check for any cell with focus or a visible editor)
         const cellIsActive = await page.evaluate(() => {
             const activeEl = document.activeElement;
-            return activeEl?.closest('.ag-body-viewport') != null ||
-                   activeEl?.closest('[role="gridcell"]') != null ||
-                   activeEl?.closest('.ag-cell') != null;
+            return (
+                activeEl?.closest('.ag-body-viewport') != null ||
+                activeEl?.closest('[role="gridcell"]') != null ||
+                activeEl?.closest('.ag-cell') != null
+            );
         });
         expect(cellIsActive).toBe(true);
     });
@@ -103,7 +105,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerCell('athlete')).toBeFocused();
 
         await page.keyboard.press('ArrowDown');
-        await expect(agIdFor.cell('0', 'athlete')).toHaveClass(/ag-cell-focus/);
+        await expect(page.locator('[row-index="0"] [col-id="athlete"]')).toHaveClass(/ag-cell-focus/);
     });
 
     test.eachFramework('Shift+Tab from input below grid focuses last cell', async ({ page }) => {

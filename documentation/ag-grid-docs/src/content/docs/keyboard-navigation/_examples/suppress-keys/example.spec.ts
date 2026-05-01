@@ -120,7 +120,8 @@ test.agExample(import.meta, () => {
             await expect(agIdFor.headerCell('country')).toBeFocused();
 
             await page.keyboard.press('ArrowDown');
-            await expect(agIdFor.cell('0', 'country')).toHaveClass(/ag-cell-focus/);
+            // Click sorts the column so use row-index to find the first displayed row rather than row ID '0'
+            await expect(page.locator('[row-index="0"] [col-id="country"]')).toHaveClass(/ag-cell-focus/);
         }
     );
 });

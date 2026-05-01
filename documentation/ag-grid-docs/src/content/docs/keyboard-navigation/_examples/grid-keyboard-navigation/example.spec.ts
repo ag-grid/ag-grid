@@ -77,7 +77,7 @@ test.agExample(import.meta, () => {
 
             // Navigate down into cell
             await page.keyboard.press('ArrowDown');
-            await expect(agIdFor.cell('0', 'athlete')).toHaveClass(/ag-cell-focus/);
+            await expect(page.locator('[row-index="0"] [col-id="athlete"]')).toHaveClass(/ag-cell-focus/);
         }
     );
 
@@ -163,7 +163,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.floatingFilter('year')).toBeFocused();
 
         await page.keyboard.press('Tab');
-        await expect(agIdFor.cell('0', 'athlete')).toHaveClass(/ag-cell-focus/);
+        await expect(page.locator('[row-index="0"] [col-id="athlete"]')).toHaveClass(/ag-cell-focus/);
     });
 
     test.eachFramework('Tab right through column headers', async ({ agIdFor, page }) => {

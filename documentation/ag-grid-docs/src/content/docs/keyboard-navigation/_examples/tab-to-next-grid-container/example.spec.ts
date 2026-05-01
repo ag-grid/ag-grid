@@ -34,7 +34,7 @@ test.agExample(import.meta, () => {
     test.eachFramework('Tab from last header enters first cell', async ({ page, agIdFor }) => {
         await agIdFor.headerCell('total').click();
         await page.keyboard.press('Tab');
-        await expect(agIdFor.cell('0', 'rowNum')).toHaveClass(/ag-cell-focus/);
+        await expect(page.locator('[row-index="0"] [col-id="rowNum"]')).toHaveClass(/ag-cell-focus/);
     });
 
     test.eachFramework('Tab right through cells in a row', async ({ page, agIdFor }) => {
