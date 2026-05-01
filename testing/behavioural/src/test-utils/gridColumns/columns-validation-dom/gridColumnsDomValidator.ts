@@ -575,6 +575,12 @@ export class GridColumnsDomValidator {
  * - Otherwise, for auto-display columns (`colDef.showRowGroup` set), the indicator mirrors the
  *   linked source rowGroup column's sort (single linked source) or returns `'mixed'` when linked
  *   sources disagree (multi-source display column with diverging sorts).
+ * - When sort coupling is disabled (custom `autoGroupColumnDef.comparator` or `treeData`),
+ *   the auto-display column's indicator does NOT track linked sources — it shows only its own
+ *   sort, so `null` here means no displayed sort. This mirrors `_isColumnsSortingCoupledToGroup`.
+ * - When the auto-display column has its own data (`field` or `valueGetter`) it participates in
+ *   the equality check alongside linked sources — an own-null vs linked-asc combination renders
+ *   as `'mixed'`, matching `getDisplaySortForColumn`'s `columnHasUniqueData` branch.
  *
  * Returns `null` when no sort is displayed.
  */
@@ -584,13 +590,23 @@ function getDisplayedSort(api: GridApi, col: Column): SortDirection | 'mixed' | 
         return ownSort;
     }
 
-    const showRowGroup = col.getColDef().showRowGroup;
+    const colDef = col.getColDef();
+    const showRowGroup = colDef.showRowGroup;
     if (showRowGroup == null) {
         return null;
     }
 
-    // RowGroupingModule may not be registered (e.g. tree-data tests) — `getRowGroupColumns`
-    // throws in that case, so guard.
+    // Sort coupling — mirrors `_isColumnsSortingCoupledToGroup(gos)`. When OFF, the auto-display
+    // column shows only its own sort (which is null here, since ownSort returned at the top).
+    const autoGroupColumnDef = api.getGridOption('autoGroupColumnDef');
+    const treeData = api.getGridOption('treeData');
+    const isSortingCoupled = !autoGroupColumnDef?.comparator && !treeData;
+    if (!isSortingCoupled) {
+        return null;
+    }
+
+    // RowGroupingModule may not be registered (e.g. tree-data tests, already excluded above) —
+    // `getRowGroupColumns` throws in that case, so guard.
     const isModuleRegistered = api.isModuleRegistered as (name: string) => boolean;
     if (!isModuleRegistered('SharedRowGrouping')) {
         return null;
@@ -608,8 +624,14 @@ function getDisplayedSort(api: GridApi, col: Column): SortDirection | 'mixed' | 
         return null;
     }
 
+    // `columnHasUniqueData` mirror: when the auto-display column has its own field/valueGetter
+    // it participates in the mix-check alongside linked sources. ownSort is null at this point;
+    // any non-null linked source therefore renders as 'mixed'.
+    const columnHasUniqueData = colDef.field != null || colDef.valueGetter != null;
+    const sortableColumns = columnHasUniqueData ? [col, ...linkedSources] : linkedSources;
+
     let firstSort: SortDirection | null | undefined;
-    for (const linked of linkedSources) {
+    for (const linked of sortableColumns) {
         const s = linked.getSort() ?? null;
         if (firstSort === undefined) {
             firstSort = s;
