@@ -163,7 +163,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.floatingFilter('year')).toBeFocused();
 
         await page.keyboard.press('Tab');
-        await expect(page.locator('[row-index="0"] [col-id="athlete"]')).toHaveClass(/ag-cell-focus/);
+        await expect(page.locator('[row-index="0"] [col-id="ag-Grid-SelectionColumn"]')).toHaveClass(/ag-cell-focus/);
     });
 
     test.eachFramework('Tab right through column headers', async ({ agIdFor, page }) => {
@@ -188,7 +188,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerCell('year')).toBeFocused();
 
         await page.keyboard.press('Tab');
-        await expect(agIdFor.floatingFilter('athlete')).toBeFocused();
+        await expect(agIdFor.floatingFilter('ag-Grid-SelectionColumn')).toBeFocused();
     });
 
     test.eachFramework('Enter on floating filter focuses filter input, Escape exits', async ({ agIdFor, page }) => {
@@ -198,7 +198,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.floatingFilter('year')).toBeFocused();
 
         await page.keyboard.press('Enter');
-        await expect(agIdFor.floatingFilter('year').locator('input')).toBeFocused();
+        await expect(agIdFor.floatingFilter('year').locator('input[type="number"]')).toBeFocused();
 
         await page.keyboard.press('Escape');
         await expect(agIdFor.floatingFilter('year')).toBeFocused();
