@@ -47,18 +47,15 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             // rolling out to everyone.
             gos.get('deltaSort');
 
+        // levelSortOptions: per-level subset of sortOptions; `null` means "use full sortOptions
+        // for every level". See buildLevelSortOptions for targeting rules and the no-sort branch
+        // below for the structural-baseline / reuse-array note. Tree data is excluded — it has no
+        // rowGroupCols (so no per-level isolation could apply) and the JSDoc on
+        // `groupMaintainOrder` documents "no effect on tree data".
         const groupColsByLevel = rowGroupColsSvc?.columns;
-        // levelSortOptions[i] = sort options targeting group level i. null = "every level uses the
-        // full sortOptions array" — covers maintain-order off and the singleColumn shared-display
-        // case (one display column represents every level). Per-level filtering keeps a sort on
-        // level L from tie-breaking with options targeting other levels (e.g. [country asc, year
-        // desc] must not let `year` reorder country siblings whose comparator returns 0).
-        // Tree data cannot have `groupMaintainOrder` and has no rowGroupCols (no groupColsByLevel), no per-level isolation.
-        // The explicit treeData guard is defensive — it ensures we keep falling through.
-        // The `_reuseArrayIfEqual` reuse on the no-sort branch (below) is a memory-only optimisation
-        // to avoid creating a new array when no changes.
+        const numLevels = groupColsByLevel?.length ?? 0;
         const levelSortOptions: SortOption[][] | null =
-            hasSortOptions && groupColsByLevel?.length && !groupStage?.treeData && gos.get('groupMaintainOrder')
+            hasSortOptions && numLevels > 0 && !groupStage?.treeData && gos.get('groupMaintainOrder')
                 ? buildLevelSortOptions(sortOptions, groupColsByLevel!)
                 : null;
 
@@ -68,15 +65,17 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         let hasAnyFirstChildChanged = false;
 
         function sortGroupChildren(rowNode: RowNode): void {
-            const level = rowNode.level;
             // Pivot leaf children aren't part of the displayed pivoted output.
             const skipPivotLeafs = isPivotMode && rowNode.leafGroup;
-            // Per-level isolation: each level (including the leaf-row bucket)
-            // sorts with only the options targeting it. Group-column sorts never reach data rows
-            // (custom comparators on group cols can otherwise reorder rows that share the group
-            // key); leaf-only sorts never reach group siblings (so a leaf sort can't tiebreak a
-            // primary group sort whose comparator returns 0).
-            const sortOptionsForLevel = !levelSortOptions ? sortOptions : levelSortOptions[level + 1];
+            // Per-level isolation: each level sorts with only the options targeting it. The
+            // `level + 1` indexing maps root (level=-1) → bucket 0 (top group level), …,
+            // leaf-group node (level=numLevels-1) → bucket numLevels (leaf-row bucket). The
+            // `?? sortOptions` fallback is defensive: if a future hierarchy node lands outside
+            // the expected range, fall back to the full sort options rather than crashing on a
+            // `.length` access.
+            const sortOptionsForLevel = levelSortOptions
+                ? (levelSortOptions[rowNode.level + 1] ?? sortOptions)
+                : sortOptions;
 
             const prevSort = rowNode.childrenAfterSort;
             let newChildrenAfterSort: RowNode[];
@@ -138,15 +137,17 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
  *
  * Targeting rules (match `sortService.getDisplaySortForColumn` semantics):
  * - Source rowGroup columns target their level by ref.
- * - Auto-display columns with `colDef.showRowGroup === true` cascade to every group level — UNLESS
- *   the display column has its own data (`field` or `valueGetter`), in which case the sort applies
- *   to that data and goes to the leaf bucket.
+ * - Auto-display columns with `colDef.showRowGroup === true` (singleColumn shared display) cascade
+ *   to every group level. If the column also has its own data (`field` or `valueGetter`) the sort
+ *   ALSO reaches the leaf bucket so leaf rows are ordered by that data — preserving the pre-PR
+ *   behaviour where sorting a visible auto-display column reordered both group rows and leaves.
  * - Auto-display columns with `colDef.showRowGroup === '<colId>'` target the matching level.
  * - Anything else (regular leaf columns) goes to the leaf bucket.
  *
- * Why the leaf bucket excludes group-column sorts: leaf rows in one leaf group all share the same
- * group key. Sorting them by the group column is a no-op under the default comparator but can
- * reorder them under a custom comparator, which violates per-level isolation.
+ * Why the leaf bucket excludes group-column sorts (rowGroup-by-ref / showRowGroup-by-colId):
+ * leaf rows in one leaf group all share the same group key, so sorting them by the group column
+ * is a no-op under the default comparator but can reorder them under a custom one, which violates
+ * per-level isolation.
  */
 const buildLevelSortOptions = (sortOptions: SortOption[], groupColsByLevel: AgColumn[]): SortOption[][] => {
     const sortLen = sortOptions.length;
@@ -173,14 +174,13 @@ const buildLevelSortOptions = (sortOptions: SortOption[], groupColsByLevel: AgCo
         const showRowGroup = colDef.showRowGroup;
 
         if (showRowGroup === true) {
-            // singleColumn shared display. With own data the sort targets the column's data
-            // (leaf bucket); without own data it cascades to every group level.
+            // Cascade to every group level. With own data, ALSO reach the leaf bucket so leaf
+            // rows are ordered by the column's data (matches pre-PR behaviour).
+            for (let j = 0; j < numLevels; ++j) {
+                result[j].push(sortOption);
+            }
             if (colDef.field != null || colDef.valueGetter != null) {
                 result[leafIndex].push(sortOption);
-            } else {
-                for (let j = 0; j < numLevels; ++j) {
-                    result[j].push(sortOption);
-                }
             }
             continue;
         }
