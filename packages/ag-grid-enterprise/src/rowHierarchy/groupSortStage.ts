@@ -90,6 +90,9 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
 
             rowNode.childrenAfterSort = newChildrenAfterSort;
 
+            // _updateRowNodeAfterSort runs before postSortRows — same ordering as AG-309
+            // (Feb 2018, when postSortRows was introduced). Callbacks see flags consistent
+            // with params.nodes.
             _updateRowNodeAfterSort(rowNode);
 
             postSortFunc?.({ nodes: newChildrenAfterSort });
