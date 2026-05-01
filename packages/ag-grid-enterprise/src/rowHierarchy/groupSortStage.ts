@@ -156,11 +156,9 @@ const buildLevelSortOptions = (sortOptions: SortOption[], groupColsByLevel: AgCo
     const numLevels = groupColsByLevel.length;
     const leafIndex = numLevels;
 
-    // Single map keyed by both AgColumn ref AND colId string. AgColumn objects and colId strings
-    // never collide (different types), so one Map keeps allocations / lookups minimal. The
-    // call site below uses `levelByKey.get(column)` for source rowGroup matches and
-    // `levelByKey.get(showRowGroup)` (when showRowGroup is a string) for auto-display column
-    // matches — the same Map serves both lookups.
+    // Single map keyed by both AgColumn ref AND colId string. AgColumn objects and strings never
+    // collide (different types), so one Map keeps allocations / lookups minimal. `showRowGroup`
+    // is documented to accept the source rowGroup column's colId, which is what we look up here.
     const levelByKey = new Map<AgColumn | string, number>();
     for (let j = 0; j < numLevels; ++j) {
         const groupCol = groupColsByLevel[j];

@@ -113,6 +113,8 @@ export class GridColumnsDomValidator {
     private validateColumnHeaders(gridColumns: GridColumns, headerRoot: HTMLElement): void {
         const { allDisplayedCols, options } = gridColumns;
 
+        const sortContext = buildDisplayedSortContext(gridColumns.api);
+
         for (const col of allDisplayedCols) {
             const colId = col.getColId();
             const headerCell = this.findHeaderCell(headerRoot, colId);
@@ -153,7 +155,7 @@ export class GridColumnsDomValidator {
             // When !sortable, aria-sort is removed from DOM regardless of model sort state.
             // Source of truth is the *displayed* sort, which for auto-display columns mirrors the
             // linked source rowGroup column in coupled-sort mode — see getDisplayedSort below.
-            const displayedSort = getDisplayedSort(gridColumns.api, col);
+            const displayedSort = getDisplayedSort(col, sortContext);
             const isSortable = col.isSortable();
             const ariaSort = headerCell.getAttribute('aria-sort');
 
@@ -590,7 +592,31 @@ export class GridColumnsDomValidator {
  * validator and the implementation would silently agree on the same bug. Keep this in sync with
  * the production helpers when their displayed-sort rules change.
  */
-function getDisplayedSort(api: GridApi, col: Column): SortDirection | 'mixed' | null {
+/**
+ * Grid-wide context for `getDisplayedSort`, computed once per validation pass:
+ * - `rowGroupCols`: the current rowGroup columns, or `null` when the SharedRowGrouping module is
+ *   not registered (e.g. tree-data-only tests). `getRowGroupColumns` is part of that module.
+ * - `isSortingCoupled`: mirrors `_isColumnsSortingCoupledToGroup(gos)` — false when a custom
+ *   `autoGroupColumnDef.comparator` or `treeData` is configured.
+ */
+interface DisplayedSortContext {
+    rowGroupCols: Column[] | null;
+    isSortingCoupled: boolean;
+}
+
+function buildDisplayedSortContext(api: GridApi): DisplayedSortContext {
+    const autoGroupColumnDef = api.getGridOption('autoGroupColumnDef');
+    const treeData = api.getGridOption('treeData');
+    const isSortingCoupled = !autoGroupColumnDef?.comparator && !treeData;
+    // `getRowGroupColumns` is gated on the SharedRowGrouping module; when not registered (e.g.
+    // tree-data-only tests), the API call would log a warning and return `undefined`. Cast for
+    // the internal module name matches the existing pattern in `validateHeaderRoot` above.
+    const isModuleRegistered = api.isModuleRegistered as (name: string) => boolean;
+    const rowGroupCols = isModuleRegistered('SharedRowGrouping') ? api.getRowGroupColumns() : null;
+    return { rowGroupCols, isSortingCoupled };
+}
+
+function getDisplayedSort(col: Column, ctx: DisplayedSortContext): SortDirection | 'mixed' | null {
     const ownSort = col.getSort() ?? null;
     if (ownSort) {
         return ownSort;
@@ -602,30 +628,16 @@ function getDisplayedSort(api: GridApi, col: Column): SortDirection | 'mixed' | 
         return null;
     }
 
-    // Sort coupling — mirrors `_isColumnsSortingCoupledToGroup(gos)`. When OFF, the auto-display
-    // column shows only its own sort (which is null here, since ownSort returned at the top).
-    const autoGroupColumnDef = api.getGridOption('autoGroupColumnDef');
-    const treeData = api.getGridOption('treeData');
-    const isSortingCoupled = !autoGroupColumnDef?.comparator && !treeData;
-    if (!isSortingCoupled) {
+    // Coupling OFF → auto-display column shows only its own sort (null at this point).
+    if (!ctx.isSortingCoupled || !ctx.rowGroupCols) {
         return null;
     }
 
-    // RowGroupingModule may not be registered (e.g. tree-data tests, already excluded above) —
-    // `getRowGroupColumns` throws in that case, so guard. `isModuleRegistered` may also be absent
-    // on partial GridApi shapes / test doubles, in which case we conservatively skip the row-group
-    // path and return null (no displayed sort).
-    const isModuleRegistered = api.isModuleRegistered;
-    if (typeof isModuleRegistered !== 'function' || !isModuleRegistered.call(api, 'SharedRowGrouping')) {
-        return null;
-    }
-
-    const rowGroupCols = api.getRowGroupColumns();
     const linkedSources =
         showRowGroup === true
-            ? rowGroupCols
+            ? ctx.rowGroupCols
             : typeof showRowGroup === 'string'
-              ? rowGroupCols.filter((c) => c.getColId() === showRowGroup)
+              ? ctx.rowGroupCols.filter((c) => c.getColId() === showRowGroup)
               : [];
 
     if (linkedSources.length === 0) {

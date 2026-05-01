@@ -143,6 +143,52 @@ describe('group order maintenance', () => {
         `);
     });
 
+    test('manual showRowGroup using source field (not colId) is not honoured by the grid — group order stays structural', async () => {
+        const rowData = [
+            { id: '1', country: 'Italy' },
+            { id: '2', country: 'France' },
+            { id: '3', country: 'Spain' },
+        ];
+
+        const api = gridsManager.createGrid('grid-manual-showrowgroup-by-field', {
+            columnDefs: [
+                {
+                    colId: 'customCountry',
+                    field: 'country',
+                    rowGroup: true,
+                    hide: true,
+                },
+                {
+                    colId: 'manualDisplay',
+                    headerName: 'Manual Display',
+                    showRowGroup: 'country', // field name, not colId — the grid does NOT resolve this
+                    sortable: true,
+                },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        // Group rows have no `groupData['manualDisplay']` because the link did not resolve.
+        const groupRowsBefore = api
+            .getRenderedNodes()
+            .filter((n) => n.group)
+            .map((n) => ({ key: n.key, groupData: n.groupData?.['manualDisplay'] }));
+        expect(groupRowsBefore.every((r) => r.groupData == null)).toBe(true);
+
+        // Sorting the manual display column does not reorder groups — there is no displayed
+        // value to sort by, and per-level routing safely sends the option to the leaf bucket.
+        api.applyColumnState({ state: [{ colId: 'manualDisplay', sort: 'desc' }] });
+        const groupOrderAfterSort = api
+            .getRenderedNodes()
+            .filter((n) => n.group)
+            .map((n) => n.key);
+        expect(groupOrderAfterSort).toEqual(['Italy', 'France', 'Spain']);
+    });
+
     test('auto-display column with own field reorders group rows under custom comparator', async () => {
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A1', displayLabel: 'long-label-Z' },
@@ -1782,6 +1828,88 @@ describe('group order maintenance', () => {
             │ └── A1 LEAF id:3 ag-Grid-AutoColumn:"A1" name:"A1"
             └─┬ BMW GROUP id:4 ag-Grid-AutoColumn:"BMW" name:"BMW"
             · └── B1 LEAF id:5 ag-Grid-AutoColumn:"B1" name:"B1"
+        `);
+    });
+
+    test('deltaSort + filter cycle interleaved with transactions: leaves stay correctly sorted', async () => {
+        // With per-level isolation, ancestor group levels take the no-sort path while leaf groups
+        // still use _doDeltaSort. The concern: delta sort's baseline (rowNode.childrenAfterSort)
+        // could go stale relative to childrenAfterAggFilter when an ancestor's filter state
+        // changes without that ancestor being re-sorted.
+        //
+        // This test interleaves filter changes WITH transactions while delta sort is active on
+        // the leaf level. After each step, leaves must be correctly sorted by athlete asc inside
+        // their groups, regardless of which ancestor groups got filtered out and back in.
+        const rowData = [
+            { id: '1', country: 'Italy', athlete: 'Mark' },
+            { id: '2', country: 'France', athlete: 'Bob' },
+            { id: '3', country: 'Italy', athlete: 'Anna' },
+            { id: '4', country: 'France', athlete: 'Zed' },
+            { id: '5', country: 'Spain', athlete: 'Carlos' },
+        ];
+
+        const api = gridsManager.createGrid('grid-delta-filter-cycle', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            deltaSort: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+
+        // Initial: groups in structural order, leaves sorted asc by athlete inside each group.
+        await new GridRows(api, 'delta-filter: initial').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:3 country:"Italy" athlete:"Anna"
+            │ └── LEAF id:1 country:"Italy" athlete:"Mark"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ ├── LEAF id:2 country:"France" athlete:"Bob"
+            │ └── LEAF id:4 country:"France" athlete:"Zed"
+            └─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
+            · └── LEAF id:5 country:"Spain" athlete:"Carlos"
+        `);
+
+        // Filter to France only — the ancestor (root) takes the no-sort branch, publishes a
+        // filtered structural baseline.
+        api.setGridOption('quickFilterText', 'France');
+        await new GridRows(api, 'delta-filter: filtered to France').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:2 country:"France" athlete:"Bob"
+            · └── LEAF id:4 country:"France" athlete:"Zed"
+        `);
+
+        // Add a row to a hidden group while filtered. Italy stays hidden.
+        applyTransactionChecked(api, { add: [{ id: '6', country: 'Italy', athlete: 'Aaron' }] });
+        await new GridRows(api, 'delta-filter: add to hidden group while filtered').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:2 country:"France" athlete:"Bob"
+            · └── LEAF id:4 country:"France" athlete:"Zed"
+        `);
+
+        // Update a hidden row's athlete. Delta sort must place it correctly when the filter clears.
+        applyTransactionChecked(api, { update: [{ id: '5', country: 'Spain', athlete: 'Aldo' }] });
+
+        // Clear filter — Italy reappears with Aaron sorting first; Spain's leaf is now Aldo
+        // (was Carlos). Leaves must be in sorted asc order, groups in structural order.
+        api.setGridOption('quickFilterText', undefined);
+        await new GridRows(api, 'delta-filter: clear filter — leaves still correctly sorted').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:6 country:"Italy" athlete:"Aaron"
+            │ ├── LEAF id:3 country:"Italy" athlete:"Anna"
+            │ └── LEAF id:1 country:"Italy" athlete:"Mark"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ ├── LEAF id:2 country:"France" athlete:"Bob"
+            │ └── LEAF id:4 country:"France" athlete:"Zed"
+            └─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
+            · └── LEAF id:5 country:"Spain" athlete:"Aldo"
         `);
     });
 });
