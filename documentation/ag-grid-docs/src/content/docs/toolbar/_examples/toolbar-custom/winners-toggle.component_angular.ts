@@ -12,7 +12,10 @@ const COLUMNS = [
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div class="ag-toolbar-item" style="display: flex; gap: 12px; padding: 8px;">
+        <div
+            class="ag-toolbar-item"
+            style="display: flex; gap: 12px; padding: 8px; border: 1px solid var(--ag-border-color); border-radius: var(--ag-border-radius);"
+        >
             @for (option of options; track option.column) {
                 <label style="padding: 0 4px;">
                     <input

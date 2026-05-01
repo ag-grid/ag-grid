@@ -17,7 +17,8 @@ export class WinnersToggle implements IToolbarItemComp {
 
         this.eGui = document.createElement('div');
         this.eGui.className = 'ag-toolbar-item';
-        this.eGui.style.cssText = 'display: flex; gap: 12px; padding: 8px;';
+        this.eGui.style.cssText =
+            'display: flex; gap: 12px; padding: 8px; border: 1px solid var(--ag-border-color); border-radius: var(--ag-border-radius);';
 
         for (const { column, label } of COLUMNS) {
             const eLabel = document.createElement('label');
@@ -78,7 +79,8 @@ export class ToolPanelRadio implements IToolbarItemComp {
         this.eGui = document.createElement('div');
         this.eGui.className = 'ag-toolbar-item';
         this.eGui.setAttribute('role', 'radiogroup');
-        this.eGui.style.cssText = 'display: flex; gap: 12px; padding: 10px; align-items: center;';
+        this.eGui.style.cssText =
+            'display: flex; gap: 12px; padding: 10px; align-items: center; border: 1px solid var(--ag-border-color); border-radius: var(--ag-border-radius);';
 
         const eGroupLabel = document.createElement('span');
         eGroupLabel.textContent = 'Tool Panel:';

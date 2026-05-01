@@ -5,7 +5,7 @@ const COLUMNS = [
 
 export default {
     template: `
-        <div class="ag-toolbar-item" style="display: flex; gap: 12px; padding: 8px;">
+        <div class="ag-toolbar-item" style="display: flex; gap: 12px; padding: 8px; border: 1px solid var(--ag-border-color); border-radius: var(--ag-border-radius);">
             <label v-for="option in options" :key="option.column" style="padding: 0 4px;">
                 <input
                     type="checkbox"

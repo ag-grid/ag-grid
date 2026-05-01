@@ -30,7 +30,16 @@ export const WinnersToggle = (props: IToolbarItemParams) => {
     };
 
     return (
-        <div className="ag-toolbar-item" style={{ display: 'flex', gap: 12, padding: 8 }}>
+        <div
+            className="ag-toolbar-item"
+            style={{
+                display: 'flex',
+                gap: 12,
+                padding: 8,
+                border: '1px solid var(--ag-border-color)',
+                borderRadius: 'var(--ag-border-radius)',
+            }}
+        >
             {COLUMNS.map(({ column, label }) => (
                 <label key={column} style={{ padding: '0 4px' }}>
                     <input
@@ -74,7 +83,14 @@ export const ToolPanelRadio = forwardRef<ToolPanelRadioHandle, IToolbarItemParam
         <div
             className="ag-toolbar-item"
             role="radiogroup"
-            style={{ display: 'flex', gap: 12, padding: 10, alignItems: 'center' }}
+            style={{
+                display: 'flex',
+                gap: 12,
+                padding: 10,
+                alignItems: 'center',
+                border: '1px solid var(--ag-border-color)',
+                borderRadius: 'var(--ag-border-radius)',
+            }}
         >
             <span style={{ fontWeight: 500 }}>Tool Panel:</span>
             {PANELS.map(({ value, label }) => (
