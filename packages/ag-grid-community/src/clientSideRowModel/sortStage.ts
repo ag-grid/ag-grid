@@ -74,15 +74,12 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
         }
 
         rootNode.childrenAfterSort = newChildrenAfterSort;
+        updateRowNodeAfterSort(rootNode);
 
-        // postSortRows runs first so the array reflects the user's customisation; only then do
-        // we sync child position metadata + fire firstChild/lastChild/childIndex events, ensuring
-        // those flags and events always describe the actually-displayed order.
         const postSortFunc = this.gos.getCallback('postSortRows');
         if (postSortFunc) {
             const params: WithoutGridCommon<PostSortRowsParams> = { nodes: newChildrenAfterSort };
             postSortFunc(params);
         }
-        updateRowNodeAfterSort(rootNode);
     }
 }

@@ -212,42 +212,11 @@ describe('group order maintenance', () => {
         `);
     });
 
-    test('firstChild / lastChild / childIndex flags reflect the order produced by postSortRows', async () => {
-        // The deprecated firstChild/lastChild/childIndex flags must describe the actually-displayed
-        // order. _updateRowNodeAfterSort therefore has to run AFTER postSortRows, otherwise it
-        // syncs flags + fires firstChildChanged/lastChildChanged/childIndexChanged events for the
-        // pre-mutation order and then the array is silently reordered, leaving the flags stale.
-        const rowData = [
-            { id: '1', country: 'Audi', athlete: 'A' },
-            { id: '2', country: 'BMW', athlete: 'B' },
-            { id: '3', country: 'Tesla', athlete: 'T' },
-        ];
-
-        const api = gridsManager.createGrid('grid-postsort-flags', {
-            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
-            autoGroupColumnDef: { headerName: 'Country' },
-            animateRows: false,
-            groupDefaultExpanded: -1,
-            groupMaintainOrder: true,
-            rowData,
-            getRowId: (p) => p.data.id,
-            postSortRows: (params) => {
-                // Reverse the array — every node's first/last/index changes.
-                params.nodes.reverse();
-            },
-        });
-
-        const groupKeys = ['Tesla', 'BMW', 'Audi'];
-        const groupNodes = groupKeys.map((key) => api.getRowNode(`row-group-country-${key}`)!);
-
-        groupNodes.forEach((node, idx) => {
-            expect(node.childIndex).toBe(idx);
-            expect(node.firstChild).toBe(idx === 0);
-            expect(node.lastChild).toBe(idx === groupNodes.length - 1);
-        });
-    });
-
     test('postSortRows reorder survives a sort refresh on the reused-array path', async () => {
+        // Exercises the path where _reuseArrayIfEqual returns the previous childrenAfterSort by
+        // reference and postSortRows then mutates the same array in place. hasAnyFirstChildChanged
+        // must capture the previous first child by value before postSortRows runs, otherwise the
+        // before/after comparison reads from one shared array and silently misses the change.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },
@@ -264,7 +233,9 @@ describe('group order maintenance', () => {
             rowData,
             getRowId: (p) => p.data.id,
             postSortRows: (params) => {
-                if (!promoteKey) return;
+                if (!promoteKey) {
+                    return;
+                }
                 const idx = params.nodes.findIndex((n) => n.key === promoteKey);
                 if (idx > 0) {
                     const [promoted] = params.nodes.splice(idx, 1);

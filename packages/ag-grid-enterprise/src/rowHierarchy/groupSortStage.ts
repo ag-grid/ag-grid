@@ -90,11 +90,9 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
 
             rowNode.childrenAfterSort = newChildrenAfterSort;
 
-            // postSortRows runs first so the array reflects the user's customisation; only then
-            // do we sync child position metadata + fire firstChild/lastChild/childIndex events,
-            // ensuring those flags and events always describe the actually-displayed order.
-            postSortFunc?.({ nodes: newChildrenAfterSort });
             _updateRowNodeAfterSort(rowNode);
+
+            postSortFunc?.({ nodes: newChildrenAfterSort });
 
             hasAnyFirstChildChanged ||= prevFirstChild !== newChildrenAfterSort[0];
         };
