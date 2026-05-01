@@ -48,7 +48,7 @@ export type AllThemeParamsForAPIDocumentation = ThemeDefaultParams;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const themeQuartzParams = () => ({
-    fontFamily: [{ googleFont: 'IBM Plex Sans' }, ...defaultFontFamily],
+    fontFamily: [{ googleFont: 'IBM Plex Sans' }, ...defaultFontFamily()],
 });
 
 const makeThemeQuartzTreeShakeable = () =>
@@ -337,7 +337,7 @@ export const themeMaterialParams = () => ({
         spread: 4,
         color: foregroundMix(0.16),
     },
-    fontFamily: [{ googleFont: 'Roboto' }, ...defaultFontFamily],
+    fontFamily: [{ googleFont: 'Roboto' }, ...defaultFontFamily()],
     inputHeight: {
         calc: 'max(iconSize, fontSize) + spacing * 3',
     },

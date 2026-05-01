@@ -363,7 +363,7 @@ export const defaultLightColorSchemeParams = {
     browserColorScheme: 'light',
 } as const;
 
-export const defaultFontFamily = [
+export const defaultFontFamily = () => [
     '-apple-system',
     'BlinkMacSystemFont',
     'Segoe UI',
@@ -381,7 +381,7 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
     textColor: foregroundColor,
     accentColor: '#2196f3',
     invalidColor: '#e02525',
-    fontFamily: defaultFontFamily,
+    fontFamily: defaultFontFamily(),
     subtleTextColor: {
         ref: 'textColor',
         mix: 0.5,
