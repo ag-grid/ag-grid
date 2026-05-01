@@ -12,7 +12,7 @@ import type {
     GridReadyEvent,
     SideBarDef,
     Theme,
-    Toolbar,
+    Toolbar as ToolbarConfig,
 } from 'ag-grid-community';
 import { AllCommunityModule, themeAlpine, themeBalham, themeMaterial, themeQuartz } from 'ag-grid-community';
 import {
@@ -213,7 +213,7 @@ const ExampleInner = ({
         }),
         [isSmall]
     );
-    const toolbar = useMemo<Toolbar>(
+    const toolbar = useMemo<ToolbarConfig>(
         () => ({
             alignment: 'right',
             items: [
