@@ -6,7 +6,8 @@ const PANELS = [
 
 export default {
     template: `
-        <div class="ag-toolbar-item" role="radiogroup" style="display: flex; gap: 12px; padding: 10px;">
+        <div class="ag-toolbar-item" role="radiogroup" style="display: flex; gap: 12px; padding: 10px; align-items: center;">
+            <span style="font-weight: 500;">Tool Panel:</span>
             <label v-for="option in options" :key="option.value" style="padding: 0 4px;">
                 <input
                     type="radio"

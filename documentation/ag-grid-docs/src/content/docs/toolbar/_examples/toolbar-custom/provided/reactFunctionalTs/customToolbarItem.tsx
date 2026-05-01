@@ -71,7 +71,12 @@ export const ToolPanelRadio = forwardRef<ToolPanelRadioHandle, IToolbarItemParam
     };
 
     return (
-        <div className="ag-toolbar-item" role="radiogroup" style={{ display: 'flex', gap: 12, padding: 10 }}>
+        <div
+            className="ag-toolbar-item"
+            role="radiogroup"
+            style={{ display: 'flex', gap: 12, padding: 10, alignItems: 'center' }}
+        >
+            <span style={{ fontWeight: 500 }}>Tool Panel:</span>
             {PANELS.map(({ value, label }) => (
                 <label key={value} style={{ padding: '0 4px' }}>
                     <input

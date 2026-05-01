@@ -3,7 +3,7 @@ title: "Quick Access Toolbar"
 enterprise: true
 ---
 
-The Toolbar appears above the grid and provides quick access to common grid actions. It supports built-in items such as quick filter and find inputs, dropdown menus, and embedded panels — and can be extended with [Action Buttons](#action-buttons) or [Custom Components](#custom-components).
+The Toolbar appears above the grid and provides quick access to common grid actions. It supports built-in items such as quick filter and find inputs, dropdown menus, and embedded panels, and can be extended with [Action Buttons](#action-buttons) or [Custom Components](#custom-components).
 
 {% gridExampleRunner title="Built-in Items" name="built-in-items" exampleHeight=590 /%}
 
@@ -21,11 +21,9 @@ const gridOptions = {
 }
 ```
 
-Updating the toolbar configuration with `setGridOption('toolbar', ...)` re-renders the toolbar automatically.
-
 ### Alignment
 
-Each item can be left- or right-aligned. The default is left, set on the toolbar via `alignment` and overridden per item with the item's own `alignment`.
+Each item can be left&#8209; or right-aligned. The default is left, set on the toolbar via `alignment` and overridden per item with the item's own `alignment`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -43,18 +41,18 @@ const gridOptions = {
 
 Built-in items require their corresponding modules to be registered. If a required module is not registered, the item is hidden and a console warning is logged.
 
-| Item                                   | Required Modules                          | Description                                                                                             |
-| -------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `agQuickFilterToolbarItem`             | `QuickFilterModule`                       | Text input that filters grid rows using the [Quick Filter](./filter-quick/).                            |
-| `agFindToolbarItem`                    | `FindModule`                              | Text input that searches within grid cells using [Find](./find/).                                       |
-| `agRowGroupPanelToolbarItem`           | `RowGroupingPanelModule`                  | Embeds the [Row Group Panel](./grouping-group-panel/). Configured independently of `rowGroupPanelShow`. |
-| `agPivotPanelToolbarItem`              | `RowGroupingPanelModule`                  | Embeds the [Pivot Panel](./pivoting/). Configured independently of `pivotPanelShow`.                    |
-| [`agMenuToolbarItem`](#dropdown-menus) | `ContextMenuModule` or `ColumnMenuModule` | Button that opens a [dropdown menu](#dropdown-menus).                                                   |
-| `separator`                            | —                                         | Vertical divider used to group items visually. Has no behaviour of its own.                             |
+| Item                                   | Description                                                                                             | Required Modules                          |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `agQuickFilterToolbarItem`             | Text input that filters grid rows using the [Quick Filter](./filter-quick/).                            | `QuickFilterModule`                       |
+| `agFindToolbarItem`                    | Text input that searches within grid cells using [Find](./find/).                                       | `FindModule`                              |
+| `agRowGroupPanelToolbarItem`           | Embeds the [Row Group Panel](./grouping-group-panel/). Configured independently of `rowGroupPanelShow`. | `RowGroupingPanelModule`                  |
+| `agPivotPanelToolbarItem`              | Embeds the [Pivot Panel](./pivoting/). Configured independently of `pivotPanelShow`.                    | `RowGroupingPanelModule`                  |
+| [`agMenuToolbarItem`](#dropdown-menus) | Button that opens a [dropdown menu](#dropdown-menus).                                                   | `ContextMenuModule` or `ColumnMenuModule` |
+| `separator`                            | Vertical divider used to group items visually. Has no behaviour of its own.                             | None                                      |
 
 ### Dropdown Menus
 
-`agMenuToolbarItem` renders a button that opens a dropdown of [Menu Items](./component-menu-item/). Set `label`, `tooltip`, and `icon` on the item and supply `menuItems` via `toolbarItemParams`. Each entry is either a [`MenuItemDef`](#reference-MenuItemDef) object or one of the built-in string names accepted by the [Context Menu](./context-menu/#built-in-menu-items).
+`agMenuToolbarItem` renders a button that opens a dropdown of [Menu Items](./component-menu-item/). Set `label`, `tooltip`, and `icon` on the item and supply `menuItems` via `toolbarItemParams`. The `icon` accepts any [provided icon](./custom-icons/#provided-icons) name. Each entry is either a [`MenuItemDef`](#reference-MenuItemDef) object or one of the built-in string names accepted by the [Context Menu](./context-menu/#built-in-menu-items).
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -91,13 +89,13 @@ const gridOptions = {
 }
 ```
 
-`label` is the visible text rendered next to the icon; omit it to render an icon-only button. `tooltip` sets the hover tooltip and `aria-label`, and falls back to `label` when omitted.
+`label` is the visible text rendered next to the icon; omit it to render an icon-only button. `icon` accepts any [provided icon](./custom-icons/#provided-icons) name. `tooltip` sets the hover tooltip and `aria-label`, and falls back to `label` when omitted.
 
 ## Custom Components
 
-For controls beyond a button — toggles, inputs, or any stateful UI — set `toolbarItem` to a component reference. Custom components can render arbitrary HTML and call any grid API, so they suit cases that the [Action Button](#action-buttons) shorthand cannot express.
+For controls beyond a button, such as toggles, inputs, or any stateful UI, set `toolbarItem` to a component reference. Custom components can render arbitrary HTML and call any grid API, so they suit cases that the [Action Button](#action-buttons) shorthand cannot express.
 
-The example below defines two custom items: checkbox toggles that apply column filters on the left, and a radio group that opens [Side Bar](./tool-panel/) tool panels on the right. The radio group exposes a `setSelected` method, called from the grid's `onToolPanelVisibleChanged` callback via [`getToolbarItemInstance`](#reference-getToolbarItemInstance) to keep its state in sync when a panel is opened or closed elsewhere — for example, by clicking a side bar tab.
+The example below defines two custom items: checkbox toggles that apply column filters on the left, and a radio group that opens [Side Bar](./tool-panel/) tool panels on the right. The radio group exposes a `setSelected` method, called from the grid's `onToolPanelVisibleChanged` callback via [`getToolbarItemInstance`](#reference-getToolbarItemInstance) to keep its state in sync when a panel is opened or closed elsewhere, for example by clicking a side bar tab.
 
 {% gridExampleRunner title="Custom Toolbar Item" name="toolbar-custom" /%}
 
@@ -105,27 +103,27 @@ The `toolbarItem` property accepts the following values:
 
 {% if isFramework("javascript") %}
 
-1. `String`: the name of a registered Toolbar Item Component — see [Registering Custom Components](./components/#registering-custom-components).
+1. `String`: the name of a registered Toolbar Item Component. See [Registering Custom Components](./components/#registering-custom-components).
 2. `Class`: a direct reference to a Toolbar Item Component.
 
 {% /if %}
 
 {% if isFramework("angular") %}
 
-1. `String`: the name of a registered Toolbar Item Component — see [Registering Custom Components](./components/#registering-custom-components).
+1. `String`: the name of a registered Toolbar Item Component. See [Registering Custom Components](./components/#registering-custom-components).
 2. `Class`: a direct reference to a Toolbar Item Component.
 
 {% /if %}
 
 {% if isFramework("vue") %}
 
-1. `String`: the name of a registered Toolbar Item Component — see [Registering Custom Components](./components/#registering-custom-components).
+1. `String`: the name of a registered Toolbar Item Component. See [Registering Custom Components](./components/#registering-custom-components).
 
 {% /if %}
 
 {% if isFramework("react") %}
 
-1. `String`: the name of a registered Toolbar Item Component — see [Registering Custom Components](./components/#registering-custom-components).
+1. `String`: the name of a registered Toolbar Item Component. See [Registering Custom Components](./components/#registering-custom-components).
 2. `Component`: a direct reference to a Toolbar Item Component.
 
 {% /if %}

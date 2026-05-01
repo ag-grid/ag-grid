@@ -1,24 +1,13 @@
 {% if isFramework("angular") %}
 
 ```js
-// CustomToolbarToggle is the custom component defined above.
-// Its toolbarItemParams are accessible via params.toolbarItemParams inside the component.
+// WinnersToggle and ToolPanelRadio are the custom components defined above.
+// Any toolbarItemParams set on the item are accessible via params.toolbarItemParams inside the component.
 this.gridOptions = {
     toolbar: {
         items: [
-            {
-                key: 'columnsPanel',
-                toolbarItem: CustomToolbarToggle,
-                toolbarItemParams: {
-                    title: 'Columns Panel',
-                    icon: 'columns',
-                    onClick: (api) =>
-                        api.getOpenedToolPanel() === 'columns'
-                            ? api.closeToolPanel()
-                            : api.openToolPanel('columns'),
-                },
-            },
-            'agQuickFilterToolbarItem',
+            { toolbarItem: WinnersToggle, key: 'winners' },
+            { toolbarItem: ToolPanelRadio, key: 'toolPanel', alignment: 'right' },
         ],
     },
     // ...other properties

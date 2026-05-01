@@ -1,23 +1,13 @@
 {% if isFramework("vue") %}
 
 ```js
-// toolbarItemParams are accessible via this.params.toolbarItemParams inside the component.
+// winnersToggle and toolPanelRadio are the custom components defined above.
+// Any toolbarItemParams set on the item are accessible via this.params.toolbarItemParams inside the component.
 this.gridOptions = {
     toolbar: {
         items: [
-            {
-                key: 'columnsPanel',
-                toolbarItem: 'customToolbarToggle',
-                toolbarItemParams: {
-                    title: 'Columns Panel',
-                    icon: 'columns',
-                    onClick: (api) =>
-                        api.getOpenedToolPanel() === 'columns'
-                            ? api.closeToolPanel()
-                            : api.openToolPanel('columns'),
-                },
-            },
-            'agQuickFilterToolbarItem',
+            { toolbarItem: 'winnersToggle', key: 'winners' },
+            { toolbarItem: 'toolPanelRadio', key: 'toolPanel', alignment: 'right' },
         ],
     },
     // ...other properties
