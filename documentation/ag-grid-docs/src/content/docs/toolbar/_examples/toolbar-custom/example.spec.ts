@@ -16,10 +16,10 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-header-cell[col-id="gold"] .ag-filter-active')).toBeVisible();
 
         await toolbar.getByLabel('Columns').check();
-        await expect(page.locator('.ag-column-tool-panel')).toBeVisible();
+        await expect(page.locator('.ag-column-panel')).toBeVisible();
 
         // Closing the panel via the side bar tab keeps the radio in sync via getToolbarItemInstance
-        await page.locator('.ag-side-button[aria-label*="Columns"]').click();
+        await page.getByRole('tab', { name: 'Columns' }).click();
         await expect(toolbar.getByLabel('None')).toBeChecked();
     });
 });
