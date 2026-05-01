@@ -1,6 +1,6 @@
 import { describe, test } from 'vitest';
 
-import { ClientSideRowModelModule, KeyCode } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 
 import { TestGridsManager } from './test-utils';
 
