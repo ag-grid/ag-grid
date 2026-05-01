@@ -54,7 +54,7 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
         // input is briefly detached/remounted after a popup show/hide cycle (Scenario B).
         const input = await findByTestId<HTMLInputElement>(
             gridDiv,
-            agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'name', index: 0 } as any)
+            agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'name', index: 0 })
         );
         input.value = text;
         input.dispatchEvent(new Event('input', { bubbles: true }));
