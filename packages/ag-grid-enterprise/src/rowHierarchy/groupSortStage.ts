@@ -26,8 +26,17 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'groupDisplayType', 'accentedSort'];
 
     public execute(changedPath: ChangedPath | undefined, changedRowNodes: _ChangedRowNodes | undefined): void {
-        const { gos, colModel, rowGroupColsSvc, rowModel, rowNodeSorter, rowRenderer, sortSvc, showRowGroupCols } =
-            this.beans;
+        const {
+            gos,
+            colModel,
+            groupStage,
+            rowGroupColsSvc,
+            rowModel,
+            rowNodeSorter,
+            rowRenderer,
+            sortSvc,
+            showRowGroupCols,
+        } = this.beans;
         const sortOptions = sortSvc?.getSortOptions();
 
         const useDeltaSort =
@@ -42,6 +51,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
 
         const shouldMaintainGroupOrder =
             gos.get('groupMaintainOrder') &&
+            !groupStage?.treeData &&
             !!rowGroupColsSvc?.columns.length &&
             !shouldSortContainsGroupCols(gos, sortOptions);
 
