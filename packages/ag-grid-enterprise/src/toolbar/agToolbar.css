@@ -98,6 +98,10 @@
     box-shadow: var(--ag-focus-shadow);
 }
 
+.ag-toolbar-input-field::placeholder {
+    color: var(--ag-input-placeholder-text-color);
+}
+
 /* stylelint-disable-next-line selector-max-specificity */
 .ag-toolbar-panel .ag-column-drop-horizontal {
     background-color: transparent;
@@ -123,6 +127,7 @@
     border-radius: var(--ag-border-radius);
     width: 280px;
     max-width: none;
+    min-width: 220px;
 }
 
 .ag-toolbar-find:focus-within {
