@@ -12,7 +12,11 @@
     "target": "ES2020",
     "useDefineForClassFields": false,
     "module": "commonjs",
-    "lib": ["ES2022", "DOM", "dom.iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "dom.iterable"
+    ],
     "skipLibCheck": true,
     "isolatedModules": true,
     "strictBindCallApply": true,
@@ -25,9 +29,16 @@
     "noUnusedLocals": false,
     "noImplicitOverride": true,
     "paths": {
-      "ag-grid-community": ["packages/ag-grid-community/src/main.ts"],
-      "ag-grid-enterprise": ["packages/ag-grid-enterprise/src/main.ts"]
+      "ag-grid-community": [
+        "packages/ag-grid-community/src/main.ts"
+      ],
+      "ag-grid-enterprise": [
+        "packages/ag-grid-enterprise/src/main.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }
