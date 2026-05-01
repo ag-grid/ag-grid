@@ -51,12 +51,9 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('Tab from last cell on page routes to pagination toolbar', async ({ page, agIdFor }) => {
-        // Use Shift+Tab from input below to reach the last cell of the grid page
+        // Navigate to the bottom-right cell of the current page via the End key
         await agIdFor.cell('0', 'athlete').click();
-
-        const inputBelow = page.locator('input').last();
-        await inputBelow.click();
-        await page.keyboard.press('Shift+Tab');
+        await page.keyboard.press('End');
         await expect(page.locator('.ag-cell-focus[col-id="total"]')).toBeVisible();
 
         // Tab from last cell → pagination (tabToNextGridContainer routes gridBody→external to pagination)
@@ -73,11 +70,11 @@ test.agExample(import.meta, () => {
         await targetCell.click();
         await expect(targetCell).toHaveClass(/ag-cell-focus/);
 
-        // Navigate to pagination: Shift+Tab from input below → last cell → Tab → pagination
+        // Shift+Tab from inputBelow lands directly on the pagination toolbar
+        // (it is the last focusable element before inputBelow in DOM order)
         const inputBelow = page.locator('input').last();
         await inputBelow.click();
-        await page.keyboard.press('Shift+Tab'); // → last cell
-        await page.keyboard.press('Tab'); // → pagination
+        await page.keyboard.press('Shift+Tab');
 
         const isPaginationFocused = await page.evaluate(
             () => document.activeElement?.closest('.ag-paging-panel') != null
@@ -89,25 +86,25 @@ test.agExample(import.meta, () => {
         await expect(targetCell).toHaveClass(/ag-cell-focus/);
     });
 
-    test.eachFramework('Tab from pagination exits grid to next external element', async ({ page, agIdFor }) => {
-        // Navigate to pagination
-        await agIdFor.cell('0', 'athlete').click();
+    test.eachFramework('Tab from pagination exits grid to next external element', async ({ page }) => {
+        // Land on the last focusable element of the pagination toolbar.
+        // Shift+Tab from inputBelow lands on the last button before inputBelow in DOM order
+        // (pressing Tab once from any earlier pagination element only moves focus within the toolbar).
         const inputBelow = page.locator('input').last();
         await inputBelow.click();
-        await page.keyboard.press('Shift+Tab'); // → last cell
-        await page.keyboard.press('Tab'); // → pagination
+        await page.keyboard.press('Shift+Tab');
 
         const isPaginationFocused = await page.evaluate(
             () => document.activeElement?.closest('.ag-paging-panel') != null
         );
         expect(isPaginationFocused).toBe(true);
 
-        // Tab forward from pagination → exits grid (returns false → browser default)
+        // Tab forward from the last pagination element → exits grid (callback returns false → browser default)
         await page.keyboard.press('Tab');
         const isStillInGrid = await page.evaluate(() => document.activeElement?.closest('.ag-root-wrapper') != null);
         expect(isStillInGrid).toBe(false);
 
         // Focus should have moved to the input below the grid
-        await expect(page.locator('input').last()).toBeFocused();
+        await expect(inputBelow).toBeFocused();
     });
 });
