@@ -402,6 +402,49 @@ describe('group order maintenance', () => {
         expect(topLevelKeys()).toEqual(['BMW', 'Audi', 'Tesla']);
     });
 
+    test('pivot mode: leaf-group children are not reordered by an active leaf-column sort', async () => {
+        // Locks the user-visible contract: in pivot mode the leaf groups' children are not
+        // part of the displayed pivoted output, so an active sort on a leaf column must not
+        // silently reorder them. The implementation enforces this via two layers — the
+        // GroupSortStage `skipSortingPivotLeafs` guard and the SortService filtering pivot-
+        // incompatible sort options out of `sortOptions` — and either layer alone is enough,
+        // but together they form the contract.
+        //
+        // The test sets up the sort first WITHOUT pivot to sanity-check that the sort can in
+        // fact reorder leaf children, then toggles pivot on and asserts the children fall
+        // back to structural / filter order. If both protective layers ever go away, this
+        // test fails.
+        const rowData = [
+            { id: '1', country: 'Audi', year: 2020, athlete: 'Z' },
+            { id: '2', country: 'Audi', year: 2020, athlete: 'A' },
+            { id: '3', country: 'Audi', year: 2021, athlete: 'M' },
+        ];
+
+        const api = gridsManager.createGrid('grid-pivot-leaf-skip', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'athlete', sort: 'asc' },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        const audi = () => api.getRowNode('row-group-country-Audi')!;
+        const childIds = () => audi().childrenAfterSort?.map((n) => n.id);
+
+        // Without pivot, athlete asc orders the leaf children: '2'=A, '3'=M, '1'=Z.
+        expect(childIds()).toEqual(['2', '3', '1']);
+
+        // Enabling pivot mode reverts leaf children to structural / filter order — they are
+        // no longer part of the pivoted display, so reordering them would be wasted work.
+        api.setGridOption('pivotMode', true);
+        expect(childIds()).toEqual(['1', '2', '3']);
+    });
+
     test('pivot mode + groupMaintainOrder: filter cycle preserves group order', async () => {
         // Group order survives a filter cycle when pivot mode is on.
         const rowData = [

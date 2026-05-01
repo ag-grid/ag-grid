@@ -37,11 +37,11 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             sortSvc,
             showRowGroupCols,
         } = this.beans;
-        const sortOptions = sortSvc?.getSortOptions();
+        const sortOptions = sortSvc?.getSortOptions() ?? [];
+        const hasSortOptions = sortOptions.length > 0;
 
         const useDeltaSort =
-            sortOptions &&
-            sortOptions.length > 0 &&
+            hasSortOptions &&
             !!changedRowNodes &&
             // in time we can remove this check, so that delta sort is always
             // on if transactions are present. it's off for now so that we can
@@ -50,11 +50,14 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             gos.get('deltaSort');
 
         // Skip the group-level sort (and use the structural filter baseline instead) only when:
+        //  - there is an active sort to skip in the first place (the no-sort case naturally
+        //    uses the filter baseline downstream, so the predicate would be a no-op),
         //  - the user opted in via `groupMaintainOrder`,
         //  - this is row grouping, not tree data (public-API contract — see grid options docs),
         //  - there are active row group columns, and
         //  - no sort option targets a group column (a group-column sort always takes precedence).
         const shouldMaintainGroupOrder =
+            hasSortOptions &&
             gos.get('groupMaintainOrder') &&
             !groupStage?.treeData &&
             !!rowGroupColsSvc?.columns.length &&
@@ -74,7 +77,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             const prevSort = rowNode.childrenAfterSort;
             let newChildrenAfterSort: RowNode[];
             // Two paths: actually sort the children, or use the filter result as the baseline.
-            if (!skipSortingGroups && sortOptions?.length && !skipSortingPivotLeafs) {
+            if (!skipSortingGroups && !skipSortingPivotLeafs && hasSortOptions) {
                 if (useDeltaSort && changedRowNodes) {
                     newChildrenAfterSort = _doDeltaSort(
                         rowNodeSorter!,
@@ -131,12 +134,10 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
     }
 }
 
-const shouldSortContainsGroupCols = (gos: GridOptionsService, sortOptions: SortOption[] | undefined): boolean => {
-    const sortOptionsLen = sortOptions?.length;
-    if (!sortOptionsLen) {
-        return false;
-    }
-
+// Caller guarantees `sortOptions` is non-empty (see the `!!sortOptions?.length` short-circuit
+// on `shouldMaintainGroupOrder`). Don't re-check emptiness here.
+const shouldSortContainsGroupCols = (gos: GridOptionsService, sortOptions: SortOption[]): boolean => {
+    const sortOptionsLen = sortOptions.length;
     if (_isColumnsSortingCoupledToGroup(gos)) {
         for (let i = 0; i < sortOptionsLen; ++i) {
             const column = sortOptions[i].column as AgColumn;
