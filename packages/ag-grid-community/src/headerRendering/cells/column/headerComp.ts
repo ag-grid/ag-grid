@@ -1,5 +1,5 @@
 import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
-import { _removeFromParent, _setDisplayed } from '../../../agStack/utils/dom';
+import { _clearElement, _removeFromParent, _setDisplayed } from '../../../agStack/utils/dom';
 import { _toString } from '../../../agStack/utils/string';
 import { _getInnerHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -86,6 +86,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private innerHeaderComponent: IInnerHeaderComponent | undefined;
     private currentInnerHeaderComponent: IHeaderParams['innerHeaderComponent'];
     private isLoadingInnerComponent: boolean = false;
+    private innerComponentGeneration: number = 0;
 
     private mouseListener?: HeaderCellMouseListenerFeature;
 
@@ -186,6 +187,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
 
         this.isLoadingInnerComponent = true;
+        const generation = ++this.innerComponentGeneration;
 
         userCompDetails.newAgStackInstance().then((comp) => {
             this.isLoadingInnerComponent = false;
@@ -194,8 +196,9 @@ export class HeaderComp extends Component implements IHeaderComp {
                 return;
             }
 
-            if (this.isAlive()) {
+            if (this.isAlive() && generation === this.innerComponentGeneration) {
                 this.innerHeaderComponent = comp;
+                _clearElement(this.eText);
                 this.eText?.appendChild(comp.getGui());
             } else {
                 this.destroyBean(comp);

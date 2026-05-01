@@ -30,11 +30,12 @@ function makeTrackedInnerHeader(refreshBehaviour?: 'accept' | 'reject' | 'none')
             TrackedComp.refreshCount = 0;
         }
 
-        protected gui = document.createElement('span');
+        private gui = document.createElement('span');
 
         init(_params: IHeaderParams): void {
             TrackedComp.initCount++;
             this.gui = document.createElement('span');
+            this.gui.textContent = 'Inner';
         }
 
         getGui(): HTMLElement {
@@ -46,20 +47,18 @@ function makeTrackedInnerHeader(refreshBehaviour?: 'accept' | 'reject' | 'none')
         }
     }
 
-    if (refreshBehaviour === 'accept') {
-        (TrackedComp.prototype as any).refresh = function (_params: IHeaderParams): boolean {
-            TrackedComp.refreshCount++;
-            return true;
-        };
-    } else if (refreshBehaviour === 'reject') {
-        (TrackedComp.prototype as any).refresh = function (_params: IHeaderParams): boolean {
-            TrackedComp.refreshCount++;
-            return false;
-        };
+    if (refreshBehaviour === 'none') {
+        return TrackedComp as unknown as TrackedClass;
     }
-    // 'none': no refresh method at all
 
-    return TrackedComp as unknown as TrackedClass;
+    const returns = refreshBehaviour === 'accept';
+    class WithRefresh extends TrackedComp {
+        refresh(_params: IHeaderParams): boolean {
+            TrackedComp.refreshCount++;
+            return returns;
+        }
+    }
+    return WithRefresh as unknown as TrackedClass;
 }
 
 const TrackingHeaderComp = makeTrackedInnerHeader('accept');
@@ -78,6 +77,8 @@ const rejectingColumnDefs: ColDef[] = [
     { field: 'b', sortable: false, headerComponentParams: { innerHeaderComponent: RejectingInnerHeader } },
 ];
 
+const headerText = (el: HTMLElement) => el.querySelector('.ag-header-cell-text')?.textContent;
+
 describe('header component lifecycle', () => {
     beforeEach(() => {
         TrackingHeaderComp.reset();
@@ -95,6 +96,7 @@ describe('header component lifecycle', () => {
         expect(TrackingHeaderComp.destroyCount).toBe(0);
         expect(TrackingInnerHeader.initCount).toBe(1);
         expect(TrackingInnerHeader.destroyCount).toBe(0);
+        expect(headerText(eGridDiv)).toBe('Inner');
 
         // Simulates a React setColumnDefs call with equivalent definitions.
         // Before the fix, HeaderComp.refresh() always returned false due to a broken
@@ -107,6 +109,7 @@ describe('header component lifecycle', () => {
         expect(TrackingInnerHeader.initCount).toBe(1);
         expect(TrackingInnerHeader.destroyCount).toBe(0);
         expect(TrackingInnerHeader.refreshCount).toBe(1);
+        expect(headerText(eGridDiv)).toBe('Inner');
 
         api.destroy();
     });
@@ -122,6 +125,7 @@ describe('header component lifecycle', () => {
         expect(TrackingHeaderComp.initCount).toBe(1);
         expect(RejectingInnerHeader.initCount).toBe(1);
         expect(RejectingInnerHeader.destroyCount).toBe(0);
+        expect(headerText(eGridDiv)).toBe('Inner');
 
         api.setGridOption('columnDefs', [...rejectingColumnDefs]);
 
@@ -133,6 +137,7 @@ describe('header component lifecycle', () => {
         // Outer headerComp on the adjacent column must not have been remounted
         expect(TrackingHeaderComp.initCount).toBe(1);
         expect(TrackingHeaderComp.destroyCount).toBe(0);
+        expect(headerText(eGridDiv)).toBe('Inner');
 
         api.destroy();
     });
@@ -156,6 +161,7 @@ describe('header component lifecycle', () => {
 
         expect(TrackingInnerHeader.initCount).toBe(1);
         expect(AlternativeInnerHeader.initCount).toBe(0);
+        expect(headerText(eGridDiv)).toBe('Inner');
 
         api.setGridOption('columnDefs', [
             { field: 'b', sortable: false, headerComponentParams: { innerHeaderComponent: AlternativeInnerHeader } },
@@ -164,6 +170,7 @@ describe('header component lifecycle', () => {
         // Old component should be destroyed and the new class initialised in its place
         expect(TrackingInnerHeader.destroyCount).toBe(1);
         expect(AlternativeInnerHeader.initCount).toBe(1);
+        expect(headerText(eGridDiv)).toBe('Inner');
 
         api.destroy();
     });
@@ -187,11 +194,12 @@ describe('header component lifecycle', () => {
         );
 
         expect(TrackingInnerHeader.initCount).toBe(1);
+        expect(headerText(eGridDiv)).toBe('Inner');
 
         api.setGridOption('columnDefs', [{ field: 'b', headerName: 'My Header', sortable: false }]);
 
         expect(TrackingInnerHeader.destroyCount).toBe(1);
-        expect(eGridDiv.querySelector('.ag-header-cell-text')?.textContent).toBe('My Header');
+        expect(headerText(eGridDiv)).toBe('My Header');
 
         api.destroy();
     });
@@ -206,13 +214,13 @@ describe('header component lifecycle', () => {
                         field: 'b',
                         headerName: 'My Header',
                         sortable: false,
-                        // headerComponentParams: { innerHeaderComponent: TrackingInnerHeader },
                     },
                 ],
                 rowData,
             },
             { modules: [ClientSideRowModelModule] }
         );
+        expect(headerText(eGridDiv)).toBe('My Header');
 
         api.setGridOption('columnDefs', [
             {
@@ -225,7 +233,7 @@ describe('header component lifecycle', () => {
 
         expect(TrackingInnerHeader.initCount).toBe(1);
         expect(TrackingInnerHeader.destroyCount).toBe(0);
-        expect(eGridDiv.querySelector('.ag-header-cell-text')?.textContent).toBe('My Header');
+        expect(headerText(eGridDiv)).toBe('Inner');
 
         api.destroy();
     });
@@ -242,11 +250,13 @@ describe('header component lifecycle', () => {
         );
 
         expect(NoRefreshInnerHeader.initCount).toBe(1);
+        expect(headerText(eGridDiv)).toBe('Inner');
 
         api.setGridOption('columnDefs', [...noRefreshDefs]);
 
         expect(NoRefreshInnerHeader.destroyCount).toBe(1);
         expect(NoRefreshInnerHeader.initCount).toBe(2);
+        expect(headerText(eGridDiv)).toBe('Inner');
 
         api.destroy();
     });
@@ -256,9 +266,12 @@ describe('header component lifecycle', () => {
 
         class CapturingRefreshInner {
             private readonly gui = document.createElement('span');
-            init(_params: IHeaderParams): void {}
+            init(params: IHeaderParams): void {
+                this.gui.textContent = params.displayName;
+            }
             refresh(params: IHeaderParams): boolean {
                 refreshedDisplayName = params.displayName;
+                this.gui.textContent = params.displayName;
                 return true;
             }
             getGui(): HTMLElement {
@@ -283,6 +296,8 @@ describe('header component lifecycle', () => {
             { modules: [ClientSideRowModelModule] }
         );
 
+        expect(headerText(eGridDiv)).toBe('Before');
+
         api.setGridOption('columnDefs', [
             {
                 field: 'b',
@@ -293,6 +308,7 @@ describe('header component lifecycle', () => {
         ]);
 
         expect(refreshedDisplayName).toBe('After');
+        expect(headerText(eGridDiv)).toBe('After');
 
         api.destroy();
     });
@@ -304,6 +320,7 @@ describe('header component lifecycle', () => {
             private readonly gui = document.createElement('span');
             init(params: IHeaderParams): void {
                 lastInitDisplayName = params.displayName;
+                this.gui.textContent = params.displayName;
             }
             getGui(): HTMLElement {
                 return this.gui;
@@ -328,6 +345,7 @@ describe('header component lifecycle', () => {
         );
 
         expect(lastInitDisplayName).toBe('Before');
+        expect(headerText(eGridDiv)).toBe('Before');
 
         api.setGridOption('columnDefs', [
             {
@@ -339,6 +357,7 @@ describe('header component lifecycle', () => {
         ]);
 
         expect(lastInitDisplayName).toBe('After');
+        expect(headerText(eGridDiv)).toBe('After');
 
         api.destroy();
     });
@@ -351,6 +370,7 @@ describe('header component lifecycle', () => {
             init(params: IHeaderParams): void {
                 lastInitDisplayName = params.displayName;
                 this.gui = document.createElement('span');
+                this.gui.textContent = params.displayName;
             }
             refresh(_params: IHeaderParams): boolean {
                 return false;
@@ -378,6 +398,7 @@ describe('header component lifecycle', () => {
         );
 
         expect(lastInitDisplayName).toBe('Before');
+        expect(headerText(eGridDiv)).toBe('Before');
 
         api.setGridOption('columnDefs', [
             {
@@ -389,6 +410,7 @@ describe('header component lifecycle', () => {
         ]);
 
         expect(lastInitDisplayName).toBe('After');
+        expect(headerText(eGridDiv)).toBe('After');
 
         api.destroy();
     });
@@ -398,9 +420,12 @@ describe('header component lifecycle', () => {
 
         class CapturingRefreshInnerWithLabel {
             private readonly gui = document.createElement('span');
-            init(_params: IHeaderParams): void {}
+            init(params: IHeaderParams): void {
+                this.gui.textContent = (params as any).customLabel;
+            }
             refresh(params: IHeaderParams): boolean {
                 refreshedLabel = (params as any).customLabel;
+                this.gui.textContent = (params as any).customLabel;
                 return true;
             }
             getGui(): HTMLElement {
@@ -427,6 +452,8 @@ describe('header component lifecycle', () => {
             { modules: [ClientSideRowModelModule] }
         );
 
+        expect(headerText(eGridDiv)).toBe('Before');
+
         api.setGridOption('columnDefs', [
             {
                 field: 'b',
@@ -439,6 +466,7 @@ describe('header component lifecycle', () => {
         ]);
 
         expect(refreshedLabel).toBe('After');
+        expect(headerText(eGridDiv)).toBe('After');
 
         api.destroy();
     });
@@ -450,6 +478,7 @@ describe('header component lifecycle', () => {
             private readonly gui = document.createElement('span');
             init(params: IHeaderParams): void {
                 lastInitLabel = (params as any).customLabel;
+                this.gui.textContent = (params as any).customLabel;
             }
             getGui(): HTMLElement {
                 return this.gui;
@@ -476,6 +505,7 @@ describe('header component lifecycle', () => {
         );
 
         expect(lastInitLabel).toBe('Before');
+        expect(headerText(eGridDiv)).toBe('Before');
 
         api.setGridOption('columnDefs', [
             {
@@ -489,6 +519,7 @@ describe('header component lifecycle', () => {
         ]);
 
         expect(lastInitLabel).toBe('After');
+        expect(headerText(eGridDiv)).toBe('After');
 
         api.destroy();
     });
@@ -501,6 +532,7 @@ describe('header component lifecycle', () => {
             init(params: IHeaderParams): void {
                 lastInitLabel = (params as any).customLabel;
                 this.gui = document.createElement('span');
+                this.gui.textContent = (params as any).customLabel;
             }
             refresh(_params: IHeaderParams): boolean {
                 return false;
@@ -530,6 +562,7 @@ describe('header component lifecycle', () => {
         );
 
         expect(lastInitLabel).toBe('Before');
+        expect(headerText(eGridDiv)).toBe('Before');
 
         api.setGridOption('columnDefs', [
             {
@@ -543,6 +576,7 @@ describe('header component lifecycle', () => {
         ]);
 
         expect(lastInitLabel).toBe('After');
+        expect(headerText(eGridDiv)).toBe('After');
 
         api.destroy();
     });
