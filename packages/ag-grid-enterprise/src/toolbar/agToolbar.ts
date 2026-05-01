@@ -22,10 +22,10 @@ import {
     _addGridCommonParams,
     _clearElement,
     _createElement,
+    _error,
     _findFocusableElements,
     _getActiveDomElement,
     _removeFromParent,
-    _warn,
 } from 'ag-grid-community';
 
 import agToolbarCSS from './agToolbar.css';
@@ -295,7 +295,7 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
             const { key } = itemConfig;
 
             if (itemConfig.toolbarItem == null) {
-                _warn(301, { key });
+                _error(301, { key });
                 continue;
             }
 

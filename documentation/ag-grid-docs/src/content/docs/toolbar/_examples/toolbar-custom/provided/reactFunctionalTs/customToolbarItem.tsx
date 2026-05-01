@@ -1,36 +1,95 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
-import type { IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
+import type { FilterChangedEvent, IToolbarItemParams } from 'ag-grid-community';
 
-export default (props: IToolbarItemParams) => {
+const COLUMNS = [
+    { column: 'gold', label: 'Gold winners only' },
+    { column: 'silver', label: 'Silver winners only' },
+];
+
+export const WinnersToggle = (props: IToolbarItemParams) => {
     const { api } = props;
-    const { label, title, icon, panelId, onClick } = props.toolbarItemParams;
-    const [active, setActive] = useState(false);
-    const tooltip = title ?? label ?? '';
+    const [checked, setChecked] = useState<Record<string, boolean>>({ gold: false, silver: false });
 
     useEffect(() => {
-        const handler = ({ key, visible }: ToolPanelVisibleChangedEvent) => {
-            if (key === panelId) {
-                setActive(visible);
-            } else if (visible) {
-                setActive(false);
+        const handler = (_event: FilterChangedEvent) => {
+            const next: Record<string, boolean> = {};
+            for (const { column } of COLUMNS) {
+                next[column] = api.getColumnFilterModel(column) != null;
             }
+            setChecked(next);
         };
-        api.addEventListener('toolPanelVisibleChanged', handler);
-        return () => api.removeEventListener('toolPanelVisibleChanged', handler);
-    }, [api, panelId]);
+        api.addEventListener('filterChanged', handler);
+        return () => api.removeEventListener('filterChanged', handler);
+    }, [api]);
+
+    const onChange = (column: string, event: React.ChangeEvent<HTMLInputElement>) => {
+        const next = event.target.checked;
+        const model = next ? { type: 'greaterThan', filter: 0 } : null;
+        api.setColumnFilterModel(column, model).then(() => api.onFilterChanged());
+    };
 
     return (
-        <button
-            className="ag-toolbar-item ag-toolbar-button"
-            type="button"
-            onClick={() => onClick(api)}
-            title={tooltip}
-            aria-label={tooltip}
-            style={active ? { backgroundColor: 'var(--ag-button-background-color)' } : undefined}
-        >
-            <span className={`ag-icon ag-icon-${icon}`} aria-hidden="true"></span>
-            {label && <span>{label}</span>}
-        </button>
+        <div className="ag-toolbar-item" style={{ display: 'flex', gap: 12, padding: 8 }}>
+            {COLUMNS.map(({ column, label }) => (
+                <label key={column} style={{ padding: '0 4px' }}>
+                    <input
+                        type="checkbox"
+                        checked={checked[column] ?? false}
+                        onChange={(event) => onChange(column, event)}
+                        style={{ marginRight: 4 }}
+                    />
+                    {label}
+                </label>
+            ))}
+        </div>
     );
 };
+
+const PANELS = [
+    { value: 'filters', label: 'Filters' },
+    { value: 'columns', label: 'Columns' },
+    { value: 'none', label: 'None' },
+];
+
+export interface ToolPanelRadioHandle {
+    setSelected(value: string): void;
+}
+
+export const ToolPanelRadio = forwardRef<ToolPanelRadioHandle, IToolbarItemParams>((props, ref) => {
+    const { api, key } = props;
+    const [selected, setSelected] = useState('none');
+
+    useImperativeHandle(ref, () => ({ setSelected }), []);
+
+    const onChange = (value: string) => {
+        if (value === 'none') {
+            api.closeToolPanel();
+        } else {
+            api.openToolPanel(value);
+        }
+    };
+
+    return (
+        <div
+            className="ag-toolbar-item"
+            role="radiogroup"
+            style={{ display: 'flex', gap: 12, padding: 10, alignItems: 'center' }}
+        >
+            <span style={{ fontWeight: 500 }}>Tool Panel:</span>
+            {PANELS.map(({ value, label }) => (
+                <label key={value} style={{ padding: '0 4px' }}>
+                    <input
+                        type="radio"
+                        name={`tool-panel-${key}`}
+                        value={value}
+                        checked={selected === value}
+                        onChange={() => onChange(value)}
+                        style={{ marginRight: 4 }}
+                    />
+                    {label}
+                </label>
+            ))}
+        </div>
+    );
+});

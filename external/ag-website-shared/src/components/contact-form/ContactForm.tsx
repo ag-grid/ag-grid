@@ -1,6 +1,13 @@
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { CONTACT_FORM_DATA, PRIVACY_POLICY_URL, RECAPTCHA_SITE_KEY, RECAPTCHA_URL } from '@ag-website-shared/constants';
+import {
+    CONTACT_FORM_DATA,
+    PRIVACY_POLICY_URL,
+    RECAPTCHA_SITE_KEY,
+    RECAPTCHA_URL,
+    STUDIO_FORM_DATA,
+} from '@ag-website-shared/constants';
+import { LIBRARY } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
 import type { FunctionComponent } from 'react';
@@ -10,9 +17,10 @@ import { useForm } from 'react-hook-form';
 import styles from './ContactForm.module.scss';
 import { RETURN_URLS } from './constants';
 
-const { actionUrl, orgId, textAreaId, leadSource, formLocationId } = getIsProduction()
-    ? CONTACT_FORM_DATA.production
-    : CONTACT_FORM_DATA.default;
+const contactFormData = LIBRARY === 'studio' ? STUDIO_FORM_DATA : CONTACT_FORM_DATA;
+
+const { actionUrl, orgId, textAreaId, leadSource, messagePlaceholder, formLocationId, captchaSettingsKeyName } =
+    getIsProduction() ? contactFormData.production : contactFormData.default;
 
 const isDev = getIsDev();
 
@@ -24,6 +32,8 @@ type FormValues = {
 
 interface Props {
     formLocation: 'About page' | 'Grid pricing page' | 'Charts pricing page';
+    hideMessage?: boolean;
+    submitLabel?: string;
 }
 
 function loadRecaptchaScript(): Promise<void> {
@@ -49,7 +59,11 @@ function loadRecaptchaScript(): Promise<void> {
     });
 }
 
-export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About page' }: Props) => {
+export const ContactForm: FunctionComponent<Props> = ({
+    formLocation = 'About page',
+    hideMessage,
+    submitLabel,
+}: Props) => {
     const formRef = useRef<HTMLFormElement>(null);
     const [isDebug, setIsDebug] = useState(isDev);
     const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
@@ -115,7 +129,7 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
             <input
                 type="hidden"
                 name="captcha_settings"
-                value={`{"keyname":"agGridComV2","fallback":"true","orgId":"${orgId}","ts":""}`}
+                value={`{"keyname":"${captchaSettingsKeyName}","fallback":"true","orgId":"${orgId}","ts":""}`}
             />
             <input type="hidden" name="oid" value={orgId} />
             <input type="hidden" name="retURL" value={returnUrl} />
@@ -179,19 +193,25 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
                     {errors.email && <p className="error">{errors.email.message}</p>}
                 </div>
             </div>
-            <div className={classnames('input-field', { 'input-error': errors[textAreaId] })}>
-                <label htmlFor={textAreaId}>Message</label>
-                <textarea
-                    id={textAreaId}
-                    rows={3}
-                    wrap="soft"
-                    placeholder="Tell us about your interest in AG Grid"
-                    {...register(textAreaId as keyof FormValues, { required: 'Message is required' })}
-                ></textarea>
-                <div className={styles.errorContainer}>
-                    {errors[textAreaId] && <p className="error">{(errors as any)[textAreaId]?.message as string}</p>}
+            {!hideMessage && (
+                <div className={classnames('input-field', { 'input-error': errors[textAreaId] })}>
+                    <label htmlFor={textAreaId}>Message</label>
+                    <textarea
+                        id={textAreaId}
+                        rows={3}
+                        wrap="soft"
+                        placeholder={messagePlaceholder}
+                        {...register(textAreaId as keyof FormValues, {
+                            required: !hideMessage && 'Message is required',
+                        })}
+                    ></textarea>
+                    <div className={styles.errorContainer}>
+                        {errors[textAreaId] && (
+                            <p className="error">{(errors as any)[textAreaId]?.message as string}</p>
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
 
             <div className={classnames('input-field', { 'input-error': captchaError })}>
                 <div className="g-recaptcha" data-sitekey={RECAPTCHA_SITE_KEY} />
@@ -204,7 +224,7 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
                 id="submit-contact-form"
                 className={classnames('button-primary', styles.submitButton, { disabled: isDisabled })}
                 type="submit"
-                value="Send us a message"
+                value={submitLabel || 'Send us a message'}
             />
             <p className={styles.privacyMessage}>
                 By submitting this form you agree to our <a href={PRIVACY_POLICY_URL}>Privacy Policy</a>.
