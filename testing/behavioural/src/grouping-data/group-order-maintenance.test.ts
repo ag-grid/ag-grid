@@ -724,12 +724,8 @@ describe('group order maintenance', () => {
         `);
     });
 
-    test('multi-level groupMaintainOrder: sort on inner level keeps outer level in structural order', async () => {
-        // With multi-level row grouping (country / year), sorting `year` should:
-        //  - re-order year groups within each country (year sort directly targets that level)
-        //  - leave country groups in their structural order (country sort is not active)
-        // Pre-fix behaviour reordered country groups by their first-leaf year — that's the bug
-        // this test locks against.
+    test('multi-level groupMaintainOrder: sort at one level only reorders that level', async () => {
+        // Sibling levels keep structural order; only the targeted level reorders.
         const rowData = [
             { id: '1', country: 'Italy', year: 2021, sales: 100 },
             { id: '2', country: 'Italy', year: 2020, sales: 50 },
@@ -738,7 +734,7 @@ describe('group order maintenance', () => {
             { id: '5', country: 'USA', year: 2018, sales: 70 },
         ];
 
-        const api = gridsManager.createGrid('grid-multi-level-inner-sort', {
+        const api = gridsManager.createGrid('grid-multi-level-sort', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
                 { field: 'year', rowGroup: true, hide: true },
@@ -752,10 +748,9 @@ describe('group order maintenance', () => {
             getRowId: (p) => p.data.id,
         });
 
+        // Inner-level sort: countries stay structural; year groups sort asc inside each country.
         api.applyColumnState({ state: [{ colId: 'year', sort: 'asc' }] });
-
-        // Country groups stay in structural order; year groups inside each country are sorted asc.
-        await new GridRows(api, 'multi-level: inner-level (year) sort').check(`
+        await new GridRows(api, 'inner (year) sort').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             │ ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
@@ -771,39 +766,14 @@ describe('group order maintenance', () => {
             · └─┬ LEAF_GROUP id:row-group-country-USA-year-2018 ag-Grid-AutoColumn:2018
             · · └── LEAF id:5 country:"USA" year:2018 sales:70
         `);
-    });
 
-    test('multi-level groupMaintainOrder: sort on outer level reorders only outer level', async () => {
-        // Counterpart to the test above: sorting `country` should re-order country groups but
-        // leave year groups within each country in structural (data-insertion) order.
-        const rowData = [
-            { id: '1', country: 'Italy', year: 2021, sales: 100 },
-            { id: '2', country: 'Italy', year: 2020, sales: 50 },
-            { id: '3', country: 'France', year: 2019, sales: 200 },
-            { id: '4', country: 'France', year: 2022, sales: 30 },
-            { id: '5', country: 'USA', year: 2018, sales: 70 },
-        ];
-
-        const api = gridsManager.createGrid('grid-multi-level-outer-sort', {
-            columnDefs: [
-                { field: 'country', rowGroup: true, hide: true },
-                { field: 'year', rowGroup: true, hide: true },
-                { field: 'sales' },
-            ],
-            autoGroupColumnDef: { headerName: 'Group' },
-            animateRows: false,
-            groupDefaultExpanded: -1,
-            groupMaintainOrder: true,
-            rowData,
-            getRowId: (p) => p.data.id,
+        // Outer-level sort: countries reorder asc; years inside each country revert to structural.
+        // Italy inserted as 2021→2020; France as 2019→2022.
+        api.applyColumnState({
+            state: [{ colId: 'country', sort: 'asc' }],
+            defaultState: { sort: null },
         });
-
-        api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] });
-
-        // Country groups sorted asc; year groups inside each country stay in structural order.
-        // Italy was inserted as 2021, then 2020 → structural is [2021, 2020].
-        // France was inserted as 2019, then 2022 → structural is [2019, 2022].
-        await new GridRows(api, 'multi-level: outer-level (country) sort').check(`
+        await new GridRows(api, 'outer (country) sort').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
             │ ├─┬ LEAF_GROUP id:row-group-country-France-year-2019 ag-Grid-AutoColumn:2019
@@ -818,6 +788,99 @@ describe('group order maintenance', () => {
             └─┬ filler id:row-group-country-USA ag-Grid-AutoColumn:"USA"
             · └─┬ LEAF_GROUP id:row-group-country-USA-year-2018 ag-Grid-AutoColumn:2018
             · · └── LEAF id:5 country:"USA" year:2018 sales:70
+        `);
+    });
+
+    test('multi-level groupMaintainOrder + secondary leaf sort: leaf rows sort inside each leaf group', async () => {
+        // Sort = [country asc, athlete asc]: country level reorders, year level keeps
+        // structural order, leaf rows inside each year group sort by athlete.
+        const rowData = [
+            { id: '1', country: 'Italy', year: 2021, athlete: 'Zed' },
+            { id: '2', country: 'Italy', year: 2021, athlete: 'Anna' },
+            { id: '3', country: 'France', year: 2019, athlete: 'Mark' },
+            { id: '4', country: 'France', year: 2019, athlete: 'Bob' },
+        ];
+
+        const api = gridsManager.createGrid('grid-leaf-sort-secondary', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'athlete' },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({
+            state: [
+                { colId: 'country', sort: 'asc', sortIndex: 0 },
+                { colId: 'athlete', sort: 'asc', sortIndex: 1 },
+            ],
+        });
+
+        await new GridRows(api, 'leaf-sort-secondary: country reorders, leaf rows sort by athlete').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └─┬ LEAF_GROUP id:row-group-country-France-year-2019 ag-Grid-AutoColumn:2019
+            │ · ├── LEAF id:4 country:"France" year:2019 athlete:"Bob"
+            │ · └── LEAF id:3 country:"France" year:2019 athlete:"Mark"
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            · · ├── LEAF id:2 country:"Italy" year:2021 athlete:"Anna"
+            · · └── LEAF id:1 country:"Italy" year:2021 athlete:"Zed"
+        `);
+    });
+
+    test('singleColumn + groupMaintainOrder: cascade-equivalent group sort reorders every level', async () => {
+        // singleColumn (default) has one shared auto-display column. A header click cascades
+        // the sort to every source rowGroup column — simulated here by applyColumnState on
+        // both. With one display column there's no per-level distinction to express, so all
+        // levels reorder.
+        const rowData = [
+            { id: '1', country: 'Italy', year: 2021, sales: 100 },
+            { id: '2', country: 'Italy', year: 2020, sales: 50 },
+            { id: '3', country: 'France', year: 2019, sales: 200 },
+            { id: '4', country: 'France', year: 2022, sales: 30 },
+        ];
+
+        const api = gridsManager.createGrid('grid-single-col-cascade', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'sales' },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        // Cascade-equivalent: setSortForColumn would propagate to both source cols.
+        api.applyColumnState({
+            state: [
+                { colId: 'country', sort: 'asc', sortIndex: 0 },
+                { colId: 'year', sort: 'asc', sortIndex: 1 },
+            ],
+        });
+
+        await new GridRows(api, 'singleColumn cascade: country and year both reorder').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ ├─┬ LEAF_GROUP id:row-group-country-France-year-2019 ag-Grid-AutoColumn:2019
+            │ │ └── LEAF id:3 country:"France" year:2019 sales:200
+            │ └─┬ LEAF_GROUP id:row-group-country-France-year-2022 ag-Grid-AutoColumn:2022
+            │ · └── LEAF id:4 country:"France" year:2022 sales:30
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · │ └── LEAF id:2 country:"Italy" year:2020 sales:50
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            · · └── LEAF id:1 country:"Italy" year:2021 sales:100
         `);
     });
 
