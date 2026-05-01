@@ -11,12 +11,12 @@ import svgr from 'vite-plugin-svgr';
 import agCacheSitemap from '../../external/ag-website-shared/plugins/agCacheSitemap';
 import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecker';
 import agMkcertPreview from '../../external/ag-website-shared/plugins/agMkcertPreview';
+import agSourcemapCors from '../../external/ag-website-shared/plugins/agSourcemapCors';
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
-import agSourcemapCors from './plugins/agSourcemapCors';
 import { getSitemapConfig } from './src/utils/sitemap';
 import { urlWithBaseUrl } from './src/utils/urlWithBaseUrl';
 
