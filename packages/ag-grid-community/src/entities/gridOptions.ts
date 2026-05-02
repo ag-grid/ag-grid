@@ -2062,6 +2062,8 @@ export interface GridOptions<TData = any> {
 
     /**
      * When enabled, sorts only the rows added/updated by a transaction.
+     *
+     * Ignored when `postSortRows` is configured (falls back to full sort).
      * @default false
      */
     deltaSort?: boolean;
@@ -2419,6 +2421,8 @@ export interface GridOptions<TData = any> {
     // *** Sorting *** //
     /**
      * Callback to perform additional sorting after the grid has sorted the rows.
+     *
+     * When configured, `deltaSort` is ignored.
      */
     postSortRows?: PostSortRows<TData>;
 

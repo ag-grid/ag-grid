@@ -38,11 +38,12 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         } = this.beans;
         const sortOptions = sortSvc?.getSortOptions() ?? [];
         const hasSortOptions = sortOptions.length > 0;
+        const postSortFunc = gos.getCallback('postSortRows');
 
-        // Delta sort runs only on transaction refreshes — sort changes refresh without a
-        // transaction and rebuild the baseline via full sort. The `deltaSort` gate is opt-in
-        // for now; can be removed once delta sort is the default.
-        const deltaSortChangedRowNodes = hasSortOptions && gos.get('deltaSort') && changedRowNodes;
+        // Delta sort runs only on transaction refreshes; the `deltaSort` gate is opt-in.
+        // Disabled when `postSortRows` is configured — a callback mutating `childrenAfterSort`
+        // into non-sort order corrupts `_doDeltaSort`'s merge baseline.
+        const deltaSortChangedRowNodes = hasSortOptions && !postSortFunc && gos.get('deltaSort') && changedRowNodes;
 
         // Per-level subset of `sortOptions`; `null` means "use full sortOptions everywhere"
         // (or no sort at all). Tree data is excluded — `groupMaintainOrder` has no effect there.
@@ -54,7 +55,6 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         const fallbackSortOptions = !levelSortOptions && hasSortOptions ? sortOptions : undefined;
 
         const isPivotMode = colModel.pivotMode;
-        const postSortFunc = gos.getCallback('postSortRows');
 
         let hasAnyFirstChildChanged = false;
 
@@ -128,14 +128,14 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
  * `numLevels` holds the options that apply to data rows inside leaf groups.
  *
  * `showRowGroup` columns are GROUP columns: sorting one sorts the group level(s) it displays.
- * Own data (`field`/`valueGetter`) adds the leaf-bucket route in addition to the group route.
+ * Own leaf sort (`field` / `valueGetter` / `comparator`) adds the leaf-bucket route in addition.
  *
  * - Source rowGroup column -> its own level (by reference). Excluded from the leaf bucket —
  *   siblings inside one leaf group share the group key.
  * - `showRowGroup === true` (singleColumn shared display) -> every group level, plus the leaf
- *   bucket if the column has own data.
+ *   bucket if the column has own leaf sort.
  * - `showRowGroup === '<colId>'` -> the matched group level, plus the leaf bucket if the column
- *   has own data.
+ *   has own leaf sort.
  * - Anything else -> leaf bucket only.
  */
 const buildLevelSortOptions = (
@@ -163,30 +163,31 @@ const buildLevelSortOptions = (
         const column = sortOption.column as AgColumn;
         const colDef = column.colDef;
         const showRowGroup = colDef.showRowGroup;
-        const hasUniqueData = colDef.field != null || colDef.valueGetter != null;
+        const hasOwnLeafSort = colDef.field != null || colDef.valueGetter != null || colDef.comparator != null;
 
         if (showRowGroup === true) {
             // singleColumn shared display — cascade to every group level.
             for (let j = 0; j < numLevels; ++j) {
                 (result[j] ??= []).push(sortOption);
             }
-            if (hasUniqueData) {
+            if (hasOwnLeafSort) {
                 (result[leafIndex] ??= []).push(sortOption);
             }
             continue;
         }
 
         // Source column ref OR `showRowGroup` colId string — the Map resolves both.
-        const key: AgColumn | string = typeof showRowGroup === 'string' ? showRowGroup : column;
+        const isLinkedDisplayCol = typeof showRowGroup === 'string';
+        const key: AgColumn | string = isLinkedDisplayCol ? showRowGroup : column;
         const matchedLevel = levelByKey.get(key);
 
         if (matchedLevel !== undefined) {
             (result[matchedLevel] ??= []).push(sortOption);
-            // Source rowGroup column (key === column) skips the leaf bucket — siblings in one
+            // Source rowGroup column (matched by ref) skips the leaf bucket — siblings in one
             // leaf group share the group key, so sorting them by it is a no-op under the default
             // comparator and can violate per-level isolation under a custom one. Display columns
-            // with own data DO reach the leaf bucket so leaves order by the column's data.
-            if (key !== column && hasUniqueData) {
+            // with own leaf sort DO reach the leaf bucket so leaves order by the column's data.
+            if (isLinkedDisplayCol && hasOwnLeafSort) {
                 (result[leafIndex] ??= []).push(sortOption);
             }
         } else {

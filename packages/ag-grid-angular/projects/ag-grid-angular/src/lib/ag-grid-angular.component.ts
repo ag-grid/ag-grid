@@ -1873,6 +1873,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public gridId: string | undefined = undefined;
     /** When enabled, sorts only the rows added/updated by a transaction.
+     *
+     * Ignored when `postSortRows` is configured (falls back to full sort).
      * @default false
      */
     @Input({ transform: booleanAttribute }) public deltaSort: boolean | undefined = undefined;
@@ -2118,6 +2120,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public fillOperation: FillOperation<TData> | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.
+     *
+     * When configured, `deltaSort` is ignored.
      */
     @Input() public postSortRows: PostSortRows<TData> | undefined = undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.

@@ -48,12 +48,94 @@ describe('group order maintenance', () => {
         `);
     });
 
+    test('leaf-column sort with custom comparator inspecting aggData does not reorder groups under groupMaintainOrder', async () => {
+        const rowData = [
+            { id: '1', country: 'Italy', sales: 5 },
+            { id: '2', country: 'Italy', sales: 3 },
+            { id: '3', country: 'France', sales: 2 },
+            { id: '4', country: 'France', sales: 6 },
+            { id: '5', country: 'USA', sales: 100 },
+        ];
+
+        const api = gridsManager.createGrid('grid-aggdata-comparator', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                {
+                    field: 'sales',
+                    aggFunc: 'sum',
+                    sortable: true,
+                    comparator: (_a, _b, nodeA, nodeB) => {
+                        const aggA = (nodeA as any)?.aggData?.sales ?? (nodeA as any)?.data?.sales ?? 0;
+                        const aggB = (nodeB as any)?.aggData?.sales ?? (nodeB as any)?.data?.sales ?? 0;
+                        return aggA - aggB;
+                    },
+                },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'sales', sort: 'desc' }] });
+
+        await new GridRows(api, 'aggData comparator: groups stay structural, leaves reorder').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" sales:8
+            │ ├── LEAF id:1 country:"Italy" sales:5
+            │ └── LEAF id:2 country:"Italy" sales:3
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" sales:8
+            │ ├── LEAF id:4 country:"France" sales:6
+            │ └── LEAF id:3 country:"France" sales:2
+            └─┬ LEAF_GROUP id:row-group-country-USA ag-Grid-AutoColumn:"USA" sales:100
+            · └── LEAF id:5 country:"USA" sales:100
+        `);
+    });
+
+    test('uncoupled mode + aggFunc leaf-column sort: groups stay structural', async () => {
+        const rowData = [
+            { id: '1', country: 'Italy', sales: 5 },
+            { id: '2', country: 'Italy', sales: 3 },
+            { id: '3', country: 'France', sales: 2 },
+            { id: '4', country: 'France', sales: 100 },
+            { id: '5', country: 'USA', sales: 7 },
+        ];
+
+        const api = gridsManager.createGrid('grid-uncoupled-aggfunc-leaf', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sales', aggFunc: 'sum', sortable: true },
+            ],
+            autoGroupColumnDef: {
+                headerName: 'Country',
+                comparator: (a: unknown, b: unknown) =>
+                    (a == null ? 0 : String(a).length) - (b == null ? 0 : String(b).length),
+            },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'sales', sort: 'desc' }] });
+
+        await new GridRows(api, 'uncoupled + aggFunc leaf sort: groups structural').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" sales:8
+            │ ├── LEAF id:1 country:"Italy" sales:5
+            │ └── LEAF id:2 country:"Italy" sales:3
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" sales:102
+            │ ├── LEAF id:4 country:"France" sales:100
+            │ └── LEAF id:3 country:"France" sales:2
+            └─┬ LEAF_GROUP id:row-group-country-USA ag-Grid-AutoColumn:"USA" sales:7
+            · └── LEAF id:5 country:"USA" sales:7
+        `);
+    });
+
     test('leaf rows are not reordered by a custom group-column comparator (data-row sort isolation)', async () => {
-        // Per-level isolation extends to data rows too: a sort on a group column must NOT reorder
-        // leaf rows inside a single leaf group (all rows there share the group key). With a custom
-        // comparator that returns a non-zero result for "equal" rows, the old code would reorder
-        // leaf rows on every group-column sort. The fix routes group-column sort options to the
-        // group-level buckets only; data rows see only the leaf-targeted options.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'Z' },
             { id: '2', country: 'Audi', athlete: 'A' },
@@ -83,8 +165,6 @@ describe('group order maintenance', () => {
 
         api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] });
 
-        // Inside Audi, athletes [Z, A] must remain in data order; the country comparator must
-        // NOT bubble down to data rows. Old behaviour would have reordered them.
         await new GridRows(api, 'leaf isolation: data rows in data order').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
@@ -96,17 +176,6 @@ describe('group order maintenance', () => {
     });
 
     test('display column with own data: sort reaches both leaf rows AND group levels', async () => {
-        // Per `sortService.getDisplaySortForColumn`: an auto-display column with `field` or
-        // `valueGetter` of its own has unique data — its sort participates in the displayed-sort
-        // mix as the column itself. `buildLevelSortOptions` cascades the option to every group
-        // level AND adds it to the leaf bucket, so leaf rows are ordered by the column's data
-        // and group rows can be reordered too.
-        //
-        // Test fixture: group columns have a comparator returning 0 (so the source rowGroup col
-        // can't reorder countries). The auto-display column has its own field `displayLabel`
-        // and is sorted asc. We verify: leaf rows reorder by displayLabel; group rows return
-        // undefined for `displayLabel` under the coupled path, so they tie and country order
-        // stays structural.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A1', displayLabel: 'Z-display' },
             { id: '2', country: 'Audi', athlete: 'A2', displayLabel: 'A-display' },
@@ -128,9 +197,6 @@ describe('group order maintenance', () => {
             getRowId: (p) => p.data.id,
         });
 
-        // Sort on the auto-display column. Leaf rows reorder by displayLabel asc; group rows
-        // tie 0 (group rows return undefined for `displayLabel` in coupled mode) so the country
-        // order stays structural.
         api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
 
         await new GridRows(api, 'display-data: leaf rows reordered by displayLabel').check(`
@@ -172,15 +238,12 @@ describe('group order maintenance', () => {
             getRowId: (p) => p.data.id,
         });
 
-        // Group rows have no `groupData['manualDisplay']` because the link did not resolve.
         const groupRowsBefore = api
             .getRenderedNodes()
             .filter((n) => n.group)
             .map((n) => ({ key: n.key, groupData: n.groupData?.['manualDisplay'] }));
         expect(groupRowsBefore.every((r) => r.groupData == null)).toBe(true);
 
-        // Sorting the manual display column does not reorder groups — there is no displayed
-        // value to sort by, and per-level routing safely sends the option to the leaf bucket.
         api.applyColumnState({ state: [{ colId: 'manualDisplay', sort: 'desc' }] });
         const groupOrderAfterSort = api
             .getRenderedNodes()
@@ -190,11 +253,6 @@ describe('group order maintenance', () => {
     });
 
     test('auto-display column with own field reorders groups under custom comparator (uncoupled escape hatch)', async () => {
-        // `showRowGroup` columns ARE group columns: sorting one sorts the group level(s) it
-        // displays. Under UNCOUPLED mode (`autoGroupColumnDef.comparator` set), group rows
-        // resolve to their group key for the auto-display column and the comparator runs on
-        // those keys — this is the documented escape hatch for reordering groups under uncoupled
-        // mode. Own data on the column adds a leaf-bucket route so leaves also reorder.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A1', displayLabel: 'long-label-Z' },
             { id: '2', country: 'Audi', athlete: 'A2', displayLabel: 'short-A' },
@@ -237,6 +295,44 @@ describe('group order maintenance', () => {
         `);
     });
 
+    test('display column with own comparator (no field/valueGetter): leaf rows sort by the comparator', async () => {
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'Anna' },
+            { id: '2', country: 'Audi', athlete: 'Marco' },
+            { id: '3', country: 'BMW', athlete: 'Luca' },
+        ];
+
+        const api = gridsManager.createGrid('grid-comparator-only-display', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: {
+                headerName: 'Group',
+                showRowGroup: true,
+                sortable: true,
+                comparator: (_a, _b, nodeA, nodeB) => {
+                    const lenA = nodeA?.data?.athlete?.length ?? 0;
+                    const lenB = nodeB?.data?.athlete?.length ?? 0;
+                    return lenA - lenB;
+                },
+            },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'desc' }] });
+
+        await new GridRows(api, 'comparator-only display column: leaves reorder by length desc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ ├── LEAF id:2 country:"Audi" athlete:"Marco"
+            │ └── LEAF id:1 country:"Audi" athlete:"Anna"
+            └─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            · └── LEAF id:3 country:"BMW" athlete:"Luca"
+        `);
+    });
+
     test('empty leaf group: leaf-column sort is applied when data is later added by transaction', async () => {
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A1', total: 5 },
@@ -259,8 +355,6 @@ describe('group order maintenance', () => {
 
         api.applyColumnState({ state: [{ colId: 'total', sort: 'desc' }] });
 
-        // Transaction adds two rows to a brand-new "Tesla" leaf group. They should appear in
-        // total-desc order (not data-insertion order) inside Tesla.
         applyTransactionChecked(api, {
             add: [
                 { id: '3', country: 'Tesla', athlete: 'T1', total: 4 },
@@ -306,10 +400,8 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"Italy" athlete:"It1"
         `);
 
-        // Add a new row that creates a new group (France)
         applyTransactionChecked(api, { add: [{ id: '4', country: 'France', athlete: 'F1' }] });
 
-        // Expect the new group to be appended at the end (Ireland, Italy, France)
         await new GridRows(api, 'after add France').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
@@ -357,10 +449,8 @@ describe('group order maintenance', () => {
             · └── LEAF id:4 country:"France" athlete:"F1"
         `);
 
-        // Update a leaf inside existing group (Ireland), do not move group
         applyTransactionChecked(api, { update: [{ id: '2', country: 'Ireland', athlete: 'I2-upd' }] });
 
-        // Group order should be unchanged
         await new GridRows(api, 'after update').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
@@ -380,8 +470,6 @@ describe('group order maintenance', () => {
     });
 
     test('group order is stable across rowData reorder (immutable mode, getRowId)', async () => {
-        // Existing groups keep their creation-order positions when rowData is reapplied in a
-        // different sequence; only new keys would land at the end.
         let rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },
@@ -408,7 +496,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"Tesla" athlete:"T"
         `);
 
-        // Reorder rowData: Tesla, BMW, Audi.
         rowData = [
             { id: '3', country: 'Tesla', athlete: 'T' },
             { id: '2', country: 'BMW', athlete: 'B' },
@@ -428,8 +515,6 @@ describe('group order maintenance', () => {
     });
 
     test('postSortRows + groupMaintainOrder: customisation reapplies through filter cycles', async () => {
-        // A postSortRows callback that pins one group to the top must keep doing so after any
-        // filter cycle.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },
@@ -531,8 +616,6 @@ describe('group order maintenance', () => {
     });
 
     test('firstChild / lastChild / childIndex reflect the sorted group order', async () => {
-        // GroupSortStage must call _updateRowNodeAfterSort so the deprecated flags (and their
-        // events) reflect the displayed group order — otherwise ag-row-first / ag-row-last go stale.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },
@@ -548,7 +631,6 @@ describe('group order maintenance', () => {
             getRowId: (p) => p.data.id,
         });
 
-        // Sort groups descending — order becomes [Tesla, BMW, Audi].
         api.applyColumnState({ state: [{ colId: 'country', sort: 'desc' }] });
 
         await new GridRows(api, 'group sort desc').check(`
@@ -572,10 +654,6 @@ describe('group order maintenance', () => {
     });
 
     test('reused-array postSortRows mutation does not corrupt the structural baseline', async () => {
-        // Two invariants: (1) prevSort and childrenAfterAggFilter are separate refs, so an
-        // in-place postSortRows never bleeds into the structural baseline; (2) _reuseArrayIfEqual
-        // is by-position, so a reordered prevSort is NOT reused next refresh. The reverse=false
-        // refresh is the load-bearing assertion — structural order is only restorable if both hold.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },
@@ -598,7 +676,6 @@ describe('group order maintenance', () => {
             },
         });
 
-        // Initial: postSortRows is a no-op, in structural order.
         await new GridRows(api, 'baseline: structural order').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
@@ -609,8 +686,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"Tesla" athlete:"T"
         `);
 
-        // Refresh with reverse=true. The reused-array branch fires and postSortRows mutates
-        // the previous array in place — childrenAfterSort flips.
         reverse = true;
         api.refreshClientSideRowModel('sort');
         await new GridRows(api, 'baseline: postSortRows reverses').check(`
@@ -623,8 +698,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:1 country:"Audi" athlete:"A"
         `);
 
-        // Refresh with reverse=false. Structural order returns. If the baseline had been
-        // corrupted by the previous mutation, the structural order could not be restored here.
         reverse = false;
         api.refreshClientSideRowModel('sort');
         await new GridRows(api, 'baseline: structural order restored').check(`
@@ -639,9 +712,6 @@ describe('group order maintenance', () => {
     });
 
     test('postSortRows reorder survives a sort refresh on the reused-array path', async () => {
-        // hasAnyFirstChildChanged must capture the previous first child by value before
-        // postSortRows mutates the reused array — otherwise the before/after comparison reads
-        // from one shared ref and silently misses the change.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'BMW', athlete: 'B' },
@@ -679,8 +749,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"Tesla" athlete:"T"
         `);
 
-        // Force the sort stage to re-run with structurally identical childrenAfterAggFilter so
-        // _reuseArrayIfEqual returns the previous reference. postSortRows then mutates that array.
         promoteKey = 'Tesla';
         api.refreshClientSideRowModel('sort');
         await new GridRows(api, 'reuse-path: Tesla promoted').check(`
@@ -693,7 +761,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:2 country:"BMW" athlete:"B"
         `);
 
-        // Run another refresh on the now-reordered array — postSortRows still applies on top.
         api.refreshClientSideRowModel('sort');
         await new GridRows(api, 'reuse-path: idempotent re-refresh').check(`
             ROOT id:ROOT_NODE_ID
@@ -705,8 +772,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:2 country:"BMW" athlete:"B"
         `);
 
-        // Switching the promoted key takes effect on the next refresh — the new ordering is
-        // produced from the structural baseline ([Audi, BMW, Tesla]) and then BMW is unshifted.
         promoteKey = 'BMW';
         api.refreshClientSideRowModel('sort');
         await new GridRows(api, 'reuse-path: switch to BMW promoted').check(`
@@ -883,9 +948,6 @@ describe('group order maintenance', () => {
     });
 
     test('pivot mode: leaf-group children are not reordered by an active leaf-column sort', async () => {
-        // In pivot mode the leaf groups' children aren't part of the displayed output, so a
-        // leaf-column sort must not reorder them. Defended by two layers: GroupSortStage's
-        // skipPivotLeafs guard and SortService filtering pivot-incompatible options.
         const rowData = [
             { id: '1', country: 'Audi', year: 2020, athlete: 'Z' },
             { id: '2', country: 'Audi', year: 2020, athlete: 'A' },
@@ -908,17 +970,13 @@ describe('group order maintenance', () => {
         const audi = () => api.getRowNode('row-group-country-Audi')!;
         const childIds = () => audi().childrenAfterSort?.map((n) => n.id);
 
-        // Without pivot, athlete asc orders the leaf children: '2'=A, '3'=M, '1'=Z.
         expect(childIds()).toEqual(['2', '3', '1']);
 
-        // Enabling pivot mode reverts leaf children to structural / filter order — they are
-        // no longer part of the pivoted display, so reordering them would be wasted work.
         api.setGridOption('pivotMode', true);
         expect(childIds()).toEqual(['1', '2', '3']);
     });
 
     test('pivot mode + groupMaintainOrder: filter cycle preserves group order', async () => {
-        // Group order survives a filter cycle when pivot mode is on.
         const rowData = [
             { id: '1', country: 'Audi', year: 2020, sales: 10 },
             { id: '2', country: 'BMW', year: 2020, sales: 20 },
@@ -987,7 +1045,6 @@ describe('group order maintenance', () => {
 
         applyTransactionChecked(api, { update: [{ id: '2', country: 'Ireland', athlete: 'I2-upd' }] });
 
-        // Group order should remain the same even when groupMaintainOrder is false
         await new GridRows(api, 'after update').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
@@ -1030,7 +1087,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"France" athlete:"Mike"
         `);
 
-        // Sort by a leaf column. Group order should remain insertion order.
         api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
 
         await new GridRows(api, 'leaf sort asc preserves group order').check(`
@@ -1074,7 +1130,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"France" athlete:"C"
         `);
 
-        // Sort by the primary grouped column; groups should reorder alphabetically: France, Ireland, Italy
         api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] });
 
         await new GridRows(api, 'group sort asc').check(`
@@ -1102,12 +1157,6 @@ describe('group order maintenance', () => {
     });
 
     test('adding a leaf sort while a group sort is active: each level sorts with its own options', async () => {
-        // `applyColumnState` with only `state` (no `defaultState`) does NOT clear sorts on
-        // unmentioned columns — so after these two calls BOTH country.sort='desc' AND
-        // athlete.sort='asc' are active. Per-level isolation routes each option to its bucket:
-        // the country level reorders by country desc, leaf rows reorder by athlete asc within
-        // their (single-row) groups. Group order persists because country desc is still
-        // applied, NOT because of any "preserve last visual order" baseline.
         const rowData = [
             { id: '1', country: 'Ireland', athlete: 'Z' },
             { id: '2', country: 'Italy', athlete: 'A' },
@@ -1137,7 +1186,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"France" athlete:"M"
         `);
 
-        // Force a group sort order first (desc): Italy, Ireland, France
         api.applyColumnState({ state: [{ colId: 'country', sort: 'desc' }] });
         await new GridRows(api, 'after group sort desc').check(`
             ROOT id:ROOT_NODE_ID
@@ -1149,7 +1197,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"France" athlete:"M"
         `);
 
-        // Now switch to a leaf sort; group order should remain the same
         api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
         await new GridRows(api, 'leaf sort maintains last group order').check(`
             ROOT id:ROOT_NODE_ID
@@ -1163,7 +1210,6 @@ describe('group order maintenance', () => {
     });
 
     test('multi-level groupMaintainOrder: sort at one level only reorders that level', async () => {
-        // Sibling levels keep structural order; only the targeted level reorders.
         const rowData = [
             { id: '1', country: 'Italy', year: 2021, sales: 100 },
             { id: '2', country: 'Italy', year: 2020, sales: 50 },
@@ -1186,7 +1232,6 @@ describe('group order maintenance', () => {
             getRowId: (p) => p.data.id,
         });
 
-        // Inner-level sort: countries stay structural; year groups sort asc inside each country.
         api.applyColumnState({ state: [{ colId: 'year', sort: 'asc' }] });
         await new GridRows(api, 'inner (year) sort').check(`
             ROOT id:ROOT_NODE_ID
@@ -1205,8 +1250,6 @@ describe('group order maintenance', () => {
             · · └── LEAF id:5 country:"USA" year:2018 sales:70
         `);
 
-        // Outer-level sort: countries reorder asc; years inside each country revert to structural.
-        // Italy inserted as 2021→2020; France as 2019→2022.
         api.applyColumnState({
             state: [{ colId: 'country', sort: 'asc' }],
             defaultState: { sort: null },
@@ -1230,8 +1273,6 @@ describe('group order maintenance', () => {
     });
 
     test('multi-level groupMaintainOrder + secondary leaf sort: leaf rows sort inside each leaf group', async () => {
-        // Sort = [country asc, athlete asc]: country level reorders, year level keeps
-        // structural order, leaf rows inside each year group sort by athlete.
         const rowData = [
             { id: '1', country: 'Italy', year: 2021, athlete: 'Zed' },
             { id: '2', country: 'Italy', year: 2021, athlete: 'Anna' },
@@ -1274,10 +1315,6 @@ describe('group order maintenance', () => {
     });
 
     test('singleColumn + groupMaintainOrder: cascade-equivalent group sort reorders every level', async () => {
-        // singleColumn (default) has one shared auto-display column. A header click cascades
-        // the sort to every source rowGroup column — simulated here by applyColumnState on
-        // both. With one display column there's no per-level distinction to express, so all
-        // levels reorder.
         const rowData = [
             { id: '1', country: 'Italy', year: 2021, sales: 100 },
             { id: '2', country: 'Italy', year: 2020, sales: 50 },
@@ -1299,7 +1336,6 @@ describe('group order maintenance', () => {
             getRowId: (p) => p.data.id,
         });
 
-        // Cascade-equivalent: setSortForColumn would propagate to both source cols.
         api.applyColumnState({
             state: [
                 { colId: 'country', sort: 'asc', sortIndex: 0 },
@@ -1323,13 +1359,6 @@ describe('group order maintenance', () => {
     });
 
     test('singleColumn cascade with 5 group levels: every level reorders', async () => {
-        // The `showRowGroup === true` branch of `buildLevelSortOptions` cascades the sort to
-        // every group level — O(numLevels) per cascading option. This test exercises the
-        // cascade with 5 group columns to verify routing and ordering remain correct under
-        // deeper hierarchies than the 1–3 levels covered elsewhere.
-        //
-        // Each row is the only member of its 5-level group path; `a` alone disambiguates, so
-        // ascending by all five levels orders rows by `a` asc: A → C → M → Z (ids 2,4,3,1).
         const rowData = [
             { id: '1', a: 'Z', b: 'X', c: 'Q', d: 'M', e: 'C' },
             { id: '2', a: 'A', b: 'Y', c: 'P', d: 'L', e: 'B' },
@@ -1353,14 +1382,11 @@ describe('group order maintenance', () => {
             getRowId: (p) => p.data.id,
         });
 
-        // singleColumn produces one shared auto-display column for all five levels.
         await new GridColumns(api, 'five-level: single auto-display column').checkColumns(`
             CENTER
             └── ag-Grid-AutoColumn "Group" width:200
         `);
 
-        // Cascade-equivalent: sort indicator on every source rowGroup column. Each group level
-        // gets its own option, so each level reorders ascending.
         api.applyColumnState({
             state: [
                 { colId: 'a', sort: 'asc', sortIndex: 0 },
@@ -1483,9 +1509,6 @@ describe('group order maintenance', () => {
             · · └── LEAF id:4 customCountry:"France" customYear:2022 sales:30
         `);
 
-        // The auto-display column for year inherits the linked customYear sort indicator
-        // visually (aria-sort=ascending in DOM, validated by GridColumnsDomValidator), but its
-        // own colDef has no sort, so the diagram shows no sort tag here.
         await new GridColumns(api, 'multipleColumns: auto-display columns + sales').checkColumns(`
             CENTER
             ├── ag-Grid-AutoColumn-customCountry "Country" width:200
@@ -1495,8 +1518,6 @@ describe('group order maintenance', () => {
     });
 
     test('clearing a filter restores the original group order', async () => {
-        // After a filter narrows the data to a single non-first group, clearing the filter must
-        // restore every group to its original slot, not move the surviving group to the end.
         const rowData = [
             { id: '1', country: 'Ireland', athlete: 'I1' },
             { id: '2', country: 'Italy', athlete: 'T1' },
@@ -1609,7 +1630,6 @@ describe('group order maintenance', () => {
     });
 
     test('initialGroupOrderComparator + groupMaintainOrder + filter cycle', async () => {
-        // Data order is Tesla, BMW, Audi — the comparator should override it to alphabetical.
         const rowData = [
             { id: '1', country: 'Tesla', athlete: 'Tim' },
             { id: '2', country: 'BMW', athlete: 'Bert' },
@@ -1655,7 +1675,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:1 country:"Tesla" athlete:"Tim"
         `);
 
-        // A transaction-added group is placed at its comparator position, not appended at the end.
         applyTransactionChecked(api, { add: [{ id: '4', country: 'Acura', athlete: 'Alex' }] });
         await new GridRows(api, 'comparator: add Acura via transaction — sorted alphabetically').check(`
             ROOT id:ROOT_NODE_ID
@@ -1697,7 +1716,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"France" athlete:"F1"
         `);
 
-        // Filter out Italy group entirely
         api.setGridOption('quickFilterText', 'I1'); // shows only Ireland
         await new GridRows(api, 'after filter Ireland only').check(`
             ROOT id:ROOT_NODE_ID
@@ -1705,7 +1723,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:1 country:"Ireland" athlete:"I1"
         `);
 
-        // Clear filter and add a new country; new group must append after prior order (Ire, Ita, Fra, then new Spain)
         api.setGridOption('quickFilterText', undefined);
         applyTransactionChecked(api, { add: [{ id: '4', country: 'Spain', athlete: 'S1' }] });
 
@@ -1749,7 +1766,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"France" athlete:"F1"
         `);
 
-        // Remove the middle group (Italy)
         applyTransactionChecked(api, { remove: [{ id: '2', country: 'Italy', athlete: 'It1' }] });
 
         await new GridRows(api, 'after remove Italy').check(`
@@ -1760,7 +1776,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"France" athlete:"F1"
         `);
 
-        // Add a new group (Spain) - should append at end
         applyTransactionChecked(api, { add: [{ id: '4', country: 'Spain', athlete: 'S1' }] });
 
         await new GridRows(api, 'after add Spain').check(`
@@ -1775,13 +1790,6 @@ describe('group order maintenance', () => {
     });
 
     test('apply group sort then clear: structural order is restored, not the prior sorted order', async () => {
-        // Locks the docs contract: "If a group column was sorted via colDef.sort and the user
-        // later explicitly clears that sort, the structural order is restored." After a desc
-        // sort on country reorders to [Italy, France, Audi], clearing the sort must put groups
-        // back to their structural slots [Audi, France, Italy] — NOT keep the desc order as a
-        // sticky baseline. The previously-sorted childrenAfterSort and the structural
-        // childrenAfterAggFilter differ by position, so _reuseArrayIfEqual takes the fresh-slice
-        // branch and the structural baseline wins.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'France', athlete: 'F' },
@@ -1832,10 +1840,6 @@ describe('group order maintenance', () => {
     });
 
     test('single-sort: applying a leaf sort while a group sort is active clears the group sort and restores structural group order', async () => {
-        // `applyColumnState` with `defaultState: { sort: null }` simulates the
-        // `clearSortBarTheseColumns` path that fires under single-sort when the user clicks a
-        // different column. Clearing a group sort returns groups to their structural order, per
-        // the documented "structural order is restored" contract on `groupMaintainOrder`.
         const rowData = [
             { id: '1', country: 'Italy', athlete: 'It' },
             { id: '2', country: 'France', athlete: 'Fr' },
@@ -1855,7 +1859,6 @@ describe('group order maintenance', () => {
             getRowId: (p) => p.data.id,
         });
 
-        // Sort country asc — groups reorder to alphabetical [Audi, France, Italy].
         api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] });
         await new GridRows(api, 'single-sort: country asc').check(`
             ROOT id:ROOT_NODE_ID
@@ -1867,9 +1870,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:1 country:"Italy" athlete:"It"
         `);
 
-        // Switch to sorting athlete only — `defaultState: { sort: null }` clears the country
-        // sort as a side effect (single-sort semantics). Groups must revert to data-insertion
-        // order [Italy, France, Audi], not stay in the prior alphabetical order.
         api.applyColumnState({
             state: [{ colId: 'athlete', sort: 'asc' }],
             defaultState: { sort: null },
@@ -1886,9 +1886,6 @@ describe('group order maintenance', () => {
     });
 
     test('multi-level clear-sort: clearing one level restores structural order at that level only', async () => {
-        // Two levels (country, year) with `groupMaintainOrder=true`. Sort country desc and year
-        // asc — both levels reorder. Then clear ONLY the year sort: country desc stays, year
-        // groups revert to structural via `_reuseArrayIfEqual` element-wise mismatch → fresh slice.
         const rowData = [
             { id: '1', country: 'Italy', year: 2021 },
             { id: '2', country: 'Italy', year: 2020 },
@@ -1909,7 +1906,6 @@ describe('group order maintenance', () => {
             getRowId: (p) => p.data.id,
         });
 
-        // Apply both sorts: country desc (Italy first), year asc within each country.
         api.applyColumnState({
             state: [
                 { colId: 'country', sort: 'desc', sortIndex: 0 },
@@ -1930,9 +1926,6 @@ describe('group order maintenance', () => {
             · · └── LEAF id:4 country:"France" year:2022
         `);
 
-        // Clear ONLY the year sort. Country desc remains active. Year groups must revert to
-        // their structural (data-insertion) order within each country: Italy structural is
-        // [2021, 2020], France structural is [2019, 2022].
         api.applyColumnState({ state: [{ colId: 'year', sort: null }] });
         await new GridRows(api, 'multilevel: clear year — country desc kept, years structural').check(`
             ROOT id:ROOT_NODE_ID
@@ -1948,9 +1941,6 @@ describe('group order maintenance', () => {
             · · └── LEAF id:4 country:"France" year:2022
         `);
 
-        // Now clear the country sort too. Both levels revert to structural — country
-        // [Italy, France] (data-insertion), years already structural. Pins that clearing a
-        // previously-active sort on a level produces a fresh slice when `prev` differs.
         api.applyColumnState({ state: [{ colId: 'country', sort: null }] });
         await new GridRows(api, 'multilevel: clear country too — fully structural').check(`
             ROOT id:ROOT_NODE_ID
@@ -1968,10 +1958,6 @@ describe('group order maintenance', () => {
     });
 
     test('clear-sort after coincidental match: structural order persists after subsequent refresh', async () => {
-        // Groups (Audi, France, Italy) where structural order equals alphabetical asc. Sort
-        // country asc — `prev` after sort equals structural exactly. Clear the sort and trigger
-        // another refresh: structural order remains, `_reuseArrayIfEqual` reuses `prev` because
-        // it already equals structural element-wise.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A' },
             { id: '2', country: 'France', athlete: 'F' },
@@ -2000,9 +1986,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:3 country:"Italy" athlete:"I"
         `);
 
-        // Clear the sort. Trigger an explicit second refresh after the clear — verifies
-        // structural order is stable across subsequent refreshes (no flag is needed because
-        // _reuseArrayIfEqual sees prev == structural element-wise on every refresh).
         api.applyColumnState({ state: [{ colId: 'country', sort: null }] });
         api.refreshClientSideRowModel('sort');
         await new GridRows(api, 'coincidental: cleared and re-refreshed — structural').check(`
@@ -2017,11 +2000,6 @@ describe('group order maintenance', () => {
     });
 
     test('deltaSort + groupMaintainOrder: per-level isolation holds across transactions', async () => {
-        // With deltaSort on, transactions hit _doDeltaSort at sortable levels (leaf groups when
-        // a leaf-column sort is active) and the structural baseline elsewhere. The per-level
-        // isolation contract must still hold: country and year groups stay in structural
-        // (data-insertion) order, leaf rows sort within each leaf group, and a transaction-added
-        // row lands in its sorted leaf-row position without disturbing group order.
         const rowData = [
             { id: '1', country: 'Italy', year: 2021, athlete: 'Zed' },
             { id: '2', country: 'Italy', year: 2021, athlete: 'Anna' },
@@ -2088,17 +2066,6 @@ describe('group order maintenance', () => {
     });
 
     test('deltaSort + postSortRows-pinned group + transactions: per-level baseline integrity', async () => {
-        // _doDeltaSort consumes rowNode.childrenAfterSort as its prior baseline. Group levels
-        // with no sort options use _reuseArrayIfEqual to publish the structural baseline;
-        // postSortRows may then mutate that array in place to pin a group, leaving
-        // childrenAfterSort in non-structural (visual) order. On the NEXT refresh:
-        //   - For the no-sort group level: the comparison `prev !== aggFilter` causes
-        //     _reuseArrayIfEqual to fall back to a fresh slice of aggFilter, restoring the
-        //     structural baseline (then postSortRows reapplies the pin on top).
-        //   - For the sort-active leaf level: _doDeltaSort is unaffected by the group level's
-        //     visual order — leaf children are unrelated nodes.
-        // The contract: an idempotent postSortRows pin at the group level remains stable across
-        // transactions, and delta-sort transactions on leaf rows place rows in their sorted slots.
         const rowData = [
             { id: '1', country: 'Italy', athlete: 'Mark' },
             { id: '2', country: 'France', athlete: 'Bob' },
@@ -2111,9 +2078,6 @@ describe('group order maintenance', () => {
             autoGroupColumnDef: { headerName: 'Country' },
             rowData,
             postSortRows: (params: any) => {
-                // Idempotent group-level pin: keep group with key 'Italy' first if present.
-                // Per-leaf-group postSortRows calls also fire; for those, no node has key 'Italy'
-                // (leaves have key=null), so this is a no-op there.
                 const idx = params.nodes.findIndex((n: any) => n.key === 'Italy');
                 if (idx > 0) {
                     const [pinned] = params.nodes.splice(idx, 1);
@@ -2124,8 +2088,6 @@ describe('group order maintenance', () => {
 
         api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
 
-        // Per-level isolation: country level uses no-sort branch (postSortRows pins Italy first);
-        // leaf level full-sorts by athlete asc.
         await new GridRows(api, 'delta+postSort: initial — Italy pinned, leaves sorted').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
@@ -2136,8 +2098,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:4 country:"France" athlete:"Zed"
         `);
 
-        // Transaction add hits delta sort at the France leaf group. Country level uses the no-sort
-        // branch + Italy pin again. New row (Carl) sorts between Bob and Zed in France.
         applyTransactionChecked(api, { add: [{ id: '5', country: 'France', athlete: 'Carl' }] });
         await new GridRows(api, 'delta+postSort: add — Carl placed in sorted slot, Italy still pinned').check(`
             ROOT id:ROOT_NODE_ID
@@ -2150,8 +2110,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:4 country:"France" athlete:"Zed"
         `);
 
-        // Update Italy/Mark to athlete='Yann'. Delta sort re-sorts the Italy leaves.
-        // Country level still pins Italy first via postSortRows.
         applyTransactionChecked(api, { update: [{ id: '1', country: 'Italy', athlete: 'Yann' }] });
         await new GridRows(api, 'delta+postSort: update reorders Italy leaves, Italy still pinned').check(`
             ROOT id:ROOT_NODE_ID
@@ -2165,14 +2123,71 @@ describe('group order maintenance', () => {
         `);
     });
 
+    test('deltaSort + postSortRows pinning at a sorted leaf level: full-sort fallback places new rows correctly', async () => {
+        const rowData = [
+            { id: '1', country: 'Italy', athlete: 'Mark' },
+            { id: '2', country: 'Italy', athlete: 'Anna' },
+            { id: '3', country: 'Italy', athlete: 'Carl' },
+            { id: '4', country: 'Italy', athlete: 'Bob' },
+            { id: '5', country: 'Italy', athlete: 'Zed' },
+            { id: '6', country: 'Italy', athlete: 'David' },
+        ];
+
+        const api = createDeltaSortGrid('grid-delta-postsort-sorted-leaf', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            rowData,
+            postSortRows: (params: any) => {
+                // Pin Zed to the front of any leaf array containing him.
+                const idx = params.nodes.findIndex((n: any) => n.data?.athlete === 'Zed');
+                if (idx > 0) {
+                    const [pinned] = params.nodes.splice(idx, 1);
+                    params.nodes.unshift(pinned);
+                }
+            },
+        });
+
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+
+        await new GridRows(api, 'delta+postSort sorted leaf: initial — Zed pinned, rest asc').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" athlete:"Zed"
+            · ├── LEAF id:2 country:"Italy" athlete:"Anna"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · └── LEAF id:1 country:"Italy" athlete:"Mark"
+        `);
+
+        applyTransactionChecked(api, { add: [{ id: '7', country: 'Italy', athlete: 'Eric' }] });
+        await new GridRows(api, 'delta+postSort sorted leaf: add — Eric in correct sorted slot').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" athlete:"Zed"
+            · ├── LEAF id:2 country:"Italy" athlete:"Anna"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · ├── LEAF id:7 country:"Italy" athlete:"Eric"
+            · └── LEAF id:1 country:"Italy" athlete:"Mark"
+        `);
+
+        applyTransactionChecked(api, { update: [{ id: '1', country: 'Italy', athlete: 'Yann' }] });
+        await new GridRows(api, 'delta+postSort sorted leaf: update reorders, Zed still pinned').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" athlete:"Zed"
+            · ├── LEAF id:2 country:"Italy" athlete:"Anna"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · ├── LEAF id:7 country:"Italy" athlete:"Eric"
+            · └── LEAF id:1 country:"Italy" athlete:"Yann"
+        `);
+    });
+
     test('treeData + groupMaintainOrder: per-level isolation does not apply, sort still runs', async () => {
-        // `groupMaintainOrder` docs state "Has no effect on tree data". This test pins that
-        // contract: with treeData=true and groupMaintainOrder=true, a sort on a leaf column
-        // reorders ALL rows (groups and leaves) just as it would without groupMaintainOrder —
-        // per-level isolation is bypassed. Tree data has no rowGroupCols (numLevels=0) and the
-        // explicit treeData guard inside GroupSortStage falls through to the full-sort path. The
-        // `_reuseArrayIfEqual` helper used on the no-sort branch is a memory optimisation only;
-        // it does not change behaviour.
         const rowData = [
             { id: '1', path: ['Audi'], name: 'Audi' },
             { id: '2', path: ['Audi', 'A2'], name: 'A2' },
@@ -2192,7 +2207,6 @@ describe('group order maintenance', () => {
             getRowId: (p) => p.data.id,
         });
 
-        // Initial: data-insertion order, with the children of Audi in their data order [A2, A1].
         await new GridRows(api, 'tree+maintain: initial structural').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ Audi GROUP id:1 ag-Grid-AutoColumn:"Audi" name:"Audi"
@@ -2202,9 +2216,6 @@ describe('group order maintenance', () => {
             · └── B1 LEAF id:5 ag-Grid-AutoColumn:"B1" name:"B1"
         `);
 
-        // Sort by name asc — both top-level groups and their children reorder. Per-level
-        // isolation does NOT apply: Audi vs BMW is alphabetised, and A1 vs A2 inside Audi
-        // is alphabetised too. This is identical to groupMaintainOrder=false for tree data.
         api.applyColumnState({ state: [{ colId: 'name', sort: 'asc' }] });
         await new GridRows(api, 'tree+maintain: sort cascades — full reorder, no isolation').check(`
             ROOT id:ROOT_NODE_ID
@@ -2215,8 +2226,6 @@ describe('group order maintenance', () => {
             · └── B1 LEAF id:5 ag-Grid-AutoColumn:"B1" name:"B1"
         `);
 
-        // Clear sort — back to structural data-insertion order (no maintained "previous sorted"
-        // baseline for tree data, just like groupMaintainOrder=false).
         api.applyColumnState({ state: [{ colId: 'name', sort: null }] });
         await new GridRows(api, 'tree+maintain: clear sort — structural order restored').check(`
             ROOT id:ROOT_NODE_ID
@@ -2229,14 +2238,6 @@ describe('group order maintenance', () => {
     });
 
     test('deltaSort + filter cycle interleaved with transactions: leaves stay correctly sorted', async () => {
-        // With per-level isolation, ancestor group levels take the no-sort path while leaf groups
-        // still use _doDeltaSort. The concern: delta sort's baseline (rowNode.childrenAfterSort)
-        // could go stale relative to childrenAfterAggFilter when an ancestor's filter state
-        // changes without that ancestor being re-sorted.
-        //
-        // This test interleaves filter changes WITH transactions while delta sort is active on
-        // the leaf level. After each step, leaves must be correctly sorted by athlete asc inside
-        // their groups, regardless of which ancestor groups got filtered out and back in.
         const rowData = [
             { id: '1', country: 'Italy', athlete: 'Mark' },
             { id: '2', country: 'France', athlete: 'Bob' },
@@ -2253,7 +2254,6 @@ describe('group order maintenance', () => {
 
         api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
 
-        // Initial: groups in structural order, leaves sorted asc by athlete inside each group.
         await new GridRows(api, 'delta-filter: initial').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
@@ -2266,8 +2266,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:5 country:"Spain" athlete:"Carlos"
         `);
 
-        // Filter to France only — the ancestor (root) takes the no-sort branch, publishes a
-        // filtered structural baseline.
         api.setGridOption('quickFilterText', 'France');
         await new GridRows(api, 'delta-filter: filtered to France').check(`
             ROOT id:ROOT_NODE_ID
@@ -2276,7 +2274,6 @@ describe('group order maintenance', () => {
             · └── LEAF id:4 country:"France" athlete:"Zed"
         `);
 
-        // Add a row to a hidden group while filtered. Italy stays hidden.
         applyTransactionChecked(api, { add: [{ id: '6', country: 'Italy', athlete: 'Aaron' }] });
         await new GridRows(api, 'delta-filter: add to hidden group while filtered').check(`
             ROOT id:ROOT_NODE_ID
@@ -2285,11 +2282,8 @@ describe('group order maintenance', () => {
             · └── LEAF id:4 country:"France" athlete:"Zed"
         `);
 
-        // Update a hidden row's athlete. Delta sort must place it correctly when the filter clears.
         applyTransactionChecked(api, { update: [{ id: '5', country: 'Spain', athlete: 'Aldo' }] });
 
-        // Clear filter — Italy reappears with Aaron sorting first; Spain's leaf is now Aldo
-        // (was Carlos). Leaves must be in sorted asc order, groups in structural order.
         api.setGridOption('quickFilterText', undefined);
         await new GridRows(api, 'delta-filter: clear filter — leaves still correctly sorted').check(`
             ROOT id:ROOT_NODE_ID
@@ -2437,12 +2431,6 @@ describe('group order maintenance', () => {
     });
 
     test('manual showRowGroup + own field: leaves reorder by the column own data', async () => {
-        // A consumer-defined display column with `showRowGroup: '<colId>'` AND its own `field`
-        // (or valueGetter). The sort option reaches BOTH the matched group level (so a custom
-        // comparator could reorder groups) AND the leaf bucket — without the leaf-bucket route,
-        // leaf rows would stay in structural order even though the column's displayed values
-        // differ per leaf row. With the default comparator and no own data on group rows, group
-        // order stays structural and leaves reorder by `label`.
         const rowData = [
             { id: '1', country: 'Italy', athlete: 'A1', label: 'M' },
             { id: '2', country: 'Italy', athlete: 'A2', label: 'A' },
@@ -2472,10 +2460,6 @@ describe('group order maintenance', () => {
 
         api.applyColumnState({ state: [{ colId: 'manualDisplay', sort: 'asc' }] });
 
-        // Leaves inside Italy reorder by `label` asc: id:2 ('A') before id:1 ('M'). If the
-        // leaf-bucket route were missing, leaves would stay in data-insertion order [M, A].
-        // Country groups stay in structural order (no own data on group rows → default
-        // comparator ties).
         await new GridRows(api, 'manual showRowGroup + own field: leaves reorder by label').check(`
             ROOT id:ROOT_NODE_ID manualDisplay:null
             ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" manualDisplay:"Italy"
@@ -2487,12 +2471,6 @@ describe('group order maintenance', () => {
     });
 
     test('uncoupled manual showRowGroup with custom comparator: groups reorder by the manual column comparator', async () => {
-        // A manual `showRowGroup: '<colId>'` column with its own `comparator` and `field` should
-        // sort the displayed groups by its own comparator under uncoupled mode. The
-        // autoGroupColumnDef.comparator below is unrelated to the manual column.
-        //
-        // Country lengths (BMW=3, Italy=5, France=6) differ from structural order so the
-        // assertion fails if groups stay structural or sort by some other comparator.
         const rowData = [
             { id: '1', country: 'Italy', athlete: 'A1', label: 'M' },
             { id: '2', country: 'Italy', athlete: 'A2', label: 'A' },
@@ -2519,8 +2497,6 @@ describe('group order maintenance', () => {
                     cellRendererParams: { suppressCount: true },
                 },
             ],
-            // Triggers uncoupled mode; comparator here belongs to the auto-display column and
-            // must not influence the manual column's sort.
             autoGroupColumnDef: { comparator: () => 0 },
             animateRows: false,
             groupDefaultExpanded: -1,

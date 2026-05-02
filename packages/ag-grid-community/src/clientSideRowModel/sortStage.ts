@@ -49,11 +49,15 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
         const rootNode = rowModel.rootNode!;
         const sortOptions = sortSvc!.getSortOptions();
         const hasSortOptions = sortOptions.length > 0;
+        const postSortFunc = this.gos.getCallback('postSortRows');
 
-        // Delta sort runs only on transaction refreshes — sort changes refresh without a
-        // transaction and rebuild the baseline via full sort. The `deltaSort` gate is opt-in
-        // for now; can be removed once delta sort is the default.
-        const deltaSortChangedRowNodes = hasSortOptions && this.gos.get('deltaSort') && changedRowNodes;
+        // Delta sort runs only on transaction refreshes — sort/grouping changes refresh
+        // without a transaction and rebuild the baseline via full sort. Disabled when
+        // `postSortRows` is configured: a callback that mutates `childrenAfterSort` into
+        // non-sort order corrupts `_doDeltaSort`'s merge baseline. Full sort is correct under
+        // any postSortRows pattern.
+        const deltaSortChangedRowNodes =
+            hasSortOptions && !postSortFunc && this.gos.get('deltaSort') && changedRowNodes;
 
         const prevSort = rootNode.childrenAfterSort;
         const aggFilter = rootNode.childrenAfterAggFilter;
@@ -81,6 +85,6 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
         // flags inside their callback. Don't flip — public contract.
         updateRowNodeAfterSort(rootNode);
 
-        this.gos.getCallback('postSortRows')?.({ nodes: newChildrenAfterSort });
+        postSortFunc?.({ nodes: newChildrenAfterSort });
     }
 }

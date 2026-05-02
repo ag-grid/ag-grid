@@ -1694,6 +1694,8 @@ export interface Props<TData> {
          */
     gridId?: string,
     /** When enabled, sorts only the rows added/updated by a transaction.
+         *
+         * Ignored when `postSortRows` is configured (falls back to full sort).
          * @default false
          */
     deltaSort?: boolean,
@@ -1939,6 +1941,8 @@ export interface Props<TData> {
          */
     fillOperation?: FillOperation<TData>,
     /** Callback to perform additional sorting after the grid has sorted the rows.
+         *
+         * When configured, `deltaSort` is ignored.
          */
     postSortRows?: PostSortRows<TData>,
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.

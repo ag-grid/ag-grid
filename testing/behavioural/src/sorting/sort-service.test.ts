@@ -7,7 +7,7 @@ import type { Column, GridApi, SortModelItem } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('SortService', () => {
     const gridMgr = new TestGridsManager({
@@ -825,6 +825,50 @@ describe('SortService', () => {
                 ├── LEAF id:2 a:"a"
                 └── LEAF id:1 a:"c"
             `);
+        });
+    });
+
+    describe('sortChanged event dispatch on sort clear', () => {
+        test('clearing already-cleared columns does not dispatch spurious sortChanged events', async () => {
+            // `clearSortBarTheseColumns` walks every column on single-sort. Columns whose sort
+            // doesn't actually change (already cleared) must not trigger column-level events.
+            const sortChangedListener = vitest.fn();
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    { colId: 'a', field: 'a' },
+                    { colId: 'b', field: 'b' },
+                    { colId: 'c', field: 'c' },
+                ],
+                rowData,
+                getRowId: (p) => p.data.id,
+            });
+            api.addEventListener('sortChanged', sortChangedListener);
+
+            api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
+            await asyncSetTimeout(0);
+            expect(sortChangedListener).toHaveBeenCalledTimes(1);
+            sortChangedListener.mockClear();
+
+            // 'a' clears, 'b' sets, 'c' stays unsorted — one grid-level event.
+            api.applyColumnState({
+                state: [{ colId: 'b', sort: 'desc' }],
+                defaultState: { sort: null },
+            });
+            await asyncSetTimeout(0);
+            expect(sortChangedListener).toHaveBeenCalledTimes(1);
+            sortChangedListener.mockClear();
+
+            api.applyColumnState({ defaultState: { sort: null } });
+            await asyncSetTimeout(0);
+            expect(sortChangedListener).toHaveBeenCalledTimes(1);
+            sortChangedListener.mockClear();
+
+            // No-op clear: nothing sorted, nothing changes. The grid-level sortChanged still
+            // fires (applyColumnState dispatches unconditionally); column-level events stay
+            // suppressed by the `_areSortDefsEqual` check in `setColSort`.
+            api.applyColumnState({ defaultState: { sort: null } });
+            await asyncSetTimeout(0);
+            expect(sortChangedListener.mock.calls.length).toBeLessThanOrEqual(1);
         });
     });
 

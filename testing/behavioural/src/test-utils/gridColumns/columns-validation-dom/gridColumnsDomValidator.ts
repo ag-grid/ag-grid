@@ -602,6 +602,9 @@ function buildDisplayedSortContext(api: GridApi): DisplayedSortContext {
  * INTENTIONAL DUPLICATION of `getDisplaySortForColumn` / `_isColumnsSortingCoupledToGroup`: the
  * validator is a black-box DOM check, so computing the expected answer from the production
  * helpers would let both agree on the same bug. Keep in sync when those helpers change.
+ *
+ * Approximation: string `showRowGroup` is resolved against `getRowGroupColumns()` only, not
+ * all defined columns; no current test config triggers a divergence.
  */
 function getDisplayedSort(col: Column, ctx: DisplayedSortContext): SortDirection | 'mixed' | null {
     const ownSort = col.getSort() ?? null;

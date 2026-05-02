@@ -51,6 +51,7 @@ export function _areEqual<T>(
  */
 export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: readonly T[] | null | undefined): T[] {
     // Equality scan inlined (not `_areEqual`) — hot path; called per group node per sort refresh.
+    // Keep the loop semantics in sync with `_areEqual`'s no-comparator branch above if either changes.
     if (!current) {
         return [];
     }
