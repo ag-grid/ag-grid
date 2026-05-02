@@ -720,6 +720,168 @@ describe('group order maintenance', () => {
         `);
     });
 
+    test('groupHideOpenParents + postSortRows reorder on reused-array path: first-child change is detected', async () => {
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'A1' },
+            { id: '2', country: 'Audi', athlete: 'A2' },
+            { id: '3', country: 'BMW', athlete: 'B1' },
+            { id: '4', country: 'BMW', athlete: 'B2' },
+        ];
+
+        let promoteId: string | null = null;
+        const api = gridsManager.createGrid('grid-ghop-reuse-firstchild', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country', cellRendererParams: { suppressCount: true } },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            groupHideOpenParents: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+            postSortRows: (params) => {
+                if (!promoteId) {
+                    return;
+                }
+                const idx = params.nodes.findIndex((n) => n.id === promoteId);
+                if (idx > 0) {
+                    const [promoted] = params.nodes.splice(idx, 1);
+                    params.nodes.unshift(promoted);
+                }
+            },
+        });
+
+        await new GridRows(api, 'groupHideOpenParents-reuse: initial structural').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-country:null
+            ├── LEAF id:1 ag-Grid-AutoColumn-country:"Audi" country:"Audi" athlete:"A1"
+            ├── LEAF id:2 country:"Audi" athlete:"A2"
+            ├── LEAF id:3 ag-Grid-AutoColumn-country:"BMW" country:"BMW" athlete:"B1"
+            └── LEAF id:4 country:"BMW" athlete:"B2"
+        `);
+
+        promoteId = '2';
+        api.refreshClientSideRowModel('sort');
+        await new GridRows(api, 'groupHideOpenParents-reuse: postSortRows promotes A2 inside Audi').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-country:null
+            ├── LEAF id:2 ag-Grid-AutoColumn-country:"Audi" country:"Audi" athlete:"A2"
+            ├── LEAF id:1 country:"Audi" athlete:"A1"
+            ├── LEAF id:3 ag-Grid-AutoColumn-country:"BMW" country:"BMW" athlete:"B1"
+            └── LEAF id:4 country:"BMW" athlete:"B2"
+        `);
+
+        api.refreshClientSideRowModel('sort');
+        await new GridRows(api, 'groupHideOpenParents-reuse: idempotent re-refresh').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-country:null
+            ├── LEAF id:2 ag-Grid-AutoColumn-country:"Audi" country:"Audi" athlete:"A2"
+            ├── LEAF id:1 country:"Audi" athlete:"A1"
+            ├── LEAF id:3 ag-Grid-AutoColumn-country:"BMW" country:"BMW" athlete:"B1"
+            └── LEAF id:4 country:"BMW" athlete:"B2"
+        `);
+
+        promoteId = '4';
+        api.refreshClientSideRowModel('sort');
+        await new GridRows(api, 'groupHideOpenParents-reuse: switch promote to B2 inside BMW').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-country:null
+            ├── LEAF id:1 ag-Grid-AutoColumn-country:"Audi" country:"Audi" athlete:"A1"
+            ├── LEAF id:2 country:"Audi" athlete:"A2"
+            ├── LEAF id:4 ag-Grid-AutoColumn-country:"BMW" country:"BMW" athlete:"B2"
+            └── LEAF id:3 country:"BMW" athlete:"B1"
+        `);
+
+        promoteId = null;
+        api.refreshClientSideRowModel('sort');
+        await new GridRows(api, 'groupHideOpenParents-reuse: clear promotion — structural order restored').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-country:null
+            ├── LEAF id:1 ag-Grid-AutoColumn-country:"Audi" country:"Audi" athlete:"A1"
+            ├── LEAF id:2 country:"Audi" athlete:"A2"
+            ├── LEAF id:3 ag-Grid-AutoColumn-country:"BMW" country:"BMW" athlete:"B1"
+            └── LEAF id:4 country:"BMW" athlete:"B2"
+        `);
+    });
+
+    test('runtime groupMaintainOrder toggle: option not in refreshProps, takes effect on next natural refresh', async () => {
+        const rowData = [
+            { id: '1', country: 'Italy', athlete: 'Z' },
+            { id: '2', country: 'France', athlete: 'A' },
+            { id: '3', country: 'Audi', athlete: 'M' },
+        ];
+
+        const api = gridsManager.createGrid('grid-runtime-toggle', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true, sortable: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: false,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'country', sort: 'desc' }] });
+        await new GridRows(api, 'toggle: country desc with maintainOrder=false').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:1 country:"Italy" athlete:"Z"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:2 country:"France" athlete:"A"
+            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            · └── LEAF id:3 country:"Audi" athlete:"M"
+        `);
+
+        api.setGridOption('groupMaintainOrder', true);
+        await new GridRows(api, 'toggle: ON without explicit refresh — previous sort persists').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:1 country:"Italy" athlete:"Z"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:2 country:"France" athlete:"A"
+            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            · └── LEAF id:3 country:"Audi" athlete:"M"
+        `);
+
+        api.refreshClientSideRowModel('sort');
+        await new GridRows(api, 'toggle: explicit refresh applies maintainOrder=true').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:1 country:"Italy" athlete:"Z"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:2 country:"France" athlete:"A"
+            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            · └── LEAF id:3 country:"Audi" athlete:"M"
+        `);
+
+        api.applyColumnState({ state: [{ colId: 'country', sort: null }] });
+        await new GridRows(api, 'toggle: clear country sort with maintainOrder=true').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:1 country:"Italy" athlete:"Z"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:2 country:"France" athlete:"A"
+            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            · └── LEAF id:3 country:"Audi" athlete:"M"
+        `);
+
+        api.setGridOption('groupMaintainOrder', false);
+        await new GridRows(api, 'toggle: OFF without explicit refresh — previous result persists').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:1 country:"Italy" athlete:"Z"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:2 country:"France" athlete:"A"
+            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            · └── LEAF id:3 country:"Audi" athlete:"M"
+        `);
+
+        api.applyColumnState({ state: [{ colId: 'country', sort: 'desc' }] });
+        await new GridRows(api, 'toggle: natural sort refresh applies maintainOrder=false').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:1 country:"Italy" athlete:"Z"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:2 country:"France" athlete:"A"
+            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            · └── LEAF id:3 country:"Audi" athlete:"M"
+        `);
+    });
+
     test('pivot mode: leaf-group children are not reordered by an active leaf-column sort', async () => {
         // In pivot mode the leaf groups' children aren't part of the displayed output, so a
         // leaf-column sort must not reorder them. Defended by two layers: GroupSortStage's

@@ -21,6 +21,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
     beanName = 'groupSortStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'sort';
+    // `groupMaintainOrder` is intentionally NOT here — see its JSDoc on `gridOptions.ts`.
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'groupDisplayType', 'accentedSort'];
 
     public execute(changedPath: ChangedPath | undefined, changedRowNodes: _ChangedRowNodes | undefined): void {
@@ -72,6 +73,8 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             }
 
             const prevSort = rowNode.childrenAfterSort;
+            // Snapshot by value: on the reused-array path `postSortRows` may mutate `prevSort` in
+            // place, so the comparison below would otherwise miss callback-only reorders.
             const prevFirstChild = prevSort?.[0];
 
             let newChildrenAfterSort: RowNode[];
