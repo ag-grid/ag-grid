@@ -13,7 +13,6 @@ import {
     BeanStub,
     _doDeltaSort,
     _forEachChangedGroupDepthFirst,
-    _isColumnsSortingCoupledToGroup,
     _reuseArrayIfEqual,
     _updateRowNodeAfterSort,
 } from 'ag-grid-community';
@@ -51,7 +50,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         const groupColsByLevel = rowGroupColsSvc?.columns;
         const levelSortOptions: (SortOption[] | undefined)[] | null =
             hasSortOptions && groupColsByLevel?.length && !groupStage?.treeData && gos.get('groupMaintainOrder')
-                ? buildLevelSortOptions(sortOptions, groupColsByLevel, _isColumnsSortingCoupledToGroup(gos))
+                ? buildLevelSortOptions(sortOptions, groupColsByLevel)
                 : null;
         // Per-level isolation off + sort active → every level uses full sortOptions.
         const fallbackSortOptions = !levelSortOptions && hasSortOptions ? sortOptions : undefined;
@@ -129,29 +128,20 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
  * entries: indices `[0, numLevels)` hold the options targeting each group level, and index
  * `numLevels` holds the options that apply to data rows inside leaf groups.
  *
- * Targeting rules:
- * - Source rowGroup column -> its own level (by reference). Per-level isolation: never reaches
- *   the leaf bucket — leaf siblings in one leaf group share the same group key.
- * - Auto/manual display column WITHOUT own `field`/`valueGetter` -> the matched group level(s).
- *   These columns have no leaf data, so sorting them MUST mean "sort the group(s) they display".
- * - Auto/manual display column WITH own `field`/`valueGetter`:
- *     - Coupled mode (default): routes to BOTH the matched group level(s) AND the leaf bucket.
- *       In coupled mode `setSortForColumn` already replicates the sort onto each source rowGroup
- *       column so the source column drives the group ordering by reference; group-row values for
- *       the display column resolve to `undefined` under `primaryColumnsSortGroups`, making the
- *       cascade harmless.
- *     - Uncoupled mode (custom `autoGroupColumnDef.comparator`): routes to the leaf bucket ONLY.
- *       The user's intent is to sort the column's own data; cascading would let the comparator
- *       reorder groups by group keys (a different value domain), which contradicts
- *       `groupMaintainOrder`'s "group order remains structural" contract for non-group sorts. A
- *       column with own data is treated as a non-group sort under uncoupled mode, mirroring
- *       `getDisplaySortForColumn`'s `columnHasUniqueData` semantics.
- * - Anything else (regular leaf columns) -> leaf bucket only.
+ * `showRowGroup` columns are GROUP columns: sorting one sorts the group level(s) it displays.
+ * Own data (`field`/`valueGetter`) adds the leaf-bucket route in addition to the group route.
+ *
+ * - Source rowGroup column -> its own level (by reference). Excluded from the leaf bucket —
+ *   siblings inside one leaf group share the group key.
+ * - `showRowGroup === true` (singleColumn shared display) -> every group level, plus the leaf
+ *   bucket if the column has own data.
+ * - `showRowGroup === '<colId>'` -> the matched group level, plus the leaf bucket if the column
+ *   has own data.
+ * - Anything else -> leaf bucket only.
  */
 const buildLevelSortOptions = (
     sortOptions: SortOption[],
-    groupColsByLevel: AgColumn[],
-    isCoupled: boolean
+    groupColsByLevel: AgColumn[]
 ): (SortOption[] | undefined)[] => {
     const sortLen = sortOptions.length;
     const numLevels = groupColsByLevel.length;
@@ -187,16 +177,11 @@ const buildLevelSortOptions = (
         const colDef = column.colDef;
         const showRowGroup = colDef.showRowGroup;
         const hasUniqueData = colDef.field != null || colDef.valueGetter != null;
-        // Uncoupled + own data: sort is "by the display column's own values" — route to leaves
-        // only and skip the group-level cascade so groups keep structural order.
-        const routeToGroupLevels = isCoupled || !hasUniqueData;
 
         if (showRowGroup === true) {
             // Shared singleColumn display — cascade to every group level.
-            if (routeToGroupLevels) {
-                for (let j = 0; j < numLevels; ++j) {
-                    (result[j] ??= []).push(sortOption);
-                }
+            for (let j = 0; j < numLevels; ++j) {
+                (result[j] ??= []).push(sortOption);
             }
             if (hasUniqueData) {
                 (result[leafIndex] ??= []).push(sortOption);
@@ -207,9 +192,7 @@ const buildLevelSortOptions = (
         if (typeof showRowGroup === 'string') {
             const displayLevel = levelByKey.get(showRowGroup);
             if (displayLevel !== undefined) {
-                if (routeToGroupLevels) {
-                    (result[displayLevel] ??= []).push(sortOption);
-                }
+                (result[displayLevel] ??= []).push(sortOption);
                 if (hasUniqueData) {
                     (result[leafIndex] ??= []).push(sortOption);
                 }

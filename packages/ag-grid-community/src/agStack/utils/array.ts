@@ -25,58 +25,61 @@ export function _areEqual<T>(
     if (len !== b.length) {
         return false; // Different lengths, cannot be equal
     }
-    for (let i = 0; i < len; i++) {
-        // We don't need to invoke the comparator if the values are the same instance
-        if (a[i] !== b[i] && !comparator?.(a[i], b[i])) {
-            return false; // Instances are different and not equal according to the comparator
+    if (comparator) {
+        for (let i = 0; i < len; ++i) {
+            if (a[i] !== b[i] && !comparator(a[i], b[i])) {
+                return false; // Elements are not strictly equal and comparator returns false
+            }
+        }
+    } else {
+        for (let i = 0; i < len; ++i) {
+            if (a[i] !== b[i]) {
+                return false; // Elements are not strictly equal
+            }
         }
     }
-    return true; // Arrays are equal
+    return true; // All elements are equal
 }
 
 /**
- * Returns `prev` when element-wise equal to `current`; otherwise a fresh copy of `current` (or
- * `[]` when nullish). When `prev === current`, returns a fresh slice — callers must not assume
- * fresh-array identity per call, but mutations on the returned array WILL persist into the next
+ * Returns `prev` when its contents equal `current`; otherwise `current.slice()` (or `[]` if
+ * nullish). The same-reference case (`prev === current`) returns a fresh slice so callers never
+ * receive the readonly `current` aliased back. Mutating a returned `prev` persists into the next
  * call's `prev`.
  *
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: readonly T[] | null | undefined): T[] {
+    // Equality scan inlined (NOT `_areEqual`) — hot path, runs once per group node per sort refresh.
     if (!current) {
-        return [];
-    }
-    // Equality check is inlined for hot-path perf — used in sort stages which call this once per
-    // group node per refresh; `_areEqual`'s extra function call and guards add up.
-    if (!prev || prev === current) {
-        return current.slice();
+        return []; // No current, return a new empty array
     }
     const len = current.length;
-    if (prev.length !== len) {
-        return current.slice();
-    }
-    for (let i = 0; i < len; ++i) {
-        if (prev[i] !== current[i]) {
-            return current.slice();
+    if (prev && prev !== current && prev.length === len) {
+        for (let i = 0; i < len; ++i) {
+            if (prev[i] !== current[i]) {
+                return current.slice(); // Contents differ, return new copy
+            }
         }
+        return prev; // Contents equal, reuse previous reference
     }
-    return prev;
+    return current.slice(); // Returns new copy
 }
 
 /**
- * Utility that uses the fastest looping approach to apply a callback to each element of the array
- * https://jsperf.app/for-for-of-for-in-foreach-comparison
- * If callback returns true, exit early.
+ * Apply `callback` to each element; returns `true` if a callback returned `true` (early exit),
+ * otherwise `undefined`. Uses an indexed loop, the fastest of the four common forms in V8 —
+ * https://jsperf.app/for-for-of-for-in-foreach-comparison.
  */
-export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boolean | void) {
-    if (!array) {
-        return;
-    }
-    for (const value of array) {
-        if (callback(value)) {
-            return true;
+export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boolean | void): boolean {
+    if (array) {
+        for (let i = 0, len = array.length; i < len; ++i) {
+            if (callback(array[i])) {
+                return true;
+            }
         }
     }
+    return false;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

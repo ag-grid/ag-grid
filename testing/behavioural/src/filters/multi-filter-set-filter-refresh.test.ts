@@ -11,7 +11,7 @@ import {
 import type { MultiFilter, SetFilter } from 'ag-grid-enterprise';
 import { ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
 
 interface Row {
     name: string;
@@ -57,11 +57,14 @@ describe('Multi Filter + Set Filter list refresh on floating filter change', () 
             agTestIdFor.textFilterInstanceInput({ source: 'floating-filter', colId: 'name', index: 0 })
         );
 
+        // Register the listener before dispatching so the post-debounce event isn't missed.
+        const filterChanged = waitForEvent('filterChanged', api);
         input.value = text;
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
 
-        await asyncSetTimeout(5);
+        await asyncSetTimeout(1);
+        return filterChanged;
     }
 
     /**

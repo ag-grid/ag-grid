@@ -595,26 +595,13 @@ function buildDisplayedSortContext(api: GridApi): DisplayedSortContext {
 }
 
 /**
- * Effective displayed sort indicator for a column. Mirrors `SortService.getDisplaySortForColumn`
- * using public API only:
- * - If the column has its own sort, that wins.
- * - Otherwise, for auto-display columns (`colDef.showRowGroup` set), the indicator mirrors the
- *   linked source rowGroup column's sort (single linked source) or returns `'mixed'` when linked
- *   sources disagree (multi-source display column with diverging sorts).
- * - When sort coupling is disabled (custom `autoGroupColumnDef.comparator` or `treeData`),
- *   the auto-display column's indicator does NOT track linked sources — it shows only its own
- *   sort, so `null` here means no displayed sort. This mirrors `_isColumnsSortingCoupledToGroup`.
- * - When the auto-display column has its own data (`field` or `valueGetter`) it participates in
- *   the equality check alongside linked sources — an own-null vs linked-asc combination renders
- *   as `'mixed'`, matching `getDisplaySortForColumn`'s `columnHasUniqueData` branch.
+ * Effective displayed sort direction for a column, or `null` when none. Mirrors
+ * `SortService.getDisplaySortForColumn` using public API only, and compares direction only —
+ * that's what the validator asserts against `aria-sort` in the DOM.
  *
- * Returns `null` when no sort is displayed.
- *
- * NOTE: this duplication of `SortService.getDisplaySortForColumn` / `_isColumnsSortingCoupledToGroup`
- * logic is INTENTIONAL. The validator is a black-box check on the rendered DOM — it must compute
- * the "what should be displayed" answer independently from the production code, otherwise both the
- * validator and the implementation would silently agree on the same bug. Keep this in sync with
- * the production helpers when their displayed-sort rules change.
+ * INTENTIONAL DUPLICATION of `getDisplaySortForColumn` / `_isColumnsSortingCoupledToGroup`: the
+ * validator is a black-box DOM check, so computing the expected answer from the production
+ * helpers would let both agree on the same bug. Keep in sync when those helpers change.
  */
 function getDisplayedSort(col: Column, ctx: DisplayedSortContext): SortDirection | 'mixed' | null {
     const ownSort = col.getSort() ?? null;
@@ -628,37 +615,25 @@ function getDisplayedSort(col: Column, ctx: DisplayedSortContext): SortDirection
         return null;
     }
 
-    // Coupling OFF → auto-display column shows only its own sort (null at this point).
+    // Coupling OFF → display column shows only its own sort (null at this point).
     if (!ctx.isSortingCoupled || !ctx.rowGroupCols) {
         return null;
     }
 
-    // `columnHasUniqueData` mirror: when the auto-display column has its own field/valueGetter
-    // it participates in the mix-check alongside linked sources. ownSort is null at this point;
-    // any non-null linked source therefore renders as 'mixed'.
-    const columnHasUniqueData = colDef.field != null || colDef.valueGetter != null;
-
-    // String form: at most one matching rowGroup column — direct find avoids allocating a
-    // filtered array on every column validation pass.
-    if (typeof showRowGroup === 'string') {
-        const match = ctx.rowGroupCols.find((c) => c.getColId() === showRowGroup);
-        if (!match) {
-            return null;
-        }
-        const matchSort = match.getSort() ?? null;
-        return columnHasUniqueData && matchSort !== null ? 'mixed' : matchSort;
-    }
-
-    // `showRowGroup === true` (singleColumn cascade): walk every rowGroup column and check that
-    // their sorts agree. Initialise `firstSort` to `null` when the display column has its own
-    // data (it participates in the mix-check with its own — necessarily null at this point —
-    // sort), otherwise leave undefined so the first linked source seeds the comparison.
-    if (ctx.rowGroupCols.length === 0) {
+    // `=== true` cascades to all rowGroup columns; string matches by colId.
+    const linked =
+        showRowGroup === true ? ctx.rowGroupCols : ctx.rowGroupCols.filter((c) => c.getColId() === showRowGroup);
+    if (linked.length === 0) {
         return null;
     }
+
+    // When the display column has own data (field/valueGetter), its own (null) sort joins the
+    // mix-check — any non-null linked source then renders as 'mixed'. See `columnHasUniqueData`
+    // in `getDisplaySortForColumn`.
+    const columnHasUniqueData = colDef.field != null || colDef.valueGetter != null;
     let firstSort: SortDirection | null | undefined = columnHasUniqueData ? null : undefined;
-    for (const linked of ctx.rowGroupCols) {
-        const s = linked.getSort() ?? null;
+    for (const c of linked) {
+        const s = c.getSort() ?? null;
         if (firstSort === undefined) {
             firstSort = s;
         } else if (firstSort !== s) {
