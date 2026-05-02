@@ -3,9 +3,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
-import type { PostSortRowsParams } from '../interfaces/iCallbackParams';
 import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeSortStage } from '../interfaces/iRowNodeStage';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ChangedRowNodes } from './changedRowNodes';
@@ -49,17 +47,22 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
     public execute(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void {
         const rootNode = this.beans.rowModel.rootNode!;
         const sortOptions = this.beans.sortSvc!.getSortOptions();
+        const hasSortOptions = sortOptions.length > 0;
 
-        const useDeltaSort = sortOptions.length > 0 && !!changedRowNodes && this.gos.get('deltaSort');
+        // Delta sort runs only on transaction refreshes — sort changes refresh without a
+        // transaction and rebuild the baseline via full sort. Falsy when delta sort doesn't
+        // apply, otherwise the `changedRowNodes` ref. The `deltaSort` gate is opt-in for now;
+        // it can be removed once delta sort is the default.
+        const deltaSortChangedRowNodes = hasSortOptions && this.gos.get('deltaSort') && changedRowNodes;
 
         const prevSort = rootNode.childrenAfterSort;
         let newChildrenAfterSort: RowNode[];
-        if (sortOptions.length > 0) {
-            if (useDeltaSort && changedRowNodes) {
+        if (hasSortOptions) {
+            if (deltaSortChangedRowNodes) {
                 newChildrenAfterSort = doDeltaSort(
                     this.beans.rowNodeSorter!,
                     rootNode,
-                    changedRowNodes,
+                    deltaSortChangedRowNodes,
                     changedPath,
                     sortOptions
                 );
@@ -82,10 +85,6 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
         // postSortRows and never after. Users may rely on this, we can't change the behaviour.
         updateRowNodeAfterSort(rootNode);
 
-        const postSortFunc = this.gos.getCallback('postSortRows');
-        if (postSortFunc) {
-            const params: WithoutGridCommon<PostSortRowsParams> = { nodes: newChildrenAfterSort };
-            postSortFunc(params);
-        }
+        this.gos.getCallback('postSortRows')?.({ nodes: newChildrenAfterSort });
     }
 }

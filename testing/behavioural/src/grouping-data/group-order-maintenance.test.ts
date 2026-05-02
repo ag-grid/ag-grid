@@ -189,7 +189,15 @@ describe('group order maintenance', () => {
         expect(groupOrderAfterSort).toEqual(['Italy', 'France', 'Spain']);
     });
 
-    test('auto-display column with own field reorders group rows under custom comparator', async () => {
+    test('uncoupled auto-display column with own field: leaves reorder, groups stay structural', async () => {
+        // Reviewer P1: under UNCOUPLED mode (custom autoGroupColumnDef.comparator), an auto-display
+        // column with its own `field`/`valueGetter` represents the user's intent to sort the
+        // column's own data. Routing the sort to source group levels would let the comparator
+        // reorder groups by group keys (a different value domain), violating
+        // `groupMaintainOrder`'s "group order remains structural" contract for non-group sorts.
+        // The fix in `buildLevelSortOptions` skips the group-level cascade when uncoupled AND the
+        // display column has unique data, mirroring `getDisplaySortForColumn`'s
+        // `columnHasUniqueData` semantics.
         const rowData = [
             { id: '1', country: 'Audi', athlete: 'A1', displayLabel: 'long-label-Z' },
             { id: '2', country: 'Audi', athlete: 'A2', displayLabel: 'short-A' },
@@ -204,9 +212,7 @@ describe('group order maintenance', () => {
                 showRowGroup: true,
                 field: 'displayLabel',
                 sortable: true,
-                // Custom comparator on autoGroupColumnDef → uncoupled mode. Compares by length;
-                // resolves the displayed value: leaves use `data.displayLabel`, group rows use
-                // their key (the group identifier).
+                // Custom comparator on autoGroupColumnDef → uncoupled mode. Compares by length.
                 comparator: (a: unknown, b: unknown) => {
                     const aLen = a == null ? 0 : String(a).length;
                     const bLen = b == null ? 0 : String(b).length;
@@ -222,16 +228,17 @@ describe('group order maintenance', () => {
 
         api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
 
-        // Country groups reorder by the comparator running on group keys (len asc): BMW, Audi,
-        // Tesla. Leaf rows inside Audi reorder by displayLabel length asc (short-A before long-).
-        // If the cascade had been dropped (pre-fix), countries would have stayed in data order.
-        await new GridRows(api, 'display-regression: groups + leaves both reorder under custom comparator').check(`
+        // Country groups stay in structural order (Audi, BMW, Tesla) — uncoupled + own data
+        // means the sort is routed to leaves only. Leaf rows inside Audi reorder by displayLabel
+        // length asc (short-A before long-label-Z). If the cascade had fired (pre-fix), countries
+        // would have been reordered by length to BMW, Audi, Tesla.
+        await new GridRows(api, 'uncoupled auto-display: groups structural, leaves reorder').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
-            │ └── LEAF id:3 ag-Grid-AutoColumn:"m-BMW" country:"BMW" athlete:"B1"
             ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
             │ ├── LEAF id:2 ag-Grid-AutoColumn:"short-A" country:"Audi" athlete:"A2"
             │ └── LEAF id:1 ag-Grid-AutoColumn:"long-label-Z" country:"Audi" athlete:"A1"
+            ├─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
+            │ └── LEAF id:3 ag-Grid-AutoColumn:"m-BMW" country:"BMW" athlete:"B1"
             └─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
             · └── LEAF id:4 ag-Grid-AutoColumn:"mid-T" country:"Tesla" athlete:"T1"
         `);
@@ -1569,19 +1576,14 @@ describe('group order maintenance', () => {
             { id: '4', country: 'France', year: 2019, athlete: 'Bob' },
         ];
 
-        const api = gridsManager.createGrid('grid-delta-sort', {
+        const api = createDeltaSortGrid('grid-delta-sort', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
                 { field: 'year', rowGroup: true, hide: true },
                 { field: 'athlete' },
             ],
             autoGroupColumnDef: { headerName: 'Group' },
-            animateRows: false,
-            groupDefaultExpanded: -1,
-            groupMaintainOrder: true,
-            deltaSort: true,
             rowData,
-            getRowId: (p) => p.data.id,
         });
 
         api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
@@ -1651,20 +1653,15 @@ describe('group order maintenance', () => {
             { id: '4', country: 'France', athlete: 'Zed' },
         ];
 
-        const api = gridsManager.createGrid('grid-delta-postsort', {
+        const api = createDeltaSortGrid('grid-delta-postsort', {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: { headerName: 'Country' },
-            animateRows: false,
-            groupDefaultExpanded: -1,
-            groupMaintainOrder: true,
-            deltaSort: true,
             rowData,
-            getRowId: (p) => p.data.id,
-            postSortRows: (params) => {
+            postSortRows: (params: any) => {
                 // Idempotent group-level pin: keep group with key 'Italy' first if present.
                 // Per-leaf-group postSortRows calls also fire; for those, no node has key 'Italy'
                 // (leaves have key=null), so this is a no-op there.
-                const idx = params.nodes.findIndex((n) => n.key === 'Italy');
+                const idx = params.nodes.findIndex((n: any) => n.key === 'Italy');
                 if (idx > 0) {
                     const [pinned] = params.nodes.splice(idx, 1);
                     params.nodes.unshift(pinned);
@@ -1717,20 +1714,18 @@ describe('group order maintenance', () => {
 
     test('display column with own data (uncoupled): sort routes to leaf-row data only', async () => {
         // Reviewer P2 [DA]: when the auto-display column has its own field/valueGetter and the
-        // user sorts that column, `buildLevelSortOptions` routes the option to the leaf-row bucket
-        // (not cascaded to group levels). This matches `getDisplaySortForColumn`'s
+        // user sorts that column, `buildLevelSortOptions` routes the option to the leaf-row
+        // bucket only under UNCOUPLED mode. This matches `getDisplaySortForColumn`'s
         // `columnHasUniqueData` semantics: the sort applies to the column's own data on leaf rows.
-        // Group rows return undefined for their own sort path under coupled mode and are not
-        // tie-broken by the display value here either, so group order stays structural.
         //
-        // This test runs with autoGroupColumnDef.comparator set, which makes
-        // _isColumnsSortingCoupledToGroup return false (UNCOUPLED). In uncoupled mode the sort
-        // does NOT propagate to source rowGroup columns, so the routing-only-to-leaf is the
-        // correct interpretation.
+        // Country values chosen so that structural order (Tesla, Audi) DIFFERS from
+        // alphabetical-by-key order (Audi, Tesla) — locks in that the cascade is suppressed.
+        // Without the fix, the autoGroupColumnDef.comparator would run on group keys and
+        // reorder groups to (Audi, Tesla).
         const rowData = [
-            { id: '1', country: 'Audi', athlete: 'A1', displayLabel: 'Z-display' },
-            { id: '2', country: 'Audi', athlete: 'A2', displayLabel: 'A-display' },
-            { id: '3', country: 'BMW', athlete: 'B1', displayLabel: 'M-display' },
+            { id: '1', country: 'Tesla', athlete: 'T1', displayLabel: 'Z-display' },
+            { id: '2', country: 'Tesla', athlete: 'T2', displayLabel: 'A-display' },
+            { id: '3', country: 'Audi', athlete: 'A1', displayLabel: 'M-display' },
         ];
 
         const api = gridsManager.createGrid('grid-display-uncoupled', {
@@ -1741,11 +1736,9 @@ describe('group order maintenance', () => {
                 field: 'displayLabel',
                 sortable: true,
                 // Custom comparator on autoGroupColumnDef triggers UNCOUPLED mode in
-                // _isColumnsSortingCoupledToGroup. The comparator runs for every sort
-                // comparison (group rows AND leaf rows) since the colDef.comparator wins over
-                // the default in `getComparatorFromColDef`. Group rows resolve `displayLabel`
-                // to undefined (no `data` on group rows) so they tie 0; leaf rows compare their
-                // string displayLabel values.
+                // `_isColumnsSortingCoupledToGroup`. Pre-fix, this comparator would also run on
+                // group keys via the cascade and reorder Tesla/Audi alphabetically. The fix
+                // suppresses the cascade for own-data columns under uncoupled mode.
                 comparator: (a: unknown, b: unknown) => {
                     const aStr = a == null ? '' : String(a);
                     const bStr = b == null ? '' : String(b);
@@ -1761,16 +1754,15 @@ describe('group order maintenance', () => {
 
         api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }] });
 
-        // Group order stays structural (Audi, BMW); leaf rows inside Audi reorder by displayLabel
-        // asc. If the sort had cascaded to group levels, Audi/BMW would also be subject to the
-        // displayLabel comparison, but that route is excluded here.
+        // Group order stays structural (Tesla, Audi); leaf rows inside Tesla reorder by
+        // displayLabel asc. If the cascade had fired, groups would have been (Audi, Tesla).
         await new GridRows(api, 'display-uncoupled: leaf rows reorder, group order structural').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
-            │ ├── LEAF id:2 ag-Grid-AutoColumn:"A-display" country:"Audi" athlete:"A2"
-            │ └── LEAF id:1 ag-Grid-AutoColumn:"Z-display" country:"Audi" athlete:"A1"
-            └─┬ LEAF_GROUP id:row-group-country-BMW ag-Grid-AutoColumn:"BMW"
-            · └── LEAF id:3 ag-Grid-AutoColumn:"M-display" country:"BMW" athlete:"B1"
+            ├─┬ LEAF_GROUP id:row-group-country-Tesla ag-Grid-AutoColumn:"Tesla"
+            │ ├── LEAF id:2 ag-Grid-AutoColumn:"A-display" country:"Tesla" athlete:"T2"
+            │ └── LEAF id:1 ag-Grid-AutoColumn:"Z-display" country:"Tesla" athlete:"T1"
+            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            · └── LEAF id:3 ag-Grid-AutoColumn:"M-display" country:"Audi" athlete:"A1"
         `);
     });
 
@@ -1854,15 +1846,10 @@ describe('group order maintenance', () => {
             { id: '5', country: 'Spain', athlete: 'Carlos' },
         ];
 
-        const api = gridsManager.createGrid('grid-delta-filter-cycle', {
+        const api = createDeltaSortGrid('grid-delta-filter-cycle', {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: { headerName: 'Country' },
-            animateRows: false,
-            groupDefaultExpanded: -1,
-            groupMaintainOrder: true,
-            deltaSort: true,
             rowData,
-            getRowId: (p) => p.data.id,
         });
 
         api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
@@ -1941,16 +1928,26 @@ describe('group order maintenance', () => {
             · └── LEAF id:5 country:"Italy" athlete:"Zed"
         `;
 
-    const createDeltaSortItalyGrid = (gridName: string) =>
+    // Generic helper for delta-sort + groupMaintainOrder grids — each test supplies its own
+    // columnDefs / rowData / extras. Shared options (animateRows, groupDefaultExpanded,
+    // groupMaintainOrder, deltaSort, getRowId) are the load-bearing setup for every delta-sort
+    // scenario in this file.
+    const createDeltaSortGrid = (gridName: string, overrides: Record<string, any>) =>
         gridsManager.createGrid(gridName, {
-            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
-            autoGroupColumnDef: { headerName: 'Country' },
             animateRows: false,
             groupDefaultExpanded: -1,
             groupMaintainOrder: true,
             deltaSort: true,
-            rowData: ITALY_SIX_ROWS.map((r) => ({ ...r })),
             getRowId: (p: any) => p.data.id,
+            ...overrides,
+        });
+
+    // Italy/athlete shorthand — used by the 6-row ITALY_SIX_ROWS tests.
+    const createDeltaSortItalyGrid = (gridName: string) =>
+        createDeltaSortGrid(gridName, {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            rowData: ITALY_SIX_ROWS.map((r) => ({ ...r })),
         });
 
     test('deltaSort + filter cycle on a 6-row leaf group: re-entered rows are correctly placed', async () => {
@@ -2081,6 +2078,70 @@ describe('group order maintenance', () => {
         // Country groups stay in structural order (no own data on group rows → default
         // comparator ties).
         await new GridRows(api, 'manual showRowGroup + own field: leaves reorder by label').check(`
+            ROOT id:ROOT_NODE_ID manualDisplay:null
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" manualDisplay:"Italy"
+            │ ├── LEAF id:2 country:"Italy" athlete:"A2" manualDisplay:"A"
+            │ └── LEAF id:1 country:"Italy" athlete:"A1" manualDisplay:"M"
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" manualDisplay:"France"
+            · └── LEAF id:3 country:"France" athlete:"B1" manualDisplay:"Z"
+        `);
+    });
+
+    test('uncoupled manual showRowGroup + own field: leaves reorder, groups stay structural', async () => {
+        // Reviewer P1: a manual `showRowGroup: '<colId>'` column with its own `field` and a
+        // custom comparator on `autoGroupColumnDef` (uncoupled mode). The sort represents the
+        // user's intent to sort the column's own data; routing it to the matched group level
+        // would let the autoGroupColumnDef.comparator reorder groups by the group key (a
+        // different value domain). The fix in `buildLevelSortOptions` skips the group-level
+        // route when uncoupled AND the manual display column has unique data.
+        //
+        // Country values chosen so that comparator-on-keys order (Italy=5, France=6) DIFFERS
+        // from structural order (Italy, France) — locks in that the cascade is suppressed.
+        const rowData = [
+            { id: '1', country: 'Italy', athlete: 'A1', label: 'M' },
+            { id: '2', country: 'Italy', athlete: 'A2', label: 'A' },
+            { id: '3', country: 'France', athlete: 'B1', label: 'Z' },
+        ];
+
+        const api = gridsManager.createGrid('grid-manual-showrowgroup-own-data-uncoupled', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete' },
+                {
+                    colId: 'manualDisplay',
+                    headerName: 'Manual',
+                    showRowGroup: 'country',
+                    field: 'label',
+                    sortable: true,
+                    cellRenderer: 'agGroupCellRenderer',
+                    cellRendererParams: { suppressCount: true },
+                },
+            ],
+            autoGroupColumnDef: {
+                // Triggers UNCOUPLED mode in `_isColumnsSortingCoupledToGroup`. Length-based —
+                // would reorder groups to [Italy(5), France(6)] if the cascade fired on the
+                // manual column under uncoupled mode.
+                comparator: (a: unknown, b: unknown) => {
+                    const aLen = a == null ? 0 : String(a).length;
+                    const bLen = b == null ? 0 : String(b).length;
+                    return aLen - bLen;
+                },
+            },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'manualDisplay', sort: 'asc' }] });
+
+        // Groups stay in structural order (Italy, France) — the autoGroupColumnDef.comparator
+        // does NOT run on group keys because the sort is routed to leaves only. Leaves inside
+        // Italy reorder by `label` asc using the default comparator on the manual column ('A'
+        // < 'M'). If the cascade had fired, groups would have been [Italy(5), France(6)] by
+        // length-asc on country keys.
+        await new GridRows(api, 'uncoupled manual showRowGroup + own field: groups structural').check(`
             ROOT id:ROOT_NODE_ID manualDisplay:null
             ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" manualDisplay:"Italy"
             │ ├── LEAF id:2 country:"Italy" athlete:"A2" manualDisplay:"A"
