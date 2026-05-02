@@ -31,11 +31,11 @@ export function _areEqual<T>(
                 return false; // Elements are not strictly equal and comparator returns false
             }
         }
-    } else {
-        for (let i = 0; i < len; ++i) {
-            if (a[i] !== b[i]) {
-                return false; // Elements are not strictly equal
-            }
+        return true; // All elements are equal
+    }
+    for (let i = 0; i < len; ++i) {
+        if (a[i] !== b[i]) {
+            return false; // Elements are not strictly equal
         }
     }
     return true; // All elements are equal
