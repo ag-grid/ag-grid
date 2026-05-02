@@ -1,0 +1,434 @@
+import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+
+import { GridRows, TestGridsManager, applyTransactionChecked } from '../../test-utils';
+
+describe('group order maintenance / delta sort', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [QuickFilterModule, ClientSideRowModelModule, RowGroupingModule],
+    });
+
+    afterEach(() => gridsManager.reset());
+
+    // 6-row leaf group used by the deltaSort tests below. ≥5 rows is required to exercise the
+    // _doDeltaSort merge path (it falls back to full sort for unsortedRowsLen ≤ MIN_DELTA_SORT_ROWS=4).
+    const ITALY_SIX_ROWS = [
+        { id: '1', country: 'Italy', athlete: 'Mark' },
+        { id: '2', country: 'Italy', athlete: 'Anna' },
+        { id: '3', country: 'Italy', athlete: 'Carl' },
+        { id: '4', country: 'Italy', athlete: 'Bob' },
+        { id: '5', country: 'Italy', athlete: 'Zed' },
+        { id: '6', country: 'Italy', athlete: 'David' },
+    ] as const;
+
+    const ITALY_SIX_ROWS_ASC = `
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:2 country:"Italy" athlete:"Anna"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · ├── LEAF id:1 country:"Italy" athlete:"Mark"
+            · └── LEAF id:5 country:"Italy" athlete:"Zed"
+        `;
+
+    // Generic helper for delta-sort + groupMaintainOrder grids — each test supplies its own
+    // columnDefs / rowData / extras. Shared options (animateRows, groupDefaultExpanded,
+    // groupMaintainOrder, deltaSort, getRowId) are the load-bearing setup for every delta-sort
+    // scenario in this file.
+    const createDeltaSortGrid = (gridName: string, overrides: Record<string, any>) =>
+        gridsManager.createGrid(gridName, {
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            deltaSort: true,
+            getRowId: (p: any) => p.data.id,
+            ...overrides,
+        });
+
+    // Italy/athlete shorthand — used by the 6-row ITALY_SIX_ROWS tests.
+    const createDeltaSortItalyGrid = (gridName: string) =>
+        createDeltaSortGrid(gridName, {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            rowData: ITALY_SIX_ROWS.map((r) => ({ ...r })),
+        });
+
+    test('deltaSort + groupMaintainOrder: per-level isolation holds across transactions', async () => {
+        const rowData = [
+            { id: '1', country: 'Italy', year: 2021, athlete: 'Zed' },
+            { id: '2', country: 'Italy', year: 2021, athlete: 'Anna' },
+            { id: '3', country: 'France', year: 2019, athlete: 'Mark' },
+            { id: '4', country: 'France', year: 2019, athlete: 'Bob' },
+        ];
+
+        const api = createDeltaSortGrid('grid-delta-sort', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'athlete' },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            rowData,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+        await new GridRows(api, 'deltaSort: leaf rows sort, country/year groups stay structural').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            │ · ├── LEAF id:2 country:"Italy" year:2021 athlete:"Anna"
+            │ · └── LEAF id:1 country:"Italy" year:2021 athlete:"Zed"
+            └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └─┬ LEAF_GROUP id:row-group-country-France-year-2019 ag-Grid-AutoColumn:2019
+            · · ├── LEAF id:4 country:"France" year:2019 athlete:"Bob"
+            · · └── LEAF id:3 country:"France" year:2019 athlete:"Mark"
+        `);
+
+        // Transaction add: id=5 goes to Italy/2021. delta sort fires at the leaf group, structural
+        // baseline stays at country and year levels. Bart sorts between Anna and Zed.
+        applyTransactionChecked(api, { add: [{ id: '5', country: 'Italy', year: 2021, athlete: 'Bart' }] });
+        await new GridRows(api, 'deltaSort: after add — Bart placed in sorted leaf position').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            │ · ├── LEAF id:2 country:"Italy" year:2021 athlete:"Anna"
+            │ · ├── LEAF id:5 country:"Italy" year:2021 athlete:"Bart"
+            │ · └── LEAF id:1 country:"Italy" year:2021 athlete:"Zed"
+            └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └─┬ LEAF_GROUP id:row-group-country-France-year-2019 ag-Grid-AutoColumn:2019
+            · · ├── LEAF id:4 country:"France" year:2019 athlete:"Bob"
+            · · └── LEAF id:3 country:"France" year:2019 athlete:"Mark"
+        `);
+
+        // Update an athlete name to force a re-sort within the same leaf group; group order
+        // must remain unchanged.
+        applyTransactionChecked(api, {
+            update: [{ id: '2', country: 'Italy', year: 2021, athlete: 'Yves' }],
+        });
+        await new GridRows(api, 'deltaSort: after update — re-sorted leaf, groups still structural').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            │ · ├── LEAF id:5 country:"Italy" year:2021 athlete:"Bart"
+            │ · ├── LEAF id:2 country:"Italy" year:2021 athlete:"Yves"
+            │ · └── LEAF id:1 country:"Italy" year:2021 athlete:"Zed"
+            └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └─┬ LEAF_GROUP id:row-group-country-France-year-2019 ag-Grid-AutoColumn:2019
+            · · ├── LEAF id:4 country:"France" year:2019 athlete:"Bob"
+            · · └── LEAF id:3 country:"France" year:2019 athlete:"Mark"
+        `);
+    });
+
+    test('deltaSort + postSortRows-pinned group + transactions: per-level baseline integrity', async () => {
+        const rowData = [
+            { id: '1', country: 'Italy', athlete: 'Mark' },
+            { id: '2', country: 'France', athlete: 'Bob' },
+            { id: '3', country: 'Italy', athlete: 'Anna' },
+            { id: '4', country: 'France', athlete: 'Zed' },
+        ];
+
+        const api = createDeltaSortGrid('grid-delta-postsort', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            rowData,
+            postSortRows: (params: any) => {
+                const idx = params.nodes.findIndex((n: any) => n.key === 'Italy');
+                if (idx > 0) {
+                    const [pinned] = params.nodes.splice(idx, 1);
+                    params.nodes.unshift(pinned);
+                }
+            },
+        });
+
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+
+        await new GridRows(api, 'delta+postSort: initial — Italy pinned, leaves sorted').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:3 country:"Italy" athlete:"Anna"
+            │ └── LEAF id:1 country:"Italy" athlete:"Mark"
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:2 country:"France" athlete:"Bob"
+            · └── LEAF id:4 country:"France" athlete:"Zed"
+        `);
+
+        applyTransactionChecked(api, { add: [{ id: '5', country: 'France', athlete: 'Carl' }] });
+        await new GridRows(api, 'delta+postSort: add — Carl placed in sorted slot, Italy still pinned').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:3 country:"Italy" athlete:"Anna"
+            │ └── LEAF id:1 country:"Italy" athlete:"Mark"
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:2 country:"France" athlete:"Bob"
+            · ├── LEAF id:5 country:"France" athlete:"Carl"
+            · └── LEAF id:4 country:"France" athlete:"Zed"
+        `);
+
+        applyTransactionChecked(api, { update: [{ id: '1', country: 'Italy', athlete: 'Yann' }] });
+        await new GridRows(api, 'delta+postSort: update reorders Italy leaves, Italy still pinned').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:3 country:"Italy" athlete:"Anna"
+            │ └── LEAF id:1 country:"Italy" athlete:"Yann"
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:2 country:"France" athlete:"Bob"
+            · ├── LEAF id:5 country:"France" athlete:"Carl"
+            · └── LEAF id:4 country:"France" athlete:"Zed"
+        `);
+    });
+
+    test('deltaSort + postSortRows pinning at a sorted leaf level: full-sort fallback places new rows correctly', async () => {
+        const rowData = [
+            { id: '1', country: 'Italy', athlete: 'Mark' },
+            { id: '2', country: 'Italy', athlete: 'Anna' },
+            { id: '3', country: 'Italy', athlete: 'Carl' },
+            { id: '4', country: 'Italy', athlete: 'Bob' },
+            { id: '5', country: 'Italy', athlete: 'Zed' },
+            { id: '6', country: 'Italy', athlete: 'David' },
+        ];
+
+        const api = createDeltaSortGrid('grid-delta-postsort-sorted-leaf', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            rowData,
+            postSortRows: (params: any) => {
+                // Pin Zed to the front of any leaf array containing him.
+                const idx = params.nodes.findIndex((n: any) => n.data?.athlete === 'Zed');
+                if (idx > 0) {
+                    const [pinned] = params.nodes.splice(idx, 1);
+                    params.nodes.unshift(pinned);
+                }
+            },
+        });
+
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+
+        await new GridRows(api, 'delta+postSort sorted leaf: initial — Zed pinned, rest asc').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" athlete:"Zed"
+            · ├── LEAF id:2 country:"Italy" athlete:"Anna"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · └── LEAF id:1 country:"Italy" athlete:"Mark"
+        `);
+
+        applyTransactionChecked(api, { add: [{ id: '7', country: 'Italy', athlete: 'Eric' }] });
+        await new GridRows(api, 'delta+postSort sorted leaf: add — Eric in correct sorted slot').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" athlete:"Zed"
+            · ├── LEAF id:2 country:"Italy" athlete:"Anna"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · ├── LEAF id:7 country:"Italy" athlete:"Eric"
+            · └── LEAF id:1 country:"Italy" athlete:"Mark"
+        `);
+
+        applyTransactionChecked(api, { update: [{ id: '1', country: 'Italy', athlete: 'Yann' }] });
+        await new GridRows(api, 'delta+postSort sorted leaf: update reorders, Zed still pinned').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" athlete:"Zed"
+            · ├── LEAF id:2 country:"Italy" athlete:"Anna"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · ├── LEAF id:7 country:"Italy" athlete:"Eric"
+            · └── LEAF id:1 country:"Italy" athlete:"Yann"
+        `);
+    });
+
+    test('deltaSort + filter cycle interleaved with transactions: leaves stay correctly sorted', async () => {
+        const rowData = [
+            { id: '1', country: 'Italy', athlete: 'Mark' },
+            { id: '2', country: 'France', athlete: 'Bob' },
+            { id: '3', country: 'Italy', athlete: 'Anna' },
+            { id: '4', country: 'France', athlete: 'Zed' },
+            { id: '5', country: 'Spain', athlete: 'Carlos' },
+        ];
+
+        const api = createDeltaSortGrid('grid-delta-filter-cycle', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            rowData,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+
+        await new GridRows(api, 'delta-filter: initial').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:3 country:"Italy" athlete:"Anna"
+            │ └── LEAF id:1 country:"Italy" athlete:"Mark"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ ├── LEAF id:2 country:"France" athlete:"Bob"
+            │ └── LEAF id:4 country:"France" athlete:"Zed"
+            └─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
+            · └── LEAF id:5 country:"Spain" athlete:"Carlos"
+        `);
+
+        api.setGridOption('quickFilterText', 'France');
+        await new GridRows(api, 'delta-filter: filtered to France').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:2 country:"France" athlete:"Bob"
+            · └── LEAF id:4 country:"France" athlete:"Zed"
+        `);
+
+        applyTransactionChecked(api, { add: [{ id: '6', country: 'Italy', athlete: 'Aaron' }] });
+        await new GridRows(api, 'delta-filter: add to hidden group while filtered').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:2 country:"France" athlete:"Bob"
+            · └── LEAF id:4 country:"France" athlete:"Zed"
+        `);
+
+        applyTransactionChecked(api, { update: [{ id: '5', country: 'Spain', athlete: 'Aldo' }] });
+
+        api.setGridOption('quickFilterText', undefined);
+        await new GridRows(api, 'delta-filter: clear filter — leaves still correctly sorted').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:6 country:"Italy" athlete:"Aaron"
+            │ ├── LEAF id:3 country:"Italy" athlete:"Anna"
+            │ └── LEAF id:1 country:"Italy" athlete:"Mark"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ ├── LEAF id:2 country:"France" athlete:"Bob"
+            │ └── LEAF id:4 country:"France" athlete:"Zed"
+            └─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
+            · └── LEAF id:5 country:"Spain" athlete:"Aldo"
+        `);
+    });
+
+    test('deltaSort + filter cycle on a 6-row leaf group: re-entered rows are correctly placed', async () => {
+        const api = createDeltaSortItalyGrid('grid-delta-large-leaf');
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+        await new GridRows(api, 'delta-large: initial sorted').check(ITALY_SIX_ROWS_ASC);
+
+        // Filter to 'r' — matches Carl + Mark only (2 rows → full-sort fallback path).
+        api.setGridOption('quickFilterText', 'r');
+        await new GridRows(api, 'delta-large: filter to 2 rows').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · └── LEAF id:1 country:"Italy" athlete:"Mark"
+        `);
+
+        // Clear filter — re-entered rows are NOT in changedRowNodes; they must still land in
+        // the correct sorted positions on the merge path.
+        api.setGridOption('quickFilterText', undefined);
+        await new GridRows(api, 'delta-large: clear filter — all 6 rows correctly sorted').check(ITALY_SIX_ROWS_ASC);
+    });
+
+    test('deltaSort: changing sort direction triggers full sort, then transactions use the fresh baseline', async () => {
+        // Sort-option changes refresh WITHOUT a transaction → full-sort path rebuilds the
+        // baseline under the new options. The next transaction then engages delta sort with a
+        // baseline that matches the current sortOptionsForLevel.
+        const api = createDeltaSortItalyGrid('grid-delta-direction-flip');
+
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+        await new GridRows(api, 'delta-direction: initial asc').check(ITALY_SIX_ROWS_ASC);
+
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'desc' }] });
+        await new GridRows(api, 'delta-direction: flipped to desc').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" athlete:"Zed"
+            · ├── LEAF id:1 country:"Italy" athlete:"Mark"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · └── LEAF id:2 country:"Italy" athlete:"Anna"
+        `);
+
+        // Add a row — delta sort engages with the desc baseline. Eric must land between Mark
+        // and David in desc order (after Mark, before David).
+        applyTransactionChecked(api, { add: [{ id: '7', country: 'Italy', athlete: 'Eric' }] });
+        await new GridRows(api, 'delta-direction: add Eric — placed in desc slot').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" athlete:"Zed"
+            · ├── LEAF id:1 country:"Italy" athlete:"Mark"
+            · ├── LEAF id:7 country:"Italy" athlete:"Eric"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · └── LEAF id:2 country:"Italy" athlete:"Anna"
+        `);
+    });
+
+    test('deltaSort + leaf group fully filtered out, mutated while hidden, then re-shown: leaves still correctly sorted', async () => {
+        // Filter out every row in the only leaf group, mutate a hidden row via transaction, then
+        // clear the filter. ≥5 rows after re-show ensures the merge path runs in _doDeltaSort.
+        const api = createDeltaSortItalyGrid('grid-delta-fully-filtered');
+        api.applyColumnState({ state: [{ colId: 'athlete', sort: 'asc' }] });
+        await new GridRows(api, 'fully-filtered: initial sorted').check(ITALY_SIX_ROWS_ASC);
+
+        // Filter to a substring no row matches — Italy group becomes fully filtered out.
+        api.setGridOption('quickFilterText', 'NO-MATCH-TOKEN');
+        await new GridRows(api, 'fully-filtered: nothing visible').check(`
+            ROOT id:ROOT_NODE_ID
+        `);
+
+        // Mutate a hidden row's athlete: 'Anna' → 'Yvette' (was first asc, becomes near-last).
+        applyTransactionChecked(api, { update: [{ id: '2', country: 'Italy', athlete: 'Yvette' }] });
+
+        // Clear filter — all 6 rows reappear, sorted asc with Yvette in its new position.
+        api.setGridOption('quickFilterText', undefined);
+        await new GridRows(api, 'fully-filtered: re-shown — leaves sorted with mutation applied').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:4 country:"Italy" athlete:"Bob"
+            · ├── LEAF id:3 country:"Italy" athlete:"Carl"
+            · ├── LEAF id:6 country:"Italy" athlete:"David"
+            · ├── LEAF id:1 country:"Italy" athlete:"Mark"
+            · ├── LEAF id:2 country:"Italy" athlete:"Yvette"
+            · └── LEAF id:5 country:"Italy" athlete:"Zed"
+        `);
+    });
+
+    test('deltaSort + groupMaintainOrder runtime toggle + transaction: per-level options narrowing does not corrupt delta-merge', async () => {
+        // The merge does not corrupt: `_doDeltaSort` uses the current `unsortedRows` (filter
+        // result, structural order) as its tie-breaker, so the result converges to either
+        // current-comparator order or structural order, never to a stale arrangement.
+        const rowData = [
+            { id: '1', country: 'Italy', sales: 5 },
+            { id: '2', country: 'France', sales: 50 },
+            { id: '3', country: 'USA', sales: 100 },
+        ];
+
+        const api = gridsManager.createGrid('grid-runtime-toggle-delta-stale-baseline', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true, sortable: true },
+                { field: 'sales', aggFunc: 'sum', sortable: true },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: false,
+            deltaSort: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({
+            state: [
+                { colId: 'country', sort: 'asc', sortIndex: 0 },
+                { colId: 'sales', sort: 'desc', sortIndex: 1 },
+            ],
+        });
+
+        api.setGridOption('groupMaintainOrder', true);
+        applyTransactionChecked(api, { add: [{ id: '4', country: 'Italy', sales: 1 }] });
+
+        const renderedKeys = api
+            .getRenderedNodes()
+            .filter((n) => n.level === 0 && n.group)
+            .map((n) => n.key);
+        expect(renderedKeys).toEqual(['France', 'Italy', 'USA']);
+    });
+});
