@@ -38,12 +38,22 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     toolbar: {
-        alignment: 'right',
         items: [
-            { toolbarItem: 'agQuickFilterToolbarItem', alignment: 'left' },
+            // Built in Quick Filter
+            'agQuickFilterToolbarItem',
+            // Action Button to re-size the columns
+            {
+                label: 'Fit Columns To Grid',
+                icon: 'maximize',
+                alignment: 'right',
+                action: (params) => params.api.sizeColumnsToFit(),
+            },
+            // Menu Item for exporting to CSV / Excel
             {
                 toolbarItem: 'agMenuToolbarItem',
                 icon: 'save',
+                alignment: 'right',
+                tooltip: 'Export to Csv / Excel',
                 toolbarItemParams: {
                     menuItems: ['csvExport', 'excelExport'],
                 },

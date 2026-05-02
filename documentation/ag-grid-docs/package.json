@@ -96,10 +96,10 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@playwright/test": "^1.56.0",
+    "@playwright/test": "^1.59.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/he": "^1.2.3",
-    "playwright": "^1.56.0",
+    "playwright": "^1.59.1",
     "playwright-ctrf-json-reporter": "0.0.29",
     "prettier-plugin-astro": "^0.14.1",
     "vite-plugin-mkcert": "^1.17.8",

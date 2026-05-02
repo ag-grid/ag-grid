@@ -4,6 +4,7 @@ import {
     _clearElement,
     _createElement,
     _createIconNoSpan,
+    _error,
     _setAriaLabel,
     _setDisabled,
     _setDisplayed,
@@ -105,4 +106,12 @@ export function renderToolbarButtonContents(
 
     _setAriaLabel(eGui, hoverText);
     _addOrRemoveAttribute(eGui, 'title', hoverText);
+}
+
+export function getRowGroupPanelBuilder(beans: BeanCollection, itemName: string) {
+    const builder = beans.rowGroupPanelBuilder;
+    if (!builder) {
+        _error(302, { itemName, moduleName: 'RowGroupingPanel', ...beans.gos.getModuleErrorParams() });
+    }
+    return builder;
 }
