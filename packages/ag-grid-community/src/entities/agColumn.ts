@@ -96,7 +96,6 @@ export class AgColumn<TValue = any>
     private oldLeft: number | null;
     public aggFunc: string | IAggFunc | null | undefined;
     private sortDef: SortDef = _getSortDefFromInput();
-    private _wasSortExplicitlyRemoved: boolean = false;
     public sortIndex: number | null | undefined;
     public moving = false;
     public resizing = false;
@@ -482,14 +481,7 @@ export class AgColumn<TValue = any>
         return new Set(explicitSortTypesFromSortingOrder);
     }
 
-    get wasSortExplicitlyRemoved(): boolean {
-        return this._wasSortExplicitlyRemoved;
-    }
-
-    public setSortDef(sortDef: SortDef, initial = false): void {
-        if (!initial) {
-            this._wasSortExplicitlyRemoved = !sortDef.direction;
-        }
+    public setSortDef(sortDef: SortDef): void {
         this.sortDef = sortDef;
     }
 

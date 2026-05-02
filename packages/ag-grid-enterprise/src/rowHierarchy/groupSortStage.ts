@@ -40,20 +40,17 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         const hasSortOptions = sortOptions.length > 0;
 
         // Delta sort runs only on transaction refreshes — sort changes refresh without a
-        // transaction and rebuild the baseline via full sort. Falsy when delta sort doesn't
-        // apply, otherwise the `changedRowNodes` ref. The `deltaSort` gate is opt-in for now;
-        // it can be removed once delta sort is the default.
+        // transaction and rebuild the baseline via full sort. The `deltaSort` gate is opt-in
+        // for now; can be removed once delta sort is the default.
         const deltaSortChangedRowNodes = hasSortOptions && gos.get('deltaSort') && changedRowNodes;
 
-        // levelSortOptions: per-level subset of sortOptions; `null` means "use full sortOptions
-        // for every level" (or no sort at all when `fallbackSortOptions` is also undefined).
-        // Tree data is excluded — `groupMaintainOrder` has no effect on tree data per its JSDoc.
+        // Per-level subset of `sortOptions`; `null` means "use full sortOptions everywhere"
+        // (or no sort at all). Tree data is excluded — `groupMaintainOrder` has no effect there.
         const groupColsByLevel = rowGroupColsSvc?.columns;
         const levelSortOptions: (SortOption[] | undefined)[] | null =
             hasSortOptions && groupColsByLevel?.length && !groupStage?.treeData && gos.get('groupMaintainOrder')
                 ? buildLevelSortOptions(sortOptions, groupColsByLevel)
                 : null;
-        // Per-level isolation off + sort active → every level uses full sortOptions.
         const fallbackSortOptions = !levelSortOptions && hasSortOptions ? sortOptions : undefined;
 
         const isPivotMode = colModel.pivotMode;
@@ -62,10 +59,10 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         let hasAnyFirstChildChanged = false;
 
         function sortGroupChildren(rowNode: RowNode): void {
-            // Pivot leaf groups aren't part of the displayed pivoted output — leave
-            // sortOptionsForLevel undefined so they take the no-sort branch. Otherwise per-level
-            // routing: root (level=-1) -> bucket 0, ..., leaf-group (level=numLevels-1) -> bucket
-            // numLevels (leaf-row bucket). Out-of-range indices yield undefined naturally.
+            // Pivot leaf groups aren't displayed — take the no-sort branch.
+            // Per-level routing: root (level=-1) -> bucket 0, ..., leaf-group -> leafIndex.
+            // Out-of-range indices yield undefined → no-sort branch (defensive default;
+            // falling back to full `sortOptions` would reintroduce cross-level tie-breaking).
             const isPivotLeaf = isPivotMode && rowNode.leafGroup;
             let sortOptionsForLevel: SortOption[] | undefined;
             if (!isPivotLeaf) {
@@ -73,8 +70,9 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             }
 
             const prevSort = rowNode.childrenAfterSort;
-            // Snapshot by value: on the reused-array path `postSortRows` may mutate `prevSort` in
-            // place, so the comparison below would otherwise miss callback-only reorders.
+            const aggFilter = rowNode.childrenAfterAggFilter;
+            // Snapshot by value: `postSortRows` may mutate `prevSort` in place on the reused-ref
+            // path, so reading `prevSort?.[0]` after the callback would miss callback-only reorders.
             const prevFirstChild = prevSort?.[0];
 
             let newChildrenAfterSort: RowNode[];
@@ -89,23 +87,21 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
                     );
                 } else {
                     newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(
-                        rowNode.childrenAfterAggFilter!.slice(),
+                        aggFilter?.slice() ?? [],
                         sortOptionsForLevel
                     );
                 }
             } else {
-                // No sort at this level — publish the filter result as the structural baseline.
-                // `_reuseArrayIfEqual` reuses `prevSort` by reference when contents are unchanged
-                // (zero alloc on no-change refresh); a `postSortRows`-reordered `prevSort` is
-                // detected as different and triggers a fresh slice. `postSortRows` re-runs every
-                // refresh so it reapplies its customisation on top of this baseline.
-                newChildrenAfterSort = _reuseArrayIfEqual(prevSort, rowNode.childrenAfterAggFilter);
+                // No sort at this level: publish the structural filter baseline. Reuses
+                // `prevSort` by ref when contents are unchanged; a `postSortRows`-reordered
+                // `prevSort` triggers a fresh slice. `postSortRows` reapplies on every refresh.
+                newChildrenAfterSort = _reuseArrayIfEqual(prevSort, aggFilter);
             }
 
             rowNode.childrenAfterSort = newChildrenAfterSort;
 
-            // AG-309 (Feb 2018) legacy: _updateRowNodeAfterSort runs BEFORE postSortRows;
-            // callers may rely on the input-order flags inside their callback.
+            // AG-309 (Feb 2018) legacy: runs BEFORE postSortRows so callers can read input-order
+            // flags inside their callback. Don't flip — public contract.
             _updateRowNodeAfterSort(rowNode);
 
             postSortFunc?.({ nodes: newChildrenAfterSort });
@@ -115,7 +111,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
 
         _forEachChangedGroupDepthFirst(rowModel.rootNode, true, changedPath, sortGroupChildren);
 
-        // groupHideOpenParents shows the parent key on the first child row — bulk refresh
+        // groupHideOpenParents renders the parent key on the first child row — bulk refresh
         // when any level's first child changed.
         if (hasAnyFirstChildChanged && gos.get('groupHideOpenParents')) {
             const columns = showRowGroupCols?.columns;
@@ -150,9 +146,8 @@ const buildLevelSortOptions = (
     const numLevels = groupColsByLevel.length;
     const leafIndex = numLevels;
 
-    // Single map keyed by both AgColumn ref AND colId string. They never collide (different
-    // types), so one Map keeps allocations / lookups minimal. `showRowGroup` accepts the source
-    // rowGroup column's colId.
+    // Single map keyed by both AgColumn ref AND colId string — they never collide (different
+    // types). O(1) lookup beats linear scan at the upper end (~100 sort options × ~10 levels).
     const levelByKey = new Map<AgColumn | string, number>();
     for (let j = 0; j < numLevels; ++j) {
         const groupCol = groupColsByLevel[j];
@@ -160,29 +155,18 @@ const buildLevelSortOptions = (
         levelByKey.set(groupCol.colId, j);
     }
 
-    // Lazy buckets: empty levels stay `undefined` so the caller's truthy check is sufficient
-    // (no `.length` probe in the hot loop). Most levels are empty in typical grids.
+    // Lazy buckets: empty levels stay `undefined` so callers can use a truthy check.
     const result: (SortOption[] | undefined)[] = new Array(numLevels + 1);
 
     for (let i = 0; i < sortLen; ++i) {
         const sortOption = sortOptions[i];
         const column = sortOption.column as AgColumn;
-
-        // Source rowGroup column matched by reference: per-level isolation excludes the leaf
-        // bucket (siblings inside one leaf group share the group key — sorting them by it is a
-        // no-op under the default comparator and can violate isolation under a custom one).
-        const sourceLevel = levelByKey.get(column);
-        if (sourceLevel !== undefined) {
-            (result[sourceLevel] ??= []).push(sortOption);
-            continue;
-        }
-
         const colDef = column.colDef;
         const showRowGroup = colDef.showRowGroup;
         const hasUniqueData = colDef.field != null || colDef.valueGetter != null;
 
         if (showRowGroup === true) {
-            // Shared singleColumn display — cascade to every group level.
+            // singleColumn shared display — cascade to every group level.
             for (let j = 0; j < numLevels; ++j) {
                 (result[j] ??= []).push(sortOption);
             }
@@ -192,19 +176,23 @@ const buildLevelSortOptions = (
             continue;
         }
 
-        if (typeof showRowGroup === 'string') {
-            const displayLevel = levelByKey.get(showRowGroup);
-            if (displayLevel !== undefined) {
-                (result[displayLevel] ??= []).push(sortOption);
-                if (hasUniqueData) {
-                    (result[leafIndex] ??= []).push(sortOption);
-                }
-                continue;
-            }
-        }
+        // Source column ref OR `showRowGroup` colId string — the Map resolves both.
+        const key: AgColumn | string = typeof showRowGroup === 'string' ? showRowGroup : column;
+        const matchedLevel = levelByKey.get(key);
 
-        // Regular leaf column (or showRowGroup pointing to an unknown colId).
-        (result[leafIndex] ??= []).push(sortOption);
+        if (matchedLevel !== undefined) {
+            (result[matchedLevel] ??= []).push(sortOption);
+            // Source rowGroup column (key === column) skips the leaf bucket — siblings in one
+            // leaf group share the group key, so sorting them by it is a no-op under the default
+            // comparator and can violate per-level isolation under a custom one. Display columns
+            // with own data DO reach the leaf bucket so leaves order by the column's data.
+            if (key !== column && hasUniqueData) {
+                (result[leafIndex] ??= []).push(sortOption);
+            }
+        } else {
+            // Regular leaf column, or unresolved `showRowGroup` string.
+            (result[leafIndex] ??= []).push(sortOption);
+        }
     }
 
     return result;

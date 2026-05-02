@@ -5,6 +5,7 @@ import type { GridRows } from '../gridRows';
 export class GridRowsValidationState {
     private _showRowGroupColumns: AgColumn[] | undefined = undefined;
     private _groupSelectsDescendants: boolean | undefined = undefined;
+    private _hasPostSortRows: boolean | undefined = undefined;
 
     public readonly gridRows: GridRows;
     public readonly api: GridApi;
@@ -17,7 +18,6 @@ export class GridRowsValidationState {
     public readonly groupAllowUnbalanced: boolean;
     /** When groupDisplayType is 'multipleColumns', all displayed rows get uiLevel=0 (set by enterprise flattenStage). */
     public readonly isGroupMultiAutoColumn: boolean;
-    public readonly hasPostSortRows: boolean;
 
     public constructor(gridRows: GridRows) {
         const api = gridRows.api;
@@ -32,7 +32,16 @@ export class GridRowsValidationState {
         this.groupHideParentOfSingleChild = api.getGridOption('groupHideParentOfSingleChild') ?? false;
         this.groupAllowUnbalanced = !!api.getGridOption('groupAllowUnbalanced');
         this.isGroupMultiAutoColumn = api.getGridOption('groupDisplayType') === 'multipleColumns';
-        this.hasPostSortRows = typeof api.getGridOption('postSortRows') === 'function';
+    }
+
+    public get hasPostSortRows(): boolean {
+        let result = this._hasPostSortRows;
+        if (result !== undefined) {
+            return result;
+        }
+        result = typeof this.api.getGridOption('postSortRows') === 'function';
+        this._hasPostSortRows = result;
+        return result;
     }
 
     public get showRowGroupColumns(): AgColumn[] {

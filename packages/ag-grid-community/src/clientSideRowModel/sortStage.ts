@@ -45,44 +45,40 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'accentedSort'];
 
     public execute(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void {
-        const rootNode = this.beans.rowModel.rootNode!;
-        const sortOptions = this.beans.sortSvc!.getSortOptions();
+        const { rowModel, sortSvc, rowNodeSorter } = this.beans;
+        const rootNode = rowModel.rootNode!;
+        const sortOptions = sortSvc!.getSortOptions();
         const hasSortOptions = sortOptions.length > 0;
 
         // Delta sort runs only on transaction refreshes — sort changes refresh without a
-        // transaction and rebuild the baseline via full sort. Falsy when delta sort doesn't
-        // apply, otherwise the `changedRowNodes` ref. The `deltaSort` gate is opt-in for now;
-        // it can be removed once delta sort is the default.
+        // transaction and rebuild the baseline via full sort. The `deltaSort` gate is opt-in
+        // for now; can be removed once delta sort is the default.
         const deltaSortChangedRowNodes = hasSortOptions && this.gos.get('deltaSort') && changedRowNodes;
 
         const prevSort = rootNode.childrenAfterSort;
+        const aggFilter = rootNode.childrenAfterAggFilter;
         let newChildrenAfterSort: RowNode[];
         if (hasSortOptions) {
             if (deltaSortChangedRowNodes) {
                 newChildrenAfterSort = doDeltaSort(
-                    this.beans.rowNodeSorter!,
+                    rowNodeSorter!,
                     rootNode,
                     deltaSortChangedRowNodes,
                     changedPath,
                     sortOptions
                 );
             } else {
-                newChildrenAfterSort = this.beans.rowNodeSorter!.doFullSortInPlace(
-                    rootNode.childrenAfterAggFilter!.slice(),
-                    sortOptions
-                );
+                newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(aggFilter?.slice() ?? [], sortOptions);
             }
         } else {
-            // No sort: fall back to the structural filter baseline. Reuses prevSort by reference
-            // only when element-wise equal — a postSortRows-reordered prevSort triggers a fresh
-            // slice instead. Same end result as the old unconditional slice, plus the no-change
-            // fast path.
-            newChildrenAfterSort = _reuseArrayIfEqual(prevSort, rootNode.childrenAfterAggFilter);
+            // No sort: structural filter baseline. Reuses `prevSort` by ref when contents are
+            // unchanged; a `postSortRows`-reordered `prevSort` triggers a fresh slice.
+            newChildrenAfterSort = _reuseArrayIfEqual(prevSort, aggFilter);
         }
 
         rootNode.childrenAfterSort = newChildrenAfterSort;
-        // AG-309 (Feb 2018) legacy: _updateRowNodeAfterSort intentionally runs BEFORE
-        // postSortRows and never after. Users may rely on this, we can't change the behaviour.
+        // AG-309 (Feb 2018) legacy: runs BEFORE postSortRows so callers can read input-order
+        // flags inside their callback. Don't flip — public contract.
         updateRowNodeAfterSort(rootNode);
 
         this.gos.getCallback('postSortRows')?.({ nodes: newChildrenAfterSort });

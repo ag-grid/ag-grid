@@ -50,20 +50,20 @@ export function _areEqual<T>(
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: readonly T[] | null | undefined): T[] {
-    // Equality scan inlined (NOT `_areEqual`) — hot path, runs once per group node per sort refresh.
+    // Equality scan inlined (not `_areEqual`) — hot path; called per group node per sort refresh.
     if (!current) {
-        return []; // No current, return a new empty array
+        return [];
     }
     const len = current.length;
     if (prev && prev !== current && prev.length === len) {
         for (let i = 0; i < len; ++i) {
             if (prev[i] !== current[i]) {
-                return current.slice(); // Contents differ, return new copy
+                return current.slice();
             }
         }
-        return prev; // Contents equal, reuse previous reference
+        return prev;
     }
-    return current.slice(); // Returns new copy
+    return current.slice();
 }
 
 /**
@@ -71,7 +71,7 @@ export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: rea
  * otherwise `undefined`. Uses an indexed loop, the fastest of the four common forms in V8 —
  * https://jsperf.app/for-for-of-for-in-foreach-comparison.
  */
-export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boolean | void): boolean {
+export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boolean | void): boolean | undefined {
     if (array) {
         for (let i = 0, len = array.length; i < len; ++i) {
             if (callback(array[i])) {
@@ -79,7 +79,6 @@ export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boole
             }
         }
     }
-    return false;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

@@ -964,7 +964,7 @@ describe('group order maintenance', () => {
             { id: '4', country: 'France', athlete: 'F1' },
         ];
 
-        const api = gridsManager.createGrid('grid3', {
+        const api = gridsManager.createGrid('grid-update-no-group-change', {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: { headerName: 'Country' },
             animateRows: false,
@@ -1007,7 +1007,7 @@ describe('group order maintenance', () => {
             { id: '3', country: 'France', athlete: 'Mike' },
         ];
 
-        const api = gridsManager.createGrid('grid4', {
+        const api = gridsManager.createGrid('grid-leaf-sort-preserves', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true },
                 { field: 'athlete', sortable: true },
@@ -1051,7 +1051,7 @@ describe('group order maintenance', () => {
             { id: '3', country: 'France', athlete: 'C' },
         ];
 
-        const api = gridsManager.createGrid('grid5', {
+        const api = gridsManager.createGrid('grid-group-col-sort-reorders', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true, sortable: true },
                 { field: 'athlete', sortable: true },
@@ -1114,7 +1114,7 @@ describe('group order maintenance', () => {
             { id: '3', country: 'France', athlete: 'M' },
         ];
 
-        const api = gridsManager.createGrid('grid6', {
+        const api = gridsManager.createGrid('grid-leaf-sort-while-group-sort-active', {
             columnDefs: [
                 { field: 'country', rowGroup: true, hide: true, sortable: true },
                 { field: 'athlete', sortable: true },
@@ -1319,6 +1319,123 @@ describe('group order maintenance', () => {
             · │ └── LEAF id:2 country:"Italy" year:2020 sales:50
             · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
             · · └── LEAF id:1 country:"Italy" year:2021 sales:100
+        `);
+    });
+
+    test('singleColumn cascade with 5 group levels: every level reorders', async () => {
+        // The `showRowGroup === true` branch of `buildLevelSortOptions` cascades the sort to
+        // every group level — O(numLevels) per cascading option. This test exercises the
+        // cascade with 5 group columns to verify routing and ordering remain correct under
+        // deeper hierarchies than the 1–3 levels covered elsewhere.
+        //
+        // Each row is the only member of its 5-level group path; `a` alone disambiguates, so
+        // ascending by all five levels orders rows by `a` asc: A → C → M → Z (ids 2,4,3,1).
+        const rowData = [
+            { id: '1', a: 'Z', b: 'X', c: 'Q', d: 'M', e: 'C' },
+            { id: '2', a: 'A', b: 'Y', c: 'P', d: 'L', e: 'B' },
+            { id: '3', a: 'M', b: 'B', c: 'O', d: 'K', e: 'A' },
+            { id: '4', a: 'C', b: 'A', c: 'N', d: 'J', e: 'D' },
+        ];
+
+        const api = gridsManager.createGrid('grid-five-level-cascade', {
+            columnDefs: [
+                { field: 'a', rowGroup: true, hide: true },
+                { field: 'b', rowGroup: true, hide: true },
+                { field: 'c', rowGroup: true, hide: true },
+                { field: 'd', rowGroup: true, hide: true },
+                { field: 'e', rowGroup: true, hide: true },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        // singleColumn produces one shared auto-display column for all five levels.
+        await new GridColumns(api, 'five-level: single auto-display column').checkColumns(`
+            CENTER
+            └── ag-Grid-AutoColumn "Group" width:200
+        `);
+
+        // Cascade-equivalent: sort indicator on every source rowGroup column. Each group level
+        // gets its own option, so each level reorders ascending.
+        api.applyColumnState({
+            state: [
+                { colId: 'a', sort: 'asc', sortIndex: 0 },
+                { colId: 'b', sort: 'asc', sortIndex: 1 },
+                { colId: 'c', sort: 'asc', sortIndex: 2 },
+                { colId: 'd', sort: 'asc', sortIndex: 3 },
+                { colId: 'e', sort: 'asc', sortIndex: 4 },
+            ],
+        });
+
+        await new GridRows(api, 'five-level cascade asc: every level reorders').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-a-A ag-Grid-AutoColumn:"A"
+            │ └─┬ filler id:row-group-a-A-b-Y ag-Grid-AutoColumn:"Y"
+            │ · └─┬ filler id:row-group-a-A-b-Y-c-P ag-Grid-AutoColumn:"P"
+            │ · · └─┬ filler id:row-group-a-A-b-Y-c-P-d-L ag-Grid-AutoColumn:"L"
+            │ · · · └─┬ LEAF_GROUP id:row-group-a-A-b-Y-c-P-d-L-e-B ag-Grid-AutoColumn:"B"
+            │ · · · · └── LEAF id:2 a:"A" b:"Y" c:"P" d:"L" e:"B"
+            ├─┬ filler id:row-group-a-C ag-Grid-AutoColumn:"C"
+            │ └─┬ filler id:row-group-a-C-b-A ag-Grid-AutoColumn:"A"
+            │ · └─┬ filler id:row-group-a-C-b-A-c-N ag-Grid-AutoColumn:"N"
+            │ · · └─┬ filler id:row-group-a-C-b-A-c-N-d-J ag-Grid-AutoColumn:"J"
+            │ · · · └─┬ LEAF_GROUP id:row-group-a-C-b-A-c-N-d-J-e-D ag-Grid-AutoColumn:"D"
+            │ · · · · └── LEAF id:4 a:"C" b:"A" c:"N" d:"J" e:"D"
+            ├─┬ filler id:row-group-a-M ag-Grid-AutoColumn:"M"
+            │ └─┬ filler id:row-group-a-M-b-B ag-Grid-AutoColumn:"B"
+            │ · └─┬ filler id:row-group-a-M-b-B-c-O ag-Grid-AutoColumn:"O"
+            │ · · └─┬ filler id:row-group-a-M-b-B-c-O-d-K ag-Grid-AutoColumn:"K"
+            │ · · · └─┬ LEAF_GROUP id:row-group-a-M-b-B-c-O-d-K-e-A ag-Grid-AutoColumn:"A"
+            │ · · · · └── LEAF id:3 a:"M" b:"B" c:"O" d:"K" e:"A"
+            └─┬ filler id:row-group-a-Z ag-Grid-AutoColumn:"Z"
+            · └─┬ filler id:row-group-a-Z-b-X ag-Grid-AutoColumn:"X"
+            · · └─┬ filler id:row-group-a-Z-b-X-c-Q ag-Grid-AutoColumn:"Q"
+            · · · └─┬ filler id:row-group-a-Z-b-X-c-Q-d-M ag-Grid-AutoColumn:"M"
+            · · · · └─┬ LEAF_GROUP id:row-group-a-Z-b-X-c-Q-d-M-e-C ag-Grid-AutoColumn:"C"
+            · · · · · └── LEAF id:1 a:"Z" b:"X" c:"Q" d:"M" e:"C"
+        `);
+
+        // Flip to descending — order reverses on every level: Z → M → C → A (ids 1,3,4,2).
+        api.applyColumnState({
+            state: [
+                { colId: 'a', sort: 'desc', sortIndex: 0 },
+                { colId: 'b', sort: 'desc', sortIndex: 1 },
+                { colId: 'c', sort: 'desc', sortIndex: 2 },
+                { colId: 'd', sort: 'desc', sortIndex: 3 },
+                { colId: 'e', sort: 'desc', sortIndex: 4 },
+            ],
+        });
+
+        await new GridRows(api, 'five-level cascade desc: every level reverses').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-a-Z ag-Grid-AutoColumn:"Z"
+            │ └─┬ filler id:row-group-a-Z-b-X ag-Grid-AutoColumn:"X"
+            │ · └─┬ filler id:row-group-a-Z-b-X-c-Q ag-Grid-AutoColumn:"Q"
+            │ · · └─┬ filler id:row-group-a-Z-b-X-c-Q-d-M ag-Grid-AutoColumn:"M"
+            │ · · · └─┬ LEAF_GROUP id:row-group-a-Z-b-X-c-Q-d-M-e-C ag-Grid-AutoColumn:"C"
+            │ · · · · └── LEAF id:1 a:"Z" b:"X" c:"Q" d:"M" e:"C"
+            ├─┬ filler id:row-group-a-M ag-Grid-AutoColumn:"M"
+            │ └─┬ filler id:row-group-a-M-b-B ag-Grid-AutoColumn:"B"
+            │ · └─┬ filler id:row-group-a-M-b-B-c-O ag-Grid-AutoColumn:"O"
+            │ · · └─┬ filler id:row-group-a-M-b-B-c-O-d-K ag-Grid-AutoColumn:"K"
+            │ · · · └─┬ LEAF_GROUP id:row-group-a-M-b-B-c-O-d-K-e-A ag-Grid-AutoColumn:"A"
+            │ · · · · └── LEAF id:3 a:"M" b:"B" c:"O" d:"K" e:"A"
+            ├─┬ filler id:row-group-a-C ag-Grid-AutoColumn:"C"
+            │ └─┬ filler id:row-group-a-C-b-A ag-Grid-AutoColumn:"A"
+            │ · └─┬ filler id:row-group-a-C-b-A-c-N ag-Grid-AutoColumn:"N"
+            │ · · └─┬ filler id:row-group-a-C-b-A-c-N-d-J ag-Grid-AutoColumn:"J"
+            │ · · · └─┬ LEAF_GROUP id:row-group-a-C-b-A-c-N-d-J-e-D ag-Grid-AutoColumn:"D"
+            │ · · · · └── LEAF id:4 a:"C" b:"A" c:"N" d:"J" e:"D"
+            └─┬ filler id:row-group-a-A ag-Grid-AutoColumn:"A"
+            · └─┬ filler id:row-group-a-A-b-Y ag-Grid-AutoColumn:"Y"
+            · · └─┬ filler id:row-group-a-A-b-Y-c-P ag-Grid-AutoColumn:"P"
+            · · · └─┬ filler id:row-group-a-A-b-Y-c-P-d-L ag-Grid-AutoColumn:"L"
+            · · · · └─┬ LEAF_GROUP id:row-group-a-A-b-Y-c-P-d-L-e-B ag-Grid-AutoColumn:"B"
+            · · · · · └── LEAF id:2 a:"A" b:"Y" c:"P" d:"L" e:"B"
         `);
     });
 
@@ -1560,7 +1677,7 @@ describe('group order maintenance', () => {
             { id: '3', country: 'France', athlete: 'F1' },
         ];
 
-        const api = gridsManager.createGrid('grid7', {
+        const api = gridsManager.createGrid('grid-filter-removes-group-then-add', {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
             autoGroupColumnDef: { headerName: 'Country' },
             animateRows: false,
@@ -1704,6 +1821,191 @@ describe('group order maintenance', () => {
 
         api.applyColumnState({ state: [{ colId: 'country', sort: null }] });
         await new GridRows(api, 'clear-sort: structural order restored, not the prior desc order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:1 country:"Audi" athlete:"A"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:2 country:"France" athlete:"F"
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └── LEAF id:3 country:"Italy" athlete:"I"
+        `);
+    });
+
+    test('single-sort: applying a leaf sort while a group sort is active clears the group sort and restores structural group order', async () => {
+        // `applyColumnState` with `defaultState: { sort: null }` simulates the
+        // `clearSortBarTheseColumns` path that fires under single-sort when the user clicks a
+        // different column. Clearing a group sort returns groups to their structural order, per
+        // the documented "structural order is restored" contract on `groupMaintainOrder`.
+        const rowData = [
+            { id: '1', country: 'Italy', athlete: 'It' },
+            { id: '2', country: 'France', athlete: 'Fr' },
+            { id: '3', country: 'Audi', athlete: 'Au' },
+        ];
+
+        const api = gridsManager.createGrid('grid-single-sort-clear-other', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true, sortable: true },
+                { field: 'athlete', sortable: true },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        // Sort country asc — groups reorder to alphabetical [Audi, France, Italy].
+        api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] });
+        await new GridRows(api, 'single-sort: country asc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:3 country:"Audi" athlete:"Au"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:2 country:"France" athlete:"Fr"
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └── LEAF id:1 country:"Italy" athlete:"It"
+        `);
+
+        // Switch to sorting athlete only — `defaultState: { sort: null }` clears the country
+        // sort as a side effect (single-sort semantics). Groups must revert to data-insertion
+        // order [Italy, France, Audi], not stay in the prior alphabetical order.
+        api.applyColumnState({
+            state: [{ colId: 'athlete', sort: 'asc' }],
+            defaultState: { sort: null },
+        });
+        await new GridRows(api, 'single-sort: leaf sort active, group sort cleared — structural').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:1 country:"Italy" athlete:"It"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:2 country:"France" athlete:"Fr"
+            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            · └── LEAF id:3 country:"Audi" athlete:"Au"
+        `);
+    });
+
+    test('multi-level clear-sort: clearing one level restores structural order at that level only', async () => {
+        // Two levels (country, year) with `groupMaintainOrder=true`. Sort country desc and year
+        // asc — both levels reorder. Then clear ONLY the year sort: country desc stays, year
+        // groups revert to structural via `_reuseArrayIfEqual` element-wise mismatch → fresh slice.
+        const rowData = [
+            { id: '1', country: 'Italy', year: 2021 },
+            { id: '2', country: 'Italy', year: 2020 },
+            { id: '3', country: 'France', year: 2019 },
+            { id: '4', country: 'France', year: 2022 },
+        ];
+
+        const api = gridsManager.createGrid('grid-multilevel-clear-sort', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true, sortable: true },
+                { field: 'year', rowGroup: true, hide: true, sortable: true },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        // Apply both sorts: country desc (Italy first), year asc within each country.
+        api.applyColumnState({
+            state: [
+                { colId: 'country', sort: 'desc', sortIndex: 0 },
+                { colId: 'year', sort: 'asc', sortIndex: 1 },
+            ],
+        });
+        await new GridRows(api, 'multilevel: country desc + year asc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            │ │ └── LEAF id:2 country:"Italy" year:2020
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF id:1 country:"Italy" year:2021
+            └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├─┬ LEAF_GROUP id:row-group-country-France-year-2019 ag-Grid-AutoColumn:2019
+            · │ └── LEAF id:3 country:"France" year:2019
+            · └─┬ LEAF_GROUP id:row-group-country-France-year-2022 ag-Grid-AutoColumn:2022
+            · · └── LEAF id:4 country:"France" year:2022
+        `);
+
+        // Clear ONLY the year sort. Country desc remains active. Year groups must revert to
+        // their structural (data-insertion) order within each country: Italy structural is
+        // [2021, 2020], France structural is [2019, 2022].
+        api.applyColumnState({ state: [{ colId: 'year', sort: null }] });
+        await new GridRows(api, 'multilevel: clear year — country desc kept, years structural').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            │ │ └── LEAF id:1 country:"Italy" year:2021
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            │ · └── LEAF id:2 country:"Italy" year:2020
+            └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├─┬ LEAF_GROUP id:row-group-country-France-year-2019 ag-Grid-AutoColumn:2019
+            · │ └── LEAF id:3 country:"France" year:2019
+            · └─┬ LEAF_GROUP id:row-group-country-France-year-2022 ag-Grid-AutoColumn:2022
+            · · └── LEAF id:4 country:"France" year:2022
+        `);
+
+        // Now clear the country sort too. Both levels revert to structural — country
+        // [Italy, France] (data-insertion), years already structural. Pins that clearing a
+        // previously-active sort on a level produces a fresh slice when `prev` differs.
+        api.applyColumnState({ state: [{ colId: 'country', sort: null }] });
+        await new GridRows(api, 'multilevel: clear country too — fully structural').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            │ │ └── LEAF id:1 country:"Italy" year:2021
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            │ · └── LEAF id:2 country:"Italy" year:2020
+            └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├─┬ LEAF_GROUP id:row-group-country-France-year-2019 ag-Grid-AutoColumn:2019
+            · │ └── LEAF id:3 country:"France" year:2019
+            · └─┬ LEAF_GROUP id:row-group-country-France-year-2022 ag-Grid-AutoColumn:2022
+            · · └── LEAF id:4 country:"France" year:2022
+        `);
+    });
+
+    test('clear-sort after coincidental match: structural order persists after subsequent refresh', async () => {
+        // Groups (Audi, France, Italy) where structural order equals alphabetical asc. Sort
+        // country asc — `prev` after sort equals structural exactly. Clear the sort and trigger
+        // another refresh: structural order remains, `_reuseArrayIfEqual` reuses `prev` because
+        // it already equals structural element-wise.
+        const rowData = [
+            { id: '1', country: 'Audi', athlete: 'A' },
+            { id: '2', country: 'France', athlete: 'F' },
+            { id: '3', country: 'Italy', athlete: 'I' },
+        ];
+
+        const api = gridsManager.createGrid('grid-coincidental-match-clear', {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true, sortable: true }, { field: 'athlete' }],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        // Sort country asc — produces [Audi, France, Italy] which equals structural order.
+        api.applyColumnState({ state: [{ colId: 'country', sort: 'asc' }] });
+        await new GridRows(api, 'coincidental: country asc matches structural').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
+            │ └── LEAF id:1 country:"Audi" athlete:"A"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:2 country:"France" athlete:"F"
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └── LEAF id:3 country:"Italy" athlete:"I"
+        `);
+
+        // Clear the sort. Trigger an explicit second refresh after the clear — verifies
+        // structural order is stable across subsequent refreshes (no flag is needed because
+        // _reuseArrayIfEqual sees prev == structural element-wise on every refresh).
+        api.applyColumnState({ state: [{ colId: 'country', sort: null }] });
+        api.refreshClientSideRowModel('sort');
+        await new GridRows(api, 'coincidental: cleared and re-refreshed — structural').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
             │ └── LEAF id:1 country:"Audi" athlete:"A"
