@@ -68,16 +68,17 @@ export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: rea
 }
 
 /**
- * Apply `callback` to each element; returns `true` if a callback returned `true` (early exit),
- * otherwise `undefined`. Uses an indexed loop, the fastest of the four common forms in V8 —
- * https://jsperf.app/for-for-of-for-in-foreach-comparison.
+ * Utility that uses the fastest looping approach to apply a callback to each element of the array
+ * https://jsperf.app/for-for-of-for-in-foreach-comparison
+ * If callback returns true, exit early.
  */
-export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boolean | void): boolean | undefined {
-    if (array) {
-        for (let i = 0, len = array.length; i < len; ++i) {
-            if (callback(array[i])) {
-                return true;
-            }
+export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boolean | void) {
+    if (!array) {
+        return;
+    }
+    for (const value of array) {
+        if (callback(value)) {
+            return true;
         }
     }
 }

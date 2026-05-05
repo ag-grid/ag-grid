@@ -391,7 +391,7 @@ describe('group order maintenance / delta sort', () => {
         `);
     });
 
-    test('deltaSort + groupMaintainOrder runtime toggle + transaction: per-level options narrowing does not corrupt delta-merge', async () => {
+    test('deltaSort + groupMaintainOrder runtime toggle + transaction: post-toggle refresh + transaction produces correct order', async () => {
         const rowData = [
             { id: '1', country: 'Italy', sales: 5 },
             { id: '2', country: 'Italy', sales: 3 },
@@ -460,13 +460,13 @@ describe('group order maintenance / delta sort', () => {
         `);
     });
 
-    test('deltaSort + groupMaintainOrder runtime toggle: stale baseline ordered by aggregate-reading comparator does not corrupt next merge', async () => {
+    test('deltaSort + groupMaintainOrder runtime toggle: aggregate-reading comparator + per-level narrowing produces correct order', async () => {
         // Under groupMaintainOrder=false the baseline is sorted by a custom country comparator
         // that reads `node.aggData.sales` (a per-group aggregate) AND a secondary `sales desc`
-        // tie-breaker. After toggling to true, per-level narrowing strips the secondary, so the
-        // country level is sorted with ONLY the aggregate-reading comparator. The next
-        // transaction's delta-sort merge must converge to the current narrowed-options ordering,
-        // not silently preserve the stale full-options arrangement.
+        // tie-breaker. Toggling to true is reactive: per-level narrowing strips the secondary,
+        // and the toggle-triggered refresh re-sorts the country level with ONLY the aggregate
+        // comparator. The subsequent transaction's delta-sort merge runs against this fresh
+        // baseline.
         const rowData = [
             { id: '1', country: 'Italy', sales: 5 },
             { id: '2', country: 'Italy', sales: 4 },
@@ -606,6 +606,100 @@ describe('group order maintenance / delta sort', () => {
             CENTER
             ├── ag-Grid-AutoColumn "Country" width:200
             └── sales "Sales" width:200 sort:desc sortIndex:1 aggFunc:sum
+        `);
+    });
+
+    test('deltaSort + groupMaintainOrder runtime toggle true→false: structural baseline at toggle time is rebuilt by the auto-refresh', async () => {
+        // Reverse direction of the test above. Under maintainOrder=true with a leaf-only sort,
+        // the country level holds a STRUCTURAL baseline (no per-level options route there) — its
+        // children are in data-insertion order, NOT in sort order. Toggling maintainOrder=false
+        // re-runs the sort stage (refreshProps reactivity) which rebuilds the country baseline
+        // under the new fallback routing BEFORE any transaction can use it. A subsequent
+        // transaction then deltaSorts against a correctly-sorted baseline.
+        const rowData = [
+            // Insertion order (Audi, Charlie, Bravo, Delta) intentionally does NOT match
+            // sales-desc-by-aggregate (Delta=90, Bravo=60, Audi=40, Charlie=10) so the toggle
+            // has observable work to do.
+            { id: '1', country: 'Audi', sales: 25 },
+            { id: '2', country: 'Audi', sales: 15 },
+            { id: '3', country: 'Charlie', sales: 5 },
+            { id: '4', country: 'Charlie', sales: 5 },
+            { id: '5', country: 'Bravo', sales: 35 },
+            { id: '6', country: 'Bravo', sales: 25 },
+            { id: '7', country: 'Delta', sales: 50 },
+            { id: '8', country: 'Delta', sales: 40 },
+        ];
+
+        const api = createDeltaSortGrid('grid-runtime-toggle-true-to-false', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true, sortable: true },
+                { field: 'sales', aggFunc: 'sum', sortable: true },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            rowData,
+        });
+
+        // Leaf-only sort: with maintainOrder=true, [sales desc] routes to the leaf bucket only.
+        // Country level keeps STRUCTURAL order (insertion order) — NOT in sort order.
+        api.applyColumnState({ state: [{ colId: 'sales', sort: 'desc' }] });
+
+        await new GridRows(api, 'maintainOrder=true: country structural, leaves sales-desc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi" sales:40
+            │ ├── LEAF id:1 country:"Audi" sales:25
+            │ └── LEAF id:2 country:"Audi" sales:15
+            ├─┬ LEAF_GROUP id:row-group-country-Charlie ag-Grid-AutoColumn:"Charlie" sales:10
+            │ ├── LEAF id:3 country:"Charlie" sales:5
+            │ └── LEAF id:4 country:"Charlie" sales:5
+            ├─┬ LEAF_GROUP id:row-group-country-Bravo ag-Grid-AutoColumn:"Bravo" sales:60
+            │ ├── LEAF id:5 country:"Bravo" sales:35
+            │ └── LEAF id:6 country:"Bravo" sales:25
+            └─┬ LEAF_GROUP id:row-group-country-Delta ag-Grid-AutoColumn:"Delta" sales:90
+            · ├── LEAF id:7 country:"Delta" sales:50
+            · └── LEAF id:8 country:"Delta" sales:40
+        `);
+
+        // Toggle to false. `groupMaintainOrder` is in `refreshProps`, so this triggers a sort
+        // refresh. The refresh has no `changedRowNodes` (not a transaction), so deltaSort is
+        // bypassed and the country level is full-sorted by [sales desc] using aggregated values:
+        // Delta(90), Bravo(60), Audi(40), Charlie(10).
+        api.setGridOption('groupMaintainOrder', false);
+
+        await new GridRows(api, 'after toggle: country level sorted desc by aggregated sales').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Delta ag-Grid-AutoColumn:"Delta" sales:90
+            │ ├── LEAF id:7 country:"Delta" sales:50
+            │ └── LEAF id:8 country:"Delta" sales:40
+            ├─┬ LEAF_GROUP id:row-group-country-Bravo ag-Grid-AutoColumn:"Bravo" sales:60
+            │ ├── LEAF id:5 country:"Bravo" sales:35
+            │ └── LEAF id:6 country:"Bravo" sales:25
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi" sales:40
+            │ ├── LEAF id:1 country:"Audi" sales:25
+            │ └── LEAF id:2 country:"Audi" sales:15
+            └─┬ LEAF_GROUP id:row-group-country-Charlie ag-Grid-AutoColumn:"Charlie" sales:10
+            · ├── LEAF id:3 country:"Charlie" sales:5
+            · └── LEAF id:4 country:"Charlie" sales:5
+        `);
+
+        // Subsequent transactions deltaSort correctly against the rebuilt baseline. Bumping
+        // Audi's aggregate to 130 places it above Bravo (60) and Delta (90).
+        applyTransactionChecked(api, { add: [{ id: '9', country: 'Audi', sales: 90 }] });
+
+        await new GridRows(api, 'after transaction: deltaSort against fresh baseline').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi" sales:130
+            │ ├── LEAF id:9 country:"Audi" sales:90
+            │ ├── LEAF id:1 country:"Audi" sales:25
+            │ └── LEAF id:2 country:"Audi" sales:15
+            ├─┬ LEAF_GROUP id:row-group-country-Delta ag-Grid-AutoColumn:"Delta" sales:90
+            │ ├── LEAF id:7 country:"Delta" sales:50
+            │ └── LEAF id:8 country:"Delta" sales:40
+            ├─┬ LEAF_GROUP id:row-group-country-Bravo ag-Grid-AutoColumn:"Bravo" sales:60
+            │ ├── LEAF id:5 country:"Bravo" sales:35
+            │ └── LEAF id:6 country:"Bravo" sales:25
+            └─┬ LEAF_GROUP id:row-group-country-Charlie ag-Grid-AutoColumn:"Charlie" sales:10
+            · ├── LEAF id:3 country:"Charlie" sales:5
+            · └── LEAF id:4 country:"Charlie" sales:5
         `);
     });
 });

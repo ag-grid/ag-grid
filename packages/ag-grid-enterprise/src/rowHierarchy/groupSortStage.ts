@@ -21,8 +21,12 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
     beanName = 'groupSortStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'sort';
-    // `groupMaintainOrder` is intentionally NOT here — see its JSDoc on `gridOptions.ts`.
-    public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'groupDisplayType', 'accentedSort'];
+    public readonly refreshProps: (keyof GridOptions<any>)[] = [
+        'postSortRows',
+        'groupDisplayType',
+        'accentedSort',
+        'groupMaintainOrder',
+    ];
 
     public execute(changedPath: ChangedPath | undefined, changedRowNodes: _ChangedRowNodes | undefined): void {
         const {
@@ -48,11 +52,11 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
         // Per-level subset of `sortOptions`; `null` means "use full sortOptions everywhere"
         // (or no sort at all). Tree data is excluded — `groupMaintainOrder` has no effect there.
         const groupColsByLevel = rowGroupColsSvc?.columns;
-        const levelSortOptions: (SortOption[] | undefined)[] | null =
+        const sortOptionsByLevel: (SortOption[] | undefined)[] | null =
             hasSortOptions && groupColsByLevel?.length && !groupStage?.treeData && gos.get('groupMaintainOrder')
-                ? buildLevelSortOptions(sortOptions, groupColsByLevel)
+                ? partitionSortOptionsByLevel(sortOptions, groupColsByLevel)
                 : null;
-        const fallbackSortOptions = !levelSortOptions && hasSortOptions ? sortOptions : undefined;
+        const fallbackSortOptions = !sortOptionsByLevel && hasSortOptions ? sortOptions : undefined;
 
         const isPivotMode = colModel.pivotMode;
 
@@ -66,7 +70,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
             const isPivotLeaf = isPivotMode && rowNode.leafGroup;
             let sortOptionsForLevel: SortOption[] | undefined;
             if (!isPivotLeaf) {
-                sortOptionsForLevel = levelSortOptions ? levelSortOptions[rowNode.level + 1] : fallbackSortOptions;
+                sortOptionsForLevel = sortOptionsByLevel ? sortOptionsByLevel[rowNode.level + 1] : fallbackSortOptions;
             }
 
             const prevSort = rowNode.childrenAfterSort;
@@ -141,7 +145,7 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
  *   so honour the user's sort intent at the leaf level when the column has data to sort by.
  * - Regular leaf column -> leaf bucket only.
  */
-const buildLevelSortOptions = (
+const partitionSortOptionsByLevel = (
     sortOptions: SortOption[],
     groupColsByLevel: AgColumn[]
 ): (SortOption[] | undefined)[] => {
@@ -186,10 +190,8 @@ const buildLevelSortOptions = (
 
         if (matchedLevel !== undefined) {
             (result[matchedLevel] ??= []).push(sortOption);
-            // Source rowGroup column (matched by ref) skips the leaf bucket — siblings in one
-            // leaf group share the group key, so sorting them by it is a no-op under the default
-            // comparator and can violate per-level isolation under a custom one. Display columns
-            // with own leaf sort DO reach the leaf bucket so leaves order by the column's data.
+            // Source rowGroup column skips the leaf bucket (siblings in one leaf group share the
+            // group key); display columns with own leaf sort also reach the leaf bucket.
             if (isLinkedDisplayCol && hasOwnLeafSort) {
                 (result[leafIndex] ??= []).push(sortOption);
             }

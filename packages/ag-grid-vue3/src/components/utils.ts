@@ -1225,9 +1225,6 @@ export interface Props<TData> {
          *
          * Applies to row grouping only. Has no effect on tree data, where row order is determined
          * by the tree structure.
-         *
-         * Toggling this option at runtime applies on the next sort, filter, or transaction
-         * refresh; call `api.refreshClientSideRowModel('sort')` to force one immediately.
          * @default false
          * @agModule `RowGroupingModule`
          */

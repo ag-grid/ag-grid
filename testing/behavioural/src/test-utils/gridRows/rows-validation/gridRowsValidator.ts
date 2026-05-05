@@ -409,7 +409,9 @@ export class GridRowsValidator {
                     `${name}[${index}] ${rowIdAndIndexToString(child)} is not in rowNodes`
             );
             if (name === 'childrenAfterSort' && !state.hasPostSortRows) {
-                // `_updateRowNodeAfterSort` runs BEFORE `postSortRows` (legacy AG-309 contract),
+                // Skip when `postSortRows` is configured: `_updateRowNodeAfterSort` runs BEFORE
+                // the callback (legacy AG-309 contract), so these flags reflect input order, not
+                // post-callback display order.
                 const childErrors = this.errors.get(child);
                 childErrors.expectValueEqual('childIndex', child.childIndex, child.footer ? undefined : index);
                 childErrors.expectValueEqual('firstChild', child.firstChild, index === 0);

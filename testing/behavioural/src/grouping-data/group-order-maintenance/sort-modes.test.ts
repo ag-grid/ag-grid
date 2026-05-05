@@ -10,15 +10,24 @@ describe('group order maintenance / sort modes', () => {
 
     afterEach(() => gridsManager.reset());
 
-    test('runtime groupMaintainOrder toggle: option not in refreshProps, takes effect on next natural refresh', async () => {
+    test('runtime groupMaintainOrder toggle: option is in refreshProps, takes effect immediately', async () => {
+        // Insertion order is Italy, USA, Audi (NOT alphabetical, NOT sales-asc). `sales` is
+        // aggregated, so a group-level sort by `sales` reads `aggData.sales` and produces
+        // distinct values per country (Italy=10, USA=50, Audi=20). The toggle's effect on the
+        // country level is therefore observable:
+        //   maintainOrder=false → country sorted by [sales asc]: Italy(10), Audi(20), USA(50)
+        //   maintainOrder=true  → country structural: Italy, USA, Audi
         const rowData = [
-            { id: '1', country: 'Italy', athlete: 'Z' },
-            { id: '2', country: 'France', athlete: 'A' },
-            { id: '3', country: 'Audi', athlete: 'M' },
+            { id: '1', country: 'Italy', sales: 10 },
+            { id: '2', country: 'USA', sales: 50 },
+            { id: '3', country: 'Audi', sales: 20 },
         ];
 
         const api = gridsManager.createGrid('grid-runtime-toggle', {
-            columnDefs: [{ field: 'country', rowGroup: true, hide: true, sortable: true }, { field: 'athlete' }],
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true, sortable: true },
+                { field: 'sales', aggFunc: 'sum', sortable: true },
+            ],
             autoGroupColumnDef: { headerName: 'Country' },
             animateRows: false,
             groupDefaultExpanded: -1,
@@ -27,70 +36,43 @@ describe('group order maintenance / sort modes', () => {
             getRowId: (p) => p.data.id,
         });
 
-        api.applyColumnState({ state: [{ colId: 'country', sort: 'desc' }] });
-        await new GridRows(api, 'toggle: country desc with maintainOrder=false').check(`
+        // With maintainOrder=false, [sales asc] cascades to the country level (full sortOptions
+        // applied everywhere). Country level sorts by aggregated sales: Italy(10), Audi(20), USA(50).
+        api.applyColumnState({ state: [{ colId: 'sales', sort: 'asc' }] });
+        await new GridRows(api, 'maintainOrder=false: country level cascades, sorted by sales asc').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            │ └── LEAF id:1 country:"Italy" athlete:"Z"
-            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
-            │ └── LEAF id:2 country:"France" athlete:"A"
-            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
-            · └── LEAF id:3 country:"Audi" athlete:"M"
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" sales:10
+            │ └── LEAF id:1 country:"Italy" sales:10
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi" sales:20
+            │ └── LEAF id:3 country:"Audi" sales:20
+            └─┬ LEAF_GROUP id:row-group-country-USA ag-Grid-AutoColumn:"USA" sales:50
+            · └── LEAF id:2 country:"USA" sales:50
         `);
 
+        // `groupMaintainOrder` is in `refreshProps` — toggling triggers an immediate sort refresh.
+        // With maintainOrder=true, [sales asc] routes to the leaf bucket only; the country level
+        // takes the no-sort branch and reverts to STRUCTURAL order [Italy, USA, Audi] (insertion).
         api.setGridOption('groupMaintainOrder', true);
-        await new GridRows(api, 'toggle: ON without explicit refresh — previous sort persists').check(`
+        await new GridRows(api, 'toggle ON: refresh applied, country reverts to structural order').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            │ └── LEAF id:1 country:"Italy" athlete:"Z"
-            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
-            │ └── LEAF id:2 country:"France" athlete:"A"
-            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
-            · └── LEAF id:3 country:"Audi" athlete:"M"
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" sales:10
+            │ └── LEAF id:1 country:"Italy" sales:10
+            ├─┬ LEAF_GROUP id:row-group-country-USA ag-Grid-AutoColumn:"USA" sales:50
+            │ └── LEAF id:2 country:"USA" sales:50
+            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi" sales:20
+            · └── LEAF id:3 country:"Audi" sales:20
         `);
 
-        api.refreshClientSideRowModel('sort');
-        await new GridRows(api, 'toggle: explicit refresh applies maintainOrder=true').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            │ └── LEAF id:1 country:"Italy" athlete:"Z"
-            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
-            │ └── LEAF id:2 country:"France" athlete:"A"
-            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
-            · └── LEAF id:3 country:"Audi" athlete:"M"
-        `);
-
-        api.applyColumnState({ state: [{ colId: 'country', sort: null }] });
-        await new GridRows(api, 'toggle: clear country sort with maintainOrder=true').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            │ └── LEAF id:1 country:"Italy" athlete:"Z"
-            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
-            │ └── LEAF id:2 country:"France" athlete:"A"
-            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
-            · └── LEAF id:3 country:"Audi" athlete:"M"
-        `);
-
+        // Toggle back to false: refresh re-cascades [sales asc] to the country level.
         api.setGridOption('groupMaintainOrder', false);
-        await new GridRows(api, 'toggle: OFF without explicit refresh — previous result persists').check(`
+        await new GridRows(api, 'toggle OFF: refresh applied, country re-sorted by sales asc').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            │ └── LEAF id:1 country:"Italy" athlete:"Z"
-            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
-            │ └── LEAF id:2 country:"France" athlete:"A"
-            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
-            · └── LEAF id:3 country:"Audi" athlete:"M"
-        `);
-
-        api.applyColumnState({ state: [{ colId: 'country', sort: 'desc' }] });
-        await new GridRows(api, 'toggle: natural sort refresh applies maintainOrder=false').check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            │ └── LEAF id:1 country:"Italy" athlete:"Z"
-            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
-            │ └── LEAF id:2 country:"France" athlete:"A"
-            └─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi"
-            · └── LEAF id:3 country:"Audi" athlete:"M"
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" sales:10
+            │ └── LEAF id:1 country:"Italy" sales:10
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi" sales:20
+            │ └── LEAF id:3 country:"Audi" sales:20
+            └─┬ LEAF_GROUP id:row-group-country-USA ag-Grid-AutoColumn:"USA" sales:50
+            · └── LEAF id:2 country:"USA" sales:50
         `);
     });
 
