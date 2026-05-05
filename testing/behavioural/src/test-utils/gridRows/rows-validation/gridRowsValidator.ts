@@ -408,15 +408,25 @@ export class GridRowsValidator {
                     gridRows.getById(child.id) === child &&
                     `${name}[${index}] ${rowIdAndIndexToString(child)} is not in rowNodes`
             );
-            if (name === 'childrenAfterSort' && !state.hasPostSortRows) {
-                // Skip when `postSortRows` is configured: `_updateRowNodeAfterSort` runs BEFORE
-                // the callback (legacy AG-309 contract), so these flags reflect input order, not
-                // post-callback display order.
+            if (name === 'childrenAfterSort') {
                 const childErrors = this.errors.get(child);
-                childErrors.expectValueEqual('childIndex', child.childIndex, child.footer ? undefined : index);
-                childErrors.expectValueEqual('firstChild', child.firstChild, index === 0);
-                if (duplicatesCount === 0) {
-                    childErrors.expectValueEqual('lastChild', child.lastChild, index === children.length - 1);
+                if (!state.hasPostSortRows) {
+                    // Strict: flags must match the displayed array position.
+                    childErrors.expectValueEqual('childIndex', child.childIndex, child.footer ? undefined : index);
+                    childErrors.expectValueEqual('firstChild', child.firstChild, index === 0);
+                    if (duplicatesCount === 0) {
+                        childErrors.expectValueEqual('lastChild', child.lastChild, index === children.length - 1);
+                    }
+                } else if (typeof child.childIndex === 'number') {
+                    // Loose (AG-309): `_updateRowNodeAfterSort` runs BEFORE `postSortRows`
+                    childErrors.expectValueEqual('firstChild', child.firstChild, child.childIndex === 0);
+                    if (duplicatesCount === 0) {
+                        childErrors.expectValueEqual(
+                            'lastChild',
+                            child.lastChild,
+                            child.childIndex === children.length - 1
+                        );
+                    }
                 }
             }
             this.validateRow(state, child);

@@ -582,16 +582,19 @@ interface DisplayedSortContext {
     isSortingCoupled: boolean;
 }
 
+// Mirrors `_isColumnsSortingCoupledToGroup`. INTENTIONAL DUPLICATION (black-box check) — keep in
+// sync with the production helper, named here so drift is easier to spot in review.
+function isCoupledSortMode(api: GridApi): boolean {
+    return !api.getGridOption('autoGroupColumnDef')?.comparator && !api.getGridOption('treeData');
+}
+
 function buildDisplayedSortContext(api: GridApi): DisplayedSortContext {
-    const autoGroupColumnDef = api.getGridOption('autoGroupColumnDef');
-    const treeData = api.getGridOption('treeData');
-    const isSortingCoupled = !autoGroupColumnDef?.comparator && !treeData;
     // `getRowGroupColumns` is gated on the SharedRowGrouping module; when not registered (e.g.
     // tree-data-only tests), the API call would log a warning and return `undefined`. Cast for
     // the internal module name matches the existing pattern in `validateHeaderRoot` above.
     const isModuleRegistered = api.isModuleRegistered as (name: string) => boolean;
     const rowGroupCols = isModuleRegistered('SharedRowGrouping') ? api.getRowGroupColumns() : null;
-    return { rowGroupCols, isSortingCoupled };
+    return { rowGroupCols, isSortingCoupled: isCoupledSortMode(api) };
 }
 
 /**
