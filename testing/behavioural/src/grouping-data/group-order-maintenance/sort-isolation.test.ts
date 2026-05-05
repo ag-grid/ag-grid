@@ -447,4 +447,73 @@ describe('group order maintenance / sort isolation', () => {
             · └── LEAF id:3 country:"BMW" athlete:"Luca"
         `);
     });
+
+    test('singleColumn shared display + source rowGroup column with independent sortIndexes: priority follows the user-specified order at each level', async () => {
+        const rowData = [
+            { id: '1', country: 'Italy', sales: 5 },
+            { id: '2', country: 'Audi', sales: 20 },
+            { id: '3', country: 'France', sales: 30 },
+        ];
+
+        const api = gridsManager.createGrid('grid-shared-display-priority', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    rowGroup: true,
+                    hide: true,
+                    sortable: true,
+                    comparator: (_a, _b, nodeA, nodeB) => {
+                        const aKey = String(nodeA?.key ?? '');
+                        const bKey = String(nodeB?.key ?? '');
+                        return aKey < bKey ? -1 : aKey > bKey ? 1 : 0;
+                    },
+                },
+                { field: 'sales', aggFunc: 'sum', sortable: true },
+            ],
+            autoGroupColumnDef: {
+                headerName: 'Group',
+                sortable: true,
+                // Uncoupled marker: the auto-display's own comparator orders groups by aggregate
+                // sales descending (Italy=5, Audi=20, France=30 → France, Audi, Italy).
+                comparator: (_a, _b, nodeA, nodeB) => (nodeB?.aggData?.sales ?? 0) - (nodeA?.aggData?.sales ?? 0),
+            },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({
+            state: [
+                { colId: 'ag-Grid-AutoColumn', sort: 'asc', sortIndex: 0 },
+                { colId: 'country', sort: 'asc', sortIndex: 1 },
+            ],
+        });
+        await new GridRows(api, 'priority A: auto-display primary, country secondary').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" sales:30
+            │ └── LEAF id:3 country:"France" sales:30
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi" sales:20
+            │ └── LEAF id:2 country:"Audi" sales:20
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" sales:5
+            · └── LEAF id:1 country:"Italy" sales:5
+        `);
+
+        api.applyColumnState({
+            state: [
+                { colId: 'country', sort: 'asc', sortIndex: 0 },
+                { colId: 'ag-Grid-AutoColumn', sort: 'asc', sortIndex: 1 },
+            ],
+        });
+        await new GridRows(api, 'priority B: country primary, auto-display secondary').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Audi ag-Grid-AutoColumn:"Audi" sales:20
+            │ └── LEAF id:2 country:"Audi" sales:20
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" sales:30
+            │ └── LEAF id:3 country:"France" sales:30
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" sales:5
+            · └── LEAF id:1 country:"Italy" sales:5
+        `);
+    });
 });

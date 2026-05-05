@@ -623,9 +623,17 @@ function getDisplayedSort(col: Column, ctx: DisplayedSortContext): SortDirection
         return null;
     }
 
-    // `=== true` cascades to all rowGroup columns; string matches by colId.
-    const linked =
-        showRowGroup === true ? ctx.rowGroupCols : ctx.rowGroupCols.filter((c) => c.getColId() === showRowGroup);
+    // `=== true` cascades to all rowGroup columns; string resolves to at most one column by colId.
+    let linked: Column[];
+    if (showRowGroup === true) {
+        linked = ctx.rowGroupCols;
+    } else {
+        const found = ctx.rowGroupCols.find((c) => c.getColId() === showRowGroup);
+        if (!found) {
+            return null;
+        }
+        linked = [found];
+    }
     if (linked.length === 0) {
         return null;
     }
