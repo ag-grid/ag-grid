@@ -1,9 +1,11 @@
 import {
     $devTools,
     $exampleDevToolbar,
+    $fpsMonitor,
     $openLinksInNewTab,
     toggleDevTools,
     toggleExampleDevToolbar,
+    toggleFpsMonitor,
     toggleOpenLinksInNewTab,
 } from '@ag-website-shared/components/dev-tools/stores/devToolsStore';
 import { useStoreSsr } from '@utils/hooks/useStoreSsr';
@@ -49,6 +51,23 @@ export const DevTools: FunctionComponent = () => {
     const devTools = useStoreSsr($devTools, false);
     const exampleDevToolbar = useStoreSsr($exampleDevToolbar, false);
     const openLinksInNewTab = useStoreSsr($openLinksInNewTab, false);
+    const fpsMonitor = useStoreSsr($fpsMonitor, false);
+
+    useEffect(() => {
+        let stop: (() => void) | undefined;
+        let cancelled = false;
+
+        if (fpsMonitor) {
+            import('@ag-website-shared/components/fps-monitor/fpsMonitor.js').then(({ startFpsMonitor }) => {
+                if (!cancelled) stop = startFpsMonitor();
+            });
+        }
+
+        return () => {
+            cancelled = true;
+            stop?.();
+        };
+    }, [fpsMonitor]);
 
     return devTools ? (
         <div id={DEV_TOOLS_ID} className={styles.devToolsContainer}>
@@ -71,6 +90,16 @@ export const DevTools: FunctionComponent = () => {
                         defaultChecked={openLinksInNewTab}
                         onClick={() => {
                             toggleOpenLinksInNewTab();
+                        }}
+                    />
+                </div>
+                <div>
+                    <label>FPS Monitor:</label>
+                    <input
+                        type="checkbox"
+                        defaultChecked={fpsMonitor}
+                        onClick={() => {
+                            toggleFpsMonitor();
                         }}
                     />
                 </div>
