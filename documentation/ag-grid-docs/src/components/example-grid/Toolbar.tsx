@@ -1,7 +1,7 @@
 import { Select } from '@ag-website-shared/components/select/Select';
-import { trackDemoToolbar, trackOnceDemoToolbar } from '@utils/analytics';
-import { useDeferredValue, useEffect, useMemo, useState } from 'react';
-import type { ChangeEvent, RefObject } from 'react';
+import { trackDemoToolbar } from '@utils/analytics';
+import { useMemo } from 'react';
+import type { RefObject } from 'react';
 
 import type { GridApi } from 'ag-grid-community';
 
@@ -77,23 +77,6 @@ export const Toolbar = ({
         updateUrlParam('theme', newTheme);
     }
 
-    const [quickFilterText, setQuickFilterText] = useState('');
-    const deferredQuickFilterText = useDeferredValue(quickFilterText);
-
-    useEffect(() => {
-        if (!gridRef.current?.api) {
-            return;
-        }
-        gridRef.current.api.setGridOption('quickFilterText', deferredQuickFilterText);
-        trackOnceDemoToolbar({
-            type: 'filterChange',
-        });
-    }, [deferredQuickFilterText, gridRef]);
-
-    function onFilterChanged(event: ChangeEvent<HTMLInputElement>) {
-        setQuickFilterText(event.target.value);
-    }
-
     const dataSizeOptions = useMemo(
         () =>
             rowCols.map(([rows, cols]) => {
@@ -147,18 +130,6 @@ export const Toolbar = ({
                         renderItem={(o: SelectOption) => {
                             return <>{o.label}</>;
                         }}
-                    />
-
-                    <label htmlFor="global-filter" className={styles.filterLabel}>
-                        Filter:
-                    </label>
-                    <input
-                        className={styles.filterInput}
-                        placeholder="Filter any column..."
-                        type="text"
-                        onInput={onFilterChanged}
-                        id="global-filter"
-                        style={{ flex: 1 }}
                     />
                 </div>
             </div>

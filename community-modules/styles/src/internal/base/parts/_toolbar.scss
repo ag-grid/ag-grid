@@ -30,7 +30,6 @@
         gap: var(--ag-spacing);
         padding: calc(var(--ag-spacing) * 2);
         border: 0;
-        border-radius: var(--ag-border-radius);
         background: transparent;
         color: var(--ag-toolbar-text-color);
         cursor: pointer;
@@ -57,7 +56,6 @@
         display: inline-flex;
         flex: 1;
         min-width: 235px;
-        max-width: 300px;
         padding: 0 calc(var(--ag-spacing) * 2);
     }
 
@@ -66,7 +64,7 @@
         display: inline-flex;
         align-items: center;
         min-width: 200px;
-        max-width: 250px;
+        max-width: none;
         margin: 0 calc(var(--ag-spacing) * 2);
     }
 
@@ -89,8 +87,7 @@
     }
 
     .ag-toolbar-input-field {
-        border: solid var(--ag-border-width) var(--ag-border-color);
-        border-radius: var(--ag-border-radius);
+        border: none;
         background: transparent;
         color: var(--ag-text-color);
         font-size: var(--ag-font-size);
@@ -99,6 +96,7 @@
         width: 100%;
         padding-top: calc(var(--ag-spacing) * 0.5);
         padding-bottom: calc(var(--ag-spacing) * 0.5);
+
         @include ag.unthemed-rtl(
             (
                 padding-right: var(--ag-spacing),
@@ -139,8 +137,6 @@
 
     .ag-toolbar-find {
         gap: calc(var(--ag-spacing) * 0.5);
-        border: solid var(--ag-border-width) var(--ag-border-color);
-        border-radius: var(--ag-border-radius);
         width: 280px;
         max-width: none;
         min-width: 220px;
@@ -148,16 +144,6 @@
 
     .ag-toolbar-find:focus-within {
         box-shadow: var(--ag-focus-shadow);
-    }
-
-    .ag-toolbar-find .ag-toolbar-input-field {
-        border: 0;
-        border-radius: 0;
-        @include ag.unthemed-rtl(
-            (
-                padding-right: 0,
-            )
-        );
     }
 
     .ag-toolbar-find .ag-toolbar-input-field:focus {
@@ -172,6 +158,8 @@
         user-select: none;
         font-variant-numeric: tabular-nums;
         min-width: 11ch;
+        height: stretch;
+        padding: var(--ag-spacing) 0;
         text-align: end;
     }
 

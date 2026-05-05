@@ -4,8 +4,13 @@ import type { IconName } from '../utils/icon';
 import type { AgGridCommon } from './iCommon';
 import type { DefaultMenuItem, MenuItemDef } from './menuItem';
 
+/**
+ * Configure the [Quick Access Toolbar](https://ag-grid.com/javascript-data-grid/toolbar/)
+ */
 export type Toolbar = {
+    /** Default alignment for items in the toolbar. Defaults to `'left'`. Item-level `alignment` takes precedence. */
     alignment?: 'left' | 'right';
+    /** Items to render in the toolbar. Each entry is either a shorthand string identifier or a full item definition object. */
     items: (ToolbarItemDef | ToolbarItemShorthand)[];
 };
 
@@ -26,6 +31,7 @@ export type ToolbarItemShorthand =
  */
 export type ToolbarItemComponent<T> = ToolbarItemShorthand | T;
 
+/** Params passed to a toolbar item's `action` callback when the item is activated. */
 export interface ToolbarItemActionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The toolbar item `key` identifying which item triggered the action. */
     key: string;
@@ -153,6 +159,10 @@ export interface IToolbarItemParams<TData = any, TContext = any, TParams = any> 
     action?: (params: ToolbarItemActionParams<TData, TContext>) => void;
 }
 
+/**
+ * Interface that custom toolbar item components may implement to receive lifecycle callbacks from the grid.
+ * Implement `refresh` to update in-place when the `toolbar` option changes, avoiding a full destroy/recreate cycle.
+ */
 export interface IToolbarItem<TData = any, TContext = any> {
     /**
      * Called when the `toolbar` grid option updates.
@@ -162,6 +172,11 @@ export interface IToolbarItem<TData = any, TContext = any> {
     refresh?(params: IToolbarItemParams<TData, TContext>): boolean;
 }
 
+/**
+ * Full interface for toolbar item components: combines `IToolbarItem` (optional `refresh` callback)
+ * with the standard AG Grid component lifecycle (`IComponent`).
+ * Custom toolbar components that are class-based should implement this interface.
+ */
 export interface IToolbarItemComp<TData = any, TContext = any>
     extends IToolbarItem<TData, TContext>, IComponent<IToolbarItemParams<TData, TContext>> {}
 
