@@ -256,12 +256,22 @@ export class NavigationService extends BeanStub implements NamedBean {
             scrollType = 'top';
         }
 
+        // focusIndex is always a body-row index (derived from rowModel/pageBounds above),
+        // so the normalisation target is in the body row model regardless of gridCell.rowPinned.
+        const targetPosition: CellPosition = {
+            rowIndex: focusIndex,
+            column: gridCell.column as AgColumn,
+            rowPinned: null,
+        };
+        const normalisedPosition = this.getNormalisedPosition(targetPosition);
+        const { rowIndex: normFocusIndex, column: normFocusColumn } = normalisedPosition ?? targetPosition;
+
         this.navigateTo({
             scrollIndex,
             scrollType,
             scrollColumn: null,
-            focusIndex,
-            focusColumn: gridCell.column as AgColumn,
+            focusIndex: normFocusIndex,
+            focusColumn: normFocusColumn as AgColumn,
         });
     }
 

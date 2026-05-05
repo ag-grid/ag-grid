@@ -7,7 +7,6 @@
         overflow: hidden;
         border-bottom: var(--ag-header-row-border);
         min-height: var(--ag-header-height);
-        line-height: 1.5;
         background-color: var(--ag-toolbar-background-color);
         color: var(--ag-toolbar-text-color);
         font-family: var(--ag-header-font-family);
@@ -24,20 +23,27 @@
         display: inline-flex;
     }
 
+    .ag-toolbar-button-wrapper {
+        display: inline-flex;
+        padding: calc(var(--ag-spacing) * 0.25);
+        height: 100%;
+    }
+
     .ag-toolbar-button {
         display: inline-flex;
         align-items: center;
         gap: var(--ag-spacing);
-        padding: calc(var(--ag-spacing) * 2);
+        padding: calc(var(--ag-spacing));
         border: 0;
         background: transparent;
         color: var(--ag-toolbar-text-color);
         cursor: pointer;
         line-height: 1;
         white-space: nowrap;
+        outline: none;
     }
 
-    .ag-toolbar-button:hover {
+    .ag-toolbar-button-wrapper:hover {
         background-color: var(--ag-icon-button-hover-background-color);
         color: var(--ag-icon-button-hover-color);
     }
@@ -79,34 +85,24 @@
         color: var(--ag-toolbar-text-color);
         opacity: 0.5;
         pointer-events: none;
-        @include ag.unthemed-rtl(
-            (
-                left: var(--ag-spacing),
-            )
-        );
+        inset-inline-start: var(--ag-spacing);
     }
 
     .ag-toolbar-input-field {
-        border: none;
-        background: transparent;
         color: var(--ag-text-color);
         font-size: var(--ag-font-size);
         line-height: 1.5;
         outline: none;
+        border: var(--ag-input-border);
+        border-radius: var(--ag-input-border-radius);
         width: 100%;
-        padding-top: calc(var(--ag-spacing) * 0.5);
-        padding-bottom: calc(var(--ag-spacing) * 0.5);
-
-        @include ag.unthemed-rtl(
-            (
-                padding-right: var(--ag-spacing),
-                padding-left: calc(var(--ag-spacing) + 14px + var(--ag-spacing) * 0.5),
-            )
-        );
+        padding-block: calc(var(--ag-spacing) * 0.5);
+        padding-inline: calc(var(--ag-spacing) * 4) var(--ag-spacing);
     }
 
     .ag-toolbar-input-field:focus {
         box-shadow: var(--ag-focus-shadow);
+        border: var(--ag-input-focus-border);
     }
 
     .ag-toolbar-input-field::placeholder {
@@ -128,11 +124,7 @@
         align-self: stretch;
         width: 0;
         margin: calc(var(--ag-spacing) * 1.75) 0;
-        @include ag.unthemed-rtl(
-            (
-                border-left: solid var(--ag-toolbar-separator-width) var(--ag-toolbar-separator-color),
-            )
-        );
+        border-inline-start: var(--ag-toolbar-separator-border);
     }
 
     .ag-toolbar-find {
@@ -140,14 +132,26 @@
         width: 280px;
         max-width: none;
         min-width: 220px;
+        border: var(--ag-input-border);
+        border-radius: var(--ag-input-border-radius);
+        background-color: var(--ag-input-background-color);
     }
 
     .ag-toolbar-find:focus-within {
         box-shadow: var(--ag-focus-shadow);
+        border: var(--ag-input-focus-border);
+    }
+
+    .ag-toolbar-find .ag-toolbar-input-field {
+        border: none;
+        background-color: transparent;
+        flex: 1;
+        min-width: 0;
     }
 
     .ag-toolbar-find .ag-toolbar-input-field:focus {
         box-shadow: none;
+        border: none;
     }
 
     .ag-toolbar-find-match-count {
@@ -157,9 +161,7 @@
         opacity: 0.7;
         user-select: none;
         font-variant-numeric: tabular-nums;
-        min-width: 11ch;
-        height: stretch;
-        padding: var(--ag-spacing) 0;
+        flex-shrink: 0;
         text-align: end;
     }
 

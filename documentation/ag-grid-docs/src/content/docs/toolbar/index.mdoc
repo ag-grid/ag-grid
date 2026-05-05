@@ -3,9 +3,9 @@ title: "Quick Access Toolbar"
 enterprise: true
 ---
 
-The Toolbar appears above the grid and provides quick access to common grid actions. It supports built-in items such as quick filter and find inputs, dropdown menus, and embedded panels, and can be extended with [Action Buttons](#action-buttons) or [Custom Components](#custom-components).
+The Toolbar appears above the grid and provides quick access to common grid actions. It supports built-in items such as quick filter and find, dropdown menus, and can be extended with [Action Buttons](#action-buttons) or [Custom Components](#custom-components).
 
-{% gridExampleRunner title="Built-in Items" name="built-in-items" exampleHeight=590 /%}
+{% gridExampleRunner title="Built-in Items" name="built-in-items" exampleHeight=300 /%}
 
 ## Configuring the Toolbar
 
@@ -14,7 +14,27 @@ Set the `toolbar` grid option to a [Toolbar](#reference-Toolbar) object. The `it
 ```{% frameworkTransform=true %}
 const gridOptions = {
     toolbar: {
-        items: ['agQuickFilterToolbarItem'],
+        items: [
+            // Built in Quick Filter
+            'agQuickFilterToolbarItem',
+            // Action Button to re-size the columns
+            {
+                label: 'Fit Columns To Grid',
+                icon: 'maximize',
+                alignment: 'right',
+                action: (params) => params.api.sizeColumnsToFit(),
+            },
+            // Menu Item for exporting to CSV / Excel
+            {
+                toolbarItem: 'agMenuToolbarItem',
+                icon: 'save',
+                alignment: 'right',
+                tooltip: 'Export to Csv / Excel',
+                toolbarItemParams: {
+                    menuItems: ['csvExport', 'excelExport'],
+                },
+            },
+        ],
     },
 
     // other grid options ...
@@ -23,7 +43,7 @@ const gridOptions = {
 
 ### Alignment
 
-Each item can be left&#8209; or right-aligned. The default is left, set on the toolbar via `alignment` and overridden per item with the item's own `alignment`.
+Toolbar items are aligned to the left by default. Set the `alignment` property on the toolbar to change the default alignment for all items, or set it individually per item.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -39,7 +59,7 @@ const gridOptions = {
 
 ## Built-in Items
 
-Built-in items require their corresponding modules to be registered. If a required module is not registered, the item is hidden and a console warning is logged.
+A number of built-in toolbar items are provided for common use cases that integrate with existing grid features. Be sure to include the required feature module, otherwise the toolbar item will be excluded.
 
 | Item                                   | Description                                                                                             | Required Modules                          |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
@@ -52,7 +72,12 @@ Built-in items require their corresponding modules to be registered. If a requir
 
 ### Dropdown Menus
 
-`agMenuToolbarItem` renders a button that opens a dropdown of [Menu Items](./component-menu-item/). Set `label`, `tooltip`, and `icon` on the item and supply `menuItems` via `toolbarItemParams`. The `icon` accepts any [provided icon](./custom-icons/#provided-icons) name. Each entry is either a [`MenuItemDef`](#reference-MenuItemDef) object or one of the built-in string names accepted by the [Context Menu](./context-menu/#built-in-menu-items).
+Use the `agMenuToolbarItem` to render a dropdown of [Menu Items](./component-menu-item/). Configure the button and menu contents using the following properties:
+
+- `label`: Visible text rendered next to the icon. Omit to render an icon-only button.
+- `icon`: Icon displayed on the button. Accepts any [provided icon](./custom-icons/#provided-icons).
+- `tooltip`: Hover tooltip and `aria-label`. Falls back to `label` when omitted.
+- `toolbarItemParams.menuItems`: Items to include in the dropdown. Each entry is either a `MenuItemDef` or one of the [built-in](./context-menu/#built-in-menu-items) menu item names as used by the Context Menu.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -72,7 +97,12 @@ const gridOptions = {
 
 ## Action Buttons
 
-Set `label`, `tooltip`, `icon` and `action` on an item to render a button without writing a component. The `action` callback fires on click and receives the grid `api`, `context`, and the item `key`.
+Action buttons provide a convenient way to trigger custom behaviour on click of a toolbar item. Configure an action button using the following properties:
+
+- `label`: Visible text rendered next to the icon. Omit to render an icon-only button.
+- `icon`: Icon displayed on the button. Accepts any [provided icon](./custom-icons/#provided-icons).
+- `tooltip`: Hover tooltip and `aria-label`. Falls back to `label` when omitted.
+- `action`: Callback fired on click. Receives the grid `api`, `context`, and the item `key`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -89,17 +119,15 @@ const gridOptions = {
 }
 ```
 
-`label` is the visible text rendered next to the icon; omit it to render an icon-only button. `icon` accepts any [provided icon](./custom-icons/#provided-icons) name. `tooltip` sets the hover tooltip and `aria-label`, and falls back to `label` when omitted.
-
 ## Custom Components
 
-For controls beyond a button, such as toggles, inputs, or any stateful UI, set `toolbarItem` to a component reference. Custom components can render arbitrary HTML and call any grid API, so they suit cases that the [Action Button](#action-buttons) shorthand cannot express.
+For controls beyond a button, such as toggles, inputs, or any stateful UI, set `toolbarItem` to a custom component. Custom components can render arbitrary HTML and call any grid API, so they suit cases that the [Action Button](#action-buttons) shorthand cannot express.
 
 The example below defines two custom items: checkbox toggles that apply column filters on the left, and a radio group that opens [Side Bar](./tool-panel/) tool panels on the right. The radio group exposes a `setSelected` method, called from the grid's `onToolPanelVisibleChanged` callback via [`getToolbarItemInstance`](#reference-getToolbarItemInstance) to keep its state in sync when a panel is opened or closed elsewhere, for example by clicking a side bar tab.
 
 {% gridExampleRunner title="Custom Toolbar Item" name="toolbar-custom" /%}
 
-The `toolbarItem` property accepts the following values:
+When defining a custom component, provide the `toolbarItem` with:
 
 {% if isFramework("javascript") %}
 
@@ -108,23 +136,16 @@ The `toolbarItem` property accepts the following values:
 
 {% /if %}
 
-{% if isFramework("angular") %}
+{% if isFramework("react", "angular") %}
 
 1. `String`: the name of a registered Toolbar Item Component. See [Registering Custom Components](./components/#registering-custom-components).
-2. `Class`: a direct reference to a Toolbar Item Component.
+2. `Component`: a direct reference to a Toolbar Item Component.
 
 {% /if %}
 
 {% if isFramework("vue") %}
 
 1. `String`: the name of a registered Toolbar Item Component. See [Registering Custom Components](./components/#registering-custom-components).
-
-{% /if %}
-
-{% if isFramework("react") %}
-
-1. `String`: the name of a registered Toolbar Item Component. See [Registering Custom Components](./components/#registering-custom-components).
-2. `Component`: a direct reference to a Toolbar Item Component.
 
 {% /if %}
 
@@ -148,12 +169,18 @@ The toolbar exposes the following [Theme Parameters](./theming-parameters/):
 | `toolbarTextColor`       | Text colour in the toolbar. Defaults to the header text colour.             |
 | `toolbarSeparatorBorder` | Border style for the vertical separator between toolbar items.              |
 
+## Accessing Toolbar Items
+
+To access a toolbar item instance use the grid api method `getToolbarItemInstance(key)`. This is demonstrated in the [Custom Components](#custom-components) example above, where it's used to keep a toolbar radio in sync with side bar tool panel changes.
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["getToolbarItemInstance"] /%}
+
 ## API Reference
+
+### Toolbar
 
 {% apiDocumentation source="grid-options/properties.json" section="accessories" names=["toolbar"] /%}
 
+### IToolbarItemParams
+
 {% interfaceDocumentation interfaceName="IToolbarItemParams" /%}
-
-`getToolbarItemInstance` is demonstrated in the [Custom Components](#custom-components) example, where it's used to keep a toolbar radio in sync with side bar tool panel changes.
-
-{% apiDocumentation source="grid-api/api.json" section="accessories" names=["getToolbarItemInstance"] /%}

@@ -226,7 +226,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
         });
     });
 
-    describe('console warnings for missing feature modules', () => {
+    describe('console error for missing feature modules', () => {
         const minimalGridMgr = new TestGridsManager({
             modules: [ClientSideRowModelModule, ToolbarModule],
         });
@@ -235,8 +235,8 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             minimalGridMgr.reset();
         });
 
-        test('hides rowGroupPanel and logs warning when RowGroupingModule is not registered', async () => {
-            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+        test('hides rowGroupPanel and logs error when RowGroupingModule is not registered', async () => {
+            const errorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
             const api = minimalGridMgr.createGrid('row-group-panel-no-module', {
                 columnDefs: [{ field: 'name' }],
@@ -251,17 +251,17 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             expect(item).not.toBeNull();
             expect(item!.classList.contains('ag-hidden')).toBe(true);
 
-            expect(warnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #302'),
+            expect(errorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('error #302'),
                 expect.stringContaining('agRowGroupPanelToolbarItem'),
                 expect.anything()
             );
 
-            warnSpy.mockRestore();
+            errorSpy.mockRestore();
         });
 
-        test('hides pivotPanel and logs warning when PivotModule is not registered', async () => {
-            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+        test('hides pivotPanel and logs error when PivotModule is not registered', async () => {
+            const errorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
             const api = minimalGridMgr.createGrid('pivot-panel-no-module', {
                 columnDefs: [{ field: 'name' }],
@@ -276,13 +276,13 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             expect(item).not.toBeNull();
             expect(item!.classList.contains('ag-hidden')).toBe(true);
 
-            expect(warnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #302'),
+            expect(errorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('error #302'),
                 expect.stringContaining('agPivotPanelToolbarItem'),
                 expect.anything()
             );
 
-            warnSpy.mockRestore();
+            errorSpy.mockRestore();
         });
     });
 });

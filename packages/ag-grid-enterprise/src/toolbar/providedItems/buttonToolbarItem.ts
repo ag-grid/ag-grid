@@ -14,6 +14,8 @@ const ButtonToolbarItemElement: ElementParams = {
 };
 
 export class ButtonToolbarItem extends Component implements IToolbarItemComp {
+    readonly agToolbarButton = 'agToolbarButton' as const;
+
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private params!: IToolbarItemParams;

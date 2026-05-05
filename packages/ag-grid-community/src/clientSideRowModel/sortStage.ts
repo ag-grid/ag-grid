@@ -1,10 +1,9 @@
+import { _reuseArrayIfEqual } from '../agStack/utils/array';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
-import type { PostSortRowsParams } from '../interfaces/iCallbackParams';
 import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeSortStage } from '../interfaces/iRowNodeStage';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ChangedRowNodes } from './changedRowNodes';
@@ -46,37 +45,46 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage 
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'accentedSort'];
 
     public execute(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void {
-        const rootNode = this.beans.rowModel.rootNode!;
-        const sortOptions = this.beans.sortSvc!.getSortOptions();
+        const { rowModel, sortSvc, rowNodeSorter } = this.beans;
+        const rootNode = rowModel.rootNode!;
+        const sortOptions = sortSvc!.getSortOptions();
+        const hasSortOptions = sortOptions.length > 0;
+        const postSortFunc = this.gos.getCallback('postSortRows');
 
-        const useDeltaSort = sortOptions.length > 0 && !!changedRowNodes && this.gos.get('deltaSort');
+        // Delta sort runs only on transaction refreshes — sort/grouping changes refresh
+        // without a transaction and rebuild the baseline via full sort. Disabled when
+        // `postSortRows` is configured: a callback that mutates `childrenAfterSort` into
+        // non-sort order corrupts `_doDeltaSort`'s merge baseline. Full sort is correct under
+        // any postSortRows pattern.
+        const deltaSortChangedRowNodes =
+            hasSortOptions && !postSortFunc && this.gos.get('deltaSort') && changedRowNodes;
 
-        let newChildrenAfterSort: RowNode[] | null = null;
-        if (sortOptions.length > 0) {
-            if (useDeltaSort && changedRowNodes) {
+        const prevSort = rootNode.childrenAfterSort;
+        const aggFilter = rootNode.childrenAfterAggFilter;
+        let newChildrenAfterSort: RowNode[];
+        if (hasSortOptions) {
+            if (deltaSortChangedRowNodes) {
                 newChildrenAfterSort = doDeltaSort(
-                    this.beans.rowNodeSorter!,
+                    rowNodeSorter!,
                     rootNode,
-                    changedRowNodes,
+                    deltaSortChangedRowNodes,
                     changedPath,
                     sortOptions
                 );
             } else {
-                newChildrenAfterSort = this.beans.rowNodeSorter!.doFullSortInPlace(
-                    rootNode.childrenAfterAggFilter!.slice(),
-                    sortOptions
-                );
+                newChildrenAfterSort = rowNodeSorter!.doFullSortInPlace(aggFilter?.slice() ?? [], sortOptions);
             }
+        } else {
+            // No sort: structural filter baseline. Reuses `prevSort` by ref when contents are
+            // unchanged; a `postSortRows`-reordered `prevSort` triggers a fresh slice.
+            newChildrenAfterSort = _reuseArrayIfEqual(prevSort, aggFilter);
         }
 
-        newChildrenAfterSort ||= rootNode.childrenAfterAggFilter?.slice() ?? [];
         rootNode.childrenAfterSort = newChildrenAfterSort;
+        // AG-309 (Feb 2018) legacy: runs BEFORE postSortRows so callers can read input-order
+        // flags inside their callback. Don't flip — public contract.
         updateRowNodeAfterSort(rootNode);
 
-        const postSortFunc = this.gos.getCallback('postSortRows');
-        if (postSortFunc) {
-            const params: WithoutGridCommon<PostSortRowsParams> = { nodes: rootNode.childrenAfterSort };
-            postSortFunc(params);
-        }
+        postSortFunc?.({ nodes: newChildrenAfterSort });
     }
 }

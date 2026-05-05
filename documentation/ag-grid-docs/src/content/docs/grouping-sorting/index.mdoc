@@ -61,6 +61,41 @@ const gridOptions = {
 }
 ```
 
+## Maintain Group Order
+
+By default, sorting on a non-group column reorders groups based on the sort. To keep groups in their structural order while only
+sorting the rows within each group, enable `groupMaintainOrder`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'athlete' },
+    ],
+    groupMaintainOrder: true,
+};
+```
+
+With `groupMaintainOrder=true`:
+
+- Sorting a leaf column sorts the rows inside each group; groups stay in structural order.
+- Filter changes preserve group order.
+- Transactions add new groups at their structural position — at the end of the data-insertion order, or at the position produced by `initialGroupOrderComparator` if one is configured.
+- With multi-level row grouping, the order is maintained per level. Sorting a group column at one level only re-orders that level's groups — sibling levels keep their structural order. For example, with `country` and `year` grouping, sorting `year` re-orders year groups within each country, while country groups remain in their structural slot.
+
+{% gridExampleRunner title="Maintain Group Order" name="maintain-group-order" /%}
+
+The example above uses `groupDisplayType: 'multipleColumns'` so each group level has its own header. Try the following to see per-level isolation:
+
+- Sort `Athlete` or `Total` (leaf columns) — only the rows inside each year group reorder; year and country groups keep their structural order.
+- Sort the `Year` group column — only year groups within each country reorder; country groups stay structural.
+- Sort the `Country` group column — only country groups reorder; year groups within each country keep their structural order.
+- Clear a group-column sort — that level reverts to structural order; sibling levels are unaffected.
+
+The structural order is the data-insertion order by default, or the order produced by
+[`initialGroupOrderComparator`](#unsorted-group-order) if one is configured. If a group column had a sort applied and the user later
+explicitly clears that sort, the structural order is restored.
+
 ## Unsorted Group Order
 
 When no sorting is applied, the groups are ordered by the order in which they appear in the data. This order can be overwritten with
