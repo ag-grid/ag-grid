@@ -184,7 +184,13 @@ export class GridRowDomCellValidator {
         }
 
         const hasGroupRendererDom = !!cellElement.querySelector('.ag-group-value');
-        if (hasGroupRendererDom || !!colDef.showRowGroup) {
+        const showRowGroup = colDef.showRowGroup;
+        // Unresolved `showRowGroup: '<colId>'` on a group row leaves `groupData` empty and the
+        // grid renders the cell as a regular cell. Skip the group-cell path in that case.
+        const hasResolvedShowRowGroup =
+            showRowGroup === true ||
+            (typeof showRowGroup === 'string' && (!row.group || !!row.groupData?.[showRowGroup]));
+        if (hasGroupRendererDom || hasResolvedShowRowGroup) {
             const expected = this.getExpectedGroupCellText(row, column, stringCellValue);
             if (expected !== undefined) {
                 this.reportGroupCellMismatch(rowErrors, columnId, expected, textContent);

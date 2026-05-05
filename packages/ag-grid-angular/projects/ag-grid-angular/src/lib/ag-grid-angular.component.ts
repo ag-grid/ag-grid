@@ -1390,8 +1390,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input() public autoGroupColumnDef: AutoGroupColumnDef<TData> | undefined = undefined;
-    /** When `true`, preserves the current group order when sorting on non-group columns.
-     * If a user explicitly resets the current group sort direction, then the current group column order is not preserved.
+    /** When `true`, sorting on non-group columns does not reorder groups; only the rows within
+     * each group are sorted. Group order remains the structural order set at grouping time
+     * (data-insertion order, or `initialGroupOrderComparator` if configured) and is preserved
+     * across filter changes and transactions. If a group column was sorted via `colDef.sort`
+     * and the user later explicitly clears that sort, the structural order is restored.
+     *
+     * With multi-level row grouping, the order is maintained per level: a sort on a group
+     * column at one level only re-orders that level's groups; sibling levels keep their
+     * structural order.
+     *
+     * Applies to row grouping only. Has no effect on tree data, where row order is determined
+     * by the tree structure.
      * @default false
      * @agModule `RowGroupingModule`
      */
@@ -1860,6 +1870,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public gridId: string | undefined = undefined;
     /** When enabled, sorts only the rows added/updated by a transaction.
+     *
+     * Ignored when `postSortRows` is configured (falls back to full sort).
      * @default false
      */
     @Input({ transform: booleanAttribute }) public deltaSort: boolean | undefined = undefined;
@@ -2105,6 +2117,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public fillOperation: FillOperation<TData> | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.
+     *
+     * When configured, `deltaSort` is ignored.
      */
     @Input() public postSortRows: PostSortRows<TData> | undefined = undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.
