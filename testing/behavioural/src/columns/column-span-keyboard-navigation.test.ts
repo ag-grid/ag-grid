@@ -1,8 +1,13 @@
 import type { ColDef, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, KeyCode } from 'ag-grid-community';
+import { ClientSideRowModelModule, KeyCode, PinnedRowModule } from 'ag-grid-community';
 
+import {
+    dispatchKeyDown,
+    getFocusedColId,
+    getFocusedRowIndex,
+    getFocusedRowPinned,
+} from '../navigation/navigation-test-utils';
 import { TestGridsManager } from '../test-utils';
-import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from '../navigation/navigation-test-utils';
 
 interface RowData {
     a: string;
@@ -31,7 +36,7 @@ function makeColumnDefs(): ColDef<RowData>[] {
 
 describe('Column Spanning Keyboard Navigation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule],
+        modules: [ClientSideRowModelModule, PinnedRowModule],
     });
 
     afterEach(() => {
@@ -80,6 +85,30 @@ describe('Column Spanning Keyboard Navigation', () => {
         dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true });
 
         expect(getFocusedRowIndex(api)).toBe(3);
+        expect(getFocusedColId(api)).toBe('a');
+    });
+
+    test('Page Down from pinned top row lands on body row and normalises spanning cell', () => {
+        // Page Down's focusIndex is computed from the body rowModel/pageBounds, so even when
+        // the starting cell is a pinned top row, the target must be a body row with rowPinned:null.
+        // Body row 1 has col 'a' spanning over 'b', so focus must normalise to 'a'.
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: makeColumnDefs(),
+            pinnedTopRowData: [{ a: 'tp0', b: 'tp0b', c: 'tp0c' }],
+            rowData: [
+                { a: 'a0', b: 'b0', c: 'c0' },
+                { a: 'a1', b: 'b1', c: 'c1' },
+            ],
+        } as GridOptions<RowData>);
+
+        api.setFocusedCell(0, 'b', 'top');
+        expect(getFocusedColId(api)).toBe('b');
+        expect(getFocusedRowPinned(api)).toBe('top');
+
+        dispatchKeyDown(KeyCode.PAGE_DOWN);
+
+        expect(getFocusedRowPinned(api)).toBeNull();
+        expect(getFocusedRowIndex(api)).toBe(1);
         expect(getFocusedColId(api)).toBe('a');
     });
 });
