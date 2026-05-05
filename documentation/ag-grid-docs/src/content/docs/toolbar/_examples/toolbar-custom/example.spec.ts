@@ -15,6 +15,10 @@ test.agExample(import.meta, () => {
         await checkboxes.nth(0).check();
         await expect(page.locator('.ag-header-cell[col-id="gold"] .ag-filter-active')).toBeVisible();
 
+        // Reset to a known starting point — Columns is selected by default in this example
+        await toolbar.getByLabel('None').check();
+        await expect(page.locator('.ag-column-panel')).toBeHidden();
+
         await toolbar.getByLabel('Columns').check();
         await expect(page.locator('.ag-column-panel')).toBeVisible();
 
