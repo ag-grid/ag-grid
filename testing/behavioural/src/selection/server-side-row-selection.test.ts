@@ -1490,6 +1490,27 @@ describe('Row Selection Grid Options', () => {
                 actions.toggleCheckboxByIndex(2);
                 expect(getStatusBarValue(api, 'Selected')).toBe('6');
             });
+
+            test('getSelectionCount returns -1 and status panel shows "?" when isRowSelectable excludes rows', async () => {
+                const [api, actions] = await createGridAndWait({
+                    columnDefs,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: {
+                        mode: 'multiRow',
+                        headerCheckbox: true,
+                        isRowSelectable: (node) => node.data.sport !== 'football',
+                    },
+                    statusBar: { statusPanels: [{ statusPanel: 'agSelectedRowCountComponent' }] },
+                });
+
+                actions.toggleHeaderCheckboxByIndex(0);
+                expect(getStatusBarValue(api, 'Selected')).toBe('?');
+            });
         });
 
         describe('Group selection', () => {

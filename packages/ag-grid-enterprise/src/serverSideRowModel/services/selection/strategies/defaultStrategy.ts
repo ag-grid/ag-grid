@@ -5,7 +5,14 @@ import type {
     RowNode,
     RowRangeSelectionContext,
 } from 'ag-grid-community';
-import { BeanStub, _error, _isMultiRowSelection, _isUsingNewRowSelectionAPI, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    _error,
+    _getIsRowSelectable,
+    _isMultiRowSelection,
+    _isUsingNewRowSelectionAPI,
+    _warn,
+} from 'ag-grid-community';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -198,6 +205,11 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         const { filterManager, rowModel } = this.beans;
         const filterPresent = filterManager?.isAnyFilterPresent();
         if (!filterPresent && rowModel.isLastRowIndexKnown()) {
+            // isRowSelectable may exclude some rows from selection. For unloaded rows we cannot
+            // know how many are non-selectable, so the count is unknowable.
+            if (_getIsRowSelectable(this.gos)) {
+                return -1;
+            }
             return Math.max(0, rowModel.getRowCount() - toggledNodes.size);
         }
         return -1;
