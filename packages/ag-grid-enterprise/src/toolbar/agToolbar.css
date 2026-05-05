@@ -106,7 +106,7 @@
     color: var(--ag-input-placeholder-text-color);
 }
 
-.ag-toolbar-panel .ag-column-drop-horizontal {
+:where(.ag-toolbar-panel) .ag-column-drop-horizontal {
     background-color: transparent;
     border-bottom: none;
     padding: 0;
@@ -139,6 +139,7 @@
     border: var(--ag-input-focus-border);
 }
 
+/* stylelint-disable-next-line selector-max-specificity */
 .ag-toolbar-find .ag-toolbar-input-field {
     border: none;
     background-color: transparent;
