@@ -140,14 +140,14 @@
     border: var(--ag-input-focus-border);
 }
 
-:where(.ag-toolbar-find) .ag-toolbar-input-field {
+.ag-toolbar-find .ag-toolbar-input-field {
     border: none;
     background-color: transparent;
     flex: 1;
     min-width: 0;
 }
 
-:where(.ag-toolbar-find) .ag-toolbar-input-field:focus {
+.ag-toolbar-find .ag-toolbar-input-field:focus {
     box-shadow: none;
     border: none;
 }
