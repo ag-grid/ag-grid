@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, applyTransactionChecked } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../../test-utils';
 
 describe('group order maintenance / delta sort', () => {
     const gridsManager = new TestGridsManager({
@@ -457,6 +457,155 @@ describe('group order maintenance / delta sort', () => {
             │ └── LEAF id:7 country:"Spain" sales:10
             └─┬ LEAF_GROUP id:row-group-country-USA ag-Grid-AutoColumn:"USA" sales:100
             · └── LEAF id:5 country:"USA" sales:100
+        `);
+    });
+
+    test('deltaSort + groupMaintainOrder runtime toggle: stale baseline ordered by aggregate-reading comparator does not corrupt next merge', async () => {
+        // Under groupMaintainOrder=false the baseline is sorted by a custom country comparator
+        // that reads `node.aggData.sales` (a per-group aggregate) AND a secondary `sales desc`
+        // tie-breaker. After toggling to true, per-level narrowing strips the secondary, so the
+        // country level is sorted with ONLY the aggregate-reading comparator. The next
+        // transaction's delta-sort merge must converge to the current narrowed-options ordering,
+        // not silently preserve the stale full-options arrangement.
+        const rowData = [
+            { id: '1', country: 'Italy', sales: 5 },
+            { id: '2', country: 'Italy', sales: 4 },
+            { id: '3', country: 'Italy', sales: 3 },
+            { id: '4', country: 'Italy', sales: 2 },
+            { id: '5', country: 'Italy', sales: 1 },
+            { id: '6', country: 'France', sales: 50 },
+            { id: '7', country: 'France', sales: 40 },
+            { id: '8', country: 'France', sales: 30 },
+            { id: '9', country: 'France', sales: 20 },
+            { id: '10', country: 'France', sales: 10 },
+            { id: '11', country: 'USA', sales: 200 },
+            { id: '12', country: 'USA', sales: 100 },
+            { id: '13', country: 'Germany', sales: 25 },
+            { id: '14', country: 'Germany', sales: 15 },
+            { id: '15', country: 'Spain', sales: 8 },
+            { id: '16', country: 'Spain', sales: 7 },
+        ];
+
+        const api = gridsManager.createGrid('grid-runtime-toggle-stale-aggregate-comparator', {
+            columnDefs: [
+                {
+                    field: 'country',
+                    rowGroup: true,
+                    hide: true,
+                    sortable: true,
+                    // Aggregate-reading comparator on the rowGroup column. Non-zero between
+                    // groups (different aggregates), zero between leaves in the same group
+                    // (same aggregate). Drives an ordering that doesn't reduce to the group
+                    // key alone, so narrowing the secondary tie-breaker can change the result.
+                    comparator: (_a, _b, nodeA, nodeB) => {
+                        const aggA = nodeA?.aggData?.sales ?? 0;
+                        const aggB = nodeB?.aggData?.sales ?? 0;
+                        return aggA - aggB;
+                    },
+                },
+                { field: 'sales', aggFunc: 'sum', sortable: true },
+            ],
+            autoGroupColumnDef: { headerName: 'Country' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: false, // start with false → root sorted with FULL sortOptions
+            deltaSort: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        // Activate sort: country asc (custom aggregate-reading comparator) + sales desc.
+        // Under groupMaintainOrder=false, root level was sorted with BOTH options.
+        // Country aggregates: Italy=15, France=150, USA=300, Germany=40, Spain=15.
+        // Italy ties Spain on country comparator (both agg 15) → sales-desc tie-breaker reads
+        // group-row aggregate sales = 15 for both, ties again → stable insertion order:
+        // Italy before Spain.
+        api.applyColumnState({
+            state: [
+                { colId: 'country', sort: 'asc', sortIndex: 0 },
+                { colId: 'sales', sort: 'desc', sortIndex: 1 },
+            ],
+        });
+
+        await new GridRows(api, 'baseline: groupMaintainOrder=false, full options sort').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" sales:15
+            │ ├── LEAF id:1 country:"Italy" sales:5
+            │ ├── LEAF id:2 country:"Italy" sales:4
+            │ ├── LEAF id:3 country:"Italy" sales:3
+            │ ├── LEAF id:4 country:"Italy" sales:2
+            │ └── LEAF id:5 country:"Italy" sales:1
+            ├─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain" sales:15
+            │ ├── LEAF id:15 country:"Spain" sales:8
+            │ └── LEAF id:16 country:"Spain" sales:7
+            ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" sales:40
+            │ ├── LEAF id:13 country:"Germany" sales:25
+            │ └── LEAF id:14 country:"Germany" sales:15
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" sales:150
+            │ ├── LEAF id:6 country:"France" sales:50
+            │ ├── LEAF id:7 country:"France" sales:40
+            │ ├── LEAF id:8 country:"France" sales:30
+            │ ├── LEAF id:9 country:"France" sales:20
+            │ └── LEAF id:10 country:"France" sales:10
+            └─┬ LEAF_GROUP id:row-group-country-USA ag-Grid-AutoColumn:"USA" sales:300
+            · ├── LEAF id:11 country:"USA" sales:200
+            · └── LEAF id:12 country:"USA" sales:100
+        `);
+
+        // The hidden source `country` column carries the sort:asc state — only `sales` is
+        // visible with its own sort indicator. The auto-display column has no own sort
+        // indicator (the country sort is on the hidden source column, not propagated to the
+        // auto-display column header in this configuration).
+        await new GridColumns(api, 'baseline: column sort indicators').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            └── sales "Sales" width:200 sort:desc sortIndex:1 aggFunc:sum
+        `);
+
+        // Toggle to true → root level narrows to ONLY the country comparator (no sales tie-break).
+        // Then add an Italy row via transaction — delta sort runs at the root level using the
+        // STALE baseline (above) but with the NEW narrowed options. Adding sales=20 changes
+        // Italy's aggregate from 15 → 35, so:
+        // Re-ranking: Spain=15, Italy=35, Germany=40, France=150, USA=300.
+        applyTransactionChecked(api, { add: [{ id: '17', country: 'Italy', sales: 20 }] });
+
+        // The merge MUST place groups in current-narrowed-options order. Italy moves from
+        // (tied with Spain at agg=15, before Spain by insertion order) to (agg=35, after
+        // Spain). If the merge silently preserved the stale Italy-before-Spain ordering we
+        // would see an inversion at agg=35 vs Spain agg=15.
+        await new GridRows(api, 'after toggle + transaction: narrowed options applied').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain" sales:15
+            │ ├── LEAF id:15 country:"Spain" sales:8
+            │ └── LEAF id:16 country:"Spain" sales:7
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" sales:35
+            │ ├── LEAF id:17 country:"Italy" sales:20
+            │ ├── LEAF id:1 country:"Italy" sales:5
+            │ ├── LEAF id:2 country:"Italy" sales:4
+            │ ├── LEAF id:3 country:"Italy" sales:3
+            │ ├── LEAF id:4 country:"Italy" sales:2
+            │ └── LEAF id:5 country:"Italy" sales:1
+            ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" sales:40
+            │ ├── LEAF id:13 country:"Germany" sales:25
+            │ └── LEAF id:14 country:"Germany" sales:15
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" sales:150
+            │ ├── LEAF id:6 country:"France" sales:50
+            │ ├── LEAF id:7 country:"France" sales:40
+            │ ├── LEAF id:8 country:"France" sales:30
+            │ ├── LEAF id:9 country:"France" sales:20
+            │ └── LEAF id:10 country:"France" sales:10
+            └─┬ LEAF_GROUP id:row-group-country-USA ag-Grid-AutoColumn:"USA" sales:300
+            · ├── LEAF id:11 country:"USA" sales:200
+            · └── LEAF id:12 country:"USA" sales:100
+        `);
+
+        // Sort indicators unchanged after the toggle + transaction — the runtime toggle of
+        // `groupMaintainOrder` does not change column state, only the per-level routing in
+        // the sort stage.
+        await new GridColumns(api, 'after toggle: sort indicators preserved').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Country" width:200
+            └── sales "Sales" width:200 sort:desc sortIndex:1 aggFunc:sum
         `);
     });
 });

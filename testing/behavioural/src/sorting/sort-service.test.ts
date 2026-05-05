@@ -829,10 +829,15 @@ describe('SortService', () => {
     });
 
     describe('sortChanged event dispatch on sort clear', () => {
-        test('clearing already-cleared columns does not dispatch spurious sortChanged events', async () => {
+        test('clearing already-cleared columns does not dispatch spurious column-level sortChanged events', async () => {
             // `clearSortBarTheseColumns` walks every column on single-sort. Columns whose sort
-            // doesn't actually change (already cleared) must not trigger column-level events.
-            const sortChangedListener = vitest.fn();
+            // doesn't actually change (already cleared) must not trigger column-level events —
+            // suppressed by the `_areSortDefsEqual` check in `setColSort`. Verify by attaching
+            // listeners to the columns themselves, not just the grid-level event.
+            const gridListener = vitest.fn();
+            const colAListener = vitest.fn();
+            const colBListener = vitest.fn();
+            const colCListener = vitest.fn();
             const api = gridMgr.createGrid('g', {
                 columnDefs: [
                     { colId: 'a', field: 'a' },
@@ -842,33 +847,107 @@ describe('SortService', () => {
                 rowData,
                 getRowId: (p) => p.data.id,
             });
-            api.addEventListener('sortChanged', sortChangedListener);
+            const colA = api.getColumn('a')!;
+            const colB = api.getColumn('b')!;
+            const colC = api.getColumn('c')!;
+            api.addEventListener('sortChanged', gridListener);
+            colA.addEventListener('sortChanged', colAListener);
+            colB.addEventListener('sortChanged', colBListener);
+            colC.addEventListener('sortChanged', colCListener);
 
             api.applyColumnState({ state: [{ colId: 'a', sort: 'asc' }] });
             await asyncSetTimeout(0);
-            expect(sortChangedListener).toHaveBeenCalledTimes(1);
-            sortChangedListener.mockClear();
+            // Setting 'a' fires column-level on 'a' only, plus one grid-level.
+            expect(gridListener).toHaveBeenCalledTimes(1);
+            expect(colAListener).toHaveBeenCalledTimes(1);
+            expect(colBListener).not.toHaveBeenCalled();
+            expect(colCListener).not.toHaveBeenCalled();
+            await new GridRows(api, "after sort 'a' asc: rows ordered by a").check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:2 a:"a" b:"x" c:1
+                ├── LEAF id:3 a:"m" b:"a" c:9
+                └── LEAF id:1 a:"z" b:"m" c:5
+            `);
+            await new GridColumns(api, "col state: only 'a' sorted asc").checkColumns(`
+                CENTER
+                ├── a "A" width:200 sort:asc
+                ├── b "B" width:200
+                └── c "C" width:200
+            `);
+            gridListener.mockClear();
+            colAListener.mockClear();
 
-            // 'a' clears, 'b' sets, 'c' stays unsorted — one grid-level event.
+            // 'a' clears, 'b' sets, 'c' stays unsorted — one grid-level event, column-level
+            // on 'a' (cleared) and 'b' (set), nothing on 'c' (already cleared, no-op).
             api.applyColumnState({
                 state: [{ colId: 'b', sort: 'desc' }],
                 defaultState: { sort: null },
             });
             await asyncSetTimeout(0);
-            expect(sortChangedListener).toHaveBeenCalledTimes(1);
-            sortChangedListener.mockClear();
+            expect(gridListener).toHaveBeenCalledTimes(1);
+            expect(colAListener).toHaveBeenCalledTimes(1);
+            expect(colBListener).toHaveBeenCalledTimes(1);
+            expect(colCListener).not.toHaveBeenCalled();
+            await new GridRows(api, "after sort 'b' desc: rows ordered by b descending").check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:2 a:"a" b:"x" c:1
+                ├── LEAF id:1 a:"z" b:"m" c:5
+                └── LEAF id:3 a:"m" b:"a" c:9
+            `);
+            await new GridColumns(api, "col state: 'a' cleared, 'b' desc, 'c' unchanged").checkColumns(`
+                CENTER
+                ├── a "A" width:200
+                ├── b "B" width:200 sort:desc
+                └── c "C" width:200
+            `);
+            gridListener.mockClear();
+            colAListener.mockClear();
+            colBListener.mockClear();
 
+            // Clear all — only 'b' was sorted, only 'b' fires column-level.
             api.applyColumnState({ defaultState: { sort: null } });
             await asyncSetTimeout(0);
-            expect(sortChangedListener).toHaveBeenCalledTimes(1);
-            sortChangedListener.mockClear();
+            expect(gridListener).toHaveBeenCalledTimes(1);
+            expect(colAListener).not.toHaveBeenCalled();
+            expect(colBListener).toHaveBeenCalledTimes(1);
+            expect(colCListener).not.toHaveBeenCalled();
+            await new GridRows(api, 'after clear all: rows back in insertion order').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 a:"z" b:"m" c:5
+                ├── LEAF id:2 a:"a" b:"x" c:1
+                └── LEAF id:3 a:"m" b:"a" c:9
+            `);
+            await new GridColumns(api, 'col state: all sorts cleared').checkColumns(`
+                CENTER
+                ├── a "A" width:200
+                ├── b "B" width:200
+                └── c "C" width:200
+            `);
+            gridListener.mockClear();
+            colBListener.mockClear();
 
-            // No-op clear: nothing sorted, nothing changes. The grid-level sortChanged still
-            // fires (applyColumnState dispatches unconditionally); column-level events stay
-            // suppressed by the `_areSortDefsEqual` check in `setColSort`.
+            // No-op clear: nothing was sorted, nothing transitions. The load-bearing assertion
+            // is that NO events fire at all — neither column-level nor grid-level — because
+            // every column was already cleared. Events are async, so `await asyncSetTimeout(0)`
+            // flushes the dispatch queue before counting.
             api.applyColumnState({ defaultState: { sort: null } });
             await asyncSetTimeout(0);
-            expect(sortChangedListener.mock.calls.length).toBeLessThanOrEqual(1);
+            expect(gridListener).not.toHaveBeenCalled();
+            expect(colAListener).not.toHaveBeenCalled();
+            expect(colBListener).not.toHaveBeenCalled();
+            expect(colCListener).not.toHaveBeenCalled();
+            await new GridRows(api, 'after no-op clear: rows still in insertion order').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 a:"z" b:"m" c:5
+                ├── LEAF id:2 a:"a" b:"x" c:1
+                └── LEAF id:3 a:"m" b:"a" c:9
+            `);
+            await new GridColumns(api, 'col state: still all unsorted after no-op').checkColumns(`
+                CENTER
+                ├── a "A" width:200
+                ├── b "B" width:200
+                └── c "C" width:200
+            `);
         });
     });
 

@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../../test-utils';
+import { GridColumns, GridRows, TestGridsManager } from '../../test-utils';
 
 describe('group order maintenance / sort isolation', () => {
     const gridsManager = new TestGridsManager({
@@ -250,6 +250,121 @@ describe('group order maintenance / sort isolation', () => {
             .filter((n) => n.group)
             .map((n) => n.key);
         expect(groupOrderAfterSort).toEqual(['Italy', 'France', 'Spain']);
+    });
+
+    test('unresolved showRowGroup colId with own field: group level unreachable, sort still applies at leaf level', async () => {
+        // `showRowGroup: '<colId>'` that does not match an active rowGroup column is a
+        // misconfiguration: the grid cannot render it as a group cell (no link). The group
+        // level is unreachable. But the column still has its own `field` — the user has
+        // expressed sort intent on a column with leaf data, so honour it at the leaf level.
+        // Dropping the option entirely would silently ignore a deliberate user click.
+        const rowData = [
+            { id: '1', country: 'Italy', athlete: 'Charlie' },
+            { id: '2', country: 'Italy', athlete: 'Alpha' },
+            { id: '3', country: 'Italy', athlete: 'Bravo' },
+            { id: '4', country: 'France', athlete: 'Zeta' },
+            { id: '5', country: 'France', athlete: 'Yvette' },
+        ];
+
+        const api = gridsManager.createGrid('grid-unresolved-showrowgroup-with-field', {
+            columnDefs: [
+                { colId: 'customCountry', field: 'country', rowGroup: true, hide: true },
+                {
+                    colId: 'manualDisplay',
+                    headerName: 'Manual Display',
+                    // Misconfigured: 'country' is the field, not a colId. customCountry is the colId.
+                    // This does NOT match any active rowGroup column.
+                    showRowGroup: 'country',
+                    field: 'athlete',
+                    sortable: true,
+                },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        // Initial order: groups in insertion order, leaves in insertion order within each group.
+        await new GridRows(api, 'unresolved showRowGroup: initial structural order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-customCountry-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:1 customCountry:"Italy" manualDisplay:"Charlie"
+            │ ├── LEAF id:2 customCountry:"Italy" manualDisplay:"Alpha"
+            │ └── LEAF id:3 customCountry:"Italy" manualDisplay:"Bravo"
+            └─┬ LEAF_GROUP id:row-group-customCountry-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:4 customCountry:"France" manualDisplay:"Zeta"
+            · └── LEAF id:5 customCountry:"France" manualDisplay:"Yvette"
+        `);
+
+        api.applyColumnState({ state: [{ colId: 'manualDisplay', sort: 'asc' }] });
+
+        // Groups stay in structural order (no group level matched by the unresolved link).
+        // Leaves inside each group sort by `field: 'athlete'` ascending — the column has own
+        // leaf data and the user clicked sort, so the leaf bucket route applies.
+        await new GridRows(api, 'unresolved showRowGroup with field: leaves sort by own data').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-customCountry-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:2 customCountry:"Italy" manualDisplay:"Alpha"
+            │ ├── LEAF id:3 customCountry:"Italy" manualDisplay:"Bravo"
+            │ └── LEAF id:1 customCountry:"Italy" manualDisplay:"Charlie"
+            └─┬ LEAF_GROUP id:row-group-customCountry-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:5 customCountry:"France" manualDisplay:"Yvette"
+            · └── LEAF id:4 customCountry:"France" manualDisplay:"Zeta"
+        `);
+
+        await new GridColumns(api, 'unresolved showRowGroup: column state shows sort recorded').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            └── manualDisplay "Manual Display" width:200 sort:asc
+        `);
+    });
+
+    test('unresolved showRowGroup colId without own data: option dropped (nothing to sort by)', async () => {
+        // Same misconfig as above, but the manual display column has NO `field`/`valueGetter`/
+        // `comparator` of its own. The group level is unreachable AND there is no leaf data —
+        // nothing meaningful to sort by, so the option drops out entirely. Groups and leaves
+        // both stay in structural order.
+        const rowData = [
+            { id: '1', country: 'Italy', athlete: 'Charlie' },
+            { id: '2', country: 'Italy', athlete: 'Alpha' },
+            { id: '3', country: 'Italy', athlete: 'Bravo' },
+            { id: '4', country: 'France', athlete: 'Zeta' },
+            { id: '5', country: 'France', athlete: 'Yvette' },
+        ];
+
+        const api = gridsManager.createGrid('grid-unresolved-showrowgroup-no-data', {
+            columnDefs: [
+                { colId: 'customCountry', field: 'country', rowGroup: true, hide: true },
+                {
+                    colId: 'manualDisplay',
+                    headerName: 'Manual Display',
+                    showRowGroup: 'country', // unresolved link
+                    sortable: true,
+                    // No field / valueGetter / comparator.
+                },
+            ],
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupMaintainOrder: true,
+            rowData,
+            getRowId: (p) => p.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'manualDisplay', sort: 'asc' }] });
+
+        // No own leaf data → option dropped → structural order at every level.
+        await new GridRows(api, 'unresolved showRowGroup, no own data: structural order kept').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-customCountry-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:1 customCountry:"Italy"
+            │ ├── LEAF id:2 customCountry:"Italy"
+            │ └── LEAF id:3 customCountry:"Italy"
+            └─┬ LEAF_GROUP id:row-group-customCountry-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:4 customCountry:"France"
+            · └── LEAF id:5 customCountry:"France"
+        `);
     });
 
     test('auto-display column with own field reorders groups under custom comparator (uncoupled escape hatch)', async () => {

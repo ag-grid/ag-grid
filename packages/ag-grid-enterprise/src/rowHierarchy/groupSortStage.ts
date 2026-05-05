@@ -134,9 +134,12 @@ export class GroupSortStage extends BeanStub implements NamedBean, _IRowNodeSort
  *   siblings inside one leaf group share the group key.
  * - `showRowGroup === true` (singleColumn shared display) -> every group level, plus the leaf
  *   bucket if the column has own leaf sort.
- * - `showRowGroup === '<colId>'` -> the matched group level, plus the leaf bucket if the column
- *   has own leaf sort.
- * - Anything else -> leaf bucket only.
+ * - `showRowGroup === '<colId>'` matching a rowGroup column -> the matched group level, plus the
+ *   leaf bucket if the column has own leaf sort.
+ * - `showRowGroup === '<colId>'` NOT matching any rowGroup column (typo, ungrouped colId) ->
+ *   leaf bucket if the column has own leaf sort, else dropped. The group level is unreachable
+ *   so honour the user's sort intent at the leaf level when the column has data to sort by.
+ * - Regular leaf column -> leaf bucket only.
  */
 const buildLevelSortOptions = (
     sortOptions: SortOption[],
@@ -190,8 +193,8 @@ const buildLevelSortOptions = (
             if (isLinkedDisplayCol && hasOwnLeafSort) {
                 (result[leafIndex] ??= []).push(sortOption);
             }
-        } else {
-            // Regular leaf column, or unresolved `showRowGroup` string.
+        } else if (!isLinkedDisplayCol || hasOwnLeafSort) {
+            // Regular leaf column, or unresolved `showRowGroup` with own leaf data.
             (result[leafIndex] ??= []).push(sortOption);
         }
     }
