@@ -3,7 +3,6 @@ import { createApp, defineComponent, ref } from 'vue';
 import {
     ClientSideRowModelModule,
     ColDef,
-    FindChangedEvent,
     FindOptions,
     FirstDataRenderedEvent,
     GetDetailRowDataParams,
@@ -15,7 +14,7 @@ import {
     RowApiModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { FindModule, MasterDetailModule } from 'ag-grid-enterprise';
+import { FindModule, MasterDetailModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import { getData } from './data';
@@ -23,6 +22,7 @@ import './styles.css';
 
 ModuleRegistry.registerModules([
     FindModule,
+    ToolbarModule,
     ClientSideRowModelModule,
     MasterDetailModule,
     RowApiModule,
@@ -51,13 +51,6 @@ const VueExample = defineComponent({
     <div class="example-wrapper">
         <div class="example-header">
             <div class="example-controls">
-                <span>Find:</span>
-                <input type="text" @input="onInput" @keydown="onKeyDown" />
-                <button @click="previous()">Previous</button>
-                <button @click="next()">Next</button>
-                <span>{{activeMatchNum}}</span>
-            </div>
-            <div class="example-controls">
                 <span>Go to match:</span>
                 <input type="number" v-model="goTo" />
                 <button @click="goToFind()">Go To</button>
@@ -73,8 +66,7 @@ const VueExample = defineComponent({
             :getRowId="getRowId"
             :detailCellRendererParams="detailCellRendererParams"
             :findOptions="findOptions"
-            :findSearchValue="findSearchValue"
-            @find-changed="onFindChanged"
+            :toolbar="toolbar"
             @first-data-rendered="onFirstDataRendered"></ag-grid-vue>
     </div>
 </div>
@@ -86,47 +78,24 @@ const VueExample = defineComponent({
         return {
             goTo: undefined,
             gridApi: undefined,
-            activeMatchNum: undefined,
-            findSearchValue: undefined,
+            toolbar: {
+                items: ['agFindToolbarItem'],
+            },
         };
     },
     methods: {
-        onFindChanged(event: FindChangedEvent) {
-            const { activeMatch, totalMatches, findSearchValue } = event;
-            this.activeMatchNum = findSearchValue?.length ? `${activeMatch?.numOverall ?? 0}/${totalMatches}` : '';
-        },
         onFirstDataRendered(event: FirstDataRenderedEvent) {
             event.api.getDisplayedRowAtIndex(0)?.setExpanded(true);
         },
         getRowId(params: GetRowIdParams) {
             return params.data.a1;
         },
-        next() {
-            this.gridApi.findNext();
-        },
-        previous() {
-            this.gridApi.findPrevious();
-        },
         goToFind() {
             const num = Number(this.goTo);
             if (isNaN(num) || num < 0) {
                 return;
             }
-            this.gridApi.findGoTo(num);
-        },
-        onInput(event: Event) {
-            this.findSearchValue = (event.target as HTMLInputElement).value;
-        },
-        onKeyDown(event: KeyboardEvent) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                const backwards = event.shiftKey;
-                if (backwards) {
-                    this.previous();
-                } else {
-                    this.next();
-                }
-            }
+            this.gridApi.findGoTo(num, true);
         },
         onGridReady(params: GridReadyEvent) {
             this.gridApi = params.api;

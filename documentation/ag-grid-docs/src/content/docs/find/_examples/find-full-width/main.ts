@@ -1,5 +1,4 @@
 import type {
-    FindChangedEvent,
     FindFullWidthCellRendererParams,
     GetFindMatchesParams,
     GridApi,
@@ -8,13 +7,14 @@ import type {
     RowHeightParams,
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { FindModule } from 'ag-grid-enterprise';
+import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { getData, getLatinText } from './data';
 import { FullWidthCellRenderer } from './fullWidthCellRenderer';
 
 ModuleRegistry.registerModules([
     FindModule,
+    ToolbarModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -48,25 +48,14 @@ const gridOptions: GridOptions = {
             return numMatches;
         },
     } as FindFullWidthCellRendererParams,
-    onFindChanged: (event: FindChangedEvent) => {
-        const { activeMatch, totalMatches, findSearchValue } = event;
-        (document.getElementById('activeMatchNum') as HTMLElement).textContent = findSearchValue?.length
-            ? `${activeMatch?.numOverall ?? 0}/${totalMatches}`
-            : '';
+    toolbar: {
+        items: ['agFindToolbarItem'],
     },
 };
 
 function isFullWidth(data: any) {
     // return true when country is Peru, France or Italy
     return ['Peru', 'France', 'Italy'].indexOf(data.name) >= 0;
-}
-
-function next() {
-    gridApi!.findNext();
-}
-
-function previous() {
-    gridApi!.findPrevious();
 }
 
 function goToFind() {
@@ -77,24 +66,7 @@ function goToFind() {
     gridApi!.findGoTo(num);
 }
 
-// setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-
-    const findInput = document.getElementById('find-text-box') as HTMLInputElement;
-    findInput.addEventListener('input', (event) => {
-        gridApi.setGridOption('findSearchValue', (event.target as HTMLInputElement).value);
-    });
-    findInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const backwards = event.shiftKey;
-            if (backwards) {
-                previous();
-            } else {
-                next();
-            }
-        }
-    });
 });

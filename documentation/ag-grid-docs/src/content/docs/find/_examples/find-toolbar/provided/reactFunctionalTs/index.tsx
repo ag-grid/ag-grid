@@ -1,6 +1,6 @@
 'use client';
 
-import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GridReadyEvent } from 'ag-grid-community';
@@ -18,7 +18,6 @@ const modules = [
 ];
 
 const GridExample = () => {
-    const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState<any[]>();
@@ -33,9 +32,12 @@ const GridExample = () => {
         { field: 'bronze', minWidth: 100 },
     ]);
 
-    const goToRef = useRef<HTMLInputElement>(null);
-
-    const toolbar = useMemo(() => ({ items: ['agFindToolbarItem' as const] }), []);
+    const toolbar = useMemo(
+        () => ({
+            items: ['agFindToolbarItem' as const],
+        }),
+        []
+    );
 
     const onGridReady = useCallback((params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -43,35 +45,16 @@ const GridExample = () => {
             .then((data: any[]) => setRowData(data));
     }, []);
 
-    const goToFind = useCallback(() => {
-        const num = Number(goToRef.current?.value);
-        if (isNaN(num) || num < 0) {
-            return;
-        }
-        gridRef.current!.api.findGoTo(num);
-    }, []);
-
     return (
         <div style={containerStyle}>
-            <div className="example-wrapper">
-                <div className="example-header">
-                    <div className="example-controls">
-                        <span>Go to match:</span>
-                        <input type="number" ref={goToRef} />
-                        <button onClick={goToFind}>Go To</button>
-                    </div>
-                </div>
-
-                <div style={gridStyle}>
-                    <AgGridReact
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        modules={modules}
-                        toolbar={toolbar}
-                        onGridReady={onGridReady}
-                    />
-                </div>
+            <div style={gridStyle}>
+                <AgGridReact
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    modules={modules}
+                    toolbar={toolbar}
+                    onGridReady={onGridReady}
+                />
             </div>
         </div>
     );

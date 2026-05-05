@@ -5,15 +5,31 @@ enterprise: true
 
 Find allows for values to be searched within the grid, with all matches highlighted and navigable, similar to find ({% kbd "^ Ctrl" /%} + {% kbd "F" /%}) within the browser.
 
-{% gridExampleRunner title="Find" name="find" /%}
-
 {% note %}
 Find is only compatible with the [Client-Side Row Model](./row-models/).
 {% /note %}
 
 ## Enabling Find
 
-Find is enabled by setting the grid option `findSearchValue` with the text to be searched for.
+### Using Quick Access Toolbar
+
+The recommended way to display the Find input is as a [Quick Access Toolbar](./toolbar/) item. This keeps the Find UI integrated with the grid and requires no additional markup.
+
+{% gridExampleRunner title="Find with Toolbar" name="find-toolbar" /%}
+
+The configuration used in the example above is:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: ['agFindToolbarItem'],
+    },
+}
+```
+
+### Using Grid Options
+
+Find can also be enabled directly via the grid option `findSearchValue`, passing the text to search for.
 
 {% apiDocumentation source="grid-options/properties.json" section="find" names=["findSearchValue"] /%}
 
@@ -34,6 +50,8 @@ Changing the Find search value, changing the active match, or updates to the gri
 The active match and the total number of matches can also be retrieved via the API.
 
 {% apiDocumentation source="grid-api/api.json" section="find" names=["findGetActiveMatch", "findGetTotalMatches"] /%}
+
+{% gridExampleRunner title="Find" name="find" /%}
 
 ## Using Find with Cell Components
 
@@ -84,18 +102,6 @@ const gridOptions = {
 The following example demonstrates performing a case sensitive search, and finding matches within the current page only:
 
 {% gridExampleRunner title="Customising Find" name="customising-find" /%}
-
-## Find in the Toolbar
-
-The recommended way to display the Find input is as a [Quick Access Toolbar](./toolbar/) item. Add `agFindToolbarItem` to the toolbar's `items` array.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    toolbar: {
-        items: ['agFindToolbarItem'],
-    },
-}
-```
 
 ## Find with Master / Detail
 

@@ -1,18 +1,9 @@
 import { createApp, defineComponent, ref } from 'vue';
 
-import {
-    ClientSideRowModelModule,
-    ColDef,
-    FirstDataRenderedEvent,
-    GetFindTextParams,
-    GridReadyEvent,
-    ModuleRegistry,
-    ValidationModule,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, ColDef, GridReadyEvent, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
-import FindRenderer from './findRenderer';
 import './styles.css';
 
 ModuleRegistry.registerModules([
@@ -30,28 +21,23 @@ const VueExample = defineComponent({
         @grid-ready="onGridReady"
         :columnDefs="columnDefs"
         :rowData="rowData"
-        :findSearchValue="findSearchValue"
-        :toolbar="toolbar"
-        @first-data-rendered="onFirstDataRendered"></ag-grid-vue>
+        :toolbar="toolbar"></ag-grid-vue>
 </div>
     `,
     components: {
         'ag-grid-vue': AgGridVue,
-        FindRenderer,
     },
     data() {
         return {
-            findSearchValue: 'e',
             toolbar: {
                 items: ['agFindToolbarItem'],
             },
         };
     },
     methods: {
-        onFirstDataRendered(event: FirstDataRenderedEvent) {
-            event.api.findNext();
-        },
         onGridReady(params: GridReadyEvent) {
+            this.gridApi = params.api;
+
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
                 .then((resp) => resp.json())
                 .then((data) => {
@@ -63,17 +49,12 @@ const VueExample = defineComponent({
         const columnDefs = ref<ColDef[]>([
             { field: 'athlete' },
             { field: 'country' },
-            {
-                field: 'year',
-                cellRenderer: 'FindRenderer',
-                getFindText: (params: GetFindTextParams) => {
-                    const cellValue = params.getValueFormatted() ?? params.value?.toString();
-                    if (!cellValue?.length) {
-                        return null;
-                    }
-                    return `Year is ${cellValue}`;
-                },
-            },
+            { field: 'sport' },
+            { field: 'year' },
+            { field: 'age', minWidth: 100 },
+            { field: 'gold', minWidth: 100 },
+            { field: 'silver', minWidth: 100 },
+            { field: 'bronze', minWidth: 100 },
         ]);
         const rowData = ref<any[]>(null);
 

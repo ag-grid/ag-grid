@@ -4,7 +4,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import {
     ClientSideRowModelModule,
     ColDef,
-    FindChangedEvent,
     FindFullWidthCellRendererParams,
     GetFindMatchesParams,
     GridApi,
@@ -14,7 +13,7 @@ import {
     RowHeightParams,
     ValidationModule,
 } from 'ag-grid-community';
-import { FindModule } from 'ag-grid-enterprise';
+import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { getData, getLatinText } from './data';
 import { FullWidthCellRenderer } from './full-width-cell-renderer.component';
@@ -22,6 +21,7 @@ import './styles.css';
 
 ModuleRegistry.registerModules([
     FindModule,
+    ToolbarModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -32,13 +32,6 @@ ModuleRegistry.registerModules([
     imports: [AgGridAngular],
     template: `<div class="example-wrapper">
         <div class="example-header">
-            <div class="example-controls">
-                <span>Find:</span>
-                <input type="text" (input)="onInput($event)" (keydown)="onKeyDown($event)" />
-                <button (click)="previous()">Previous</button>
-                <button (click)="next()">Next</button>
-                <span>{{ activeMatchNum }}</span>
-            </div>
             <div class="example-controls">
                 <span>Go to match:</span>
                 <input #goToInput type="number" />
@@ -54,8 +47,7 @@ ModuleRegistry.registerModules([
             [isFullWidthRow]="isFullWidthRow"
             [fullWidthCellRenderer]="fullWidthCellRenderer"
             [fullWidthCellRendererParams]="fullWidthCellRendererParams"
-            [findSearchValue]="findSearchValue"
-            (findChanged)="onFindChanged($event)"
+            [toolbar]="toolbar"
             (gridReady)="onGridReady($event)"
         />
     </div> `,
@@ -92,23 +84,12 @@ export class AppComponent {
         },
     };
 
-    activeMatchNum: string = '';
+    toolbar = {
+        items: ['agFindToolbarItem' as const],
+    };
 
-    findSearchValue: string | undefined;
-
-    constructor() {}
-
-    onFindChanged(event: FindChangedEvent) {
-        const { activeMatch, totalMatches, findSearchValue } = event;
-        this.activeMatchNum = findSearchValue?.length ? `${activeMatch?.numOverall ?? 0}/${totalMatches}` : '';
-    }
-
-    next() {
-        this.gridApi.findNext();
-    }
-
-    previous() {
-        this.gridApi.findPrevious();
+    onGridReady(params: GridReadyEvent) {
+        this.gridApi = params.api;
     }
 
     goToFind() {
@@ -117,26 +98,6 @@ export class AppComponent {
             return;
         }
         this.gridApi.findGoTo(num);
-    }
-
-    onGridReady(params: GridReadyEvent) {
-        this.gridApi = params.api;
-    }
-
-    onInput(event: Event): void {
-        this.findSearchValue = (event.target as HTMLInputElement).value;
-    }
-
-    onKeyDown(event: KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const backwards = event.shiftKey;
-            if (backwards) {
-                this.previous();
-            } else {
-                this.next();
-            }
-        }
     }
 
     private isFullWidth(data: any) {

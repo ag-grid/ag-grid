@@ -14,12 +14,13 @@ import {
     PinnedRowModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { FindModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
+import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import './styles.css';
 
 ModuleRegistry.registerModules([
     FindModule,
+    ToolbarModule,
     RowGroupingModule,
     RowGroupingPanelModule,
     PinnedRowModule,
@@ -45,13 +46,6 @@ ModuleRegistry.registerModules([
                 </label>
             </div>
             <div class="example-controls">
-                <span>Find:</span>
-                <input type="text" (input)="onInput($event)" (keydown)="onKeyDown($event)" />
-                <button (click)="previous()">Previous</button>
-                <button (click)="next()">Next</button>
-                <span>{{ activeMatchNum }}</span>
-            </div>
-            <div class="example-controls">
                 <span>Go to match:</span>
                 <input #goToInput type="number" />
                 <button (click)="goToFind()">Go To</button>
@@ -68,9 +62,9 @@ ModuleRegistry.registerModules([
             [pagination]="true"
             [paginationPageSize]="paginationPageSize"
             [paginationPageSizeSelector]="paginationPageSizeSelector"
+            [toolbar]="toolbar"
             [findOptions]="findOptions"
             [rowData]="rowData"
-            [findSearchValue]="findSearchValue"
             (findChanged)="onFindChanged($event)"
             (gridReady)="onGridReady($event)"
         />
@@ -101,11 +95,11 @@ export class AppComponent {
     paginationPageSizeSelector: number[] | boolean = [5, 10];
     rowData!: any[];
 
-    activeMatchNum: string = '';
-
     activeMatch: string = '';
 
-    findSearchValue: string | undefined;
+    toolbar = {
+        items: ['agFindToolbarItem' as const],
+    };
     findOptions: FindOptions = {
         caseSensitive: true,
         currentPageOnly: true,
@@ -114,19 +108,10 @@ export class AppComponent {
     constructor(private http: HttpClient) {}
 
     onFindChanged(event: FindChangedEvent) {
-        const { activeMatch, totalMatches, findSearchValue } = event;
-        this.activeMatchNum = findSearchValue?.length ? `${activeMatch?.numOverall ?? 0}/${totalMatches}` : '';
+        const { activeMatch } = event;
         this.activeMatch = activeMatch
             ? `Active match: { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column?.getColId()}, match number in cell: ${activeMatch.numInMatch} }`
             : '';
-    }
-
-    next() {
-        this.gridApi.findNext();
-    }
-
-    previous() {
-        this.gridApi.findPrevious();
     }
 
     goToFind() {
@@ -159,21 +144,5 @@ export class AppComponent {
         this.http
             .get<any[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .subscribe((data) => (this.rowData = data));
-    }
-
-    onInput(event: Event): void {
-        this.findSearchValue = (event.target as HTMLInputElement).value;
-    }
-
-    onKeyDown(event: KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const backwards = event.shiftKey;
-            if (backwards) {
-                this.previous();
-            } else {
-                this.next();
-            }
-        }
     }
 }

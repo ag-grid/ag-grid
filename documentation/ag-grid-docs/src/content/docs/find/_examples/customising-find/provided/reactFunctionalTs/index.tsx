@@ -1,17 +1,18 @@
 'use client';
 
-import React, { ChangeEvent, KeyboardEvent, StrictMode, useCallback, useMemo, useRef, useState } from 'react';
+import React, { ChangeEvent, StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, FindChangedEvent, FindOptions, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, PaginationModule, PinnedRowModule, ValidationModule } from 'ag-grid-community';
-import { FindModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
-import { AgGridProvider, AgGridReact } from 'ag-grid-react';
+import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
 const modules = [
     FindModule,
+    ToolbarModule,
     RowGroupingModule,
     RowGroupingPanelModule,
     PinnedRowModule,
@@ -31,7 +32,7 @@ const GridExample = () => {
     const pinnedBottomRowData = useMemo<any[]>(() => {
         return [{ athlete: 'Bottom' }];
     }, []);
-    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
+    const [columnDefs] = useState<ColDef[]>([
         { field: 'athlete' },
         { field: 'country' },
         { field: 'sport', rowGroup: true, hide: true },
@@ -55,11 +56,9 @@ const GridExample = () => {
         currentPageOnly: true,
     });
 
+    const toolbar = useMemo(() => ({ items: ['agFindToolbarItem' as const] }), []);
+
     const goToRef = useRef<HTMLInputElement>(null);
-
-    const [findSearchValue, setFindSearchValue] = useState<string>();
-
-    const [activeMatchNum, setActiveMatchNum] = useState<string>();
 
     const [activeMatch, setActiveMatch] = useState<string>();
 
@@ -70,37 +69,12 @@ const GridExample = () => {
     }, []);
 
     const onFindChanged = useCallback((event: FindChangedEvent) => {
-        const { activeMatch, totalMatches, findSearchValue } = event;
-        setActiveMatchNum(findSearchValue?.length ? `${activeMatch?.numOverall ?? 0}/${totalMatches}` : '');
+        const { activeMatch } = event;
         setActiveMatch(
             activeMatch
                 ? `Active match: { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column?.getColId()}, match number in cell: ${activeMatch.numInMatch} }`
                 : ''
         );
-    }, []);
-
-    const onInput = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        setFindSearchValue(event.target.value);
-    }, []);
-
-    const onKeyDown = useCallback((event: KeyboardEvent) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const backwards = event.shiftKey;
-            if (backwards) {
-                previous();
-            } else {
-                next();
-            }
-        }
-    }, []);
-
-    const next = useCallback(() => {
-        gridRef.current!.api.findNext();
-    }, []);
-
-    const previous = useCallback(() => {
-        gridRef.current!.api.findPrevious();
     }, []);
 
     const goToFind = useCallback(() => {
@@ -128,66 +102,58 @@ const GridExample = () => {
     }, []);
 
     return (
-        <AgGridProvider modules={modules}>
-            <div style={containerStyle}>
-                <div className="example-wrapper">
-                    <div className="example-header">
-                        <div className="example-controls">
-                            <label>
-                                <span>caseSensitive:</span>
-                                <input
-                                    id="caseSensitive"
-                                    type="checkbox"
-                                    onChange={toggleCaseSensitive}
-                                    checked={findOptions.caseSensitive}
-                                />
-                            </label>
-                            <label>
-                                <span>currentPageOnly:</span>
-                                <input
-                                    id="currentPageOnly"
-                                    type="checkbox"
-                                    onChange={toggleCurrentPageOnly}
-                                    checked={findOptions.currentPageOnly}
-                                />
-                            </label>
-                        </div>
-                        <div className="example-controls">
-                            <span>Find:</span>
-                            <input type="text" onInput={onInput} onKeyDown={onKeyDown} />
-                            <button onClick={previous}>Previous</button>
-                            <button onClick={next}>Next</button>
-                            <span>{activeMatchNum}</span>
-                        </div>
-                        <div className="example-controls">
-                            <span>Go to match:</span>
-                            <input type="number" ref={goToRef} />
-                            <button onClick={goToFind}>Go To</button>
-                        </div>
-                        <div>{activeMatch}</div>
+        <div style={containerStyle}>
+            <div className="example-wrapper">
+                <div className="example-header">
+                    <div className="example-controls">
+                        <label>
+                            <span>caseSensitive:</span>
+                            <input
+                                id="caseSensitive"
+                                type="checkbox"
+                                onChange={toggleCaseSensitive}
+                                checked={findOptions.caseSensitive}
+                            />
+                        </label>
+                        <label>
+                            <span>currentPageOnly:</span>
+                            <input
+                                id="currentPageOnly"
+                                type="checkbox"
+                                onChange={toggleCurrentPageOnly}
+                                checked={findOptions.currentPageOnly}
+                            />
+                        </label>
                     </div>
+                    <div className="example-controls">
+                        <span>Go to match:</span>
+                        <input type="number" ref={goToRef} />
+                        <button onClick={goToFind}>Go To</button>
+                    </div>
+                    <div>{activeMatch}</div>
+                </div>
 
-                    <div style={gridStyle}>
-                        <AgGridReact
-                            ref={gridRef}
-                            rowData={rowData}
-                            pinnedTopRowData={pinnedTopRowData}
-                            pinnedBottomRowData={pinnedBottomRowData}
-                            columnDefs={columnDefs}
-                            defaultColDef={defaultColDef}
-                            rowGroupPanelShow={'always'}
-                            pagination={true}
-                            paginationPageSize={5}
-                            paginationPageSizeSelector={paginationPageSizeSelector}
-                            findSearchValue={findSearchValue}
-                            findOptions={findOptions}
-                            onGridReady={onGridReady}
-                            onFindChanged={onFindChanged}
-                        />
-                    </div>
+                <div style={gridStyle}>
+                    <AgGridReact
+                        ref={gridRef}
+                        rowData={rowData}
+                        pinnedTopRowData={pinnedTopRowData}
+                        pinnedBottomRowData={pinnedBottomRowData}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        rowGroupPanelShow={'always'}
+                        pagination={true}
+                        paginationPageSize={5}
+                        paginationPageSizeSelector={paginationPageSizeSelector}
+                        toolbar={toolbar}
+                        findOptions={findOptions}
+                        modules={modules}
+                        onGridReady={onGridReady}
+                        onFindChanged={onFindChanged}
+                    />
                 </div>
             </div>
-        </AgGridProvider>
+        </div>
     );
 };
 

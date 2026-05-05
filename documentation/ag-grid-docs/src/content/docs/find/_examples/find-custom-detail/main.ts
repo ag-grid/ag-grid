@@ -1,5 +1,4 @@
 import type {
-    FindChangedEvent,
     FindDetailCellRendererParams,
     FirstDataRenderedEvent,
     GetFindMatchesParams,
@@ -13,12 +12,13 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { FindModule, MasterDetailModule } from 'ag-grid-enterprise';
+import { FindModule, MasterDetailModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { DetailCellRenderer } from './detailCellRenderer';
 
 ModuleRegistry.registerModules([
     FindModule,
+    ToolbarModule,
     ClientSideRowModelModule,
     MasterDetailModule,
     RowApiModule,
@@ -42,27 +42,16 @@ const gridOptions: GridOptions = {
         },
     } as FindDetailCellRendererParams,
     detailRowHeight: 100,
+    toolbar: {
+        items: ['agFindToolbarItem'],
+    },
     findOptions: {
         searchDetail: true,
-    },
-    onFindChanged: (event: FindChangedEvent) => {
-        const { activeMatch, totalMatches, findSearchValue } = event;
-        (document.getElementById('activeMatchNum') as HTMLElement).textContent = findSearchValue?.length
-            ? `${activeMatch?.numOverall ?? 0}/${totalMatches}`
-            : '';
     },
     onFirstDataRendered: (event: FirstDataRenderedEvent) => {
         event.api.getDisplayedRowAtIndex(0)?.setExpanded(true);
     },
 };
-
-function next() {
-    gridApi!.findNext();
-}
-
-function previous() {
-    gridApi!.findPrevious();
-}
 
 function goToFind() {
     const num = Number((document.getElementById('find-goto') as HTMLInputElement).value);
@@ -72,7 +61,6 @@ function goToFind() {
     gridApi!.findGoTo(num);
 }
 
-// setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
@@ -80,20 +68,4 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
         .then((response) => response.json())
         .then((data: IAccount[]) => gridApi!.setGridOption('rowData', data));
-
-    const findInput = document.getElementById('find-text-box') as HTMLInputElement;
-    findInput.addEventListener('input', (event) => {
-        gridApi.setGridOption('findSearchValue', (event.target as HTMLInputElement).value);
-    });
-    findInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const backwards = event.shiftKey;
-            if (backwards) {
-                previous();
-            } else {
-                next();
-            }
-        }
-    });
 });

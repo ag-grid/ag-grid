@@ -5,7 +5,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import {
     ClientSideRowModelModule,
     ColDef,
-    FindChangedEvent,
     FindDetailCellRendererParams,
     FindOptions,
     FirstDataRenderedEvent,
@@ -16,13 +15,14 @@ import {
     RowApiModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { FindModule, MasterDetailModule } from 'ag-grid-enterprise';
+import { FindModule, MasterDetailModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { DetailCellRenderer } from './detail-cell-renderer.component';
 import './styles.css';
 
 ModuleRegistry.registerModules([
     FindModule,
+    ToolbarModule,
     ClientSideRowModelModule,
     MasterDetailModule,
     RowApiModule,
@@ -36,13 +36,6 @@ ModuleRegistry.registerModules([
     template: `<div class="example-wrapper">
         <div class="example-header">
             <div class="example-controls">
-                <span>Find:</span>
-                <input type="text" (input)="onInput($event)" (keydown)="onKeyDown($event)" />
-                <button (click)="previous()">Previous</button>
-                <button (click)="next()">Next</button>
-                <span>{{ activeMatchNum }}</span>
-            </div>
-            <div class="example-controls">
                 <span>Go to match:</span>
                 <input #goToInput type="number" />
                 <button (click)="goToFind()">Go To</button>
@@ -52,13 +45,12 @@ ModuleRegistry.registerModules([
             style="width: 100%; height: 100%;"
             [columnDefs]="columnDefs"
             [rowData]="rowData"
-            [findSearchValue]="findSearchValue"
             [masterDetail]="true"
             [detailCellRenderer]="detailCellRenderer"
             [detailCellRendererParams]="detailCellRendererParams"
             [detailRowHeight]="100"
             [findOptions]="findOptions"
-            (findChanged)="onFindChanged($event)"
+            [toolbar]="toolbar"
             (firstDataRendered)="onFirstDataRendered($event)"
             (gridReady)="onGridReady($event)"
         />
@@ -85,9 +77,9 @@ export class AppComponent {
         },
     };
 
-    activeMatchNum: string = '';
-
-    findSearchValue: string | undefined;
+    toolbar = {
+        items: ['agFindToolbarItem' as const],
+    };
 
     findOptions: FindOptions = {
         searchDetail: true,
@@ -95,21 +87,8 @@ export class AppComponent {
 
     constructor(private http: HttpClient) {}
 
-    onFindChanged(event: FindChangedEvent) {
-        const { activeMatch, totalMatches, findSearchValue } = event;
-        this.activeMatchNum = findSearchValue?.length ? `${activeMatch?.numOverall ?? 0}/${totalMatches}` : '';
-    }
-
     onFirstDataRendered(event: FirstDataRenderedEvent) {
         event.api.getDisplayedRowAtIndex(0)?.setExpanded(true);
-    }
-
-    next() {
-        this.gridApi.findNext();
-    }
-
-    previous() {
-        this.gridApi.findPrevious();
     }
 
     goToFind() {
@@ -126,21 +105,5 @@ export class AppComponent {
         this.http
             .get<any[]>('https://www.ag-grid.com/example-assets/master-detail-data.json')
             .subscribe((data) => (this.rowData = data));
-    }
-
-    onInput(event: Event): void {
-        this.findSearchValue = (event.target as HTMLInputElement).value;
-    }
-
-    onKeyDown(event: KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const backwards = event.shiftKey;
-            if (backwards) {
-                this.previous();
-            } else {
-                this.next();
-            }
-        }
     }
 }
