@@ -6,13 +6,12 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { PivotModule, ToolbarModule } from 'ag-grid-enterprise';
+import { ToolbarModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     QuickFilterModule,
     ToolbarModule,
     ClientSideRowModelModule,
-    PivotModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -21,37 +20,21 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'athlete' },
-        { field: 'country', rowGroup: true },
+        { field: 'country' },
         { field: 'sport' },
-        { field: 'year', pivot: true },
-        { field: 'age' },
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
+        { field: 'age', minWidth: 100 },
+        { field: 'gold', minWidth: 100 },
+        { field: 'silver', minWidth: 100 },
+        { field: 'bronze', minWidth: 100 },
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
     },
-    autoGroupColumnDef: {
-        minWidth: 250,
-    },
-    pivotMode: true,
     toolbar: {
         items: ['agQuickFilterToolbarItem'],
     },
 };
 
-let applyBeforePivotOrAgg = false;
-
-function onApplyBeforePivotOrAgg() {
-    applyBeforePivotOrAgg = !applyBeforePivotOrAgg;
-    gridApi!.setGridOption('applyQuickFilterBeforePivotOrAgg', applyBeforePivotOrAgg);
-    document.querySelector('#applyBeforePivotOrAgg')!.textContent =
-        `Apply ${applyBeforePivotOrAgg ? 'After' : 'Before'} Pivot/Aggregation`;
-}
-
-// setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
