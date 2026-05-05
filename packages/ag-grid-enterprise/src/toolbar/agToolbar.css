@@ -94,8 +94,7 @@
     border-radius: var(--ag-input-border-radius);
     width: 100%;
     padding-block: calc(var(--ag-spacing) * 0.5);
-    padding-inline-end: var(--ag-spacing);
-    padding-inline-start: calc(var(--ag-spacing) + 14px + var(--ag-spacing) * 0.5);
+    padding-inline: calc(var(--ag-spacing) * 5) var(--ag-spacing);
 }
 
 .ag-toolbar-input-field:focus {
