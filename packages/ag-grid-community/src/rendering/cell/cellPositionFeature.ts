@@ -32,17 +32,21 @@ export class CellPositionFeature extends BeanStub {
         this.column = cellCtrl.column;
         this.rowNode = cellCtrl.rowNode;
 
+        // Listener setup runs in the constructor (before the cell component attaches) so that
+        // getColSpanningList() is available as soon as the CellCtrl exists. This is required in
+        // React, where setComp() is called asynchronously, but navigation normalisation may query
+        // the position feature synchronously before the first render completes.
         const cellSpan = cellCtrl.getCellSpan();
-        if (!cellSpan) {
-            this.setupColSpan();
-            this.setupRowSpan();
-        } else {
+        if (cellSpan) {
             const refreshSpanHeight = this.refreshSpanHeight.bind(this, cellSpan);
             this.addManagedListeners(this.beans.eventSvc, {
                 paginationChanged: refreshSpanHeight,
                 recalculateRowBounds: refreshSpanHeight,
                 pinnedHeightChanged: refreshSpanHeight,
             });
+        } else {
+            this.setupColSpan();
+            this.setupRowSpan();
         }
     }
 
@@ -57,10 +61,10 @@ export class CellPositionFeature extends BeanStub {
         this.onLeftChanged();
         this.onWidthChanged();
         const cellSpan = this.cellCtrl.getCellSpan();
-        if (!cellSpan) {
-            this._legacyApplyRowSpan();
-        } else {
+        if (cellSpan) {
             this.refreshSpanHeight(cellSpan);
+        } else {
+            this._legacyApplyRowSpan();
         }
     }
 

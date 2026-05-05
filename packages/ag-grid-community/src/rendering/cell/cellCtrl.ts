@@ -1045,16 +1045,16 @@ export class CellCtrl extends BeanStub {
     public override destroy(): void {
         this.onCompAttachedFuncs = [];
         this.onEditorAttachedFuncs = [];
+        const { focusSvc, context } = this.beans;
 
         // if this was focused; (e.g cell span status changes) then we need to restore focus
         if (this.isCellFocused() && this.hasBrowserFocus()) {
-            this.beans.focusSvc.attemptToRecoverFocus();
+            focusSvc.attemptToRecoverFocus();
         }
 
         super.destroy();
 
-        this.beans.context.destroyBean(this.positionFeature);
-        this.positionFeature = undefined;
+        this.positionFeature = context.destroyBean(this.positionFeature);
     }
 
     public hasBrowserFocus(): boolean {
