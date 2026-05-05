@@ -351,7 +351,7 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
 
         this.toolbarItems.set(key, component);
         const eItemGui = component.getGui();
-        if (eItemGui.classList.contains('ag-toolbar-button')) {
+        if ('agToolbarButton' in component) {
             const eWrapper = _createElement({ tag: 'div', cls: 'ag-toolbar-button-wrapper' });
             eWrapper.appendChild(eItemGui);
             placeholder.replaceWith(eWrapper);
