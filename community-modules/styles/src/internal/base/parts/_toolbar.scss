@@ -85,7 +85,7 @@
         color: var(--ag-toolbar-text-color);
         opacity: 0.5;
         pointer-events: none;
-        left: var(--ag-spacing);
+        inset-inline-start: var(--ag-spacing);
     }
 
     .ag-toolbar-input-field {
@@ -96,12 +96,12 @@
         border: var(--ag-input-border);
         border-radius: var(--ag-input-border-radius);
         width: 100%;
-        padding: calc(var(--ag-spacing) * 0.5) var(--ag-spacing) calc(var(--ag-spacing) * 0.5)
-            calc(var(--ag-spacing) + 14px + var(--ag-spacing) * 0.5);
+        padding-block: calc(var(--ag-spacing) * 0.5);
+        padding-inline-end: var(--ag-spacing);
+        padding-inline-start: calc(var(--ag-spacing) + 14px + var(--ag-spacing) * 0.5);
     }
 
     .ag-toolbar-input-field:focus {
-        outline: none;
         box-shadow: var(--ag-focus-shadow);
         border: var(--ag-input-focus-border);
     }
