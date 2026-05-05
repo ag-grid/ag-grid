@@ -124,8 +124,9 @@ export class SortService extends BeanStub implements NamedBean {
                 if (columnToClear.getSortDef()) {
                     clearedColumns.push(columnToClear);
                 }
-
-                this.setColSort(columnToClear, _getSortDefFromInput(), source);
+                // Fresh SortDef per column: `getColumnDefs()` exposes a reference to user code.
+                const sortDef = _getSortDefFromInput();
+                this.setColSort(columnToClear, sortDef, source);
             }
         });
 
