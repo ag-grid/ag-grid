@@ -88,6 +88,67 @@ describe('Column Spanning Keyboard Navigation', () => {
         expect(getFocusedColId(api)).toBe('a');
     });
 
+    test('Arrow Right from spanning cell skips covered columns (TC4)', () => {
+        // Row 1 has col 'a' spanning over 'b'. Pressing Right from 'a' at row 1
+        // should skip the covered 'b' (no CellCtrl there) and land on 'c'.
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: makeColumnDefs(),
+            rowData: [
+                { a: 'a0', b: 'b0', c: 'c0' },
+                { a: 'a1', b: 'b1', c: 'c1' },
+            ],
+        } as GridOptions<RowData>);
+
+        api.setFocusedCell(1, 'a');
+        expect(getFocusedColId(api)).toBe('a');
+
+        dispatchKeyDown(KeyCode.RIGHT);
+
+        expect(getFocusedRowIndex(api)).toBe(1);
+        expect(getFocusedColId(api)).toBe('c');
+    });
+
+    test('Arrow Left into spanning cell from column after the span (TC5)', () => {
+        // Row 1 has 'a' spanning over 'b'. Pressing Left from 'c' should skip the
+        // non-existent 'b' cell and land on the spanning 'a'.
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: makeColumnDefs(),
+            rowData: [
+                { a: 'a0', b: 'b0', c: 'c0' },
+                { a: 'a1', b: 'b1', c: 'c1' },
+            ],
+        } as GridOptions<RowData>);
+
+        api.setFocusedCell(1, 'c');
+        expect(getFocusedColId(api)).toBe('c');
+
+        dispatchKeyDown(KeyCode.LEFT);
+
+        expect(getFocusedRowIndex(api)).toBe(1);
+        expect(getFocusedColId(api)).toBe('a');
+    });
+
+    test('Arrow Down onto spanning row stays on correct column (TC6)', () => {
+        // Starting on 'a' at row 0 (non-spanning), Down should land on row 1, col 'a'
+        // which is the spanning cell itself — no normalisation needed, just verify
+        // navigation is not broken by the colSpan definition on that row.
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: makeColumnDefs(),
+            rowData: [
+                { a: 'a0', b: 'b0', c: 'c0' },
+                { a: 'a1', b: 'b1', c: 'c1' },
+            ],
+        } as GridOptions<RowData>);
+
+        api.setFocusedCell(0, 'a');
+        expect(getFocusedColId(api)).toBe('a');
+
+        dispatchKeyDown(KeyCode.DOWN);
+
+        expect(getFocusedRowIndex(api)).toBe(1);
+        expect(getFocusedColId(api)).toBe('a');
+    });
+
     test('Page Down from pinned top row lands on body row and normalises spanning cell', () => {
         // Page Down's focusIndex is computed from the body rowModel/pageBounds, so even when
         // the starting cell is a pinned top row, the target must be a body row with rowPinned:null.
