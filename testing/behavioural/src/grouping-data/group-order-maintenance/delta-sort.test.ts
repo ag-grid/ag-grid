@@ -562,11 +562,12 @@ describe('group order maintenance / delta sort', () => {
             └── sales "Sales" width:200 sort:desc sortIndex:1 aggFunc:sum
         `);
 
-        // Toggle to true → root level narrows to ONLY the country comparator (no sales tie-break).
-        // Then add an Italy row via transaction — delta sort runs at the root level using the
-        // STALE baseline (above) but with the NEW narrowed options. Adding sales=20 changes
-        // Italy's aggregate from 15 → 35, so:
+        // Toggle to true → refreshProps triggers a refresh; root level narrows to ONLY the
+        // country comparator (no sales tie-break). Then add an Italy row via transaction —
+        // delta sort runs at the root level against the post-toggle baseline. Adding sales=20
+        // changes Italy's aggregate from 15 → 35.
         // Re-ranking: Spain=15, Italy=35, Germany=40, France=150, USA=300.
+        api.setGridOption('groupMaintainOrder', true);
         applyTransactionChecked(api, { add: [{ id: '17', country: 'Italy', sales: 20 }] });
 
         // The merge MUST place groups in current-narrowed-options order. Italy moves from
