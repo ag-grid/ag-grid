@@ -147,6 +147,7 @@
     min-width: 0;
 }
 
+/* stylelint-disable-next-line selector-max-specificity */
 .ag-toolbar-find .ag-toolbar-input-field:focus {
     box-shadow: none;
     border: none;
