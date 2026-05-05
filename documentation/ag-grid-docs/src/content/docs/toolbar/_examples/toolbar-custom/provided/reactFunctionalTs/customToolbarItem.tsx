@@ -63,6 +63,7 @@ export const ToolPanelRadio = forwardRef<ToolPanelRadioHandle, IToolbarItemParam
     useImperativeHandle(ref, () => ({ setSelected }), []);
 
     const onChange = (value: string) => {
+        setSelected(value);
         if (value === 'none') {
             api.closeToolPanel();
         } else {

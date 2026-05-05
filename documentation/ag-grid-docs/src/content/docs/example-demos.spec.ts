@@ -26,8 +26,8 @@ test.describe(`Demo Examples`, async () => {
         await page.getByRole('option', { name: '1,000 Rows, 22 Cols' }).click();
         await page.locator('button').filter({ hasText: 'Quartz' }).click();
         await page.getByText('Balham').click();
-        await page.getByRole('textbox', { name: 'Filter:' }).click();
-        await page.getByRole('textbox', { name: 'Filter:' }).fill('');
+        await page.getByRole('textbox', { name: 'Filter', exact: true }).click();
+        await page.getByRole('textbox', { name: 'Filter', exact: true }).fill('');
         await page.getByText('Drag here to set row groups').first().click();
         await page.getByRole('grid').getByText('Country').click();
         await page.locator('.ag-cell-label-container.ag-header-cell-sorted-asc > .ag-header-icon > .ag-icon').click();

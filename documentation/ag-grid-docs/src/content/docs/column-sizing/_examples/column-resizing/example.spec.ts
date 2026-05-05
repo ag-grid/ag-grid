@@ -81,8 +81,10 @@ test.agExample(import.meta, () => {
         const scaledUpHeaderWidths = await getHeaderWidths(headers);
 
         expect(scaledUpHeaderWidths.athlete).toBe(apiResizedHeaderWidths.athlete);
-        // here the age column needs to be scaled up to fill the grid
-        expect(scaledUpHeaderWidths.age).toBeGreaterThan(baseHeaderWidths.age);
+        // age has maxWidth: 150; on browsers where fitCellContents already pegs it at the cap
+        // (e.g. Firefox font rendering), scaleUp can't grow it further, so >= rather than >.
+        // country/year/date below have no maxWidth and still strictly prove scale-up worked.
+        expect(scaledUpHeaderWidths.age).toBeGreaterThanOrEqual(baseHeaderWidths.age);
         expect(scaledUpHeaderWidths.country).toBeGreaterThan(baseHeaderWidths.country);
         expect(scaledUpHeaderWidths.year).toBeGreaterThan(baseHeaderWidths.year);
         expect(scaledUpHeaderWidths.date).toBeGreaterThan(baseHeaderWidths.date);
