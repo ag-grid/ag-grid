@@ -1,7 +1,8 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
+import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from '../navigation/navigation-test-utils';
 
 interface RowData {
     a: string;
@@ -28,19 +29,6 @@ function makeColumnDefs(): ColDef<RowData>[] {
     ];
 }
 
-function dispatchKeyDownOnActiveElement(key: string, opts?: KeyboardEventInit): void {
-    const el = document.activeElement as HTMLElement | null;
-    el?.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...opts }));
-}
-
-function getFocusedColId(api: GridApi): string | null {
-    return api.getFocusedCell()?.column.getColId() ?? null;
-}
-
-function getFocusedRowIndex(api: GridApi): number | null {
-    return api.getFocusedCell()?.rowIndex ?? null;
-}
-
 describe('Column Spanning Keyboard Navigation', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule],
@@ -65,7 +53,7 @@ describe('Column Spanning Keyboard Navigation', () => {
         api.setFocusedCell(0, 'b');
         expect(getFocusedColId(api)).toBe('b');
 
-        dispatchKeyDownOnActiveElement(KeyCode.PAGE_DOWN);
+        dispatchKeyDown(KeyCode.PAGE_DOWN);
 
         // Page Down moves one row down in jsdom (viewport height ≈ 0 → diff of +1).
         // Row 1 has col 'a' spanning over 'b' — focus must be normalised to 'a'.
@@ -89,7 +77,7 @@ describe('Column Spanning Keyboard Navigation', () => {
         api.setFocusedCell(0, 'b');
         expect(getFocusedColId(api)).toBe('b');
 
-        dispatchKeyDownOnActiveElement(KeyCode.DOWN, { ctrlKey: true });
+        dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true });
 
         expect(getFocusedRowIndex(api)).toBe(3);
         expect(getFocusedColId(api)).toBe('a');
