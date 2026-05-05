@@ -112,6 +112,11 @@
     padding: 0;
 }
 
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar .ag-column-drop-horizontal {
+    border-bottom: none;
+}
+
 .ag-toolbar-button-chevron {
     display: inline-flex;
     align-items: center;

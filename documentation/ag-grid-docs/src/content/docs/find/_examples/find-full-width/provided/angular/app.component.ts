@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import {
@@ -6,8 +6,6 @@ import {
     ColDef,
     FindFullWidthCellRendererParams,
     GetFindMatchesParams,
-    GridApi,
-    GridReadyEvent,
     IsFullWidthRowParams,
     ModuleRegistry,
     RowHeightParams,
@@ -30,33 +28,19 @@ ModuleRegistry.registerModules([
     selector: 'my-app',
     standalone: true,
     imports: [AgGridAngular],
-    template: `<div class="example-wrapper">
-        <div class="example-header">
-            <div class="example-controls">
-                <span>Go to match:</span>
-                <input #goToInput type="number" />
-                <button (click)="goToFind()">Go To</button>
-            </div>
-        </div>
-        <ag-grid-angular
-            style="width: 100%; height: 100%;"
-            [columnDefs]="columnDefs"
-            [defaultColDef]="defaultColDef"
-            [rowData]="rowData"
-            [getRowHeight]="getRowHeight"
-            [isFullWidthRow]="isFullWidthRow"
-            [fullWidthCellRenderer]="fullWidthCellRenderer"
-            [fullWidthCellRendererParams]="fullWidthCellRendererParams"
-            [toolbar]="toolbar"
-            (gridReady)="onGridReady($event)"
-        />
-    </div> `,
+    template: `<ag-grid-angular
+        style="width: 100%; height: 100%;"
+        [columnDefs]="columnDefs"
+        [defaultColDef]="defaultColDef"
+        [rowData]="rowData"
+        [getRowHeight]="getRowHeight"
+        [isFullWidthRow]="isFullWidthRow"
+        [fullWidthCellRenderer]="fullWidthCellRenderer"
+        [fullWidthCellRendererParams]="fullWidthCellRendererParams"
+        [toolbar]="toolbar"
+    /> `,
 })
 export class AppComponent {
-    @ViewChild('goToInput', { read: ElementRef }) public goToInput!: ElementRef;
-
-    private gridApi!: GridApi;
-
     columnDefs: ColDef[] = [{ field: 'name' }, { field: 'continent' }, { field: 'language' }];
     defaultColDef: ColDef = {
         flex: 1,
@@ -87,18 +71,6 @@ export class AppComponent {
     toolbar = {
         items: ['agFindToolbarItem' as const],
     };
-
-    onGridReady(params: GridReadyEvent) {
-        this.gridApi = params.api;
-    }
-
-    goToFind() {
-        const num = Number((this.goToInput.nativeElement as HTMLInputElement).value);
-        if (isNaN(num) || num < 0) {
-            return;
-        }
-        this.gridApi.findGoTo(num);
-    }
 
     private isFullWidth(data: any) {
         // return true when country is Peru, France or Italy

@@ -30,27 +30,18 @@ ModuleRegistry.registerModules([
 const VueExample = defineComponent({
     template: `
 <div style="height: 100%">
-    <div class="example-wrapper">
-        <div class="example-header">
-            <div class="example-controls">
-                <span>Go to match:</span>
-                <input type="number" v-model="goTo" />
-                <button @click="goToFind()">Go To</button>
-            </div>
-        </div>
-        <ag-grid-vue
-            style="width: 100%; height: 100%;"
-            @grid-ready="onGridReady"
-            :columnDefs="columnDefs"
-            :rowData="rowData"
-            :masterDetail="true"
-            :detailCellRenderer="detailCellRenderer"
-            :detailCellRendererParams="detailCellRendererParams"
-            :detailRowHeight="100"
-            :findOptions="findOptions"
-            :toolbar="toolbar"
-            @first-data-rendered="onFirstDataRendered"></ag-grid-vue>
-    </div>
+    <ag-grid-vue
+        style="width: 100%; height: 100%;"
+        @grid-ready="onGridReady"
+        :columnDefs="columnDefs"
+        :rowData="rowData"
+        :masterDetail="true"
+        :detailCellRenderer="detailCellRenderer"
+        :detailCellRendererParams="detailCellRendererParams"
+        :detailRowHeight="100"
+        :findOptions="findOptions"
+        :toolbar="toolbar"
+        @first-data-rendered="onFirstDataRendered"></ag-grid-vue>
 </div>
     `,
     components: {
@@ -59,8 +50,6 @@ const VueExample = defineComponent({
     },
     data() {
         return {
-            goTo: undefined,
-            gridApi: undefined,
             toolbar: {
                 items: ['agFindToolbarItem'],
             },
@@ -70,16 +59,7 @@ const VueExample = defineComponent({
         onFirstDataRendered(event: FirstDataRenderedEvent) {
             event.api.getDisplayedRowAtIndex(0)?.setExpanded(true);
         },
-        goToFind() {
-            const num = Number(this.goTo);
-            if (isNaN(num) || num < 0) {
-                return;
-            }
-            this.gridApi.findGoTo(num);
-        },
         onGridReady(params: GridReadyEvent) {
-            this.gridApi = params.api;
-
             fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
                 .then((resp) => resp.json())
                 .then((data) => {

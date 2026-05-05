@@ -1,7 +1,6 @@
 import type {
     FindFullWidthCellRendererParams,
     GetFindMatchesParams,
-    GridApi,
     GridOptions,
     IsFullWidthRowParams,
     RowHeightParams,
@@ -18,8 +17,6 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
-
-let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [{ field: 'name' }, { field: 'continent' }, { field: 'language' }],
@@ -58,15 +55,7 @@ function isFullWidth(data: any) {
     return ['Peru', 'France', 'Italy'].indexOf(data.name) >= 0;
 }
 
-function goToFind() {
-    const num = Number((document.getElementById('find-goto') as HTMLInputElement).value);
-    if (isNaN(num) || num < 0) {
-        return;
-    }
-    gridApi!.findGoTo(num);
-}
-
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
+    createGrid(gridDiv, gridOptions);
 });

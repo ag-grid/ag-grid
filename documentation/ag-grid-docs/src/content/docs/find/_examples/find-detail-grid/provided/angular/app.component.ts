@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import {
@@ -9,8 +9,6 @@ import {
     GetDetailRowDataParams,
     GetFindMatchesParams,
     GetRowIdParams,
-    GridApi,
-    GridReadyEvent,
     IDetailCellRendererParams,
     ModuleRegistry,
     RowApiModule,
@@ -34,34 +32,20 @@ ModuleRegistry.registerModules([
     selector: 'my-app',
     standalone: true,
     imports: [AgGridAngular],
-    template: `<div class="example-wrapper">
-        <div class="example-header">
-            <div class="example-controls">
-                <span>Go to match:</span>
-                <input #goToInput type="number" />
-                <button (click)="goToFind()">Go To</button>
-            </div>
-        </div>
-        <ag-grid-angular
-            style="width: 100%; height: 100%;"
-            [columnDefs]="columnDefs"
-            [defaultColDef]="defaultColDef"
-            [rowData]="rowData"
-            [masterDetail]="true"
-            [getRowId]="getRowId"
-            [detailCellRendererParams]="detailCellRendererParams"
-            [findOptions]="findOptions"
-            [toolbar]="toolbar"
-            (firstDataRendered)="onFirstDataRendered($event)"
-            (gridReady)="onGridReady($event)"
-        />
-    </div> `,
+    template: `<ag-grid-angular
+        style="width: 100%; height: 100%;"
+        [columnDefs]="columnDefs"
+        [defaultColDef]="defaultColDef"
+        [rowData]="rowData"
+        [masterDetail]="true"
+        [getRowId]="getRowId"
+        [detailCellRendererParams]="detailCellRendererParams"
+        [findOptions]="findOptions"
+        [toolbar]="toolbar"
+        (firstDataRendered)="onFirstDataRendered($event)"
+    /> `,
 })
 export class AppComponent {
-    @ViewChild('goToInput', { read: ElementRef }) public goToInput!: ElementRef;
-
-    private gridApi!: GridApi;
-
     columnDefs: ColDef[] = [{ field: 'a1', cellRenderer: 'agGroupCellRenderer' }, { field: 'b1' }];
     defaultColDef: ColDef = {
         flex: 1,
@@ -110,18 +94,6 @@ export class AppComponent {
 
     onFirstDataRendered(event: FirstDataRenderedEvent) {
         event.api.getDisplayedRowAtIndex(0)?.setExpanded(true);
-    }
-
-    goToFind() {
-        const num = Number((this.goToInput.nativeElement as HTMLInputElement).value);
-        if (isNaN(num) || num < 0) {
-            return;
-        }
-        this.gridApi.findGoTo(num, true);
-    }
-
-    onGridReady(params: GridReadyEvent) {
-        this.gridApi = params.api;
     }
 
     private getFindMatches(params: GetFindMatchesParams) {

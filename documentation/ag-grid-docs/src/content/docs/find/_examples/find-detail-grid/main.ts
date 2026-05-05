@@ -3,7 +3,6 @@ import type {
     GetDetailRowDataParams,
     GetFindMatchesParams,
     GetRowIdParams,
-    GridApi,
     GridOptions,
     IDetailCellRendererParams,
 } from 'ag-grid-community';
@@ -26,8 +25,6 @@ ModuleRegistry.registerModules([
     RowApiModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
-
-let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     rowData: getData(),
@@ -97,15 +94,7 @@ function getFindMatches(params: GetFindMatchesParams) {
     return numMatches;
 }
 
-function goToFind() {
-    const num = Number((document.getElementById('find-goto') as HTMLInputElement).value);
-    if (isNaN(num) || num < 0) {
-        return;
-    }
-    gridApi!.findGoTo(num, true);
-}
-
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
+    createGrid(gridDiv, gridOptions);
 });

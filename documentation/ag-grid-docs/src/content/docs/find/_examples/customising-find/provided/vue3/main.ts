@@ -55,7 +55,6 @@ const VueExample = defineComponent({
             :pinnedBottomRowData="pinnedBottomRowData"
             :columnDefs="columnDefs"
             :defaultColDef="defaultColDef"
-            :rowGroupPanelShow="rowGroupPanelShow"
             :pagination="true"
             :paginationPageSize="paginationPageSize"
             :paginationPageSizeSelector="paginationPageSizeSelector"
@@ -75,7 +74,7 @@ const VueExample = defineComponent({
             gridApi: undefined,
             activeMatch: undefined,
             toolbar: {
-                items: ['agFindToolbarItem'],
+                items: ['agRowGroupPanelToolbarItem', 'agFindToolbarItem'],
             },
             findOptions: {
                 caseSensitive: true,
@@ -137,7 +136,6 @@ const VueExample = defineComponent({
         const defaultColDef = ref<ColDef>({
             enableRowGroup: true,
         });
-        const rowGroupPanelShow = ref<'always' | 'onlyWhenGrouping' | 'never'>('always');
         const paginationPageSize = ref(5);
         const paginationPageSizeSelector = ref<number[] | boolean>([5, 10]);
         const rowData = ref<any[]>(null);
@@ -147,7 +145,6 @@ const VueExample = defineComponent({
             pinnedBottomRowData,
             columnDefs,
             defaultColDef,
-            rowGroupPanelShow,
             paginationPageSize,
             paginationPageSizeSelector,
             rowData,

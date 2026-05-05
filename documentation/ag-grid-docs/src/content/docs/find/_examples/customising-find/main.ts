@@ -38,12 +38,11 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         enableRowGroup: true,
     },
-    rowGroupPanelShow: 'always',
     pagination: true,
     paginationPageSize: 5,
     paginationPageSizeSelector: [5, 10],
     toolbar: {
-        items: ['agFindToolbarItem'],
+        items: ['agRowGroupPanelToolbarItem', 'agFindToolbarItem'],
     },
     findOptions: {
         caseSensitive: true,

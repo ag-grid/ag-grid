@@ -56,7 +56,10 @@ const GridExample = () => {
         currentPageOnly: true,
     });
 
-    const toolbar = useMemo(() => ({ items: ['agFindToolbarItem' as const] }), []);
+    const toolbar = useMemo(
+        () => ({ items: ['agRowGroupPanelToolbarItem' as const, 'agFindToolbarItem' as const] }),
+        []
+    );
 
     const goToRef = useRef<HTMLInputElement>(null);
 
@@ -141,7 +144,6 @@ const GridExample = () => {
                         pinnedBottomRowData={pinnedBottomRowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        rowGroupPanelShow={'always'}
                         pagination={true}
                         paginationPageSize={5}
                         paginationPageSizeSelector={paginationPageSizeSelector}

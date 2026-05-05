@@ -58,7 +58,6 @@ ModuleRegistry.registerModules([
             [pinnedBottomRowData]="pinnedBottomRowData"
             [columnDefs]="columnDefs"
             [defaultColDef]="defaultColDef"
-            [rowGroupPanelShow]="rowGroupPanelShow"
             [pagination]="true"
             [paginationPageSize]="paginationPageSize"
             [paginationPageSizeSelector]="paginationPageSizeSelector"
@@ -90,7 +89,6 @@ export class AppComponent {
     defaultColDef: ColDef = {
         enableRowGroup: true,
     };
-    rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never' = 'always';
     paginationPageSize = 5;
     paginationPageSizeSelector: number[] | boolean = [5, 10];
     rowData!: any[];
@@ -98,7 +96,7 @@ export class AppComponent {
     activeMatch: string = '';
 
     toolbar = {
-        items: ['agFindToolbarItem' as const],
+        items: ['agRowGroupPanelToolbarItem' as const, 'agFindToolbarItem' as const],
     };
     findOptions: FindOptions = {
         caseSensitive: true,

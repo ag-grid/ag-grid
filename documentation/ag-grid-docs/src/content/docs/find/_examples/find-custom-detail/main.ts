@@ -2,7 +2,6 @@ import type {
     FindDetailCellRendererParams,
     FirstDataRenderedEvent,
     GetFindMatchesParams,
-    GridApi,
     GridOptions,
 } from 'ag-grid-community';
 import {
@@ -24,8 +23,6 @@ ModuleRegistry.registerModules([
     RowApiModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
-
-let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -53,17 +50,9 @@ const gridOptions: GridOptions = {
     },
 };
 
-function goToFind() {
-    const num = Number((document.getElementById('find-goto') as HTMLInputElement).value);
-    if (isNaN(num) || num < 0) {
-        return;
-    }
-    gridApi!.findGoTo(num);
-}
-
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
+    const gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
         .then((response) => response.json())

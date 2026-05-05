@@ -8,7 +8,6 @@ import {
     GetDetailRowDataParams,
     GetFindMatchesParams,
     GetRowIdParams,
-    GridReadyEvent,
     IDetailCellRendererParams,
     ModuleRegistry,
     RowApiModule,
@@ -48,27 +47,17 @@ function getFindMatches(params: GetFindMatchesParams) {
 const VueExample = defineComponent({
     template: `
 <div style="height: 100%">
-    <div class="example-wrapper">
-        <div class="example-header">
-            <div class="example-controls">
-                <span>Go to match:</span>
-                <input type="number" v-model="goTo" />
-                <button @click="goToFind()">Go To</button>
-            </div>
-        </div>
-        <ag-grid-vue
-            style="width: 100%; height: 100%;"
-            @grid-ready="onGridReady"
-            :columnDefs="columnDefs"
-            :defaultColDef="defaultColDef"
-            :rowData="rowData"
-            :masterDetail="true"
-            :getRowId="getRowId"
-            :detailCellRendererParams="detailCellRendererParams"
-            :findOptions="findOptions"
-            :toolbar="toolbar"
-            @first-data-rendered="onFirstDataRendered"></ag-grid-vue>
-    </div>
+    <ag-grid-vue
+        style="width: 100%; height: 100%;"
+        :columnDefs="columnDefs"
+        :defaultColDef="defaultColDef"
+        :rowData="rowData"
+        :masterDetail="true"
+        :getRowId="getRowId"
+        :detailCellRendererParams="detailCellRendererParams"
+        :findOptions="findOptions"
+        :toolbar="toolbar"
+        @first-data-rendered="onFirstDataRendered"></ag-grid-vue>
 </div>
     `,
     components: {
@@ -76,8 +65,6 @@ const VueExample = defineComponent({
     },
     data() {
         return {
-            goTo: undefined,
-            gridApi: undefined,
             toolbar: {
                 items: ['agFindToolbarItem'],
             },
@@ -89,16 +76,6 @@ const VueExample = defineComponent({
         },
         getRowId(params: GetRowIdParams) {
             return params.data.a1;
-        },
-        goToFind() {
-            const num = Number(this.goTo);
-            if (isNaN(num) || num < 0) {
-                return;
-            }
-            this.gridApi.findGoTo(num, true);
-        },
-        onGridReady(params: GridReadyEvent) {
-            this.gridApi = params.api;
         },
     },
     setup() {
