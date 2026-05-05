@@ -1,49 +1,53 @@
-import type { IToolbarItemComp, IToolbarItemParams, ToolPanelVisibleChangedEvent } from 'ag-grid-community';
+import type { FilterChangedEvent, IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
 
-export class CustomToolbarToggle implements IToolbarItemComp {
+const COLUMNS = [
+    { column: 'gold', label: 'Gold winners only' },
+    { column: 'silver', label: 'Silver winners only' },
+];
+
+export class WinnersToggle implements IToolbarItemComp {
     private params!: IToolbarItemParams;
-    eGui!: HTMLButtonElement;
-    buttonListener!: () => void;
-    panelListener!: (event: ToolPanelVisibleChangedEvent) => void;
+    eGui!: HTMLDivElement;
+    private inputs: Record<string, HTMLInputElement> = {};
+    private changeListener!: (event: Event) => void;
+    private filterListener!: (event: FilterChangedEvent) => void;
 
     init(params: IToolbarItemParams) {
         this.params = params;
-        const { label, title, icon, panelId, onClick } = params.toolbarItemParams;
 
-        const tooltip = title ?? label ?? '';
+        this.eGui = document.createElement('div');
+        this.eGui.className = 'ag-toolbar-item';
+        this.eGui.style.cssText = 'display: flex; gap: 12px; padding: 8px;';
 
-        this.eGui = document.createElement('button');
-        this.eGui.type = 'button';
-        this.eGui.className = 'ag-toolbar-item ag-toolbar-button';
-        this.eGui.title = tooltip;
-        this.eGui.setAttribute('aria-label', tooltip);
+        for (const { column, label } of COLUMNS) {
+            const eLabel = document.createElement('label');
+            eLabel.style.padding = '0 4px';
 
-        const eIcon = document.createElement('span');
-        eIcon.className = `ag-icon ag-icon-${icon}`;
-        eIcon.setAttribute('aria-hidden', 'true');
-        this.eGui.appendChild(eIcon);
+            const eInput = document.createElement('input');
+            eInput.type = 'checkbox';
+            eInput.dataset.column = column;
+            eInput.style.marginRight = '4px';
 
-        if (label) {
-            const eLabel = document.createElement('span');
-            eLabel.textContent = label;
+            eLabel.appendChild(eInput);
+            eLabel.appendChild(document.createTextNode(label));
             this.eGui.appendChild(eLabel);
+            this.inputs[column] = eInput;
         }
 
-        this.buttonListener = () => onClick(this.params.api);
-        this.eGui.addEventListener('click', this.buttonListener);
+        this.changeListener = (event: Event) => {
+            const target = event.target as HTMLInputElement;
+            const column = target.dataset.column!;
+            const model = target.checked ? { type: 'greaterThan', filter: 0 } : null;
+            params.api.setColumnFilterModel(column, model).then(() => params.api.onFilterChanged());
+        };
+        this.eGui.addEventListener('change', this.changeListener);
 
-        this.panelListener = ({ key, visible }: ToolPanelVisibleChangedEvent) => {
-            if (key === panelId) {
-                this.setActive(visible);
-            } else if (visible) {
-                this.setActive(false);
+        this.filterListener = () => {
+            for (const { column } of COLUMNS) {
+                this.inputs[column].checked = params.api.getColumnFilterModel(column) != null;
             }
         };
-        params.api.addEventListener('toolPanelVisibleChanged', this.panelListener);
-    }
-
-    private setActive(active: boolean) {
-        this.eGui.style.backgroundColor = active ? 'var(--ag-button-background-color)' : '';
+        params.api.addEventListener('filterChanged', this.filterListener);
     }
 
     getGui() {
@@ -51,7 +55,79 @@ export class CustomToolbarToggle implements IToolbarItemComp {
     }
 
     destroy() {
-        this.eGui.removeEventListener('click', this.buttonListener);
-        this.params.api.removeEventListener('toolPanelVisibleChanged', this.panelListener);
+        this.eGui.removeEventListener('change', this.changeListener);
+        this.params.api.removeEventListener('filterChanged', this.filterListener);
+    }
+}
+
+const PANELS = [
+    { value: 'filters', label: 'Filters' },
+    { value: 'columns', label: 'Columns' },
+    { value: 'none', label: 'None' },
+];
+
+export class ToolPanelRadio implements IToolbarItemComp {
+    eGui!: HTMLDivElement;
+    private params!: IToolbarItemParams;
+    private inputs: Record<string, HTMLInputElement> = {};
+    private changeListener!: (event: Event) => void;
+
+    init(params: IToolbarItemParams) {
+        this.params = params;
+
+        this.eGui = document.createElement('div');
+        this.eGui.className = 'ag-toolbar-item';
+        this.eGui.setAttribute('role', 'radiogroup');
+        this.eGui.style.cssText = 'display: flex; gap: 12px; padding: 10px; align-items: center;';
+
+        const eGroupLabel = document.createElement('span');
+        eGroupLabel.textContent = 'Tool Panel:';
+        eGroupLabel.style.fontWeight = '500';
+        this.eGui.appendChild(eGroupLabel);
+
+        const groupName = `tool-panel-${params.key}`;
+        for (const { value, label } of PANELS) {
+            const eLabel = document.createElement('label');
+            eLabel.style.padding = '0 4px';
+
+            const eInput = document.createElement('input');
+            eInput.type = 'radio';
+            eInput.name = groupName;
+            eInput.value = value;
+            eInput.checked = value === 'none';
+            eInput.style.marginRight = '4px';
+
+            eLabel.appendChild(eInput);
+            eLabel.appendChild(document.createTextNode(label));
+            this.eGui.appendChild(eLabel);
+            this.inputs[value] = eInput;
+        }
+
+        this.changeListener = (event: Event) => {
+            const value = (event.target as HTMLInputElement).value;
+            if (value === 'none') {
+                params.api.closeToolPanel();
+            } else {
+                params.api.openToolPanel(value);
+            }
+        };
+        this.eGui.addEventListener('change', this.changeListener);
+    }
+
+    // Public method, called externally via api.getToolbarItemInstance(key) when a tool panel
+    // is opened or closed by anything other than this component.
+    setSelected(value: string) {
+        const target = this.inputs[value] ?? this.inputs['none'];
+        if (target && !target.checked) {
+            target.checked = true;
+        }
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+
+    destroy() {
+        this.eGui.removeEventListener('change', this.changeListener);
     }
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync, writeFileSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, readdirSync, unlinkSync } from 'fs';
 import { resolve, relative } from 'path';
 
 // ---------------------------------------------------------------------------
@@ -326,6 +326,12 @@ function removeStaleEntries(content, stalePaths) {
     return result;
 }
 
+// Both top-level sections are the empty inline mapping → nothing left to keep.
+function isSnykFileEmpty(content) {
+    return /^ignore:\s*\{\s*\}\s*$/m.test(content)
+        && /^patch:\s*\{\s*\}\s*$/m.test(content);
+}
+
 // ---------------------------------------------------------------------------
 // Check which entries are stale
 // ---------------------------------------------------------------------------
@@ -385,8 +391,17 @@ function main() {
         totalRemoved += staleEntries.length;
         filesModified++;
 
-        if (!args.dryRun) {
-            const cleaned = removeStaleEntries(content, staleEntries);
+        const cleaned = removeStaleEntries(content, staleEntries);
+        const fileNowEmpty = isSnykFileEmpty(cleaned);
+
+        if (args.dryRun) {
+            if (fileNowEmpty) {
+                console.log(`  → would delete ${relPath} (no remaining ignores or patches)`);
+            }
+        } else if (fileNowEmpty) {
+            unlinkSync(filePath);
+            console.log(`  → deleted ${relPath} (no remaining ignores or patches)`);
+        } else {
             writeFileSync(filePath, cleaned, 'utf8');
         }
     }

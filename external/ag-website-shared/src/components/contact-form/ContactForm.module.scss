@@ -3,8 +3,10 @@
 .contactForm {
     display: flex;
     flex-wrap: wrap;
-    gap: $spacing-size-1;
+    gap: $spacing-size-3;
     flex-direction: column;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .nameRow {
@@ -51,6 +53,7 @@
     font-size: var(--text-fs-xs);
     line-height: var(--text-lh-xs);
     color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 30%);
+    margin: 0;
 
     a {
         font-weight: var(--text-regular);
@@ -65,10 +68,12 @@
     vertical-align: middle;
 }
 
-/* Reserve space for error messages to prevent layout shifts */
 .errorContainer {
-    min-height: 1.25rem; /* Reserve space for one line of error text */
     margin-top: 0.25rem;
+
+    &:empty {
+        margin-top: 0;
+    }
 }
 
 /* Make submit input visually match button heights */
@@ -78,6 +83,8 @@
     justify-content: center;
     height: var(--control-height, 40px);
     padding: 0 $spacing-size-4;
-    line-height: 1; /* avoid double height from line-height */
+    margin-top: $spacing-size-4;
+    margin-bottom: $spacing-size-2;
+    line-height: 1;
     cursor: pointer;
 }
