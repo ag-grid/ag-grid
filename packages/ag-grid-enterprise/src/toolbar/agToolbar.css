@@ -86,19 +86,21 @@
 }
 
 .ag-toolbar-input-field {
-    border: none;
-    background: transparent;
     color: var(--ag-text-color);
     font-size: var(--ag-font-size);
     line-height: 1.5;
     outline: none;
+    border: var(--ag-input-border);
+    border-radius: var(--ag-input-border-radius);
     width: 100%;
     padding: calc(var(--ag-spacing) * 0.5) var(--ag-spacing) calc(var(--ag-spacing) * 0.5)
         calc(var(--ag-spacing) + 14px + var(--ag-spacing) * 0.5);
 }
 
 .ag-toolbar-input-field:focus {
+    outline: none;
     box-shadow: var(--ag-focus-shadow);
+    border: var(--ag-input-focus-border);
 }
 
 .ag-toolbar-input-field::placeholder {

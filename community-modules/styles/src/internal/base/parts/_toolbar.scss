@@ -85,34 +85,25 @@
         color: var(--ag-toolbar-text-color);
         opacity: 0.5;
         pointer-events: none;
-        @include ag.unthemed-rtl(
-            (
-                left: var(--ag-spacing),
-            )
-        );
+        left: var(--ag-spacing);
     }
 
     .ag-toolbar-input-field {
-        border: none;
-        background: transparent;
         color: var(--ag-text-color);
         font-size: var(--ag-font-size);
         line-height: 1.5;
         outline: none;
+        border: var(--ag-input-border);
+        border-radius: var(--ag-input-border-radius);
         width: 100%;
-        padding-top: calc(var(--ag-spacing) * 0.5);
-        padding-bottom: calc(var(--ag-spacing) * 0.5);
-
-        @include ag.unthemed-rtl(
-            (
-                padding-right: var(--ag-spacing),
-                padding-left: calc(var(--ag-spacing) + 14px + var(--ag-spacing) * 0.5),
-            )
-        );
+        padding: calc(var(--ag-spacing) * 0.5) var(--ag-spacing) calc(var(--ag-spacing) * 0.5)
+            calc(var(--ag-spacing) + 14px + var(--ag-spacing) * 0.5);
     }
 
     .ag-toolbar-input-field:focus {
+        outline: none;
         box-shadow: var(--ag-focus-shadow);
+        border: var(--ag-input-focus-border);
     }
 
     .ag-toolbar-input-field::placeholder {
@@ -134,11 +125,7 @@
         align-self: stretch;
         width: 0;
         margin: calc(var(--ag-spacing) * 1.75) 0;
-        @include ag.unthemed-rtl(
-            (
-                border-left: solid var(--ag-toolbar-separator-width) var(--ag-toolbar-separator-color),
-            )
-        );
+        border-inline-start: var(--ag-toolbar-separator-border);
     }
 
     .ag-toolbar-find {
