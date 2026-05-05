@@ -3,9 +3,9 @@ import { cleanup, waitFor } from '@testing-library/react';
 import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 
-import { ignoreConsoleLicenseKeyError } from '../test-utils';
-import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from '../navigation/navigation-test-utils';
 import { renderNavGrid } from '../navigation/navigation-react-test-utils';
+import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from '../navigation/navigation-test-utils';
+import { ignoreConsoleLicenseKeyError } from '../test-utils';
 
 interface RowData {
     a: string;
