@@ -392,13 +392,14 @@ describe('group order maintenance / delta sort', () => {
     });
 
     test('deltaSort + groupMaintainOrder runtime toggle + transaction: per-level options narrowing does not corrupt delta-merge', async () => {
-        // The merge does not corrupt: `_doDeltaSort` uses the current `unsortedRows` (filter
-        // result, structural order) as its tie-breaker, so the result converges to either
-        // current-comparator order or structural order, never to a stale arrangement.
         const rowData = [
             { id: '1', country: 'Italy', sales: 5 },
-            { id: '2', country: 'France', sales: 50 },
-            { id: '3', country: 'USA', sales: 100 },
+            { id: '2', country: 'Italy', sales: 3 },
+            { id: '3', country: 'France', sales: 50 },
+            { id: '4', country: 'France', sales: 20 },
+            { id: '5', country: 'USA', sales: 100 },
+            { id: '6', country: 'Germany', sales: 40 },
+            { id: '7', country: 'Spain', sales: 10 },
         ];
 
         const api = gridsManager.createGrid('grid-runtime-toggle-delta-stale-baseline', {
@@ -422,13 +423,40 @@ describe('group order maintenance / delta sort', () => {
             ],
         });
 
-        api.setGridOption('groupMaintainOrder', true);
-        applyTransactionChecked(api, { add: [{ id: '4', country: 'Italy', sales: 1 }] });
+        await new GridRows(api, 'initial: country asc + sales desc, groupMaintainOrder=false').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" sales:70
+            │ ├── LEAF id:3 country:"France" sales:50
+            │ └── LEAF id:4 country:"France" sales:20
+            ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" sales:40
+            │ └── LEAF id:6 country:"Germany" sales:40
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" sales:8
+            │ ├── LEAF id:1 country:"Italy" sales:5
+            │ └── LEAF id:2 country:"Italy" sales:3
+            ├─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain" sales:10
+            │ └── LEAF id:7 country:"Spain" sales:10
+            └─┬ LEAF_GROUP id:row-group-country-USA ag-Grid-AutoColumn:"USA" sales:100
+            · └── LEAF id:5 country:"USA" sales:100
+        `);
 
-        const renderedKeys = api
-            .getRenderedNodes()
-            .filter((n) => n.level === 0 && n.group)
-            .map((n) => n.key);
-        expect(renderedKeys).toEqual(['France', 'Italy', 'USA']);
+        api.setGridOption('groupMaintainOrder', true);
+        applyTransactionChecked(api, { add: [{ id: '8', country: 'Italy', sales: 7 }] });
+
+        await new GridRows(api, 'after toggle to true + add Italy row: per-level sort, no corruption').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" sales:70
+            │ ├── LEAF id:3 country:"France" sales:50
+            │ └── LEAF id:4 country:"France" sales:20
+            ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" sales:40
+            │ └── LEAF id:6 country:"Germany" sales:40
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" sales:15
+            │ ├── LEAF id:8 country:"Italy" sales:7
+            │ ├── LEAF id:1 country:"Italy" sales:5
+            │ └── LEAF id:2 country:"Italy" sales:3
+            ├─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain" sales:10
+            │ └── LEAF id:7 country:"Spain" sales:10
+            └─┬ LEAF_GROUP id:row-group-country-USA ag-Grid-AutoColumn:"USA" sales:100
+            · └── LEAF id:5 country:"USA" sales:100
+        `);
     });
 });
