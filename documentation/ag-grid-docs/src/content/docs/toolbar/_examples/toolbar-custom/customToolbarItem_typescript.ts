@@ -88,14 +88,13 @@ export class ToolPanelRadio implements IToolbarItemComp {
         const groupName = `tool-panel-${params.key}`;
         for (const { value, label } of PANELS) {
             const eLabel = document.createElement('label');
-            eLabel.style.padding = '0 4px';
+            eLabel.style.cssText = 'display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;';
 
             const eInput = document.createElement('input');
             eInput.type = 'radio';
             eInput.name = groupName;
             eInput.value = value;
             eInput.checked = value === 'none';
-            eInput.style.marginRight = '4px';
 
             eLabel.appendChild(eInput);
             eLabel.appendChild(document.createTextNode(label));
