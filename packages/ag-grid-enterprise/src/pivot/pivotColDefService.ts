@@ -482,10 +482,6 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         return `pivot_${pivotCols.join('-')}_${pivotKeys.join('-')}_${measureColumnId}`;
     }
 
-    public isPivotRowTotalColumn(colDef: ColDef): boolean {
-        return colDef.colId?.startsWith(PIVOT_ROW_TOTAL_PREFIX) ?? false;
-    }
-
     /**
      * Used by the SSRM to create secondary columns from provided fields
      * @param fields
