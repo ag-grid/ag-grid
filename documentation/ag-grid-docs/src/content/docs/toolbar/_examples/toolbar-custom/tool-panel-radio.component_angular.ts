@@ -27,6 +27,7 @@ const PANELS = [
                         [value]="option.value"
                         [checked]="selected === option.value"
                         (change)="onChange(option.value)"
+                        style="margin: 0;"
                     />
                     {{ option.label }}
                 </label>

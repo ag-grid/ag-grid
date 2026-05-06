@@ -95,6 +95,7 @@ export class ToolPanelRadio implements IToolbarItemComp {
             eInput.name = groupName;
             eInput.value = value;
             eInput.checked = value === 'none';
+            eInput.style.margin = '0';
 
             eLabel.appendChild(eInput);
             eLabel.appendChild(document.createTextNode(label));
