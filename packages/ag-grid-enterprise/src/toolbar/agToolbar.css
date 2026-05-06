@@ -132,6 +132,7 @@
 /* stylelint-disable-next-line selector-max-specificity */
 .ag-toolbar .ag-column-drop-horizontal {
     border-bottom: none;
+    padding-inline-start: 0;
 }
 
 .ag-toolbar-button-chevron {
