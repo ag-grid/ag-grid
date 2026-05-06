@@ -3,7 +3,7 @@ import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
 import { _parseBigIntOrNull } from '../agStack/utils/bigInt';
 import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../agStack/utils/date';
 import { _toStringOrNull } from '../agStack/utils/generic';
-import { _getValueUsingField } from '../agStack/utils/value';
+import { _getValueUsingDotField } from '../agStack/utils/value';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -310,7 +310,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const initialData = this.getInitialData();
         if (initialData) {
             const fieldContainsDots = field.includes('.') && !this.gos.get('suppressFieldDotNotation');
-            value = _getValueUsingField(initialData, field, fieldContainsDots);
+            value = fieldContainsDots ? _getValueUsingDotField(initialData, field) : initialData[field];
         } else {
             this.initWaitForRowData(colId);
         }
