@@ -492,10 +492,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
         for (const col of additionalCols) {
             const rowTotalAnchor = rowTotalAnchors?.get(col);
             if (rowTotalAnchor !== undefined) {
-                if (rowTotalAnchor !== null) {
-                    addColAfter(rowTotalAnchor, col);
-                } else {
+                if (rowTotalAnchor === null) {
                     noSiblingsAvailable.push(col);
+                } else {
+                    addColAfter(rowTotalAnchor, col);
                 }
                 continue;
             }

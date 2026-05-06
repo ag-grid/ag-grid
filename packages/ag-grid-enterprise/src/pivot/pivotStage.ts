@@ -143,11 +143,12 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
             // list (and the includes-scan against last time) on every transaction
             // would burn allocations on the no-op hot path.
             const aggregationColumnIds = aggregationColumns.map((column) => column.getId());
+            const lastIds = this.aggregationColumnIdsLastTime;
             const aggregationColumnsReordered =
-                this.aggregationColumnIdsLastTime != null &&
-                this.aggregationColumnIdsLastTime.length === aggregationColumnIds.length &&
-                !_areEqual(this.aggregationColumnIdsLastTime, aggregationColumnIds) &&
-                this.aggregationColumnIdsLastTime.every((id) => aggregationColumnIds.includes(id));
+                lastIds != null &&
+                lastIds.length === aggregationColumnIds.length &&
+                !_areEqual(lastIds, aggregationColumnIds) &&
+                lastIds.every((id) => aggregationColumnIds.includes(id));
             this.aggregationColumnIdsLastTime = aggregationColumnIds;
 
             const pivotColumnGroupDefs = this.pivotColDefSvc.createPivotColumnDefs(this.uniqueValues);
