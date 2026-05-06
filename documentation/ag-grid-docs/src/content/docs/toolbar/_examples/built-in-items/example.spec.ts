@@ -8,7 +8,7 @@ test.agExample(import.meta, () => {
         await expect(toolbar).toBeVisible();
 
         await expect(toolbar.locator(':scope > .ag-toolbar-input')).toHaveCount(1);
-        await expect(toolbar.locator(':scope > .ag-toolbar-button')).toHaveCount(2);
+        await expect(toolbar.locator(':scope > .ag-toolbar-button-wrapper')).toHaveCount(2);
     });
 
     test.eachFramework('Typing into quick filter reduces displayed rows', async ({ agIdFor, page }) => {
