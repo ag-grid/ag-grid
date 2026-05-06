@@ -198,7 +198,7 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         const editSvc = this.editSvc;
-        if (editSvc) {
+        if (editSvc && from !== 'data') {
             // Check for edit/pending values if not requesting committed data
             const pending = editSvc.getPendingEditValue(rowNode, column, from);
             if (pending !== undefined) {
