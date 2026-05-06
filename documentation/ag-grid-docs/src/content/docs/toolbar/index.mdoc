@@ -124,6 +124,10 @@ const gridOptions = {
 }
 ```
 
+The example below uses icon-only buttons — no `label` is set, so only the icon is rendered. A `tooltip` is provided on each button for accessibility. Separators divide the buttons into logical groups.
+
+{% gridExampleRunner title="Action Buttons" name="action-buttons" exampleHeight=300 /%}
+
 ## Custom Components
 
 For controls beyond a button, such as toggles, inputs, or any stateful UI, set `toolbarItem` to a custom component. Custom components can render arbitrary HTML and call any grid API, so they suit cases that the [Action Button](#action-buttons) shorthand cannot express.
