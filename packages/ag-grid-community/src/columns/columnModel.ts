@@ -174,7 +174,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // setPivotMode, applyColumnState,
     // functionColsService.setPrimaryColList, functionColsService.updatePrimaryColList,
     // pivotResultCols.setPivotResultCols
-    public refreshCols(newColDefs: boolean, source: ColumnEventType): void {
+    public refreshCols(newColDefs: boolean, source: ColumnEventType, useGeneratedOrder: boolean = false): void {
         if (!this.colDefCols) {
             return;
         }
@@ -206,7 +206,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols, source);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
-        if (!newColDefs || shouldSortNewColDefs) {
+        if (!useGeneratedOrder && (!newColDefs || shouldSortNewColDefs)) {
             this.restoreColOrder(cols);
         }
 
