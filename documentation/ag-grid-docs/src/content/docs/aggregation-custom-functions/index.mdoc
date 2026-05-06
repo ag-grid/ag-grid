@@ -67,10 +67,28 @@ the raw leaf values — so a function written only against `params.values` produ
 results at any level above the leaves, because it would treat already-aggregated summaries as if
 they were raw values.
 
-The fix is to return an `IAggFuncResult` wrapper that carries any auxiliary fields the parent
-needs to recompute — see [`getDataValue`](./row-object/#reference-data-getDataValue). Sub-group children expose the wrapper to the
-parent via `getDataValue(colKey, 'data')`; leaf children expose their value via the same call — a primitive when the column reads from a `field`, or a wrapper when a `valueGetter` returns one.
-Every child reads the same way at every level.
+The fix is to return an `IAggFuncResult` — a small wrapper interface that carries the auxiliary
+fields the parent needs to recompute:
+
+```ts
+interface IAggFuncResult<TAggValue = number | bigint | null> {
+    /** The aggregated scalar value. */
+    value?: TAggValue;
+    /** The count of aggregated values. Present on `avg` results. */
+    count?: number;
+    /** String representation. Also used for sorting. */
+    toString(): string;
+    /** Numeric representation. Also used for sorting. */
+    toNumber?(): TAggValue;
+}
+```
+
+The built-in `avg` and `count` functions return this same shape; a custom function extends it with
+whatever auxiliary fields it needs (e.g. `min`/`max` for a range, two running sums for a ratio).
+
+Sub-group children expose the wrapper to the parent via `getDataValue(colKey, 'data')`; leaf
+children expose their value via the same call — a primitive when the column reads from a `field`,
+or a wrapper when a `valueGetter` returns one. Every child reads the same way at every level.
 
 A class is a natural fit: `toNumber` and `toString` live on the prototype, and `instanceof` (paired with a `typeof` check when leaves expose a primitive) makes it trivial to identify a wrapper.
 
