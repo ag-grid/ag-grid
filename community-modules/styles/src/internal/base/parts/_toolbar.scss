@@ -74,7 +74,8 @@
         margin: 0 calc(var(--ag-spacing) * 2);
     }
 
-    :where(.ag-toolbar-input) + :where(.ag-toolbar-input) {
+    // stylelint-disable-next-line selector-max-specificity
+    .ag-toolbar-input + .ag-toolbar-input {
         margin-inline-start: 0;
     }
 
