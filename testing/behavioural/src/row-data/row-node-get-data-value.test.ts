@@ -2603,7 +2603,7 @@ describe('RowNode.getDataValue', () => {
         });
 
         test('getDataValue ignores valueGetter on a showRowGroup column for group rows (groupData wins; level guard returns null at deeper levels)', async () => {
-            const valueGetterCallCount = { count: 0 };
+            let valueGetterCalls = 0;
             const api = await gridsManager.createGridAndWait('showRowGroup-valueGetter-blocked', {
                 columnDefs: [
                     {
@@ -2611,7 +2611,7 @@ describe('RowNode.getDataValue', () => {
                         showRowGroup: 'country',
                         cellRenderer: 'agGroupCellRenderer',
                         valueGetter: (p) => {
-                            valueGetterCallCount.count++;
+                            valueGetterCalls++;
                             return p.data ? `getter:${p.data.country}` : 'getter:no-data';
                         },
                     },
@@ -2620,7 +2620,7 @@ describe('RowNode.getDataValue', () => {
                         showRowGroup: 'athlete',
                         cellRenderer: 'agGroupCellRenderer',
                         valueGetter: () => {
-                            valueGetterCallCount.count++;
+                            valueGetterCalls++;
                             return 'getter:athlete';
                         },
                     },
@@ -2642,7 +2642,7 @@ describe('RowNode.getDataValue', () => {
             const athleteGroup = api.getRowNode('row-group-country-USA-athlete-Michael')!;
 
             // Only count invocations from the explicit getDataValue calls below.
-            valueGetterCallCount.count = 0;
+            valueGetterCalls = 0;
 
             // Matching level: groupData wins, getter not invoked.
             expect(countryGroup.getDataValue('countryGroupCol')).toBe('USA');
@@ -2653,7 +2653,7 @@ describe('RowNode.getDataValue', () => {
             // Shallower level on athlete col (idx 1 > level 0): null via the level guard.
             expect(countryGroup.getDataValue('athleteGroupCol')).toBeNull();
 
-            expect(valueGetterCallCount.count).toBe(0);
+            expect(valueGetterCalls).toBe(0);
         });
 
         test('tree data group rows resolve showRowGroup columns from their own data', async () => {

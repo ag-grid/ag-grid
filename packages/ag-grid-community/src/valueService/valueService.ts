@@ -79,8 +79,8 @@ export class ValueService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         this.init();
-        // Branching on the option (not just bean presence) avoids two no-op method calls per
-        // cell read for full-bundle users who leave the cache off — the common case.
+        // Cache variant bound here, not in wireBeans, so the rowRenderer.postConstruct
+        // race-window render uses the safe no-cache default.
         if (this.valueCache && this.gos.get('valueCache')) {
             this.executeValueGetter = this.executeValueGetterWithValueCache;
         }
@@ -317,8 +317,10 @@ export class ValueService extends BeanStub implements NamedBean {
         const ssrmFooterGroupCol =
             isSsrm && rowNode.footer && rowNode.field && (rowGroupColId === true || rowGroupColId === rowNode.field);
         if (ssrmFooterGroupCol) {
-            // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
-            // the group value from the data using the row field
+            // SSRM footer rows have no groupData — read the group value from data using the row field.
+            if (!data) {
+                return undefined;
+            }
             const rowField = rowNode.field!;
             return column.fieldContainsDots ? _getValueUsingDotField(data, rowField) : data[rowField];
         }

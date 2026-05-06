@@ -47,7 +47,7 @@ describe('ValueService init in wireBeans', () => {
         expect(api.getCellValue({ rowNode: node, colKey: 'fullName' })).toBe('Ada Lovelace');
     });
 
-    test('valueCache path: cache-variant executeValueGetter is bound during wireBeans', () => {
+    test('valueCache path: cache-variant executeValueGetter is bound in postConstruct', () => {
         let calls = 0;
         const countingGetter = (params: ValueGetterParams<Person>) => {
             calls++;
@@ -72,6 +72,37 @@ describe('ValueService init in wireBeans', () => {
         expect(api.getCellValue({ rowNode: node, colKey: 'shouted' })).toBe('ADA');
         // Cache hit — getter not re-invoked.
         expect(calls).toBe(callsBeforeApi);
+    });
+
+    test('valueCache: by the time createGrid returns, the cache is populated and the first API read is a hit', () => {
+        // Locks in the user-visible contract: regardless of which render pass populated the
+        // cache (the rowRenderer.postConstruct race window uses the no-cache variant; any
+        // later render before createGrid returns uses the cache variant), the cache MUST be
+        // ready by the time the api is handed to user code. The first user API call must be
+        // a cache hit, not a populating call — otherwise non-deterministic getters would
+        // produce a different value on first API read vs. subsequent reads.
+        let calls = 0;
+        const countingGetter = (params: ValueGetterParams<Person>) => {
+            calls++;
+            return params.data!.firstName.toUpperCase();
+        };
+
+        const api: GridApi<Person> = gridsManager.createGrid(
+            'grid-value-cache-populated',
+            {
+                columnDefs: [{ colId: 'shouted', valueGetter: countingGetter }],
+                rowData: PEOPLE,
+                valueCache: true,
+            },
+            { modules: [ValueCacheModule] }
+        );
+
+        const node = api.getRowNode('0')!;
+
+        // The cache must be populated for this row before user code runs.
+        const callsAfterCreate = calls;
+        api.getCellValue({ rowNode: node, colKey: 'shouted' });
+        expect(calls).toBe(callsAfterCreate);
     });
 
     test('no-valueCache path: every getCellValue call re-invokes the getter when ValueCacheModule is NOT registered', () => {
