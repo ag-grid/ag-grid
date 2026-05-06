@@ -75,15 +75,14 @@ export class ValueService extends BeanStub implements NamedBean {
         this.cellExpressions = gos.get('enableCellExpressions');
         this.isTreeData = gos.get('treeData');
         this.groupSuppressBlankHeader = gos.get('groupSuppressBlankHeader');
+        this.executeValueGetter =
+            this.valueCache && gos.get('valueCache')
+                ? this.executeValueGetterWithValueCache
+                : this.executeValueGetterWithoutValueCache;
     }
 
     public postConstruct(): void {
         this.init();
-        // Cache variant bound here, not in wireBeans, so the rowRenderer.postConstruct
-        // race-window render uses the safe no-cache default.
-        if (this.valueCache && this.gos.get('valueCache')) {
-            this.executeValueGetter = this.executeValueGetterWithValueCache;
-        }
 
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events

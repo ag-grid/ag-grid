@@ -75,12 +75,8 @@ describe('ValueService init in wireBeans', () => {
     });
 
     test('valueCache: by the time createGrid returns, the cache is populated and the first API read is a hit', () => {
-        // Locks in the user-visible contract: regardless of which render pass populated the
-        // cache (the rowRenderer.postConstruct race window uses the no-cache variant; any
-        // later render before createGrid returns uses the cache variant), the cache MUST be
-        // ready by the time the api is handed to user code. The first user API call must be
-        // a cache hit, not a populating call — otherwise non-deterministic getters would
-        // produce a different value on first API read vs. subsequent reads.
+        // Cache variant is bound in init() (wireBeans), so the very first render writes to
+        // the cache. The first user API read after createGrid must therefore be a cache hit.
         let calls = 0;
         const countingGetter = (params: ValueGetterParams<Person>) => {
             calls++;
