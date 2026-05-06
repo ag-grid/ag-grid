@@ -47,6 +47,16 @@
     color: var(--ag-icon-button-hover-color);
 }
 
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar > .ag-toolbar-item:first-child > .ag-toolbar-button-wrapper {
+    border-start-start-radius: var(--ag-border-radius);
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar > .ag-toolbar-item:last-child > .ag-toolbar-button-wrapper {
+    border-start-end-radius: var(--ag-border-radius);
+}
+
 .ag-toolbar-button:focus-visible {
     box-shadow: var(--ag-focus-shadow);
 }
