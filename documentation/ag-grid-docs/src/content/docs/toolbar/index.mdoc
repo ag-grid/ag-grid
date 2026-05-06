@@ -70,6 +70,10 @@ A number of built-in toolbar items are provided for common use cases that integr
 | [`agMenuToolbarItem`](#dropdown-menus) | Button that opens a [dropdown menu](#dropdown-menus).                                                   | `ContextMenuModule` or `ColumnMenuModule` |
 | `separator`                            | Vertical divider used to group items visually. Has no behaviour of its own.                             | None                                      |
 
+{% note %}
+When the same built-in item appears more than once, set a unique `key` on each occurrence. Without a `key`, the item type is used as the key, so only the first duplicate will be rendered.
+{% /note %}
+
 ### Dropdown Menus
 
 Use the `agMenuToolbarItem` to render a dropdown of [Menu Items](./component-menu-item/). Configure the button and menu contents using the following properties:
