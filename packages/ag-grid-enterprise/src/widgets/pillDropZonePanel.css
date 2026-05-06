@@ -101,7 +101,6 @@
     overflow: auto hidden;
     scrollbar-width: thin;
     height: var(--ag-header-height);
-    padding-left: var(--ag-cell-horizontal-padding);
     gap: var(--ag-cell-widget-spacing);
     background-color: var(--ag-header-background-color);
     border-bottom: var(--ag-header-row-border);
