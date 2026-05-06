@@ -78,6 +78,17 @@
     margin-inline-start: 0;
 }
 
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar > .ag-toolbar-input:first-child,
+.ag-toolbar-right-start + .ag-toolbar-input {
+    margin-inline-start: 0;
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar > .ag-toolbar-input:last-child {
+    margin-inline-end: 0;
+}
+
 .ag-toolbar-input-icon {
     position: absolute;
     display: inline-flex;
