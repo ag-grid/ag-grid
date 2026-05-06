@@ -34,8 +34,10 @@ export class ValueService extends BeanStub implements NamedBean {
     // Hot-path fields first (read on every getValue call). All declared with primitive
     // defaults so V8 picks a stable hidden-class shape from the moment the instance is
     // constructed — `init()` and `postConstruct` overwrite values without reshaping.
-    // Defaults to the no-cache variant so the initial render (driven by rowRenderer's
-    // postConstruct, which runs before valueSvc.postConstruct) bypasses the cache.
+    /**
+     * Bound by `init()` to the cache or no-cache variant. Default is no-cache for safety.
+     * Unbound method reference is fine — call sites use `this.executeValueGetter(...)`.
+     */
     private executeValueGetter: (
         valueGetter: string | ((...args: any[]) => any),
         data: any,
