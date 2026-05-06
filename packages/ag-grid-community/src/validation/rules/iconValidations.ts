@@ -186,6 +186,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     rowUnpin: 'PinnedRow',
     rowPinBottom: 'PinnedRow',
     rowPinTop: 'PinnedRow',
+    search: 'Find',
 };
 
 export const DEPRECATED_ICONS_V33: Set<IconName> = new Set([
