@@ -471,7 +471,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 if (colPositionMap.has(col)) {
                     lastPositioned = col;
                 } else if (pivotColDefSvc.isPivotRowTotalColumn(col.colDef)) {
-                    (rowTotalAnchors ??= new Map()).set(col, lastPositioned);
+                    rowTotalAnchors ??= new Map();
+                    rowTotalAnchors.set(col, lastPositioned);
                 }
             }
         }
