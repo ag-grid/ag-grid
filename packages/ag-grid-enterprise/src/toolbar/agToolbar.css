@@ -34,6 +34,8 @@
     border: 0;
     background: transparent;
     color: var(--ag-toolbar-text-color);
+    font-family: inherit;
+    font-weight: inherit;
     cursor: pointer;
     line-height: 1;
     white-space: nowrap;
@@ -88,8 +90,11 @@
 .ag-toolbar-input-field {
     color: var(--ag-text-color);
     font-size: var(--ag-font-size);
+    font-family: inherit;
+    font-weight: inherit;
     line-height: 1.5;
     outline: none;
+    background-color: var(--ag-input-background-color);
     border: var(--ag-input-border);
     border-radius: var(--ag-input-border-radius);
     width: 100%;

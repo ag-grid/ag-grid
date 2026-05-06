@@ -53,6 +53,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 toolbarItem: 'agMenuToolbarItem',
                 icon: 'save',
                 alignment: 'right',
+                label: 'Export',
                 tooltip: 'Export to Csv / Excel',
                 toolbarItemParams: {
                     menuItems: ['csvExport', 'excelExport'],
