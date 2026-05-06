@@ -4,8 +4,6 @@ title: "Quick Filter"
 
 Quick Filter is a piece of text given to the grid that is used to filter rows by comparing against the data in all columns. It can be used in addition to column-specific filtering.
 
-The filter text is split into words, and each word is compared against every column value (case insensitive). All words must match a row for it to be included. For example, searching "Tony Ireland" will only show rows containing both "Tony" and "Ireland".
-
 ## Enable the Quick Filter
 
 ### Using the Quick Access Toolbar {% enterpriseIcon style="{\"marginTop\": \"-4px\"}" /%}
@@ -47,11 +45,15 @@ The initial Quick Filter text can also be set via the `quickFilterText` grid opt
 
 {% gridExampleRunner title="Quick Filter" name="quick-filter" /%}
 
-## Checking the Quick Filter
+## Quick Filter Value
 
-Usually the state of the Quick Filter text would be maintained outside of the grid. However, it's possible to check whether the Quick Filter is applied via the API method `isQuickFilterPresent()`, and get the current text via `getQuickFilter()`.
+The filter text is split into words, and each word is compared against every column value (case-insensitive). All words must match a row for it to be included. For example, searching "Tony Ireland" will only show rows containing both "Tony" and "Ireland".
 
-## Overriding the Quick Filter Value
+### Checking the Quick Filter
+
+When the Quick Filter is set via `quickFilterText`, the state is maintained outside the grid. When the Quick Access Toolbar item is used, the input is owned by the grid. In either case, use `isQuickFilterPresent()` to check whether the Quick Filter is applied, and `getQuickFilter()` to read the current text.
+
+### Overriding the Quick Filter Value
 
 If your data contains complex objects, the Quick Filter will end up comparing against `[object Object]` instead of searchable string values. In this case you will need to implement `getQuickFilterText` to extract a searchable string from your complex object.
 
