@@ -124,11 +124,9 @@ export class SortService extends BeanStub implements NamedBean {
                 if (columnToClear.getSortDef()) {
                     clearedColumns.push(columnToClear);
                 }
-
-                // setting to 'undefined' hits a special condition, which marks
-                // a column's sortDef as implicitly modified (initial), this allows
-                // groupMaintainOrder gridOption feature to work
-                this.setColSort(columnToClear, undefined, source);
+                // Fresh SortDef per column: `getColumnDefs()` exposes a reference to user code.
+                const sortDef = _getSortDefFromInput();
+                this.setColSort(columnToClear, sortDef, source);
             }
         });
 
@@ -299,7 +297,7 @@ export class SortService extends BeanStub implements NamedBean {
             comp.toggleCss('ag-header-cell-sorted-abs-desc', type === 'absolute' && direction === 'desc');
             comp.toggleCss('ag-header-cell-sorted-none', !direction);
 
-            if (column.getColDef().showRowGroup) {
+            if (column.colDef.showRowGroup) {
                 const sourceColumns = this.beans.showRowGroupCols?.getSourceColumnsForGroupColumn(column);
                 // this == is intentional, as it allows null and undefined to match, which are both unsorted states
                 const sortDirectionsMatch = sourceColumns?.every(
@@ -324,7 +322,7 @@ export class SortService extends BeanStub implements NamedBean {
 
         const sortDef = _getSortDefFromColDef(column.colDef);
         if (sortDef) {
-            column.setSortDef(sortDef, true);
+            column.setSortDef(sortDef);
         }
 
         if (sortIndex !== undefined) {
@@ -352,9 +350,9 @@ export class SortService extends BeanStub implements NamedBean {
         this.setColSort(column, _getSortDefFromInput(sortDefOrDirection), source);
     }
 
-    private setColSort(column: AgColumn, sort: SortDef | undefined, source: ColumnEventType): void {
-        if (!_areSortDefsEqual(column.getSortDef(), sort)) {
-            column.setSortDef(_getSortDefFromInput(sort), sort === undefined);
+    private setColSort(column: AgColumn, sortDef: SortDef, source: ColumnEventType): void {
+        if (!_areSortDefsEqual(column.getSortDef(), sortDef)) {
+            column.setSortDef(sortDef);
             column.dispatchColEvent('sortChanged', source);
         }
         column.dispatchStateUpdatedEvent('sort');

@@ -1,4 +1,4 @@
-import type { Column, ColumnGroup } from 'ag-grid-community';
+import type { Column, ColumnGroup, GridApi, SortDirection } from 'ag-grid-community';
 
 import { getGridHTMLElement } from '../../gridRows/gridHtmlRows';
 import type { GridColumnsErrors } from '../columns-validation/gridColumnsErrors';
@@ -113,6 +113,8 @@ export class GridColumnsDomValidator {
     private validateColumnHeaders(gridColumns: GridColumns, headerRoot: HTMLElement): void {
         const { allDisplayedCols, options } = gridColumns;
 
+        const sortContext = buildDisplayedSortContext(gridColumns.api);
+
         for (const col of allDisplayedCols) {
             const colId = col.getColId();
             const headerCell = this.findHeaderCell(headerRoot, colId);
@@ -151,23 +153,30 @@ export class GridColumnsDomValidator {
             // ── aria-sort attribute ─────────────────────────────────────────
             // The grid sets aria-sort only when the column is sortable (headerCellCtrl.refreshAriaSort).
             // When !sortable, aria-sort is removed from DOM regardless of model sort state.
-            const sort = col.getSort();
+            // Source of truth is the *displayed* sort, which for auto-display columns mirrors the
+            // linked source rowGroup column in coupled-sort mode — see getDisplayedSort below.
+            const displayedSort = getDisplayedSort(col, sortContext);
             const isSortable = col.isSortable();
             const ariaSort = headerCell.getAttribute('aria-sort');
 
             if (isSortable) {
-                // Sortable column — aria-sort should reflect the current sort state
-                if (sort === 'asc' && ariaSort !== 'ascending') {
+                // Sortable column — aria-sort should reflect the displayed sort.
+                if (displayedSort === 'asc' && ariaSort !== 'ascending') {
                     colErrors.add(
-                        `Sortable column with sort "asc" has aria-sort="${ariaSort ?? 'null'}", expected "ascending".`
+                        `Sortable column with displayed sort "asc" has aria-sort="${ariaSort ?? 'null'}", expected "ascending".`
                     );
-                } else if (sort === 'desc' && ariaSort !== 'descending') {
+                } else if (displayedSort === 'desc' && ariaSort !== 'descending') {
                     colErrors.add(
-                        `Sortable column with sort "desc" has aria-sort="${ariaSort ?? 'null'}", expected "descending".`
+                        `Sortable column with displayed sort "desc" has aria-sort="${ariaSort ?? 'null'}", expected "descending".`
                     );
-                } else if (!sort && ariaSort != null && ariaSort !== 'none') {
+                } else if (displayedSort === 'mixed' && ariaSort !== 'other') {
+                    // Coupled-sort group display column with diverging linked-source sorts.
                     colErrors.add(
-                        `Sortable column with no sort has aria-sort="${ariaSort}", expected "none" or absent.`
+                        `Sortable column with mixed displayed sort has aria-sort="${ariaSort ?? 'null'}", expected "other".`
+                    );
+                } else if (!displayedSort && ariaSort != null && ariaSort !== 'none') {
+                    colErrors.add(
+                        `Sortable column with no displayed sort has aria-sort="${ariaSort}", expected "none" or absent.`
                     );
                 }
             } else if (ariaSort != null && ariaSort !== 'none') {
@@ -559,4 +568,91 @@ export class GridColumnsDomValidator {
         visit(tree);
         return groups;
     }
+}
+
+/**
+ * Grid-wide context for `getDisplayedSort`, computed once per validation pass:
+ * - `rowGroupCols`: the current rowGroup columns, or `null` when the SharedRowGrouping module is
+ *   not registered (e.g. tree-data-only tests). `getRowGroupColumns` is part of that module.
+ * - `isSortingCoupled`: mirrors `_isColumnsSortingCoupledToGroup(gos)` — false when a custom
+ *   `autoGroupColumnDef.comparator` or `treeData` is configured.
+ */
+interface DisplayedSortContext {
+    rowGroupCols: Column[] | null;
+    isSortingCoupled: boolean;
+}
+
+// Mirrors `_isColumnsSortingCoupledToGroup`. INTENTIONAL DUPLICATION (black-box check) — keep in
+// sync with the production helper, named here so drift is easier to spot in review.
+function isCoupledSortMode(api: GridApi): boolean {
+    return !api.getGridOption('autoGroupColumnDef')?.comparator && !api.getGridOption('treeData');
+}
+
+function buildDisplayedSortContext(api: GridApi): DisplayedSortContext {
+    // `getRowGroupColumns` is gated on the SharedRowGrouping module; when not registered (e.g.
+    // tree-data-only tests), the API call would log a warning and return `undefined`. Cast for
+    // the internal module name matches the existing pattern in `validateHeaderRoot` above.
+    const isModuleRegistered = api.isModuleRegistered as (name: string) => boolean;
+    const rowGroupCols = isModuleRegistered('SharedRowGrouping') ? api.getRowGroupColumns() : null;
+    return { rowGroupCols, isSortingCoupled: isCoupledSortMode(api) };
+}
+
+/**
+ * Effective displayed sort direction for a column, or `null` when none. Mirrors
+ * `SortService.getDisplaySortForColumn` using public API only, and compares direction only —
+ * that's what the validator asserts against `aria-sort` in the DOM.
+ *
+ * INTENTIONAL DUPLICATION of `getDisplaySortForColumn` / `_isColumnsSortingCoupledToGroup`: the
+ * validator is a black-box DOM check, so computing the expected answer from the production
+ * helpers would let both agree on the same bug. Keep in sync when those helpers change.
+ *
+ * Approximation: string `showRowGroup` is resolved against `getRowGroupColumns()` only, not
+ * all defined columns; no current test config triggers a divergence.
+ */
+function getDisplayedSort(col: Column, ctx: DisplayedSortContext): SortDirection | 'mixed' | null {
+    const ownSort = col.getSort() ?? null;
+    if (ownSort) {
+        return ownSort;
+    }
+
+    const colDef = col.getColDef();
+    const showRowGroup = colDef.showRowGroup;
+    if (showRowGroup == null) {
+        return null;
+    }
+
+    // Coupling OFF → display column shows only its own sort (null at this point).
+    if (!ctx.isSortingCoupled || !ctx.rowGroupCols) {
+        return null;
+    }
+
+    // `=== true` cascades to all rowGroup columns; string resolves to at most one column by colId.
+    let linked: Column[];
+    if (showRowGroup === true) {
+        linked = ctx.rowGroupCols;
+    } else {
+        const found = ctx.rowGroupCols.find((c) => c.getColId() === showRowGroup);
+        if (!found) {
+            return null;
+        }
+        linked = [found];
+    }
+    if (linked.length === 0) {
+        return null;
+    }
+
+    // When the display column has own data (field/valueGetter), its own (null) sort joins the
+    // mix-check — any non-null linked source then renders as 'mixed'. See `columnHasUniqueData`
+    // in `getDisplaySortForColumn`.
+    const columnHasUniqueData = colDef.field != null || colDef.valueGetter != null;
+    let firstSort: SortDirection | null | undefined = columnHasUniqueData ? null : undefined;
+    for (const c of linked) {
+        const s = c.getSort() ?? null;
+        if (firstSort === undefined) {
+            firstSort = s;
+        } else if (firstSort !== s) {
+            return 'mixed';
+        }
+    }
+    return firstSort ?? null;
 }

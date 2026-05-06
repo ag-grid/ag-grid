@@ -18,9 +18,6 @@ export class CellPositionFeature extends BeanStub {
     private readonly column: AgColumn;
     private readonly rowNode: RowNode;
 
-    private eSetLeft: HTMLElement;
-    private eContent: HTMLElement;
-
     private colsSpanning: AgColumn[];
     private rowSpan: number;
 
@@ -34,6 +31,23 @@ export class CellPositionFeature extends BeanStub {
 
         this.column = cellCtrl.column;
         this.rowNode = cellCtrl.rowNode;
+
+        // Listener setup runs in the constructor (before the cell component attaches) so that
+        // getColSpanningList() is available as soon as the CellCtrl exists. This is required in
+        // React, where setComp() is called asynchronously, but navigation normalisation may query
+        // the position feature synchronously before the first render completes.
+        const cellSpan = cellCtrl.getCellSpan();
+        if (cellSpan) {
+            const refreshSpanHeight = this.refreshSpanHeight.bind(this, cellSpan);
+            this.addManagedListeners(this.beans.eventSvc, {
+                paginationChanged: refreshSpanHeight,
+                recalculateRowBounds: refreshSpanHeight,
+                pinnedHeightChanged: refreshSpanHeight,
+            });
+        } else {
+            this.setupColSpan();
+            this.setupRowSpan();
+        }
     }
 
     private setupRowSpan(): void {
@@ -42,40 +56,23 @@ export class CellPositionFeature extends BeanStub {
         this.addManagedListeners(this.beans.eventSvc, { newColumnsLoaded: () => this.onNewColumnsLoaded() });
     }
 
+    // Called each time the cell component attaches (initial mount and any remount).
     public init(): void {
-        this.eSetLeft = this.cellCtrl.getRootElement();
-        this.eContent = this.cellCtrl.eGui;
-
-        const cellSpan = this.cellCtrl.getCellSpan();
-
-        // add event handlers only after GUI is attached,
-        // so we don't get events before we are ready
-        if (!cellSpan) {
-            this.setupColSpan();
-            this.setupRowSpan();
-        }
-
         this.onLeftChanged();
         this.onWidthChanged();
-        if (!cellSpan) {
-            this._legacyApplyRowSpan();
-        }
-
+        const cellSpan = this.cellCtrl.getCellSpan();
         if (cellSpan) {
-            const refreshSpanHeight = this.refreshSpanHeight.bind(this, cellSpan);
-            refreshSpanHeight();
-            this.addManagedListeners(this.beans.eventSvc, {
-                paginationChanged: refreshSpanHeight,
-                recalculateRowBounds: refreshSpanHeight,
-                pinnedHeightChanged: refreshSpanHeight,
-            });
+            this.refreshSpanHeight(cellSpan);
+        } else {
+            this._legacyApplyRowSpan();
         }
     }
 
     private refreshSpanHeight(cellSpan: CellSpan) {
         const spanHeight = cellSpan.getCellHeight();
-        if (spanHeight != null) {
-            this.eContent.style.height = `${spanHeight}px`;
+        const eContent = this.cellCtrl.eGui;
+        if (spanHeight != null && eContent) {
+            eContent.style.height = `${spanHeight}px`;
         }
     }
 
@@ -119,11 +116,11 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onWidthChanged(): void {
-        if (!this.eContent) {
+        const eContent = this.cellCtrl.eGui;
+        if (!eContent) {
             return;
         }
-        const width = this.getCellWidth();
-        this.eContent.style.width = `${width}px`;
+        eContent.style.width = `${this.getCellWidth()}px`;
     }
 
     private getCellWidth(): number {
@@ -162,11 +159,11 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onLeftChanged(): void {
-        if (!this.eSetLeft) {
+        const eSetLeft = this.cellCtrl.getRootElement();
+        if (!eSetLeft) {
             return;
         }
-        const left = this.modifyLeftForPrintLayout(this.getCellLeft());
-        this.eSetLeft.style.left = left + 'px';
+        eSetLeft.style.left = this.modifyLeftForPrintLayout(this.getCellLeft()) + 'px';
     }
 
     private getCellLeft(): number | null {
@@ -203,11 +200,14 @@ export class CellPositionFeature extends BeanStub {
             return;
         }
 
-        const singleRowHeight = _getRowHeightAsNumber(this.beans);
-        const totalRowHeight = singleRowHeight * this.rowSpan;
+        const eContent = this.cellCtrl.eGui;
+        if (!eContent) {
+            return;
+        }
 
-        this.eContent.style.height = `${totalRowHeight}px`;
-        this.eContent.style.zIndex = '1';
+        const singleRowHeight = _getRowHeightAsNumber(this.beans);
+        eContent.style.height = `${singleRowHeight * this.rowSpan}px`;
+        eContent.style.zIndex = '1';
     }
 
     // overriding to make public, as we don't dispose this bean via context

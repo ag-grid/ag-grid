@@ -26,6 +26,12 @@ export interface ColumnFilterSpec {
 interface FloatingFilterSpec {
     source: 'floating-filter';
     colId?: string | null;
+    /**
+     * Index of the input within a multi-text-input floating filter (e.g. number range filter
+     * with two inputs). Set by `testIdService` only when more than one input is present in
+     * the floating-filter cell; omitted for the single-input case.
+     */
+    index?: number;
 }
 
 export type FilterSpec = FilterToolpanelSpec | ColumnFilterSpec | FloatingFilterSpec;

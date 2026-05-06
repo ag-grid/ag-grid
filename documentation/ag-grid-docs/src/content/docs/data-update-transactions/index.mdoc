@@ -163,6 +163,8 @@ Some caveats also exist which may make delta sorting slower in your application 
 - Your data set is small compared to the size of your transactions
 - You have a large number of groups containing small numbers of rows.
 
+Delta sort is ignored (full sort runs instead) when [`postSortRows`](./row-sorting/#post-sort) is configured.
+
 In the below example two buttons have been provided, one using delta sort and one without. When clicked they use a transaction to insert one row and update one existing row on the initial dataset of 100,000 rows.
 
 {% gridExampleRunner title="Delta Sorting" name="delta-sorting" /%}
