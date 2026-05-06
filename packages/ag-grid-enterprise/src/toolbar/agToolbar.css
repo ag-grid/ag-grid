@@ -81,12 +81,12 @@
 /* stylelint-disable-next-line selector-max-specificity */
 .ag-toolbar > .ag-toolbar-input:first-child,
 .ag-toolbar-right-start + .ag-toolbar-input {
-    margin-inline-start: 0;
+    margin-inline-start: var(--ag-spacing);
 }
 
 /* stylelint-disable-next-line selector-max-specificity */
 .ag-toolbar > .ag-toolbar-input:last-child {
-    margin-inline-end: 0;
+    margin-inline-end: var(--ag-spacing);
 }
 
 .ag-toolbar-input-icon {
