@@ -191,6 +191,12 @@
         box-shadow: none;
     }
 
+    // Remove text-input mixin's padding-bottom so toolbar input text aligns with the icon
+    // stylelint-disable-next-line selector-max-specificity
+    .ag-toolbar input[class^='ag-'][type='text'].ag-toolbar-input-field {
+        padding-bottom: 0;
+    }
+
     .ag-standard-button {
         appearance: none;
         background-color: transparent;
