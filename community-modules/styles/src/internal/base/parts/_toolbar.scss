@@ -50,7 +50,8 @@
     }
 
     // stylelint-disable-next-line selector-max-specificity
-    .ag-toolbar-button-wrapper:hover .ag-toolbar-button {
+    .ag-toolbar-button-wrapper:hover .ag-toolbar-button,
+    .ag-toolbar-button-wrapper:hover .ag-toolbar-button .ag-icon {
         color: var(--ag-icon-button-hover-color);
     }
 

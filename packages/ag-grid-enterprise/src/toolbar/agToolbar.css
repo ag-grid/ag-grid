@@ -47,7 +47,8 @@
     color: var(--ag-icon-button-hover-color);
 }
 
-.ag-toolbar-button-wrapper:hover .ag-toolbar-button {
+.ag-toolbar-button-wrapper:hover .ag-toolbar-button,
+.ag-toolbar-button-wrapper:hover .ag-toolbar-button .ag-icon {
     color: var(--ag-icon-button-hover-color);
 }
 
