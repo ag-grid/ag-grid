@@ -171,6 +171,10 @@
         box-shadow: none;
     }
 
+    .ag-toolbar-find {
+        border-bottom: 2px solid var(--ag-border-color);
+    }
+
     .ag-toolbar-find:focus-within {
         border-top: none;
         border-left: none;
