@@ -260,8 +260,3 @@
 .ag-icon-search::before {
     mask-image: url('./balham-svg-icons/search.svg');
 }
-
-.ag-toolbar-input .ag-toolbar-input-field,
-.ag-toolbar-find .ag-toolbar-input-field {
-    padding-left: calc(var(--ag-spacing) * 1.5 + 12px);
-}
