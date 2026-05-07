@@ -69,6 +69,10 @@
         box-shadow: var(--ag-focus-shadow);
     }
 
+    .ag-toolbar-button:focus:not(:focus-visible) {
+        box-shadow: none;
+    }
+
     .ag-toolbar-button:disabled {
         opacity: 0.5;
         cursor: default;
