@@ -172,6 +172,7 @@
     }
 
     .ag-toolbar-find {
+        height: calc(var(--ag-grid-size) * 5);
         border-bottom: 2px solid var(--ag-border-color);
     }
 
