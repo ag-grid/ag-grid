@@ -5,13 +5,15 @@ const CONTAINER_ID = 'ag-fps-monitor';
 const SAMPLE_WINDOW_MS = 1000;
 const HISTORY_LENGTH = 60;
 
+let activeStop = null;
+
 export function startFpsMonitor() {
     if (typeof window === 'undefined' || typeof document === 'undefined') {
         return () => {};
     }
 
     if (document.getElementById(CONTAINER_ID)) {
-        return () => {};
+        return activeStop ?? (() => {});
     }
 
     const container = document.createElement('div');
@@ -111,9 +113,12 @@ export function startFpsMonitor() {
 
     rafId = requestAnimationFrame(tick);
 
-    return function stopFpsMonitor() {
+    activeStop = function stopFpsMonitor() {
         running = false;
         if (rafId) cancelAnimationFrame(rafId);
         container.remove();
+        activeStop = null;
     };
+
+    return activeStop;
 }
