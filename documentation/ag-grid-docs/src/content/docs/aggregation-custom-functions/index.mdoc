@@ -70,21 +70,12 @@ they were raw values.
 The fix is to return an `IAggFuncResult` — a small wrapper interface that carries the auxiliary
 fields the parent needs to recompute:
 
-```ts
-interface IAggFuncResult<TAggValue = number | bigint | null> {
-    /** The aggregated scalar value. */
-    value?: TAggValue;
-    /** The count of aggregated values. Present on `avg` results. */
-    count?: number;
-    /** String representation. Also used for sorting. */
-    toString(): string;
-    /** Numeric representation. Also used for sorting. */
-    toNumber?(): TAggValue;
-}
-```
+{% interfaceDocumentation interfaceName="IAggFuncResult" config={"asCode":true} /%}
 
 The built-in `avg` and `count` functions return this same shape; a custom function extends it with
 whatever auxiliary fields it needs (e.g. `min`/`max` for a range, two running sums for a ratio).
+See [`getDataValue`](./row-object/#reference-data-getDataValue) for how the wrapper is exposed when
+reading values back.
 
 Sub-group children expose the wrapper to the parent via `getDataValue(colKey, 'data')`; leaf
 children expose their value via the same call — a primitive when the column reads from a `field`,
@@ -132,7 +123,8 @@ function rangeAggFunc(params) {
 `getDataValue` takes a mode argument:
 
 - `'data'` returns the stored wrapper unchanged, so the parent can read `min`/`max` off it.
-- `'value'` calls `toNumber()` and returns just the scalar, dropping the auxiliary fields.
+- `'value'` unwraps the wrapper to a scalar by calling `toNumber()` when present, otherwise reading
+  the `value` field. The wrapper is returned unchanged if neither is available.
 
 A ratio uses the same wrapper pattern — carry the two running sums (`gold` and `silver`) so the
 parent divides at every level. Giving leaf rows the same `RatioResult` shape via a `valueGetter`
