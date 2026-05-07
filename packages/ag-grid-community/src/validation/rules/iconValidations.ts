@@ -72,6 +72,7 @@ export const ICON_VALUES: Record<IconValue, 1> = {
     'chevron-left': 1,
     'chevron-right': 1,
     edit: 1,
+    search: 1,
 };
 
 export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationModuleName[]> = {
