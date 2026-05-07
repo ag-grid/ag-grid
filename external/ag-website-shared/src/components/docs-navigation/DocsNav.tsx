@@ -4,7 +4,7 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { getExamplePageUrl } from '@components/docs/utils/urlPaths';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 
 import styles from './DocsNav.module.scss';
 
@@ -104,9 +104,44 @@ function Group({
     setOpenGroup?: any;
 }) {
     const isOpen = openGroup === groupData;
+    const groupRef = useRef<HTMLDivElement>(null);
+
+    const handleScrollToGroup = () => {
+        const groupEl = groupRef.current;
+        if (!groupEl) {
+            return;
+        }
+
+        const containerRect = scrollContainer.getBoundingClientRect();
+        const groupRect = groupEl.getBoundingClientRect();
+        const currentScrollTop = scrollContainer.scrollTop;
+
+        // Calculate the group's position relative to the scroll container
+        const groupTop = groupRect.top - containerRect.top + currentScrollTop;
+        const groupBottom = groupTop + groupRect.height;
+
+        // Define thresholds for when to scroll: if the group is above the top 10% of the visible area or below the bottom - MOVE!
+        const thresholdTop = currentScrollTop + containerRect.height * 0.1;
+        const visibleBottom = currentScrollTop + containerRect.height;
+
+        let targetScrollTop = currentScrollTop;
+
+        if (groupTop < thresholdTop) {
+            targetScrollTop = Math.max(groupTop - containerRect.height * 0.1, 0);
+        } else if (groupBottom > visibleBottom) {
+            targetScrollTop = Math.min(
+                groupBottom - containerRect.height,
+                scrollContainer.scrollHeight - containerRect.height
+            );
+        }
+
+        if (targetScrollTop !== currentScrollTop) {
+            scrollContainer.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
+        }
+    };
 
     return (
-        <div className={classnames(styles.group, isOpen ? styles.isOpen : '')}>
+        <div ref={groupRef} className={classnames(styles.group, isOpen ? styles.isOpen : '')}>
             <button
                 className={classnames('button-style-none', styles.groupTitle)}
                 onClick={() => {
@@ -122,7 +157,7 @@ function Group({
                 <span>{groupData.title}</span>
             </button>
 
-            <Collapsible id={groupData.title} isOpen={isOpen}>
+            <Collapsible id={groupData.title} isOpen={isOpen} onAnimationEnd={isOpen ? handleScrollToGroup : undefined}>
                 <div className={styles.groupChildren}>
                     {groupData.children.map((childData) => {
                         return (
