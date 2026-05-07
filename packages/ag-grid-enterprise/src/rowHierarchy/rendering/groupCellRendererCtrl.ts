@@ -122,6 +122,26 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.setupIndent();
     }
 
+    public refresh(params: GroupCellRendererParams): boolean {
+        // listeners + checkbox are bound to the original node; if the node has
+        // changed, the caller must recreate the controller rather than refresh.
+        if (params?.node !== this.params?.node) {
+            return false;
+        }
+
+        this.params = params;
+
+        const { column } = params;
+        if (column) {
+            this.displayedNode =
+                (this.beans.showRowGroupColValueSvc?.getDisplayedNode(this.node, column as AgColumn) as RowNode) ??
+                this.node;
+        }
+
+        this.addGroupValue();
+        return true;
+    }
+
     /**
      * Returns an aria "role" to place on full width group cells, or the parent wrapper.
      * @returns the aria role to place on the parent wrapper

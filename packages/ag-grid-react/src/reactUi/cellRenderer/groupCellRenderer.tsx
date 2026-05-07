@@ -41,9 +41,10 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
 
     useImperativeHandle(ref, () => {
         return {
-            // force new instance when grid tries to refresh
-            refresh() {
-                return false;
+            // refresh in place when the controller can handle it (same node);
+            // otherwise return false so cellComp creates a new instance.
+            refresh(params: GroupCellRendererParams) {
+                return ctrlRef.current?.refresh(params) ?? false;
             },
         };
     });

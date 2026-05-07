@@ -82,6 +82,12 @@ export interface IGroupCellRendererCtrl<TData = any, TValue = any> {
         compClass: any,
         params: GroupCellRendererParams<TData, TValue>
     ): void;
+    /**
+     * Refresh the cell with new params. Returns `true` if the controller updated in
+     * place; `false` if the caller must dispose this controller and create a new one
+     * (e.g. when the underlying row node has changed and listeners need rebinding).
+     */
+    refresh(params: GroupCellRendererParams<TData, TValue>): boolean;
     destroy(): void;
     getCellAriaRole(): string;
 }
