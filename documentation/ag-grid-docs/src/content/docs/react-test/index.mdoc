@@ -36,3 +36,9 @@ This example mimics the way that Vitest clears the window as part of its test te
 There should be no errors in the console when clicking the "Destroy" button.
 
 {% gridExampleRunner title="Test Tear Down" name="test-tear-down" exampleHeight=350 /%}
+
+## Row Group Custom Inner Renderer
+
+This example tests using a custom `innerRenderer` inside `agGroupCellRenderer` for grouped rows. The inner renderer contains a button that calls `refreshCells` on `onMouseMove`, exercising cell refresh within grouped rows with a React component renderer.
+
+{% gridExampleRunner title="Row Group Custom Inner Renderer" name="row-group-inner-renderer" /%}
