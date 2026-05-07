@@ -26,6 +26,7 @@ import {
     _findFocusableElements,
     _getActiveDomElement,
     _removeFromParent,
+    _warn,
 } from 'ag-grid-community';
 
 import agToolbarCSS from './agToolbar.css';
@@ -68,9 +69,16 @@ function normaliseItem(item: ToolbarItemDef | string, nextKey: () => string): No
         ({ label, tooltip, icon } = item as ToolbarMenuBuiltInItemDef);
     }
 
-    const key = item.key ?? (typeof toolbarItem === 'string' ? toolbarItem : nextKey());
-
-    return { toolbarItem, toolbarItemParams, alignment: item.alignment, key, label, tooltip, icon, action };
+    return {
+        toolbarItem,
+        toolbarItemParams,
+        alignment: item.alignment,
+        key: item.key ?? nextKey(),
+        label,
+        tooltip,
+        icon,
+        action,
+    };
 }
 
 const ToolbarItemComponent: ComponentType = {
@@ -86,7 +94,7 @@ const AgToolbarElement: ElementParams = {
 
 class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
     private readonly toolbarItems: Map<string, IToolbarItemComp> = new Map();
-    private customKeyCounter: number = 0;
+    private nextKey: number = 0;
     // Incremented on each rebuild so stale async resolves from a previous generation can be discarded
     private generation: number = 0;
 
@@ -189,22 +197,10 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
         if (!toolbar?.items) {
             return undefined;
         }
-        // Reset counter so keyless custom items get stable positional keys across updates
-        this.customKeyCounter = 0;
-        const nextKey = () => `custom-toolbar-item-${this.customKeyCounter++}`;
-        const seen = new Set<string>();
-        return toolbar.items.reduce<NormalisedToolbarItem[]>((acc, item) => {
-            const normalised = normaliseItem(item, nextKey);
-            if (normalised.toolbarItem === 'separator') {
-                acc.push(normalised);
-                return acc;
-            }
-            if (!seen.has(normalised.key)) {
-                seen.add(normalised.key);
-                acc.push(normalised);
-            }
-            return acc;
-        }, []);
+        // Reset counter so keyless items get stable positional keys across updates
+        this.nextKey = 0;
+        const nextKey = () => `toolbar-item-${this.nextKey++}`;
+        return toolbar.items.map((item) => normaliseItem(item, nextKey));
     }
 
     private createItemParams(itemConfig: NormalisedToolbarItem, key: string): IToolbarItemParams {
@@ -226,12 +222,12 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
         const rightItems: NormalisedToolbarItem[] = [];
         // Alignment is semantic, not physical — flex mirrors layout in RTL automatically, so
         // the default is always 'left' regardless of direction.
-        const defaultAlignment: 'left' | 'right' = toolbar?.alignment ?? 'left';
+        const defaultAlignment = toolbar?.alignment ?? 'left';
         // Separators inherit the alignment of the preceding item, unless explicitly set
-        let lastAlignment: 'left' | 'right' = defaultAlignment;
+        let lastAlignment = defaultAlignment;
         for (const item of items) {
             const isSeparator = item.toolbarItem === 'separator';
-            const alignment: 'left' | 'right' = item.alignment ?? (isSeparator ? lastAlignment : defaultAlignment);
+            const alignment = item.alignment ?? (isSeparator ? lastAlignment : defaultAlignment);
             (alignment === 'right' ? rightItems : leftItems).push(item);
             if (!isSeparator) {
                 lastAlignment = alignment;
@@ -343,9 +339,13 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
 
         // Placeholder was discarded by a rebuild or destroy — clean up the orphan component.
         // Don't rely on isConnected: on initial render the grid is not yet in the document.
-        if (!this.isAlive() || placeholder.parentNode !== this.getGui()) {
+        const isDuplicate = this.toolbarItems.has(key);
+        if (isDuplicate || !this.isAlive() || placeholder.parentNode !== this.getGui()) {
             _removeFromParent(placeholder);
             this.destroyBean(component);
+            if (isDuplicate) {
+                _warn(303, { key });
+            }
             return;
         }
 
