@@ -7,6 +7,13 @@ import { MasterDetailModule } from 'ag-grid-enterprise';
 import { TestGridsManager, assertSelectedRowsByIndex, asyncSetTimeout, waitForEvent } from '../test-utils';
 import { GridActions } from './utils';
 
+async function waitForSelection(api: GridApi, expected: number, timeoutMs = 200): Promise<void> {
+    const deadline = Date.now() + timeoutMs;
+    while (api.getSelectedNodes().length !== expected && Date.now() < deadline) {
+        await asyncSetTimeout(5);
+    }
+}
+
 describe('Row Selection Grid Options', () => {
     const columnDefs = [{ field: 'sport', cellRenderer: 'agGroupCellRenderer' }];
     const rowData = [
@@ -263,10 +270,12 @@ describe('Row Selection Grid Options', () => {
         // Collapse and re-expand master row to hide/show detail grid
         await actions.collapseGroupRowByIndex(1, { count: 1 });
         await actions.expandGroupRowByIndex(1, { count: 1 });
-        await asyncSetTimeout(12);
 
         info = api.getDetailGridInfo('detail_1')!;
-        await waitForEvent('firstDataRendered', info.api!);
+        // Poll for selection-state restoration on the recreated detail grid: firstDataRendered
+        // is one-shot and may already have fired by the time we attach a listener, so we wait
+        // on the deterministic post-condition instead.
+        await waitForSelection(info.api!, 2);
         detailActions = new GridActions(info.api!, '[row-id="detail_1"]');
 
         // Detail grid should have same rows selected
@@ -286,10 +295,9 @@ describe('Row Selection Grid Options', () => {
         // Collapse and re-expand master row again
         await actions.collapseGroupRowByIndex(1, { count: 1 });
         await actions.expandGroupRowByIndex(1, { count: 1 });
-        await asyncSetTimeout(12);
 
         info = api.getDetailGridInfo('detail_1')!;
-        await waitForEvent('firstDataRendered', info.api!);
+        await waitForSelection(info.api!, 1);
         detailActions = new GridActions(info.api!, '[row-id="detail_1"]');
 
         // Detail grid should have same rows selected
