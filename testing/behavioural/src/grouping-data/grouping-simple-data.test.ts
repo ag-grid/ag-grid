@@ -931,4 +931,40 @@ describe('ag-grid grouping simple data', () => {
         expect(topChangedCount).toBe(0);
         expect(rowIndexChangedCount).toBe(0);
     });
+
+    test('removing all rows in a group fires position events on the dying filler', async () => {
+        // Contract: incremental group teardown (e.g. transaction removes all rows in a group)
+        // must still fire position events on the dying filler so the renderer can detach its RowCtrl.
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'name' }, { field: 'country', rowGroup: true, hide: true }],
+            groupDefaultExpanded: -1,
+            rowData: [
+                { name: 'Alice', country: 'IE' },
+                { name: 'Bob', country: 'IT' },
+            ],
+            getRowId: ({ data }) => data.name,
+            animateRows: false,
+        };
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+        await asyncSetTimeout(1);
+
+        const itFiller = api.getRowNode('row-group-country-IT');
+        expect(itFiller).toBeTruthy();
+
+        let topChangedCount = 0;
+        let rowIndexChangedCount = 0;
+        itFiller!.addEventListener('topChanged', () => {
+            ++topChangedCount;
+        });
+        itFiller!.addEventListener('rowIndexChanged', () => {
+            ++rowIndexChangedCount;
+        });
+
+        api.applyTransaction({ remove: [{ name: 'Bob' }] });
+        await asyncSetTimeout(1);
+
+        expect(itFiller!.destroyed).toBe(true);
+        expect(topChangedCount).toBeGreaterThan(0);
+        expect(rowIndexChangedCount).toBeGreaterThan(0);
+    });
 });
