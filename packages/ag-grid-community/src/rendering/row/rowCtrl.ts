@@ -194,6 +194,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.fullWidthNotesFeature = this.isFullWidth() ? beans.notesSvc?.createFullWidthNotesFeature(this) : undefined;
 
         this.addListeners();
+
+        // Pre-create CellCtrls so framework wrappers can seed their first render with
+        // them; otherwise bulk adds flash empty rows. Scroll-driven creation stays
+        // deferred so scroll throughput isn't blocked by upfront CellCtrl construction.
+        if (!useAnimationFrameForCreate && !this.isFullWidth()) {
+            this.createAllCellCtrls();
+        }
     }
 
     private initRowBusinessKey(): void {
@@ -657,7 +664,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    private getCellCtrlsForContainer(containerType: RowContainerType) {
+    private getCellCtrlsForContainer(containerType: RowContainerType): CellCtrl[] {
         switch (containerType) {
             case 'left':
                 return this.leftCellCtrls.list;
@@ -687,6 +694,19 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             const rightCols = presentedColsService.getRightColsForRow(this.rowNode);
             this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, 'right');
         }
+    }
+
+    /**
+     * Returns the CellCtrls for the given container type if they were eagerly created
+     * in the constructor, or `null` if creation is deferred (scroll-driven path or
+     * full-width row). Lets framework wrappers seed their initial render and avoid an
+     * empty-row flicker when many rows mount in one batch.
+     */
+    public getInitialCellCtrls(containerType: RowContainerType): CellCtrl[] | null {
+        if (this.useAnimationFrameForCreate || this.isFullWidth()) {
+            return null;
+        }
+        return this.getCellCtrlsForContainer(containerType);
     }
 
     private isCellEligibleToBeRemoved(cellCtrl: CellCtrl, nextContainerPinned: ColumnPinnedType): boolean {
