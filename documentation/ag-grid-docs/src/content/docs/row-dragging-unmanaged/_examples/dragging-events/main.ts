@@ -50,16 +50,16 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function onRowDragEnter(e: RowDragEnterEvent) {
-    console.log('onRowDragEnter', e);
+    console.log('onRowDragEnter: node', e.node.id);
 }
 
 function onRowDragEnd(e: RowDragEndEvent) {
-    console.log('onRowDragEnd', e);
+    console.log('onRowDragEnd: node', e.node.id);
     e.api.setRowDropPositionIndicator(null);
 }
 
 function onRowDragMove(e: RowDragMoveEvent) {
-    console.log('onRowDragMove', e);
+    console.log('onRowDragMove: node', e.node.id);
 
     const overNodeTop = e.overNode?.rowTop ?? 0;
     const overNodeHeight = e.overNode?.rowHeight ?? 0;
@@ -74,12 +74,12 @@ function onRowDragMove(e: RowDragMoveEvent) {
 }
 
 function onRowDragLeave(e: RowDragLeaveEvent) {
-    console.log('onRowDragLeave', e);
+    console.log('onRowDragLeave: node', e.node.id);
     e.api.setRowDropPositionIndicator(null);
 }
 
 function onRowDragCancel(e: RowDragCancelEvent) {
-    console.log('onRowDragCancel', e);
+    console.log('onRowDragCancel: node', e.node.id);
     e.api.setRowDropPositionIndicator(null);
 }
 
