@@ -3,15 +3,15 @@
 # All arguments are forwarded to playwright. Defaults to chromium only.
 #
 # Usage:
-#   ./e2e.sh                                   # Run all tests (chromium)
-#   ./e2e.sh "file-pattern"                    # Run tests matching pattern
-#   ./e2e.sh "file-pattern" --grep "name"      # Run specific test by name
-#   ./e2e.sh --all-browsers                    # Run all browsers
-#   ./e2e.sh --framework react                 # Run with specific framework
-#   ./e2e.sh --url https://localhost:4610      # Run against specific URL
-#   ./e2e.sh --headed                          # Run in headed mode
-#   ./e2e.sh --ui                              # Open Playwright UI mode
-#   ./e2e.sh --debug                           # Debug mode
+#   ./docs-e2e.sh                                   # Run all tests (chromium)
+#   ./docs-e2e.sh "file-pattern"                    # Run tests matching pattern
+#   ./docs-e2e.sh "file-pattern" --grep "name"      # Run specific test by name
+#   ./docs-e2e.sh --all-browsers                    # Run all browsers
+#   ./docs-e2e.sh --framework react                 # Run with specific framework
+#   ./docs-e2e.sh --url https://localhost:4610      # Run against specific URL
+#   ./docs-e2e.sh --headed                          # Run in headed mode
+#   ./docs-e2e.sh --ui                              # Open Playwright UI mode
+#   ./docs-e2e.sh --debug                           # Debug mode
 
 set -euo pipefail
 
@@ -19,7 +19,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 usage() {
     cat <<'EOF'
-Usage: ./e2e.sh [options] [playwright-args]
+Usage: ./docs-e2e.sh [options] [playwright-args]
 
 Runs docs Playwright e2e tests directly, bypassing Nx. Defaults to chromium only.
 Any unrecognised arguments are forwarded directly to playwright test.
@@ -39,14 +39,14 @@ Playwright options (forwarded as-is):
   --debug                 Debug mode
 
 Examples:
-  ./e2e.sh
-  ./e2e.sh "toolbar"
-  ./e2e.sh "toolbar" --grep "Quick filter"
-  ./e2e.sh --all-browsers
-  ./e2e.sh --framework react
-  ./e2e.sh --url https://localhost:4610
-  ./e2e.sh --headed
-  ./e2e.sh --ui
+  ./docs-e2e.sh
+  ./docs-e2e.sh "toolbar"
+  ./docs-e2e.sh "toolbar" --grep "Quick filter"
+  ./docs-e2e.sh --all-browsers
+  ./docs-e2e.sh --framework react
+  ./docs-e2e.sh --url https://localhost:4610
+  ./docs-e2e.sh --headed
+  ./docs-e2e.sh --ui
 EOF
 }
 
