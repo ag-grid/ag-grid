@@ -195,9 +195,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.addListeners();
 
-        // Pre-create CellCtrls so framework wrappers can seed their first render with
-        // them; otherwise bulk adds flash empty rows. Scroll-driven creation stays
-        // deferred so scroll throughput isn't blocked by upfront CellCtrl construction.
+        // Pre-create CellCtrls so framework wrappers can seed their first render and
+        // avoid the bulk-add empty-row flash.
+        // The animation-frame path is left to handle deferred creation.
         if (!useAnimationFrameForCreate && !this.isFullWidth()) {
             this.createAllCellCtrls();
         }
@@ -697,10 +697,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     /**
-     * Returns the CellCtrls for the given container type if they were eagerly created
-     * in the constructor, or `null` if creation is deferred (scroll-driven path or
-     * full-width row). Lets framework wrappers seed their initial render and avoid an
-     * empty-row flicker when many rows mount in one batch.
+     * CellCtrls for the container if eagerly created in the constructor, or `null`
+     * when creation is deferred (animation-frame path) or skipped (full-width rows).
+     * Used by framework wrappers to seed first render and avoid bulk-add flicker.
      */
     public getInitialCellCtrls(containerType: RowContainerType): CellCtrl[] | null {
         if (this.useAnimationFrameForCreate || this.isFullWidth()) {

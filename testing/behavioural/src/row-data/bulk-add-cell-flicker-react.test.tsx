@@ -16,11 +16,10 @@ import { asyncSetTimeout, ignoreConsoleLicenseKeyError } from '../test-utils';
 const ROW_SELECTOR = '[row-id]';
 
 /**
- * Detection strategy: a MutationObserver records every mutation where an
- * element is appended INTO an already-attached row. Pre-fix this fires for
- * every newly-added row (RowComp inserts an empty container, then fills its
- * cells / full-width content on a later commit); post-fix it never does for
- * the eager path.
+ * Detection strategy: a MutationObserver records mutations where an element is
+ * appended INTO an already-attached row. Pre-fix this fires for every newly-added
+ * row (RowComp mounts empty, fills cells on a later commit); post-fix RowCtrl
+ * pre-creates the cells so the row's first commit already contains them.
  */
 describe('Eager row content seed (bulk-add flicker regression)', () => {
     beforeAll(() => {

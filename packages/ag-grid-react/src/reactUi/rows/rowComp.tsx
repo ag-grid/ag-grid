@@ -37,8 +37,8 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     const [rowBusinessKey, setRowBusinessKey] = useState<string | null>(() => rowCtrl.businessKey);
 
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(() => rowCtrl.rowStyles);
-    // Seeded so bulk-add doesn't flash empty rows; getInitialCellCtrls self-gates
-    // to no-op for the scroll-driven path and for full-width rows.
+    // Seeded so bulk-add doesn't flash empty rows; getInitialCellCtrls returns
+    // null when creation is deferred or not applicable.
     const [cellCtrlsFlushSync, setCellCtrlsFlushSync] = useState<CellCtrl[] | null>(() =>
         rowCtrl.getInitialCellCtrls(containerType)
     );
