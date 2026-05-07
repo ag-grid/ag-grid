@@ -69,7 +69,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             pinnedRowModel.reset(); // only clear pinned rows if using manual pinning
         }
 
-        groupStage?.clearNonLeafs(null); // wholesale — silent destroy, no position events
+        groupStage?.clearNonLeafs();
 
         const existingLeafs = this.rootNode._leafs;
         if (existingLeafs) {

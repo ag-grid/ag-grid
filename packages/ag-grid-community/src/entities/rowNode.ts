@@ -943,12 +943,11 @@ export class RowNode<TData = any>
     /**
      * Called internally to destroy this node.
      * @param fadeOut
-     *   - `true`: fade-out animation (clearRowTopAndRowIndex; preserves slide-in via oldRowTop)
-     *   - `false`: instant removal; setRowTop(null) and setRowIndex(null) fire events
-     *   - `null`: silent removal; no position events. Use when the entire row tree is being
-     *     replaced wholesale (setNewRowData, clearNonLeafs) — the rowRenderer is about to tear
-     *     down every RowCtrl anyway, so dying-row events only trigger wasted work in
-     *     cellCtrl.onRowIndexChanged() on rows that are about to vanish.
+     *   - `true`: fade-out animation; preserves slide-in via `oldRowTop`.
+     *   - `false`: instant removal; dispatches position events.
+     *   - `null`: silent. Wholesale tree replacement only — the rowRenderer is about to
+     *     tear down every RowCtrl, so position events would just trigger wasted work in
+     *     `cellCtrl.onRowIndexChanged()` on rows that are about to vanish.
      */
     public _destroy(fadeOut: boolean | null): boolean {
         if (this.destroyed) {
@@ -956,9 +955,8 @@ export class RowNode<TData = any>
         }
         this.destroyed = true;
 
-        // Unpin the pinned sibling when this source row is destroyed.
         // Check pinnedSibling.rowPinned to ensure we're the source row (not a pinned clone being destroyed).
-        // This also prevents re-entrance when _destroyRowNodeSibling clears rowPinned before calling _destroy.
+        // Also prevents re-entrance when _destroyRowNodeSibling clears rowPinned before calling _destroy.
         const pinnedSibling = this.pinnedSibling;
         if (pinnedSibling?.rowPinned && !this.rowPinned) {
             this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
@@ -970,7 +968,6 @@ export class RowNode<TData = any>
             this.setRowTop(null);
             this.setRowIndex(null);
         } else {
-            // silent: clear position state without dispatching events
             this.oldRowTop = null;
             this.rowTop = null;
             this.rowIndex = null;

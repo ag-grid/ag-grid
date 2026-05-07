@@ -631,12 +631,16 @@ describe('ag-grid hierarchical tree data reset', () => {
 
         let topChangedCount = 0;
         let rowIndexChangedCount = 0;
+        let displayedChangedCount = 0;
         for (const f of fillers) {
             f.addEventListener('topChanged', () => {
                 ++topChangedCount;
             });
             f.addEventListener('rowIndexChanged', () => {
                 ++rowIndexChangedCount;
+            });
+            f.addEventListener('displayedChanged', () => {
+                ++displayedChangedCount;
             });
         }
 
@@ -654,5 +658,6 @@ describe('ag-grid hierarchical tree data reset', () => {
         }
         expect(topChangedCount).toBe(0);
         expect(rowIndexChangedCount).toBe(0);
+        expect(displayedChangedCount).toBe(0);
     });
 });

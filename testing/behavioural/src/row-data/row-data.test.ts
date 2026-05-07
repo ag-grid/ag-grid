@@ -391,7 +391,7 @@ describe('ag-grid row data', () => {
         expect(api.getRowNode(999 as any)).toBeUndefined();
     });
 
-    test('setRowData without getRowId destroys old nodes silently (no topChanged events)', async () => {
+    test('setRowData without getRowId destroys old nodes silently (no position events)', async () => {
         const row1 = { value: 1 };
         const row2 = { value: 2 };
         const row3 = { value: 3 };
@@ -417,12 +417,16 @@ describe('ag-grid row data', () => {
 
         let topChangedCount = 0;
         let rowIndexChangedCount = 0;
+        let displayedChangedCount = 0;
         for (const node of initialNodes) {
             node.addEventListener('topChanged', () => {
                 ++topChangedCount;
             });
             node.addEventListener('rowIndexChanged', () => {
                 ++rowIndexChangedCount;
+            });
+            node.addEventListener('displayedChanged', () => {
+                ++displayedChangedCount;
             });
         }
 
@@ -448,6 +452,7 @@ describe('ag-grid row data', () => {
 
         expect(topChangedCount).toBe(0);
         expect(rowIndexChangedCount).toBe(0);
+        expect(displayedChangedCount).toBe(0);
     });
 
     describe('onModelUpdated event flags', () => {
