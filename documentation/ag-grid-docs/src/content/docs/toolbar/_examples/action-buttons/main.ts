@@ -1,6 +1,8 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    ColumnApiModule,
+    ColumnAutoSizeModule,
     CsvExportModule,
     ModuleRegistry,
     NumberFilterModule,
@@ -15,6 +17,8 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
     CsvExportModule,
+    ColumnAutoSizeModule,
+    ColumnApiModule,
     ContextMenuModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),

@@ -1,6 +1,7 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    ColumnAutoSizeModule,
     CsvExportModule,
     ModuleRegistry,
     NumberFilterModule,
@@ -15,6 +16,7 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
+    ColumnAutoSizeModule,
     ContextMenuModule,
     CsvExportModule,
     ExcelExportModule,
