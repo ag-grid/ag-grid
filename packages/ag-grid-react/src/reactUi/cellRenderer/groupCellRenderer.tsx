@@ -4,7 +4,6 @@ import React, {
     useContext,
     useImperativeHandle,
     useLayoutEffect,
-    useMemo,
     useRef,
     useState,
 } from 'react';
@@ -15,11 +14,17 @@ import type {
     IGroupCellRendererCtrl,
     UserCompDetails,
 } from 'ag-grid-community';
-import { _toString } from 'ag-grid-community';
+import { CssClassManager, _toString } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
-import { CssClasses } from '../utils';
+
+type CssManagers = {
+    wrapper: CssClassManager;
+    expanded: CssClassManager;
+    contracted: CssClassManager;
+    checkbox: CssClassManager;
+};
 
 const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const { registry, context } = useContext(BeansContext);
@@ -30,14 +35,11 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const eExpandedRef = useRef<HTMLElement>(null);
     const eContractedRef = useRef<HTMLElement>(null);
     const ctrlRef = useRef<IGroupCellRendererCtrl>();
+    const cssManagersRef = useRef<CssManagers>();
 
     const [innerCompDetails, setInnerCompDetails] = useState<UserCompDetails>();
     const [childCount, setChildCount] = useState<string>();
     const [value, setValue] = useState<any>();
-    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
-    const [expandedCssClasses, setExpandedCssClasses] = useState<CssClasses>(() => new CssClasses('ag-hidden'));
-    const [contractedCssClasses, setContractedCssClasses] = useState<CssClasses>(() => new CssClasses('ag-hidden'));
-    const [checkboxCssClasses, setCheckboxCssClasses] = useState<CssClasses>(() => new CssClasses('ag-invisible'));
 
     useImperativeHandle(ref, () => {
         return {
@@ -59,20 +61,36 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
             ctrlRef.current = context.destroyBean(ctrlRef.current);
             return;
         }
+
+        // Lazy-create managers and seed their base classes so React never owns
+        // these elements' classNames — preventing reconciliation from clobbering
+        // manager updates.
+        if (!cssManagersRef.current) {
+            const make = (getEl: () => HTMLElement | null, baseClasses: string) => {
+                const manager = new CssClassManager(getEl);
+                manager.toggleCss(baseClasses, true);
+                return manager;
+            };
+            cssManagersRef.current = {
+                wrapper: make(() => eGui.current, 'ag-cell-wrapper'),
+                expanded: make(() => eExpandedRef.current, 'ag-group-expanded ag-hidden'),
+                contracted: make(() => eContractedRef.current, 'ag-group-contracted ag-hidden'),
+                checkbox: make(() => eCheckboxRef.current, 'ag-group-checkbox ag-invisible'),
+            };
+        }
+        const cssManagers = cssManagersRef.current;
+
         const compProxy: IGroupCellRenderer = {
             setInnerRenderer: (details, valueToDisplay) => {
                 setInnerCompDetails(details);
                 setValue(valueToDisplay);
             },
             setChildCount: (count) => setChildCount(count),
-            toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
-            setContractedDisplayed: (displayed) =>
-                setContractedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
-            setExpandedDisplayed: (displayed) =>
-                setExpandedCssClasses((prev) => prev.setClass('ag-hidden', !displayed)),
-            setCheckboxVisible: (visible) => setCheckboxCssClasses((prev) => prev.setClass('ag-invisible', !visible)),
-            setCheckboxSpacing: (add) =>
-                setCheckboxCssClasses((prev) => prev.setClass('ag-group-checkbox-spacing', add)),
+            toggleCss: (name, on) => cssManagers.wrapper.toggleCss(name, on),
+            setContractedDisplayed: (displayed) => cssManagers.contracted.toggleCss('ag-hidden', !displayed),
+            setExpandedDisplayed: (displayed) => cssManagers.expanded.toggleCss('ag-hidden', !displayed),
+            setCheckboxVisible: (visible) => cssManagers.checkbox.toggleCss('ag-invisible', !visible),
+            setCheckboxSpacing: (add) => cssManagers.checkbox.toggleCss('ag-group-checkbox-spacing', add),
         };
 
         const groupCellRendererCtrl = registry.createDynamicBean<IGroupCellRendererCtrl>('groupCellRendererCtrl', true);
@@ -90,14 +108,6 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
         }
     }, []);
 
-    const className = useMemo(() => `ag-cell-wrapper ${cssClasses.toString()}`, [cssClasses]);
-    const expandedClassName = useMemo(() => `ag-group-expanded ${expandedCssClasses.toString()}`, [expandedCssClasses]);
-    const contractedClassName = useMemo(
-        () => `ag-group-contracted ${contractedCssClasses.toString()}`,
-        [contractedCssClasses]
-    );
-    const checkboxClassName = useMemo(() => `ag-group-checkbox ${checkboxCssClasses.toString()}`, [checkboxCssClasses]);
-
     const useFwRenderer = innerCompDetails?.componentFromFramework;
     const FwRenderer = useFwRenderer ? innerCompDetails!.componentClass : undefined;
     const useValue = innerCompDetails == null && value != null;
@@ -105,14 +115,10 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
 
     // if there is no ColDef, it means this is a Full Width Group, then we need to add `role="gridcell"`.
     return (
-        <span
-            className={className}
-            ref={setRef}
-            {...(!props.colDef ? { role: ctrlRef.current?.getCellAriaRole() } : {})}
-        >
-            <span className={expandedClassName} ref={eExpandedRef}></span>
-            <span className={contractedClassName} ref={eContractedRef}></span>
-            <span className={checkboxClassName} ref={eCheckboxRef}></span>
+        <span ref={setRef} {...(!props.colDef ? { role: ctrlRef.current?.getCellAriaRole() } : {})}>
+            <span ref={eExpandedRef}></span>
+            <span ref={eContractedRef}></span>
+            <span ref={eCheckboxRef}></span>
             <span className="ag-group-value" ref={eValueRef}>
                 {useValue ? escapedValue : useFwRenderer ? <FwRenderer {...innerCompDetails!.params} /> : null}
             </span>
