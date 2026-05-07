@@ -47,6 +47,10 @@
     color: var(--ag-icon-button-hover-color);
 }
 
+.ag-toolbar-button-wrapper:hover .ag-toolbar-button {
+    color: var(--ag-icon-button-hover-color);
+}
+
 .ag-toolbar-button:focus-visible {
     box-shadow: var(--ag-focus-shadow);
 }
