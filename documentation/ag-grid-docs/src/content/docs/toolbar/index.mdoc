@@ -62,18 +62,48 @@ const gridOptions = {
 
 A number of built-in toolbar items are provided for common use cases that integrate with existing grid features. Be sure to include the required feature module, otherwise the toolbar item will be excluded.
 
-| Item                                   | Description                                                                                             | Required Modules                          |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| `agQuickFilterToolbarItem`             | Text input that filters grid rows using the [Quick Filter](./filter-quick/).                            | `QuickFilterModule`                       |
-| `agFindToolbarItem`                    | Text input that searches within grid cells using [Find](./find/).                                       | `FindModule`                              |
-| `agRowGroupPanelToolbarItem`           | Embeds the [Row Group Panel](./grouping-group-panel/). Configured independently of `rowGroupPanelShow`. | `RowGroupingPanelModule`                  |
-| `agPivotPanelToolbarItem`              | Embeds the [Pivot Panel](./pivoting/). Configured independently of `pivotPanelShow`.                    | `RowGroupingPanelModule`                  |
-| [`agMenuToolbarItem`](#dropdown-menus) | Button that opens a [dropdown menu](#dropdown-menus).                                                   | `ContextMenuModule` or `ColumnMenuModule` |
-| `separator`                            | Vertical divider used to group items visually. Has no behaviour of its own.                             | None                                      |
+| Item                                   | Description                                                                  | Required Modules                          |
+| -------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------- |
+| `agQuickFilterToolbarItem`             | Text input that filters grid rows using the [Quick Filter](./filter-quick/). | `QuickFilterModule`                       |
+| `agFindToolbarItem`                    | Text input that searches within grid cells using [Find](./find/).            | `FindModule`                              |
+| `agRowGroupPanelToolbarItem`           | Embeds the [Row Group Panel](./grouping-group-panel/).                       | `RowGroupingPanelModule`                  |
+| `agPivotPanelToolbarItem`              | Embeds the [Pivot Panel](./pivoting/).                                       | `RowGroupingPanelModule`                  |
+| [`agMenuToolbarItem`](#dropdown-menus) | Button that opens a [dropdown menu](#dropdown-menus).                        | `ContextMenuModule` or `ColumnMenuModule` |
+| `separator`                            | Vertical divider used to group items visually. Has no behaviour of its own.  | None                                      |
 
 {% note %}
 When the same built-in item appears more than once, set a unique `key` on each occurrence. Without a `key`, the item type is used as the key, so only the first duplicate will be rendered.
 {% /note %}
+
+### Row Group Panel
+
+The Row Group Panel can be embedded in the Quick Access Toolbar using the `agRowGroupPanelToolbarItem` built-in item.
+
+The Toolbar Row Group Panel is configured independently of `rowGroupPanelShow`. This means you can display the Row Group Panel in the Toolbar, above the grid, or both at the same time. In most cases, if you are using the Toolbar version, you would typically not also show the standard Row Group Panel above the grid.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: ['agRowGroupPanelToolbarItem'],
+    },
+    // other grid options ...
+}
+```
+
+### Pivot Panel
+
+The Pivot Panel can be embedded in the Quick Access Toolbar using the `agPivotPanelToolbarItem` built-in item.
+
+The Toolbar Pivot Panel is configured independently of `pivotPanelShow`. This means you can display the Pivot Panel in the Toolbar, above the grid, or both at the same time. In most cases, if you are using the Toolbar version, you would typically not also show the standard Pivot Panel above the grid.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: ['agPivotPanelToolbarItem'],
+    },
+    // other grid options ...
+}
+```
 
 ### Dropdown Menus
 
