@@ -435,6 +435,9 @@ describe('ag-grid row data', () => {
 
         for (const node of initialNodes) {
             expect(node.destroyed).toBe(true);
+            expect(node.rowTop).toBeNull();
+            expect(node.rowIndex).toBeNull();
+            expect(node.displayed).toBe(false);
         }
         await new GridRows(api, 'after').check(`
             ROOT id:ROOT_NODE_ID

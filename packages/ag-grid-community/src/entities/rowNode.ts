@@ -969,6 +969,12 @@ export class RowNode<TData = any>
         } else if (fadeOut === false) {
             this.setRowTop(null);
             this.setRowIndex(null);
+        } else {
+            // silent: clear position state without dispatching events
+            this.oldRowTop = null;
+            this.rowTop = null;
+            this.rowIndex = null;
+            this.displayed = false;
         }
 
         if (!this.footer) {
