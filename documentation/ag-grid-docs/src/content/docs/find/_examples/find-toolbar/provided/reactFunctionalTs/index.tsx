@@ -1,14 +1,13 @@
 'use client';
 
-import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, FirstDataRenderedEvent, GetFindTextParams, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-import FindRenderer from './findRenderer';
 import './styles.css';
 
 const modules = [
@@ -19,27 +18,26 @@ const modules = [
 ];
 
 const GridExample = () => {
-    const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState<any[]>();
     const [columnDefs] = useState<ColDef[]>([
         { field: 'athlete' },
         { field: 'country' },
-        {
-            field: 'year',
-            cellRenderer: FindRenderer,
-            getFindText: (params: GetFindTextParams) => {
-                const cellValue = params.getValueFormatted() ?? params.value?.toString();
-                if (!cellValue?.length) {
-                    return null;
-                }
-                return `Year is ${cellValue}`;
-            },
-        },
+        { field: 'sport' },
+        { field: 'year' },
+        { field: 'age', minWidth: 100 },
+        { field: 'gold', minWidth: 100 },
+        { field: 'silver', minWidth: 100 },
+        { field: 'bronze', minWidth: 100 },
     ]);
 
-    const toolbar = useMemo(() => ({ items: ['agFindToolbarItem' as const] }), []);
+    const toolbar = useMemo(
+        () => ({
+            items: ['agFindToolbarItem' as const],
+        }),
+        []
+    );
 
     const onGridReady = useCallback((params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -47,22 +45,15 @@ const GridExample = () => {
             .then((data: any[]) => setRowData(data));
     }, []);
 
-    const onFirstDataRendered = useCallback((event: FirstDataRenderedEvent) => {
-        event.api.findNext();
-    }, []);
-
     return (
         <div style={containerStyle}>
             <div style={gridStyle}>
                 <AgGridReact
-                    ref={gridRef}
                     rowData={rowData}
                     columnDefs={columnDefs}
                     modules={modules}
-                    findSearchValue="e"
                     toolbar={toolbar}
                     onGridReady={onGridReady}
-                    onFirstDataRendered={onFirstDataRendered}
                 />
             </div>
         </div>

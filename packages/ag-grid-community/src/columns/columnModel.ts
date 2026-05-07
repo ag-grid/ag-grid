@@ -460,25 +460,22 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // in results array
         const previousSiblingPosMap: Map<AgColumn, AgColumn | AgColumn[]> = new Map();
 
+        // Single forward pass over cols.list pre-computes each pivot row-total's
+        // anchor (the most-recent preserved col seen). null value = row total with
+        // no preceding preserved col — falls through to noSiblingsAvailable below.
         const { pivotColDefSvc } = this.beans;
-        let freshListIndex: Map<AgColumn, number> | null = null;
-
-        const getPreviousColInFreshList = (col: AgColumn): AgColumn | null => {
-            if (freshListIndex == null) {
-                freshListIndex = new Map<AgColumn, number>();
-                for (let i = 0; i < cols.list.length; i++) {
-                    freshListIndex.set(cols.list[i], i);
+        let rowTotalAnchors: Map<AgColumn, AgColumn | null> | null = null;
+        if (pivotColDefSvc != null) {
+            let lastPositioned: AgColumn | null = null;
+            for (const col of cols.list) {
+                if (colPositionMap.has(col)) {
+                    lastPositioned = col;
+                } else if (pivotColDefSvc.isPivotRowTotalColumn(col.colDef)) {
+                    rowTotalAnchors ??= new Map();
+                    rowTotalAnchors.set(col, lastPositioned);
                 }
             }
-            const idx = freshListIndex.get(col)!;
-            for (let i = idx - 1; i >= 0; i--) {
-                const candidate = cols.list[i];
-                if (colPositionMap.has(candidate)) {
-                    return candidate;
-                }
-            }
-            return null;
-        };
+        }
 
         const addColAfter = (anchor: AgColumn, col: AgColumn): void => {
             const prev = previousSiblingPosMap.get(anchor);
@@ -494,12 +491,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         // for each new col, find the col it needs inserted after and store for when array is constructed
         for (const col of additionalCols) {
-            if (pivotColDefSvc?.isPivotRowTotalColumn(col.colDef)) {
-                const anchor = getPreviousColInFreshList(col);
-                if (anchor == null) {
+            const rowTotalAnchor = rowTotalAnchors?.get(col);
+            if (rowTotalAnchor !== undefined) {
+                if (rowTotalAnchor === null) {
                     noSiblingsAvailable.push(col);
                 } else {
-                    addColAfter(anchor, col);
+                    addColAfter(rowTotalAnchor, col);
                 }
                 continue;
             }

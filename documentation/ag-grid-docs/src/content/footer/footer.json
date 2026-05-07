@@ -4,19 +4,19 @@
         "links": [
             {
                 "name": "Getting Started",
-                "url": "/documentation"
+                "url": "/documentation/"
             },
             {
                 "name": "Changelog",
-                "url": "/changelog"
+                "url": "/changelog/"
             },
             {
                 "name": "Pipeline",
-                "url": "/pipeline"
+                "url": "/pipeline/"
             },
             {
                 "name": "Documentation Archive",
-                "url": "/documentation-archive"
+                "url": "/documentation-archive/"
             }
         ]
     },
@@ -30,7 +30,7 @@
             },
             {
                 "name": "License & Pricing",
-                "url": "/license-pricing"
+                "url": "/license-pricing/"
             },
             {
                 "name": "Support via Zendesk",
@@ -39,7 +39,7 @@
             },
             {
                 "name": "Security",
-                "url": "/data-grid/security"
+                "url": "/data-grid/security/"
             }
         ]
     },
@@ -52,35 +52,35 @@
             },
             {
                 "name": "AG Studio",
-                "url": "https://www.ag-grid.com/studio"
+                "url": "https://www.ag-grid.com/studio/"
             },
             {
                 "name": "About",
-                "url": "/about"
+                "url": "/about/"
             },
             {
                 "name": "Contact Us",
-                "url": "/about#contact-section"
+                "url": "/about/#contact-section"
             },
             {
                 "name": "Blog",
-                "url": "https://blog.ag-grid.com"
+                "url": "https://blog.ag-grid.com/"
             },
             {
                 "name": "Privacy Policy",
-                "url": "/privacy"
+                "url": "/privacy/"
             },
             {
                 "name": "Cookies Policy",
-                "url": "/cookies"
+                "url": "/cookies/"
             },
             {
                 "name": "Modern Slavery",
-                "url": "/modern-slavery"
+                "url": "/modern-slavery/"
             },
             {
                 "name": "Sitemap",
-                "url": "/sitemap"
+                "url": "/sitemap/"
             }
         ]
     },

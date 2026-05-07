@@ -10,13 +10,14 @@ import {
     PinnedRowModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { FindModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
+import { FindModule, RowGroupingModule, RowGroupingPanelModule, ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
 
 ModuleRegistry.registerModules([
     FindModule,
+    ToolbarModule,
     RowGroupingModule,
     RowGroupingPanelModule,
     PinnedRowModule,
@@ -41,13 +42,6 @@ const VueExample = defineComponent({
                 </label>
             </div>
             <div class="example-controls">
-                <span>Find:</span>
-                <input type="text" @input="onInput" @keydown="onKeyDown" />
-                <button @click="previous()">Previous</button>
-                <button @click="next()">Next</button>
-                <span>{{activeMatchNum}}</span>
-            </div>
-            <div class="example-controls">
                 <span>Go to match:</span>
                 <input type="number" v-model="goTo" />
                 <button @click="goToFind()">Go To</button>
@@ -61,11 +55,10 @@ const VueExample = defineComponent({
             :pinnedBottomRowData="pinnedBottomRowData"
             :columnDefs="columnDefs"
             :defaultColDef="defaultColDef"
-            :rowGroupPanelShow="rowGroupPanelShow"
             :pagination="true"
             :paginationPageSize="paginationPageSize"
             :paginationPageSizeSelector="paginationPageSizeSelector"
-            :findSearchValue="findSearchValue"
+            :toolbar="toolbar"
             :findOptions="findOptions"
             :rowData="rowData"
             @find-changed="onFindChanged"></ag-grid-vue>
@@ -79,9 +72,10 @@ const VueExample = defineComponent({
         return {
             goTo: undefined,
             gridApi: undefined,
-            activeMatchNum: undefined,
             activeMatch: undefined,
-            findSearchValue: undefined,
+            toolbar: {
+                items: ['agRowGroupPanelToolbarItem', 'agFindToolbarItem'],
+            },
             findOptions: {
                 caseSensitive: true,
                 currentPageOnly: true,
@@ -90,17 +84,10 @@ const VueExample = defineComponent({
     },
     methods: {
         onFindChanged(event: FindChangedEvent) {
-            const { activeMatch, totalMatches, findSearchValue } = event;
-            this.activeMatchNum = findSearchValue?.length ? `${activeMatch?.numOverall ?? 0}/${totalMatches}` : '';
+            const { activeMatch } = event;
             this.activeMatch = activeMatch
                 ? `Active match: { pinned: ${activeMatch.node.rowPinned}, row index: ${activeMatch.node.rowIndex}, column: ${activeMatch.column?.getColId()}, match number in cell: ${activeMatch.numInMatch} }`
                 : '';
-        },
-        next() {
-            this.gridApi.findNext();
-        },
-        previous() {
-            this.gridApi.findPrevious();
         },
         goToFind() {
             const num = Number(this.goTo);
@@ -108,20 +95,6 @@ const VueExample = defineComponent({
                 return;
             }
             this.gridApi.findGoTo(num);
-        },
-        onInput(event: Event) {
-            this.findSearchValue = (event.target as HTMLInputElement).value;
-        },
-        onKeyDown(event: KeyboardEvent) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                const backwards = event.shiftKey;
-                if (backwards) {
-                    this.previous();
-                } else {
-                    this.next();
-                }
-            }
         },
         onGridReady(params: GridReadyEvent) {
             this.gridApi = params.api;
@@ -163,7 +136,6 @@ const VueExample = defineComponent({
         const defaultColDef = ref<ColDef>({
             enableRowGroup: true,
         });
-        const rowGroupPanelShow = ref<'always' | 'onlyWhenGrouping' | 'never'>('always');
         const paginationPageSize = ref(5);
         const paginationPageSizeSelector = ref<number[] | boolean>([5, 10]);
         const rowData = ref<any[]>(null);
@@ -173,7 +145,6 @@ const VueExample = defineComponent({
             pinnedBottomRowData,
             columnDefs,
             defaultColDef,
-            rowGroupPanelShow,
             paginationPageSize,
             paginationPageSizeSelector,
             rowData,
