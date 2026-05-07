@@ -47,8 +47,8 @@
     color: var(--ag-icon-button-hover-color);
 }
 
-.ag-toolbar-button-wrapper:hover .ag-toolbar-button,
-.ag-toolbar-button-wrapper:hover .ag-toolbar-button .ag-icon {
+:where(.ag-toolbar-button-wrapper:hover) .ag-toolbar-button,
+:where(.ag-toolbar-button-wrapper:hover .ag-toolbar-button) .ag-icon {
     color: var(--ag-icon-button-hover-color);
 }
 
@@ -56,7 +56,7 @@
     box-shadow: var(--ag-focus-shadow);
 }
 
-.ag-toolbar-button:focus:not(:focus-visible) {
+:where(.ag-toolbar-button:focus):not(:focus-visible) {
     box-shadow: none;
 }
 
