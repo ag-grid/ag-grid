@@ -50,6 +50,11 @@
     }
 
     // stylelint-disable-next-line selector-max-specificity
+    .ag-toolbar-button-wrapper:hover .ag-toolbar-button {
+        color: var(--ag-icon-button-hover-color);
+    }
+
+    // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar > .ag-toolbar-button-wrapper:first-child > .ag-toolbar-button {
         border-start-start-radius: calc(var(--ag-border-radius) + 1px);
     }
