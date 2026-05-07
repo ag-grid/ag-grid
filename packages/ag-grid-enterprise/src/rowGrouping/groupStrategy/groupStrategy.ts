@@ -37,10 +37,10 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         this.nonLeafsById.clear();
     }
 
-    public clearNonLeafs(): void {
+    public clearNonLeafs(fadeOut: boolean | null): void {
         const nonLeafsById = this.nonLeafsById;
         for (const node of nonLeafsById.values()) {
-            node._destroy(null);
+            node._destroy(fadeOut);
         }
         nonLeafsById.clear();
     }

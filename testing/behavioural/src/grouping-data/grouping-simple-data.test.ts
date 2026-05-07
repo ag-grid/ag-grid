@@ -1,4 +1,4 @@
-import type { ColDef, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridOptions, IRowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -882,5 +882,53 @@ describe('ag-grid grouping simple data', () => {
             · · · · └─┬ LEAF_GROUP id:row-group-l1-B-l2-B1-l3-B1a-l4-B1a1-l5-B1a1i ag-Grid-AutoColumn:"B1a1i"
             · · · · · └── LEAF id:4 l1:"B" l2:"B1" l3:"B1a" l4:"B1a1" l5:"B1a1i" name:"Deep Item 4"
         `);
+    });
+
+    test('setRowData without getRowId destroys group filler nodes silently', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'name' }, { field: 'country', rowGroup: true, hide: true }],
+            groupDefaultExpanded: -1,
+            rowData: [
+                { name: 'Alice', country: 'IE' },
+                { name: 'Bob', country: 'IT' },
+            ],
+            animateRows: false,
+        };
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+        await asyncSetTimeout(1);
+
+        const fillers: IRowNode[] = [];
+        api.forEachNode((n) => {
+            if (n.group) {
+                fillers.push(n);
+            }
+        });
+        expect(fillers.length).toBeGreaterThan(0);
+
+        let topChangedCount = 0;
+        let rowIndexChangedCount = 0;
+        for (const f of fillers) {
+            f.addEventListener('topChanged', () => {
+                ++topChangedCount;
+            });
+            f.addEventListener('rowIndexChanged', () => {
+                ++rowIndexChangedCount;
+            });
+        }
+
+        setRowDataChecked(api, [
+            { name: 'Alice', country: 'IE' },
+            { name: 'Bob', country: 'IT' },
+        ]);
+        await asyncSetTimeout(1);
+
+        for (const f of fillers) {
+            expect(f.destroyed).toBe(true);
+            expect(f.rowTop).toBeNull();
+            expect(f.rowIndex).toBeNull();
+            expect(f.displayed).toBe(false);
+        }
+        expect(topChangedCount).toBe(0);
+        expect(rowIndexChangedCount).toBe(0);
     });
 });

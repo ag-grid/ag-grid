@@ -61,8 +61,10 @@ export interface IRowNodeGroupStage<TData = any> extends IRowNodeStage<TData> {
     /** Used to lazily compute and store groupData for a row node - not for siblings */
     loadGroupData(node: RowNode<TData>): Record<string, any> | null;
 
-    /** Clears all stored group rows / tree data fillers */
-    clearNonLeafs(): void;
+    /** Clears all stored group rows / tree data fillers.
+     * @param fadeOut forwarded to RowNode._destroy on each dying node — `null` is silent
+     * (use only when the entire row tree is being torn down wholesale). */
+    clearNonLeafs(fadeOut: boolean | null): void;
 
     /** Called when row group columns might have changed */
     invalidateGroupCols(): void;

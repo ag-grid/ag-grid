@@ -75,21 +75,21 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
     public override destroy(): void {
         this.nodesToUnselect = null;
-        this.reset();
+        this.reset(false);
         super.destroy();
     }
 
-    public reset(): void {
-        this.clearNonLeafs();
+    public reset(fadeOut: boolean | null): void {
+        this.clearNonLeafs(fadeOut);
         this.deselectHiddenNodes(false);
         this.fullReload = true;
     }
 
-    public clearNonLeafs(): void {
+    public clearNonLeafs(fadeOut: boolean | null): void {
         const fillers = this.nonLeafsById;
         if (fillers) {
             for (const node of fillers.values()) {
-                node._destroy(null);
+                node._destroy(fadeOut);
             }
             fillers.clear();
             this.nonLeafsById = null;
@@ -119,7 +119,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
     public execute(rootNode: RowNode<TData>, params: RefreshModelParams<TData>): boolean {
         if (this.fullReload) {
-            this.reset();
+            this.reset(false); // incremental refresh — let the renderer hear the events
         }
 
         const { changedRowNodes, changedPath } = params;

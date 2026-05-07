@@ -151,8 +151,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
         return null;
     }
 
-    public clearNonLeafs(): void {
-        this.strategy?.clearNonLeafs();
+    public clearNonLeafs(fadeOut: boolean | null): void {
+        this.strategy?.clearNonLeafs(fadeOut);
     }
 
     private getWantedStrategyType(): GroupStrategyType {
