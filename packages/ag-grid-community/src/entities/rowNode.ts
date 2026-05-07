@@ -940,8 +940,17 @@ export class RowNode<TData = any>
         return this.childrenAfterSort?.[0] ?? null;
     }
 
-    /** Called internally to destroy this node */
-    public _destroy(fadeOut: boolean): boolean {
+    /**
+     * Called internally to destroy this node.
+     * @param fadeOut
+     *   - `true`: fade-out animation (clearRowTopAndRowIndex; preserves slide-in via oldRowTop)
+     *   - `false`: instant removal; setRowTop(null) and setRowIndex(null) fire events
+     *   - `null`: silent removal; no position events. Use when the entire row tree is being
+     *     replaced wholesale (setNewRowData, clearNonLeafs) — the rowRenderer is about to tear
+     *     down every RowCtrl anyway, so dying-row events only trigger wasted work in
+     *     cellCtrl.onRowIndexChanged() on rows that are about to vanish.
+     */
+    public _destroy(fadeOut: boolean | null): boolean {
         if (this.destroyed) {
             return false;
         }
@@ -955,9 +964,9 @@ export class RowNode<TData = any>
             this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
         }
 
-        if (fadeOut) {
+        if (fadeOut === true) {
             this.clearRowTopAndRowIndex(); // so row renderer knows to fade row out (and not reposition it)
-        } else {
+        } else if (fadeOut === false) {
             this.setRowTop(null);
             this.setRowIndex(null);
         }
