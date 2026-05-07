@@ -87,6 +87,16 @@
     line-height: var(--text-lh-base);
 }
 
+.objectPreview {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    font-size: var(--text-fs-xs);
+    color: var(--color-text-secondary);
+    white-space: pre-wrap;
+}
+
 .type-null,
 .type-undefined {
     color: var(--color-code-keyword);

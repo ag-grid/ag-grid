@@ -1,9 +1,12 @@
 import { getType } from '@ag-website-shared/components/example-runner/utils/getType';
-import { type FunctionComponent, lazy, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { type FunctionComponent, useCallback, useEffect, useRef } from 'react';
 
 import styles from './ExampleLogger.module.scss';
 
-const LazyReactJson = lazy(() => import('@microlink/react-json-view'));
+// High-frequency loggers (e.g. onRowDragMove during a drag) can post several batches per
+// frame. Coalesce them into one DOM update at this cadence so the panel stays live but
+// doesn't trigger a per-batch reflow.
+const COMMIT_INTERVAL_MS = 200;
 
 type LogObject = {
     __consoleLogObject: true;
@@ -14,12 +17,15 @@ type LogObject = {
 type SimpleValue = string | number | boolean | null | undefined;
 type LogData = SimpleValue | LogObject;
 
-interface Log {
-    type: 'console-log';
-    pageName?: string;
-    exampleName: string;
+interface IncomingLog {
+    type: string;
     data: LogData[];
+}
+
+interface RenderedLog {
     rawData: LogData[];
+    element: HTMLElement;
+    countEl: HTMLElement;
     count: number;
 }
 
@@ -28,205 +34,200 @@ interface Props {
     bufferSize?: number;
 }
 
-const REACT_JSON_VIEW_CONFIG = {
-    collapsed: true,
-    name: null,
-    enableClipboard: false,
-    displayDataTypes: false,
-    displayObjectSize: false,
-    displayArrayKey: false,
-    quotesOnKeys: false,
-};
 const IGNORED_MESSAGES = [
     'Angular is running in development mode.',
     '[vite] server connection lost. Polling for restart...',
 ];
 
-// Styles using base16: https://github.com/chriskempson/base16/blob/main/styling.md
-const JSON_VIEWER_THEME = {
-    base00: 'rgba(0, 0, 0, 0)',
-    base01: 'rgb(245, 245, 245)',
-    // Selection Background
-    base02: 'rgba(0, 0, 0, 0)',
-    base03: '#93a1a1',
-    base04: 'rgba(0, 0, 0, 0.3)',
-    base05: '#586e75',
-    base06: '#073642',
-    base07: 'var(--color-code-punctuation)',
-    base08: '#d33682',
-    // Integers, Boolean, Constants, XML Attributes, Markup Link Url
-    base09: 'var(--color-code-string)',
-    // Classes, Markup Bold, Search Text Background
-    base0A: 'var(--color-code-keyword)',
-    // Strings, Inherited Class, Markup Code, Diff Inserted
-    base0B: 'var(--color-code-string)',
-    // Support, Regular Expressions, Escape Characters, Markup Quotes
-    base0C: 'var(--color-code-property)',
-    base0D: '#586e75',
-    // Keywords, Storage, Selector, Markup Italic, Diff Changed
-    base0E: 'var(--color-code-symbol)',
-    // Deprecated, Opening/Closing Embedded Language Tags, e.g. <?php ?>
-    base0F: 'var(--color-code-symbol)',
-};
-
-const MATCH_TYPE_REGEXP = /\[TYPE:([^\]]+)]/g;
-const REPLACEMENT_TYPES_MAP: Record<string, any> = {
-    undefined: undefined,
-    nan: NaN,
-    infinity: Infinity,
-    negativeInfinity: -Infinity,
-};
-
-function containsIgnoredMessage(log: Log) {
-    return log.data.some((message) =>
-        IGNORED_MESSAGES.some((ignoredMessage) => typeof message === 'string' && message.includes(ignoredMessage))
+function containsIgnoredMessage(data: LogData[]) {
+    return data.some((message) =>
+        IGNORED_MESSAGES.some((ignored) => typeof message === 'string' && message.includes(ignored))
     );
 }
 
-function getLoggableData(data: LogData[]) {
-    return data.map((logItem: LogData) => {
-        const consoleLogObject = logItem as LogObject;
-        if (logItem && consoleLogObject.__consoleLogObject) {
-            const parsedObject = JSON.parse(consoleLogObject.safeString);
-            return updateWithTypeValues(parsedObject);
-        } else {
-            return logItem;
+function isRepeatedRawData(prev: LogData[], next: LogData[]) {
+    if (prev.length !== next.length) return false;
+    for (let i = 0; i < prev.length; i++) {
+        const a = prev[i];
+        const b = next[i];
+        if ((a as LogObject)?.__consoleLogObject) {
+            if ((a as LogObject).safeString !== (b as LogObject)?.safeString) return false;
+        } else if (a !== b && !(Number.isNaN(a) && Number.isNaN(b))) {
+            return false;
         }
-    });
+    }
+    return true;
 }
 
-function getReplacementType(typeValue: string) {
-    const [replacementType] = Array.from(typeValue.matchAll(MATCH_TYPE_REGEXP), (m) => m[1]);
-    return replacementType;
-}
-
-/**
- * Recursively update the values of an object or array with their replacement types.
- *
- * Due to the limitations of `JSON.stringify`, we need to store some values as special strings
- * in the form `[TYPE:<type>]`, where `<type>` is a type that can't be deserialised. This
- * needs to be extracted and converted back to the original value.
- */
-function updateWithTypeValues(value: any) {
+function buildSimpleValue(value: SimpleValue): HTMLElement {
     const valueType = getType(value);
-
-    if (valueType === 'string') {
-        const replacementType = getReplacementType(value);
-
-        const output = replacementType ? REPLACEMENT_TYPES_MAP[replacementType] : value;
-        return output;
-    } else if (valueType === 'array') {
-        return value.map((item: any) => updateWithTypeValues(item));
-    } else if (valueType === 'object') {
-        const obj = { ...value };
-        for (const key in value) {
-            obj[key] = updateWithTypeValues(value[key]);
-        }
-
-        const sortedKeys = Object.keys(obj).sort();
-        const sortedObj = Object.fromEntries(
-            sortedKeys.map((key) => {
-                return [key, obj[key]];
-            })
-        );
-        return sortedObj;
+    const span = document.createElement('span');
+    const cls = styles[`type-${valueType}`];
+    if (cls) span.className = cls;
+    if (valueType === 'null' || valueType === 'undefined') {
+        span.textContent = valueType;
     } else {
-        return value;
+        span.textContent = String(value);
     }
+    return span;
 }
 
-function isRepeatedLog({ prevLogs, log }: { prevLogs: Log[]; log: Log }) {
-    const lastLog = prevLogs[prevLogs.length - 1];
-    if (!lastLog || lastLog.data.length !== log.data.length) {
-        return false;
-    }
+// Build an empty <details> with a toggle listener that lazy-populates the <pre> on first
+// expand. Per-commit cost is just createElement + addEventListener — the JSON.parse +
+// JSON.stringify(_, null, 2) only runs when the user actually clicks to view the object.
+function buildObjectPreview(safeString: string): HTMLElement {
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    summary.textContent = safeString.charCodeAt(0) === 91 /* '[' */ ? 'Array' : 'Object';
+    details.appendChild(summary);
 
-    // NOTE: Compare `rawData` to avoid updates from `updateWithTypeValues`
-    return lastLog.rawData.every((value, index) => {
-        const logDataItem = log.data[index];
+    const pre = document.createElement('pre');
+    pre.className = styles.objectPreview;
+    details.appendChild(pre);
 
-        return (value as LogObject)?.__consoleLogObject
-            ? (value as LogObject).safeString === (logDataItem as LogObject)?.safeString
-            : value === logDataItem || (Number.isNaN(value) && Number.isNaN(logDataItem));
+    let populated = false;
+    details.addEventListener('toggle', () => {
+        if (!details.open || populated) return;
+        populated = true;
+        try {
+            pre.textContent = JSON.stringify(JSON.parse(safeString), null, 2);
+        } catch {
+            pre.textContent = safeString;
+        }
     });
+
+    return details;
 }
 
-const SimpleValueDisplay = ({ value }: { value: SimpleValue }) => {
-    const valueType = getType(value);
-    let displayValue = value;
-    if (['null', 'undefined'].includes(valueType)) {
-        displayValue = valueType;
+function buildLogElement(rawData: LogData[]): { element: HTMLElement; countEl: HTMLElement } {
+    const item = document.createElement('div');
+    item.className = styles.logItem;
+
+    const countEl = document.createElement('div');
+    countEl.className = styles.count;
+    countEl.style.display = 'none';
+    countEl.textContent = '1';
+    item.appendChild(countEl);
+
+    const dataItem = document.createElement('div');
+    dataItem.className = styles.dataItem;
+    for (const value of rawData) {
+        const obj = value as LogObject;
+        if (value && obj.__consoleLogObject) {
+            dataItem.appendChild(buildObjectPreview(obj.safeString));
+        } else {
+            dataItem.appendChild(buildSimpleValue(value as SimpleValue));
+        }
     }
+    item.appendChild(dataItem);
 
-    return <span className={styles[`type-${valueType}`]}>{displayValue?.toString()}</span>;
-};
-
-const DataItem = ({ data }: { data: LogData[] }) => {
-    return (
-        <>
-            <div className={styles.dataItem}>
-                {data.map((value, i) => {
-                    const isJSonViewable = ['object', 'array'].includes(getType(value));
-                    return isJSonViewable ? (
-                        <LazyReactJson
-                            key={i}
-                            src={value as object}
-                            theme={JSON_VIEWER_THEME}
-                            {...REACT_JSON_VIEW_CONFIG}
-                        />
-                    ) : (
-                        <SimpleValueDisplay key={i} value={value as SimpleValue} />
-                    );
-                })}
-            </div>
-        </>
-    );
-};
+    return { element: item, countEl };
+}
 
 export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSize = 20 }) => {
     const containerRef = useRef<HTMLPreElement>(null);
-    const [logs, setLogs] = useState<Log[]>([]);
+    const placeholderRef = useRef<HTMLDivElement>(null);
+    const clearRef = useRef<() => void>(() => {});
 
-    const clearLogs = useCallback(() => {
-        setLogs([]);
-    }, []);
+    const clearLogs = useCallback(() => clearRef.current(), []);
 
     useEffect(() => {
-        const updateLogs = (event: MessageEvent) => {
-            const log = event.data;
-            if (log?.type?.startsWith('console-') && log.exampleName === exampleName && !containsIgnoredMessage(log)) {
-                setLogs((prevLogs) => {
-                    if (isRepeatedLog({ prevLogs, log })) {
-                        const lastLog = prevLogs[prevLogs.length - 1];
-                        const updatedLogs = prevLogs.slice(0, -1);
+        const container = containerRef.current;
+        const placeholder = placeholderRef.current;
+        if (!container) return;
 
-                        return [...updatedLogs, { ...lastLog, count: lastLog.count + 1 }];
-                    } else {
-                        const bufferedLogs = prevLogs.length >= bufferSize ? prevLogs.slice(1) : prevLogs;
+        // All log state lives here in closures — no React state, no per-commit reconcile.
+        const logs: RenderedLog[] = [];
+        const pending: IncomingLog[] = [];
+        let commitTimer: ReturnType<typeof setTimeout> | null = null;
 
-                        const newLog = {
-                            ...log,
-                            data: getLoggableData(log.data),
-                            rawData: log.data,
-                            count: 1,
-                        };
-                        return [...bufferedLogs, newLog];
-                    }
-                });
-            }
+        const setPlaceholderVisible = (visible: boolean) => {
+            if (placeholder) placeholder.style.display = visible ? '' : 'none';
         };
 
-        window.addEventListener('message', updateLogs);
+        const commit = () => {
+            commitTimer = null;
+            if (pending.length === 0) return;
+            const batch = pending.splice(0, pending.length);
+
+            const fragment = document.createDocumentFragment();
+            for (const entry of batch) {
+                const last = logs[logs.length - 1];
+                if (last && isRepeatedRawData(last.rawData, entry.data)) {
+                    last.count++;
+                    last.countEl.style.display = '';
+                    last.countEl.textContent = String(last.count);
+                    continue;
+                }
+                const { element, countEl } = buildLogElement(entry.data);
+                logs.push({ rawData: entry.data, element, countEl, count: 1 });
+                fragment.appendChild(element);
+            }
+
+            if (logs.length > 0) setPlaceholderVisible(false);
+            if (fragment.childNodes.length > 0) container.appendChild(fragment);
+
+            while (logs.length > bufferSize) {
+                const removed = logs.shift();
+                if (removed && removed.element.parentNode === container) {
+                    container.removeChild(removed.element);
+                }
+            }
+
+            container.scrollTop = container.scrollHeight;
+        };
+
+        const scheduleCommit = () => {
+            if (commitTimer !== null) return;
+            commitTimer = setTimeout(commit, COMMIT_INTERVAL_MS);
+        };
+
+        const handleMessage = (event: MessageEvent) => {
+            const envelope = event.data;
+            if (!envelope?.type?.startsWith('console-') || envelope.exampleName !== exampleName) return;
+
+            if (envelope.type === 'console-batch') {
+                const entries: IncomingLog[] = envelope.logs ?? [];
+                for (const entry of entries) {
+                    if (!containsIgnoredMessage(entry.data)) pending.push(entry);
+                }
+            } else {
+                if (containsIgnoredMessage(envelope.data ?? [])) return;
+                pending.push({ type: envelope.type, data: envelope.data ?? [] });
+            }
+            if (pending.length > 0) scheduleCommit();
+        };
+
+        clearRef.current = () => {
+            pending.length = 0;
+            if (commitTimer !== null) {
+                clearTimeout(commitTimer);
+                commitTimer = null;
+            }
+            for (const entry of logs) {
+                if (entry.element.parentNode === container) {
+                    container.removeChild(entry.element);
+                }
+            }
+            logs.length = 0;
+            setPlaceholderVisible(true);
+        };
+
+        window.addEventListener('message', handleMessage);
 
         return () => {
-            window.removeEventListener('message', updateLogs);
+            window.removeEventListener('message', handleMessage);
+            if (commitTimer !== null) clearTimeout(commitTimer);
+            clearRef.current = () => {};
+            for (const entry of logs) {
+                if (entry.element.parentNode === container) {
+                    container.removeChild(entry.element);
+                }
+            }
+            logs.length = 0;
+            setPlaceholderVisible(true);
         };
-    }, []);
-
-    useLayoutEffect(() => {
-        // Scroll to the bottom of the logs, when new logs are added
-        containerRef.current!.scrollTo({ top: containerRef.current!.scrollHeight });
-    }, [logs]);
+    }, [exampleName, bufferSize]);
 
     return (
         <div className={styles.loggerOuter}>
@@ -237,15 +238,9 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
                 </button>
             </div>
             <pre ref={containerRef} className={styles.loggerPre}>
-                {logs.length === 0 && (
-                    <div className={styles.placeholder}>Console logs from the example shown here...</div>
-                )}
-                {logs.map((log, i) => (
-                    <div key={i} className={styles.logItem}>
-                        {log.count > 1 && <div className={styles.count}>{log.count}</div>}
-                        <DataItem data={log.data}></DataItem>
-                    </div>
-                ))}
+                <div ref={placeholderRef} className={styles.placeholder}>
+                    Console logs from the example shown here...
+                </div>
             </pre>
         </div>
     );
