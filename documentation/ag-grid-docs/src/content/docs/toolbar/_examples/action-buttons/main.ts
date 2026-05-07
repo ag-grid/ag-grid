@@ -66,9 +66,19 @@ const gridOptions: GridOptions<IOlympicData> = {
             },
             'separator',
             {
-                key: 'resetFilters',
-                icon: 'clipboardCut',
-                tooltip: 'Reset All Filters',
+                key: 'addFilter',
+                icon: 'filter-add',
+                tooltip: 'Add Filter',
+                action: (params) =>
+                    params.api.setFilterModel({
+                        country: { filterType: 'text', type: 'contains', filter: 'Canada' },
+                    }),
+            },
+            'separator',
+            {
+                key: 'clearFilters',
+                icon: 'filterActive',
+                tooltip: 'Clear All Filters',
                 action: (params) => params.api.setFilterModel(null),
             },
             'separator',
