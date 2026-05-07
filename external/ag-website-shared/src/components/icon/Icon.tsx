@@ -154,6 +154,7 @@ export const ICON_MAP = {
     terminal: CarbonIcon.Terminal,
     pricingFeatures: CarbonIcon.CicsProgram,
     support: CarbonIcon.Chat,
+    edit: CarbonIcon.Edit,
     ...SOCIALS_ICON_MAP,
     ...CHARTS_ICON_MAP,
 };

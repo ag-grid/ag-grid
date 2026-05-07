@@ -11,21 +11,12 @@ interface Props {
     title: string;
     files: FileContents;
     htmlUrl: string;
-    boilerPlateFiles?: FileContents;
     packageJson: Record<string, any>;
     fileToOpen: string;
     isDev: boolean;
 }
 
-export const OpenInPlunkr: FunctionComponent<Props> = ({
-    title,
-    files,
-    htmlUrl,
-    boilerPlateFiles,
-    packageJson,
-    fileToOpen,
-    isDev,
-}) => {
+export const OpenInPlunkr: FunctionComponent<Props> = ({ title, files, htmlUrl, packageJson, fileToOpen, isDev }) => {
     return (
         <OpenInCTA
             type="plunker"
@@ -36,7 +27,6 @@ export const OpenInPlunkr: FunctionComponent<Props> = ({
                 stripOutExampleGeneratorCode(localFiles);
                 const plunkrExampleFiles = {
                     ...localFiles,
-                    ...boilerPlateFiles,
                     'package.json': JSON.stringify(packageJson, null, 2),
                     'index.html': indexHtml,
                 };

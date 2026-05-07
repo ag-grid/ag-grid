@@ -206,8 +206,8 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
             validationResults[link] = { error };
             return;
         } else {
-            // check if the hash exists in the file
-            if (!anchors.has(linkWithoutPrefix)) {
+            // Check if the hash exists in the file
+            if (!anchors.has(linkWithoutPrefix) && !anchors.has(linkWithoutPrefix.replace('#', '/#'))) {
                 errors.push(
                     `Link to ${originalLink} could not be resolved in (${filePathsString(filePaths, options)}).`
                 );

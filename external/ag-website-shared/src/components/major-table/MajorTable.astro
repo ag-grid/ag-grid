@@ -13,13 +13,14 @@ interface Props {
     library: Library;
     major: Number;
     type: 'migration' | 'archive';
+    suppressChangelog?: boolean;
 }
 
 interface Params {
     framework?: Framework;
 }
 
-const { library, major, type } = Astro.props as Props;
+const { library, major, type, suppressChangelog } = Astro.props as Props;
 
 const isMigration = type === 'migration';
 
@@ -72,12 +73,14 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
 
                     {!isMigration && (
                         <>
-                            <td class={styles.changelog}>
-                                <a href={changelogUrl}>
-                                    Changelog
-                                    <Icon name="arrowRight" />
-                                </a>
-                            </td>
+                            {!suppressChangelog && (
+                                <td class={styles.changelog}>
+                                    <a href={changelogUrl}>
+                                        Changelog
+                                        <Icon name="arrowRight" />
+                                    </a>
+                                </td>
+                            )}
 
                             <td>
                                 <a href={docsUrl}>
