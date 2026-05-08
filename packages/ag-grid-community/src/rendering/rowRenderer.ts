@@ -649,7 +649,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // however we can reuse the rows, so we keep them but index by rowNode.id
         const rowsToRecycle = recycleRows ? this.getRowsToRecycle() : null;
         if (!recycleRows) {
-            this.removeAllRowComps();
+            // Forward !animate so the destroy path skips the fade-out when the
+            // redraw itself is non-animating; otherwise rapid replaces flicker via opacity:0.
+            this.removeAllRowComps(!animate);
         }
 
         this.workOutFirstAndLastRowsToRender();
