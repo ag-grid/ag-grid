@@ -518,7 +518,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             const prev = typeof previousValue === 'object' ? previousValue : undefined;
 
             if (curr?.checkboxLocation !== prev?.checkboxLocation) {
-                this.destroyCheckbox();
+                this.destroyCheckbox(true);
                 this.addCheckbox();
             }
         });
@@ -579,9 +579,12 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.comp.setCheckboxVisible(true);
     }
 
-    private destroyCheckbox(): void {
-        this.comp.setCheckboxSpacing(false);
-        this.comp.setCheckboxVisible(false);
+    private destroyCheckbox(resetComp: boolean): void {
+        if (resetComp) {
+            // Only reset the comp if we are going to be re-using it and not a full destroy
+            this.comp.setCheckboxSpacing(false);
+            this.comp.setCheckboxVisible(false);
+        }
         this.cbComp?.getGui().remove();
         this.cbComp = this.destroyBean(this.cbComp);
     }
@@ -664,6 +667,6 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     public override destroy(): void {
         super.destroy();
         // property cleanup to avoid memory leaks
-        this.destroyCheckbox();
+        this.destroyCheckbox(false);
     }
 }
