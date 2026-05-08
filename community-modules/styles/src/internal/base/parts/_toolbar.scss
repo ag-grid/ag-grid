@@ -42,6 +42,8 @@
         line-height: 1;
         white-space: nowrap;
         outline: none;
+        font-family: var(--ag-header-font-family);
+        font-weight: var(--ag-header-font-weight);
     }
 
     .ag-toolbar-button-wrapper:hover {
@@ -123,6 +125,8 @@
     .ag-toolbar-input-field {
         color: var(--ag-foreground-color);
         font-size: var(--ag-font-size);
+        font-family: var(--ag-header-font-family);
+        font-weight: var(--ag-header-font-weight);
         line-height: 1.5;
         outline: none;
         border: var(--ag-borders-input) var(--ag-input-border-color);
@@ -167,6 +171,7 @@
     // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar .ag-column-drop-horizontal {
         border-bottom: none;
+        background-color: transparent;
     }
 
     .ag-toolbar-button-chevron {

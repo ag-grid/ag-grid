@@ -26,6 +26,14 @@
         background-color: var(--ag-subheader-background-color);
     }
 
+    .ag-toolbar .ag-column-drop-horizontal {
+        background-color: transparent;
+    }
+
+    .ag-toolbar .ag-toolbar-panel {
+        padding-left: var(--ag-grid-size);
+    }
+
     .ag-tabs-body {
         padding: calc(var(--ag-grid-size) * 0.5) 0;
     }

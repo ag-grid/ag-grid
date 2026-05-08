@@ -42,7 +42,7 @@
     outline: none;
 }
 
-.ag-toolbar-button .ag-icon {
+:where(.ag-toolbar-button) .ag-icon {
     color: var(--ag-icon-color);
 }
 

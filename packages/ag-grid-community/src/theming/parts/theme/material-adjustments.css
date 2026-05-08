@@ -17,6 +17,11 @@
     background-color: transparent;
 }
 
+.ag-toolbar .ag-toolbar-panel {
+    padding-left: var(--ag-cell-horizontal-padding);
+    padding-right: 0;
+}
+
 .ag-cell.ag-cell-inline-editing {
     padding: var(--ag-spacing);
     height: calc(var(--ag-row-height) + var(--ag-spacing) * 3);

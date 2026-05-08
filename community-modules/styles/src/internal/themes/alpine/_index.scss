@@ -49,6 +49,10 @@
         background-color: var(--ag-control-panel-background-color);
     }
 
+    .ag-toolbar .ag-toolbar-panel {
+        padding-left: var(--ag-grid-size);
+    }
+
     .ag-panel-content-wrapper .ag-column-select {
         background-color: var(--ag-control-panel-background-color);
     }
