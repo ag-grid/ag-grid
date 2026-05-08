@@ -13,6 +13,7 @@ interface Props {
     internalFramework: InternalFramework;
     files: FileContents;
     htmlUrl: string;
+    boilerPlateFiles?: FileContents;
     packageJson: Record<string, any>;
     isDev: boolean;
 }
@@ -22,6 +23,7 @@ export const OpenInCodeSandbox: FunctionComponent<Props> = ({
     internalFramework,
     files,
     htmlUrl,
+    boilerPlateFiles,
     packageJson,
     isDev,
 }) => {
@@ -42,6 +44,7 @@ export const OpenInCodeSandbox: FunctionComponent<Props> = ({
                 openCodeSandbox({
                     title,
                     files: sandboxFiles,
+                    boilerPlateFiles,
                     internalFramework,
                 });
             }}
