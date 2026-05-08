@@ -63,5 +63,5 @@ Test documentation changes:
 yarn nx dev
 
 # Run E2E tests (chromium only, bypasses Nx)
-./docs-e2e.sh feature-catagory
+./docs-e2e.sh feature-category
 ```
