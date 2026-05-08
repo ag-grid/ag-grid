@@ -260,7 +260,7 @@ export const TrialLicenceFormStudio: FunctionComponent = ({ submitUrl }: Props) 
                         required
                     />
 
-                    <p className={classnames({ [styles.isHidden]: !firstNameError }, 'error')}>Last name required</p>
+                    <p className={classnames({ [styles.isHidden]: !lastNameError }, 'error')}>Last name required</p>
                 </div>
             </div>
 
