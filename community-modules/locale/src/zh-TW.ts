@@ -334,6 +334,11 @@ export const AG_GRID_LOCALE_TW = {
     sortAbsoluteDescending: '絕對遞減排序',
     sortUnSort: '清除排列',
     shiftF2: 'Shift+F2',
+    toolbarFind: '尋找',
+    toolbarFindPreviousMatch: '上一次匹配',
+    toolbarFindNextMatch: '下一個匹配',
+    toolbarQuickFilter: '篩選',
+    toolbarMenu: '選單',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '總和',

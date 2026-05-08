@@ -337,6 +337,11 @@ export const AG_GRID_LOCALE_RO = {
     sortAbsoluteDescending: 'Sortează în ordine descendentă absolută',
     sortUnSort: 'Șterge Sortarea',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Caută',
+    toolbarFindPreviousMatch: 'Potrivire Anterioară',
+    toolbarFindNextMatch: 'Potrivire Următoare',
+    toolbarQuickFilter: 'Filtru',
+    toolbarMenu: 'Meniu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sumă',

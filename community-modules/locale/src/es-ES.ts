@@ -338,6 +338,11 @@ export const AG_GRID_LOCALE_ES = {
     sortAbsoluteDescending: 'Ordenar absolutamente descendente',
     sortUnSort: 'Limpiar Orden',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Buscar',
+    toolbarFindPreviousMatch: 'Coincidencia Anterior',
+    toolbarFindNextMatch: 'Siguiente Coincidencia',
+    toolbarQuickFilter: 'Filtrar',
+    toolbarMenu: 'Menú',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Suma',

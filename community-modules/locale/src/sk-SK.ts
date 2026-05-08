@@ -335,6 +335,11 @@ export const AG_GRID_LOCALE_SK = {
     sortAbsoluteDescending: 'Zoradiť absolútne zostupne',
     sortUnSort: 'Zrušiť zoradenie',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Nájsť',
+    toolbarFindPreviousMatch: 'Predchádzajúca zhoda',
+    toolbarFindNextMatch: 'Nasledujúca zhoda',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Súčet',
