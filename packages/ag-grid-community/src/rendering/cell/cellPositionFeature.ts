@@ -177,7 +177,7 @@ export class CellPositionFeature extends BeanStub {
             return;
         }
 
-        this.setHorizontalPosition(left);
+        this.setHorizontalPosition(eSetLeft, left);
     }
 
     private getCellLeft(): number | null {
@@ -186,9 +186,9 @@ export class CellPositionFeature extends BeanStub {
         return this.column.getLeft();
     }
 
-    private setHorizontalPosition(left: number): void {
+    private setHorizontalPosition(eSetLeft: HTMLElement, left: number): void {
         const { gos, visibleCols } = this.beans;
-        applyHorizontalPosition(this.eSetLeft, {
+        applyHorizontalPosition(eSetLeft, {
             offset: left,
             pinned: this.column.getPinned(),
             width: this.getCellWidth(),
