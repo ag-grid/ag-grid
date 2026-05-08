@@ -371,6 +371,22 @@
     },
     {
         "group": {
+            "name": "Server-Side Rendering"
+        },
+        "items": [
+            {
+                "label": {
+                    "name": "Server-Side Rendering",
+                    "link": "https://www.ag-grid.com/charts/r/server-side-rendering/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            }
+        ]
+    },
+    {
+        "group": {
             "name": "Data"
         },
         "items": [
@@ -552,8 +568,26 @@
             },
             {
                 "label": {
+                    "name": "Flash On Update",
+                    "link": "https://www.ag-grid.com/charts/r/flash-on-update/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
                     "name": "Navigator",
                     "link": "https://www.ag-grid.com/charts/r/navigator/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Range Buttons",
+                    "link": "https://www.ag-grid.com/charts/r/range-controls/"
                 },
                 "community": false,
                 "enterprise": true,

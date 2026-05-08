@@ -74,7 +74,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const existingLeafs = this.rootNode._leafs;
         if (existingLeafs) {
             for (let i = 0, len = existingLeafs.length; i < len; ++i) {
-                existingLeafs[i]._destroy(false);
+                existingLeafs[i]._destroy(null);
             }
         }
 

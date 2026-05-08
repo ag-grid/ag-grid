@@ -38,7 +38,7 @@ export class FindToolbarItem extends Component implements IToolbarItemComp {
 
         const { eIconWrapper, eInput } = createToolbarInput(this.beans, {
             label,
-            iconName: 'filter',
+            iconName: 'search',
             initialValue: this.gos.get('findSearchValue'),
         });
         const inputId = `ag-toolbar-find-input-${++findInputIdCounter}`;

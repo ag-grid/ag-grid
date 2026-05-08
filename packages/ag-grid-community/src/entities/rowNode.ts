@@ -940,26 +940,38 @@ export class RowNode<TData = any>
         return this.childrenAfterSort?.[0] ?? null;
     }
 
-    /** Called internally to destroy this node */
-    public _destroy(fadeOut: boolean): boolean {
+    /**
+     * Called internally to destroy this node.
+     * @param fadeOut
+     *   - `true`: fade-out animation; preserves slide-in via `oldRowTop`.
+     *   - `false`: instant removal; dispatches position events.
+     *   - `null`: silent. Wholesale tree replacement only — the rowRenderer is about to
+     *     tear down every RowCtrl, so position events would just trigger wasted work in
+     *     `cellCtrl.onRowIndexChanged()` on rows that are about to vanish.
+     */
+    public _destroy(fadeOut: boolean | null): boolean {
         if (this.destroyed) {
             return false;
         }
         this.destroyed = true;
 
-        // Unpin the pinned sibling when this source row is destroyed.
         // Check pinnedSibling.rowPinned to ensure we're the source row (not a pinned clone being destroyed).
-        // This also prevents re-entrance when _destroyRowNodeSibling clears rowPinned before calling _destroy.
+        // Also prevents re-entrance when _destroyRowNodeSibling clears rowPinned before calling _destroy.
         const pinnedSibling = this.pinnedSibling;
         if (pinnedSibling?.rowPinned && !this.rowPinned) {
             this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
         }
 
-        if (fadeOut) {
+        if (fadeOut === true) {
             this.clearRowTopAndRowIndex(); // so row renderer knows to fade row out (and not reposition it)
-        } else {
+        } else if (fadeOut === false) {
             this.setRowTop(null);
             this.setRowIndex(null);
+        } else {
+            this.oldRowTop = null;
+            this.rowTop = null;
+            this.rowIndex = null;
+            this.displayed = false;
         }
 
         if (!this.footer) {

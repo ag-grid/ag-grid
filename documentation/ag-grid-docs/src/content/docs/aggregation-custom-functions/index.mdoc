@@ -63,13 +63,23 @@ const gridOptions = {
 
 With multiple levels of grouping, an aggregation function runs once per group at every level. Above
 the leaf groups, `params.values` holds the already-aggregated results from the level below — not
-the raw leaf values — so a function written only against `params.values` produces wrong results
-above the leaves.
+the raw leaf values — so a function written only against `params.values` produces incorrect
+results at any level above the leaves, because it would treat already-aggregated summaries as if
+they were raw values.
 
-The fix is to return an [`IAggFuncResult`](./row-object/#reference-data-getDataValue) that carries
-any auxiliary fields the parent needs to recompute. Sub-group children expose the wrapper to the
-parent via `getDataValue(colKey, 'data')`; leaf children expose their value via the same call — a primitive when the column reads from a `field`, or a wrapper when a `valueGetter` returns one.
-Every child reads the same way at every level.
+The fix is to return an `IAggFuncResult` — a small wrapper interface that carries the auxiliary
+fields the parent needs to recompute:
+
+{% interfaceDocumentation interfaceName="IAggFuncResult" config={"asCode":true} /%}
+
+The built-in `avg` and `count` functions return this same shape; a custom function extends it with
+whatever auxiliary fields it needs (e.g. `min`/`max` for a range, two running sums for a ratio).
+See [`getDataValue`](./row-object/#reference-data-getDataValue) for how the wrapper is exposed when
+reading values back.
+
+Sub-group children expose the wrapper to the parent via `getDataValue(colKey, 'data')`; leaf
+children expose their value via the same call — a primitive when the column reads from a `field`,
+or a wrapper when a `valueGetter` returns one. Every child reads the same way at every level.
 
 A class is a natural fit: `toNumber` and `toString` live on the prototype, and `instanceof` (paired with a `typeof` check when leaves expose a primitive) makes it trivial to identify a wrapper.
 
@@ -110,8 +120,11 @@ function rangeAggFunc(params) {
 }
 ```
 
-`'data'` mode returns the stored wrapper as-is. `'value'` would unwrap it via `toNumber()` to its
-scalar.
+`getDataValue` takes a mode argument:
+
+- `'data'` returns the stored wrapper unchanged, so the parent can read `min`/`max` off it.
+- `'value'` unwraps the wrapper to a scalar by calling `toNumber()` when present, otherwise reading
+  the `value` field. The wrapper is returned unchanged if neither is available.
 
 A ratio uses the same wrapper pattern — carry the two running sums (`gold` and `silver`) so the
 parent divides at every level. Giving leaf rows the same `RatioResult` shape via a `valueGetter`

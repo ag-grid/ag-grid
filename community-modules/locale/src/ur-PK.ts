@@ -335,6 +335,11 @@ export const AG_GRID_LOCALE_PK = {
     sortAbsoluteDescending: 'مکمل اُتری ابجدی ترتیب میں ترتیب دیں',
     sortUnSort: 'ترتیب مٹائیں',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'تلاش',
+    toolbarFindPreviousMatch: 'پچھلا میچ',
+    toolbarFindNextMatch: 'اگلا میچ',
+    toolbarQuickFilter: 'فلٹر',
+    toolbarMenu: 'مینو',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'مجموعہ',

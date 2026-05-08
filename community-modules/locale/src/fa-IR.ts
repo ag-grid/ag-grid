@@ -335,6 +335,11 @@ export const AG_GRID_LOCALE_IR = {
     sortAbsoluteDescending: 'مرتب‌سازی مطلق به صورت نزولی',
     sortUnSort: 'پاک کردن مرتب‌سازی',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'یافتن',
+    toolbarFindPreviousMatch: 'مطابقت قبلی',
+    toolbarFindNextMatch: 'مطابقت بعدی',
+    toolbarQuickFilter: 'فیلتر',
+    toolbarMenu: 'منو',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'جمع',

@@ -5,9 +5,12 @@ import { ClientSideRowModelModule, ModuleRegistry, RowSelectionModule, Validatio
 import { ToolbarModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
+import { ignoreConsoleLicenseKeyError } from '../test-utils';
+
 describe('Toolbar (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, RowSelectionModule, ToolbarModule, ValidationModule]);
+        ignoreConsoleLicenseKeyError();
     });
 
     afterEach(() => {

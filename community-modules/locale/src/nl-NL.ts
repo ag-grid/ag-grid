@@ -335,6 +335,11 @@ export const AG_GRID_LOCALE_NL = {
     sortAbsoluteDescending: 'Sorteren absoluut aflopend',
     sortUnSort: 'Sortering wissen',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Zoeken',
+    toolbarFindPreviousMatch: 'Vorige resultaat',
+    toolbarFindNextMatch: 'Volgende resultaat',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Som',

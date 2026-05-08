@@ -334,6 +334,11 @@ export const AG_GRID_LOCALE_CN = {
     sortAbsoluteDescending: '绝对降序排序',
     sortUnSort: '清除排序',
     shiftF2: 'Shift+F2',
+    toolbarFind: '查找',
+    toolbarFindPreviousMatch: '上一个匹配',
+    toolbarFindNextMatch: '下一个匹配',
+    toolbarQuickFilter: '筛选',
+    toolbarMenu: '菜单',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '总和',

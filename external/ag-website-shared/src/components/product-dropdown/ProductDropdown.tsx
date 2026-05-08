@@ -10,7 +10,7 @@ import styles from './ProductDropdown.module.scss';
 
 export const ProductDropdown = ({ items, children }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const handleMenuToggle = () => {
         setIsOpen(!isOpen);

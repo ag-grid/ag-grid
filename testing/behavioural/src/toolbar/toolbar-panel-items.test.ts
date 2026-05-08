@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule, QuickFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, CustomFilterModule, QuickFilterModule } from 'ag-grid-community';
 import {
     ContextMenuModule,
     FindModule,
@@ -21,6 +21,7 @@ describe('Toolbar panel items (rowGroupPanel and pivotPanel)', () => {
             RowGroupingModule,
             RowGroupingPanelModule,
             ToolbarModule,
+            CustomFilterModule,
         ],
     });
 

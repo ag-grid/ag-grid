@@ -56,3 +56,37 @@
 .ag-filter-add-button:hover {
     border-bottom: 2px solid var(--ag-primary-color);
 }
+
+.ag-toolbar-button-wrapper {
+    transition:
+        background-color 0.2s,
+        color 0.2s;
+}
+
+.ag-toolbar-find,
+.ag-toolbar-input {
+    box-shadow: none;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
+
+.ag-toolbar-find:focus-within {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+}
+
+.ag-toolbar-input-field {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.ag-toolbar-input-field:focus {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+}

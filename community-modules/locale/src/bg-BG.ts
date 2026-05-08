@@ -337,6 +337,11 @@ export const AG_GRID_LOCALE_BG = {
     sortAbsoluteDescending: 'Абсолютно сортиране низходящо',
     sortUnSort: 'Изчистване на сортирането',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Намиране',
+    toolbarFindPreviousMatch: 'Предишно съвпадение',
+    toolbarFindNextMatch: 'Следващо съвпадение',
+    toolbarQuickFilter: 'Филтър',
+    toolbarMenu: 'Меню',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Сума',

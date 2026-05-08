@@ -4,8 +4,25 @@ import type { DetailGridInfo, GetDetailRowDataParams, GridApi, GridOptions } fro
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, assertSelectedRowsByIndex, asyncSetTimeout, waitForEvent } from '../test-utils';
+import { TestGridsManager, assertSelectedRowsByIndex, waitForEvent } from '../test-utils';
 import { GridActions } from './utils';
+
+/**
+ * Latch hooked into `detailGridOptions.onFirstDataRendered`. Call `next()` before
+ * triggering the detail grid (collapse + expand) and await the returned promise —
+ * the latch is set up at grid-creation time so the one-shot event can never fire
+ * before the resolver is registered.
+ */
+function createDetailRenderedLatch(): {
+    onFirstDataRendered: () => void;
+    next: () => Promise<void>;
+} {
+    const pending: Array<() => void> = [];
+    return {
+        onFirstDataRendered: () => pending.shift()?.(),
+        next: () => new Promise<void>((resolve) => pending.push(resolve)),
+    };
+}
 
 describe('Row Selection Grid Options', () => {
     const columnDefs = [{ field: 'sport', cellRenderer: 'agGroupCellRenderer' }];
@@ -210,6 +227,8 @@ describe('Row Selection Grid Options', () => {
     });
 
     test('detail state properly tracked and restored when collapsing and re-expanding detail grid', async () => {
+        const detailRendered = createDetailRenderedLatch();
+
         const [api, actions] = await createGridAndWait({
             columnDefs,
             rowData,
@@ -219,6 +238,7 @@ describe('Row Selection Grid Options', () => {
                 detailGridOptions: {
                     columnDefs: detailColumnDefs,
                     rowSelection: { mode: 'multiRow' },
+                    onFirstDataRendered: detailRendered.onFirstDataRendered,
                 },
                 getDetailRowData(params: GetDetailRowDataParams) {
                     params.successCallback(params.data.detail);
@@ -234,12 +254,12 @@ describe('Row Selection Grid Options', () => {
         // Round 1
         //////////
 
+        const round1Rendered = detailRendered.next();
         await actions.expandGroupRowByIndex(1, { count: 1 });
+        await round1Rendered;
 
         info = api.getDetailGridInfo('detail_1')!;
         expect(info).not.toBeUndefined();
-
-        await waitForEvent('firstDataRendered', info.api!);
 
         detailActions = new GridActions(info.api!, '[row-id="detail_1"]');
 
@@ -262,8 +282,9 @@ describe('Row Selection Grid Options', () => {
 
         // Collapse and re-expand master row to hide/show detail grid
         await actions.collapseGroupRowByIndex(1, { count: 1 });
+        const round2Rendered = detailRendered.next();
         await actions.expandGroupRowByIndex(1, { count: 1 });
-        await asyncSetTimeout(10);
+        await round2Rendered;
 
         info = api.getDetailGridInfo('detail_1')!;
         detailActions = new GridActions(info.api!, '[row-id="detail_1"]');
@@ -284,8 +305,9 @@ describe('Row Selection Grid Options', () => {
 
         // Collapse and re-expand master row again
         await actions.collapseGroupRowByIndex(1, { count: 1 });
+        const round3Rendered = detailRendered.next();
         await actions.expandGroupRowByIndex(1, { count: 1 });
-        await asyncSetTimeout(20);
+        await round3Rendered;
 
         info = api.getDetailGridInfo('detail_1')!;
         detailActions = new GridActions(info.api!, '[row-id="detail_1"]');

@@ -11,6 +11,10 @@
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border-primary);
     overflow: hidden;
+
+    @media screen and (max-width: $breakpoint-docs-search-medium) {
+        display: none;
+    }
 }
 
 .loggerHeader {

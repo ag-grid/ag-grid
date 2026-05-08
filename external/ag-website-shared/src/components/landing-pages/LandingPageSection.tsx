@@ -46,6 +46,7 @@ interface Props {
     showBackgroundGradient?: boolean;
     children: ReactNode;
     isFramework?: boolean;
+    maxWidth?: string;
 }
 
 const CTAWithFrameworks: FunctionComponent<{ ctaId: string; ctaTitle: string; ctaUrl: string }> = ({
@@ -173,6 +174,7 @@ export const LandingPageSection: FunctionComponent<Props> = ({
     sectionClass,
     showBackgroundGradient,
     children,
+    maxWidth,
 }) => {
     return (
         <div
@@ -181,7 +183,7 @@ export const LandingPageSection: FunctionComponent<Props> = ({
                 [styles.withBackgroundGradient]: showBackgroundGradient,
             })}
         >
-            <header className={styles.headingContainer}>
+            <header className={styles.headingContainer} style={{ maxWidth: maxWidth }}>
                 <h2 className={styles.tag}>{tag}</h2>
 
                 {headingHtml ? (
