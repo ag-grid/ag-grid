@@ -138,20 +138,13 @@ const CellComp = ({
         // refresh() → setRenderKey → renderer remount → cellCtrl re-emits compDetails → repeat
         // (e.g. during column drag-and-drop with agGroupCellRenderer, whose refresh() deliberately
         // returns false).
-        if (
-            oldDetails == null ||
-            oldDetails.compDetails == null ||
-            newDetails == null ||
-            newDetails.compDetails == null ||
-            oldDetails.compDetails === newDetails.compDetails
-        ) {
+        const oldCompDetails = oldDetails?.compDetails;
+        const newCompDetails = newDetails?.compDetails;
+        if (oldCompDetails == null || newCompDetails == null || oldCompDetails === newCompDetails) {
             return;
         }
 
         rowDragCompRef.current?.refreshVisibility();
-
-        const oldCompDetails = oldDetails.compDetails;
-        const newCompDetails = newDetails.compDetails;
 
         // if different Cell Renderer, then do nothing, as renderer will be recreated
         if (oldCompDetails.componentClass != newCompDetails.componentClass) {
