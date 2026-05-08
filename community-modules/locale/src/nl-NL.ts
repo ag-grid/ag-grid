@@ -336,8 +336,8 @@ export const AG_GRID_LOCALE_NL = {
     sortUnSort: 'Sortering wissen',
     shiftF2: 'Shift+F2',
     toolbarFind: 'Zoeken',
-    toolbarFindPreviousMatch: 'Vorige overeenkoming',
-    toolbarFindNextMatch: 'Volgende overeenkoming',
+    toolbarFindPreviousMatch: 'Vorige resultaat',
+    toolbarFindNextMatch: 'Volgende resultaat',
     toolbarQuickFilter: 'Filter',
     toolbarMenu: 'Menu',
 
