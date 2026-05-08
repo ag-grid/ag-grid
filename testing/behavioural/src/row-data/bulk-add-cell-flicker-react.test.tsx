@@ -92,6 +92,7 @@ describe('Eager row content seed (bulk-add flicker regression)', () => {
                 <AgGridReact
                     rowData={initialRowData}
                     columnDefs={columnDefs}
+                    animateRows={true}
                     onGridReady={(p) => {
                         gridApi = p.api;
                     }}
@@ -137,6 +138,7 @@ describe('Eager row content seed (bulk-add flicker regression)', () => {
                 <AgGridReact
                     rowData={initialRowData}
                     columnDefs={columnDefs}
+                    animateRows={true}
                     onGridReady={(p) => {
                         gridApi = p.api;
                     }}
@@ -162,6 +164,88 @@ describe('Eager row content seed (bulk-add flicker regression)', () => {
         expectNoFlicker(records);
     });
 
+    // Mirrors the staging demo (`updating-row-data-without-row-ids`): React-state-driven
+    // rowData with no getRowId. Each rerender replaces the rowData prop, every viewport
+    // RowCtrl is destroyed and a fresh one created.
+    type RowDatum = { a: string; b: string; c: string };
+    let driveRowData: React.Dispatch<React.SetStateAction<RowDatum[]>> | undefined;
+    const initialData = (): RowDatum[] => Array.from({ length: 8 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` }));
+    const cycleData = (cycle: number): RowDatum[] =>
+        Array.from({ length: 8 }, (_, i) => ({ a: `c${cycle}-${i}`, b: `c${cycle}-${i}`, c: `c${cycle}-${i}` }));
+
+    function StreamingWrapper({ renderingMode }: { renderingMode: 'default' | 'legacy' }) {
+        const [data, setData] = React.useState<RowDatum[]>(initialData);
+        driveRowData = setData;
+        return (
+            <div style={{ height: 400, width: 600 }}>
+                <AgGridReact
+                    rowData={data}
+                    columnDefs={[{ field: 'a' }, { field: 'b' }, { field: 'c' }]}
+                    renderingMode={renderingMode}
+                    animateRows={true}
+                />
+            </div>
+        );
+    }
+
+    async function streamRowDataCycles(cycles = 3): Promise<void> {
+        for (let cycle = 0; cycle < cycles; cycle++) {
+            act(() => driveRowData!(cycleData(cycle)));
+            await asyncSetTimeout(20); // flush React commits + rAF before next cycle
+        }
+    }
+
+    test.each(['default', 'legacy'] as const)(
+        'setRowData via React prop without getRowId (%s): rows mount with cells',
+        async (renderingMode) => {
+            const rendered = render(<StreamingWrapper renderingMode={renderingMode} />);
+            await waitFor(() => expect(rendered.container.querySelectorAll(ROW_SELECTOR).length).toBeGreaterThan(0));
+
+            const records = await recordContentAppendedIntoExistingRows(rendered.container, streamRowDataCycles);
+
+            expectNoFlicker(records);
+        }
+    );
+
+    // Detects the fade-out flicker directly: assert no row gains `ag-opacity-zero`
+    // during a non-animating wholesale-replace.
+    test.each(['default', 'legacy'] as const)(
+        'setRowData wholesale-replace without getRowId (%s): no fade-out class toggling',
+        async (renderingMode) => {
+            const rendered = render(<StreamingWrapper renderingMode={renderingMode} />);
+            await waitFor(() => expect(rendered.container.querySelectorAll(ROW_SELECTOR).length).toBeGreaterThan(0));
+
+            const opacityToggles: { rowId: string | null; value: string }[] = [];
+            const observer = new MutationObserver((mutations) => {
+                for (const m of mutations) {
+                    if (m.type !== 'attributes' || m.attributeName !== 'class') {
+                        continue;
+                    }
+                    const target = m.target;
+                    if (!(target instanceof HTMLElement) || !target.hasAttribute('row-id')) {
+                        continue;
+                    }
+                    const cls = target.getAttribute('class') ?? '';
+                    if (cls.includes('ag-opacity-zero')) {
+                        opacityToggles.push({ rowId: target.getAttribute('row-id'), value: cls });
+                    }
+                }
+            });
+            observer.observe(rendered.container, { subtree: true, attributes: true, attributeFilter: ['class'] });
+
+            await streamRowDataCycles();
+            observer.disconnect();
+
+            if (opacityToggles.length > 0) {
+                throw new Error(
+                    `Expected no rows to receive ag-opacity-zero during wholesale-replace without getRowId, ` +
+                        `but ${opacityToggles.length} row class change(s) included it. ` +
+                        `First: ${JSON.stringify(opacityToggles.slice(0, 3))}`
+                );
+            }
+        }
+    );
+
     test('column visibility toggle after bulk add still produces correct cells', async () => {
         // Guards against a regression where the constructor pre-creation prevents the
         // setComp-driven reconciliation from picking up subsequent column changes.
@@ -174,6 +258,7 @@ describe('Eager row content seed (bulk-add flicker regression)', () => {
                 <AgGridReact
                     rowData={initialRowData}
                     columnDefs={columnDefs}
+                    animateRows={true}
                     onGridReady={(p) => {
                         gridApi = p.api;
                     }}

@@ -25,20 +25,6 @@
         --ag-toolbar-separator-color: var(--ag-border-color);
         --ag-toolbar-separator-width: 1px;
 
-        // Shims mapping new Theming API variable names used by toolbar SCSS to legacy equivalents
-        --ag-spacing: var(--ag-grid-size);
-        --ag-text-color: var(--ag-foreground-color);
-        --ag-header-row-border: var(--ag-borders) var(--ag-border-color);
-        --ag-toolbar-separator-border: solid var(--ag-toolbar-separator-width) var(--ag-toolbar-separator-color);
-        --ag-input-border: var(--ag-borders-input) var(--ag-input-border-color);
-        --ag-input-border-radius: var(--ag-border-radius);
-        --ag-input-background-color: var(--ag-background-color);
-        --ag-input-placeholder-text-color: var(--ag-disabled-foreground-color);
-        --ag-input-focus-border: var(--ag-borders-input) var(--ag-input-focus-border-color);
-        --ag-focus-shadow: var(--ag-input-focus-box-shadow);
-        --ag-icon-button-hover-background-color: transparent;
-        --ag-icon-button-hover-color: var(--ag-foreground-color);
-
         --ag-tooltip-background-color: transparent;
 
         --ag-tooltip-error-background-color: color-mix(
@@ -295,7 +281,7 @@
         --ag-note-popup-background-color: var(--ag-menu-background-color);
         --ag-note-popup-text-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 75%);
         --ag-note-popup-input-text-color: var(--ag-input-text-color);
-        --ag-note-popup-input-background-color: var(--ag-input-background-color);
+        --ag-note-popup-input-background-color: var(--ag-background-color);
         --ag-note-popup-border: var(--ag-dialog-border);
         --ag-note-popup-padding: calc(var(--ag-grid-size) / 2);
     }

@@ -7,8 +7,8 @@ test.agExample(import.meta, () => {
         const toolbar = page.locator('.ag-toolbar');
         await expect(toolbar).toBeVisible();
 
-        await expect(toolbar.locator(':scope > .ag-toolbar-button-wrapper')).toHaveCount(6);
-        await expect(toolbar.locator(':scope > .ag-toolbar-separator')).toHaveCount(5);
+        await expect(toolbar.locator(':scope > .ag-toolbar-button-wrapper')).toHaveCount(7);
+        await expect(toolbar.locator(':scope > .ag-toolbar-separator')).toHaveCount(3);
     });
 
     test.eachFramework('Action buttons have no visible label text', async ({ page }) => {

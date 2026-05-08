@@ -67,43 +67,17 @@ A number of built-in toolbar items are provided for common use cases that integr
 | `agQuickFilterToolbarItem`             | Text input that filters grid rows using the [Quick Filter](./filter-quick/). | `QuickFilterModule`                       |
 | `agFindToolbarItem`                    | Text input that searches within grid cells using [Find](./find/).            | `FindModule`                              |
 | `agRowGroupPanelToolbarItem`           | Embeds the [Row Group Panel](./grouping-group-panel/).                       | `RowGroupingPanelModule`                  |
-| `agPivotPanelToolbarItem`              | Embeds the [Pivot Panel](./pivoting/).                                       | `RowGroupingPanelModule`                  |
+| `agPivotPanelToolbarItem`              | Embeds the [Pivot Panel](./pivoting/#enabling-the-pivot-panel/).             | `RowGroupingPanelModule`                  |
 | [`agMenuToolbarItem`](#dropdown-menus) | Button that opens a [dropdown menu](#dropdown-menus).                        | `ContextMenuModule` or `ColumnMenuModule` |
 | `separator`                            | Vertical divider used to group items visually. Has no behaviour of its own.  | None                                      |
 
-{% note %}
-When the same built-in item appears more than once, set a unique `key` on each occurrence. Without a `key`, the item type is used as the key, so only the first duplicate will be rendered.
-{% /note %}
+### Row Group and Pivot Panels
 
-### Row Group Panel
+The Row Group Panel and Pivot Panel can both be embedded in the Quick Access Toolbar using `agRowGroupPanelToolbarItem` and `agPivotPanelToolbarItem`. Both panels are configured independently of the [Row Group Panel](./grouping-group-panel/) and the [Pivot Panel](./pivoting/#enabling-the-pivot-panel/), so you can display each panel in the Toolbar, above the grid, or both at the same time.
 
-The Row Group Panel can be embedded in the Quick Access Toolbar using the `agRowGroupPanelToolbarItem` built-in item.
+The example below shows both panels in the toolbar along with a reset action button. Use the panels to rearrange columns, then click Reset to restore the initial layout.
 
-The Toolbar Row Group Panel is configured independently of `rowGroupPanelShow`. This means you can display the Row Group Panel in the Toolbar, above the grid, or both at the same time. In most cases, if you are using the Toolbar version, you would typically not also show the standard Row Group Panel above the grid.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    toolbar: {
-        items: ['agRowGroupPanelToolbarItem'],
-    },
-    // other grid options ...
-}
-```
-
-### Pivot Panel
-
-The Pivot Panel can be embedded in the Quick Access Toolbar using the `agPivotPanelToolbarItem` built-in item.
-
-The Toolbar Pivot Panel is configured independently of `pivotPanelShow`. This means you can display the Pivot Panel in the Toolbar, above the grid, or both at the same time. In most cases, if you are using the Toolbar version, you would typically not also show the standard Pivot Panel above the grid.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    toolbar: {
-        items: ['agPivotPanelToolbarItem'],
-    },
-    // other grid options ...
-}
-```
+{% gridExampleRunner title="Row Group and Pivot Panels" name="row-group-pivot-panels" exampleHeight=350 /%}
 
 ### Dropdown Menus
 
@@ -162,7 +136,7 @@ The example below shows icon-only buttons with tooltips for sizing columns, sort
 
 For controls beyond a button, such as toggles, inputs, or any stateful UI, set `toolbarItem` to a custom component. Custom components can render arbitrary HTML and call any grid API, so they suit cases that the [Action Button](#action-buttons) shorthand cannot express.
 
-The example below defines two custom items: checkbox toggles that apply column filters on the left, and a radio group that opens [Side Bar](./tool-panel/) tool panels on the right. The radio group exposes a `setSelected` method, called from the grid's `onToolPanelVisibleChanged` callback via [`getToolbarItemInstance`](#reference-getToolbarItemInstance) to keep its state in sync when a panel is opened or closed elsewhere, for example by clicking a side bar tab.
+The example below defines two custom items: checkbox toggles that apply column filters on the left, and a radio group that opens [Side Bar](./tool-panel/) tool panels on the right. The radio group's `setSelected` method is called via [`getToolbarItemInstance`](#reference-getToolbarItemInstance) in `onToolPanelVisibleChanged` to stay in sync when a panel is opened or closed elsewhere, such as via a sidebar tab.
 
 {% gridExampleRunner title="Custom Toolbar Item" name="toolbar-custom" /%}
 
@@ -210,7 +184,7 @@ The toolbar exposes the following [Theme Parameters](./theming-parameters/):
 
 ## Accessing Toolbar Items
 
-To access a toolbar item instance use the grid api method `getToolbarItemInstance(key)`. This is demonstrated in the [Custom Components](#custom-components) example above, where it's used to keep a toolbar radio in sync with side bar tool panel changes.
+To access a toolbar item instance use the grid api method `getToolbarItemInstance(key)`. The `key` must match a `key` set on the item definition; items without an explicit key are not reachable via the API. This is demonstrated in the [Custom Components](#custom-components) example above, where it's used to keep a toolbar radio in sync with side bar tool panel changes.
 
 {% apiDocumentation source="grid-api/api.json" section="accessories" names=["getToolbarItemInstance"] /%}
 
