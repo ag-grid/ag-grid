@@ -30,6 +30,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     // this cell renderer
     private readonly innerCellRenderer: ICellRendererComp;
+    private ctrl: GroupCellRendererCtrl | null;
 
     constructor() {
         super(GroupCellRendererElement);
@@ -47,6 +48,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         };
 
         const ctrl = this.createManagedBean(new GroupCellRendererCtrl());
+        this.ctrl = ctrl;
         const fullWidth = !params.colDef;
         const eGui = this.getGui();
         ctrl.init(compProxy, eGui, this.eCheckbox, this.eExpanded, this.eContracted, this.constructor, params);
@@ -79,9 +81,10 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     public override destroy(): void {
         this.destroyBean(this.innerCellRenderer);
         super.destroy();
+        this.ctrl = null;
     }
 
-    public refresh(): boolean {
-        return false;
+    public refresh(params: GroupCellRendererParams): boolean {
+        return this.ctrl?.refresh(params) ?? false;
     }
 }
