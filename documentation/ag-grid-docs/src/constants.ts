@@ -185,6 +185,7 @@ export const EXAMPLE_RANDOM_SEED = 'AG Grid Random Seed';
 export const TRIAL_LICENCE_FORM_URL = import.meta.env?.PUBLIC_TRIAL_LICENCE_FORM_URL;
 
 export const EXAMPLE_STYLE_FILE_NAME = 'ag-example-styles.css';
+export const DEBUG_SCRIPT_FILE_NAME = 'ag-grid-debug.js';
 
 export const PRODUCTION_CHANGELOG_JSON_URL = 'https://www.ag-grid.com/changelog/changelog.json';
 
