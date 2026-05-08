@@ -1009,7 +1009,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         super.destroy();
     }
 
-    private removeAllRowComps(suppressAnimation: boolean = false): void {
+    private removeAllRowComps(suppressAnimation: boolean): void {
         const rowIndexesToRemove = Object.keys(this.rowCtrlsByRowIndex);
         this.removeRowCtrls(rowIndexesToRemove, suppressAnimation);
 
