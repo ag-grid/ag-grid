@@ -166,7 +166,7 @@ export const themeBalhamParams = () => ({
     statusBarLabelFontWeight: 600,
     statusBarValueFontWeight: 600,
     panelTitleBarIconColor: foregroundColor,
-    toolbarTextColor: foregroundColor,
+    toolbarTextColor: { ref: 'headerTextColor' },
     colorPickerThumbSize: 13,
     colorPickerTrackSize: 11,
     colorPickerThumbBorderWidth: 2,
