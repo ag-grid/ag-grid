@@ -150,6 +150,9 @@
     background-color: transparent;
     border-bottom: none;
     padding: 0;
+    font-weight: var(--ag-cell-font-weight);
+    font-size: var(--ag-cell-font-size);
+    font-family: var(--ag-cell-font-family);
 }
 
 /* stylelint-disable-next-line selector-max-specificity */

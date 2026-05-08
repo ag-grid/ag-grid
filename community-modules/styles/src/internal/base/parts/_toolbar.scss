@@ -45,14 +45,14 @@
     }
 
     .ag-toolbar-button-wrapper:hover {
-        background-color: transparent;
-        color: var(--ag-foreground-color);
+        background-color: var(--ag-icon-button-hover-background-color, transparent);
+        color: var(--ag-icon-button-hover-color, var(--ag-foreground-color));
     }
 
     // stylelint-disable-next-line selector-max-specificity
     .ag-toolbar-button-wrapper:hover .ag-toolbar-button,
     .ag-toolbar-button-wrapper:hover .ag-toolbar-button .ag-icon {
-        color: var(--ag-foreground-color);
+        color: var(--ag-icon-button-hover-color, var(--ag-foreground-color));
     }
 
     // stylelint-disable-next-line selector-max-specificity
@@ -160,6 +160,9 @@
         background-color: transparent;
         border-bottom: none;
         padding: 0;
+        font-weight: normal;
+        font-size: var(--ag-font-size);
+        font-family: var(--ag-font-family);
     }
 
     // stylelint-disable-next-line selector-max-specificity
