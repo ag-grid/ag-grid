@@ -1,29 +1,27 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import {
     ClientSideRowModelModule,
     ColDef,
-    FindChangedEvent,
     FindOptions,
     FirstDataRenderedEvent,
     GetDetailRowDataParams,
     GetFindMatchesParams,
     GetRowIdParams,
-    GridApi,
-    GridReadyEvent,
     IDetailCellRendererParams,
     ModuleRegistry,
     RowApiModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { FindModule, MasterDetailModule } from 'ag-grid-enterprise';
+import { FindModule, MasterDetailModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 import './styles.css';
 
 ModuleRegistry.registerModules([
     FindModule,
+    ToolbarModule,
     ClientSideRowModelModule,
     MasterDetailModule,
     RowApiModule,
@@ -34,42 +32,20 @@ ModuleRegistry.registerModules([
     selector: 'my-app',
     standalone: true,
     imports: [AgGridAngular],
-    template: `<div class="example-wrapper">
-        <div class="example-header">
-            <div class="example-controls">
-                <span>Find:</span>
-                <input type="text" (input)="onInput($event)" (keydown)="onKeyDown($event)" />
-                <button (click)="previous()">Previous</button>
-                <button (click)="next()">Next</button>
-                <span>{{ activeMatchNum }}</span>
-            </div>
-            <div class="example-controls">
-                <span>Go to match:</span>
-                <input #goToInput type="number" />
-                <button (click)="goToFind()">Go To</button>
-            </div>
-        </div>
-        <ag-grid-angular
-            style="width: 100%; height: 100%;"
-            [columnDefs]="columnDefs"
-            [defaultColDef]="defaultColDef"
-            [rowData]="rowData"
-            [masterDetail]="true"
-            [getRowId]="getRowId"
-            [detailCellRendererParams]="detailCellRendererParams"
-            [findOptions]="findOptions"
-            [findSearchValue]="findSearchValue"
-            (findChanged)="onFindChanged($event)"
-            (firstDataRendered)="onFirstDataRendered($event)"
-            (gridReady)="onGridReady($event)"
-        />
-    </div> `,
+    template: `<ag-grid-angular
+        style="width: 100%; height: 100%;"
+        [columnDefs]="columnDefs"
+        [defaultColDef]="defaultColDef"
+        [rowData]="rowData"
+        [masterDetail]="true"
+        [getRowId]="getRowId"
+        [detailCellRendererParams]="detailCellRendererParams"
+        [findOptions]="findOptions"
+        [toolbar]="toolbar"
+        (firstDataRendered)="onFirstDataRendered($event)"
+    /> `,
 })
 export class AppComponent {
-    @ViewChild('goToInput', { read: ElementRef }) public goToInput!: ElementRef;
-
-    private gridApi!: GridApi;
-
     columnDefs: ColDef[] = [{ field: 'a1', cellRenderer: 'agGroupCellRenderer' }, { field: 'b1' }];
     defaultColDef: ColDef = {
         flex: 1,
@@ -78,6 +54,9 @@ export class AppComponent {
     getRowId = (params: GetRowIdParams) => params.data.a1;
     findOptions: FindOptions = {
         searchDetail: true,
+    };
+    toolbar = {
+        items: ['agFindToolbarItem' as const],
     };
     detailCellRendererParams: Partial<IDetailCellRendererParams> = {
         // level 2 grid options
@@ -113,55 +92,8 @@ export class AppComponent {
         getFindMatches: (params: GetFindMatchesParams) => this.getFindMatches(params),
     };
 
-    activeMatchNum: string = '';
-
-    findSearchValue: string | undefined;
-
-    constructor() {}
-
-    onFindChanged(event: FindChangedEvent) {
-        const { activeMatch, totalMatches, findSearchValue } = event;
-        this.activeMatchNum = findSearchValue?.length ? `${activeMatch?.numOverall ?? 0}/${totalMatches}` : '';
-    }
-
     onFirstDataRendered(event: FirstDataRenderedEvent) {
         event.api.getDisplayedRowAtIndex(0)?.setExpanded(true);
-    }
-
-    next() {
-        this.gridApi.findNext();
-    }
-
-    previous() {
-        this.gridApi.findPrevious();
-    }
-
-    goToFind() {
-        const num = Number((this.goToInput.nativeElement as HTMLInputElement).value);
-        if (isNaN(num) || num < 0) {
-            return;
-        }
-        this.gridApi.findGoTo(num);
-    }
-
-    onGridReady(params: GridReadyEvent) {
-        this.gridApi = params.api;
-    }
-
-    onInput(event: Event): void {
-        this.findSearchValue = (event.target as HTMLInputElement).value;
-    }
-
-    onKeyDown(event: KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const backwards = event.shiftKey;
-            if (backwards) {
-                this.previous();
-            } else {
-                this.next();
-            }
-        }
     }
 
     private getFindMatches(params: GetFindMatchesParams) {

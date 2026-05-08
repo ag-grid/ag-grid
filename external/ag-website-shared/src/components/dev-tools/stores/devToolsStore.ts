@@ -30,3 +30,6 @@ export const $openLinksInNewTab = persistentAtom<boolean>(
     parseBoolean
 );
 export const toggleOpenLinksInNewTab = createToggleBoolean($openLinksInNewTab);
+
+export const $fpsMonitor = persistentAtom<boolean>(`${LOCALSTORAGE_PREFIX}:fpsMonitor`, false, parseBoolean);
+export const toggleFpsMonitor = createToggleBoolean($fpsMonitor);

@@ -3,18 +3,24 @@
 import React, { type ChangeEvent, type KeyboardEvent, StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, FindChangedEvent, GridReadyEvent } from 'ag-grid-community';
-import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColDef,
+    FindChangedEvent,
+    GridReadyEvent,
+    ModuleRegistry,
+    ValidationModule,
+} from 'ag-grid-community';
 import { FindModule } from 'ag-grid-enterprise';
-import { AgGridProvider, AgGridReact } from 'ag-grid-react';
+import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-const modules = [
+ModuleRegistry.registerModules([
     FindModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
-];
+]);
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
@@ -83,37 +89,35 @@ const GridExample = () => {
     }, []);
 
     return (
-        <AgGridProvider modules={modules}>
-            <div style={containerStyle}>
-                <div className="example-wrapper">
-                    <div className="example-header">
-                        <div className="example-controls">
-                            <span>Find:</span>
-                            <input type="text" onInput={onInput} onKeyDown={onKeyDown} />
-                            <button onClick={previous}>Previous</button>
-                            <button onClick={next}>Next</button>
-                            <span>{activeMatchNum}</span>
-                        </div>
-                        <div className="example-controls">
-                            <span>Go to match:</span>
-                            <input type="number" ref={goToRef} />
-                            <button onClick={goToFind}>Go To</button>
-                        </div>
+        <div style={containerStyle}>
+            <div className="example-wrapper">
+                <div className="example-header">
+                    <div className="example-controls">
+                        <span>Find:</span>
+                        <input type="text" onInput={onInput} onKeyDown={onKeyDown} />
+                        <button onClick={previous}>Previous</button>
+                        <button onClick={next}>Next</button>
+                        <span>{activeMatchNum}</span>
                     </div>
-
-                    <div style={gridStyle}>
-                        <AgGridReact
-                            ref={gridRef}
-                            rowData={rowData}
-                            columnDefs={columnDefs}
-                            findSearchValue={findSearchValue}
-                            onGridReady={onGridReady}
-                            onFindChanged={onFindChanged}
-                        />
+                    <div className="example-controls">
+                        <span>Go to match:</span>
+                        <input type="number" ref={goToRef} />
+                        <button onClick={goToFind}>Go To</button>
                     </div>
                 </div>
+
+                <div style={gridStyle}>
+                    <AgGridReact
+                        ref={gridRef}
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        findSearchValue={findSearchValue}
+                        onGridReady={onGridReady}
+                        onFindChanged={onFindChanged}
+                    />
+                </div>
             </div>
-        </AgGridProvider>
+        </div>
     );
 };
 

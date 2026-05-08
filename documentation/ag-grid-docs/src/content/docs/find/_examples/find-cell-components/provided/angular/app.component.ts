@@ -5,20 +5,20 @@ import { AgGridAngular } from 'ag-grid-angular';
 import {
     ClientSideRowModelModule,
     ColDef,
-    FindChangedEvent,
+    FirstDataRenderedEvent,
     GetFindTextParams,
-    GridApi,
     GridReadyEvent,
     ModuleRegistry,
     ValidationModule,
 } from 'ag-grid-community';
-import { FindModule } from 'ag-grid-enterprise';
+import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { FindRenderer } from './find-renderer.component';
 import './styles.css';
 
 ModuleRegistry.registerModules([
     FindModule,
+    ToolbarModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -27,30 +27,17 @@ ModuleRegistry.registerModules([
     selector: 'my-app',
     standalone: true,
     imports: [AgGridAngular, FindRenderer],
-    template: `<div class="example-wrapper">
-        <div class="example-header">
-            <div class="example-controls">
-                <span>Find:</span>
-                <input type="text" (input)="onInput($event)" (keydown)="onKeyDown($event)" value="e" />
-                <button (click)="previous()">Previous</button>
-                <button (click)="next()">Next</button>
-                <span>{{ activeMatchNum }}</span>
-            </div>
-        </div>
-        <ag-grid-angular
-            style="width: 100%; height: 100%;"
-            [columnDefs]="columnDefs"
-            [rowData]="rowData"
-            [findSearchValue]="findSearchValue"
-            (findChanged)="onFindChanged($event)"
-            (gridReady)="onGridReady($event)"
-            (firstDataRendered)="onFirstDataRendered($event)"
-        />
-    </div> `,
+    template: `<ag-grid-angular
+        style="width: 100%; height: 100%;"
+        [columnDefs]="columnDefs"
+        [rowData]="rowData"
+        [findSearchValue]="findSearchValue"
+        [toolbar]="toolbar"
+        (gridReady)="onGridReady($event)"
+        (firstDataRendered)="onFirstDataRendered($event)"
+    /> `,
 })
 export class AppComponent {
-    private gridApi!: GridApi;
-
     columnDefs: ColDef[] = [
         { field: 'athlete' },
         { field: 'country' },
@@ -68,50 +55,21 @@ export class AppComponent {
     ];
     rowData!: any[];
 
-    activeMatchNum: string = '';
+    findSearchValue: string = 'e';
 
-    findSearchValue: string | undefined = 'e';
+    toolbar = {
+        items: ['agFindToolbarItem' as const],
+    };
 
     constructor(private http: HttpClient) {}
 
-    onFindChanged(event: FindChangedEvent) {
-        const { activeMatch, totalMatches, findSearchValue } = event;
-        this.activeMatchNum = findSearchValue?.length ? `${activeMatch?.numOverall ?? 0}/${totalMatches}` : '';
-    }
-
-    onFirstDataRendered() {
-        this.next();
-    }
-
-    next() {
-        this.gridApi.findNext();
-    }
-
-    previous() {
-        this.gridApi.findPrevious();
+    onFirstDataRendered(event: FirstDataRenderedEvent) {
+        event.api.findNext();
     }
 
     onGridReady(params: GridReadyEvent) {
-        this.gridApi = params.api;
-
         this.http
             .get<any[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .subscribe((data) => (this.rowData = data));
-    }
-
-    onInput(event: Event): void {
-        this.findSearchValue = (event.target as HTMLInputElement).value;
-    }
-
-    onKeyDown(event: KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const backwards = event.shiftKey;
-            if (backwards) {
-                this.previous();
-            } else {
-                this.next();
-            }
-        }
     }
 }

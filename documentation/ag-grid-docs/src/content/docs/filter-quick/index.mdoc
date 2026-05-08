@@ -2,14 +2,28 @@
 title: "Quick Filter"
 ---
 
-Quick Filter is a piece of text given to the grid (typically the user will type it in somewhere in your application) that is used to filter rows by comparing against the data in all columns. This can be used in addition to column-specific filtering.
+Quick Filter is a piece of text given to the grid that is used to filter rows by comparing against the data in all columns. It can be used in addition to column-specific filtering.
 
-## Setting the Quick Filter
+## Enable the Quick Filter
 
-{% gridExampleRunner title="Quick Filter" name="quick-filter" /%}
+### Using the Quick Access Toolbar {% enterpriseIcon style="{\"marginTop\": \"-4px\"}" /%}
+
+The recommended way to add a Quick Filter input is as a [Quick Access Toolbar](./toolbar/) item. This keeps the Quick Filter integrated with the grid and requires no additional markup.
+
+{% gridExampleRunner title="Quick Filter with Toolbar" name="quick-filter-toolbar" /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: ['agQuickFilterToolbarItem'],
+    },
+}
+```
+
+### Using Grid Options
 
 {% if isFramework("react") %}
-You can set the Quick Filter text via the `quickFilterText` grid option.
+Set the `quickFilterText` grid option to filter rows.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -20,22 +34,26 @@ const gridOptions = {
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
-You can set the Quick Filter text by calling the `setGridOption('quickFilterText', text)` method on the grid API.
+Call `setGridOption('quickFilterText', text)` to filter rows.
 
 ```{% frameworkTransform=true %}
 api.setGridOption('quickFilterText', 'new filter text');
 ```
 
-You can also set the initial Quick Filter text via the `quickFilterText` grid option.
+The initial Quick Filter text can also be set via the `quickFilterText` grid option.
 {% /if %}
 
-The provided Quick Filter text will be split into words, and each word will be compared against the row. A word matches the row if the string value of any of the columns contains the word (the check is case insensitive). All words must match the row for it to be included. For example, if the text is "Tony Ireland", the Quick Filter will only include rows with both "Tony" AND "Ireland" in them.
+{% gridExampleRunner title="Quick Filter" name="quick-filter" /%}
 
-## Checking the Quick Filter
+## Quick Filter Value
 
-Usually the state of the Quick Filter text would be maintained outside of the grid. However, it's possible to check whether the Quick Filter is applied via the API method `isQuickFilterPresent()`, and get the current text via `getQuickFilter()`.
+The filter text is split into words, and each word is compared against every column value (case-insensitive). All words must match a row for it to be included. For example, searching "Tony Ireland" will only show rows containing both "Tony" and "Ireland".
 
-## Overriding the Quick Filter Value
+### Checking the Quick Filter
+
+When the Quick Filter is set via `quickFilterText`, the state is maintained outside the grid. When the Quick Access Toolbar item is used, the input is owned by the grid. In either case, use `isQuickFilterPresent()` to check whether the Quick Filter is applied, and `getQuickFilter()` to read the current text.
+
+### Overriding the Quick Filter Value
 
 If your data contains complex objects, the Quick Filter will end up comparing against `[object Object]` instead of searchable string values. In this case you will need to implement `getQuickFilterText` to extract a searchable string from your complex object.
 
@@ -115,7 +133,7 @@ The example below shows the Quick Filter working on different data types. Each c
 - `Age` - Complex object with 'dot' in field, Quick Filter works fine.
 - `Country` - Complex object and value getter used, again Quick Filter works fine.
 - `Results` - Complex object, Quick Filter would call `toString` on the complex object, so `getQuickFilterText` is provided.
-- `Hidden` - A hidden column with all values being the string 'hidden'. Enter `hidden` into the filter and no rows will be matched. Click the `Include Hidden Columns` button to set `includeHiddenColumnsInQuickFilter = true`, and all rows will be matched. Note the Quick Filter cache will be cleared automatically when the option is changed.
+- `Hidden` - A hidden column with all values being the string 'hidden'. Search `hidden` in the toolbar and no rows will be matched. Click the `Include Hidden Columns` button to set `includeHiddenColumnsInQuickFilter = true`, and all rows will be matched. Note the Quick Filter cache will be cleared automatically when the option is changed.
 
 A `quickFilterParser` is defined to allow exact searches using quotes, e.g. `"gold: 1"` will only match `Results` with that value. A `quickFilterMatcher` is also defined to allow regular expressions to be entered, e.g. `2[012]` will match `Age` 20, 21 and 22.
 
@@ -134,8 +152,8 @@ It is possible to instead filter the data before pivoting/aggregating are applie
 
 The following example demonstrates the difference in filtering behaviour with `applyQuickFilterBeforePivotOrAgg` enabled/disabled. The columns **Athlete** and **Sport** are present, but are not being used for pivoting:
 
-- Search for “Swimming” or 2000 and note that there are no matches in the grid, as the filter is applied after pivoting.
-- Click the button to apply Quick Filter before pivoting and aggregation and note that there are matches in the grid, as the filter is applied before pivoting.
+- Use the Quick Filter toolbar to search for "Swimming" or 2000 and note that there are no matches in the grid, as the filter is applied after pivoting.
+- Click the button to apply Quick Filter before pivoting and aggregation, then search again and note that there are now matches, as the filter is applied before pivoting.
 
 {% gridExampleRunner title="Quick Filter Pivot / Aggregation" name="quick-filter-pivot-agg" /%}
 

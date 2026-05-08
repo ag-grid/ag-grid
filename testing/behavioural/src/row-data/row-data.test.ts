@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule, NumberFilterModule, RowApiModule, TextFilterModule } from 'ag-grid-community';
-import type { GridOptions, ModelUpdatedEvent } from 'ag-grid-community';
+import type { GridOptions, IRowNode, ModelUpdatedEvent } from 'ag-grid-community';
 
 import {
     GridRows,
@@ -389,6 +389,70 @@ describe('ag-grid row data', () => {
         // Passing a number should not throw, and should still find the row via property key coercion
         expect(api.getRowNode(1 as any)).toBeTruthy();
         expect(api.getRowNode(999 as any)).toBeUndefined();
+    });
+
+    test('setRowData without getRowId destroys old nodes silently (no position events)', async () => {
+        const row1 = { value: 1 };
+        const row2 = { value: 2 };
+        const row3 = { value: 3 };
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'value' }],
+            rowData: [row1, row2, row3],
+            animateRows: false,
+        };
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+        await asyncSetTimeout(1);
+
+        const initialNodes: IRowNode[] = [];
+        api.forEachNode((n) => initialNodes.push(n));
+        expect(initialNodes).toHaveLength(3);
+
+        await new GridRows(api, 'before').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 value:1
+            ├── LEAF id:1 value:2
+            └── LEAF id:2 value:3
+        `);
+
+        let topChangedCount = 0;
+        let rowIndexChangedCount = 0;
+        let displayedChangedCount = 0;
+        for (const node of initialNodes) {
+            node.addEventListener('topChanged', () => {
+                ++topChangedCount;
+            });
+            node.addEventListener('rowIndexChanged', () => {
+                ++rowIndexChangedCount;
+            });
+            node.addEventListener('displayedChanged', () => {
+                ++displayedChangedCount;
+            });
+        }
+
+        setRowDataChecked(api, [{ value: 10 }, row2, row3]);
+        await asyncSetTimeout(1);
+
+        const newNodes: IRowNode[] = [];
+        api.forEachNode((n) => newNodes.push(n));
+        expect(newNodes).toHaveLength(3);
+
+        for (const node of initialNodes) {
+            expect(node.destroyed).toBe(true);
+            expect(node.rowTop).toBeNull();
+            expect(node.rowIndex).toBeNull();
+            expect(node.displayed).toBe(false);
+        }
+        await new GridRows(api, 'after').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 value:10
+            ├── LEAF id:1 value:2
+            └── LEAF id:2 value:3
+        `);
+
+        expect(topChangedCount).toBe(0);
+        expect(rowIndexChangedCount).toBe(0);
+        expect(displayedChangedCount).toBe(0);
     });
 
     describe('onModelUpdated event flags', () => {

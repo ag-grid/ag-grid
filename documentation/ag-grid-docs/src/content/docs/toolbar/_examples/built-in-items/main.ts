@@ -1,6 +1,7 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    ColumnAutoSizeModule,
     CsvExportModule,
     ModuleRegistry,
     NumberFilterModule,
@@ -9,15 +10,17 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ContextMenuModule, ExcelExportModule, ToolbarModule } from 'ag-grid-enterprise';
+import { ContextMenuModule, ExcelExportModule, FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
     ClientSideRowModelModule,
+    ColumnAutoSizeModule,
     ContextMenuModule,
     CsvExportModule,
     ExcelExportModule,
+    FindModule,
     QuickFilterModule,
     ToolbarModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
@@ -38,12 +41,23 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     toolbar: {
-        alignment: 'right',
         items: [
-            { toolbarItem: 'agQuickFilterToolbarItem', alignment: 'left' },
+            'agQuickFilterToolbarItem',
+            'separator',
+            'agFindToolbarItem',
+            'separator',
+            {
+                label: 'Fit Columns To Grid',
+                icon: 'maximize',
+                alignment: 'right',
+                action: (params) => params.api.sizeColumnsToFit(),
+            },
             {
                 toolbarItem: 'agMenuToolbarItem',
                 icon: 'save',
+                alignment: 'right',
+                label: 'Export',
+                tooltip: 'Export as CSV or Excel',
                 toolbarItemParams: {
                     menuItems: ['csvExport', 'excelExport'],
                 },

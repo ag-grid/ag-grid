@@ -61,8 +61,8 @@ describe('Toolbar quickFilter item', () => {
             minimalGridMgr.reset();
         });
 
-        test('hides quickFilter and logs warning when QuickFilterModule is not registered', async () => {
-            const warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+        test('hides quickFilter and logs error when QuickFilterModule is not registered', async () => {
+            const errorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
             const api = minimalGridMgr.createGrid('quick-filter-no-module', {
                 columnDefs: [{ field: 'name' }],
@@ -77,13 +77,13 @@ describe('Toolbar quickFilter item', () => {
             expect(item).not.toBeNull();
             expect(item!.classList.contains('ag-hidden')).toBe(true);
 
-            expect(warnSpy).toHaveBeenCalledWith(
-                expect.stringContaining('warning #302'),
+            expect(errorSpy).toHaveBeenCalledWith(
+                expect.stringContaining('error #302'),
                 expect.stringContaining('agQuickFilterToolbarItem'),
                 expect.anything()
             );
 
-            warnSpy.mockRestore();
+            errorSpy.mockRestore();
         });
     });
 });

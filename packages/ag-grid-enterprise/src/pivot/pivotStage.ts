@@ -107,21 +107,14 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
         const aggregationColumns = valueColsSvc?.columns ?? [];
-        const aggregationColumnIds = aggregationColumns.map((column) => column.getId());
         const aggregationColumnsHash = aggregationColumns
             .map((column) => `${column.getId()}-${column.colDef.headerName}`)
             .join('#');
         const aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc()!.toString()).join('#');
 
         const aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
-        const aggregationColumnsReordered =
-            this.aggregationColumnIdsLastTime != null &&
-            !_areEqual(this.aggregationColumnIdsLastTime, aggregationColumnIds) &&
-            this.aggregationColumnIdsLastTime.length === aggregationColumnIds.length &&
-            this.aggregationColumnIdsLastTime.every((id) => aggregationColumnIds.includes(id));
         const aggregationFuncsChanged = this.aggregationFuncsHashLastTime !== aggregationFuncsHash;
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
-        this.aggregationColumnIdsLastTime = aggregationColumnIds;
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
 
         const groupColumnsHash = (rowGroupColsSvc?.columns ?? []).map((column) => column.getId()).join('#');
@@ -146,6 +139,18 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
             pivotOrderChanged ||
             anyGridOptionsChanged
         ) {
+            // Reorder detection only matters on the rebuild path. Computing the id
+            // list (and the includes-scan against last time) on every transaction
+            // would burn allocations on the no-op hot path.
+            const aggregationColumnIds = aggregationColumns.map((column) => column.getId());
+            const lastIds = this.aggregationColumnIdsLastTime;
+            const aggregationColumnsReordered =
+                lastIds != null &&
+                lastIds.length === aggregationColumnIds.length &&
+                !_areEqual(lastIds, aggregationColumnIds) &&
+                lastIds.every((id) => aggregationColumnIds.includes(id));
+            this.aggregationColumnIdsLastTime = aggregationColumnIds;
+
             const pivotColumnGroupDefs = this.pivotColDefSvc.createPivotColumnDefs(this.uniqueValues);
             this.pivotResultCols.setPivotResultCols(
                 pivotColumnGroupDefs,

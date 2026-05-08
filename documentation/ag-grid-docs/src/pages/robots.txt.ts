@@ -4,7 +4,7 @@ import { pathJoin } from '@utils/pathJoin';
 import { getSitemapAllowPaths, getSitemapIgnorePaths } from '@utils/sitemapPages';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
-const disallowAllRobotsTxt = () => 'User-agent: * Disallow: /';
+const disallowAllRobotsTxt = () => 'User-agent: *\nDisallow: /';
 
 const productionRobotsTxt = (allowPaths: string[] = [], disallowPaths: string[] = []) => `User-agent: *
 Allow: ${urlWithBaseUrl('/')}

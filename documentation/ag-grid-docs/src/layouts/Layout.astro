@@ -91,7 +91,7 @@ const announcementBannerProps = {
         {(!isProduction || isArchive || hidePageFromSearchEngines) && <meta name="robots" content="noindex" />}
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
-        <link rel="canonical" href={canonicalUrl} />
+        {!isStaging && <link rel="canonical" href={canonicalUrl} />}
         {
             !isDev && (
                 <link

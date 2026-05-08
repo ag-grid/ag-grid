@@ -64,8 +64,9 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             const sortOption = sortOptions[i];
             const isDescending = sortOption.sort === 'desc';
 
-            let valueA = this.getValue(nodeA, sortOption.column as AgColumn);
-            let valueB = this.getValue(nodeB, sortOption.column as AgColumn);
+            const column = sortOption.column as AgColumn;
+            let valueA = this.getValue(nodeA, column);
+            let valueB = this.getValue(nodeB, column);
 
             let comparatorResult: number;
             const providedComparator = this.getComparator(sortOption, nodeA);
@@ -102,7 +103,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
      * @private
      */
     private getComparator(sortOption: SortOption, rowNode: RowNode): SortComparatorFn | undefined {
-        const colDef = sortOption.column.getColDef();
+        const colDef = (sortOption.column as AgColumn).colDef;
 
         // comparator on col get preference over everything else
         const comparatorOnCol = this.getComparatorFromColDef(colDef, sortOption);

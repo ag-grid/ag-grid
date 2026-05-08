@@ -16,6 +16,7 @@
     --ag-range-selection-background-color-3: #{color.change(#2196f3, $alpha: 0.49)};
     --ag-range-selection-background-color-4: #{color.change(#2196f3, $alpha: 0.59)};
     --ag-row-numbers-selected-color: color-mix(in srgb, transparent, var(--ag-alpine-active-color) 50%);
+    --ag-icon-button-hover-color: var(--ag-alpine-active-color);
 
     // main colours (overridden by alpine-dark)
     --ag-background-color: #fff;

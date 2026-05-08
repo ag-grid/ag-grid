@@ -7,7 +7,6 @@
         overflow: hidden;
         border-bottom: var(--ag-header-row-border);
         min-height: var(--ag-header-height);
-        line-height: 1.5;
         background-color: var(--ag-toolbar-background-color);
         color: var(--ag-toolbar-text-color);
         font-family: var(--ag-header-font-family);
@@ -22,28 +21,56 @@
 
     .ag-toolbar-item {
         display: inline-flex;
+        margin: 0 calc(var(--ag-spacing, 8px) * 2);
+    }
+
+    .ag-toolbar-button-wrapper {
+        display: inline-flex;
+        padding: calc(var(--ag-spacing) * 0.25);
+        height: 100%;
     }
 
     .ag-toolbar-button {
         display: inline-flex;
         align-items: center;
         gap: var(--ag-spacing);
-        padding: calc(var(--ag-spacing) * 2);
+        padding: calc(var(--ag-spacing));
         border: 0;
         background: transparent;
         color: var(--ag-toolbar-text-color);
         cursor: pointer;
         line-height: 1;
         white-space: nowrap;
+        outline: none;
     }
 
-    .ag-toolbar-button:hover {
+    .ag-toolbar-button-wrapper:hover {
         background-color: var(--ag-icon-button-hover-background-color);
         color: var(--ag-icon-button-hover-color);
     }
 
+    // stylelint-disable-next-line selector-max-specificity
+    .ag-toolbar-button-wrapper:hover .ag-toolbar-button,
+    .ag-toolbar-button-wrapper:hover .ag-toolbar-button .ag-icon {
+        color: var(--ag-icon-button-hover-color);
+    }
+
+    // stylelint-disable-next-line selector-max-specificity
+    .ag-toolbar > .ag-toolbar-button-wrapper:first-child > .ag-toolbar-button {
+        border-start-start-radius: calc(var(--ag-border-radius) + 1px);
+    }
+
+    // stylelint-disable-next-line selector-max-specificity
+    .ag-toolbar > .ag-toolbar-button-wrapper:last-child > .ag-toolbar-button {
+        border-start-end-radius: calc(var(--ag-border-radius) + 1px);
+    }
+
     .ag-toolbar-button:focus-visible {
         box-shadow: var(--ag-focus-shadow);
+    }
+
+    .ag-toolbar-button:focus:not(:focus-visible) {
+        box-shadow: none;
     }
 
     .ag-toolbar-button:disabled {
@@ -68,8 +95,20 @@
         margin: 0 calc(var(--ag-spacing) * 2);
     }
 
-    :where(.ag-toolbar-input) + :where(.ag-toolbar-input) {
+    // stylelint-disable-next-line selector-max-specificity
+    .ag-toolbar-input + .ag-toolbar-input {
         margin-inline-start: 0;
+    }
+
+    // stylelint-disable-next-line selector-max-specificity
+    .ag-toolbar > .ag-toolbar-input:first-child,
+    .ag-toolbar-right-start + .ag-toolbar-input {
+        margin-inline-start: var(--ag-spacing);
+    }
+
+    // stylelint-disable-next-line selector-max-specificity
+    .ag-toolbar > .ag-toolbar-input:last-child {
+        margin-inline-end: var(--ag-spacing);
     }
 
     .ag-toolbar-input-icon {
@@ -79,34 +118,38 @@
         color: var(--ag-toolbar-text-color);
         opacity: 0.5;
         pointer-events: none;
-        @include ag.unthemed-rtl(
-            (
-                left: var(--ag-spacing),
-            )
-        );
+        inset-inline-start: var(--ag-spacing);
     }
 
     .ag-toolbar-input-field {
-        border: none;
-        background: transparent;
         color: var(--ag-text-color);
         font-size: var(--ag-font-size);
         line-height: 1.5;
         outline: none;
+        border: var(--ag-input-border);
+        border-radius: var(--ag-input-border-radius);
         width: 100%;
-        padding-top: calc(var(--ag-spacing) * 0.5);
-        padding-bottom: calc(var(--ag-spacing) * 0.5);
+        padding-block: calc(var(--ag-spacing) * 0.5);
+        padding-inline: calc(var(--ag-icon-size) + var(--ag-spacing) * 2) var(--ag-spacing);
+    }
 
-        @include ag.unthemed-rtl(
-            (
-                padding-right: var(--ag-spacing),
-                padding-left: calc(var(--ag-spacing) + 14px + var(--ag-spacing) * 0.5),
-            )
-        );
+    // High-specificity padding override — beats theme text-input padding-left rules
+    // (which reach .ag-theme-X .ag-ltr input[class^='ag-'][type='text'] = 0-4-1)
+    .ag-toolbar-input {
+        // stylelint-disable-next-line selector-max-specificity
+        input[class^='ag-'][type='text'].ag-toolbar-input-field {
+            @include ag.unthemed-rtl(
+                (
+                    padding-left: calc(var(--ag-icon-size) + var(--ag-spacing) * 2),
+                    padding-right: var(--ag-spacing),
+                )
+            );
+        }
     }
 
     .ag-toolbar-input-field:focus {
         box-shadow: var(--ag-focus-shadow);
+        border: var(--ag-input-focus-border);
     }
 
     .ag-toolbar-input-field::placeholder {
@@ -119,6 +162,11 @@
         padding: 0;
     }
 
+    // stylelint-disable-next-line selector-max-specificity
+    .ag-toolbar .ag-column-drop-horizontal {
+        border-bottom: none;
+    }
+
     .ag-toolbar-button-chevron {
         display: inline-flex;
         align-items: center;
@@ -128,11 +176,7 @@
         align-self: stretch;
         width: 0;
         margin: calc(var(--ag-spacing) * 1.75) 0;
-        @include ag.unthemed-rtl(
-            (
-                border-left: solid var(--ag-toolbar-separator-width) var(--ag-toolbar-separator-color),
-            )
-        );
+        border-inline-start: var(--ag-toolbar-separator-border);
     }
 
     .ag-toolbar-find {
@@ -140,14 +184,33 @@
         width: 280px;
         max-width: none;
         min-width: 220px;
+        border: var(--ag-input-border);
+        border-radius: var(--ag-input-border-radius);
+        background-color: var(--ag-input-background-color);
     }
 
     .ag-toolbar-find:focus-within {
         box-shadow: var(--ag-focus-shadow);
+        border: var(--ag-input-focus-border);
     }
 
-    .ag-toolbar-find .ag-toolbar-input-field:focus {
+    .ag-toolbar-find .ag-toolbar-input-field {
+        border: none;
+        background-color: transparent;
+        flex: 1;
+        min-width: 0;
+    }
+
+    // High-specificity overrides to prevent theme text-input rules reinstating border/shadow
+    // stylelint-disable-next-line selector-max-specificity
+    .ag-toolbar .ag-toolbar-find input[class^='ag-'][type='text'].ag-toolbar-input-field {
+        border: none;
         box-shadow: none;
+
+        &:focus {
+            border: none;
+            box-shadow: none;
+        }
     }
 
     .ag-toolbar-find-match-count {
@@ -157,9 +220,7 @@
         opacity: 0.7;
         user-select: none;
         font-variant-numeric: tabular-nums;
-        min-width: 11ch;
-        height: stretch;
-        padding: var(--ag-spacing) 0;
+        flex-shrink: 0;
         text-align: end;
     }
 

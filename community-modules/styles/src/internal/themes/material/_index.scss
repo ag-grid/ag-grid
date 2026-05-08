@@ -157,6 +157,47 @@
         }
     }
 
+    // Toolbar: button hover animation matching header cells
+    .ag-toolbar-button-wrapper {
+        transition: background-color 0.5s;
+    }
+
+    // Toolbar: underlined inputs matching Material text-input style
+    .ag-toolbar-find,
+    .ag-toolbar-input {
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        box-shadow: none;
+    }
+
+    .ag-toolbar-find {
+        height: calc(var(--ag-grid-size) * 5);
+        border-bottom: 2px solid var(--ag-border-color);
+    }
+
+    .ag-toolbar-find:focus-within {
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        box-shadow: none;
+        border-bottom: 2px solid var(--ag-material-primary-color);
+    }
+
+    .ag-toolbar-input-field:focus {
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        box-shadow: none;
+    }
+
+    // Remove text-input mixin's padding-bottom so toolbar input text aligns with the icon
+    .ag-toolbar {
+        @include ag.text-input {
+            padding-bottom: 0;
+        }
+    }
+
     .ag-standard-button {
         appearance: none;
         background-color: transparent;

@@ -11,12 +11,12 @@ import svgr from 'vite-plugin-svgr';
 import agCacheSitemap from '../../external/ag-website-shared/plugins/agCacheSitemap';
 import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecker';
 import agMkcertPreview from '../../external/ag-website-shared/plugins/agMkcertPreview';
+import agSourcemapCors from '../../external/ag-website-shared/plugins/agSourcemapCors';
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
-import agSourcemapCors from './plugins/agSourcemapCors';
 import { getSitemapConfig } from './src/utils/sitemap';
 import { urlWithBaseUrl } from './src/utils/urlWithBaseUrl';
 
@@ -199,8 +199,8 @@ export default defineConfig({
                 'Content-Security-Policy': [
                     "default-src 'self'",
                     "script-src 'self' https://*.ag-grid.com https://localhost:4610 https://localhost:4611 https://www.googletagmanager.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'",
-                    "style-src 'self' https://fonts.googleapis.com 'unsafe-inline'",
-                    "font-src 'self' https://fonts.gstatic.com data:",
+                    "style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com 'unsafe-inline'",
+                    "font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com data:",
                     "img-src 'self' data: blob: https:",
                     "connect-src 'self' https:",
                     "worker-src 'self' blob:",

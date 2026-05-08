@@ -98,6 +98,8 @@ const excludeErrors = [
     'InstallTrigger is deprecated and will be removed in the future.',
     'onmozfullscreenchange is deprecated.',
     'onmozfullscreenerror is deprecated.',
+    // Emitted by systemjs@0.19.47 (loaded via the SystemJS plunker template); not under our control
+    'Window.fullScreen attribute is deprecated and will be removed in the future.',
     'XML Parsing Error: not well-formed',
     'XML Parsing Error: syntax error',
     'Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content.',

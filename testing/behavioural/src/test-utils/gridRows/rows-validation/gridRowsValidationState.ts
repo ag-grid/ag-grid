@@ -5,6 +5,7 @@ import type { GridRows } from '../gridRows';
 export class GridRowsValidationState {
     private _showRowGroupColumns: AgColumn[] | undefined = undefined;
     private _groupSelectsDescendants: boolean | undefined = undefined;
+    private _hasPostSortRows: boolean | undefined = undefined;
 
     public readonly gridRows: GridRows;
     public readonly api: GridApi;
@@ -31,6 +32,16 @@ export class GridRowsValidationState {
         this.groupHideParentOfSingleChild = api.getGridOption('groupHideParentOfSingleChild') ?? false;
         this.groupAllowUnbalanced = !!api.getGridOption('groupAllowUnbalanced');
         this.isGroupMultiAutoColumn = api.getGridOption('groupDisplayType') === 'multipleColumns';
+    }
+
+    public get hasPostSortRows(): boolean {
+        let result = this._hasPostSortRows;
+        if (result !== undefined) {
+            return result;
+        }
+        result = typeof this.api.getGridOption('postSortRows') === 'function';
+        this._hasPostSortRows = result;
+        return result;
     }
 
     public get showRowGroupColumns(): AgColumn[] {

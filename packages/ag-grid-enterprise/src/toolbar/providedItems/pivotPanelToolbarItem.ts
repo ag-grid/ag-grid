@@ -1,5 +1,7 @@
 import type { IToolbarItemComp, IToolbarItemParams } from 'ag-grid-community';
-import { Component, _warn } from 'ag-grid-community';
+import { Component, _error } from 'ag-grid-community';
+
+import { getRowGroupPanelBuilder } from './toolbarItemUtils';
 
 export class PivotPanelToolbarItem extends Component implements IToolbarItemComp {
     constructor() {
@@ -8,7 +10,7 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
 
     public init(_params: IToolbarItemParams): void {
         if (!this.gos.isModuleRegistered('Pivot')) {
-            _warn(302, {
+            _error(302, {
                 itemName: 'agPivotPanelToolbarItem',
                 moduleName: 'Pivot',
                 ...this.gos.getModuleErrorParams(),
@@ -17,13 +19,8 @@ export class PivotPanelToolbarItem extends Component implements IToolbarItemComp
             return;
         }
 
-        const builder = this.beans.rowGroupPanelBuilder;
+        const builder = getRowGroupPanelBuilder(this.beans, 'agPivotPanelToolbarItem');
         if (!builder) {
-            _warn(302, {
-                itemName: 'agPivotPanelToolbarItem',
-                moduleName: 'RowGroupingPanel',
-                ...this.gos.getModuleErrorParams(),
-            });
             this.setDisplayed(false);
             return;
         }

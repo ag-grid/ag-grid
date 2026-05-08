@@ -27,6 +27,8 @@ const MenuToolbarItemElement: ElementParams = {
 };
 
 export class MenuToolbarItem extends Component implements IToolbarItemComp {
+    readonly agToolbarButton = 'agToolbarButton' as const;
+
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eChevron: HTMLElement = RefPlaceholder;
