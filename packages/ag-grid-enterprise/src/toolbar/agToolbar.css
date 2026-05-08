@@ -42,6 +42,10 @@
     outline: none;
 }
 
+.ag-toolbar-button .ag-icon {
+    color: var(--ag-icon-color);
+}
+
 .ag-toolbar-button-wrapper:hover {
     background-color: var(--ag-icon-button-hover-background-color);
     color: var(--ag-icon-button-hover-color);
@@ -116,7 +120,7 @@
     position: absolute;
     display: inline-flex;
     align-items: center;
-    color: var(--ag-toolbar-text-color);
+    color: var(--ag-icon-color);
     opacity: 0.5;
     pointer-events: none;
     inset-inline-start: var(--ag-spacing);
@@ -151,7 +155,7 @@
     border-bottom: none;
     padding: 0;
     font-weight: var(--ag-cell-font-weight);
-    font-size: var(--ag-cell-font-size);
+    font-size: var(--ag-font-size);
     font-family: var(--ag-cell-font-family);
 }
 
