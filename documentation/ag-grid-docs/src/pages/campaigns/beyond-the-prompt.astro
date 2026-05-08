@@ -1,18 +1,14 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import styles from '../../pages-styles/campaigns.module.scss';
-import pageStyles from '../../pages-styles/beyond-the-prompt.module.scss';
+import styles from '../../pages-styles/beyond-the-prompt.module.scss';
 
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
-// Links
 const MAILTO_HREF = 'mailto:info@ag-grid.com?subject=Beyond the Prompt enquiry';
 const BOOK_TICKETS_HREF = 'https://maglo.co.uk/event/ag-grid/ag-grid-bryntum';
 const VENUE_MAP_HREF = 'https://maps.app.goo.gl/GRcWV6LPBoXJwDLu6';
-
-// Hero background (full-bleed venue photo with brand-colour overlay)
-const HERO_BG_URL = urlWithBaseUrl('images/campaigns/beyond-the-prompt/iet-savoy.webp');
+const SOCIAL_IMAGE_URL = 'images/campaigns/beyond-the-prompt/social-card.png';
 
 type AgendaItem = {
     time: string;
@@ -20,6 +16,17 @@ type AgendaItem = {
     speakers?: string;
     description?: string;
     isBreak?: boolean;
+    // Solo-speaker rows normally get a heavy 2.4x portrait on hover to fill
+    // the otherwise short cell. Set this on rows that are already tall (long
+    // description) where the heavy scale clips the head awkwardly.
+    keepDefaultPortraitScale?: boolean;
+};
+
+// The schedule is grouped into named blocks (Morning / Afternoon) so each
+// chunk can sit between full-width section rules in the rendered page.
+type AgendaSection = {
+    label: string;
+    items: AgendaItem[];
 };
 
 type Speaker = {
@@ -27,381 +34,717 @@ type Speaker = {
     title: string;
     bio: string;
     image: string;
+    // Re-shaded variant designed for orange backgrounds. The ditherpattern
+    // and knockout values are tuned for #F43800; we crossfade to it on
+    // card hover (Speakers grid) and use it directly in the agenda hover
+    // overlay, where the row turns orange behind the portrait.
+    imageOrange?: string;
+    // Some speaker SVGs are exported as full-figure portraits with very tall,
+    // narrow aspect ratios (e.g. Mats 193×352, John 232×388). Using the
+    // default `object-fit: cover` on a 4:5 box clips ~140px off the bottom.
+    // Setting `imageFit: 'contain'` switches just those cards to fit-the-whole
+    // SVG while staying anchored to the bottom of the frame.
+    imageFit?: 'contain';
 };
 
 type VenueImage = {
     src: string;
+    // Optional narrow-viewport variant. When present we render a `<picture>`
+    // with a mobile `<source>` so portrait phones get a re-cropped/re-stacked
+    // version of the same illustration. Falls through to `src` on desktop.
+    srcMobile?: string;
     alt: string;
     caption?: string;
 };
 
-const AGENDA: AgendaItem[] = [
+// Lunch sits at the boundary between the morning and afternoon programmes;
+// we keep it at the end of the morning block so the afternoon section opens
+// with a return-to-sessions cue (the 13:15 talk) rather than a long break.
+const AGENDA_SECTIONS: AgendaSection[] = [
     {
-        time: '08:30 – 09:30',
-        title: 'Registration and coffee',
-        isBreak: true,
+        label: 'Morning',
+        items: [
+            { time: '08:30 – 09:30', title: 'Registration and coffee', isBreak: true },
+            {
+                time: '09:30 – 09:40',
+                title: 'Welcome',
+                description: 'Opening remarks to set the theme for the day: building with tools you can trust.',
+            },
+            {
+                time: '09:40 – 10:10',
+                title: 'Opening Keynote',
+                speakers: 'John Masterson (CEO, AG Grid) & Mats Bryntse (Founder & CEO, Bryntum)',
+            },
+            {
+                time: '10:10 – 10:40',
+                title: 'Goodbye slop; welcome determinism',
+                speakers: 'David Khourshid',
+                description:
+                    'Vibe coding feels productive until you have to maintain it. Behind the agent "thinking..." you ignore and the code you never opened lies a growing pile of wasted tokens, nondeterministic behavior, and compounding errors hiding in plain sight. This talk pushes back on the status quo: elaborate agent architectures, "prompting astrology", overnight automation loops burning through context windows and credit cards. Come for the critique, leave with a framework for using AI to build software you actually understand.',
+                keepDefaultPortraitScale: true,
+            },
+            { time: '10:40 – 11:10', title: 'Coffee break', isBreak: true },
+            {
+                time: '11:10 – 11:35',
+                title: 'Codebase design for the agent era',
+                speakers: 'Stephen Cooper (Team Lead, AG Grid)',
+                description:
+                    "As AI agents become part of the development workflow, codebase structure and well-designed system prompts matter more than ever. This session will show you how we're approaching this in the AG Grid and AG Charts codebases..",
+                keepDefaultPortraitScale: true,
+            },
+            {
+                time: '11:35 – 12:00',
+                title: 'One-click agentic SDLC',
+                speakers: 'Mats Bryntse (Founder & CEO, Bryntum)',
+                description:
+                    'A demo of a headless Claude workflow, built by Bryntum CEO Mats, that turns GitHub issues into mergeable PRs, with agents doing the work, and a custom Kanban UI keeping things in check.',
+            },
+            { time: '12:00 – 13:10', title: 'Lunch and product demos', isBreak: true },
+        ],
     },
     {
-        time: '09:30 – 09:45',
-        title: 'Welcome',
-        description: 'Opening remarks to set the theme for the day: building with tools you can trust.',
-    },
-    {
-        time: '09:45 – 10:15',
-        title: 'Opening Keynote',
-        speakers: 'John Masterson (CEO, AG Grid) & Mats Bryntse (Founder & CEO, Bryntum)',
-    },
-    {
-        time: '10:15 – 10:45',
-        title: 'Coffee break',
-        isBreak: true,
-    },
-    {
-        time: '10:45 – 11:15',
-        title: 'Codebase design for the agent era',
-        speakers: 'Stephen Cooper (Team Lead, AG Grid)',
-        description:
-            "As AI agents become part of the development workflow, codebase structure and well-designed system prompts matter more than ever. This session will show you how we're approaching this in the AG Grid and AG Charts codebases..",
-    },
-    {
-        time: '11:15 – 11:45',
-        title: 'One-click agentic SDLC',
-        speakers: 'Mats Bryntse (Founder & CEO, Bryntum)',
-        description:
-            'A demo of a headless Claude workflow, built by Bryntum CEO Mats, that turns GitHub issues into mergeable PRs, with agents doing the work, and a custom Kanban UI keeping things in check.',
-    },
-    {
-        time: '11:45 – 13:00',
-        title: 'Lunch and product demos',
-        isBreak: true,
-    },
-    {
-        time: '13:00 – 13:30',
-        title: 'Debugging CSS performance with AI',
-        speakers: 'Bernie Sumption (Engineer, AG Grid)',
-        description:
-            'CSS performance issues can be subtle and time-consuming. This talk will show you how you can guide AI to uncover bugs without needing to learn the intricacies of CSS rendering internals.',
-    },
-    {
-        time: '13:30 – 14:00',
-        title: 'AI in AG Studio',
-        speakers: 'Josh Hobson (Developer, AG Grid)',
-        description:
-            "How do you build a dashboard you can't see? A behind-the-scenes look at AG Studio's multi-agent architecture and the client-side tools that let any LLM build reports it otherwise couldn't.",
-    },
-    {
-        time: '14:00 – 14:30',
-        title: 'Customer Showcase',
-        description: 'To be announced',
-    },
-    {
-        time: '14:30 – 15:00',
-        title: 'Coffee break',
-        isBreak: true,
-    },
-    {
-        time: '15:00 – 15:30',
-        title: 'Product Roadmap',
-        speakers: 'Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (AG Studio Product Lead, AG Grid)',
-        description: "A detailed look at our upcoming roadmap, covering AG Grid and Bryntum's suite of tools.",
-    },
-    {
-        time: '15:30 – 16:15',
-        title: 'Panel Discussion',
-        description: 'To be announced',
-    },
-    {
-        time: '16:15 – 16:45',
-        title: 'Vibe Coding as a Maker',
-        speakers: 'Matt Webb',
-        description:
-            'Matt will show his vibe coding experiments, from his AI clock to an app that points to the centre of the galaxy, and share some learnings from building hardware at his startup, Inanimate. Then we ask: what are the limits of vibing and agentic coding? And how might we create libraries that agents love?',
-    },
-    {
-        time: '17:00 – 20:00',
-        title: 'Networking reception',
-        isBreak: true,
+        label: 'Afternoon',
+        items: [
+            {
+                time: '13:10 – 13:40',
+                title: 'Debugging CSS performance with AI',
+                speakers: 'Bernie Sumption (Engineer, AG Grid)',
+                description:
+                    'CSS performance issues can be subtle and time-consuming. This talk will show you how you can guide AI to uncover bugs without needing to learn the intricacies of CSS rendering internals.',
+            },
+            {
+                time: '13:40 – 14:05',
+                title: 'AI in AG Studio',
+                speakers: 'Josh Hobson (Developer, AG Grid)',
+                description:
+                    "How do you build a dashboard you can't see? A behind-the-scenes look at AG Studio's multi-agent architecture and the client-side tools that let any LLM build reports it otherwise couldn't.",
+            },
+            { time: '14:05 – 14:30', title: 'Customer Showcase', description: 'TBA' },
+            { time: '14:30 – 15:00', title: 'Coffee break', isBreak: true },
+            {
+                time: '15:00 – 15:30',
+                title: 'Product Roadmap',
+                speakers: 'Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (AG Studio Product Lead, AG Grid)',
+                description: "A detailed look at our upcoming roadmap, covering AG Grid and Bryntum's suite of tools.",
+            },
+            {
+                time: '15:30 – 16:15',
+                title: 'Panel Discussion',
+                speakers:
+                    'Maggie Appleton (Staff Research Engineer, GitHub), Matt Pocock (Senior Developer Educator, AI Hero), & Sophie Koonin (Web Discipline Lead, Monzo)',
+                description: 'TBA',
+            },
+            {
+                time: '16:15 – 16:45',
+                title: 'Vibe Coding as a Maker',
+                speakers: 'Matt Webb',
+                description:
+                    'Matt will show his vibe coding experiments, from his AI clock to an app that points to the centre of the galaxy, and share some learnings from building hardware at his startup, Inanimate. Then we ask: what are the limits of vibing and agentic coding? And how might we create libraries that agents love?',
+                keepDefaultPortraitScale: true,
+            },
+            { time: '17:00 – 20:00', title: 'Networking reception', isBreak: true },
+        ],
     },
 ];
 
-// Drop speaker headshots at /public/images/campaigns/beyond-the-prompt/speakers/
-// (recommend 400x400 square JPG/PNG).
 const SPEAKERS: Speaker[] = [
     {
         name: 'Matt Webb',
         title: 'Co-founder, Inanimate',
         bio: "Matt is co-founder of Inanimate, consumer hardware bringing agents into the real world. Previously he has consulted with Google's AI research group, run startup accelerators with R/GA Ventures, and was CEO and co-founder of the design studio BERG which invented some of the world’s first internet-connected consumer products like Little Printer (and has work in the New York MoMA). He is co-author of Mind Hacks (O’Reilly, 2004). Since 2000 Matt has blogged at interconnected.org. He writes weekly+ on computing, design, and speculative futures. He lives in London.",
-        image: 'images/campaigns/beyond-the-prompt/speakers/matt-webb.webp',
+        image: 'images/campaigns/beyond-the-prompt/svg/mat-web.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/mat-web-orange-bg.svg',
     },
     {
         name: 'Stephen Cooper',
         title: 'Team Lead, AG Grid',
         bio: `Stephen is the Team Lead for AG Grid and loves sharing practical, experience-based tips, tricks, and case studies from years in the codebase. He's gone deep into grid performance and framework integrations, and has spent more time than he'd like profiling render cycles. Outside of work, life revolves around family, four kids and two dogs, and he's happiest when the whole crew is out together exploring in the park.`,
-        image: 'images/campaigns/beyond-the-prompt/speakers/stephen-cooper.webp',
+        image: 'images/campaigns/beyond-the-prompt/svg/stephen.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/stephen-orange-bg.svg',
     },
     {
         name: 'Maggie Appleton',
         title: 'Staff Research Engineer, GitHub',
         bio: `Maggie is a Staff Research Engineer at GitHub, where she works on tools for thinking, writing, and building with code. With a background in anthropology, she’s known for her visual essays that explore how developers understand systems, languages, and ideas. She’s a strong advocate for “digital gardens” over traditional publishing, and spends her time mapping out how knowledge grows on the web. Outside of work, she’s usually sketching concepts, writing, or connecting dots between code and culture.`,
-        image: 'images/campaigns/beyond-the-prompt/speakers/maggie-appleton.webp',
+        image: 'images/campaigns/beyond-the-prompt/svg/maggie.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/maggie-orange-bg.svg',
+    },
+    {
+        name: 'Sophie Koonin',
+        title: 'Web Discipline Lead, Monzo',
+        bio: `Sophie leads a team within the Operations collective at Monzo, building the software that powers the bank's award-winning customer experience. She's also Monzo's Web Discipline Lead, advocating for web and empowering others to lead web platform improvements throughout the company. Outside of work, Sophie loves arranging pop songs for her choir Mixtape, playing video games, cooking, and gardening.`,
+        image: 'images/campaigns/beyond-the-prompt/svg/sophie.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/sophie-orange-bg.svg',
+    },
+    {
+        name: 'David Khourshid',
+        title: 'Founder, Stately.ai',
+        bio: `David is the founder of Stately.ai and creator of XState, the most popular open-source state machine & statecharts library. He's a longtime advocate for event-driven modeling and visual diagramming as the foundation for reliable UIs and, increasingly, AI agents. When he's not at a computer keyboard, he's at a piano keyboard.`,
+        image: 'images/campaigns/beyond-the-prompt/svg/david-kourshid.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/david-kourshid-orange-bg.svg',
     },
     {
         name: 'Mats Bryntse',
         title: 'Founder & CEO, Bryntum',
         bio: `Mats is the founder and CEO of Bryntum, where he and his team build advanced scheduling and project planning tools for modern web apps. For the past 15 years, he has obsessed over JavaScript performance, developer experience, and making complex UIs feel simple. He used to enjoy chess, badminton, and independent thought, until Claude entered his life and optimized those away.`,
-        image: 'images/campaigns/beyond-the-prompt/speakers/mats-bryntse.webp',
+        image: 'images/campaigns/beyond-the-prompt/svg/mats.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/mats-orange-bg.svg',
+        imageFit: 'contain',
+    },
+    {
+        name: 'Matt Pocock',
+        title: 'Senior Developer Educator, AI Hero',
+        bio: `Matt is a senior developer educator at AI Hero, a TypeScript author, and an educator passionate about bringing real software engineering rigour to the age of AI. He co-organizes the AI Coding for Real Engineers cohort, a community for experienced developers who want to build with AI tools without throwing away everything they already know. Outside of the keyboard, Matt enjoys long runs through the Oxfordshire countryside, loudly supporting Arsenal, and experimenting with new ways to make complex ideas click for developers everywhere.`,
+        image: 'images/campaigns/beyond-the-prompt/svg/matt-pocock.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/matt-pocock-orange-bg.svg',
     },
     {
         name: 'Bernie Sumption',
         title: 'Engineer, AG Grid',
         bio: `Bernie is an engineer at AG Grid specialising in theming. "The other engineers make it work fast and well, I make it look pretty" he likes to say. Outside work he goes hiking, plays with his kids, and once made a tweeting cat flap that has 10x more social media followers than he does.`,
-        image: 'images/campaigns/beyond-the-prompt/speakers/bernie-sumption.webp',
+        image: 'images/campaigns/beyond-the-prompt/svg/bernie.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/bernie-orange-bg.svg',
     },
     {
         name: 'Josh Hobson',
         title: 'Developer, AG Grid',
         bio: `Josh is a developer at AG Grid, where he's been building AG Studio — a new dashboard library with multi-agent AI baked in. He's a mathematician by training and a maker by instinct, with a particular love for developer tooling, type systems, and intelligent interfaces. Outside of work, Josh can be found tinkering with 3D printers, ski touring in the Alps, or out on long walks with his dog.`,
-        image: 'images/campaigns/beyond-the-prompt/speakers/josh-hobson.webp',
+        image: 'images/campaigns/beyond-the-prompt/svg/josh.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/josh-orange-bg.svg',
     },
     {
         name: 'Adam Wang',
         title: 'AG Studio Product Lead, AG Grid',
         bio: `Adam is the AG Studio Product Lead at AG Grid, with around 10 years of experience in product management across various disciplines. He previously worked on AG Grid Integrated Charts before focusing on AG Studio. He enjoys the creative process of product management and is keen to solve problems by truly understanding user needs. Outside of work, he's a spin instructor who loves to put together a fire playlist. He also collects coloured vinyl.`,
-        image: 'images/campaigns/beyond-the-prompt/speakers/adam-wang.webp',
+        image: 'images/campaigns/beyond-the-prompt/svg/adam.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/adam-orange-bg.svg',
     },
     {
         name: 'Johan Isaksson',
         title: 'Head of Engineering, Bryntum',
         bio: `Johan is responsible for architecture, gate keeping, performance and styling across all Bryntum products. When not checking pull requests, recording performance profiles or tweaking CSS he enjoys watching hockey and playing floorball.`,
-        image: 'images/campaigns/beyond-the-prompt/speakers/johan-isaksson.webp',
+        image: 'images/campaigns/beyond-the-prompt/svg/johan.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/johan-orange-bg.svg',
     },
     {
         name: 'John Masterson',
         title: 'CEO, AG Grid',
         bio: `John is the CEO of AG Grid, which he first joined in 2016 as employee number two. After a detour as CTO of a London health-tech startup, he returned in 2020 and stepped into the CEO role in 2024. He's spent fifteen years building software and leading engineering teams, and is determined to keep AG Grid the first choice for JavaScript developers. Outside of work, John can be found on his bike, in his headphones listening to a podcast, or picking up a guitar.`,
-        image: 'images/campaigns/beyond-the-prompt/speakers/john-masterson.webp',
+        image: 'images/campaigns/beyond-the-prompt/svg/john.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/john-orange-bg.svg',
+        imageFit: 'contain',
     },
     {
         name: 'Phil Hawksworth',
         title: 'Event MC',
         bio: `With a passion for browser technologies, and the empowering properties of the web, Phil loves seeking out ingenuity and simplicity, especially in places where over-engineering is common. After 25 years of building web applications for companies such as Google, Apple, Nike, R/GA, and The London Stock Exchange, he has worked to challenge traditional technical architectures in favour of simplicity and effectiveness, working in Developer Experience at Netlify and Deno.`,
-        image: 'images/campaigns/beyond-the-prompt/speakers/phil-hawksworth.webp',
+        image: 'images/campaigns/beyond-the-prompt/svg/phil.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/phil-orange-bg.svg',
     },
 ];
 
-// TODO: drop venue photos into /public/images/campaigns/beyond-the-prompt/venue/
-// (recommend landscape 3:2, min 1600x1067).
+// Map an agenda item's free-text `speakers` string to the matching SVG
+// portraits. We do a substring `includes` check against each canonical
+// `SPEAKERS[].name` so strings like
+//   "Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (...)"
+// resolve to multiple portraits. Iterating `SPEAKERS` (rather than
+// splitting the input string) keeps the render order stable across rows
+// even when the agenda lists speakers in a different sequence.
+//
+// We return the *orange-bg* variant here because the agenda overlay only
+// renders behind the row's hover state (which paints the row orange);
+// the orange-tuned dither pattern reads correctly there. Falls back to
+// the default illustration if a speaker hasn't been given an orange
+// variant yet.
+const getSpeakerImagesForItem = (speakers?: string): string[] => {
+    if (!speakers) return [];
+    return SPEAKERS.filter((s) => speakers.includes(s.name)).map((s) => s.imageOrange ?? s.image);
+};
+
+// Featured faces for the hero (use the SVG illustrations).
+// Order is intentional: the middle slot drops down in the layout to create a
+// small zigzag, so the bookend slots (1 and 3) sit at the natural top while
+// slot 2 takes the dropped position.
+const HERO_FACES = [
+    { name: 'Maggie', src: 'images/campaigns/beyond-the-prompt/svg/maggie.svg' },
+    { name: 'Stephen', src: 'images/campaigns/beyond-the-prompt/svg/stephen.svg' },
+    { name: 'Matt Pocock', src: 'images/campaigns/beyond-the-prompt/svg/matt-pocock.svg' },
+];
+
 const VENUE_IMAGES: VenueImage[] = [
     {
-        src: 'images/campaigns/beyond-the-prompt/venue/venue-1.webp',
-        alt: 'IET London exterior',
-        caption: 'IET London',
-    },
-    {
-        src: 'images/campaigns/beyond-the-prompt/venue/venue-2.webp',
-        alt: 'Networking reception space',
-        caption: 'Entrance and Foyer',
-    },
-    {
-        src: 'images/campaigns/beyond-the-prompt/venue/venue-3.webp',
-        alt: 'Kelvin Lecture Theatre',
-        caption: 'Kelvin Lecture Theatre',
+        src: 'images/campaigns/beyond-the-prompt/venue/savoy.webp',
+        srcMobile: 'images/campaigns/beyond-the-prompt/venue/savoy-mobile.webp',
+        alt: 'Line drawing of IET London at 2 Savoy Place',
     },
 ];
 ---
+
+{/* Astro hoists these <link> tags into <head> at build time, so the Geist fonts only load on this page. */}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&display=swap"
+    rel="stylesheet"
+/>
+
+{
+    /*
+    Page-only global override: the campaign uses a #F2F2F2 page background, but the
+    html/body still default to white from the global design system so over-scroll
+    (macOS bounce, mobile rubber-band) flashes white. Scope this to the page by
+    only emitting it from this .astro file.
+*/
+}
+<style is:global>
+    html,
+    body {
+        background-color: #f2f2f2;
+    }
+
+    /*
+        Brand-coloured text selection. `::selection` is a pseudo-element and
+        can't be hashed by CSS Modules, so we route it through `is:global`
+        — but because this <style> block lives in a page component, it's
+        only emitted into the bundle for this route, so other pages keep
+        the browser default.
+    */
+    ::selection {
+        background-color: #f43800;
+        color: #fff;
+    }
+</style>
 
 <Layout
     title={'Beyond the Prompt — AG Grid & Bryntum Conference, 19 May 2026'}
     description={'A one-day conference from AG Grid and Bryntum on building AI-assisted applications that hold up in production. Tuesday 19 May 2026, IET London.'}
     showDocsNav={false}
-    showSearchBar={true}
+    showSearchBar={false}
+    hideHeader={true}
+    hideFooter={true}
+    overrideSocialImage={SOCIAL_IMAGE_URL}
+    showAnnouncementBanner={false}
 >
-    <div class:list={[styles.homepageHero, pageStyles.hero]} style={`--hero-bg-image: url('${HERO_BG_URL}')`}>
-        <div class:list={[styles.heroInner, 'layout-max-width-small']}>
-            <div class:list={[styles.heroHeadings, pageStyles.heroContent]}>
-                <div class={pageStyles.logoStrip}>
+    <div class={styles.page}>
+        {
+            /*
+            Sticky page nav. Hidden by default; revealed via `data-visible="true"`
+            once the hero scrolls fully out of view. The IntersectionObserver
+            script lives at the end of this file. Background matches the page
+            (var(--btp-bg) === #f2f2f2) so it reads as a continuation rather
+            than a chrome bar.
+        */
+        }
+        <nav class={styles.stickyNav} data-sticky-nav aria-label="Beyond the Prompt page nav">
+            <div class={`${styles.container} ${styles.stickyNavInner}`}>
+                <a href="#top" class={styles.stickyNavBrand} aria-label="Back to top">
                     <img
-                        src={urlWithBaseUrl('images/ag-logos/svg-logos/AG-Grid-Logo_Dark-Theme.svg')}
-                        alt="AG Grid"
-                        class={pageStyles.logoAgGrid}
+                        src={urlWithBaseUrl('images/campaigns/beyond-the-prompt/logo-btp.svg')}
+                        alt=""
+                        aria-hidden="true"
+                        class={styles.stickyNavLogo}
+                        width="48"
+                        height="34"
                     />
-                    <span class={pageStyles.logoDivider} aria-hidden="true">×</span>
-                    <img
-                        src={urlWithBaseUrl('images/campaigns/bryntum-logo.png')}
-                        alt="Bryntum"
-                        class={pageStyles.logoBryntum}
-                    />
-                </div>
-
-                <h1>Beyond the Prompt</h1>
-
-                <h2>
-                    A one-day conference on building applications that hold up in production — hosted by
-                    <span class={styles.noWrap}>AG Grid</span> and Bryntum.
-                </h2>
-
-                <ul class={pageStyles.eventMeta}>
-                    <li>
-                        <Icon name="alarm" />
-                        <span>Tuesday 19 May 2026</span>
-                    </li>
-                    <li>
-                        <Icon name="mapPin" />
-                        <span>IET London, 2 Savoy Place</span>
-                    </li>
-                    <li>
-                        <Icon name="creditCard" />
-                        <span>Early bird £149</span>
-                    </li>
-                </ul>
-
-                <div>
-                    <a href={BOOK_TICKETS_HREF} class="button-secondary">
-                        Book tickets <Icon name="chevronRight" />
-                    </a>
-                    <a href={MAILTO_HREF} class="button-secondary">Contact us <Icon name="email" /></a>
-                </div>
+                </a>
+                <a
+                    href={BOOK_TICKETS_HREF}
+                    class={`${styles.btnPrimary} ${styles.stickyNavCta}`}
+                    aria-label="Book tickets"
+                >
+                    Book tickets <Icon name="chevronRight" />
+                </a>
             </div>
-        </div>
-    </div>
-
-    <main class={styles.campaignOuter}>
-        <nav class={pageStyles.sectionNav} aria-label="Jump to section">
-            <a href="#speakers" class={pageStyles.sectionNavLink}>Speakers</a>
-            <a href="#agenda" class={pageStyles.sectionNavLink}>Agenda</a>
-            <a href="#venue" class={pageStyles.sectionNavLink}>Venue</a>
         </nav>
 
-        <section class={pageStyles.intro}>
-            <h2>Getting to a prototype with AI is easy. Production is not.</h2>
-            <p>
-                Beyond the Prompt is built around a simple observation: getting to a working prototype with AI is easy.
-                But when real data arrives, everything changes. Performance degrades, edge cases multiply, and the
-                application you built is not the one you need. That is the point where AI helps less, and where the real
-                engineering begins.
-            </p>
-            <p>
-                The day brings together engineers and experts to talk honestly about what it takes to build applications
-                that hold up in production — with time to connect with our teams over lunch, coffee, and drinks.
-            </p>
-        </section>
-
-        <section class={pageStyles.atAGlance} aria-labelledby="at-a-glance-heading">
-            <h2 id="at-a-glance-heading">At a glance</h2>
-            <div class={pageStyles.atAGlanceGrid}>
-                <div class={pageStyles.atAGlanceCard}>
-                    <Icon name="alarm" />
-                    <h3>When</h3>
-                    <p><b>Tuesday 19 May 2026</b></p>
-                    <p>Doors open 08:30 <br /> Sessions 09:30 - 16:45 <br /> Networking 17:00 - 20:00</p>
-                </div>
-                <div class={pageStyles.atAGlanceCard}>
-                    <Icon name="mapPin" />
-                    <h3>Where</h3>
-                    <p><b>IET London</b></p>
-                    <p>2 Savoy Place, <br /> London <br /> WC2R 0BL</p>
-                    <a href={VENUE_MAP_HREF} target="_blank" rel="noopener">View on map <Icon name="arrowRight" /></a>
-                </div>
-                <div class={pageStyles.atAGlanceCard}>
-                    <Icon name="creditCard" />
-                    <h3>Tickets</h3>
-                    <p><b>Early bird £149</b></p>
-                    <p>Includes refreshments, lunch, and entry to the networking reception.</p>
-                    <a href={BOOK_TICKETS_HREF} target="_blank" rel="noopener">Book Now <Icon name="arrowRight" /></a>
-                </div>
-            </div>
-        </section>
-
-        <section id="speakers" class={pageStyles.speakersSection} aria-labelledby="speakers-heading">
-            <h2 id="speakers-heading">Speakers</h2>
-            <p class={pageStyles.speakersIntro}>
-                Engineers and experts from AG Grid, Bryntum, and beyond — talking about what it takes to build
-                applications that hold up in production.
-            </p>
-
-            <div class={pageStyles.speakerGrid}>
-                {
-                    SPEAKERS.map((speaker) => (
-                        <article class={pageStyles.speakerCard}>
+        <section class={styles.hero} data-sticky-trigger id="top">
+            <div class={styles.container}>
+                <div class={styles.heroInner}>
+                    <div class={styles.heroContent}>
+                        <div class={styles.heroLogos}>
                             <img
-                                src={urlWithBaseUrl(speaker.image)}
-                                alt={speaker.name}
-                                class={pageStyles.speakerImage}
-                                loading="lazy"
+                                src={urlWithBaseUrl('images/ag-logos/svg-logos/AG-Grid-Logo_Light-Theme.svg')}
+                                alt="AG Grid"
+                                class={styles.heroLogoAg}
                             />
-                            <h3 class={pageStyles.speakerName}>{speaker.name}</h3>
-                            <p class={pageStyles.speakerTitle}>{speaker.title}</p>
-                            <p class={pageStyles.speakerBio}>{speaker.bio}</p>
-                        </article>
-                    ))
-                }
+                            <span class={styles.heroLogoX} aria-hidden="true">×</span>
+                            <img
+                                src={urlWithBaseUrl('images/campaigns/bryntum-logo.webp')}
+                                alt="Bryntum"
+                                class={styles.heroLogoBryntum}
+                            />
+                        </div>
+
+                        <h1 class={styles.heroTitle}>
+                            <img
+                                src={urlWithBaseUrl('images/campaigns/beyond-the-prompt/logo-btp.svg')}
+                                alt="Beyond the Prompt"
+                                class={styles.heroTitleLogo}
+                                width="338"
+                                height="238"
+                            />
+                        </h1>
+
+                        <h2 class={styles.heroTagline}>
+                            A one-day conference on building applications that hold up in production — hosted by
+                            <span class={styles.noWrap}>AG Grid</span> and Bryntum.
+                        </h2>
+
+                        <ul class={styles.heroMeta}>
+                            <li>
+                                <Icon name="alarm" />
+                                <span>Tuesday 19 May 2026</span>
+                            </li>
+                            <li>
+                                <Icon name="mapPin" />
+                                <span>IET London, 2 Savoy Place</span>
+                            </li>
+                            <li>
+                                <Icon name="creditCard" />
+                                <span>Early bird £149</span>
+                            </li>
+                        </ul>
+
+                        <div class={styles.heroCtas}>
+                            <a href={BOOK_TICKETS_HREF} class={styles.btnPrimary} aria-label="Book tickets">
+                                <span class={styles.btnRoll} aria-hidden="true">
+                                    <span class={styles.btnRollLayer}>
+                                        {
+                                            Array.from('Book tickets').map((c, i) => (
+                                                <span class={styles.btnRollChar} style={`--btn-roll-i: ${i}`}>
+                                                    {c === ' ' ? '\u00A0' : c}
+                                                </span>
+                                            ))
+                                        }
+                                    </span>
+                                    <span class={styles.btnRollLayer}>
+                                        {
+                                            Array.from('Book tickets').map((c, i) => (
+                                                <span class={styles.btnRollChar} style={`--btn-roll-i: ${i}`}>
+                                                    {c === ' ' ? '\u00A0' : c}
+                                                </span>
+                                            ))
+                                        }
+                                    </span>
+                                </span>
+                                <Icon name="chevronRight" />
+                            </a>
+                            <a href={MAILTO_HREF} class={styles.btnSecondary} aria-label="Contact us">
+                                <span class={styles.btnRoll} aria-hidden="true">
+                                    <span class={styles.btnRollLayer}>
+                                        {
+                                            Array.from('Contact us').map((c, i) => (
+                                                <span class={styles.btnRollChar} style={`--btn-roll-i: ${i}`}>
+                                                    {c === ' ' ? '\u00A0' : c}
+                                                </span>
+                                            ))
+                                        }
+                                    </span>
+                                    <span class={styles.btnRollLayer}>
+                                        {
+                                            Array.from('Contact us').map((c, i) => (
+                                                <span class={styles.btnRollChar} style={`--btn-roll-i: ${i}`}>
+                                                    {c === ' ' ? '\u00A0' : c}
+                                                </span>
+                                            ))
+                                        }
+                                    </span>
+                                </span>
+                                <Icon name="email" />
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class={styles.heroFaces} aria-hidden="true">
+                        {
+                            HERO_FACES.map((face) => (
+                                <img src={urlWithBaseUrl(face.src)} alt="" class={styles.heroFace} loading="eager" />
+                            ))
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class={styles.sectionNav} aria-label="Jump to section">
+            <a href="#speakers">Speakers</a>
+            <a href="#agenda">Agenda</a>
+            <a href="#venue">Venue</a>
+        </nav>
+
+        <section class={styles.intro}>
+            <div class={styles.container}>
+                <div class={styles.sectionHeader}>
+                    <h2 class={styles.sectionTitle}>Getting to a prototype with AI is easy. Production is not.</h2>
+                </div>
+                <div class={styles.introBody}>
+                    <p>
+                        Beyond the Prompt is built around a simple observation: getting to a working prototype with AI
+                        is easy. But when real data arrives, everything changes. Performance degrades, edge cases
+                        multiply, and the application you built is not the one you need. That is the point where AI
+                        helps less, and where the real engineering begins.
+                    </p>
+                    <p>
+                        The day brings together engineers and experts to talk honestly about what it takes to build
+                        applications that hold up in production — with time to connect with our teams over lunch,
+                        coffee, and drinks.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class={styles.atAGlance} aria-labelledby="at-a-glance-heading">
+            <div class={styles.sectionRule}>
+                <h2 id="at-a-glance-heading" class={styles.sectionRuleTitle}>At a glance</h2>
+            </div>
+            <div class={styles.container}>
+                <div class={styles.atAGlanceGrid}>
+                    <div class={styles.atAGlanceCard}>
+                        <Icon name="alarm" />
+                        <h3>When</h3>
+                        <p class={styles.atAGlancePrimary}>Tuesday 19 May 2026</p>
+                        <p class={styles.atAGlanceDetail}>
+                            Doors open 08:30 <br /> Sessions 09:30 - 16:45 <br /> Networking 17:00 - 20:00
+                        </p>
+                    </div>
+                    <div class={styles.atAGlanceCard}>
+                        <Icon name="mapPin" />
+                        <h3>Where</h3>
+                        <p class={styles.atAGlancePrimary}>IET London</p>
+                        <p class={styles.atAGlanceDetail}>2 Savoy Place, <br /> London <br /> WC2R 0BL</p>
+                        <a href={VENUE_MAP_HREF} target="_blank" rel="noopener" class={styles.btnGhost}>
+                            View on map <Icon name="arrowRight" />
+                        </a>
+                    </div>
+                    <div class={styles.atAGlanceCard}>
+                        <Icon name="creditCard" />
+                        <h3>Tickets</h3>
+                        <p class={styles.atAGlancePrimary}>Early bird £149</p>
+                        <p class={styles.atAGlanceDetail}>
+                            Includes refreshments, lunch, and entry to the networking reception.
+                        </p>
+                        <a href={BOOK_TICKETS_HREF} target="_blank" rel="noopener" class={styles.btnGhost}>
+                            Book Now <Icon name="arrowRight" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="speakers" class={styles.speakersSection} aria-labelledby="speakers-heading">
+            <div class={styles.sectionRule}>
+                <h2 id="speakers-heading" class={styles.sectionRuleTitle}>Speakers</h2>
+            </div>
+            <div class={styles.container}>
+                <p class={styles.sectionLead}>
+                    Engineers and experts from AG Grid, Bryntum, and beyond — talking about what it takes to build
+                    applications that hold up in production.
+                </p>
+
+                <div class={styles.speakerGrid}>
+                    {
+                        SPEAKERS.map((speaker) => (
+                            <article class={styles.speakerCard}>
+                                <div class={styles.speakerImageWrap}>
+                                    <img
+                                        src={urlWithBaseUrl(speaker.image)}
+                                        alt={speaker.name}
+                                        class:list={[
+                                            styles.speakerImage,
+                                            speaker.imageFit === 'contain' && styles.speakerImageContain,
+                                        ]}
+                                        loading="lazy"
+                                    />
+                                    {/*
+                                        Re-shaded variant for the orange hover state. Sits on top of
+                                        the default illustration via `position: absolute` so the two
+                                        portraits crossfade in place when the card is hovered. The
+                                        wrap turns orange in CSS at the same time, so the orange-bg
+                                        SVG's dither/knockout reads correctly. Decorative — the
+                                        first <img> already carries the speaker's name as alt text.
+                                    */}
+                                    {speaker.imageOrange && (
+                                        <img
+                                            src={urlWithBaseUrl(speaker.imageOrange)}
+                                            alt=""
+                                            aria-hidden="true"
+                                            class:list={[
+                                                styles.speakerImage,
+                                                styles.speakerImageOrange,
+                                                speaker.imageFit === 'contain' && styles.speakerImageContain,
+                                            ]}
+                                            loading="lazy"
+                                        />
+                                    )}
+                                </div>
+                                <h3 class={styles.speakerName}>{speaker.name}</h3>
+                                <p class={styles.speakerTitle}>{speaker.title}</p>
+                                <p class={styles.speakerBio}>{speaker.bio}</p>
+                            </article>
+                        ))
+                    }
+                </div>
+
+                <p class={styles.speakersMore}>More speakers to be announced soon...</p>
+            </div>
+        </section>
+
+        <section id="agenda" class={styles.agendaSection} aria-labelledby="agenda-heading">
+            <div class={styles.sectionRule}>
+                <h2 id="agenda-heading" class={styles.sectionRuleTitle}>Full schedule</h2>
+            </div>
+            <div class={styles.container}>
+                <p class={styles.sectionLead}>
+                    A single track across the day, with breaks designed for conversation. Some sessions are still being
+                    finalised and speakers may be added.
+                </p>
             </div>
 
-            <p class={pageStyles.speakersMore}>More speakers to be announced soon...</p>
-        </section>
-
-        <section id="agenda" class={pageStyles.agendaSection} aria-labelledby="agenda-heading">
-            <h2 id="agenda-heading">Full schedule</h2>
-            <p class={pageStyles.agendaIntro}>
-                A single track across the day, with breaks designed for conversation. Some sessions are still being
-                finalised and speakers may be added.
-            </p>
-
-            <ol class={pageStyles.agenda}>
-                {
-                    AGENDA.map((item) => (
-                        <li class:list={[pageStyles.agendaRow, { [pageStyles.agendaBreak]: item.isBreak }]}>
-                            <div class={pageStyles.agendaTime}>{item.time}</div>
-                            <div class={pageStyles.agendaBody}>
-                                <h3>{item.title}</h3>
-                                {item.speakers && <p class={pageStyles.agendaSpeakers}>{item.speakers}</p>}
-                                {item.description && <p class={pageStyles.agendaDescription}>{item.description}</p>}
+            {
+                AGENDA_SECTIONS.map((section) => (
+                    <div class={styles.container}>
+                        <div class={styles.agenda}>
+                            <div class={styles.agendaSectionHeader}>
+                                <p class={styles.agendaSectionLabel}>{section.label}</p>
                             </div>
-                        </li>
-                    ))
-                }
-            </ol>
+                            <ol class={styles.agendaList}>
+                                {section.items.map((item) => {
+                                    const speakerImages = getSpeakerImagesForItem(item.speakers);
+                                    // Render the wrap whenever a row has *either* a description or
+                                    // a matching speaker portrait — so sessions like the Opening
+                                    // Keynote (speakers but no copy) still get the hover reveal.
+                                    const hasOverlay = Boolean(item.description) || speakerImages.length > 0;
+                                    return (
+                                        <li class:list={[styles.agendaRow, { [styles.agendaBreak]: item.isBreak }]}>
+                                            <div class={styles.agendaTime}>{item.time}</div>
+                                            <div class={styles.agendaBody}>
+                                                <h3 class={styles.agendaTitle}>{item.title}</h3>
+                                                {item.speakers && <p class={styles.agendaSpeakers}>{item.speakers}</p>}
+                                            </div>
+                                            {hasOverlay && (
+                                                <div class={styles.agendaDescriptionWrap}>
+                                                    {item.description && (
+                                                        <p class={styles.agendaDescription}>{item.description}</p>
+                                                    )}
+                                                    {/*
+                                                        Speaker portraits rise + fade in on row hover.
+                                                        They share the row's bounding box and the row
+                                                        clips overflow, so portraits can scale up past
+                                                        the cell without forcing a layout shift. Names
+                                                        already appear in the body column, so this
+                                                        layer is purely decorative.
+                                                    */}
+                                                    {speakerImages.length > 0 && (
+                                                        <div class={styles.agendaSpeakerStack} aria-hidden="true">
+                                                            {speakerImages.map((src) => (
+                                                                <img
+                                                                    src={urlWithBaseUrl(src)}
+                                                                    alt=""
+                                                                    class:list={[
+                                                                        styles.agendaSpeakerImage,
+                                                                        item.keepDefaultPortraitScale &&
+                                                                            styles.agendaSpeakerImageDefaultScale,
+                                                                    ]}
+                                                                    loading="lazy"
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </li>
+                                    );
+                                })}
+                            </ol>
+                        </div>
+                    </div>
+                ))
+            }
         </section>
 
-        <section id="venue" class={pageStyles.venueSection} aria-labelledby="venue-heading">
-            <h2 id="venue-heading">The venue</h2>
-            <p class={pageStyles.venueIntro}>
-                IET London at 2 Savoy Place - a historical, Grade II listed building on the Thames, home to the
-                Institution of Engineering and Technology.
-            </p>
+        <section id="venue" class={styles.venueSection} aria-labelledby="venue-heading">
+            <div class={styles.sectionRule}>
+                <h2 id="venue-heading" class={styles.sectionRuleTitle}>The venue</h2>
+            </div>
+            <div class={styles.container}>
+                <p class={styles.sectionLead}>
+                    IET London at 2 Savoy Place - a historical, Grade II listed building on the Thames, home to the
+                    Institution of Engineering and Technology.
+                </p>
 
-            <div class={pageStyles.venueCarousel}>
-                <div class={pageStyles.venueTrack} data-venue-track>
+                <div class={styles.venueGrid}>
                     {
                         VENUE_IMAGES.map((img) => (
-                            <figure class={pageStyles.venueSlide}>
-                                <img
-                                    src={urlWithBaseUrl(img.src)}
-                                    alt={img.alt}
-                                    class={pageStyles.venueImage}
-                                    loading="lazy"
-                                />
-                                {img.caption && <figcaption class={pageStyles.venueCaption}>{img.caption}</figcaption>}
+                            <figure class={styles.venueSlide}>
+                                {/*
+                                    `<picture>` lets the browser pick the
+                                    narrow-viewport asset before the `<img>`
+                                    fires a request, so phones never download
+                                    the full-width desktop WebP. We use the
+                                    same 720px breakpoint that switches the
+                                    rest of the page into desktop layout.
+                                */}
+                                <picture>
+                                    {img.srcMobile && (
+                                        <source media="(max-width: 719px)" srcset={urlWithBaseUrl(img.srcMobile)} />
+                                    )}
+                                    <img
+                                        src={urlWithBaseUrl(img.src)}
+                                        alt={img.alt}
+                                        class={styles.venueImage}
+                                        loading="lazy"
+                                    />
+                                </picture>
+                                {img.caption && <figcaption class={styles.venueCaption}>{img.caption}</figcaption>}
                             </figure>
                         ))
                     }
                 </div>
+
+                <div class={styles.venueCta}>
+                    <a href={VENUE_MAP_HREF} class={styles.btnSecondary} target="_blank" rel="noopener noreferrer">
+                        <Icon name="mapPin" />
+                        IET London
+                    </a>
+                </div>
             </div>
         </section>
 
-        <div class={styles.finalCTA}>
-            <h2 class="text-2xl">Join us on 19 May in London</h2>
-
-            <div>
-                Early bird tickets are £149. <a href={BOOK_TICKETS_HREF}>Book your place</a> or email
-                <a href={MAILTO_HREF}>info@ag-grid.com</a> with any questions.
-            </div>
-            <br />
-            <div>
-                <div>
-                    <a href={BOOK_TICKETS_HREF} class="button-tertiary">Register Now <Icon name="arrowRight" /></a>
+        <section class={styles.finalCta}>
+            <div class={styles.container}>
+                <div class={styles.finalCtaInner}>
+                    <h2 class={styles.finalCtaTitle}>Join us on 19 May in London</h2>
+                    <p class={styles.finalCtaBody}>
+                        Early bird tickets are £149. <a href={BOOK_TICKETS_HREF}>Book your place</a> or email
+                        <a href={MAILTO_HREF}>info@ag-grid.com</a> with any questions.
+                    </p>
+                    <div class={styles.heroCtas}>
+                        <a href={BOOK_TICKETS_HREF} class={styles.btnPrimary}>
+                            Register Now <Icon name="arrowRight" />
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </section>
+    </div>
 </Layout>
+
+<script>
+    // Reveal the sticky nav once the hero has scrolled fully out of view.
+    // We watch the hero with `threshold: 0`; when `isIntersecting` flips
+    // to false, we set `data-visible="true"` on the nav. The state lives
+    // in a data-attribute (rather than a class) so it doesn't have to
+    // round-trip through CSS Modules name hashing.
+    const stickyNav = document.querySelector<HTMLElement>('[data-sticky-nav]');
+    const stickyTrigger = document.querySelector<HTMLElement>('[data-sticky-trigger]');
+
+    if (stickyNav && stickyTrigger && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                stickyNav.dataset.visible = entry.isIntersecting ? 'false' : 'true';
+            },
+            { threshold: 0 }
+        );
+        observer.observe(stickyTrigger);
+    }
+</script>

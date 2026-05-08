@@ -55,6 +55,7 @@ const {
     hideFooter,
     hidePageFromSearchEngines,
     showMicrosoftMessage,
+    showAnnouncementBanner = true,
     overrideSocialImage,
 } = Astro.props;
 
@@ -194,7 +195,7 @@ const announcementBannerProps = {
         </script>
 
         {
-            !isArchive && (
+            !isArchive && showAnnouncementBanner && (
                 <AnnouncementBanner
                     href={announcementBannerProps.href}
                     title={announcementBannerProps.title}
