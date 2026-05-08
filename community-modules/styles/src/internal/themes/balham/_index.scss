@@ -85,6 +85,10 @@
         height: var(--ag-header-height);
     }
 
+    .ag-toolbar {
+        font-weight: 600;
+    }
+
     .ag-toolbar .ag-toolbar-panel {
         padding-left: var(--ag-grid-size);
     }
