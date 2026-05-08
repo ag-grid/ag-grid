@@ -164,7 +164,7 @@ describe('Toolbar', () => {
     });
 
     describe('duplicate items', () => {
-        test('renders duplicate built-in items in string form', async () => {
+        test('does not render duplicate built-in items in string form', async () => {
             const api = gridMgr.createGrid('duplicate-string-form', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
@@ -175,10 +175,10 @@ describe('Toolbar', () => {
 
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
             const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
-            expect(toolbar.querySelectorAll('.ag-toolbar-input-field').length).toBe(2);
+            expect(toolbar.querySelectorAll('.ag-toolbar-input-field').length).toBe(1);
         });
 
-        test('renders duplicate built-in items without explicit keys', async () => {
+        test('renders duplicate built-in items when passed as objects without explicit keys', async () => {
             const api = gridMgr.createGrid('duplicate-keyless-object-form', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
@@ -194,7 +194,7 @@ describe('Toolbar', () => {
             expect(toolbar.querySelectorAll('.ag-toolbar-input-field').length).toBe(2);
         });
 
-        test('renders both items when explicit keys collide and warns', async () => {
+        test('does not render both items when explicit keys collide and warns', async () => {
             const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
             const api = gridMgr.createGrid('duplicate-explicit-key-collision', {
