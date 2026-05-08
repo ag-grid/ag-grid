@@ -145,8 +145,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
             const aggregationColumnIds = aggregationColumns.map((column) => column.getId());
             const lastIds = this.aggregationColumnIdsLastTime;
             const aggregationColumnsReordered =
-                lastIds != null &&
-                lastIds.length === aggregationColumnIds.length &&
+                lastIds?.length === aggregationColumnIds.length &&
                 !_areEqual(lastIds, aggregationColumnIds) &&
                 lastIds.every((id) => aggregationColumnIds.includes(id));
             this.aggregationColumnIdsLastTime = aggregationColumnIds;
