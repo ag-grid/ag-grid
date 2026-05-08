@@ -30,7 +30,7 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'athlete' },
-        { field: 'country' },
+        { field: 'country', filter: 'agTextColumnFilter' },
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },
