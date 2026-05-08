@@ -17,6 +17,10 @@
         color: var(--ag-header-foreground-color);
     }
 
+    .ag-toolbar {
+        font-weight: 500;
+    }
+
     @include ag.text-input {
         min-height: calc(var(--ag-grid-size) * 4);
         border-radius: var(--ag-border-radius);
