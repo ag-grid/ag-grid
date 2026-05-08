@@ -37,8 +37,12 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     const [rowBusinessKey, setRowBusinessKey] = useState<string | null>(() => rowCtrl.businessKey);
 
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(() => rowCtrl.rowStyles);
-    const cellCtrlsRef = useRef<CellCtrl[] | null>(null);
-    const [cellCtrlsFlushSync, setCellCtrlsFlushSync] = useState<CellCtrl[] | null>(() => null);
+    // Seeded so bulk-add doesn't flash empty rows; getInitialCellCtrls returns
+    // null when creation is deferred or not applicable.
+    const [cellCtrlsFlushSync, setCellCtrlsFlushSync] = useState<CellCtrl[] | null>(() =>
+        rowCtrl.getInitialCellCtrls(containerType)
+    );
+    const cellCtrlsRef = useRef<CellCtrl[] | null>(cellCtrlsFlushSync);
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
 
     // these styles have initial values, so element is placed into the DOM with them,

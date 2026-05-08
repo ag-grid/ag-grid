@@ -2,6 +2,7 @@ import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
+import type { IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
@@ -603,5 +604,60 @@ describe('ag-grid hierarchical tree data reset', () => {
         setRowDataChecked(api, []);
 
         await new GridRows(api, 'cleared').check('empty');
+    });
+
+    test('setRowData without getRowId destroys filler nodes silently', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [],
+            autoGroupColumnDef: { headerName: 'Hierarchy' },
+            treeData: true,
+            treeDataChildrenField: 'children',
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData: [
+                { name: 'A', children: [{ name: 'A.1' }] },
+                { name: 'B', children: [{ name: 'B.1' }] },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        const fillers: IRowNode[] = [];
+        api.forEachNode((n) => {
+            if (n.group) {
+                fillers.push(n);
+            }
+        });
+        expect(fillers.length).toBeGreaterThan(0);
+
+        let topChangedCount = 0;
+        let rowIndexChangedCount = 0;
+        let displayedChangedCount = 0;
+        for (const f of fillers) {
+            f.addEventListener('topChanged', () => {
+                ++topChangedCount;
+            });
+            f.addEventListener('rowIndexChanged', () => {
+                ++rowIndexChangedCount;
+            });
+            f.addEventListener('displayedChanged', () => {
+                ++displayedChangedCount;
+            });
+        }
+
+        setRowDataChecked(api, [
+            { name: 'A', children: [{ name: 'A.1' }] },
+            { name: 'B', children: [{ name: 'B.1' }] },
+        ]);
+        await asyncSetTimeout(1);
+
+        for (const f of fillers) {
+            expect(f.destroyed).toBe(true);
+            expect(f.rowTop).toBeNull();
+            expect(f.rowIndex).toBeNull();
+            expect(f.displayed).toBe(false);
+        }
+        expect(topChangedCount).toBe(0);
+        expect(rowIndexChangedCount).toBe(0);
+        expect(displayedChangedCount).toBe(0);
     });
 });

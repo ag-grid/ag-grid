@@ -374,6 +374,38 @@ describe('RowNode.getDataValue', () => {
             expect(child1Node.getDataValue('name')).toBe('Child 1');
             expect(child1Node.getDataValue('value')).toBe(20);
         });
+
+        test('getDataValue runs valueGetter on tree-data rows', async () => {
+            const api = await gridsManager.createGridAndWait('tree-valueGetter', {
+                columnDefs: [
+                    { field: 'name' },
+                    { colId: 'shouted', valueGetter: (p) => p.data?.name?.toUpperCase() ?? null },
+                ],
+                treeData: true,
+                treeDataChildrenField: 'children',
+                rowData: [
+                    {
+                        id: '1',
+                        name: 'Parent',
+                        children: [
+                            { id: '1-1', name: 'ChildA' },
+                            { id: '1-2', name: 'ChildB' },
+                        ],
+                    },
+                ],
+                getRowId: (params) => params.data.id,
+                groupDefaultExpanded: -1,
+            });
+
+            await asyncSetTimeout(1);
+
+            // Parent (group row) — valueGetter executes against the row's own data
+            expect(api.getRowNode('1')!.getDataValue('shouted')).toBe('PARENT');
+
+            // Child rows
+            expect(api.getRowNode('1-1')!.getDataValue('shouted')).toBe('CHILDA');
+            expect(api.getRowNode('1-2')!.getDataValue('shouted')).toBe('CHILDB');
+        });
     });
 
     describe('with setDataValue', () => {
@@ -2568,6 +2600,60 @@ describe('RowNode.getDataValue', () => {
 
             // Aggregated gold values still work
             expect(countryGroup.getDataValue('gold')).toBe(10);
+        });
+
+        test('getDataValue ignores valueGetter on a showRowGroup column for group rows (groupData wins; level guard returns null at deeper levels)', async () => {
+            let valueGetterCalls = 0;
+            const api = await gridsManager.createGridAndWait('showRowGroup-valueGetter-blocked', {
+                columnDefs: [
+                    {
+                        colId: 'countryGroupCol',
+                        showRowGroup: 'country',
+                        cellRenderer: 'agGroupCellRenderer',
+                        valueGetter: (p) => {
+                            valueGetterCalls++;
+                            return p.data ? `getter:${p.data.country}` : 'getter:no-data';
+                        },
+                    },
+                    {
+                        colId: 'athleteGroupCol',
+                        showRowGroup: 'athlete',
+                        cellRenderer: 'agGroupCellRenderer',
+                        valueGetter: () => {
+                            valueGetterCalls++;
+                            return 'getter:athlete';
+                        },
+                    },
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'athlete', rowGroup: true, hide: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                groupDisplayType: 'custom',
+                groupDefaultExpanded: -1,
+                getRowId: ({ data }) => data.id,
+                rowData: [
+                    { id: '1', country: 'USA', athlete: 'Michael', gold: 8 },
+                    { id: '2', country: 'USA', athlete: 'Ryan', gold: 2 },
+                ],
+            });
+            await asyncSetTimeout(1);
+
+            const countryGroup = api.getRowNode('row-group-country-USA')!;
+            const athleteGroup = api.getRowNode('row-group-country-USA-athlete-Michael')!;
+
+            // Only count invocations from the explicit getDataValue calls below.
+            valueGetterCalls = 0;
+
+            // Matching level: groupData wins, getter not invoked.
+            expect(countryGroup.getDataValue('countryGroupCol')).toBe('USA');
+
+            // Deeper level on country col (idx 0 ≯ level 1): undefined, getter blocked.
+            expect(athleteGroup.getDataValue('countryGroupCol')).toBeUndefined();
+
+            // Shallower level on athlete col (idx 1 > level 0): null via the level guard.
+            expect(countryGroup.getDataValue('athleteGroupCol')).toBeNull();
+
+            expect(valueGetterCalls).toBe(0);
         });
 
         test('tree data group rows resolve showRowGroup columns from their own data', async () => {

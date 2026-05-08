@@ -26,6 +26,7 @@
     --ag-range-selection-highlight-color: #fce4ec;
     --ag-row-hover-color: #fafafa;
     --ag-column-hover-color: #fafafa;
+    --ag-icon-button-hover-background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 6%);
     --ag-control-panel-background-color: #fafafa;
     --ag-selected-row-background-color: rgba(33, 150, 243, 0.3);
     --ag-checkbox-unchecked-color: #333;
@@ -106,6 +107,7 @@
     --ag-foreground-color: #ffffffff;
     --ag-data-color: #f5f5f5ff;
     --ag-header-cell-hover-background-color: #000000ff;
+    --ag-icon-button-hover-background-color: #000000ff;
     --ag-advanced-filter-join-pill-color: #7a3a37ff;
     --ag-advanced-filter-column-pill-color: #355f2dff;
     --ag-advanced-filter-option-pill-color: #5a3168ff;

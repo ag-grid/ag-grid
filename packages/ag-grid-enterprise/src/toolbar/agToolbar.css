@@ -34,6 +34,8 @@
     border: 0;
     background: transparent;
     color: var(--ag-toolbar-text-color);
+    font-family: inherit;
+    font-weight: inherit;
     cursor: pointer;
     line-height: 1;
     white-space: nowrap;
@@ -45,14 +47,33 @@
     color: var(--ag-icon-button-hover-color);
 }
 
+:where(.ag-toolbar-button-wrapper:hover) .ag-toolbar-button,
+:where(.ag-toolbar-button-wrapper:hover .ag-toolbar-button) .ag-icon {
+    color: var(--ag-icon-button-hover-color);
+}
+
 .ag-toolbar-button:focus-visible {
     box-shadow: var(--ag-focus-shadow);
+}
+
+:where(.ag-toolbar-button:focus):not(:focus-visible) {
+    box-shadow: none;
 }
 
 .ag-toolbar-button:disabled {
     opacity: 0.5;
     cursor: default;
     pointer-events: none;
+}
+
+/* stylelint-disable-next-line no-descending-specificity, selector-max-specificity */
+.ag-toolbar > .ag-toolbar-button-wrapper:first-child > .ag-toolbar-button {
+    border-start-start-radius: calc(var(--ag-border-radius) + 1px);
+}
+
+/* stylelint-disable-next-line no-descending-specificity, selector-max-specificity */
+.ag-toolbar > .ag-toolbar-button-wrapper:last-child > .ag-toolbar-button {
+    border-start-end-radius: calc(var(--ag-border-radius) + 1px);
 }
 
 .ag-toolbar-panel {
@@ -71,8 +92,24 @@
     margin: 0 calc(var(--ag-spacing) * 2);
 }
 
-:where(.ag-toolbar-input) + :where(.ag-toolbar-input) {
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar-input + .ag-toolbar-input {
     margin-inline-start: 0;
+}
+
+/* stylelint-disable-next-line no-descending-specificity, selector-max-specificity */
+.ag-toolbar-right-start + .ag-toolbar-input {
+    margin-inline-start: var(--ag-spacing);
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar > .ag-toolbar-input:first-child {
+    margin-inline-start: var(--ag-spacing);
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-toolbar > .ag-toolbar-input:last-child {
+    margin-inline-end: var(--ag-spacing);
 }
 
 .ag-toolbar-input-icon {
@@ -88,13 +125,16 @@
 .ag-toolbar-input-field {
     color: var(--ag-text-color);
     font-size: var(--ag-font-size);
+    font-family: inherit;
+    font-weight: inherit;
     line-height: 1.5;
     outline: none;
+    background-color: var(--ag-input-background-color);
     border: var(--ag-input-border);
     border-radius: var(--ag-input-border-radius);
     width: 100%;
     padding-block: calc(var(--ag-spacing) * 0.5);
-    padding-inline: calc(var(--ag-spacing) * 4) var(--ag-spacing);
+    padding-inline: calc(var(--ag-icon-size) + var(--ag-spacing) * 2) var(--ag-spacing);
 }
 
 .ag-toolbar-input-field:focus {
@@ -115,6 +155,7 @@
 /* stylelint-disable-next-line selector-max-specificity */
 .ag-toolbar .ag-column-drop-horizontal {
     border-bottom: none;
+    padding-inline-start: 0;
 }
 
 .ag-toolbar-button-chevron {

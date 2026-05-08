@@ -6,12 +6,12 @@ const COLUMNS = [
 export default {
     template: `
         <div class="ag-toolbar-item" style="display: flex; gap: 12px; padding: 8px;">
-            <label v-for="option in options" :key="option.column" style="padding: 0 4px;">
+            <label v-for="option in options" :key="option.column" style="display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;">
                 <input
                     type="checkbox"
                     :checked="checked[option.column]"
                     @change="onChange(option.column, $event)"
-                    style="margin-right: 4px;"
+                    style="margin: 0;"
                 />
                 {{ option.label }}
             </label>

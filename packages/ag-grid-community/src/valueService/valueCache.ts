@@ -7,44 +7,35 @@ export class ValueCache extends BeanStub implements NamedBean {
     beanName = 'valueCache' as const;
 
     private cacheVersion = 0;
-    private active: boolean;
-    private neverExpires: boolean;
+    private neverExpires: boolean = false;
 
     public postConstruct(): void {
-        const gos = this.gos;
-        this.active = gos.get('valueCache');
-        this.neverExpires = gos.get('valueCacheNeverExpires');
+        this.neverExpires = this.gos.get('valueCacheNeverExpires');
     }
 
     public onDataChanged(): void {
-        if (this.neverExpires) {
-            return;
+        if (!this.neverExpires) {
+            this.expire();
         }
-
-        this.expire();
     }
 
     public expire(): void {
         this.cacheVersion++;
     }
 
-    public setValue(rowNode: RowNode, colId: string, value: any): any {
-        if (this.active) {
-            const cacheVersion = this.cacheVersion;
-            if (rowNode.__cacheVersion !== cacheVersion) {
-                rowNode.__cacheVersion = cacheVersion;
-                rowNode.__cacheData = {};
-            }
-
-            rowNode.__cacheData[colId] = value;
+    public setValue(rowNode: RowNode, colId: string, value: any): void {
+        const cacheVersion = this.cacheVersion;
+        if (rowNode.__cacheVersion !== cacheVersion) {
+            rowNode.__cacheVersion = cacheVersion;
+            rowNode.__cacheData = {};
         }
+        rowNode.__cacheData[colId] = value;
     }
 
     public getValue(rowNode: RowNode, colId: string): any {
-        if (!this.active || rowNode.__cacheVersion !== this.cacheVersion) {
+        if (rowNode.__cacheVersion !== this.cacheVersion) {
             return undefined;
         }
-
         return rowNode.__cacheData[colId];
     }
 }

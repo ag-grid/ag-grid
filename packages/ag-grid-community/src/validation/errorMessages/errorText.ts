@@ -797,6 +797,8 @@ export const AG_GRID_ERRORS = {
             rowModelType,
             additionalText: 'The item will not be rendered.',
         }),
+    303: ({ key }: { key: string }) =>
+        `Multiple toolbar items share the explicit key '${key}'. Only the first item is rendered.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
