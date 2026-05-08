@@ -118,7 +118,7 @@ describe('Toolbar', () => {
             expect(instance).toBeDefined();
         });
 
-        test('returns undefined when string form is used (no explicit key)', async () => {
+        test('returns built in item when string form is used (no explicit key)', async () => {
             const api = gridMgr.createGrid('get-instance-builtin-string-form', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
@@ -127,7 +127,7 @@ describe('Toolbar', () => {
 
             await waitForEvent('firstDataRendered', api);
 
-            expect(api.getToolbarItemInstance('agQuickFilterToolbarItem')).toBeUndefined();
+            expect(api.getToolbarItemInstance('agQuickFilterToolbarItem')).toBeDefined();
         });
 
         test('returns undefined when no explicit key is given on object form', async () => {
@@ -165,6 +165,7 @@ describe('Toolbar', () => {
 
     describe('duplicate items', () => {
         test('does not render duplicate built-in items in string form', async () => {
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             const api = gridMgr.createGrid('duplicate-string-form', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
@@ -176,6 +177,11 @@ describe('Toolbar', () => {
             const gridDiv = TestGridsManager.getHTMLElement(api)!;
             const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
             expect(toolbar.querySelectorAll('.ag-toolbar-input-field').length).toBe(1);
+
+            const warnings = warnSpy.mock.calls.flat().join(' ');
+            expect(warnings).toContain('303');
+
+            warnSpy.mockRestore();
         });
 
         test('renders duplicate built-in items when passed as objects without explicit keys', async () => {
