@@ -176,6 +176,8 @@ function calculateGridUrl() {
 
 export const GRID_URL = calculateGridUrl();
 
+export const PRODUCTION_STUDIO_SITE_URL = 'https://www.ag-grid.com/studio';
+
 export const LIVE_SITEMAP_URL = import.meta.env?.LIVE_SITEMAP_URL;
 
 export const EXAMPLE_RANDOM_SEED = 'AG Grid Random Seed';
