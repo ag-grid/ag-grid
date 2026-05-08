@@ -10,12 +10,13 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ContextMenuModule, ToolbarModule } from 'ag-grid-enterprise';
+import { ColumnMenuModule, ContextMenuModule, ToolbarModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     TextFilterModule,
     NumberFilterModule,
+    ColumnMenuModule,
     CsvExportModule,
     ColumnAutoSizeModule,
     ColumnApiModule,
@@ -46,7 +47,6 @@ const gridOptions: GridOptions<IOlympicData> = {
                 tooltip: 'Size Columns to Fit',
                 action: (params) => params.api.sizeColumnsToFit(),
             },
-            'separator',
             {
                 key: 'autoSizeAll',
                 icon: 'minimize',
@@ -64,6 +64,16 @@ const gridOptions: GridOptions<IOlympicData> = {
                         defaultState: { sort: null },
                     }),
             },
+            {
+                key: 'sortFirstColumnDesc',
+                icon: 'sortDescending',
+                tooltip: 'Sort First Column Descending',
+                action: (params) =>
+                    params.api.applyColumnState({
+                        state: [{ colId: 'athlete', sort: 'desc' }],
+                        defaultState: { sort: null },
+                    }),
+            },
             'separator',
             {
                 key: 'addFilter',
@@ -74,7 +84,6 @@ const gridOptions: GridOptions<IOlympicData> = {
                         country: { filterType: 'text', type: 'contains', filter: 'Canada' },
                     }),
             },
-            'separator',
             {
                 key: 'clearFilters',
                 icon: 'filterActive',
@@ -83,10 +92,10 @@ const gridOptions: GridOptions<IOlympicData> = {
             },
             'separator',
             {
-                key: 'resetColumns',
+                key: 'showColumnChooser',
                 icon: 'columns',
-                tooltip: 'Reset Column State',
-                action: (params) => params.api.resetColumnState(),
+                tooltip: 'Open Column Chooser',
+                action: (params) => params.api.showColumnChooser(),
             },
         ],
     },
