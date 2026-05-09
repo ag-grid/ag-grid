@@ -20,6 +20,10 @@
     display: inline-flex;
 }
 
+.ag-toolbar-button {
+    font-size: 14px;
+}
+
 .ag-toolbar-button-wrapper {
     display: inline-flex;
     padding: calc(var(--ag-spacing) * 0.25);
