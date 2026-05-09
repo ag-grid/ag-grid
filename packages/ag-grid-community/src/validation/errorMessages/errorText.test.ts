@@ -105,7 +105,7 @@ function App() {
     );
 }
 
-For more info see: https://localhost:4610/javascript-data-grid/modules/"
+For more info see: https://www.ag-grid.com/archive/35.3.0/javascript-data-grid/modules/"
 `);
     });
 
@@ -127,7 +127,7 @@ import { RowSelectionModule } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ RowSelectionModule ]);
 
-For more info see: https://localhost:4610/javascript-data-grid/modules/"
+For more info see: https://www.ag-grid.com/archive/35.3.0/javascript-data-grid/modules/"
 `);
     });
 });
@@ -159,7 +159,7 @@ function App() {
     );
 }
 
-For more info see: https://localhost:4610/javascript-data-grid/modules/"
+For more info see: https://www.ag-grid.com/archive/35.3.0/javascript-data-grid/modules/"
 `);
     });
 
@@ -181,7 +181,7 @@ import { RichSelectModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ RichSelectModule ]);
 
-For more info see: https://localhost:4610/javascript-data-grid/modules/"
+For more info see: https://www.ag-grid.com/archive/35.3.0/javascript-data-grid/modules/"
 `);
     });
 });

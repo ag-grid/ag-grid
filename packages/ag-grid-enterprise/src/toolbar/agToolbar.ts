@@ -146,7 +146,9 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
 
     public getToolbarItemInstance<T = IToolbarItem>(key: string): T | undefined {
         const comp = this.toolbarItems.get(key);
-        if (!comp) return undefined;
+        if (!comp) {
+            return undefined;
+        }
         return _unwrapUserComp(comp) as T | undefined;
     }
 
