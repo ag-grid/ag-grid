@@ -20,10 +20,6 @@
     display: inline-flex;
 }
 
-.ag-toolbar-button {
-    font-size: 14px;
-}
-
 .ag-toolbar-button-wrapper {
     display: inline-flex;
     padding: calc(var(--ag-spacing) * 0.25);
@@ -37,8 +33,9 @@
     padding: calc(var(--ag-spacing));
     border: 0;
     background: transparent;
-    color: var(--ag-toolbar-text-color);
+    color: var(--ag-header-foreground-color);
     font-family: inherit;
+    font-size: var(--ag-header-font-size);
     font-weight: inherit;
     cursor: pointer;
     line-height: 1;
