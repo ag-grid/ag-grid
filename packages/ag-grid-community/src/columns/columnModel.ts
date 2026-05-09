@@ -174,7 +174,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // setPivotMode, applyColumnState,
     // functionColsService.setPrimaryColList, functionColsService.updatePrimaryColList,
     // pivotResultCols.setPivotResultCols
-    public refreshCols(newColDefs: boolean, source: ColumnEventType, useGeneratedOrder: boolean = false): void {
+    public refreshCols(newColDefs: boolean, source: ColumnEventType): void {
         if (!this.colDefCols) {
             return;
         }
@@ -206,7 +206,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols, source);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
-        if (!useGeneratedOrder && (!newColDefs || shouldSortNewColDefs)) {
+        if (!newColDefs || shouldSortNewColDefs) {
             this.restoreColOrder(cols);
         }
 
@@ -460,54 +460,23 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // in results array
         const previousSiblingPosMap: Map<AgColumn, AgColumn | AgColumn[]> = new Map();
 
-        // Single forward pass over cols.list pre-computes each pivot row-total's
-        // anchor (the most-recent preserved col seen). null value = row total with
-        // no preceding preserved col — falls through to noSiblingsAvailable below.
-        const { pivotColDefSvc } = this.beans;
-        let rowTotalAnchors: Map<AgColumn, AgColumn | null> | null = null;
-        if (pivotColDefSvc != null) {
-            let lastPositioned: AgColumn | null = null;
-            for (const col of cols.list) {
-                if (colPositionMap.has(col)) {
-                    lastPositioned = col;
-                } else if (pivotColDefSvc.isPivotRowTotalColumn(col.colDef)) {
-                    rowTotalAnchors ??= new Map();
-                    rowTotalAnchors.set(col, lastPositioned);
-                }
-            }
-        }
-
-        const addColAfter = (anchor: AgColumn, col: AgColumn): void => {
-            const prev = previousSiblingPosMap.get(anchor);
-            if (prev === undefined) {
-                previousSiblingPosMap.set(anchor, col);
-            } else if (Array.isArray(prev)) {
-                prev.push(col);
-            } else {
-                // if we have a single col, then we need to add the new col to the array
-                previousSiblingPosMap.set(anchor, [prev, col]);
-            }
-        };
-
         // for each new col, find the col it needs inserted after and store for when array is constructed
         for (const col of additionalCols) {
-            const rowTotalAnchor = rowTotalAnchors?.get(col);
-            if (rowTotalAnchor !== undefined) {
-                if (rowTotalAnchor === null) {
-                    noSiblingsAvailable.push(col);
-                } else {
-                    addColAfter(rowTotalAnchor, col);
-                }
-                continue;
-            }
-
             const prevSiblingIdx = getPreviousSibling(col, null);
             if (prevSiblingIdx == null) {
                 noSiblingsAvailable.push(col);
                 continue;
             }
 
-            addColAfter(prevSiblingIdx, col);
+            const prev = previousSiblingPosMap.get(prevSiblingIdx);
+            if (prev === undefined) {
+                previousSiblingPosMap.set(prevSiblingIdx, col);
+            } else if (Array.isArray(prev)) {
+                prev.push(col);
+            } else {
+                // if we have a single col, then we need to add the new col to the array
+                previousSiblingPosMap.set(prevSiblingIdx, [prev, col]);
+            }
         }
 
         // the following code starts at the tail of the array and works backwards.
@@ -517,7 +486,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const result = new Array(cols.list.length);
         let resultPointer = result.length - 1;
-
         // work backwards, first adding no siblings to end
         for (let i = noSiblingsAvailable.length - 1; i >= 0; i--) {
             result[resultPointer--] = noSiblingsAvailable[i];
@@ -539,7 +507,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
             }
             result[resultPointer--] = nextCol;
         }
-
         cols.list = result;
     }
 

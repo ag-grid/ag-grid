@@ -62,6 +62,6 @@ Test documentation changes:
 # Start dev server
 yarn nx dev
 
-# Run E2E tests
-yarn nx e2e ag-grid-docs
+# Run E2E tests (chromium only, bypasses Nx)
+./docs-e2e.sh feature-category
 ```

@@ -106,7 +106,13 @@ For detailed information about preferred technologies and architectural constrai
 -   `yarn nx test <package>` – execute Jest unit tests for the affected package.
 -   `yarn nx test <package> --testPathPattern="<file-name>"` - test specific test file
 -   `yarn nx test <package> --testPathPattern="<file-name>" --testNamePattern="<test-name>"` - test specific test name in a specific test file
--   `yarn nx e2e <package>` – run Playwright flows when altering website behaviour.
+-   `./docs-e2e.sh` – run docs Playwright E2E tests directly, bypassing Nx (chromium by default).
+-   `./docs-e2e.sh "<file-pattern>"` – run E2E tests matching a file pattern.
+-   `./docs-e2e.sh "<file-pattern>" --grep "<test-name>"` – run a specific E2E test by name.
+-   `./docs-e2e.sh --all-browsers` – run E2E tests across chromium, firefox, and webkit.
+-   `./docs-e2e.sh --framework <name>` – run E2E tests with a specific framework (e.g. react, angular, vue).
+-   `./docs-e2e.sh --ui` – open Playwright UI mode.
+-   `yarn nx e2e <package>` – run Playwright flows via Nx when altering website behaviour.
 -   `yarn nx lint <package>` – apply ESLint and custom rules before final review.
 
 ### Slash Commands
@@ -183,13 +189,11 @@ While this transition is in progress, changes made to Theming API should be appl
 #### Quick Playbooks
 
 -   **Bug fix or feature work (community/enterprise)**
-
     1. Update the affected implementation (typically under `packages/ag-grid-*/src/`).
     2. Sync any dependent docs/examples.
     3. Run `yarn nx test ag-grid-community`, `yarn nx test ag-grid-enterprise`.
 
 -   **Documentation/content update**
-
     1. Consult the [Documentation Pages Guide](.rulesync/rules/docs-pages.md) for structure and patterns.
     2. Modify the relevant content under `documentation/ag-grid-docs/`.
     3. Create or update examples in `_examples/` folder following the [Examples Guide](.rulesync/rules/examples.md).

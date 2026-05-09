@@ -44,7 +44,6 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
     private uniqueValues: Map<string, any> = new Map();
 
     private aggregationColumnsHashLastTime: string | null;
-    private aggregationColumnIdsLastTime: string[] | null;
     private aggregationFuncsHashLastTime: string;
     private pivotOrderLastTime: string[] = [];
 
@@ -65,7 +64,6 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
 
     private executePivotOff(): boolean {
         this.aggregationColumnsHashLastTime = null;
-        this.aggregationColumnIdsLastTime = null;
         this.pivotOrderLastTime = [];
         this.uniqueValues = new Map();
         if (this.pivotResultCols.isPivotResultColsPresent()) {
@@ -139,23 +137,8 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
             pivotOrderChanged ||
             anyGridOptionsChanged
         ) {
-            // Reorder detection only matters on the rebuild path. Computing the id
-            // list (and the includes-scan against last time) on every transaction
-            // would burn allocations on the no-op hot path.
-            const aggregationColumnIds = aggregationColumns.map((column) => column.getId());
-            const lastIds = this.aggregationColumnIdsLastTime;
-            const aggregationColumnsReordered =
-                lastIds?.length === aggregationColumnIds.length &&
-                !_areEqual(lastIds, aggregationColumnIds) &&
-                lastIds.every((id) => aggregationColumnIds.includes(id));
-            this.aggregationColumnIdsLastTime = aggregationColumnIds;
-
             const pivotColumnGroupDefs = this.pivotColDefSvc.createPivotColumnDefs(this.uniqueValues);
-            this.pivotResultCols.setPivotResultCols(
-                pivotColumnGroupDefs,
-                'rowModelUpdated',
-                aggregationColumnsReordered
-            );
+            this.pivotResultCols.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
             // Because the secondary columns have changed, the aggregation needs to visit the whole
             // tree again, so signal the caller to deactivate the changedPath.
             this.lastTimeFailed = false;

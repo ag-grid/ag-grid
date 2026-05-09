@@ -61,9 +61,11 @@ const getCodeSandboxRuntime = (internalFramework: InternalFramework) => {
 
 const getCodeSandboxFiles = ({
     files,
+    boilerPlateFiles,
     internalFramework,
 }: {
     files: FileContents;
+    boilerPlateFiles?: FileContents;
     internalFramework: InternalFramework;
 }) => {
     const sandboxFiles: SandboxFiles = {};
@@ -107,10 +109,12 @@ const createHiddenInputFactory =
 const getCodeSandboxFilesToSubmit = ({
     title,
     files,
+    boilerPlateFiles,
     internalFramework,
 }: {
     title: string;
     files: FileContents;
+    boilerPlateFiles?: FileContents;
     internalFramework: InternalFramework;
 }) => {
     const runtime = getCodeSandboxRuntime(internalFramework);
@@ -124,6 +128,7 @@ const getCodeSandboxFilesToSubmit = ({
         ...configFiles,
         ...getCodeSandboxFiles({
             files,
+            boilerPlateFiles,
             internalFramework,
         }),
     };
@@ -140,10 +145,12 @@ const getCodeSandboxFilesToSubmit = ({
 export const openCodeSandbox = ({
     title,
     files,
+    boilerPlateFiles,
     internalFramework,
 }: {
     title: string;
     files: FileContents;
+    boilerPlateFiles?: FileContents;
     internalFramework: InternalFramework;
 }) => {
     const form = document.createElement('form');
@@ -157,6 +164,7 @@ export const openCodeSandbox = ({
         files: getCodeSandboxFilesToSubmit({
             title,
             files,
+            boilerPlateFiles,
             internalFramework,
         }),
         template: getCodeSandboxRuntime(internalFramework),

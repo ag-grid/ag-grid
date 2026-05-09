@@ -25,12 +25,7 @@ interface Props {
     hidePageFromSearchEngines?: boolean;
     showMicrosoftMessage?: boolean;
     showAnnouncementBanner?: boolean;
-    announcementBannerProps?: {
-        href: string;
-        title: string;
-        description: string;
-        ctaLabel: string;
-    };
+    overrideSocialImage?: string;
 }
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
@@ -54,10 +49,12 @@ const {
     hideFooter,
     hidePageFromSearchEngines,
     showMicrosoftMessage,
+    showAnnouncementBanner = true,
+    overrideSocialImage,
 } = Astro.props;
 
 const path = Astro.url.pathname;
-const socialImage = urlWithBaseUrl(metadata.socialImage);
+const socialImage = urlWithBaseUrl(overrideSocialImage ?? metadata.socialImage);
 
 const lightModeCSSUrl = `url("${urlWithBaseUrl('/images/sun.svg')}")`;
 const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
@@ -192,7 +189,7 @@ const announcementBannerProps = {
         </script>
 
         {
-            !isArchive && (
+            !isArchive && showAnnouncementBanner && (
                 <AnnouncementBanner
                     href={announcementBannerProps.href}
                     title={announcementBannerProps.title}
