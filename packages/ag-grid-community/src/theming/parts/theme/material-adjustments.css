@@ -13,13 +13,12 @@
     background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 8%);
 }
 
-.ag-toolbar .ag-column-drop-horizontal {
+:where(.ag-toolbar) .ag-column-drop-horizontal {
     background-color: transparent;
 }
 
-.ag-toolbar .ag-toolbar-panel {
-    padding-inline-start: var(--ag-cell-horizontal-padding);
-    padding-inline-end: 0;
+:where(.ag-toolbar) .ag-toolbar-panel {
+    padding-inline: var(--ag-cell-horizontal-padding) 0;
 }
 
 .ag-cell.ag-cell-inline-editing {
