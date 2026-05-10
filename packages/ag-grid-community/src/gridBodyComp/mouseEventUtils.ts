@@ -59,6 +59,6 @@ function getRowAreaTopOffset(beans: BeanCollection, event: MouseEvent | { x: num
     const visibleOffset = eScrollingRows.getBoundingClientRect().top - eViewport.getBoundingClientRect().top;
     // `event.y` is viewport-relative. Convert the measured visible offset into
     // the scroll-content offset so it remains stable while scrolling.
-    const offset = visibleOffset + eViewport.scrollTop;
+    const offset = visibleOffset + eGridViewport.scrollTop;
     return offset > 0 ? offset : 0;
 }
