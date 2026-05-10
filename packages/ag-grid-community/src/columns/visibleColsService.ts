@@ -63,7 +63,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private ariaOrderColumns: AgColumn[];
 
     public refresh(source: ColumnEventType, skipTreeBuild = false): void {
-        const { colFlex, colModel, colGroupSvc, colViewport, selectionColSvc } = this.beans;
+        const { colFlex, colModel, colGroupSvc, colViewport, selectionColSvc, ctrlsSvc } = this.beans;
         // when we open/close col group, skipTreeBuild=false, as we know liveCols haven't changed
         if (!skipTreeBuild) {
             this.buildTrees(colModel, colGroupSvc);
@@ -84,7 +84,22 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         this.setLeftValues(source);
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
-        colFlex?.refreshFlexedColumns();
+        // The cached flex viewport width inside `colFlex` only updates from the resize observer
+        // in viewportSizeFeature. When pinning changes the logical centre width without resizing
+        // the DOM viewport, we must pass the freshly-derived centre width here.
+        // Compute pinned widths directly from the just-updated column lists rather than using
+        // `getCenterWidth()` — the latter reads the cached `leftWidth`/`rightWidth` via
+        // `getLeftStickyColumnContainerWidth`, which is only refreshed by `updateBodyWidths` below.
+        const gridBodyCtrl = ctrlsSvc?.getGridBodyCtrl();
+        const viewportWidth = gridBodyCtrl?.getViewportWidthWithoutScrollbar();
+        const centerWidth =
+            viewportWidth != null
+                ? Math.max(
+                      0,
+                      viewportWidth - getWidthOfColsInList(this.leftCols) - getWidthOfColsInList(this.rightCols)
+                  )
+                : undefined;
+        colFlex?.refreshFlexedColumns(centerWidth != null ? { viewportWidth: centerWidth } : undefined);
         this.updateBodyWidths();
         this.setFirstRightAndLastLeftPinned(colModel, this.leftCols, this.rightCols, source);
         colViewport.checkViewportColumns(false);

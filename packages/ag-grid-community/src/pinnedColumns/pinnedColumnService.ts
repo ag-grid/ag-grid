@@ -100,7 +100,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     }
 
     public setColsPinned(keys: ColKey[], pinned: ColumnPinnedType, source: ColumnEventType): void {
-        const { colModel, colAnimation, visibleCols, gos } = this.beans;
+        const { colModel, visibleCols, gos } = this.beans;
         if (!colModel.cols) {
             return;
         }
@@ -112,8 +112,6 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             _warn(37);
             return;
         }
-
-        colAnimation?.start();
 
         let actualPinned: ColumnPinnedType;
         if (pinned === true || pinned === 'left') {
@@ -145,8 +143,6 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             visibleCols.refresh(source);
             dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
         }
-
-        colAnimation?.finish();
     }
 
     public initCol(column: AgColumn): void {
