@@ -336,6 +336,11 @@ export const AG_GRID_LOCALE_HR = {
     sortAbsoluteDescending: 'Sortiraj apsolutno silazno',
     sortUnSort: 'Očisti sortiranje',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Pronađi',
+    toolbarFindPreviousMatch: 'Prethodno podudaranje',
+    toolbarFindNextMatch: 'Sljedeće podudaranje',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Izbornik',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Zbroj',

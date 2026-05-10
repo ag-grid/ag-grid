@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "35.2.1-beta.20260419.2046",
+  "version": "35.2.1-beta.20260503.2052",
   "description": "AG Grid React Component",
   "main": "./dist/package/index.cjs.js",
   "types": "./dist/types/src/index.d.ts",
@@ -31,7 +31,7 @@
   "devDependencies": {
     "@babel/runtime": "^7.29.2",
     "prop-types": "^15.6.2",
-    "ag-grid-community": "35.2.1-beta.20260419.2046",
+    "ag-grid-community": "35.2.1-beta.20260503.2052",
     "@babel/plugin-proposal-throw-expressions": "^7.27.1",
     "@babel/preset-typescript": "^7.28.5",
     "@types/react": "~18.3.26",
@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "prop-types": "^15.8.1",
-    "ag-grid-community": "35.2.1-beta.20260419.2046"
+    "ag-grid-community": "35.2.1-beta.20260503.2052"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",

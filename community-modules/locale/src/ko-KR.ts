@@ -335,6 +335,11 @@ export const AG_GRID_LOCALE_KR = {
     sortAbsoluteDescending: '절대 내림차순 정렬',
     sortUnSort: '정렬 해제',
     shiftF2: 'Shift+F2',
+    toolbarFind: '찾기',
+    toolbarFindPreviousMatch: '이전 항목 찾기',
+    toolbarFindNextMatch: '다음 항목 찾기',
+    toolbarQuickFilter: '필터',
+    toolbarMenu: '메뉴',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '합계',

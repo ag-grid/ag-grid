@@ -336,6 +336,11 @@ export const AG_GRID_LOCALE_UA = {
     sortAbsoluteDescending: 'Сортувати за спаданням',
     sortUnSort: 'Очистити Сортування',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Знайти',
+    toolbarFindPreviousMatch: 'Попередній збіг',
+    toolbarFindNextMatch: 'Наступний збіг',
+    toolbarQuickFilter: 'Фільтр',
+    toolbarMenu: 'Меню',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Сума',

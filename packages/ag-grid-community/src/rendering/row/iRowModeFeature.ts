@@ -1,6 +1,7 @@
 import type { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent } from '../../events';
+import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { INotesFeature } from '../../interfaces/notes';
@@ -38,6 +39,8 @@ export interface IRowModeFeature {
     onTabKeyDown?(keyboardEvent: KeyboardEvent): void;
     onRowMouseDown?(mouseEvent: MouseEvent): void;
     setupDetailRowAutoHeight?(eGui: HTMLElement): void;
+    prepareInitialCellCtrls?(): void;
+    getInitialCellCtrls?(containerType: RowContainerType): CellCtrl[] | null;
 
     // Target resolution
     getTargets?(): FullWidthTarget[];

@@ -337,6 +337,11 @@ export const AG_GRID_LOCALE_DK = {
     sortAbsoluteDescending: 'Sorter Absolut Faldende',
     sortUnSort: 'Ryd Sortering',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Find',
+    toolbarFindPreviousMatch: 'Forrige fund',
+    toolbarFindNextMatch: 'Næste fund',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',

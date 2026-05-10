@@ -185,6 +185,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowEditStyleFeature = beans.editSvc?.createRowStyleFeature(this);
 
         this.addListeners();
+
+        this.rowModeFeature.prepareInitialCellCtrls?.();
     }
 
     private createRowModeFeature(): IRowModeFeature {
@@ -495,6 +497,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             centerWidth: visibleCols.bodyWidth,
             rightWidth: visibleCols.getRightStickyColumnContainerWidth(),
         };
+    }
+
+    /**
+     * CellCtrls for rows whose normal-mode feature eagerly created cells in the constructor.
+     * React uses this to seed first render and avoid an empty row flash on bulk add.
+     */
+    public getInitialCellCtrls(containerType: RowContainerType): CellCtrl[] | null {
+        return this.rowModeFeature.getInitialCellCtrls?.(containerType) ?? null;
     }
 
     public getDomOrder(): boolean {

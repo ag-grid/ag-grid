@@ -88,10 +88,33 @@ yarn nx test ag-grid-community --testPathPattern="featureName"
 yarn nx test ag-grid-community --testPathPattern="featureName" --testNamePattern="should handle"
 ```
 
-### E2E Tests
+### E2E Tests (Playwright)
+
+E2E tests run via Playwright against the docs site. `./docs-e2e.sh` runs them directly from the repo root, bypassing Nx, and defaults to chromium only:
 
 ```bash
-# Run documentation E2E tests
+# Run all E2E tests (chromium)
+./docs-e2e.sh
+
+# Run tests matching a file pattern
+./docs-e2e.sh "toolbar"
+
+# Run a specific test by name
+./docs-e2e.sh "toolbar" --grep "Quick filter"
+
+# Run against all browsers
+./docs-e2e.sh --all-browsers
+
+# Run with a specific framework
+./docs-e2e.sh --framework react
+
+# Open Playwright UI mode
+./docs-e2e.sh --ui
+```
+
+The full Nx target is still available when needed:
+
+```bash
 yarn nx e2e ag-grid-docs
 ```
 

@@ -17,6 +17,7 @@
     align-items: center;
     background-color: var(--ag-column-drop-cell-background-color);
     color: var(--ag-column-drop-cell-text-color);
+    font-weight: normal;
     border-radius: 500px;
     padding: calc(var(--ag-spacing) * 0.25);
     padding-left: calc(var(--ag-spacing) * 0.75);

@@ -1,5 +1,6 @@
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
+import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
 import type { CellCtrl } from '../cell/cellCtrl';
@@ -38,6 +39,20 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
 
     public shouldCreateCellSections(): boolean {
         return true;
+    }
+
+    public prepareInitialCellCtrls(): void {
+        if (this.rowCtrl.useAnimationFrameForCreate) {
+            return;
+        }
+        this.createAllCellCtrls();
+    }
+
+    public getInitialCellCtrls(_containerType: RowContainerType): CellCtrl[] | null {
+        if (this.rowCtrl.useAnimationFrameForCreate) {
+            return null;
+        }
+        return this.getAllCellCtrls();
     }
 
     public getAllCellCtrls(): CellCtrl[] {

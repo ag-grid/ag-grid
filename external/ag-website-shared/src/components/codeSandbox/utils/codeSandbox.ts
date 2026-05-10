@@ -1,6 +1,6 @@
 import type { InternalFramework } from '@ag-grid-types';
 import type { FileContents } from '@components/example-generator/types';
-import { EXAMPLE_STYLE_FILE_NAME } from '@constants';
+import { DEBUG_SCRIPT_FILE_NAME, EXAMPLE_STYLE_FILE_NAME } from '@constants';
 import { isReactInternalFramework } from '@utils/framework';
 import { getParameters } from 'codesandbox-import-utils/lib/api/define';
 
@@ -27,7 +27,9 @@ const getPathForFile = ({
         return `public/index.html`;
     }
 
-    if (fileName === EXAMPLE_STYLE_FILE_NAME) {
+    if (fileName === DEBUG_SCRIPT_FILE_NAME) {
+        return `public/${DEBUG_SCRIPT_FILE_NAME}`;
+    } else if (fileName === EXAMPLE_STYLE_FILE_NAME) {
         return `public/${EXAMPLE_STYLE_FILE_NAME}`;
     }
 
@@ -63,7 +65,7 @@ const getCodeSandboxFiles = ({
     internalFramework,
 }: {
     files: FileContents;
-    boilerPlateFiles: FileContents;
+    boilerPlateFiles?: FileContents;
     internalFramework: InternalFramework;
 }) => {
     const sandboxFiles: SandboxFiles = {};
@@ -112,7 +114,7 @@ const getCodeSandboxFilesToSubmit = ({
 }: {
     title: string;
     files: FileContents;
-    boilerPlateFiles: FileContents;
+    boilerPlateFiles?: FileContents;
     internalFramework: InternalFramework;
 }) => {
     const runtime = getCodeSandboxRuntime(internalFramework);
@@ -148,7 +150,7 @@ export const openCodeSandbox = ({
 }: {
     title: string;
     files: FileContents;
-    boilerPlateFiles: FileContents;
+    boilerPlateFiles?: FileContents;
     internalFramework: InternalFramework;
 }) => {
     const form = document.createElement('form');

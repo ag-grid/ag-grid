@@ -334,6 +334,11 @@ export const AG_GRID_LOCALE_IL = {
     sortAbsoluteDescending: 'מיון יורד מוחלט',
     sortUnSort: 'נקה מיון',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'חפש',
+    toolbarFindPreviousMatch: 'תאמה קודמת',
+    toolbarFindNextMatch: 'תאמה הבאה',
+    toolbarQuickFilter: 'סנן',
+    toolbarMenu: 'תפריט',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'סכום',

@@ -338,6 +338,11 @@ export const AG_GRID_LOCALE_TR = {
     sortAbsoluteDescending: 'Mutlak Azalan Sırala',
     sortUnSort: 'Sıralamayı Temizle',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Bul',
+    toolbarFindPreviousMatch: 'Önceki Eşleşme',
+    toolbarFindNextMatch: 'Sonraki Eşleşme',
+    toolbarQuickFilter: 'Filtre',
+    toolbarMenu: 'Menü',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Toplam',

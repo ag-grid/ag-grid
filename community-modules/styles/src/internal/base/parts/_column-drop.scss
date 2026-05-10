@@ -7,6 +7,7 @@
         height: calc(var(--ag-grid-size) * 4);
         padding: 0 calc(var(--ag-grid-size) * 0.5);
         border: 1px solid var(--ag-chip-border-color);
+        font-weight: normal;
     }
 
     @include ag.keyboard-focus((ag-column-drop-cell), 2px);
@@ -37,6 +38,12 @@
         color: var(--ag-secondary-foreground-color);
         height: var(--ag-header-height);
         border-bottom: var(--ag-borders) var(--ag-border-color);
+
+        @include ag.unthemed-rtl(
+            (
+                padding-left: var(--ag-cell-horizontal-padding),
+            )
+        );
     }
 
     .ag-column-drop-horizontal-half-width:not(:last-child) {

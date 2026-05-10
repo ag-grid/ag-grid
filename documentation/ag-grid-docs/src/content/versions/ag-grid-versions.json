@@ -1,5 +1,32 @@
 [
     {
+        "version": "35.3.0",
+        "date": "13th May 2026",
+        "landingPageHighlight": "Quick Access Toolbar, Cell Notes, Grand Total Row for server-side row model, Performance Improvements, Quality Improvements",
+        "highlights": [
+            {
+                "text": "Quick Access Toolbar",
+                "path": "./toolbar/"
+            },
+            {
+                "text": "Cell Notes",
+                "path": "./notes/"
+            },
+            {
+                "text": "Grand Total Row for server-side row model",
+                "path": "./server-side-model-grouping/#grand-total-row"
+            },
+            {
+                "text": "Performance Improvements"
+            },
+            {
+                "text": "Quality Improvements"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-35-3",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "35.2.1",
         "date": "7th April 2026"
     },
