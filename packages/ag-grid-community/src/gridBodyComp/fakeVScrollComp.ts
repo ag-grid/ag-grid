@@ -60,7 +60,9 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
 
         const fallbackScrollbarWidth = scrollVisibleSvc.getScrollbarWidth() || 0;
-        const scrollbarWidth = vScrollShowing ? gridBodyCtrl?.getVerticalScrollbarWidth() ?? fallbackScrollbarWidth : 0;
+        const scrollbarWidth = vScrollShowing
+            ? (gridBodyCtrl?.getVerticalScrollbarWidth() ?? fallbackScrollbarWidth)
+            : 0;
         const adjustedScrollbarWidth = scrollbarWidth === 0 && invisibleScrollbar ? 16 : scrollbarWidth;
         const horizontalScrollHeight = gridBodyCtrl?.getHorizontalScrollbarHeight() ?? 0;
         const headerRowsOffset = gridBodyCtrl?.getHeaderRowsOffset() ?? 0;
