@@ -1,4 +1,10 @@
-import type { AgCartesianAxisType, AgChartInstance, AgChartInstanceOptions, AgPolarAxisType } from 'ag-charts-types';
+import type {
+    AgCartesianAxisType,
+    AgChartInstance,
+    AgChartInstanceOptions,
+    AgChartOptions,
+    AgPolarAxisType,
+} from 'ag-charts-types';
 
 export function deproxy(chartOrProxy: AgChartInstance<AgChartInstanceOptions>): AgChartActual {
     if ((chartOrProxy as any).chart != null) {
@@ -36,6 +42,7 @@ export interface AgChartActual extends AgChartInstance {
     getCanvasDataURL(type?: string): string;
     addEventListener(type: 'click', cb: (even: any) => void): void;
     waitForUpdate(): Promise<void>;
+    chartOptions: { processedOptions: AgChartOptions };
 }
 
 type AgChartAxis = NonNullable<AgChartActual['axes']>[string];
