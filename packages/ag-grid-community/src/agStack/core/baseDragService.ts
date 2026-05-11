@@ -14,9 +14,9 @@ import {
     _areEventsNear,
     _getFirstActiveTouch,
     _isEventFromThisInstance,
+    _preventEventDefault,
     addTempEventHandlers,
     clearTempEventHandlers,
-    preventEventDefault,
 } from '../utils/event';
 import { AgBeanStub } from './agBeanStub';
 
@@ -171,7 +171,7 @@ export class BaseDragService<
 
         addTempEventHandlers(
             drag.handlers,
-            [rootEl, 'contextmenu', preventEventDefault],
+            [rootEl, 'contextmenu', _preventEventDefault],
             [rootEl, 'keydown', keydownEvent],
             [eDocument, 'scroll', onScroll, { capture: true }],
             [eDocument.defaultView || window, 'scroll', onScroll],
@@ -294,7 +294,7 @@ export class BaseDragService<
 
         if (this.isPointer()) {
             if (this.dragging) {
-                preventEventDefault(touchEvent);
+                _preventEventDefault(touchEvent);
             }
             return; // Active pointer drag in progress, ignore legacy touch start
         }
@@ -328,10 +328,10 @@ export class BaseDragService<
         }
     }
 
-    /** preventEventDefault on the event while dragging only and if the event is cancellable */
+    /** _preventEventDefault on the event while dragging only and if the event is cancellable */
     private draggingPreventDefault(e: Event): void {
         if (this.dragging) {
-            preventEventDefault(e);
+            _preventEventDefault(e);
         }
     }
 
@@ -392,7 +392,7 @@ export class BaseDragService<
         }
 
         if (this.shouldPreventMouseEvent(mouseEvent)) {
-            preventEventDefault(mouseEvent);
+            _preventEventDefault(mouseEvent);
         }
 
         this.onMove(mouseEvent);

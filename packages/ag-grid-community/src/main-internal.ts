@@ -175,7 +175,7 @@ export {
     _setVisible,
 } from './agStack/utils/dom';
 export type { AgElementParams as _AgElementParams } from './agStack/utils/dom';
-export { _anchorElementToMouseMoveEvent, _isElementInEventPath } from './agStack/utils/event';
+export { _anchorElementToMouseMoveEvent, _isElementInEventPath, _preventEventDefault } from './agStack/utils/event';
 export {
     _findFocusableElements,
     _findNextFocusableElement,

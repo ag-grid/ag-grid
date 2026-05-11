@@ -220,8 +220,8 @@ export const clearTempEventHandlers = (list: TempEventHandler[] | null | undefin
     }
 };
 
-export const preventEventDefault = (event: Event) => {
-    if (event.cancelable) {
+export const _preventEventDefault = (event: Event | null | undefined) => {
+    if (event?.cancelable) {
         event.preventDefault();
     }
 };

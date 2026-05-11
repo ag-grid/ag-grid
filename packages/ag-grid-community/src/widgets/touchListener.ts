@@ -4,9 +4,9 @@ import type { IEventEmitter, IEventListener } from '../agStack/interfaces/iEvent
 import {
     _areEventsNear,
     _getFirstActiveTouch,
+    _preventEventDefault,
     addTempEventHandlers,
     clearTempEventHandlers,
-    preventEventDefault,
 } from '../agStack/utils/event';
 import type { TempEventHandler } from '../agStack/utils/event';
 
@@ -99,7 +99,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
                 [doc, 'touchcancel', touchCancel, passiveTrue],
                 // we set passive=false, as we want to prevent default on this event
                 [doc, 'touchend', touchEnd, passiveFalse],
-                [doc, 'contextmenu', preventEventDefault, passiveFalse]
+                [doc, 'contextmenu', _preventEventDefault, passiveFalse]
             );
         }
 
@@ -137,7 +137,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         }
 
         if (this.preventClick) {
-            preventEventDefault(touchEvent); // stops the tap from also been processed as a mouse click
+            _preventEventDefault(touchEvent); // stops the tap from also been processed as a mouse click
         }
 
         this.cancel();

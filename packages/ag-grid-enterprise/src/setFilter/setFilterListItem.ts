@@ -23,6 +23,7 @@ import {
     _getCellRendererDetails,
     _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
+    _preventEventDefault,
     _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaExpanded,
@@ -167,12 +168,17 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
 
         this.render();
 
-        this.eCheckbox
+        const eInput = this.eCheckbox
             .setLabelEllipsis(true)
             .setValue(this.isSelected, true)
             .setDisabled(!!this.params.readOnly)
-            .getInputElement()
-            .setAttribute('tabindex', '-1');
+            .getInputElement();
+        eInput.setAttribute('tabindex', '-1');
+        this.addManagedElementListeners(eInput, {
+            // Focus belongs on the outer treeitem wrapper; for aria-hidden tree groups, focusing
+            // the inner input triggers a Chromium aria-hidden warning. The click still toggles.
+            mousedown: _preventEventDefault,
+        });
 
         this.refreshVariableAriaLabels();
 
