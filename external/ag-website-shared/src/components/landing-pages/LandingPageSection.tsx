@@ -115,7 +115,7 @@ const CTAWithFrameworks: FunctionComponent<{ ctaId: string; ctaTitle: string; ct
                 >
                     {CurrentIcon && <CurrentIcon className={styles.frameworkIcon} />}
 
-                    <span className={styles.frameworkName}>{framework}</span>
+                    <span className={styles.frameworkName}>{FRAMEWORK_CONFIGS[framework].name}</span>
 
                     <Icon name="chevronDown" svgClasses={styles.frameworkChevronDown} />
                 </div>
