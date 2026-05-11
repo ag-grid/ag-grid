@@ -84,7 +84,7 @@ function getServerSideDatasource(server: ReturnType<typeof FakeServer>): IServer
                 if (needsGrandTotal) {
                     void refreshGrandTotalAsync(params);
                 }
-            }, 500);
+            }, 800);
         },
     };
 }
@@ -103,7 +103,7 @@ async function refreshGrandTotalAsync(params: IServerSideGetRowsParams<OlympicRo
     const grandTotalData = await new Promise<OlympicRow>((resolve) => {
         setTimeout(() => {
             resolve(fakeServer.getData(request, true).grandTotalData);
-        }, 1500);
+        }, 1300);
     });
 
     if (thisRequestId !== latestGrandTotalRequestId) {
