@@ -11,7 +11,6 @@
         color: var(--ag-toolbar-text-color);
         font-family: var(--ag-header-font-family);
         font-size: var(--ag-header-font-size);
-        font-weight: var(--ag-header-font-weight);
         white-space: nowrap;
     }
 
@@ -22,6 +21,10 @@
     .ag-toolbar-item {
         display: inline-flex;
         margin: 0 calc(var(--ag-grid-size, 8px) * 2);
+    }
+
+    .ag-toolbar-item:where(:not(.ag-toolbar-panel)) {
+        font-weight: var(--ag-header-font-weight);
     }
 
     .ag-toolbar-button-wrapper {
@@ -164,7 +167,6 @@
         background-color: transparent;
         border-bottom: none;
         padding: 0;
-        font-weight: normal;
         font-size: var(--ag-font-size);
         font-family: var(--ag-font-family);
     }
