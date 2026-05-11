@@ -748,4 +748,176 @@ describe('ag-grid formulas filtering', () => {
         gridRows = new GridRows(api, 'custom filter');
         await gridRows.check('empty');
     });
+
+    test('TC5 Cell selection during formula editing uses formula row index, not filtered display index', async () => {
+        const gridOptions: GridOptions = {
+            rowData: [
+                { id: '1', A: 10, B: '' },
+                { id: '2', A: 20, B: '' },
+                { id: '3', A: 30, B: '=' },
+                { id: '4', A: 40, B: '' },
+                { id: '5', A: 50, B: '' },
+            ],
+            columnDefs: [
+                { field: 'A', filter: 'agNumberColumnFilter' },
+                { field: 'B', editable: true },
+            ],
+            defaultColDef: {
+                allowFormula: true,
+            },
+            cellSelection: true,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = gridsManager.createGrid('tc5', gridOptions);
+
+        api.setFilterModel({ A: { type: 'greaterThan', filter: 25 } });
+
+        const gridRows = new GridRows(api, 'filtered A > 25');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:3 row-number:"3" A:30 B:"="
+            ├── LEAF id:4 row-number:"4" A:40 B:""
+            └── LEAF id:5 row-number:"5" A:50 B:""
+        `);
+
+        // Start editing B in the first visible row (display index 0 = actual row 3).
+        // The cell has "=" as its starting value, which activates formula range selection.
+        const editingStarted = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'B' });
+        await editingStarted;
+        await asyncSetTimeout(5);
+
+        // Simulate clicking on cell A at display index 2 (actual row 5, formula row index 5).
+        api.addCellRange({ rowStartIndex: 2, rowEndIndex: 2, columns: ['A'] });
+        await asyncSetTimeout(10);
+
+        // The editor should reference A5 (the actual formula row), not A3 (display index 2+1).
+        const [editor] = api.getCellEditorInstances();
+        const editorValue = String(editor?.getValue() ?? '');
+        expect(editorValue).toContain('A5');
+        expect(editorValue).not.toContain('A3');
+
+        api.stopEditing(true);
+    });
+
+    test('TC5-1 Multi-row range selection during formula editing uses formula row indices across filtered gaps', async () => {
+        const gridOptions: GridOptions = {
+            rowData: [
+                { id: '1', A: 10, B: '' },
+                { id: '2', A: 20, B: '' },
+                { id: '3', A: 30, B: '=' },
+                { id: '4', A: 40, B: '' },
+                { id: '5', A: 50, B: '' },
+                { id: '6', A: 60, B: '' },
+            ],
+            columnDefs: [
+                { field: 'A', filter: 'agNumberColumnFilter' },
+                { field: 'B', editable: true },
+            ],
+            defaultColDef: {
+                allowFormula: true,
+            },
+            cellSelection: true,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = gridsManager.createGrid('tc5-1', gridOptions);
+
+        // Filter to show rows 3, 5, 6 (display indices 0, 1, 2). Row 4 is hidden.
+        api.setFilterModel({
+            A: {
+                filterType: 'number',
+                operator: 'OR',
+                conditions: [
+                    { filterType: 'number', type: 'equals', filter: 30 },
+                    { filterType: 'number', type: 'greaterThanOrEqual', filter: 50 },
+                ],
+            },
+        });
+
+        const gridRows = new GridRows(api, 'filtered');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:3 row-number:"3" A:30 B:"="
+            ├── LEAF id:5 row-number:"5" A:50 B:""
+            └── LEAF id:6 row-number:"6" A:60 B:""
+        `);
+
+        // Start editing B in the first visible row (display index 0 = formula row 3).
+        const editingStarted = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'B' });
+        await editingStarted;
+        await asyncSetTimeout(5);
+
+        // Select a range spanning display indices 0-2 (formula rows 3, 5, 6 with a gap at row 4).
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 2, columns: ['A'] });
+        await asyncSetTimeout(10);
+
+        // The range ref should be A3:A6 (formula rows 3 through 6), not A1:A3 (display indices).
+        const [editor] = api.getCellEditorInstances();
+        const editorValue = String(editor?.getValue() ?? '');
+        expect(editorValue).toContain('A3:A6');
+        expect(editorValue).not.toContain('A1:A3');
+
+        api.stopEditing(true);
+    });
+
+    test('TC5-2 Typing a ref to a filtered-out row does not highlight a visible cell', async () => {
+        const gridOptions: GridOptions = {
+            rowData: [
+                { id: '1', A: 10, B: '' },
+                { id: '2', A: 20, B: '' },
+                { id: '3', A: 30, B: '' },
+                { id: '4', A: 40, B: '' },
+                { id: '5', A: 50, B: '=' },
+            ],
+            columnDefs: [
+                { field: 'A', filter: 'agNumberColumnFilter' },
+                { field: 'B', editable: true },
+            ],
+            defaultColDef: {
+                allowFormula: true,
+            },
+            cellSelection: true,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = gridsManager.createGrid('tc5-2', gridOptions);
+
+        // Filter to show only row 5 (display index 0). Rows 1-4 are hidden.
+        api.setFilterModel({ A: { type: 'equals', filter: 50 } });
+
+        const gridRows = new GridRows(api, 'filtered A = 50');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:5 row-number:"5" A:50 B:"="
+        `);
+
+        // Start editing B in row 5 (the only visible row).
+        const editingStarted = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'B' });
+        await editingStarted;
+        await asyncSetTimeout(5);
+
+        // Simulate typing "=A1" — A1 references formula row 1 which is filtered out.
+        const [editor] = api.getCellEditorInstances() as unknown as [{ agSetEditValue?: (v: unknown) => void }];
+        editor?.agSetEditValue?.('=A1');
+        await asyncSetTimeout(10);
+
+        // A1 references a filtered-out row, so no cell range should be created.
+        const ranges = api.getCellRanges() ?? [];
+        const rangeRefs = ranges.map((r) => {
+            const startIdx = r.startRow?.rowIndex;
+            const endIdx = r.endRow?.rowIndex;
+            return { startIdx, endIdx };
+        });
+        // There should be no range highlighting row 0 (which would mean A1 incorrectly
+        // mapped to display index 0 = row 5).
+        for (const range of rangeRefs) {
+            expect(range.startIdx).not.toBe(0);
+        }
+
+        api.stopEditing(true);
+    });
 });

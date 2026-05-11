@@ -1,4 +1,4 @@
-import { isSpecialCol } from 'ag-grid-community';
+import { _getRowNode, isSpecialCol } from 'ag-grid-community';
 import type { AgColumn, BeanCollection, CellRange, IClientSideRowModel } from 'ag-grid-community';
 
 import { getRefTokenMatches, parseA1Ref } from '../formula/refUtils';
@@ -78,13 +78,23 @@ export const getCellRangeParams = (beans: BeanCollection, ref: string) => {
 
     const rowModel = beans.rowModel as IClientSideRowModel | null;
     // formulas run on the client-side row model, so use formula rows to validate.
-    if (!rowModel?.getFormulaRow(rowStartIndex) || !rowModel.getFormulaRow(rowEndIndex)) {
+    const startNode = rowModel?.getFormulaRow(rowStartIndex);
+    const endNode = rowModel?.getFormulaRow(rowEndIndex);
+    if (!startNode || !endNode) {
+        return null;
+    }
+
+    // Convert formula row indices to display indices for the range service.
+    // If a referenced row is filtered out, its rowIndex is null and no range can be shown.
+    const displayStart = startNode.rowIndex;
+    const displayEnd = endNode.rowIndex;
+    if (displayStart == null || displayEnd == null) {
         return null;
     }
 
     return {
-        rowStartIndex,
-        rowEndIndex,
+        rowStartIndex: displayStart,
+        rowEndIndex: displayEnd,
         columnStart: startColMatch,
         columnEnd: endColMatch,
     };
@@ -115,8 +125,17 @@ export const rangeToRef = (beans: BeanCollection, range: CellRange): string | nu
         return null;
     }
 
-    const rowStartIndex = Math.min(startRow.rowIndex!, endRow.rowIndex!) + 1;
-    const rowEndIndex = Math.max(startRow.rowIndex!, endRow.rowIndex!) + 1;
+    const startNode = _getRowNode(beans, startRow);
+    const endNode = _getRowNode(beans, endRow);
+    const startFormulaIdx = startNode?.formulaRowIndex;
+    const endFormulaIdx = endNode?.formulaRowIndex;
+
+    if (startFormulaIdx == null || endFormulaIdx == null) {
+        return null;
+    }
+
+    const rowStartIndex = Math.min(startFormulaIdx, endFormulaIdx) + 1;
+    const rowEndIndex = Math.max(startFormulaIdx, endFormulaIdx) + 1;
 
     // ignore selection/row-number columns and any columns without A1 refs
     const columns = range.columns?.filter((col) => !isSpecialCol(col) && !!formula.getColRef(col as AgColumn));
