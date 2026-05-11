@@ -63,6 +63,7 @@ function getServerSideDatasource(server: ReturnType<typeof FakeServer>): IServer
             console.log('[Datasource] - rows requested:', params.request);
 
             const response = server.getData(params.request, false);
+            const needsGrandTotal = params.needsGrandTotal;
 
             setTimeout(() => {
                 if (!response.success) {
@@ -80,7 +81,7 @@ function getServerSideDatasource(server: ReturnType<typeof FakeServer>): IServer
                 // store.grandTotalData = null. The grid treats null as "explicitly cleared" so
                 // `needsGrandTotal` stays false for subsequent block requests in the same store
                 // — this branch fires exactly once per logical query.
-                if (params.needsGrandTotal) {
+                if (needsGrandTotal) {
                     void refreshGrandTotalAsync(params);
                 }
             }, 800);
