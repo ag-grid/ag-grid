@@ -362,9 +362,7 @@ export class ChartOptionsService extends BeanStub {
         if (!axis) {
             return false;
         }
-        // Only the top-level namespace needs to exist on the axis — leaves may be absent until first
-        // write. The original implementation walked every segment but did so against the live axis's
-        // prototype chain, which exposed leaves that bare processedOptions does not.
+        // Only the top-level namespace needs to exist; leaves may be absent until first write.
         const [head] = expression.split('.');
         return head in (axis as Record<string, unknown>);
     }
