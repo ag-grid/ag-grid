@@ -28,9 +28,8 @@ group rows and leaf rows.
 
 ## Built-in Value Distribution
 
-The built-in distribution cascades the edited value to descendant rows, adjusting each child so
-the column's `aggFunc` produces the new total. Pass an options object to `groupRowValueSetter` to
-customise the strategy or precision.
+The built-in distribution adjusts each child so the column's `aggFunc` produces the new total.
+Pass an options object to `groupRowValueSetter` to customise the strategy or precision.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -101,6 +100,8 @@ them.
 Setting `distribution` to `false` or `null` suppresses distribution and makes the cell not
 editable, even when `groupRowEditable` is `true`.
 
+For `avg`, every strategy adjusts child values so the children's average equals the edited value.
+
 {% note %}
 The `precision` option rounds the values written to **child rows**, not the group row's displayed
 value. The group value is re-computed by the column's `aggFunc` from the rounded children. For
@@ -163,8 +164,8 @@ Double-click any group row cell to edit it:
 
 - **Salary** (`sum`): divides the new total equally among children, rounded to integers
   (`precision: 0`). Editing 300 across 3 children produces 100 each.
-- **Bonus** (`avg`): overwrites every child with the edited value (the default for `avg`).
-  Editing the average to 15 sets all children's bonus to 15.
+- **Bonus** (`avg`): overwrites every child with the edited value. Editing the average to 15
+  sets all children's bonus to 15.
 - **Projects** (no `aggFunc`): overwrites every child with the edited value. The group cell is
   blank but still editable.
 - **Rate %** (custom callback): computes each leaf child's bonus as `salary × rate / 100`.
@@ -409,6 +410,9 @@ For full control, use a custom `groupRowValueSetter` callback. In the example be
   unchanged.
 
 {% gridExampleRunner title="Custom Editable Pivot Totals" name="pivot-editable-totals-custom" exampleHeight=500 /%}
+
+Edits on pivot columns therefore affect only the rows contributing to that pivot value, leaving
+other pivot categories untouched.
 
 ## Tree Data
 
