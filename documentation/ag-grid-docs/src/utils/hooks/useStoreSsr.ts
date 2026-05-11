@@ -7,6 +7,7 @@ export const useStoreSsr = <T>(store: Atom<T>, ssrValue: T) => {
     const storeValue = useStore(store);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional hydration pattern
         setValue(storeValue);
     }, [storeValue]);
 
