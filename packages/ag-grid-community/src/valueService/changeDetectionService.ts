@@ -96,7 +96,11 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         }
     }
 
-    /** Queues `node` for refresh on the next `endDeferred()` flush. Must be called inside an active deferred scope. */
+    /**
+     * Queues `node` for refresh on the next `endDeferred()` flush. The flush fans out to every
+     * sibling via `refreshRowAndSiblings`, so callers only need to queue the primary — even when
+     * only a sibling's `aggData` changed and the primary is not rendered.
+     */
     public addRow(node: RowNode): void {
         let nodes = this.batchedNodes;
         if (!nodes) {
