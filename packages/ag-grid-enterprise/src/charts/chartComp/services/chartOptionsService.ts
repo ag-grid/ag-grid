@@ -41,7 +41,7 @@ type AgChartOptionsWithThemeOverrides = AgChartOptions & {
 
 type ReadScope =
     | { kind: 'chart' }
-    | { kind: 'axis'; direction: 'x' | 'y' }
+    | { kind: 'axis'; direction: 'x' | 'y' | 'angle' | 'radius' }
     | { kind: 'series'; seriesType: ChartSeriesType };
 
 const CARTESIAN_AXIS_TYPES: AgCartesianAxisType[] = ['number', 'category', 'time', 'grouped-category'];
@@ -105,6 +105,14 @@ export class ChartOptionsService extends BeanStub {
                     [{ expression: expression === '*' ? null : expression, value }]
                 ),
             setValues: (properties) => this.setCartesianAxisThemeOverrides(axisType, properties),
+        };
+    }
+
+    public getPolarAxisThemeOverridesProxy(axisType: 'angle' | 'radius'): ChartOptionsProxy {
+        return {
+            getValue: (expression) => this.getPolarAxisProperty(axisType, expression),
+            setValue: (expression, value) => this.setAxisThemeOverrides([{ expression, value }]),
+            setValues: (properties) => this.setAxisThemeOverrides(properties),
         };
     }
 
@@ -294,7 +302,7 @@ export class ChartOptionsService extends BeanStub {
         return get(source, expression, undefined) as T;
     }
 
-    private pickProcessedAxis(axes: unknown, direction: 'x' | 'y'): unknown {
+    private pickProcessedAxis(axes: unknown, direction: 'x' | 'y' | 'angle' | 'radius'): unknown {
         if (!axes || typeof axes !== 'object') {
             return undefined;
         }
@@ -354,6 +362,10 @@ export class ChartOptionsService extends BeanStub {
 
     private getCartesianAxisProperty<T = string | undefined>(axisType: 'xAxis' | 'yAxis', expression: string): T {
         return this.readProcessed<T>({ kind: 'axis', direction: axisType === 'xAxis' ? 'x' : 'y' }, expression) as T;
+    }
+
+    private getPolarAxisProperty<T = string | undefined>(axisType: 'angle' | 'radius', expression: string): T {
+        return this.readProcessed<T>({ kind: 'axis', direction: axisType }, expression) as T;
     }
 
     private getCartesianAxisThemeOverride<T = string>(
