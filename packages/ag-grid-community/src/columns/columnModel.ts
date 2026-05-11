@@ -64,6 +64,23 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // true if we are doing column spanning
     public colSpanActive: boolean;
 
+    /** Lazy cache for `hasValueGetterCol()`. Cleared from `refreshCols` whenever columns change. */
+    private valueGetterColCache: boolean | undefined;
+
+    /**
+     * `true` if any user-defined column (primary, auto-group, selection, group-hierarchy) has a
+     * `valueGetter`. Pivot-result columns are excluded — their auto-generated `valueGetter`
+     * reads `params.data?.[field]` and never derives from sibling aggregates.
+     */
+    public hasValueGetterCol(): boolean {
+        let cached = this.valueGetterColCache;
+        if (cached === undefined) {
+            cached = this.computeHasValueGetterCol();
+            this.valueGetterColCache = cached;
+        }
+        return cached;
+    }
+
     public ready = false;
     public changeEventsDispatching = false;
 
@@ -215,6 +232,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         quickFilter?.refreshCols();
 
         this.setColSpanActive();
+        this.valueGetterColCache = undefined;
         rowAutoHeight?.setAutoHeightActive(cols);
 
         // make sure any part of the gui that tries to draw, eg the header,
@@ -539,6 +557,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.colSpanActive = !!this.cols?.list.some((col) => col.getColDef().colSpan != null);
     }
 
+    private computeHasValueGetterCol(): boolean {
+        const { autoColSvc, selectionColSvc, groupHierarchyColSvc } = this.beans;
+        return (
+            listHasValueGetter(this.colDefCols?.list) ||
+            listHasValueGetter(autoColSvc?.columns?.list) ||
+            listHasValueGetter(selectionColSvc?.columns?.list) ||
+            listHasValueGetter(groupHierarchyColSvc?.columns?.list)
+        );
+    }
+
     public isPivotMode(): boolean {
         return this.pivotMode;
     }
@@ -717,3 +745,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
         );
     }
 }
+
+/** `true` if any column in `list` has a `valueGetter` defined. */
+const listHasValueGetter = (list: AgColumn[] | undefined): boolean => {
+    if (!list) {
+        return false;
+    }
+    for (let i = 0, len = list.length; i < len; ++i) {
+        if (list[i].colDef.valueGetter != null) {
+            return true;
+        }
+    }
+    return false;
+};

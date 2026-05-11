@@ -250,51 +250,60 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private onPropChange(properties: (keyof GridOptions)[]): void {
         const { nodeManager, gos, beans } = this;
-        const groupStage = beans.groupStage;
         if (!nodeManager) {
             return; // Destroyed
         }
-        const changedProps = new Set(properties);
-        const extractData = groupStage?.onPropChange(changedProps);
 
-        let newRowData: any[] | null | undefined;
-        if (changedProps.has('rowData')) {
-            newRowData = gos.get('rowData'); // new rowData to load or update
-        } else if (extractData) {
-            newRowData = groupStage?.extractData(); // extract rowData from nodes, to include changes
-        }
-        if (newRowData && !Array.isArray(newRowData)) {
-            newRowData = null;
-            _warn(1); // `rowData` must be an array
-        }
+        // Mirror `refreshModel`'s deferred wrap — batches events from `setImmutableRowData` /
+        // `setNewRowData` (or user callbacks) into the eventual refresh flush.
+        const changeDetectionSvc = beans.changeDetectionSvc;
+        changeDetectionSvc?.beginDeferred();
+        try {
+            const groupStage = beans.groupStage;
+            const changedProps = new Set(properties);
+            const extractData = groupStage?.onPropChange(changedProps);
 
-        const params: RefreshModelParams = { step: 'nothing', changedProps };
-        if (newRowData) {
-            const immutable =
-                !extractData &&
-                !this.isEmpty() &&
-                newRowData.length > 0 &&
-                gos.exists('getRowId') &&
-                // backward compatibility - for who want old behaviour of Row IDs but NOT Immutable Data.
-                !gos.get('resetRowDataOnUpdate');
-            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
-            if (immutable) {
-                params.keepRenderedRows = true;
-                params.animate = !gos.get('suppressAnimationFrame');
-                params.changedRowNodes = new ChangedRowNodes();
-                nodeManager.setImmutableRowData(params, newRowData);
-            } else {
-                params.rowDataUpdated = true;
-                params.newData = true;
-                nodeManager.setNewRowData(newRowData);
-                this.rowNodesCountReady = true;
+            let newRowData: any[] | null | undefined;
+            if (changedProps.has('rowData')) {
+                newRowData = gos.get('rowData'); // new rowData to load or update
+            } else if (extractData) {
+                newRowData = groupStage?.extractData(); // extract rowData from nodes, to include changes
             }
-        }
+            if (newRowData && !Array.isArray(newRowData)) {
+                newRowData = null;
+                _warn(1); // `rowData` must be an array
+            }
 
-        const step = params.rowDataUpdated ? 'group' : this.getRefreshedStage(properties);
-        if (step) {
-            params.step = step;
-            this.refreshModel(params);
+            const params: RefreshModelParams = { step: 'nothing', changedProps };
+            if (newRowData) {
+                const immutable =
+                    !extractData &&
+                    !this.isEmpty() &&
+                    newRowData.length > 0 &&
+                    gos.exists('getRowId') &&
+                    // backward compatibility - for who want old behaviour of Row IDs but NOT Immutable Data.
+                    !gos.get('resetRowDataOnUpdate');
+                this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
+                if (immutable) {
+                    params.keepRenderedRows = true;
+                    params.animate = !gos.get('suppressAnimationFrame');
+                    params.changedRowNodes = new ChangedRowNodes();
+                    nodeManager.setImmutableRowData(params, newRowData);
+                } else {
+                    params.rowDataUpdated = true;
+                    params.newData = true;
+                    nodeManager.setNewRowData(newRowData);
+                    this.rowNodesCountReady = true;
+                }
+            }
+
+            const step = params.rowDataUpdated ? 'group' : this.getRefreshedStage(properties);
+            if (step) {
+                params.step = step;
+                this.refreshModel(params);
+            }
+        } finally {
+            changeDetectionSvc?.endDeferred();
         }
     }
 
@@ -542,63 +551,70 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public refreshModel(params: RefreshModelParams): void {
-        const { nodeManager, eventSvc, started } = this;
+        const { nodeManager, beans, eventSvc, started } = this;
         if (!nodeManager) {
             return; // destroyed
         }
 
         const rowDataUpdated = !!params.rowDataUpdated;
 
-        if (started && rowDataUpdated) {
-            eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
-        }
-
-        if (this.deferRefresh(params)) {
-            // Refresh is deferred. Capture flags to apply when refresh eventually occurs.
-            // Flag accumulation is intentional - they persist until the next successful refreshModel().
-            this.setPendingRefreshFlags(params);
-            this.rowDataUpdatedPending ||= rowDataUpdated;
-            return;
-        }
-
-        if (this.rowDataUpdatedPending) {
-            this.rowDataUpdatedPending = false;
-            params.step = 'group'; // Ensure grouping runs
-        }
-
-        // Apply forced flags from any previous skipped refresh calls
-        this.updateRefreshParams(params);
-
-        let succeeded = false;
-        this.refreshingModel = true; // Prevent nested refreshModel calls
+        // Flush after `modelUpdated` so per-row refresh sees the up-to-date `rowCtrlsByRowIndex`.
+        const changeDetectionSvc = beans.changeDetectionSvc;
+        changeDetectionSvc?.beginDeferred();
         try {
-            this.executeRefresh(params, rowDataUpdated);
-            succeeded = true;
-        } finally {
-            // Reset lock flags even on failure to prevent the grid from being stuck
-            this.refreshingData = false;
-            this.refreshingModel = false;
-
-            if (!succeeded) {
-                // Capture flags so on error they are not lost.
-                this.setPendingRefreshFlags(params);
+            if (started && rowDataUpdated) {
+                eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
             }
+
+            if (this.deferRefresh(params)) {
+                // Refresh is deferred. Capture flags to apply when refresh eventually occurs.
+                // Flag accumulation is intentional - they persist until the next successful refreshModel().
+                this.setPendingRefreshFlags(params);
+                this.rowDataUpdatedPending ||= rowDataUpdated;
+                return;
+            }
+
+            if (this.rowDataUpdatedPending) {
+                this.rowDataUpdatedPending = false;
+                params.step = 'group'; // Ensure grouping runs
+            }
+
+            // Apply forced flags from any previous skipped refresh calls
+            this.updateRefreshParams(params);
+
+            let succeeded = false;
+            this.refreshingModel = true; // Prevent nested refreshModel calls
+            try {
+                this.executeRefresh(params, rowDataUpdated);
+                succeeded = true;
+            } finally {
+                // Reset lock flags even on failure to prevent the grid from being stuck
+                this.refreshingData = false;
+                this.refreshingModel = false;
+
+                if (!succeeded) {
+                    // Capture flags so on error they are not lost.
+                    this.setPendingRefreshFlags(params);
+                }
+            }
+
+            // Clear accumulated state flags only on successful completion
+            this.clearPendingRefreshFlags();
+
+            this.beans.formula?.onRowsChanged(params.changedRowNodes, params.newData);
+
+            // finally dispatch the final model updated event with the correct values
+            eventSvc.dispatchEvent({
+                type: 'modelUpdated',
+                animate: params.animate,
+                keepRenderedRows: params.keepRenderedRows,
+                newData: params.newData,
+                newPage: false,
+                keepUndoRedoStack: params.keepUndoRedoStack,
+            });
+        } finally {
+            changeDetectionSvc?.endDeferred();
         }
-
-        // Clear accumulated state flags only on successful completion
-        this.clearPendingRefreshFlags();
-
-        this.beans.formula?.onRowsChanged(params.changedRowNodes, params.newData);
-
-        // finally dispatch the final model updated event with the correct values
-        eventSvc.dispatchEvent({
-            type: 'modelUpdated',
-            animate: params.animate,
-            keepRenderedRows: params.keepRenderedRows,
-            newData: params.newData,
-            newPage: false,
-            keepUndoRedoStack: params.keepUndoRedoStack,
-        });
     }
 
     /** Executes the refresh pipeline stages and updates row positions. */
@@ -640,7 +656,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     params.changedPath = undefined;
                 }
             case 'aggregate': // depends on agg fields
-                this.doAggregate(changedPath);
+                this.aggregate(changedPath, true);
             case 'filter_aggregates':
                 this.doFilterAggregates(changedPath);
             case 'sort':
@@ -948,11 +964,25 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return index;
     }
 
-    // it's possible to recompute the aggregate without doing the other parts + api.refreshClientSideRowModel('aggregate')
-    public doAggregate(changedPath: ChangedPath | undefined): void {
-        const rootNode = this.rootNode;
-        if (rootNode) {
-            this.beans.aggStage?.execute(changedPath);
+    /**
+     * Re-runs aggregation. When `refresh` is `true`, queues affected rows on
+     * `ChangeDetectionService` and batches the result into one flush. Pass `false` when the caller
+     * manages its own refresh (e.g. clipboard).
+     */
+    public aggregate(changedPath: ChangedPath | undefined, refresh: boolean): void {
+        if (!this.rootNode) {
+            return;
+        }
+        const { changeDetectionSvc, aggStage } = this.beans;
+        if (refresh) {
+            changeDetectionSvc?.beginDeferred();
+        }
+        try {
+            aggStage?.execute(changedPath, refresh);
+        } finally {
+            if (refresh) {
+                changeDetectionSvc?.endDeferred();
+            }
         }
     }
 

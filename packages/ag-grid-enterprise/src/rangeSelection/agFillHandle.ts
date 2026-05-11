@@ -428,7 +428,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 iterateAcrossCells(undefined, columns);
             }
             // Stop the editor inside the deferred block so the commit (if any) is included
-            // in the same doAggregate pass as the fill writes.
+            // in the same aggregate pass as the fill writes.
             this.beans.editSvc?.stopEditing(undefined, { source: 'fillHandle' });
         } finally {
             changeDetectionSvc?.endDeferred();

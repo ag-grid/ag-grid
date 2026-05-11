@@ -469,6 +469,54 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
         `);
     });
 
+    test('valueGetter columns on source and destination groups refresh after a drag move', async () => {
+        const gridOptions: GridOptions = {
+            animateRows: true,
+            columnDefs: [
+                { field: 'group', rowGroup: true, hide: true },
+                { field: 'a', aggFunc: 'sum' },
+                { field: 'b', aggFunc: 'sum' },
+                {
+                    colId: 'total',
+                    headerName: 'Total',
+                    valueGetter: (params) => (params.getValue('a') ?? 0) + (params.getValue('b') ?? 0),
+                    rowDrag: true,
+                },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            rowData: [
+                { id: '1', group: 'A', a: 10, b: 20 },
+                { id: '2', group: 'A', a: 30, b: 40 },
+                { id: '3', group: 'B', a: 5, b: 6 },
+            ],
+            rowDragManaged: true,
+            suppressMoveWhenRowDragging,
+            refreshAfterGroupEdit: true,
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = gridsManager.createGrid('row-group-drag-aggregation-valuegetter', gridOptions);
+        await asyncSetTimeout(0);
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('2');
+        await dispatcher.move('row-group-group-B', { center: true });
+        await dispatcher.finish();
+        await asyncSetTimeout(0);
+
+        // After dragging row 2 from A → B, both groups' valueGetter Totals must reflect the
+        // post-regroup aggregates: A loses row 2 (total 100 → 30), B gains it (total 11 → 81).
+        await new GridRows(api, 'after drag move', { useFormatter: false }).check(`
+            ROOT id:ROOT_NODE_ID total:0
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" a:10 b:20 total:30
+            │ └── LEAF id:1 group:"A" a:10 b:20 total:30
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B" a:35 b:46 total:81
+            · ├── LEAF id:2 group:"B" a:30 b:40 total:70
+            · └── LEAF id:3 group:"B" a:5 b:6 total:11
+        `);
+    });
+
     test('rowDragInsertDelay does not promote leaf targets in row grouping', async () => {
         const gridOptions: GridOptions = {
             animateRows: true,

@@ -69,7 +69,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         this.batchedNodes = null;
 
         if (path) {
-            this.csrm?.doAggregate(path);
+            this.csrm?.aggregate(path, true);
         }
 
         const { rowRenderer } = this.beans;
@@ -96,6 +96,16 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         }
     }
 
+    /** Queues `node` for refresh on the next `endDeferred()` flush. Must be called inside an active deferred scope. */
+    public addRow(node: RowNode): void {
+        let nodes = this.batchedNodes;
+        if (!nodes) {
+            nodes = new Set();
+            this.batchedNodes = nodes;
+        }
+        nodes.add(node);
+    }
+
     private onCellValueChanged(event: CellValueChangedEvent): void {
         const { gos, rowModel, changedPathFactory } = this.beans;
         if (event.source === SOURCE_PASTE || gos.get('suppressChangeDetection')) {
@@ -119,19 +129,17 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
             if (!node.group) {
                 // For leaf nodes, we want to mark the parent group as changed in the path
                 // and add the leaf to the batch for direct refresh to run before groups.
-                const nodes = (this.batchedNodes ??= new Set());
-                nodes.add(node);
+                this.addRow(node);
                 pathNode = node.parent;
             }
             batchedPath?.addCell(pathNode, event.column.getColId());
         } else {
             // Non-CSRM: no path, queue for direct refresh.
-            const nodes = (this.batchedNodes ??= new Set());
-            nodes.add(node);
+            this.addRow(node);
         }
 
         // If not inside an outer deferred block, flush immediately.
-        // Guard re-entrance: depth=1 so any cellValueChanged fired during doAggregate/refresh
+        // Guard re-entrance: depth=1 so any cellValueChanged fired during aggregate/refresh
         // accumulates for a follow-up pass rather than recursing.
         if (this.deferredDepth === 0) {
             this.deferredDepth = 1;

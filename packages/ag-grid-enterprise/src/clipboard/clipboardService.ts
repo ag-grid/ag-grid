@@ -301,7 +301,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         const nodesToRefresh: RowNode[] = updatedRowNodes.slice();
         if (changedPath) {
-            clientSideRowModel.doAggregate(changedPath);
+            // `refresh: false` — clipboard issues its own `refreshCells` below; skip the stage's
+            // refresh queueing to avoid a double refresh on valueGetter cells.
+            clientSideRowModel.aggregate(changedPath, false);
 
             // add all nodes impacted by aggregation, as they need refreshed also.
             _forEachChangedGroupDepthFirst(rootNode, clientSideRowModel.hierarchical, changedPath, (rowNode) => {
@@ -310,7 +312,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         // clipboardSvc has to do changeDetection itself, to prevent repeat logic in favour of batching.
-        // changeDetectionSvc is disabled for this action.
+        // changeDetectionSvc is disabled for this action (SOURCE_PASTE is filtered by the listener,
+        // and `aggregate` above skips the queueing path).
         rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
 
         this.dispatchFlashCells(cellsToFlash);

@@ -28,7 +28,12 @@ export interface IRowNodePivotStage<TData = any> extends IRowNodeStage<TData> {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNodeAggregationStage<TData = any> extends IRowNodeStage<TData> {
-    execute(changedPath: ChangedPath | undefined): void;
+    /**
+     * Aggregates the row model. When `queueRefresh` is `false`, the stage will not queue affected
+     * rows on `ChangeDetectionService` — callers (e.g. clipboard) that manage their own refresh
+     * pass `false` to avoid a double refresh of valueGetter cells.
+     */
+    execute(changedPath: ChangedPath | undefined, queueRefresh: boolean): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

@@ -491,7 +491,7 @@ export class ValueService extends BeanStub implements NamedBean {
         // Wrap cascade + finishValueChange together in one deferred block.
         // - For group rows the cascade triggers child setDataValue → child setValue calls, each of
         //   which increments deferredDepth again, so their cellValueChanged events accumulate in this
-        //   same batch and do not each trigger an individual doAggregate pass.
+        //   same batch and do not each trigger an individual aggregation pass.
         // - For leaf rows the single cellValueChanged is accumulated and flushed once at endDeferred.
         // - Nested callers (clipboard, fill handle) just increment/decrement the same counter; the
         //   outermost endDeferred() performs the single aggregation + refresh pass.

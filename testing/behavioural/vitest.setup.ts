@@ -1,8 +1,7 @@
-import * as jestDomMatchers from '@testing-library/jest-dom/matchers';
+// Registers all jest-dom matchers globally AND augments `Assertion` so `toHaveClass`,
+// `toHaveTextContent`, etc. are recognised by TypeScript.
+import '@testing-library/jest-dom/vitest';
 import { afterAll, expect, vitest } from 'vitest';
-
-// Register all jest-dom matchers globally.
-expect.extend(jestDomMatchers);
 
 // Shim for code that references `jest` — redirect to vitest.
 (globalThis as Record<string, unknown>).jest = vitest;

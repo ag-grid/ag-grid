@@ -65,10 +65,11 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     private hadAgg = false;
 
     // Stale aggData on demoted nodes is cleared by the group stage (setRowNodeGroup), not here.
-    public execute(changedPath: ChangedPath | undefined): void {
+    public execute(changedPath: ChangedPath | undefined, queueRefresh: boolean): void {
         const { gos, beans } = this;
         const userAggFunc = gos.getCallback('getGroupRowAgg');
         const valueColumns = beans.valueColsSvc?.columns;
+        const changeDetectionSvc = queueRefresh ? beans.changeDetectionSvc : undefined;
 
         if (!valueColumns?.length && !userAggFunc) {
             if (this.hadAgg && !changedPath) {
@@ -78,8 +79,11 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 this.hadAgg = false;
                 const colModel = beans.colModel;
                 const rowModel = beans.rowModel;
+                const queueRow = colModel.hasValueGetterCol() ? changeDetectionSvc : undefined;
                 _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, undefined, (rowNode) => {
-                    setAggDataWithSiblings(rowNode, null, colModel);
+                    if (setAggDataWithSiblings(rowNode, null, colModel)) {
+                        queueRow?.addRow(rowNode);
+                    }
                 });
             }
             return;
@@ -129,9 +133,12 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         const values2d = colCount > 0 ? new Array<any[] | null>(colCount) : null;
 
         const rowModel = beans.rowModel;
+        const queueRow = colModel.hasValueGetterCol() ? changeDetectionSvc : undefined;
         _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, (rowNode) => {
             if (rowNode.level === -1 && !aggregateRoot) {
-                setAggData(rowNode, null, colModel);
+                if (setAggData(rowNode, null, colModel)) {
+                    queueRow?.addRow(rowNode);
+                }
                 return;
             }
 
@@ -156,7 +163,9 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 );
             }
 
-            setAggDataWithSiblings(rowNode, aggResult, colModel);
+            if (setAggDataWithSiblings(rowNode, aggResult, colModel)) {
+                queueRow?.addRow(rowNode);
+            }
         });
     }
 }

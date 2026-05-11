@@ -54,7 +54,12 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
         callback?: (res: RowNodeTransaction<TData>) => void
     ): void;
     flushAsyncTransactions(): void;
-    doAggregate(changedPath: ChangedPath | undefined): void;
+    /**
+     * Re-runs the aggregation stage. When `refresh` is `true`, queues affected rows on
+     * `ChangeDetectionService` and batches the result into one flush. Pass `false` when the
+     * caller manages its own refresh (e.g. clipboard).
+     */
+    aggregate(changedPath: ChangedPath | undefined, refresh: boolean): void;
     getTopLevelNodes(): RowNode[] | null;
     getFormulaRow(index: number): RowNode;
 

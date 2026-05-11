@@ -124,7 +124,7 @@ describe('Cell Editing: change detection', () => {
     // ─── Batch commit ─────────────────────────────────────────────────────────
 
     describe('batch commit', () => {
-        // Regression / optimisation: commitBatchEdit() must run doAggregate exactly once,
+        // Regression / optimisation: commitBatchEdit() must run aggregation exactly once,
         // not once per changed cell.
         test('applies all staged values and updates aggregation in a single pass', async () => {
             const api = await gridMgr.createGridAndWait('batchAgg', {
