@@ -14,3 +14,15 @@
     font-size: 13px;
     margin-bottom: 5px;
 }
+
+/** Add widths to avoid pagination controls changing size when the number of digits changes, i.e [1] -> [500] **/
+.ag-paging-description {
+    width: 120px;
+    text-align: center;
+}
+
+/** Add widths to avoid pagination controls changing size when the number of digits changes, i.e [1] -> [500] **/
+.ag-paging-row-summary-panel {
+    width: 200px;
+    text-align: center;
+}
