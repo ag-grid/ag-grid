@@ -341,11 +341,7 @@ export class ChartOptionsService extends BeanStub {
         // combine the options into a single merged object
         const chartOptions = this.createChartOptions();
         for (const { expression, value } of properties) {
-            const relevantAxes = Object.values(chart.axes ?? {}).filter((axis) =>
-                this.processedAxisExposes(axis.direction, expression)
-            );
-
-            for (const axis of relevantAxes) {
+            for (const axis of Object.values(chart.axes ?? {})) {
                 if (!this.isValidAxisType(axis)) {
                     continue;
                 }
@@ -354,17 +350,6 @@ export class ChartOptionsService extends BeanStub {
         }
 
         this.applyChartOptions(chartOptions);
-    }
-
-    private processedAxisExposes(direction: 'x' | 'y', expression: string): boolean {
-        const processed = this.getChart().chartOptions?.processedOptions as any;
-        const axis = this.pickProcessedAxis(processed?.axes, direction);
-        if (!axis) {
-            return false;
-        }
-        // Only the top-level namespace needs to exist; leaves may be absent until first write.
-        const [head] = expression.split('.');
-        return head in (axis as Record<string, unknown>);
     }
 
     private getCartesianAxisProperty<T = string | undefined>(axisType: 'xAxis' | 'yAxis', expression: string): T {
