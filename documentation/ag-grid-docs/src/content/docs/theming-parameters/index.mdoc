@@ -117,7 +117,7 @@ All parameters ending "ColorScheme" (and there is only one: `browserColorScheme`
 
 All parameters ending "Duration" are duration values. These can accept any [valid CSS time value](https://developer.mozilla.org/en-US/docs/Web/CSS/time), such as `'1s'`, `'500ms'` and variable expressions (`'var(--myAnimationDelayTime)'`). In addition, the following syntax is supported:
 
-| Syntax                         | Description                                                                                                          |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `0.4`                          | A plain number is treated as a number of **seconds** (so `0.4` becomes `0.4s`). To use milliseconds, pass `'400ms'`. |
-| `{ ref: 'someOtherDuration' }` | Use the same value as another duration parameter.                                                                    |
+| Syntax                         | Description                                                                |
+| ------------------------------ | -------------------------------------------------------------------------- |
+| `0.4`                          | A plain number is treated as a number of seconds, so `0.4` becomes `0.4s`. |
+| `{ ref: 'someOtherDuration' }` | Use the same value as another duration parameter.                          |
