@@ -11,10 +11,10 @@ import type {
 import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { getSeriesType, isRadial } from '../../../utils/seriesTypeMapper';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import type { FontPanelParams } from '../fontPanel';
 import { FontPanel } from '../fontPanel';
 import type { FormatPanelOptions } from '../formatPanel';
-import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class PolarAxisPanel extends Component {
     private readonly axisGroup: GroupComponent = RefPlaceholder;
@@ -41,11 +41,7 @@ export class PolarAxisPanel extends Component {
             new ChartMenuParamsFactory(chartOptionsService.getPolarAxisThemeOverridesProxy('angle'))
         );
         const axisColorInputParams = chartAxisThemeOverrides.getDefaultColorPickerParams('line.stroke');
-        const axisLineWidthSliderParams = chartAxisThemeOverrides.getDefaultSliderParams(
-            'line.width',
-            'thickness',
-            10
-        );
+        const axisLineWidthSliderParams = chartAxisThemeOverrides.getDefaultSliderParams('line.width', 'thickness', 10);
         this.setTemplate(
             /* html */ `<div>
             <ag-group-component data-ref="axisGroup">
@@ -168,24 +164,20 @@ export class PolarAxisPanel extends Component {
     }
 
     private createSlider(config: {
-        chartAxisThemeOverrides: ChartMenuParamsFactory
+        chartAxisThemeOverrides: ChartMenuParamsFactory;
         labelKey: ChartTranslationKey;
         defaultMaxValue: number;
         step?: number;
         property: string;
     }): GridSlider {
         const { labelKey, defaultMaxValue, step = 0.05, property, chartAxisThemeOverrides } = config;
-        const params = chartAxisThemeOverrides.getDefaultSliderParams(
-            property,
-            labelKey,
-            defaultMaxValue
-        );
+        const params = chartAxisThemeOverrides.getDefaultSliderParams(property, labelKey, defaultMaxValue);
         params.step = step;
         return this.createManagedBean(new AgSlider(params));
     }
 
     private createSelect(config: {
-        chartAxisThemeOverrides: ChartMenuParamsFactory,
+        chartAxisThemeOverrides: ChartMenuParamsFactory;
         labelKey: ChartTranslationKey;
         options: Array<ListOption>;
         property: string;
