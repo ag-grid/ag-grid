@@ -84,7 +84,7 @@ function getServerSideDatasource(server: ReturnType<typeof FakeServer>): IServer
                 if (needsGrandTotal) {
                     void refreshGrandTotalAsync(params);
                 }
-            }, 800);
+            }, 500);
         },
     };
 }
