@@ -1046,7 +1046,7 @@ describe('ag-grid formulas filtering', () => {
         api.stopEditing(true);
     });
 
-    test('TC5-5 Typed range ref where one endpoint is filtered out does not create a range', async () => {
+    test('TC5-5 Typed range ref with one hidden endpoint highlights the visible portion', async () => {
         const gridOptions: GridOptions = {
             rowData: [
                 { id: '1', A: 10, B: '' },
@@ -1068,7 +1068,7 @@ describe('ag-grid formulas filtering', () => {
 
         const api = gridsManager.createGrid('tc5-5', gridOptions);
 
-        // Filter to show rows 3-5. Rows 1-2 are hidden.
+        // Filter to show rows 3-5 (display indices 0,1,2). Rows 1-2 are hidden.
         api.setFilterModel({ A: { type: 'greaterThan', filter: 25 } });
 
         await new GridRows(api, 'filtered A > 25').check(`
@@ -1084,16 +1084,21 @@ describe('ag-grid formulas filtering', () => {
         await editingStarted;
         await asyncSetTimeout(5);
 
-        // Type "=A1:A5" — row 1 is filtered out, row 5 is visible.
+        // Type "=A1:A5" — rows 1-2 are filtered out, rows 3-5 are visible.
         const [editor] = api.getCellEditorInstances() as unknown as [{ agSetEditValue?: (v: unknown) => void }];
         editor?.agSetEditValue?.('=A1:A5');
         await asyncSetTimeout(10);
 
-        // The range should not be created because one endpoint (A1) is filtered out.
+        // A range should be created for the visible portion (display indices 0-2 = rows 3-5).
         const ranges = api.getCellRanges() ?? [];
-        for (const range of ranges) {
-            expect(range.startRow?.rowIndex).not.toBe(0);
-        }
+        const formulaRanges = ranges.filter((r) => r.startRow != null && r.endRow != null);
+        expect(formulaRanges.length).toBeGreaterThan(0);
+
+        const range = formulaRanges[0];
+        const startDisplay = Math.min(range.startRow!.rowIndex, range.endRow!.rowIndex);
+        const endDisplay = Math.max(range.startRow!.rowIndex, range.endRow!.rowIndex);
+        expect(startDisplay).toBe(0);
+        expect(endDisplay).toBe(2);
 
         api.stopEditing(true);
     });
