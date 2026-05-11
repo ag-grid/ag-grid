@@ -39,6 +39,11 @@ type AgChartOptionsWithThemeOverrides = AgChartOptions & {
     };
 };
 
+type ReadScope =
+    | { kind: 'chart' }
+    | { kind: 'axis'; direction: 'x' | 'y' }
+    | { kind: 'series'; seriesType: ChartSeriesType };
+
 const CARTESIAN_AXIS_TYPES: AgCartesianAxisType[] = ['number', 'category', 'time', 'grouped-category'];
 const POLAR_AXIS_TYPES: AgPolarAxisType[] = ['angle-category', 'angle-number', 'radius-category', 'radius-number'];
 
@@ -261,7 +266,39 @@ export class ChartOptionsService extends BeanStub {
     }
 
     private getChartOption<T = string>(expression: string): T {
-        return get(this.getChart(), expression, undefined) as T;
+        return this.readProcessed<T>({ kind: 'chart' }, expression) as T;
+    }
+
+    // Reads route through `chart.chartOptions.processedOptions` rather than the live runtime
+    // objects, which no longer expose module-provided config (e.g. crosshair) as plain properties.
+    private readProcessed<T>(scope: ReadScope, expression: string): T | undefined {
+        const processed = this.getChart().chartOptions?.processedOptions as any;
+        if (!processed) {
+            return undefined;
+        }
+
+        let source: unknown;
+        switch (scope.kind) {
+            case 'chart':
+                source = processed;
+                break;
+            case 'axis':
+                source = this.pickProcessedAxis(processed.axes, scope.direction);
+                break;
+            case 'series':
+                source = Array.isArray(processed.series)
+                    ? processed.series.find((s: any) => isMatchingSeries(scope.seriesType, s))
+                    : undefined;
+                break;
+        }
+        return get(source, expression, undefined) as T;
+    }
+
+    private pickProcessedAxis(axes: unknown, direction: 'x' | 'y'): unknown {
+        if (!axes || typeof axes !== 'object') {
+            return undefined;
+        }
+        return (axes as Record<string, any>)[direction];
     }
 
     private setChartThemeOverrides<T = string>(properties: { expression: string; value: T }[]): void {
@@ -294,8 +331,7 @@ export class ChartOptionsService extends BeanStub {
     }
 
     private getAxisProperty<T = string>(expression: string): T {
-        // Assume the property exists on the first axis
-        return get(this.getChart().axes?.x, expression, undefined);
+        return this.readProcessed<T>({ kind: 'axis', direction: 'x' }, expression) as T;
     }
 
     private setAxisThemeOverrides<T = string>(properties: { expression: string; value: T }[]): void {
@@ -305,21 +341,9 @@ export class ChartOptionsService extends BeanStub {
         // combine the options into a single merged object
         const chartOptions = this.createChartOptions();
         for (const { expression, value } of properties) {
-            // Only apply the property to axes that declare the property on their prototype chain
-            const relevantAxes = Object.values(chart.axes ?? {}).filter((axis) => {
-                const parts = expression.split('.');
-                let current: any = axis;
-                for (const part of parts) {
-                    if (!(part in current)) {
-                        return false;
-                    }
-                    current = current[part];
-                }
-                return true;
-            });
-            if (!relevantAxes) {
-                continue;
-            }
+            const relevantAxes = Object.values(chart.axes ?? {}).filter((axis) =>
+                this.processedAxisExposes(axis.direction, expression)
+            );
 
             for (const axis of relevantAxes) {
                 if (!this.isValidAxisType(axis)) {
@@ -332,10 +356,21 @@ export class ChartOptionsService extends BeanStub {
         this.applyChartOptions(chartOptions);
     }
 
+    private processedAxisExposes(direction: 'x' | 'y', expression: string): boolean {
+        const processed = this.getChart().chartOptions?.processedOptions as any;
+        const axis = this.pickProcessedAxis(processed?.axes, direction);
+        if (!axis) {
+            return false;
+        }
+        // Only the top-level namespace needs to exist on the axis — leaves may be absent until first
+        // write. The original implementation walked every segment but did so against the live axis's
+        // prototype chain, which exposed leaves that bare processedOptions does not.
+        const [head] = expression.split('.');
+        return head in (axis as Record<string, unknown>);
+    }
+
     private getCartesianAxisProperty<T = string | undefined>(axisType: 'xAxis' | 'yAxis', expression: string): T {
-        const axes = this.getChartAxes();
-        const axis = this.getCartesianAxis(axes, axisType);
-        return get(axis, expression, undefined);
+        return this.readProcessed<T>({ kind: 'axis', direction: axisType === 'xAxis' ? 'x' : 'y' }, expression) as T;
     }
 
     private getCartesianAxisThemeOverride<T = string>(
@@ -350,7 +385,7 @@ export class ChartOptionsService extends BeanStub {
         const chartType = this.getChartType();
         const chartOptions = this.getChart().getOptions();
 
-        return this.retrieveChartAxisThemeOverride(
+        return this.retrieveChartAxisThemeOverride<T>(
             chartOptions,
             chartType,
             chartAxis.type,
@@ -465,11 +500,12 @@ export class ChartOptionsService extends BeanStub {
     }
 
     private getSeriesOption<T = string>(seriesType: ChartSeriesType, expression: string, calculated?: boolean): T {
-        // N.B. 'calculated' here refers to the fact that the property exists on the internal series object itself,
-        // rather than the properties object. This is due to us needing to reach inside the chart itself to retrieve
-        // the value, and will likely be cleaned up in a future release
-        const series = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s));
-        return get(calculated ? series : series?.properties.toJson(), expression, undefined) as T;
+        // `calculated` reads runtime-derived values (e.g. histogram calculatedBins) off the live series.
+        if (calculated) {
+            const series = this.getChart().series.find((s: any) => isMatchingSeries(seriesType, s));
+            return get(series, expression, undefined) as T;
+        }
+        return this.readProcessed<T>({ kind: 'series', seriesType }, expression) as T;
     }
 
     private setSeriesOptions<T = string>(
