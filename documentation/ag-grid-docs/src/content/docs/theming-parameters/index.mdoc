@@ -55,8 +55,8 @@ All parameters ending "Color" are color values. These can accept any [valid CSS 
 | Syntax                                                       | Description                                       |
 | ------------------------------------------------------------ | ------------------------------------------------- |
 | `{ ref: 'accentColor' }`                                     | Use the same value as the `accentColor` parameter |
-| `{ ref: 'accentColor', mix: 0.25 }`                          | A mix of 25%, `accentColor` 75% transparent       |
-| `{ ref: 'accentColor', mix: 0.25, onto: 'backgroundColor' }` | A mix of 25%, `accentColor` 75% `backgroundColor` |
+| `{ ref: 'accentColor', mix: 0.25 }`                          | A mix of 25% `accentColor`, 75% transparent       |
+| `{ ref: 'accentColor', mix: 0.25, onto: 'backgroundColor' }` | A mix of 25% `accentColor`, 75% `backgroundColor` |
 
 ### Border Values
 
@@ -65,8 +65,8 @@ All parameters ending "Border" are border values. These can accept any [valid CS
 | Syntax                                         | Description                                                                                                                                                                                                                                                                                                                            |
 | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `{ width: 2, style: 'dashed', color: 'blue' }` | An object with 3 optional properties. `width` can take any [length value](#length-values) and defaults to 1. `style` takes a [CSS border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) string and defaults to "solid". `color` takes any [color value](#color-values) and defaults to `{ ref: 'borderColor' }` |
-| `true`                                         | The default border: `{width: 1, style: 'solid' { ref: 'borderColor' }`                                                                                                                                                                                                                                                                 |
-| `false`                                        | A shorthand for `0`                                                                                                                                                                                                                                                                                                                    |
+| `true`                                         | The default border: `{ width: 1, style: 'solid', color: { ref: 'borderColor' } }`                                                                                                                                                                                                                                                      |
+| `false`                                        | A shorthand for `'none'` (no border)                                                                                                                                                                                                                                                                                                   |
 
 ### Border Style Values
 

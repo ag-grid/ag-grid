@@ -34,7 +34,7 @@ If there is no parameter for the effect that you want to achieve, you can use CS
 
 ### Underlined Text Inputs
 
-The default text input style is `inputStyleBordered`. The other provided input style is `inputStyleUnderlined` which produces a Material Design style underlined input. These are [theme parts](./theming-parts/) so you can swap them using `theme.usePart()` or create your own:
+The default text input style is `inputStyleBordered`. The other provided input style is `inputStyleUnderlined` which produces a Material Design style underlined input. These are [theme parts](./theming-parts/) so you can swap them using `theme.withPart()` or create your own:
 
 ```js
 const myTheme = themeQuartz.withPart(inputStyleUnderlined);
@@ -86,7 +86,7 @@ If there is no parameter for the effect that you want to achieve, you can use CS
 
 The example above uses `checkboxCheckedShapeImage` to replace the default check mark with a X symbol. By default, `checkboxCheckedShapeImage` provides only the shape of the check mark, and the colour is replaced using the `checkboxCheckedShapeColor` parameter.
 
-If you have SVG images containing their own colour, this example demonstrates how to create a checkbox style with coloured SVG images. It removes the existing checkbox styles using `theme.removePart()` and adds new styles with CSS:
+If you have SVG images containing their own colour, this example demonstrates how to create a checkbox style with coloured SVG images. It removes the existing checkbox styles using `theme.withoutPart()` and adds new styles with CSS:
 
 {% gridExampleRunner title="Checkbox Styling" name="checkboxes-custom-svg" exampleHeight=450 /%}
 
