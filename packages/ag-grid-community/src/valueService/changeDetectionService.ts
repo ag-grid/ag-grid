@@ -77,8 +77,11 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
      * `cellValueChanged` fired by a custom `aggFunc` / `valueGetter` / cell renderer accumulates
      * into batchedPath/batchedNodes and is processed by the re-entrance guard below, rather than
      * recursing into endDeferred mid-flush.
+     *
+     * If user code throws, the current batch is abandoned and depth resets to 0,
+     * recovered in the next refresh.
      */
-    private flush(repeat: number): void {
+    private flush(reentryCount: number): void {
         const batchedPath = this.batchedPath;
         const batchedNodes = this.batchedNodes;
         this.batchedPath = null;
@@ -95,14 +98,8 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 
             // Refresh nodes not in the path (CSRM leaves, or all nodes for non-CSRM).
             if (batchedNodes) {
-                if (batchedPath?.kind === 'rows') {
-                    for (const node of batchedNodes) {
-                        if (!batchedPath.hasRow(node)) {
-                            refreshRowAndSiblings(rowRenderer, node);
-                        }
-                    }
-                } else {
-                    for (const node of batchedNodes) {
+                for (const node of batchedNodes) {
+                    if (!batchedPath?.hasRow(node)) {
                         refreshRowAndSiblings(rowRenderer, node);
                     }
                 }
@@ -120,9 +117,9 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         }
 
         // If re-entrant events accumulated during the flush, process them now.
-        if (repeat < MAX_FLUSH_REPEAT && (this.batchedPath || this.batchedNodes)) {
+        if (reentryCount < MAX_FLUSH_REPEAT && (this.batchedPath || this.batchedNodes)) {
             this.deferredDepth = 1;
-            this.flush(repeat + 1);
+            this.flush(reentryCount + 1);
         }
     }
 

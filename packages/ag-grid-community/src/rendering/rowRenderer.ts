@@ -928,7 +928,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return undefined;
     }
 
-    /** Refreshes the rendered row for the given node if it is currently in the viewport. Null-safe: no-op when node is null or undefined. */
+    /** Refreshes the rendered row for the given node if it is currently in the viewport. */
     public refreshRowByNode(node: IRowNode): void {
         this.getRowCtrlByNode(node)?.refreshRow();
     }

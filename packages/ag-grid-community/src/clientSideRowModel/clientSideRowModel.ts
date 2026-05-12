@@ -254,8 +254,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return; // Destroyed
         }
 
-        // Mirror `refreshModel`'s deferred wrap — batches events from `setImmutableRowData` /
-        // `setNewRowData` (or user callbacks) into the eventual refresh flush.
+        // Mirror `refreshModel`'s deferred wrap — batches any `cellValueChanged` events fired during
+        // the prop-change pipeline (row-data application, user callbacks, downstream `refreshModel`)
+        // into a single flush at the end. For prop changes that don't trigger row work this is a
+        // no-op counter inc/dec.
         const changeDetectionSvc = beans.changeDetectionSvc;
         changeDetectionSvc.beginDeferred();
         try {
