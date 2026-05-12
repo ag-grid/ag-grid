@@ -49,8 +49,10 @@ export const tagRangeWithFormulaColor = (
     range.colorClass = rangeClass;
 };
 
+type FormulaRangeParams = { rowStartIndex: number; rowEndIndex: number; columnStart: AgColumn; columnEnd: AgColumn };
+
 // Range helpers
-export const getCellRangeParams = (beans: BeanCollection, ref: string) => {
+export const getCellRangeParams = (beans: BeanCollection, ref: string): FormulaRangeParams | null => {
     // Allow a trailing ":" while the user is still typing a range (e.g. "A1:").
     const parsed = parseA1Ref(ref, { allowTrailingColon: true });
     if (!parsed) {
@@ -93,19 +95,16 @@ export const getCellRangeParams = (beans: BeanCollection, ref: string) => {
 /** Convert formula-row-based params to display-index-based params for the range service.
  *  Clamps to the visible portion when endpoints are filtered out. Returns null if no
  *  rows in the range are currently visible. */
-export const toDisplayRangeParams = (
-    beans: BeanCollection,
-    params: { rowStartIndex: number; rowEndIndex: number; columnStart: AgColumn; columnEnd: AgColumn }
-): { rowStartIndex: number; rowEndIndex: number; columnStart: AgColumn; columnEnd: AgColumn } | null => {
+export const toDisplayRangeParams = (beans: BeanCollection, params: FormulaRangeParams): FormulaRangeParams | null => {
     const rowModel = beans.rowModel as IClientSideRowModel | null;
     if (!rowModel) {
         return null;
     }
 
-    const { rowStartIndex: formulaStart, rowEndIndex: formulaEnd } = params;
+    const { rowStartIndex, rowEndIndex } = params;
 
     let displayStart: number | null = null;
-    for (let i = formulaStart; i <= formulaEnd; i++) {
+    for (let i = rowStartIndex; i <= rowEndIndex; i++) {
         const idx = rowModel.getFormulaRow(i)?.rowIndex;
         if (idx != null) {
             displayStart = idx;
@@ -114,7 +113,7 @@ export const toDisplayRangeParams = (
     }
 
     let displayEnd: number | null = null;
-    for (let i = formulaEnd; i >= formulaStart; i--) {
+    for (let i = rowEndIndex; i >= rowStartIndex; i--) {
         const idx = rowModel.getFormulaRow(i)?.rowIndex;
         if (idx != null) {
             displayEnd = idx;
