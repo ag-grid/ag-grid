@@ -11,7 +11,12 @@
 #   3. gh CLI                  — if `gh auth token` resolves a token, use it
 #                                the same way as GITHUB_TOKEN. Transparent for
 #                                developers already logged in with `gh`.
-#   4. Fallback                 — https clone with no explicit credentials; git's
+#   4. Consumer origin is SSH  — if the consumer repo's `origin` remote points
+#                                at github.com over SSH, mirror that scheme.
+#                                Cheap and local (single `git config` read),
+#                                and a strong signal that the developer has
+#                                working SSH keys for github.com.
+#   5. Fallback                 — https clone with no explicit credentials; git's
 #                                credential helper (osxkeychain, manager, etc.)
 #                                supplies auth. The dev workstation path.
 #
@@ -51,6 +56,12 @@ elif command -v gh >/dev/null 2>&1 && _gh_token="$(gh auth token 2>/dev/null)" &
         AUTH_MODE="gh"
     fi
     unset _gh_token
+elif _origin_url=$(git config --get remote.origin.url 2>/dev/null) && [[ "$_origin_url" =~ ^(git@github\.com:|ssh://git@github\.com/) ]]; then
+    # No gh / GITHUB_TOKEN, but the consumer repo was cloned over SSH. The
+    # developer almost certainly has working SSH keys for github.com, so mirror
+    # that scheme rather than falling through to an HTTPS prompt.
+    AUTH_MODE="origin-ssh"
+    unset _origin_url
 else
     AUTH_MODE="https"
 fi
@@ -72,9 +83,10 @@ fi
 
 resolve_repo_url() {
     case "$AUTH_MODE" in
-        override) echo "$AG_DEV_PROMPTS_REPO" ;;
-        gh-ssh)   echo "git@github.com:${REPO_SLUG}.git" ;;
-        *)        echo "https://github.com/${REPO_SLUG}.git" ;;
+        override)   echo "$AG_DEV_PROMPTS_REPO" ;;
+        gh-ssh)     echo "git@github.com:${REPO_SLUG}.git" ;;
+        origin-ssh) echo "git@github.com:${REPO_SLUG}.git" ;;
+        *)          echo "https://github.com/${REPO_SLUG}.git" ;;
     esac
 }
 
@@ -163,6 +175,36 @@ SSH clone was attempted from $REPO_URL and failed. Likely causes:
   * Prefer HTTPS? Switch gh's git protocol and re-run:
       gh config set -h github.com git_protocol https
       gh auth setup-git
+      yarn
+
+Verify SSH access directly:
+  ssh -T git@github.com
+EOF
+            ;;
+        origin-ssh)
+            cat >&2 <<EOF
+Auth path: SSH inferred from the consumer repo's origin remote.
+
+No GITHUB_TOKEN and no \`gh\` login were found, but this repo's \`origin\`
+points at github.com over SSH, so we tried the same scheme for
+${REPO_SLUG} and it failed. Likely causes:
+
+  * SSH key not loaded into ssh-agent:
+      ssh-add -l
+      ssh-add ~/.ssh/id_ed25519     # or your key path
+
+  * SSH key registered with GitHub but missing SAML SSO authorization
+    for the ag-grid org:
+      # Authorize: https://github.com/organizations/ag-grid/sso
+
+  * Prefer HTTPS instead? Install gh and authenticate:
+      brew install gh
+      gh auth login --hostname github.com --git-protocol https --web
+      gh auth setup-git
+      yarn
+
+  * Or supply a token directly:
+      export GITHUB_TOKEN=ghp_...
       yarn
 
 Verify SSH access directly:
