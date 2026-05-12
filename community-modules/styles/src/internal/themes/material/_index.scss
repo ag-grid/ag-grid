@@ -26,6 +26,22 @@
         background-color: var(--ag-subheader-background-color);
     }
 
+    .ag-toolbar-item:where(:not(.ag-toolbar-panel)) {
+        font-weight: 600;
+    }
+
+    .ag-toolbar-item {
+        font-size: calc(var(--ag-font-size) - 1px);
+    }
+
+    .ag-toolbar .ag-column-drop-horizontal {
+        background-color: transparent;
+    }
+
+    .ag-toolbar .ag-toolbar-panel {
+        padding-inline-start: var(--ag-grid-size);
+    }
+
     .ag-tabs-body {
         padding: calc(var(--ag-grid-size) * 0.5) 0;
     }

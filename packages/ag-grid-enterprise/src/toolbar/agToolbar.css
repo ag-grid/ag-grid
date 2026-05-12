@@ -8,7 +8,6 @@
     color: var(--ag-toolbar-text-color);
     font-family: var(--ag-header-font-family);
     font-size: var(--ag-header-font-size);
-    font-weight: var(--ag-header-font-weight);
     white-space: nowrap;
 }
 
@@ -18,6 +17,10 @@
 
 .ag-toolbar-item {
     display: inline-flex;
+}
+
+.ag-toolbar-item:where(:not(.ag-toolbar-panel)) {
+    font-weight: var(--ag-header-font-weight);
 }
 
 .ag-toolbar-button-wrapper {
@@ -30,16 +33,21 @@
     display: inline-flex;
     align-items: center;
     gap: var(--ag-spacing);
-    padding: calc(var(--ag-spacing));
+    padding: var(--ag-spacing);
     border: 0;
     background: transparent;
     color: var(--ag-toolbar-text-color);
-    font-family: inherit;
-    font-weight: inherit;
+    font-family: var(--ag-header-font-family);
+    font-size: var(--ag-header-font-size);
+    font-weight: var(--ag-header-font-weight);
     cursor: pointer;
     line-height: 1;
     white-space: nowrap;
     outline: none;
+}
+
+:where(.ag-toolbar-button) .ag-icon {
+    color: var(--ag-icon-color);
 }
 
 .ag-toolbar-button-wrapper:hover {
@@ -79,7 +87,7 @@
 .ag-toolbar-panel {
     display: inline-flex;
     flex: 1;
-    min-width: 235px;
+    min-width: 260px;
     padding: 0 calc(var(--ag-spacing) * 2);
 }
 
@@ -116,7 +124,7 @@
     position: absolute;
     display: inline-flex;
     align-items: center;
-    color: var(--ag-toolbar-text-color);
+    color: var(--ag-icon-color);
     opacity: 0.5;
     pointer-events: none;
     inset-inline-start: var(--ag-spacing);
@@ -150,8 +158,7 @@
     background-color: transparent;
     border-bottom: none;
     padding: 0;
-    font-weight: var(--ag-cell-font-weight);
-    font-size: var(--ag-cell-font-size);
+    font-size: var(--ag-font-size);
     font-family: var(--ag-cell-font-family);
 }
 

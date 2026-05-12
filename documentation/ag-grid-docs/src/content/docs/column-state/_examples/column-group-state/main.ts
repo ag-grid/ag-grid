@@ -44,7 +44,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 function saveState() {
     window.groupState = gridApi!.getColumnGroupState();
     console.log('group state saved', window.groupState);
-    console.log('column state saved');
+    console.log('column group state saved');
 }
 
 function restoreState() {
@@ -53,12 +53,12 @@ function restoreState() {
         return;
     }
     gridApi!.setColumnGroupState(window.groupState);
-    console.log('column state restored');
+    console.log('column group state restored');
 }
 
 function resetState() {
     gridApi!.resetColumnGroupState();
-    console.log('column state reset');
+    console.log('column group state reset');
 }
 
 // setup the grid after the page has finished loading

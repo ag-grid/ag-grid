@@ -2,7 +2,7 @@
 title: "Migrating to the Theming API"
 ---
 
-Migrating to the Theming API
+Update your app to use the new theming system available in v33
 
 Before v33, themes were imported as CSS files in our NPM modules, and applied by setting a class name on the grid's container element, e.g. `class="ag-theme-quartz"`. In v33, the default method of styling the grid is the Theming API, in which themes are imported as JavaScript objects and passed to the grid as a grid option. The old method of styling (now called legacy themes) is still supported, but is deprecated and will be removed in a future major version.
 
@@ -105,11 +105,11 @@ public theme = myTheme;
 
 ### 3. Convert any css custom properties you are using to the new names
 
-In legacy themes, custom properties had to be set in CSS. When migrating custom properties to the Theming API you may choose whether to specify them in JavaScript in order to get Typescript validation of property names and values, or to continue to set them in CSS. The list below provides the JS API names, to convert them to CSS use kebab-case and add the `--ag-` prefix (`tooltipTextColor` -> `--ag-tooltip-text-color`).
+In legacy themes, custom properties had to be set in CSS. When migrating custom properties to the Theming API you may choose whether to specify them in JavaScript in order to get TypeScript validation of property names and values, or to continue to set them in CSS. The list below provides the JS API names, to convert them to CSS use kebab-case and add the `--ag-` prefix (`tooltipTextColor` -> `--ag-tooltip-text-color`).
 
 #### Key changes
 
-- `--ag-grid-size` -> `spacing` spacing works a little bit differently from the old "grid size". It controls the padding around elements, whereas grid size controlled their size. So setting spacing to `0` will result in a grid with no padding, whereas setting grid size to `0` would have resulted in zero-height rows.
+- `--ag-grid-size` -> `spacing`. Spacing works a little differently from the old grid size: it controls the padding around elements, whereas grid size controlled their size. Setting `spacing` to `0` produces a grid with no padding, whereas setting grid size to `0` produced zero-height rows.
 - `--ag-active-color`, `--ag-alpine-active-color`, `--ag-balham-active-color`, `--ag-material-accent-color` -> use `accentColor`
 - `--ag-borders*` -> there has been a reworking of border parameters, see [Customising Borders](./theming-borders/) for the new list of border parameters.
 - `--ag-row-border-color`, `--ag-row-border-style`, `--ag-row-border-width` -> replaced with `rowBorder`
@@ -121,7 +121,6 @@ While developing the Theming API we took the opportunity to rename many of our p
 
 Note: the replacement parameter is given as name for use in the TypeScript Theming API, e.g. `chromeBackgroundColor`. To use this in CSS, convert it to kebab-case and add the `--ag-` prefix, e.g. `--ag-chrome-background-color`.
 
-- `--ag-secondary-foreground-color` -> `chromeBackgroundColor`
 - `--ag-selected-tab-underline-color` -> `tabSelectedUnderlineColor`
 - `--ag-selected-tab-underline-transition-speed` -> `tabSelectedUnderlineTransitionDuration`
 - `--ag-selected-tab-underline-width` -> `tabSelectedUnderlineWidth`
@@ -149,7 +148,7 @@ Note: the replacement parameter is given as name for use in the TypeScript Themi
 - `--ag-menu-border-color` -> `menuBorderColor`
 - `--ag-panel-border-color` -> `dialogBorder`
 - `--ag-quartz-icon-active-color` -> this was used to apply an outline to focussed icons, now all focussed elements throughout the grid use `focusShadow`
-- `--ag-quartz-icon-hover-color` -> `iconButtonHoverColor`
+- `--ag-quartz-icon-hover-color` -> `iconButtonHoverBackgroundColor`
 
 #### Components with significantly different theming parameters
 
@@ -162,6 +161,7 @@ Note: the replacement parameter is given as name for use in the TypeScript Themi
 These properties were either outdated, confusing to use, or provided no benefit over using CSS rules.
 
 - `--ag-secondary-border-color` -> there is no longer a concept of "secondary" borders use `borderColor` or CSS rules to target specific borders
+- `--ag-secondary-foreground-color` -> there is no longer a concept of "secondary" text color use parameters like `headerTextColor` or CSS rules to target specific components
 - `--ag-borders-side-button`
 - `--ag-tab-min-width`
 - `--ag-menu-min-width`
@@ -213,7 +213,7 @@ body {
 }
 ```
 
-### 4. [Sass users only] Remove use of the Sass API
+### 5. [Sass users only] Remove use of the Sass API
 
 The Theming API achieves in JavaScript what the old Sass API did in Sass.
 
@@ -271,7 +271,7 @@ For Angular, consider using [ViewEncapsulation.ShadowDom](https://angular.dev/gu
 
 If you are familiar with the method of theming applications used in v32 and earlier, the following technical context will help you understand what is changing and what remains the same.
 
-The grid is styled using CSS. A running grid instance contains thousands of DOM elements, and each of them has class names like `ag-header` and `ag-row` that can be used in CSS rules that change the style of that element. The grid package from NPM contains CSS that set up a default grid style and expose CSS custom properties (variables) that allow configuration of colors, borders, padding, fonts etc. When you want to go beyond what is possible with the custom properties, you write your own CSS rules targeting the grid's class names.
+The grid is styled using CSS. A running grid instance contains thousands of DOM elements, and each of them has class names like `ag-header` and `ag-row` that can be used in CSS rules that change the style of that element. The grid package from NPM contains CSS that set up a default grid style and expose CSS custom properties (variables) that allow configuration of colours, borders, padding, fonts etc. When you want to go beyond what is possible with the custom properties, you write your own CSS rules targeting the grid's class names.
 
 None of this is changing - the grid is still styled with CSS and CSS custom properties, and you can still extend it with your own CSS rules. What the Theming API changes is the following:
 
@@ -279,7 +279,7 @@ None of this is changing - the grid is still styled with CSS and CSS custom prop
 2. There is a TypeScript API for setting CSS custom properties (`theme.withParams(...)`). This provides autocompletion and inline documentation making it easier to find the property you're looking for. You can still set custom properties in CSS if you prefer.
 3. It is now possible to mix and match elements of different themes. Previously, if you wanted the text inputs from Material and the buttons from Quartz, you would have to write your own styles. Now you can compose your own themes using parts from different built in themes (`theme.withPart(...)`).
 4. It is a significant rewrite of the CSS we provide to style the grid, containing many improvements and resolving long-standing issues. It contains all the learnings from 10 years of maintaining the old CSS themes. Some examples of changes we've made:
-    - Compactness and spacing has been completely overhauled. In legacy themes the size of many elements was set as a multiple of `--ag-grid-size`, so lower values produced a more compact grid. However in practice after changing the value, many further tweaks were required to get things looking right. In the Theming API this is replaced by `--ag-spacing` which is designed to "just work" at any value.
+    - Compactness and spacing have been overhauled. In legacy themes the size of many elements was set as a multiple of `--ag-grid-size`, so lower values produced a more compact grid. However in practice after changing the value, many further tweaks were required to get things looking right. In the Theming API this is replaced by `--ag-spacing` which is designed to "just work" at any value.
     - Focus styles look and work better, with focus styles on elements like header cells looking more like the focus styles on form inputs.
     - CSS custom properties now inherit as expected - if you set `--ag-foreground-color` on the `body` element, it will be inherited by all grids on the page. In legacy themes, the custom property had to be set on the same element as the theme class.
     - [Selector specificity](https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity) has been reduced across the board, making it easier to override in your own style sheets. For example, in legacy themes if you added the following code to your application's style sheet - `.ag-cell-inline-editing { box-shadow: none; }` - it would not have the intended effect of removing the shadow from cells being edited. This was because our CSS that added the shadow had a more specific selector. In the Theming API this code works as expected.

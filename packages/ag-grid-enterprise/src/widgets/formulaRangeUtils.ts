@@ -1,4 +1,4 @@
-import { isSpecialCol } from 'ag-grid-community';
+import { _getRowNode, isSpecialCol } from 'ag-grid-community';
 import type { AgColumn, BeanCollection, CellRange, IClientSideRowModel } from 'ag-grid-community';
 
 import { getRefTokenMatches, parseA1Ref } from '../formula/refUtils';
@@ -49,8 +49,10 @@ export const tagRangeWithFormulaColor = (
     range.colorClass = rangeClass;
 };
 
+type FormulaRangeParams = { rowStartIndex: number; rowEndIndex: number; columnStart: AgColumn; columnEnd: AgColumn };
+
 // Range helpers
-export const getCellRangeParams = (beans: BeanCollection, ref: string) => {
+export const getCellRangeParams = (beans: BeanCollection, ref: string): FormulaRangeParams | null => {
     // Allow a trailing ":" while the user is still typing a range (e.g. "A1:").
     const parsed = parseA1Ref(ref, { allowTrailingColon: true });
     if (!parsed) {
@@ -90,6 +92,42 @@ export const getCellRangeParams = (beans: BeanCollection, ref: string) => {
     };
 };
 
+/** Convert formula-row-based params to display-index-based params for the range service.
+ *  Clamps to the visible portion when endpoints are filtered out. Returns null if no
+ *  rows in the range are currently visible. */
+export const toDisplayRangeParams = (beans: BeanCollection, params: FormulaRangeParams): FormulaRangeParams | null => {
+    const rowModel = beans.rowModel as IClientSideRowModel | null;
+    if (!rowModel) {
+        return null;
+    }
+
+    const { rowStartIndex, rowEndIndex } = params;
+
+    let displayStart: number | null = null;
+    for (let i = rowStartIndex; i <= rowEndIndex; i++) {
+        const idx = rowModel.getFormulaRow(i)?.rowIndex;
+        if (idx != null) {
+            displayStart = idx;
+            break;
+        }
+    }
+
+    let displayEnd: number | null = null;
+    for (let i = rowEndIndex; i >= rowStartIndex; i--) {
+        const idx = rowModel.getFormulaRow(i)?.rowIndex;
+        if (idx != null) {
+            displayEnd = idx;
+            break;
+        }
+    }
+
+    if (displayStart == null || displayEnd == null) {
+        return null;
+    }
+
+    return { ...params, rowStartIndex: displayStart, rowEndIndex: displayEnd };
+};
+
 export const getLatestRangeRef = (beans: BeanCollection): string | null => {
     const ranges = beans.rangeSvc?.getCellRanges();
     const latest = ranges?.length ? ranges[ranges.length - 1] : null;
@@ -115,8 +153,17 @@ export const rangeToRef = (beans: BeanCollection, range: CellRange): string | nu
         return null;
     }
 
-    const rowStartIndex = Math.min(startRow.rowIndex!, endRow.rowIndex!) + 1;
-    const rowEndIndex = Math.max(startRow.rowIndex!, endRow.rowIndex!) + 1;
+    const startNode = _getRowNode(beans, startRow);
+    const endNode = _getRowNode(beans, endRow);
+    const startFormulaIdx = startNode?.formulaRowIndex;
+    const endFormulaIdx = endNode?.formulaRowIndex;
+
+    if (startFormulaIdx == null || endFormulaIdx == null) {
+        return null;
+    }
+
+    const rowStartIndex = Math.min(startFormulaIdx, endFormulaIdx) + 1;
+    const rowEndIndex = Math.max(startFormulaIdx, endFormulaIdx) + 1;
 
     // ignore selection/row-number columns and any columns without A1 refs
     const columns = range.columns?.filter((col) => !isSpecialCol(col) && !!formula.getColRef(col as AgColumn));

@@ -26,6 +26,7 @@ import {
     _findFocusableElements,
     _getActiveDomElement,
     _removeFromParent,
+    _unwrapUserComp,
     _warn,
 } from 'ag-grid-community';
 
@@ -144,7 +145,11 @@ class AgToolbar extends Component implements FocusableContainer, IToolbarComp {
     }
 
     public getToolbarItemInstance<T = IToolbarItem>(key: string): T | undefined {
-        return this.toolbarItems.get(key) as T | undefined;
+        const comp = this.toolbarItems.get(key);
+        if (!comp) {
+            return undefined;
+        }
+        return _unwrapUserComp(comp) as T | undefined;
     }
 
     private onTabKeyDown(_e: KeyboardEvent): void {

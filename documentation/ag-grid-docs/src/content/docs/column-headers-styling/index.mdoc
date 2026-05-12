@@ -116,10 +116,6 @@ The following example shows how you can provide a unique look and feel to the he
         groupHeaderHeight: 75,
         // Label columns
         headerHeight: 150,
-        // Pivoting, requires turning on pivot mode. Label columns
-        pivotHeaderHeight: 100,
-        // Pivoting, requires turning on pivot mode. Group columns
-        pivotGroupHeaderHeight: 50,
     }
 ```
 
@@ -128,11 +124,10 @@ The following example shows how you can provide a unique look and feel to the he
 ```css
 .ag-pivot-off .ag-header-group-cell {
     font-size: 50px;
-    color: red;
 }
 
 .ag-pivot-on .ag-header-group-cell {
-    font-size: 25px;
+    font-size: 10px;
     color: green;
 }
 ```
@@ -143,17 +138,16 @@ The following example shows how you can provide a unique look and feel to the he
 .ag-header-cell-label {
     /* Necessary to allow for text to grow vertically */
     height: 100%;
-    padding: 0 !important;
+    padding: 0;
 }
 
 .ag-header-cell-label .ag-header-cell-text {
     /* Force the width corresponding to how much width
     we need once the text is laid out vertically */
-    width: 30px;
-    transform: rotate(90deg);
-    margin-top: 50px;
-    /* Since we are rotating a span */
-    display: inline-block;
+    width: 55px;
+    writing-mode: vertical-lr;
+    line-height: 2em;
+    margin-top: 60px;
 }
 ```
 

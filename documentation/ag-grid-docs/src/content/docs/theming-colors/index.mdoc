@@ -27,9 +27,11 @@ Some commonly overridden colour parameters are:
 - `dataBackgroundColor` - the background colour of the grid data area
 - `headerBackgroundColor` - the background colour of the header rows
 - `chromeBackgroundColor` - the background colour of the grid's chrome (header, tool panel, etc)
-- `textColor`, `headerTextColor`, `cellTextColor` - override text colours for UI, for headers and cells respectively
+- `textColor` - the color for all text unless overridden by a more specific parameter
+- `headerTextColor` - the color of text in the header
+- `cellTextColor` - the color of text in data cells
 
-Many more parameters are available, search the "All Parameters" section of the [theme builder](/theme-builder/) for a full list.
+Many more colour parameters are available. See the [Colours section](./theming-api/#reference-colours) of the parameters reference for the core colour parameters, or search "color" in the "All Parameters" section of the [Theme Builder](/theme-builder/) for a full list of colour parameters.
 
 For example:
 
@@ -54,8 +56,8 @@ All theme parameters with the suffix `Color` are colour values, and can accept t
 | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `string`                                                     | A [CSS colour value](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value), such as `'red'`, `'rgb(255, 0, 0)'`, or variable expression `'var(--myColorVar)'`. |
 | `{ ref: 'accentColor' }`                                     | Use the same value as the `accentColor` parameter                                                                                                                      |
-| `{ ref: 'accentColor', mix: 0.25 }`                          | A mix of 25%, `accentColor` 75% transparent                                                                                                                            |
-| `{ ref: 'accentColor', mix: 0.25, onto: 'backgroundColor' }` | A mix of 25%, `accentColor` 75% `backgroundColor`                                                                                                                      |
+| `{ ref: 'accentColor', mix: 0.25 }`                          | A mix of 25% `accentColor`, 75% transparent                                                                                                                            |
+| `{ ref: 'accentColor', mix: 0.25, onto: 'backgroundColor' }` | A mix of 25% `accentColor`, 75% `backgroundColor`                                                                                                                      |
 
 ## Colour Schemes
 
@@ -104,7 +106,7 @@ For this use case we provide theme modes. When a theme uses the `colorSchemeVari
 - `dark`
 - `dark-blue`
 
-It is also possible to define your own colour modes, by passing the mode name to the second parameter of `withParams`. This example defines custom colour schemes for light and dark mode and switches between them by setting the `data-ag-theme-mode` attribute on the `body` element:
+You can also define custom colour modes by passing the mode name as the second argument to `withParams`. This example defines custom colour schemes for light and dark mode and switches between them by setting the `data-ag-theme-mode` attribute on the `body` element:
 
 ```js
 

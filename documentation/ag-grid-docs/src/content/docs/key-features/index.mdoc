@@ -40,7 +40,7 @@ The `headerName` provides the title for the header. If missing the title is deri
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
-        { headerName: "Make & Model", valueGetter: p => p.make + ' ' + p.model},
+        { headerName: "Make & Model", valueGetter: p => p.data.make + ' ' + p.data.model},
         { field: "price" },
     ],
 };
@@ -87,12 +87,12 @@ class CustomButtonComponent {
 
     init(params) {
         this.eGui = document.createElement("div");
-        let button = document.createElement("button");
-        button.className = "btn-simple";
-        button.textContent = "Push Me!";
-        this.eventListener = () => alert("clicked");
-        button.addEventListener("click", this.eventListener);
-        this.eGui.appendChild(button);
+        this.eButton = document.createElement("button");
+        this.eButton.className = "btn-simple";
+        this.eButton.textContent = "Push Me!";
+        this.eventListener = () => console.log("clicked");
+        this.eButton.addEventListener("click", this.eventListener);
+        this.eGui.appendChild(this.eButton);
     }
 
     getGui() {
@@ -104,8 +104,8 @@ class CustomButtonComponent {
     }
 
     destroy() {
-        if (button) {
-            button.removeEventListener("click", this.eventListener);
+        if (this.eButton) {
+            this.eButton.removeEventListener("click", this.eventListener);
         }
     }
 }
@@ -237,7 +237,7 @@ const gridOptions = {
 };
 ```
 
-Set the cell editor type using the `cellEditor` attribute. There are 7 [Provided Cell Editors](./provided-cell-editors/) which can be set through this attribute.
+Set the cell editor type using the `cellEditor` attribute. There are 8 [Provided Cell Editors](./provided-cell-editors/) which can be set through this attribute.
 You can also create your own [Custom Editors](./cell-editors/).
 
 ```{% frameworkTransform=true %}
@@ -282,8 +282,8 @@ Enable [Pagination](./row-pagination/) by setting `pagination` to be true.
 ```{% frameworkTransform=true %}
 const gridOptions = {
     pagination: true,
-    paginationPageSize: 500,
-    paginationPageSizeSelector: [200, 500, 1000],
+    paginationPageSize: 10,
+    paginationPageSizeSelector: [10, 25, 50],
 };
 ```
 

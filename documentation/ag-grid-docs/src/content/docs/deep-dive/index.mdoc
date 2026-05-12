@@ -47,7 +47,7 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 
 1. **Row Data:** The data to be displayed.
 1. **Column Definition:** Defines & controls grid columns.
-1. **Container:** A div that contains the grid and defines it's dimensions.
+1. **Container:** A div that contains the grid and defines its dimensions.
 1. **Grid Component:** The `AgGridReact` component with **Row Data** and **Column Definition** props.
 
 {% gridExampleRunner title="Basic Example" name="basic-example"  exampleHeight=220 /%}
@@ -103,7 +103,7 @@ Now that we're loading data from an external source, we can empty our `rowData` 
 ```jsx
 const gridOptions = {
     rowData: [],
-    colDefs: [
+    columnDefs: [
         { field: "mission" },
         { field: "company" },
         { field: "location" },
@@ -350,7 +350,7 @@ Column Properties can be added to one or more columns to enable/disable column-s
 const colDefs = ref([
     { field: "mission", filter: true },
     // ...
-];
+]);
 ```
 
 We should now be able to filter the 'mission' column - you can test this by filtering for the 'Apollo' missions:
@@ -463,11 +463,11 @@ const App = {
             filter: true
         });
         // ...
+        return {
+            defaultColDef
+            // ...
+        };
     }
-    return {
-        defaultColDef
-        // ...
-    };
     // ...
 }
 ```
@@ -824,7 +824,6 @@ Let's try this by creating a new component to display the company logo in the 'c
 @Component({
     selector: 'app-company-logo-renderer',
     standalone: true,
-    imports: [CommonModule],
     template: `<span>@if(value){<img [alt]="value" [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'" /> <p>{{ value }}</p>}</span>`,
     styles: ["img {display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
     })
@@ -1013,12 +1012,12 @@ onCellValueChanged = (event: CellValueChangedEvent) => {
 }
 ```
 
-Finally, let's add the `gridReady` attribute to the `ag-grid-angular` component, with the value as the function we've just created:
+Finally, let's add the `cellValueChanged` attribute to the `ag-grid-angular` component, with the value as the function we've just created:
 
 ```ts
 <!-- The AG Grid component, with various Grid Option properties -->
 <ag-grid-angular
-    (gridReady)="onGridReady($event)"
+    (cellValueChanged)="onCellValueChanged($event)"
     ...
 />
 ```
@@ -1084,7 +1083,7 @@ Let's put what you've learned so far into action by modifying the grid:
 
 1. Enable multiple row selection
 
-    _Hint: `selection` is a Grid Option property_
+    _Hint: `rowSelection` is a Grid Option property_
 
 1. Log a message to the console when a row selection is changed
 

@@ -27,7 +27,8 @@ const gridOptions: GridOptions<IOlympicData> = {
         suppressCount: true,
     },
     rowSelection: {
-        mode: 'singleRow',
+        mode: 'multiRow',
+        groupSelects: 'descendants',
         checkboxLocation: 'autoGroupColumn',
     },
     groupDisplayType: 'groupRows',

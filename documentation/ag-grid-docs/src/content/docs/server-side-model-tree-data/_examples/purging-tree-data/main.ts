@@ -7,7 +7,7 @@ import type {
     IServerSideGetRowsRequest,
     IsServerSideGroupOpenByDefaultParams,
 } from 'ag-grid-community';
-import { IsServerSideGroup, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import {
     ColumnMenuModule,
     ColumnsToolPanelModule,

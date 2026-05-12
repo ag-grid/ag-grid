@@ -61,29 +61,39 @@ const gridOptions = {
 
 ## Multiple Group Levels
 
-With multiple levels of grouping, an aggregation function runs once per group at every level. Above
-the leaf groups, `params.values` holds the already-aggregated results from the level below — not
-the raw leaf values — so a function written only against `params.values` produces incorrect
-results at any level above the leaves, because it would treat already-aggregated summaries as if
-they were raw values.
+When rows are grouped by more than one column, a custom aggregation runs from the lowest group level upwards.
 
-The fix is to return an `IAggFuncResult` — a small wrapper interface that carries the auxiliary
-fields the parent needs to recompute:
+- For the lowest-level groups, `params.values` contains the raw cell values from the leaf rows.
+- For higher-level groups, `params.values` contains the aggregated results from the child groups, not the original row values.
+
+This means a custom aggregation function must be able to combine its own previous results. For simple aggregations like `sum`, this works naturally: adding partial sums gives the same total as adding every leaf. For aggregations like `range`, it does not: combining child ranges with `Math.max(...values) - Math.min(...values)` gives the range _of the child ranges_, not the original min/max spread across the leaves.
+
+To support multiple group levels, return an `IAggFuncResult` instead of a raw scalar. This wrapper stores the displayed aggregate value, plus any extra data the next level up needs to aggregate correctly.
 
 {% interfaceDocumentation interfaceName="IAggFuncResult" config={"asCode":true} /%}
 
-The built-in `avg` and `count` functions return this same shape; a custom function extends it with
-whatever auxiliary fields it needs (e.g. `min`/`max` for a range, two running sums for a ratio).
-See [`getDataValue`](./row-object/#reference-data-getDataValue) for how the wrapper is exposed when
-reading values back.
+For example, a range aggregation can return the displayed range as `value`, and also store `min` and `max`. Parent groups then combine the child `min` and `max` values to compute the correct parent range. The built-in `avg` and `count` aggregations use the same wrapper shape.
 
-Sub-group children expose the wrapper to the parent via `getDataValue(colKey, 'data')`; leaf
-children expose their value via the same call — a primitive when the column reads from a `field`,
-or a wrapper when a `valueGetter` returns one. Every child reads the same way at every level.
+### Reading Child Values
 
-A class is a natural fit: `toNumber` and `toString` live on the prototype, and `instanceof` (paired with a `typeof` check when leaves expose a primitive) makes it trivial to identify a wrapper.
+Parent groups read each child's value using [`getDataValue`](./row-object/#reference-data-getDataValue). The mode argument controls what is returned:
+
+- `'data'` returns the stored wrapper unchanged, so the parent can read fields like `min` and `max` off it.
+- `'value'` unwraps the wrapper to a scalar by calling `toNumber()` when present, otherwise reading the `value` field. The wrapper is returned unchanged if neither is available.
+
+For child group rows, `getDataValue(column, 'data')` returns the `IAggFuncResult` produced by the child aggregation. For leaf rows, it returns the leaf cell value — usually a primitive read from the column's `field`, or a wrapper if the column has a `valueGetter` that returns one.
+
+A custom aggregation function therefore needs to handle both cases: raw leaf values at the lowest level, and `IAggFuncResult` wrappers from child groups at higher levels.
+
+### Range Example
+
+The example below applies a `range` aggregation across two grouping levels (country, then year). The custom function reads each child via `getDataValue`, falling back to the stored `min`/`max` when the child is a sub-group.
 
 {% gridExampleRunner title="Multiple Group Levels" name="multi-group-levels" /%}
+
+A class is a convenient way to define the wrapper: `toNumber()` and `toString()` live on the prototype, and `instanceof` makes it easy to detect a wrapper alongside a `typeof` check for primitive leaf values.
+
+Here is the configuration used in the example above:
 
 ```ts
 /** Carries `min`/`max` alongside the scalar `value` so the parent recomputes in O(N). */
@@ -99,19 +109,16 @@ class RangeResult implements IAggFuncResult<number> {
 }
 
 function rangeAggFunc(params) {
-    // Read each immediate child via `getDataValue(col, 'data')`:
-    //  - leaf children return the raw `total` number
-    //  - sub-group children return the RangeResult this function produced one
-    //    level down — its `min`/`max` let the parent recompute the range
-    //    without re-walking descendant leaves.
     let min = Infinity;
     let max = -Infinity;
     for (const child of params.aggregatedChildren) {
         const childValue = child.getDataValue(params.column, 'data');
         if (typeof childValue === 'number') {
+            // Leaf rows expose the raw `total` number.
             min = Math.min(min, childValue);
             max = Math.max(max, childValue);
         } else if (childValue instanceof RangeResult) {
+            // Sub-group rows expose the wrapper produced one level down.
             min = Math.min(min, childValue.min);
             max = Math.max(max, childValue.max);
         }
@@ -120,17 +127,13 @@ function rangeAggFunc(params) {
 }
 ```
 
-`getDataValue` takes a mode argument:
+### Ratio Example
 
-- `'data'` returns the stored wrapper unchanged, so the parent can read `min`/`max` off it.
-- `'value'` unwraps the wrapper to a scalar by calling `toNumber()` when present, otherwise reading
-  the `value` field. The wrapper is returned unchanged if neither is available.
-
-A ratio uses the same wrapper pattern — carry the two running sums (`gold` and `silver`) so the
-parent divides at every level. Giving leaf rows the same `RatioResult` shape via a `valueGetter`
-also gives the leaf cells something to display, and reduces the aggFunc to a single branch:
+A ratio of two sums (gold to silver medals) uses the same pattern: carry both running totals on the wrapper so the parent can divide at any level. Giving leaf rows the same wrapper shape via a `valueGetter` lets the aggregation function read every child uniformly, without branching on leaf vs. group.
 
 {% gridExampleRunner title="Ratio Across Levels" name="multi-level-ratio" /%}
+
+Here is the configuration used in the example above:
 
 ```ts
 class RatioResult implements IAggFuncResult<number | null> {
@@ -180,11 +183,7 @@ This pattern works whenever each child can be summarised by a few numbers that t
 - **Standard deviation** — carry `sum`, `sum-of-squares`, and `count`; the parent adds all three.
 - **Ratio of sums** — carry the two running sums; the parent adds and divides.
 
-The pattern requires that the child summaries can be combined into the parent summary without
-revisiting the leaves — the auxiliary fields must be enough on their own. Aggregations like median
-or percentile do not have that property: a parent's median is not derivable from its children's
-medians. For those, walk every descendant leaf directly via
-`params.rowNode.getAggregatedChildren(params.column, true)`.
+The pattern only works when the values stored on the wrapper are enough on their own to combine into the parent summary, without revisiting the leaves. Aggregations like median or percentile do not have that property: a parent's median cannot be derived from its children's medians. For those, walk every descendant leaf directly via `params.rowNode.getAggregatedChildren(params.column, true)`.
 
 {% note %}
 Custom aggregation functions can also be used with [Editing Group Rows](./grouping-edit/).

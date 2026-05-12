@@ -1,27 +1,15 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
     ModuleRegistry,
-    NumberFilterModule,
-    PivotModule,
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
-    SetFilterModule,
-    TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
-    NumberFilterModule,
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
-    SetFilterModule,
-    PivotModule,
-    TextFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -39,7 +27,6 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
         { field: 'bronze' },
         { field: 'total' },
     ],
-    // theme: 'legacy',
     defaultColDef: {
         flex: 1,
         minWidth: 100,

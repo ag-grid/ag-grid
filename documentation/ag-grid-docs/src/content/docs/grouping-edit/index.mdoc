@@ -9,30 +9,27 @@ and refreshing the grouping hierarchy after edits.
 
 ## Editing Group Row Cells
 
-Double-click any group row's `Sales` cell to edit it. The new value is distributed equally among
-the group's children, rounding to integers. When a child is itself a group, the cascade recurses
-through the full hierarchy.
+Set `groupRowEditable` on any column to make its group row cells editable. The grid then
+distributes the edited value to descendant rows using the built-in distribution. To customise
+this, set `groupRowValueSetter` to an options object, a callback, or `false` to disable
+distribution.
+
+In the example below, double-click any group row's `Sales` cell to edit it. The new total spreads
+equally across the group's children, recursing through nested groups.
 
 {% gridExampleRunner title="Built-in Sum Distribution" name="distribute-group-value-sum" exampleHeight=540 /%}
 
-Set `groupRowEditable` on any column that should accept edits on group rows.
-This property accepts either a `boolean` or a callback; the callback is only invoked for nodes
-where `rowNode.group === true`, while leaf rows continue to honour `editable`.
-
-When a column defines both `groupRowEditable` and `editable`, the grid evaluates only the property
-that matches the current node type, enabling separate rules for group rows and leaf rows.
-
-When `groupRowEditable` is defined, the grid automatically distributes edited values to descendant
-rows using the built-in distribution. To customise this behaviour, set `groupRowValueSetter` to an
-options object, a custom callback function, or `false` to disable distribution.
+`groupRowEditable` accepts a `boolean` or a callback. The callback runs only for group rows
+(`rowNode.group === true`); leaf rows continue to honour `editable`. When a column sets both
+properties, the grid uses whichever matches the current row type, allowing separate rules for
+group rows and leaf rows.
 
 {% apiDocumentation source="column-properties/properties.json" section="editing" names=["groupRowEditable", "groupRowValueSetter"] /%}
 
 ## Built-in Value Distribution
 
-The built-in distribution cascades the edited value to descendant rows, adjusting each child
-so the aggregate matches the new total. Pass an options object to `groupRowValueSetter` to
-customise the strategy or precision.
+The built-in distribution adjusts each child so the column's `aggFunc` produces the new total.
+Pass an options object to `groupRowValueSetter` to customise the strategy or precision.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -63,14 +60,14 @@ the strategy is chosen automatically based on the column's `aggFunc`:
 | `'increment'`  | Distributes only the difference (`newValue − oldValue`) among children, adding it to current values.                     | —                 |
 
 Editing is **disabled by default** for `count`, `min`, `max`, `first`, `last`, and
-**custom aggregation functions** because there is no single correct way to split an edited value
-back into children for these functions. To enable editing, you can:
+**custom aggregation functions**. These functions have no unique inverse, so the grid cannot
+choose a safe default. To enable editing for them:
 
 - Set `distribution` to `'overwrite'` to write the new value directly to every child.
-- Provide a per-aggFunc record entry with `'overwrite'`, `true`, or a custom callback function
-  that implements application-specific logic (see [Per-Aggregation Strategies](#per-aggregation-strategies)).
-- Assign a custom [callback function](#custom-distribution-with-a-callback) to `groupRowValueSetter`
-  for full control over the distribution.
+- Provide a per-aggFunc record entry with `'overwrite'`, `true`, or a custom callback
+  (see [Per-Aggregation Strategies](#per-aggregation-strategies)).
+- Assign a [callback](#custom-distribution-with-a-callback) to `groupRowValueSetter` for full
+  control.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -95,21 +92,23 @@ const gridOptions = {
 }
 ```
 
-Setting `distribution` to `true` uses built-in defaults for `sum`, `avg`, no-aggFunc columns,
-and custom aggregation functions. The `count`/`min`/`max`/`first`/`last` functions remain disabled
-with `true` — use `'overwrite'`, a per-aggFunc record entry, or a custom callback to enable them.
+Setting `distribution` to `true` uses built-in defaults for `sum`, `avg`, no-aggFunc columns, and
+custom aggregation functions. The `count`, `min`, `max`, `first`, and `last` functions stay
+disabled even with `true`; use `'overwrite'`, a per-aggFunc record entry, or a callback to enable
+them.
 
-Setting `distribution` to `false` or `null` suppresses distribution and makes the cell not editable,
-even when `groupRowEditable` is `true`.
+Setting `distribution` to `false` or `null` suppresses distribution and makes the cell not
+editable, even when `groupRowEditable` is `true`.
 
-For `avg` aggregation, the distributor adjusts child values so the average equals the edited value.
+For `avg`, every strategy adjusts child values so the children's average equals the edited value.
 
 {% note %}
-The `precision` option rounds the values written to **child rows**, not the group row's displayed value.
-The group value is re-computed by the column's `aggFunc` from the rounded children. For `sum` this is always exact.
-For `avg` the re-aggregated value may differ — for example, distributing `precision: 0` across 3 children
-produces integers, but their average (`10 / 3 ≈ 3.33`) is not an integer. Use a
-[Value Formatter](./value-formatters/) to control how the group row displays the re-aggregated value.
+The `precision` option rounds the values written to **child rows**, not the group row's displayed
+value. The group value is re-computed by the column's `aggFunc` from the rounded children. For
+`sum` this is always exact. For `avg` the re-aggregated value may differ: distributing
+`precision: 0` across 3 children produces integers, but their average (`10 / 3 ≈ 3.33`) is not.
+Use a [Value Formatter](./value-formatters/) to control how the group row displays the
+re-aggregated value.
 {% /note %}
 
 ### Distribution Options
@@ -118,10 +117,9 @@ produces integers, but their average (`10 / 3 ≈ 3.33`) is not an integer. Use 
 
 ### Merging with Default Column Definitions
 
-When `groupRowValueSetter` is set as an options object on both `defaultColDef` and an individual
-column definition, the grid deep merges the two objects — the same way all column definition
-properties are merged. The column's own properties take precedence, and any properties not
-specified on the column are inherited from the default. This includes nested `distribution` records.
+When `groupRowValueSetter` is set as an options object on both `defaultColDef` and a column, the
+grid deep merges the two. The column's properties take precedence; anything not specified on the
+column is inherited from the default. This includes nested `distribution` records.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -161,30 +159,29 @@ as plain objects. If the column defines a callback function, it replaces the def
 
 ### Multiple Aggregation Functions
 
-The built-in distribution handles standard aggregation functions. The following example
-demonstrates a mix of built-in strategies, non-aggregated columns, and custom callbacks.
+The following example mixes built-in strategies, a non-aggregated column, and custom callbacks.
 Double-click any group row cell to edit it:
 
-- **Salary** (`sum`): divides the new total equally among children, rounding to integers
-  (`precision: 0`). For example, editing a group total of 300 across 3 children produces 100 each.
-- **Bonus** (`avg`): overwrites every child with the edited value (the default for `avg`).
-  For example, editing the group average to 15 sets all children's bonus to 15.
-- **Projects** (no `aggFunc`): overwrites every child with the edited value (the default when
-  there is no aggregation). The group cell is blank but still editable.
-- **Rate %** (custom callback): reads each leaf child's salary and computes their bonus as
-  `salary × rate / 100`. For example, entering 20 sets each child's bonus to 20% of their
-  individual salary. Uses `allLeafChildren` to reach all descendant data rows directly.
-- **SumSq** (custom `sumOfSquares` aggFunc): uses a custom callback that computes
-  `√(newValue / count)` per child — the correct inverse of sum-of-squares.
+- **Salary** (`sum`): divides the new total equally among children, rounded to integers
+  (`precision: 0`). Editing 300 across 3 children produces 100 each.
+- **Bonus** (`avg`): overwrites every child with the edited value. Editing the average to 15
+  sets all children's bonus to 15.
+- **Projects** (no `aggFunc`): overwrites every child with the edited value. The group cell is
+  blank but still editable.
+- **Rate %** (custom callback): computes each leaf child's bonus as `salary × rate / 100`.
+  Entering 20 sets each child's bonus to 20% of their salary. Uses
+  `node.getAggregatedChildren(column, true)` to reach all descendant leaf rows directly.
+- **SumSq** (custom `sumOfSquares` aggFunc): a callback sets each child to `√(newValue / count)`,
+  the inverse of sum-of-squares.
 
 {% gridExampleRunner title="Multiple Aggregation Functions" name="distribute-group-value-all-agg" exampleHeight=540 /%}
 
 ### Per-Aggregation Strategies
 
-When different columns use different aggregation functions but share a `groupRowValueSetter`
-(e.g. via `defaultColDef`), the `distribution` property can be set to a record mapping each
-aggregation function name to a strategy string, an options object, a custom callback function,
-`true` to enable with built-in defaults, or `false`/`null` to suppress distribution for that aggFunc:
+When several columns share a `groupRowValueSetter` (e.g. via `defaultColDef`) but use different
+aggregation functions, set `distribution` to a record keyed by `aggFunc` name. Each entry can be
+a strategy string, an options object, a custom callback, `true` for built-in defaults, or
+`false`/`null` to suppress distribution for that aggFunc:
 
 ```{% frameworkTransform=true %}
 const myCustomAgg = (params) => {
@@ -229,8 +226,8 @@ const gridOptions = {
 ```
 
 Custom aggregation functions are disabled by default. To enable editing, add an explicit entry in
-the `distribution` record — either a strategy string, an options object, or a custom callback
-function that implements the inverse of the aggregation logic:
+the `distribution` record. The entry can be a strategy string, an options object, or a callback
+that implements the inverse of the aggregation logic:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -263,10 +260,10 @@ the built-in defaults (see the strategy table above).
 
 When multiple custom aggregation functions share the same distribution logic, the `default`
 property avoids repeating entries for each one. It applies to any aggregation function not
-explicitly listed in the `distribution` record — including custom aggregation functions (which are
-disabled without it) and columns without an `aggFunc` (which already default to `'overwrite'` via
-built-in defaults). Non-distributable functions (`count`, `min`, `max`, `first`, `last`) are
-**not** affected by `default` and must always be listed explicitly.
+explicitly listed in the `distribution` record, including custom aggregations (which are otherwise
+disabled) and columns with no `aggFunc` (which already default to `'overwrite'`).
+Non-distributable functions (`count`, `min`, `max`, `first`, `last`) are **not** affected by
+`default` and must always be listed explicitly.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -286,15 +283,42 @@ const gridOptions = {
 }
 ```
 
+### Custom getValue and setValue
+
+The `getValue` and `setValue` callbacks override how the built-in distributor reads from and
+writes to child rows. By default it uses `node.getDataValue(column, 'value')` to read and
+`node.setDataValue(column, value, 'data')` to write. Provide your own when child values live on a
+different field or custom data structure, when you need to apply transformations or side effects
+during distribution, or when the column's `valueGetter` / `valueSetter` are not suitable for
+distribution.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'amount',
+            aggFunc: 'sum',
+            editable: true,
+            groupRowEditable: true,
+            groupRowValueSetter: {
+                distribution: 'percentage',
+                getValue: (params) => (params.data && params.data.weight) || 0,
+                setValue: (params) => params.node.setDataValue(params.column, params.value, 'data'),
+            },
+        },
+    ],
+}
+```
+
 ## Custom Distribution with a Callback
 
 For full control over how group-level edits cascade, assign a function to `groupRowValueSetter`.
-The callback receives a `GroupRowValueSetterParams` object and should return `true` if any child
-value was changed.
+The callback receives a `GroupRowValueSetterParams` object and should return `true` when any
+child value was changed.
 
-The following example demonstrates a custom function that distributes the edited total equally
-among children, rounding child values to integers (largest remainder method). The function calls
-`setDataValue` on each child, which triggers aggregation to refresh parent totals automatically.
+The example below distributes the edited total equally among children, rounded to integers
+(largest remainder method). It calls `setDataValue` on each child; aggregation then refreshes
+parent totals automatically.
 
 {% gridExampleRunner title="Custom Editable Group Totals" name="group-editable-totals-custom" exampleHeight=620 /%}
 
@@ -304,23 +328,22 @@ among children, rounding child values to integers (largest remainder method). Th
 
 ### Aggregated Children
 
-The `groupRowValueSetter` callback receives an `aggregatedChildren` array containing the immediate children
-that contribute to the [Aggregation](./aggregation/) for the edited column. This array makes it easy to
-cascade edited values down to descendant rows without manually traversing the row hierarchy.
+The `groupRowValueSetter` callback receives an `aggregatedChildren` array: the immediate children
+that contribute to the [Aggregation](./aggregation/) for the edited column. Cascading edits to
+these children avoids traversing the row hierarchy by hand.
 
-The children returned by `aggregatedChildren` depend on the column and grid configuration:
+What `aggregatedChildren` returns depends on the column and grid configuration:
 
-- **Regular value columns**: Returns direct children used for aggregation. This respects the
-  `suppressAggFilteredOnly` grid option and `groupAggFiltering` — when these cause aggregation to include
-  all children (not just filtered ones), `aggregatedChildren` returns all children accordingly.
-- **Pivot columns on leaf groups**: Returns only the children matching the column's pivot keys, since
+- **Regular value columns**: the direct children used for aggregation. This respects
+  `suppressAggFilteredOnly` and `groupAggFiltering`; when those cause aggregation to include all
+  children rather than just filtered ones, `aggregatedChildren` follows suit.
+- **Pivot columns on leaf groups**: only the children matching the column's pivot keys, since
   pivot aggregation groups rows by pivot key values.
-- **Non-group rows**: Always returns an empty array — only group rows have aggregated children.
+- **Non-group rows**: an empty array.
 
-Alternatively, `rowNode.getAggregatedChildren(colKey)` can be called anywhere in code to retrieve the same
-children programmatically.
-To collect all descendant leaf rows instead of only the immediate children,
-pass `true` as the second argument: `rowNode.getAggregatedChildren(colKey, true)`.
+The same children can be retrieved programmatically with `rowNode.getAggregatedChildren(colKey)`.
+To collect all descendant leaf rows instead of only the immediate children, pass `true` as the
+second argument: `rowNode.getAggregatedChildren(colKey, true)`.
 
 See [Retrieving Aggregated Children](./aggregation/#retrieving-aggregated-children) for more details.
 
@@ -328,11 +351,11 @@ See [Retrieving Aggregated Children](./aggregation/#retrieving-aggregated-childr
 
 Key points for implementing cascading edits:
 
-- Calling `rowNode.setDataValue` on each child pushes updated figures down.
-- When a child is also a group that defines its own `groupRowValueSetter`, the cascade recurses further.
-- Parent aggregates refresh automatically because child `data` changes re-run the column `aggFunc`,
-  so editing a group row total instantly rebalances the children to reach that value.
-- Aggregation is batched automatically — all `setDataValue` calls within a single `groupRowValueSetter`
+- Call `rowNode.setDataValue` on each child to write the new value down.
+- When a child is itself a group with its own `groupRowValueSetter`, the cascade recurses further.
+- Parent aggregates refresh automatically: child `data` changes re-run the column `aggFunc`, so
+  editing a group total rebalances the children to match it.
+- Aggregation is batched. All `setDataValue` calls within a single `groupRowValueSetter`
   invocation are processed before re-aggregation runs.
 
 {% note %}
@@ -364,71 +387,42 @@ import { distributeGroupValue } from 'ag-grid-enterprise';
 colDef.groupRowValueSetter = distributeGroupValue;
 ```
 
-### Custom getValue and setValue
-
-The `getValue` and `setValue` callbacks let you override how the built-in distributor reads from
-and writes to child rows. By default, the distributor uses `node.getDataValue(column, 'value')`
-to read and `node.setDataValue(column, value, 'data')` to write.
-
-This is useful when:
-
-- Child values are stored in a different field or custom data structure.
-- You need to apply transformations or side effects during distribution.
-- The column's `valueSetter` or `valueGetter` don't match the distribution needs.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'amount',
-            aggFunc: 'sum',
-            editable: true,
-            groupRowEditable: true,
-            groupRowValueSetter: {
-                distribution: 'percentage',
-                getValue: (params) => (params.data && params.data.weight) || 0,
-                setValue: (params) => params.node.setDataValue(params.column, params.value, 'data'),
-            },
-        },
-    ],
-}
-```
-
 ## Editing Pivot Columns
 
 When using [Pivoting](./pivoting/), the `groupRowValueSetter` also works with pivot result columns.
 The key difference is that `aggregatedChildren` returns only the children matching the column's pivot keys,
 not all children of the group.
 
-The following example uses the built-in distribution with pivot mode. Since `groupRowEditable` is defined,
-the distribution is enabled automatically. Double-click any pivot cell to edit it. The edited value is
+The following example uses the built-in distribution in pivot mode. Setting `groupRowEditable`
+enables distribution automatically. Double-click any pivot cell to edit it; the edited value is
 distributed uniformly among the children matching that pivot column's keys.
 
 {% gridExampleRunner title="Built-in Pivot Editing" name="pivot-editable-builtin" exampleHeight=500 /%}
 
-For full control over pivot editing, use a custom `groupRowValueSetter` callback.
-In the following example:
+For full control, use a custom `groupRowValueSetter` callback. In the example below:
 
-- The grid is pivoted by `product` (Electronics, Clothing, Food), grouped by `region` and `country`.
-- Double-clicking on any pivot column cell opens the editor for the aggregated value.
-- When editing a pivot cell (e.g., "Electronics" column on "Europe" row), the `aggregatedChildren` array
-  contains only the European rows selling Electronics — not all European rows.
-- The edit is distributed equally among just those matching children, leaving other product categories unchanged.
+- The grid is pivoted by `product` (Electronics, Clothing, Food), grouped by `region` and
+  `country`.
+- Double-clicking any pivot column cell opens the editor for the aggregated value.
+- When editing a pivot cell (e.g. "Electronics" on the "Europe" row), `aggregatedChildren`
+  contains only the European rows selling Electronics, not all European rows.
+- The edit is distributed equally among those matching children, leaving other product categories
+  unchanged.
 
 {% gridExampleRunner title="Custom Editable Pivot Totals" name="pivot-editable-totals-custom" exampleHeight=500 /%}
 
-This behaviour ensures that edits on pivot columns affect only the data that contributes to that specific
-pivot value, making cascading edits work correctly with pivoted data.
+Edits on pivot columns therefore affect only the rows contributing to that pivot value, leaving
+other pivot categories untouched.
 
 ## Tree Data
 
-The `groupRowEditable` and `groupRowValueSetter` features also work with [Tree Data](./tree-data/).
-In tree data mode, parent nodes act as group rows — editing a parent's aggregated value
-cascades the change down to its children, just like with row grouping.
+`groupRowEditable` and `groupRowValueSetter` also work with [Tree Data](./tree-data/). Parent
+nodes act as group rows, so editing a parent's aggregated value cascades the change down to its
+children just as with row grouping.
 
-The following example shows a company's budget organised as a tree: departments contain teams, and
-teams contain employees. Editing a department's or team's budget distributes the new total equally
-among its members, rounding to integers. The cascade recurses through the full hierarchy automatically.
+The example below shows a company's budget organised as a tree: departments contain teams, and
+teams contain employees. Editing a department's or team's budget distributes the new total
+equally among its members, rounded to integers, recursing through the hierarchy.
 
 {% gridExampleRunner title="Tree Data Editable" name="tree-data-editable" exampleHeight=500 /%}
 
@@ -441,8 +435,8 @@ grouping does not get updated until the next full refresh.
 When enabling `refreshAfterGroupEdit`, also provide `getRowId` so that the grid can track rows by
 stable IDs while rebuilding the grouping hierarchy.
 
-The following example demonstrates this behaviour. Double-click on a `department` or `team` cell to edit
-it — the grid re-evaluates the grouping and moves the row to the correct group instantly.
+The following example demonstrates this behaviour. Double-click on a `department` or `team` cell
+to edit it; the grid re-evaluates the grouping and moves the row to the correct group instantly.
 
 {% gridExampleRunner title="Refresh After Group Edit" name="refresh-after-group-edit" exampleHeight=600 /%}
 
