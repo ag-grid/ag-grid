@@ -100,8 +100,16 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 
             // Refresh nodes not in the path (CSRM leaves, or all nodes for non-CSRM).
             if (batchedNodes) {
-                for (const node of batchedNodes) {
-                    refreshRowAndSiblings(rowRenderer, node);
+                if (batchedPath?.kind === 'rows') {
+                    for (const node of batchedNodes) {
+                        if (!batchedPath.hasRow(node)) {
+                            refreshRowAndSiblings(rowRenderer, node);
+                        }
+                    }
+                } else {
+                    for (const node of batchedNodes) {
+                        refreshRowAndSiblings(rowRenderer, node);
+                    }
                 }
             }
 
