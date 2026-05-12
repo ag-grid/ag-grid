@@ -3,7 +3,7 @@ title: "SSRM Transactions"
 enterprise: true
 ---
 
-This section show how rows can be added, removed and updated using the Server-Side Transaction API.
+This section shows how rows can be added, removed and updated using the Server-Side Transaction API.
 
 {% note %}
 Server-Side Transactions require [Row IDs](./server-side-model-configuration/#providing-row-ids) to be supplied to grid.
@@ -39,7 +39,7 @@ The following example demonstrates add / update and remove operations via the Se
 
 - When clicking any of the buttons, the console logs each transaction as it is applied to the grid.
 - **Add Above Selected** - adds a row above the selected row using the `addIndex` property as rows are added at the end by default.
-- **Updated Selected** - updates the 'current' value on the selected row.
+- **Update Selected** - updates the 'current' value on the selected row.
 - **Removed Selected** - removes the selected row.
 
 {% gridExampleRunner title="Server-Side Transaction API" name="transactions-simple"  exampleHeight=615 /%}
@@ -100,7 +100,7 @@ api.applyServerSideTransactionAsync({
 
 In the example below, note the following:
 
-- After starting the updates, 1 row is created, 10 rows are updated, and 1 rows is deleted every 10 milliseconds.
+- After starting the updates, 1 row is created, 10 rows are updated, and 1 row is deleted every 10 milliseconds.
 - The transactions are batched, and only executed once every second.
 
 {% gridExampleRunner title="Asynchronous Example" name="transactions-async"  exampleHeight=615 /%}

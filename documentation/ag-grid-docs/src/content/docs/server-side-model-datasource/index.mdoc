@@ -61,7 +61,7 @@ Notice that the datasource contains a single method `getRows(params)` which is c
 required. A request is supplied in the `params` object which contains all the information required by the server to
 fetch data from the server.
 
-Rows fetched from the server are supplied to the grid via `params.success(data)`.
+Rows fetched from the server are supplied to the grid via `params.success({ rowData: rows })`.
 
 ## Registering the Datasource
 
