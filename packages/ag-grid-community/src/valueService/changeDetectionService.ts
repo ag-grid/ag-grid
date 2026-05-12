@@ -10,6 +10,12 @@ import type { ChangedPath } from '../utils/changedPath';
 // Matches value in clipboard module
 const SOURCE_PASTE = 'paste';
 
+/**
+ * limits the number of times `flush` can re-enter itself via `cellValueChanged` events fired during aggregate/refresh.
+ * This should not happen but this is a safety guard against infinite loops in case of user code (e.g. aggFunc/valueGetter/cellRenderer) misbehaving and firing `cellValueChanged`
+ */
+const MAX_FLUSH_REPEAT = 3;
+
 export class ChangeDetectionService extends BeanStub implements NamedBean {
     beanName = 'changeDetectionSvc' as const;
 
@@ -55,44 +61,65 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
      * aggregation pass over all accumulated changes and refreshes the affected rows in depth-first order.
      */
     public endDeferred(): void {
-        if (this.deferredDepth === 0) {
+        const depth = this.deferredDepth;
+        if (depth > 1) {
+            this.deferredDepth = depth - 1;
             return;
         }
-        if (--this.deferredDepth > 0) {
+        if (depth <= 0) {
             return;
         }
+        this.flush(0);
+    }
 
-        // Snapshot and clear accumulated state.
-        const path = this.batchedPath;
-        const nodes = this.batchedNodes;
+    /**
+     * Outermost endDeferred slow path. Keeps `deferredDepth` at 1 throughout the flush so any
+     * `cellValueChanged` fired by a custom `aggFunc` / `valueGetter` / cell renderer accumulates
+     * into batchedPath/batchedNodes and is processed by the re-entrance guard below, rather than
+     * recursing into endDeferred mid-flush.
+     */
+    private flush(repeat: number): void {
+        const batchedPath = this.batchedPath;
+        const batchedNodes = this.batchedNodes;
         this.batchedPath = null;
         this.batchedNodes = null;
 
-        if (path) {
-            this.csrm?.aggregate(path, true);
-        }
-
-        const { rowRenderer } = this.beans;
-
-        // Refresh nodes not in the path (CSRM leaves, or all nodes for non-CSRM).
-        if (nodes) {
-            for (const node of nodes) {
-                refreshRowAndSiblings(rowRenderer, node);
+        try {
+            if (batchedPath) {
+                // `refresh: false` — aggStage processes the same set of rows the path loop below
+                // refreshes, so skip the per-row queueing to avoid a double refresh on every group.
+                this.csrm?.aggregate(batchedPath, false);
             }
-        }
 
-        // Refresh group nodes from the path in depth-first order (deepest first).
-        if (path) {
-            const rows = path.getSortedRows();
-            for (let i = 0, len = rows.length; i < len; ++i) {
-                refreshRowAndSiblings(rowRenderer, rows[i]);
+            const rowRenderer = this.beans.rowRenderer;
+
+            // `batchedNodes` and `batchedPath` are disjoint by construction: only leaf events queue
+            // into `batchedNodes` (and their parent into the path); group events (including tree-data
+            // data-bearing groups) go only into the path. The path only walks upward via `node.parent`,
+            // so anything in `batchedNodes` (always a leaf) is never pulled into the path transitively.
+
+            // Refresh nodes not in the path (CSRM leaves, or all nodes for non-CSRM).
+            if (batchedNodes) {
+                for (const node of batchedNodes) {
+                    refreshRowAndSiblings(rowRenderer, node);
+                }
             }
+
+            // Refresh group nodes from the path in depth-first order (deepest first).
+            if (batchedPath) {
+                const rows = batchedPath.getSortedRows();
+                for (let i = 0, len = rows.length; i < len; ++i) {
+                    refreshRowAndSiblings(rowRenderer, rows[i]);
+                }
+            }
+        } finally {
+            this.deferredDepth = 0;
         }
 
         // If re-entrant events accumulated during the flush, process them now.
-        if (this.batchedPath || this.batchedNodes) {
+        if (repeat < MAX_FLUSH_REPEAT && (this.batchedPath || this.batchedNodes)) {
             this.deferredDepth = 1;
-            this.endDeferred();
+            this.flush(repeat + 1);
         }
     }
 

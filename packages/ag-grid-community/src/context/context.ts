@@ -402,7 +402,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     gridSerializer?: GridSerializer;
     licenseManager?: IWatermark;
     changedPathFactory?: IChangedPathFactory;
-    changeDetectionSvc?: ChangeDetectionService;
+    changeDetectionSvc: ChangeDetectionService;
     iconSvc: IconService;
     groupHierarchyColSvc?: IGroupHierarchyColService;
     formulaDataSvc?: IFormulaDataService;

@@ -440,8 +440,7 @@ describe('cell editing with refreshAfterGroupEdit', () => {
             getRowId: (params) => params.data.id,
         };
 
-        const api = gridsManager.createGrid('refresh-pinned-sibling-valuegetter', gridOptions);
-        await asyncSetTimeout(0);
+        const api = await gridsManager.createGridAndWait('refresh-pinned-sibling-valuegetter', gridOptions);
 
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
 

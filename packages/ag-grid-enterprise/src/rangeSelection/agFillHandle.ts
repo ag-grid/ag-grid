@@ -417,7 +417,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         };
 
         const { changeDetectionSvc } = this.beans;
-        changeDetectionSvc?.beginDeferred();
+        changeDetectionSvc.beginDeferred();
         try {
             if (isVertical) {
                 initialRange.columns.forEach((col: AgColumn) => {
@@ -431,7 +431,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             // in the same aggregate pass as the fill writes.
             this.beans.editSvc?.stopEditing(undefined, { source: 'fillHandle' });
         } finally {
-            changeDetectionSvc?.endDeferred();
+            changeDetectionSvc.endDeferred();
         }
     }
 

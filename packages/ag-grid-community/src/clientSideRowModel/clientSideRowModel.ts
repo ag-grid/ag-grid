@@ -257,7 +257,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // Mirror `refreshModel`'s deferred wrap — batches events from `setImmutableRowData` /
         // `setNewRowData` (or user callbacks) into the eventual refresh flush.
         const changeDetectionSvc = beans.changeDetectionSvc;
-        changeDetectionSvc?.beginDeferred();
+        changeDetectionSvc.beginDeferred();
         try {
             const groupStage = beans.groupStage;
             const changedProps = new Set(properties);
@@ -303,7 +303,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 this.refreshModel(params);
             }
         } finally {
-            changeDetectionSvc?.endDeferred();
+            changeDetectionSvc.endDeferred();
         }
     }
 
@@ -560,7 +560,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // Flush after `modelUpdated` so per-row refresh sees the up-to-date `rowCtrlsByRowIndex`.
         const changeDetectionSvc = beans.changeDetectionSvc;
-        changeDetectionSvc?.beginDeferred();
+        changeDetectionSvc.beginDeferred();
         try {
             if (started && rowDataUpdated) {
                 eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
@@ -613,7 +613,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 keepUndoRedoStack: params.keepUndoRedoStack,
             });
         } finally {
-            changeDetectionSvc?.endDeferred();
+            changeDetectionSvc.endDeferred();
         }
     }
 
@@ -975,13 +975,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
         const { changeDetectionSvc, aggStage } = this.beans;
         if (refresh) {
-            changeDetectionSvc?.beginDeferred();
+            changeDetectionSvc.beginDeferred();
         }
         try {
             aggStage?.execute(changedPath, refresh);
         } finally {
             if (refresh) {
-                changeDetectionSvc?.endDeferred();
+                changeDetectionSvc.endDeferred();
             }
         }
     }

@@ -648,7 +648,7 @@ export class EditService extends BeanStub implements NamedBean {
         const editsToDelete: EditPosition[] = [];
 
         const { changeDetectionSvc } = this.beans;
-        changeDetectionSvc?.beginDeferred();
+        changeDetectionSvc.beginDeferred();
         try {
             for (const rowNode of rowNodes) {
                 const editRow = edits.get(rowNode)!;
@@ -672,7 +672,7 @@ export class EditService extends BeanStub implements NamedBean {
                 }
             }
         } finally {
-            changeDetectionSvc?.endDeferred();
+            changeDetectionSvc.endDeferred();
         }
 
         return editsToDelete;

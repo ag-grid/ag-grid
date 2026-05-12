@@ -461,7 +461,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         }
         const { valueSvc, changeDetectionSvc } = this.beans;
         let changed = false;
-        changeDetectionSvc?.beginDeferred();
+        changeDetectionSvc.beginDeferred();
         try {
             for (let level = 0; level < columns.length; ++level) {
                 const column = columns[level];
@@ -484,7 +484,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
                 }
             }
         } finally {
-            changeDetectionSvc?.endDeferred();
+            changeDetectionSvc.endDeferred();
         }
         return changed;
     }

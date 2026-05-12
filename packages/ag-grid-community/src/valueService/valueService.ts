@@ -496,7 +496,7 @@ export class ValueService extends BeanStub implements NamedBean {
         // - Nested callers (clipboard, fill handle) just increment/decrement the same counter; the
         //   outermost endDeferred() performs the single aggregation + refresh pass.
         const changeDetectionSvc = this.beans.changeDetectionSvc;
-        changeDetectionSvc?.beginDeferred();
+        changeDetectionSvc.beginDeferred();
         try {
             // Delegate groupRowValueSetter handling to the enterprise service.
             // Returns undefined if no groupRowValueSetter is configured.
@@ -529,7 +529,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
             return this.finishValueChange(rowNode, column, params, eventSource);
         } finally {
-            changeDetectionSvc?.endDeferred();
+            changeDetectionSvc.endDeferred();
         }
     }
 

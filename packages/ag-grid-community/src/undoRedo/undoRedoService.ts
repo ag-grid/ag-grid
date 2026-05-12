@@ -182,7 +182,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         source: string
     ) {
         const { changeDetectionSvc } = this.beans;
-        changeDetectionSvc?.beginDeferred();
+        changeDetectionSvc.beginDeferred();
         try {
             for (const cellValueChange of action.cellValueChanges) {
                 const { rowIndex, rowPinned, columnId } = cellValueChange;
@@ -198,7 +198,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
                 currentRow.setDataValue(columnId, valueExtractor(cellValueChange), source);
             }
         } finally {
-            changeDetectionSvc?.endDeferred();
+            changeDetectionSvc.endDeferred();
         }
     }
 
