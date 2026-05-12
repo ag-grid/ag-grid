@@ -10,7 +10,7 @@ on:
       - 'latest'
       - 'next'
       - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [ opened, synchronize, reopened, ready_for_review ]
   workflow_dispatch:
     inputs:
       skip_docs:
@@ -113,7 +113,8 @@ jobs:
   init:
     name: Initialise Workflow
     needs: detect-changes
-    if: github.event.pull_request.draft == false && needs.detect-changes.outputs.run_full_ci == 'true'
+    if: github.event.pull_request.draft == false &&
+      needs.detect-changes.outputs.run_full_ci == 'true'
     permissions:
       contents: write
     outputs:
@@ -145,7 +146,7 @@ jobs:
 
   calc_matrix:
     name: Calculate Github Matrix
-    needs: [detect-changes, init]
+    needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_full_ci == 'true'
     outputs:
       test_count: ${{ steps.matrix.outputs.test_count }}
@@ -187,22 +188,22 @@ jobs:
           echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
           echo "test_count=${count}" >> $GITHUB_OUTPUT
           echo "Test matrix determined to be: ${matrix} (test_count=${count})"
-          
+
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
           e2e_count=10
           else
             e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
           fi
-          
+
           # not enough non-bundle size e2e tests to shard atm
           e2e_matrix={"shard":[0]}
           echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
           echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
           echo "e2e Test matrix determined to be: ${e2e_matrix} (e2e_test_count=${e2e_count})"
-          
+
           # 3 is optimal atm for bundle tests
           bundle_count=3
-          
+
           bundle_matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
           echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
           echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
@@ -215,8 +216,9 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
-    needs: [detect-changes, calc_matrix]
-    if: needs.detect-changes.outputs.run_full_ci == 'true' && needs.calc_matrix.outputs.test_count > 0
+    needs: [ detect-changes, calc_matrix ]
+    if: needs.detect-changes.outputs.run_full_ci == 'true' &&
+      needs.calc_matrix.outputs.test_count > 0
     strategy:
       matrix: ${{ fromJson(needs.calc_matrix.outputs.test_matrix )}}
       fail-fast: false
@@ -244,11 +246,14 @@ jobs:
       - name: nx test
         if: matrix.shard != 0
         id: test
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c=staging --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test
+          -c=staging --exclude tag:no-sharding --exclude all --shard=${{
+          matrix.shard }}/$((${{ strategy.job-total }} - 1))
       - name: nx test (non-sharded)
         if: matrix.shard == 0
         id: test-no-shard
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c staging --exclude '*,!tag:no-sharding'
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c
+          staging --exclude '*,!tag:no-sharding'
       - name: nx pack:verify
         if: matrix.shard == 0
         id: pack-verify
@@ -271,8 +276,9 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     name: e2e Tests
-    needs: [detect-changes, calc_matrix]
-    if: needs.detect-changes.outputs.run_full_ci == 'true' && needs.calc_matrix.outputs.e2e_test_count > 0
+    needs: [ detect-changes, calc_matrix ]
+    if: needs.detect-changes.outputs.run_full_ci == 'true' &&
+      needs.calc_matrix.outputs.e2e_test_count > 0
     strategy:
       matrix: ${{ fromJson(needs.calc_matrix.outputs.e2e_test_matrix )}}
       fail-fast: false
@@ -294,7 +300,8 @@ jobs:
 
       - name: nx test:e2e
         id: tests
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c staging --exclude 'tag:module-size' --exclude all
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c
+          staging --exclude 'tag:module-size' --exclude all
 
       - name: Persist test results
         if: always() && matrix.shard != 0
@@ -307,8 +314,9 @@ jobs:
   format_lint_build:
     runs-on: ubuntu-latest
     name: Format, Lint and Build
-    needs: [detect-changes, init]
-    if: ${{ always() && needs.detect-changes.result == 'success' && (needs.init.result == 'success' || needs.init.result == 'skipped') }}
+    needs: [ detect-changes, init ]
+    if: ${{ always() && needs.detect-changes.result == 'success' &&
+      (needs.init.result == 'success' || needs.init.result == 'skipped') }}
     outputs:
       format: ${{ steps.format.outcome || '' }}
       lint: ${{ steps.lint.outcome || '' }}
@@ -350,8 +358,9 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
-    needs: [detect-changes, init]
-    if: ${{ needs.detect-changes.outputs.run_full_ci == 'true' && needs.init.result == 'success' && !inputs.skip_docs }}
+    needs: [ detect-changes, init ]
+    if: ${{ needs.detect-changes.outputs.run_full_ci == 'true' && needs.init.result
+      == 'success' && !inputs.skip_docs }}
     strategy:
       fail-fast: false
     env:
@@ -378,7 +387,8 @@ jobs:
         run: node scripts/deployments/validateGridModulesList.js
 
       - name: docs build and link checker
-        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c
+          staging
 
       - name: validate base url
         run: node scripts/deployments/sanityCheckBaseUrl.js staging
@@ -411,8 +421,9 @@ jobs:
     name: Framework Package Tests (${{ matrix.framework }})
     permissions:
       contents: write
-    needs: [calc_matrix, init]
-    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release') || inputs.run_package_tests
+    needs: [ calc_matrix, init ]
+    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type
+      == 'release') || inputs.run_package_tests
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.calc_matrix.outputs.test_pkg_matrix )}}
@@ -436,7 +447,8 @@ jobs:
       - name: nx package:test
         id: package-test
         if: matrix.framework != 'none'
-        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests --configuration=update
+        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests
+          --configuration=update
 
       - name: Snapshot Branch
         if: matrix.framework != 'none'
@@ -449,7 +461,19 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ detect-changes, init, test, e2e, format_lint_build, docs, calc_matrix, fw_pkg_test, sonar_community, sonar_enterprise ]
+    needs:
+      [
+        detect-changes,
+        init,
+        test,
+        e2e,
+        format_lint_build,
+        docs,
+        calc_matrix,
+        fw_pkg_test,
+        sonar_community,
+        sonar_enterprise,
+      ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
@@ -519,11 +543,11 @@ jobs:
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.docs.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
-          
+
           # Uncomment to add package tests back in
           # elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
           #   WORKFLOW_STATUS="failure"
-          
+
           elif [ "${{ needs.sonar_community.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.sonar_enterprise.result }}" == "failure" ] ; then
@@ -549,7 +573,8 @@ jobs:
 
       - name: Commit History
         id: commits
-        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
+        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
+          && steps.lastJobStatus.outputs.changedState == 'true'
         run: |
           GIT_LOG=$(git log HEAD ^${{ needs.init.outputs.nx_base }} --format="%an (%h) %s")
           echo "GIT_LOG<<EOF" >> $GITHUB_ENV
@@ -557,7 +582,8 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Tag Latest Successful Commit
-        if: success() && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.workflowStatus != 'failure'
+        if: success() && github.ref == 'refs/heads/latest' &&
+          steps.lastJobStatus.outputs.workflowStatus != 'failure'
         uses: EndBug/latest-tag@latest
         with:
           ref: latest-success
@@ -616,8 +642,8 @@ jobs:
       - name: Fail job if workflow failed
         if: success() && steps.lastJobStatus.outputs.workflowStatus == 'failure'
         run: |
-            echo "Workflow failed, failing the build."
-            exit 1
+          echo "Workflow failed, failing the build."
+          exit 1
 
   sonar_community:
     name: SonarQube Community
@@ -635,8 +661,7 @@ jobs:
         with:
           projectBaseDir: ./packages/
           args: >
-            -Dsonar.javascript.node.maxspace=8192
-            -Dsonar.organization=ag-grid
+            -Dsonar.javascript.node.maxspace=8192 -Dsonar.organization=ag-grid
             -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
             -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
             -Dsonar.projectKey=ag-grid_community_latest
@@ -660,8 +685,7 @@ jobs:
         with:
           projectBaseDir: ./packages/
           args: >
-            -Dsonar.javascript.node.maxspace=8192
-            -Dsonar.organization=ag-grid
+            -Dsonar.javascript.node.maxspace=8192 -Dsonar.organization=ag-grid
             -Dsonar.sources=./ag-grid-enterprise
             -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
             -Dsonar.branch.name=master
