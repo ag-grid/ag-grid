@@ -32,7 +32,7 @@ const ensureGridApiHasBeenSet = vm => new Promise(function (resolve, reject) {
         }
 
         // not set - wait a bit longer
-        timeout =- 10;
+        timeout -= 10;
         setTimeout(waitForGridReady, 10);
     })();
 });
@@ -155,7 +155,7 @@ it('grid renders as expected', () => {
     expect(cells.length).toEqual(2);
 
     expect(cells.at(0).text()).toEqual('Toyota');
-    expect(cells.at(1).text()).toEqual('70000');
+    expect(cells.at(1).text()).toEqual('35000');
 });
 
 it('cell should be editable and editor component usable', () => {
@@ -183,11 +183,11 @@ it('cell should be editable and editor component usable', () => {
     expect(cells.length).toEqual(2);
 
     expect(cells.at(0).text()).toEqual('Toyota');
-    expect(cells.at(1).text()).toEqual('200000');
+    expect(cells.at(1).text()).toEqual('100000');
 });
 ```
 
-We use the Grid API to initiate and end testing as we're can't readily perform double clicks in a
-unit testing environment (but could if doing e2e with something like Protractor for example).
+We use the Grid API to initiate and end testing as we can't readily perform double clicks in a
+unit testing environment (but could if doing e2e with something like Playwright for example).
 
 {% /if %}
