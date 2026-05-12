@@ -1,5 +1,8 @@
+import { BASE_URL } from '../../baseUrl';
 import { VanillaFrameworkOverrides } from '../../vanillaFrameworkOverrides';
 import { AG_GRID_ERRORS, NoModulesRegisteredError } from './errorText';
+
+const trimTrailingSpaces = (s: string) => s.replace(/ +\n/g, '\n');
 
 describe('Validate AG_GRID_ERRORS', () => {
     // eslint-disable-next-line no-restricted-properties
@@ -81,18 +84,20 @@ ModuleRegistry.registerModules([ AllCommunityModule ]);
 describe('error 200 (missing module)', () => {
     test('shows AgGridProvider snippet when usesAgGridProvider is true', () => {
         expect(
-            AG_GRID_ERRORS[200]({
-                reasonOrId: 'Test feature',
-                moduleName: 'RowSelection',
-                gridScoped: false,
-                gridId: 'myGrid',
-                rowModelType: 'clientSide',
-                usesAgGridProvider: true,
-            })
-        ).toMatchInlineSnapshot(`
-"Unable to use Test feature as RowSelectionModule is not registered.  Check if you have registered the module:
+            trimTrailingSpaces(
+                AG_GRID_ERRORS[200]({
+                    reasonOrId: 'Test feature',
+                    moduleName: 'RowSelection',
+                    gridScoped: false,
+                    gridId: 'myGrid',
+                    rowModelType: 'clientSide',
+                    usesAgGridProvider: true,
+                })
+            )
+        )
+            .toEqual(`Unable to use Test feature as RowSelectionModule is not registered.  Check if you have registered the module:
 
-import { AgGridProvider, AgGridReact } from 'ag-grid-react'; 
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import { RowSelectionModule } from 'ag-grid-community';
 
 const modules = [ RowSelectionModule ];
@@ -105,48 +110,50 @@ function App() {
     );
 }
 
-For more info see: https://www.ag-grid.com/archive/35.3.0/javascript-data-grid/modules/"
-`);
+For more info see: ${BASE_URL}/javascript-data-grid/modules/`);
     });
 
     test('shows ModuleRegistry snippet for React users using ModuleRegistry (without AgGridProvider)', () => {
         expect(
-            AG_GRID_ERRORS[200]({
-                reasonOrId: 'Test feature',
-                moduleName: 'RowSelection',
-                gridScoped: false,
-                gridId: 'myGrid',
-                rowModelType: 'clientSide',
-                usesAgGridProvider: false,
-            })
-        ).toMatchInlineSnapshot(`
-"Unable to use Test feature as RowSelectionModule is not registered.  Check if you have registered the module:
+            trimTrailingSpaces(
+                AG_GRID_ERRORS[200]({
+                    reasonOrId: 'Test feature',
+                    moduleName: 'RowSelection',
+                    gridScoped: false,
+                    gridId: 'myGrid',
+                    rowModelType: 'clientSide',
+                    usesAgGridProvider: false,
+                })
+            )
+        )
+            .toEqual(`Unable to use Test feature as RowSelectionModule is not registered.  Check if you have registered the module:
 
-import { ModuleRegistry } from 'ag-grid-community'; 
+import { ModuleRegistry } from 'ag-grid-community';
 import { RowSelectionModule } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ RowSelectionModule ]);
 
-For more info see: https://www.ag-grid.com/archive/35.3.0/javascript-data-grid/modules/"
-`);
+For more info see: ${BASE_URL}/javascript-data-grid/modules/`);
     });
 });
 
 describe('error 260 (missing user component)', () => {
     test('formats missing component error with usesAgGridProvider', () => {
         expect(
-            AG_GRID_ERRORS[260]({
-                propName: 'cellEditor',
-                compName: 'agRichSelectCellEditor',
-                gridScoped: false,
-                gridId: 'myGrid',
-                rowModelType: 'clientSide',
-                usesAgGridProvider: true,
-            })
-        ).toMatchInlineSnapshot(`
-"Unable to use AG Grid 'cellEditor' component: agRichSelectCellEditor as RichSelectModule is not registered.  Check if you have registered the module:
+            trimTrailingSpaces(
+                AG_GRID_ERRORS[260]({
+                    propName: 'cellEditor',
+                    compName: 'agRichSelectCellEditor',
+                    gridScoped: false,
+                    gridId: 'myGrid',
+                    rowModelType: 'clientSide',
+                    usesAgGridProvider: true,
+                })
+            )
+        )
+            .toEqual(`Unable to use AG Grid 'cellEditor' component: agRichSelectCellEditor as RichSelectModule is not registered.  Check if you have registered the module:
 
-import { AgGridProvider, AgGridReact } from 'ag-grid-react'; 
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
 const modules = [ RichSelectModule ];
@@ -159,29 +166,29 @@ function App() {
     );
 }
 
-For more info see: https://www.ag-grid.com/archive/35.3.0/javascript-data-grid/modules/"
-`);
+For more info see: ${BASE_URL}/javascript-data-grid/modules/`);
     });
 
     test('formats missing component error for React using ModuleRegistry (without AgGridProvider)', () => {
         expect(
-            AG_GRID_ERRORS[260]({
-                propName: 'cellEditor',
-                compName: 'agRichSelectCellEditor',
-                gridScoped: false,
-                gridId: 'myGrid',
-                rowModelType: 'clientSide',
-                usesAgGridProvider: false,
-            })
-        ).toMatchInlineSnapshot(`
-"Unable to use AG Grid 'cellEditor' component: agRichSelectCellEditor as RichSelectModule is not registered.  Check if you have registered the module:
+            trimTrailingSpaces(
+                AG_GRID_ERRORS[260]({
+                    propName: 'cellEditor',
+                    compName: 'agRichSelectCellEditor',
+                    gridScoped: false,
+                    gridId: 'myGrid',
+                    rowModelType: 'clientSide',
+                    usesAgGridProvider: false,
+                })
+            )
+        )
+            .toEqual(`Unable to use AG Grid 'cellEditor' component: agRichSelectCellEditor as RichSelectModule is not registered.  Check if you have registered the module:
 
-import { ModuleRegistry } from 'ag-grid-community'; 
+import { ModuleRegistry } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ RichSelectModule ]);
 
-For more info see: https://www.ag-grid.com/archive/35.3.0/javascript-data-grid/modules/"
-`);
+For more info see: ${BASE_URL}/javascript-data-grid/modules/`);
     });
 });
