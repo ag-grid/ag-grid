@@ -93,11 +93,6 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 
             const rowRenderer = this.beans.rowRenderer;
 
-            // `batchedNodes` and `batchedPath` are disjoint by construction: only leaf events queue
-            // into `batchedNodes` (and their parent into the path); group events (including tree-data
-            // data-bearing groups) go only into the path. The path only walks upward via `node.parent`,
-            // so anything in `batchedNodes` (always a leaf) is never pulled into the path transitively.
-
             // Refresh nodes not in the path (CSRM leaves, or all nodes for non-CSRM).
             if (batchedNodes) {
                 if (batchedPath?.kind === 'rows') {
@@ -191,8 +186,18 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 const refreshRowAndSiblings = (rowRenderer: RowRenderer, node: RowNode): void => {
     const { sibling, pinnedSibling } = node;
     rowRenderer.refreshRowByNode(node);
-    rowRenderer.refreshRowByNode(sibling);
-    rowRenderer.refreshRowByNode(pinnedSibling);
-    rowRenderer.refreshRowByNode(sibling?.pinnedSibling);
-    rowRenderer.refreshRowByNode(pinnedSibling?.sibling);
+    if (sibling) {
+        rowRenderer.refreshRowByNode(sibling);
+        const siblingPinnedSibling = sibling.pinnedSibling;
+        if (siblingPinnedSibling) {
+            rowRenderer.refreshRowByNode(siblingPinnedSibling);
+        }
+    }
+    if (pinnedSibling) {
+        rowRenderer.refreshRowByNode(pinnedSibling);
+        const pinnedSiblingSibling = pinnedSibling.sibling;
+        if (pinnedSiblingSibling) {
+            rowRenderer.refreshRowByNode(pinnedSiblingSibling);
+        }
+    }
 };
