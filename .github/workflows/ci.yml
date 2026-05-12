@@ -54,7 +54,8 @@ jobs:
     runs-on: ubuntu-24.04
     name: Detect Changes
     outputs:
-      run_full_ci: ${{ steps.decide.outputs.run_full_ci }}
+      run_code_ci: ${{ steps.decide.outputs.run_code_ci }}
+      run_docs_ci: ${{ steps.decide.outputs.run_docs_ci }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -89,13 +90,17 @@ jobs:
               - 'jest.preset.js'
             ci:
               - '.github/**'
+            docs:
+              - 'documentation/ag-grid-docs/src/**'
+              - 'external/ag-website-shared/**'
 
       - name: Decide what to run
         id: decide
         run: |
           # Always run full CI for push events and manual triggers
           if [[ "${{ github.event_name }}" != "pull_request" ]]; then
-            echo "run_full_ci=true" >> $GITHUB_OUTPUT
+            echo "run_code_ci=true" >> $GITHUB_OUTPUT
+            echo "run_docs_ci=true" >> $GITHUB_OUTPUT
             echo "Non-PR event (${{ github.event_name }}), running full CI"
             exit 0
           fi
@@ -103,10 +108,16 @@ jobs:
           # For PRs, check if code or CI files changed
           if [[ "${{ steps.filter.outputs.code }}" == "true" ]] || \
              [[ "${{ steps.filter.outputs.ci }}" == "true" ]]; then
-            echo "run_full_ci=true" >> $GITHUB_OUTPUT
+            echo "run_code_ci=true" >> $GITHUB_OUTPUT
+            echo "run_docs_ci=false" >> $GITHUB_OUTPUT
             echo "Code or CI changes detected (code=${{ steps.filter.outputs.code }}, ci=${{ steps.filter.outputs.ci }}), running full CI"
+          elif [[ "${{ steps.filter.outputs.docs }}" == "true" ]]; then
+            echo "run_code_ci=false" >> $GITHUB_OUTPUT
+            echo "run_docs_ci=true" >> $GITHUB_OUTPUT
+            echo "Docs content changes detected, running docs build and link checker"
           else
-            echo "run_full_ci=false" >> $GITHUB_OUTPUT
+            echo "run_code_ci=false" >> $GITHUB_OUTPUT
+            echo "run_docs_ci=false" >> $GITHUB_OUTPUT
             echo "Only non-code changes detected, running lint only"
           fi
 
@@ -114,7 +125,8 @@ jobs:
     name: Initialise Workflow
     needs: detect-changes
     if: github.event.pull_request.draft == false &&
-      needs.detect-changes.outputs.run_full_ci == 'true'
+      (needs.detect-changes.outputs.run_code_ci == 'true' ||
+      needs.detect-changes.outputs.run_docs_ci == 'true')
     permissions:
       contents: write
     outputs:
@@ -147,7 +159,7 @@ jobs:
   calc_matrix:
     name: Calculate Github Matrix
     needs: [ detect-changes, init ]
-    if: needs.detect-changes.outputs.run_full_ci == 'true'
+    if: needs.detect-changes.outputs.run_code_ci == 'true'
     outputs:
       test_count: ${{ steps.matrix.outputs.test_count }}
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
@@ -217,7 +229,7 @@ jobs:
     runs-on: ubuntu-24.04
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: [ detect-changes, calc_matrix ]
-    if: needs.detect-changes.outputs.run_full_ci == 'true' &&
+    if: needs.detect-changes.outputs.run_code_ci == 'true' &&
       needs.calc_matrix.outputs.test_count > 0
     strategy:
       matrix: ${{ fromJson(needs.calc_matrix.outputs.test_matrix )}}
@@ -277,7 +289,7 @@ jobs:
     runs-on: ubuntu-latest
     name: e2e Tests
     needs: [ detect-changes, calc_matrix ]
-    if: needs.detect-changes.outputs.run_full_ci == 'true' &&
+    if: needs.detect-changes.outputs.run_code_ci == 'true' &&
       needs.calc_matrix.outputs.e2e_test_count > 0
     strategy:
       matrix: ${{ fromJson(needs.calc_matrix.outputs.e2e_test_matrix )}}
@@ -351,7 +363,7 @@ jobs:
 
       - name: nx build
         id: build
-        if: needs.detect-changes.outputs.run_full_ci == 'true'
+        if: needs.detect-changes.outputs.run_code_ci == 'true'
         run: |
           yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
@@ -359,7 +371,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
     needs: [ detect-changes, init ]
-    if: ${{ needs.detect-changes.outputs.run_full_ci == 'true' && needs.init.result
+    if: ${{ (needs.detect-changes.outputs.run_code_ci == 'true' ||
+      needs.detect-changes.outputs.run_docs_ci == 'true') && needs.init.result
       == 'success' && !inputs.skip_docs }}
     strategy:
       fail-fast: false
