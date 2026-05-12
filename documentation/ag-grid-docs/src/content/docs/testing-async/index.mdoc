@@ -43,9 +43,9 @@ The expected behaviour can be seen in the example below by entering the text "Ge
 The first part of the test is to configure the test module.
 
 ```ts
-beforeEach(() => {
+beforeEach(async () => {
     TestBed.configureTestingModule({
-        declarations: [TestHostComponent],
+        imports: [AppComponent],
     });
     // Create the test component fixture
     fixture = TestBed.createComponent(AppComponent);

@@ -2,7 +2,6 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellStyleModule,
     ClientSideRowModelModule,
-    ColDef,
     ModuleRegistry,
     ValidationModule,
     createGrid,
