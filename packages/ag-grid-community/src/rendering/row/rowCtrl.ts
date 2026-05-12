@@ -393,7 +393,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private executeProcessRowPostCreateFunc(): void {
         const func = this.gos.getCallback('processRowPostCreate');
         const rowGui = this.rowGui;
-        if (!func || !rowGui || rowGui.containerType !== 'center') {
+        if (!func || rowGui?.containerType !== 'center') {
             return;
         }
 

@@ -241,7 +241,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public getHorizontalScrollPosition(): { left: number; right: number } {
-        const left = this.eGridViewport.scrollLeft;
+        const left = this.getHorizontalScrollLeft();
         return {
             left,
             right: left + this.getCenterWidth(),

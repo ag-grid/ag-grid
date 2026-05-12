@@ -568,11 +568,9 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         const physicalLeftPinnedWidth = visibleCols.getLeftStickyColumnContainerWidth();
         const physicalRightPinnedWidth = visibleCols.getRightStickyColumnContainerWidth();
 
-        let nearPhysicalLeft = false;
-        let nearPhysicalRight = false;
-
-        nearPhysicalLeft = physicalX < physicalLeftPinnedWidth + SCROLL_GAP_NEEDED_BEFORE_MOVE;
-        nearPhysicalRight = physicalX > viewportRect.width - physicalRightPinnedWidth - SCROLL_GAP_NEEDED_BEFORE_MOVE;
+        const nearPhysicalLeft = physicalX < physicalLeftPinnedWidth + SCROLL_GAP_NEEDED_BEFORE_MOVE;
+        const nearPhysicalRight =
+            physicalX > viewportRect.width - physicalRightPinnedWidth - SCROLL_GAP_NEEDED_BEFORE_MOVE;
 
         this.needToMoveLeft = nearPhysicalLeft;
         this.needToMoveRight = nearPhysicalRight;
