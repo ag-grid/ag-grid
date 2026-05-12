@@ -85,7 +85,7 @@
         height: var(--ag-header-height);
     }
 
-    .ag-toolbar {
+    .ag-toolbar-item:where(:not(.ag-toolbar-panel)) {
         font-weight: 600;
     }
 

@@ -17,7 +17,7 @@
         color: var(--ag-header-foreground-color);
     }
 
-    .ag-toolbar {
+    .ag-toolbar-item:where(:not(.ag-toolbar-panel)) {
         font-weight: 700;
     }
 
@@ -199,6 +199,7 @@
     .ag-paging-number,
     .ag-paging-row-summary-panel-number {
         font-weight: 700;
+        font-variant-numeric: tabular-nums;
     }
 
     .ag-column-drop-cell-button {

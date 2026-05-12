@@ -10,6 +10,7 @@ import {
     getRefTokensFromText,
     rangeToRef,
     tagRangeWithFormulaColor,
+    toDisplayRangeParams,
 } from './formulaRangeUtils';
 
 type TrackedRange = { ref: string; tokenIndex?: number | null };
@@ -573,8 +574,12 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             if (!params) {
                 return undefined;
             }
+            const displayParams = toDisplayRangeParams(this.beans, params);
+            if (!displayParams) {
+                return undefined;
+            }
             this.withSuppressedRangeEvents(() => {
-                created = rangeSvc.addCellRange(params);
+                created = rangeSvc.addCellRange(displayParams);
             });
         } else {
             created = this.findLatestRangeForRef(ref, true) ?? this.findLatestRangeForRef(ref, false);

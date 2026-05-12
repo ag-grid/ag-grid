@@ -42,9 +42,9 @@ See [Customising the grid with CSS](./theming-css/) for more details on CSS use.
 
 You can set CSS variables on detail grids, but be aware of a difference in how they work compared to setting them on a master grid.
 
-Some high-level variables control the behaviour of many lower-level variables by providing default values. This is the case for general colors like --ag-background-color and for --ag-spacing.
+High-level variables like `--ag-background-color` and `--ag-spacing` define default values for multiple lower-level variables.
 
-In this example we set the background color on the master grid to red. Setting `--ag-background-color` to red sets _default_ values for `--ag-data-background-color`, `--ag-odd-row-background-color` and `--ag-header-background-color`, so because these variables have no values defined, they are set to red. We attempt to set the detail grid to green using the same technique, but now these three variables already have values defined - the red color inherited from the master grid, so the default value provided by `--ag-background-color` has no effect.
+In this example we set the background colour on the master grid to red. Setting `--ag-background-color` to red sets _default_ values for `--ag-data-background-color`, `--ag-odd-row-background-color` and `--ag-header-background-color`, so because these variables have no values defined, they are set to red. We attempt to set the detail grid to green using the same technique, but now these three variables already have values defined - the red colour inherited from the master grid, so the default value provided by `--ag-background-color` has no effect.
 
 ```css
 body {
@@ -57,7 +57,7 @@ body {
 
 {% gridExampleRunner title="Custom Properties and Detail Grids" name="custom-properties" /%}
 
-In order to avoid this, you need to set all the lower-level variable explicitly:
+In order to avoid this, you need to set all the lower-level variables explicitly:
 
 ```css
 body {

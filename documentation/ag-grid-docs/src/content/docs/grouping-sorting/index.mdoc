@@ -35,16 +35,11 @@ const gridOptions = {
 ## Custom Row Group Sorting
 
 The generated Group Columns can be unlinked from the columns with row grouping by configuring
-[Custom Group Sorting](./row-sorting/#custom-sorting) using a `autoGroupColumnDef.comparator`. This allows custom sorting
-to be applied across all levels of row grouping.
+[Custom Group Sorting](./row-sorting/#custom-sorting) using a `autoGroupColumnDef.comparator`. This
+allows custom sorting to be applied across all levels of row grouping.
 
-{% gridExampleRunner title="Custom Group Sort" name="custom-group-sort" /%}
-
-{% note %}
-When using custom group sorting, sorting the `Group` column no longer impacts the columns with row grouping, and vice versa.
-{% /note %}
-
-The example above demonstrates a configuration which ignores the data entirely, preferring to sort the rows by the number of descendants:
+The example below demonstrates a configuration that ignores the data entirely, sorting rows by
+the number of descendants instead:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -60,6 +55,12 @@ const gridOptions = {
     },
 }
 ```
+
+{% gridExampleRunner title="Custom Group Sort" name="custom-group-sort" /%}
+
+{% note %}
+When using custom group sorting, sorting the `Group` column no longer impacts the columns with row grouping, and vice versa.
+{% /note %}
 
 ## Maintain Group Order
 
@@ -80,17 +81,17 @@ With `groupMaintainOrder=true`:
 
 - Sorting a leaf column sorts the rows inside each group; groups stay in structural order.
 - Filter changes preserve group order.
-- Transactions add new groups at their structural position — at the end of the data-insertion order, or at the position produced by `initialGroupOrderComparator` if one is configured.
-- With multi-level row grouping, the order is maintained per level. Sorting a group column at one level only re-orders that level's groups — sibling levels keep their structural order. For example, with `country` and `year` grouping, sorting `year` re-orders year groups within each country, while country groups remain in their structural slot.
+- Transactions add new groups at their structural position: the end of the data-insertion order, or the position produced by `initialGroupOrderComparator` if one is configured.
+- With multi-level row grouping, the order is maintained per level. Sorting a group column at one level only re-orders that level's groups; sibling levels keep their structural order. For example, with `country` and `year` grouping, sorting `year` re-orders year groups within each country, while country groups remain in their structural slot.
 
 {% gridExampleRunner title="Maintain Group Order" name="maintain-group-order" /%}
 
 The example above uses `groupDisplayType: 'multipleColumns'` so each group level has its own header. Try the following to see per-level isolation:
 
-- Sort `Athlete` or `Total` (leaf columns) — only the rows inside each year group reorder; year and country groups keep their structural order.
-- Sort the `Year` group column — only year groups within each country reorder; country groups stay structural.
-- Sort the `Country` group column — only country groups reorder; year groups within each country keep their structural order.
-- Clear a group-column sort — that level reverts to structural order; sibling levels are unaffected.
+- Sort `Athlete` or `Total` (leaf columns): only the rows inside each year group reorder; year and country groups keep their structural order.
+- Sort the `Year` group column: only year groups within each country reorder; country groups stay structural.
+- Sort the `Country` group column: only country groups reorder; year groups within each country keep their structural order.
+- Clear a group-column sort: that level reverts to structural order; sibling levels are unaffected.
 
 The structural order is the data-insertion order by default, or the order produced by
 [`initialGroupOrderComparator`](#unsorted-group-order) if one is configured. If a group column had a sort applied and the user later
