@@ -87,7 +87,7 @@
 .ag-toolbar-panel {
     display: inline-flex;
     flex: 1;
-    min-width: 235px;
+    min-width: 260px;
     padding: 0 calc(var(--ag-spacing) * 2);
 }
 
