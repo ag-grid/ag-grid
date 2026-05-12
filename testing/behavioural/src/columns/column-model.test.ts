@@ -176,12 +176,12 @@ describe('Column Model', () => {
 
             const api = gridsManager.createGrid('myGrid', { columnDefs });
 
-            // Flex columns get calculated widths; use true to print since exact
-            // widths depend on the container size in the test environment
+            // Flex columns distribute the remaining 900px (mock viewport 1000 minus c's 100)
+            // between a (flex 1) and b (flex 2), so 300/600.
             await new GridColumns(api, 'flex columns').checkColumns(`
                 CENTER
-                ├── a width:200 flex:1
-                ├── b width:200 flex:2
+                ├── a width:300 flex:1
+                ├── b width:600 flex:2
                 └── c width:100
             `);
         });

@@ -129,8 +129,8 @@ describe('ag-grid tree transactions', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── ag-Grid-AutoColumn "Files" width:330 flex:1
-            └── size "Size" width:200 flex:1 aggFunc:sum
+            ├── ag-Grid-AutoColumn "Files" width:500 flex:1
+            └── size "Size" width:500 flex:1 aggFunc:sum
         `);
     });
 
