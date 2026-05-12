@@ -52,3 +52,7 @@ documentation/ag-grid-docs/src/components/ZoomInfo.astro
 external/ag-shared/
 
 .rulesync
+
+# Licenses
+LICENSE.html
+AG-Grid-Enterprise-License-Latest.html
