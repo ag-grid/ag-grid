@@ -120,8 +120,8 @@ function setAutoHeight() {
 function setFixedHeight() {
     // we could also call setDomLayout() here as normal is the default
     gridApi!.setGridOption('domLayout', 'normal');
-    // when auto height is off, the grid ahs a fixed height, and then the grid
-    // will provide scrollbars if the data does not fit into it.
+    // when auto height is off, the grid has a fixed height and provides
+    // scrollbars if the data does not fit into it.
     (document.querySelector<HTMLElement>('#myGrid')! as any)!.style.height = '400px';
 }
 

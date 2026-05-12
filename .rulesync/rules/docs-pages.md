@@ -54,6 +54,14 @@ description: Brief description of the feature
 4. Link to related documentation
 5. Keep paragraphs concise
 
+## Image Conventions
+
+The `imageCaption` and `image` markdoc components automatically pick up a `*-dark.{ext}` sibling next to the referenced image. For an `imageCaption imagePath="resources/foo.png"`, if `resources/foo-dark.png` exists it is loaded automatically when the docs site is in dark mode — no separate `mdoc` reference is needed.
+
+Do not flag a `*-dark.{ext}` file as "unused" if its light-mode sibling is referenced — it is wired by naming convention.
+
+Do not flag the _absence_ of a dark mode image as an error, not all images require dark mode versions.
+
 ## Validation
 
 Test documentation changes:
