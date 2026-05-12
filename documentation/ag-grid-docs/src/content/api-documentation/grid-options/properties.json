@@ -292,7 +292,7 @@
         "suppressDragLeaveHidesColumns": {
             "more": {
                 "name": "Suppress Hide Leave",
-                "url": "./column-moving/#suppress-hide-leave"
+                "url": "./column-moving/#suppress-hide-on-drag-leave"
             }
         },
         "allowDragFromColumnsToolPanel": {
