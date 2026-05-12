@@ -23,6 +23,15 @@ export const mockGridLayout = {
     columnWidth: 150,
     dragHandleWidth: 20,
 
+    /**
+     * Opt-in: when true, `offsetHeight`/`clientHeight`/`offsetWidth`/`clientWidth` return the
+     * mocked dimensions from `getBoundingClientRect()`. Default `false` preserves jsdom's
+     * built-in behaviour of returning 0, which matches what most behavioural-test snapshots
+     * were captured against. Set this in `beforeAll` (and restore in `afterAll`) for tests
+     * that depend on viewport-aware production code such as page-key navigation.
+     */
+    useRealOffsetDimensions: false,
+
     init,
     getBoundingClientRect,
 };
@@ -236,20 +245,26 @@ function init(): boolean {
         return style;
     };
 
-    for (const prop of ['offsetHeight', 'clientHeight']) {
-        Object.defineProperty(Element.prototype, prop, {
+    // jsdom defines offsetHeight/clientHeight/offsetWidth/clientWidth on HTMLElement.prototype
+    // (more specific than Element.prototype) and returns 0. A patch on Element.prototype is
+    // therefore shadowed. We install on HTMLElement.prototype directly, behind a feature flag
+    // so the default behaviour matches jsdom (returns 0) — preserving existing snapshots —
+    // and only opt-in tests see real mocked dimensions.
+    const installOffsetDimensionPatch = (prop: 'offsetHeight' | 'clientHeight' | 'offsetWidth' | 'clientWidth') => {
+        const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, prop);
+        const axis = prop === 'offsetWidth' || prop === 'clientWidth' ? 'width' : 'height';
+        Object.defineProperty(HTMLElement.prototype, prop, {
+            configurable: true,
             get(this: HTMLElement) {
-                return this.getBoundingClientRect().height;
+                if (mockGridLayout.useRealOffsetDimensions) {
+                    return this.getBoundingClientRect()[axis];
+                }
+                return original?.get?.call(this) ?? 0;
             },
         });
-    }
-
-    for (const prop of ['offsetWidth', 'clientWidth']) {
-        Object.defineProperty(Element.prototype, prop, {
-            get(this: Element) {
-                return this.getBoundingClientRect().width;
-            },
-        });
+    };
+    for (const prop of ['offsetHeight', 'clientHeight', 'offsetWidth', 'clientWidth'] as const) {
+        installOffsetDimensionPatch(prop);
     }
 
     // scrollHeight must account for the virtual scroll container height set by the grid (e.g.
