@@ -17,7 +17,7 @@
 
 /** Add widths to avoid pagination controls changing size when the number of digits changes, i.e [1] -> [500] **/
 .ag-paging-description {
-    width: 120px;
+    width: 160px;
     text-align: center;
 }
 
