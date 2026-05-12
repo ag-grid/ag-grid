@@ -10,18 +10,16 @@
     position: absolute;
     height: var(--ag-header-height);
     color: var(--ag-header-text-color);
-    font-size: var(--ag-header-font-size);
-    font-family: var(--ag-header-font-family);
-    font-weight: var(--ag-header-font-weight);
-}
-
-.ag-row.ag-header-row {
     border-bottom: none;
 
     .ag-grid-pinned-left-cells,
     .ag-grid-pinned-right-cells {
         overflow: visible;
     }
+
+    font-size: var(--ag-header-font-size);
+    font-family: var(--ag-header-font-family);
+    font-weight: var(--ag-header-font-weight);
 }
 
 /* stylelint-enable selector-max-specificity */

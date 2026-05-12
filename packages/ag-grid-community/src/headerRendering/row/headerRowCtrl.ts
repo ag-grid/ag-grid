@@ -51,7 +51,7 @@ export class HeaderRowCtrl extends BeanStub {
         } else if (type === 'filter') {
             typeClass = 'ag-header-row-filter';
         }
-        this.headerRowClass = `ag-row ag-header-row ${typeClass}`;
+        this.headerRowClass = `ag-header-row ${typeClass}`;
     }
 
     public setRowIndex(rowIndex: number): void {

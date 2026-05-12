@@ -758,6 +758,7 @@
     // fill the gap between the last content section and pinned-right without allowing
     // the row's own background to bleed into the empty viewport area.
     .ag-row:not(.ag-full-width-row)::after,
+    .ag-header-row::after,
     .ag-row.ag-embedded-full-width-row::after {
         content: '';
         flex: 1 0 0px;
@@ -814,6 +815,7 @@
     // place pinned-right after the ::after spacer so the spacer fills the gap between
     // the scrolling section and pinned-right.
     .ag-row:not(.ag-full-width-row),
+    .ag-header-row,
     .ag-row.ag-embedded-full-width-row {
         > .ag-grid-pinned-right-cells {
             order: 1;
@@ -823,6 +825,7 @@
     // in RTL (row-reverse), the gap is between pinned-left and scrolling-cells.
     // move scrolling-cells after the spacer so it sits next to pinned-right on the left.
     .ag-rtl .ag-row:not(.ag-full-width-row),
+    .ag-rtl .ag-header-row,
     .ag-rtl .ag-row.ag-embedded-full-width-row {
         > .ag-grid-scrolling-cells {
             order: 1;
