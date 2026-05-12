@@ -67,7 +67,7 @@ export interface IRowComp {
     getPinnedRightRowElement(): HTMLElement | undefined;
     showFullWidth(compDetails: UserCompDetails): void;
     showEmbeddedFullWidth?(compDetails: HorizontalSectionMap<UserCompDetails>): void;
-    getFullWidthCellRenderer(): ICellRenderer | null | undefined;
+    getFullWidthCellRenderers(): (ICellRenderer | null | undefined)[];
     getFullWidthCellRendererParams(): ICellRendererParams | undefined;
     getFullWidthCellRendererParamsForPinned?(pinned: ColumnPinnedType): ICellRendererParams | undefined;
     setTop(top: string): void;
@@ -386,8 +386,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         });
     }
 
-    public getModeCellRenderer(): ICellRenderer<any> | null | undefined {
-        return this.rowModeFeature.getModeCellRenderer?.();
+    public getModeCellRenderers(): (ICellRenderer<any> | null | undefined)[] {
+        return this.rowModeFeature.getModeCellRenderers?.() ?? [];
     }
 
     private executeProcessRowPostCreateFunc(): void {
@@ -397,10 +397,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
+        // In the flattened layout there is a single row element per row. Preserve `latest`'s
+        // contract by mapping the legacy pinned-row params to that same element when the
+        // corresponding pinned section has columns, and `undefined` otherwise.
+        const { visibleCols } = this.beans;
+        const eRow = rowGui.element;
         const params: WithoutGridCommon<ProcessRowParams> = {
-            eRow: rowGui.element,
-            ePinnedLeftRow: rowGui.rowComp.getPinnedLeftRowElement(),
-            ePinnedRightRow: rowGui.rowComp.getPinnedRightRowElement(),
+            eRow,
+            ePinnedLeftRow: visibleCols.leftCols.length ? eRow : undefined,
+            ePinnedRightRow: visibleCols.rightCols.length ? eRow : undefined,
             node: this.rowNode,
             rowIndex: this.rowNode.rowIndex!,
             addRenderedRowListener: this.addEventListener.bind(this),

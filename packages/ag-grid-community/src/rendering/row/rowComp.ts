@@ -80,7 +80,7 @@ export class RowComp extends Component {
             getPinnedRightRowElement: () => this.ePinnedRightCells,
             showFullWidth: (compDetails) => this.showFullWidth(compDetails),
             showEmbeddedFullWidth: (compDetails) => this.showEmbeddedFullWidth(compDetails),
-            getFullWidthCellRenderer: () => this.getPrimaryFullWidthCellRenderer(),
+            getFullWidthCellRenderers: () => this.getAllFullWidthCellRenderers(),
             getFullWidthCellRendererParams: () => this.getPrimaryFullWidthCellRendererParams(),
             getFullWidthCellRendererParamsForPinned: (pinned: ColumnPinnedType) =>
                 this.getFullWidthCellRendererParamsForPinned(pinned),
@@ -204,8 +204,12 @@ export class RowComp extends Component {
         return refreshed;
     }
 
-    private getPrimaryFullWidthCellRenderer(): ICellRendererComp | null | undefined {
-        return this.fullWidthCellRenderer ?? this.fullWidthCellRenderersBySection.center;
+    private getAllFullWidthCellRenderers(): (ICellRendererComp | null | undefined)[] {
+        if (this.isEmbeddedFullWidth) {
+            const { left, center, right } = this.fullWidthCellRenderersBySection;
+            return [left, center, right].filter((r): r is ICellRendererComp => r != null);
+        }
+        return this.fullWidthCellRenderer ? [this.fullWidthCellRenderer] : [];
     }
 
     private getPrimaryFullWidthCellRendererParams(): ICellRendererParams | undefined {

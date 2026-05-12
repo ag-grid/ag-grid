@@ -193,7 +193,8 @@ export class GridHeaderCtrl extends BeanStub {
             return;
         }
 
-        const nextFocusInHeaderRow = relatedTarget instanceof HTMLElement && !!relatedTarget.closest('.ag-header-row');
+        const nextFocusInHeaderRow =
+            relatedTarget instanceof HTMLElement && eGui.contains(relatedTarget.closest('.ag-header-row'));
         if (!nextFocusInHeaderRow) {
             beans.focusSvc.focusedHeader = null;
         }

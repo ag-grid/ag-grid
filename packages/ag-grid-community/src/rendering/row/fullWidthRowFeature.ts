@@ -21,6 +21,7 @@ import type { INotesFeature } from '../../interfaces/notes';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import type { CellCtrl } from '../cell/cellCtrl';
+import type { ICellRenderer } from '../cellRenderers/iCellRenderer';
 import type { ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import { _suppressFullWidthMouseEvent } from '../renderUtils';
 import type { FullWidthTarget, IRowModeFeature } from './iRowModeFeature';
@@ -94,8 +95,8 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         return this.rowCtrl.printLayout || this.gos.get('embedFullWidthRows');
     }
 
-    public getModeCellRenderer() {
-        return this.rowCtrl.getCurrentRowComp()?.getFullWidthCellRenderer();
+    public getModeCellRenderers(): (ICellRenderer | null | undefined)[] {
+        return this.rowCtrl.getCurrentRowComp()?.getFullWidthCellRenderers() ?? [];
     }
 
     public getAllCellCtrls(): CellCtrl[] {

@@ -30,7 +30,7 @@ export interface IRowModeFeature {
     onSpannedCellsUpdated(pinned: ColumnPinnedType): void;
 
     // Optional Features
-    getModeCellRenderer?(): ICellRenderer | null | undefined;
+    getModeCellRenderers?(): (ICellRenderer | null | undefined)[];
     setupFocus?(): void;
     onRowFocused?(event?: CellFocusedEvent): void;
     getRowContentElement?(): HTMLElement | null;

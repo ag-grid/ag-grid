@@ -183,7 +183,16 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 fullWidthEmbeddedRightParamsRef.current = compDetails.right.params;
                 setEmbeddedFullWidthCompDetails(compDetails);
             },
-            getFullWidthCellRenderer: () => fullWidthCompRef.current ?? fullWidthEmbeddedCenterCompRef.current,
+            getFullWidthCellRenderers: () => {
+                if (isEmbeddedFullWidthRef.current) {
+                    return [
+                        fullWidthEmbeddedLeftCompRef.current,
+                        fullWidthEmbeddedCenterCompRef.current,
+                        fullWidthEmbeddedRightCompRef.current,
+                    ].filter((r) => r != null);
+                }
+                return fullWidthCompRef.current ? [fullWidthCompRef.current] : [];
+            },
             getFullWidthCellRendererParams: () =>
                 fullWidthParamsRef.current ?? fullWidthEmbeddedCenterParamsRef.current,
             getFullWidthCellRendererParamsForPinned: (pinned) =>
