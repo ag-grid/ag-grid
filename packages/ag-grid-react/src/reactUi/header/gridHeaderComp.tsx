@@ -1,35 +1,26 @@
 import React, { memo, useCallback, useContext, useRef, useState } from 'react';
 
 import type { IGridHeaderComp } from 'ag-grid-community';
-import { GridHeaderCtrl } from 'ag-grid-community';
+import { CssClassManager, GridHeaderCtrl } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
-import { CssClasses } from '../utils';
 import HeaderRowsComp from './headerRowsComp';
 
 const GridHeaderComp = ({ eTopSection, eGridViewport }: { eTopSection: HTMLElement; eGridViewport: HTMLElement }) => {
     const { context, environment } = useContext(BeansContext);
 
     const gridHeaderCtrlRef = useRef<GridHeaderCtrl>();
+    const cssManager = useRef<CssClassManager>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const [headerElement, setHeaderElement] = useState<HTMLDivElement | null>(null);
     const [mounted, setMounted] = useState(false);
-    const [cssClasses, setCssClasses] = useState(() => new CssClasses('ag-header'));
+
+    if (!cssManager.current) {
+        cssManager.current = new CssClassManager(() => eGui.current);
+    }
 
     const setHeaderRowFocusableElements = useCallback((elements: HTMLElement[]) => {
         gridHeaderCtrlRef.current?.setHeaderRowFocusableElements(elements);
-    }, []);
-
-    const toggleCss = useCallback((className: string, on: boolean) => {
-        setCssClasses((prev) => {
-            let next = prev;
-            for (const cls of className.split(' ')) {
-                if (cls) {
-                    next = next.setClass(cls, on);
-                }
-            }
-            return next;
-        });
     }, []);
 
     const setRef = useCallback(
@@ -43,8 +34,10 @@ const GridHeaderComp = ({ eTopSection, eGridViewport }: { eTopSection: HTMLEleme
                 return;
             }
 
+            cssManager.current!.toggleCss('ag-header', true);
+
             const compProxy: IGridHeaderComp = {
-                toggleCss,
+                toggleCss: (name, on) => cssManager.current!.toggleCss(name, on),
                 setHeightAndMinHeight: (height) => {
                     const borderWidth = environment.getHeaderRowBorderWidth();
                     const heightWithBorder = height + borderWidth;
@@ -59,11 +52,11 @@ const GridHeaderComp = ({ eTopSection, eGridViewport }: { eTopSection: HTMLEleme
             gridHeaderCtrlRef.current.setComp(compProxy, eRef);
             setMounted(true);
         },
-        [context, environment, eTopSection, toggleCss]
+        [context, environment, eTopSection]
     );
 
     return (
-        <div ref={setRef} className={cssClasses.toString()} role="presentation">
+        <div ref={setRef} role="presentation">
             {mounted && headerElement && (
                 <HeaderRowsComp
                     eGui={headerElement}
