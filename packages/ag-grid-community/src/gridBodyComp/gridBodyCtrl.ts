@@ -584,6 +584,10 @@ export class GridBodyCtrl extends BeanStub {
         return this.getHeaderRowsOffset() + this.topPinnedRowsHeight;
     }
 
+    public getBottomPinnedRowsOffset(): number {
+        return this.bottomPinnedRowsHeight;
+    }
+
     public getBodyViewportHeight(totalViewportHeight: number): number {
         const bodyHeight = totalViewportHeight - this.getTopPinnedRowsOffset() - this.bottomPinnedRowsHeight;
         return Math.max(0, bodyHeight);

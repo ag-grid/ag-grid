@@ -23,6 +23,7 @@ export class AutoScrollService {
     private readonly shouldSkipHorizontalScroll: () => boolean;
 
     private readonly getTopOffset: () => number;
+    private readonly getBottomOffset: () => number;
 
     private readonly onScrollCallback: (() => void) | null = null;
 
@@ -45,6 +46,8 @@ export class AutoScrollService {
         shouldSkipHorizontalScroll?: () => boolean;
         // offset from the top of the scroll container to the start of the scrollable row area.
         getTopOffset?: () => number;
+        // offset from the bottom of the scroll container to the end of the scrollable row area.
+        getBottomOffset?: () => number;
         onScrollCallback?: () => void;
     }) {
         this.scrollContainer = params.scrollContainer;
@@ -70,6 +73,7 @@ export class AutoScrollService {
         this.shouldSkipVerticalScroll = params.shouldSkipVerticalScroll || (() => false);
         this.shouldSkipHorizontalScroll = params.shouldSkipHorizontalScroll || (() => false);
         this.getTopOffset = params.getTopOffset || (() => 0);
+        this.getBottomOffset = params.getBottomOffset || (() => 0);
     }
 
     public check(mouseEvent: MouseEvent | Touch, forceSkipVerticalScroll: boolean = false): void {
@@ -83,11 +87,12 @@ export class AutoScrollService {
         const rect = this.scrollContainer.getBoundingClientRect();
         const scrollTick = this.scrollByTick;
         const topOffset = this.getTopOffset();
+        const bottomOffset = this.getBottomOffset();
 
         this.tickLeft = !skipHorizontalScroll && mouseEvent.clientX < rect.left + scrollTick;
         this.tickRight = !skipHorizontalScroll && mouseEvent.clientX > rect.right - scrollTick;
         this.tickUp = !skipVerticalScroll && mouseEvent.clientY < rect.top + topOffset + scrollTick;
-        this.tickDown = !skipVerticalScroll && mouseEvent.clientY > rect.bottom - scrollTick;
+        this.tickDown = !skipVerticalScroll && mouseEvent.clientY > rect.bottom - bottomOffset - scrollTick;
 
         if (this.tickLeft || this.tickRight || this.tickUp || this.tickDown) {
             this.ensureTickingStarted();

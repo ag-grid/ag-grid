@@ -142,6 +142,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
                 setHorizontalPosition: (position) => gridBodyCtrl.scrollFeature.setHorizontalScrollPosition(position),
                 shouldSkipVerticalScroll: () => !_isDomLayout(this.gos, 'normal'),
                 shouldSkipHorizontalScroll: () => !gridBodyCtrl.scrollFeature.isHorizontalScrollShowing(),
+                getTopOffset: () => gridBodyCtrl.getTopPinnedRowsOffset(),
+                getBottomOffset: () => gridBodyCtrl.getBottomPinnedRowsOffset(),
             });
         });
     }
