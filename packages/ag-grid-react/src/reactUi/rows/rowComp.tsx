@@ -7,7 +7,6 @@ import type {
     ICellRenderer,
     ICellRendererParams,
     IRowComp,
-    PinnedCellGroupWidths,
     RowContainerType,
     RowCtrl,
     RowStyle,
