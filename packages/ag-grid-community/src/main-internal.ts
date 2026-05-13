@@ -521,7 +521,7 @@ export {
 } from './rendering/renderUtils';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 export type { FullWidthTarget } from './rendering/row/iRowModeFeature';
-export type { IRowComp, RowCtrl, RowGui } from './rendering/row/rowCtrl';
+export type { IRowComp, PinnedCellGroupWidths, RowCtrl, RowGui } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
 export { BaseSelectionService } from './selection/baseSelectionService';
 export type { RowRangeSelectionContext } from './selection/rowRangeSelectionContext';

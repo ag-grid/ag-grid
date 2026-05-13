@@ -7,6 +7,7 @@ import type {
     ICellRenderer,
     ICellRendererParams,
     IRowComp,
+    PinnedCellGroupWidths,
     RowContainerType,
     RowCtrl,
     RowStyle,
@@ -58,8 +59,10 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const eFullWidthAnchor = useRef<HTMLDivElement | null>(null);
+    const ePinnedLeftSection = useRef<HTMLDivElement | null>(null);
     const ePinnedLeftCells = useRef<HTMLDivElement | null>(null);
     const eScrollingCells = useRef<HTMLDivElement | null>(null);
+    const ePinnedRightSection = useRef<HTMLDivElement | null>(null);
     const ePinnedRightCells = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
     const fullWidthEmbeddedLeftCompRef = useRef<ICellRenderer>();
@@ -104,6 +107,29 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     if (!cssManager.current) {
         cssManager.current = new CssClassManager(() => eGui.current);
     }
+
+    const setPinnedSectionWidth = (section: HTMLDivElement | null, wrapper: HTMLDivElement | null, width: number) => {
+        const display = width > 0 ? '' : 'none';
+
+        if (section) {
+            section.style.width = `${width}px`;
+            section.style.display = display;
+        }
+
+        if (wrapper) {
+            wrapper.style.width = `${width}px`;
+            wrapper.style.display = display;
+        }
+    };
+
+    const setPinnedCellGroupWidths = ({ leftWidth, centerWidth, rightWidth }: PinnedCellGroupWidths) => {
+        setPinnedSectionWidth(ePinnedLeftSection.current, ePinnedLeftCells.current, leftWidth);
+        setPinnedSectionWidth(ePinnedRightSection.current, ePinnedRightCells.current, rightWidth);
+
+        if (eScrollingCells.current) {
+            eScrollingCells.current.style.width = `${centerWidth}px`;
+        }
+    };
 
     // Setup both approaches to avoid conditionally rendering Hooks even though we don't use both at the same time.
     const cellsChanged = useRef<any>(() => {});
@@ -217,6 +243,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     rightWidth: hasRight ? widths.rightWidth : 0,
                 };
             },
+            setPinnedCellGroupWidths,
             refreshFullWidth: (getUpdatedParams) => {
                 const fullWidthParams = getUpdatedParams();
                 fullWidthParamsRef.current = fullWidthParams;
@@ -469,15 +496,22 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     const renderCellSection = (
         sectionClass: string,
-        sectionRef: React.Ref<HTMLDivElement>,
+        sectionRef: React.Ref<HTMLDivElement> | undefined,
+        wrapperRef: React.Ref<HTMLDivElement>,
         width: number,
-        children: React.ReactNode
+        children: React.ReactNode,
+        pinned: boolean = false
     ) => (
-        <div className={sectionClass} role="presentation">
+        <div
+            className={sectionClass}
+            role="presentation"
+            ref={sectionRef}
+            style={pinned ? { width: `${width}px`, display: width > 0 ? undefined : 'none' } : undefined}
+        >
             <div
                 className="ag-grid-container-wrapper"
                 role="presentation"
-                ref={sectionRef}
+                ref={wrapperRef}
                 style={{ width: width || undefined, display: width > 0 ? undefined : 'none' }}
             >
                 {children}
@@ -498,42 +532,52 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 <>
                     {renderCellSection(
                         'ag-grid-pinned-left-cells',
+                        ePinnedLeftSection,
                         ePinnedLeftCells,
                         leftWidth,
-                        showCellsJsx(leftCellCtrls)
+                        showCellsJsx(leftCellCtrls),
+                        true
                     )}
                     {renderCellSection(
                         'ag-grid-scrolling-cells',
+                        undefined,
                         eScrollingCells,
                         centerWidth,
                         showCellsJsx(centerCellCtrls)
                     )}
                     {renderCellSection(
                         'ag-grid-pinned-right-cells',
+                        ePinnedRightSection,
                         ePinnedRightCells,
                         rightWidth,
-                        showCellsJsx(rightCellCtrls)
+                        showCellsJsx(rightCellCtrls),
+                        true
                     )}
                 </>
             ) : showEmbeddedFullWidth ? (
                 <>
                     {renderCellSection(
                         'ag-grid-pinned-left-cells',
+                        ePinnedLeftSection,
                         ePinnedLeftCells,
                         leftWidth,
-                        showEmbeddedFrameworkSection('left')
+                        showEmbeddedFrameworkSection('left'),
+                        true
                     )}
                     {renderCellSection(
                         'ag-grid-scrolling-cells',
+                        undefined,
                         eScrollingCells,
                         centerWidth,
                         showEmbeddedFrameworkSection('center')
                     )}
                     {renderCellSection(
                         'ag-grid-pinned-right-cells',
+                        ePinnedRightSection,
                         ePinnedRightCells,
                         rightWidth,
-                        showEmbeddedFrameworkSection('right')
+                        showEmbeddedFrameworkSection('right'),
+                        true
                     )}
                 </>
             ) : showFullWidthFramework ? (

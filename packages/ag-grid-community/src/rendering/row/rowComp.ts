@@ -40,8 +40,10 @@ export class RowComp extends Component {
     };
 
     private readonly rowCtrl: RowCtrl;
+    private readonly ePinnedLeftSection: HTMLElement | undefined;
     private readonly ePinnedLeftCells: HTMLElement | undefined;
     private readonly eScrollingCells: HTMLElement | undefined;
+    private readonly ePinnedRightSection: HTMLElement | undefined;
     private readonly ePinnedRightCells: HTMLElement | undefined;
 
     private domOrder: boolean;
@@ -60,8 +62,10 @@ export class RowComp extends Component {
             const centerSection = createCellSection('ag-grid-scrolling-cells');
             const rightSection = createCellSection('ag-grid-pinned-right-cells');
 
+            this.ePinnedLeftSection = leftSection.container;
             this.ePinnedLeftCells = leftSection.wrapper;
             this.eScrollingCells = centerSection.wrapper;
+            this.ePinnedRightSection = rightSection.container;
             this.ePinnedRightCells = rightSection.wrapper;
 
             rowDiv.append(leftSection.container, centerSection.container, rightSection.container);
@@ -92,6 +96,7 @@ export class RowComp extends Component {
             setRowId: (rowId: string) => rowDiv.setAttribute('row-id', rowId),
             setRowBusinessKey: (businessKey) => rowDiv.setAttribute('row-business-key', businessKey),
             mapPinnedCellGroupWidths: (widths) => this.mapPinnedCellGroupWidths(widths),
+            setPinnedCellGroupWidths: (widths) => this.setPinnedCellGroupWidths(widths),
             refreshFullWidth: (getUpdatedParams) => {
                 const params = getUpdatedParams();
                 this.fullWidthCellRendererParams = params;
@@ -243,6 +248,35 @@ export class RowComp extends Component {
             centerWidth: widths.centerWidth + (hasLeft ? 0 : widths.leftWidth) + (hasRight ? 0 : widths.rightWidth),
             rightWidth: hasRight ? widths.rightWidth : 0,
         };
+    }
+
+    private setPinnedCellGroupWidths(widths: PinnedCellGroupWidths): void {
+        const { leftWidth, centerWidth, rightWidth } = widths;
+
+        this.setPinnedSectionWidth(this.ePinnedLeftSection, this.ePinnedLeftCells, leftWidth);
+        this.setPinnedSectionWidth(this.ePinnedRightSection, this.ePinnedRightCells, rightWidth);
+
+        if (this.eScrollingCells) {
+            this.eScrollingCells.style.width = `${centerWidth}px`;
+        }
+    }
+
+    private setPinnedSectionWidth(
+        section: HTMLElement | undefined,
+        wrapper: HTMLElement | undefined,
+        width: number
+    ): void {
+        const display = width > 0 ? '' : 'none';
+
+        if (section) {
+            section.style.width = `${width}px`;
+            section.style.display = display;
+        }
+
+        if (wrapper) {
+            wrapper.style.width = `${width}px`;
+            wrapper.style.display = display;
+        }
     }
 
     private setCellCtrls(cellCtrls: CellCtrl[]): void {

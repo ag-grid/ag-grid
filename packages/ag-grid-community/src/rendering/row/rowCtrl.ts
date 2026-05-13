@@ -70,6 +70,7 @@ export interface IRowComp {
     getFullWidthCellRenderers(): (ICellRenderer | null | undefined)[];
     getFullWidthCellRendererParams(): ICellRendererParams | undefined;
     getFullWidthCellRendererParamsForPinned?(pinned: ColumnPinnedType): ICellRendererParams | undefined;
+    setPinnedCellGroupWidths(widths: PinnedCellGroupWidths): void;
     setTop(top: string): void;
     setTransform(transform: string): void;
     setRowIndex(rowIndex: string): void;
@@ -93,29 +94,6 @@ export interface PinnedCellGroupWidths {
     leftWidth: number;
     centerWidth: number;
     rightWidth: number;
-}
-
-function applyPinnedCellGroupWidthsToElements(
-    widths: PinnedCellGroupWidths,
-    ePinnedLeftCells: HTMLElement | undefined,
-    eScrollingCells: HTMLElement | undefined,
-    ePinnedRightCells: HTMLElement | undefined
-): void {
-    const { leftWidth, centerWidth, rightWidth } = widths;
-
-    if (ePinnedLeftCells) {
-        ePinnedLeftCells.style.width = `${leftWidth}px`;
-        ePinnedLeftCells.style.display = leftWidth > 0 ? '' : 'none';
-    }
-
-    if (eScrollingCells) {
-        eScrollingCells.style.width = `${centerWidth}px`;
-    }
-
-    if (ePinnedRightCells) {
-        ePinnedRightCells.style.width = `${rightWidth}px`;
-        ePinnedRightCells.style.display = rightWidth > 0 ? '' : 'none';
-    }
 }
 
 type RowCtrlEvent = RenderedRowEvent;
@@ -479,12 +457,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
         const baseWidths = this.getPinnedCellGroupWidths();
         const widths = rowGui.rowComp.mapPinnedCellGroupWidths?.(baseWidths) ?? baseWidths;
-        applyPinnedCellGroupWidthsToElements(
-            widths,
-            rowGui.rowComp.getPinnedLeftRowElement(),
-            rowGui.rowComp.getScrollingRowElement(),
-            rowGui.rowComp.getPinnedRightRowElement()
-        );
+        rowGui.rowComp.setPinnedCellGroupWidths(widths);
     }
 
     public getPinnedCellGroupWidths(): PinnedCellGroupWidths {
