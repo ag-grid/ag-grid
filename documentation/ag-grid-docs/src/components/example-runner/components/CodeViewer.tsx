@@ -1,5 +1,4 @@
 import type { InternalFramework } from '@ag-grid-types';
-import Code from '@ag-website-shared/components/code/Code';
 import CodeShiki from '@ag-website-shared/components/code/CodeShiki';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import {
@@ -167,7 +166,6 @@ const FileView = ({ path, code }) => {
     return (
         <>
             <CodeShiki code={code} language={ExtensionMap[extension] || extension} lineNumbers />
-            {/* <Code code={code} language={ExtensionMap[extension] || extension} lineNumbers={true} /> */}
         </>
     );
 };

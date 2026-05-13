@@ -4,16 +4,6 @@
     overflow: auto !important;
 }
 
-// .shikiCode {
-//     :global(span) {
-//         color: var(--shiki-light);
-
-//         #{$selector-darkmode} & {
-//             color: var(--shiki-dark);
-//         }
-//     }
-// }
-
 .lineNumbers {
     .shikiCode {
         padding-left: 3.8em;
