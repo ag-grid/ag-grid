@@ -297,16 +297,16 @@ export class CellCtrl extends BeanStub {
     }
 
     private checkFormulaError() {
-        if (!this.beans.formula) {
+        if (!this.beans.formula?.active) {
             return;
         }
         this.eGui.classList.toggle('formula-error', this.hasFormulaError());
     }
 
     private hasFormulaError(): boolean {
-        const { formula } = this.beans;
+        const formula = this.beans.formula;
 
-        if (!formula) {
+        if (!formula?.active) {
             return false;
         }
 
