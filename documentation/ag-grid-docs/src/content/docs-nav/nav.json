@@ -3,77 +3,33 @@
         {
             "title": "Getting Started",
             "children": [
-                {
-                    "type": "item",
-                    "title": "Quick Start",
-                    "path": "getting-started"
-                },
-                {
-                    "type": "item",
-                    "title": "Key Features",
-                    "path": "key-features"
-                },
-                {
-                    "type": "item",
-                    "title": "Community vs. Enterprise",
-                    "path": "community-vs-enterprise"
-                },
+                { "type": "item", "title": "Quick Start", "path": "getting-started" },
+                { "type": "item", "title": "Key Features", "path": "key-features" },
+                { "type": "item", "title": "Community vs. Enterprise", "path": "community-vs-enterprise" },
                 {
                     "title": "Setup",
                     "type": "group",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Installation",
-                            "path": "installation"
-                        },
-                        {
-                            "title": "Registering Modules",
-                            "path": "modules"
-                        },
-                        {
-                            "title": "Installing Enterprise Licence",
-                            "path": "license-install"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Migration",
-                            "path": "migration"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Codemods",
-                            "path": "codemods"
-                        }
+                        { "type": "item", "title": "Installation", "path": "installation" },
+                        { "title": "Registering Modules", "path": "modules" },
+                        { "title": "Installing Enterprise Licence", "path": "license-install" },
+                        { "type": "item", "title": "Migration", "path": "migration" },
+                        { "type": "item", "title": "Codemods", "path": "codemods" }
                     ]
                 },
                 {
                     "title": "Tutorials",
                     "type": "group",
                     "children": [
-                        {
-                            "title": "Creating a Basic Grid",
-                            "path": "deep-dive"
-                        },
-                        {
-                            "title": "Styling a Grid",
-                            "path": "styling-tutorial"
-                        },
-                        {
-                            "title": "Best Practices",
-                            "path": "react-hooks",
-                            "frameworks": ["react"]
-                        },
+                        { "title": "Creating a Basic Grid", "path": "deep-dive" },
+                        { "title": "Styling a Grid", "path": "styling-tutorial" },
+                        { "title": "Best Practices", "path": "react-hooks", "frameworks": ["react"] },
                         {
                             "title": "Testing",
                             "type": "group",
                             "frameworks": ["angular", "react"],
                             "children": [
-                                {
-                                    "title": "Overview",
-                                    "path": "testing",
-                                    "frameworks": ["angular", "react"]
-                                },
+                                { "title": "Overview", "path": "testing", "frameworks": ["angular", "react"] },
                                 {
                                     "type": "item",
                                     "title": "Testing Async",
@@ -97,12 +53,7 @@
                                 }
                             ]
                         },
-                        {
-                            "title": "Testing",
-                            "type": "item",
-                            "path": "testing",
-                            "frameworks": ["javascript", "vue"]
-                        },
+                        { "title": "Testing", "type": "item", "path": "testing", "frameworks": ["javascript", "vue"] },
                         {
                             "type": "item",
                             "title": "Video Tutorials",
@@ -133,21 +84,9 @@
                     "title": "Compatibility & Security",
                     "type": "group",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Compatibility",
-                            "path": "compatibility"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Security",
-                            "path": "security"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Supported Browsers",
-                            "path": "supported-browsers"
-                        }
+                        { "type": "item", "title": "Compatibility", "path": "compatibility" },
+                        { "type": "item", "title": "Security", "path": "security" },
+                        { "type": "item", "title": "Supported Browsers", "path": "supported-browsers" }
                     ]
                 }
             ]
@@ -155,17 +94,8 @@
         {
             "title": "AI Features",
             "children": [
-                {
-                    "type": "item",
-                    "title": "AI Toolkit",
-                    "path": "ai-toolkit",
-                    "isEnterprise": true
-                },
-                {
-                    "type": "item",
-                    "title": "MCP Server",
-                    "path": "mcp-server"
-                }
+                { "type": "item", "title": "AI Toolkit", "path": "ai-toolkit", "isEnterprise": true },
+                { "type": "item", "title": "MCP Server", "path": "mcp-server" }
             ]
         },
         {
@@ -175,101 +105,25 @@
                     "type": "group",
                     "title": "Theming",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Overview",
-                            "path": "theming"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Built-in Themes",
-                            "path": "themes"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Theme Parameters",
-                            "path": "theming-parameters"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Theme Parts",
-                            "path": "theming-parts"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Colors & Dark Mode",
-                            "path": "theming-colors"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Fonts",
-                            "path": "theming-fonts"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Borders",
-                            "path": "theming-borders"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Compactness & Row Height",
-                            "path": "theming-compactness"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Selections",
-                            "path": "theming-selections"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Headers",
-                            "path": "theming-headers"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Icons",
-                            "path": "custom-icons"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Master Detail",
-                            "path": "theming-master-detail"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Tool Panels",
-                            "path": "theming-tool-panels"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Inputs & Widgets",
-                            "path": "theming-widgets"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Menus & Popups",
-                            "path": "theming-popups"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Extending with CSS",
-                            "path": "theming-css"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Theme Builder",
-                            "path": "theming-theme-builder"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Distributing Shared Themes",
-                            "path": "theming-distribution"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Migration from v32",
-                            "path": "theming-migration"
-                        },
+                        { "type": "item", "title": "Overview", "path": "theming" },
+                        { "type": "item", "title": "Built-in Themes", "path": "themes" },
+                        { "type": "item", "title": "Theme Parameters", "path": "theming-parameters" },
+                        { "type": "item", "title": "Theme Parts", "path": "theming-parts" },
+                        { "type": "item", "title": "Colors & Dark Mode", "path": "theming-colors" },
+                        { "type": "item", "title": "Fonts", "path": "theming-fonts" },
+                        { "type": "item", "title": "Borders", "path": "theming-borders" },
+                        { "type": "item", "title": "Compactness & Row Height", "path": "theming-compactness" },
+                        { "type": "item", "title": "Selections", "path": "theming-selections" },
+                        { "type": "item", "title": "Headers", "path": "theming-headers" },
+                        { "type": "item", "title": "Icons", "path": "custom-icons" },
+                        { "type": "item", "title": "Master Detail", "path": "theming-master-detail" },
+                        { "type": "item", "title": "Tool Panels", "path": "theming-tool-panels" },
+                        { "type": "item", "title": "Inputs & Widgets", "path": "theming-widgets" },
+                        { "type": "item", "title": "Menus & Popups", "path": "theming-popups" },
+                        { "type": "item", "title": "Extending with CSS", "path": "theming-css" },
+                        { "type": "item", "title": "Theme Builder", "path": "theming-theme-builder" },
+                        { "type": "item", "title": "Distributing Shared Themes", "path": "theming-distribution" },
+                        { "type": "item", "title": "Migration from v32", "path": "theming-migration" },
                         {
                             "type": "item",
                             "title": "Legacy Themes",
@@ -297,16 +151,8 @@
                         }
                     ]
                 },
-                {
-                    "type": "item",
-                    "title": "Design System",
-                    "path": "ag-grid-design-system"
-                },
-                {
-                    "type": "item",
-                    "title": "Grid Layout",
-                    "path": "grid-size"
-                }
+                { "type": "item", "title": "Design System", "path": "ag-grid-design-system" },
+                { "type": "item", "title": "Grid Layout", "path": "grid-size" }
             ]
         },
         {
@@ -354,24 +200,14 @@
                                 }
                             ]
                         },
-                        {
-                            "type": "item",
-                            "title": "Sparkline Data",
-                            "path": "sparklines-data",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Sparkline Data", "path": "sparklines-data", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Axis Types",
                             "path": "sparklines-axis-types",
                             "isEnterprise": true
                         },
-                        {
-                            "type": "item",
-                            "title": "Tooltips",
-                            "path": "sparklines-tooltips",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Tooltips", "path": "sparklines-tooltips", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Points of Interest",
@@ -410,12 +246,7 @@
                     "type": "group",
                     "title": "Integrated Charts",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Overview",
-                            "path": "integrated-charts",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Overview", "path": "integrated-charts", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Install Integrated Charts",
@@ -527,13 +358,12 @@
                 {
                     "type": "group",
                     "title": "Standalone Charts",
-                    "children": [
-                        {
-                            "type": "item",
-                            "title": "See AG Charts",
-                            "url": "https://www.ag-grid.com/charts"
-                        }
-                    ]
+                    "children": [{ "type": "item", "title": "See AG Charts", "url": "https://www.ag-grid.com/charts" }]
+                },
+                {
+                    "type": "group",
+                    "title": "Dashboards",
+                    "children": [{ "type": "item", "title": "See AG Studio", "url": "https://www.ag-grid.com/studio" }]
                 }
             ]
         },
@@ -549,21 +379,13 @@
                             "title": "Configuration",
                             "path": "configuration",
                             "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Column Definitions",
-                                    "path": "column-definitions"
-                                },
+                                { "type": "item", "title": "Column Definitions", "path": "column-definitions" },
                                 {
                                     "type": "item",
                                     "title": "Updating Definitions",
                                     "path": "column-updating-definitions"
                                 },
-                                {
-                                    "type": "item",
-                                    "title": "Column State",
-                                    "path": "column-state"
-                                }
+                                { "type": "item", "title": "Column State", "path": "column-state" }
                             ]
                         },
                         {
@@ -571,110 +393,37 @@
                             "title": "Column Headers",
                             "path": "column-headers",
                             "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Styling & Height",
-                                    "path": "column-headers-styling"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Custom Components",
-                                    "path": "column-headers-components"
-                                }
+                                { "type": "item", "title": "Styling & Height", "path": "column-headers-styling" },
+                                { "type": "item", "title": "Custom Components", "path": "column-headers-components" }
                             ]
                         },
-                        {
-                            "type": "item",
-                            "title": "Column Groups",
-                            "path": "column-groups"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Column Sizing",
-                            "path": "column-sizing"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Column Moving",
-                            "path": "column-moving"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Column Pinning",
-                            "path": "column-pinning"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Column Spanning",
-                            "path": "column-spanning"
-                        }
+                        { "type": "item", "title": "Column Groups", "path": "column-groups" },
+                        { "type": "item", "title": "Column Sizing", "path": "column-sizing" },
+                        { "type": "item", "title": "Column Moving", "path": "column-moving" },
+                        { "type": "item", "title": "Column Pinning", "path": "column-pinning" },
+                        { "type": "item", "title": "Column Spanning", "path": "column-spanning" }
                     ]
                 },
                 {
                     "type": "group",
                     "title": "Rows",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Row Data",
-                            "path": "row-ids"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Row Sorting",
-                            "path": "row-sorting"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Row Numbers",
-                            "path": "row-numbers",
-                            "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
-                            "title": "Row Spanning",
-                            "path": "row-spanning"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Row Pinning",
-                            "path": "row-pinning"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Row Height",
-                            "path": "row-height"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Styling Rows",
-                            "path": "row-styles"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Row Pagination",
-                            "path": "row-pagination"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Accessing Rows",
-                            "path": "accessing-data"
-                        },
+                        { "type": "item", "title": "Row Data", "path": "row-ids" },
+                        { "type": "item", "title": "Row Sorting", "path": "row-sorting" },
+                        { "type": "item", "title": "Row Numbers", "path": "row-numbers", "isEnterprise": true },
+                        { "type": "item", "title": "Row Spanning", "path": "row-spanning" },
+                        { "type": "item", "title": "Row Pinning", "path": "row-pinning" },
+                        { "type": "item", "title": "Row Height", "path": "row-height" },
+                        { "type": "item", "title": "Styling Rows", "path": "row-styles" },
+                        { "type": "item", "title": "Row Pagination", "path": "row-pagination" },
+                        { "type": "item", "title": "Accessing Rows", "path": "accessing-data" },
                         {
                             "type": "item",
                             "title": "Row Dragging",
                             "path": "row-dragging",
                             "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Managed Row Dragging",
-                                    "path": "row-dragging-managed"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Unmanaged Row Dragging",
-                                    "path": "row-dragging-unmanaged"
-                                },
+                                { "type": "item", "title": "Managed Row Dragging", "path": "row-dragging-managed" },
+                                { "type": "item", "title": "Unmanaged Row Dragging", "path": "row-dragging-unmanaged" },
                                 {
                                     "type": "item",
                                     "title": "Row Dragging Customisation",
@@ -685,18 +434,10 @@
                                     "title": "External DropZone",
                                     "path": "row-dragging-to-external-dropzone"
                                 },
-                                {
-                                    "type": "item",
-                                    "title": "Grid to Grid",
-                                    "path": "row-dragging-to-grid"
-                                }
+                                { "type": "item", "title": "Grid to Grid", "path": "row-dragging-to-grid" }
                             ]
                         },
-                        {
-                            "type": "item",
-                            "title": "Full Width Rows",
-                            "path": "full-width-rows"
-                        }
+                        { "type": "item", "title": "Full Width Rows", "path": "full-width-rows" }
                     ]
                 },
                 {
@@ -708,26 +449,10 @@
                             "title": "Cell Content",
                             "path": "cell-content",
                             "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Getting Values",
-                                    "path": "value-getters"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Text Formatting",
-                                    "path": "value-formatters"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Cell Components",
-                                    "path": "component-cell-renderer"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Cell Data Types",
-                                    "path": "cell-data-types"
-                                }
+                                { "type": "item", "title": "Getting Values", "path": "value-getters" },
+                                { "type": "item", "title": "Text Formatting", "path": "value-formatters" },
+                                { "type": "item", "title": "Cell Components", "path": "component-cell-renderer" },
+                                { "type": "item", "title": "Cell Data Types", "path": "cell-data-types" }
                             ]
                         },
                         {
@@ -756,89 +481,31 @@
                                 }
                             ]
                         },
-                        {
-                            "type": "item",
-                            "title": "Find",
-                            "path": "find",
-                            "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
-                            "title": "Notes",
-                            "path": "notes",
-                            "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
-                            "title": "Styling Cells",
-                            "path": "cell-styles"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Highlighting Changes",
-                            "path": "change-cell-renderers"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Tooltips",
-                            "path": "tooltips"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Expressions",
-                            "path": "cell-expressions"
-                        },
-                        {
-                            "type": "item",
-                            "title": "View Refresh",
-                            "path": "view-refresh"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Reference Data",
-                            "path": "reference-data"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Cell Text Selection",
-                            "path": "cell-text-selection"
-                        }
+                        { "type": "item", "title": "Find", "path": "find", "isEnterprise": true },
+                        { "type": "item", "title": "Notes", "path": "notes", "isEnterprise": true },
+                        { "type": "item", "title": "Styling Cells", "path": "cell-styles" },
+                        { "type": "item", "title": "Highlighting Changes", "path": "change-cell-renderers" },
+                        { "type": "item", "title": "Tooltips", "path": "tooltips" },
+                        { "type": "item", "title": "Expressions", "path": "cell-expressions" },
+                        { "type": "item", "title": "View Refresh", "path": "view-refresh" },
+                        { "type": "item", "title": "Reference Data", "path": "reference-data" },
+                        { "type": "item", "title": "Cell Text Selection", "path": "cell-text-selection" }
                     ]
                 },
                 {
                     "type": "group",
                     "title": "Filtering",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Overview",
-                            "path": "filtering-overview"
-                        },
+                        { "type": "item", "title": "Overview", "path": "filtering-overview" },
                         {
                             "type": "item",
                             "title": "Column Filters",
                             "path": "filtering",
                             "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Text Filter",
-                                    "path": "filter-text"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Number Filter",
-                                    "path": "filter-number"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "BigInt Filter",
-                                    "path": "filter-bigint"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Date Filter",
-                                    "path": "filter-date"
-                                },
+                                { "type": "item", "title": "Text Filter", "path": "filter-text" },
+                                { "type": "item", "title": "Number Filter", "path": "filter-number" },
+                                { "type": "item", "title": "BigInt Filter", "path": "filter-bigint" },
+                                { "type": "item", "title": "Date Filter", "path": "filter-date" },
                                 {
                                     "type": "item",
                                     "title": "Set Filter",
@@ -889,54 +556,17 @@
                                     "path": "filter-multi",
                                     "isEnterprise": true
                                 },
-                                {
-                                    "type": "item",
-                                    "title": "Filter Conditions",
-                                    "path": "filter-conditions"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Applying Filters",
-                                    "path": "filter-applying"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Filter API",
-                                    "path": "filter-api"
-                                }
+                                { "type": "item", "title": "Filter Conditions", "path": "filter-conditions" },
+                                { "type": "item", "title": "Applying Filters", "path": "filter-applying" },
+                                { "type": "item", "title": "Filter API", "path": "filter-api" }
                             ]
                         },
-                        {
-                            "type": "item",
-                            "title": "Custom Column Filters",
-                            "path": "component-filter"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Floating Filters",
-                            "path": "floating-filters"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Custom Floating Filters",
-                            "path": "component-floating-filter"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Advanced Filter",
-                            "path": "filter-advanced",
-                            "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
-                            "title": "External Filter",
-                            "path": "filter-external"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Quick Filter",
-                            "path": "filter-quick"
-                        }
+                        { "type": "item", "title": "Custom Column Filters", "path": "component-filter" },
+                        { "type": "item", "title": "Floating Filters", "path": "floating-filters" },
+                        { "type": "item", "title": "Custom Floating Filters", "path": "component-floating-filter" },
+                        { "type": "item", "title": "Advanced Filter", "path": "filter-advanced", "isEnterprise": true },
+                        { "type": "item", "title": "External Filter", "path": "filter-external" },
+                        { "type": "item", "title": "Quick Filter", "path": "filter-quick" }
                     ]
                 },
                 {
@@ -948,21 +578,9 @@
                             "title": "Row Selection",
                             "path": "row-selection",
                             "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Single Row Selection",
-                                    "path": "row-selection-single-row"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Multi-Row Selection",
-                                    "path": "row-selection-multi-row"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "API Reference",
-                                    "path": "row-selection-api-reference"
-                                }
+                                { "type": "item", "title": "Single Row Selection", "path": "row-selection-single-row" },
+                                { "type": "item", "title": "Multi-Row Selection", "path": "row-selection-multi-row" },
+                                { "type": "item", "title": "API Reference", "path": "row-selection-api-reference" }
                             ]
                         },
                         {
@@ -997,66 +615,30 @@
                     "type": "group",
                     "title": "Editing",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Overview",
-                            "path": "cell-editing"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Start / Stop Editing",
-                            "path": "cell-editing-start-stop"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Parsing Values",
-                            "path": "value-parsers"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Saving Values",
-                            "path": "value-setters"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Edit Components",
-                            "path": "cell-editors"
-                        },
+                        { "type": "item", "title": "Overview", "path": "cell-editing" },
+                        { "type": "item", "title": "Start / Stop Editing", "path": "cell-editing-start-stop" },
+                        { "type": "item", "title": "Parsing Values", "path": "value-parsers" },
+                        { "type": "item", "title": "Saving Values", "path": "value-setters" },
+                        { "type": "item", "title": "Edit Components", "path": "cell-editors" },
                         {
                             "type": "item",
                             "title": "Provided Cell Editors",
                             "path": "provided-cell-editors",
                             "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Text Editor",
-                                    "path": "provided-cell-editors-text"
-                                },
+                                { "type": "item", "title": "Text Editor", "path": "provided-cell-editors-text" },
                                 {
                                     "type": "item",
                                     "title": "Large Text Editor",
                                     "path": "provided-cell-editors-large-text"
                                 },
-                                {
-                                    "type": "item",
-                                    "title": "Number Editor",
-                                    "path": "provided-cell-editors-number"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Date Editors",
-                                    "path": "provided-cell-editors-date"
-                                },
+                                { "type": "item", "title": "Number Editor", "path": "provided-cell-editors-number" },
+                                { "type": "item", "title": "Date Editors", "path": "provided-cell-editors-date" },
                                 {
                                     "type": "item",
                                     "title": "Checkbox Editor",
                                     "path": "provided-cell-editors-checkbox"
                                 },
-                                {
-                                    "type": "item",
-                                    "title": "Select Editor",
-                                    "path": "provided-cell-editors-select"
-                                },
+                                { "type": "item", "title": "Select Editor", "path": "provided-cell-editors-select" },
                                 {
                                     "type": "item",
                                     "title": "Rich Select Editor",
@@ -1079,27 +661,10 @@
                                 }
                             ]
                         },
-                        {
-                            "type": "item",
-                            "title": "Undo / Redo Edits",
-                            "path": "undo-redo-edits"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Full Row",
-                            "path": "cell-editing-full-row"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Validation",
-                            "path": "cell-editing-validation"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Batch Editing",
-                            "path": "cell-editing-batch",
-                            "isEnterprise": true
-                        }
+                        { "type": "item", "title": "Undo / Redo Edits", "path": "undo-redo-edits" },
+                        { "type": "item", "title": "Full Row", "path": "cell-editing-full-row" },
+                        { "type": "item", "title": "Validation", "path": "cell-editing-validation" },
+                        { "type": "item", "title": "Batch Editing", "path": "cell-editing-batch", "isEnterprise": true }
                     ]
                 },
                 {
@@ -1107,62 +672,22 @@
                     "title": "Updating Data",
                     "path": "data-update",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Row Data",
-                            "path": "data-update-row-data"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Single Row / Cell",
-                            "path": "data-update-single-row-cell"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Transactions",
-                            "path": "data-update-transactions"
-                        },
-                        {
-                            "type": "item",
-                            "title": "High Frequency",
-                            "path": "data-update-high-frequency"
-                        }
+                        { "type": "item", "title": "Row Data", "path": "data-update-row-data" },
+                        { "type": "item", "title": "Single Row / Cell", "path": "data-update-single-row-cell" },
+                        { "type": "item", "title": "Transactions", "path": "data-update-transactions" },
+                        { "type": "item", "title": "High Frequency", "path": "data-update-high-frequency" }
                     ]
                 },
                 {
                     "type": "group",
                     "title": "Interactivity",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Keyboard Navigation",
-                            "path": "keyboard-navigation"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Touch",
-                            "path": "touch"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Accessibility (ARIA)",
-                            "path": "accessibility"
-                        },
-                        {
-                            "type": "item",
-                            "title": "RTL Text Direction",
-                            "path": "rtl"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Aligned Grids",
-                            "path": "aligned-grids"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Localisation",
-                            "path": "localisation"
-                        }
+                        { "type": "item", "title": "Keyboard Navigation", "path": "keyboard-navigation" },
+                        { "type": "item", "title": "Touch", "path": "touch" },
+                        { "type": "item", "title": "Accessibility (ARIA)", "path": "accessibility" },
+                        { "type": "item", "title": "RTL Text Direction", "path": "rtl" },
+                        { "type": "item", "title": "Aligned Grids", "path": "aligned-grids" },
+                        { "type": "item", "title": "Localisation", "path": "localisation" }
                     ]
                 }
             ]
@@ -1174,18 +699,8 @@
                     "type": "group",
                     "title": "Row Grouping",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Overview",
-                            "path": "grouping",
-                            "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
-                            "title": "Grouping Data",
-                            "path": "grouping-data",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Overview", "path": "grouping", "isEnterprise": true },
+                        { "type": "item", "title": "Grouping Data", "path": "grouping-data", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Group Display Types",
@@ -1230,18 +745,8 @@
                             "path": "grouping-row-selection",
                             "isEnterprise": true
                         },
-                        {
-                            "type": "item",
-                            "title": "Sorting",
-                            "path": "grouping-sorting",
-                            "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
-                            "title": "Editing Groups",
-                            "path": "grouping-edit",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Sorting", "path": "grouping-sorting", "isEnterprise": true },
+                        { "type": "item", "title": "Editing Groups", "path": "grouping-edit", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Row Dragging",
@@ -1254,12 +759,7 @@
                     "type": "group",
                     "title": "Aggregation",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Overview",
-                            "path": "aggregation",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Overview", "path": "aggregation", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Configure Columns",
@@ -1278,24 +778,14 @@
                             "path": "aggregation-total-rows",
                             "isEnterprise": true
                         },
-                        {
-                            "type": "item",
-                            "title": "Filtering ",
-                            "path": "aggregation-filtering",
-                            "isEnterprise": true
-                        }
+                        { "type": "item", "title": "Filtering ", "path": "aggregation-filtering", "isEnterprise": true }
                     ]
                 },
                 {
                     "type": "group",
                     "title": "Pivoting",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Overview",
-                            "path": "pivoting",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Overview", "path": "pivoting", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Pivot Result Columns",
@@ -1308,24 +798,14 @@
                             "path": "pivoting-column-groups",
                             "isEnterprise": true
                         },
-                        {
-                            "type": "item",
-                            "title": "Pivot Totals",
-                            "path": "pivoting-totals",
-                            "isEnterprise": true
-                        }
+                        { "type": "item", "title": "Pivot Totals", "path": "pivoting-totals", "isEnterprise": true }
                     ]
                 },
                 {
                     "type": "group",
                     "title": "Tree Data",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Overview",
-                            "path": "tree-data",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Overview", "path": "tree-data", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Supplying Data",
@@ -1370,12 +850,7 @@
                             "path": "tree-data-selection",
                             "isEnterprise": true
                         },
-                        {
-                            "type": "item",
-                            "title": "Filtering",
-                            "path": "tree-data-filtering",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Filtering", "path": "tree-data-filtering", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Tree Row Dragging",
@@ -1388,12 +863,7 @@
                     "type": "group",
                     "title": "Master Detail",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Overview",
-                            "path": "master-detail",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Overview", "path": "master-detail", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Detail Grids",
@@ -1418,24 +888,14 @@
                             "path": "master-detail-master-rows",
                             "isEnterprise": true
                         },
-                        {
-                            "type": "item",
-                            "title": "Nesting",
-                            "path": "master-detail-nesting",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Nesting", "path": "master-detail-nesting", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Custom Detail",
                             "path": "master-detail-custom-detail",
                             "isEnterprise": true
                         },
-                        {
-                            "type": "item",
-                            "title": "Other",
-                            "path": "master-detail-other",
-                            "isEnterprise": true
-                        }
+                        { "type": "item", "title": "Other", "path": "master-detail-other", "isEnterprise": true }
                     ]
                 },
                 {
@@ -1448,12 +908,7 @@
                             "path": "tool-panel",
                             "isEnterprise": true,
                             "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Side Bar",
-                                    "path": "side-bar",
-                                    "isEnterprise": true
-                                },
+                                { "type": "item", "title": "Side Bar", "path": "side-bar", "isEnterprise": true },
                                 {
                                     "type": "item",
                                     "title": "Columns Tool Panel",
@@ -1480,51 +935,23 @@
                                 }
                             ]
                         },
-                        {
-                            "type": "item",
-                            "title": "Quick Access Toolbar",
-                            "path": "toolbar",
-                            "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
-                            "title": "Column Menu",
-                            "path": "column-menu",
-                            "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
-                            "title": "Context Menu",
-                            "path": "context-menu",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Quick Access Toolbar", "path": "toolbar", "isEnterprise": true },
+                        { "type": "item", "title": "Column Menu", "path": "column-menu", "isEnterprise": true },
+                        { "type": "item", "title": "Context Menu", "path": "context-menu", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Menu Item Component",
                             "path": "component-menu-item",
                             "isEnterprise": true
                         },
-                        {
-                            "type": "item",
-                            "title": "Status Bar",
-                            "path": "status-bar",
-                            "isEnterprise": true
-                        },
+                        { "type": "item", "title": "Status Bar", "path": "status-bar", "isEnterprise": true },
                         {
                             "type": "item",
                             "title": "Overlays",
                             "path": "overlays-overview",
                             "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Provided Overlays",
-                                    "path": "overlays-provided"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Active Overlay",
-                                    "path": "overlays-active"
-                                }
+                                { "type": "item", "title": "Provided Overlays", "path": "overlays-provided" },
+                                { "type": "item", "title": "Active Overlay", "path": "overlays-active" }
                             ]
                         }
                     ]
@@ -1533,11 +960,7 @@
                     "type": "group",
                     "title": "Server-Side Data",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Row Models",
-                            "path": "row-models"
-                        },
+                        { "type": "item", "title": "Row Models", "path": "row-models" },
                         {
                             "type": "item",
                             "title": "Server-Side Row Model",
@@ -1686,28 +1109,15 @@
                                 }
                             ]
                         },
-                        {
-                            "type": "item",
-                            "title": "Infinite Row Model",
-                            "path": "infinite-scrolling"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Viewport Row Model",
-                            "path": "viewport",
-                            "isEnterprise": true
-                        }
+                        { "type": "item", "title": "Infinite Row Model", "path": "infinite-scrolling" },
+                        { "type": "item", "title": "Viewport Row Model", "path": "viewport", "isEnterprise": true }
                     ]
                 },
                 {
                     "type": "group",
                     "title": "Import & Export",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "CSV Export",
-                            "path": "csv-export"
-                        },
+                        { "type": "item", "title": "CSV Export", "path": "csv-export" },
                         {
                             "type": "item",
                             "title": "Excel Export",
@@ -1768,12 +1178,7 @@
                                     "path": "excel-export-multiple-sheets",
                                     "isEnterprise": true
                                 },
-                                {
-                                    "type": "item",
-                                    "title": "Rows",
-                                    "path": "excel-export-rows",
-                                    "isEnterprise": true
-                                },
+                                { "type": "item", "title": "Rows", "path": "excel-export-rows", "isEnterprise": true },
                                 {
                                     "type": "item",
                                     "title": "Columns",
@@ -1818,90 +1223,32 @@
                                 }
                             ]
                         },
-                        {
-                            "type": "item",
-                            "title": "Clipboard",
-                            "path": "clipboard",
-                            "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
-                            "title": "Drag & Drop",
-                            "path": "drag-and-drop"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Printing",
-                            "path": "printing"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Import Excel",
-                            "path": "excel-import"
-                        }
+                        { "type": "item", "title": "Clipboard", "path": "clipboard", "isEnterprise": true },
+                        { "type": "item", "title": "Drag & Drop", "path": "drag-and-drop" },
+                        { "type": "item", "title": "Printing", "path": "printing" },
+                        { "type": "item", "title": "Import Excel", "path": "excel-import" }
                     ]
                 },
                 {
                     "type": "group",
                     "title": "State & Lifecycle",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Grid State",
-                            "path": "grid-state"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Grid Context",
-                            "path": "context"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Grid Lifecycle",
-                            "path": "grid-lifecycle"
-                        }
+                        { "type": "item", "title": "Grid State", "path": "grid-state" },
+                        { "type": "item", "title": "Grid Context", "path": "context" },
+                        { "type": "item", "title": "Grid Lifecycle", "path": "grid-lifecycle" }
                     ]
                 },
                 {
                     "type": "group",
                     "title": "Performance",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Change Detection",
-                            "path": "change-detection"
-                        },
-                        {
-                            "type": "item",
-                            "title": "DOM Virtualisation",
-                            "path": "dom-virtualisation"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Value Cache",
-                            "path": "value-cache"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Row Animation",
-                            "path": "row-animation"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Massive Row Count",
-                            "path": "massive-row-count"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Scrolling Performance",
-                            "path": "scrolling-performance"
-                        },
-                        {
-                            "type": "item",
-                            "title": "NgZone",
-                            "path": "angular-ngzone",
-                            "frameworks": ["angular"]
-                        }
+                        { "type": "item", "title": "Change Detection", "path": "change-detection" },
+                        { "type": "item", "title": "DOM Virtualisation", "path": "dom-virtualisation" },
+                        { "type": "item", "title": "Value Cache", "path": "value-cache" },
+                        { "type": "item", "title": "Row Animation", "path": "row-animation" },
+                        { "type": "item", "title": "Massive Row Count", "path": "massive-row-count" },
+                        { "type": "item", "title": "Scrolling Performance", "path": "scrolling-performance" },
+                        { "type": "item", "title": "NgZone", "path": "angular-ngzone", "frameworks": ["angular"] }
                     ]
                 }
             ]
