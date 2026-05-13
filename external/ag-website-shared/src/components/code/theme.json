@@ -481,6 +481,12 @@
             }
         },
         {
+            "scope": ["support.type.property-name.json"],
+            "settings": {
+                "foreground": "var(--color-code-tag)"
+            }
+        },
+        {
             "scope": [
                 "support.constant.property-value",
                 "support.constant.font-name",
