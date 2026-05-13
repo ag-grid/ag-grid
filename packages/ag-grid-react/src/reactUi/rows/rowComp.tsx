@@ -108,29 +108,6 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         cssManager.current = new CssClassManager(() => eGui.current);
     }
 
-    const setPinnedSectionWidth = (section: HTMLDivElement | null, wrapper: HTMLDivElement | null, width: number) => {
-        const display = width > 0 ? '' : 'none';
-
-        if (section) {
-            section.style.width = `${width}px`;
-            section.style.display = display;
-        }
-
-        if (wrapper) {
-            wrapper.style.width = `${width}px`;
-            wrapper.style.display = display;
-        }
-    };
-
-    const setPinnedCellGroupWidths = ({ leftWidth, centerWidth, rightWidth }: PinnedCellGroupWidths) => {
-        setPinnedSectionWidth(ePinnedLeftSection.current, ePinnedLeftCells.current, leftWidth);
-        setPinnedSectionWidth(ePinnedRightSection.current, ePinnedRightCells.current, rightWidth);
-
-        if (eScrollingCells.current) {
-            eScrollingCells.current.style.width = `${centerWidth}px`;
-        }
-    };
-
     // Setup both approaches to avoid conditionally rendering Hooks even though we don't use both at the same time.
     const cellsChanged = useRef<any>(() => {});
     const sub = useCallback((onStoreChange: any) => {
@@ -243,7 +220,6 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     rightWidth: hasRight ? widths.rightWidth : 0,
                 };
             },
-            setPinnedCellGroupWidths,
             refreshFullWidth: (getUpdatedParams) => {
                 const fullWidthParams = getUpdatedParams();
                 fullWidthParamsRef.current = fullWidthParams;

@@ -70,7 +70,6 @@ export interface IRowComp {
     getFullWidthCellRenderers(): (ICellRenderer | null | undefined)[];
     getFullWidthCellRendererParams(): ICellRendererParams | undefined;
     getFullWidthCellRendererParamsForPinned?(pinned: ColumnPinnedType): ICellRendererParams | undefined;
-    setPinnedCellGroupWidths(widths: PinnedCellGroupWidths): void;
     setTop(top: string): void;
     setTransform(transform: string): void;
     setRowIndex(rowIndex: string): void;
@@ -456,9 +455,37 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (!rowGui) {
             return;
         }
+        const { rowComp } = rowGui;
         const baseWidths = this.getPinnedCellGroupWidths();
-        const widths = rowGui.rowComp.mapPinnedCellGroupWidths?.(baseWidths) ?? baseWidths;
-        rowGui.rowComp.setPinnedCellGroupWidths(widths);
+        const widths = rowComp.mapPinnedCellGroupWidths?.(baseWidths) ?? baseWidths;
+
+        this.setPinnedSectionWidth(rowComp.getPinnedLeftRowElement(), widths.leftWidth);
+        this.setPinnedSectionWidth(rowComp.getPinnedRightRowElement(), widths.rightWidth);
+
+        const eScrolling = rowComp.getScrollingRowElement();
+        if (eScrolling) {
+            eScrolling.style.width = `${widths.centerWidth}px`;
+        }
+    }
+
+    private setPinnedSectionWidth(wrapper: HTMLElement | undefined, width: number): void {
+        if (!wrapper) {
+            return;
+        }
+        const display = width > 0 ? '' : 'none';
+        const widthPx = `${width}px`;
+
+        const setStyles = (e: HTMLElement) => {
+            e.style.width = widthPx;
+            e.style.display = display;
+        };
+
+        setStyles(wrapper);
+
+        const section = wrapper.parentElement;
+        if (section) {
+            setStyles(section);
+        }
     }
 
     public getPinnedCellGroupWidths(): PinnedCellGroupWidths {
