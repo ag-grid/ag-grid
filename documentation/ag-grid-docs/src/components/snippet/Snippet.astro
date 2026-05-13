@@ -1,5 +1,6 @@
 ---
 import CodeShiki, { LanguageMap } from '@ag-website-shared/components/code/CodeShiki';
+import agDocsTheme from '@ag-website-shared/components/code/theme.json';
 import { getFrameworkFromPath } from '@components/docs/utils/urlPaths';
 import he from 'he';
 import { codeToHtml } from 'shiki';
@@ -43,11 +44,7 @@ const snippet = frameworkTransform
 
 const preHighlightedHtml = await codeToHtml(snippet, {
     lang: shikiLang,
-    themes: {
-        light: 'github-light',
-        dark: 'github-dark',
-    },
-    defaultColor: false,
+    theme: agDocsTheme as Parameters<typeof codeToHtml>[1]['theme'],
 });
 ---
 
