@@ -28,6 +28,9 @@ const gridOptions = {
                     <span data-ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>
                     <span data-ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>
                     <span data-ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>
+                    <span data-ref="eSortAbsoluteAsc" class="ag-header-icon ag-sort-absolute-ascending-icon"></span>
+                    <span data-ref="eSortAbsoluteDesc" class="ag-header-icon ag-sort-absolute-descending-icon"></span>
+                    <span data-ref="eSortMixed" class="ag-header-icon ag-sort-mixed-icon"></span>
                     <span data-ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>
                     ** <span data-ref="eText" class="ag-header-cell-text" role="columnheader"></span>
                     <span data-ref="eFilter" class="ag-header-icon ag-filter-icon"></span>
@@ -41,7 +44,7 @@ const gridOptions = {
 The example below demonstrates a custom template. Note that specifying your own templates is compatible with other configurations:
 
 - `suppressHeaderFilterButton` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
-- `sortable=false` is specified in: **Age**, **Year**, **Sport**, **Silver** and **Total** columns
+- `sortable=false` is specified in: **Age**, **Year**, **Date**, **Sport**, **Silver** and **Total** columns
 - **Gold** is the only column that doesn't have `sortable=false` or `suppressHeaderFilterButton`
 
 {% gridExampleRunner title="Header template" name="header-template" /%}
@@ -62,6 +65,7 @@ This is the default template used in AG Grid:
         <span data-ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon" aria-hidden="true"></span>
         <span data-ref="eSortAbsoluteAsc" class="ag-header-icon ag-header-label-icon ag-sort-absolute-ascending-icon ag-hidden"></span>
         <span data-ref="eSortAbsoluteDesc" class="ag-header-icon ag-header-label-icon ag-sort-absolute-descending-icon ag-hidden"></span>
+        <span data-ref="eSortMixed" class="ag-header-icon ag-header-label-icon ag-sort-mixed-icon ag-hidden"></span>
         <span data-ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon" aria-hidden="true"></span>
     </div>
 </div>
@@ -81,6 +85,7 @@ When you provide your own template, everything should work as expected as long a
 | `eSortDesc`         | If the column is sorted descending, this shows the descending icon.                                                                                            |
 | `eSortAbsoluteAsc`  | If the column is sorted absolute ascending, this shows the absolute ascending icon.                                                                            |
 | `eSortAbsoluteDesc` | If the column is sorted absolute descending, this shows the absolute descending icon.                                                                          |
+| `eSortMixed`        | If the column has a mixed sort state (e.g. grouped data with differing sort directions), this shows the mixed sort icon.                                       |
 | `eSortNone`         | If no sort is applied, this shows the no sort icon. Note this icon by default is empty.                                                                        |
 
 The `data-ref` parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.

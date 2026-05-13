@@ -11,12 +11,12 @@ class CustomButtonComponent {
 
     init() {
         this.eGui = document.createElement('div');
-        const eButton = document.createElement('button');
-        eButton.className = 'btn-simple';
-        eButton.textContent = 'Push Me!';
+        this.eButton = document.createElement('button');
+        this.eButton.className = 'btn-simple';
+        this.eButton.textContent = 'Push Me!';
         this.eventListener = () => console.log('clicked');
-        eButton.addEventListener('click', this.eventListener);
-        this.eGui.appendChild(eButton);
+        this.eButton.addEventListener('click', this.eventListener);
+        this.eGui.appendChild(this.eButton);
     }
 
     getGui() {

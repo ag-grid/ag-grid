@@ -13,7 +13,11 @@ This example demonstrates the ability to re-order multiple AG Grid instances wit
 
 ## Updating Row Data without RowIds
 
-This example tests the rendering behavior of AG Grid when updating row data without specifying `rowId` properties. This has lead to collapsing cells in the past and now there is a difference between renderingModes.
+This example tests the rendering behavior of AG Grid when updating row data without specifying `rowId` properties. This has lead to collapsing cells in the past.
+
+### Pre Version 35.3
+
+**Without getRowId Callback**
 
 - `renderingMode: 'legacy'` - There is no flashing of rows, but when throttling the CPU, then after some time the grid crashes with an error.
 
@@ -23,9 +27,21 @@ Uncaught Error: Maximum update depth exceeded. This can happen when a component 
 
 - `renderingMode: 'default'` - The grid does not crash, but there is flashing of rows when the data is updated.
 
-{% note %}
+**With getRowId Callback**
+
 When `getRowId` is provided both work as expected, without flashing and without crashing.
-{% /note %}
+
+### Post Version 35.3
+
+Improvements were made in v35.3
+
+**Without getRowId Callback**
+
+No flickering and no Maximum update depth when throttling `legacy` mode. Only flicker is visible on the row highlight.
+
+**With getRowId Callback**
+
+Both work as expected.
 
 {% gridExampleRunner title="Updating Row Data without RowIds" name="updating-row-data-without-row-ids" /%}
 

@@ -93,9 +93,12 @@ All parameters ending "Scale" are scale values, which are multiplied by other va
 
 All parameters ending "Shadow" are shadow values. These can accept any [valid CSS box-shadow value](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow), such as `2px 2px 4px 2px rgba(0, 0, 0, 0.5)` and variable expressions (`var(--myShadowVar)`). In addition, the following syntax is supported:
 
-| Syntax                                                                          | Description                                                                                                                                                                                                                             |
-| ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `{ offsetX: 2, offsetY: 2, radius: 4, spread: 2, color: 'rgba(0, 0, 0, 0.5)' }` | An object with 5 optional properties. `offsetX`, `offsetY`, `radius` and `spread` take any [length value](#length-values) and default to 0. `color` takes any [color value](#color-values) and defaults to `{ ref: 'foregroundColor' }` |
+| Syntax                                                                                        | Description                                                                                                                                                                                                                                                           |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `{ offsetX: 2, offsetY: 2, radius: 4, spread: 2, color: 'rgba(0, 0, 0, 0.5)', inset: false }` | An object with 6 optional properties. `offsetX`, `offsetY`, `radius` and `spread` take any [length value](#length-values) and default to 0. `color` takes any [color value](#color-values) and defaults to `{ ref: 'foregroundColor' }`. `inset` defaults to `false`. |
+| Array of objects                                                                              | Pass an array of shadow objects to apply multiple stacked shadows, e.g. `[{ offsetY: 1, radius: 2 }, { offsetY: 4, radius: 8 }]`.                                                                                                                                     |
+| `{ ref: 'cardShadow' }`                                                                       | Use the same value as the `cardShadow` parameter.                                                                                                                                                                                                                     |
+| `false`                                                                                       | A shorthand for `'none'` (no shadow).                                                                                                                                                                                                                                 |
 
 ### Image Values
 
@@ -112,4 +115,9 @@ All parameters ending "ColorScheme" (and there is only one: `browserColorScheme`
 
 ### Duration Values
 
-All parameters ending "Duration" are duration values. These can accept any [valid CSS time value](https://developer.mozilla.org/en-US/docs/Web/CSS/time), such as `1s`, `500ms` and variable expressions (`var(--myAnimationDelayTime)`).
+All parameters ending "Duration" are duration values. These can accept any [valid CSS time value](https://developer.mozilla.org/en-US/docs/Web/CSS/time), such as `'1s'`, `'500ms'` and variable expressions (`'var(--myAnimationDelayTime)'`). In addition, the following syntax is supported:
+
+| Syntax                         | Description                                                                |
+| ------------------------------ | -------------------------------------------------------------------------- |
+| `0.4`                          | A plain number is treated as a number of seconds, so `0.4` becomes `0.4s`. |
+| `{ ref: 'someOtherDuration' }` | Use the same value as another duration parameter.                          |

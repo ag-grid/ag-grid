@@ -136,7 +136,7 @@ const App = () => {
     const [clickedCount, setClickedCount] = useState(0);
 
     // GOOD callback, no hook, no stale data
-    const onCellClicked = () => setClickedRow(clickedCount++);
+    const onCellClicked = () => setClickedCount(clickedCount + 1);
 
     // BAD callback - stale data, dependency missing, will ALWAYS print 0
     const onCellValueChanged = useCallback( ()=> {

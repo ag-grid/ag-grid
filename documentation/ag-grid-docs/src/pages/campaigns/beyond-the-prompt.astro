@@ -94,55 +94,74 @@ const AGENDA_SECTIONS: AgendaSection[] = [
             },
             {
                 time: '11:35 – 12:00',
-                title: 'One-click agentic SDLC',
-                speakers: 'Mats Bryntse (Founder & CEO, Bryntum)',
+                title: 'AI in AG Studio',
+                speakers: 'Josh Hobson (Developer, AG Grid)',
                 description:
-                    'A demo of a headless Claude workflow, built by Bryntum CEO Mats, that turns GitHub issues into mergeable PRs, with agents doing the work, and a custom Kanban UI keeping things in check.',
+                    "How do you build a dashboard you can't see? A behind-the-scenes look at AG Studio's multi-agent architecture and the client-side tools that let any LLM build reports it otherwise couldn't.",
             },
-            { time: '12:00 – 13:10', title: 'Lunch and product demos', isBreak: true },
+            {
+                time: '12:00 – 12:25',
+                title: 'Bringing AI to the Canvas',
+                speakers: 'Steve Ruiz (CEO, tldraw)',
+                description: `At tldraw, we've been bringing agents to our infinite canvas. In December 2025, we ran a one-month experiment named Fairydraw where users could work with three fairies - virtual collaborators who work with you, with your human collaborators, and coordinate together on large tasks.`,
+            },
+            { time: '12:25 – 13:35', title: 'Lunch and product demos', isBreak: true },
         ],
     },
     {
         label: 'Afternoon',
         items: [
             {
-                time: '13:10 – 13:40',
+                time: '13:35 – 14:05',
                 title: 'Debugging CSS performance with AI',
-                speakers: 'Bernie Sumption (Engineer, AG Grid)',
+                speakers: 'Bernie Sumption (Developer, AG Grid)',
                 description:
                     'CSS performance issues can be subtle and time-consuming. This talk will show you how you can guide AI to uncover bugs without needing to learn the intricacies of CSS rendering internals.',
             },
             {
-                time: '13:40 – 14:05',
-                title: 'AI in AG Studio',
-                speakers: 'Josh Hobson (Developer, AG Grid)',
+                time: '14:05 – 14:20',
+                title: 'Software that moves fleets: Lessons from AG Grid, Bryntum, and Beyond',
+                speakers: 'Patrick Rau (Developer, TCS)',
                 description:
-                    "How do you build a dashboard you can't see? A behind-the-scenes look at AG Studio's multi-agent architecture and the client-side tools that let any LLM build reports it otherwise couldn't.",
+                    "In aviation, the software has to be rock solid. Patrick pulls back the curtain on the components powering Fleetplan's UI, including AG Grid, Bryntum's Scheduler Pro, and the modules behind audit tracking and safety reporting that keep operations airtight.",
             },
-            { time: '14:05 – 14:30', title: 'Customer Showcase', description: 'TBA' },
-            { time: '14:30 – 15:00', title: 'Coffee break', isBreak: true },
             {
-                time: '15:00 – 15:30',
+                time: '14:20 – 14:50',
                 title: 'Product Roadmap',
                 speakers: 'Johan Isaksson (Head of Engineering, Bryntum) & Adam Wang (AG Studio Product Lead, AG Grid)',
                 description: "A detailed look at our upcoming roadmap, covering AG Grid and Bryntum's suite of tools.",
             },
+            { time: '14:50 – 15:20', title: 'Coffee break', isBreak: true },
             {
-                time: '15:30 – 16:15',
-                title: 'Panel Discussion',
-                speakers:
-                    'Maggie Appleton (Staff Research Engineer, GitHub), Matt Pocock (Senior Developer Educator, AI Hero), & Sophie Koonin (Web Discipline Lead, Monzo)',
-                description: 'TBA',
+                time: '15:20 – 15:45',
+                title: 'One-click agentic SDLC',
+                speakers: 'Mats Bryntse (Founder & CEO, Bryntum)',
+                description:
+                    'A demo of a headless Claude workflow, built by Bryntum CEO Mats, that turns GitHub issues into mergeable PRs, with agents doing the work, and a custom Kanban UI keeping things in check.',
             },
             {
-                time: '16:15 – 16:45',
+                time: '15:45 – 16:30',
+                title: 'How agentic AI Is reshaping software engineering',
+                speakers:
+                    'Maggie Appleton (Staff Research Engineer, GitHub), Matt Pocock (Senior Developer Educator, AI Hero), Sophie Koonin (Web Discipline Lead, Monzo), Phil Hawksworth (MC)',
+                description:
+                    'As AI reshapes how software gets built, what actually changes for engineers, teams, and developer tools? This panel explores the real-world impact of agentic workflows on software engineering - from code review and system design to cognitive skills, ownership, and developer experience. Expect practical insights, rapid-fire hot takes, and honest discussion from engineers building beyond the prompt.',
+            },
+            {
+                time: '16:30 – 17:00',
                 title: 'Vibe Coding as a Maker',
                 speakers: 'Matt Webb',
                 description:
                     'Matt will show his vibe coding experiments, from his AI clock to an app that points to the centre of the galaxy, and share some learnings from building hardware at his startup, Inanimate. Then we ask: what are the limits of vibing and agentic coding? And how might we create libraries that agents love?',
                 keepDefaultPortraitScale: true,
             },
-            { time: '17:00 – 20:00', title: 'Networking reception', isBreak: true },
+
+            {
+                time: '17:00 – 17:10',
+                title: 'Closing Remarks',
+                description: 'Closing thoughts to wrap up the day and set the stage for the networking reception.',
+            },
+            { time: '17:10 – 20:00', title: 'Networking reception', isBreak: true },
         ],
     },
 ];
@@ -192,6 +211,13 @@ const SPEAKERS: Speaker[] = [
         imageFit: 'contain',
     },
     {
+        name: 'Steve Ruiz',
+        title: 'CEO, tldraw',
+        bio: `A developer, designer, and now startup founder in London. With a background in visual art, Steve works primarily in creative tools for the web. He is known for tldraw, and demos of perfect arrows.`,
+        image: 'images/campaigns/beyond-the-prompt/svg/steve-ruiz.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/steve-ruiz-bg.svg',
+    },
+    {
         name: 'Matt Pocock',
         title: 'Senior Developer Educator, AI Hero',
         bio: `Matt is a senior developer educator at AI Hero, a TypeScript author, and an educator passionate about bringing real software engineering rigour to the age of AI. He co-organizes the AI Coding for Real Engineers cohort, a community for experienced developers who want to build with AI tools without throwing away everything they already know. Outside of the keyboard, Matt enjoys long runs through the Oxfordshire countryside, loudly supporting Arsenal, and experimenting with new ways to make complex ideas click for developers everywhere.`,
@@ -218,6 +244,13 @@ const SPEAKERS: Speaker[] = [
         bio: `Adam is the AG Studio Product Lead at AG Grid, with around 10 years of experience in product management across various disciplines. He previously worked on AG Grid Integrated Charts before focusing on AG Studio. He enjoys the creative process of product management and is keen to solve problems by truly understanding user needs. Outside of work, he's a spin instructor who loves to put together a fire playlist. He also collects coloured vinyl.`,
         image: 'images/campaigns/beyond-the-prompt/svg/adam.svg',
         imageOrange: 'images/campaigns/beyond-the-prompt/svg/adam-orange-bg.svg',
+    },
+    {
+        name: 'Patrick Rau',
+        title: 'Senior Developer, TCS',
+        bio: `Patrick builds and maintains core parts of Team Centric Software's fleetplan platform, specializing in UI integration and complex components like AG Grid, Bryntum's Scheduler Pro, and modules for audit tracking and safety reporting. He's driven by a passion for creating software that makes a real difference for the people who use it. When he's not solving problems at work, you'll find him exploring new technologies through personal projects, gaming, or planning his next trip.`,
+        image: 'images/campaigns/beyond-the-prompt/svg/patrick-rau.svg',
+        imageOrange: 'images/campaigns/beyond-the-prompt/svg/patrick-rau-bg.svg',
     },
     {
         name: 'Johan Isaksson',

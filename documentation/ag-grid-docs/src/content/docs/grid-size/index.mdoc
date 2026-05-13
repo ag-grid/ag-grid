@@ -3,8 +3,7 @@ title: "Grid Layout"
 description: "Format the grid layout for your $framework Table. Change grid width/height, assign a DOM layout value, format dynamic resizing."
 ---
 
-Under normal usage, your application should set the width and height of the grid using CSS styles. The grid will then fit the width you provide
-and use scrolling inside the grid to allow all rows and columns to be viewed.
+Set the width, height and scrolling behaviour of the grid.
 
 {% if isFramework("javascript") %}
 
@@ -92,7 +91,7 @@ This example is best seen when opened in a new tab - then change the horizontal 
 
 ### Dynamic Vertical Resizing
 
-Sometimes the vertical height of the grid is greater than the number of rows you have it in. You can dynamically set the row heights to fill the available height as the following example shows:
+Sometimes the grid is taller than the rows it contains. You can dynamically set the row heights to fill the available height as the following example shows:
 
 {% gridExampleRunner title="Dynamic vertical resizing" name="example2" /%}
 
@@ -123,11 +122,11 @@ The example below demonstrates the autoHeight feature. Notice the following:
 - The height will also adjust as you filter, to add and remove rows.
 - If you have pinned rows, the grid will size to accommodate the pinned rows.
 - Vertical scrolling will not happen, however horizontal scrolling, including pinned columns, will work as normal.
-- It is possible to move the grid into and out of 'full height' mode by using the `api.setGridOption('domLayout', layout)` or by changing the bound property `domLayout`.
+- You can switch the grid into and out of auto-height mode by calling `api.setGridOption('domLayout', layout)` or by changing the bound `domLayout` property.
 
 {% note %}
-The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.
-Note that if you use the example inlined the scroll bars shown are for the containing `iframe`, not the grid.
+The following example is best viewed in a new tab, so it is obvious that there are no scroll bars.
+When viewed inline below, the scroll bars shown are for the containing iframe, not the grid.
 {% /note %}
 
 {% gridExampleRunner title="Auto Height" name="auto-height"  exampleHeight=580 /%}

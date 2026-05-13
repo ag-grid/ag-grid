@@ -1,10 +1,7 @@
 import type { DebugElement } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed, fakeAsync, flush } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-
-import { AgGridAngular } from 'ag-grid-angular';
 
 import { AppComponent } from './app.component';
 
@@ -17,8 +14,7 @@ describe('AppComponent', () => {
 
     beforeEach(async () => {
         TestBed.configureTestingModule({
-            declarations: [AppComponent],
-            imports: [AgGridAngular, FormsModule],
+            imports: [AppComponent],
         });
 
         fixture = TestBed.createComponent(AppComponent);

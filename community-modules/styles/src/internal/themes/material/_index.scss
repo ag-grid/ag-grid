@@ -26,8 +26,11 @@
         background-color: var(--ag-subheader-background-color);
     }
 
-    .ag-toolbar {
+    .ag-toolbar-item:where(:not(.ag-toolbar-panel)) {
         font-weight: 600;
+    }
+
+    .ag-toolbar-item {
         font-size: calc(var(--ag-font-size) - 1px);
     }
 
