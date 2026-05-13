@@ -1,5 +1,5 @@
 import { Alert } from '@ag-website-shared/components/alert/Alert';
-import Code from '@ag-website-shared/components/code/Code';
+import CodeShiki from '@ag-website-shared/components/code/CodeShiki';
 import { Tabs } from '@ag-website-shared/components/tabs/Tabs';
 import { Checkmark, Copy, Upload } from '@carbon/icons-react';
 import styled from '@emotion/styled';
@@ -101,7 +101,7 @@ const ExportTabContent = ({ codeRef }: { codeRef: RefObject<HTMLDivElement | nul
         <TabContentInner>
             <HelpText />
             <CodeWrapper ref={codeRef} onClick={selectAllCode}>
-                <Code code={codeSample} language="js" />
+                <CodeShiki code={codeSample} language="js" />
             </CodeWrapper>
             <ButtonRow>
                 <DownloadLink className="button-tertiary" href={downloadLink} download="ag-grid-theme-builder.js">

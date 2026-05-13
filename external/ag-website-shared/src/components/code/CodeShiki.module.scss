@@ -2,6 +2,10 @@
 
 .shikiPre {
     overflow: auto !important;
+
+    :global(.line) {
+        -webkit-font-smoothing: subpixel-antialiased;
+    }
 }
 
 .shikiPre:global(.language-bash),
