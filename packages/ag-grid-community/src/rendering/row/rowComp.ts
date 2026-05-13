@@ -10,7 +10,7 @@ import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
 import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
 import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import type { IRowComp, PinnedCellGroupWidths, RowCtrl } from './rowCtrl';
+import type { IRowComp, RowCtrl } from './rowCtrl';
 
 const createCellSection = (sectionClass: string): { container: HTMLElement; wrapper: HTMLElement } => {
     const wrapper = _createElement({
@@ -32,12 +32,6 @@ export class RowComp extends Component {
     private fullWidthCellRendererParams: ICellRendererParams | undefined;
     private fullWidthCellRenderersBySection: Partial<HorizontalSectionMap<ICellRendererComp | null>> = {};
     private fullWidthCellRendererParamsBySection: Partial<HorizontalSectionMap<ICellRendererParams>> = {};
-    private isEmbeddedFullWidth = false;
-    private embeddedSectionHasContent: HorizontalSectionMap<boolean> = {
-        left: true,
-        center: true,
-        right: true,
-    };
 
     private readonly rowCtrl: RowCtrl;
     private readonly ePinnedLeftSection: HTMLElement | undefined;
@@ -97,7 +91,6 @@ export class RowComp extends Component {
             setRowIndex: (rowIndex) => rowDiv.setAttribute('row-index', rowIndex),
             setRowId: (rowId: string) => rowDiv.setAttribute('row-id', rowId),
             setRowBusinessKey: (businessKey) => rowDiv.setAttribute('row-business-key', businessKey),
-            mapPinnedCellGroupWidths: (widths) => this.mapPinnedCellGroupWidths(widths),
             refreshFullWidth: (getUpdatedParams) => {
                 const params = getUpdatedParams();
                 this.fullWidthCellRendererParams = params;
@@ -126,7 +119,6 @@ export class RowComp extends Component {
     }
 
     private showFullWidth(compDetails: UserCompDetails): void {
-        this.isEmbeddedFullWidth = false;
         const eRow = this.getGui();
         const eAnchor = _createElement({ tag: 'div', cls: 'ag-full-width-anchor', role: 'presentation' });
         eRow.appendChild(eAnchor);
@@ -146,10 +138,6 @@ export class RowComp extends Component {
     }
 
     private showEmbeddedFullWidth(compDetails: HorizontalSectionMap<UserCompDetails>): void {
-        this.isEmbeddedFullWidth = true;
-        this.embeddedSectionHasContent.left = true;
-        this.embeddedSectionHasContent.center = true;
-        this.embeddedSectionHasContent.right = true;
         this.showEmbeddedFullWidthSection('left', compDetails.left, this.ePinnedLeftCells);
         this.showEmbeddedFullWidthSection('center', compDetails.center, this.eScrollingCells);
         this.showEmbeddedFullWidthSection('right', compDetails.right, this.ePinnedRightCells);
@@ -179,7 +167,7 @@ export class RowComp extends Component {
             // the first child element has any child elements or text content.
             const firstEl = host.firstElementChild;
             const hasContent = firstEl != null && (firstEl.childElementCount > 0 || !!firstEl.textContent?.trim());
-            this.embeddedSectionHasContent[section] = hasContent;
+            this.rowCtrl.setEmbeddedSectionHasContent(section, hasContent);
             this.setEmbeddedFullWidthRowComp(section, cellRenderer, compDetails.params);
             this.rowCtrl.refreshPinnedCellGroupWidths();
         };
@@ -211,7 +199,7 @@ export class RowComp extends Component {
     }
 
     private getAllFullWidthCellRenderers(): (ICellRendererComp | null | undefined)[] {
-        if (this.isEmbeddedFullWidth) {
+        if (this.rowCtrl.isEmbeddedFullWidth) {
             const { left, center, right } = this.fullWidthCellRenderersBySection;
             return [left, center, right].filter((r): r is ICellRendererComp => r != null);
         }
@@ -234,21 +222,6 @@ export class RowComp extends Component {
             return 'right';
         }
         return 'center';
-    }
-
-    private mapPinnedCellGroupWidths(widths: PinnedCellGroupWidths): PinnedCellGroupWidths {
-        if (!this.isEmbeddedFullWidth) {
-            return widths;
-        }
-
-        const hasLeft = this.embeddedSectionHasContent.left;
-        const hasRight = this.embeddedSectionHasContent.right;
-
-        return {
-            leftWidth: hasLeft ? widths.leftWidth : 0,
-            centerWidth: widths.centerWidth + (hasLeft ? 0 : widths.leftWidth) + (hasRight ? 0 : widths.rightWidth),
-            rightWidth: hasRight ? widths.rightWidth : 0,
-        };
     }
 
     private setCellCtrls(cellCtrls: CellCtrl[]): void {

@@ -43,6 +43,8 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         }
 
         if (this.shouldCreateCellSections() && rowComp.showEmbeddedFullWidth) {
+            this.rowCtrl.isEmbeddedFullWidth = true;
+            this.rowCtrl.embeddedSectionHasContent = { left: true, center: true, right: true };
             rowComp.showEmbeddedFullWidth({
                 left: this.createFullWidthCompDetails(rowComp.getPinnedLeftRowElement() ?? eRow, 'left'),
                 center: this.createFullWidthCompDetails(rowComp.getScrollingRowElement() ?? eRow, null),
@@ -50,6 +52,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
             });
             this.rowCtrl.refreshPinnedCellGroupWidths();
         } else {
+            this.rowCtrl.isEmbeddedFullWidth = false;
             const compDetails = this.createFullWidthCompDetails(eRow, null);
             rowComp.showFullWidth(compDetails);
             this.rowCtrl.refreshPinnedCellGroupWidths();

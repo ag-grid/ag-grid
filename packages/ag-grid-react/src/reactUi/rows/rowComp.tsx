@@ -67,17 +67,11 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     const fullWidthEmbeddedLeftCompRef = useRef<ICellRenderer>();
     const fullWidthEmbeddedCenterCompRef = useRef<ICellRenderer>();
     const fullWidthEmbeddedRightCompRef = useRef<ICellRenderer>();
-    const isEmbeddedFullWidthRef = useRef(false);
     const fullWidthParamsRef = useRef<ICellRendererParams>();
     const fullWidthEmbeddedLeftParamsRef = useRef<ICellRendererParams>();
     const fullWidthEmbeddedCenterParamsRef = useRef<ICellRendererParams>();
     const fullWidthEmbeddedRightParamsRef = useRef<ICellRendererParams>();
-    const [embeddedSectionHasContent, setEmbeddedSectionHasContent] = useState({
-        left: true,
-        center: true,
-        right: true,
-    });
-    const embeddedSectionHasContentRef = useRef(embeddedSectionHasContent);
+    const [embeddedSectionHasContent, setEmbeddedSectionHasContent] = useState(() => rowCtrl.embeddedSectionHasContent);
 
     const autoHeightSetup = useRef<boolean>(false);
     const [autoHeightSetupAttempt, setAutoHeightSetupAttempt] = useState<number>(0);
@@ -173,7 +167,6 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             getPinnedRightRowElement: () => ePinnedRightCells.current ?? undefined,
             getPinnedRightSectionElement: () => ePinnedRightSection.current ?? undefined,
             showFullWidth: (compDetails) => {
-                isEmbeddedFullWidthRef.current = false;
                 embeddedFullWidthCompDetailsRef.current = undefined;
                 setEmbeddedFullWidthCompDetails(undefined);
                 setEmbeddedSectionHasContent({ left: true, center: true, right: true });
@@ -181,7 +174,6 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 setFullWidthCompDetails(compDetails);
             },
             showEmbeddedFullWidth: (compDetails) => {
-                isEmbeddedFullWidthRef.current = true;
                 setFullWidthCompDetails(undefined);
                 setEmbeddedSectionHasContent({ left: true, center: true, right: true });
                 fullWidthEmbeddedLeftParamsRef.current = compDetails.left.params;
@@ -191,7 +183,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 setEmbeddedFullWidthCompDetails(compDetails);
             },
             getFullWidthCellRenderers: () => {
-                if (isEmbeddedFullWidthRef.current) {
+                if (rowCtrl.isEmbeddedFullWidth) {
                     return [
                         fullWidthEmbeddedLeftCompRef.current,
                         fullWidthEmbeddedCenterCompRef.current,
@@ -208,19 +200,6 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     : pinned === 'right'
                       ? fullWidthEmbeddedRightParamsRef.current
                       : fullWidthEmbeddedCenterParamsRef.current,
-            mapPinnedCellGroupWidths: (widths) => {
-                if (!isEmbeddedFullWidthRef.current) {
-                    return widths;
-                }
-                const hasLeft = embeddedSectionHasContentRef.current.left;
-                const hasRight = embeddedSectionHasContentRef.current.right;
-                return {
-                    leftWidth: hasLeft ? widths.leftWidth : 0,
-                    centerWidth:
-                        widths.centerWidth + (hasLeft ? 0 : widths.leftWidth) + (hasRight ? 0 : widths.rightWidth),
-                    rightWidth: hasRight ? widths.rightWidth : 0,
-                };
-            },
             refreshFullWidth: (getUpdatedParams) => {
                 const fullWidthParams = getUpdatedParams();
                 fullWidthParamsRef.current = fullWidthParams;
@@ -280,14 +259,14 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     'left',
                     leftParams,
                     leftRef,
-                    embeddedSectionHasContentRef.current.left
+                    rowCtrl.embeddedSectionHasContent.left
                 );
                 const centerRefreshed = refreshSection('center', centerParams, centerRef, true);
                 const rightRefreshed = refreshSection(
                     'right',
                     rightParams,
                     rightRef,
-                    embeddedSectionHasContentRef.current.right
+                    rowCtrl.embeddedSectionHasContent.right
                 );
 
                 if (nextDetails) {
@@ -350,6 +329,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 center: !!eScrollingCells.current?.firstElementChild,
                 right: !!ePinnedRightCells.current?.firstElementChild,
             };
+            rowCtrl.embeddedSectionHasContent = next;
             setEmbeddedSectionHasContent((prev) =>
                 prev.left === next.left && prev.center === next.center && prev.right === next.right ? prev : next
             );
@@ -403,21 +383,10 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         };
     }, [cellCtrlsMerged]);
 
-    const { leftWidth, centerWidth, rightWidth } = useMemo(() => {
-        const baseWidths = rowCtrl.getPinnedCellGroupWidths();
-        if (!showEmbeddedFullWidth) {
-            return baseWidths;
-        }
-
-        const hasLeft = embeddedSectionHasContent.left;
-        const hasRight = embeddedSectionHasContent.right;
-        return {
-            leftWidth: hasLeft ? baseWidths.leftWidth : 0,
-            centerWidth:
-                baseWidths.centerWidth + (hasLeft ? 0 : baseWidths.leftWidth) + (hasRight ? 0 : baseWidths.rightWidth),
-            rightWidth: hasRight ? baseWidths.rightWidth : 0,
-        };
-    }, [rowCtrl, showEmbeddedFullWidth, embeddedSectionHasContent]);
+    const { leftWidth, centerWidth, rightWidth } = useMemo(
+        () => rowCtrl.getMappedPinnedCellGroupWidths(),
+        [rowCtrl, showEmbeddedFullWidth, embeddedSectionHasContent]
+    );
 
     const reactFullWidthCellRendererStateless = useMemo(() => {
         const res =
@@ -431,9 +400,6 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         canRefreshFullWidthRef.current =
             reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gos.get('reactiveCustomComponents');
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
-    useEffect(() => {
-        embeddedSectionHasContentRef.current = embeddedSectionHasContent;
-    }, [embeddedSectionHasContent]);
 
     const showCellsJsx = (cellCtrls: CellCtrl[]) =>
         cellCtrls.map((cellCtrl) => (

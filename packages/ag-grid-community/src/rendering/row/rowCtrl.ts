@@ -36,7 +36,7 @@ import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallb
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
-import type { HorizontalSectionMap } from '../../interfaces/iGridSection';
+import type { HorizontalSection, HorizontalSectionMap } from '../../interfaces/iGridSection';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { IRowStyleFeature } from '../../interfaces/iRowStyleFeature';
@@ -79,7 +79,6 @@ export interface IRowComp {
     setRowBusinessKey(businessKey: string): void;
     setUserStyles(styles: RowStyle | undefined): void;
     refreshFullWidth(getUpdatedParams: () => ICellRendererParams): boolean;
-    mapPinnedCellGroupWidths?(widths: PinnedCellGroupWidths): PinnedCellGroupWidths;
     refreshEmbeddedFullWidth?(getUpdatedParams: (pinned: ColumnPinnedType) => ICellRendererParams): boolean;
 }
 
@@ -135,6 +134,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public businessKey: string | null = null;
     private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
     public rowEditStyleFeature?: IRowStyleFeature;
+
+    public isEmbeddedFullWidth = false;
+    public embeddedSectionHasContent: HorizontalSectionMap<boolean> = {
+        left: true,
+        center: true,
+        right: true,
+    };
 
     constructor(
         public readonly rowNode: RowNode,
@@ -452,14 +458,17 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return !this.beans.rowSpanSvc?.isCellSpanning(cell.column, this.rowNode);
     }
 
+    public setEmbeddedSectionHasContent(section: HorizontalSection, hasContent: boolean): void {
+        this.embeddedSectionHasContent[section] = hasContent;
+    }
+
     public refreshPinnedCellGroupWidths(): void {
         const rowGui = this.rowGui;
         if (!rowGui) {
             return;
         }
         const { rowComp } = rowGui;
-        const baseWidths = this.getPinnedCellGroupWidths();
-        const widths = rowComp.mapPinnedCellGroupWidths?.(baseWidths) ?? baseWidths;
+        const widths = this.getMappedPinnedCellGroupWidths();
 
         this.setPinnedSectionWidth(
             rowComp.getPinnedLeftRowElement(),
@@ -476,6 +485,24 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (eScrolling) {
             eScrolling.style.width = `${widths.centerWidth}px`;
         }
+    }
+
+    public getMappedPinnedCellGroupWidths(): PinnedCellGroupWidths {
+        const baseWidths = this.getPinnedCellGroupWidths();
+
+        if (!this.isEmbeddedFullWidth) {
+            return baseWidths;
+        }
+
+        const hasLeft = this.embeddedSectionHasContent.left;
+        const hasRight = this.embeddedSectionHasContent.right;
+
+        return {
+            leftWidth: hasLeft ? baseWidths.leftWidth : 0,
+            centerWidth:
+                baseWidths.centerWidth + (hasLeft ? 0 : baseWidths.leftWidth) + (hasRight ? 0 : baseWidths.rightWidth),
+            rightWidth: hasRight ? baseWidths.rightWidth : 0,
+        };
     }
 
     private setPinnedSectionWidth(
