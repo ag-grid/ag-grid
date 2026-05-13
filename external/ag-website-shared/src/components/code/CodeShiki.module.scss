@@ -1,0 +1,45 @@
+@use 'design-system' as *;
+
+.shikiPre {
+    overflow: auto !important;
+}
+
+// .shikiCode {
+//     :global(span) {
+//         color: var(--shiki-light);
+
+//         #{$selector-darkmode} & {
+//             color: var(--shiki-dark);
+//         }
+//     }
+// }
+
+.lineNumbers {
+    .shikiCode {
+        padding-left: 3.8em;
+        position: relative;
+
+        :global(.line) {
+            display: block;
+            counter-increment: shiki-line;
+            // hack for linenumber spacing
+            margin-bottom: -23px;
+
+            &::before {
+                content: counter(shiki-line);
+                display: inline-block;
+                width: 2em;
+                margin-left: -3.5em;
+                margin-right: 1em;
+                text-align: right;
+                color: var(--color-util-brand-500);
+                opacity: 0.33;
+
+                #{$selector-darkmode} & {
+                    color: var(--color-fg-primary);
+                    opacity: 0.33;
+                }
+            }
+        }
+    }
+}

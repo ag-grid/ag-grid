@@ -91,6 +91,7 @@
     "react-markdown": "5.0.3",
     "react-shadow": "^20.4.0",
     "sass": "^1.77.8",
+    "shiki": "^4.0.2",
     "typescript": "~5.4.5",
     "vite-plugin-svgr": "^4.5.0",
     "vue": "^3.5.13"

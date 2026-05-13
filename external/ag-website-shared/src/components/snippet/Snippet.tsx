@@ -1,6 +1,7 @@
 import type { Framework } from '@ag-grid-types';
 import Code from '@ag-website-shared/components/code/Code';
 import type { Language } from '@ag-website-shared/components/code/Code';
+import CodeShiki from '@ag-website-shared/components/code/CodeShiki';
 import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
 import * as snippetTransformer from '@components/snippet/snippetTransformer';
 
@@ -56,7 +57,13 @@ export const Snippet = (props: Props) => {
         : content;
 
     return (
-        <Code
+        // <Code
+        //     code={snippet}
+        //     language={language ? language : (languages[framework] as Language)}
+        //     lineNumbers={lineNumbers}
+        //     copyToClipboard={copyToClipboard}
+        // />
+        <CodeShiki
             code={snippet}
             language={language ? language : (languages[framework] as Language)}
             lineNumbers={lineNumbers}
