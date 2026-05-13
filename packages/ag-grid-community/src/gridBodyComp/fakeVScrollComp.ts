@@ -39,12 +39,13 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         const { ctrlsSvc } = this.beans;
         ctrlsSvc.register('fakeVScrollComp', this);
 
+        const queueContainerHeightSync = this.queueContainerHeightSync.bind(this);
         this.addManagedEventListeners({
             rowContainerHeightChanged: this.onRowContainerHeightChanged.bind(this, ctrlsSvc),
             headerHeightChanged: this.onScrollVisibilityChanged.bind(this),
-            pinnedRowsChanged: this.queueContainerHeightSync.bind(this),
-            pinnedHeightChanged: this.queueContainerHeightSync.bind(this),
-            pinnedRowDataChanged: this.queueContainerHeightSync.bind(this),
+            pinnedRowsChanged: queueContainerHeightSync,
+            pinnedHeightChanged: queueContainerHeightSync,
+            pinnedRowDataChanged: queueContainerHeightSync,
         });
         this.addManagedPropertyListeners(
             ['suppressHorizontalScroll', 'enableRtl'],

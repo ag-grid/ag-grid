@@ -718,15 +718,16 @@ export class GridBodyScrollFeature extends BeanStub {
         const newHorizontalScroll: number | null = this.getPositionedHorizontalScroll(column, position);
 
         frameworkOverrides.wrapIncoming(() => {
+            const ctrl = this.ctrlsSvc.getGridBodyCtrl();
             if (newHorizontalScroll !== null) {
-                this.ctrlsSvc.getGridBodyCtrl()?.setHorizontalScrollLeft(newHorizontalScroll);
+                ctrl?.setHorizontalScrollLeft(newHorizontalScroll);
             }
 
             // this will happen anyway, as the move will cause a 'scroll' event on the body, however
             // it is possible that the ensureColumnVisible method is called from within AG Grid and
             // the caller will need to have the columns rendered to continue, which will be before
             // the event has been worked on (which is the case for cell navigation).
-            this.ctrlsSvc.getGridBodyCtrl()?.updateColumnViewport();
+            ctrl?.updateColumnViewport();
 
             // so when we return back to user, the cells have rendered
             this.animationFrameSvc?.flushAllFrames();

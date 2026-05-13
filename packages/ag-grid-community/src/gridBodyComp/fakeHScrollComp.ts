@@ -87,10 +87,11 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     }
 
     private setContainerWidth(): void {
+        const visibleCols = this.visibleCols;
         const width =
-            this.visibleCols.bodyWidth +
-            this.visibleCols.getLeftStickyColumnContainerWidth() +
-            this.visibleCols.getRightStickyColumnContainerWidth();
+            visibleCols.bodyWidth +
+            visibleCols.getLeftStickyColumnContainerWidth() +
+            visibleCols.getRightStickyColumnContainerWidth();
         this.eContainer.style.width = `${Math.max(width, 1)}px`;
     }
 

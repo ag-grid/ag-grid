@@ -40,16 +40,17 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
             }
             this.eSecondaryContainers = uniqueViewports.map((viewport) => [viewport]);
         });
-
+        const buildMoveFeature = (type: ColumnPinnedType) => this.createManagedBean(new MoveColumnFeature(type));
         this.moveColumnFeatures = {
-            left: this.createManagedBean(new MoveColumnFeature('left')),
-            center: this.createManagedBean(new MoveColumnFeature(null)),
-            right: this.createManagedBean(new MoveColumnFeature('right')),
+            left: buildMoveFeature('left'),
+            center: buildMoveFeature(null),
+            right: buildMoveFeature('right'),
         };
+        const buildDropTarget = (type: ColumnPinnedType) => this.createManagedBean(new BodyDropPivotTarget(type));
         this.bodyDropPivotTargets = {
-            left: this.createManagedBean(new BodyDropPivotTarget('left')),
-            center: this.createManagedBean(new BodyDropPivotTarget(null)),
-            right: this.createManagedBean(new BodyDropPivotTarget('right')),
+            left: buildDropTarget('left'),
+            center: buildDropTarget(null),
+            right: buildDropTarget('right'),
         };
 
         dragAndDrop!.addDropTarget(this);
