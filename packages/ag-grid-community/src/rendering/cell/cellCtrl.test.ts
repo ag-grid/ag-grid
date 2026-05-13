@@ -17,6 +17,7 @@ describe('CellCtrl', () => {
         };
         (ctrl as unknown as { beans: Partial<BeanCollection> }).beans = {
             formula: {
+                active: true,
                 getFormulaError: vi.fn(() => (formulaError ? { message: 'Formula error' } : null)),
             },
             editModelSvc: {
