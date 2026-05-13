@@ -49,7 +49,7 @@ export class TouchService extends BeanStub implements NamedBean {
             if (cellCtrl?.column) {
                 cellCtrl.dispatchCellContextMenuEvent(touchEvent ?? null);
             }
-            this.beans.contextMenuSvc?.handleContextMenuMouseEvent(undefined, touchEvent, rowCtrl, cellCtrl!);
+            this.beans.contextMenuSvc?.handleContextMenuMouseEvent(undefined, touchEvent, rowCtrl, cellCtrl);
         };
         this.mockContextMenu(ctrl, ctrl.element, listener);
     }

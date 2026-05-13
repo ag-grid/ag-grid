@@ -217,12 +217,15 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         mouseEvent: MouseEvent | undefined,
         touchEvent: TouchEvent | undefined,
         rowCtrl: RowCtrl | null,
-        cellCtrl: CellCtrl
+        cellCtrl: CellCtrl | null
     ): void {
         // prio cell ctrl first, in case of spanned cell, then rowCtrl in case of full width row
         const fullWidthInfo = rowCtrl?.findInfoForEvent(mouseEvent || touchEvent);
         const rowNode = cellCtrl?.rowNode ?? rowCtrl?.rowNode ?? null;
-        const column = cellCtrl?.column ?? fullWidthInfo?.column ?? rowCtrl?.getNavigationColumn() ?? null;
+        const column =
+            cellCtrl?.column ??
+            fullWidthInfo?.column ??
+            (rowCtrl?.isFullWidth() ? rowCtrl.getNavigationColumn() : null);
         const noteParams: GetNoteParams | undefined = cellCtrl
             ? { rowNode: cellCtrl.rowNode, column: cellCtrl.column }
             : rowCtrl && fullWidthInfo

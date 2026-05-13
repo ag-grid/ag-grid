@@ -47,6 +47,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
     const [embeddedFullWidthCompDetails, setEmbeddedFullWidthCompDetails] =
         useState<HorizontalSectionMap<UserCompDetails>>();
+    const embeddedFullWidthCompDetailsRef = useRef<HorizontalSectionMap<UserCompDetails>>();
 
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
@@ -169,6 +170,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             getPinnedRightRowElement: () => ePinnedRightCells.current ?? undefined,
             showFullWidth: (compDetails) => {
                 isEmbeddedFullWidthRef.current = false;
+                embeddedFullWidthCompDetailsRef.current = undefined;
                 setEmbeddedFullWidthCompDetails(undefined);
                 setEmbeddedSectionHasContent({ left: true, center: true, right: true });
                 fullWidthParamsRef.current = compDetails.params;
@@ -181,6 +183,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 fullWidthEmbeddedLeftParamsRef.current = compDetails.left.params;
                 fullWidthEmbeddedCenterParamsRef.current = compDetails.center.params;
                 fullWidthEmbeddedRightParamsRef.current = compDetails.right.params;
+                embeddedFullWidthCompDetailsRef.current = compDetails;
                 setEmbeddedFullWidthCompDetails(compDetails);
             },
             getFullWidthCellRenderers: () => {
@@ -243,9 +246,50 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 const centerRef = fullWidthEmbeddedCenterCompRef.current;
                 const rightRef = fullWidthEmbeddedRightCompRef.current;
 
-                const leftRefreshed = leftRef?.refresh?.(leftParams) ?? !embeddedSectionHasContentRef.current.left;
-                const centerRefreshed = centerRef?.refresh?.(centerParams) ?? true;
-                const rightRefreshed = rightRef?.refresh?.(rightParams) ?? !embeddedSectionHasContentRef.current.right;
+                const currentDetails = embeddedFullWidthCompDetailsRef.current;
+                let nextDetails: HorizontalSectionMap<UserCompDetails> | undefined;
+
+                const refreshSection = (
+                    section: HorizontalSection,
+                    params: ICellRendererParams,
+                    renderer: ICellRenderer | undefined,
+                    hasContent: boolean
+                ): boolean => {
+                    const details = currentDetails?.[section];
+                    const isStatelessFrameworkRenderer =
+                        !!details?.componentFromFramework && isComponentStateless(details.componentClass);
+
+                    if (isStatelessFrameworkRenderer) {
+                        if (!gos.get('reactiveCustomComponents') || !currentDetails) {
+                            return false;
+                        }
+
+                        nextDetails ??= { ...currentDetails };
+                        nextDetails[section] = { ...details, params };
+                        return true;
+                    }
+
+                    return renderer?.refresh?.(params) ?? !hasContent;
+                };
+
+                const leftRefreshed = refreshSection(
+                    'left',
+                    leftParams,
+                    leftRef,
+                    embeddedSectionHasContentRef.current.left
+                );
+                const centerRefreshed = refreshSection('center', centerParams, centerRef, true);
+                const rightRefreshed = refreshSection(
+                    'right',
+                    rightParams,
+                    rightRef,
+                    embeddedSectionHasContentRef.current.right
+                );
+
+                if (nextDetails) {
+                    embeddedFullWidthCompDetailsRef.current = nextDetails;
+                    setEmbeddedFullWidthCompDetails(nextDetails);
+                }
 
                 return leftRefreshed && centerRefreshed && rightRefreshed;
             },

@@ -64,7 +64,7 @@ export class RowContainerEventsFeature extends BeanStub {
             if (cellCtrl?.column) {
                 cellCtrl.dispatchCellContextMenuEvent(mouseEvent);
             }
-            this.beans.contextMenuSvc?.handleContextMenuMouseEvent(mouseEvent, undefined, rowCtrl, cellCtrl!);
+            this.beans.contextMenuSvc?.handleContextMenuMouseEvent(mouseEvent, undefined, rowCtrl, cellCtrl);
         } else {
             if (cellCtrl) {
                 cellCtrl.onMouseEvent(eventName, mouseEvent);

@@ -13,7 +13,7 @@ export interface IContextMenuService {
         mouseEvent: MouseEvent | undefined,
         touchEvent: TouchEvent | undefined,
         rowComp: RowCtrl | null,
-        cellCtrl: CellCtrl
+        cellCtrl: CellCtrl | null
     ): void;
 }
 
