@@ -63,8 +63,10 @@ export interface IRowComp {
     toggleCss(cssClassName: string, on: boolean): void;
     setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
     getPinnedLeftRowElement(): HTMLElement | undefined;
+    getPinnedLeftSectionElement(): HTMLElement | undefined;
     getScrollingRowElement(): HTMLElement | undefined;
     getPinnedRightRowElement(): HTMLElement | undefined;
+    getPinnedRightSectionElement(): HTMLElement | undefined;
     showFullWidth(compDetails: UserCompDetails): void;
     showEmbeddedFullWidth?(compDetails: HorizontalSectionMap<UserCompDetails>): void;
     getFullWidthCellRenderers(): (ICellRenderer | null | undefined)[];
@@ -459,8 +461,16 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const baseWidths = this.getPinnedCellGroupWidths();
         const widths = rowComp.mapPinnedCellGroupWidths?.(baseWidths) ?? baseWidths;
 
-        this.setPinnedSectionWidth(rowComp.getPinnedLeftRowElement(), widths.leftWidth);
-        this.setPinnedSectionWidth(rowComp.getPinnedRightRowElement(), widths.rightWidth);
+        this.setPinnedSectionWidth(
+            rowComp.getPinnedLeftRowElement(),
+            rowComp.getPinnedLeftSectionElement(),
+            widths.leftWidth
+        );
+        this.setPinnedSectionWidth(
+            rowComp.getPinnedRightRowElement(),
+            rowComp.getPinnedRightSectionElement(),
+            widths.rightWidth
+        );
 
         const eScrolling = rowComp.getScrollingRowElement();
         if (eScrolling) {
@@ -468,7 +478,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    private setPinnedSectionWidth(wrapper: HTMLElement | undefined, width: number): void {
+    private setPinnedSectionWidth(
+        wrapper: HTMLElement | undefined,
+        section: HTMLElement | undefined,
+        width: number
+    ): void {
         if (!wrapper) {
             return;
         }
@@ -482,7 +496,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         setStyles(wrapper);
 
-        const section = wrapper.parentElement;
         if (section) {
             setStyles(section);
         }

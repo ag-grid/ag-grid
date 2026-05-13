@@ -168,8 +168,10 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 }
             },
             getPinnedLeftRowElement: () => ePinnedLeftCells.current ?? undefined,
+            getPinnedLeftSectionElement: () => ePinnedLeftSection.current ?? undefined,
             getScrollingRowElement: () => eScrollingCells.current ?? undefined,
             getPinnedRightRowElement: () => ePinnedRightCells.current ?? undefined,
+            getPinnedRightSectionElement: () => ePinnedRightSection.current ?? undefined,
             showFullWidth: (compDetails) => {
                 isEmbeddedFullWidthRef.current = false;
                 embeddedFullWidthCompDetailsRef.current = undefined;
