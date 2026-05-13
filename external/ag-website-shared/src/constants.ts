@@ -24,7 +24,7 @@ export const CONTACT_FORM_DATA = {
         messagePlaceholder: 'Tell us about your interest in AG Grid',
         leadSource: 'AG Grid Contact Form',
         formLocationId: '00NQ500000CVgqT',
-        captchaSettingsKeyName: 'agGridStagingV2',
+        captchaSettingsKeyName: 'agGridComV2',
     },
 };
 
