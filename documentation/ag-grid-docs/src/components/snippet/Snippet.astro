@@ -42,10 +42,10 @@ const snippet = frameworkTransform
       })
     : content;
 
-const preHighlightedHtml = await codeToHtml(snippet, {
+const preHighlightedHtml = await codeToHtml(snippet.trimEnd(), {
     lang: shikiLang,
-    theme: agDocsTheme as Parameters<typeof codeToHtml>[1]['theme'],
-});
+    theme: agDocsTheme,
+} as any);
 ---
 
 <CodeShiki

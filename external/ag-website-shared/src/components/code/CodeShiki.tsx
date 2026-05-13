@@ -58,7 +58,9 @@ function highlight(code: string, language: Language, keepMarkup: boolean): Promi
         return Promise.resolve(cache.get(key)!);
     }
 
-    const { cleanCode, decorations } = keepMarkup ? extractDecorations(code) : { cleanCode: code, decorations: [] };
+    const { cleanCode, decorations } = keepMarkup
+        ? extractDecorations(code.trimEnd())
+        : { cleanCode: code.trimEnd(), decorations: [] };
 
     return highlighterPromise.then((hl) => {
         const html = hl.codeToHtml(cleanCode, {
