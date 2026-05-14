@@ -49,8 +49,7 @@ function getRowAreaTopOffset(beans: BeanCollection, event: MouseEvent | { x: num
     const { eGridViewport, eScrollingRows } = beans.ctrlsSvc.getGridBodyCtrl();
 
     const eventWithDropZone = event as { dropZoneTarget?: EventTarget | null };
-    const viewport = eventWithDropZone.dropZoneTarget;
-    const eViewport = (viewport ? viewport : eGridViewport) as HTMLElement;
+    const eViewport = (eventWithDropZone.dropZoneTarget ?? eGridViewport) as HTMLElement;
 
     if (!eScrollingRows) {
         return 0;

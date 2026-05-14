@@ -390,12 +390,14 @@ function calculateValidMoves(params: {
 }
 
 function getSectionElement(pinned: ColumnPinnedType, ctrlsSvc: CtrlsService): HTMLElement | null {
-    const sectionClass =
-        pinned === 'left'
-            ? 'ag-grid-pinned-left-cells'
-            : pinned === 'right'
-              ? 'ag-grid-pinned-right-cells'
-              : 'ag-grid-scrolling-cells';
+    let sectionClass: string;
+    if (pinned === 'left') {
+        sectionClass = 'ag-grid-pinned-left-cells';
+    } else if (pinned === 'right') {
+        sectionClass = 'ag-grid-pinned-right-cells';
+    } else {
+        sectionClass = 'ag-grid-scrolling-cells';
+    }
     return ctrlsSvc
         .getHeaderRowContainerCtrl()
         ?.eViewport?.querySelector(`.ag-header-row .${sectionClass}`) as HTMLElement | null;

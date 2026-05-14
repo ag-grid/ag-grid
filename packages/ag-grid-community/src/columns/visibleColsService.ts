@@ -13,18 +13,6 @@ import type { ColumnModel } from './columnModel';
 import { getWidthOfColsInList } from './columnUtils';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
-function _removeAllFromUnorderedArray<T>(array: T[], toRemove: T[]) {
-    for (let i = 0; i < toRemove.length; i++) {
-        const index = array.indexOf(toRemove[i]);
-
-        if (index >= 0) {
-            // preserve the last element, then shorten array length by 1 to delete index
-            array[index] = array[array.length - 1];
-            array.pop();
-        }
-    }
-}
-
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class VisibleColsService extends BeanStub implements NamedBean {
@@ -90,16 +78,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         // Compute pinned widths directly from the just-updated column lists rather than using
         // `getCenterWidth()` — the latter reads the cached `leftWidth`/`rightWidth` via
         // `getLeftStickyColumnContainerWidth`, which is only refreshed by `updateBodyWidths` below.
-        const gridBodyCtrl = ctrlsSvc?.getGridBodyCtrl();
-        const viewportWidth = gridBodyCtrl?.getViewportWidthWithoutScrollbar();
-        const centerWidth =
-            viewportWidth != null
-                ? Math.max(
-                      0,
-                      viewportWidth - getWidthOfColsInList(this.leftCols) - getWidthOfColsInList(this.rightCols)
-                  )
-                : undefined;
-        colFlex?.refreshFlexedColumns(centerWidth != null ? { viewportWidth: centerWidth } : undefined);
+        const viewportWidth = ctrlsSvc?.getGridBodyCtrl()?.getViewportWidthWithoutScrollbar();
+        let flexParams: { viewportWidth: number } | undefined;
+        if (viewportWidth != null) {
+            const centerWidth =
+                viewportWidth - getWidthOfColsInList(this.leftCols) - getWidthOfColsInList(this.rightCols);
+            flexParams = { viewportWidth: centerWidth > 0 ? centerWidth : 0 };
+        }
+        colFlex?.refreshFlexedColumns(flexParams);
         this.updateBodyWidths();
         this.setFirstRightAndLastLeftPinned(colModel, this.leftCols, this.rightCols, source);
         colViewport.checkViewportColumns(false);
@@ -179,7 +165,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         source: ColumnEventType
     ): void {
         const lastLeft = leftCols.length ? _last(leftCols) : null;
-        const firstRight = rightCols.length ? (this.gos.get('enableRtl') ? _last(rightCols) : rightCols[0]) : null;
+        let firstRight: AgColumn | null = null;
+        if (rightCols.length) {
+            firstRight = this.gos.get('enableRtl') ? _last(rightCols) : rightCols[0];
+        }
 
         for (const col of colModel.getCols()) {
             col.setLastLeftPinned(col === lastLeft, source);
@@ -275,28 +264,27 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     private setLeftValuesOfCols(source: ColumnEventType): void {
         const { colModel } = this.beans;
-        const primaryCols = colModel.getColDefCols();
-        if (!primaryCols) {
+        if (!colModel.getColDefCols()) {
             return;
         }
 
-        // go through each list of displayed columns
-        const allColumns = colModel.getCols().slice(0);
-
+        const displayedCols = new Set<AgColumn>();
         for (const columns of [this.leftCols, this.rightCols, this.centerCols]) {
             let left = 0;
             for (const column of columns) {
                 column.setLeft(left, source);
                 left += column.getActualWidth();
+                displayedCols.add(column);
             }
-            _removeAllFromUnorderedArray(allColumns, columns);
         }
 
-        // items left in allColumns are columns not displayed, so remove the left position. this is
-        // important for the rows, as if a col is made visible, then taken out, then made visible again,
-        // we don't want the animation of the cell floating in from the old position, whatever that was.
-        for (const column of allColumns) {
-            column.setLeft(null, source);
+        // columns not in the displayed set need their left position reset. this is important for the
+        // rows, as if a col is made visible, then taken out, then made visible again, we don't want
+        // the animation of the cell floating in from the old position, whatever that was.
+        for (const column of colModel.getCols()) {
+            if (!displayedCols.has(column)) {
+                column.setLeft(null, source);
+            }
         }
     }
 

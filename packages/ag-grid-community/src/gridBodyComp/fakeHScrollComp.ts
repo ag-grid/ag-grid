@@ -143,12 +143,16 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
             return gridBodyCtrl.getVerticalScrollbarWidth();
         }
 
-        if (!this.scrollVisibleSvc.verticalScrollShowing) {
+        const scrollVisibleSvc = this.scrollVisibleSvc;
+        if (!scrollVisibleSvc.verticalScrollShowing) {
             return 0;
         }
 
-        const scrollbarWidth = this.scrollVisibleSvc.getScrollbarWidth() || 0;
-        return scrollbarWidth > 0 ? scrollbarWidth : this.invisibleScrollbar ? 16 : 0;
+        const scrollbarWidth = scrollVisibleSvc.getScrollbarWidth() || 0;
+        if (scrollbarWidth > 0) {
+            return scrollbarWidth;
+        }
+        return this.invisibleScrollbar ? 16 : 0;
     }
 
     public getScrollPosition(): number {

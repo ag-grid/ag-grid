@@ -31,14 +31,21 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     public postConstruct(): void {
         const { ctrlsSvc, dragAndDrop } = this.beans;
         ctrlsSvc.whenReady(this, (p) => {
-            this.eGridViewport = p.gridBodyCtrl.eGridViewport;
-            const uniqueViewports: HTMLElement[] = [];
-            for (const viewport of [this.eGridViewport, p.pinnedTop.eViewport, p.pinnedBottom.eViewport]) {
-                if (viewport && !uniqueViewports.includes(viewport)) {
-                    uniqueViewports.push(viewport);
-                }
+            const eGridViewport = p.gridBodyCtrl.eGridViewport;
+            const ePinnedTop = p.pinnedTop.eViewport;
+            const ePinnedBottom = p.pinnedBottom.eViewport;
+            this.eGridViewport = eGridViewport;
+            const eSecondaryContainers: HTMLElement[][] = [];
+            if (eGridViewport) {
+                eSecondaryContainers.push([eGridViewport]);
             }
-            this.eSecondaryContainers = uniqueViewports.map((viewport) => [viewport]);
+            if (ePinnedTop && ePinnedTop !== eGridViewport) {
+                eSecondaryContainers.push([ePinnedTop]);
+            }
+            if (ePinnedBottom && ePinnedBottom !== eGridViewport && ePinnedBottom !== ePinnedTop) {
+                eSecondaryContainers.push([ePinnedBottom]);
+            }
+            this.eSecondaryContainers = eSecondaryContainers;
         });
         const buildMoveFeature = (type: ColumnPinnedType) => this.createManagedBean(new MoveColumnFeature(type));
         this.moveColumnFeatures = {
@@ -87,41 +94,53 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     }
 
     public onDragEnter(draggingEvent: GridDraggingEvent): void {
+        const dropListener = this.getDropListener(draggingEvent);
         this.lastDetectedSection = null;
-        this.currentDropListener = this.getDropListener(draggingEvent);
-        this.currentDropListener.onDragEnter(draggingEvent);
+        this.currentDropListener = dropListener;
+        dropListener.onDragEnter(draggingEvent);
     }
 
     public onDragLeave(params: GridDraggingEvent): void {
-        this.currentDropListener?.onDragLeave(params);
-        this.currentDropListener = null;
+        const currentDropListener = this.currentDropListener;
+        if (currentDropListener) {
+            currentDropListener.onDragLeave(params);
+            this.currentDropListener = null;
+        }
         this.lastDetectedSection = null;
     }
 
     public onDragging(params: GridDraggingEvent): void {
-        if (!this.currentDropListener) {
+        let currentDropListener = this.currentDropListener;
+        if (!currentDropListener) {
             return;
         }
 
         const dropListener = this.getDropListener(params);
-        if (this.currentDropListener !== dropListener) {
-            this.currentDropListener.onDragLeave(params);
+        if (currentDropListener !== dropListener) {
+            currentDropListener.onDragLeave(params);
+            currentDropListener = dropListener;
             this.currentDropListener = dropListener;
-            this.currentDropListener.onDragEnter(params);
+            currentDropListener.onDragEnter(params);
             params.changed = true;
         }
 
-        this.currentDropListener.onDragging(params);
+        currentDropListener.onDragging(params);
     }
 
     public onDragStop(params: GridDraggingEvent): void {
-        this.currentDropListener?.onDragStop(params);
-        this.currentDropListener = null;
+        const currentDropListener = this.currentDropListener;
+        if (currentDropListener) {
+            currentDropListener.onDragStop(params);
+            this.currentDropListener = null;
+        }
     }
 
     public onDragCancel(): void {
-        this.currentDropListener?.onDragCancel();
-        this.currentDropListener = null;
+        const currentDropListener = this.currentDropListener;
+        if (currentDropListener) {
+            currentDropListener.onDragCancel();
+            this.currentDropListener = null;
+        }
     }
 
     private getSection(draggingEvent: GridDraggingEvent): HorizontalSection {
@@ -158,8 +177,9 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         }
 
         // suppress oscillation from nudge-triggered re-detection
-        if (draggingEvent.fromNudge && section !== this.lastDetectedSection && this.lastDetectedSection !== null) {
-            return this.lastDetectedSection;
+        const lastDetectedSection = this.lastDetectedSection;
+        if (draggingEvent.fromNudge && section !== lastDetectedSection && lastDetectedSection !== null) {
+            return lastDetectedSection;
         }
 
         this.lastDetectedSection = section;
