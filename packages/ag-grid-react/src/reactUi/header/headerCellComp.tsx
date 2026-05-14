@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import type {
     AriaSortState,
@@ -87,10 +87,8 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
         ctrl.setDragSource(eGui.current!);
     }, [userCompDetails]);
 
-    const userCompStateless = useMemo(() => {
-        const res = userCompDetails?.componentFromFramework && isComponentStateless(userCompDetails.componentClass);
-        return !!res;
-    }, [userCompDetails]);
+    const userCompStateless =
+        !!userCompDetails?.componentFromFramework && isComponentStateless(userCompDetails.componentClass);
 
     const reactUserComp = userCompDetails?.componentFromFramework;
     const UserCompClass = userCompDetails?.componentClass;

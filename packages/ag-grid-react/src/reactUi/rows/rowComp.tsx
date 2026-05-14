@@ -350,12 +350,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         return () => observer.disconnect();
     }, [showEmbeddedFullWidth, embeddedFullWidthCompDetails]);
 
-    const rowStyles = useMemo(() => {
-        const res = { top, transform };
-
-        Object.assign(res, userStyles);
-        return res;
-    }, [top, transform, userStyles]);
+    const rowStyles = { top, transform, ...userStyles };
 
     const showFullWidthFramework = isFullWidth && fullWidthCompDetails?.componentFromFramework;
     const showCells = !isFullWidth && cellCtrlsMerged != null;
@@ -388,11 +383,8 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         [rowCtrl, showEmbeddedFullWidth, embeddedSectionHasContent]
     );
 
-    const reactFullWidthCellRendererStateless = useMemo(() => {
-        const res =
-            fullWidthCompDetails?.componentFromFramework && isComponentStateless(fullWidthCompDetails.componentClass);
-        return !!res;
-    }, [fullWidthCompDetails]);
+    const reactFullWidthCellRendererStateless =
+        !!fullWidthCompDetails?.componentFromFramework && isComponentStateless(fullWidthCompDetails.componentClass);
 
     // needs to be a ref to avoid stale closure, as used in compProxy passed to row ctrl
     const canRefreshFullWidthRef = useRef(false);

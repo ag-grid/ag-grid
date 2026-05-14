@@ -257,12 +257,10 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         }
     }, []);
 
-    const style = useMemo(() => {
-        return {
-            height: '100%',
-            ...(props.containerStyle || {}),
-        };
-    }, [props.containerStyle]);
+    const style = {
+        height: '100%',
+        ...(props.containerStyle || {}),
+    };
 
     const processWhenReady = useCallback((func: () => void) => {
         if (ready.current && !frameworkOverridesRef.current?.shouldQueueUpdates()) {
@@ -407,8 +405,8 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
         () => _getGridRegisteredModules(props.api.getGridId(), detailGridOptions?.rowModelType ?? 'clientSide'),
         [props]
     );
-    const topClassName = useMemo(() => cssClasses.toString() + ' ag-details-row', [cssClasses]);
-    const gridClassName = useMemo(() => gridCssClasses.toString() + ' ag-details-grid', [gridCssClasses]);
+    const topClassName = cssClasses.toString() + ' ag-details-row';
+    const gridClassName = gridCssClasses.toString() + ' ag-details-grid';
 
     if (ref) {
         useImperativeHandle(ref, () => ({

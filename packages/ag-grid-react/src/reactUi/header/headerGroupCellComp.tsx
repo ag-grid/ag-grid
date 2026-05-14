@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import type {
     HeaderGroupCellCtrl,
@@ -80,16 +80,11 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
         }
     }, [userCompDetails]);
 
-    const userCompStateless = useMemo(() => {
-        const res = userCompDetails?.componentFromFramework && isComponentStateless(userCompDetails.componentClass);
-        return !!res;
-    }, [userCompDetails]);
+    const userCompStateless =
+        !!userCompDetails?.componentFromFramework && isComponentStateless(userCompDetails.componentClass);
 
-    const className = useMemo(() => 'ag-header-group-cell ' + cssClasses.toString(), [cssClasses]);
-    const resizableClassName = useMemo(
-        () => 'ag-header-cell-resize ' + cssResizableClasses.toString(),
-        [cssResizableClasses]
-    );
+    const className = 'ag-header-group-cell ' + cssClasses.toString();
+    const resizableClassName = 'ag-header-cell-resize ' + cssResizableClasses.toString();
 
     const reactUserComp = userCompDetails?.componentFromFramework;
     const UserCompClass = userCompDetails?.componentClass;

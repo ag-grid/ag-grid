@@ -48,18 +48,14 @@ const RowContainerComp = ({
     const domOrderRef = useRef<boolean>(false);
     const rowContainerCtrlRef = useRef<RowContainerCtrl>();
 
-    const containerClasses = useMemo(
-        () =>
-            classesList(
-                _getRowContainerClass(asCommunityRowContainerName(name)),
-                hidden ? 'ag-hidden' : null,
-                extraClassName
-            ),
-        [extraClassName, name, hidden]
+    const containerClasses = classesList(
+        _getRowContainerClass(asCommunityRowContainerName(name)),
+        hidden ? 'ag-hidden' : null,
+        extraClassName
     );
-    const spanClasses = useMemo(
-        () => classesList('ag-spanning-container', _getRowSpanContainerClass(asCommunityRowContainerName(name))),
-        [name]
+    const spanClasses = classesList(
+        'ag-spanning-container',
+        _getRowSpanContainerClass(asCommunityRowContainerName(name))
     );
 
     useReactCommentEffect(' AG Row Container ' + name + ' ', eContainer);

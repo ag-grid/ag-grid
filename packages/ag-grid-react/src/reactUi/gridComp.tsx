@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 
 import type {
     Component,
@@ -201,23 +201,14 @@ const GridComp = ({ context }: GridCompProps) => {
         };
     }, [tabGuardReady, eGridBodyParent, context]);
 
-    const rootWrapperClasses = useMemo(
-        () => classesList('ag-root-wrapper', rtlClass, layoutClass),
-        [rtlClass, layoutClass]
-    );
-    const rootWrapperBodyClasses = useMemo(
-        () => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass),
-        [layoutClass]
-    );
+    const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, layoutClass);
+    const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass);
 
-    const topStyle: React.CSSProperties = useMemo(
-        () => ({
-            userSelect: userSelect != null ? (userSelect as any) : '',
-            WebkitUserSelect: userSelect != null ? (userSelect as any) : '',
-            cursor: cursor != null ? cursor : '',
-        }),
-        [userSelect, cursor]
-    );
+    const topStyle: React.CSSProperties = {
+        userSelect: userSelect != null ? (userSelect as any) : '',
+        WebkitUserSelect: userSelect != null ? (userSelect as any) : '',
+        cursor: cursor != null ? cursor : '',
+    };
 
     const setTabGuardCompRef = useCallback((ref: TabGuardCompCallback) => {
         tabGuardRef.current = ref;

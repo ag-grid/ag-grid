@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import type {
     HeaderFilterCellCtrl,
@@ -92,20 +92,15 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
         [userCompDetails]
     );
 
-    const className = useMemo(() => cssClasses.toString(), [cssClasses]);
-    const bodyClassName = useMemo(() => cssBodyClasses.toString(), [cssBodyClasses]);
-    const buttonWrapperClassName = useMemo(() => cssButtonWrapperClasses.toString(), [cssButtonWrapperClasses]);
+    const className = cssClasses.toString();
+    const bodyClassName = cssBodyClasses.toString();
+    const buttonWrapperClassName = cssButtonWrapperClasses.toString();
 
-    const userCompStateless = useMemo(() => {
-        const res =
-            userCompDetails &&
-            userCompDetails.componentFromFramework &&
-            isComponentStateless(userCompDetails.componentClass);
-        return !!res;
-    }, [userCompDetails]);
+    const userCompStateless =
+        !!userCompDetails?.componentFromFramework && isComponentStateless(userCompDetails.componentClass);
 
-    const reactiveCustomComponents = useMemo(() => gos.get('reactiveCustomComponents'), []);
-    const enableFilterHandlers = useMemo(() => gos.get('enableFilterHandlers'), []);
+    const reactiveCustomComponents = gos.get('reactiveCustomComponents');
+    const enableFilterHandlers = gos.get('enableFilterHandlers');
     const [floatingFilterCompProxy, setFloatingFilterCompProxy] = useState<
         FloatingFilterComponentProxy | FloatingFilterDisplayComponentProxy
     >();

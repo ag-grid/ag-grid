@@ -1,4 +1,4 @@
-import React, { Suspense, memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, memo, useCallback, useContext, useLayoutEffect, useRef, useState } from 'react';
 
 import type {
     CellCtrl,
@@ -57,9 +57,8 @@ const CellComp = ({
 
     const [jsEditorComp, setJsEditorComp] = useState<ICellEditorComp>();
 
-    // useMemo as more then just accessing a boolean on the cellCtrl
-    const forceWrapper = useMemo(() => cellCtrl.isForceWrapper(), [cellCtrl]);
-    const cellAriaRole = useMemo(() => cellCtrl.getCellAriaRole(), [cellCtrl]);
+    const forceWrapper = cellCtrl.isForceWrapper();
+    const cellAriaRole = cellCtrl.getCellAriaRole();
     const eGui = useRef<HTMLDivElement | null>(null);
     const eWrapper = useRef<HTMLDivElement | null>(null);
     const cellRendererRef = useRef<any>(null);
@@ -83,9 +82,7 @@ const CellComp = ({
         (includeSelection || includeDndSource || includeRowDrag) &&
         (editDetails == null || !!editDetails.popup);
     const showCellWrapper = forceWrapper || showTools;
-    const cellValueClass = useMemo(() => {
-        return cellCtrl.getCellValueClass();
-    }, [cellCtrl]);
+    const cellValueClass = cellCtrl.getCellValueClass();
 
     const setCellEditorRef = useCallback(
         (cellEditor: ICellEditor | undefined) => {
@@ -393,13 +390,9 @@ const CellComp = ({
         init();
     }, []);
 
-    const reactCellRendererStateless = useMemo(() => {
-        const res =
-            renderDetails?.compDetails?.componentFromFramework &&
-            isComponentStateless(renderDetails.compDetails.componentClass);
-
-        return !!res;
-    }, [renderDetails]);
+    const reactCellRendererStateless =
+        !!renderDetails?.compDetails?.componentFromFramework &&
+        isComponentStateless(renderDetails.compDetails.componentClass);
 
     useLayoutEffect(() => {
         if (!eGui.current) {

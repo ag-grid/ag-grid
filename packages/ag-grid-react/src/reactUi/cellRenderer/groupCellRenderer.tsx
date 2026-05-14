@@ -4,7 +4,6 @@ import React, {
     useContext,
     useImperativeHandle,
     useLayoutEffect,
-    useMemo,
     useRef,
     useState,
 } from 'react';
@@ -89,13 +88,10 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
         }
     }, []);
 
-    const className = useMemo(() => `ag-cell-wrapper ${cssClasses.toString()}`, [cssClasses]);
-    const expandedClassName = useMemo(() => `ag-group-expanded ${expandedCssClasses.toString()}`, [expandedCssClasses]);
-    const contractedClassName = useMemo(
-        () => `ag-group-contracted ${contractedCssClasses.toString()}`,
-        [contractedCssClasses]
-    );
-    const checkboxClassName = useMemo(() => `ag-group-checkbox ${checkboxCssClasses.toString()}`, [checkboxCssClasses]);
+    const className = `ag-cell-wrapper ${cssClasses.toString()}`;
+    const expandedClassName = `ag-group-expanded ${expandedCssClasses.toString()}`;
+    const contractedClassName = `ag-group-contracted ${contractedCssClasses.toString()}`;
+    const checkboxClassName = `ag-group-checkbox ${checkboxCssClasses.toString()}`;
 
     const useFwRenderer = innerCompDetails?.componentFromFramework;
     const FwRenderer = useFwRenderer ? innerCompDetails!.componentClass : undefined;

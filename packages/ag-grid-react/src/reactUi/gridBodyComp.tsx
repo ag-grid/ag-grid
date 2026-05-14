@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import type { ComponentSelector, IGridBodyComp, VerticalSection, VerticalSectionMap } from 'ag-grid-community';
 import {
@@ -175,62 +175,41 @@ const GridBodyComp = () => {
         };
     }, [context, gos, overlays, rangeSvc, rootElement]);
 
-    const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
-    const gridViewportClasses = useMemo(
-        () => classesList('ag-grid-viewport', layoutClass, forceVerticalScrollClass),
-        [layoutClass, forceVerticalScrollClass]
-    );
-    const bodyClasses = useMemo(
-        () => classesList('ag-grid-scrolling-rows', layoutClass, cellSelectableCss),
-        [layoutClass, cellSelectableCss]
-    );
+    const rootClasses = classesList('ag-root', 'ag-unselectable', layoutClass);
+    const gridViewportClasses = classesList('ag-grid-viewport', layoutClass, forceVerticalScrollClass);
+    const bodyClasses = classesList('ag-grid-scrolling-rows', layoutClass, cellSelectableCss);
     const topSection = pinnedSections.top;
     const bottomSection = pinnedSections.bottom;
-    const topClasses = useMemo(
-        () => classesList('ag-grid-pinned-top-rows', cellSelectableCss),
-        [cellSelectableCss, topSection.invisible]
-    );
+    const topClasses = classesList('ag-grid-pinned-top-rows', cellSelectableCss);
     const stickyBottomHeightNumber = Number.parseFloat(stickyBottomHeight) || 0;
     const bottomSectionHidden = bottomSection.height <= 0 && stickyBottomHeightNumber <= 0;
 
-    const scrollableClasses = useMemo(
-        () =>
-            classesList(
-                'ag-grid-scrollable-area',
-                !topSection.invisible ? 'ag-has-top-pinned-rows' : null,
-                !bottomSection.invisible ? 'ag-has-bottom-pinned-rows' : null
-            ),
-        [bottomSection.invisible, topSection.invisible]
+    const scrollableClasses = classesList(
+        'ag-grid-scrollable-area',
+        !topSection.invisible ? 'ag-has-top-pinned-rows' : null,
+        !bottomSection.invisible ? 'ag-has-bottom-pinned-rows' : null
     );
-    const bottomClasses = useMemo(
-        () => classesList('ag-grid-pinned-bottom-rows', bottomSectionHidden ? 'ag-hidden' : null, cellSelectableCss),
-        [bottomSection.invisible, bottomSectionHidden, cellSelectableCss]
+    const bottomClasses = classesList(
+        'ag-grid-pinned-bottom-rows',
+        bottomSectionHidden ? 'ag-hidden' : null,
+        cellSelectableCss
     );
-    const rowAnimationContainerClass = useMemo(
-        () => classesList(rowAnimationClass, preventRowAnimationClass),
-        [preventRowAnimationClass, rowAnimationClass]
-    );
+    const rowAnimationContainerClass = classesList(rowAnimationClass, preventRowAnimationClass);
 
-    const topStyle: React.CSSProperties = useMemo(() => {
-        const topRowsHeight = `${topSection.height}px`;
-        const topSectionHeight = `calc(var(--ag-header-rows-height, 0px) + ${topRowsHeight})`;
-        return {
-            '--ag-top-rows-height': topRowsHeight,
-            minHeight: topSectionHeight,
-            height: topSectionHeight,
-        } as React.CSSProperties;
-    }, [topSection.height]);
+    const topRowsHeight = `${topSection.height}px`;
+    const topSectionHeight = `calc(var(--ag-header-rows-height, 0px) + ${topRowsHeight})`;
+    const topStyle: React.CSSProperties = {
+        '--ag-top-rows-height': topRowsHeight,
+        minHeight: topSectionHeight,
+        height: topSectionHeight,
+    } as React.CSSProperties;
 
-    const bottomStyle: React.CSSProperties = useMemo(
-        () =>
-            ({
-                '--ag-bottom-rows-height': `${bottomSection.height}px`,
-                height: `calc(${bottomSection.height}px + ${stickyBottomHeight})`,
-                minHeight: `calc(${bottomSection.height}px + ${stickyBottomHeight})`,
-                width: stickyBottomWidth,
-            }) as React.CSSProperties,
-        [bottomSection.height, stickyBottomHeight, stickyBottomWidth]
-    );
+    const bottomStyle: React.CSSProperties = {
+        '--ag-bottom-rows-height': `${bottomSection.height}px`,
+        height: `calc(${bottomSection.height}px + ${stickyBottomHeight})`,
+        minHeight: `calc(${bottomSection.height}px + ${stickyBottomHeight})`,
+        width: stickyBottomWidth,
+    } as React.CSSProperties;
 
     const setTopRef = useCallback((el: HTMLDivElement | null) => {
         eTop.current = el;
