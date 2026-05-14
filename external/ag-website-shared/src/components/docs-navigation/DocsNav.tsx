@@ -105,45 +105,75 @@ function Group({
 }) {
     const isOpen = openGroup === groupData;
     const groupRef = useRef<HTMLDivElement>(null);
+    const scrollTargetRef = useRef<number | null>(null);
 
-    const handleScrollToGroup = () => {
-        const groupEl = groupRef.current;
-        if (!groupEl) return;
+    useEffect(() => {
+        if (!isOpen) return;
 
-        const scrollContainer = document.getElementById('docs-nav-scroll');
-        if (!scrollContainer) return;
+        const timer = setTimeout(() => {
+            const groupEl = groupRef.current;
+            if (!groupEl) return;
 
-        const containerRect = scrollContainer.getBoundingClientRect();
-        const groupRect = groupEl.getBoundingClientRect();
-        const currentScrollTop = scrollContainer.scrollTop;
+            const scrollContainer = document.getElementById('docs-nav-scroll');
+            if (!scrollContainer) return;
 
-        const groupTop = groupRect.top - containerRect.top + currentScrollTop;
-        const groupBottom = groupTop + groupRect.height;
-        const visibleBottom = currentScrollTop + containerRect.height;
+            const containerRect = scrollContainer.getBoundingClientRect();
+            const groupRect = groupEl.getBoundingClientRect();
 
-        if (groupBottom <= visibleBottom) return;
+            if (groupRect.top >= containerRect.top && groupRect.bottom <= containerRect.bottom) {
+                scrollTargetRef.current = null;
+                return;
+            }
 
-        scrollContainer.scrollTo({ top: groupTop, behavior: 'smooth' });
+            const targetScrollTop =
+                scrollTargetRef.current ?? Math.max(0, groupRect.top - containerRect.top + scrollContainer.scrollTop);
+
+            scrollContainer.scrollTo({ top: Math.max(0, targetScrollTop), behavior: 'smooth' });
+            scrollTargetRef.current = null;
+        }, 400);
+
+        return () => clearTimeout(timer);
+    }, [isOpen]);
+
+    const handleClick = () => {
+        if (!isOpen) {
+            const scrollContainer = document.getElementById('docs-nav-scroll');
+            const groupEl = groupRef.current;
+
+            if (scrollContainer && groupEl) {
+                const containerRect = scrollContainer.getBoundingClientRect();
+                const groupRect = groupEl.getBoundingClientRect();
+                const bAbsoluteTop = groupRect.top - containerRect.top + scrollContainer.scrollTop;
+
+                let collapsingHeight = 0;
+                if (openGroup) {
+                    const prevCollapsibleEl = document.getElementById(openGroup.title);
+                    if (prevCollapsibleEl) {
+                        const isAbove = !!(
+                            prevCollapsibleEl.compareDocumentPosition(groupEl) & Node.DOCUMENT_POSITION_FOLLOWING
+                        );
+                        if (isAbove) {
+                            collapsingHeight = prevCollapsibleEl.getBoundingClientRect().height;
+                        }
+                    }
+                }
+
+                scrollTargetRef.current = bAbsoluteTop - collapsingHeight;
+            }
+        }
+
+        setOpenGroup(isOpen ? undefined : groupData);
     };
 
     return (
         <div ref={groupRef} className={classnames(styles.group, isOpen ? styles.isOpen : '')}>
-            <button
-                className={classnames('button-style-none', styles.groupTitle)}
-                onClick={() => {
-                    if (isOpen) {
-                        setOpenGroup(undefined);
-                    } else {
-                        setOpenGroup(groupData);
-                    }
-                }}
-            >
+            <button className={classnames('button-style-none', styles.groupTitle)} onClick={handleClick}>
                 <Icon name="chevronRight" svgClasses={styles.groupChevron} />
 
                 <span>{groupData.title}</span>
             </button>
 
-            <Collapsible id={groupData.title} isOpen={isOpen} onAnimationEnd={isOpen ? handleScrollToGroup : undefined}>
+            <Collapsible id={groupData.title} isOpen={isOpen}>
                 <div className={styles.groupChildren}>
                     {groupData.children.map((childData) => {
                         return (
