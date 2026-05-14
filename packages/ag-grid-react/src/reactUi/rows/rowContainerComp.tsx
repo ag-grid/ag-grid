@@ -15,10 +15,6 @@ import RowComp from './rowComp';
 
 export type ReactRowContainerName = 'scrolling' | 'pinnedTop' | 'pinnedBottom' | 'stickyTop' | 'stickyBottom';
 
-type CommunityRowContainerName = Parameters<typeof _getRowContainerOptions>[0];
-const asCommunityRowContainerName = (name: ReactRowContainerName): CommunityRowContainerName =>
-    name as CommunityRowContainerName;
-
 const RowContainerComp = ({
     name,
     viewportElement,
@@ -30,7 +26,7 @@ const RowContainerComp = ({
 }) => {
     const { context, gos } = useContext(BeansContext);
 
-    const containerOptions = useMemo(() => _getRowContainerOptions(asCommunityRowContainerName(name)), [name]);
+    const containerOptions = useMemo(() => _getRowContainerOptions(name), [name]);
 
     const eContainer = useRef<HTMLDivElement | null>(null);
     const eSpanContainer = useRef<HTMLDivElement | null>(null);
@@ -49,18 +45,10 @@ const RowContainerComp = ({
     const rowContainerCtrlRef = useRef<RowContainerCtrl>();
 
     const containerClasses = useMemo(
-        () =>
-            classesList(
-                _getRowContainerClass(asCommunityRowContainerName(name)),
-                hidden ? 'ag-hidden' : null,
-                extraClassName
-            ),
+        () => classesList(_getRowContainerClass(name), hidden ? 'ag-hidden' : null, extraClassName),
         [extraClassName, name, hidden]
     );
-    const spanClasses = useMemo(
-        () => classesList('ag-spanning-container', _getRowSpanContainerClass(asCommunityRowContainerName(name))),
-        [name]
-    );
+    const spanClasses = useMemo(() => classesList('ag-spanning-container', _getRowSpanContainerClass(name)), [name]);
 
     useReactCommentEffect(' AG Row Container ' + name + ' ', eContainer);
 
@@ -137,7 +125,7 @@ const RowContainerComp = ({
             setHidden: (hidden: boolean) => setHidden(hidden),
         };
 
-        rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(asCommunityRowContainerName(name)));
+        rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(name));
         rowContainerCtrlRef.current.setComp(compProxy, eContainerForCtrl, eSpanContainerForCtrl, eViewportForCtrl);
     }, [context, isSpanning, name, viewportElement]);
 
