@@ -32,6 +32,7 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     getUserCompInstance(): IHeaderGroupComp | undefined;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function applyHeaderWrapperHidden(el: HTMLElement, hidden: boolean): void {
     if (hidden) {
         el.style.setProperty('display', 'none');
@@ -40,6 +41,7 @@ export function applyHeaderWrapperHidden(el: HTMLElement, hidden: boolean): void
     }
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function applyHeaderWrapperMaxHeight(el: HTMLElement, value: number | null): void {
     if (value != null) {
         el.style.setProperty('max-height', `${value}px`);
