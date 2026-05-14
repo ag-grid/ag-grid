@@ -40,7 +40,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             advancedFilterEnabledChanged: onDisplayedColsChanged,
         });
 
-        ctrlsSvc.register('headerRowsCenter', this);
+        ctrlsSvc.register('headerRowContainerCtrl', this);
 
         if (colModel.ready) {
             this.refresh();

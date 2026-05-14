@@ -24,7 +24,7 @@ interface ReadyParams {
     fakeVScrollComp: FakeVScrollComp;
     gridHeaderCtrl: GridHeaderCtrl;
 
-    headerRowsCenter: HeaderRowContainerCtrl;
+    headerRowContainerCtrl: HeaderRowContainerCtrl;
 }
 
 type CtrlType = keyof ReadyParams;
@@ -39,7 +39,7 @@ const REQUIRED_CTRLS: CtrlType[] = [
     'fakeHScrollComp',
     'fakeVScrollComp',
     'gridHeaderCtrl',
-    'headerRowsCenter',
+    'headerRowContainerCtrl',
 ];
 
 type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
@@ -121,7 +121,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     }
 
     public getHeaderRowContainerCtrl(): HeaderRowContainerCtrl | undefined {
-        return this.params.headerRowsCenter;
+        return this.params.headerRowContainerCtrl;
     }
 
     public getScrollFeature(): GridBodyScrollFeature {
