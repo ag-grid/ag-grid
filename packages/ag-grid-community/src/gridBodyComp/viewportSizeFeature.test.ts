@@ -12,37 +12,37 @@ vi.mock('../agStack/utils/dom', async () => {
     };
 });
 
+function createFakeFeature(params: {
+    centerContainer: HTMLDivElement;
+    centerViewport: HTMLDivElement;
+    registerViewportResizeListener: Mock;
+    onCenterViewportResized: Mock;
+    refreshScrollVisible: Mock;
+}): ViewportSizeFeature & { beans: object } {
+    return Object.assign(Object.create(ViewportSizeFeature.prototype), {
+        beans: {},
+        scrollVisibleSvc: {
+            refresh: params.refreshScrollVisible,
+        },
+        centerContainerCtrl: {
+            eContainer: params.centerContainer,
+            eViewport: params.centerViewport,
+            registerViewportResizeListener: params.registerViewportResizeListener,
+        },
+        gridBodyCtrl: {
+            eGridViewport: params.centerViewport,
+        },
+        addDestroyFunc: vi.fn(),
+        onCenterViewportResized: params.onCenterViewportResized,
+        centerViewportResizeQueued: false,
+        scrollVisibilityRefreshQueued: false,
+    });
+}
+
 describe('ViewportSizeFeature', () => {
     beforeEach(() => {
         vi.clearAllMocks();
     });
-
-    function createFakeFeature(params: {
-        centerContainer: HTMLDivElement;
-        centerViewport: HTMLDivElement;
-        registerViewportResizeListener: Mock;
-        onCenterViewportResized: Mock;
-        refreshScrollVisible: Mock;
-    }): ViewportSizeFeature {
-        return Object.assign(Object.create(ViewportSizeFeature.prototype), {
-            beans: {},
-            scrollVisibleSvc: {
-                refresh: params.refreshScrollVisible,
-            },
-            centerContainerCtrl: {
-                eContainer: params.centerContainer,
-                eViewport: params.centerViewport,
-                registerViewportResizeListener: params.registerViewportResizeListener,
-            },
-            gridBodyCtrl: {
-                eGridViewport: params.centerViewport,
-            },
-            addDestroyFunc: vi.fn(),
-            onCenterViewportResized: params.onCenterViewportResized,
-            centerViewportResizeQueued: false,
-            scrollVisibilityRefreshQueued: false,
-        }) as ViewportSizeFeature;
-    }
 
     test('listens to center container resize and refreshes scroll visibility', () => {
         let resizeCallback: (() => void) | undefined;

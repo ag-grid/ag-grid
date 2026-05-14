@@ -197,8 +197,8 @@ const GridBodyComp = () => {
         () =>
             classesList(
                 'ag-grid-scrollable-area',
-                !topSection.invisible ? 'ag-has-top-pinned-rows' : null,
-                !bottomSection.invisible ? 'ag-has-bottom-pinned-rows' : null
+                topSection.invisible ? null : 'ag-has-top-pinned-rows',
+                bottomSection.invisible ? null : 'ag-has-bottom-pinned-rows'
             ),
         [bottomSection.invisible, topSection.invisible]
     );

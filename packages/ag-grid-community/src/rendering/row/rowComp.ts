@@ -12,7 +12,7 @@ import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
 import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { IRowComp, RowCtrl } from './rowCtrl';
 
-const LEAF_RENDERER_TAGS = ['CANVAS', 'IMG', 'SVG', 'VIDEO', 'AUDIO', 'INPUT', 'IFRAME', 'PICTURE'];
+const LEAF_RENDERER_TAGS = new Set(['CANVAS', 'IMG', 'SVG', 'VIDEO', 'AUDIO', 'INPUT', 'IFRAME', 'PICTURE']);
 
 const createCellSection = (sectionClass: string): { container: HTMLElement; wrapper: HTMLElement } => {
     const wrapper = _createElement({
@@ -173,7 +173,7 @@ export class RowComp extends Component {
                 firstEl != null &&
                 (firstEl.childElementCount > 0 ||
                     !!firstEl.textContent?.trim() ||
-                    LEAF_RENDERER_TAGS.indexOf(firstEl.tagName) !== -1);
+                    LEAF_RENDERER_TAGS.has(firstEl.tagName));
             this.rowCtrl.setEmbeddedSectionHasContent(section, hasContent);
             this.setEmbeddedFullWidthRowComp(section, cellRenderer, compDetails.params);
             this.rowCtrl.refreshPinnedCellGroupWidths();
@@ -283,12 +283,15 @@ export class RowComp extends Component {
 
     private newCellComp(cellCtrl: CellCtrl): void {
         const editing = this.beans.editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false;
-        const parent =
-            cellCtrl.column.getPinned() === 'left'
-                ? this.ePinnedLeftCells
-                : cellCtrl.column.getPinned() === 'right'
-                  ? this.ePinnedRightCells
-                  : this.eScrollingCells;
+        const pinned = cellCtrl.column.getPinned();
+        let parent: HTMLElement | null | undefined;
+        if (pinned === 'left') {
+            parent = this.ePinnedLeftCells;
+        } else if (pinned === 'right') {
+            parent = this.ePinnedRightCells;
+        } else {
+            parent = this.eScrollingCells;
+        }
         const eParent = parent ?? this.getGui();
         const cellComp = new CellComp(this.beans, cellCtrl, this.rowCtrl.printLayout, eParent, editing);
         this.cellComps.set(cellCtrl.instanceId, cellComp);

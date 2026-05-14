@@ -27,12 +27,14 @@ export function getResolvedHorizontalOffset(params: HorizontalOffsetParams): num
 
     let physicalLeft = left;
     if (isRtl) {
-        const sectionWidth =
-            pinned === 'left'
-                ? visibleCols.getLeftStickyColumnContainerWidth()
-                : pinned === 'right'
-                  ? visibleCols.getRightStickyColumnContainerWidth()
-                  : visibleCols.bodyWidth;
+        let sectionWidth: number;
+        if (pinned === 'left') {
+            sectionWidth = visibleCols.getLeftStickyColumnContainerWidth();
+        } else if (pinned === 'right') {
+            sectionWidth = visibleCols.getRightStickyColumnContainerWidth();
+        } else {
+            sectionWidth = visibleCols.bodyWidth;
+        }
         physicalLeft = sectionWidth - left - width;
     }
 

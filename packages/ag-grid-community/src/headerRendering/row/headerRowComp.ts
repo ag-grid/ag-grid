@@ -83,9 +83,7 @@ export class HeaderRowComp extends Component {
             let comp = oldComps[id];
             delete oldComps[id];
 
-            if (comp == null) {
-                comp = this.createHeaderComp(ctrl);
-            }
+            comp ??= this.createHeaderComp(ctrl);
 
             const parent = this.getHeaderCellGroup(ctrl);
             if (comp.getGui().parentElement !== parent) {

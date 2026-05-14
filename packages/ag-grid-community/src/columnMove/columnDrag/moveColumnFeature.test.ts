@@ -2,75 +2,75 @@ import type { GridDraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import type { GridOptionsService } from '../../gridOptionsService';
 import { MoveColumnFeature } from './moveColumnFeature';
 
+function createFeature(pinned: 'left' | 'right' | null, rtl = false) {
+    const feature = new MoveColumnFeature(pinned) as any;
+    const eViewport = document.createElement('div');
+    Object.defineProperty(eViewport, 'clientWidth', {
+        configurable: true,
+        get: () => 1000,
+    });
+    const eHeaderRow = document.createElement('div');
+    eHeaderRow.classList.add('ag-header-row');
+    Object.defineProperty(eHeaderRow, 'clientWidth', {
+        configurable: true,
+        get: () => 1000,
+    });
+    eViewport.appendChild(eHeaderRow);
+
+    // Section sub-containers inside the header row
+    // Physical layout: viewport starts at x=100, width=1000
+    // Pinned-left is always physically left and pinned-right is always physically right.
+    // Both LTR and RTL: [pinnedLeft:100..150][scrolling:150..1050][pinnedRight:1050..1100]
+    const pinnedLeftCells = document.createElement('div');
+    pinnedLeftCells.classList.add('ag-grid-pinned-left-cells');
+    const scrollingCells = document.createElement('div');
+    scrollingCells.classList.add('ag-grid-scrolling-cells');
+    const pinnedRightCells = document.createElement('div');
+    pinnedRightCells.classList.add('ag-grid-pinned-right-cells');
+    eHeaderRow.append(pinnedLeftCells, scrollingCells, pinnedRightCells);
+
+    pinnedLeftCells.getBoundingClientRect = () => ({ left: 100, width: 50 }) as DOMRect;
+    scrollingCells.getBoundingClientRect = () => ({ left: 150, width: 900 }) as DOMRect;
+    pinnedRightCells.getBoundingClientRect = () => ({ left: 1050, width: 50 }) as DOMRect;
+
+    const eGridViewport = document.createElement('div');
+    eGridViewport.getBoundingClientRect = () =>
+        ({ left: 100, top: 0, width: 1000, height: 600, right: 1100, bottom: 600 }) as DOMRect;
+
+    feature.beans = {
+        gos: {
+            get: (key: string) => {
+                if (key === 'suppressMoveWhenColumnDragging') {
+                    return true;
+                }
+                if (key === 'enableRtl') {
+                    return rtl;
+                }
+                return undefined;
+            },
+        } as GridOptionsService,
+        ctrlsSvc: {
+            getHeaderRowContainerCtrl: () => ({ eViewport }),
+            get: () => ({
+                getCenterViewportScrollLeft: () => 0,
+            }),
+        },
+        visibleCols: {
+            getLeftStickyColumnContainerWidth: () => 50,
+            getRightStickyColumnContainerWidth: () => 50,
+        },
+    };
+
+    feature.gridBodyCon = { eGridViewport };
+    feature.checkCenterForScrolling = vi.fn();
+    feature.handleColumnDragWhileSuppressingMovement = vi.fn();
+    feature.handleColumnDragWhileAllowingMovement = vi.fn();
+    feature.lastDraggingEvent = null;
+
+    return feature;
+}
+
 describe('MoveColumnFeature', () => {
-    function createFeature(pinned: 'left' | 'right' | null, rtl = false) {
-        const feature = new MoveColumnFeature(pinned) as any;
-        const eViewport = document.createElement('div');
-        Object.defineProperty(eViewport, 'clientWidth', {
-            configurable: true,
-            get: () => 1000,
-        });
-        const eHeaderRow = document.createElement('div');
-        eHeaderRow.classList.add('ag-header-row');
-        Object.defineProperty(eHeaderRow, 'clientWidth', {
-            configurable: true,
-            get: () => 1000,
-        });
-        eViewport.appendChild(eHeaderRow);
-
-        // Section sub-containers inside the header row
-        // Physical layout: viewport starts at x=100, width=1000
-        // Pinned-left is always physically left and pinned-right is always physically right.
-        // Both LTR and RTL: [pinnedLeft:100..150][scrolling:150..1050][pinnedRight:1050..1100]
-        const pinnedLeftCells = document.createElement('div');
-        pinnedLeftCells.classList.add('ag-grid-pinned-left-cells');
-        const scrollingCells = document.createElement('div');
-        scrollingCells.classList.add('ag-grid-scrolling-cells');
-        const pinnedRightCells = document.createElement('div');
-        pinnedRightCells.classList.add('ag-grid-pinned-right-cells');
-        eHeaderRow.append(pinnedLeftCells, scrollingCells, pinnedRightCells);
-
-        pinnedLeftCells.getBoundingClientRect = () => ({ left: 100, width: 50 }) as DOMRect;
-        scrollingCells.getBoundingClientRect = () => ({ left: 150, width: 900 }) as DOMRect;
-        pinnedRightCells.getBoundingClientRect = () => ({ left: 1050, width: 50 }) as DOMRect;
-
-        const eGridViewport = document.createElement('div');
-        eGridViewport.getBoundingClientRect = () =>
-            ({ left: 100, top: 0, width: 1000, height: 600, right: 1100, bottom: 600 }) as DOMRect;
-
-        feature.beans = {
-            gos: {
-                get: (key: string) => {
-                    if (key === 'suppressMoveWhenColumnDragging') {
-                        return true;
-                    }
-                    if (key === 'enableRtl') {
-                        return rtl;
-                    }
-                    return undefined;
-                },
-            } as GridOptionsService,
-            ctrlsSvc: {
-                getHeaderRowContainerCtrl: () => ({ eViewport }),
-                get: () => ({
-                    getCenterViewportScrollLeft: () => 0,
-                }),
-            },
-            visibleCols: {
-                getLeftStickyColumnContainerWidth: () => 50,
-                getRightStickyColumnContainerWidth: () => 50,
-            },
-        };
-
-        feature.gridBodyCon = { eGridViewport };
-        feature.checkCenterForScrolling = vi.fn();
-        feature.handleColumnDragWhileSuppressingMovement = vi.fn();
-        feature.handleColumnDragWhileAllowingMovement = vi.fn();
-        feature.lastDraggingEvent = null;
-
-        return feature;
-    }
-
     test('passes dragging event to center auto-scroll checks', () => {
         const feature = createFeature(null);
 

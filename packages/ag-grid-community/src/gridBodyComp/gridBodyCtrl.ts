@@ -568,7 +568,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setStickyWidth(vScrollVisible: boolean) {
-        this.comp.setStickyBottomWidth(!vScrollVisible ? '100%' : `calc(100% - ${this.getVerticalScrollbarWidth()}px)`);
+        this.comp.setStickyBottomWidth(vScrollVisible ? `calc(100% - ${this.getVerticalScrollbarWidth()}px)` : '100%');
     }
 
     public getHeaderRowsOffset(): number {

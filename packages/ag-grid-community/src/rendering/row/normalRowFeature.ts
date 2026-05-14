@@ -180,10 +180,10 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         };
 
         const addCell = (colInstanceId: ColumnInstanceId, cellCtrl: CellCtrl, index?: number) => {
-            if (index != null) {
-                res.list.splice(index, 0, cellCtrl);
-            } else {
+            if (index == null) {
                 res.list.push(cellCtrl);
+            } else {
+                res.list.splice(index, 0, cellCtrl);
             }
             res.map[colInstanceId] = cellCtrl;
         };
@@ -202,9 +202,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
                 cellCtrl = undefined;
             }
 
-            if (!cellCtrl) {
-                cellCtrl = rowCtrl.getNewCellCtrl(col);
-            }
+            cellCtrl ??= rowCtrl.getNewCellCtrl(col);
 
             if (!cellCtrl) {
                 continue;
@@ -305,8 +303,7 @@ export class NormalRowFeature extends BeanStub implements IRowModeFeature {
         const mightWantToKeepCell = editing || focused;
 
         if (mightWantToKeepCell) {
-            const displayedColumns = visibleCols.allCols;
-            const cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
+            const cellStillDisplayed = visibleCols.allCols.indexOf(column) >= 0;
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
         }
 
