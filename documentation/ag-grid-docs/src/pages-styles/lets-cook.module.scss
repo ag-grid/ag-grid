@@ -1,0 +1,94 @@
+@use 'design-system' as *;
+
+.letsCookPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px);
+    padding: $spacing-size-12 $spacing-size-4;
+    text-align: center;
+}
+
+.letsCookInner {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: $spacing-size-8;
+    max-width: 1100px;
+    width: 100%;
+
+    @media screen and (min-width: 900px) {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: $spacing-size-16;
+        text-align: left;
+    }
+}
+
+.copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-size-6;
+    max-width: 640px;
+
+    @media screen and (min-width: 900px) {
+        align-items: flex-start;
+    }
+}
+
+.title {
+    font-size: clamp(3rem, 9vw, 6.5rem);
+    line-height: 1;
+    margin: 0;
+    font-weight: var(--text-bold);
+    color: var(--color-fg-primary);
+
+    @media screen and (min-width: 900px) {
+        font-size: clamp(4rem, 7vw, 7.5rem);
+    }
+}
+
+.intro {
+    font-size: var(--text-fs-xl);
+    line-height: 1.4;
+    margin: 0;
+    color: var(--color-fg-secondary);
+
+    @media screen and (min-width: 900px) {
+        font-size: var(--text-fs-2xl);
+    }
+
+    @media screen and (max-width: 480px) {
+        font-size: var(--text-fs-sm);
+    }
+}
+
+.cta {
+    font-size: var(--text-fs-lg);
+    padding-right: 0.333em;
+
+    :global(.icon) {
+        --icon-size: 1.333em;
+    }
+
+    @media screen and (min-width: 900px) {
+        font-size: var(--text-fs-lg);
+    }
+
+    @media screen and (max-width: 480px) {
+        font-size: var(--text-fs-sm);
+    }
+}
+
+.heroImage {
+    width: clamp(180px, 50vw, 320px);
+    height: auto;
+    flex-shrink: 0;
+
+    @media screen and (min-width: 900px) {
+        width: clamp(260px, 30vw, 420px);
+    }
+}
