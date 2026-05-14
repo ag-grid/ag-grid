@@ -736,6 +736,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 
 .agendaDownloads {
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
     padding: 16px 0;
 }
