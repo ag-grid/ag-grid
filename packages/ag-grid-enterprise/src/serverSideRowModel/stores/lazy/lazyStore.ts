@@ -294,7 +294,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns whether or not the row exists within this store
      */
     isDisplayIndexInStore(displayIndex: number): boolean {
-        if (this.cache.getRowCount() === 0) {
+        if (this.getRowCount() === 0) {
             return false;
         }
 
