@@ -253,6 +253,7 @@ createGrid(<dom element>, gridOptions, { modules: [
 ```js
 import { Component } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular'
+import type { Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 import { ExcelExportModule, MasterDetailModule } from 'ag-grid-enterprise';
 
@@ -310,26 +311,28 @@ function App() {
 {% if isFramework("vue") %}
 
 ```js
-import { createApp } from 'vue';
 import { AgGridVue } from 'ag-grid-vue3';
 import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 import { ExcelExportModule, MasterDetailModule } from 'ag-grid-enterprise';
 
-data() {
-    return {
-        // ... other properties
-        modules: [
-            ClientSideRowModelModule,
-            CsvExportModule,
-            ExcelExportModule,
-            MasterDetailModule
-        ]
-    }
+export default {
+    components: { AgGridVue },
+    data() {
+        return {
+            // ... other properties
+            modules: [
+                ClientSideRowModelModule,
+                CsvExportModule,
+                ExcelExportModule,
+                MasterDetailModule
+            ]
+        }
+    },
+    template: `<ag-grid-vue
+        :modules="modules"
+        /* ... other properties */
+    />`
 }
-<ag-grid-vue
-    :modules="modules"
-    // ... other properties
-/>
 ```
 
 {% /if %}

@@ -4,6 +4,7 @@ import {
     CsvExportModule,
     ModuleRegistry,
     NumberFilterModule,
+    TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
@@ -14,6 +15,7 @@ ModuleRegistry.registerModules([
     CsvExportModule,
     ExcelExportModule,
     NumberFilterModule,
+    TextFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 

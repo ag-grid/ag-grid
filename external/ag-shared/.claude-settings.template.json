@@ -142,6 +142,8 @@
   "enabledPlugins": {
     "ag-core@ag-dev": true,
     "ag-prodeng@ag-dev": true,
+    "ag-eng@ag-dev": true,
+    "ag-product@ag-dev": true,
     "${PRODUCT}@ag-dev": true,
     "codex@openai-codex": true,
     "skill-creator@claude-plugins-official": true

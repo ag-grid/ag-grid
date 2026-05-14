@@ -38,7 +38,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
     // use the server-side row model
     rowModelType: 'serverSide',
 
-    // only keep 4 blocks of rows (default is keep all rows)
+    // only keep 2 blocks of rows (default is keep all rows)
     maxBlocksInCache: 2,
     debug: true,
 };

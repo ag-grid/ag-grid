@@ -113,7 +113,7 @@ export interface ExportParams<T> extends BaseExportParams {
     getCustomContentBelowRow?: (params: ProcessRowGroupForExportParams) => T | undefined;
 
     /**
-     * Set to `true` to allow the contents of the Header Row Column to be exported.
+     * Set to `true` to allow the contents of the Row Numbers column to be exported.
      */
     exportRowNumbers?: boolean;
 }

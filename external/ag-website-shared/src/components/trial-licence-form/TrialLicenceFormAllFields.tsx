@@ -222,7 +222,10 @@ export const TrialLicenceFormAllFields: FunctionComponent = ({ submitUrl }: Prop
     return (
         <form id={ZI_FORM_ID} noValidate className={styles.trialForm} onSubmit={handleFormSubmit}>
             <div className={styles.inputs}>
-                <input placeholder="Company" type="hidden" id="company" name="company" />
+                <div className={classnames('input-field')}>
+                    <label htmlFor="company">Company (optional)</label>
+                    <input placeholder="Company" type="text" id="company" name="company" />
+                </div>
 
                 <div className={classnames('input-field', styles.emailField, { 'input-error': emailError })}>
                     <label htmlFor="email">Email</label>

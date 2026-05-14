@@ -8,7 +8,7 @@ Using parts you can, for example, select a text input style that matches you app
 
 ## Configuring Theme Parts
 
-To add a part to a theme, call the `theme.withPart(...)` method which returns a new theme using that part. A theme can only have one part for a given feature, so for example because all color scheme parts have `feature: "colorScheme"`, adding a new color scheme to a theme will remove any existing part.
+To add a part to a theme, call the `theme.withPart(...)` method which returns a new theme using that part. A theme can only have one part for a given feature, so for example because all colour scheme parts have `feature: "colorScheme"`, adding a new colour scheme to a theme will remove any existing part.
 
 ```js
 import { themeQuartz, colorSchemeDark, iconSetMaterial } from 'ag-grid-community';
@@ -19,7 +19,7 @@ const myTheme = themeQuartz
     .withPart(colorSchemeDark);
 ```
 
-This example demonstrates mixing and matching any built-in theme, icon set, and color scheme:
+This example demonstrates mixing and matching any built-in theme, icon set, and colour scheme:
 
 {% gridExampleRunner title="Configuring Theme Parts" name="configuring-theme-parts" /%}
 
@@ -28,13 +28,12 @@ This example demonstrates mixing and matching any built-in theme, icon set, and 
 The following parts are available:
 
 - `colorScheme` feature:
-    - `colorSchemeVariable` - the default color scheme for all our [built-in themes](./themes/#built-in-themes). By default it appears light, but can be adjusted using [theme modes](./theming-colors/#theme-modes).
+    - `colorSchemeVariable` - the default colour scheme for all our [built-in themes](./themes/#built-in-themes). By default it appears light, but can be adjusted using [theme modes](./theming-colors/#theme-modes).
     - `colorSchemeLight` - neutral light scheme
-    - `colorSchemeLightCold` - light scheme with subtle cold tint used by Balham theme
+    - `colorSchemeLightCold` - light scheme with subtle cold tint
     - `colorSchemeLightWarm` - light scheme with subtle warm tint
     - `colorSchemeDark` - neutral dark scheme
     - `colorSchemeDarkBlue` - our preferred dark scheme used on this website
-    - `colorSchemeDarkWarm` - dark scheme with subtle warm tint
     - `colorSchemeDarkWarm` - dark scheme with subtle warm tint
 - `iconSet` feature:
     - `iconSetQuartz` - our default icon set
@@ -64,7 +63,7 @@ The following parts are available:
     - `tabStyleAlpine` - tabs styled as per the Alpine theme
     - `tabStyleRolodex` - tabs designed to imitate paper cards, as used by the Balham theme
 - `styleMaterial` feature (used by the Material theme):
-    - `styleMaterial` - Adds the `primaryColor` parameter defined by [Material Design v2](https://m2.material.io/) and uses this color instead of the `accentColor` for most colored elements. `accentColor` is still used for checked checkboxes and to highlight active filters. This part also applies some adjustments to appearance of elements to match the Material Design specification, e.g. making all button text uppercase.
+    - `styleMaterial` - Adds the `primaryColor` parameter defined by [Material Design v2](https://m2.material.io/) and uses this colour instead of the `accentColor` for most coloured elements. `accentColor` is still used for checked checkboxes and to highlight active filters. This part also applies some adjustments to appearance of elements to match the Material Design specification, e.g. making all button text uppercase.
 
 ## Removing a Part
 

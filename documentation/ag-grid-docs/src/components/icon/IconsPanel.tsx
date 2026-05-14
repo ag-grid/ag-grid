@@ -59,6 +59,7 @@ const ICONS = [
     'previous',
     'right',
     'save',
+    'search',
     'small-down',
     'small-left',
     'small-right',

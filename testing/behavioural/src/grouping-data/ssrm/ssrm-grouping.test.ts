@@ -184,6 +184,9 @@ describe('csv exports for server-side grouping', () => {
         expect(irelandYear2000Total?.footer).toBe(true);
         expect(irelandYear2000Total?.data?.medals).toBe(5);
 
+        expect(api.getCellValue({ rowNode: irelandGroupTotal!, colKey: 'ag-Grid-AutoColumn-country' })).toBe('Ireland');
+        expect(api.getCellValue({ rowNode: irelandYear2000Total!, colKey: 'ag-Grid-AutoColumn-year' })).toBe('2000');
+
         expect(unindentText(api.getDataAsCsv({ suppressQuotes: true }))).toEqual(unindentText`
             Country,Country,sum(Medals)
             Ireland,,

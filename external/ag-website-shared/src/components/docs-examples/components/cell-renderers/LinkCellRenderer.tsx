@@ -10,7 +10,10 @@ export function LinkCellRenderer({ colDef, data }) {
         return;
     }
     const internalFramework = colDef.colId;
-    const { pageName, exampleName } = data;
+    const { pageName, exampleName, supportedFrameworks } = data;
+    if (supportedFrameworks && !supportedFrameworks.includes(internalFramework)) {
+        return null;
+    }
     const titlePrefix = `${pageName} > ${exampleName} > ${internalFramework}`;
 
     return (

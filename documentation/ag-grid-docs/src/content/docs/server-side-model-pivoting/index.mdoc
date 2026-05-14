@@ -164,7 +164,7 @@ function addPivotResultCols(response, api) {
 }
 ```
 
-In the code above, `addPivotColDefs` does not create column groups for simplicity. However, the example below shows a
+In the code above, `addPivotResultCols` does not create column groups for simplicity. However, the example below shows a
 more complex implementation that creates column groups. Note the following:
 
 - Column definitions are created from the `pivotFields` are returned from the server.
@@ -212,4 +212,4 @@ The example demonstrates the following:
 
 ## Batching Data Requests
 
-You can stage multiple data requests by using the Columns Tool Panel. This allows multiple configuration changes to be applied in a single update, avoiding unnecessary intermediate recomputations or server requests. See [SSRM Row Grouping — Batching Data Requests](./server-side-model-grouping/#batching-data-requests) for a detailed example.
+You can stage multiple data requests by using the Columns Tool Panel. This allows multiple configuration changes to be applied in a single update, avoiding unnecessary intermediate recomputations or server requests. See [SSRM Row Grouping — Deferred Column Configuration](./server-side-model-grouping/#deferred-column-configuration) for a detailed example.

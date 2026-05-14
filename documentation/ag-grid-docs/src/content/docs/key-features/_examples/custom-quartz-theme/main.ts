@@ -5,13 +5,13 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 const myTheme = themeQuartz.withParams({
     /* Low spacing = very compact */
     spacing: 2,
-    /* Changes the color of the grid text */
+    /* Changes the colour of the grid text */
     foregroundColor: 'rgb(14, 68, 145)',
-    /* Changes the color of the grid background */
+    /* Changes the colour of the grid background */
     backgroundColor: 'rgb(241, 247, 255)',
-    /* Changes the header color of the top row */
+    /* Changes the header colour of the top row */
     headerBackgroundColor: 'rgb(228, 237, 250)',
-    /* Changes the hover color of the row*/
+    /* Changes the hover colour of the row*/
     rowHoverColor: 'rgb(216, 226, 255)',
 });
 

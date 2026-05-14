@@ -23,8 +23,12 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
+    autoGroupColumnDef: {
+        minWidth: 220,
+    },
     rowSelection: {
         mode: 'multiRow',
+        groupSelects: 'descendants',
         selectAll: 'all',
         checkboxLocation: 'autoGroupColumn',
     },

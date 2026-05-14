@@ -334,6 +334,11 @@ export const AG_GRID_LOCALE_JP = {
     sortAbsoluteDescending: '絶対降順に並べ替え',
     sortUnSort: 'ソート解除',
     shiftF2: 'Shift+F2',
+    toolbarFind: '検索',
+    toolbarFindPreviousMatch: '前の一致',
+    toolbarFindNextMatch: '次の一致',
+    toolbarQuickFilter: 'フィルター',
+    toolbarMenu: 'メニュー',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '合計',

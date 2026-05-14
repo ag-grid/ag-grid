@@ -3,7 +3,7 @@ title: "Load Retry"
 enterprise: true
 ---
 
-When a datasource load fails, it is possible to retry loading the rows again at a later time.
+When a datasource load fails, call `retryServerSideLoads()` to reload the failed rows at a later time.
 
 When loading fails, the datasource informs the grid of such using the `fail()` callback instead of using the `success()` callback. Calling `fail()` puts the loading rows into a Loading Failed state which hides the loading spinner. No data is shown in these rows as they are not loaded.
 

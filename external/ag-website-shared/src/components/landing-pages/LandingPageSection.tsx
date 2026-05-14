@@ -46,6 +46,7 @@ interface Props {
     showBackgroundGradient?: boolean;
     children: ReactNode;
     isFramework?: boolean;
+    maxWidth?: string;
 }
 
 const CTAWithFrameworks: FunctionComponent<{ ctaId: string; ctaTitle: string; ctaUrl: string }> = ({
@@ -114,7 +115,7 @@ const CTAWithFrameworks: FunctionComponent<{ ctaId: string; ctaTitle: string; ct
                 >
                     {CurrentIcon && <CurrentIcon className={styles.frameworkIcon} />}
 
-                    <span className={styles.frameworkName}>{framework}</span>
+                    <span className={styles.frameworkName}>{FRAMEWORK_CONFIGS[framework].name}</span>
 
                     <Icon name="chevronDown" svgClasses={styles.frameworkChevronDown} />
                 </div>
@@ -173,6 +174,7 @@ export const LandingPageSection: FunctionComponent<Props> = ({
     sectionClass,
     showBackgroundGradient,
     children,
+    maxWidth,
 }) => {
     return (
         <div
@@ -181,7 +183,7 @@ export const LandingPageSection: FunctionComponent<Props> = ({
                 [styles.withBackgroundGradient]: showBackgroundGradient,
             })}
         >
-            <header className={styles.headingContainer}>
+            <header className={styles.headingContainer} style={{ maxWidth: maxWidth }}>
                 <h2 className={styles.tag}>{tag}</h2>
 
                 {headingHtml ? (

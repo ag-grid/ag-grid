@@ -32,12 +32,12 @@ export const WinnersToggle = (props: IToolbarItemParams) => {
     return (
         <div className="ag-toolbar-item" style={{ display: 'flex', gap: 12, padding: 8 }}>
             {COLUMNS.map(({ column, label }) => (
-                <label key={column} style={{ padding: '0 4px' }}>
+                <label key={column} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '0 4px' }}>
                     <input
                         type="checkbox"
                         checked={checked[column] ?? false}
                         onChange={(event) => onChange(column, event)}
-                        style={{ marginRight: 4 }}
+                        style={{ margin: 0 }}
                     />
                     {label}
                 </label>
@@ -79,14 +79,14 @@ export const ToolPanelRadio = forwardRef<ToolPanelRadioHandle, IToolbarItemParam
         >
             <span style={{ fontWeight: 500 }}>Tool Panel:</span>
             {PANELS.map(({ value, label }) => (
-                <label key={value} style={{ padding: '0 4px' }}>
+                <label key={value} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '0 4px' }}>
                     <input
                         type="radio"
                         name={`tool-panel-${key}`}
                         value={value}
                         checked={selected === value}
                         onChange={() => onChange(value)}
-                        style={{ marginRight: 4 }}
+                        style={{ margin: 0 }}
                     />
                     {label}
                 </label>

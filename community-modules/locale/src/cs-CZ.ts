@@ -335,6 +335,11 @@ export const AG_GRID_LOCALE_CZ = {
     sortAbsoluteDescending: 'Řadit absolutně sestupně',
     sortUnSort: 'Zrušit třídění',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Najít',
+    toolbarFindPreviousMatch: 'Předchozí shoda',
+    toolbarFindNextMatch: 'Další shoda',
+    toolbarQuickFilter: 'Filtr',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Součet',

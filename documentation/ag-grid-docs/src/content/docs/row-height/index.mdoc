@@ -163,7 +163,7 @@ Row resizing is available as an option when showing [Row Numbers](./row-numbers/
 ## Height for Pinned Rows
 
 When pinning rows while `enableRowPinning = true`, the row height of pinned rows can be changed as [described above](#rownodesetrowheightheight-and-apionrowheightchanged).
-Use `api.forEachPinnedRow` to get references to the row nodes of pinned rows.
+Use `api.forEachPinnedRow(floating, callback)` to get references to the row nodes of pinned rows, where `floating` is `'top'` or `'bottom'`.
 
 When setting pinned row data via `pinnedTopRowData` or `pinnedBottomRowData`, row height works exactly as for normal rows with one difference: it
 is not possible to dynamically change the height once set. However this is easily solved

@@ -1,3 +1,4 @@
+import BackToTopIcon from '@ag-website-shared/images/inline-svgs/back-to-top-icon.svg?react';
 import BoldChevronDown from '@ag-website-shared/images/inline-svgs/bold-chevron-down.svg?react';
 import BoldChevronLeft from '@ag-website-shared/images/inline-svgs/bold-chevron-left.svg?react';
 import BoldChevronRight from '@ag-website-shared/images/inline-svgs/bold-chevron-right.svg?react';
@@ -95,6 +96,7 @@ const CHARTS_ICON_MAP = {
 };
 
 export const ICON_MAP = {
+    backToTop: BackToTopIcon,
     info: CarbonIcon.Information,
     warning: CarbonIcon.WarningAlt,
     creditCard: CarbonIcon.Purchase,
@@ -154,6 +156,7 @@ export const ICON_MAP = {
     terminal: CarbonIcon.Terminal,
     pricingFeatures: CarbonIcon.CicsProgram,
     support: CarbonIcon.Chat,
+    edit: CarbonIcon.Edit,
     ...SOCIALS_ICON_MAP,
     ...CHARTS_ICON_MAP,
 };

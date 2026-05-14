@@ -85,6 +85,14 @@
         height: var(--ag-header-height);
     }
 
+    .ag-toolbar-item:where(:not(.ag-toolbar-panel)) {
+        font-weight: 600;
+    }
+
+    .ag-toolbar .ag-toolbar-panel {
+        padding-left: var(--ag-grid-size);
+    }
+
     .ag-column-drop-empty {
         color: var(--ag-disabled-foreground-color);
     }

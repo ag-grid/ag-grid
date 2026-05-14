@@ -118,7 +118,7 @@ describe('Toolbar', () => {
             expect(instance).toBeDefined();
         });
 
-        test('returns the built-in item instance by derived key when string form is used', async () => {
+        test('returns built in item when string form is used (no explicit key)', async () => {
             const api = gridMgr.createGrid('get-instance-builtin-string-form', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
@@ -130,7 +130,7 @@ describe('Toolbar', () => {
             expect(api.getToolbarItemInstance('agQuickFilterToolbarItem')).toBeDefined();
         });
 
-        test('returns the built-in item instance by derived key when no explicit key is given', async () => {
+        test('returns undefined when no explicit key is given on object form', async () => {
             const api = gridMgr.createGrid('get-instance-builtin-derived-key', {
                 columnDefs: [{ field: 'name' }],
                 rowData: [{ name: 'Alice' }],
@@ -141,7 +141,7 @@ describe('Toolbar', () => {
 
             await waitForEvent('firstDataRendered', api);
 
-            expect(api.getToolbarItemInstance('agQuickFilterToolbarItem')).toBeDefined();
+            expect(api.getToolbarItemInstance('agQuickFilterToolbarItem')).toBeUndefined();
         });
 
         test('returns undefined after toolbar items are cleared at runtime', async () => {
@@ -160,6 +160,70 @@ describe('Toolbar', () => {
             api.setGridOption('toolbar', { items: [] });
 
             expect(api.getToolbarItemInstance('myFilter')).toBeUndefined();
+        });
+    });
+
+    describe('duplicate items', () => {
+        test('does not render duplicate built-in items in string form', async () => {
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = gridMgr.createGrid('duplicate-string-form', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: { items: ['agQuickFilterToolbarItem', 'agQuickFilterToolbarItem'] },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+            expect(toolbar.querySelectorAll('.ag-toolbar-input-field').length).toBe(1);
+
+            const warnings = warnSpy.mock.calls.flat().join(' ');
+            expect(warnings).toContain('303');
+
+            warnSpy.mockRestore();
+        });
+
+        test('renders duplicate built-in items when passed as objects without explicit keys', async () => {
+            const api = gridMgr.createGrid('duplicate-keyless-object-form', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: [{ toolbarItem: 'agQuickFilterToolbarItem' }, { toolbarItem: 'agQuickFilterToolbarItem' }],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+            expect(toolbar.querySelectorAll('.ag-toolbar-input-field').length).toBe(2);
+        });
+
+        test('does not render both items when explicit keys collide and warns', async () => {
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+            const api = gridMgr.createGrid('duplicate-explicit-key-collision', {
+                columnDefs: [{ field: 'name' }],
+                rowData: [{ name: 'Alice' }],
+                toolbar: {
+                    items: [
+                        { toolbarItem: 'agQuickFilterToolbarItem', key: 'shared' },
+                        { toolbarItem: 'agQuickFilterToolbarItem', key: 'shared' },
+                    ],
+                },
+            });
+
+            await waitForEvent('firstDataRendered', api);
+
+            const gridDiv = TestGridsManager.getHTMLElement(api)!;
+            const toolbar = gridDiv.querySelector<HTMLElement>('.ag-toolbar')!;
+            expect(toolbar.querySelectorAll('.ag-toolbar-input-field').length).toBe(1);
+
+            const warnings = warnSpy.mock.calls.flat().join(' ');
+            expect(warnings).toContain('303');
+
+            warnSpy.mockRestore();
         });
     });
 

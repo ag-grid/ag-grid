@@ -7,6 +7,7 @@
     "importOrderParserPlugins": ["typescript", "decorators-legacy"],
     "importOrderSeparation": true,
     "importOrderSortSpecifiers": true,
+    "importOrderImportAttributesKeyword": "with",
     "overrides": [
         {
             "files": [

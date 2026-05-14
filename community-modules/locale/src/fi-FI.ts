@@ -338,6 +338,11 @@ export const AG_GRID_LOCALE_FI = {
     sortAbsoluteDescending: 'Lajittele ehdoton laskeva',
     sortUnSort: 'Tyhjennä lajittelu',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Etsi',
+    toolbarFindPreviousMatch: 'Edellinen osuma',
+    toolbarFindNextMatch: 'Seuraava osuma',
+    toolbarQuickFilter: 'Suodatus',
+    toolbarMenu: 'Valikko',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Summa',

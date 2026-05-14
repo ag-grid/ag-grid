@@ -18,16 +18,16 @@ const PANELS = [
             role="radiogroup"
             style="display: flex; gap: 12px; padding: 10px; align-items: center;"
         >
-            <span style="font-weight: 500;">Tool Panel:</span>
+            <span>Tool Panel:</span>
             @for (option of options; track option.value) {
-                <label style="padding: 0 4px;">
+                <label style="display: inline-flex; align-items: center; gap: 4px; padding: 0 4px;">
                     <input
                         type="radio"
                         [name]="groupName"
                         [value]="option.value"
                         [checked]="selected === option.value"
                         (change)="onChange(option.value)"
-                        style="margin-right: 4px;"
+                        style="margin: 0;"
                     />
                     {{ option.label }}
                 </label>

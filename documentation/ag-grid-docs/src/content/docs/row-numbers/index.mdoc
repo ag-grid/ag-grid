@@ -82,7 +82,10 @@ This behaviour can be changed by toggling the `exportRowNumbers` of the export p
 ```{% frameworkTransform=true %}
 const gridOptions = {
     rowNumbers: true,
-    cellSelection: true,
+    cellSelection: {
+        enableHeaderHighlight: true,
+        handle: { mode: 'fill' },
+    },
     defaultCsvExportParams: {
         exportRowNumbers: true,
     },

@@ -3,26 +3,26 @@ import { getCollection } from 'astro:content';
 import DebugLayout from '@layouts/DebugLayout.astro';
 import { getDocsExampleContents } from '@components/docs/utils/pageData';
 
-import { DocsExamples } from '@ag-website-shared/components/docs-examples/components/DocsExamples';
+import {
+    DocsExamples,
+    type ExampleProperty,
+} from '@ag-website-shared/components/docs-examples/components/DocsExamples';
 
 const pages = await getCollection('docs');
 const exampleContents = await getDocsExampleContents({ pages });
+const properties: ExampleProperty[] = [
+    'sourceFileList',
+    'isEnterprise',
+    'isIntegratedCharts',
+    'isLocale',
+    'hasExampleConsoleLog',
+    'hasSimpleHtml',
+    'scriptNonce',
+    'supportedFrameworks',
+];
 ---
 
 <DebugLayout title={`Debug: Docs Example Pages`}>
     <h1>Docs Example Pages</h1>
-    <DocsExamples
-        library="grid"
-        client:load
-        exampleContents={exampleContents}
-        properties={[
-            'sourceFileList',
-            'isEnterprise',
-            'isIntegratedCharts',
-            'isLocale',
-            'hasExampleConsoleLog',
-            'hasSimpleHtml',
-            'scriptNonce',
-        ]}
-    />
+    <DocsExamples library="grid" client:load exampleContents={exampleContents} properties={properties} />
 </DebugLayout>

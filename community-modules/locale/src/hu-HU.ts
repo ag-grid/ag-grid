@@ -339,6 +339,11 @@ export const AG_GRID_LOCALE_HU = {
     sortAbsoluteDescending: 'Abszolút csökkenő sorrendben rendez',
     sortUnSort: 'Rendezés törlése',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Keresés',
+    toolbarFindPreviousMatch: 'Előző találat',
+    toolbarFindNextMatch: 'Következő találat',
+    toolbarQuickFilter: 'Szűrő',
+    toolbarMenu: 'Menü',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Összeg',

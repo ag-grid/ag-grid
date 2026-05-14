@@ -46,6 +46,7 @@
 .ag-paging-number,
 .ag-paging-row-summary-panel-number {
     font-weight: 500;
+    font-variant-numeric: tabular-nums;
 }
 
 .ag-paging-description {

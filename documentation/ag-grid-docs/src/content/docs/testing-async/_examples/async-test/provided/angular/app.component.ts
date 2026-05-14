@@ -41,7 +41,7 @@ ModuleRegistry.registerModules([
     </div>`,
 })
 export class AppComponent implements OnInit {
-    public displayedRows: number = 10;
+    public displayedRows: number = 0;
     public quickFilterText: string = '';
 
     public columnDefs: ColDef[] = [
@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
     ];
     public rowData: any[] | null = null;
 
-    @ViewChild('myGrid') grid!: AgGridAngular;
+    @ViewChild(AgGridAngular) grid!: AgGridAngular;
 
     ngOnInit(): void {
         this.rowData = getData();

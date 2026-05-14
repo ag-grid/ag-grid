@@ -3,7 +3,7 @@ import type {
     GridApi,
     GridOptions,
     IServerSideDatasource,
-    IServerSideGetRowsRequest,
+    IServerSideGetRowsParams,
 } from 'ag-grid-community';
 import {
     GRAND_TOTAL_ROW_ID,
@@ -63,7 +63,7 @@ function getServerSideDatasource(server: ReturnType<typeof FakeServer>): IServer
             console.log('[Datasource] - rows requested:', params.request);
 
             const response = server.getData(params.request, false);
-            const { needsGrandTotal, request } = params;
+            const needsGrandTotal = params.needsGrandTotal;
 
             setTimeout(() => {
                 if (!response.success) {
@@ -82,19 +82,20 @@ function getServerSideDatasource(server: ReturnType<typeof FakeServer>): IServer
                 // `needsGrandTotal` stays false for subsequent block requests in the same store
                 // — this branch fires exactly once per logical query.
                 if (needsGrandTotal) {
-                    void refreshGrandTotalAsync(request);
+                    void refreshGrandTotalAsync(params);
                 }
             }, 800);
         },
     };
 }
 
-async function refreshGrandTotalAsync(request: IServerSideGetRowsRequest) {
+async function refreshGrandTotalAsync(params: IServerSideGetRowsParams<OlympicRow>) {
+    const { api, request } = params;
     const thisRequestId = ++latestGrandTotalRequestId;
     console.log(`[GrandTotal] - request ${thisRequestId} started`);
 
     // Clear the stale total immediately; we'll add the fresh one back when the fetch resolves.
-    gridApi.applyServerSideTransaction({
+    api.applyServerSideTransaction({
         remove: [{ id: GRAND_TOTAL_ROW_ID } as any],
     });
 
@@ -102,7 +103,7 @@ async function refreshGrandTotalAsync(request: IServerSideGetRowsRequest) {
     const grandTotalData = await new Promise<OlympicRow>((resolve) => {
         setTimeout(() => {
             resolve(fakeServer.getData(request, true).grandTotalData);
-        }, 1500);
+        }, 1300);
     });
 
     if (thisRequestId !== latestGrandTotalRequestId) {
@@ -110,7 +111,7 @@ async function refreshGrandTotalAsync(request: IServerSideGetRowsRequest) {
         return;
     }
 
-    gridApi.applyServerSideTransaction({ add: [grandTotalData] });
+    api.applyServerSideTransaction({ add: [grandTotalData] });
     console.log(`[GrandTotal] - request ${thisRequestId} applied`);
 }
 

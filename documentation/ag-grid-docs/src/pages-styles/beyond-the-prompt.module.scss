@@ -1,352 +1,940 @@
-@use 'design-system' as *;
+// Beyond the Prompt — fully isolated stylesheet for the conference landing page.
+// Intentionally does NOT import the design system; the page owns its own visual language.
+// Fonts (Geist + Geist Mono) are loaded via <link> tags in the page frontmatter so that
+// only this page pays the cost of importing them.
 
-.logoStrip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $spacing-size-4;
-    margin-bottom: $spacing-size-8;
+// ─── Brand tokens ────────────────────────────────────────────────────────────
+$btp-orange: #f43800;
+$btp-orange-dark: #c02c00;
+$btp-bg: #f2f2f2;
+$btp-bg-alt: #e9e9e9;
+// All copy uses brand orange. Hierarchy comes from size/weight, not colour.
+$btp-ink: #f43800;
+$btp-ink-muted: rgba(244, 56, 0, 0.75);
+$btp-border: rgba(244, 56, 0, 0.2);
+$btp-card: #ffffff;
 
-    @media screen and (min-width: $breakpoint-hero-large) {
-        justify-content: flex-start;
+// ─── Page wrapper ────────────────────────────────────────────────────────────
+.page {
+    --btp-orange: #{$btp-orange};
+    --btp-orange-dark: #{$btp-orange-dark};
+    --btp-bg: #{$btp-bg};
+    --btp-bg-alt: #{$btp-bg-alt};
+    --btp-ink: #{$btp-ink};
+    --btp-ink-muted: #{$btp-ink-muted};
+    --btp-border: #{$btp-border};
+    --btp-card: #{$btp-card};
+
+    background: var(--btp-bg);
+    color: var(--btp-ink);
+    font-family:
+        'Geist',
+        system-ui,
+        -apple-system,
+        'Segoe UI',
+        sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    line-height: 1.55;
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+
+    // Reset link colour expectations from the global design system.
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        font-family:
+            'Geist',
+            system-ui,
+            -apple-system,
+            'Segoe UI',
+            sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--btp-ink);
+        margin: 0;
+    }
+
+    p {
+        margin: 0;
+        color: var(--btp-ink);
+    }
+
+    ul,
+    ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
     }
 }
 
-.logoDivider {
-    font-size: var(--text-fs-xl);
-    opacity: 0.6;
-    color: var(--color-white);
+// ─── Eyebrows (Geist Mono UPPERCASE) ─────────────────────────────────────────
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--btp-ink);
 }
 
-.logoAgGrid {
-    height: 38px;
-    width: auto;
+.eyebrowPill {
+    composes: eyebrow;
+    padding: 6px 14px;
+    border: 1px solid var(--btp-ink);
+    border-radius: 999px;
+    background: transparent;
 }
 
-.logoBryntum {
-    height: 24px;
-    width: auto;
+.eyebrowAccent {
+    composes: eyebrow;
+    color: var(--btp-orange);
 }
 
+// ─── Layout primitives ───────────────────────────────────────────────────────
+.container {
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
+
+    @media (min-width: 768px) {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+}
+
+// ─── Sticky page nav ─────────────────────────────────────────────────────────
+// Hidden until the hero leaves the viewport, then slides down. The page-bg
+// colour is reused so the bar reads as a continuation of the page rather
+// than chrome — the only visual separator is the hairline brand-tinted
+// bottom border. Visibility is controlled via `data-visible="true"` set by
+// the IntersectionObserver script in the page (no CSS-Modules hash round-trip).
+.stickyNav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: var(--btp-bg);
+    border-bottom: 1px solid var(--btp-border);
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        transform 0.32s ease,
+        opacity 0.32s ease;
+
+    &[data-visible='true'] {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        transition: opacity 0.2s ease;
+        transform: none;
+    }
+}
+
+.stickyNavInner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.stickyNavBrand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--btp-ink);
+    min-width: 0;
+}
+
+.stickyNavLogo {
+    display: block;
+    width: 36px;
+    height: auto;
+
+    @media (min-width: 720px) {
+        width: 44px;
+    }
+}
+
+// Size overrides only — the actual primary-button visuals are layered on
+// at the markup level by combining `.btnPrimary` with this class. Avoids
+// composing forward across the file (CSS Modules' `composes` requires
+// the referenced class to be declared earlier in the module).
+.stickyNavCta {
+    padding: 10px 18px;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+// ─── Hero ────────────────────────────────────────────────────────────────────
 .hero {
     position: relative;
-    background-image:
-        linear-gradient(
-            135deg,
-            color-mix(in srgb, var(--color-util-brand-500) 92%, transparent) 0%,
-            color-mix(in srgb, var(--color-util-brand-500) 55%, transparent) 100%
-        ),
-        var(--hero-bg-image);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: var(--btp-bg);
+    padding: 48px 0 64px;
+    overflow: hidden;
 
-    #{$selector-darkmode} & {
-        background-image:
-            linear-gradient(
-                135deg,
-                color-mix(in srgb, var(--color-util-gray-100) 90%, transparent) 0%,
-                color-mix(in srgb, var(--color-util-gray-100) 55%, transparent) 100%
-            ),
-            var(--hero-bg-image);
+    @media (min-width: 900px) {
+        padding: 72px 0 96px;
+    }
+
+    // Page-scoped widening: only the hero's container gets the extra room so
+    // the logomark and the speaker portraits can spread out comfortably across
+    // wide screens. All other sections keep the standard 1320px page width.
+    // Both classes live in this CSS module so the selector is hashed locally.
+    .container {
+        max-width: 1480px;
+    }
+}
+
+.heroInner {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+
+    // The first hero face (Maggie) is rendered at `scale(1.3)` with
+    // `transform-origin: top right`, so its rendered box overflows ~30% of
+    // its column-width to the LEFT, into the corridor between this flex
+    // column and the heroContent text. We need this gap to be wider than
+    // that overflow so the text never sits beneath the SVG. 64–96px clears
+    // it comfortably on every desktop width.
+    @media (min-width: 900px) {
+        flex-direction: row;
+        align-items: center;
+        gap: 64px;
+    }
+
+    @media (min-width: 1200px) {
+        gap: 96px;
     }
 }
 
 .heroContent {
-    max-width: 720px;
-
-    @media screen and (min-width: $breakpoint-hero-large) {
-        max-width: 640px;
-    }
-}
-
-.sectionNav {
+    flex: 1 1 540px;
+    min-width: 0;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-.sectionNavLink {
-    &:not(:last-child)::after {
-        content: '•';
-        display: inline-block;
-        margin: 0 $spacing-size-3;
-        color: var(--color-fg-secondary);
-        pointer-events: none;
-    }
-}
-
-.eventMeta {
-    display: flex;
-    flex-wrap: wrap;
     flex-direction: column;
-    justify-content: center;
-    gap: $spacing-size-4 $spacing-size-6;
-    margin: 0 0 $spacing-size-8;
-    padding: 0;
-    list-style: none;
+    align-items: flex-start;
+    gap: 24px;
 
-    @media screen and (min-width: $breakpoint-hero-large) {
-        justify-content: flex-start;
+    @media (min-width: 900px) {
+        flex: 1 1 50%;
     }
+}
+
+.heroLogos {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+// Recolour brand logos to match the page's brand orange (#f43800).
+// Filter chain via https://codepen.io/sosuke/pen/Pjoqqp.
+$btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) saturate(3924%) hue-rotate(7deg)
+    brightness(99%) contrast(108%);
+
+.heroLogoAg {
+    height: 40px;
+    width: auto;
+    filter: $btp-logo-orange-filter;
+}
+
+.heroLogoX {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--btp-ink-muted);
+}
+
+.heroLogoBryntum {
+    height: 22px;
+    width: auto;
+    filter: $btp-logo-orange-filter;
+}
+
+// The hero title is rendered as an SVG logomark wrapped in an <h1> for SEO/a11y.
+// We zero out the typographic chrome that would otherwise add space around the
+// inline image, and let `.heroTitleLogo` control the visual size.
+.page .heroTitle {
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+    color: inherit;
+}
+
+.heroTitleLogo {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    // Fixed mobile height so the logomark renders at a consistent size
+    // regardless of the SVG's intrinsic aspect ratio at narrow widths.
+    height: 172px;
+
+    @media (min-width: 900px) {
+        max-width: 480px;
+        height: auto;
+    }
+}
+
+// Nested under `.page` so the weight wins over the generic `.page h2` reset.
+.page .heroTagline {
+    font-family:
+        'Geist',
+        system-ui,
+        -apple-system,
+        'Segoe UI',
+        sans-serif;
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.4;
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    color: var(--btp-ink-muted);
+    max-width: 42ch;
+}
+
+.noWrap {
+    white-space: nowrap;
+}
+
+.heroMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    margin-top: 8px;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 
     li {
         display: flex;
         align-items: center;
-        gap: $spacing-size-2;
-        color: var(--color-white);
-        font-size: var(--text-fs-base);
+        gap: 8px;
+        color: var(--btp-ink);
 
         :global(.icon) {
-            --icon-size: 20px;
-            --icon-color: var(--color-white);
-            flex-shrink: 0;
+            --icon-size: 16px;
+            --icon-color: var(--btp-orange);
         }
     }
 }
 
-.intro {
-    text-align: center;
-    max-width: 70ch;
+.heroCtas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+}
 
-    h2 {
-        font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-2xl);
-        margin-bottom: $spacing-size-6;
-    }
+// ─── Hero faces (right side) ─────────────────────────────────────────────────
+// Three same-sized portraits laid out with a clear gap. They share a single
+// `max-height` so the heads read at a uniform scale; the only variation is
+// vertical start position — the middle slot drops down a touch to create a
+// gentle zigzag (up / down / up) rather than a flat baseline.
+.heroFaces {
+    flex: 1 1 50%;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    align-items: start;
 
-    p {
-        font-size: var(--text-fs-lg);
-        line-height: var(--text-lh-lg);
-        margin-bottom: $spacing-size-4;
+    @media (min-width: 900px) {
+        gap: 28px;
     }
 }
 
-.atAGlance {
+.heroFace {
     width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    object-position: top;
+    filter: drop-shadow(0 12px 24px rgba(244, 56, 0, 0.08));
+    transition: transform 0.4s ease;
 
-    h2 {
-        text-align: center;
-        font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-2xl);
-        margin-bottom: $spacing-size-8;
+    &:hover {
+        transform: translateY(-4px);
     }
+}
+
+// Per-face calibration. The three SVG canvases were exported at very
+// different head-to-frame ratios:
+//   • Maggie  (322 × 361) — head + shoulders, head only ~40% of canvas
+//   • Mats    (193 × 352) — head-only crop, head ~75% of canvas
+//   • John    (232 × 388) — head-only crop, head ~75% of canvas
+// A single `max-height` therefore renders the heads at very different
+// visible scales. To equalise:
+//   1. Give all three the same `max-height` budget for a consistent baseline.
+//   2. Up-scale Maggie via `transform: scale()` to compensate for her
+//      surrounding whitespace (the parent `.heroFaces` has no overflow
+//      clipping so the visual overflow into adjacent columns is fine).
+//   3. Drop the middle face down to create the alternating zigzag.
+
+.heroFace:nth-child(1) {
+    max-height: 220px;
+    // Origin `top right` means Maggie scales leftward into the gap between
+    // the hero copy and the faces grid, instead of rightward into Mats's
+    // column where she'd otherwise occlude him.
+    transform: scale(1.15);
+    transform-origin: top right;
+
+    @media (min-width: 900px) {
+        max-height: 260px;
+    }
+
+    &:hover {
+        transform: scale(1.15) translateY(-4px);
+    }
+}
+
+.heroFace:nth-child(2) {
+    max-height: 220px;
+    // Slot 2 is dropped well below the bookend portraits to make the zigzag
+    // read as a deliberate compositional move rather than a small offset.
+    // Mobile uses a much smaller drop (100px) than desktop (238px) — at
+    // narrow viewports the portrait was sliding past the hero's bottom
+    // edge into the section nav, getting clipped.
+    transform: translateY(100px);
+
+    @media (min-width: 900px) {
+        max-height: 323px;
+        transform: translateY(238px);
+    }
+
+    &:hover {
+        transform: translateY(96px);
+
+        @media (min-width: 900px) {
+            transform: translateY(234px);
+        }
+    }
+}
+
+.heroFace:nth-child(3) {
+    max-height: 220px;
+
+    @media (min-width: 900px) {
+        max-height: 260px;
+    }
+
+    &:hover {
+        transform: translateY(-4px);
+    }
+}
+
+// ─── Hero entrance animation ─────────────────────────────────────────────────
+// A blur-rise stagger plays once on page load:
+//   • Left group  — `.heroContent > *` rise + un-blur sequentially.
+//   • Right group — the three `.heroFace` SVGs un-blur in place, slightly
+//     offset from the left so the eye finishes reading the copy as the
+//     portraits resolve. We only animate `opacity` and `filter` for the
+//     faces because each one already owns a bespoke `transform` (Maggie's
+//     `scale(1.15)`, Mats's `translateY(211px)` etc.) that we must not
+//     clobber. The existing `drop-shadow` is preserved in both keyframe
+//     stages so the filter function chain stays consistent and CSS can
+//     interpolate cleanly.
+//
+// `animation-fill-mode: both` is critical: it keeps each element in the
+// `from` state during its individual `animation-delay`, otherwise the
+// not-yet-started elements would flash visible before their turn.
+@keyframes btp-hero-rise {
+    from {
+        opacity: 0;
+        filter: blur(14px);
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+    }
+}
+
+@keyframes btp-hero-face-in {
+    from {
+        opacity: 0;
+        filter: drop-shadow(0 12px 24px rgba(244, 56, 0, 0.08)) blur(18px);
+    }
+    to {
+        opacity: 1;
+        filter: drop-shadow(0 12px 24px rgba(244, 56, 0, 0.08)) blur(0);
+    }
+}
+
+.heroContent > * {
+    animation: btp-hero-rise 720ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.heroContent > *:nth-child(1) {
+    animation-delay: 0ms;
+}
+.heroContent > *:nth-child(2) {
+    animation-delay: 90ms;
+}
+.heroContent > *:nth-child(3) {
+    animation-delay: 180ms;
+}
+.heroContent > *:nth-child(4) {
+    animation-delay: 270ms;
+}
+.heroContent > *:nth-child(5) {
+    animation-delay: 360ms;
+}
+
+.heroFace {
+    animation: btp-hero-face-in 820ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+// Right group lags the left group by a beat so the faces feel like they
+// resolve _into_ a finished hero, rather than racing the copy.
+.heroFace:nth-child(1) {
+    animation-delay: 220ms;
+}
+.heroFace:nth-child(2) {
+    animation-delay: 320ms;
+}
+.heroFace:nth-child(3) {
+    animation-delay: 420ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .heroContent > *,
+    .heroFace {
+        animation: none;
+    }
+}
+
+// ─── Buttons (brand) ─────────────────────────────────────────────────────────
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 22px;
+    border-radius: 999px;
+    font-family: 'Geist', system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    line-height: 1;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+    white-space: nowrap;
+
+    :global(.icon) {
+        --icon-size: 16px;
+        transition: transform 0.2s ease;
+    }
+
+    &:hover :global(.icon) {
+        transform: translateX(2px);
+    }
+}
+
+.btnPrimary {
+    composes: btn;
+    background: var(--btp-orange);
+    color: #fff !important;
+    border-color: var(--btp-orange);
+
+    :global(.icon) {
+        --icon-color: #fff;
+    }
+
+    &:hover {
+        background: var(--btp-orange-dark);
+        border-color: var(--btp-orange-dark);
+    }
+}
+
+.btnSecondary {
+    composes: btn;
+    background: transparent;
+    color: var(--btp-ink) !important;
+    border-color: var(--btp-ink);
+
+    :global(.icon) {
+        --icon-color: var(--btp-ink);
+    }
+
+    &:hover {
+        background: var(--btp-ink);
+        color: #fff !important;
+
+        :global(.icon) {
+            --icon-color: #fff;
+        }
+    }
+}
+
+.btnGhost {
+    composes: btn;
+    background: transparent;
+    color: var(--btp-orange) !important;
+    border-color: transparent;
+    padding: 8px 0;
+
+    :global(.icon) {
+        --icon-color: var(--btp-orange);
+    }
+
+    &:hover {
+        color: var(--btp-orange-dark) !important;
+
+        :global(.icon) {
+            --icon-color: var(--btp-orange-dark);
+        }
+    }
+}
+
+// ─── Roll-up text animation ──────────────────────────────────────────────────
+// Wraps a button label in two stacked copies of the same text. On hover both
+// layers translate up by exactly one row with a per-character stagger so the
+// front text rolls out the top while an identical copy rolls in from below —
+// the classic editorial-style "filmstrip" hover.
+.btnRoll {
+    position: relative;
+    display: inline-flex;
+    overflow: hidden;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.btnRollLayer {
+    display: inline-flex;
+}
+
+// Stack the second layer directly on top of the first so the two rows occupy
+// the same horizontal slot; the per-char `translateY(100%)` below pushes its
+// glyphs out of the visible row, ready to roll up on hover.
+.btnRollLayer + .btnRollLayer {
+    position: absolute;
+    inset: 0;
+}
+
+.btnRollChar {
+    display: inline-block;
+    transition: transform 0.45s cubic-bezier(0.7, 0, 0.2, 1);
+    transition-delay: calc(var(--btn-roll-i, 0) * 22ms);
+    will-change: transform;
+}
+
+// Back layer starts one row below the visible area.
+.btnRollLayer + .btnRollLayer .btnRollChar {
+    transform: translateY(100%);
+}
+
+// On hover the whole filmstrip advances by exactly one row, in both
+// directions, so unhover plays the animation in reverse for free.
+.btn:hover .btnRollLayer:first-child .btnRollChar,
+.btn:focus-visible .btnRollLayer:first-child .btnRollChar {
+    transform: translateY(-100%);
+}
+
+.btn:hover .btnRollLayer + .btnRollLayer .btnRollChar,
+.btn:focus-visible .btnRollLayer + .btnRollLayer .btnRollChar {
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btnRollChar {
+        transition: none;
+    }
+}
+
+// ─── Section nav ─────────────────────────────────────────────────────────────
+// Full-width jump nav. Lives outside `.container` in the markup (matching the
+// `.sectionRule` blocks) so the top/bottom rules span the viewport edge to
+// edge. Padding/spacing is kept in sync with `.sectionRule` so the rhythm of
+// horizontal lines down the page reads as one consistent system.
+.sectionNav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 18px 0;
+    border-top: 1px solid var(--btp-border);
+    border-bottom: 1px solid var(--btp-border);
+    margin-bottom: 80px;
+
+    @media (min-width: 900px) {
+        padding: 22px 0;
+    }
+
+    a {
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--btp-ink);
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: var(--btp-orange);
+        }
+    }
+}
+
+// ─── Generic section ─────────────────────────────────────────────────────────
+.section {
+    padding: 64px 0;
+    scroll-margin-top: 32px;
+
+    @media (min-width: 900px) {
+        padding: 96px 0;
+    }
+}
+
+.sectionHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 48px;
+    max-width: 720px;
+}
+
+// Nested under `.page` to win specificity over the generic `.page h2` reset.
+.page .sectionTitle {
+    font-size: 56px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    font-weight: 500;
+}
+
+.sectionLead {
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--btp-ink-muted);
+    max-width: 720px;
+}
+
+// ─── Full-width section title rule ───────────────────────────────────────────
+// Editorial banner that replaces the large `.sectionTitle` heading on the
+// At a glance / Speakers / Full schedule / The venue sections. Top + bottom
+// borders span the full viewport width; the label uses Geist Mono uppercase
+// to echo the section nav at the top of the page.
+.sectionRule {
+    border-top: 1px solid var(--btp-border);
+    border-bottom: 1px solid var(--btp-border);
+    padding: 18px 0;
+    margin-bottom: 48px;
+
+    @media (min-width: 900px) {
+        padding: 22px 0;
+        margin-bottom: 64px;
+    }
+}
+
+.page .sectionRuleTitle {
+    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--btp-ink);
+    text-align: center;
+    margin: 0;
+}
+
+// When a `.sectionLead` follows the full-width rule, it lives inside the
+// container directly and needs its own bottom spacing before the section grid.
+.sectionLead + * {
+    margin-top: 32px;
+
+    @media (min-width: 900px) {
+        margin-top: 48px;
+    }
+}
+
+// On the Agenda section, `.sectionLead` lives in its own `.container` div
+// (separate from the cards), so the adjacent-sibling `+` rule above can't
+// reach across the wrapping containers. Mirror the same gap by pushing the
+// `.container` that immediately follows the lead's container down instead.
+// Speakers and Venue keep `.sectionLead` and their grids inside a single
+// `.container`, so that pattern continues to use the rule above.
+.container:has(> .sectionLead) + .container {
+    margin-top: 32px;
+
+    @media (min-width: 900px) {
+        margin-top: 48px;
+    }
+}
+
+// ─── Intro ───────────────────────────────────────────────────────────────────
+.intro {
+    composes: section;
+    background: var(--btp-bg);
+}
+
+.introBody {
+    display: grid;
+    gap: 24px;
+    max-width: 70ch;
+
+    p {
+        font-size: 18px;
+        line-height: 1.65;
+        color: var(--btp-ink-muted);
+    }
+}
+
+// ─── At a glance ─────────────────────────────────────────────────────────────
+.atAGlance {
+    composes: section;
 }
 
 .atAGlanceGrid {
     display: grid;
-    gap: $spacing-size-4;
+    gap: 16px;
     grid-template-columns: 1fr;
 
-    @media screen and (min-width: $breakpoint-landing-page-medium) {
+    @media (min-width: 720px) {
         grid-template-columns: repeat(3, 1fr);
     }
 }
 
+// Default card = white background, orange text. Used by the first two
+// cards (When + Where), which are informational. The third card (Tickets)
+// inherits this base then gets overridden below into an orange knockout
+// to bias attention toward the booking CTA.
+//
+// Border is kept (1px transparent) only so the box dimensions match the
+// orange Tickets card sitting next to it — but never renders any colour
+// in either default or hover state on the informational cards.
 .atAGlanceCard {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding: $spacing-size-6;
-    border: 1px solid var(--color-util-gray-200);
-    border-radius: 8px;
-    background-color: var(--color-bg-primary);
-    box-shadow: 0 2px 4px #0000001a;
+    gap: 12px;
+    padding: 32px;
+    background: var(--btp-card);
+    border: 1px solid transparent;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
 
-    #{$selector-darkmode} & {
-        border-color: var(--color-util-gray-300);
-        background-color: #192232;
+    :global(.icon) {
+        --icon-size: 24px;
+        --icon-color: var(--btp-orange);
+    }
+
+    h3 {
+        font-size: 13px;
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--btp-ink-muted);
+    }
+
+    .atAGlancePrimary {
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--btp-ink);
+    }
+
+    .atAGlanceDetail {
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--btp-ink-muted);
+    }
+
+    a {
+        margin-top: auto;
+        align-self: flex-start;
+    }
+}
+
+// Third card (Tickets) gets the orange knockout treatment so the booking
+// action stands out against its two informational siblings. Hover deepens
+// to `--btp-orange-dark` and the inner `.btnGhost` is re-skinned so its
+// default orange text + icon stay legible on the new orange surface.
+.atAGlanceCard:nth-child(3) {
+    background: var(--btp-orange);
+    border-color: var(--btp-orange);
+
+    &:hover {
+        background: var(--btp-orange-dark);
+        border-color: var(--btp-orange-dark);
     }
 
     :global(.icon) {
-        --icon-size: 28px;
-        --icon-color: var(--color-link);
-        margin-bottom: $spacing-size-3;
+        --icon-color: var(--btp-bg);
     }
 
     h3 {
-        font-size: var(--text-fs-lg);
-        margin-bottom: $spacing-size-2;
-        color: var(--color-fg-primary);
+        color: var(--btp-bg);
+        opacity: 0.8;
     }
 
-    p {
-        margin-bottom: $spacing-size-3;
-        line-height: 1.5;
+    .atAGlancePrimary {
+        color: var(--btp-bg);
     }
 
-    a:global(.button-tertiary) {
-        margin-top: auto;
+    .atAGlanceDetail {
+        color: var(--btp-bg);
+        opacity: 0.85;
     }
 
-    a:not(:global(.button-tertiary)) {
-        color: var(--color-link);
-        display: inline-flex;
-        align-items: center;
-        gap: $spacing-size-1;
+    .btnGhost {
+        color: var(--btp-bg) !important;
 
         :global(.icon) {
-            --icon-size: 16px;
-            --icon-color: currentColor;
-            margin-bottom: 0;
+            --icon-color: var(--btp-bg);
+        }
+
+        &:hover {
+            color: var(--btp-bg) !important;
+            opacity: 0.85;
+
+            :global(.icon) {
+                --icon-color: var(--btp-bg);
+            }
         }
     }
 }
 
-.agendaSection {
-    width: 100%;
-    scroll-margin-top: $spacing-size-16;
-
-    h2 {
-        text-align: center;
-        font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-2xl);
-        margin-bottom: $spacing-size-2;
-    }
-}
-
-.agendaIntro {
-    text-align: center;
-    color: var(--color-fg-secondary);
-    margin-bottom: $spacing-size-8;
-}
-
-.agenda {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    border: 1px solid var(--color-util-gray-200);
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: var(--color-bg-primary);
-
-    #{$selector-darkmode} & {
-        border-color: var(--color-util-gray-300);
-        background-color: #192232;
-    }
-}
-
-.agendaRow {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-size-1;
-    margin-bottom: 0;
-    padding: $spacing-size-4 $spacing-size-6;
-
-    @media screen and (min-width: $breakpoint-landing-page-medium) {
-        flex-direction: row;
-        gap: $spacing-size-6;
-        padding: $spacing-size-5 $spacing-size-8;
-    }
-
-    &:not(:last-child) {
-        border-bottom: 1px solid var(--color-util-gray-200);
-
-        #{$selector-darkmode} & {
-            border-bottom-color: var(--color-util-gray-300);
-        }
-    }
-}
-
-.agendaBreak {
-    background-color: color-mix(in srgb, var(--color-util-gray-100) 40%, transparent);
-    color: var(--color-fg-secondary);
-
-    #{$selector-darkmode} & {
-        background-color: color-mix(in srgb, var(--color-util-gray-200) 20%, transparent);
-    }
-
-    .agendaBody h3 {
-        font-weight: var(--text-regular);
-        color: var(--color-fg-secondary);
-    }
-}
-
-.agendaTime {
-    flex-shrink: 0;
-    font-variant-numeric: tabular-nums;
-    font-weight: var(--text-semibold);
-    color: var(--color-fg-secondary);
-
-    @media screen and (min-width: $breakpoint-landing-page-medium) {
-        width: 140px;
-        padding-top: 2px;
-    }
-}
-
-.agendaBody {
-    flex: 1;
-    min-width: 0;
-
-    h3 {
-        font-size: var(--text-fs-lg);
-        line-height: 1.3;
-        margin: 0 0 $spacing-size-1;
-        color: var(--color-fg-primary);
-    }
-}
-
-.agendaSpeakers {
-    margin: 0 0 $spacing-size-2;
-    font-size: var(--text-fs-sm);
-    color: var(--color-link);
-    font-weight: var(--text-semibold);
-}
-
-.agendaDescription {
-    margin: 0;
-    line-height: 1.5;
-}
-
+// ─── Speakers ────────────────────────────────────────────────────────────────
 .speakersSection {
-    width: 100%;
-    scroll-margin-top: $spacing-size-16;
-
-    h2 {
-        text-align: center;
-        font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-2xl);
-        margin-bottom: $spacing-size-2;
-    }
-}
-
-.speakersIntro {
-    text-align: center;
-    color: var(--color-fg-secondary);
-    margin-bottom: $spacing-size-8;
-}
-
-.speakersMore {
-    display: block;
-    text-align: center;
-    margin: $spacing-size-8 auto 0;
-    padding: $spacing-size-5 $spacing-size-6;
-    max-width: 640px;
-    border: 2px dashed var(--color-util-gray-300);
-    border-radius: 8px;
-    font-size: var(--text-fs-lg);
-    font-weight: var(--text-semibold);
-    color: var(--color-fg-primary);
-    background-color: color-mix(in srgb, var(--color-util-gray-100) 30%, transparent);
-
-    #{$selector-darkmode} & {
-        border-color: var(--color-util-gray-300);
-        background-color: color-mix(in srgb, var(--color-util-gray-200) 20%, transparent);
-    }
+    composes: section;
 }
 
 .speakerGrid {
     display: grid;
-    gap: $spacing-size-6;
+    gap: 32px 16px;
     grid-template-columns: 1fr;
 
-    @media screen and (min-width: $breakpoint-landing-page-medium) {
+    @media (min-width: 600px) {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    @media screen and (min-width: 960px) {
+    @media (min-width: 960px) {
         grid-template-columns: repeat(3, 1fr);
     }
 }
@@ -354,156 +942,581 @@
 .speakerCard {
     display: flex;
     flex-direction: column;
-    padding: $spacing-size-4;
-    border: 1px solid var(--color-util-gray-200);
-    border-radius: 8px;
-    background-color: var(--color-bg-primary);
+    gap: 12px;
+}
 
-    #{$selector-darkmode} & {
-        border-color: var(--color-util-gray-300);
-        background-color: #192232;
-    }
+// Fixed-size portrait box — every speaker gets the same 250×312 frame
+// (4:5 ratio) so the row reads at a consistent rhythm regardless of how
+// the underlying SVG was cropped. The image fills the box top-to-bottom
+// via `object-fit: cover`, anchored to the top so faces are never clipped.
+//
+// On hover the wrap paints orange and the orange-bg portrait crossfades
+// in on top — see `.speakerImageOrange` and the hover rule below.
+.speakerImageWrap {
+    position: relative;
+    width: 250px;
+    aspect-ratio: 4 / 5;
+    border-radius: 12px;
+    overflow: hidden;
+    transition:
+        background-color 0.32s ease,
+        border-radius 0.32s ease;
 }
 
 .speakerImage {
     width: 100%;
-    aspect-ratio: 1;
+    height: 100%;
     object-fit: cover;
-    border-radius: 6px;
-    margin-bottom: $spacing-size-4;
-    background-color: var(--color-util-gray-100);
-}
-
-.speakerName {
-    font-size: var(--text-fs-lg);
-    line-height: 1.3;
-    margin: 0 0 $spacing-size-1;
-    color: var(--color-fg-primary);
-}
-
-.speakerTitle {
-    margin: 0 0 $spacing-size-3;
-    font-size: var(--text-fs-sm);
-    color: var(--color-link);
-    font-weight: var(--text-semibold);
-}
-
-.speakerBio {
-    margin: 0;
-    line-height: 1.5;
-    color: var(--color-fg-secondary);
-}
-
-.venueSection {
-    width: 100%;
-    scroll-margin-top: $spacing-size-16;
-
-    h2 {
-        text-align: center;
-        font-size: var(--text-fs-2xl);
-        line-height: var(--text-lh-2xl);
-        margin-bottom: $spacing-size-2;
-    }
-}
-
-.venueIntro {
-    text-align: center;
-    color: var(--color-fg-secondary);
-    margin-bottom: $spacing-size-8;
-}
-
-.venueCarousel {
-    position: relative;
-    width: 100%;
-}
-
-.venueTrack {
-    display: flex;
-    gap: $spacing-size-4;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: $spacing-size-2;
-
-    &::-webkit-scrollbar {
-        display: none;
-    }
-}
-
-.venueSlide {
-    flex: 0 0 100%;
-    scroll-snap-align: start;
-    margin: 0;
-
-    @media screen and (min-width: $breakpoint-landing-page-medium) {
-        flex: 0 0 calc(50% - #{$spacing-size-2});
-    }
-
-    @media screen and (min-width: 960px) {
-        flex: 0 0 calc(33.333% - #{$spacing-size-3});
-    }
-}
-
-.venueImage {
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    border-radius: 8px;
-    background-color: var(--color-util-gray-100);
+    object-position: center top;
     display: block;
 }
 
-.venueCaption {
-    margin-top: $spacing-size-2;
-    font-size: var(--text-fs-sm);
-    color: var(--color-fg-secondary);
+// Re-shaded portrait used only on hover. Stacks directly on top of the
+// default illustration, sharing all sizing rules so swapping is a pure
+// opacity crossfade with no layout reflow. The dither pattern in this
+// variant is tuned for the #F43800 hover background.
+.speakerImageOrange {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.32s ease;
+}
+
+// Mats and John have unusually narrow/tall SVG viewBoxes (~0.55 / 0.60
+// aspect ratio vs. the 0.8 portrait box). With the default `cover` rule
+// above, the bottom ~140px of their figure clips off the frame. Switching
+// to `contain` and anchoring to the bottom keeps the whole figure visible
+// while maintaining a matching baseline with the other portraits. Applied
+// to both the default and orange-bg images so the swap stays in register.
+.speakerImageContain {
+    object-fit: contain;
+    object-position: center bottom;
+}
+
+// Hover-driven crossfade. Gated on `(hover: hover)` so touch devices
+// (where there's no pointer to leave the card) don't latch into the
+// orange state with no obvious way to undo it.
+@media (hover: hover) {
+    .speakerCard:hover .speakerImageWrap {
+        background-color: var(--btp-orange);
+        // Square off the corners on hover so the orange-bg illustration
+        // reads as a hard editorial block rather than a soft avatar tile
+        // — matches the agenda hover treatment, which has no rounding.
+        border-radius: 0;
+    }
+
+    .speakerCard:hover .speakerImageOrange {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .speakerImageWrap,
+    .speakerImageOrange {
+        transition: none;
+    }
+}
+
+.speakerName {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--btp-ink);
+    margin-top: 4px;
+}
+
+.speakerTitle {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--btp-orange);
+}
+
+.speakerBio {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--btp-ink-muted);
+}
+
+.speakersMore {
+    margin-top: 48px;
+    padding: 24px;
+    text-align: center;
+    border: 1.5px dashed var(--btp-border);
+    border-radius: 12px;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--btp-ink-muted);
+}
+
+// ─── Agenda ──────────────────────────────────────────────────────────────────
+.agendaSection {
+    composes: section;
+}
+
+// Each Morning / Afternoon block is its own white card with hard corners.
+// The section label sits inside the card as a banner, sharing the same hairline
+// border that separates the rows below it, so the whole thing reads as one
+// continuous slab rather than a card with a floating header above it.
+.agenda {
+    border: 1px solid var(--btp-border);
+    overflow: hidden;
+    background: var(--btp-card);
+
+    // When two agenda cards stack (Morning then Afternoon), give them a small
+    // breathing gap so the borders don't double-up into a heavy 2px line.
+    & + & {
+        margin-top: 24px;
+    }
+}
+
+// "Morning" / "Afternoon" header strip inside each agenda card. We dress
+// it up with a subtle orange wash plus a pixel-art dither: a sparse
+// checker covers the whole strip, and a denser checker fades in from
+// the right edge so the eye lands there as a graphic accent. The label
+// sits above both layers via `isolation: isolate` + `z-index: -1` on the
+// pseudo-elements (no positioning needed on the <p> itself).
+.agendaSectionHeader {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-bottom: 1px solid var(--btp-border);
+    padding: 18px 0;
+    background-color: rgba(244, 56, 0, 0.04);
+
+    @media (min-width: 900px) {
+        padding: 22px 0;
+    }
+
+    // Whisper-light checker across the whole strip. The two staggered
+    // 45deg gradients are the classic CSS checkerboard recipe — each
+    // gradient draws opposite triangles, and offsetting the second tile
+    // by half its size aligns them into squares.
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-image:
+            linear-gradient(
+                45deg,
+                rgba(244, 56, 0, 0.55) 25%,
+                transparent 25%,
+                transparent 75%,
+                rgba(244, 56, 0, 0.55) 75%
+            ),
+            linear-gradient(
+                45deg,
+                rgba(244, 56, 0, 0.55) 25%,
+                transparent 25%,
+                transparent 75%,
+                rgba(244, 56, 0, 0.55) 75%
+            );
+        background-size: 4px 4px;
+        background-position:
+            0 0,
+            2px 2px;
+        opacity: 0.16;
+        pointer-events: none;
+    }
+
+    // Denser dither cluster anchored to the right edge. A horizontal
+    // mask-image fades the cluster out to the left so it reads as a
+    // pixel-art "fall-off" rather than a hard band.
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 240px;
+        z-index: -1;
+        background-image:
+            linear-gradient(45deg, var(--btp-orange) 25%, transparent 25%, transparent 75%, var(--btp-orange) 75%),
+            linear-gradient(45deg, var(--btp-orange) 25%, transparent 25%, transparent 75%, var(--btp-orange) 75%);
+        background-size: 5px 5px;
+        background-position:
+            0 0,
+            2.5px 2.5px;
+        opacity: 0.4;
+        mask-image: linear-gradient(to right, transparent, black 75%);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 75%);
+        pointer-events: none;
+
+        @media (min-width: 900px) {
+            width: 320px;
+        }
+    }
+}
+
+.page .agendaSectionLabel {
+    font-family: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--btp-ink);
+    text-align: center;
+    margin: 0;
+}
+
+.agendaList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+// Three-column flex layout per row: [time] [title + speakers] [description].
+// On mobile the columns stack in document order. On ≥720px the row becomes a
+// flex row, with the time pinned at 160px and the body / description sharing
+// the remaining width 50/50. When a row has no description (e.g. "Welcome",
+// "Coffee break"), the body simply fills the post-time area.
+.agendaRow {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    // Mobile keeps the classic outer padding — the row stacks vertically
+    // and there's no portrait overlay to fight with, so a unified inset
+    // reads as expected. On desktop the vertical padding moves onto the
+    // inner columns (see `.agendaTime` / `.agendaBody` / `.agendaDescription`)
+    // so the speaker portrait overlay can fill the row's full height. If
+    // we kept the padding on the row itself, the orange hover background
+    // would render correctly but the portrait inside `.agendaDescriptionWrap`
+    // would stop short of the row top/bottom, leaving a visible "padding
+    // gap" above and below the speaker on hover.
+    padding: 16px 24px;
+    // Belt-and-braces against any default `<li>` margin (some user agents
+    // / global resets add it) — without this, the hovered row's orange
+    // background would float on a sliver of cream between rows.
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--btp-border);
+    // `overflow: hidden` lets the speaker portrait scale up past the cell on
+    // hover and bleed into the row's padding without affecting siblings.
+    overflow: hidden;
+    transition:
+        background-color 0.32s ease,
+        border-bottom-color 0.32s ease;
+
+    &:last-child {
+        border-bottom: 0;
+    }
+
+    @media (min-width: 720px) {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 32px;
+        padding: 0 32px;
+    }
+}
+
+.agendaBreak {
+    .agendaTitle {
+        // Break rows (Registration, Coffee break, Lunch, Networking) read
+        // as labels rather than session titles, so we drop them into an
+        // uppercase mono treatment. Kept at full ink colour (not muted)
+        // so the break still anchors the schedule visually.
+        font-family: 'Geist Mono', ui-monospace, monospace;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+}
+
+.agendaTime {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--btp-orange);
+    font-variant-numeric: tabular-nums;
+    transition: color 0.32s ease;
+
+    @media (min-width: 720px) {
+        flex: 0 0 160px;
+        // Vertical padding lives on the column (not the row) so the speaker
+        // overlay in `.agendaDescriptionWrap` can stretch the full row height.
+        padding: 18px 0;
+    }
+}
+
+.agendaBody {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    @media (min-width: 720px) {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 18px 0;
+    }
+}
+
+.agendaTitle {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--btp-ink);
+    line-height: 1.3;
+    transition: color 0.32s ease;
+}
+
+.agendaSpeakers {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--btp-ink-muted);
+    transition: color 0.32s ease;
+}
+
+// `.agendaDescriptionWrap` is the flex item on desktop (the description
+// itself used to play that role). It exists so we can layer a speaker
+// portrait overlay (`.agendaSpeakerStack`) on top of the description and
+// swap between the two on row hover.
+//
+// `align-self: stretch` is what lets the overlay use the row's full
+// content height — important for short rows like the David Kourshid
+// keynote where there's no description and the wrap would otherwise
+// collapse to nothing.
+.agendaDescriptionWrap {
+    position: relative;
+
+    @media (min-width: 720px) {
+        flex: 1 1 0;
+        min-width: 0;
+        align-self: stretch;
+    }
+}
+
+.agendaDescription {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--btp-ink-muted);
+    transition:
+        opacity 0.32s ease,
+        color 0.32s ease;
+
+    // Match the vertical inset that used to live on `.agendaRow`. Padding
+    // is on the text, not on `.agendaDescriptionWrap`, so the wrap itself
+    // can stretch the full row height and the speaker overlay (`inset: 0`
+    // of the wrap) covers the whole row top-to-bottom.
+    @media (min-width: 720px) {
+        padding: 18px 0;
+    }
+}
+
+// Speaker portrait overlay. Anchored to the right of the wrap and sized
+// taller than the row so the silhouette reads as a knockout that bleeds
+// into the cell padding. The row's `overflow: hidden` clips the bottom
+// edge — the user explicitly opted into this clipping over the previous
+// `object-fit: contain` (which kept portraits prim but tiny).
+//
+// On hover the stack rises 16px and fades in, choreographed with the
+// row's bg colour shift to feel like a single gesture.
+.agendaSpeakerStack {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+    // 24px feels right at the row scale: enough breathing room between
+    // two heads (e.g. Opening Keynote: John + Mats) that they read as
+    // distinct portraits, but tight enough that they still feel like a
+    // pair sharing the right column.
+    gap: 24px;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition:
+        opacity 0.32s ease,
+        transform 0.32s ease;
+}
+
+// Multi-speaker rows keep the flex layout — two portraits laid out
+// side-by-side with the 24px gap from `.agendaSpeakerStack`. Scale stays
+// modest here so John+Mats / Johan+Adam / Maggie+Matt P don't overlap
+// or fight each other for space.
+.agendaSpeakerImage {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    // `transform-origin: top right` keeps the head pinned at the top of
+    // the cell while the body extends downwards (and gets clipped). If
+    // we anchored bottom-right the head would shift up and out of frame.
+    transform: scale(1.4);
+    transform-origin: top right;
+}
+
+// Solo-speaker rows. Most of these have short or no descriptions, so the
+// row's content height is dictated by the title + speakers column on the
+// left and `height: 100%` ends up tiny. Pop out of the flex layout, scale
+// hard, and lift up so the portrait dominates the right side of the row
+// — the row's `overflow: hidden` then clips whatever overflows.
+.agendaSpeakerImage:only-child {
+    position: absolute;
+    top: -20px;
+    right: 0;
+    transform: scale(2.4);
+    transform-origin: top;
+}
+
+// Per-row opt-out for solo-speaker cells that are already tall (e.g.
+// David Khourshid's row, which has a long description). Reverts the
+// portrait to the default flex layout + 1.4x scale so the heavy 2.4x
+// crop doesn't clip the head off the top and right edges.
+.agendaSpeakerImage:only-child.agendaSpeakerImageDefaultScale {
+    position: static;
+    top: auto;
+    right: auto;
+    transform: scale(1.4);
+    transform-origin: top right;
+}
+
+// Hover state. Gated on:
+//   1. `(hover: hover)` — touch devices would otherwise latch into the
+//      hover state on tap with no obvious way to undo it.
+//   2. `:has(.agendaSpeakerStack)` — rows without a matching speaker
+//      (`Welcome`, `Customer Showcase`) keep their default appearance,
+//      so we never fade copy out into nothing or flip a row to orange
+//      with no payoff.
+@media (hover: hover) {
+    .agendaRow:has(.agendaSpeakerStack):hover {
+        background-color: var(--btp-orange);
+        // Hide the hairline at the bottom of the hovered row so the
+        // orange block sits flush against the next row with no white-ish
+        // sliver showing through. The pair rule below kills the hairline
+        // above by retroactively dropping the *previous* row's border.
+        border-bottom-color: transparent;
+    }
+
+    // `:has(+ X)` is the closest CSS gets to a "previous sibling" selector.
+    // It matches a row whose immediate next sibling is the hovered orange
+    // row, letting us erase that neighbour's bottom border so the orange
+    // block extends right up to the row above it.
+    .agendaRow:has(+ .agendaRow:has(.agendaSpeakerStack):hover) {
+        border-bottom-color: transparent;
+    }
+
+    .agendaRow:has(.agendaSpeakerStack):hover .agendaTime,
+    .agendaRow:has(.agendaSpeakerStack):hover .agendaTitle,
+    .agendaRow:has(.agendaSpeakerStack):hover .agendaSpeakers,
+    .agendaRow:has(.agendaSpeakerStack):hover .agendaDescription {
+        color: var(--btp-bg);
+    }
+
+    .agendaRow:has(.agendaSpeakerStack):hover .agendaDescription {
+        opacity: 0;
+    }
+
+    .agendaRow:has(.agendaSpeakerStack):hover .agendaSpeakerStack {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .agendaRow,
+    .agendaTime,
+    .agendaTitle,
+    .agendaSpeakers,
+    .agendaDescription,
+    .agendaSpeakerStack {
+        transition: none;
+    }
+}
+
+// ─── Venue ───────────────────────────────────────────────────────────────────
+.venueSection {
+    composes: section;
+
+    // Page-scoped container override (mirrors the same pattern used by `.hero`).
+    // The Savoy line drawing reads better at a generous size, so on wide
+    // screens we let the venue's `.container` stretch wider than the standard
+    // 1320px page container. Both class names live in this CSS module so the
+    // selector is hashed locally — no other section/page is affected.
+    .container {
+        max-width: 1480px;
+    }
+}
+
+// Single hero image of the venue. No card chrome — we want the line drawing
+// to read as a piece of editorial illustration sitting directly on the page.
+.venueGrid {
+    display: flex;
+    justify-content: center;
+}
+
+.venueSlide {
+    position: relative;
+    margin: 0;
+    width: 100%;
+    // Allow the figure to fill the (now wider) venue container all the way
+    // out to the section's max width. Previously capped at 960px, which
+    // looked dwarfed inside the page container.
+    max-width: 100%;
+}
+
+.venueImage {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+// The "IET London" CTA sits directly under the illustration and links out to
+// Google Maps. Centred and given breathing room so it reads as a deliberate
+// closing beat for the section rather than a footer afterthought.
+.venueCta {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+
+    @media (min-width: 900px) {
+        margin-top: 40px;
+    }
+}
+
+// ─── Final CTA ───────────────────────────────────────────────────────────────
+.finalCta {
+    padding: 96px 0 128px;
     text-align: center;
 }
 
-.venueNav {
+.finalCtaInner {
+    max-width: 640px;
+    margin: 0 auto;
     display: flex;
-    justify-content: center;
-    gap: $spacing-size-2;
-    margin-top: $spacing-size-4;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
 }
 
-.venueNavButton {
-    --icon-size: 20px;
-    --icon-color: var(--color-fg-primary);
+.finalCtaTitle {
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    font-weight: 600;
+}
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border: 1px solid var(--color-util-gray-200);
-    border-radius: 50%;
-    background-color: var(--color-bg-primary);
-    cursor: pointer;
-    transition:
-        background-color 0.2s,
-        border-color 0.2s;
+.finalCtaBody {
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--btp-ink-muted);
 
-    &:hover {
-        background-color: var(--color-util-gray-100);
-        border-color: var(--color-util-gray-300);
-    }
-
-    &:focus-visible {
-        outline: 2px solid var(--color-link);
-        outline-offset: 2px;
-    }
-
-    #{$selector-darkmode} & {
-        --icon-color: var(--color-white);
-        border-color: var(--color-util-gray-300);
-        background-color: #192232;
+    a {
+        color: var(--btp-orange);
+        text-decoration: underline;
+        text-underline-offset: 2px;
 
         &:hover {
-            background-color: var(--color-util-gray-200);
+            color: var(--btp-orange-dark);
         }
     }
 }

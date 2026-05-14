@@ -257,3 +257,7 @@
 .ag-icon-edit::before {
     mask-image: url('./material-svg-icons/edit.svg');
 }
+
+.ag-icon-search::before {
+    mask-image: url('./material-svg-icons/search.svg');
+}
