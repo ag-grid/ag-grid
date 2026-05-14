@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import styles from '../../pages-styles/lets-cook.module.scss';
 
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 ---
 
 <Layout
@@ -52,7 +53,7 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
             </div>
 
             <img
-                src="/landing-pages/lets-cook/chilli-hero.svg"
+                src={urlWithBaseUrl('/landing-pages/lets-cook/chilli-hero.svg')}
                 alt="AG Grill chilli mascot"
                 class={styles.heroImage}
                 width="320"
