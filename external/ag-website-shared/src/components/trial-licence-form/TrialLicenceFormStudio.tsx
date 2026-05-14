@@ -297,15 +297,15 @@ export const TrialLicenceFormStudio: FunctionComponent = ({ submitUrl }: Props) 
                     By submitting this form you agree to our <a href={PRIVACY_POLICY_URL}>Privacy Policy</a>.
                 </p>
 
-                {formState === 'success' && (
-                    <p className={styles.statusMessage}>
-                        <Icon name="tick" svgClasses={styles.statusIconSuccess} />
-                        <span>
-                            Thank you. Please check your inbox to validate your email and receive your <b>AG Studio</b>{' '}
-                            trial licence.
-                        </span>
-                    </p>
-                )}
+                {/* {formState === 'success' && ( */}
+                <p className={styles.statusMessage}>
+                    <Icon name="tick" svgClasses={styles.statusIconSuccess} />
+                    <span>
+                        Thank you. Please check your inbox to validate your email and receive your <b>AG Studio</b>{' '}
+                        trial licence.
+                    </span>
+                </p>
+                {/* )} */}
 
                 {formError && (
                     <p className={classnames(styles.statusMessage, styles.errorMessage)}>

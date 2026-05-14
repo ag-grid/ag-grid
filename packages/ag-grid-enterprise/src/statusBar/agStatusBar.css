@@ -5,7 +5,7 @@
     border-top: var(--ag-footer-row-border);
     padding-right: calc(var(--ag-spacing) * 4);
     padding-left: calc(var(--ag-spacing) * 4);
-    line-height: 1.5;
+    line-height: 23px;
 }
 
 .ag-status-panel,

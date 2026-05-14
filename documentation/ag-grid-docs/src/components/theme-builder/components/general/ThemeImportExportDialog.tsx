@@ -389,7 +389,7 @@ const Textarea = styled('textarea')`
     font-variant-ligatures: none;
     font-optical-sizing: auto;
     font-weight: 500;
-    line-height: 1.5;
+    line-height: 23px;
 
     &:focus {
         outline: none;

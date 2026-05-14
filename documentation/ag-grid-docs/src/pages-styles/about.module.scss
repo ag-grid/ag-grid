@@ -264,7 +264,7 @@
 .timelineDesc {
     color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 75%);
     font-size: 15px;
-    line-height: 1.5;
+    line-height: 23px;
 }
 
 .principlesContent,
@@ -377,7 +377,7 @@
 .principleDesc {
     color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 75%);
     font-size: 15px;
-    line-height: 1.5;
+    line-height: 23px;
 }
 
 .footnote {
@@ -482,7 +482,7 @@
 .leaderDesc {
     color: var(--color-text-secondary);
     font-size: 15px;
-    line-height: 1.5;
+    line-height: 23px;
     opacity: 0.8;
     padding-top: $spacing-size-2;
 }
@@ -565,7 +565,7 @@
 .resourceDesc {
     color: var(--color-text-secondary);
     font-size: 15px;
-    line-height: 1.5;
+    line-height: 23px;
 }
 
 .contactSection {

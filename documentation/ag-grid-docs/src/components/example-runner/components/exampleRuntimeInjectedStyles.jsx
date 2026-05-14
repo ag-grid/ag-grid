@@ -119,7 +119,7 @@ html[data-color-scheme='dark'] body {
 html textarea:not(.ag-root-wrapper textarea) {
   padding: 8px;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 23px;
   border-radius: 8px;
   color: #0c111d;
   border: 1px solid rgba(0,0,0, 0.2);

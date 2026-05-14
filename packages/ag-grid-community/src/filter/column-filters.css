@@ -192,7 +192,7 @@
 }
 
 .ag-filter-apply-panel-button {
-    line-height: 1.5;
+    line-height: 23px;
     margin-left: calc(var(--ag-spacing) * 2);
 }
 

@@ -135,7 +135,7 @@
     font-size: var(--ag-font-size);
     font-family: inherit;
     font-weight: inherit;
-    line-height: 1.5;
+    line-height: 23px;
     outline: none;
     background-color: var(--ag-input-background-color);
     border: var(--ag-input-border);

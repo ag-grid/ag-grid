@@ -227,7 +227,7 @@
     }
 
     .ag-filter-apply-panel-button {
-        line-height: 1.5;
+        line-height: 23px;
         @include ag.unthemed-rtl(
             (
                 margin-left: calc(var(--ag-grid-size) * 2),

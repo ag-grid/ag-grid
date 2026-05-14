@@ -34,7 +34,7 @@ $btp-card: #ffffff;
         'Segoe UI',
         sans-serif;
     font-feature-settings: 'cv11', 'ss01';
-    line-height: 1.55;
+    line-height: 23px5;
     min-height: 100vh;
     width: 100%;
     overflow: hidden;
@@ -729,7 +729,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 
 .sectionLead {
     font-size: 18px;
-    line-height: 1.55;
+    line-height: 23px5;
     color: var(--btp-ink-muted);
     max-width: 720px;
 }
@@ -861,7 +861,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 
     .atAGlanceDetail {
         font-size: 15px;
-        line-height: 1.5;
+        line-height: 23px;
         color: var(--btp-ink-muted);
     }
 
@@ -1036,7 +1036,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 
 .speakerBio {
     font-size: 14px;
-    line-height: 1.55;
+    line-height: 23px5;
     color: var(--btp-ink-muted);
 }
 
@@ -1298,7 +1298,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 
 .agendaDescription {
     font-size: 15px;
-    line-height: 1.55;
+    line-height: 23px5;
     color: var(--btp-ink-muted);
     transition:
         opacity 0.32s ease,
@@ -1507,7 +1507,7 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 
 .finalCtaBody {
     font-size: 18px;
-    line-height: 1.55;
+    line-height: 23px5;
     color: var(--btp-ink-muted);
 
     a {

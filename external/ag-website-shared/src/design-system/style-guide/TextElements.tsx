@@ -121,7 +121,7 @@ export const TextElements: FunctionComponent = () => {
                 <code>{`<pre>`}</code>
                 <pre>{`:root {
     --font-size: 1rem;
-    --line-height: 1.5;
+    --line-height: 23px;
     --font-weight: 400;
     --font-weight-thin: 300;
     --font-weight-normal: 400;
