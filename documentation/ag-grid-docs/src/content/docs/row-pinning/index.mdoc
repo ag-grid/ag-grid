@@ -8,7 +8,7 @@ Rows can be pinned via the [Context Menu](./context-menu) or Grid Options.
 
 ## Enabling Row Pinning
 
-To enable row pinning, set `enableRowPinning` to `true`.
+To enable row pinning, set `enableRowPinning` to `true`. To restrict pinning to only one direction, set it to `'top'` or `'bottom'`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -26,7 +26,7 @@ As an example, the snippet below will pin all rows whose `country` field is `nul
 const gridOptions = {
     enableRowPinning: true,
     isRowPinned: (rowNode) => {
-        return rowNode.data.country == null ? 'top' : null;
+        return rowNode.data?.country == null ? 'top' : null;
     }
 }
 ```
@@ -71,7 +71,7 @@ To prevent a user from pinning a row via the context menu, use the `isRowPinnabl
 const gridOptions = {
     enableRowPinning: true,
     isRowPinnable: (rowNode) => {
-        return rowNode.data.sport != 'Swimming';
+        return rowNode.data?.sport != 'Swimming';
     }
 }
 ```
