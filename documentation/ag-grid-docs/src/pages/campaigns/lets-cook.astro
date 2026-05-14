@@ -1,0 +1,64 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import styles from '../../pages-styles/lets-cook.module.scss';
+
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+---
+
+<Layout
+    title={"Now you're cooking — AG Grill hot sauce"}
+    description={'Show us your AG Grill hot sauce in action. Share your recipes and BBQ pics with the AG Grid community.'}
+    showDocsNav={false}
+    showSearchBar={true}
+    hidePageFromSearchEngines={true}
+>
+    <main class={styles.letsCookPage}>
+        <div class={styles.letsCookInner}>
+            <div class={styles.copy}>
+                <h1 class={styles.title}>Now you're cooking</h1>
+
+                <p class={styles.intro}>
+                    Show us your AG Grill hot sauce in&nbsp;action!<br />
+                    Got a banger recipe? A pic of a sizzling&nbsp;BBQ?<br />
+                    Share the joy on socials or DM us.
+                </p>
+
+                <p class={styles.intro}>Need more sauce? 👀 Hit us up!</p>
+
+                <a
+                    href="https://www.linkedin.com/company/ag-grid/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class:list={['button', styles.cta]}
+                >
+                    Connect with us on LinkedIn <Icon name="chevronRight" />
+                </a>
+                <a
+                    href="https://x.com/ag_grid"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class:list={['button', styles.cta]}
+                >
+                    Connect with us on X <Icon name="chevronRight" />
+                </a>
+                <a
+                    href="https://bsky.app/profile/ag-grid.bsky.social"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class:list={['button', styles.cta]}
+                >
+                    Connect with us on bluesky <Icon name="chevronRight" />
+                </a>
+            </div>
+
+            <img
+                src={urlWithBaseUrl('/landing-pages/lets-cook/chilli-hero.svg')}
+                alt="AG Grill chilli mascot"
+                class={styles.heroImage}
+                width="320"
+                height="566"
+            />
+        </div>
+    </main>
+</Layout>
