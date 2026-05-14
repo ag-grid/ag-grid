@@ -229,13 +229,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             }
         }
 
-        const headerRowsCtrl = ctrlsSvc.getHeaderRowsCtrl();
-        if (!headerRowsCtrl) {
+        const headerRowContainerCtrl = ctrlsSvc.getHeaderRowContainerCtrl();
+        if (!headerRowContainerCtrl) {
             return;
         }
 
         for (const columnGroup of columnGroups) {
-            const headerGroupCtrl = headerRowsCtrl.getHeaderCtrlForColumn(columnGroup) as
+            const headerGroupCtrl = headerRowContainerCtrl.getHeaderCtrlForColumn(columnGroup) as
                 | HeaderGroupCellCtrl
                 | undefined;
             headerGroupCtrl?.resizeLeafColumnsToFit(source);

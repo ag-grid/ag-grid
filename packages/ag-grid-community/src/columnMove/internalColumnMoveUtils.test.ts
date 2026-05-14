@@ -34,7 +34,7 @@ function createSectionElements(layout: { left: number; pinnedLeftWidth: number; 
 
 function createCtrlsSvc(viewport: HTMLElement): CtrlsService {
     return {
-        getHeaderRowsCtrl: () => ({ eViewport: viewport }),
+        getHeaderRowContainerCtrl: () => ({ eViewport: viewport }),
     } as CtrlsService;
 }
 

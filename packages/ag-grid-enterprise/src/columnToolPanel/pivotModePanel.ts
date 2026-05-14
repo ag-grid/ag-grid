@@ -57,7 +57,7 @@ export class PivotModePanel extends Component {
 
         const onPivotModeChanged = () => {
             cbPivotMode.setValue(this.getCurrentPivotMode());
-            ctrlsSvc.getHeaderRowsCtrl()?.refresh();
+            ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
         };
 
         this.addManagedListeners(cbPivotMode, { fieldValueChanged: onBtPivotMode });

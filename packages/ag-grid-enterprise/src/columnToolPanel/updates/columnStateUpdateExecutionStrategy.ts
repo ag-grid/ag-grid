@@ -212,7 +212,7 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
         if (pivotMode && this.lastPivotColIds.length > 0) {
             this.beans.pivotColsSvc?.setColumns(this.lastPivotColIds, eventType);
         }
-        ctrlsSvc.getHeaderRowsCtrl()?.refresh();
+        ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
     }
 
     public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {
@@ -413,7 +413,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                         if (operation.pivotMode && pivotColIds.length > 0) {
                             beans.pivotColsSvc?.setColumns(pivotColIds, operation.eventType);
                         }
-                        ctrlsSvc.getHeaderRowsCtrl()?.refresh();
+                        ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
                     }
                     break;
                 }

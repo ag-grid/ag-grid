@@ -7,7 +7,7 @@ import type { GridBodyScrollFeature } from './gridBodyComp/gridBodyScrollFeature
 import type { RowContainerCtrl } from './gridBodyComp/rowContainer/rowContainerCtrl';
 import type { GridCtrl } from './gridComp/gridCtrl';
 import type { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
-import type { HeaderRowsCtrl } from './headerRendering/rowContainer/headerRowsCtrl';
+import type { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
 
 /** If adding or removing a control, update `REQUIRED_CTRLS` below. */
 interface ReadyParams {
@@ -24,7 +24,7 @@ interface ReadyParams {
     fakeVScrollComp: FakeVScrollComp;
     gridHeaderCtrl: GridHeaderCtrl;
 
-    headerRowsCenter: HeaderRowsCtrl;
+    headerRowsCenter: HeaderRowContainerCtrl;
 }
 
 type CtrlType = keyof ReadyParams;
@@ -120,7 +120,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         return this.params.gridBodyCtrl;
     }
 
-    public getHeaderRowsCtrl(): HeaderRowsCtrl | undefined {
+    public getHeaderRowContainerCtrl(): HeaderRowContainerCtrl | undefined {
         return this.params.headerRowsCenter;
     }
 

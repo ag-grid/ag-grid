@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useContext, useLayoutEffect, useRef, useState } from 'react';
 
 import type { HeaderRowCtrl, IHeaderRowsComp } from 'ag-grid-community';
-import { HeaderRowsCtrl } from 'ag-grid-community';
+import { HeaderRowContainerCtrl } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import HeaderRowComp from './headerRowComp';
@@ -18,7 +18,7 @@ const HeaderRowsComp = ({
     const { context } = useContext(BeansContext);
 
     const [headerRowCtrls, setHeaderRowCtrls] = useState<HeaderRowCtrl[]>([]);
-    const headerRowsCtrlRef = useRef<HeaderRowsCtrl>();
+    const headerRowContainerCtrlRef = useRef<HeaderRowContainerCtrl>();
     const rowGuisRef = useRef(new Map<number, HTMLDivElement>());
 
     const setRowGui = useCallback((instanceId: number, eGui: HTMLDivElement | null) => {
@@ -43,7 +43,7 @@ const HeaderRowsComp = ({
 
     useLayoutEffect(() => {
         if (!eGui || context.isDestroyed()) {
-            headerRowsCtrlRef.current = context.destroyBean(headerRowsCtrlRef.current);
+            headerRowContainerCtrlRef.current = context.destroyBean(headerRowContainerCtrlRef.current);
             return;
         }
 
@@ -52,14 +52,14 @@ const HeaderRowsComp = ({
             setViewportScrollLeft: (_left) => {},
         };
 
-        headerRowsCtrlRef.current = context.createBean(new HeaderRowsCtrl());
-        headerRowsCtrlRef.current.setComp(compProxy, eGui, eGridViewport);
+        headerRowContainerCtrlRef.current = context.createBean(new HeaderRowContainerCtrl());
+        headerRowContainerCtrlRef.current.setComp(compProxy, eGui, eGridViewport);
 
         return () => {
             if (setHeaderRowFocusableElements) {
                 setHeaderRowFocusableElements([]);
             }
-            headerRowsCtrlRef.current = context.destroyBean(headerRowsCtrlRef.current);
+            headerRowContainerCtrlRef.current = context.destroyBean(headerRowContainerCtrlRef.current);
         };
     }, [context, eGui, eGridViewport, setHeaderRowFocusableElements]);
 

@@ -1,7 +1,7 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCount } from '../agStack/utils/aria';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
-import { GridHeaderFeature } from '../headerRendering/gridHeaderFeature';
+import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { VerticalSection, VerticalSectionMap } from '../interfaces/iGridSection';
 import { _setDisplayed } from '../main-internal';
@@ -183,7 +183,7 @@ export class GridBodyComp extends Component implements FocusableContainer {
             this.eBottom
         );
 
-        this.createManagedBean(new GridHeaderFeature(this.eTop, this.eGridViewport));
+        this.createManagedBean(new GridHeaderComp(this.eTop, this.eGridViewport));
 
         if ((rangeSvc && _isCellSelectionEnabled(this.gos)) || _isMultiRowSelection(this.gos)) {
             _setAriaMultiSelectable(this.eGridViewport, true);

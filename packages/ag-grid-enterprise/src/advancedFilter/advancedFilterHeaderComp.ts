@@ -141,7 +141,7 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private setAriaRowIndex(): void {
-        const headerRowCount = this.ctrlsSvc.getHeaderRowsCtrl()?.getRowCount() ?? 0;
+        const headerRowCount = this.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0;
         _setAriaRowIndex(this.getGui(), headerRowCount + 1);
     }
 

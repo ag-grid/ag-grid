@@ -17,7 +17,7 @@ export interface IHeaderRowsComp {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class HeaderRowsCtrl extends BeanStub implements ScrollPartner {
+export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     public comp: IHeaderRowsComp;
     private includeFloatingFilter: boolean = false;
 

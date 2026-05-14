@@ -96,7 +96,7 @@ describe('Focus override callbacks', () => {
                     headerGroupRowCount: 0,
                 },
                 ctrlsSvc: {
-                    getHeaderRowsCtrl: () => ({ getRowCount: () => 2 }),
+                    getHeaderRowContainerCtrl: () => ({ getRowCount: () => 2 }),
                 },
             };
             focusSvcAny.focusedHeader = currentHeader;
@@ -485,7 +485,7 @@ describe('Focus override callbacks', () => {
                     getRowByPosition: vi.fn(),
                 },
                 ctrlsSvc: {
-                    getHeaderRowsCtrl: () => ({ getRowCount: () => 2 }),
+                    getHeaderRowContainerCtrl: () => ({ getRowCount: () => 2 }),
                 },
             };
 

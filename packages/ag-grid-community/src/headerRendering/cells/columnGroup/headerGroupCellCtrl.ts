@@ -18,8 +18,8 @@ import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
+import type { IHeaderGroupComp, IHeaderGroupParams } from './agColumnGroupHeader';
 import { GroupWidthFeature } from './groupWidthFeature';
-import type { IHeaderGroupComp, IHeaderGroupParams } from './headerGroupComp';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {

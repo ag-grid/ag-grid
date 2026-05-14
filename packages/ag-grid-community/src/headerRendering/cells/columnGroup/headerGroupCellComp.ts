@@ -4,8 +4,8 @@ import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import type { ElementParams } from '../../../utils/element';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
+import type { IHeaderGroupComp } from './agColumnGroupHeader';
 import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
-import type { IHeaderGroupComp } from './headerGroupComp';
 
 const HeaderGroupCellCompElement: ElementParams = {
     tag: 'div',

@@ -893,7 +893,7 @@ export type {
     IHeaderGroupComp,
     IHeaderGroupParams,
     IInnerHeaderGroupComponent,
-} from './headerRendering/cells/columnGroup/headerGroupComp';
+} from './headerRendering/cells/columnGroup/agColumnGroupHeader';
 export type { IHeader, IHeaderComp, IHeaderParams, IInnerHeaderComponent } from './interfaces/iHeader';
 
 // Tooltips

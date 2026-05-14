@@ -397,7 +397,7 @@ function getSectionElement(pinned: ColumnPinnedType, ctrlsSvc: CtrlsService): HT
               ? 'ag-grid-pinned-right-cells'
               : 'ag-grid-scrolling-cells';
     return ctrlsSvc
-        .getHeaderRowsCtrl()
+        .getHeaderRowContainerCtrl()
         ?.eViewport?.querySelector(`.ag-header-row .${sectionClass}`) as HTMLElement | null;
 }
 

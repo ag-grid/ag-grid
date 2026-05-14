@@ -419,7 +419,7 @@ export type {
     IAbstractHeaderCellComp,
 } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 export type { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
-export { HeaderComp as _HeaderComp } from './headerRendering/cells/column/headerComp';
+export { AgColumnHeader as _HeaderComp } from './headerRendering/cells/column/agColumnHeader';
 export type {
     HeaderGroupCellCtrl,
     IHeaderGroupCellComp,
@@ -434,8 +434,8 @@ export {
     getHeaderRowCount as _getHeaderRowCount,
 } from './headerRendering/headerUtils';
 export type { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
-export { HeaderRowsCtrl } from './headerRendering/rowContainer/headerRowsCtrl';
-export type { IHeaderRowsComp } from './headerRendering/rowContainer/headerRowsCtrl';
+export { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
+export type { IHeaderRowsComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
 export type { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 export type { IAggColumnNameService } from './interfaces/iAggColumnNameService';

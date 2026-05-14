@@ -55,7 +55,7 @@ function getHeaderCompElementParams(includeColumnRefIndicator: boolean, includeS
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class HeaderComp extends Component implements IHeaderComp {
+export class AgColumnHeader extends Component implements IHeaderComp {
     // All the elements are optional, as they are not guaranteed to be present if the user provides a custom template
     private readonly eFilter?: HTMLElement = RefPlaceholder;
     public eFilterButton?: HTMLElement = RefPlaceholder;
