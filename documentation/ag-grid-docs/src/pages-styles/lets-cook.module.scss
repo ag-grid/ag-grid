@@ -60,6 +60,10 @@
     @media screen and (min-width: 900px) {
         font-size: var(--text-fs-2xl);
     }
+
+    @media screen and (max-width: 480px) {
+        font-size: var(--text-fs-sm);
+    }
 }
 
 .cta {
@@ -72,6 +76,10 @@
 
     @media screen and (min-width: 900px) {
         font-size: var(--text-fs-lg);
+    }
+
+    @media screen and (max-width: 480px) {
+        font-size: var(--text-fs-sm);
     }
 }
 
