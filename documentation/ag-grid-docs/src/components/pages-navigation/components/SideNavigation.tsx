@@ -1,9 +1,9 @@
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { navigate, scrollIntoViewById } from '@ag-website-shared/utils/navigation';
 import { useScrollSpy } from '@components/pages-navigation/hooks/useScrollSpy';
 import { addNonBreakingSpaceBetweenLastWords } from '@utils/addNonBreakingSpaceBetweenLastWords';
 import type { MarkdownHeading } from 'astro';
 
-import BackToTopIcon from '../../../images/back-to-top-icon.svg?react';
 import styles from './SideNavigation.module.scss';
 
 interface Props {
@@ -52,7 +52,7 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                             navigate({ search: window.location.search, hash: 'top' });
                         }}
                     >
-                        <BackToTopIcon className={styles.backToTopIcon} />
+                        <Icon name="backToTop" svgClasses={styles.backToTopIcon} />
                         Back to top
                     </a>
                 </div>
