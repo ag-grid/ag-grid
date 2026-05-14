@@ -20,6 +20,7 @@ type SelectProps<O> = {
     isPopper?: boolean;
     isLarge?: boolean;
     constrainHeight?: boolean;
+    className?: string;
 };
 
 export function Select<O>({
@@ -35,6 +36,7 @@ export function Select<O>({
     isPopper,
     isLarge,
     constrainHeight,
+    className,
 }: SelectProps<O>) {
     const getOptionContent = useCallback((option: O) => {
         const key = getKey(option) ?? '';
@@ -81,7 +83,7 @@ export function Select<O>({
             <RadixSelect.Trigger
                 tabIndex={0}
                 aria-label={triggerAriaLabel}
-                className={classnames(styles.trigger, { [styles.large]: isLarge })}
+                className={classnames(styles.trigger, { [styles.large]: isLarge }, className)}
             >
                 <RadixSelect.Value placeholder={placeholder}>{getOptionContent(value).optionContent}</RadixSelect.Value>
                 <RadixSelect.Icon>
