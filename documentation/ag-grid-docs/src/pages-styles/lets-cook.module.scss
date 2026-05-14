@@ -64,12 +64,14 @@
 
 .cta {
     font-size: var(--text-fs-lg);
-    padding: $spacing-size-4 $spacing-size-8;
-    margin-top: $spacing-size-2;
+    padding-right: 0.333em;
+
+    :global(.icon) {
+        --icon-size: 1.333em;
+    }
 
     @media screen and (min-width: 900px) {
-        font-size: var(--text-fs-xl);
-        padding: $spacing-size-5 $spacing-size-10;
+        font-size: var(--text-fs-lg);
     }
 }
 

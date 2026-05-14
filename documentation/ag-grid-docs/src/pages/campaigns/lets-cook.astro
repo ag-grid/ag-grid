@@ -3,8 +3,6 @@ import Layout from '../../layouts/Layout.astro';
 import styles from '../../pages-styles/lets-cook.module.scss';
 
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-
-const TWITTER_URL = 'https://x.com/ag_grid';
 ---
 
 <Layout
@@ -27,8 +25,29 @@ const TWITTER_URL = 'https://x.com/ag_grid';
 
                 <p class={styles.intro}>Need more sauce? 👀 Hit us up!</p>
 
-                <a href={TWITTER_URL} target="_blank" rel="noopener noreferrer" class:list={['button', styles.cta]}>
+                <a
+                    href="https://www.linkedin.com/company/ag-grid/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class:list={['button', styles.cta]}
+                >
+                    Connect with us on LinkedIn <Icon name="chevronRight" />
+                </a>
+                <a
+                    href="https://x.com/ag_grid"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class:list={['button', styles.cta]}
+                >
                     Connect with us on X <Icon name="chevronRight" />
+                </a>
+                <a
+                    href="https://bsky.app/profile/ag-grid.bsky.social"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class:list={['button', styles.cta]}
+                >
+                    Connect with us on bluesky <Icon name="chevronRight" />
                 </a>
             </div>
 
