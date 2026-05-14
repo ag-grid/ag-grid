@@ -420,6 +420,10 @@ export type {
 } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 export type { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
 export { AgColumnHeader as _HeaderComp } from './headerRendering/cells/column/agColumnHeader';
+export {
+    applyHeaderWrapperHidden as _applyHeaderWrapperHidden,
+    applyHeaderWrapperMaxHeight as _applyHeaderWrapperMaxHeight,
+} from './headerRendering/cells/columnGroup/headerGroupCellCtrl';
 export type {
     HeaderGroupCellCtrl,
     IHeaderGroupCellComp,
@@ -432,7 +436,10 @@ export type { IGridHeaderComp } from './headerRendering/gridHeaderCtrl';
 export {
     getFloatingFiltersHeight as _getFloatingFiltersHeight,
     getHeaderRowCount as _getHeaderRowCount,
+    getPinnedSectionWidths as _getPinnedSectionWidths,
+    partitionByPinned as _partitionByPinned,
 } from './headerRendering/headerUtils';
+export type { PinnedSections, PinnedSectionWidths } from './headerRendering/headerUtils';
 export type { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
 export { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
 export type { IHeaderRowsComp } from './headerRendering/rowContainer/headerRowContainerCtrl';

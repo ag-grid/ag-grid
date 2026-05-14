@@ -30,7 +30,8 @@ import {
     _isRowSelection,
     _setDomData,
 } from '../../gridOptionsUtils';
-import { getAriaHeaderRowCount } from '../../headerRendering/headerUtils';
+import { getAriaHeaderRowCount, getPinnedSectionWidths } from '../../headerRendering/headerUtils';
+import type { PinnedSectionWidths } from '../../headerRendering/headerUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallbackParams';
 import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
@@ -91,11 +92,7 @@ export interface RowGui {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface PinnedCellGroupWidths {
-    leftWidth: number;
-    centerWidth: number;
-    rightWidth: number;
-}
+export type PinnedCellGroupWidths = PinnedSectionWidths;
 
 type RowCtrlEvent = RenderedRowEvent;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -529,20 +526,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public getPinnedCellGroupWidths(): PinnedCellGroupWidths {
-        const { visibleCols } = this.beans;
-        if (this.printLayout) {
-            return {
-                leftWidth: 0,
-                centerWidth: visibleCols.bodyWidth,
-                rightWidth: 0,
-            };
-        }
-
-        return {
-            leftWidth: visibleCols.getLeftStickyColumnContainerWidth(),
-            centerWidth: visibleCols.bodyWidth,
-            rightWidth: visibleCols.getRightStickyColumnContainerWidth(),
-        };
+        return getPinnedSectionWidths(this.beans.visibleCols, this.printLayout);
     }
 
     /**

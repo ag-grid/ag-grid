@@ -8,7 +8,7 @@ import type {
     HeaderRowCtrl,
     IHeaderRowComp,
 } from 'ag-grid-community';
-import { _EmptyBean, _setAriaRowIndex } from 'ag-grid-community';
+import { _EmptyBean, _getPinnedSectionWidths, _partitionByPinned, _setAriaRowIndex } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { agFlushSync, getNextValueIfDifferent } from '../utils';
@@ -60,15 +60,10 @@ const HeaderRowComp = ({
 
     const refreshPinnedWidths = useCallback(() => {
         const isPrint = gos.get('domLayout') === 'print';
-        if (isPrint) {
-            setPinnedLeftWidth(0);
-            setCenterWidth(visibleCols.bodyWidth);
-            setPinnedRightWidth(0);
-            return;
-        }
-        setPinnedLeftWidth(visibleCols.getLeftStickyColumnContainerWidth());
-        setCenterWidth(visibleCols.bodyWidth);
-        setPinnedRightWidth(visibleCols.getRightStickyColumnContainerWidth());
+        const { leftWidth, centerWidth, rightWidth } = _getPinnedSectionWidths(visibleCols, isPrint);
+        setPinnedLeftWidth(leftWidth);
+        setCenterWidth(centerWidth);
+        setPinnedRightWidth(rightWidth);
     }, [gos, visibleCols]);
 
     const setRef = useCallback(
@@ -123,34 +118,16 @@ const HeaderRowComp = ({
         }
     }, [ariaRowIndex]);
 
-    // Partition cells into left/center/right sections
     const isPrint = gos.get('domLayout') === 'print';
-    const { leftCells, centerCells, rightCells } = useMemo(() => {
+    const {
+        left: leftCells,
+        center: centerCells,
+        right: rightCells,
+    } = useMemo(() => {
         if (isPrint) {
-            // In print layout, all cells go to center
-            return {
-                leftCells: [] as AbstractHeaderCellCtrl[],
-                centerCells: cellCtrls,
-                rightCells: [] as AbstractHeaderCellCtrl[],
-            };
+            return { left: [] as AbstractHeaderCellCtrl[], center: cellCtrls, right: [] as AbstractHeaderCellCtrl[] };
         }
-
-        const left: AbstractHeaderCellCtrl[] = [];
-        const center: AbstractHeaderCellCtrl[] = [];
-        const right: AbstractHeaderCellCtrl[] = [];
-
-        for (const ctrl of cellCtrls) {
-            const pinned = ctrl.column.getPinned();
-            if (pinned === 'left') {
-                left.push(ctrl);
-            } else if (pinned === 'right') {
-                right.push(ctrl);
-            } else {
-                center.push(ctrl);
-            }
-        }
-
-        return { leftCells: left, centerCells: center, rightCells: right };
+        return _partitionByPinned(cellCtrls, (ctrl: AbstractHeaderCellCtrl) => ctrl.column.getPinned());
     }, [cellCtrls, isPrint]);
 
     const createCellJsx = useCallback(

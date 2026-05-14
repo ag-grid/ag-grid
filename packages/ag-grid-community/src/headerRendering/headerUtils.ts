@@ -1,5 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import type { BeanCollection } from '../context/context';
+import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { HeaderRowCtrl } from './row/headerRowCtrl';
 
@@ -104,4 +106,50 @@ export function isHeaderPositionEqual(headerPosA: HeaderPosition, headerPosB: He
 
 export function isHeaderPosition(position: unknown): position is HeaderPosition {
     return (position as HeaderPosition)?.headerRowIndex != null;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface PinnedSectionWidths {
+    leftWidth: number;
+    centerWidth: number;
+    rightWidth: number;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function getPinnedSectionWidths(visibleCols: VisibleColsService, isPrint: boolean): PinnedSectionWidths {
+    if (isPrint) {
+        return { leftWidth: 0, centerWidth: visibleCols.bodyWidth, rightWidth: 0 };
+    }
+    return {
+        leftWidth: visibleCols.getLeftStickyColumnContainerWidth(),
+        centerWidth: visibleCols.bodyWidth,
+        rightWidth: visibleCols.getRightStickyColumnContainerWidth(),
+    };
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface PinnedSections<T> {
+    left: T[];
+    center: T[];
+    right: T[];
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function partitionByPinned<T>(items: T[], getPinned: (item: T) => ColumnPinnedType): PinnedSections<T> {
+    const left: T[] = [];
+    const center: T[] = [];
+    const right: T[] = [];
+
+    for (const item of items) {
+        const pinned = getPinned(item);
+        if (pinned === 'left') {
+            left.push(item);
+        } else if (pinned === 'right') {
+            right.push(item);
+        } else {
+            center.push(item);
+        }
+    }
+
+    return { left, center, right };
 }

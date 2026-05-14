@@ -203,16 +203,18 @@ export class GridBodyComp extends Component implements FocusableContainer {
 
     private setPinnedSection(section: VerticalSection, state: PinnedSectionState): void {
         this.pinnedSectionState[section] = state;
-
+        const { height, invisible } = state;
+        const eGridScrollableArea = this.eGridScrollableArea;
         if (section === 'top') {
-            this.eTop.style.setProperty('--ag-top-rows-height', `${state.height}px`);
-            const topSectionHeight = `calc(var(--ag-header-rows-height, 0px) + ${state.height}px)`;
-            this.eTop.style.minHeight = topSectionHeight;
-            this.eTop.style.height = topSectionHeight;
-            this.eGridScrollableArea.classList.toggle('ag-has-top-pinned-rows', !state.invisible);
+            const eTop = this.eTop;
+            const topSectionHeight = `calc(var(--ag-header-rows-height, 0px) + ${height}px)`;
+            eTop.style.setProperty('--ag-top-rows-height', `${height}px`);
+            eTop.style.minHeight = topSectionHeight;
+            eTop.style.height = topSectionHeight;
+            eGridScrollableArea.classList.toggle('ag-has-top-pinned-rows', !invisible);
         } else {
-            this.eBottom.style.setProperty('--ag-bottom-rows-height', `${state.height}px`);
-            this.eGridScrollableArea.classList.toggle('ag-has-bottom-pinned-rows', !state.invisible);
+            this.eBottom.style.setProperty('--ag-bottom-rows-height', `${height}px`);
+            eGridScrollableArea.classList.toggle('ag-has-bottom-pinned-rows', !invisible);
             this.refreshBottomSectionHeight();
         }
     }
@@ -221,9 +223,10 @@ export class GridBodyComp extends Component implements FocusableContainer {
         const bottomSection = this.pinnedSectionState.bottom;
         const totalHeight = bottomSection.height + this.stickyBottomRowsHeight;
         const heightString = `${totalHeight}px`;
-        this.eBottom.style.minHeight = heightString;
-        this.eBottom.style.height = heightString;
-        _setDisplayed(this.eBottom, totalHeight > 0, { skipAriaHidden: true });
+        const eBottom = this.eBottom;
+        eBottom.style.minHeight = heightString;
+        eBottom.style.height = heightString;
+        _setDisplayed(eBottom, totalHeight > 0, { skipAriaHidden: true });
     }
 
     public getFocusableContainerName(): 'gridBody' {

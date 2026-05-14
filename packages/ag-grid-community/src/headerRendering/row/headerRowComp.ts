@@ -10,6 +10,7 @@ import { HeaderGroupCellComp } from '../cells/columnGroup/headerGroupCellComp';
 import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellComp';
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
+import { getPinnedSectionWidths, partitionByPinned } from '../headerUtils';
 import type { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
 export type HeaderRowType = 'group' | 'column' | 'filter';
@@ -112,35 +113,24 @@ export class HeaderRowComp extends Component {
                 return;
             }
 
-            const leftComps: AbstractHeaderCellComp<AbstractHeaderCellCtrl>[] = [];
-            const centerComps: AbstractHeaderCellComp<AbstractHeaderCellCtrl>[] = [];
-            const rightComps: AbstractHeaderCellComp<AbstractHeaderCellCtrl>[] = [];
-            for (const comp of Object.values(this.headerComps)) {
-                const pinned = comp.getCtrl().column.getPinned();
-                if (pinned === 'left') {
-                    leftComps.push(comp);
-                } else if (pinned === 'right') {
-                    rightComps.push(comp);
-                } else {
-                    centerComps.push(comp);
-                }
-            }
+            const comps = Object.values(this.headerComps);
+            const { left, center, right } = partitionByPinned(comps, (c) => c.getCtrl().column.getPinned());
 
-            leftComps.sort(sortByLeft);
-            centerComps.sort(sortByLeft);
-            rightComps.sort(sortByLeft);
+            left.sort(sortByLeft);
+            center.sort(sortByLeft);
+            right.sort(sortByLeft);
 
             _setDomChildOrder(
                 this.ePinnedLeftCells,
-                leftComps.map((c) => c.getGui())
+                left.map((c) => c.getGui())
             );
             _setDomChildOrder(
                 this.eScrollingCells,
-                centerComps.map((c) => c.getGui())
+                center.map((c) => c.getGui())
             );
             _setDomChildOrder(
                 this.ePinnedRightCells,
-                rightComps.map((c) => c.getGui())
+                right.map((c) => c.getGui())
             );
         }
     }
@@ -161,35 +151,10 @@ export class HeaderRowComp extends Component {
     }
 
     private updatePinnedCellGroupWidths(): void {
-        const {
-            gos,
-            ePinnedLeftCells,
-            eScrollingCells,
-            ePinnedRightCells,
-            beans: { visibleCols },
-        } = this;
-        if (gos.get('domLayout') === 'print') {
-            if (this.pinnedLeftWidth !== 0) {
-                ePinnedLeftCells.style.width = '0px';
-                ePinnedLeftCells.style.display = 'none';
-                this.pinnedLeftWidth = 0;
-            }
-            if (this.pinnedRightWidth !== 0) {
-                ePinnedRightCells.style.width = '0px';
-                ePinnedRightCells.style.display = 'none';
-                this.pinnedRightWidth = 0;
-            }
-            const centerWidth = visibleCols.bodyWidth;
-            if (this.centerWidth !== centerWidth) {
-                eScrollingCells.style.width = `${centerWidth}px`;
-                this.centerWidth = centerWidth;
-            }
-            return;
-        }
+        const { ePinnedLeftCells, eScrollingCells, ePinnedRightCells } = this;
+        const isPrint = this.gos.get('domLayout') === 'print';
+        const { leftWidth, centerWidth, rightWidth } = getPinnedSectionWidths(this.beans.visibleCols, isPrint);
 
-        const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
-        const centerWidth = visibleCols.bodyWidth;
-        const rightWidth = visibleCols.getRightStickyColumnContainerWidth();
         if (this.pinnedLeftWidth !== leftWidth) {
             ePinnedLeftCells.style.width = `${leftWidth}px`;
             ePinnedLeftCells.style.display = leftWidth > 0 ? '' : 'none';
