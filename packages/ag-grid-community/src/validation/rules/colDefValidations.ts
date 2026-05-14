@@ -436,6 +436,8 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     enableRowGroup: undefined,
     enablePivot: undefined,
     enableValue: undefined,
+    valueIndex: undefined,
+    initialValueIndex: undefined,
     editable: undefined,
     suppressPaste: undefined,
     suppressNavigable: undefined,

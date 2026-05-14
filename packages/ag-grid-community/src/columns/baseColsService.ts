@@ -84,7 +84,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             return;
         }
 
-        const changes: Map<AgColumn, number> = new Map();
+        const changes = new Map<AgColumn, number>();
         // store all original cols and their index.
         masterList.forEach((col, idx) => changes.set(col, idx));
 
@@ -360,12 +360,11 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
         const colIdsInOriginalOrder: string[] = [];
         const originalOrderMap: { [colId: string]: number } = {};
-        let orderIndex = 0;
         for (let i = 0; i < primaryCols.length; i++) {
             const colId = primaryCols[i].colId;
             if (allColIds.has(colId)) {
-                colIdsInOriginalOrder.push(colId);
-                originalOrderMap[colId] = orderIndex++;
+                const len = colIdsInOriginalOrder.push(colId);
+                originalOrderMap[colId] = len - 1;
             }
         }
 
@@ -374,10 +373,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         let hasAddedNewCols = false;
         let lastIndex = 0;
 
-        const enableProp = this.columnOrdering.enableProp;
-        const initialEnableProp = this.columnOrdering.initialEnableProp;
-        const indexProp = this.columnOrdering.indexProp;
-        const initialIndexProp = this.columnOrdering.initialIndexProp;
+        const { enableProp, initialEnableProp, indexProp, initialIndexProp } = this.columnOrdering;
 
         const processPrecedingNewCols = (colId: string) => {
             const originalOrderIndex = originalOrderMap[colId];
