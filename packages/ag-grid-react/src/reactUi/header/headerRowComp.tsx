@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import type {
     AbstractHeaderCellCtrl,
@@ -7,8 +7,9 @@ import type {
     HeaderGroupCellCtrl,
     HeaderRowCtrl,
     IHeaderRowComp,
+    PinnedSectionWidthsCache,
 } from 'ag-grid-community';
-import { _EmptyBean, _getPinnedSectionWidths, _partitionByPinned, _setAriaRowIndex } from 'ag-grid-community';
+import { _EmptyBean, _partitionByPinned, _setAriaRowIndex, _updatePinnedSectionWidths } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { agFlushSync, getNextValueIfDifferent } from '../utils';
@@ -39,12 +40,10 @@ const HeaderRowComp = ({
     const { context, visibleCols, gos } = useContext(BeansContext);
 
     const eGui = useRef<HTMLDivElement | null>(null);
+    const ePinnedLeft = useRef<HTMLDivElement | null>(null);
+    const eScrolling = useRef<HTMLDivElement | null>(null);
+    const ePinnedRight = useRef<HTMLDivElement | null>(null);
     const compBean = useRef<_EmptyBean>();
-
-    const [height, setHeight] = useState<string>('0px');
-    const [top, setTop] = useState<string>('0px');
-    const [width, setWidth] = useState<string>('');
-    const [ariaRowIndex, setAriaRowIndex] = useState<number>(ctrl.getAriaRowIndex());
 
     // Cell ctrls partitioned into 3 sections
     const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[]>([]);
@@ -53,17 +52,23 @@ const HeaderRowComp = ({
     const domOrderRef = useRef<boolean>(false);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>([]);
 
-    // Pinned section widths
-    const [pinnedLeftWidth, setPinnedLeftWidth] = useState<number>(0);
-    const [centerWidth, setCenterWidth] = useState<number>(0);
-    const [pinnedRightWidth, setPinnedRightWidth] = useState<number>(0);
+    const pinnedWidthsCache = useRef<PinnedSectionWidthsCache>({
+        pinnedLeftWidth: undefined,
+        centerWidth: undefined,
+        pinnedRightWidth: undefined,
+    });
 
     const refreshPinnedWidths = useCallback(() => {
+        if (!ePinnedLeft.current || !eScrolling.current || !ePinnedRight.current) {
+            return;
+        }
         const isPrint = gos.get('domLayout') === 'print';
-        const { leftWidth, centerWidth, rightWidth } = _getPinnedSectionWidths(visibleCols, isPrint);
-        setPinnedLeftWidth(leftWidth);
-        setCenterWidth(centerWidth);
-        setPinnedRightWidth(rightWidth);
+        _updatePinnedSectionWidths(
+            visibleCols,
+            isPrint,
+            { ePinnedLeft: ePinnedLeft.current, eScrolling: eScrolling.current, ePinnedRight: ePinnedRight.current },
+            pinnedWidthsCache.current
+        );
     }, [gos, visibleCols]);
 
     const setRef = useCallback(
@@ -93,30 +98,39 @@ const HeaderRowComp = ({
             };
 
             const compProxy: IHeaderRowComp = {
-                setTop: (value) => setTop(value),
-                setHeight: (value) => setHeight(value),
+                setTop: (value) => {
+                    if (eGui.current) {
+                        eGui.current.style.top = value;
+                    }
+                },
+                setHeight: (value) => {
+                    if (eGui.current) {
+                        eGui.current.style.height = value;
+                    }
+                },
                 setHeaderCtrls: (ctrls, forceOrder, afterScroll) => {
                     domOrderRef.current = forceOrder;
                     cellCtrlsRef.current = ctrls;
                     updateCellCtrls(afterScroll);
                 },
                 refreshPinnedCellGroupWidths: () => refreshPinnedWidths(),
-                setWidth: (value) => setWidth(value),
-                setRowIndex: (rowIndex) => setAriaRowIndex(rowIndex),
+                setWidth: (value) => {
+                    if (eGui.current) {
+                        eGui.current.style.width = value;
+                    }
+                },
+                setRowIndex: (rowIndex) => {
+                    if (eGui.current) {
+                        _setAriaRowIndex(eGui.current, rowIndex);
+                        eGui.current.classList.toggle('ag-header-row-not-first', rowIndex !== 1);
+                    }
+                },
             };
 
             ctrl.setComp(compProxy, compBean.current);
         },
         [context, ctrl, refreshPinnedWidths, setGuiRef]
     );
-
-    // Set aria-row-index on the DOM element directly
-    useEffect(() => {
-        if (eGui.current) {
-            _setAriaRowIndex(eGui.current, ariaRowIndex);
-            eGui.current.classList.toggle('ag-header-row-not-first', ariaRowIndex !== 1);
-        }
-    }, [ariaRowIndex]);
 
     const isPrint = gos.get('domLayout') === 'print';
     const {
@@ -144,33 +158,17 @@ const HeaderRowComp = ({
         [ctrl.type]
     );
 
-    const style: React.CSSProperties = { height, top, width };
-
-    const leftStyle: React.CSSProperties = {
-        width: `${pinnedLeftWidth}px`,
-        display: pinnedLeftWidth > 0 || isPrint ? '' : 'none',
-    };
-
-    const centerStyle: React.CSSProperties = {
-        width: `${centerWidth}px`,
-    };
-
-    const rightStyle: React.CSSProperties = {
-        width: `${pinnedRightWidth}px`,
-        display: pinnedRightWidth > 0 || isPrint ? '' : 'none',
-    };
-
     const tabIndex = gos.get('tabIndex');
 
     return (
-        <div ref={setRef} className={ctrl.headerRowClass} role="row" style={style} tabIndex={tabIndex}>
-            <div className="ag-grid-pinned-left-cells" role="presentation" style={leftStyle}>
+        <div ref={setRef} className={ctrl.headerRowClass} role="row" tabIndex={tabIndex}>
+            <div ref={ePinnedLeft} className="ag-grid-pinned-left-cells" role="presentation">
                 {leftCells.map(createCellJsx)}
             </div>
-            <div className="ag-grid-scrolling-cells" role="presentation" style={centerStyle}>
+            <div ref={eScrolling} className="ag-grid-scrolling-cells" role="presentation">
                 {centerCells.map(createCellJsx)}
             </div>
-            <div className="ag-grid-pinned-right-cells" role="presentation" style={rightStyle}>
+            <div ref={ePinnedRight} className="ag-grid-pinned-right-cells" role="presentation">
                 {rightCells.map(createCellJsx)}
             </div>
         </div>

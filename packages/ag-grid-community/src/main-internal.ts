@@ -438,8 +438,14 @@ export {
     getHeaderRowCount as _getHeaderRowCount,
     getPinnedSectionWidths as _getPinnedSectionWidths,
     partitionByPinned as _partitionByPinned,
+    updatePinnedSectionWidths as _updatePinnedSectionWidths,
 } from './headerRendering/headerUtils';
-export type { PinnedSections, PinnedSectionWidths } from './headerRendering/headerUtils';
+export type {
+    PinnedSectionElements,
+    PinnedSections,
+    PinnedSectionWidths,
+    PinnedSectionWidthsCache,
+} from './headerRendering/headerUtils';
 export type { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
 export { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
 export type { IHeaderRowsComp } from './headerRendering/rowContainer/headerRowContainerCtrl';

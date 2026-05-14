@@ -10,7 +10,8 @@ import { HeaderGroupCellComp } from '../cells/columnGroup/headerGroupCellComp';
 import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellComp';
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
-import { getPinnedSectionWidths, partitionByPinned } from '../headerUtils';
+import type { PinnedSectionWidthsCache } from '../headerUtils';
+import { partitionByPinned, updatePinnedSectionWidths } from '../headerUtils';
 import type { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
 export type HeaderRowType = 'group' | 'column' | 'filter';
@@ -20,9 +21,11 @@ export class HeaderRowComp extends Component {
     private readonly ePinnedLeftCells: HTMLElement;
     private readonly eScrollingCells: HTMLElement;
     private readonly ePinnedRightCells: HTMLElement;
-    private pinnedLeftWidth: number | undefined;
-    private centerWidth: number | undefined;
-    private pinnedRightWidth: number | undefined;
+    private readonly pinnedWidthsCache: PinnedSectionWidthsCache = {
+        pinnedLeftWidth: undefined,
+        centerWidth: undefined,
+        pinnedRightWidth: undefined,
+    };
 
     constructor(private readonly ctrl: HeaderRowCtrl) {
         super({ tag: 'div', cls: ctrl.headerRowClass, role: 'row' });
@@ -54,7 +57,7 @@ export class HeaderRowComp extends Component {
             setHeight: (height) => (this.getGui().style.height = height),
             setTop: (top) => (this.getGui().style.top = top),
             setHeaderCtrls: (ctrls, forceOrder) => this.setHeaderCtrls(ctrls, forceOrder),
-            refreshPinnedCellGroupWidths: () => this.refreshPinnedCellGroupWidths(),
+            refreshPinnedCellGroupWidths: () => this.updatePinnedCellGroupWidths(),
             setWidth: (width) => (this.getGui().style.width = width),
             setRowIndex: (rowIndex) => this.setRowIndex(rowIndex),
         };
@@ -151,28 +154,17 @@ export class HeaderRowComp extends Component {
     }
 
     private updatePinnedCellGroupWidths(): void {
-        const { ePinnedLeftCells, eScrollingCells, ePinnedRightCells } = this;
         const isPrint = this.gos.get('domLayout') === 'print';
-        const { leftWidth, centerWidth, rightWidth } = getPinnedSectionWidths(this.beans.visibleCols, isPrint);
-
-        if (this.pinnedLeftWidth !== leftWidth) {
-            ePinnedLeftCells.style.width = `${leftWidth}px`;
-            ePinnedLeftCells.style.display = leftWidth > 0 ? '' : 'none';
-            this.pinnedLeftWidth = leftWidth;
-        }
-        if (this.centerWidth !== centerWidth) {
-            eScrollingCells.style.width = `${centerWidth}px`;
-            this.centerWidth = centerWidth;
-        }
-        if (this.pinnedRightWidth !== rightWidth) {
-            ePinnedRightCells.style.width = `${rightWidth}px`;
-            ePinnedRightCells.style.display = rightWidth > 0 ? '' : 'none';
-            this.pinnedRightWidth = rightWidth;
-        }
-    }
-
-    private refreshPinnedCellGroupWidths(): void {
-        this.updatePinnedCellGroupWidths();
+        updatePinnedSectionWidths(
+            this.beans.visibleCols,
+            isPrint,
+            {
+                ePinnedLeft: this.ePinnedLeftCells,
+                eScrolling: this.eScrollingCells,
+                ePinnedRight: this.ePinnedRightCells,
+            },
+            this.pinnedWidthsCache
+        );
     }
 
     private setRowIndex(ariaRowIndex: number): void {

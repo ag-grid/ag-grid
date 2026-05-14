@@ -128,6 +128,46 @@ export function getPinnedSectionWidths(visibleCols: VisibleColsService, isPrint:
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface PinnedSectionElements {
+    ePinnedLeft: HTMLElement;
+    eScrolling: HTMLElement;
+    ePinnedRight: HTMLElement;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface PinnedSectionWidthsCache {
+    pinnedLeftWidth: number | undefined;
+    centerWidth: number | undefined;
+    pinnedRightWidth: number | undefined;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function updatePinnedSectionWidths(
+    visibleCols: VisibleColsService,
+    isPrint: boolean,
+    elements: PinnedSectionElements,
+    cache: PinnedSectionWidthsCache
+): void {
+    const { ePinnedLeft, eScrolling, ePinnedRight } = elements;
+    const { leftWidth, centerWidth, rightWidth } = getPinnedSectionWidths(visibleCols, isPrint);
+
+    if (cache.pinnedLeftWidth !== leftWidth) {
+        ePinnedLeft.style.width = leftWidth + 'px';
+        ePinnedLeft.style.display = leftWidth > 0 || isPrint ? '' : 'none';
+        cache.pinnedLeftWidth = leftWidth;
+    }
+    if (cache.centerWidth !== centerWidth) {
+        eScrolling.style.width = centerWidth + 'px';
+        cache.centerWidth = centerWidth;
+    }
+    if (cache.pinnedRightWidth !== rightWidth) {
+        ePinnedRight.style.width = rightWidth + 'px';
+        ePinnedRight.style.display = rightWidth > 0 || isPrint ? '' : 'none';
+        cache.pinnedRightWidth = rightWidth;
+    }
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface PinnedSections<T> {
     left: T[];
     center: T[];
