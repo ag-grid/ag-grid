@@ -55,6 +55,25 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             filterChanged: setup,
             cellSelectionChanged: setup,
         });
+
+        // Virtual lists in column panels/choosers create new DOM elements on scroll,
+        // which lose their test IDs. Capture-phase scroll listener re-applies them.
+        const root = _getRootNode(this.beans);
+        const onVirtualListScroll = _debounce(this, () => this.setupAllTestIds(), 100);
+        const onScroll = (e: Event) => {
+            const target = e.target;
+            if (
+                target instanceof HTMLElement &&
+                target.classList.contains('ag-virtual-list-viewport') &&
+                (target.closest('.ag-column-panel') || target.closest('.ag-panel'))
+            ) {
+                onVirtualListScroll();
+            }
+        };
+        root.addEventListener('scroll', onScroll, { capture: true });
+        this.addDestroyFunc(() =>
+            root.removeEventListener('scroll', onScroll, { capture: true } as EventListenerOptions)
+        );
     }
 
     public setupAllTestIds(): void {
