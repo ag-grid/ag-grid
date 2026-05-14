@@ -734,6 +734,12 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     max-width: 720px;
 }
 
+.agendaDownloads {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+}
+
 // ─── Full-width section title rule ───────────────────────────────────────────
 // Editorial banner that replaces the large `.sectionTitle` heading on the
 // At a glance / Speakers / Full schedule / The venue sections. Top + bottom
