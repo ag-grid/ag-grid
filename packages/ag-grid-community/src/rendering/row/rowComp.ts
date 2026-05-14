@@ -12,6 +12,8 @@ import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
 import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { IRowComp, RowCtrl } from './rowCtrl';
 
+const LEAF_RENDERER_TAGS = ['CANVAS', 'IMG', 'SVG', 'VIDEO', 'AUDIO', 'INPUT', 'IFRAME', 'PICTURE'];
+
 const createCellSection = (sectionClass: string): { container: HTMLElement; wrapper: HTMLElement } => {
     const wrapper = _createElement({
         tag: 'div',
@@ -163,10 +165,15 @@ export class RowComp extends Component {
             }
             // Check the host for actual visible content after appending. Framework wrappers
             // (Angular/Vue) return container elements from getGui() even when the component
-            // renders nothing, so a simple null check on eGui is insufficient. We check if
-            // the first child element has any child elements or text content.
+            // renders nothing, so a simple null check on eGui is insufficient. Treat known
+            // leaf renderers (canvas, img, svg, ...) as content unconditionally; for other
+            // elements, require either child elements or non-empty text.
             const firstEl = host.firstElementChild;
-            const hasContent = firstEl != null && (firstEl.childElementCount > 0 || !!firstEl.textContent?.trim());
+            const hasContent =
+                firstEl != null &&
+                (firstEl.childElementCount > 0 ||
+                    !!firstEl.textContent?.trim() ||
+                    LEAF_RENDERER_TAGS.indexOf(firstEl.tagName) !== -1);
             this.rowCtrl.setEmbeddedSectionHasContent(section, hasContent);
             this.setEmbeddedFullWidthRowComp(section, cellRenderer, compDetails.params);
             this.rowCtrl.refreshPinnedCellGroupWidths();

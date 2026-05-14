@@ -140,7 +140,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         /** Rows */
 
-        root.querySelectorAll('.ag-row:not(.ag-header-row)').forEach((row) => {
+        root.querySelectorAll('.ag-row[row-id]').forEach((row) => {
             const rowId = row.getAttribute('row-id');
             setTestId(row, agTestIdFor.rowNode(rowId));
 
