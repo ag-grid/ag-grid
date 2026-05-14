@@ -185,7 +185,7 @@ const gridOptions = {
     getRowHeight: params => {
         const isDetailRow = params.node.detail;
 
-        // not that this callback gets called for all rows, not just the detail row
+        // note that this callback gets called for all rows, not just the detail row
         if (isDetailRow) {
             // dynamically calculate detail row height
             return params.data.children.length * 50;
@@ -200,9 +200,7 @@ Option 3 - use autoHeight
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    detailCellRendererParams: {
-        autoHeight: true,
-    }
+    detailRowAutoHeight: true,
 }
 ```
 

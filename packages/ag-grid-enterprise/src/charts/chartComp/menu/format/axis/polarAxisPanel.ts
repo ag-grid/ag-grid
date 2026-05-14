@@ -11,6 +11,7 @@ import type {
 import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { getSeriesType, isRadial } from '../../../utils/seriesTypeMapper';
+import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import type { FontPanelParams } from '../fontPanel';
 import { FontPanel } from '../fontPanel';
 import type { FormatPanelOptions } from '../formatPanel';
@@ -28,7 +29,7 @@ export class PolarAxisPanel extends Component {
     }
 
     public postConstruct() {
-        const { isExpandedOnInit: expanded, chartAxisMenuParamsFactory, registerGroupComponent } = this.options;
+        const { isExpandedOnInit: expanded, chartOptionsService, registerGroupComponent } = this.options;
         const axisGroupParams: GroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical',
@@ -36,12 +37,11 @@ export class PolarAxisPanel extends Component {
             expanded,
             suppressEnabledCheckbox: true,
         };
-        const axisColorInputParams = chartAxisMenuParamsFactory.getDefaultColorPickerParams('line.stroke');
-        const axisLineWidthSliderParams = chartAxisMenuParamsFactory.getDefaultSliderParams(
-            'line.width',
-            'thickness',
-            10
+        const chartAxisThemeOverrides = this.createManagedBean(
+            new ChartMenuParamsFactory(chartOptionsService.getPolarAxisThemeOverridesProxy('angle'))
         );
+        const axisColorInputParams = chartAxisThemeOverrides.getDefaultColorPickerParams('line.stroke');
+        const axisLineWidthSliderParams = chartAxisThemeOverrides.getDefaultSliderParams('line.width', 'thickness', 10);
         this.setTemplate(
             /* html */ `<div>
             <ag-group-component data-ref="axisGroup">
@@ -58,12 +58,12 @@ export class PolarAxisPanel extends Component {
         );
         registerGroupComponent(this.axisGroup);
 
-        this.initAxis();
-        this.initAxisLabels();
-        this.initRadiusAxis();
+        this.initAxis(chartAxisThemeOverrides);
+        this.initAxisLabels(chartAxisThemeOverrides);
+        this.initRadiusAxis(chartAxisThemeOverrides);
     }
 
-    private initAxis() {
+    private initAxis(chartAxisThemeOverrides: ChartMenuParamsFactory) {
         const chartType = this.options.chartController.getChartType();
         const hasConfigurableAxisShape = ['radarLine', 'radarArea'].includes(chartType);
         if (hasConfigurableAxisShape) {
@@ -74,6 +74,7 @@ export class PolarAxisPanel extends Component {
 
             this.axisGroup.addItem(
                 this.createSelect({
+                    chartAxisThemeOverrides,
                     labelKey: 'shape',
                     options: options,
                     property: 'shape',
@@ -84,6 +85,7 @@ export class PolarAxisPanel extends Component {
         if (chartType !== 'pie') {
             this.axisGroup.addItem(
                 this.createSlider({
+                    chartAxisThemeOverrides,
                     labelKey: 'innerRadius',
                     defaultMaxValue: 1,
                     property: 'innerRadiusRatio',
@@ -92,23 +94,23 @@ export class PolarAxisPanel extends Component {
         }
     }
 
-    private initAxisLabels() {
+    private initAxisLabels(chartAxisThemeOverrides: ChartMenuParamsFactory) {
         const params: FontPanelParams = {
             name: this.translate('labels'),
             enabled: true,
             suppressEnabledCheckbox: true,
-            chartMenuParamsFactory: this.options.chartAxisMenuParamsFactory,
+            chartMenuParamsFactory: chartAxisThemeOverrides,
             keyMapper: (key) => `label.${key}`,
         };
 
         const labelPanelComp = this.createManagedBean(new FontPanel(params));
-        const labelOrientationComp = this.createOrientationWidget();
+        const labelOrientationComp = this.createOrientationWidget(chartAxisThemeOverrides);
         labelPanelComp.addItem(labelOrientationComp);
 
         this.axisGroup.addItem(labelPanelComp);
     }
 
-    private createOrientationWidget(): GridSelect {
+    private createOrientationWidget(chartAxisThemeOverrides: ChartMenuParamsFactory): GridSelect {
         const options: Array<ListOption> = [
             { value: 'fixed', text: this.translate('fixed') },
             { value: 'parallel', text: this.translate('parallel') },
@@ -116,13 +118,14 @@ export class PolarAxisPanel extends Component {
         ];
 
         return this.createSelect({
+            chartAxisThemeOverrides,
             labelKey: 'orientation',
             options,
             property: 'label.orientation',
         });
     }
 
-    private initRadiusAxis() {
+    private initRadiusAxis(chartAxisThemeOverrides: ChartMenuParamsFactory) {
         const chartSeriesType = getSeriesType(this.options.chartController.getChartType());
         if (!isRadial(chartSeriesType)) {
             return;
@@ -130,11 +133,13 @@ export class PolarAxisPanel extends Component {
 
         const items = [
             this.createSlider({
+                chartAxisThemeOverrides,
                 labelKey: 'groupPadding',
                 defaultMaxValue: 1,
                 property: 'paddingInner',
             }),
             this.createSlider({
+                chartAxisThemeOverrides,
                 labelKey: 'seriesPadding',
                 defaultMaxValue: 1,
                 property: 'groupPaddingInner',
@@ -159,29 +164,27 @@ export class PolarAxisPanel extends Component {
     }
 
     private createSlider(config: {
+        chartAxisThemeOverrides: ChartMenuParamsFactory;
         labelKey: ChartTranslationKey;
         defaultMaxValue: number;
         step?: number;
         property: string;
     }): GridSlider {
-        const { labelKey, defaultMaxValue, step = 0.05, property } = config;
-        const params = this.options.chartAxisMenuParamsFactory.getDefaultSliderParams(
-            property,
-            labelKey,
-            defaultMaxValue
-        );
+        const { labelKey, defaultMaxValue, step = 0.05, property, chartAxisThemeOverrides } = config;
+        const params = chartAxisThemeOverrides.getDefaultSliderParams(property, labelKey, defaultMaxValue);
         params.step = step;
         return this.createManagedBean(new AgSlider(params));
     }
 
     private createSelect(config: {
+        chartAxisThemeOverrides: ChartMenuParamsFactory;
         labelKey: ChartTranslationKey;
         options: Array<ListOption>;
         property: string;
     }): GridSelect {
-        const { labelKey, options, property } = config;
+        const { labelKey, options, property, chartAxisThemeOverrides } = config;
         return this.createManagedBean(
-            new AgSelect(this.options.chartAxisMenuParamsFactory.getDefaultSelectParams(property, labelKey, options))
+            new AgSelect(chartAxisThemeOverrides.getDefaultSelectParams(property, labelKey, options))
         );
     }
 

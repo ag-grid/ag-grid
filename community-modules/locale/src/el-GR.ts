@@ -340,6 +340,11 @@ export const AG_GRID_LOCALE_GR = {
     sortAbsoluteDescending: '"Απόλυτη φθίνουσα ταξινόμηση"',
     sortUnSort: 'Καθαρισμός Ταξινόμησης',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Εύρεση',
+    toolbarFindPreviousMatch: 'Προηγούμενη Αντιστοιχία',
+    toolbarFindNextMatch: 'Επόμενη Αντιστοιχία',
+    toolbarQuickFilter: 'Φίλτρο',
+    toolbarMenu: 'Μενού',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Άθροισμα',

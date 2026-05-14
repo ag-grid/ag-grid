@@ -7,7 +7,7 @@ Each Column has a Column Header providing a Header Name and typically functions 
 
 ## Header Name
 
-When no header name is provided, the grid will derive the header name from the provided `field`. The grid expects the field value to use Camel Case and will insert spaces between word breaks to build a readable header name. Alternatively, you can provide your own header name using the `headerName` property of the `ColDef`.
+When no header name is provided, the grid will derive the header name from the provided `field`. The grid expects the field value to use camelCase and will convert it to Title Case (e.g. `firstName` becomes `First Name`). Alternatively, you can provide your own header name using the `headerName` property of the `ColDef`.
 
 {% apiDocumentation source="column-properties/properties.json" section="header" names=["headerName"] /%}
 
@@ -33,7 +33,7 @@ Use `headerValueGetter` instead of `colDef.headerName` to provide column header 
 The parameters for `headerValueGetter` differ from a [Cell Value Getter](./value-getters) as follows:
 
 - Only one of column or columnGroup will be present, depending on whether it's a column or a column group.
-- Parameter `location` allows you to have different column names depending on where the column is appearing, eg you might want to have a different name when the column is in the column drop zone or the toolbar.
+- Parameter `location` allows you to have different column names depending on where the column is appearing, eg you might want to have a different name when the column is in the column drop zone or the columns tool panel.
 
 See the [Column Tool Panel Example](./tool-panel-columns/#columns-tool-panel-example) for an example of `headerValueGetter` used in different locations, where you can change the header name depending on where the name appears.
 

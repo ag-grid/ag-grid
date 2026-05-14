@@ -335,6 +335,11 @@ export const AG_GRID_LOCALE_VN = {
     sortAbsoluteDescending: 'Sắp Xếp Giảm Dần Tuyệt Đối',
     sortUnSort: 'Xóa Sắp Xếp',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Tìm kiếm',
+    toolbarFindPreviousMatch: 'Kết quả trùng khớp trước',
+    toolbarFindNextMatch: 'Kết quả trùng khớp tiếp theo',
+    toolbarQuickFilter: 'Bộ lọc',
+    toolbarMenu: 'Trình đơn',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Tổng',

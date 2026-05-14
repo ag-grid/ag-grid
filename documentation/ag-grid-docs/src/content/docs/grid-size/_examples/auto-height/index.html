@@ -5,11 +5,11 @@
         <button onclick="updateRowData(50)">50 Rows</button>
     </div>
     <div>
-        <button onclick="setAutoHeight()">Auto Height</button>
-        <button onclick="setFixedHeight()">Fixed Height</button>
+        <button onclick="setDomLayoutAutoHeight()">Auto Height</button>
+        <button onclick="setDomLayoutNormal()">Fixed Height</button>
     </div>
     <div>
-        <input name="pinned-rows" type="checkbox" id="floating-rows" onclick="cbFloatingRows()" />
+        <input name="pinned-rows" type="checkbox" id="floating-rows" onclick="toggleFloatingRows()" />
         <label for="pinned-rows"> Pinned Rows </label>
     </div>
     <div>Row Count = <span id="currentRowCount"></span></div>

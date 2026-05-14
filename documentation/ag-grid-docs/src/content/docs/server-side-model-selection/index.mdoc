@@ -81,7 +81,7 @@ In the example below, note the following;
 The below snippet demonstrates how to set all nodes as selected, except in the case of the "United States" group, whose only selected child is the row with the ID `group-country-year-United States2004`.
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
-params.api.setServerSideSelectionState({
+api.setServerSideSelectionState({
     // this root level config can be used to determine a global select-all
     selectAllChildren: true,
     // all of the top level group nodes which do not conform with the select all value will have an entry here

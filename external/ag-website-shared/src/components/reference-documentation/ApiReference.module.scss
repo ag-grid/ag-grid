@@ -267,6 +267,7 @@
     padding-left: 8px;
     padding-right: 8px;
     border-radius: var(--radius-sm);
+    word-break: break-word;
 
     #{$selector-darkmode} & {
         background-color: color-mix(in srgb, var(--color-fg-code), var(--color-bg-primary) 90%);

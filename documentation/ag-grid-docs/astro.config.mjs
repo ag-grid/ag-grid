@@ -199,8 +199,8 @@ export default defineConfig({
                 'Content-Security-Policy': [
                     "default-src 'self'",
                     "script-src 'self' https://*.ag-grid.com https://localhost:4610 https://localhost:4611 https://www.googletagmanager.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'",
-                    "style-src 'self' https://fonts.googleapis.com 'unsafe-inline'",
-                    "font-src 'self' https://fonts.gstatic.com data:",
+                    "style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com 'unsafe-inline'",
+                    "font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com data:",
                     "img-src 'self' data: blob: https:",
                     "connect-src 'self' https:",
                     "worker-src 'self' blob:",

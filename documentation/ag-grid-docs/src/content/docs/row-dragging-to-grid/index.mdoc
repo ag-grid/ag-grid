@@ -17,10 +17,12 @@ const dropZoneParams = targetGridApi.getRowDropZoneParams({
     }
 });
 
-sourceGridApi.addRowDropZone(dropZoneParams);
+if (dropZoneParams) {
+    sourceGridApi.addRowDropZone(dropZoneParams);
 
-// when the DropZone above is no longer needed
-sourceGridApi.removeRowDropZone(dropZoneParams);
+    // when the DropZone above is no longer needed
+    sourceGridApi.removeRowDropZone(dropZoneParams);
+}
 ```
 
 In the example below, note the following:

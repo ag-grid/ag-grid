@@ -256,3 +256,7 @@
 .ag-icon-edit::before {
     mask-image: url('./balham-svg-icons/edit.svg');
 }
+
+.ag-icon-search::before {
+    mask-image: url('./balham-svg-icons/search.svg');
+}

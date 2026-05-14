@@ -58,15 +58,15 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function onRowDragEnter(e: RowDragEnterEvent) {
-    console.log('onRowDragEnter', e);
+    console.log('onRowDragEnter: node', e.node.id);
 }
 
 function onRowDragEnd(e: RowDragEndEvent) {
-    console.log('onRowDragEnd', e);
+    console.log('onRowDragEnd: node', e.node.id);
 }
 
 function onRowDragCancel(e: RowDragCancelEvent) {
-    console.log('onRowDragCancel', e);
+    console.log('onRowDragCancel: node', e.node.id);
 }
 
 // setup the grid after the page has finished loading

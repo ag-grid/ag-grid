@@ -10,7 +10,8 @@
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         position: sticky;
         top: 0;
-        z-index: 10001; // needed in order to prevent grid z-indexes overlapping on small height
+        width: 100%;
+        z-index: 10002; // needed in order to prevent grid z-indexes overlapping on small height
     }
 
     #{$selector-darkmode}:has([data-is-homepage='false']) &,

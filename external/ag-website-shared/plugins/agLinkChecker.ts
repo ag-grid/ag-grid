@@ -91,46 +91,39 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
         const anchorTags: string[] = [];
 
         // uses a stream as ingesting the entire file was causing memory crashes.
-        const fileStream = fs.createReadStream(join(dir, filePath));
-        await new Promise<void>((resolve) => {
-            fileStream.on('readable', function () {
-                let prev;
-                let active = false;
-                let str = '';
-                let chunk;
-                while (null !== (chunk = fileStream.read(16384))) {
-                    const strChunk = chunk.toString();
-                    for (let i = 0; i < strChunk.length; i++) {
-                        const chr = strChunk[i];
-                        if (!prev || prev === '<') {
-                            if (chr === 'a') {
-                                active = true;
-                            }
-                        } else if (active && chr === '>') {
-                            active = false;
-                            anchorTags.push(str);
-                            str = '';
-                        }
+        // State is held in the closure here (not inside an event handler) so it
+        // survives across stream chunks — otherwise tags that straddle a chunk
+        // boundary are silently dropped.
+        const fileStream = fs.createReadStream(join(dir, filePath), { encoding: 'utf8' });
+        let prev: string | undefined;
+        let active = false;
+        let str = '';
+        for await (const chunk of fileStream) {
+            const strChunk = chunk as string;
+            for (let i = 0; i < strChunk.length; i++) {
+                const chr = strChunk[i];
+                if (!prev || prev === '<') {
+                    if (chr === 'a') {
+                        active = true;
+                    }
+                } else if (active && chr === '>') {
+                    active = false;
+                    anchorTags.push(str);
+                    str = '';
+                }
 
-                        if (active) {
-                            str += chr;
+                if (active) {
+                    str += chr;
 
-                            if (str.length >= 2 && !str.startsWith('a ')) {
-                                active = false;
-                                str = '';
-                            }
-                        }
-
-                        prev = chr;
+                    if (str.length >= 2 && !str.startsWith('a ')) {
+                        active = false;
+                        str = '';
                     }
                 }
-            });
 
-            fileStream.on('end', () => {
-                resolve();
-            });
-        });
-        fileStream.close();
+                prev = chr;
+            }
+        }
 
         anchorTags.forEach((tag) => {
             const regex = /.*href="(.*?)".*/g;
@@ -205,8 +198,8 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
             validationResults[link] = { error };
             return;
         } else {
-            // check if the hash exists in the file
-            if (!anchors.has(linkWithoutPrefix)) {
+            // Check if the hash exists in the file
+            if (!anchors.has(linkWithoutPrefix) && !anchors.has(linkWithoutPrefix.replace('#', '/#'))) {
                 errors.push(
                     `Link to ${originalLink} could not be resolved in (${filePathsString(filePaths, options)}).`
                 );

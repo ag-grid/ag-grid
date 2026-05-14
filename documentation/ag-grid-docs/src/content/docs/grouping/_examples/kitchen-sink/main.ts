@@ -13,10 +13,10 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true },
+        { field: 'country', rowGroup: true, enableRowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, enableRowGroup: true, hide: true },
         { field: 'athlete' },
-        { field: 'sport' },
+        { field: 'sport', enableRowGroup: true },
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },

@@ -89,7 +89,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const fillers = this.nonLeafsById;
         if (fillers) {
             for (const node of fillers.values()) {
-                node._destroy(false);
+                node._destroy(null);
             }
             fillers.clear();
             this.nonLeafsById = null;

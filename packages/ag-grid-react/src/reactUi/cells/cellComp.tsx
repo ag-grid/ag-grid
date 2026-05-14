@@ -133,20 +133,18 @@ const CellComp = ({
         const newDetails = renderDetails;
         lastRenderDetails.current = renderDetails;
 
-        // if not updating renderDetails, do nothing
-        if (
-            oldDetails == null ||
-            oldDetails.compDetails == null ||
-            newDetails == null ||
-            newDetails.compDetails == null
-        ) {
+        // Skip the effect unless we have a real renderDetails change. A wrapper-only change (same inner
+        // compDetails ref, new wrapper object) would otherwise drive an infinite update loop:
+        // refresh() → setRenderKey → renderer remount → cellCtrl re-emits compDetails → repeat
+        // (e.g. during column drag-and-drop with agGroupCellRenderer, whose refresh() deliberately
+        // returns false).
+        const oldCompDetails = oldDetails?.compDetails;
+        const newCompDetails = newDetails?.compDetails;
+        if (oldCompDetails == null || newCompDetails == null || oldCompDetails === newCompDetails) {
             return;
         }
 
         rowDragCompRef.current?.refreshVisibility();
-
-        const oldCompDetails = oldDetails.compDetails;
-        const newCompDetails = newDetails.compDetails;
 
         // if different Cell Renderer, then do nothing, as renderer will be recreated
         if (oldCompDetails.componentClass != newCompDetails.componentClass) {

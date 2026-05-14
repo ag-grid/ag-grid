@@ -26,7 +26,9 @@ The group rows use the `agGroupCellRenderer` component to display the group info
 for expanding and collapsing rows.
 
 This can be configured with several [Group Renderer Properties](./grouping-group-rows/#configurable-options) using
-the `groupRowRendererParams` grid option. The example below removes the row count. Checkboxes are enabled for row selection with the `checkboxLocation` property.
+the `groupRowRendererParams` grid option.
+
+The example below removes the row count. Checkboxes are enabled for row selection with the `checkboxLocation` property, and `groupSelects` is set to `'descendants'` so that selecting a group row also selects all of its children.
 
 {% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-group-cell" /%}
 
@@ -42,7 +44,8 @@ const gridOptions = {
         suppressCount: true,
     },
     rowSelection: {
-        mode: 'singleRow',
+        mode: 'multiRow',
+        groupSelects: 'descendants',
         checkboxLocation: 'autoGroupColumn',
     }
 }
@@ -58,6 +61,8 @@ The `agGroupCellRenderer` can be configured to show checkboxes for row selection
 `checkboxLocation` property to `'autoGroupColumn'` does not hide the [Checkbox Column](./row-selection-single-row/#customising-the-checkbox-column)
 but does prevent any columns configured with `agGroupCellRenderer` from showing checkboxes.
 
+Setting `groupSelects` to `'descendants'` causes selecting a group row to also select all of its children.
+
 {% gridExampleRunner title="Group Cell Renderer Checkbox Selection" name="renderer-config-checkbox" /%}
 
 The example above demonstrates the following configuration:
@@ -66,6 +71,7 @@ The example above demonstrates the following configuration:
 const gridOptions = {
     rowSelection: {
         mode: 'multiRow',
+        groupSelects: 'descendants',
         selectAll: 'all',
         checkboxLocation: 'autoGroupColumn',
     },

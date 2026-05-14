@@ -334,6 +334,11 @@ export const AG_GRID_LOCALE_HK = {
     sortAbsoluteDescending: '絕對降序排序',
     sortUnSort: '清除排序',
     shiftF2: 'Shift+F2',
+    toolbarFind: '尋找',
+    toolbarFindPreviousMatch: '上一個匹配',
+    toolbarFindNextMatch: '下一個匹配',
+    toolbarQuickFilter: '篩選',
+    toolbarMenu: '菜單',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '總和',

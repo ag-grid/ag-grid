@@ -54,7 +54,6 @@
     font-size: var(--text-fs-lg);
     font-weight: var(--text-semibold);
     color: var(--color-util-brand-600);
-    text-transform: capitalize;
 
     #{$selector-darkmode} & {
         color: var(--color-util-brand-900);
@@ -65,7 +64,6 @@
     font-size: 40px;
     font-weight: var(--text-bold);
     letter-spacing: -1px;
-    text-transform: capitalize;
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
         padding: 0;
@@ -246,7 +244,6 @@
 }
 
 .frameworkName {
-    text-transform: capitalize;
     font-weight: 600;
 }
 

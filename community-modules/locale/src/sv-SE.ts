@@ -337,6 +337,11 @@ export const AG_GRID_LOCALE_SE = {
     sortAbsoluteDescending: 'Sortera Absolut Fallande',
     sortUnSort: 'Rensa Sortering',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Sök',
+    toolbarFindPreviousMatch: 'Föregående träff',
+    toolbarFindNextMatch: 'Nästa träff',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Meny',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Summa',

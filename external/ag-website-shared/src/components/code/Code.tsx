@@ -31,6 +31,7 @@ const GrammarMap = {
     diff: Prism.languages.diff,
     scss: Prism.languages.scss,
     xml: Prism.languages.xml,
+    plain: Prism.languages.plain,
 };
 
 export type Language = keyof typeof GrammarMap;
@@ -92,6 +93,7 @@ function Code({
 
     return (
         <pre
+            suppressHydrationWarning
             className={classnames(
                 'code',
                 `language-${language}`,
@@ -126,7 +128,13 @@ const CodeWithPrismPlugins = ({ code, keepMarkup }: { code: string; keepMarkup: 
         }
     });
 
-    return keepMarkup ? <code ref={ref} dangerouslySetInnerHTML={{ __html: code }} /> : <code ref={ref}>{code}</code>;
+    return keepMarkup ? (
+        <code ref={ref} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: code }} />
+    ) : (
+        <code ref={ref} suppressHydrationWarning>
+            {code}
+        </code>
+    );
 };
 
 /**
@@ -134,7 +142,10 @@ const CodeWithPrismPlugins = ({ code, keepMarkup }: { code: string; keepMarkup: 
  * small part of the Prism lifecycle.
  */
 const CodeWithoutPrismPlugins = ({ code, language }: { code: string; language: Language }) => (
-    <code dangerouslySetInnerHTML={{ __html: Prism.highlight(code, GrammarMap[language], language) }} />
+    <code
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: Prism.highlight(code, GrammarMap[language], language) }}
+    />
 );
 
 export default memo(Code);
