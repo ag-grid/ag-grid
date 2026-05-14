@@ -144,37 +144,21 @@ const HeaderRowComp = ({
         [ctrl.type]
     );
 
-    const style = useMemo(
-        () => ({
-            height,
-            top,
-            width,
-        }),
-        [height, top, width]
-    );
+    const style: React.CSSProperties = { height, top, width };
 
-    const leftStyle: React.CSSProperties = useMemo(
-        () => ({
-            width: `${pinnedLeftWidth}px`,
-            display: pinnedLeftWidth > 0 || isPrint ? '' : 'none',
-        }),
-        [pinnedLeftWidth, isPrint]
-    );
+    const leftStyle: React.CSSProperties = {
+        width: `${pinnedLeftWidth}px`,
+        display: pinnedLeftWidth > 0 || isPrint ? '' : 'none',
+    };
 
-    const centerStyle: React.CSSProperties = useMemo(
-        () => ({
-            width: `${centerWidth}px`,
-        }),
-        [centerWidth]
-    );
+    const centerStyle: React.CSSProperties = {
+        width: `${centerWidth}px`,
+    };
 
-    const rightStyle: React.CSSProperties = useMemo(
-        () => ({
-            width: `${pinnedRightWidth}px`,
-            display: pinnedRightWidth > 0 || isPrint ? '' : 'none',
-        }),
-        [pinnedRightWidth, isPrint]
-    );
+    const rightStyle: React.CSSProperties = {
+        width: `${pinnedRightWidth}px`,
+        display: pinnedRightWidth > 0 || isPrint ? '' : 'none',
+    };
 
     const tabIndex = gos.get('tabIndex');
 
