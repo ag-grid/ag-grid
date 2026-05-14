@@ -12,6 +12,7 @@ interface Example {
     internalFramework: InternalFramework;
     pageName: string;
     exampleName: string;
+    supportedFrameworks?: InternalFramework[];
 }
 
 type DocExamplePages = Awaited<ReturnType<typeof getDocsExamplePages>>;
@@ -23,6 +24,7 @@ type DocExamplePage = DocExamplePages[number]['params'] & {
     hasSimpleHtml?: boolean;
     scriptNonce?: string;
     sourceFileList?: string[];
+    supportedFrameworks?: InternalFramework[];
 };
 type DocFrameworkExamples = Record<InternalFramework, DocExamplePage>;
 
@@ -84,19 +86,17 @@ async function getDocsExampleNameParts({ pages }: { pages: DocsPage[] }): Promis
         : internalFrameworkExamples;
 
     return filteredInternalFrameworkExamples
-        .flatMap((example) => {
-            const frameworkSupported =
-                example.supportedFrameworks === undefined || example.supportedFrameworks.has(example.internalFramework);
-
-            if (!frameworkSupported) {
-                return undefined;
-            }
-
-            return {
-                ...example,
-            };
+        .filter((example) => {
+            return (
+                example.supportedFrameworks === undefined || example.supportedFrameworks.has(example.internalFramework)
+            );
         })
-        .filter((e) => e !== undefined) as Example[];
+        .map(({ internalFramework, pageName, exampleName, supportedFrameworks }) => ({
+            internalFramework,
+            pageName,
+            exampleName,
+            supportedFrameworks: supportedFrameworks ? Array.from(supportedFrameworks) : undefined,
+        }));
 }
 
 export async function getDocsExamplePages({ pages }: { pages: DocsPage[] }) {
@@ -122,7 +122,7 @@ function allPropertiesAreTruthy(entries: [string, DocExamplePage][], property: k
 function flattenDocsExampleContents(data: Record<string, DocFrameworkExamples>) {
     return Object.values(data).map((frameworkExamples) => {
         const frameworkEntries = Object.entries(frameworkExamples);
-        const [_, { pageName, exampleName, sourceFileList, scriptNonce }] = frameworkEntries[0];
+        const [_, { pageName, exampleName, sourceFileList, scriptNonce, supportedFrameworks }] = frameworkEntries[0];
         const isEnterprise = allPropertiesAreTruthy(frameworkEntries, 'isEnterprise');
         const isIntegratedCharts = allPropertiesAreTruthy(frameworkEntries, 'isIntegratedCharts');
         const isLocale = allPropertiesAreTruthy(frameworkEntries, 'isLocale');
@@ -140,19 +140,18 @@ function flattenDocsExampleContents(data: Record<string, DocFrameworkExamples>) 
             hasExampleConsoleLog,
             hasSimpleHtml,
             scriptNonce,
+            supportedFrameworks,
             frameworkExamples,
         };
     });
 }
 
 export async function getDocsExampleContents({ pages }: { pages: DocsPage[] }) {
-    const examples = await getDocsExamplePages({
-        pages,
-    });
+    const examples = await getDocsExampleNameParts({ pages });
 
     const exampleContents: Record<string, DocFrameworkExamples> = {};
     const examplePromises = examples.map(async (example) => {
-        const { internalFramework, pageName, exampleName } = example.params;
+        const { internalFramework, pageName, exampleName, supportedFrameworks } = example;
         const key = `${pageName}-${exampleName}`;
         if (!exampleContents[key]) {
             exampleContents[key] = {} as DocFrameworkExamples;
@@ -173,7 +172,10 @@ export async function getDocsExampleContents({ pages }: { pages: DocsPage[] }) {
             hasSimpleHtml: contents?.hasSimpleHtml,
             sourceFileList: contents?.sourceFileList,
             scriptNonce: contents?.scriptNonce,
-            ...example.params,
+            internalFramework,
+            pageName,
+            exampleName,
+            supportedFrameworks,
         };
     });
     await Promise.all(examplePromises);
