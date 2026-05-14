@@ -108,36 +108,22 @@ function Group({
 
     const handleScrollToGroup = () => {
         const groupEl = groupRef.current;
-        if (!groupEl) {
-            return;
-        }
+        if (!groupEl) return;
+
+        const scrollContainer = document.getElementById('docs-nav-scroll');
+        if (!scrollContainer) return;
 
         const containerRect = scrollContainer.getBoundingClientRect();
         const groupRect = groupEl.getBoundingClientRect();
         const currentScrollTop = scrollContainer.scrollTop;
 
-        // Calculate the group's position relative to the scroll container
         const groupTop = groupRect.top - containerRect.top + currentScrollTop;
         const groupBottom = groupTop + groupRect.height;
-
-        // Define thresholds for when to scroll: if the group is above the top 10% of the visible area or below the bottom - MOVE!
-        const thresholdTop = currentScrollTop + containerRect.height * 0.1;
         const visibleBottom = currentScrollTop + containerRect.height;
 
-        let targetScrollTop = currentScrollTop;
+        if (groupBottom <= visibleBottom) return;
 
-        if (groupTop < thresholdTop) {
-            targetScrollTop = Math.max(groupTop - containerRect.height * 0.1, 0);
-        } else if (groupBottom > visibleBottom) {
-            targetScrollTop = Math.min(
-                groupBottom - containerRect.height,
-                scrollContainer.scrollHeight - containerRect.height
-            );
-        }
-
-        if (targetScrollTop !== currentScrollTop) {
-            scrollContainer.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
-        }
+        scrollContainer.scrollTo({ top: groupTop, behavior: 'smooth' });
     };
 
     return (
