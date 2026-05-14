@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "last_updated": "2026-05-13T00:00:00+01:00",
-  "url": "https://www.ag-grid.com/campaigns/beyond-the-prompt/schedule.json",
+  "url": "https://www.ag-grid.com/downloads/beyond-the-prompt/beyond-the-prompt-agenda.json",
   "conference": {
     "name": "Beyond The Prompt",
     "tagline": "A one-day conference on building applications that hold up in production",
