@@ -40,7 +40,7 @@
     "react": "^16.9.0",
     "react-app-polyfill": "^3.0.0",
     "react-dom": "^16.9.0",
-    "typescript": "~5.4.5"
+    "typescript": "~5.8.3"
   },
   "dependencies": {
     "prop-types": "^15.8.1",

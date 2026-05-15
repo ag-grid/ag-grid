@@ -6,7 +6,7 @@
     "ag-shared": "0.0.1",
     "ag-grid-community": "35.3.0",
     "glob": "^11.1.0",
-    "typescript": "~5.4.5",
+    "typescript": "~5.8.3",
     "cheerio": "^1.2.0",
     "sucrase": "^3.35.1",
     "json5": "2.2.3",

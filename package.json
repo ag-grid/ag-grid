@@ -86,7 +86,7 @@
     "stylelint-config-standard": "^40.0.0",
     "ts-node": "10.9.2",
     "tsx": "4.21.0",
-    "typescript": "~5.4.5",
+    "typescript": "~5.8.3",
     "typescript-eslint": "^8.58.2",
     "vite": "~5.4.19",
     "vitest": "2.1.9"
