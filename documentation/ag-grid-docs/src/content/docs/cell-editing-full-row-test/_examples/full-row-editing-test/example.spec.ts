@@ -81,7 +81,7 @@ test.agExample(import.meta, () => {
         const cellEditor = cell.locator('input');
         await expect(cellEditor).toBeVisible();
 
-        const verticalView = page.locator('.ag-grid-scrolling-rows.ag-row-animation.ag-layout-normal');
+        const verticalView = page.locator('.ag-grid-scrolling-container.ag-row-animation');
         await expect(verticalView).toBeVisible();
 
         const horizontalView = page.locator('.ag-grid-viewport.ag-layout-normal');
@@ -121,7 +121,7 @@ test.agExample(import.meta, () => {
             const remoteApi = remoteGrid(page);
             await remoteApi.setGridOption('editType', 'fullRow');
 
-            const verticalView = page.locator('.ag-grid-scrolling-rows.ag-row-animation.ag-layout-normal');
+            const verticalView = page.locator('.ag-grid-scrolling-container.ag-row-animation');
             await expect(verticalView).toBeVisible();
             const horizontalView = page.locator('.ag-grid-viewport.ag-layout-normal');
             await expect(horizontalView).toBeVisible();

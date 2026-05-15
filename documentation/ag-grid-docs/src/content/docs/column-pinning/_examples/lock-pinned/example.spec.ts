@@ -8,7 +8,7 @@ test.agExample(import.meta, () => {
         await expect(athleteHeader).toBeVisible();
 
         // Athlete should be in the pinned left header
-        const pinnedLeftHeader = page.locator('.ag-pinned-left-header');
+        const pinnedLeftHeader = page.locator('.ag-header-row .ag-grid-pinned-left-cells');
         await expect(pinnedLeftHeader.locator('.ag-header-cell[col-id="athlete"]')).toBeVisible();
     });
 
@@ -19,7 +19,7 @@ test.agExample(import.meta, () => {
         await expect(ageHeader).toBeVisible();
 
         // Age should be in the center header, not pinned
-        const centerHeader = page.locator('.ag-header-viewport');
+        const centerHeader = page.locator('.ag-header-row .ag-grid-scrolling-cells');
         await expect(centerHeader.locator('.ag-header-cell[col-id="age"]')).toBeVisible();
     });
 
@@ -27,13 +27,11 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         // First row athlete cell should have lock-pinned class
-        const athleteCell = page.locator(
-            '.ag-pinned-left-cols-container .ag-row:first-child .ag-cell[col-id="athlete"]'
-        );
+        const athleteCell = page.locator('.ag-grid-pinned-left-cells .ag-cell[col-id="athlete"]').first();
         await expect(athleteCell).toHaveClass(/lock-pinned/);
 
         // First row age cell should have lock-pinned class
-        const ageCell = page.locator('.ag-center-cols-container .ag-row:first-child .ag-cell[col-id="age"]');
+        const ageCell = page.locator('.ag-grid-scrolling-cells .ag-cell[col-id="age"]').first();
         await expect(ageCell).toHaveClass(/lock-pinned/);
     });
 });

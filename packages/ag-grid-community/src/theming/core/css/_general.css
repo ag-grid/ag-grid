@@ -169,7 +169,6 @@
 
 .ag-body-horizontal-scroll {
     width: 100%;
-    position: relative;
     flex: none;
 
     &:where(.ag-scrollbar-invisible) {
