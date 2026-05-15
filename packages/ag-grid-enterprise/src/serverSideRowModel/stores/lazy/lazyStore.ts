@@ -274,10 +274,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns the virtual size of this store
      */
     getRowCount(): number {
+        const rowCount = this.cache.getRowCount();
         if (this.parentRowNode.sibling) {
-            return this.cache.getRowCount() + 1;
+            return rowCount + 1;
         }
-        return this.cache.getRowCount();
+        return rowCount;
     }
 
     /**
