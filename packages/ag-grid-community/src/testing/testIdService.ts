@@ -71,9 +71,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             }
         };
         root.addEventListener('scroll', onScroll, { capture: true });
-        this.addDestroyFunc(() =>
-            root.removeEventListener('scroll', onScroll, { capture: true })
-        );
+        this.addDestroyFunc(() => root.removeEventListener('scroll', onScroll, { capture: true }));
     }
 
     public setupAllTestIds(): void {
