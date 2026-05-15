@@ -81,14 +81,15 @@ function extractPropertyValue(property) {
 }
 
 /**
- * Extracts mailto: addresses from a Notion rich_text property, ignoring any
- * separator/plain segments. Returns an array of bare email addresses.
+ * Extracts email addresses from a Notion rich_text property. Notion renders
+ * emails as either bare text (`someone@example.com`) or as mailto links; in
+ * both cases the address appears in the segment's `plain_text`, so we scan
+ * the concatenated plain text with an email regex and dedupe.
  */
+const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z0-9-]+/g;
 function extractEmailsFromRichText(prop) {
-  return prop.rich_text
-    .map((t) => t.text?.link?.url ?? t.href ?? null)
-    .filter((url) => typeof url === "string" && url.startsWith("mailto:"))
-    .map((url) => url.slice("mailto:".length));
+  const text = prop.rich_text.map((t) => t.plain_text ?? "").join("");
+  return [...new Set(text.match(EMAIL_RE) ?? [])];
 }
 
 /**
@@ -137,7 +138,7 @@ export async function getSlackUserConfig({
         "Full Name": "fullName",
         "Github": "github",
         "Staging notification": "stagingNotification",
-        "Emails": { key: "emails", extract: extractEmailsFromRichText },
+        "Git Emails": { key: "gitEmails", extract: extractEmailsFromRichText },
     });
 
     return results;

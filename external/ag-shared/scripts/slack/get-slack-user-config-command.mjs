@@ -14,8 +14,7 @@ if (!NOTION_API_TOKEN || !NOTION_DATA_SOURCE_ID) {
             notionDataSourceId: NOTION_DATA_SOURCE_ID,
             notionApiVersion: NOTION_API_VERSION,
         });
-    
-        console.log('Slack user config fetched successfully:');
+
         console.log(JSON.stringify(results, null, 2));
     } catch (error) {
         console.error('Error fetching Slack user config:', error);
