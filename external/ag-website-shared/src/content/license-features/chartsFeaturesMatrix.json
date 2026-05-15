@@ -298,6 +298,16 @@
                 "community": false,
                 "enterprise": true,
                 "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Org Chart",
+                    "icon": "chartsOrg",
+                    "link": "https://www.ag-grid.com/charts/r/org-chart/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
             }
         ]
     },
@@ -480,6 +490,15 @@
             },
             {
                 "label": {
+                    "name": "Colour Scale",
+                    "link": "https://www.ag-grid.com/charts/r/colour-scale/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
                     "name": "Error Bars",
                     "link": "https://www.ag-grid.com/charts/r/error-bars/"
                 },
@@ -561,6 +580,15 @@
                 "label": {
                     "name": "Crosshairs & Band Highlight",
                     "link": "https://www.ag-grid.com/charts/r/axes-crosshairs/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Data Selection",
+                    "link": "https://www.ag-grid.com/charts/r/selection/"
                 },
                 "community": false,
                 "enterprise": true,
