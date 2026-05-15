@@ -179,7 +179,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
         }
     }
 
-    private getTextForColumn(column: AgColumn, node: RowNode): string {
+    private getTextForColumn(column: AgColumn, node: RowNode): string | null {
         let value = this.beans.filterValueSvc!.getValue(column, node);
         const colDef = column.colDef;
 
