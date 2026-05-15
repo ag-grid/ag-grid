@@ -17,7 +17,7 @@ test.agExample(import.meta, () => {
 
         await cell.click();
 
-        await expect(page.locator('.ag-center-cols-container .ag-row[row-id]')).toHaveCount(1);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(1);
     });
 
     test.eachFramework('startDate column filter opens and applies with equals', async ({ page, agIdFor }) => {
@@ -36,7 +36,7 @@ test.agExample(import.meta, () => {
 
         await cell.click();
 
-        await expect(page.locator('.ag-center-cols-container .ag-row[row-id]')).toHaveCount(1);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(1);
     });
 
     test.eachFramework('endDate column filter opens and applies with equals', async ({ page, agIdFor }) => {
@@ -55,7 +55,7 @@ test.agExample(import.meta, () => {
 
         await cell.click();
 
-        await expect(page.locator('.ag-center-cols-container .ag-row[row-id]')).toHaveCount(1);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(1);
     });
 
     test.eachFramework('endDateTime column filter opens and applies with equals', async ({ page, agIdFor }) => {
@@ -75,6 +75,6 @@ test.agExample(import.meta, () => {
         const otherCell = agIdFor.cell('0', 'startDate');
         await otherCell.click();
 
-        await expect(page.locator('.ag-center-cols-container .ag-row[row-id]')).toHaveCount(1);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(1);
     });
 });

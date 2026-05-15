@@ -280,7 +280,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         rowCtrl.setComp(compProxy, eRef, containerType, compBean.current);
     }, []);
 
-    const showEmbeddedFullWidth = isFullWidth && !!embeddedFullWidthCompDetails;
+    const showEmbeddedFullWidth = isFullWidth && rowCtrl.shouldCreateCellSections();
 
     useLayoutEffect(
         () => showJsComp(fullWidthCompDetails, context, eFullWidthAnchor.current ?? eGui.current!, fullWidthCompRef),
