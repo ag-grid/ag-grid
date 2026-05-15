@@ -13,7 +13,6 @@ import type { AgFrameworkComponent } from './interfaces';
 @Component({
     selector: 'ag-component-container',
     template: '',
-    standalone: false,
 })
 export class AgComponentContainer {
     public vcr = inject(ViewContainerRef);
