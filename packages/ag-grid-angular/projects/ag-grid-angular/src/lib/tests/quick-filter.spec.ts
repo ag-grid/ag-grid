@@ -12,7 +12,6 @@ import { AgGridAngular } from '../ag-grid-angular.component';
 
 @Component({
     selector: 'app-grid-wrapper',
-    standalone: true,
     imports: [AgGridAngular, FormsModule],
     template: ` <input type="text" id="quickFilter" [(ngModel)]="quickFilterText" />
         <div id="numberOfRows">Number of rows: {{ displayedRows }}</div>

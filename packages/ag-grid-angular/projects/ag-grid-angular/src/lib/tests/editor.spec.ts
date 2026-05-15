@@ -28,7 +28,6 @@ export class PoundRenderer implements ICellRendererAngularComp {
 
 @Component({
     selector: 'editor-cell',
-    standalone: true,
     imports: [FormsModule],
     template: `<input #input [(ngModel)]="value" style="width: 100%" />`,
 })
@@ -63,7 +62,6 @@ export class EditorComponent implements ICellEditorAngularComp {
 
 @Component({
     selector: 'app-grid-wrapper',
-    standalone: true,
     imports: [AgGridAngular],
     template: `<ag-grid-angular [rowData]="rowData" [columnDefs]="columnDefs" [modules]="modules"></ag-grid-angular>`,
 })
