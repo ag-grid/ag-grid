@@ -5,7 +5,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(24);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(23);
 
         const totalFilterInput = agIdFor.numberFilterInstanceInput({ source: 'floating-filter', colId: 'total' });
         await totalFilterInput.fill('609');

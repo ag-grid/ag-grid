@@ -40,7 +40,7 @@ test.agExample(import.meta, () => {
 
         await waitForAnimation(page);
         const headers = getHeaders(agIdFor);
-        const headerRow = page.locator('.ag-header-row').filter({ has: headers.athlete });
+        const headerRow = page.locator('.ag-header-row .ag-grid-scrolling-cells').filter({ has: headers.athlete });
         const baseHeaderWidths = await getHeaderWidths(headers);
 
         expect(await getWidth(headerRow)).toEqual(await totalHeaderWidth(headers));
@@ -116,7 +116,9 @@ test.agExample(import.meta, () => {
         await waitForAnimation(page);
 
         expect(
-            await getWidth(page.locator('.ag-header-row').filter({ has: agIdFor.headerCell('athlete') }))
+            await getWidth(
+                page.locator('.ag-header-row .ag-grid-scrolling-cells').filter({ has: agIdFor.headerCell('athlete') })
+            )
         ).toBeGreaterThan(600);
     });
 
@@ -157,8 +159,14 @@ test.agExample(import.meta, () => {
 
             expect(await getWidth(agIdFor.headerCell('ag-Grid-SelectionColumn'))).toEqual(50);
 
-            const pinnedWidth = (await getWidth(page.locator('.ag-header-row').filter({ has: headers.athlete }))) ?? 0;
-            const mainWidth = (await getWidth(page.locator('.ag-header-row').filter({ has: headers.age }))) ?? 0;
+            const pinnedWidth =
+                (await getWidth(
+                    page.locator('.ag-header-row .ag-grid-pinned-left-cells').filter({ has: headers.athlete })
+                )) ?? 0;
+            const mainWidth =
+                (await getWidth(
+                    page.locator('.ag-header-row .ag-grid-scrolling-cells').filter({ has: headers.age })
+                )) ?? 0;
 
             // +50 for the selection column
             expect(pinnedWidth + mainWidth).toEqual((await totalHeaderWidth(headers)) + 50);
