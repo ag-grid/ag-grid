@@ -72,7 +72,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         };
         root.addEventListener('scroll', onScroll, { capture: true });
         this.addDestroyFunc(() =>
-            root.removeEventListener('scroll', onScroll, { capture: true } as EventListenerOptions)
+            root.removeEventListener('scroll', onScroll, { capture: true })
         );
     }
 
