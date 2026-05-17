@@ -12,18 +12,19 @@ test.agExample(import.meta, () => {
         await expect(checkboxes).toHaveCount(2);
         await expect(radios).toHaveCount(3);
 
-        await checkboxes.nth(0).check();
+        await checkboxes.nth(0).click();
         await expect(page.locator('.ag-header-cell[col-id="gold"] .ag-filter-active')).toBeVisible();
 
         // Reset to a known starting point — Columns is selected by default in this example
-        await toolbar.getByLabel('None').check();
+        await toolbar.getByLabel('None').click();
         await expect(page.locator('.ag-column-panel')).toBeHidden();
 
-        await toolbar.getByLabel('Columns').check();
+        await toolbar.getByLabel('Columns').click();
         await expect(page.locator('.ag-column-panel')).toBeVisible();
 
         // Closing the panel via the side bar tab keeps the radio in sync via getToolbarItemInstance
         await page.getByRole('tab', { name: 'Columns' }).click();
+        await expect(page.locator('.ag-column-panel')).toBeHidden();
         await expect(toolbar.getByLabel('None')).toBeChecked();
     });
 });

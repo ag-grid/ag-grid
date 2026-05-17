@@ -93,10 +93,11 @@ export async function scrollGridRelative(
     }
 
     await test.step(`Scroll grid ${directionWord.join('-')}`, async () => {
+        const browserName = page.context().browser()?.browserType().name();
         if (
             method === 'element' ||
-            // On Firefox the wheel event doesn't scroll the element as expected under testing
-            (method === 'wheel' && page.context().browser()?.browserType().name() === 'firefox')
+            // On Firefox and WebKit the wheel event doesn't scroll the element reliably under testing
+            (method === 'wheel' && (browserName === 'firefox' || browserName === 'webkit'))
         ) {
             await scrollElement();
         } else if (method === 'wheel') {
