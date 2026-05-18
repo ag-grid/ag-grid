@@ -412,7 +412,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/build@20.3.26":
+"@angular/build@20.3.26", "@angular/build@^20.0.0":
   version "20.3.26"
   resolved "https://registry.ag-grid.com/@angular/build/-/build-20.3.26.tgz#55335922416b6f90329cb035c9f46a88ae4b3251"
   integrity sha512-WXpntiPE3YWprEvam7S2KJd8u/FwAYB5aZqeVniOoa4aru6a33waN8f1oWTM0DeNsvvjl3qI7UpEjbyjZ7QYmA==
