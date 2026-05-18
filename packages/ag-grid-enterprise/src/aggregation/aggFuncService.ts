@@ -88,7 +88,7 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
     }
 
     public getFuncNames(column: AgColumn): string[] {
-        return column.colDef.allowedAggFuncs ?? this.orderedFuncNames;
+        return column.colDef.allowedAggFuncs ?? this.orderedFuncNames.slice();
     }
 
     private updateOrderedFuncNames(): void {
