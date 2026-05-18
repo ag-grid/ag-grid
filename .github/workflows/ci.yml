@@ -158,8 +158,9 @@ jobs:
 
   calc_matrix:
     name: Calculate Github Matrix
-    needs: [ detect-changes, init ]
-    if: needs.detect-changes.outputs.run_code_ci == 'true'
+    needs: [ detect-changes ]
+    if: needs.detect-changes.outputs.run_code_ci == 'true' &&
+      github.event.pull_request.draft == false
     outputs:
       test_count: ${{ steps.matrix.outputs.test_count }}
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
@@ -236,7 +237,6 @@ jobs:
       fail-fast: false
     env:
       NX_PARALLEL: 1
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
       - name: Checkout
         id: checkout
@@ -296,7 +296,6 @@ jobs:
       fail-fast: false
     env:
       NX_PARALLEL: 1
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
       - name: Checkout
         id: checkout
@@ -326,9 +325,8 @@ jobs:
   format_lint_build:
     runs-on: ubuntu-latest
     name: Format, Lint and Build
-    needs: [ detect-changes, init ]
-    if: ${{ always() && needs.detect-changes.result == 'success' &&
-      (needs.init.result == 'success' || needs.init.result == 'skipped') }}
+    needs: [ detect-changes ]
+    if: ${{ always() && needs.detect-changes.result == 'success' }}
     outputs:
       format: ${{ steps.format.outcome || '' }}
       lint: ${{ steps.lint.outcome || '' }}
@@ -370,14 +368,12 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
-    needs: [ detect-changes, init ]
+    needs: [ detect-changes ]
     if: ${{ (needs.detect-changes.outputs.run_code_ci == 'true' ||
-      needs.detect-changes.outputs.run_docs_ci == 'true') && needs.init.result
-      == 'success' && !inputs.skip_docs }}
+      needs.detect-changes.outputs.run_docs_ci == 'true') &&
+      github.event.pull_request.draft == false && !inputs.skip_docs }}
     strategy:
       fail-fast: false
-    env:
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
     outputs:
       docs_deployed: ${{ steps.deploy_to_staging.outcome }}
     steps:
@@ -400,8 +396,11 @@ jobs:
         run: node scripts/deployments/validateGridModulesList.js
 
       - name: docs build and link checker
-        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c
-          staging
+        run: |
+          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+            export CHECK_LINKS=true CHECK_REDIRECTS=true
+          fi
+          yarn nx run ag-grid-docs:build -c staging
 
       - name: validate base url
         run: node scripts/deployments/sanityCheckBaseUrl.js staging
