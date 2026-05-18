@@ -40,6 +40,7 @@ const IGNORED_SIBLING_PROPERTIES = new Set<
     '_groupData',
     '_leafs',
     'childStore',
+    'destroyed',
     'groupValue',
     'oldRowTop',
     'sticky',
