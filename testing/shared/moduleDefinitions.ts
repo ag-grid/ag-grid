@@ -56,6 +56,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     AllEnterpriseModule: 1627.32,
     AiToolkitModule: 36,
     BatchEditModule: 84.54,
+    CalculatedColumnsModule: 63.8,
     CellSelectionModule: 62.78,
     ClipboardModule: 49,
     ColumnMenuModule: 159.04,
