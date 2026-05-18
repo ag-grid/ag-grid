@@ -2,6 +2,7 @@ import type { ColDef, GridOptions, ValueFormatterParams } from 'ag-grid-communit
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
+    NumberEditorModule,
     NumberFilterModule,
     ValidationModule,
     createGrid,
@@ -11,6 +12,7 @@ import { CalculatedColumnsModule } from 'ag-grid-enterprise';
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     CalculatedColumnsModule,
+    NumberEditorModule,
     NumberFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);

@@ -326,6 +326,63 @@ describe('ag-grid calculated columns', () => {
         }
     });
 
+    test('calculated columns survive a getColumnDefs / createGrid roundtrip', async () => {
+        const rowData = [
+            { id: 'r1', revenue: 10, cost: 3 },
+            { id: 'r2', revenue: 20, cost: 8 },
+        ];
+        const initialColumnDefs = [
+            { field: 'revenue' },
+            { field: 'cost' },
+            { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' as const },
+        ];
+        const firstApi = createGrid('calculated-roundtrip-1', { rowData, columnDefs: initialColumnDefs });
+
+        await new GridRows(firstApi, 'initial', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 revenue:10 cost:3 profit:7
+            └── LEAF id:r2 revenue:20 cost:8 profit:12
+        `);
+
+        const persistedColumnDefs = firstApi.getColumnDefs();
+        firstApi.destroy();
+
+        const profitDef = persistedColumnDefs?.find(
+            (def): def is { colId: string; calculatedExpression?: string } => 'colId' in def && def.colId === 'profit'
+        );
+        expect(profitDef?.calculatedExpression).toBe('[revenue] - [cost]');
+
+        const secondApi = createGrid('calculated-roundtrip-2', { rowData, columnDefs: persistedColumnDefs! });
+        await new GridRows(secondApi, 'restored', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 revenue:10 cost:3 profit:7
+            └── LEAF id:r2 revenue:20 cost:8 profit:12
+        `);
+    });
+
+    test('warns when calculatedExpression is combined with field, valueGetter or valueSetter', () => {
+        let consoleWarnSpy: MockInstance | undefined;
+        try {
+            consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            createGrid('calculated-field-conflict', {
+                rowData: [{ revenue: 10, cost: 3 }],
+                columnDefs: [
+                    { field: 'revenue' },
+                    { field: 'cost' },
+                    { colId: 'profit', field: 'revenue', calculatedExpression: '[revenue] - [cost]' },
+                ],
+            });
+
+            expect(consoleWarnSpy).toHaveBeenCalledWith(
+                expect.stringContaining(
+                    'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.'
+                )
+            );
+        } finally {
+            consoleWarnSpy?.mockRestore();
+        }
+    });
+
     test('does not evaluate calculatedExpression with FormulaModule alone', async () => {
         const formulaOnlyGridsManager = new TestGridsManager({
             modules: [ClientSideRowModelModule, FormulaModule, TextEditorModule],

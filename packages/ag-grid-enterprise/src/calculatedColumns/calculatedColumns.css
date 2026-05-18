@@ -70,3 +70,14 @@
     flex-direction: column;
     gap: calc(var(--ag-spacing) / 2);
 }
+
+.ag-calculated-column-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: calc(var(--ag-spacing) / 2);
+    margin-top: var(--ag-spacing);
+}
+
+.ag-calculated-column-action {
+    min-width: 72px;
+}

@@ -845,6 +845,10 @@ export const AG_GRID_LOCALE_EN = {
     calculatedColumnFunctions: 'Functions',
     calculatedColumnOperators: 'Operators',
     calculatedColumnSuggestions: 'Calculated Column Suggestions',
+    calculatedColumnSuggestionsHint: 'Tab/Enter to accept. Esc to close',
+    calculatedColumnDefaultTitle: 'New title',
+    calculatedColumnApply: 'Apply',
+    calculatedColumnCancel: 'Cancel',
 
     // Notes
     note: 'Note',

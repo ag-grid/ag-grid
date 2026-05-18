@@ -135,8 +135,8 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 if (colDef.field || colDef.valueGetter || colDef.valueSetter) {
                     return 'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.';
                 }
-                if (colDef.editable || colDef.cellEditor || colDef.cellEditorSelector) {
-                    return 'colDef.calculatedExpression columns are read-only and should not be combined with editable, cellEditor or cellEditorSelector.';
+                if (colDef.editable) {
+                    return 'colDef.calculatedExpression columns are read-only and should not be combined with editable.';
                 }
                 return null;
             },
