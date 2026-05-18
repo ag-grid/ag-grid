@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   expand-jira-links:
+    if: github.repository == 'ag-grid/ag-grid'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
