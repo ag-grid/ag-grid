@@ -467,6 +467,60 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
                 PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:1400
             `);
         });
+
+        test('CSRM pinned grand total stays as a single row after filter change', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'amount', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+                ],
+                rowData: createRowData(),
+                getRowId: (params) => params.data.id,
+                grandTotalRow: 'pinnedBottom',
+                groupDefaultExpanded: -1,
+            });
+
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(1000);
+
+            await api.setColumnFilterModel('amount', { filterType: 'number', type: 'greaterThanOrEqual', filter: 200 });
+            api.onFilterChanged();
+
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            expect(api.getPinnedTopRowCount()).toBe(0);
+            expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(750); // lyon 200 + hamburg 250 + rome 300
+        });
+
+        test('CSRM pinned grand total stays as a single row after cycling position', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'amount', aggFunc: 'sum' },
+                ],
+                rowData: createRowData(),
+                getRowId: (params) => params.data.id,
+                grandTotalRow: 'pinnedBottom',
+                groupDefaultExpanded: -1,
+            });
+
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            const firstPinned = api.getPinnedBottomRow(0)!;
+
+            api.setGridOption('grandTotalRow', 'pinnedTop');
+            expect(api.getPinnedBottomRowCount()).toBe(0);
+            expect(api.getPinnedTopRowCount()).toBe(1);
+            expect(firstPinned.destroyed).toBe(true);
+            const topPinned = api.getPinnedTopRow(0)!;
+
+            api.setGridOption('grandTotalRow', undefined);
+            expect(api.getPinnedBottomRowCount()).toBe(0);
+            expect(api.getPinnedTopRowCount()).toBe(0);
+            expect(topPinned.destroyed).toBe(true);
+
+            api.setGridOption('grandTotalRow', 'pinnedBottom');
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            expect(api.getPinnedBottomRow(0)?.destroyed).toBe(false);
+        });
     });
 
     describe('getAggregatedChildren on pinned siblings', () => {
