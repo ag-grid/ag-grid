@@ -292,7 +292,7 @@
     height: 100%;
     width: 8px;
     top: 0;
-    cursor: ew-resize;
+    cursor: col-resize;
 
     /* unpinned headers get their resize handle on the right in normal mode and left in RTL mode */
     right: -3px;

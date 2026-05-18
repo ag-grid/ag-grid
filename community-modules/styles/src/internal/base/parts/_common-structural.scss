@@ -482,7 +482,7 @@
         width: 8px;
         top: 0;
 
-        cursor: ew-resize;
+        cursor: col-resize;
 
         // unpinned headers get their rezise handle on the right in normal mode and left in RTL mode
         @include ag.unthemed-rtl(
@@ -1795,7 +1795,7 @@
         left: 0;
         height: 4px;
         width: 100%;
-        cursor: ns-resize;
+        cursor: row-resize;
     }
 
     .ag-grid-pinned-bottom-rows .ag-row-numbers-resizer {

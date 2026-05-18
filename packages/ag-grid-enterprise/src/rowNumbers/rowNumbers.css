@@ -18,7 +18,7 @@
     left: 0;
     height: 4px;
     width: 100%;
-    cursor: ns-resize;
+    cursor: row-resize;
 }
 
 /* stylelint-disable-next-line selector-max-specificity */

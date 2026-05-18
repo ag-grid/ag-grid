@@ -35,6 +35,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
             const finishedWithResizeFunc = horizontalResizeSvc!.addResizeBar({
                 eResizeBar: this.eResize,
+                isColumn: true,
                 onResizeStart: this.onResizeStart.bind(this),
                 onResizing: this.onResizing.bind(this, false),
                 onResizeEnd: this.onResizing.bind(this, true),

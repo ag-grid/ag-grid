@@ -48,7 +48,7 @@ export class AgRowNumbersRowResizer extends Component {
         } = this;
 
         const ctrl = ctrlsSvc.get('gridCtrl');
-        ctrl.setResizeCursor(Direction.Vertical);
+        ctrl.setResizeCursor(Direction.Vertical, true);
 
         this.dragging = true;
         this.initialHeight = this.node.rowHeight as number;

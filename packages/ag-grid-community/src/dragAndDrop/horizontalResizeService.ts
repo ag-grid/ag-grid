@@ -6,6 +6,8 @@ import { BeanStub } from '../context/beanStub';
 interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
     dragStartPixels?: number;
+    /** use column cursor when resizing, default false */
+    isColumn?: boolean;
     onResizeStart: (shiftKey: boolean) => void;
     onResizing: (delta: number) => void;
     onResizeEnd: (delta: number) => void;
@@ -44,16 +46,16 @@ export class HorizontalResizeService extends BeanStub implements NamedBean {
     private onDragStart(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
         this.dragStartX = mouseEvent.clientX;
 
-        this.setResizeIcons();
+        this.setResizeIcons(!!params.isColumn);
 
         const shiftKey = mouseEvent instanceof MouseEvent && mouseEvent.shiftKey === true;
         params.onResizeStart(shiftKey);
     }
 
-    private setResizeIcons(): void {
+    private setResizeIcons(isColumn: boolean): void {
         const ctrl = this.beans.ctrlsSvc.get('gridCtrl');
         // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
-        ctrl.setResizeCursor(Direction.Horizontal);
+        ctrl.setResizeCursor(Direction.Horizontal, isColumn);
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
         ctrl.disableUserSelect(true);
     }
