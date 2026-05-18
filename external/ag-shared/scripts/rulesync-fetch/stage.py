@@ -153,9 +153,28 @@ def _replace_as_regular(dst: Path):
             shutil.rmtree(dst)
 
 
-def stage_file(src: Path, dst: Path, targets: list[str] | str, staged: set[Path]):
+def _is_tracked(dst: Path, tracked: set[Path]) -> bool:
+    """Return True if dst is currently tracked by git (relative to REPO_ROOT).
+
+    Tracked files are authoritative local content — a plugin guide that
+    happens to share a filename with a tracked rule must not silently
+    replace it. Mirrors the guard already applied during stale cleanup at
+    the bottom of ``stage()``.
+    """
+    rel = dst.relative_to(REPO_ROOT) if dst.is_absolute() else dst
+    return rel in tracked
+
+
+def stage_file(src: Path, dst: Path, targets: list[str] | str, staged: set[Path], tracked: set[Path]):
     if not src.exists():
         print(f"  WARN: source missing: {src}", file=sys.stderr)
+        return
+    if _is_tracked(dst, tracked):
+        print(
+            f"  skipping tracked {dst.relative_to(REPO_ROOT)} "
+            f"(plugin would overwrite a local tracked file)",
+            file=sys.stderr,
+        )
         return
     dst.parent.mkdir(parents=True, exist_ok=True)
     _replace_as_regular(dst)
@@ -165,9 +184,16 @@ def stage_file(src: Path, dst: Path, targets: list[str] | str, staged: set[Path]
     staged.add(dst)
 
 
-def stage_skill_dir(src: Path, dst: Path, targets: list[str] | str, staged: set[Path]):
+def stage_skill_dir(src: Path, dst: Path, targets: list[str] | str, staged: set[Path], tracked: set[Path]):
     if not src.exists():
         print(f"  WARN: source missing: {src}", file=sys.stderr)
+        return
+    if _is_tracked(dst, tracked):
+        print(
+            f"  skipping tracked {dst.relative_to(REPO_ROOT)}/ "
+            f"(plugin would overwrite a local tracked skill dir)",
+            file=sys.stderr,
+        )
         return
     _replace_as_regular(dst)
     shutil.copytree(src, dst)
@@ -197,6 +223,12 @@ def stage(dry_run: bool = False) -> set[Path]:
     print(f"Staging for product: {product}", file=sys.stderr)
     plugins_to_stage = included_plugins(manifest, product)
 
+    # Snapshot tracked files once and pass through to stage_file / stage_skill_dir
+    # so they refuse to overwrite a locally-tracked rule that happens to share a
+    # filename with a plugin-contributed item. The stale-cleanup pass below
+    # reuses the same snapshot.
+    tracked = _tracked_files()
+
     for plugin_name, plugin in plugins_to_stage.items():
         plugin_src = CACHE_REPO / "plugins" / plugin_name
         if not plugin_src.exists():
@@ -210,7 +242,7 @@ def stage(dry_run: bool = False) -> set[Path]:
                 print(f"  skill {plugin_name}/{skill_name} → {dst.relative_to(REPO_ROOT)}")
                 staged.add(dst)
             else:
-                stage_skill_dir(src, dst, NON_CLAUDE_TARGETS, staged)
+                stage_skill_dir(src, dst, NON_CLAUDE_TARGETS, staged, tracked)
 
         for agent_name in plugin.get("agents", []):
             src = plugin_src / "agents" / f"{agent_name}.md"
@@ -222,7 +254,7 @@ def stage(dry_run: bool = False) -> set[Path]:
                 print(f"  agent {plugin_name}/{agent_name} → {dst.relative_to(REPO_ROOT)}")
                 staged.add(dst)
             else:
-                stage_file(src, dst, NON_CLAUDE_TARGETS, staged)
+                stage_file(src, dst, NON_CLAUDE_TARGETS, staged, tracked)
 
         for cmd_name in plugin.get("commands", []):
             src = plugin_src / "commands" / f"{cmd_name}.md"
@@ -231,7 +263,7 @@ def stage(dry_run: bool = False) -> set[Path]:
                 print(f"  command {plugin_name}/{cmd_name} → {dst.relative_to(REPO_ROOT)}")
                 staged.add(dst)
             else:
-                stage_file(src, dst, NON_CLAUDE_TARGETS, staged)
+                stage_file(src, dst, NON_CLAUDE_TARGETS, staged, tracked)
 
         # Auto-stage underscore-prefixed runtime partials (any depth under commands/).
         # Wrappers read them via project-local paths like .rulesync/commands/docs/_foo.md.
@@ -258,7 +290,7 @@ def stage(dry_run: bool = False) -> set[Path]:
                     staged.add(dst)
                 else:
                     # Partials don't carry frontmatter, so rewrite_targets is a no-op.
-                    stage_file(partial, dst, "['*']", staged)
+                    stage_file(partial, dst, "['*']", staged, tracked)
 
         for guide_name in plugin.get("guides", []):
             if guide_name.startswith("_"):
@@ -271,7 +303,7 @@ def stage(dry_run: bool = False) -> set[Path]:
             else:
                 # Claude still consumes rules via rulesync (plugins don't do globs),
                 # so keep targets: ['*'].
-                stage_file(src, dst, "['*']", staged)
+                stage_file(src, dst, "['*']", staged, tracked)
 
     # Top-level shared artefacts outside any plugin (e.g. mcp.json consumed by
     # rulesync's `mcp` generator). Source of truth lives in ag-dev-prompts/shared/.
@@ -298,8 +330,8 @@ def stage(dry_run: bool = False) -> set[Path]:
         # filename (e.g. ag-grid's local .rulesync/rules/benchmarks.md vs the
         # ag-charts plugin's benchmarks.md guide). The local version is the
         # authoritative source for whichever product tracks it; staging should
-        # never clobber it.
-        tracked = _tracked_files()
+        # never clobber it. The `tracked` snapshot is reused from the write
+        # guard above.
         all_possible = _stageable_paths(manifest["plugins"])
         for stale in sorted(all_possible - staged):
             rel = stale.relative_to(REPO_ROOT) if stale.is_absolute() else stale
