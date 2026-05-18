@@ -23,6 +23,15 @@ export const mockGridLayout = {
     columnWidth: 150,
     dragHandleWidth: 20,
 
+    /**
+     * Opt-in: when true, `offsetHeight`/`clientHeight`/`offsetWidth`/`clientWidth` return the
+     * mocked dimensions from `getBoundingClientRect()`. Default `false` preserves jsdom's
+     * built-in behaviour of returning 0, which matches what most behavioural-test snapshots
+     * were captured against. Set this in `beforeAll` (and restore in `afterAll`) for tests
+     * that depend on viewport-aware production code such as page-key navigation.
+     */
+    useRealOffsetDimensions: false,
+
     init,
     getBoundingClientRect,
 };
@@ -32,13 +41,22 @@ const getElementType = (el: HTMLElement) => {
         return 'body';
     }
     const classList = el.classList;
+    if (classList.contains('ag-grid-scrollable-area')) {
+        return 'scrollable-area';
+    }
+    if (classList.contains('ag-grid-scrolling-rows')) {
+        return 'scrolling-rows';
+    }
+    if (classList.contains('ag-header-row')) {
+        return 'header-row';
+    }
     if (classList.contains('ag-row')) {
         return 'row';
     }
     if (classList.contains('ag-header')) {
         return 'header';
     }
-    if (classList.contains('ag-body-viewport')) {
+    if (classList.contains('ag-grid-viewport')) {
         return 'viewport';
     }
     if (classList.contains('ag-root')) {
@@ -67,6 +85,14 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
     let left = 0;
 
     switch (type) {
+        case 'scrollable-area': {
+            height = gridHeight;
+            break;
+        }
+        case 'scrolling-rows': {
+            height = gridHeight;
+            break;
+        }
         case 'header': {
             height = headerHeight;
             break;
@@ -92,6 +118,10 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
             const adjustedRowIndex = rowIndex - paginationOffset;
             top = adjustedRowIndex * rowHeight;
             height = rowHeight;
+            break;
+        }
+        case 'header-row': {
+            height = headerHeight;
             break;
         }
 
@@ -142,6 +172,7 @@ function getBoundingClientRect(this: HTMLElement): DOMRect {
     if (!isNaN(styleWidth) && styleWidth > 0) {
         width = styleWidth;
     }
+
     const styleHeight = parseFloat(this.style?.height);
     if (!isNaN(styleHeight) && styleHeight > 0) {
         height = styleHeight;
@@ -214,20 +245,26 @@ function init(): boolean {
         return style;
     };
 
-    for (const prop of ['offsetHeight', 'clientHeight']) {
-        Object.defineProperty(Element.prototype, prop, {
+    // jsdom defines offsetHeight/clientHeight/offsetWidth/clientWidth on HTMLElement.prototype
+    // (more specific than Element.prototype) and returns 0. A patch on Element.prototype is
+    // therefore shadowed. We install on HTMLElement.prototype directly, behind a feature flag
+    // so the default behaviour matches jsdom (returns 0) — preserving existing snapshots —
+    // and only opt-in tests see real mocked dimensions.
+    const installOffsetDimensionPatch = (prop: 'offsetHeight' | 'clientHeight' | 'offsetWidth' | 'clientWidth') => {
+        const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, prop);
+        const axis = prop === 'offsetWidth' || prop === 'clientWidth' ? 'width' : 'height';
+        Object.defineProperty(HTMLElement.prototype, prop, {
+            configurable: true,
             get(this: HTMLElement) {
-                return this.getBoundingClientRect().height;
+                if (mockGridLayout.useRealOffsetDimensions) {
+                    return this.getBoundingClientRect()[axis];
+                }
+                return original?.get?.call(this) ?? 0;
             },
         });
-    }
-
-    for (const prop of ['offsetWidth', 'clientWidth']) {
-        Object.defineProperty(Element.prototype, prop, {
-            get(this: Element) {
-                return this.getBoundingClientRect().width;
-            },
-        });
+    };
+    for (const prop of ['offsetHeight', 'clientHeight', 'offsetWidth', 'clientWidth'] as const) {
+        installOffsetDimensionPatch(prop);
     }
 
     // scrollHeight must account for the virtual scroll container height set by the grid (e.g.
@@ -320,12 +357,12 @@ function init(): boolean {
 }
 
 function getPaginationOffset(el: HTMLElement): number {
-    const body = el.closest('.ag-body');
+    const body = el.closest('.ag-grid-scrolling-rows');
     if (!body) {
         return 0;
     }
 
-    const rows = body.querySelectorAll('.ag-row');
+    const rows = body.querySelectorAll('.ag-row:not(.ag-header-row)');
     let minIndex = Infinity;
 
     for (let i = 0; i < rows.length; i++) {

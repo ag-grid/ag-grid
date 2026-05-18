@@ -1,0 +1,35 @@
+{% if isFramework("javascript") %}
+Implement this interface to create a toolbar item component.
+{% /if %}
+
+{% if isFramework("javascript") %}
+
+```ts
+interface IToolbarItemComp {
+    // mandatory methods
+
+    // Return the DOM element of your component, this is what the grid puts into the DOM.
+    getGui(): HTMLElement;
+
+    // optional methods
+
+    // The init(params) method is called on the toolbar item component once.
+    // See below for details on the parameters.
+    init(params: IToolbarItemParams): void;
+
+    // Called when the `toolbar` grid option updates.
+    // Return `true` if the component updates itself with the new params.
+    // Return `false` (or omit) to have the grid destroy and recreate the component.
+    refresh(params: IToolbarItemParams): boolean;
+
+    // Gets called when the grid is destroyed.
+    // If your toolbar item needs to do any cleanup, do it here.
+    destroy(): void;
+}
+```
+
+{% /if %}
+
+{% if isFramework("javascript") %}
+The `init(params)` method receives a params object that implements `IToolbarItemParams`:
+{% /if %}

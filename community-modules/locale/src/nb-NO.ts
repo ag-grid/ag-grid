@@ -337,6 +337,11 @@ export const AG_GRID_LOCALE_NO = {
     sortAbsoluteDescending: 'Sorter absolutt synkende',
     sortUnSort: 'Fjern Sortering',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Finn',
+    toolbarFindPreviousMatch: 'Forrige treff',
+    toolbarFindNextMatch: 'Neste treff',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Meny',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
@@ -688,12 +693,16 @@ export const AG_GRID_LOCALE_NO = {
     ariaSelectAllRowCells: 'Trykk på Enter for å velge alle celler i denne raden',
     ariaColumnCellSelection: 'Trykk på Enter for å veksle markering av alle synlige celler i denne kolonnen',
     ariaColumnGroupCellSelection: 'Trykk på Enter for å veksle markering av alle synlige celler i denne kolonnegruppen',
+    ariaColumnGroupExpansion: 'Trykk ENTER for å utvide eller skjule denne kolonnegruppen',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Trykk på Enter for å veksle markering av alle synlige celler i denne kolonnegruppen. Trykk ALT ENTER for å utvide eller skjule denne kolonnegruppen',
     ariaRowSelectAll: 'Trykk SPACE for å veksle alle radvalgene',
     ariaRowToggleSelection: 'Trykk SPACE for å veksle radvalg',
     ariaRowSelect: 'Trykk SPACE for å velge denne raden',
     ariaRowSelectionDisabled: 'Radvalg er deaktivert for denne raden',
     ariaSearch: 'Søk',
     ariaSortableColumn: 'Trykk ENTER for å sortere',
+    ariaSortableColumnWithCellSelection: 'Trykk ALT ENTER for å sortere',
     ariaToggleVisibility: 'Trykk SPACE for å veksle synlighet',
     ariaToggleCellValue: 'Trykk SPACE for å veksle celleverdi',
     ariaUnchecked: 'uavmerket',
@@ -812,8 +821,4 @@ export const AG_GRID_LOCALE_NO = {
     editNote: 'Rediger notat',
     deleteNote: 'Fjern notat',
     notePlaceholder: 'Legg til et notat...',
-    noteHint:
-        'Hold markøren over for forhåndsvisning. Klikk inni for å redigere. Dra i hjørnet for å endre størrelse. Trykk Esc for å lukke.',
-    noteReadOnlyHint:
-        'Skrivebeskyttet notat. Merk teksten for å kopiere. Dra i hjørnet for å endre størrelse. Trykk Esc for å lukke.',
 };

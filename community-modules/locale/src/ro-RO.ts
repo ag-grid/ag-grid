@@ -338,6 +338,11 @@ export const AG_GRID_LOCALE_RO = {
     sortAbsoluteDescending: 'Sortează în ordine descendentă absolută',
     sortUnSort: 'Șterge Sortarea',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Caută',
+    toolbarFindPreviousMatch: 'Potrivire Anterioară',
+    toolbarFindNextMatch: 'Potrivire Următoare',
+    toolbarQuickFilter: 'Filtru',
+    toolbarMenu: 'Meniu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sumă',
@@ -691,12 +696,16 @@ export const AG_GRID_LOCALE_RO = {
     ariaColumnCellSelection: 'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din această coloană',
     ariaColumnGroupCellSelection:
         'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din acest grup de coloane',
+    ariaColumnGroupExpansion: 'Apăsați ENTER pentru a extinde sau restrânge acest grup de coloane',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Apăsați Enter pentru a comuta selecția tuturor celulelor vizibile din acest grup de coloane. Apăsați ALT ENTER pentru a extinde sau restrânge acest grup de coloane',
     ariaRowSelectAll: 'Apăsați Space pentru a comuta selecția tuturor rândurilor',
     ariaRowToggleSelection: 'Apăsați Space pentru a comuta selecția rândului',
     ariaRowSelect: 'Apăsați SPACE pentru a selecta acest rând',
     ariaRowSelectionDisabled: 'Selecția rândului este dezactivată pentru acest rând',
     ariaSearch: 'Căutare',
     ariaSortableColumn: 'Apăsați ENTER pentru a sorta',
+    ariaSortableColumnWithCellSelection: 'Apăsați ALT ENTER pentru a sorta',
     ariaToggleVisibility: 'Apăsați SPACE pentru a comuta vizibilitatea',
     ariaToggleCellValue: 'Apăsați SPACE pentru a comuta valoarea celulei',
     ariaUnchecked: 'nebifat',
@@ -815,8 +824,4 @@ export const AG_GRID_LOCALE_RO = {
     editNote: 'Editează nota',
     deleteNote: 'Elimină nota',
     notePlaceholder: 'Adaugă o notă...',
-    noteHint:
-        'Treceți cu cursorul pentru previzualizare. Faceți clic în interior pentru a edita. Trageți de colț pentru a redimensiona. Apăsați Esc pentru a închide.',
-    noteReadOnlyHint:
-        'Notă doar pentru citire. Selectați textul pentru a-l copia. Trageți de colț pentru a redimensiona. Apăsați Esc pentru a închide.',
 };

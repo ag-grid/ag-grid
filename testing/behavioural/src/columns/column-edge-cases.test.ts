@@ -290,7 +290,7 @@ describe('Column Edge Cases', () => {
     });
 
     describe('RTL mode', () => {
-        test('enableRtl reverses column left positions', async () => {
+        test('enableRtl keeps column left positions as start-edge offsets', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { colId: 'a', width: 100 },
@@ -300,12 +300,14 @@ describe('Column Edge Cases', () => {
                 enableRtl: true,
             });
 
+            const colB = api.getColumn('b')!;
             const colA = api.getColumn('a')!;
             const colC = api.getColumn('c')!;
 
-            // In RTL, last column has left=0, positions increase right-to-left
-            expect(colC.getLeft()).toBe(0);
-            expect(colA.getLeft()).toBeGreaterThan(colC.getLeft()!);
+            // Column left values remain start-edge offsets in both LTR and RTL.
+            expect(colA.getLeft()).toBe(0);
+            expect(colB.getLeft()).toBe(100);
+            expect(colC.getLeft()).toBe(300);
 
             await new GridColumns(api, 'RTL columns').checkColumns(false);
         });

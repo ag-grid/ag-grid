@@ -39,7 +39,7 @@ async function performTest(agIdFor: any, page: Page, miniFilterSearch: any) {
     const firstRowAthlete = agIdFor.cell('8041', 'athlete');
     await expect(firstRowAthlete).toHaveText('Aaron Armstrong');
     // check the row index attribute is correct on the parent row element
-    await expect(firstRowAthlete.locator('..')).toHaveAttribute('row-index', '0');
+    await expect(page.locator('.ag-row').filter({ has: firstRowAthlete }).first()).toHaveAttribute('row-index', '0');
 
     const colFilterIcon2 = agIdFor.headerFilterButton('athlete');
     await expect(colFilterIcon2).toBeVisible();

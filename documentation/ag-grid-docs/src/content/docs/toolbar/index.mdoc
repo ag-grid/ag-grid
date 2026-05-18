@@ -1,0 +1,199 @@
+---
+title: "Quick Access Toolbar"
+enterprise: true
+---
+
+The Toolbar appears above the grid and provides quick access to common grid actions. It supports built-in items such as quick filter and find, dropdown menus, and can be extended with [Action Buttons](#action-buttons) or [Custom Components](#custom-components).
+
+{% gridExampleRunner title="Built-in Items" name="built-in-items" exampleHeight=300 /%}
+
+## Configuring the Toolbar
+
+Set the `toolbar` grid option to a [Toolbar](#reference-Toolbar) object. The `items` array accepts built-in item names, [Action Buttons](#action-buttons), and [Custom Components](#custom-components).
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: [
+            'agQuickFilterToolbarItem',
+            'separator',
+            'agFindToolbarItem',
+            'separator',
+            {
+                label: 'Fit Columns To Grid',
+                icon: 'maximize',
+                alignment: 'right',
+                action: (params) => params.api.sizeColumnsToFit(),
+            },
+            {
+                toolbarItem: 'agMenuToolbarItem',
+                icon: 'save',
+                alignment: 'right',
+                label: 'Download',
+                tooltip: 'Download as CSV or Excel',
+                toolbarItemParams: {
+                    menuItems: ['csvExport', 'excelExport'],
+                },
+            },
+        ],
+    },
+
+    // other grid options ...
+}
+```
+
+### Alignment
+
+Toolbar items are aligned to the left by default. Set the `alignment` property on the toolbar to change the default alignment for all items, or set it individually per item.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        alignment: 'right',
+        items: [
+            'agFindToolbarItem',
+            { toolbarItem: 'agQuickFilterToolbarItem', alignment: 'left' },
+        ]
+    }
+}
+```
+
+## Built-in Items
+
+A number of built-in toolbar items are provided for common use cases that integrate with existing grid features. Be sure to include the required feature module, otherwise the toolbar item will be excluded.
+
+| Item                                   | Description                                                                  | Required Modules                          |
+| -------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------- |
+| `agQuickFilterToolbarItem`             | Text input that filters grid rows using the [Quick Filter](./filter-quick/). | `QuickFilterModule`                       |
+| `agFindToolbarItem`                    | Text input that searches within grid cells using [Find](./find/).            | `FindModule`                              |
+| `agRowGroupPanelToolbarItem`           | Embeds the [Row Group Panel](./grouping-group-panel/).                       | `RowGroupingPanelModule`                  |
+| `agPivotPanelToolbarItem`              | Embeds the [Pivot Panel](./pivoting/#enabling-the-pivot-panel/).             | `RowGroupingPanelModule`                  |
+| [`agMenuToolbarItem`](#dropdown-menus) | Button that opens a [dropdown menu](#dropdown-menus).                        | `ContextMenuModule` or `ColumnMenuModule` |
+| `separator`                            | Vertical divider used to group items visually. Has no behaviour of its own.  | None                                      |
+
+### Row Group and Pivot Panels
+
+The Row Group Panel and Pivot Panel can both be embedded in the Quick Access Toolbar using `agRowGroupPanelToolbarItem` and `agPivotPanelToolbarItem`. Both panels are configured independently of the [Row Group Panel](./grouping-group-panel/) and the [Pivot Panel](./pivoting/#enabling-the-pivot-panel/), so you can display each panel in the Toolbar, above the grid, or both at the same time.
+
+The example below shows both panels in the toolbar along with a reset action button. Use the panels to rearrange columns, then click Reset to restore the initial layout.
+
+{% gridExampleRunner title="Row Group and Pivot Panels" name="row-group-pivot-panels" exampleHeight=350 /%}
+
+### Dropdown Menus
+
+Use the `agMenuToolbarItem` to render a dropdown of [Menu Items](./component-menu-item/). Configure the button and menu contents using the following properties:
+
+- `label`: Visible text rendered next to the icon. Omit to render an icon-only button.
+- `icon`: Icon displayed on the button. Accepts any [provided icon](./custom-icons/#provided-icons).
+- `tooltip`: Hover tooltip and `aria-label`. Falls back to `label` when omitted.
+- `toolbarItemParams.menuItems`: Items to include in the dropdown. Each entry is either a `MenuItemDef` or one of the [built-in](./context-menu/#built-in-menu-items) menu item names as used by the Context Menu.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: [
+            {
+                toolbarItem: 'agMenuToolbarItem',
+                icon: 'save',
+                toolbarItemParams: {
+                    menuItems: ['csvExport', 'excelExport'],
+                },
+            },
+        ],
+    },
+}
+```
+
+## Action Buttons
+
+Action buttons provide a convenient way to trigger custom behaviour on click of a toolbar item. Configure an action button using the following properties:
+
+- `label`: Visible text rendered next to the icon. Omit to render an icon-only button.
+- `icon`: Icon displayed on the button. Accepts any [provided icon](./custom-icons/#provided-icons).
+- `tooltip`: Hover tooltip and `aria-label`. Falls back to `label` when omitted.
+- `action`: Callback fired on click. Receives the grid `api`, `context`, and the item `key`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: [
+            {
+                key: 'autoSizeAll',
+                label: 'Auto Size All',
+                icon: 'maximize',
+                action: (params) => params.api.autoSizeAllColumns(),
+            },
+        ],
+    },
+}
+```
+
+The example below shows icon-only buttons with tooltips for sizing columns, sorting, and resetting filters and column state, divided by separators.
+
+{% gridExampleRunner title="Action Buttons" name="action-buttons" exampleHeight=300 /%}
+
+## Custom Components
+
+For controls beyond a button, such as toggles, inputs, or any stateful UI, set `toolbarItem` to a custom component. Custom components can render arbitrary HTML and call any grid API, so they suit cases that the [Action Button](#action-buttons) shorthand cannot express.
+
+The example below defines two custom items: checkbox toggles that apply column filters on the left, and a radio group that opens [Side Bar](./tool-panel/) tool panels on the right. The radio group's `setSelected` method is called via [`getToolbarItemInstance`](#reference-getToolbarItemInstance) in `onToolPanelVisibleChanged` to stay in sync when a panel is opened or closed elsewhere, such as via a sidebar tab.
+
+{% gridExampleRunner title="Custom Toolbar Item" name="toolbar-custom" /%}
+
+When defining a custom component, provide the `toolbarItem` with:
+
+{% if isFramework("javascript") %}
+
+1. `String`: the name of a registered Toolbar Item Component. See [Registering Custom Components](./components/#registering-custom-components).
+2. `Class`: a direct reference to a Toolbar Item Component.
+
+{% /if %}
+
+{% if isFramework("react", "angular") %}
+
+1. `String`: the name of a registered Toolbar Item Component. See [Registering Custom Components](./components/#registering-custom-components).
+2. `Component`: a direct reference to a Toolbar Item Component.
+
+{% /if %}
+
+{% if isFramework("vue") %}
+
+1. `String`: the name of a registered Toolbar Item Component. See [Registering Custom Components](./components/#registering-custom-components).
+
+{% /if %}
+
+{% partial file="./_configure-javascript.mdoc" /%}
+{% partial file="./_configure-angular.mdoc" /%}
+{% partial file="./_configure-react.mdoc" /%}
+{% partial file="./_configure-vue.mdoc" /%}
+
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
+
+## Theme Parameters
+
+The toolbar exposes the following [Theme Parameters](./theming-parameters/):
+
+| Parameter                | Description                                                                 |
+| ------------------------ | --------------------------------------------------------------------------- |
+| `toolbarBackgroundColor` | Background colour of the toolbar. Defaults to the header background colour. |
+| `toolbarTextColor`       | Text colour in the toolbar. Defaults to the header text colour.             |
+| `toolbarSeparatorBorder` | Border style for the vertical separator between toolbar items.              |
+
+## Accessing Toolbar Items
+
+To access a toolbar item instance use the grid api method `getToolbarItemInstance(key)`. The `key` must match a `key` set on the item definition; items without an explicit key are not reachable via the API. This is demonstrated in the [Custom Components](#custom-components) example above, where it's used to keep a toolbar radio in sync with side bar tool panel changes.
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["getToolbarItemInstance"] /%}
+
+## API Reference
+
+### Toolbar
+
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["toolbar"] /%}
+
+### IToolbarItemParams
+
+{% interfaceDocumentation interfaceName="IToolbarItemParams" /%}

@@ -89,7 +89,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const fillers = this.nonLeafsById;
         if (fillers) {
             for (const node of fillers.values()) {
-                node._destroy(false);
+                node._destroy(null);
             }
             fillers.clear();
             this.nonLeafsById = null;
@@ -111,7 +111,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const groupDisplayCols = this.beans.showRowGroupCols?.columns;
         if (groupDisplayCols) {
             for (let i = 0, len = groupDisplayCols.length; i < len; ++i) {
-                groupData[groupDisplayCols[i].getColId()] = key;
+                groupData[groupDisplayCols[i].colId] = key;
             }
         }
         return groupData;

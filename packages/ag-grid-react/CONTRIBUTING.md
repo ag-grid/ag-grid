@@ -3,13 +3,13 @@
 We would love for you to contribute to ag-grid-react and help make it even better than it is
 today! As a contributor, here are the guidelines we would like you to follow:
 
--   [Question or Problem?](#question)
--   [Issues and Bugs](#issue)
--   [Feature Requests](#feature)
--   [Submission Guidelines](#submit)
--   [Coding Rules](#rules)
--   [Commit Message Guidelines](#commit)
--   [Signing the CLA](#cla)
+- [Question or Problem?](#question)
+- [Issues and Bugs](#issue)
+- [Feature Requests](#feature)
+- [Submission Guidelines](#submit)
+- [Coding Rules](#rules)
+- [Commit Message Guidelines](#commit)
+- [Signing the CLA](#cla)
 
 ## <a name="question"></a> Got a Question or Problem?
 
@@ -37,9 +37,9 @@ Before you submit an issue, please search the issue tracker, maybe an issue for 
 
 We want to fix all the issues as soon as possible, but before fixing a bug we need to reproduce and confirm it. In order to reproduce bugs we will systematically ask you to provide a minimal reproduction scenario using http://plnkr.co. Having a live, reproducible scenario gives us wealth of important information without going back & forth to you with additional questions like:
 
--   version of React used
--   3rd-party libraries and their versions
--   and most importantly - a use-case that fails
+- version of React used
+- 3rd-party libraries and their versions
+- and most importantly - a use-case that fails
 
 A minimal reproduce scenario using http://plnkr.co/ allows us to quickly confirm a bug (or point out coding problem) as well as confirm that we are fixing the right problem. If plunker is not a suitable way to demonstrate the problem (for example for issues related to our npm packaging), please create a standalone git repository demonstrating the problem.
 

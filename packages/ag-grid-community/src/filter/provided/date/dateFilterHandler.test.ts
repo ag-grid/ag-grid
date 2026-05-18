@@ -115,7 +115,7 @@ describe('getFirstDayOfWeek', () => {
     const originalNavigator = typeof navigator === 'undefined' ? undefined : navigator;
 
     beforeEach(() => {
-        jest.resetModules();
+        vi.resetModules();
     });
 
     afterEach(() => {
@@ -127,8 +127,8 @@ describe('getFirstDayOfWeek', () => {
         }
     });
 
-    it('uses Intl.Locale.getWeekInfo when available', () => {
-        const getWeekInfo = jest.fn(() => ({ firstDay: 0 }));
+    it('uses Intl.Locale.getWeekInfo when available', async () => {
+        const getWeekInfo = vi.fn(() => ({ firstDay: 0 }));
         class MockLocale {
             getWeekInfo() {
                 return getWeekInfo();
@@ -141,12 +141,9 @@ describe('getFirstDayOfWeek', () => {
             value: { language: 'en-US', languages: ['en-US'] },
         });
 
-        jest.isolateModules(() => {
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const { presetDateFilterTypeRelativeFromToMap: map } = require('./dateFilterHandler');
-            const result = map.setStartOfWeek(new Date(base));
-            expect(result.toUTCString()).toContain('Sun, 05 Apr 2020');
-        });
+        const { presetDateFilterTypeRelativeFromToMap: map } = await import('./dateFilterHandler');
+        const result = map.setStartOfWeek(new Date(base));
+        expect(result.toUTCString()).toContain('Sun, 05 Apr 2020');
 
         expect(getWeekInfo).toHaveBeenCalledTimes(1);
     });
@@ -156,17 +153,17 @@ describe('getOrRefreshRangeCacheItem', () => {
     const key = 'today' as ISimpleFilterModelPresetType;
 
     beforeEach(() => {
-        jest.useFakeTimers();
-        jest.setSystemTime(new Date(0));
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date(0));
     });
 
     afterEach(() => {
-        jest.useRealTimers();
+        vi.useRealTimers();
     });
 
     it('returns cached range for the same key before expiry', () => {
         const handler = new DateFilterHandler();
-        const rangeFn = jest.fn(() => [new Date(1), new Date(2)] as [Date, Date]);
+        const rangeFn = vi.fn(() => [new Date(1), new Date(2)] as [Date, Date]);
 
         const first = handler.getOrRefreshRangeCacheItem(key, rangeFn);
         const second = handler.getOrRefreshRangeCacheItem(key, rangeFn);
@@ -178,14 +175,14 @@ describe('getOrRefreshRangeCacheItem', () => {
 
     it('refreshes the cache when expired', () => {
         const handler = new DateFilterHandler();
-        const rangeFn = jest
+        const rangeFn = vi
             .fn()
             .mockImplementationOnce(() => [new Date(1), new Date(2)] as [Date, Date])
             .mockImplementationOnce(() => [new Date(3), new Date(4)] as [Date, Date]);
 
         const first = handler.getOrRefreshRangeCacheItem(key, rangeFn);
 
-        jest.setSystemTime(new Date(86_400_001));
+        vi.setSystemTime(new Date(86_400_001));
 
         const second = handler.getOrRefreshRangeCacheItem(key, rangeFn);
 
@@ -197,8 +194,8 @@ describe('getOrRefreshRangeCacheItem', () => {
 
     it('keeps separate caches per key', () => {
         const handler = new DateFilterHandler();
-        const rangeFnToday = jest.fn(() => [new Date(10), new Date(20)] as [Date, Date]);
-        const rangeFnYesterday = jest.fn(() => [new Date(30), new Date(40)] as [Date, Date]);
+        const rangeFnToday = vi.fn(() => [new Date(10), new Date(20)] as [Date, Date]);
+        const rangeFnYesterday = vi.fn(() => [new Date(30), new Date(40)] as [Date, Date]);
 
         const today = handler.getOrRefreshRangeCacheItem('today', rangeFnToday);
         const yesterday = handler.getOrRefreshRangeCacheItem('yesterday', rangeFnYesterday);

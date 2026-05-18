@@ -325,7 +325,7 @@ export class SetFilterHandler<TValue = string>
             }
             const clearOnAllSelected =
                 !filterParams.defaultToNothingSelected &&
-                (this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ||
+                (valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ||
                     !filterParams.suppressClearModelOnRefreshValues);
             const allSelected = clearOnAllSelected && numNewValues === existingFormattedKeys.size;
 

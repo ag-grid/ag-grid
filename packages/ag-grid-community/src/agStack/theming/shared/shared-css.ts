@@ -363,23 +363,25 @@ export const defaultLightColorSchemeParams = {
     browserColorScheme: 'light',
 } as const;
 
+export const defaultFontFamily = () => [
+    '-apple-system',
+    'BlinkMacSystemFont',
+    'Segoe UI',
+    'Roboto',
+    'Oxygen-Sans',
+    'Ubuntu',
+    'Cantarell',
+    'Helvetica Neue',
+    'sans-serif',
+];
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const sharedDefaults: Readonly<SharedThemeParams> = {
     ...defaultLightColorSchemeParams,
     textColor: foregroundColor,
     accentColor: '#2196f3',
     invalidColor: '#e02525',
-    fontFamily: [
-        '-apple-system',
-        'BlinkMacSystemFont',
-        'Segoe UI',
-        'Roboto',
-        'Oxygen-Sans',
-        'Ubuntu',
-        'Cantarell',
-        'Helvetica Neue',
-        'sans-serif',
-    ],
+    fontFamily: defaultFontFamily(),
     subtleTextColor: {
         ref: 'textColor',
         mix: 0.5,
@@ -388,7 +390,7 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
     borderRadius: 4,
     spacing: 8,
     fontSize: 14,
-    fontWeight: 'inherit',
+    fontWeight: 400,
     focusShadow: {
         spread: 3,
         color: accentMix(0.5),
@@ -505,7 +507,7 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
         ref: 'textColor',
     },
     headerHeight: {
-        calc: 'max(iconSize, dataFontSize) + spacing * 4 * headerVerticalPaddingScale',
+        calc: 'max(iconSize, headerFontSize) + spacing * 4 * headerVerticalPaddingScale',
     },
     headerVerticalPaddingScale: 1,
     menuBorder: {

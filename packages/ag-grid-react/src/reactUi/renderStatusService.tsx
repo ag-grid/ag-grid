@@ -30,9 +30,12 @@ export class RenderStatusService extends BeanStub implements IRenderStatusServic
     }
 
     public areHeaderCellsRendered(): boolean {
-        return this.beans.ctrlsSvc
-            .getHeaderRowContainerCtrls()
-            .every((container) => container.getAllCtrls().every((ctrl) => ctrl.areCellsRendered()));
+        return (
+            this.beans.ctrlsSvc
+                .getHeaderRowContainerCtrl()
+                ?.getAllCtrls()
+                .every((ctrl) => ctrl.areCellsRendered()) ?? true
+        );
     }
 
     public areCellsRendered(): boolean {

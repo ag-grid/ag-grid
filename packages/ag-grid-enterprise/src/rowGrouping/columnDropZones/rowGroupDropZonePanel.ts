@@ -6,8 +6,8 @@ import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/colu
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
-    constructor(horizontal: boolean, params?: ColumnStateUpdateParams) {
-        super(horizontal, 'rowGroup', params);
+    constructor(horizontal: boolean, params?: ColumnStateUpdateParams, embedded = false) {
+        super(horizontal, 'rowGroup', params, embedded);
     }
 
     public postConstruct(): void {
@@ -21,8 +21,10 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
             title,
         });
 
-        // only the top (horizontal) drop zone participates in core grid container tabbing.
-        if (this.horizontal) {
+        // Only the top (horizontal) drop zone participates in core grid container tabbing.
+        // When embedded in a parent focus container (e.g. the Toolbar), the parent handles
+        // tab hand-off across its items — registering here would make tab skip siblings.
+        if (this.horizontal && !this.embedded) {
             _addFocusableContainerListener(this.beans, this, this.getGui());
         }
 
@@ -38,7 +40,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel implements Focusabl
 
     protected isItemDroppable(column: AgColumn, draggingEvent: GridDraggingEvent): boolean {
         // we never allow grouping of secondary columns or already-grouped columns
-        if (this.gos.get('functionsReadOnly') || !column.isPrimary() || column.colDef.showRowGroup) {
+        if (this.gos.get('functionsReadOnly') || !column.primary || column.colDef.showRowGroup) {
             return false;
         }
 

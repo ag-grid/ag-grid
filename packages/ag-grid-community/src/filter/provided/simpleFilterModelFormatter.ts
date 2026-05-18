@@ -136,6 +136,6 @@ export abstract class SimpleFilterModelFormatter<
 
     protected formatValue(value?: TValue | null): string {
         const valueFormatter = this.valueFormatter;
-        return valueFormatter ? valueFormatter(value ?? null) ?? '' : String(value);
+        return valueFormatter ? (valueFormatter(value ?? null) ?? '') : String(value);
     }
 }

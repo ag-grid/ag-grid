@@ -60,18 +60,18 @@ Dynamic strings with `${}` interpolation are skipped with a warning.
 To execute benchmarks:
 
 ```sh
-nx run ag-behavioural-testing:benchmark
+./benches.sh
 ```
 
-To execute benchmarks on a single file:
+To execute benchmarks on a single file (any positional arg is forwarded to `vitest bench`):
 
 ```sh
-nx run ag-behavioural-testing:benchmark -- src/tree-data/datapath/benchmarks/tree-data-path.bench.ts
+./benches.sh "tree-data-path"
 ```
 
 ## References:
 
--   https://www.youtube.com/watch?v=EZ05e7EMOLM
--   https://docs.google.com/presentation/d/1bEK7sOindHAMIyzFK59VMdjuSzC-NFG3hlUZkwLeGT8
--   https://martinfowler.com/articles/mocksArentStubs.html
--   https://agilewarrior.wordpress.com/2015/04/18/classical-vs-mockist-testing/
+- https://www.youtube.com/watch?v=EZ05e7EMOLM
+- https://docs.google.com/presentation/d/1bEK7sOindHAMIyzFK59VMdjuSzC-NFG3hlUZkwLeGT8
+- https://martinfowler.com/articles/mocksArentStubs.html
+- https://agilewarrior.wordpress.com/2015/04/18/classical-vs-mockist-testing/

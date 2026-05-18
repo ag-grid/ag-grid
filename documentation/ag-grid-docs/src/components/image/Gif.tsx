@@ -1,6 +1,6 @@
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import GifPlayer from 'react-gif-player';
 
 import styles from './Gif.module.scss';
@@ -32,20 +32,14 @@ export const Gif = ({
     ...props
 }: Props) => {
     const [darkMode] = useDarkmode();
-    const [gif, setGif] = useState<string>();
-    const [stillImage, setStillImage] = useState<string>();
 
     const classes = classnames(styles.gif, { [styles.wrapped]: wrapped }, className);
 
-    useEffect(() => {
-        if (darkMode) {
-            setGif(darkModeImageSrc);
-            setStillImage(darkModeStillImageSrc);
-        } else {
-            setGif(imageSrc);
-            setStillImage(stillImageSrc);
-        }
-    }, [darkMode, darkModeImageSrc, darkModeStillImageSrc, imageSrc, stillImageSrc]);
+    const gif = useMemo(() => (darkMode ? darkModeImageSrc : imageSrc), [darkMode, darkModeImageSrc, imageSrc]);
+    const stillImage = useMemo(
+        () => (darkMode ? darkModeStillImageSrc : stillImageSrc),
+        [darkMode, darkModeStillImageSrc, stillImageSrc]
+    );
 
     return <GifPlayer gif={gif} still={stillImage} className={classes} autoplay={autoPlay} alt={alt} {...props} />;
 };

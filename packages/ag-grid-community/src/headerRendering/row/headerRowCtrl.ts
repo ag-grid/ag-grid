@@ -4,7 +4,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { _isDomLayout } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
-import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
+import type { HeaderColumnId } from '../../interfaces/iColumn';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
@@ -17,6 +17,7 @@ export interface IHeaderRowComp {
     setTop(top: string): void;
     setHeight(height: string): void;
     setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean): void;
+    refreshPinnedCellGroupWidths(): void;
     setWidth(width: string): void;
     setRowIndex(rowIndex: number): void;
 }
@@ -40,7 +41,6 @@ export class HeaderRowCtrl extends BeanStub {
 
     constructor(
         public rowIndex: number,
-        public readonly pinned: ColumnPinnedType,
         public readonly type: HeaderRowType
     ) {
         super();
@@ -103,7 +103,10 @@ export class HeaderRowCtrl extends BeanStub {
         const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
         compBean.addManagedEventListeners({
             columnResized: this.setWidth.bind(this),
+            leftPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
+            rightPinnedWidthChanged: this.refreshPinnedCellGroupWidths.bind(this),
             displayedColumnsChanged: onDisplayedColumnsChanged,
+            gridSizeChanged: this.setWidth.bind(this),
             virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
             columnGroupHeaderHeightChanged: onHeightChanged,
             columnHeaderHeightChanged: onHeightChanged,
@@ -140,25 +143,24 @@ export class HeaderRowCtrl extends BeanStub {
         }
         const width = this.getWidthForRow();
         this.comp.setWidth(`${width}px`);
+        this.refreshPinnedCellGroupWidths();
+    }
+
+    private refreshPinnedCellGroupWidths(): void {
+        this.comp?.refreshPinnedCellGroupWidths();
     }
 
     private getWidthForRow(): number {
         const { visibleCols } = this.beans;
-        if (this.isPrintLayout) {
-            const pinned = this.pinned != null;
-            if (pinned) {
-                return 0;
-            }
+        const contentWidth =
+            visibleCols.getContainerWidth('right') +
+            visibleCols.getContainerWidth('left') +
+            visibleCols.getContainerWidth(null);
 
-            return (
-                visibleCols.getContainerWidth('right') +
-                visibleCols.getContainerWidth('left') +
-                visibleCols.getContainerWidth(null)
-            );
-        }
+        const eGridViewport = this.beans.ctrlsSvc.getGridBodyCtrl()?.eGridViewport;
+        const viewportWidth = eGridViewport ? eGridViewport.getBoundingClientRect().width : 0;
 
-        // if not printing, just return the width as normal
-        return visibleCols.getContainerWidth(this.pinned);
+        return Math.max(contentWidth, viewportWidth);
     }
 
     private onRowHeightChanged(): void {
@@ -167,7 +169,9 @@ export class HeaderRowCtrl extends BeanStub {
         }
         const { topOffset, rowHeight } = this.getTopAndHeight();
 
-        this.comp.setTop(topOffset + 'px');
+        // header rows must be positioned with `top`: using transforms creates a stacking context per row,
+        // which breaks spanHeaderHeight clipping when header and pinned lanes share the pinned-top host.
+        this.comp.setTop(`${topOffset}px`);
         this.comp.setHeight(rowHeight + 'px');
     }
 
@@ -310,25 +314,14 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getColumnsInViewport(): (AgColumn | AgColumnGroup)[] {
-        // default virtualisation scenario
-        if (!this.isPrintLayout) {
-            return this.getComponentsToRender();
-        }
-
-        // if print layout, all cols in center. Not sure why this isn't handled by the columnViewportService.
-        if (this.pinned) {
-            return [];
-        }
-
-        // return pinned left, center and right columns in print layout
         const viewportColumns: (AgColumn | AgColumnGroup)[] = [];
-        for (const pinned of ['left', null, 'right'] as ColumnPinnedType[]) {
+        for (const pinned of ['left', null, 'right'] as const) {
             viewportColumns.push(...this.getComponentsToRender(pinned));
         }
         return viewportColumns;
     }
 
-    private getComponentsToRender(pinned: ColumnPinnedType = this.pinned): (AgColumn | AgColumnGroup)[] {
+    private getComponentsToRender(pinned: 'left' | 'right' | null): (AgColumn | AgColumnGroup)[] {
         if (this.type === 'group') {
             return this.beans.colViewport.getHeadersToRender(pinned, this.rowIndex);
         }

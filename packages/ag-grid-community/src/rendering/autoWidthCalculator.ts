@@ -7,11 +7,11 @@ import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainer
 export class AutoWidthCalculator extends BeanStub implements NamedBean {
     beanName = 'autoWidthCalc' as const;
 
-    private centerRowContainerCtrl: RowContainerCtrl;
+    private scrollingRowContainerCtrl: RowContainerCtrl;
 
     public postConstruct(): void {
         this.beans.ctrlsSvc.whenReady(this, (p) => {
-            this.centerRowContainerCtrl = p.center;
+            this.scrollingRowContainerCtrl = p.scrolling;
         });
     }
 
@@ -58,7 +58,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
-        const eBodyContainer = this.centerRowContainerCtrl.eContainer;
+        const eBodyContainer = this.scrollingRowContainerCtrl.eContainer;
 
         for (const el of elements) {
             this.cloneItemIntoDummy(el, eDummyContainer);
@@ -82,16 +82,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
     }
 
     private getHeaderCellForColumn(column: AgColumnGroup | AgColumn): HTMLElement | null {
-        let element: HTMLElement | null = null;
-
-        for (const container of this.beans.ctrlsSvc.getHeaderRowContainerCtrls()) {
-            const res = container.getHtmlElementForColumnHeader(column);
-            if (res != null) {
-                element = res;
-            }
-        }
-
-        return element;
+        return this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getHtmlElementForColumnHeader(column) ?? null;
     }
 
     private cloneItemIntoDummy(eCell: HTMLElement, eDummyContainer: HTMLElement): void {
@@ -102,6 +93,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
         // the original has position = absolute, we need to remove this so it's positioned normally
         eCellClone.style.position = 'static';
         eCellClone.style.left = '';
+        eCellClone.style.right = '';
         // we put the cell into a containing div, as otherwise the cells would just line up
         // on the same line, standard flow layout, by putting them into divs, they are laid
         // out one per line

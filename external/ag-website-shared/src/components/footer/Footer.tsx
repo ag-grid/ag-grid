@@ -46,11 +46,27 @@ export const Footer = ({ showMicrosoftMessage, footerItems }: FooterProps) => {
                         <SiteLogo />
                     </div>
 
-                    <p className="text-sm">&copy; AG Grid Ltd. 2015-{new Date().getFullYear()}</p>
+                    <p className="text-sm">&copy; AG Grid Ltd 2015-{new Date().getFullYear()}</p>
 
                     <p className="text-sm">
-                        <DevToolsToggle>AG Grid Ltd registered</DevToolsToggle> in the United Kingdom.
+                        <DevToolsToggle>AG Grid Ltd registered</DevToolsToggle> in England&nbsp;&amp;&nbsp;Wales.
+                        <br />
                         Company&nbsp;No.&nbsp;07318192.
+                        <br />
+                        VAT&nbsp;no.&nbsp;GB998360167
+                    </p>
+
+                    <p className="text-sm">
+                        Registered address
+                        <br />
+                        AG Grid Ltd
+                        <br />
+                        70 Wilson Street
+                        <br />
+                        London
+                        <br />
+                        EC2A 2DB
+                        <br />
                     </p>
 
                     {showMicrosoftMessage && (

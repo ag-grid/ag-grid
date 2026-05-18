@@ -336,6 +336,11 @@ export const AG_GRID_LOCALE_VN = {
     sortAbsoluteDescending: 'Sắp Xếp Giảm Dần Tuyệt Đối',
     sortUnSort: 'Xóa Sắp Xếp',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Tìm kiếm',
+    toolbarFindPreviousMatch: 'Kết quả trùng khớp trước',
+    toolbarFindNextMatch: 'Kết quả trùng khớp tiếp theo',
+    toolbarQuickFilter: 'Bộ lọc',
+    toolbarMenu: 'Trình đơn',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Tổng',
@@ -687,12 +692,16 @@ export const AG_GRID_LOCALE_VN = {
     ariaSelectAllRowCells: 'Nhấn Enter để chọn tất cả các ô trên hàng này',
     ariaColumnCellSelection: 'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong cột này',
     ariaColumnGroupCellSelection: 'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong nhóm cột này',
+    ariaColumnGroupExpansion: 'Nhấn ENTER để mở rộng hoặc thu gọn nhóm cột này',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Nhấn Enter để chuyển đổi lựa chọn tất cả các ô hiển thị trong nhóm cột này. Nhấn ALT ENTER để mở rộng hoặc thu gọn nhóm cột này',
     ariaRowSelectAll: 'Nhấn SPACE để chuyển đổi chọn tất cả các hàng',
     ariaRowToggleSelection: 'Nhấn SPACE để chuyển đổi chọn hàng',
     ariaRowSelect: 'Nhấn SPACE để chọn hàng này',
     ariaRowSelectionDisabled: 'Chọn hàng bị vô hiệu hoá cho hàng này',
     ariaSearch: 'Tìm kiếm',
     ariaSortableColumn: 'Nhấn ENTER để sắp xếp',
+    ariaSortableColumnWithCellSelection: 'Nhấn ALT ENTER để sắp xếp',
     ariaToggleVisibility: 'Nhấn SPACE để chuyển đổi hiển thị',
     ariaToggleCellValue: 'Nhấn SPACE để chuyển đổi giá trị ô',
     ariaUnchecked: 'chưa đánh dấu',
@@ -811,7 +820,4 @@ export const AG_GRID_LOCALE_VN = {
     editNote: 'Chỉnh sửa ghi chú',
     deleteNote: 'Xóa ghi chú',
     notePlaceholder: 'Thêm ghi chú...',
-    noteHint:
-        'Di chuột để xem trước. Nhấp vào bên trong để chỉnh sửa. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
-    noteReadOnlyHint: 'Ghi chú chỉ đọc. Chọn văn bản để sao chép. Kéo góc để thay đổi kích thước. Nhấn Esc để đóng.',
 };

@@ -28,6 +28,7 @@ export function _getNormalisedMousePosition(
     } else {
         x = e.x;
         y = e.y;
+        y -= getRowAreaTopOffset(beans, event);
     }
 
     const { pageFirstPixel } = beans.pageBounds.getCurrentPagePixelRange();
@@ -42,4 +43,21 @@ export function _getNormalisedMousePosition(
     }
 
     return { x, y };
+}
+
+function getRowAreaTopOffset(beans: BeanCollection, event: MouseEvent | { x: number; y: number }): number {
+    const { eGridViewport, eScrollingRows } = beans.ctrlsSvc.getGridBodyCtrl();
+
+    const eventWithDropZone = event as { dropZoneTarget?: EventTarget | null };
+    const eViewport = (eventWithDropZone.dropZoneTarget ?? eGridViewport) as HTMLElement;
+
+    if (!eScrollingRows) {
+        return 0;
+    }
+
+    const visibleOffset = eScrollingRows.getBoundingClientRect().top - eViewport.getBoundingClientRect().top;
+    // `event.y` is viewport-relative. Convert the measured visible offset into
+    // the scroll-content offset so it remains stable while scrolling.
+    const offset = visibleOffset + eGridViewport.scrollTop;
+    return offset > 0 ? offset : 0;
 }

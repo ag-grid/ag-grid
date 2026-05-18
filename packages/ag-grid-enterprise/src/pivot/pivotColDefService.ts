@@ -125,7 +125,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
 
         // sort by either user provided comparator, or our own one
-        const { pivotComparator } = primaryPivotColumns[index].getColDef();
+        const { pivotComparator } = primaryPivotColumns[index].colDef;
         const comparator = pivotComparator ? convertToHeaderNameComparator(pivotComparator) : headerNameComparator;
 
         const measureColumns = this.valueColsSvc?.columns;
@@ -216,7 +216,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 for (const valueColumn of valueCols) {
                     const columnName: string | null = this.colNames.getDisplayNameForColumn(valueColumn, 'header');
                     const totalColDef = this.createColDef(valueColumn, columnName, def.pivotKeys);
-                    totalColDef.pivotTotalColumnIds = childAcc.get(valueColumn.getColId());
+                    totalColDef.pivotTotalColumnIds = childAcc.get(valueColumn.colId);
 
                     totalColDef.columnGroupShow = !isSuppressExpand ? 'closed' : 'open';
 
@@ -268,7 +268,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         // don't add pivot totals if there is less than 1 aggFunc or they are not all the same
         if (!aggFuncs || aggFuncs.length < 1 || !this.sameAggFuncs(aggFuncs)) {
-            // console.warn('AG Grid: aborting adding pivot total columns - value columns require same aggFunc');
+            // value columns require same aggFunc for pivot totals
             return;
         }
 
@@ -365,7 +365,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 ? {
                       children: [colDef],
                       pivotKeys: [],
-                      groupId: `${PIVOT_ROW_TOTAL_PREFIX}_pivotGroup_${valueCol.getColId()}`,
+                      groupId: `${PIVOT_ROW_TOTAL_PREFIX}_pivotGroup_${valueCol.colId}`,
                   }
                 : colDef;
 
@@ -389,6 +389,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             pivotTotalColumnIds,
             columnGroupShow,
             colId,
+            field,
             valueGetter,
             aggFunc,
         } = colDef;
@@ -400,9 +401,10 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         const newColDef = this.createColDef(pivotValueColumn as AgColumn, headerName, pivotKeys, !!pivotTotalColumnIds);
 
-        // don't overwrite these
+        // preserve pivot-result identity from the old colDef.
         newColDef.columnGroupShow = columnGroupShow;
         newColDef.colId = colId;
+        newColDef.field = field;
         newColDef.valueGetter = valueGetter;
         newColDef.aggFunc = aggFunc;
         newColDef.pivotTotalColumnIds = pivotTotalColumnIds;
@@ -422,7 +424,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         // This is null when there are no measure columns and we're creating placeholder columns
         if (valueColumn) {
-            const colDefToCopy = valueColumn.getColDef();
+            const colDefToCopy = valueColumn.colDef;
             Object.assign(colDef, colDefToCopy);
 
             // even if original column was hidden, we always show the pivot value column, otherwise it would be
@@ -431,10 +433,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
 
         colDef.headerName = headerName;
-        colDef.colId = this.generateColumnId(
-            pivotKeys || [],
-            valueColumn && !totalColumn ? valueColumn.getColId() : ''
-        );
+        colDef.colId = this.generateColumnId(pivotKeys || [], valueColumn && !totalColumn ? valueColumn.colId : '');
 
         // pivot columns repeat over field, so it makes sense to use the unique id instead. For example if you want to
         // assign values to pinned bottom rows using setPinnedBottomRowData the value service will use this colId.
@@ -474,12 +473,12 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
     }
 
     private generateColumnGroupId(pivotKeys: string[]): string {
-        const pivotCols = (this.pivotColsSvc?.columns ?? []).map((col) => col.getColId());
+        const pivotCols = (this.pivotColsSvc?.columns ?? []).map((col) => col.colId);
         return `pivotGroup_${pivotCols.join('-')}_${pivotKeys.join('-')}`;
     }
 
     private generateColumnId(pivotKeys: string[], measureColumnId: string) {
-        const pivotCols = (this.pivotColsSvc?.columns ?? []).map((col) => col.getColId());
+        const pivotCols = (this.pivotColsSvc?.columns ?? []).map((col) => col.colId);
         return `pivot_${pivotCols.join('-')}_${pivotKeys.join('-')}_${measureColumnId}`;
     }
 

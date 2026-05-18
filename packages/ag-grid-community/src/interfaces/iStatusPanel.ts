@@ -35,8 +35,7 @@ export interface IAggregationStatusPanelParams extends IProvidedStatusPanelParam
 }
 
 export interface AggregationStatusPanelParams<TData = any, TContext = any>
-    extends IAggregationStatusPanelParams,
-        IStatusPanelParams<TData, TContext> {
+    extends IAggregationStatusPanelParams, IStatusPanelParams<TData, TContext> {
     aggFuncs: AggregationStatusPanelAggFunc[];
 }
 
@@ -53,5 +52,4 @@ export interface IStatusPanel<TData = any, TContext = any> {
 }
 
 export interface IStatusPanelComp<TData = any, TContext = any>
-    extends IStatusPanel<TData, TContext>,
-        IComponent<IStatusPanelParams<TData, TContext>> {}
+    extends IStatusPanel<TData, TContext>, IComponent<IStatusPanelParams<TData, TContext>> {}

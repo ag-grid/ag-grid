@@ -1,14 +1,40 @@
-import type { GetRowIdParams, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
-import { GRAND_TOTAL_ROW_ID, PaginationModule, ROOT_NODE_ID } from 'ag-grid-community';
+import type {
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+    IServerSideDatasource,
+    IServerSideGetRowsParams,
+} from 'ag-grid-community';
+import {
+    GRAND_TOTAL_ROW_ID,
+    NumberFilterModule,
+    PaginationModule,
+    PinnedRowModule,
+    ROOT_NODE_ID,
+} from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, unindentText, waitForEvent, waitForNoLoadingRows } from '../../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    unindentText,
+    waitForEvent,
+    waitForNoLoadingRows,
+} from '../../test-utils';
 
 const GRAND_TOTAL_ID = GRAND_TOTAL_ROW_ID;
 
 describe('SSRM grand total row', () => {
     const gridManager = new TestGridsManager({
-        modules: [ServerSideRowModelModule, ServerSideRowModelApiModule, RowGroupingModule, PaginationModule],
+        modules: [
+            ServerSideRowModelModule,
+            ServerSideRowModelApiModule,
+            RowGroupingModule,
+            PaginationModule,
+            NumberFilterModule,
+            PinnedRowModule,
+        ],
     });
 
     afterEach(() => {
@@ -162,6 +188,126 @@ describe('SSRM grand total row', () => {
         expect(getRowsCalls[0].needsGrandTotal).toBe(false);
     });
 
+    test('needsGrandTotal becomes true again after filter change', async () => {
+        const getRowsCalls: { needsGrandTotal: boolean }[] = [];
+
+        const api = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value', filter: 'agNumberColumnFilter' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'bottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    getRowsCalls.push({ needsGrandTotal: params.needsGrandTotal });
+                    const filter = params.request.filterModel as { value?: { filter?: number } } | null;
+                    const threshold = filter?.value?.filter;
+                    const filtered = threshold != null ? flatRows.filter((r) => r.value > threshold) : flatRows;
+                    const rowData: any[] = [...filtered];
+                    if (params.needsGrandTotal) {
+                        const total = filtered.reduce((sum, r) => sum + r.value, 0);
+                        rowData.push({ id: GRAND_TOTAL_ID, value: total });
+                    }
+                    setTimeout(() => {
+                        params.success({ rowData, rowCount: filtered.length });
+                    }, 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        expect(getRowsCalls[0].needsGrandTotal).toBe(true);
+
+        const callsBeforeFilter = getRowsCalls.length;
+        api.setFilterModel({ value: { type: 'greaterThan', filter: 15 } });
+        await waitForNoLoadingRows(api);
+
+        // A new root load must have occurred after the filter change, with needsGrandTotal=true
+        expect(getRowsCalls.length).toBeGreaterThan(callsBeforeFilter);
+        expect(getRowsCalls[callsBeforeFilter].needsGrandTotal).toBe(true);
+    });
+
+    test('needsGrandTotal becomes true again after aggregation change', async () => {
+        const getRowsCalls: { needsGrandTotal: boolean }[] = [];
+
+        const api = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value', aggFunc: 'sum' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'bottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    getRowsCalls.push({ needsGrandTotal: params.needsGrandTotal });
+                    const rowData: any[] = [...flatRows];
+                    if (params.needsGrandTotal) {
+                        rowData.push({ id: GRAND_TOTAL_ID, value: 60 });
+                    }
+                    setTimeout(() => {
+                        params.success({ rowData, rowCount: flatRows.length });
+                    }, 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        expect(getRowsCalls[0].needsGrandTotal).toBe(true);
+
+        const callsBeforeAgg = getRowsCalls.length;
+        api.setColumnAggFunc('value', 'avg');
+        await waitForNoLoadingRows(api);
+
+        // Aggregation change resets the root store, so the next load requires fresh grand total data
+        expect(getRowsCalls.length).toBeGreaterThan(callsBeforeAgg);
+        expect(getRowsCalls[callsBeforeAgg].needsGrandTotal).toBe(true);
+    });
+
+    test('needsGrandTotal stays false after sort change (grand total data retained)', async () => {
+        const getRowsCalls: { needsGrandTotal: boolean }[] = [];
+
+        const api = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value', sortable: true }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'bottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    getRowsCalls.push({ needsGrandTotal: params.needsGrandTotal });
+                    const sorted = [...flatRows];
+                    const sort = params.request.sortModel[0];
+                    if (sort?.colId === 'value') {
+                        sorted.sort((a, b) => (sort.sort === 'asc' ? a.value - b.value : b.value - a.value));
+                    }
+                    const rowData: any[] = sorted;
+                    if (params.needsGrandTotal) {
+                        rowData.push({ id: GRAND_TOTAL_ID, value: 60 });
+                    }
+                    setTimeout(() => {
+                        params.success({ rowData, rowCount: flatRows.length });
+                    }, 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        expect(getRowsCalls[0].needsGrandTotal).toBe(true);
+
+        const callsBeforeSort = getRowsCalls.length;
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+        await waitForNoLoadingRows(api);
+
+        // Sort rebuilds the cache but the grand total data on the store is retained,
+        // so subsequent loads must not request it again.
+        expect(getRowsCalls.length).toBeGreaterThan(callsBeforeSort);
+        for (let i = callsBeforeSort; i < getRowsCalls.length; i++) {
+            expect(getRowsCalls[i].needsGrandTotal).toBe(false);
+        }
+    });
+
     test('grand total row in response is filtered from display but data is kept when grandTotalRow not configured', async () => {
         const api = gridManager.createGrid(null, {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
@@ -253,7 +399,7 @@ describe('SSRM grand total row', () => {
 
         const gridRows = new GridRows(api, 'after update');
         await gridRows.check(unindentText`
-            ROOT id:<no-id> id:"rowGroupFooter_ROOT_NODE_ID" value:999
+            ROOT id:<no-id>
             ├── LEAF id:1 id:"1" value:10
             ├── LEAF id:2 id:"2" value:20
             ├── LEAF id:3 id:"3" value:30
@@ -491,7 +637,7 @@ describe('SSRM grand total row', () => {
         expect(api.getDisplayedRowCount()).toBe(4);
     });
 
-    test('pinned grand total row (pinnedBottom)', async () => {
+    test('grand total at pinnedBottom renders in pinned area, not inline', async () => {
         const api = gridManager.createGrid(
             null,
             createFlatGridOptions({
@@ -502,13 +648,23 @@ describe('SSRM grand total row', () => {
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
 
-        // The grand total row data should still be stored
-        const grandTotal = api.getRowNode(GRAND_TOTAL_ID);
-        expect(grandTotal).toBeDefined();
-        expect(grandTotal!.data.value).toBe(60);
+        // Grand total is in the pinned bottom area, not inline with data rows
+        await new GridRows(api, 'pinnedBottom').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
+
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+        expect(api.getPinnedTopRowCount()).toBe(0);
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(60);
+        // Displayed (non-pinned) row count should not include the pinned grand total
+        expect(api.getDisplayedRowCount()).toBe(3);
     });
 
-    test('pinned grand total row (pinnedTop)', async () => {
+    test('grand total at pinnedTop renders in pinned area, not inline', async () => {
         const api = gridManager.createGrid(
             null,
             createFlatGridOptions({
@@ -519,10 +675,408 @@ describe('SSRM grand total row', () => {
         await waitForEvent('firstDataRendered', api);
         await waitForNoLoadingRows(api);
 
-        // The grand total row data should still be stored
-        const grandTotal = api.getRowNode(GRAND_TOTAL_ID);
-        expect(grandTotal).toBeDefined();
-        expect(grandTotal!.data.value).toBe(60);
+        await new GridRows(api, 'pinnedTop').check(unindentText`
+            PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+        `);
+
+        expect(api.getPinnedTopRowCount()).toBe(1);
+        expect(api.getPinnedBottomRowCount()).toBe(0);
+        expect(api.getPinnedTopRow(0)?.data?.value).toBe(60);
+        expect(api.getDisplayedRowCount()).toBe(3);
+    });
+
+    test('cycle through grandTotalRow positions including pinned', async () => {
+        const api = gridManager.createGrid(
+            null,
+            createFlatGridOptions({
+                grandTotalRow: 'bottom',
+            })
+        );
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        // bottom (inline)
+        await new GridRows(api, 'bottom').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
+        expect(api.getPinnedBottomRowCount()).toBe(0);
+
+        // bottom → pinnedBottom
+        api.setGridOption('grandTotalRow', 'pinnedBottom');
+        await asyncSetTimeout(10);
+
+        await new GridRows(api, 'pinnedBottom').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+        expect(api.getPinnedTopRowCount()).toBe(0);
+        const pinnedBottomNode = api.getPinnedBottomRow(0)!;
+        expect(pinnedBottomNode.destroyed).toBe(false);
+
+        // pinnedBottom → pinnedTop: the previous pinned-bottom sibling must be destroyed,
+        // not orphaned in the bottom container.
+        api.setGridOption('grandTotalRow', 'pinnedTop');
+        await asyncSetTimeout(10);
+
+        await new GridRows(api, 'pinnedTop').check(unindentText`
+            PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+        `);
+        expect(api.getPinnedTopRowCount()).toBe(1);
+        expect(api.getPinnedBottomRowCount()).toBe(0);
+        expect(pinnedBottomNode.destroyed).toBe(true);
+        const pinnedTopNode = api.getPinnedTopRow(0)!;
+        expect(pinnedTopNode.destroyed).toBe(false);
+
+        // pinnedTop → top (back to inline). The pinned-top sibling must be destroyed.
+        api.setGridOption('grandTotalRow', 'top');
+        await asyncSetTimeout(10);
+        expect(pinnedTopNode.destroyed).toBe(true);
+
+        await new GridRows(api, 'top').check(unindentText`
+            ROOT id:<no-id>
+            ├─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+        `);
+        expect(api.getPinnedTopRowCount()).toBe(0);
+        expect(api.getPinnedBottomRowCount()).toBe(0);
+
+        // top → pinnedBottom
+        api.setGridOption('grandTotalRow', 'pinnedBottom');
+        await asyncSetTimeout(10);
+
+        await new GridRows(api, 'pinnedBottom again').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+
+        // pinnedBottom → undefined (grand total removed). The pinned sibling must be destroyed.
+        const lastPinnedBottomNode = api.getPinnedBottomRow(0)!;
+        api.setGridOption('grandTotalRow', undefined);
+        await asyncSetTimeout(10);
+
+        await new GridRows(api, 'disabled').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+        `);
+        expect(api.getPinnedBottomRowCount()).toBe(0);
+        expect(api.getPinnedTopRowCount()).toBe(0);
+        expect(lastPinnedBottomNode.destroyed).toBe(true);
+    });
+
+    test('pinned grand total updates when value changes via transaction', async () => {
+        const api = gridManager.createGrid(
+            null,
+            createFlatGridOptions({
+                grandTotalRow: 'pinnedBottom',
+            })
+        );
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(60);
+
+        api.applyServerSideTransaction({
+            update: [{ id: GRAND_TOTAL_ID, value: 999 }],
+        });
+        await asyncSetTimeout(10);
+
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(999);
+        await new GridRows(api, 'after pinned grand total update').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:999
+        `);
+    });
+
+    test('pinned grand total with grouped grid', async () => {
+        interface GroupedRow {
+            id: string;
+            category: string;
+            value: number;
+        }
+
+        const serverRows: GroupedRow[] = [
+            { id: 'a1', category: 'A', value: 10 },
+            { id: 'a2', category: 'A', value: 20 },
+            { id: 'b1', category: 'B', value: 30 },
+        ];
+
+        const api = gridManager.createGrid(null, {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                { field: 'value', aggFunc: 'sum' },
+            ],
+            autoGroupColumnDef: { headerName: 'Category' },
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<GroupedRow>) => params.data.id,
+            grandTotalRow: 'pinnedBottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    const { request } = params;
+                    let rowData: any[];
+
+                    if (request.groupKeys.length === 0) {
+                        const groups = new Map<string, number>();
+                        for (const row of serverRows) {
+                            groups.set(row.category, (groups.get(row.category) ?? 0) + row.value);
+                        }
+                        rowData = [...groups.entries()].map(([category, value]) => ({
+                            id: `category:${category}`,
+                            category,
+                            value,
+                            group: true,
+                            leafGroup: true,
+                            key: category,
+                        }));
+                        if (params.needsGrandTotal) {
+                            const total = serverRows.reduce((s, r) => s + r.value, 0);
+                            rowData.push({ id: GRAND_TOTAL_ID, value: total });
+                        }
+                    } else {
+                        const groupKey = request.groupKeys[0];
+                        rowData = serverRows.filter((r) => r.category === groupKey).map((r) => ({ ...r }));
+                    }
+
+                    const dataRowCount =
+                        request.groupKeys.length === 0
+                            ? rowData.filter((r: any) => r.id !== GRAND_TOTAL_ID).length
+                            : rowData.length;
+                    setTimeout(() => params.success({ rowData, rowCount: dataRowCount }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        await new GridRows(api, 'grouped pinnedBottom').check(unindentText`
+            ROOT id:<no-id>
+            ├── GROUP-leafGroup collapsed id:"category:A" ag-Grid-AutoColumn:"A" category:"A" value:30
+            └── GROUP-leafGroup collapsed id:"category:B" ag-Grid-AutoColumn:"B" category:"B" value:30
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " value:60
+        `);
+
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(60);
+    });
+
+    // --- Updating grand total via getRows / transaction ---
+
+    test('grand total updates when getRows returns a new value via id in rowData', async () => {
+        let total = 60;
+        const api = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'bottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    const rowData: any[] = [...flatRows];
+                    if (params.needsGrandTotal) {
+                        rowData.push({ id: GRAND_TOTAL_ID, value: total });
+                    }
+                    setTimeout(() => params.success({ rowData, rowCount: flatRows.length }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(60);
+
+        const originalNodeId = api.getRowNode(GRAND_TOTAL_ID)?.id;
+        total = 999;
+        api.refreshServerSide({ purge: true });
+        await waitForNoLoadingRows(api);
+
+        // The same node is updated in place (compare by id to avoid row-node deep diff on failure)
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.id).toBe(originalNodeId);
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(999);
+
+        await new GridRows(api, 'after getRows id update').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:999
+        `);
+    });
+
+    test('pinned grand total updates when value changes via transaction update', async () => {
+        const api = gridManager.createGrid(null, createFlatGridOptions({ grandTotalRow: 'pinnedTop' }));
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getPinnedTopRow(0)?.data?.value).toBe(60);
+
+        api.applyServerSideTransaction({ update: [{ id: GRAND_TOTAL_ID, value: 321 }] });
+        await asyncSetTimeout(10);
+
+        expect(api.getPinnedTopRow(0)?.data?.value).toBe(321);
+        expect(api.getPinnedTopRowCount()).toBe(1);
+        expect(api.getPinnedBottomRowCount()).toBe(0);
+    });
+
+    test('grand total updates when getRows returns a new value via grandTotalData field', async () => {
+        let total = 60;
+        const api = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'bottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    setTimeout(() => {
+                        params.success({
+                            rowData: [...flatRows],
+                            rowCount: flatRows.length,
+                            grandTotalData: { id: GRAND_TOTAL_ID, value: total },
+                        });
+                    }, 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(60);
+
+        const originalNodeId = api.getRowNode(GRAND_TOTAL_ID)?.id;
+        total = 123;
+        api.refreshServerSide({ purge: true });
+        await waitForNoLoadingRows(api);
+
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(123);
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.id).toBe(originalNodeId);
+    });
+
+    test('grand total is unaffected when getRows is called on a child group', async () => {
+        // Expanding a group calls getRows on the group's store (not the root). The root's
+        // grand total must not be destroyed or duplicated by that load.
+        interface GroupedRow {
+            id: string;
+            category: string;
+            value: number;
+        }
+
+        const serverRows: GroupedRow[] = [
+            { id: 'a1', category: 'A', value: 10 },
+            { id: 'a2', category: 'A', value: 20 },
+            { id: 'b1', category: 'B', value: 30 },
+        ];
+        const groupKeysCalls: string[][] = [];
+
+        const api = gridManager.createGrid(null, {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                { field: 'value', aggFunc: 'sum' },
+            ],
+            autoGroupColumnDef: { headerName: 'Category' },
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<GroupedRow>) => params.data.id,
+            grandTotalRow: 'bottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    const { request } = params;
+                    groupKeysCalls.push([...request.groupKeys]);
+                    let rowData: any[];
+
+                    if (request.groupKeys.length === 0) {
+                        const groups = new Map<string, number>();
+                        for (const row of serverRows) {
+                            groups.set(row.category, (groups.get(row.category) ?? 0) + row.value);
+                        }
+                        rowData = [...groups.entries()].map(([category, value]) => ({
+                            id: `category:${category}`,
+                            category,
+                            value,
+                            group: true,
+                            leafGroup: true,
+                            key: category,
+                        }));
+                        if (params.needsGrandTotal) {
+                            const total = serverRows.reduce((s, r) => s + r.value, 0);
+                            rowData.push({ id: GRAND_TOTAL_ID, value: total });
+                        }
+                    } else {
+                        const groupKey = request.groupKeys[0];
+                        rowData = serverRows.filter((r) => r.category === groupKey).map((r) => ({ ...r }));
+                    }
+
+                    const dataRowCount =
+                        request.groupKeys.length === 0
+                            ? rowData.filter((r: any) => r.id !== GRAND_TOTAL_ID).length
+                            : rowData.length;
+                    setTimeout(() => params.success({ rowData, rowCount: dataRowCount }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        const grandTotalNodeId = api.getRowNode(GRAND_TOTAL_ID)?.id;
+        expect(grandTotalNodeId).toBeDefined();
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(60);
+
+        // Expanding group A triggers getRows({groupKeys: ['A']}) on the group store
+        groupKeysCalls.length = 0;
+        api.getRowNode('category:A')?.setExpanded(true);
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(10);
+
+        expect(groupKeysCalls).toEqual([['A']]);
+        // The root's grand total is the same instance with the same data
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.id).toBe(grandTotalNodeId);
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(60);
+    });
+
+    test('grand total updates when value changes via transaction (inline)', async () => {
+        const api = gridManager.createGrid(null, createFlatGridOptions({ grandTotalRow: 'bottom' }));
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        const originalNodeId = api.getRowNode(GRAND_TOTAL_ID)?.id;
+        api.applyServerSideTransaction({ update: [{ id: GRAND_TOTAL_ID, value: 999 }] });
+        await asyncSetTimeout(10);
+
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.id).toBe(originalNodeId);
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(999);
+        await new GridRows(api, 'after inline transaction update').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:999
+        `);
     });
 
     // --- grandTotalData field tests ---
@@ -858,6 +1412,144 @@ describe('SSRM grand total row', () => {
             ├── LEAF id:1 id:"2" value:20
             ├── LEAF id:2 id:"3" value:30
             └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
+    });
+
+    test('async grand total via transaction: add after initial success', async () => {
+        const api: GridApi<RowData> = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'bottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    setTimeout(() => {
+                        params.success({ rowData: flatRows, rowCount: flatRows.length });
+                        if (params.needsGrandTotal) {
+                            api.applyServerSideTransaction({ remove: [{ id: GRAND_TOTAL_ID } as any] });
+                            setTimeout(() => {
+                                api.applyServerSideTransaction({
+                                    add: [{ id: GRAND_TOTAL_ID, value: 60 } as any],
+                                });
+                            }, 5);
+                        }
+                    }, 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(20);
+
+        const gridRows = new GridRows(api, 'after async grand total applied');
+        await gridRows.check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
+    });
+
+    test('async grand total via transaction: transaction remove sets needsGrandTotal=false for subsequent blocks', async () => {
+        // Locks in the semantic contract: transaction `remove` of GRAND_TOTAL_ROW_ID sets
+        // store.grandTotalData = null (explicit "no grand total"), so paged block requests in
+        // the same store report needsGrandTotal=false. Only a store reset (filter/agg change)
+        // flips it back to true.
+        const manyRows: RowData[] = Array.from({ length: 200 }, (_, i) => ({ id: String(i), value: i }));
+        const expectedTotal = manyRows.reduce((s, r) => s + r.value, 0);
+        const getRowsCalls: { startRow?: number; needsGrandTotal: boolean }[] = [];
+
+        const api: GridApi<RowData> = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'bottom',
+            cacheBlockSize: 20,
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    const { startRow = 0, endRow = manyRows.length } = params.request;
+                    getRowsCalls.push({ startRow, needsGrandTotal: params.needsGrandTotal });
+                    const page = manyRows.slice(startRow, endRow);
+                    setTimeout(() => {
+                        params.success({ rowData: page, rowCount: manyRows.length });
+                        if (params.needsGrandTotal) {
+                            api.applyServerSideTransaction({ remove: [{ id: GRAND_TOTAL_ID } as any] });
+                            setTimeout(() => {
+                                api.applyServerSideTransaction({
+                                    add: [{ id: GRAND_TOTAL_ID, value: expectedTotal } as any],
+                                });
+                            }, 5);
+                        }
+                    }, 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(20);
+
+        expect(getRowsCalls[0].needsGrandTotal).toBe(true);
+        for (let i = 1; i < getRowsCalls.length; i++) {
+            expect(getRowsCalls[i].needsGrandTotal).toBe(false);
+        }
+        expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(expectedTotal);
+    });
+
+    test('async grand total via transaction: filter change hides then restores grand total', async () => {
+        const computeTotal = (threshold?: number) =>
+            flatRows.filter((r) => threshold === undefined || r.value > threshold).reduce((s, r) => s + r.value, 0);
+
+        const api: GridApi<RowData> = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value', filter: 'agNumberColumnFilter' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'bottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    const filter = params.request.filterModel as { value?: { filter?: number } } | null;
+                    const threshold = filter?.value?.filter;
+                    const filtered = threshold != null ? flatRows.filter((r) => r.value > threshold) : flatRows;
+                    setTimeout(() => {
+                        params.success({ rowData: filtered, rowCount: filtered.length });
+                        if (params.needsGrandTotal) {
+                            api.applyServerSideTransaction({ remove: [{ id: GRAND_TOTAL_ID } as any] });
+                            setTimeout(() => {
+                                api.applyServerSideTransaction({
+                                    add: [{ id: GRAND_TOTAL_ID, value: computeTotal(threshold) } as any],
+                                });
+                            }, 5);
+                        }
+                    }, 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(20);
+
+        const gridRows1 = new GridRows(api, 'initial');
+        await gridRows1.check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
+
+        api.setFilterModel({ value: { type: 'greaterThan', filter: 15 } });
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(20);
+
+        const gridRows2 = new GridRows(api, 'after filter');
+        await gridRows2.check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:50
         `);
     });
 });

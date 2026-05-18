@@ -65,6 +65,7 @@ import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '
 import type { SideBarDef } from '../interfaces/iSideBar';
 import type { IStatusPanel } from '../interfaces/iStatusPanel';
 import type { IToolPanel } from '../interfaces/iToolPanel';
+import type { IToolbarItem } from '../interfaces/iToolbar';
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import type { GetNoteParams, Note, RefreshNotesParams, SetNoteParams } from '../interfaces/notes';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
@@ -1434,6 +1435,15 @@ export interface _SideBarGridApi<TData> {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface _ToolbarGridApi<TData = any> {
+    /**
+     * Gets the toolbar item instance for the given `key`. Only toolbar items configured with a `key` can be accessed.
+     * @agModule `ToolbarModule`
+     */
+    getToolbarItemInstance<T = IToolbarItem<TData>>(key: string): T | undefined;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _StatusBarGridApi<TData = any> {
     /**
      * Gets the status panel instance corresponding to the supplied `id`.
@@ -1743,6 +1753,31 @@ export interface _ColumnChooserGridApi {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface _FormulaGridApi<TData = any> {
+    /**
+     * Invalidate the grid's formula cache so the next render re-queries
+     * `formulaDataSource.getFormula` and re-evaluates affected formulas.
+     *
+     * Call this when the formula store has been mutated outside the grid (e.g. synced from
+     * a backend). In-grid edits and Client-Side Row Model updates invalidate automatically.
+     *
+     * - No argument: invalidates every cached formula.
+     * - `RowNode`: invalidates that row and its pinned / group-footer siblings.
+     * - `string` (row id): resolved against the main row model, pinned-top and pinned-bottom.
+     *   Every match is invalidated — so if a statically-pinned row shares an id with a body
+     *   row, both are refreshed. An unknown id is a silent no-op.
+     *
+     * @returns `true` when a refresh was actually performed — i.e. the full cache was cleared
+     * (no-arg call) or at least one cache entry was dropped for any resolved row or its
+     * siblings. Returns `false` for no-op cases: formulas inactive, an unknown row id,
+     * or a row whose entire sibling chain had no cached formulas.
+     *
+     * @agModule `FormulaModule`
+     */
+    refreshFormulas(rowNode?: IRowNode<TData> | string): boolean;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _MasterDetailGridApi {
     /**
      * Register a detail grid with the master grid when it is created.
@@ -1966,7 +2001,8 @@ export interface _AiToolkitGridApi {
 }
 
 export interface GridApi<TData = any>
-    extends _CoreGridApi<TData>,
+    extends
+        _CoreGridApi<TData>,
         _StateGridApi,
         _RowSelectionGridApi<TData>,
         _RowGridApi<TData>,
@@ -2001,6 +2037,7 @@ export interface GridApi<TData = any>
         _SsrmInfiniteSharedGridApi,
         _ClientSideRowModelGridApi<TData>,
         _SideBarGridApi<TData>,
+        _ToolbarGridApi<TData>,
         _StatusBarGridApi<TData>,
         _InfiniteRowModelGridApi,
         _CsvExportGridApi,
@@ -2012,6 +2049,7 @@ export interface GridApi<TData = any>
         _ContextMenuGridApi,
         _ColumnChooserGridApi,
         _MasterDetailGridApi,
+        _FormulaGridApi<TData>,
         _ExcelExportGridApi,
         _PdfExportGridApi,
         _ClipboardGridApi,

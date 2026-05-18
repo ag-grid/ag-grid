@@ -338,6 +338,11 @@ export const AG_GRID_LOCALE_SE = {
     sortAbsoluteDescending: 'Sortera Absolut Fallande',
     sortUnSort: 'Rensa Sortering',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Sök',
+    toolbarFindPreviousMatch: 'Föregående träff',
+    toolbarFindNextMatch: 'Nästa träff',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Meny',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Summa',
@@ -690,12 +695,16 @@ export const AG_GRID_LOCALE_SE = {
     ariaColumnCellSelection: 'Tryck på Enter för att växla markeringen av alla synliga celler i den här kolumnen',
     ariaColumnGroupCellSelection:
         'Tryck på Enter för att växla markeringen av alla synliga celler i den här kolumngruppen',
+    ariaColumnGroupExpansion: 'Tryck ENTER för att expandera eller kollapsa denna kolumngrupp',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Tryck på Enter för att växla markeringen av alla synliga celler i den här kolumngruppen. Tryck ALT ENTER för att expandera eller kollapsa denna kolumngrupp',
     ariaRowSelectAll: 'Tryck SPACE för att växla markering av alla rader',
     ariaRowToggleSelection: 'Tryck SPACE för att växla radmarkering',
     ariaRowSelect: 'Tryck SPACE för att markera denna rad',
     ariaRowSelectionDisabled: 'Radmarkering är inaktiverad för denna rad',
     ariaSearch: 'Sök',
     ariaSortableColumn: 'Tryck ENTER för att sortera',
+    ariaSortableColumnWithCellSelection: 'Tryck ALT ENTER för att sortera',
     ariaToggleVisibility: 'Tryck SPACE för att växla synlighet',
     ariaToggleCellValue: 'Tryck SPACE för att växla cellvärde',
     ariaUnchecked: 'omarkerad',
@@ -814,8 +823,4 @@ export const AG_GRID_LOCALE_SE = {
     editNote: 'Redigera anteckning',
     deleteNote: 'Ta bort anteckning',
     notePlaceholder: 'Lägg till en anteckning...',
-    noteHint:
-        'Hovra för förhandsvisning. Klicka inuti för att redigera. Dra i hörnet för att ändra storlek. Tryck Esc för att stänga.',
-    noteReadOnlyHint:
-        'Skrivskyddad anteckning. Markera text för att kopiera. Dra i hörnet för att ändra storlek. Tryck Esc för att stänga.',
 };

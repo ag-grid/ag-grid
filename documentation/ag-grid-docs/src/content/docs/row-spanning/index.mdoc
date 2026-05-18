@@ -10,6 +10,8 @@ A single cell can be used to represent multiple contiguous leaf rows with equal 
 
 The example above demonstrates merging cells with equal values into a single cell that spans multiple rows.
 
+Row spanning requires the `CellSpanModule` to be registered. The `enableCellSpan` grid option is an initial property and cannot be changed after the grid is created.
+
 The following snippet demonstrates enabling row spanning by setting `gridOptions.enableCellSpan` to true.
 The country, year, and sport columns then configure row span by setting `colDef.spanRows` to `true`.
 
@@ -36,7 +38,7 @@ const gridOptions = {
 
 ## Custom Row Spanning
 
-Row spanning can be customised by providing a callback function to `colDef.spanRows` which returns true if the two rows should be spanned together.
+Row spanning can be customised by providing a callback function to `colDef.spanRows`. The callback returns `true` if the two adjacent rows should be spanned together.
 
 The example below demonstrates custom row spanning which prevents any country cells with the value `"Algeria"` from being spanned.
 {% gridExampleRunner title="Row Spanning Custom" name="row-spanning-custom" /%}

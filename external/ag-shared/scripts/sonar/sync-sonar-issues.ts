@@ -176,7 +176,7 @@ function createIssueSignature(issue: Issue, projectKey: string): string {
 async function fetchAllIssues(projectKey: string, statuses: string[]): Promise<Issue[]> {
     const allIssues: Issue[] = [];
     let page = 1;
-    let total = 0;
+    let total: number;
 
     do {
         const statusParam = statuses.join(',');

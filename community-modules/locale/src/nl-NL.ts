@@ -336,6 +336,11 @@ export const AG_GRID_LOCALE_NL = {
     sortAbsoluteDescending: 'Sorteren absoluut aflopend',
     sortUnSort: 'Sortering wissen',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Zoeken',
+    toolbarFindPreviousMatch: 'Vorige resultaat',
+    toolbarFindNextMatch: 'Volgende resultaat',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Som',
@@ -689,12 +694,16 @@ export const AG_GRID_LOCALE_NL = {
     ariaColumnCellSelection: 'Druk op Enter om de selectie van alle zichtbare cellen in deze kolom te wisselen',
     ariaColumnGroupCellSelection:
         'Druk op Enter om de selectie van alle zichtbare cellen in deze kolomgroep te wisselen',
+    ariaColumnGroupExpansion: 'Druk op ENTER om deze kolomgroep uit te vouwen of samen te vouwen',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Druk op Enter om de selectie van alle zichtbare cellen in deze kolomgroep te wisselen. Druk op ALT ENTER om deze kolomgroep uit te vouwen of samen te vouwen',
     ariaRowSelectAll: 'Druk op SPATIE om alle rijen te selecteren/deselecteren',
     ariaRowToggleSelection: 'Druk op SPATIE om rijselectie te schakelen',
     ariaRowSelect: 'Druk op SPATIE om deze rij te selecteren',
     ariaRowSelectionDisabled: 'Rijselectie is uitgeschakeld voor deze rij',
     ariaSearch: 'Zoeken',
     ariaSortableColumn: 'Druk op ENTER om te sorteren',
+    ariaSortableColumnWithCellSelection: 'Druk op ALT ENTER om te sorteren',
     ariaToggleVisibility: 'Druk op SPATIE om zichtbaarheid te schakelen',
     ariaToggleCellValue: 'Druk op SPATIE om celwaarde te schakelen',
     ariaUnchecked: 'niet geselecteerd',
@@ -813,8 +822,4 @@ export const AG_GRID_LOCALE_NL = {
     editNote: 'Notitie bewerken',
     deleteNote: 'Notitie verwijderen',
     notePlaceholder: 'Een notitie toevoegen...',
-    noteHint:
-        'Beweeg erover om een voorbeeld te zien. Klik binnenin om te bewerken. Sleep de hoek om het formaat aan te passen. Druk op Esc om te sluiten.',
-    noteReadOnlyHint:
-        'Alleen-lezen-notitie. Selecteer tekst om te kopiëren. Sleep de hoek om het formaat aan te passen. Druk op Esc om te sluiten.',
 };

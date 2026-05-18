@@ -47,11 +47,11 @@ export function _getWindow(beans: UtilBeanCollection) {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getPageBody(beans: UtilBeanCollection): HTMLElement | ShadowRoot {
     let rootNode: Document | ShadowRoot | HTMLElement | null = null;
-    let targetEl: HTMLElement | ShadowRoot | null = null;
+    let targetEl: HTMLElement | ShadowRoot | null;
 
     try {
         rootNode = _getDocument(beans).fullscreenElement as HTMLElement;
-    } catch (e) {
+    } catch {
         // some environments like SalesForce will throw errors
         // simply by trying to read the fullscreenElement property
     } finally {

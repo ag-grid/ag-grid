@@ -11,6 +11,7 @@ import { NotesService } from './notesService';
 /**
  * @feature Notes
  * @gridOption notesDataSource
+ * @gridOption noteTrigger
  * @gridOption noteShowDelay
  * @gridOption noteHideDelay
  */

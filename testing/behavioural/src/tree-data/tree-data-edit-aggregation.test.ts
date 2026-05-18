@@ -191,9 +191,9 @@ describe('ag-grid tree data edit aggregation', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── ag-Grid-AutoColumn "Group" width:200 flex:1
-            ├── model "Model" width:200 flex:1 editable
-            └── total "Total" width:200 flex:1 aggFunc:sumFunctionWithQty editable
+            ├── ag-Grid-AutoColumn "Group" width:333 flex:1
+            ├── model "Model" width:334 flex:1 editable
+            └── total "Total" width:333 flex:1 aggFunc:sumFunctionWithQty editable
         `);
     });
 });

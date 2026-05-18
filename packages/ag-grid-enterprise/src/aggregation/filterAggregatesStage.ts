@@ -26,7 +26,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
         const { rowModel, colModel, groupStage } = this.beans;
         const { filterManager } = this;
 
-        const isPivotMode = colModel.isPivotMode();
+        const isPivotMode = colModel.pivotMode;
         const isAggFilterActive =
             filterManager?.isAggregateFilterPresent() || filterManager?.isAggregateQuickFilterPresent();
         const isTreeData = !!groupStage?.treeData;

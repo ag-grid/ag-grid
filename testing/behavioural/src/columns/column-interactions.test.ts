@@ -258,9 +258,9 @@ describe('Column Interactions', () => {
 
             // Verify header cells are in correct containers
             const gridDiv = getGridElement(api)! as HTMLElement;
-            const leftHeader = gridDiv.querySelector('.ag-pinned-left-header [col-id="a"]');
-            const centerHeader = gridDiv.querySelector('.ag-header-viewport [col-id="b"]');
-            const rightHeader = gridDiv.querySelector('.ag-pinned-right-header [col-id="c"]');
+            const leftHeader = gridDiv.querySelector('.ag-grid-pinned-left-cells [col-id="a"]');
+            const centerHeader = gridDiv.querySelector('.ag-grid-scrolling-cells [col-id="b"]');
+            const rightHeader = gridDiv.querySelector('.ag-grid-pinned-right-cells [col-id="c"]');
 
             expect(leftHeader).not.toBeNull();
             expect(centerHeader).not.toBeNull();

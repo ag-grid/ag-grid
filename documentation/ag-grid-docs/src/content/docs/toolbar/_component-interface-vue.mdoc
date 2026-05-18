@@ -1,0 +1,20 @@
+{% if isFramework("vue") %}
+Any valid Vue component can be a toolbar item component, however it is also possible to implement the following optional methods:
+{% /if %}
+
+{% if isFramework("vue") %}
+
+```ts
+interface IToolbarItem {
+    // Called when the `toolbar` grid option updates.
+    // Return `true` if the component updates itself with the new params.
+    // Return `false` (or omit) to have the grid destroy and recreate the component.
+    refresh(params: IToolbarItemParams): boolean;
+}
+```
+
+{% /if %}
+
+{% if isFramework("vue") %}
+When a custom toolbar item component is instantiated then the following will be made available on `this.params`:
+{% /if %}

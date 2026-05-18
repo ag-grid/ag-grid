@@ -38,6 +38,7 @@ export class PivotModePanel extends Component {
     }
 
     public postConstruct(): void {
+        const { columnStateUpdateStrategy, ctrlsSvc } = this.beans;
         this.setTemplate(PivotModePanelElement, [AgToggleButtonSelector]);
 
         const cbPivotMode = this.cbPivotMode;
@@ -48,12 +49,15 @@ export class PivotModePanel extends Component {
 
         const onBtPivotMode = () => {
             const newValue = !!cbPivotMode.getValue();
-            this.beans.columnStateUpdateStrategy.setPivotMode(isDeferredMode(this.params), newValue, 'toolPanelUi');
+
+            columnStateUpdateStrategy.setPivotMode(isDeferredMode(this.params), newValue, 'toolPanelUi');
+
             this.onPivotModeValueChanged?.();
         };
 
         const onPivotModeChanged = () => {
             cbPivotMode.setValue(this.getCurrentPivotMode());
+            ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
         };
 
         this.addManagedListeners(cbPivotMode, { fieldValueChanged: onBtPivotMode });

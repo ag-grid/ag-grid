@@ -1,10 +1,11 @@
-import { _areEqual, _last } from '../../agStack/utils/array';
+import { _areEqual } from '../../agStack/utils/array';
 import { _missing } from '../../agStack/utils/generic';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import { _getRowHeightAsNumber } from '../../gridOptionsUtils';
+import { applyHorizontalPosition, getResolvedHorizontalOffset } from '../features/horizontalPositionUtils';
 import type { CellSpan } from '../spanning/rowSpanCache';
 import type { CellCtrl } from './cellCtrl';
 
@@ -17,9 +18,6 @@ import type { CellCtrl } from './cellCtrl';
 export class CellPositionFeature extends BeanStub {
     private readonly column: AgColumn;
     private readonly rowNode: RowNode;
-
-    private eSetLeft: HTMLElement;
-    private eContent: HTMLElement;
 
     private colsSpanning: AgColumn[];
     private rowSpan: number;
@@ -34,6 +32,23 @@ export class CellPositionFeature extends BeanStub {
 
         this.column = cellCtrl.column;
         this.rowNode = cellCtrl.rowNode;
+
+        // Listener setup runs in the constructor (before the cell component attaches) so that
+        // getColSpanningList() is available as soon as the CellCtrl exists. This is required in
+        // React, where setComp() is called asynchronously, but navigation normalisation may query
+        // the position feature synchronously before the first render completes.
+        const cellSpan = cellCtrl.getCellSpan();
+        if (cellSpan) {
+            const refreshSpanHeight = this.refreshSpanHeight.bind(this, cellSpan);
+            this.addManagedListeners(this.beans.eventSvc, {
+                paginationChanged: refreshSpanHeight,
+                recalculateRowBounds: refreshSpanHeight,
+                pinnedHeightChanged: refreshSpanHeight,
+            });
+        } else {
+            this.setupColSpan();
+            this.setupRowSpan();
+        }
     }
 
     private setupRowSpan(): void {
@@ -42,40 +57,23 @@ export class CellPositionFeature extends BeanStub {
         this.addManagedListeners(this.beans.eventSvc, { newColumnsLoaded: () => this.onNewColumnsLoaded() });
     }
 
+    // Called each time the cell component attaches (initial mount and any remount).
     public init(): void {
-        this.eSetLeft = this.cellCtrl.getRootElement();
-        this.eContent = this.cellCtrl.eGui;
-
-        const cellSpan = this.cellCtrl.getCellSpan();
-
-        // add event handlers only after GUI is attached,
-        // so we don't get events before we are ready
-        if (!cellSpan) {
-            this.setupColSpan();
-            this.setupRowSpan();
-        }
-
         this.onLeftChanged();
         this.onWidthChanged();
-        if (!cellSpan) {
-            this._legacyApplyRowSpan();
-        }
-
+        const cellSpan = this.cellCtrl.getCellSpan();
         if (cellSpan) {
-            const refreshSpanHeight = this.refreshSpanHeight.bind(this, cellSpan);
-            refreshSpanHeight();
-            this.addManagedListeners(this.beans.eventSvc, {
-                paginationChanged: refreshSpanHeight,
-                recalculateRowBounds: refreshSpanHeight,
-                pinnedHeightChanged: refreshSpanHeight,
-            });
+            this.refreshSpanHeight(cellSpan);
+        } else {
+            this._legacyApplyRowSpan();
         }
     }
 
     private refreshSpanHeight(cellSpan: CellSpan) {
         const spanHeight = cellSpan.getCellHeight();
-        if (spanHeight != null) {
-            this.eContent.style.height = `${spanHeight}px`;
+        const eContent = this.cellCtrl.eGui;
+        if (spanHeight != null && eContent) {
+            eContent.style.height = `${spanHeight}px`;
         }
     }
 
@@ -101,7 +99,7 @@ export class CellPositionFeature extends BeanStub {
 
     private setupColSpan(): void {
         // if no col span is active, then we don't set it up, as it would be wasteful of CPU
-        if (this.column.getColDef().colSpan == null) {
+        if (this.column.colDef.colSpan == null) {
             return;
         }
 
@@ -119,11 +117,11 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onWidthChanged(): void {
-        if (!this.eContent) {
+        const eContent = this.cellCtrl.eGui;
+        if (!eContent) {
             return;
         }
-        const width = this.getCellWidth();
-        this.eContent.style.width = `${width}px`;
+        eContent.style.width = `${this.getCellWidth()}px`;
     }
 
     private getCellWidth(): number {
@@ -162,40 +160,42 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onLeftChanged(): void {
-        if (!this.eSetLeft) {
+        const eSetLeft = this.cellCtrl.getRootElement();
+        if (!eSetLeft) {
             return;
         }
-        const left = this.modifyLeftForPrintLayout(this.getCellLeft());
-        this.eSetLeft.style.left = left + 'px';
+        const { gos, visibleCols } = this.beans;
+        const left = getResolvedHorizontalOffset({
+            left: this.getCellLeft(),
+            pinned: this.column.getPinned(),
+            width: this.getCellWidth(),
+            isPrintLayout: this.cellCtrl.printLayout,
+            isRtl: gos.get('enableRtl'),
+            visibleCols,
+        });
+        if (left == null) {
+            return;
+        }
+
+        this.setHorizontalPosition(eSetLeft, left);
     }
 
     private getCellLeft(): number | null {
-        let mostLeftCol: AgColumn;
-
-        if (this.beans.gos.get('enableRtl') && this.colsSpanning) {
-            mostLeftCol = _last(this.colsSpanning);
-        } else {
-            mostLeftCol = this.column;
-        }
-
-        return mostLeftCol.getLeft();
+        // column.getLeft() is "distance from start edge" — in both LTR and RTL,
+        // this.column is the start-edge column of any col-spanning range.
+        return this.column.getLeft();
     }
 
-    private modifyLeftForPrintLayout(leftPosition: number | null): number | null {
-        if (!this.cellCtrl.printLayout || this.column.getPinned() === 'left') {
-            return leftPosition;
-        }
-
-        const { visibleCols } = this.beans;
-        const leftWidth = visibleCols.getColsLeftWidth();
-
-        if (this.column.getPinned() === 'right') {
-            const bodyWidth = visibleCols.bodyWidth;
-            return leftWidth + bodyWidth + (leftPosition || 0);
-        }
-
-        // is in body
-        return leftWidth + (leftPosition || 0);
+    private setHorizontalPosition(eSetLeft: HTMLElement, left: number): void {
+        const { gos, visibleCols } = this.beans;
+        applyHorizontalPosition(eSetLeft, {
+            offset: left,
+            pinned: this.column.getPinned(),
+            width: this.getCellWidth(),
+            isPrintLayout: this.cellCtrl.printLayout,
+            isRtl: gos.get('enableRtl'),
+            visibleCols,
+        });
     }
 
     private _legacyApplyRowSpan(force?: boolean): void {
@@ -203,11 +203,17 @@ export class CellPositionFeature extends BeanStub {
             return;
         }
 
+        const eContent = this.cellCtrl.eGui;
+        if (!eContent) {
+            return;
+        }
+
         const singleRowHeight = _getRowHeightAsNumber(this.beans);
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
-        this.eContent.style.height = `${totalRowHeight}px`;
-        this.eContent.style.zIndex = '1';
+        eContent.style.height = `${totalRowHeight}px`;
+        // row-spanned cell content must sit above normal cells in the same row.
+        eContent.style.zIndex = '1';
     }
 
     // overriding to make public, as we don't dispose this bean via context

@@ -28,10 +28,8 @@ export type AgComponentSelectorType =
     | 'AG-FILTERS-TOOL-PANEL-LIST'
     | 'AG-GRID-BODY'
     | 'AG-GRID-HEADER-DROP-ZONES'
-    | 'AG-HEADER-ROOT'
     | 'AG-NAME-VALUE'
     | 'AG-OVERLAY-WRAPPER'
-    | 'AG-PAGE-SIZE-SELECTOR'
     | 'AG-PAGINATION'
     | 'AG-PRIMARY-COLS-HEADER'
     | 'AG-PRIMARY-COLS-LIST'
@@ -40,6 +38,7 @@ export type AgComponentSelectorType =
     | 'AG-SIDE-BAR-BUTTONS'
     | 'AG-SORT-INDICATOR'
     | 'AG-STATUS-BAR'
+    | 'AG-TOOLBAR'
     | 'AG-WATERMARK'
     | 'AG-FORMULA-INPUT-FIELD';
 

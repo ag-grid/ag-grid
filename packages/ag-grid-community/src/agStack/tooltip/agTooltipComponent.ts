@@ -9,15 +9,15 @@ import type { BaseTooltipParams } from './baseTooltipStateManager';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgTooltipComponent<
-        TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-        TProperties extends BaseProperties,
-        TGlobalEvents extends BaseEvents,
-        TCommon,
-        TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-        TComponentSelectorType extends string,
-        TTooltipParams extends BaseTooltipParams<TLocation>,
-        TLocation extends string,
-    >
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+    TComponentSelectorType extends string,
+    TTooltipParams extends BaseTooltipParams<TLocation>,
+    TLocation extends string,
+>
     extends AgPopupComponent<
         TBeanCollection,
         TProperties,

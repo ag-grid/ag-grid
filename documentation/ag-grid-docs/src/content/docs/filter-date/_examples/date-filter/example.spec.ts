@@ -12,13 +12,12 @@ test.agExample(import.meta, () => {
         const filterInput = agIdFor.dateFilterInstanceInput({ source: 'column-filter' });
         await expect(filterInput).toBeVisible();
 
-        // Built-in dateTime formatter outputs "YYYY-MM-DDTHH:mm:ss" (local time, T separator already present)
         await filterInput.fill(cellText);
         await filterInput.dispatchEvent('input');
 
         await cell.click();
 
-        await expect(page.locator('.ag-center-cols-container .ag-row[row-id]')).toHaveCount(1);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(1);
     });
 
     test.eachFramework('startDate column filter opens and applies with equals', async ({ page, agIdFor }) => {
@@ -37,7 +36,7 @@ test.agExample(import.meta, () => {
 
         await cell.click();
 
-        await expect(page.locator('.ag-center-cols-container .ag-row[row-id]')).toHaveCount(1);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(1);
     });
 
     test.eachFramework('endDate column filter opens and applies with equals', async ({ page, agIdFor }) => {
@@ -56,7 +55,7 @@ test.agExample(import.meta, () => {
 
         await cell.click();
 
-        await expect(page.locator('.ag-center-cols-container .ag-row[row-id]')).toHaveCount(1);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(1);
     });
 
     test.eachFramework('endDateTime column filter opens and applies with equals', async ({ page, agIdFor }) => {
@@ -70,14 +69,12 @@ test.agExample(import.meta, () => {
         const filterInput = agIdFor.dateFilterInstanceInput({ source: 'column-filter' });
         await expect(filterInput).toBeVisible();
 
-        // valueFormatter outputs "YYYY-MM-DD HH:mm:ss"; convert to datetime-local format "YYYY-MM-DDTHH:mm:ss"
-        const datetimeValue = cellText.replace(' ', 'T');
-        await filterInput.fill(datetimeValue);
+        await filterInput.fill(cellText);
         await filterInput.dispatchEvent('input');
 
         const otherCell = agIdFor.cell('0', 'startDate');
         await otherCell.click();
 
-        await expect(page.locator('.ag-center-cols-container .ag-row[row-id]')).toHaveCount(1);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(1);
     });
 });

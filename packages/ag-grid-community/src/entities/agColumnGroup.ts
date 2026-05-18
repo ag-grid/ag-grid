@@ -1,4 +1,3 @@
-import { _last } from '../agStack/utils/array';
 import { _escapeString } from '../agStack/utils/string';
 import { BeanStub } from '../context/beanStub';
 import type {
@@ -90,16 +89,20 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
             }
         }
 
-        // set our left based on first displayed column
+        // set our left to the minimum child left so ordering changes in displayedChildren
+        // do not affect group positioning after column moves.
         if (this.displayedChildren!.length > 0) {
-            if (this.gos.get('enableRtl')) {
-                const lastChild = _last(this.displayedChildren!);
-                const lastChildLeft = lastChild.getLeft();
-                this.setLeft(lastChildLeft);
-            } else {
-                const firstChildLeft = this.displayedChildren![0].getLeft();
-                this.setLeft(firstChildLeft);
+            let minLeft: number | null = null;
+            for (const child of this.displayedChildren!) {
+                const childLeft = child.getLeft();
+                if (childLeft == null) {
+                    continue;
+                }
+                if (minLeft == null || childLeft < minLeft) {
+                    minLeft = childLeft;
+                }
             }
+            this.setLeft(minLeft);
         } else {
             // this should never happen, as if we have no displayed columns, then
             // this groups should not even exist.
@@ -262,7 +265,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     }
 
     public getPaddingLevel(): number {
-        const parent = this.getParent();
+        const parent = this.parent;
 
         if (!this.isPadding() || !parent?.isPadding()) {
             return 0;
@@ -279,7 +282,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         // groups, where the expandable is actually the first parent that is not a padding group.
         let parentWithExpansion: AgColumnGroup | null = this;
         while (parentWithExpansion?.isPadding()) {
-            parentWithExpansion = parentWithExpansion.getParent();
+            parentWithExpansion = parentWithExpansion.parent;
         }
 
         const isExpandable = parentWithExpansion ? parentWithExpansion.getProvidedColumnGroup().isExpandable() : false;

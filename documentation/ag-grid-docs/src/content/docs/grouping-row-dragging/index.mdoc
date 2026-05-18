@@ -20,13 +20,13 @@ In this example, users can drag athletes and groups of athletes between countrie
 
 When using managed row dragging with grouping the following configuration is required:
 
--   `getRowId` is required to uniquely identify rows.
--   `rowDragManaged=true` is needed to enable managed dragging.
--   `refreshAfterGroupEdit=true` is required so the grid re-evaluates the groups immediately after a drag changes the grouped column values.
--   `rowDrag=true` needs to be set in a column or in the auto group column definitions or the `rowDragEntireRow=true` in the grid options.
--   `suppressMoveWhenRowDragging=true` to avoid the performance penalty of rebuilding the whole hierarchy while dragging and to avoid the grid reordering rows mid-drag, which otherwise causes large visual jumps when parent branches move.
--   `BatchEditModule` is recommended, together with `TextEditorModule` (or your preferred editor modules) and to handle edit and batch edit events.
--   Managed drag works only with [Client-Side Row Model](./row-models/#client-side).
+- `getRowId` is required to uniquely identify rows.
+- `rowDragManaged=true` is needed to enable managed dragging.
+- `refreshAfterGroupEdit=true` is required so the grid re-evaluates the groups immediately after a drag changes the grouped column values.
+- `rowDrag=true` needs to be set in a column or in the auto group column definitions or the `rowDragEntireRow=true` in the grid options.
+- `suppressMoveWhenRowDragging=true` to avoid the performance penalty of rebuilding the whole hierarchy while dragging and to avoid the grid reordering rows mid-drag, which otherwise causes large visual jumps when parent branches move.
+- `BatchEditModule` is recommended, together with `TextEditorModule` (or your preferred editor modules) and to handle edit and batch edit events.
+- Managed drag works only with [Client-Side Row Model](./row-models/#client-side).
 
 See [Editing Groups](./grouping-edit/) for more on editing grouped data and `refreshAfterGroupEdit`.
 
@@ -43,9 +43,9 @@ This keeps all row models and grid features available because the grid simply em
 
 The example below shows unmanaged row dragging with [Row Grouping](./grouping/) where the following can be noted:
 
--   The **Athlete** column enables a drag handle only for leaf rows via the callback version of `rowDrag`.
--   Because the grid does not manage reordering, dragging remains available even while sorting or filtering is applied.
--   The example listens to `onRowDragMove` to change the `country` for the dragged row in real time, and uses `api.applyTransaction({ update: [...] })` to commit the change.
--   The application can decide whether to update rows during the drag or after `rowDragEnd`, and can allow changes regardless of sort and filter state.
+- The **Athlete** column enables a drag handle only for leaf rows via the callback version of `rowDrag`.
+- Because the grid does not manage reordering, dragging remains available even while sorting or filtering is applied.
+- The example listens to `onRowDragMove` to change the `country` for the dragged row in real time, and uses `api.applyTransaction({ update: [...] })` to commit the change.
+- The application can decide whether to update rows during the drag or after `rowDragEnd`, and can allow changes regardless of sort and filter state.
 
 {% gridExampleRunner title="Unmanaged Row Drag with Grouping" name="unmanaged-row-group-drag" exampleHeight=640 /%}

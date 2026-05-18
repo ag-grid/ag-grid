@@ -339,6 +339,11 @@ export const AG_GRID_LOCALE_PL = {
     sortAbsoluteDescending: 'Sortuj bezwzględnie malejąco',
     sortUnSort: 'Usuń Sortowanie',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Znajdź',
+    toolbarFindPreviousMatch: 'Poprzednie Dopasowanie',
+    toolbarFindNextMatch: 'Następne Dopasowanie',
+    toolbarQuickFilter: 'Filtruj',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Suma',
@@ -692,12 +697,16 @@ export const AG_GRID_LOCALE_PL = {
     ariaColumnCellSelection: 'Naciśnij Enter, aby przełączyć zaznaczenie wszystkich widocznych komórek w tej kolumnie',
     ariaColumnGroupCellSelection:
         'Naciśnij Enter, aby przełączyć zaznaczenie wszystkich widocznych komórek w tej grupie kolumn',
+    ariaColumnGroupExpansion: 'Naciśnij ENTER, aby rozwinąć lub zwinąć tę grupę kolumn',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Naciśnij Enter, aby przełączyć zaznaczenie wszystkich widocznych komórek w tej grupie kolumn. Naciśnij ALT ENTER, aby rozwinąć lub zwinąć tę grupę kolumn',
     ariaRowSelectAll: 'Naciśnij SPACJĘ, aby przełączyć zaznaczenie wszystkich wierszy',
     ariaRowToggleSelection: 'Naciśnij SPACJĘ, aby przełączyć zaznaczenie wiersza',
     ariaRowSelect: 'Naciśnij SPACJĘ, aby zaznaczyć ten wiersz',
     ariaRowSelectionDisabled: 'Zaznaczenie wiersza jest wyłączone dla tego wiersza',
     ariaSearch: 'Szukaj',
     ariaSortableColumn: 'Naciśnij ENTER, aby sortować',
+    ariaSortableColumnWithCellSelection: 'Naciśnij ALT ENTER, aby sortować',
     ariaToggleVisibility: 'Naciśnij SPACJĘ, aby przełączyć widoczność',
     ariaToggleCellValue: 'Naciśnij SPACJĘ, aby przełączyć wartość komórki',
     ariaUnchecked: 'niezaznaczone',
@@ -816,8 +825,4 @@ export const AG_GRID_LOCALE_PL = {
     editNote: 'Edytuj notatkę',
     deleteNote: 'Usuń notatkę',
     notePlaceholder: 'Dodaj notatkę...',
-    noteHint:
-        'Najedź, aby wyświetlić podgląd. Kliknij wewnątrz, aby edytować. Przeciągnij róg, aby zmienić rozmiar. Naciśnij Esc, aby zamknąć.',
-    noteReadOnlyHint:
-        'Notatka tylko do odczytu. Zaznacz tekst, aby go skopiować. Przeciągnij róg, aby zmienić rozmiar. Naciśnij Esc, aby zamknąć.',
 };

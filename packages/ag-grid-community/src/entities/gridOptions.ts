@@ -188,6 +188,7 @@ import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
 import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusBar } from '../interfaces/iStatusPanel';
+import type { Toolbar } from '../interfaces/iToolbar';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { FullWidthNotesDataSource, NotesDataSource } from '../interfaces/notes';
@@ -211,6 +212,11 @@ export interface GridOptions<TData = any> {
     // ******************************************************************************************************
 
     // *** Accessories *** //
+    /**
+     * Specifies the toolbar items to use in the toolbar.
+     * @agModule `ToolbarModule`
+     */
+    toolbar?: Toolbar;
     /**
      * Specifies the status bar components to use in the status bar.
      * @agModule `StatusBarModule`
@@ -1099,7 +1105,6 @@ export interface GridOptions<TData = any> {
      * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
      * Set to `false` to hide the page size selector.
      * @default true
-     * @initial
      * @agModule `PaginationModule`
      */
     paginationPageSizeSelector?: number[] | boolean;
@@ -1124,6 +1129,15 @@ export interface GridOptions<TData = any> {
      * @agModule `PaginationModule`
      */
     suppressPaginationPanel?: boolean;
+    /**
+     * Controls which built-in components appear in the pagination panel and in what order.
+     * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+     * Components render in the order they appear in the array. Omitted components are hidden.
+     * An empty array hides the pagination panel entirely.
+     * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+     * @agModule `PaginationModule`
+     */
+    paginationPanels?: PaginationPanel[];
 
     // *** Pivot and Aggregation *** //
     /**
@@ -1204,7 +1218,16 @@ export interface GridOptions<TData = any> {
      */
     notesDataSource?: NotesDataSource | FullWidthNotesDataSource;
     /**
+     * Changes how existing notes are opened.
+     *  - `'hover'` - Existing notes open when hovering a noted cell or full width row.
+     *  - `'click'` - Existing notes open when clicking a noted cell or full width row.
+     * @default 'hover'
+     * @agModule `NotesModule`
+     */
+    noteTrigger?: 'hover' | 'click';
+    /**
      * The delay in milliseconds before a note is shown when hovering a noted cell.
+     * Only applies when `noteTrigger = 'hover'`.
      * @default 180
      * @agModule `NotesModule`
      */
@@ -1437,8 +1460,18 @@ export interface GridOptions<TData = any> {
      */
     autoGroupColumnDef?: AutoGroupColumnDef<TData>;
     /**
-     * When `true`, preserves the current group order when sorting on non-group columns.
-     * If a user explicitly resets the current group sort direction, then the current group column order is not preserved.
+     * When `true`, sorting on non-group columns does not reorder groups; only the rows within
+     * each group are sorted. Group order remains the structural order set at grouping time
+     * (data-insertion order, or `initialGroupOrderComparator` if configured) and is preserved
+     * across filter changes and transactions. If a group column was sorted via `colDef.sort`
+     * and the user later explicitly clears that sort, the structural order is restored.
+     *
+     * With multi-level row grouping, the order is maintained per level: a sort on a group
+     * column at one level only re-orders that level's groups; sibling levels keep their
+     * structural order.
+     *
+     * Applies to row grouping only. Has no effect on tree data, where row order is determined
+     * by the tree structure.
      * @default false
      * @agModule `RowGroupingModule`
      */
@@ -2037,6 +2070,8 @@ export interface GridOptions<TData = any> {
 
     /**
      * When enabled, sorts only the rows added/updated by a transaction.
+     *
+     * Ignored when `postSortRows` is configured (falls back to full sort).
      * @default false
      */
     deltaSort?: boolean;
@@ -2394,6 +2429,8 @@ export interface GridOptions<TData = any> {
     // *** Sorting *** //
     /**
      * Callback to perform additional sorting after the grid has sorted the rows.
+     *
+     * When configured, `deltaSort` is ignored.
      */
     postSortRows?: PostSortRows<TData>;
 
@@ -3190,16 +3227,22 @@ interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
 /**
  * Determines selection behaviour when only a single row can be selected at a time
  */
-export interface SingleRowSelectionOptions<TData = any, TValue = any, TContext = any>
-    extends CommonRowSelectionOptions<TData, TValue, TContext> {
+export interface SingleRowSelectionOptions<TData = any, TValue = any, TContext = any> extends CommonRowSelectionOptions<
+    TData,
+    TValue,
+    TContext
+> {
     mode: 'singleRow';
 }
 
 /**
  * Determines selection behaviour when multiple rows can be selected at once.
  */
-export interface MultiRowSelectionOptions<TData = any, TValue = any, TContext = any>
-    extends CommonRowSelectionOptions<TData, TValue, TContext> {
+export interface MultiRowSelectionOptions<TData = any, TValue = any, TContext = any> extends CommonRowSelectionOptions<
+    TData,
+    TValue,
+    TContext
+> {
     mode: 'multiRow';
     /**
      * Determine group selection behaviour
@@ -3318,6 +3361,8 @@ export type AgPublicEventHandlerType = `on${Capitalize<AgPublicEventType>}` & ke
 
 export type ProcessPivotResultColDef<TData = any, TValue = any> = (colDef: ColDef<TData, TValue>) => void;
 export type ProcessPivotResultColGroupDef<TData = any> = (colDef: ColGroupDef<TData>) => void;
+
+export type PaginationPanel = 'pageSize' | 'rowSummary' | 'pageSummary';
 
 export type PivotColumnGroupTotals = 'before' | 'after';
 export type PivotRowTotals = 'before' | 'after';

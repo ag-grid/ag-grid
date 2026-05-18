@@ -120,7 +120,7 @@ export function getRowStyles(rowType: PdfRowType, styles: PdfStyleColors, bodyRo
     if (rowType === 'BODY') {
         return {
             background:
-                bodyRowIndex % 2 === 1 ? styles.oddRowBackground ?? styles.dataBackground : styles.dataBackground,
+                bodyRowIndex % 2 === 1 ? (styles.oddRowBackground ?? styles.dataBackground) : styles.dataBackground,
             border: styles.border,
             text: styles.foreground,
         };

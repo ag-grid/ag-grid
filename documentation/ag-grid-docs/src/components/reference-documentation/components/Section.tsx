@@ -1,5 +1,5 @@
 import type { Framework } from '@ag-grid-types';
-import Code from '@ag-website-shared/components/code/Code';
+import CodeShiki from '@ag-website-shared/components/code/CodeShiki';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import styles from '@ag-website-shared/components/reference-documentation/ApiReference.module.scss';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
@@ -104,7 +104,7 @@ const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs = {
     }
 
     const escapedLines = escapeGenericCode(lines);
-    return <Code code={escapedLines} keepMarkup={true} />;
+    return <CodeShiki code={escapedLines} keepMarkup={true} />;
 };
 
 const SectionHeader = ({

@@ -11,11 +11,8 @@ export function getColumnDef<TValue = any, TData = any>(
     beans: BeanCollection,
     key: string | Column<TValue>
 ): ColDef<TData, TValue> | null {
-    const column = beans.colModel.getColDefCol(key);
-    if (column) {
-        return column.getColDef();
-    }
-    return null;
+    const column = beans.colModel.getColDefColOrCol(key);
+    return column ? column.colDef : null;
 }
 
 export function getColumnDefs<TData = any>(beans: BeanCollection): (ColDef<TData> | ColGroupDef<TData>)[] | undefined {
@@ -30,7 +27,7 @@ export function getColumn<TValue = any, TData = any>(
     beans: BeanCollection,
     key: ColKey<TData, TValue>
 ): Column<TValue> | null {
-    return beans.colModel.getColDefCol(key);
+    return beans.colModel.getColDefColOrCol(key);
 }
 
 export function getColumns(beans: BeanCollection): Column[] | null {

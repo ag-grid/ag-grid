@@ -256,12 +256,22 @@ export class NavigationService extends BeanStub implements NamedBean {
             scrollType = 'top';
         }
 
+        // focusIndex is always a body-row index (derived from rowModel/pageBounds above),
+        // so the normalisation target is in the body row model regardless of gridCell.rowPinned.
+        const targetPosition: CellPosition = {
+            rowIndex: focusIndex,
+            column: gridCell.column as AgColumn,
+            rowPinned: null,
+        };
+        const normalisedPosition = this.getNormalisedPosition(targetPosition);
+        const { rowIndex: normFocusIndex, column: normFocusColumn } = normalisedPosition ?? targetPosition;
+
         this.navigateTo({
             scrollIndex,
             scrollType,
             scrollColumn: null,
-            focusIndex,
-            focusColumn: gridCell.column as AgColumn,
+            focusIndex: normFocusIndex,
+            focusColumn: normFocusColumn as AgColumn,
         });
     }
 
@@ -327,7 +337,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const scrollbarWidth = this.beans.scrollVisibleSvc.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
-        if (beans.ctrlsSvc.get('center').isHorizontalScrollShowing()) {
+        if (beans.scrollVisibleSvc.isHorizontalScrollShowing()) {
             pixelsInOnePage -= scrollbarWidth;
         }
 
@@ -480,13 +490,13 @@ export class NavigationService extends BeanStub implements NamedBean {
     ): boolean | null {
         const { editSvc, focusSvc } = this.beans;
 
-        let res: boolean | null | undefined = undefined;
+        let res: boolean | null | undefined;
         const cellCtrl = previous instanceof CellCtrl ? previous : previous.getAllCellCtrls()?.[0];
 
         if (editSvc?.isEditing()) {
             res = editSvc?.moveToNextCell(cellCtrl, backwards, event, source);
         } else {
-            res = this.moveToNextCellNotEditing(previous, backwards, event);
+            res = this.moveToNextCellNotEditing(previous, backwards);
         }
 
         if (res === null) {
@@ -498,11 +508,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     // returns null if no navigation should be performed
-    private moveToNextCellNotEditing(
-        previousCell: CellCtrl | RowCtrl,
-        backwards: boolean,
-        event?: KeyboardEvent
-    ): boolean | null {
+    private moveToNextCellNotEditing(previousCell: CellCtrl | RowCtrl, backwards: boolean): boolean | null {
         const displayedColumns = this.beans.visibleCols.allCols;
         let cellPos: CellPosition;
 
@@ -512,11 +518,8 @@ export class NavigationService extends BeanStub implements NamedBean {
                 column: backwards ? displayedColumns[0] : _last(displayedColumns),
             };
 
-            if (this.gos.get('embedFullWidthRows') && event) {
-                const focusedContainer = previousCell.findFullWidthInfoForEvent(event);
-                if (focusedContainer) {
-                    cellPos.column = focusedContainer.column;
-                }
+            if (this.gos.get('embedFullWidthRows')) {
+                cellPos.column = previousCell.getNavigationColumn();
             }
         } else {
             cellPos = previousCell.getFocusedCellPosition();
@@ -706,7 +709,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             hitEdgeOfGrid = _missing(nextCell);
         }
 
-        if (hitEdgeOfGrid && event && event.key === KeyCode.UP) {
+        if (hitEdgeOfGrid && event?.key === KeyCode.UP) {
             nextCell = {
                 rowIndex: -1,
                 rowPinned: null,

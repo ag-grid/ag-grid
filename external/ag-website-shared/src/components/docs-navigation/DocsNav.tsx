@@ -4,7 +4,7 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { getExamplePageUrl } from '@components/docs/utils/urlPaths';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 
 import styles from './DocsNav.module.scss';
 
@@ -104,19 +104,70 @@ function Group({
     setOpenGroup?: any;
 }) {
     const isOpen = openGroup === groupData;
+    const groupRef = useRef<HTMLDivElement>(null);
+    const scrollTargetRef = useRef<number | null>(null);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const timer = setTimeout(() => {
+            const groupEl = groupRef.current;
+            if (!groupEl) return;
+
+            const scrollContainer = document.getElementById('docs-nav-scroll');
+            if (!scrollContainer) return;
+
+            const containerRect = scrollContainer.getBoundingClientRect();
+            const groupRect = groupEl.getBoundingClientRect();
+
+            if (groupRect.top >= containerRect.top && groupRect.bottom <= containerRect.bottom) {
+                scrollTargetRef.current = null;
+                return;
+            }
+
+            const targetScrollTop =
+                scrollTargetRef.current ?? Math.max(0, groupRect.top - containerRect.top + scrollContainer.scrollTop);
+
+            scrollContainer.scrollTo({ top: Math.max(0, targetScrollTop), behavior: 'smooth' });
+            scrollTargetRef.current = null;
+        }, 400);
+
+        return () => clearTimeout(timer);
+    }, [isOpen]);
+
+    const handleClick = () => {
+        if (!isOpen) {
+            const scrollContainer = document.getElementById('docs-nav-scroll');
+            const groupEl = groupRef.current;
+
+            if (scrollContainer && groupEl) {
+                const containerRect = scrollContainer.getBoundingClientRect();
+                const groupRect = groupEl.getBoundingClientRect();
+                const bAbsoluteTop = groupRect.top - containerRect.top + scrollContainer.scrollTop;
+
+                let collapsingHeight = 0;
+                if (openGroup) {
+                    const prevCollapsibleEl = document.getElementById(openGroup.title);
+                    if (prevCollapsibleEl) {
+                        const isAbove = !!(
+                            prevCollapsibleEl.compareDocumentPosition(groupEl) & Node.DOCUMENT_POSITION_FOLLOWING
+                        );
+                        if (isAbove) {
+                            collapsingHeight = prevCollapsibleEl.getBoundingClientRect().height;
+                        }
+                    }
+                }
+
+                scrollTargetRef.current = bAbsoluteTop - collapsingHeight;
+            }
+        }
+
+        setOpenGroup(isOpen ? undefined : groupData);
+    };
 
     return (
-        <div className={classnames(styles.group, isOpen ? styles.isOpen : '')}>
-            <button
-                className={classnames('button-style-none', styles.groupTitle)}
-                onClick={() => {
-                    if (isOpen) {
-                        setOpenGroup(undefined);
-                    } else {
-                        setOpenGroup(groupData);
-                    }
-                }}
-            >
+        <div ref={groupRef} className={classnames(styles.group, isOpen ? styles.isOpen : '')}>
+            <button className={classnames('button-style-none', styles.groupTitle)} onClick={handleClick}>
                 <Icon name="chevronRight" svgClasses={styles.groupChevron} />
 
                 <span>{groupData.title}</span>

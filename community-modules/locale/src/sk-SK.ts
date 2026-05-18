@@ -336,6 +336,11 @@ export const AG_GRID_LOCALE_SK = {
     sortAbsoluteDescending: 'Zoradiť absolútne zostupne',
     sortUnSort: 'Zrušiť zoradenie',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Nájsť',
+    toolbarFindPreviousMatch: 'Predchádzajúca zhoda',
+    toolbarFindNextMatch: 'Nasledujúca zhoda',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Súčet',
@@ -688,12 +693,16 @@ export const AG_GRID_LOCALE_SK = {
     ariaColumnCellSelection: 'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tomto stĺpci',
     ariaColumnGroupCellSelection:
         'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tejto skupine stĺpcov',
+    ariaColumnGroupExpansion: 'Stlačte ENTER na rozbalenie alebo zbalenie tejto skupiny stĺpcov',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Stlačte Enter na prepnutie výberu všetkých viditeľných buniek v tejto skupine stĺpcov. Stlačte ALT ENTER na rozbalenie alebo zbalenie tejto skupiny stĺpcov',
     ariaRowSelectAll: 'Stlačte SPACE na prepínanie výberu všetkých riadkov',
     ariaRowToggleSelection: 'Stlačte SPACE na prepínanie výberu riadku',
     ariaRowSelect: 'Stlačte SPACE na výber tohto riadku',
     ariaRowSelectionDisabled: 'Výber riadku je pre tento riadok zakázaný',
     ariaSearch: 'Hľadať',
     ariaSortableColumn: 'Stlačte ENTER na zoradenie',
+    ariaSortableColumnWithCellSelection: 'Stlačte ALT ENTER na zoradenie',
     ariaToggleVisibility: 'Stlačte SPACE na prepínanie viditeľnosti',
     ariaToggleCellValue: 'Stlačte SPACE na prepínanie hodnoty bunky',
     ariaUnchecked: 'neoznačené',
@@ -812,8 +821,4 @@ export const AG_GRID_LOCALE_SK = {
     editNote: 'Upraviť poznámku',
     deleteNote: 'Odstrániť poznámku',
     notePlaceholder: 'Pridať poznámku...',
-    noteHint:
-        'Pre náhľad prejdite kurzorom. Kliknite dovnútra pre úpravu. Potiahnutím rohu zmeňte veľkosť. Stlačte Esc pre zatvorenie.',
-    noteReadOnlyHint:
-        'Poznámka iba na čítanie. Označte text na kopírovanie. Potiahnutím rohu zmeňte veľkosť. Stlačte Esc pre zatvorenie.',
 };

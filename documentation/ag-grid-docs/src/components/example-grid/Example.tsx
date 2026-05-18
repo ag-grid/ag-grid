@@ -12,6 +12,7 @@ import type {
     GridReadyEvent,
     SideBarDef,
     Theme,
+    Toolbar as ToolbarConfig,
 } from 'ag-grid-community';
 import { AllCommunityModule, themeAlpine, themeBalham, themeMaterial, themeQuartz } from 'ag-grid-community';
 import {
@@ -35,6 +36,7 @@ import {
     SideBarModule,
     SparklinesModule,
     StatusBarModule,
+    ToolbarModule,
 } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -85,6 +87,7 @@ const modules = [
     PdfExportModule,
     PivotModule,
     RowNumbersModule,
+    ToolbarModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
     SparklinesModule.with(AgChartsEnterpriseModule),
 ];
@@ -118,7 +121,6 @@ const staticGridOptions: GridOptions = {
         return 0;
     },
     enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
-    pivotPanelShow: 'always',
 
     enableCharts: true,
     undoRedoCellEditing: true,
@@ -213,6 +215,22 @@ const ExampleInner = ({
         }),
         [isSmall]
     );
+    const toolbar = useMemo<ToolbarConfig>(
+        () => ({
+            alignment: 'right',
+            items: [
+                ...(isSmall
+                    ? []
+                    : [
+                          { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'left' as const },
+                          { toolbarItem: 'separator', alignment: 'left' as const },
+                          { toolbarItem: 'agPivotPanelToolbarItem', alignment: 'left' as const },
+                      ]),
+                'agQuickFilterToolbarItem',
+            ],
+        }),
+        [isSmall]
+    );
 
     const onGridReady = useCallback((event: GridReadyEvent) => {
         if (!IS_SSR && document.documentElement.clientWidth <= 1024) {
@@ -223,6 +241,7 @@ const ExampleInner = ({
     const createData = (dataSize: string) => {
         loadInstance.current = loadInstance.current + 1;
         const loadInstanceCopy = loadInstance.current;
+        // eslint-disable-next-line react-hooks/purity -- Date.now() called at execution time, not during render
         const startTime = Date.now(); // Track when message display started
 
         const colCount = parseInt(dataSize?.split('x')[1] ?? '0', 10);
@@ -288,6 +307,7 @@ const ExampleInner = ({
         const defaultCols = isSmall ? smallDefaultCols : largeDefaultCols;
         const defaultColCount = isSmall ? smallColCount : largeColCount;
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing derived state from props
         setDefaultCols(defaultCols);
         setDefaultColCount(defaultColCount);
 
@@ -393,10 +413,12 @@ const ExampleInner = ({
     const createDataRef = useRef(createData);
     // Ensure we always use the latest createData function to avoid stale closures but without
     // triggering the createData function to be recreated on every render
+    // eslint-disable-next-line react-hooks/refs -- intentional ref update during render to avoid stale closure
     createDataRef.current = createData;
 
     useEffect(() => {
         if (dataSize) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional loading state before async data generation
             setIsLoading(true);
             setTimeout(() => {
                 createDataRef.current(dataSize);
@@ -430,9 +452,9 @@ const ExampleInner = ({
                                 loading={isLoading}
                                 defaultColDef={defaultColDef}
                                 sideBar={sideBar}
+                                toolbar={toolbar}
                                 columnTypes={columnTypes}
                                 dataTypeDefinitions={dataTypeDefinitions}
-                                rowGroupPanelShow={isSmall ? undefined : 'always'}
                                 defaultCsvExportParams={defaultExportParams as CsvExportParams}
                                 defaultExcelExportParams={defaultExportParams as ExcelExportParams}
                                 onGridReady={onGridReady}
@@ -448,10 +470,10 @@ const ExampleInner = ({
 const Example = () => {
     const [darkMode] = useDarkmode();
     const [gridThemeStr] = useState<string>(() =>
-        IS_SSR ? 'quartz' : new URLSearchParams(window.location.search).get('theme') ?? 'quartz'
+        IS_SSR ? 'quartz' : (new URLSearchParams(window.location.search).get('theme') ?? 'quartz')
     );
     const [dataSizeStr] = useState<string | undefined>(() =>
-        IS_SSR ? undefined : new URLSearchParams(window.location.search).get('dataSize') ?? undefined
+        IS_SSR ? undefined : (new URLSearchParams(window.location.search).get('dataSize') ?? undefined)
     );
     const [small] = useState(() =>
         IS_SSR ? false : document.documentElement.clientHeight <= 415 || document.documentElement.clientWidth < 768

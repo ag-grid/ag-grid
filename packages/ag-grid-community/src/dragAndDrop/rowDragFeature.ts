@@ -78,11 +78,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         beans.ctrlsSvc.whenReady(this, (p) => {
             const getScrollY = () => p.gridBodyCtrl.scrollFeature.getVScrollPosition().top;
             const autoScroll = new AutoScrollService({
-                scrollContainer: p.gridBodyCtrl.eBodyViewport,
+                scrollContainer: p.gridBodyCtrl.eGridViewport,
                 scrollAxis: 'y',
                 getVerticalPosition: getScrollY,
                 setVerticalPosition: (position: number) =>
                     p.gridBodyCtrl.scrollFeature.setVerticalScrollPosition(position),
+                getTopOffset: () => p.gridBodyCtrl.getTopPinnedRowsOffset(),
                 onScrollCallback: () => {
                     const newVScroll = getScrollY();
                     if (this.autoScrollOldV !== newVScroll) {
@@ -208,7 +209,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return null;
         }
 
-        let { sameGrid, rootNode, source, target } = rowsDrop;
+        const { sameGrid, rootNode, source } = rowsDrop;
+        let { target } = rowsDrop;
 
         target ??= rowModel.getRow(rowModel.getRowCount() - 1) ?? null;
 
@@ -508,7 +510,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const withRowsDrop = rowsDrop?.rootNode === beans.rowModel.rootNode;
         const y = withRowsDrop ? rowsDrop.y : _getNormalisedMousePosition(beans, draggingEvent).y;
         const overNode = withRowsDrop ? rowsDrop.overNode : this.getOverNode(y);
-        const overIndex = withRowsDrop ? rowsDrop.overIndex : overNode?.rowIndex ?? -1;
+        const overIndex = withRowsDrop ? rowsDrop.overIndex : (overNode?.rowIndex ?? -1);
         return {
             api: beans.gridApi,
             context: beans.gridOptions.context,
@@ -701,14 +703,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
 const rowsDropChanged = (a: RowsDrop | null | undefined, b: RowsDrop): boolean =>
     a !== b &&
-    (!a ||
-        a.sameGrid !== b.sameGrid ||
-        a.allowed !== b.allowed ||
-        a.position !== b.position ||
-        a.target !== b.target ||
-        a.source !== b.source ||
-        a.newParent !== b.newParent ||
-        !_areEqual(a.rows, b.rows));
+    (a?.sameGrid !== b.sameGrid ||
+        a?.allowed !== b.allowed ||
+        a?.position !== b.position ||
+        a?.target !== b.target ||
+        a?.source !== b.source ||
+        a?.newParent !== b.newParent ||
+        !_areEqual(a?.rows, b.rows));
 
 const compareRowIndex = ({ rowIndex: a }: IRowNode, { rowIndex: b }: IRowNode): number =>
     a !== null && b !== null ? a - b : 0;

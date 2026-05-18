@@ -31,9 +31,9 @@ export function getHeaderIndexToFocus(beans: BeanCollection, column: AgColumn, l
     }
 
     // if level is less, then find the group with the given level
-    let parent = column.getParent();
+    let parent = column.parent;
     while (parent && parent.getProvidedColumnGroup().getLevel() > level) {
-        parent = parent.getParent();
+        parent = parent.parent;
     }
 
     const isColSpanning = column.isSpanHeaderHeight();
@@ -94,8 +94,8 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             return null;
         }
 
-        const centerHeaderContainer = ctrlsSvc.getHeaderRowContainerCtrl();
-        const allCtrls = centerHeaderContainer?.getAllCtrls();
+        const headerRowContainerCtrl = ctrlsSvc.getHeaderRowContainerCtrl();
+        const allCtrls = headerRowContainerCtrl?.getAllCtrls();
         const isFloatingFilterVisible = _last(allCtrls || []).type === 'filter';
         const headerRowCount = getFocusHeaderRowCount(this.beans) - 1;
 
@@ -104,7 +104,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
         while (col) {
             row++;
-            col = col.getParent();
+            col = col.parent;
         }
 
         let headerRowIndex = row;
@@ -243,7 +243,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         const beans = this.beans;
         const currentIndex = focusedHeader.headerRowIndex;
 
-        let nextFocusedCol: AgColumn | null = null;
+        let nextFocusedCol: AgColumn | null;
         let nextRowIndex: number;
 
         const headerRowCount = getFocusHeaderRowCount(beans);
@@ -346,9 +346,9 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     }
 
     private getHeaderRowType(rowIndex: number): HeaderRowType | undefined {
-        const centerHeaderContainer = this.beans.ctrlsSvc.getHeaderRowContainerCtrl();
-        if (centerHeaderContainer) {
-            return centerHeaderContainer.getRowType(rowIndex);
+        const headerRowContainerCtrl = this.beans.ctrlsSvc.getHeaderRowContainerCtrl();
+        if (headerRowContainerCtrl) {
+            return headerRowContainerCtrl.getRowType(rowIndex);
         }
     }
 }
@@ -361,14 +361,14 @@ function getColumnVisibleParent(
     const optimisticNextIndex = currentIndex - 1;
     if (currentRowType !== 'filter') {
         const isSpanningCol = currentColumn instanceof AgColumn && currentColumn.isSpanHeaderHeight();
-        let nextVisibleParent = currentColumn.getParent();
+        let nextVisibleParent = currentColumn.parent;
         while (
             nextVisibleParent &&
             // skip if row isn't visible or col is padding and spanned
             (nextVisibleParent.getProvidedColumnGroup().getLevel() > optimisticNextIndex ||
                 (isSpanningCol && nextVisibleParent.isPadding()))
         ) {
-            nextVisibleParent = nextVisibleParent.getParent();
+            nextVisibleParent = nextVisibleParent.parent;
         }
 
         if (nextVisibleParent) {

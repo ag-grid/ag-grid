@@ -335,6 +335,11 @@ export const AG_GRID_LOCALE_EG = {
     sortAbsoluteDescending: 'ترتيب تنازلي مطلق',
     sortUnSort: 'إلغاء الترتيب',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'بحث',
+    toolbarFindPreviousMatch: 'التطابق السابق',
+    toolbarFindNextMatch: 'التطابق التالي',
+    toolbarQuickFilter: 'تصفية',
+    toolbarMenu: 'قائمة',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'المجموع',
@@ -686,12 +691,16 @@ export const AG_GRID_LOCALE_EG = {
     ariaSelectAllRowCells: 'اضغط على Enter لتحديد كل الخلايا في هذا الصف',
     ariaColumnCellSelection: 'اضغط على Enter لتبديل تحديد جميع الخلايا المرئية في هذا العمود',
     ariaColumnGroupCellSelection: 'اضغط على Enter لتبديل تحديد جميع الخلايا المرئية في مجموعة الأعمدة هذه',
+    ariaColumnGroupExpansion: 'اضغط على ENTER لتوسيع أو طي مجموعة الأعمدة هذه',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'اضغط على Enter لتبديل تحديد جميع الخلايا المرئية في مجموعة الأعمدة هذه. اضغط على ALT ENTER لتوسيع أو طي مجموعة الأعمدة هذه',
     ariaRowSelectAll: 'اضغط Space لتبديل تحديد كل الصفوف',
     ariaRowToggleSelection: 'اضغط Space لتبديل تحديد الصف',
     ariaRowSelect: 'اضغط SPACE لتحديد هذا الصف',
     ariaRowSelectionDisabled: 'تحديد الصف معطل لهذا الصف',
     ariaSearch: 'بحث',
     ariaSortableColumn: 'اضغط ENTER لفرز',
+    ariaSortableColumnWithCellSelection: 'اضغط ALT ENTER لفرز',
     ariaToggleVisibility: 'اضغط SPACE لتبديل الرؤية',
     ariaToggleCellValue: 'اضغط SPACE لتبديل قيمة الخلية',
     ariaUnchecked: 'غير محدد',
@@ -810,6 +819,4 @@ export const AG_GRID_LOCALE_EG = {
     editNote: 'تحرير الملاحظة',
     deleteNote: 'إزالة الملاحظة',
     notePlaceholder: 'أضف ملاحظة...',
-    noteHint: 'مرر المؤشر للمعاينة. انقر بالداخل للتحرير. اسحب الزاوية لتغيير الحجم. اضغط Esc للإغلاق.',
-    noteReadOnlyHint: 'ملاحظة للقراءة فقط. حدد النص لنسخه. اسحب الزاوية لتغيير الحجم. اضغط Esc للإغلاق.',
 };

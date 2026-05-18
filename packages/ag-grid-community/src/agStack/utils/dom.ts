@@ -277,7 +277,7 @@ export function _loadTemplate(template: string | undefined | null): HTMLElement 
 
 export function _ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null): void {
     // if already in right order, do nothing
-    if (eChildBefore && eChildBefore.nextSibling === eChild) {
+    if (eChildBefore?.nextSibling === eChild) {
         return;
     }
 
@@ -474,6 +474,7 @@ type RoleType =
     | 'tab'
     | 'tablist'
     | 'tabpanel'
+    | 'toolbar'
     | 'treeitem';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

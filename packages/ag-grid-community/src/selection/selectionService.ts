@@ -733,12 +733,19 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     public refreshMasterNodeState(node: RowNode, e?: Event): void {
-        if (!this.masterSelectsDetail) {
+        if (!this.masterSelectsDetail || !node.expanded) {
             return;
         }
 
         const detailApi = node.detailNode?.detailGridInfo?.api;
         if (!detailApi) {
+            return;
+        }
+
+        // detail grid teardown during collapse can emit selection transitions while rows are
+        // being removed. Preserve tracked detail selection in this transient state.
+        const displayedRowCount = detailApi.getDisplayedRowCount();
+        if (displayedRowCount === 0 && node.isSelected() === undefined) {
             return;
         }
 
@@ -752,7 +759,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
         }
 
-        if (!isSelectAll) {
+        if (!isSelectAll && displayedRowCount > 0) {
             this.detailSelection.set(node.id!, new Set(detailApi.getSelectedNodes().map((n) => n.id!)));
         }
     }
@@ -767,6 +774,28 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return;
         }
 
+        const selectedIds = this.detailSelection.get(masterNode.id!);
+        const restoreTrackedState = () => {
+            if (!selectedIds?.size) {
+                return false;
+            }
+
+            const nodes: IRowNode[] = [];
+            for (const id of selectedIds) {
+                const node = detailApi.getRowNode(id);
+                if (node) {
+                    nodes.push(node);
+                }
+            }
+
+            if (!nodes.length) {
+                return false;
+            }
+
+            detailApi.setNodesSelected({ nodes, newValue: true, source: 'masterDetail' });
+            return true;
+        };
+
         switch (masterNode.isSelected()) {
             case true: {
                 detailApi.selectAll();
@@ -777,18 +806,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 break;
             }
             case undefined: {
-                const selectedIds = this.detailSelection.get(masterNode.id!);
-                if (selectedIds) {
-                    const nodes: IRowNode[] = [];
-                    for (const id of selectedIds) {
-                        const n = detailApi.getRowNode(id);
-                        if (n) {
-                            nodes.push(n);
-                        }
-                    }
-
-                    detailApi.setNodesSelected({ nodes, newValue: true, source: 'masterDetail' });
-                }
+                restoreTrackedState();
                 break;
             }
 

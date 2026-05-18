@@ -335,6 +335,11 @@ export const AG_GRID_LOCALE_JP = {
     sortAbsoluteDescending: '絶対降順に並べ替え',
     sortUnSort: 'ソート解除',
     shiftF2: 'Shift+F2',
+    toolbarFind: '検索',
+    toolbarFindPreviousMatch: '前の一致',
+    toolbarFindNextMatch: '次の一致',
+    toolbarQuickFilter: 'フィルター',
+    toolbarMenu: 'メニュー',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '合計',
@@ -687,12 +692,16 @@ export const AG_GRID_LOCALE_JP = {
     ariaSelectAllRowCells: 'この行のすべてのセルを選択するにはEnterキーを押してください',
     ariaColumnCellSelection: 'この列のすべての表示セルの選択を切り替えるにはEnterキーを押してください',
     ariaColumnGroupCellSelection: 'この列グループのすべての表示セルの選択を切り替えるにはEnterキーを押してください',
+    ariaColumnGroupExpansion: 'この列グループを展開または折りたたむにはENTERキーを押してください',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'この列グループのすべての表示セルの選択を切り替えるにはEnterキーを押してください. この列グループを展開または折りたたむにはALT ENTERキーを押してください',
     ariaRowSelectAll: 'すべての行の選択を切り替えるにはSPACEを押してください',
     ariaRowToggleSelection: '行の選択を切り替えるにはSPACEを押してください',
     ariaRowSelect: 'この行を選択するにはSPACEを押してください',
     ariaRowSelectionDisabled: 'この行の選択は無効です',
     ariaSearch: '検索',
     ariaSortableColumn: '並べ替えるにはENTERを押してください',
+    ariaSortableColumnWithCellSelection: '並べ替えるにはALT ENTERを押してください',
     ariaToggleVisibility: '表示を切り替えるにはSPACEを押してください',
     ariaToggleCellValue: 'セルの値を切り替えるにはSPACEを押してください',
     ariaUnchecked: '未チェック',
@@ -811,8 +820,4 @@ export const AG_GRID_LOCALE_JP = {
     editNote: 'メモを編集',
     deleteNote: 'メモを削除',
     notePlaceholder: 'メモを追加...',
-    noteHint:
-        'プレビューするにはホバーします。編集するには内側をクリックします。サイズを変更するには角をドラッグします。閉じるにはEscを押します。',
-    noteReadOnlyHint:
-        '読み取り専用のメモです。コピーするにはテキストを選択してください。サイズを変更するには角をドラッグします。閉じるにはEscを押します。',
 };

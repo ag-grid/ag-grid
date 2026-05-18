@@ -42,7 +42,7 @@ ModuleRegistry.registerModules([
 // Parse input to integer
 const amountValueParser = (params: ValueParserParams): number | null => {
     const numericValue = Number(params.newValue);
-    return Number.isFinite(numericValue) ? Math.round(numericValue) : params.oldValue ?? null;
+    return Number.isFinite(numericValue) ? Math.round(numericValue) : (params.oldValue ?? null);
 };
 
 /**

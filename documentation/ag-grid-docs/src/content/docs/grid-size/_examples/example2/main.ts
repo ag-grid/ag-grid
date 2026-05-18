@@ -67,7 +67,7 @@ function onGridSizeChanged(params: GridSizeChangedEvent) {
 
 const updateRowHeight = (params: { api: GridApi }) => {
     // get the height of the grid body - this excludes the height of the headers
-    const bodyViewport = document.querySelector('.ag-body-viewport');
+    const bodyViewport = document.querySelector('.ag-grid-scrolling-rows');
     if (!bodyViewport) {
         return;
     }

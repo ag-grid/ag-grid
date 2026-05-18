@@ -16,6 +16,7 @@
     --ag-range-selection-background-color-3: #{color.change(#2196f3, $alpha: 0.49)};
     --ag-range-selection-background-color-4: #{color.change(#2196f3, $alpha: 0.59)};
     --ag-row-numbers-selected-color: color-mix(in srgb, transparent, var(--ag-alpine-active-color) 50%);
+    --ag-icon-button-hover-color: var(--ag-alpine-active-color);
 
     // main colours (overridden by alpine-dark)
     --ag-background-color: #fff;
@@ -92,8 +93,9 @@
     --ag-toggle-button-width: 28px;
 
     // FONTS
-    --ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
-        'Helvetica Neue', sans-serif;
+    --ag-font-family:
+        -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue',
+        sans-serif;
     --ag-font-size: 13px;
     --ag-icon-font-family: agGridAlpine;
 
@@ -106,6 +108,7 @@
     --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
     --ag-popup-shadow: var(--ag-card-shadow);
     --ag-side-bar-panel-width: 250px;
+    --ag-note-indicator-color: var(--ag-alpine-active-color);
 }
 
 @mixin -dark-vars {
@@ -121,7 +124,8 @@
     --ag-subheader-background-color: #000;
     --ag-input-disabled-background-color: #282c2f;
     --ag-input-focus-box-shadow: 0 0 2px 0.5px rgba(255, 255, 255, 0.5), 0 0 4px 3px var(--ag-input-focus-border-color);
-    --ag-input-error-focus-box-shadow: 0 0 2px 0.5px rgba(255, 255, 255, 0.5),
+    --ag-input-error-focus-box-shadow:
+        0 0 2px 0.5px rgba(255, 255, 255, 0.5),
         0 0 4px 3px color-mix(in srgb, var(--ag-background-color), var(--ag-invalid-color) 0.5%);
     --ag-card-shadow: 0 1px 20px 1px black;
 

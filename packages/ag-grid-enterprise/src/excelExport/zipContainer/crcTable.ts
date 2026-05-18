@@ -5,14 +5,10 @@ const getCrcFromCrc32TableAndByteArray = (content: Uint8Array): number => {
 
     let crc = 0 ^ -1;
 
-    let j = 0;
-    let k = 0;
-    let l = 0;
-
     for (let i = 0; i < content.length; i++) {
-        j = content[i];
-        k = (crc ^ j) & 0xff;
-        l = crcTable[k];
+        const j = content[i];
+        const k = (crc ^ j) & 0xff;
+        const l = crcTable[k];
         crc = (crc >>> 8) ^ l;
     }
 

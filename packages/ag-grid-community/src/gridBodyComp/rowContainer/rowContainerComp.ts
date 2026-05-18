@@ -1,5 +1,5 @@
 import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
-import { _ensureDomOrder } from '../../agStack/utils/dom';
+import { _ensureDomOrder, _setDisplayed } from '../../agStack/utils/dom';
 import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
@@ -12,42 +12,29 @@ import {
     _getRowContainerClass,
     _getRowContainerOptions,
     _getRowSpanContainerClass,
-    _getRowViewportClass,
 } from './rowContainerCtrl';
 
 function getElementParams(name: RowContainerName, options: RowContainerOptions, beans: BeanCollection): ElementParams {
     const isCellSpanning = !!beans.gos.get('enableCellSpan') && !!options.getSpannedRowCtrls;
-
-    const eContainerElement: ElementParams = {
+    return {
         tag: 'div',
         ref: 'eContainer',
         cls: _getRowContainerClass(name),
-        role: 'rowgroup',
+        role: 'presentation',
+        children: [
+            isCellSpanning
+                ? {
+                      tag: 'div',
+                      ref: 'eSpannedContainer',
+                      cls: `ag-spanning-container ${_getRowSpanContainerClass(name)}`,
+                      role: 'presentation',
+                  }
+                : null,
+        ],
     };
-
-    if (options.type === 'center' || isCellSpanning) {
-        const eSpannedContainerElement: ElementParams = {
-            tag: 'div',
-            ref: 'eSpannedContainer',
-            cls: `ag-spanning-container ${_getRowSpanContainerClass(name)}`,
-            role: 'presentation',
-        };
-
-        eContainerElement.role = 'presentation';
-
-        return {
-            tag: 'div',
-            ref: 'eViewport',
-            cls: `ag-viewport ${_getRowViewportClass(name)}`,
-            role: 'rowgroup',
-            children: [eContainerElement, isCellSpanning ? eSpannedContainerElement : null],
-        };
-    }
-    return eContainerElement;
 }
 
-class RowContainerComp extends Component {
-    private readonly eViewport: HTMLElement = RefPlaceholder;
+export class RowContainerComp extends Component {
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private readonly eSpannedContainer: HTMLElement = RefPlaceholder;
 
@@ -61,6 +48,7 @@ class RowContainerComp extends Component {
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
     private domOrder: boolean;
     private lastPlacedElement: HTMLElement | null;
+    private initialised = false;
 
     constructor(params?: { name: string }) {
         super();
@@ -70,32 +58,48 @@ class RowContainerComp extends Component {
 
     public postConstruct(): void {
         this.setTemplate(getElementParams(this.name, this.options, this.beans));
+        this.initialiseComp();
+    }
+
+    private initialiseComp(): void {
+        if (this.initialised || !this.isAlive()) {
+            return;
+        }
+
+        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+        let eGridViewport: HTMLElement | undefined = gridBodyCtrl?.eGridViewport;
+        if (!eGridViewport) {
+            const parentComponent = this.getParentComponent() as { eGridViewport?: HTMLElement };
+            eGridViewport = parentComponent?.eGridViewport;
+        }
+
+        const eContainer = this.eContainer;
+        const eSpannedContainer: HTMLElement | undefined = this.eSpannedContainer;
+        const eViewport = eGridViewport ?? eContainer;
 
         const compProxy: IRowContainerComp = {
-            setHorizontalScroll: (offset: number) => (this.eViewport.scrollLeft = offset),
-            setViewportHeight: (height) => (this.eViewport.style.height = height),
             setRowCtrls: ({ rowCtrls }) => this.setRowCtrls(rowCtrls),
             setSpannedRowCtrls: (rowCtrls: RowCtrl[]) => this.setRowCtrls(rowCtrls, true),
-            setDomOrder: (domOrder) => {
-                this.domOrder = domOrder;
-            },
+            setDomOrder: (domOrder) => (this.domOrder = domOrder),
             setContainerWidth: (width) => {
-                this.eContainer.style.width = width;
-                if (this.eSpannedContainer) {
-                    this.eSpannedContainer.style.width = width;
+                eContainer.style.width = width;
+                if (eSpannedContainer) {
+                    eSpannedContainer.style.width = width;
                 }
             },
             setOffsetTop: (offset) => {
                 const top = `translateY(${offset})`;
-                this.eContainer.style.transform = top;
-                if (this.eSpannedContainer) {
-                    this.eSpannedContainer.style.transform = top;
+                eContainer.style.transform = top;
+                if (eSpannedContainer) {
+                    eSpannedContainer.style.transform = top;
                 }
             },
+            setHidden: (hidden: boolean) => _setDisplayed(eContainer, !hidden, { skipAriaHidden: true }),
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
-        ctrl.setComp(compProxy, this.eContainer, this.eSpannedContainer, this.eViewport);
+        ctrl.setComp(compProxy, eContainer, eSpannedContainer, eViewport);
+        this.initialised = true;
     }
 
     public override destroy(): void {
@@ -110,6 +114,9 @@ class RowContainerComp extends Component {
         const { beans, options } = this;
 
         const container = spanContainer ? this.eSpannedContainer : this.eContainer;
+        if (!container) {
+            return;
+        }
         const oldRows = spanContainer ? { ...this.rowCompsWithSpan } : { ...this.rowCompsNoSpan };
         const newComps: { [id: RowCtrlInstanceId]: RowComp } = {};
 

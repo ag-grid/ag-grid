@@ -184,7 +184,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         const colorIndex =
             fromRef && this.formulaColorByRef.has(fromRef)
                 ? this.getColorIndexForRef(fromRef)
-                : fallback ?? this.formulaColorByRef.get(toRef) ?? this.getColorIndexForRef(toRef);
+                : (fallback ?? this.formulaColorByRef.get(toRef) ?? this.getColorIndexForRef(toRef));
 
         if (fromRef && fromRef !== toRef) {
             this.formulaColorByRef.delete(fromRef);
@@ -474,7 +474,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         const { useCachedCaret, useCachedValueOffset } = options;
         const contentElement = this.getContentElement();
         const caretOffset = useCachedCaret
-            ? this.selectionCaretOffset ?? getCaretOffset(beans, contentElement, value) ?? this.currentValue.length
+            ? (this.selectionCaretOffset ?? getCaretOffset(beans, contentElement, value) ?? this.currentValue.length)
             : getCaretOffset(beans, contentElement, value);
 
         if (caretOffset == null) {

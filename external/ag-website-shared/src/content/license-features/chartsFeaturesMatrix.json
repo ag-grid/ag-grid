@@ -298,6 +298,16 @@
                 "community": false,
                 "enterprise": true,
                 "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Org Chart",
+                    "icon": "chartsOrg",
+                    "link": "https://www.ag-grid.com/charts/r/org-chart/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
             }
         ]
     },
@@ -362,6 +372,22 @@
                 "label": {
                     "name": "Markers and Points of Interest",
                     "link": "https://www.ag-grid.com/charts/r/map-markers/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            }
+        ]
+    },
+    {
+        "group": {
+            "name": "Server-Side Rendering"
+        },
+        "items": [
+            {
+                "label": {
+                    "name": "Server-Side Rendering",
+                    "link": "https://www.ag-grid.com/charts/r/server-side-rendering/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -464,6 +490,15 @@
             },
             {
                 "label": {
+                    "name": "Colour Scale",
+                    "link": "https://www.ag-grid.com/charts/r/colour-scale/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
                     "name": "Error Bars",
                     "link": "https://www.ag-grid.com/charts/r/error-bars/"
                 },
@@ -552,8 +587,35 @@
             },
             {
                 "label": {
+                    "name": "Data Selection",
+                    "link": "https://www.ag-grid.com/charts/r/selection/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Flash On Update",
+                    "link": "https://www.ag-grid.com/charts/r/flash-on-update/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
                     "name": "Navigator",
                     "link": "https://www.ag-grid.com/charts/r/navigator/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Range Buttons",
+                    "link": "https://www.ag-grid.com/charts/r/range-controls/"
                 },
                 "community": false,
                 "enterprise": true,

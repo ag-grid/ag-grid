@@ -9,11 +9,17 @@ import type {
 } from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
 
-export interface INoRowsOverlay<TData = any, TContext = any>
-    extends IOverlay<TData, TContext, INoRowsOverlayParams<TData, TContext>> {}
+export interface INoRowsOverlay<TData = any, TContext = any> extends IOverlay<
+    TData,
+    TContext,
+    INoRowsOverlayParams<TData, TContext>
+> {}
 
-export interface INoRowsOverlayComp<TData = any, TContext = any>
-    extends IOverlayComp<TData, TContext, INoRowsOverlayParams<TData, TContext>> {}
+export interface INoRowsOverlayComp<TData = any, TContext = any> extends IOverlayComp<
+    TData,
+    TContext,
+    INoRowsOverlayParams<TData, TContext>
+> {}
 
 const NoRowsOverlayElement: ElementParams = { tag: 'span', cls: 'ag-overlay-no-rows-center' };
 

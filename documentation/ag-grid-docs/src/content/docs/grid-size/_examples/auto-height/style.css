@@ -31,10 +31,11 @@ html[data-color-scheme='dark'] body {
 .test-header #floating-rows {
     vertical-align: bottom;
 }
-.ag-floating-top .ag-row-pinned.ag-row {
+
+.ag-grid-pinned-top-rows-container .ag-row {
     background-color: #2244cc44;
 }
 
-.ag-floating-bottom .ag-row-pinned.ag-row {
+.ag-grid-pinned-bottom-rows-container .ag-row {
     background-color: #2244cc44;
 }

@@ -339,6 +339,11 @@ export const AG_GRID_LOCALE_IT = {
     sortAbsoluteDescending: 'Ordina Assoluto Decrescente',
     sortUnSort: 'Annulla Ordinamento',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Trova',
+    toolbarFindPreviousMatch: 'Corrispondenza Precedente',
+    toolbarFindNextMatch: 'Corrispondenza Successiva',
+    toolbarQuickFilter: 'Filtro',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Somma',
@@ -693,12 +698,16 @@ export const AG_GRID_LOCALE_IT = {
         'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questa colonna',
     ariaColumnGroupCellSelection:
         'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questo gruppo di colonne',
+    ariaColumnGroupExpansion: 'Premi INVIO per espandere o comprimere questo gruppo di colonne',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Premi Enter per attivare o disattivare la selezione di tutte le celle visibili in questo gruppo di colonne. Premi ALT INVIO per espandere o comprimere questo gruppo di colonne',
     ariaRowSelectAll: 'Premi SPAZIO per attivare/disattivare la selezione di tutte le righe',
     ariaRowToggleSelection: 'Premi SPAZIO per attivare/disattivare la selezione della riga',
     ariaRowSelect: 'Premi SPAZIO per selezionare questa riga',
     ariaRowSelectionDisabled: 'La selezione della riga è disabilitata per questa riga',
     ariaSearch: 'Cerca',
     ariaSortableColumn: 'Premi INVIO per ordinare',
+    ariaSortableColumnWithCellSelection: 'Premi ALT INVIO per ordinare',
     ariaToggleVisibility: 'Premi SPAZIO per attivare/disattivare la visibilità',
     ariaToggleCellValue: 'Premi SPAZIO per attivare/disattivare il valore della cella',
     ariaUnchecked: 'non selezionato',
@@ -817,8 +826,4 @@ export const AG_GRID_LOCALE_IT = {
     editNote: 'Modifica nota',
     deleteNote: 'Rimuovi nota',
     notePlaceholder: 'Aggiungi una nota...',
-    noteHint:
-        "Passa il mouse per l'anteprima. Fai clic all'interno per modificare. Trascina l'angolo per ridimensionare. Premi Esc per chiudere.",
-    noteReadOnlyHint:
-        "Nota di sola lettura. Seleziona il testo per copiarlo. Trascina l'angolo per ridimensionare. Premi Esc per chiudere.",
 };

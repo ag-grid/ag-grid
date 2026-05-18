@@ -36,7 +36,7 @@ export function useScrollSpy({
         } else {
             runScrollSpy();
         }
-    }, [location?.hash, headings, delayedScrollSpy]);
+    }, [location?.hash, headings, delayedScrollSpy, offset]);
 
     return menuRef;
 }

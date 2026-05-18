@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-angular-tests",
-  "version": "35.2.1-beta.20260415.1321",
+  "version": "35.3.0",
   "private": true,
   "scripts": {
     "test:e2e": "jest --no-cache"
@@ -11,18 +11,18 @@
     "@angular/core": "^21.0.0",
     "@angular/platform-browser": "^21.0.0",
     "@angular/platform-browser-dynamic": "^21.0.0",
-    "ag-grid-angular": "35.2.1-beta.20260415.1321",
-    "ag-grid-community": "35.2.1-beta.20260415.1321",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
+    "ag-grid-angular": "35.3.0",
+    "ag-grid-community": "35.3.0",
+    "rxjs": "~7.8.2",
+    "tslib": "^2.8.1",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
     "@angular/compiler-cli": "^21.0.0",
-    "@types/jest": "^29.5.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "jest-preset-angular": "^14.0.0",
-    "typescript": "~5.6.2"
+    "@types/jest": "^30.0.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "jest-preset-angular": "^16.0.0",
+    "typescript": "~5.8.3"
   }
 }

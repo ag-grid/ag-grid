@@ -1,5 +1,5 @@
 import type { Framework } from '@ag-grid-types';
-import Code from '@ag-website-shared/components/code/Code';
+import CodeShiki from '@ag-website-shared/components/code/CodeShiki';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { LinkIcon } from '@ag-website-shared/components/link-icon/LinkIcon';
 import styles from '@ag-website-shared/components/reference-documentation/ApiReference.module.scss';
@@ -246,6 +246,7 @@ export const Property: FunctionComponent<{
         const hashId = location.hash.slice(1); // Remove the '#' symbol
 
         if (idName === hashId) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- expand property when URL hash matches
             setExpanded(true);
             propertyRef.current?.scrollIntoView();
         }
@@ -377,7 +378,7 @@ export const Property: FunctionComponent<{
 
                     {detailsCode && isExpanded && (
                         <div id={getDetailsId(idName)} className={styles.expandedContent}>
-                            {detailsCode && <Code code={detailsCode} keepMarkup={true} />}
+                            {detailsCode && <CodeShiki code={detailsCode} keepMarkup={true} />}
                         </div>
                     )}
                 </div>

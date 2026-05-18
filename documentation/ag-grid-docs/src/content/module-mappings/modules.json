@@ -406,6 +406,12 @@
                     "name": "Status Bar",
                     "path": "status-bar",
                     "isEnterprise": true
+                },
+                {
+                    "moduleName": "ToolbarModule",
+                    "name": "Toolbar",
+                    "path": "toolbar",
+                    "isEnterprise": true
                 }
             ]
         },

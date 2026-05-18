@@ -10,27 +10,24 @@ import type {
 import { COUNTRY_NAMES, LANGUAGES, type RowItem, games, months } from '../data';
 import { CountryCellRenderer, RatingRenderer } from './renderers';
 
-//put in the month cols
-const monthCols = months.map((month) => {
-    const child: ColDef = {
-        field: month,
-        width: 120,
-        enableValue: true,
-        aggFunc: 'sum',
-        cellClassRules: {
-            'good-score': 'typeof x === "number" && x > 50000',
-            'bad-score': 'typeof x === "number" && x < 10000',
-            'currency-cell': 'typeof x === "number" && x >= 10000 && x <= 50000',
-        },
-        cellDataType: 'currency',
-        filter: 'agNumberColumnFilter',
-        filterParams: {
-            buttons: ['reset'],
-            inRangeInclusive: true,
-        },
-    };
-    return child;
-});
+const monthColBase: ColDef = {
+    width: 120,
+    minWidth: 120,
+    enableValue: true,
+    cellClassRules: {
+        'good-score': 'typeof x === "number" && x > 50000',
+        'bad-score': 'typeof x === "number" && x < 10000',
+        'currency-cell': 'typeof x === "number" && x >= 10000 && x <= 50000',
+    },
+    cellDataType: 'currency',
+    filter: 'agNumberColumnFilter',
+    filterParams: {
+        buttons: ['reset'],
+        inRangeInclusive: true,
+    },
+};
+
+const monthCols = months.map((month): ColDef => ({ ...monthColBase, field: month, aggFunc: 'sum' }));
 
 const currencyCssFunc: CellStyleFunc = (params) => {
     if (params.value != null && params.value < 0) {
@@ -341,11 +338,29 @@ const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
                     return months.map((month) => ({ month, value: data[month] }));
                 },
                 width: 200,
+                minWidth: 200,
             } as ColDef,
             ...monthCols.map((col) => ({
                 ...col,
                 columnGroupShow: 'open' as const,
             })),
+            {
+                ...monthColBase,
+                headerName: 'Average',
+                colId: 'monthlyAverage',
+                aggFunc: 'avg',
+                valueGetter: (params: ValueGetterParams) => {
+                    const data = params.data;
+                    if (!data) {
+                        return undefined;
+                    }
+                    const values = months.map((month) => data[month]).filter((val) => val != null);
+                    if (values.length === 0) {
+                        return undefined;
+                    }
+                    return values.reduce((sum, val) => sum + val, 0) / values.length;
+                },
+            } as ColDef,
         ],
     },
 ];

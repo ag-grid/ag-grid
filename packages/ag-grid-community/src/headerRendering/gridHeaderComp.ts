@@ -1,39 +1,56 @@
+import { BeanStub } from '../context/beanStub';
 import type { ElementParams } from '../utils/element';
-import type { ComponentSelector } from '../widgets/component';
-import { Component } from '../widgets/component';
-import type { IGridHeaderComp } from './gridHeaderCtrl';
+import { _createElement } from '../utils/element';
 import { GridHeaderCtrl } from './gridHeaderCtrl';
-import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
+import type { IGridHeaderComp } from './gridHeaderCtrl';
+import { HeaderRowsComp } from './rowContainer/headerRowsComp';
 
-const GridHeaderElement: ElementParams = { tag: 'div', cls: 'ag-header', role: 'presentation' };
-class GridHeaderComp extends Component {
-    constructor() {
-        super(GridHeaderElement);
+const HeaderWrapperElement: ElementParams = {
+    tag: 'div',
+    cls: 'ag-header',
+    attrs: { role: 'presentation' },
+};
+
+export class GridHeaderComp extends BeanStub {
+    private gridHeaderCtrl: GridHeaderCtrl | undefined;
+    private readonly eHeaderWrapper: HTMLDivElement;
+
+    constructor(
+        private readonly eTopSection: HTMLElement,
+        private readonly eGridViewport: HTMLElement
+    ) {
+        super();
+        this.eHeaderWrapper = _createElement(HeaderWrapperElement);
     }
 
     public postConstruct(): void {
+        // Prepend .ag-header as the first child of eTop
+        this.eTopSection.prepend(this.eHeaderWrapper);
+
         const compProxy: IGridHeaderComp = {
-            toggleCss: (cssClassName, on) => this.toggleCss(cssClassName, on),
+            toggleCss: (cssClassName, on) => this.eHeaderWrapper.classList.toggle(cssClassName, on),
             setHeightAndMinHeight: (height) => {
-                this.getGui().style.height = height;
-                this.getGui().style.minHeight = height;
+                const borderWidth = this.beans.environment.getHeaderRowBorderWidth();
+                const heightWithBorder = height + borderWidth;
+                this.eTopSection.style.setProperty('--ag-header-rows-height', `${heightWithBorder}px`);
+                this.eHeaderWrapper.style.height = `${heightWithBorder}px`;
             },
         };
 
-        const ctrl = this.createManagedBean(new GridHeaderCtrl());
-        ctrl.setComp(compProxy, this.getGui(), this.getFocusableElement());
+        this.gridHeaderCtrl = this.createManagedBean(new GridHeaderCtrl());
+        this.gridHeaderCtrl.setComp(compProxy, this.eHeaderWrapper);
 
-        const addContainer = (container: HeaderRowContainerComp) => {
-            this.createManagedBean(container);
-            this.appendChild(container);
-        };
+        this.createManagedBean(
+            new HeaderRowsComp(this.eHeaderWrapper, this.eGridViewport, (elements) =>
+                this.gridHeaderCtrl?.setHeaderRowFocusableElements(elements)
+            )
+        );
+    }
 
-        addContainer(new HeaderRowContainerComp('left'));
-        addContainer(new HeaderRowContainerComp(null));
-        addContainer(new HeaderRowContainerComp('right'));
+    public override destroy(): void {
+        this.gridHeaderCtrl = undefined;
+        this.eTopSection.style.removeProperty('--ag-header-rows-height');
+        this.eHeaderWrapper.remove();
+        super.destroy();
     }
 }
-export const GridHeaderSelector: ComponentSelector = {
-    selector: 'AG-HEADER-ROOT',
-    component: GridHeaderComp,
-};

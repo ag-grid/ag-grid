@@ -7,7 +7,6 @@ import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { _error } from '../validation/logging';
 import { GroupResizeFeature } from './groupResizeFeature';
 import { ResizeFeature } from './resizeFeature';
@@ -35,7 +34,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         const { colModel, gos, visibleCols } = this.beans;
 
         for (const columnWidth of columnWidths) {
-            const col = colModel.getColDefCol(columnWidth.key) || colModel.getCol(columnWidth.key);
+            const col = colModel.getColDefColOrCol(columnWidth.key);
 
             if (!col) {
                 continue;
@@ -247,22 +246,20 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
     }
 
     public createResizeFeature(
-        pinned: ColumnPinnedType,
         column: AgColumn,
         eResize: HTMLElement,
         comp: IHeaderCellComp,
         ctrl: HeaderCellCtrl
     ): ResizeFeature {
-        return new ResizeFeature(pinned, column, eResize, comp, ctrl);
+        return new ResizeFeature(column, eResize, comp, ctrl);
     }
 
     public createGroupResizeFeature(
         comp: IHeaderGroupCellComp,
         eResize: HTMLElement,
-        pinned: ColumnPinnedType,
         columnGroup: AgColumnGroup
     ): GroupResizeFeature {
-        return new GroupResizeFeature(comp, eResize, pinned, columnGroup);
+        return new GroupResizeFeature(comp, eResize, columnGroup);
     }
 }
 

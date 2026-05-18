@@ -342,16 +342,14 @@ export class EditService extends BeanStub implements NamedBean {
         this.stopping = true;
 
         let res = false;
-        let { edits } = context;
 
         try {
             const outcome = this.processStopRequest(context);
             res ||= outcome.res;
-            edits = outcome.edits;
 
             this.finishStopEditing({
                 ...context,
-                edits,
+                edits: outcome.edits,
                 params,
                 position,
                 res,
@@ -1014,11 +1012,7 @@ export class EditService extends BeanStub implements NamedBean {
      * Gets the pending edit value for a cell (used by ValueService).
      * Returns undefined to fallback to committed data/valueGetter.
      */
-    public getPendingEditValue(rowNode: IRowNode, column: Column, from: CellValueResolveFrom): any {
-        if (from === 'data') {
-            return undefined; // 'data' mode: always use committed data, never edit values
-        }
-
+    public getPendingEditValue(rowNode: IRowNode, column: Column, from: Exclude<CellValueResolveFrom, 'data'>): any {
         if (from === 'batch' && !this.batch) {
             return undefined; // 'batch' mode: only return edit values when batch editing is active
         }

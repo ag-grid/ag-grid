@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, IAggFuncParams, IAggFuncResult } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import {
     ColumnMenuModule,
@@ -18,55 +18,64 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
+/** Carries `min`/`max` alongside the scalar `value` so the parent recomputes in `O(N)`. */
+class RangeResult implements IAggFuncResult<number> {
+    constructor(
+        readonly value: number,
+        readonly min: number,
+        readonly max: number
+    ) {}
+
+    toNumber() {
+        return this.value;
+    }
+
+    toString() {
+        return this.value.toFixed(2);
+    }
+}
+
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
         { field: 'year', rowGroup: true, hide: true },
-        { field: 'total', aggFunc: 'simpleRange' },
-        { field: 'total', aggFunc: 'range' },
+        { headerName: 'Range', field: 'total', aggFunc: 'range' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 150,
     },
     autoGroupColumnDef: {
+        field: 'athlete',
         minWidth: 220,
     },
     aggFuncs: {
-        simpleRange: (params) => {
-            const values = params.values;
-            const max = Math.max(...values);
-            const min = Math.min(...values);
-            return max - min;
-        },
-        range: (params) => {
-            const values = params.values;
-            if (params.rowNode.leafGroup) {
-                const max = Math.max(...values);
-                const min = Math.min(...values);
-                return {
-                    max: max,
-                    min: min,
-                    value: max - min,
-                };
-            }
-
-            let max = values[0].max;
-            let min = values[0].min;
-            values.forEach((value) => {
-                max = Math.max(max, value.max);
-                min = Math.min(min, value.min);
-            });
-            return {
-                max: max,
-                min: min,
-                value: max - min,
-            };
-        },
+        range: rangeAggFunc,
     },
 };
+
+function rangeAggFunc(params: IAggFuncParams<IOlympicData>): RangeResult | null {
+    // Read each immediate child via `getDataValue(col, 'data')`:
+    //  - leaf children return the raw `total` number
+    //  - sub-group children return the RangeResult this function produced one
+    //    level down — its `min`/`max` let the parent recompute the range
+    //    without re-walking descendant leaves.
+    let min = Infinity;
+    let max = -Infinity;
+    for (const child of params.aggregatedChildren) {
+        const childValue = child.getDataValue(params.column, 'data');
+        if (typeof childValue === 'number') {
+            min = Math.min(min, childValue);
+            max = Math.max(max, childValue);
+        } else if (childValue instanceof RangeResult) {
+            min = Math.min(min, childValue.min);
+            max = Math.max(max, childValue.max);
+        }
+    }
+    return Number.isFinite(min) ? new RangeResult(max - min, min, max) : null;
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {

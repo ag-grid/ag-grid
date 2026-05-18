@@ -412,7 +412,6 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
         allAncestors.forEach((a) => {
             let extended = a.extends;
 
-            let extInt = undefined;
             const omitFields = [];
             const pickFields = [];
             if (extended === 'Omit') {
@@ -439,7 +438,7 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                 // Required: https://www.typescriptlang.org/docs/handbook/utility-types.html
                 extended = a.params[0];
             }
-            extInt = interfaces[extended];
+            const extInt = interfaces[extended];
 
             if (!extInt) {
                 //Check for type params
@@ -841,6 +840,8 @@ export function getThemeParams(themesFile: string) {
                         resolveAndCollect(t.typeName.getText(nodeFile));
                     }
                 }
+            } else if (ts.isTypeReferenceNode(node.type)) {
+                resolveAndCollect(node.type.typeName.getText(nodeFile));
             } else if (ts.isTypeLiteralNode(node.type)) {
                 node.type.members.forEach(
                     (m) => (members = mergeMembersPreservingMeta(members, extractTypesFromNode(m, nodeFile, false)))

@@ -1,0 +1,17 @@
+{% if isFramework("vue") %}
+
+```js
+// winnersToggle and toolPanelRadio are the custom components defined above.
+// Any toolbarItemParams set on the item are accessible via this.params.toolbarItemParams inside the component.
+this.gridOptions = {
+    toolbar: {
+        items: [
+            { toolbarItem: 'winnersToggle', key: 'winners' },
+            { toolbarItem: 'toolPanelRadio', key: 'toolPanel', alignment: 'right' },
+        ],
+    },
+    // ...other properties
+}
+```
+
+{% /if %}

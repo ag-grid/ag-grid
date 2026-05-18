@@ -5,15 +5,31 @@ enterprise: true
 
 Find allows for values to be searched within the grid, with all matches highlighted and navigable, similar to find ({% kbd "^ Ctrl" /%} + {% kbd "F" /%}) within the browser.
 
-{% gridExampleRunner title="Find" name="find" /%}
-
 {% note %}
 Find is only compatible with the [Client-Side Row Model](./row-models/).
 {% /note %}
 
 ## Enabling Find
 
-Find is enabled by setting the grid option `findSearchValue` with the text to be searched for.
+### Using Quick Access Toolbar
+
+The recommended way to display the Find input is as a [Quick Access Toolbar](./toolbar/) item. This keeps the Find UI integrated with the grid and requires no additional markup.
+
+{% gridExampleRunner title="Find with Toolbar" name="find-toolbar" /%}
+
+The configuration used in the example above is:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: ['agFindToolbarItem'],
+    },
+}
+```
+
+### Using Grid Options
+
+Find can also be enabled directly via the grid option `findSearchValue`, passing the text to search for.
 
 {% apiDocumentation source="grid-options/properties.json" section="find" names=["findSearchValue"] /%}
 
@@ -34,6 +50,8 @@ Changing the Find search value, changing the active match, or updates to the gri
 The active match and the total number of matches can also be retrieved via the API.
 
 {% apiDocumentation source="grid-api/api.json" section="find" names=["findGetActiveMatch", "findGetTotalMatches"] /%}
+
+{% gridExampleRunner title="Find" name="find" /%}
 
 ## Using Find with Cell Components
 
@@ -58,7 +76,7 @@ When providing a custom cell component, the component is responsible for highlig
 
 {% apiDocumentation source="grid-api/api.json" section="find" names=["findGetNumMatches", "findGetParts"] /%}
 
-The following example demonstrates a custom cell component in the `Year` column, which uses the features described above. The custom cell component reuses the grid CSS classes `ag-find-match` and `ag-find-active-match` to apply the same styling as the default grid cell component.
+The following example demonstrates a custom cell component in the `Year` column that implements match highlighting using the methods above. The find input is provided by the toolbar. The custom cell component reuses the grid CSS classes `ag-find-match` and `ag-find-active-match` to apply the same styling as the default grid cell component.
 
 {% gridExampleRunner title="Find with Cell Components" name="find-cell-components" /%}
 

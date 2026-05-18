@@ -341,6 +341,11 @@ export const AG_GRID_LOCALE_GR = {
     sortAbsoluteDescending: '"Απόλυτη φθίνουσα ταξινόμηση"',
     sortUnSort: 'Καθαρισμός Ταξινόμησης',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Εύρεση',
+    toolbarFindPreviousMatch: 'Προηγούμενη Αντιστοιχία',
+    toolbarFindNextMatch: 'Επόμενη Αντιστοιχία',
+    toolbarQuickFilter: 'Φίλτρο',
+    toolbarMenu: 'Μενού',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Άθροισμα',
@@ -693,12 +698,16 @@ export const AG_GRID_LOCALE_GR = {
     ariaSelectAllRowCells: 'Πατήστε Enter για επιλογή όλων των κελιών σε αυτή τη γραμμή',
     ariaColumnCellSelection: 'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή τη στήλη',
     ariaColumnGroupCellSelection: 'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή την ομάδα στηλών',
+    ariaColumnGroupExpansion: 'Πατήστε ENTER για ανάπτυξη ή σύμπτυξη αυτής της ομάδας στηλών',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Πατήστε Enter για εναλλαγή επιλογής όλων των ορατών κελιών σε αυτή την ομάδα στηλών. Πατήστε ALT ENTER για ανάπτυξη ή σύμπτυξη αυτής της ομάδας στηλών',
     ariaRowSelectAll: 'Πατήστε SPACE για αλλαγή επιλογής όλων των γραμμών',
     ariaRowToggleSelection: 'Πατήστε SPACE για εναλλαγή επιλογής γραμμής',
     ariaRowSelect: 'Πατήστε SPACE για επιλογή αυτής της γραμμής',
     ariaRowSelectionDisabled: 'Η επιλογή γραμμής έχει απενεργοποιηθεί για αυτή τη γραμμή',
     ariaSearch: 'Αναζήτηση',
     ariaSortableColumn: 'Πατήστε ENTER για ταξινόμηση',
+    ariaSortableColumnWithCellSelection: 'Πατήστε ALT ENTER για ταξινόμηση',
     ariaToggleVisibility: 'Πατήστε SPACE για αλλαγή ορατότητας',
     ariaToggleCellValue: 'Πατήστε SPACE για εναλλαγή τιμής κελιού',
     ariaUnchecked: 'μη ελεγμένο',
@@ -817,8 +826,4 @@ export const AG_GRID_LOCALE_GR = {
     editNote: 'Επεξεργασία σημείωσης',
     deleteNote: 'Αφαίρεση σημείωσης',
     notePlaceholder: 'Προσθέστε μια σημείωση...',
-    noteHint:
-        'Τοποθετήστε τον δείκτη για προεπισκόπηση. Κάντε κλικ μέσα για επεξεργασία. Σύρετε τη γωνία για αλλαγή μεγέθους. Πατήστε Esc για κλείσιμο.',
-    noteReadOnlyHint:
-        'Σημείωση μόνο για ανάγνωση. Επιλέξτε κείμενο για αντιγραφή. Σύρετε τη γωνία για αλλαγή μεγέθους. Πατήστε Esc για κλείσιμο.',
 };

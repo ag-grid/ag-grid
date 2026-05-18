@@ -335,6 +335,11 @@ export const AG_GRID_LOCALE_TW = {
     sortAbsoluteDescending: '絕對遞減排序',
     sortUnSort: '清除排列',
     shiftF2: 'Shift+F2',
+    toolbarFind: '尋找',
+    toolbarFindPreviousMatch: '上一次匹配',
+    toolbarFindNextMatch: '下一個匹配',
+    toolbarQuickFilter: '篩選',
+    toolbarMenu: '選單',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '總和',
@@ -686,12 +691,16 @@ export const AG_GRID_LOCALE_TW = {
     ariaSelectAllRowCells: '按 Enter 鍵以選擇此行中的所有儲存格',
     ariaColumnCellSelection: '按 Enter 鍵切換此欄中所有可見儲存格的選取',
     ariaColumnGroupCellSelection: '按 Enter 鍵切換此欄群組中所有可見儲存格的選取',
+    ariaColumnGroupExpansion: '按 ENTER 鍵展開或摺疊此欄群組',
+    ariaColumnGroupCellSelectionAndExpansion:
+        '按 Enter 鍵切換此欄群組中所有可見儲存格的選取. 按 ALT ENTER 鍵展開或摺疊此欄群組',
     ariaRowSelectAll: '按 SPACE 鍵切換所有行的選擇',
     ariaRowToggleSelection: '按 SPACE 鍵切換行的選擇',
     ariaRowSelect: '按 SPACE 鍵選取此行',
     ariaRowSelectionDisabled: '此行已禁用行選擇',
     ariaSearch: '搜尋',
     ariaSortableColumn: '按 ENTER 鍵排序',
+    ariaSortableColumnWithCellSelection: '按 ALT ENTER 鍵排序',
     ariaToggleVisibility: '按 SPACE 鍵切換可見性',
     ariaToggleCellValue: '按 SPACE 鍵切換單元格值',
     ariaUnchecked: '未勾選',
@@ -810,6 +819,4 @@ export const AG_GRID_LOCALE_TW = {
     editNote: '編輯備註',
     deleteNote: '移除備註',
     notePlaceholder: '新增備註...',
-    noteHint: '滑過即可預覽。按一下內部即可編輯。拖曳角落即可調整大小。按 Esc 關閉。',
-    noteReadOnlyHint: '唯讀備註。選取文字即可複製。拖曳角落即可調整大小。按 Esc 關閉。',
 };

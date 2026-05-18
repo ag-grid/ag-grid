@@ -10,7 +10,7 @@ import { addChangedModelItem, getChangedModelItemCount } from './model/changed-m
 import { initialiseStore } from './model/store';
 
 export const ThemeBuilder = () => {
-    const store = useMemo(initialiseStore, []);
+    const store = useMemo(() => initialiseStore(), []);
 
     const [initialised, setInitialised] = useState(false);
 
@@ -32,9 +32,11 @@ export const ThemeBuilder = () => {
         ];
 
         if (!initialised) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time initialisation flag
             setInitialised(true);
         }
         return () => listeners.forEach((listener) => listener());
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- one-time initialisation, store is stable
     }, []);
 
     return (

@@ -399,7 +399,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
                         displayValue,
                     },
                     valueFormatter: (value: AutocompleteEntry) =>
-                        value == null ? '' : value.displayValue ?? value.key,
+                        value == null ? '' : (value.displayValue ?? value.key),
                     variableWidth: true,
                     minPickerWidth,
                     maxPickerWidth,

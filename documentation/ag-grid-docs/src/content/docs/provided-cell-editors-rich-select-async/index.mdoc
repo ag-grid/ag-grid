@@ -61,10 +61,10 @@ The `values` callback params remain typed as `RichCellEditorValuesCallbackParams
 
 When `filterListAsync` is set to `true`, the cell editor behaves as follows:
 
--   It calls the `values` callback with the current search term.
--   It delays the search request by 300ms (this can be adjusted using `searchDebounceDelay`) to avoid excessive calls.
--   A loading indicator appears while the network request is in progress.
--   Once the promise resolves, the dropdown is updated with the filtered results.
+- It calls the `values` callback with the current search term.
+- It delays the search request by 300ms (this can be adjusted using `searchDebounceDelay`) to avoid excessive calls.
+- A loading indicator appears while the network request is in progress.
+- Once the promise resolves, the dropdown is updated with the filtered results.
 
 {% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "searchDebounceDelay", "values"]  config={ "description": "" } /%}
 
@@ -98,9 +98,9 @@ For very large, server-backed datasets, combine async filtering with `valuesPage
 
 In this mode each request includes:
 
--   `search` for the current filter text.
--   `startRow` and `endRow` for range-based pagination.
--   `cursor` (optional) for cursor-based forward pagination APIs (`undefined` on the first request, then replayed from the previous response).
+- `search` for the current filter text.
+- `startRow` and `endRow` for range-based pagination.
+- `cursor` (optional) for cursor-based forward pagination APIs (`undefined` on the first request, then replayed from the previous response).
 
 {% interfaceDocumentation interfaceName="IRichCellEditorParams" overrideSrc="provided-cell-editors-rich-select/rich-select.json" names=["filterListAsync", "valuesPage", "valuesPageInitialStartRow", "valuesPageSize", "valuesPageLoadThreshold"] config={ "description": "" } /%}
 

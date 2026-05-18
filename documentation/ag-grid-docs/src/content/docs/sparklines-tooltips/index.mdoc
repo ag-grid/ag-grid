@@ -7,10 +7,10 @@ Tooltips containing data related to specific points will appear when the sparkli
 
 The following sections cover how sparkline tooltips can be customised:
 
--   [Disabling Tooltips](./sparklines-tooltips/#disabling-sparkline-tooltips) - shows how to disable tooltips.
--   [Tooltip Data](./sparklines-tooltips/#tooltip-data) - covers how to change title and content of the default tooltip and access data from other columns in the same row.
--   [Tooltip Styles](./sparklines-tooltips/#using-css-styles) available to customise the default tooltip styles.
--   [Custom Tooltip](./sparklines-tooltips/#custom-tooltip) - demonstrates how a completely custom HTML template can be used as the tooltip.
+- [Disabling Tooltips](./sparklines-tooltips/#disabling-sparkline-tooltips) - shows how to disable tooltips.
+- [Tooltip Data](./sparklines-tooltips/#tooltip-data) - covers how to change title and content of the default tooltip and access data from other columns in the same row.
+- [Tooltip Styles](./sparklines-tooltips/#using-css-styles) available to customise the default tooltip styles.
+- [Custom Tooltip](./sparklines-tooltips/#custom-tooltip) - demonstrates how a completely custom HTML template can be used as the tooltip.
 
 ## Disabling Sparkline Tooltips
 
@@ -62,9 +62,9 @@ sparklineOptions: {
 }
 ```
 
--   The `renderer` is a callback function which receives data values associated with the highlighted data point.
--   It returns an object with the `content` and `title` properties containing plain text that is used for the **Content** and **Title** sections of the tooltip.
--   Alternatively, the `renderer` function could return a string representing HTML content, which can be used to provide completely [Custom Tooltips](./sparklines-tooltips/#custom-tooltip).
+- The `renderer` is a callback function which receives data values associated with the highlighted data point.
+- It returns an object with the `content` and `title` properties containing plain text that is used for the **Content** and **Title** sections of the tooltip.
+- Alternatively, the `renderer` function could return a string representing HTML content, which can be used to provide completely [Custom Tooltips](./sparklines-tooltips/#custom-tooltip).
 
 Here's an example renderer function.
 
@@ -80,8 +80,8 @@ const tooltipRenderer = (params) => {
 
 The following example demonstrates the results of the tooltip renderer above. Note that:
 
--   The renderer function sets the tooltip `content` to render Y values formatted with 1 digit after the decimal point.
--   The title of the tooltips is set to X values provided in the `params` formatted using the `toLocaleString()` method. This is optional because if X values are provided in the data, they will be formatted and displayed in the tooltip title by default.
+- The renderer function sets the tooltip `content` to render Y values formatted with 1 digit after the decimal point.
+- The title of the tooltips is set to X values provided in the `params` formatted using the `toLocaleString()` method. This is optional because if X values are provided in the data, they will be formatted and displayed in the tooltip title by default.
 
 {% gridExampleRunner title="Sparkline Tooltip Renderer" name="sparkline-tooltip-renderer"  exampleHeight=585 /%}
 
@@ -113,7 +113,7 @@ See [Styling Chart Tooltips](https://www.ag-grid.com/charts/javascript/tooltips/
 
 This is shown in the example below. Note that:
 
--   The default tooltip template is used and the style definitions are overriden in the styles.css file.
+- The default tooltip template is used and the style definitions are overriden in the styles.css file.
 
 {% gridExampleRunner title="Styling Sparkline Tooltips" name="sparkline-tooltip-advanced-styles"  exampleHeight=585 /%}
 
@@ -144,9 +144,9 @@ The effect of applying the tooltip renderer from the snippet above can be seen i
 
 Note that:
 
--   The structure of the returned DOM is up to you.
--   In this example the value of the title comes from `params.context.data.symbol` which is the value for the **Symbol** column for the given row.
--   The elements have custom CSS class attributes, but the default class names can also be used so that the tooltip gets the default styling.
--   The styles for the elements are defined in the external styles.css file.
+- The structure of the returned DOM is up to you.
+- In this example the value of the title comes from `params.context.data.symbol` which is the value for the **Symbol** column for the given row.
+- The elements have custom CSS class attributes, but the default class names can also be used so that the tooltip gets the default styling.
+- The styles for the elements are defined in the external styles.css file.
 
 {% gridExampleRunner title="Custom Tooltips" name="sparkline-tooltip-custom-html"  exampleHeight=585 /%}

@@ -5,7 +5,10 @@ const path = require('path');
 const rootConfig = require('../../esbuild.config.cjs');
 
 const PROJECT_NAME = process.env.NX_TASK_TARGET_PROJECT;
-const isProduction = ['production', 'staging'].includes(process.env.NX_TASK_TARGET_CONFIGURATION ?? '');
+// `production` and `staging` nx configurations omit inline sourcemaps; every other configuration
+// (default build, archive, etc.) keeps them for easier debugging. Minification runs unconditionally
+// — the docs site's local /files/ endpoint serves .min.js in every non-dev environment.
+const includeInlineSourcemap = !['production', 'staging'].includes(process.env.NX_TASK_TARGET_CONFIGURATION ?? '');
 
 // Exclude the minification plugin — we handle minification ourselves to control output filenames.
 const plugins = rootConfig.plugins.filter((p) => p.name !== 'minification-plugin');
@@ -22,7 +25,7 @@ const umdPostBuildPlugin = {
     setup(build) {
         build.initialOptions.metafile = true;
 
-        if (!isProduction) {
+        if (includeInlineSourcemap) {
             build.initialOptions.sourcemap = 'inline';
         }
 
@@ -59,24 +62,24 @@ const umdPostBuildPlugin = {
                 renamedFiles.push(newPath);
             }
 
-            // 2. Minify in production to produce .min variants with correct naming.
-            if (isProduction) {
-                await Promise.all(
-                    renamedFiles.map(async (filePath) => {
-                        const contents = await fs.readFile(filePath, 'utf-8');
-                        const minified = await esbuild.transform(contents, { minify: true });
-                        const parsed = path.parse(filePath);
-                        // Match naming convention: ag-grid-community.min.js, ag-grid-community.min.noStyle.js
-                        const baseParts = parsed.name.split('.');
-                        const projectBase = baseParts[0]; // e.g. 'ag-grid-community'
-                        const suffix = baseParts.slice(1).join('.'); // e.g. 'noStyle' or ''
-                        const minName = suffix
-                            ? `${projectBase}.min.${suffix}${parsed.ext}`
-                            : `${projectBase}.min${parsed.ext}`;
-                        await fs.writeFile(path.join(parsed.dir, minName), minified.code);
-                    })
-                );
-            }
+            // 2. Always produce .min variants so local /files/ consumers (default build preview,
+            //    staging, archive) can request the minified bundle uniformly. The build cost is a
+            //    single esbuild.transform pass per entry point.
+            await Promise.all(
+                renamedFiles.map(async (filePath) => {
+                    const contents = await fs.readFile(filePath, 'utf-8');
+                    const minified = await esbuild.transform(contents, { minify: true });
+                    const parsed = path.parse(filePath);
+                    // Match naming convention: ag-grid-community.min.js, ag-grid-community.min.noStyle.js
+                    const baseParts = parsed.name.split('.');
+                    const projectBase = baseParts[0]; // e.g. 'ag-grid-community'
+                    const suffix = baseParts.slice(1).join('.'); // e.g. 'noStyle' or ''
+                    const minName = suffix
+                        ? `${projectBase}.min.${suffix}${parsed.ext}`
+                        : `${projectBase}.min${parsed.ext}`;
+                    await fs.writeFile(path.join(parsed.dir, minName), minified.code);
+                })
+            );
         });
     },
 };

@@ -1,5 +1,4 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
-import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { TooltipModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';

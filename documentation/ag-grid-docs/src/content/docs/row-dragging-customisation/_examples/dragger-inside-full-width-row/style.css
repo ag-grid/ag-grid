@@ -13,16 +13,19 @@
     float: left;
     padding: 6px;
 }
+
 .full-width-summary {
     float: left;
     /*margin-left: 10px;*/
     margin-right: 10px;
 }
+
 .full-width-panel label {
     padding-top: 3px;
     display: inline-block;
     font-size: 12px;
 }
+
 .full-width-center {
     overflow-y: scroll;
     border: 1px solid grey;
@@ -32,9 +35,11 @@
     font-family: cursive;
     background-color: #99999944;
 }
+
 .full-width-center p {
     margin-top: 0px;
 }
+
 .full-width-title {
     font-size: 20px;
 }

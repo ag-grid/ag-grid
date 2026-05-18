@@ -50,11 +50,11 @@ type FilterModelOrCombined<M extends ISimpleFilterModel> = M | ICombinedSimpleMo
  * @param E type of UI element used for collecting user-input
  */
 export abstract class SimpleFilter<
-        M extends ISimpleFilterModel,
-        V,
-        E = GridInputTextField,
-        P extends SimpleFilterDisplayParams<M> = SimpleFilterDisplayParams<M>,
-    >
+    M extends ISimpleFilterModel,
+    V,
+    E = GridInputTextField,
+    P extends SimpleFilterDisplayParams<M> = SimpleFilterDisplayParams<M>,
+>
     extends ProvidedFilter<M | ICombinedSimpleModel<M>, V, P>
     implements ISimpleFilter
 {

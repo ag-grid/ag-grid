@@ -1,5 +1,5 @@
 import { _getSortDefFromInput } from '../../entities/agColumn';
-import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
+import type { DomLayoutType, GridOptions, PaginationPanel } from '../../entities/gridOptions';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
@@ -138,8 +138,6 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     masterDetail: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'MasterDetail',
     notesDataSource: 'Notes',
-    noteShowDelay: 'Notes',
-    noteHideDelay: 'Notes',
     pagination: 'Pagination',
     pinnedBottomRowData: 'PinnedRow',
     pinnedTopRowData: 'PinnedRow',
@@ -161,6 +159,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     statusBar: 'StatusBar',
     treeData: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'TreeData',
+    toolbar: 'Toolbar',
     undoRedoCellEditing: 'UndoRedoEdit',
     valueCache: 'ValueCache',
     viewportDatasource: 'ViewportRowModel',
@@ -364,6 +363,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 if (!values.length) {
                     return `'paginationPageSizeSelector' cannot be an empty array.
                     If you want to hide the page size selector, set paginationPageSizeSelector to false.`;
+                }
+                return null;
+            },
+        },
+        paginationPanels: {
+            validate: ({ paginationPanels }) => {
+                const validNames = new Set<PaginationPanel>(['pageSize', 'rowSummary', 'pageSummary']);
+                if (
+                    paginationPanels != null &&
+                    (!Array.isArray(paginationPanels) || paginationPanels.some((p) => !validNames.has(p)))
+                ) {
+                    return "'paginationPanels' expects an array of panel names: ['pageSize', 'rowSummary', 'pageSummary']";
                 }
                 return null;
             },

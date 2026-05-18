@@ -254,7 +254,7 @@ function stringToFloat(
 
     let filterText = _makeNull(value);
 
-    if (filterText != null && filterText.trim() === '') {
+    if (filterText?.trim() === '') {
         filterText = null;
     }
 

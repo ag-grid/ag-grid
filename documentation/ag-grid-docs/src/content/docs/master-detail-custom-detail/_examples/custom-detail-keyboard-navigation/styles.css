@@ -1,6 +1,5 @@
 p {
     font-size: 1em;
-    margin-bottom: 1em;
     margin-top: 0;
 }
 
@@ -11,8 +10,20 @@ p {
     padding: 2.5em;
 }
 
+[role='gridcell'] {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+form {
+    flex: 1;
+}
+
 form > div {
     display: flex;
+    flex: 1;
+    height: 100%;
     background-color: #99999944;
 }
 

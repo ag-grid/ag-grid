@@ -17,6 +17,10 @@
         color: var(--ag-header-foreground-color);
     }
 
+    .ag-toolbar-item:where(:not(.ag-toolbar-panel)) {
+        font-weight: 700;
+    }
+
     .ag-row {
         font-size: calc(var(--ag-font-size) + 1px);
     }
@@ -43,6 +47,10 @@
 
     .ag-menu {
         background-color: var(--ag-control-panel-background-color);
+    }
+
+    .ag-toolbar .ag-toolbar-panel {
+        padding-left: var(--ag-grid-size);
     }
 
     .ag-panel-content-wrapper .ag-column-select {
@@ -191,6 +199,7 @@
     .ag-paging-number,
     .ag-paging-row-summary-panel-number {
         font-weight: 700;
+        font-variant-numeric: tabular-nums;
     }
 
     .ag-column-drop-cell-button {
@@ -284,8 +293,7 @@
 
     .ag-layout-auto-height,
     .ag-layout-print {
-        .ag-center-cols-viewport,
-        .ag-center-cols-container {
+        .ag-grid-scrolling-container {
             min-height: 150px;
         }
     }
@@ -305,10 +313,6 @@
 
     .ag-pill .ag-pill-button:hover {
         color: var(--ag-alpine-active-color);
-    }
-
-    .ag-has-cell-notes::after {
-        border-color: transparent var(--ag-alpine-active-color) transparent transparent;
     }
 
     .ag-advanced-filter-builder-item-button-disabled,

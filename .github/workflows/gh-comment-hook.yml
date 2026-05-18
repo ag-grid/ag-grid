@@ -9,11 +9,19 @@ permissions:
 
 jobs:
   expand-jira-links:
+    if: github.repository == 'ag-grid/ag-grid'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       issues: write
     steps:
+      - name: Checkout repository
+        if: github.event.action == 'opened'
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout:
+            'scripts/ci/_utils.mjs'
+
       - name: Replace mention with jira link
         id: notify-start
         uses: actions/github-script@v7
@@ -21,6 +29,11 @@ jobs:
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
           PR_ID: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          EVENT_ACTION: ${{ github.event.action }}
+          JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
+          JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         with:
           result-encoding: string
           script: |
@@ -28,8 +41,63 @@ jobs:
             const repo = context.repo.repo;
             const old_body = process.env.PR_BODY || '';
             const issue_number = process.env.PR_ID;
-            
+            const pr_url = process.env.PR_URL;
+            const pr_title = process.env.PR_TITLE;
+            const eventAction = process.env.EVENT_ACTION;
+
+            // Expand bare JIRA ticket mentions (#AG-XXXX) into markdown links
             const body = old_body.replace(/#((AG|RTI)-\d{3,})/g, `[$1](https://ag-grid.atlassian.net/browse/$1)`);
             if (body !== old_body) {
                 await github.rest.issues.update({ owner, repo, issue_number, body });
             }
+
+            // Post a Jira comment only when the PR is first opened
+            if (eventAction !== 'opened') return;
+            if (!process.env.JIRA_API_AUTH) return;
+
+            const { addJiraComment, getJiraIssueComments } =
+                require('./scripts/ci/_utils.mjs');
+
+            // Collect all JIRA tickets referenced in the PR body (using the possibly-updated body)
+            const ticketRegex = /(AG|RTI)-\d{3,}/gi;
+            const tickets = [...new Set([...(body || old_body).matchAll(ticketRegex)].map(m => m[0].toUpperCase()))];
+            if (!tickets.length) return;
+
+            const prLink = `https://github.com/${owner}/${repo}/pull/${issue_number}`;
+            // Sentinel string embedded in the comment so we can detect it later and avoid duplicates
+            const sentinel = `<!-- gh-pr-mention:pr=${issue_number} -->`;
+
+            const paragraph = (content) => ({ type: 'paragraph', content: Array.isArray(content) ? content : [content] });
+            const txt = (text) => ({ text, type: 'text' });
+            const link = (text, url) => ({ type: 'text', text, marks: [{ type: 'link', attrs: { href: url, title: text } }] });
+
+            await Promise.all(tickets.map(async (ticket) => {
+                // Deduplicate: check whether we already posted a comment for this PR on this ticket
+                const existing = await getJiraIssueComments(ticket);
+                const alreadyPosted = existing?.some(c => {
+                    // Comments stored as ADF; fall back to plain text check on stringified body
+                    const raw = JSON.stringify(c.body || '');
+                    return raw.includes(`pr=${issue_number}`);
+                });
+                if (alreadyPosted) {
+                    console.log(`Skipping ${ticket} — already has a comment for PR #${issue_number}`);
+                    return;
+                }
+
+                const adf = {
+                    type: 'doc',
+                    version: 1,
+                    content: [
+                        paragraph([
+                            txt(`${sentinel}[This issue was mentioned in `),
+                            link(`PR #${issue_number}`, prLink),
+                            pr_title ? txt(` — ${pr_title}`) : txt(''),
+                            txt(' by '),
+                            link('CI workflow', process.env.JOB_URL || '#'),
+                            txt('.]'),
+                        ]),
+                    ],
+                };
+
+                await addJiraComment(ticket, adf);
+            }));

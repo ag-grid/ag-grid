@@ -18,8 +18,8 @@ import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
+import type { IHeaderGroupComp, IHeaderGroupParams } from './agColumnGroupHeader';
 import { GroupWidthFeature } from './groupWidthFeature';
-import type { IHeaderGroupComp, IHeaderGroupParams } from './headerGroupComp';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
@@ -30,6 +30,25 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeaderGroupComp | undefined;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function applyHeaderWrapperHidden(el: HTMLElement, hidden: boolean): void {
+    if (hidden) {
+        el.style.setProperty('display', 'none');
+    } else {
+        el.style.removeProperty('display');
+    }
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function applyHeaderWrapperMaxHeight(el: HTMLElement, value: number | null): void {
+    if (value == null) {
+        el.style.removeProperty('max-height');
+    } else {
+        el.style.setProperty('max-height', `${value}px`);
+    }
+    el.classList.toggle('ag-header-cell-comp-wrapper-limited-height', value != null);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -76,7 +95,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
         this.refreshMaxHeaderHeight();
 
-        const pinned = this.rowCtrl.pinned;
         const leafCols = column.getProvidedColumnGroup().getLeafColumns();
 
         colHover?.createHoverFeature(compBean, leafCols, eGui);
@@ -84,9 +102,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean.createManagedBean(new SetLeftFeature(column, eGui, beans));
         compBean.createManagedBean(new GroupWidthFeature(comp, column));
         if (colResize) {
-            this.resizeFeature = compBean.createManagedBean(
-                colResize.createGroupResizeFeature(comp, eResize, pinned, column)
-            );
+            this.resizeFeature = compBean.createManagedBean(colResize.createGroupResizeFeature(comp, eResize, column));
         } else {
             comp.setResizableDisplayed(false);
         }
@@ -106,6 +122,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             cellSelectionChanged: () => this.refreshAnnouncement(),
         });
 
+        compBean.addManagedPropertyListener('cellSelection', () => this.refreshAnnouncement());
         compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners(compBean);
         // Make sure this is the last destroy func as it clears the gui and comp
@@ -317,6 +334,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
 
         this.refreshHeaderStyles();
+        this.refreshAnnouncement();
     }
 
     private addClasses(): void {
@@ -407,15 +425,22 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
     private refreshAnnouncement(): void {
         let description: string | undefined;
-        const { gos } = this;
+        const { gos, expandable } = this;
         const enableColumnSelection = _getEnableColumnSelection(gos);
+        const translate = this.getLocaleTextFunc();
 
-        if (enableColumnSelection) {
-            const translate = this.getLocaleTextFunc();
+        if (enableColumnSelection && expandable) {
+            description = translate(
+                'ariaColumnGroupCellSelectionAndExpansion',
+                'Press Enter to toggle selection for all visible cells in this column group. Press ALT ENTER to expand or collapse this column group'
+            );
+        } else if (enableColumnSelection) {
             description = translate(
                 'ariaColumnGroupCellSelection',
                 'Press Enter to toggle selection for all visible cells in this column group'
             );
+        } else if (expandable) {
+            description = translate('ariaColumnGroupExpansion', 'Press ENTER to expand or collapse this column group');
         }
 
         this.ariaAnnouncement = description;
@@ -451,9 +476,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         // if any child is fixed, then don't allow moving
         return (
             this.gos.get('suppressMovableColumns') ||
-            this.column
-                .getLeafColumns()
-                .some((column) => column.getColDef().suppressMovable || column.getColDef().lockPosition)
+            this.column.getLeafColumns().some((column) => column.colDef.suppressMovable || column.colDef.lockPosition)
         );
     }
 

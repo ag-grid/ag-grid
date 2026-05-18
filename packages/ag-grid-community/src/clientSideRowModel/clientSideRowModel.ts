@@ -588,6 +588,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // Clear accumulated state flags only on successful completion
         this.clearPendingRefreshFlags();
 
+        this.beans.formula?.onRowsChanged(params.changedRowNodes, params.newData);
+
         // finally dispatch the final model updated event with the correct values
         eventSvc.dispatchEvent({
             type: 'modelUpdated',
@@ -887,7 +889,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public forEachPivotNode(callback: ForEachNodeCallback, includeFooterNodes?: boolean, afterSort?: boolean): void {
         const { colModel, rowGroupColsSvc } = this.beans;
-        if (!colModel.isPivotMode()) {
+        if (!colModel.pivotMode) {
             return;
         }
 

@@ -33,7 +33,7 @@ export class DndSourceComp extends Component {
 
     private onDragStart(dragEvent: DragEvent): void {
         const { rowNode, column, eCell, gos } = this;
-        const providedOnRowDrag = column.getColDef().dndSourceOnRowDrag;
+        const providedOnRowDrag = column.colDef.dndSourceOnRowDrag;
 
         const dataTransfer = dragEvent.dataTransfer!;
 
@@ -52,7 +52,7 @@ export class DndSourceComp extends Component {
 
                 dataTransfer.setData('application/json', jsonData);
                 dataTransfer.setData('text/plain', jsonData);
-            } catch (e) {
+            } catch {
                 // if we cannot convert the data to json, then we do not set the type
             }
         }

@@ -336,6 +336,11 @@ export const AG_GRID_LOCALE_IR = {
     sortAbsoluteDescending: 'مرتب‌سازی مطلق به صورت نزولی',
     sortUnSort: 'پاک کردن مرتب‌سازی',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'یافتن',
+    toolbarFindPreviousMatch: 'مطابقت قبلی',
+    toolbarFindNextMatch: 'مطابقت بعدی',
+    toolbarQuickFilter: 'فیلتر',
+    toolbarMenu: 'منو',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'جمع',
@@ -689,12 +694,16 @@ export const AG_GRID_LOCALE_IR = {
     ariaColumnCellSelection: 'برای تغییر انتخاب همه سلول‌های قابل مشاهده در این ستون، کلید Enter را فشار دهید',
     ariaColumnGroupCellSelection:
         'برای تغییر انتخاب همه سلول‌های قابل مشاهده در این گروه ستون، کلید Enter را فشار دهید',
+    ariaColumnGroupExpansion: 'برای باز یا بسته کردن این گروه ستون ENTER را فشار دهید',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'برای تغییر انتخاب همه سلول‌های قابل مشاهده در این گروه ستون، کلید Enter را فشار دهید. برای باز یا بسته کردن این گروه ستون ALT ENTER را فشار دهید',
     ariaRowSelectAll: 'SPACE را فشار دهید تا همه سطرها انتخاب/غیرفعال شوند',
     ariaRowToggleSelection: 'SPACE را فشار دهید تا انتخاب سطر تغییر یابد',
     ariaRowSelect: 'SPACE را فشار دهید تا این سطر انتخاب شود',
     ariaRowSelectionDisabled: 'انتخاب سطر برای این سطر غیرفعال است',
     ariaSearch: 'جستجو',
     ariaSortableColumn: 'ENTER را فشار دهید تا مرتب شود',
+    ariaSortableColumnWithCellSelection: 'برای مرتب‌سازی ALT ENTER را فشار دهید',
     ariaToggleVisibility: 'SPACE را فشار دهید تا قابلیت رویت تغییر یابد',
     ariaToggleCellValue: 'SPACE را فشار دهید تا مقدار سلول تغییر یابد',
     ariaUnchecked: 'انتخاب نشده',
@@ -813,8 +822,4 @@ export const AG_GRID_LOCALE_IR = {
     editNote: 'ویرایش یادداشت',
     deleteNote: 'حذف یادداشت',
     notePlaceholder: 'یک یادداشت اضافه کنید...',
-    noteHint:
-        'برای پیش‌نمایش نشانگر را روی آن ببرید. برای ویرایش داخل آن کلیک کنید. گوشه را بکشید تا اندازه تغییر کند. برای بستن Esc را فشار دهید.',
-    noteReadOnlyHint:
-        'یادداشت فقط خواندنی. برای کپی کردن متن را انتخاب کنید. گوشه را بکشید تا اندازه تغییر کند. برای بستن Esc را فشار دهید.',
 };

@@ -60,7 +60,7 @@ export const getBoilerPlateFiles = async (isDev: boolean, internalFramework: Int
             if (contents) {
                 files[fileName] = contents;
             }
-        } catch (e) {
+        } catch {
             // Skip missing files.
         }
     });
@@ -146,7 +146,7 @@ export const getFileList = async ({ folderPath, fileList }: { folderPath: string
             try {
                 const file = readFileSync(path.join(folderPath, fileName));
                 contentFiles[fileName] = file.toString('utf-8');
-            } catch (e) {
+            } catch {
                 // Skip missing files.
             }
         })

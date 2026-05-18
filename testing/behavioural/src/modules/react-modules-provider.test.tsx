@@ -1,4 +1,4 @@
-import { cleanup, render } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
 
@@ -43,7 +43,10 @@ async function renderGridWithModules(
         )
     );
 
-    const api = await readyPromise;
+    let api!: GridApi;
+    await act(async () => {
+        api = await readyPromise;
+    });
     return { api };
 }
 
@@ -501,10 +504,16 @@ describe('Module Registration compatible with React context', () => {
                 </AgGridProvider>
             );
 
-            await readyPromise;
+            await act(async () => {
+                await readyPromise;
+            });
 
-            // No enterprise module means no license validation, so no console errors
-            expect(consoleErrorSpy).not.toHaveBeenCalled();
+            // No enterprise module means no AG Grid enterprise license errors.
+            // Ignore React act() warnings that are unrelated to license validation.
+            const nonActErrorCalls = consoleErrorSpy.mock.calls.filter(
+                ([message]) => !(typeof message === 'string' && message.includes('not wrapped in act'))
+            );
+            expect(nonActErrorCalls).toHaveLength(0);
 
             consoleErrorSpy.mockRestore();
         });
@@ -534,7 +543,9 @@ describe('Module Registration compatible with React context', () => {
                 </AgGridProvider>
             );
 
-            await readyPromise;
+            await act(async () => {
+                await readyPromise;
+            });
 
             // Enterprise module without license key should produce console error about missing license
             expect(consoleErrorSpy).toHaveBeenCalled();
@@ -570,7 +581,9 @@ describe('Module Registration compatible with React context', () => {
                 </AgGridProvider>
             );
 
-            await readyPromise;
+            await act(async () => {
+                await readyPromise;
+            });
 
             // Enterprise module without license key should produce console error about missing license
             expect(consoleErrorSpy).toHaveBeenCalled();

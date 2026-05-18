@@ -337,6 +337,11 @@ export const AG_GRID_LOCALE_HR = {
     sortAbsoluteDescending: 'Sortiraj apsolutno silazno',
     sortUnSort: 'Očisti sortiranje',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Pronađi',
+    toolbarFindPreviousMatch: 'Prethodno podudaranje',
+    toolbarFindNextMatch: 'Sljedeće podudaranje',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Izbornik',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Zbroj',
@@ -689,12 +694,16 @@ export const AG_GRID_LOCALE_HR = {
     ariaSelectAllRowCells: 'Pritisnite Enter za odabir svih ćelija u ovom retku',
     ariaColumnCellSelection: 'Pritisnite Enter za prebacivanje odabira svih vidljivih ćelija u ovom stupcu',
     ariaColumnGroupCellSelection: 'Pritisnite Enter za prebacivanje odabira svih vidljivih ćelija u ovoj grupi stupaca',
+    ariaColumnGroupExpansion: 'Pritisnite ENTER za proširivanje ili sažimanje ove grupe stupaca',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Pritisnite Enter za prebacivanje odabira svih vidljivih ćelija u ovoj grupi stupaca. Pritisnite ALT ENTER za proširivanje ili sažimanje ove grupe stupaca',
     ariaRowSelectAll: 'Pritisnite SPACE za uključivanje/isključivanje odabira svih redaka',
     ariaRowToggleSelection: 'Pritisnite SPACE za uključivanje/isključivanje odabira retka',
     ariaRowSelect: 'Pritisnite SPACE za odabir ovog retka',
     ariaRowSelectionDisabled: 'Odabir retka je onemogućen za ovaj redak',
     ariaSearch: 'Pretraživanje',
     ariaSortableColumn: 'Pritisnite ENTER za sortiranje',
+    ariaSortableColumnWithCellSelection: 'Pritisnite ALT ENTER za sortiranje',
     ariaToggleVisibility: 'Pritisnite SPACE za uključivanje/isključivanje vidljivosti',
     ariaToggleCellValue: 'Pritisnite SPACE za uključivanje/isključivanje vrijednosti ćelije',
     ariaUnchecked: 'neoznačeno',
@@ -813,8 +822,4 @@ export const AG_GRID_LOCALE_HR = {
     editNote: 'Uredi napomenu',
     deleteNote: 'Ukloni napomenu',
     notePlaceholder: 'Dodaj napomenu...',
-    noteHint:
-        'Zadržite pokazivač za pretpregled. Kliknite unutar za uređivanje. Povucite kut za promjenu veličine. Pritisnite Esc za zatvaranje.',
-    noteReadOnlyHint:
-        'Napomena samo za čitanje. Označite tekst za kopiranje. Povucite kut za promjenu veličine. Pritisnite Esc za zatvaranje.',
 };

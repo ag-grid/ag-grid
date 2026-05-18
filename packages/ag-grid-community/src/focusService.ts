@@ -310,14 +310,12 @@ export class FocusService extends BeanStub implements NamedBean {
 
         const {
             column,
-            rowCtrl: { rowIndex: headerRowIndex, pinned },
+            rowCtrl: { rowIndex: headerRowIndex },
         } = headerCtrl;
 
         const { column: focusedColumn, headerRowIndex: focusedHeaderRowIndex } = this.focusedHeader;
 
-        return (
-            column === focusedColumn && headerRowIndex === focusedHeaderRowIndex && pinned == focusedColumn.getPinned()
-        );
+        return column === focusedColumn && headerRowIndex === focusedHeaderRowIndex;
     }
 
     public focusHeaderPosition(params: {
@@ -454,7 +452,15 @@ export class FocusService extends BeanStub implements NamedBean {
         const { column, headerRowIndex } = headerPosition;
         const { filterManager, ctrlsSvc, headerNavigation } = this.beans;
 
-        if (this.focusedHeader && isHeaderPositionEqual(params.headerPosition, this.focusedHeader)) {
+        const browserFocusOnHeader = this.isDomDataPresentInHierarchy(
+            _getActiveDomElement(this.beans),
+            DOM_DATA_KEY_HEADER_CTRL
+        );
+        if (
+            browserFocusOnHeader &&
+            this.focusedHeader &&
+            isHeaderPositionEqual(params.headerPosition, this.focusedHeader)
+        ) {
             return false;
         }
 
@@ -469,7 +475,7 @@ export class FocusService extends BeanStub implements NamedBean {
             headerNavigation?.scrollToColumn(column as AgColumn, direction);
         }
 
-        const headerRowContainerCtrl = ctrlsSvc.getHeaderRowContainerCtrl(column.getPinned());
+        const headerRowContainerCtrl = ctrlsSvc.getHeaderRowContainerCtrl();
 
         // this will automatically set the focused header
         const focusSuccess =

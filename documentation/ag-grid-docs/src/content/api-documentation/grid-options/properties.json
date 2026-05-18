@@ -12,6 +12,16 @@
         "meta": {
             "displayName": "Accessories"
         },
+        "toolbar": {
+            "more": {
+                "name": "Toolbar",
+                "url": "./toolbar/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": ["IToolbarItemComp", "IconName", "MenuItemDef", "IMenuActionParams", "DefaultMenuItem"],
+                "include": []
+            }
+        },
         "statusBar": {
             "more": {
                 "name": "Status Bar",
@@ -282,7 +292,7 @@
         "suppressDragLeaveHidesColumns": {
             "more": {
                 "name": "Suppress Hide Leave",
-                "url": "./column-moving/#suppress-hide-leave"
+                "url": "./column-moving/#suppress-hide-on-drag-leave"
             }
         },
         "allowDragFromColumnsToolPanel": {
@@ -648,6 +658,12 @@
             }
         },
         "notesDataSource": {
+            "more": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteTrigger": {
             "more": {
                 "name": "Notes",
                 "url": "./notes/"
@@ -1067,6 +1083,12 @@
             "more": {
                 "name": "Customising Pagination",
                 "url": "./row-pagination/#example-customising-pagination"
+            }
+        },
+        "paginationPanels": {
+            "more": {
+                "name": "Pagination Panel Layout",
+                "url": "./row-pagination/#pagination-panel-layout"
             }
         },
         "paginationNumberFormatter": {

@@ -40,10 +40,10 @@ test.agExample(import.meta, () => {
 
         await waitForAnimation(page);
         const headers = getHeaders(agIdFor);
-        const headerRow = page.locator('.ag-header-row').filter({ has: headers.athlete });
+        const centerHeaderSection = page.locator('.ag-header-row .ag-grid-scrolling-cells').first();
         const baseHeaderWidths = await getHeaderWidths(headers);
 
-        expect(await getWidth(headerRow)).toEqual(await totalHeaderWidth(headers));
+        expect(await getWidth(centerHeaderSection)).toEqual(await totalHeaderWidth(headers));
 
         await page.locator('button.resize-button').click();
         await waitForAnimation(page);
@@ -55,7 +55,7 @@ test.agExample(import.meta, () => {
         expect(apiResizedHeaderWidths.country).toBe(baseHeaderWidths.country);
         expect(apiResizedHeaderWidths.year).toBe(baseHeaderWidths.year);
         expect(apiResizedHeaderWidths.date).toBe(baseHeaderWidths.date);
-        expect(await getWidth(headerRow)).toEqual(await totalHeaderWidth(headers));
+        expect(await getWidth(centerHeaderSection)).toEqual(await totalHeaderWidth(headers));
 
         // `skipHeaders only`
         await page.locator('#toggle-ignore-headers').click(); // on
@@ -70,7 +70,7 @@ test.agExample(import.meta, () => {
         expect(headerSkippedWidths.country).toBe(apiResizedHeaderWidths.country);
         expect(headerSkippedWidths.year).toBe(apiResizedHeaderWidths.year);
         expect(headerSkippedWidths.date).toBe(apiResizedHeaderWidths.date);
-        expect(await getWidth(headerRow)).toEqual(await totalHeaderWidth(headers));
+        expect(await getWidth(centerHeaderSection)).toEqual(await totalHeaderWidth(headers));
 
         // `scaleUpToFitGridWidth only`
         await page.locator('#toggle-ignore-headers').click(); // off
@@ -81,12 +81,14 @@ test.agExample(import.meta, () => {
         const scaledUpHeaderWidths = await getHeaderWidths(headers);
 
         expect(scaledUpHeaderWidths.athlete).toBe(apiResizedHeaderWidths.athlete);
-        // here the age column needs to be scaled up to fill the grid
-        expect(scaledUpHeaderWidths.age).toBeGreaterThan(baseHeaderWidths.age);
+        // age has maxWidth: 150; on browsers where fitCellContents already pegs it at the cap
+        // (e.g. Firefox font rendering), scaleUp can't grow it further, so >= rather than >.
+        // country/year/date below have no maxWidth and still strictly prove scale-up worked.
+        expect(scaledUpHeaderWidths.age).toBeGreaterThanOrEqual(baseHeaderWidths.age);
         expect(scaledUpHeaderWidths.country).toBeGreaterThan(baseHeaderWidths.country);
         expect(scaledUpHeaderWidths.year).toBeGreaterThan(baseHeaderWidths.year);
         expect(scaledUpHeaderWidths.date).toBeGreaterThan(baseHeaderWidths.date);
-        expect(await getWidth(headerRow)).toEqual(await totalHeaderWidth(headers));
+        expect(await getWidth(centerHeaderSection)).toEqual(await totalHeaderWidth(headers));
 
         // `skipHeaders` and `scaleUpToFitGridWidth`
         await page.locator('#toggle-ignore-headers').click(); // on
@@ -100,7 +102,7 @@ test.agExample(import.meta, () => {
         expect(headerSkippedAndScaledUpHeaderWidths.country).toBe(scaledUpHeaderWidths.country);
         expect(headerSkippedAndScaledUpHeaderWidths.year).toBe(scaledUpHeaderWidths.year);
         expect(headerSkippedAndScaledUpHeaderWidths.date).toBe(scaledUpHeaderWidths.date);
-        expect(await getWidth(headerRow)).toEqual(await totalHeaderWidth(headers));
+        expect(await getWidth(centerHeaderSection)).toEqual(await totalHeaderWidth(headers));
     });
 
     test.eachFramework('fitCellToContents + scaleUpToFitGridWidth does not scale down', async ({ agIdFor, page }) => {
@@ -155,8 +157,9 @@ test.agExample(import.meta, () => {
 
             expect(await getWidth(agIdFor.headerCell('ag-Grid-SelectionColumn'))).toEqual(50);
 
-            const pinnedWidth = (await getWidth(page.locator('.ag-header-row').filter({ has: headers.athlete }))) ?? 0;
-            const mainWidth = (await getWidth(page.locator('.ag-header-row').filter({ has: headers.age }))) ?? 0;
+            const pinnedWidth =
+                (await getWidth(page.locator('.ag-header-row .ag-grid-pinned-left-cells').first())) ?? 0;
+            const mainWidth = (await getWidth(page.locator('.ag-header-row .ag-grid-scrolling-cells').first())) ?? 0;
 
             // +50 for the selection column
             expect(pinnedWidth + mainWidth).toEqual((await totalHeaderWidth(headers)) + 50);

@@ -1,0 +1,45 @@
+@use 'design-system' as *;
+
+.shikiPre {
+    overflow: auto !important;
+
+    :global(.line) {
+        -webkit-font-smoothing: subpixel-antialiased;
+    }
+}
+
+// Bash/shell: suppress Shiki token colours so all text renders as plain foreground
+.shikiPre:global(.language-bash),
+.shikiPre:global(.language-shell) {
+    .shikiCode :global(span) {
+        color: var(--color-fg-primary) !important;
+    }
+}
+
+.lineNumbers .shikiCode {
+    padding-left: 3.8em;
+    padding-top: 1.5em;
+    padding-bottom: 1.5em;
+    position: relative;
+
+    :global(.line) {
+        display: block;
+        counter-increment: shiki-line;
+        line-height: 0.1em; // hack for line number spacing
+
+        &::before {
+            content: counter(shiki-line);
+            display: inline-block;
+            width: 2em;
+            margin-left: -3.5em;
+            margin-right: 1em;
+            text-align: right;
+            color: var(--color-util-brand-500);
+            opacity: 0.33;
+
+            #{$selector-darkmode} & {
+                color: var(--color-fg-primary);
+            }
+        }
+    }
+}

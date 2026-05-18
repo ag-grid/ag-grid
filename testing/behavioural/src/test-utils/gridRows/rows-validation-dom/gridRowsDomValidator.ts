@@ -168,7 +168,15 @@ export class GridRowsDomValidator {
             return false;
         }
         validateRowClasses(row, rowElements, rowErrors, lastDisplayedRowIndex, bugs, gridRows);
-        validateRowAriaAttributes(row, rowElements, rowErrors, bugs, headerRowCount);
+        validateRowAriaAttributes(
+            row,
+            rowElements,
+            rowErrors,
+            bugs,
+            headerRowCount,
+            gridRows.pinnedTopRows.length,
+            gridRows.displayedRows.length
+        );
         validateRowSelectionState(row, rowElements, rowErrors);
         cellValidator.validateRow(row, rowElements);
         return true;

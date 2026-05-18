@@ -201,7 +201,7 @@ export class RowNode<TData = any>
     /** CSRM only - do not use this property internally, this is exposed to the end user only. Use `_leafs` instead. */
     public get allLeafChildren(): RowNode<TData>[] | null {
         const leafs = this._leafs;
-        return leafs === undefined ? this.beans.groupStage?.loadLeafs?.(this) ?? null : leafs;
+        return leafs === undefined ? (this.beans.groupStage?.loadLeafs?.(this) ?? null) : leafs;
     }
 
     public set allLeafChildren(value: RowNode<TData>[] | null | undefined) {
@@ -341,7 +341,7 @@ export class RowNode<TData = any>
      * Replaces the data on the `rowNode`. When this method is called, the grid refreshes the entire rendered row if it is displayed.
      */
     public setData(data: TData): void {
-        this.setDataCommon(data, false);
+        this.setDataCommon(data, 'set');
     }
 
     // similar to setRowData, however it is expected that the data is the same data item. this
@@ -354,12 +354,23 @@ export class RowNode<TData = any>
      * Updates the data on the `rowNode`. When this method is called, the grid refreshes the entire rendered row if it is displayed.
      */
     public updateData(data: TData): void {
-        this.setDataCommon(data, true);
+        this.setDataCommon(data, 'update');
     }
 
-    private setDataCommon(data: TData, update: boolean): void {
+    /**
+     * Like {@link updateData}, but does NOT mirror the data onto `this.sibling`. Used for
+     * row nodes whose sibling must not share data — e.g. the SSRM grand total node, whose
+     * sibling is the root.
+     * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+     */
+    public _updateDataNoSibling(data: TData): void {
+        this.setDataCommon(data, 'updateNoSibling');
+    }
+
+    private setDataCommon(data: TData, mode: 'set' | 'update' | 'updateNoSibling'): void {
         const { valueCache, eventSvc } = this.beans;
         const oldData = this.data;
+        const update = mode !== 'set';
 
         this.data = data;
         valueCache?.onDataChanged();
@@ -369,10 +380,13 @@ export class RowNode<TData = any>
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
         this.__localEventService?.dispatchEvent(event);
 
-        if (this.sibling) {
-            this.sibling.data = data;
-            const event: DataChangedEvent<TData> = this.sibling.createDataChangedEvent(data, oldData, update);
-            this.sibling.__localEventService?.dispatchEvent(event);
+        if (mode !== 'updateNoSibling') {
+            const sibling = this.sibling;
+            if (sibling) {
+                sibling.data = data;
+                const event: DataChangedEvent<TData> = sibling.createDataChangedEvent(data, oldData, update);
+                sibling.__localEventService?.dispatchEvent(event);
+            }
         }
 
         eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: this });
@@ -560,7 +574,7 @@ export class RowNode<TData = any>
             return false; // no column
         }
 
-        let column = colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
+        let column = colModel.getColOrColDefCol(colKey);
         if (!column) {
             return false; // column not found
         }
@@ -628,41 +642,59 @@ export class RowNode<TData = any>
     ): TValue | IAggFuncResult<TValue> | null | undefined;
     public getDataValue<TValue = any>(
         colKey: ColKey<TValue>,
-        from: DataValueFrom = 'data'
+        from: DataValueFrom | undefined
     ): TValue | IAggFuncResult<TValue> | null | undefined {
-        const { colModel, valueSvc, formula } = this.beans;
+        // PERFORMANCE CRITICAL
 
-        if (colKey == null) {
-            return undefined;
-        }
+        const beans = this.beans;
 
-        const column = colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
+        const column = beans.colModel.getColOrColDefCol(colKey);
         if (!column) {
             return undefined;
         }
 
-        // 'data-raw' skips aggData (aggregation results) and formula resolution, but still calls valueGetters
-        // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
-        const dataRaw = from === 'data-raw';
-        const resolvedFrom = dataRaw || from === 'value' ? 'data' : from;
-        let value = valueSvc.getValue(column, this, resolvedFrom, dataRaw);
-
-        if (!dataRaw) {
-            // Resolve formulas to their computed value (skip for 'data-raw')
-            if (formula && column.isAllowFormula() && formula.isFormula(value)) {
-                value = formula.resolveValue(column, this);
+        let value: any;
+        if (from === 'data' || !from) {
+            value = beans.valueSvc.getValue(column, this, 'data', false);
+            if (value == null) {
+                return value;
+            }
+        } else {
+            // 'data-raw' skips aggData (aggregation results) and formula resolution, but still calls valueGetters
+            // 'value' reads committed data like 'data' but resolves agg wrappers (handled below)
+            const dataRaw = from === 'data-raw';
+            const resolvedFrom = dataRaw || from === 'value' ? 'data' : from;
+            value = beans.valueSvc.getValue(column, this, resolvedFrom, dataRaw);
+            if (dataRaw || value == null) {
+                return value;
             }
 
-            // For 'value', 'edit', and 'batch' modes, resolve aggregation wrapper objects to their scalar value
-            // on agg columns. Matches the resolution pattern in dataTypeService:
-            // first try toNumber(), then fall back to .value property.
-            if (from !== 'data' && column.getAggFunc() && typeof value === 'object' && value != null) {
+            // For 'value', 'edit', and 'batch' modes, resolve aggregation wrapper objects to their scalar
+            // value on agg columns. Matches the resolution pattern in dataTypeService: first try toNumber(),
+            // then fall back to .value property. `typeof` check precedes `aggFunc` to cheaply skip primitives.
+            if (typeof value === 'object' && column.aggFunc) {
                 if (typeof value.toNumber === 'function') {
                     return value.toNumber();
                 }
                 if ('value' in value) {
                     return value.value;
                 }
+            }
+
+            // 'edit' and 'batch' mirror the edit-pipeline buffer, which stores the raw formula string
+            // (see editService / editModelService `sourceValue` handling). Resolving formulas here would
+            // break symmetry between the read side and the write side: callers couldn't round-trip the
+            // formula through edits. Only 'value' continues to the formula tail — it is the "computed
+            // value" variant of 'data'.
+            if (from !== 'value') {
+                return value;
+            }
+        }
+
+        if (column.colDef.allowFormula) {
+            const formula = beans.formula;
+            if (formula?.isFormula(value) && column.isAllowFormula()) {
+                value = formula.resolveValue(column, this);
             }
         }
 
@@ -908,26 +940,38 @@ export class RowNode<TData = any>
         return this.childrenAfterSort?.[0] ?? null;
     }
 
-    /** Called internally to destroy this node */
-    public _destroy(fadeOut: boolean): boolean {
+    /**
+     * Called internally to destroy this node.
+     * @param fadeOut
+     *   - `true`: fade-out animation; preserves slide-in via `oldRowTop`.
+     *   - `false`: instant removal; dispatches position events.
+     *   - `null`: silent. Wholesale tree replacement only — the rowRenderer is about to
+     *     tear down every RowCtrl, so position events would just trigger wasted work in
+     *     `cellCtrl.onRowIndexChanged()` on rows that are about to vanish.
+     */
+    public _destroy(fadeOut: boolean | null): boolean {
         if (this.destroyed) {
             return false;
         }
         this.destroyed = true;
 
-        // Unpin the pinned sibling when this source row is destroyed.
         // Check pinnedSibling.rowPinned to ensure we're the source row (not a pinned clone being destroyed).
-        // This also prevents re-entrance when _destroyRowNodeSibling clears rowPinned before calling _destroy.
+        // Also prevents re-entrance when _destroyRowNodeSibling clears rowPinned before calling _destroy.
         const pinnedSibling = this.pinnedSibling;
         if (pinnedSibling?.rowPinned && !this.rowPinned) {
             this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
         }
 
-        if (fadeOut) {
+        if (fadeOut === true) {
             this.clearRowTopAndRowIndex(); // so row renderer knows to fade row out (and not reposition it)
-        } else {
+        } else if (fadeOut === false) {
             this.setRowTop(null);
             this.setRowIndex(null);
+        } else {
+            this.oldRowTop = null;
+            this.rowTop = null;
+            this.rowIndex = null;
+            this.displayed = false;
         }
 
         if (!this.footer) {

@@ -338,6 +338,11 @@ export const AG_GRID_LOCALE_DK = {
     sortAbsoluteDescending: 'Sorter Absolut Faldende',
     sortUnSort: 'Ryd Sortering',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Find',
+    toolbarFindPreviousMatch: 'Forrige fund',
+    toolbarFindNextMatch: 'Næste fund',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
@@ -690,12 +695,16 @@ export const AG_GRID_LOCALE_DK = {
     ariaSelectAllRowCells: 'Tryk på Enter for at vælge alle celler i denne række',
     ariaColumnCellSelection: 'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonne',
     ariaColumnGroupCellSelection: 'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonnegruppe',
+    ariaColumnGroupExpansion: 'Tryk på ENTER for at udvide eller skjule denne kolonnegruppe',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Tryk på Enter for at skifte markering af alle synlige celler i denne kolonnegruppe. Tryk på ALT ENTER for at udvide eller skjule denne kolonnegruppe',
     ariaRowSelectAll: 'Tryk på MELLEMRUM for at skifte alle rækkers valg',
     ariaRowToggleSelection: 'Tryk på MELLEMRUM for at skifte rækkes valg',
     ariaRowSelect: 'Tryk på MELLEMRUM for at vælge denne række',
     ariaRowSelectionDisabled: 'Rækkevalg er deaktiveret for denne række',
     ariaSearch: 'Søg',
     ariaSortableColumn: 'Tryk på ENTER for at sortere',
+    ariaSortableColumnWithCellSelection: 'Tryk på ALT ENTER for at sortere',
     ariaToggleVisibility: 'Tryk på MELLEMRUM for at skifte synlighed',
     ariaToggleCellValue: 'Tryk på MELLEMRUM for at skifte celleværdi',
     ariaUnchecked: 'umarkeret',
@@ -814,8 +823,4 @@ export const AG_GRID_LOCALE_DK = {
     editNote: 'Rediger note',
     deleteNote: 'Fjern note',
     notePlaceholder: 'Tilføj en note...',
-    noteHint:
-        'Hold musen over for at få vist en forhåndsvisning. Klik indenfor for at redigere. Træk i hjørnet for at ændre størrelsen. Tryk på Esc for at lukke.',
-    noteReadOnlyHint:
-        'Skrivebeskyttet note. Markér tekst for at kopiere. Træk i hjørnet for at ændre størrelsen. Tryk på Esc for at lukke.',
 };

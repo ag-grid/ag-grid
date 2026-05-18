@@ -146,6 +146,7 @@ const DocsExampleRunnerInner = ({
 
     useEffect(() => {
         if (isError) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- sync state from query result
             setSupportedFrameworks(['typescript']);
         }
 

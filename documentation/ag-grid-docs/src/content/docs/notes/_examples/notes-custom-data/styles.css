@@ -1,0 +1,66 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+}
+
+.example-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.legend-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--ag-border-color);
+    border-radius: 999px;
+    background: var(--ag-background-color);
+    color: var(--ag-foreground-color);
+    font-size: 12px;
+}
+
+.legend-chip::before {
+    content: '';
+    width: var(--ag-note-indicator-size, 10px);
+    height: var(--ag-note-indicator-size, 10px);
+    border-radius: 999px;
+    background: var(--ag-note-indicator-color, var(--ag-accent-color));
+}
+
+.ag-cell.note-type-team,
+.legend-chip.note-type-team {
+    --ag-note-indicator-color: #2563eb;
+}
+
+.ag-cell.note-type-review,
+.legend-chip.note-type-review {
+    --ag-note-indicator-color: #14b8a6;
+}
+
+.ag-cell.note-type-personal,
+.legend-chip.note-type-personal {
+    --ag-note-indicator-color: #f59e0b;
+}
+
+.ag-cell.note-priority-high,
+.legend-chip.note-priority-high {
+    --ag-note-indicator-size: 12px;
+}
+
+.ag-cell.note-priority-medium,
+.legend-chip.note-priority-medium {
+    --ag-note-indicator-size: 10px;
+}
+
+.ag-cell.note-priority-low,
+.legend-chip.note-priority-low {
+    --ag-note-indicator-size: 8px;
+}
+
+#myGrid {
+    flex: 1 1 0;
+}

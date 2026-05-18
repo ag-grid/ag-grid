@@ -341,6 +341,11 @@ export const AG_GRID_LOCALE_FR = {
     sortAbsoluteDescending: 'Trier par ordre décroissant absolu',
     sortUnSort: 'Effacer le tri',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Rechercher',
+    toolbarFindPreviousMatch: 'Correspondance précédente',
+    toolbarFindNextMatch: 'Correspondance suivante',
+    toolbarQuickFilter: 'Filtrer',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Somme',
@@ -695,12 +700,16 @@ export const AG_GRID_LOCALE_FR = {
         'Appuyez sur Entrée pour basculer la sélection de toutes les cellules visibles de cette colonne',
     ariaColumnGroupCellSelection:
         'Appuyez sur Entrée pour basculer la sélection de toutes les cellules visibles de ce groupe de colonnes',
+    ariaColumnGroupExpansion: 'Appuyez sur ENTER pour développer ou réduire ce groupe de colonnes',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Appuyez sur Entrée pour basculer la sélection de toutes les cellules visibles de ce groupe de colonnes. Appuyez sur ALT ENTER pour développer ou réduire ce groupe de colonnes',
     ariaRowSelectAll: 'Appuyez sur ESPACE pour basculer la sélection de toutes les lignes',
     ariaRowToggleSelection: 'Appuyez sur ESPACE pour basculer la sélection de la ligne',
     ariaRowSelect: 'Appuyez sur ESPACE pour sélectionner cette ligne',
     ariaRowSelectionDisabled: 'La sélection de lignes est désactivée pour cette ligne',
     ariaSearch: 'Rechercher',
     ariaSortableColumn: 'Appuyez sur ENTER pour trier',
+    ariaSortableColumnWithCellSelection: 'Appuyez sur ALT ENTER pour trier',
     ariaToggleVisibility: 'Appuyez sur ESPACE pour basculer la visibilité',
     ariaToggleCellValue: 'Appuyez sur ESPACE pour basculer la valeur de la cellule',
     ariaUnchecked: 'non coché',
@@ -820,8 +829,4 @@ export const AG_GRID_LOCALE_FR = {
     editNote: 'Modifier la note',
     deleteNote: 'Supprimer la note',
     notePlaceholder: 'Ajouter une note...',
-    noteHint:
-        "Survolez pour prévisualiser. Cliquez à l'intérieur pour modifier. Faites glisser le coin pour redimensionner. Appuyez sur Échap pour fermer.",
-    noteReadOnlyHint:
-        'Note en lecture seule. Sélectionnez le texte pour le copier. Faites glisser le coin pour redimensionner. Appuyez sur Échap pour fermer.',
 };

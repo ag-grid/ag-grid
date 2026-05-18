@@ -80,8 +80,8 @@ describe('AgRichSelectList', () => {
         const row = {
             getCompId: () => '123',
             getValue: () => 'Pink',
-            toggleHighlighted: jest.fn(),
-            updateSelected: jest.fn(),
+            toggleHighlighted: vi.fn(),
+            updateSelected: vi.fn(),
         };
 
         (list as any).forEachRenderedRow = (callback: (cmp: any, idx: number) => void) => {
@@ -89,14 +89,14 @@ describe('AgRichSelectList', () => {
                 callback(row, 0);
             }
         };
-        (list as any).refresh = jest.fn();
-        (list as any).ensureIndexVisible = jest.fn();
+        (list as any).refresh = vi.fn();
+        (list as any).ensureIndexVisible = vi.fn();
 
         list.selectValue('Pink');
         expect(row.toggleHighlighted).not.toHaveBeenCalled();
 
         const virtualListPrototype = Object.getPrototypeOf(Object.getPrototypeOf(list));
-        const drawVirtualRowsSpy = jest.spyOn(virtualListPrototype, 'drawVirtualRows').mockImplementation(() => {});
+        const drawVirtualRowsSpy = vi.spyOn(virtualListPrototype, 'drawVirtualRows').mockImplementation(() => {});
         try {
             rendered = true;
             (list as any).drawVirtualRows(true);
@@ -148,7 +148,7 @@ describe('AgRichSelectList', () => {
 
     it('requests more rows when viewport is close to the end', () => {
         const { list } = createList<string>();
-        const callback = jest.fn();
+        const callback = vi.fn();
         const gui = list.getGui() as HTMLElement;
 
         Object.defineProperty(gui, 'clientHeight', { value: 100, configurable: true });
@@ -167,7 +167,7 @@ describe('AgRichSelectList', () => {
 
     it('requests previous rows when viewport is close to the start', () => {
         const { list } = createList<string>();
-        const callback = jest.fn();
+        const callback = vi.fn();
         const gui = list.getGui() as HTMLElement;
 
         Object.defineProperty(gui, 'clientHeight', { value: 100, configurable: true });
@@ -185,7 +185,7 @@ describe('AgRichSelectList', () => {
 
     it('requests previous rows from layout checks when there is no vertical overflow', () => {
         const { list } = createList<string>();
-        const callback = jest.fn();
+        const callback = vi.fn();
         const gui = list.getGui() as HTMLElement;
 
         Object.defineProperty(gui, 'clientHeight', { value: 200, configurable: true });
@@ -201,7 +201,7 @@ describe('AgRichSelectList', () => {
 
     it('allows requesting more rows even when the current list is empty', () => {
         const { list } = createList<string>();
-        const callback = jest.fn();
+        const callback = vi.fn();
         const gui = list.getGui() as HTMLElement;
 
         Object.defineProperty(gui, 'clientHeight', { value: 100, configurable: true });
@@ -219,7 +219,7 @@ describe('AgRichSelectList', () => {
 
     it('announces loading and no-matches state transitions', () => {
         const { list } = createList<string>({ allowNoResultsCopy: true });
-        const announce = jest.fn();
+        const announce = vi.fn();
 
         (list as any).loadingLabel = 'Loading...';
         (list as any).noMatchesLabel = 'No matches to show';

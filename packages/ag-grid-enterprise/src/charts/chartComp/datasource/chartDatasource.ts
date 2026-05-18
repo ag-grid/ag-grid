@@ -12,7 +12,6 @@ import type {
     RowNodeSorter,
     SortOption,
     SortService,
-    ValueService,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -57,7 +56,6 @@ export interface ChartValueWrapper<T = any> {
 export class ChartDatasource extends BeanStub {
     private gridRowModel: IRowModel;
     private pivotResultCols?: IPivotResultColsService;
-    private valueSvc: ValueService;
     private colModel: ColumnModel;
     private rowNodeSorter?: RowNodeSorter;
     private sortSvc?: SortService;
@@ -66,7 +64,6 @@ export class ChartDatasource extends BeanStub {
         this.sortSvc = beans.sortSvc;
         this.gridRowModel = beans.rowModel;
         this.colModel = beans.colModel;
-        this.valueSvc = beans.valueSvc;
         this.pivotResultCols = beans.pivotResultCols;
         this.rowNodeSorter = beans.rowNodeSorter;
     }
@@ -141,13 +138,13 @@ export class ChartDatasource extends BeanStub {
                 let colNamesArr: string[] = [];
 
                 // pivot keys should be added first
-                const pivotKeys = col.getColDef().pivotKeys;
+                const pivotKeys = col.colDef.pivotKeys;
                 if (pivotKeys) {
                     colNamesArr = pivotKeys.slice();
                 }
 
                 // then add column header name to results
-                const headerName = col.getColDef().headerName;
+                const headerName = col.colDef.headerName;
                 if (headerName) {
                     colNamesArr.push(headerName);
                 }
@@ -180,7 +177,7 @@ export class ChartDatasource extends BeanStub {
                 const column = this.colModel.getCol(colId);
 
                 if (column) {
-                    const valueObject = this.valueSvc.getValue(column, rowNode, 'data');
+                    const valueObject = rowNode.getDataValue(column, 'data');
 
                     // when grouping we also need to build up multi category labels for charts
                     if (grouping) {
@@ -234,12 +231,12 @@ export class ChartDatasource extends BeanStub {
 
             // then get data for value columns
             for (const col of valueCols) {
-                const colId = col.getColId();
+                const colId = col.colId;
                 if (crossFiltering) {
                     const filteredOutColId = colId + '-filtered-out';
 
                     // add data value to value column
-                    const value = this.valueSvc.getValue(col, rowNode, 'data');
+                    const value = rowNode.getDataValue(col, 'data');
                     let actualValue = value;
 
                     // unwrap value objects if present
@@ -260,7 +257,7 @@ export class ChartDatasource extends BeanStub {
                     }
                 } else {
                     // add data value to value column
-                    let value = this.valueSvc.getValue(col, rowNode, 'data');
+                    let value = rowNode.getDataValue(col, 'data');
 
                     // unwrap value object if present
                     if (value && typeof value.value === 'number') {
@@ -360,7 +357,7 @@ export class ChartDatasource extends BeanStub {
 
             for (const groupItem of dataAggregated) {
                 for (const col of params.valueCols) {
-                    const colId = col.getColId();
+                    const colId = col.colId;
 
                     if (params.crossFiltering) {
                         // filtered data
@@ -379,8 +376,7 @@ export class ChartDatasource extends BeanStub {
                             api,
                             context,
                         });
-                        groupItem[colId] =
-                            aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                        groupItem[colId] = typeof aggResult?.value !== 'undefined' ? aggResult.value : aggResult;
 
                         // filtered out data
                         const filteredOutColId = `${colId}-filtered-out`;
@@ -400,7 +396,7 @@ export class ChartDatasource extends BeanStub {
                             context,
                         });
                         groupItem[filteredOutColId] =
-                            aggResultFiltered && typeof aggResultFiltered.value !== 'undefined'
+                            typeof aggResultFiltered?.value !== 'undefined'
                                 ? aggResultFiltered.value
                                 : aggResultFiltered;
                     } else {
@@ -417,8 +413,7 @@ export class ChartDatasource extends BeanStub {
                             context,
                         });
 
-                        groupItem[colId] =
-                            aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+                        groupItem[colId] = typeof aggResult?.value !== 'undefined' ? aggResult.value : aggResult;
                     }
                 }
             }
@@ -442,10 +437,10 @@ export class ChartDatasource extends BeanStub {
         // the same logic can be used for CSRM and SSRM to extract legend names in extractRowsFromGridRowModel()
         for (const col of secondaryColumns) {
             if (pivotKeySeparator === '') {
-                col.getColDef().pivotKeys = [];
+                col.colDef.pivotKeys = [];
             } else {
-                const keys = col.getColId().split(pivotKeySeparator);
-                col.getColDef().pivotKeys = keys.slice(0, keys.length - 1);
+                const keys = col.colId.split(pivotKeySeparator);
+                col.colDef.pivotKeys = keys.slice(0, keys.length - 1);
             }
         }
     }
@@ -468,7 +463,7 @@ export class ChartDatasource extends BeanStub {
         if (firstSecondaryCol.getParent() == null) {
             return '';
         }
-        return extractSeparator(firstSecondaryCol.getParent()!, firstSecondaryCol.getColId());
+        return extractSeparator(firstSecondaryCol.getParent()!, firstSecondaryCol.colId);
     }
 
     private getGroupLabels(rowNode: RowNode | null, initialLabel: string): string[] {
@@ -481,7 +476,7 @@ export class ChartDatasource extends BeanStub {
                     // just like we do for the initialLabel
                     const groupColumn = this.colModel.getCol(GROUP_AUTO_COLUMN_ID);
                     if (groupColumn) {
-                        const valueObject = this.valueSvc.getValue(groupColumn, rowNode, 'data');
+                        const valueObject = rowNode.getDataValue(groupColumn, 'data');
                         const valueString = valueObject?.toString ? String(valueObject.toString()) : ' ';
                         labels.push(valueString);
                     }

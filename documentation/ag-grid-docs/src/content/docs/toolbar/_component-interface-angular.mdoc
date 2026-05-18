@@ -1,0 +1,28 @@
+{% if isFramework("angular") %}
+Implement this interface to create a toolbar item component.
+{% /if %}
+
+{% if isFramework("angular") %}
+
+```ts
+interface IToolbarItemAngularComp {
+    // mandatory methods
+
+    // The agInit(params) method is called on the toolbar item component once.
+    // See below for details on the parameters.
+    agInit(params: IToolbarItemParams): void;
+
+    // optional methods
+
+    // Called when the `toolbar` grid option updates.
+    // Return `true` if the component updates itself with the new params.
+    // Return `false` (or omit) to have the grid destroy and recreate the component.
+    refresh(params: IToolbarItemParams): boolean;
+}
+```
+
+{% /if %}
+
+{% if isFramework("angular") %}
+The `agInit(params)` method receives a params object that implements `IToolbarItemParams`:
+{% /if %}

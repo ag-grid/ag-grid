@@ -6,8 +6,8 @@ import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/colu
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableContainer {
-    constructor(horizontal: boolean, params?: ColumnStateUpdateParams) {
-        super(horizontal, 'pivot', params);
+    constructor(horizontal: boolean, params?: ColumnStateUpdateParams, embedded = false) {
+        super(horizontal, 'pivot', params, embedded);
     }
 
     public postConstruct(): void {
@@ -21,8 +21,8 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
             title: title,
         });
 
-        // only the top (horizontal) drop zone participates in core grid container tabbing.
-        if (this.horizontal) {
+        // See RowGroupDropZonePanel — embedded drop zones defer tab hand-off to their host.
+        if (this.horizontal && !this.embedded) {
             _addFocusableContainerListener(this.beans, this, this.getGui());
         }
 
@@ -48,7 +48,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
 
     private checkVisibility(): void {
         const colModel = this.beans.colModel;
-        const pivotMode = colModel.isPivotMode();
+        const pivotMode = colModel.pivotMode;
 
         if (this.horizontal) {
             // what we do for horizontal (ie the pivot panel at the top) depends
@@ -75,7 +75,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel implements FocusableCo
 
     protected isItemDroppable(column: AgColumn, draggingEvent: GridDraggingEvent): boolean {
         // we never allow grouping of secondary columns
-        if (this.gos.get('functionsReadOnly') || !column.isPrimary()) {
+        if (this.gos.get('functionsReadOnly') || !column.primary) {
             return false;
         }
 

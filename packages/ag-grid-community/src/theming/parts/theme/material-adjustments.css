@@ -13,6 +13,14 @@
     background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 8%);
 }
 
+:where(.ag-toolbar) .ag-column-drop-horizontal {
+    background-color: transparent;
+}
+
+:where(.ag-toolbar) .ag-toolbar-panel {
+    padding-inline: var(--ag-cell-horizontal-padding) 0;
+}
+
 .ag-cell.ag-cell-inline-editing {
     padding: var(--ag-spacing);
     height: calc(var(--ag-row-height) + var(--ag-spacing) * 3);
@@ -55,4 +63,38 @@
 .ag-filter-add-button,
 .ag-filter-add-button:hover {
     border-bottom: 2px solid var(--ag-primary-color);
+}
+
+.ag-toolbar-button-wrapper {
+    transition:
+        background-color 0.2s,
+        color 0.2s;
+}
+
+.ag-toolbar-find,
+.ag-toolbar-input {
+    box-shadow: none;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
+
+.ag-toolbar-find:focus-within {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+}
+
+.ag-toolbar-input-field {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.ag-toolbar-input-field:focus {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
 }

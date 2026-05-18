@@ -44,10 +44,12 @@ export const FormattedInput = ({
         if (!hasFocus.current) {
             setEditorValue(valueToDisplayString(value));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally omitting valueToDisplayString to avoid re-running on function identity changes
     }, [value]);
 
     const isValid = useMemo(
         () => (editorValue === '' ? true : editingStringToValue(editorValue) != null),
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally omitting editingStringToValue to avoid re-running on function identity changes
         [editorValue]
     );
 

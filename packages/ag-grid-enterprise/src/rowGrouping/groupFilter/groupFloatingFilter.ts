@@ -206,7 +206,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
                 eFloatingFilterText.setDisplayed(false);
             } else {
                 const model = column ? colFilter.getModelForColumn(column) : null;
-                eFloatingFilterText.setValue(model == null ? '' : filterOrHandler.getModelAsString?.(model) ?? '');
+                eFloatingFilterText.setValue(model == null ? '' : (filterOrHandler.getModelAsString?.(model) ?? ''));
                 eFloatingFilterText.setDisplayed(true);
             }
         };

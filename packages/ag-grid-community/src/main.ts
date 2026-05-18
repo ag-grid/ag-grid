@@ -431,6 +431,23 @@ export type {
     StatusPanelDef,
 } from './interfaces/iStatusPanel';
 
+// Toolbar
+export type {
+    IToolbarItem,
+    IToolbarItemComp,
+    IToolbarItemParams,
+    Toolbar,
+    ToolbarBuiltInItemDef,
+    ToolbarButtonItemDef,
+    ToolbarCustomItemDef,
+    ToolbarItemActionParams,
+    ToolbarItemComponent,
+    ToolbarItemDef,
+    ToolbarItemShorthand,
+    ToolbarMenuBuiltInItemDef,
+    ToolbarMenuItemParams,
+} from './interfaces/iToolbar';
+
 // Tool Panel
 export type { IColumnToolPanel } from './interfaces/iColumnToolPanel';
 export type { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
@@ -798,6 +815,7 @@ export type {
     LocaleText,
     MasterSelectionMode,
     MultiRowSelectionOptions,
+    PaginationPanel,
     PivotColumnGroupTotals,
     PivotRowTotals,
     ProcessPivotResultColDef,
@@ -893,7 +911,7 @@ export type {
     IHeaderGroupComp,
     IHeaderGroupParams,
     IInnerHeaderGroupComponent,
-} from './headerRendering/cells/columnGroup/headerGroupComp';
+} from './headerRendering/cells/columnGroup/agColumnGroupHeader';
 export type { IHeader, IHeaderComp, IHeaderParams, IInnerHeaderComponent } from './interfaces/iHeader';
 
 // Tooltips

@@ -8,49 +8,39 @@ import type { RowContainerCtrl } from './gridBodyComp/rowContainer/rowContainerC
 import type { GridCtrl } from './gridComp/gridCtrl';
 import type { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
 import type { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
-import type { ColumnPinnedType } from './interfaces/iColumn';
 
-/** If adding or removing a control, update `NUM_CTRLS` below. */
+/** If adding or removing a control, update `REQUIRED_CTRLS` below. */
 interface ReadyParams {
     gridCtrl: GridCtrl;
     gridBodyCtrl: GridBodyCtrl;
 
-    center: RowContainerCtrl;
-    left: RowContainerCtrl;
-    right: RowContainerCtrl;
-
-    bottomCenter: RowContainerCtrl;
-    bottomLeft: RowContainerCtrl;
-    bottomRight: RowContainerCtrl;
-
-    topCenter: RowContainerCtrl;
-    topLeft: RowContainerCtrl;
-    topRight: RowContainerCtrl;
-
-    stickyTopCenter: RowContainerCtrl;
-    stickyTopLeft: RowContainerCtrl;
-    stickyTopRight: RowContainerCtrl;
-
-    stickyBottomCenter: RowContainerCtrl;
-    stickyBottomLeft: RowContainerCtrl;
-    stickyBottomRight: RowContainerCtrl;
+    scrolling: RowContainerCtrl;
+    pinnedTop: RowContainerCtrl;
+    pinnedBottom: RowContainerCtrl;
+    stickyTop: RowContainerCtrl;
+    stickyBottom: RowContainerCtrl;
 
     fakeHScrollComp: FakeHScrollComp;
     fakeVScrollComp: FakeVScrollComp;
     gridHeaderCtrl: GridHeaderCtrl;
 
-    centerHeader: HeaderRowContainerCtrl;
-    leftHeader: HeaderRowContainerCtrl;
-    rightHeader: HeaderRowContainerCtrl;
+    headerRowContainerCtrl: HeaderRowContainerCtrl;
 }
 
-/**
- * This is the number of controls defined above in `ReadyParams`.
- * This allows us to quickly know when all controls have been registered.
- */
-const NUM_CTRLS = 23;
-
 type CtrlType = keyof ReadyParams;
+const REQUIRED_CTRLS: CtrlType[] = [
+    'gridCtrl',
+    'gridBodyCtrl',
+    'scrolling',
+    'pinnedTop',
+    'pinnedBottom',
+    'stickyTop',
+    'stickyBottom',
+    'fakeHScrollComp',
+    'fakeVScrollComp',
+    'gridHeaderCtrl',
+    'headerRowContainerCtrl',
+];
 
 type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
 
@@ -85,13 +75,11 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         );
     }
     private updateReady(): void {
-        const values = Object.values(this.params);
-        // ready when all ctrls have been registered and are alive
-        this.ready =
-            values.length === NUM_CTRLS &&
-            values.every((ctrl: BeanStub<any> | undefined) => {
-                return ctrl?.isAlive() ?? false;
-            });
+        // ready when all required controls have been registered and are alive
+        this.ready = REQUIRED_CTRLS.every((ctrlType) => {
+            const ctrl = this.params[ctrlType];
+            return ctrl?.isAlive() ?? false;
+        });
     }
 
     public whenReady(caller: BeanDestroyFunc, callback: (p: ReadyParams) => void): void {
@@ -132,21 +120,8 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         return this.params.gridBodyCtrl;
     }
 
-    public getHeaderRowContainerCtrls(): HeaderRowContainerCtrl[] {
-        const { leftHeader, centerHeader, rightHeader } = this.params;
-        return [leftHeader, rightHeader, centerHeader];
-    }
-
-    public getHeaderRowContainerCtrl(pinned?: ColumnPinnedType): HeaderRowContainerCtrl | undefined {
-        const params = this.params;
-        switch (pinned) {
-            case 'left':
-                return params.leftHeader;
-            case 'right':
-                return params.rightHeader;
-            default:
-                return params.centerHeader;
-        }
+    public getHeaderRowContainerCtrl(): HeaderRowContainerCtrl | undefined {
+        return this.params.headerRowContainerCtrl;
     }
 
     public getScrollFeature(): GridBodyScrollFeature {

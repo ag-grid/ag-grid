@@ -37,8 +37,7 @@ export const getHeightFromProperty = (
     if (typeof height === 'number') {
         finalHeight = height;
     } else {
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        const heightFunc = height as Function;
+        const heightFunc = height as (params: { rowIndex: number }) => number;
         finalHeight = heightFunc({ rowIndex });
     }
 

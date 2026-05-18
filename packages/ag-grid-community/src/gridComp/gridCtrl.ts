@@ -28,6 +28,7 @@ export interface OptionalGridComponents {
     gridHeaderDropZonesSelector?: ComponentSelector<Component>;
     sideBarSelector?: ComponentSelector<Component>;
     statusBarSelector?: ComponentSelector<Component>;
+    toolbarSelector?: ComponentSelector<Component & FocusableContainer>;
     watermarkSelector?: ComponentSelector<Component>;
 }
 
@@ -94,6 +95,7 @@ export class GridCtrl extends BeanStub {
             gridHeaderDropZonesSelector: beans.registry?.getSelector('AG-GRID-HEADER-DROP-ZONES'),
             sideBarSelector: beans.sideBar?.getSelector(),
             statusBarSelector: beans.registry?.getSelector('AG-STATUS-BAR'),
+            toolbarSelector: beans.registry?.getSelector('AG-TOOLBAR'),
             watermarkSelector: beans.licenseManager?.getWatermarkSelector(),
         };
     }
@@ -114,11 +116,13 @@ export class GridCtrl extends BeanStub {
         return this.eGui;
     }
 
-    public setResizeCursor(direction: Direction | false): void {
+    public setResizeCursor(direction: Direction | false, isColumn: boolean = false): void {
         const { view } = this;
 
         if (direction === false) {
             view.setCursor(null);
+        } else if (isColumn) {
+            view.setCursor(direction === Direction.Horizontal ? 'col-resize' : 'row-resize');
         } else {
             view.setCursor(direction === Direction.Horizontal ? 'ew-resize' : 'ns-resize');
         }

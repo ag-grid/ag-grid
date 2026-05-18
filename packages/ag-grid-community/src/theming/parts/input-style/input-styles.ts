@@ -108,6 +108,11 @@ export type InputStyleParams = {
     pickerButtonBorder: BorderValue;
 
     /**
+     * Corner radius of buttons with attached dropdown menus (e.g. select fields)
+     */
+    pickerButtonBorderRadius: LengthValue;
+
+    /**
      * Border around buttons with attached dropdown menus (e.g. select fields) when focussed
      */
     pickerButtonFocusBorder: BorderValue;
@@ -205,6 +210,7 @@ const baseParams: InputStyleParams = {
         ref: 'inputTextColor',
     },
     pickerButtonBorder: false,
+    pickerButtonBorderRadius: 0,
     pickerButtonFocusBorder: { ref: 'inputFocusBorder' },
     pickerButtonBackgroundColor: { ref: 'backgroundColor' },
     pickerButtonFocusBackgroundColor: { ref: 'backgroundColor' },
@@ -254,6 +260,9 @@ const makeInputStyleBorderedTreeShakeable = () =>
                 color: { ref: 'invalidColor' },
             },
             pickerButtonBorder: true,
+            pickerButtonBorderRadius: {
+                ref: 'borderRadius',
+            },
             pickerListBorder: true,
         },
         css: () => inputStyleBaseCSS + inputStyleBorderedCSS,

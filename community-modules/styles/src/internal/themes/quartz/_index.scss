@@ -17,6 +17,10 @@
         color: var(--ag-header-foreground-color);
     }
 
+    .ag-toolbar-item:where(:not(.ag-toolbar-panel)) {
+        font-weight: 500;
+    }
+
     @include ag.text-input {
         min-height: calc(var(--ag-grid-size) * 4);
         border-radius: var(--ag-border-radius);
@@ -457,6 +461,7 @@
     .ag-paging-number,
     .ag-paging-row-summary-panel-number {
         font-weight: 500;
+        font-variant-numeric: tabular-nums;
     }
 
     .ag-column-drop-cell-button {
@@ -598,8 +603,7 @@
 
     .ag-layout-auto-height,
     .ag-layout-print {
-        .ag-center-cols-viewport,
-        .ag-center-cols-container {
+        .ag-grid-scrolling-container {
             min-height: 150px;
         }
     }
@@ -697,10 +701,6 @@
 
     .ag-pill .ag-pill-button:hover {
         color: var(--ag-active-color);
-    }
-
-    .ag-has-cell-notes::after {
-        border-color: transparent var(--ag-active-color) transparent transparent;
     }
 }
 

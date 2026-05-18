@@ -28,8 +28,7 @@ type KeysLike<U> = Exclude<GetPropKeys<GridOptions, U>, undefined>;
 type KeysWithType<U> = Exclude<GetPropKeys<GridOptions, U>, AnyGridOptions>;
 type CallbackKeys = KeysWithType<(any: AgGridCommon<any, any>) => any>;
 /** All function properties excluding those explicity match the common callback interface. */
-// eslint-disable-next-line @typescript-eslint/ban-types
-type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
+type FunctionKeys = Exclude<KeysLike<(...args: any[]) => any>, CallbackKeys>;
 
 /**
  * These keys are used for validating properties supplied on a gridOptions object, and for code generation.
@@ -57,6 +56,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'treeDataParentIdField',
     'colResizeDefault',
     'tooltipTrigger',
+    'noteTrigger',
     'serverSidePivotResultFieldSeparator',
     'columnMenu',
     'tooltipShowMode',
@@ -98,6 +98,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'activeOverlayParams',
     'popupParent',
     'themeStyleContainer',
+    'toolbar',
     'statusBar',
     'chartThemeOverrides',
     'customChartThemes',
@@ -129,6 +130,7 @@ const ARRAY_GRID_OPTIONS: KeysWithType<any[]>[] = [
     'chartThemes',
     'rowClass',
     'paginationPageSizeSelector',
+    'paginationPanels',
     'suppressOverlays',
 ];
 

@@ -217,8 +217,8 @@ describe('tree dats sorting behaviour', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── ag-Grid-AutoColumn "File Explorer" width:280 flex:1 sort:desc
-            └── size "Size" width:200 flex:1 aggFunc:sum
+            ├── ag-Grid-AutoColumn "File Explorer" width:500 flex:1 sort:desc
+            └── size "Size" width:500 flex:1 aggFunc:sum
         `);
     });
 

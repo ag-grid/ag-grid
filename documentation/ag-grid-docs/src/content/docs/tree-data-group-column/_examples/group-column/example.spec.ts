@@ -21,7 +21,7 @@ test.agExample(import.meta, () => {
                 .first()
                 .locator('[col-id="size"]');
 
-        const viewport = page.locator('.ag-body-viewport');
+        const viewport = page.locator('.ag-grid-viewport');
 
         // Level 0: Desktop (sum: 2,072,576 bytes = 1.98 MB)
         await expect(groupSizeCell('Desktop')).toContainText('1.98 MB');

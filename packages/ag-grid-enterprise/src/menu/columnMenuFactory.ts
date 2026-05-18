@@ -51,7 +51,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         const defaultItems = this.getDefaultMenuOptions(column);
         let result: (DefaultMenuItem | MenuItemDef)[];
 
-        const columnMainMenuItems = (column?.getColDef() ?? columnGroup?.getColGroupDef())?.mainMenuItems;
+        const columnMainMenuItems = (column?.colDef ?? columnGroup?.getColGroupDef())?.mainMenuItems;
         if (Array.isArray(columnMainMenuItems)) {
             result = columnMainMenuItems;
         } else if (typeof columnMainMenuItems === 'function') {
@@ -119,7 +119,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         const grandTotalRow = _getGrandTotalRow(gos);
         const treeData = gos.get('treeData');
 
-        const isPrimary = column.isPrimary();
+        const isPrimary = column.primary;
 
         // 1. secondary columns can always have aggValue, as it means it's a pivot value column
         // 2. otherwise, only allow aggValue if it's a value column and we're grouping or have a grand total row
@@ -210,7 +210,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         if (
             expansionSvc &&
             (_isClientSideRowModel(gos) || gos.get('ssrmExpandAllAffectsAllRows')) &&
-            (treeData || rowGroupCount > (colModel.isPivotMode() ? 1 : 0))
+            (treeData || rowGroupCount > (colModel.pivotMode ? 1 : 0))
         ) {
             result.push('expandAll');
             result.push('contractAll');

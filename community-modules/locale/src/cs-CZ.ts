@@ -336,6 +336,11 @@ export const AG_GRID_LOCALE_CZ = {
     sortAbsoluteDescending: 'Řadit absolutně sestupně',
     sortUnSort: 'Zrušit třídění',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Najít',
+    toolbarFindPreviousMatch: 'Předchozí shoda',
+    toolbarFindNextMatch: 'Další shoda',
+    toolbarQuickFilter: 'Filtr',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Součet',
@@ -687,12 +692,16 @@ export const AG_GRID_LOCALE_CZ = {
     ariaSelectAllRowCells: 'Stiskněte Enter pro výběr všech buněk v tomto řádku',
     ariaColumnCellSelection: 'Stiskněte Enter pro přepnutí výběru všech viditelných buněk v tomto sloupci',
     ariaColumnGroupCellSelection: 'Stiskněte Enter pro přepnutí výběru všech viditelných buněk v této skupině sloupců',
+    ariaColumnGroupExpansion: 'Stiskněte ENTER pro rozbalení nebo sbalení této skupiny sloupců',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Stiskněte Enter pro přepnutí výběru všech viditelných buněk v této skupině sloupců. Stiskněte ALT ENTER pro rozbalení nebo sbalení této skupiny sloupců',
     ariaRowSelectAll: 'Stiskněte SPACE pro přepnutí výběru všech řádků',
     ariaRowToggleSelection: 'Stiskněte SPACE pro přepnutí výběru řádku',
     ariaRowSelect: 'Stiskněte SPACE pro výběr tohoto řádku',
     ariaRowSelectionDisabled: 'Výběr řádku je pro tento řádek zakázán',
     ariaSearch: 'Hledat',
     ariaSortableColumn: 'Stiskněte ENTER pro třídění',
+    ariaSortableColumnWithCellSelection: 'Stiskněte ALT ENTER pro třídění',
     ariaToggleVisibility: 'Stiskněte SPACE pro přepnutí viditelnosti',
     ariaToggleCellValue: 'Stiskněte SPACE pro přepnutí hodnoty buňky',
     ariaUnchecked: 'nezaškrtnuto',
@@ -811,8 +820,4 @@ export const AG_GRID_LOCALE_CZ = {
     editNote: 'Upravit poznámku',
     deleteNote: 'Odstranit poznámku',
     notePlaceholder: 'Přidat poznámku...',
-    noteHint:
-        'Najeďte pro náhled. Klikněte dovnitř pro úpravu. Přetažením rohu změňte velikost. Stiskněte Esc pro zavření.',
-    noteReadOnlyHint:
-        'Poznámka jen pro čtení. Označte text pro kopírování. Přetažením rohu změňte velikost. Stiskněte Esc pro zavření.',
 };

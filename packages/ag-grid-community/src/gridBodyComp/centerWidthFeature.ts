@@ -35,8 +35,8 @@ export class CenterWidthFeature extends BeanStub {
         const { visibleCols, scrollVisibleSvc } = this.beans;
 
         const centerWidth = visibleCols.bodyWidth;
-        const leftWidth = visibleCols.getColsLeftWidth();
-        const rightWidth = visibleCols.getDisplayedColumnsRightWidth();
+        const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
+        const rightWidth = visibleCols.getRightStickyColumnContainerWidth();
 
         let totalWidth: number;
 

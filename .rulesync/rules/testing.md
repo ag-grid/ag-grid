@@ -14,9 +14,9 @@ Behavioural tests in `testing/behavioural/` are the primary test suite for AG Gr
 
 **Key principles:**
 
--   The unit under test is a **behaviour**, not a function, class, method, or file
--   **Avoid mocking** — prefer fakes instead (e.g., fake DOM)
--   Test at the edges of the system to ensure real integration using public APIs
+- The unit under test is a **behaviour**, not a function, class, method, or file
+- **Avoid mocking** — prefer fakes instead (e.g., fake DOM)
+- Test at the edges of the system to ensure real integration using public APIs
 
 ## Test Structure
 
@@ -67,10 +67,10 @@ Behavioural tests in `testing/behavioural/` are the primary test suite for verif
 
 ```bash
 # Run all benchmarks
-yarn nx run ag-behavioural-testing:benchmark
+./benches.sh
 
-# Run specific benchmark file
-yarn nx run ag-behavioural-testing:benchmark -- src/tree-data/datapath/benchmarks/tree-data-path.bench.ts
+# Run specific benchmark file (any positional arg is forwarded to `vitest bench`)
+./benches.sh "tree-data-path"
 ```
 
 ### Unit Tests (Jest)
@@ -88,10 +88,33 @@ yarn nx test ag-grid-community --testPathPattern="featureName"
 yarn nx test ag-grid-community --testPathPattern="featureName" --testNamePattern="should handle"
 ```
 
-### E2E Tests
+### E2E Tests (Playwright)
+
+E2E tests run via Playwright against the docs site. `./docs-e2e.sh` runs them directly from the repo root, bypassing Nx, and defaults to chromium only:
 
 ```bash
-# Run documentation E2E tests
+# Run all E2E tests (chromium)
+./docs-e2e.sh
+
+# Run tests matching a file pattern
+./docs-e2e.sh "toolbar"
+
+# Run a specific test by name
+./docs-e2e.sh "toolbar" --grep "Quick filter"
+
+# Run against all browsers
+./docs-e2e.sh --all-browsers
+
+# Run with a specific framework
+./docs-e2e.sh --framework react
+
+# Open Playwright UI mode
+./docs-e2e.sh --ui
+```
+
+The full Nx target is still available when needed:
+
+```bash
 yarn nx e2e ag-grid-docs
 ```
 
@@ -180,12 +203,13 @@ for (const [name, example] of Object.entries(EXAMPLES)) {
 1. **Test behaviour, not implementation** - Focus on what the code does, not how
 2. **Keep tests independent** - Each test should be able to run in isolation
 3. **Use descriptive names** - Test names should describe the expected behaviour
-4. **Avoid test helpers that hide behaviour** - Tests should be readable without jumping to helpers
-5. **Clean up after tests** - Reset mocks and state in `afterEach`
-6. **Review similar tests** - When adding tests, check related tests for consistency
+4. **Avoid test helpers that hide behaviour** - Repetition is fine in tests; prefer inline setup over a shared factory so each test reads top-to-bottom. Do not flag duplicated test setup (row data, grid options, column defs) in code review. **Do** flag duplicated test *cases* — i.e. tests that assert the same behaviour twice — within a file or across files, since they add no coverage.
+5. **Merge tests that differ only in assertions** - Same setup → one test with sequential assertions. Avoids test-count bloat.
+6. **Clean up after tests** - Reset mocks and state in `afterEach`
+7. **Review similar tests** - When adding tests, check related tests for consistency
 
 ## Coverage
 
--   Aim for meaningful coverage, not 100%
--   Focus on edge cases and error handling
--   Critical paths should have comprehensive tests
+- Aim for meaningful coverage, not 100%
+- Focus on edge cases and error handling
+- Critical paths should have comprehensive tests

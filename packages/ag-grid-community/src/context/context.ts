@@ -82,6 +82,7 @@ import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
+import type { IRowGroupPanelBuilder } from '../interfaces/iRowGroupPanelBuilder';
 import type { IRowGroupingEditValueSvc } from '../interfaces/iRowGroupingEditValueSvc';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type {
@@ -100,6 +101,7 @@ import type { IShowRowGroupColsValueService } from '../interfaces/iShowRowGroupC
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { ITestIdService } from '../interfaces/iTestIdService';
+import type { IToolbarService } from '../interfaces/iToolbar';
 import type { IWatermark } from '../interfaces/iWatermark';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { INotesDataService, INotesService } from '../interfaces/notes';
@@ -170,6 +172,15 @@ export type DynamicBeanName =
     | 'agTextColumnFilterHandler';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type ToolbarItemComponentName =
+    | 'agButtonToolbarItem'
+    | 'agFindToolbarItem'
+    | 'agMenuToolbarItem'
+    | 'agPivotPanelToolbarItem'
+    | 'agQuickFilterToolbarItem'
+    | 'agRowGroupPanelToolbarItem';
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type StatusPanelComponentName =
     | 'agAggregationComponent'
     | 'agSelectedRowCountComponent'
@@ -228,6 +239,7 @@ export type UserComponentName =
     | 'agDetailCellRenderer'
     | 'agSparklineCellRenderer'
     | StatusPanelComponentName
+    | ToolbarItemComponentName
     | 'agFindCellRenderer';
 
 interface ComponentMetaWithParams {
@@ -251,13 +263,12 @@ export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFu
 
 export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 
-interface CoreBeanCollection
-    extends AgCoreBeanCollection<
-        GridOptionsWithDefaults,
-        AgEventTypeParams,
-        AgGridCommon<any, any>,
-        GridOptionsService
-    > {
+interface CoreBeanCollection extends AgCoreBeanCollection<
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AgGridCommon<any, any>,
+    GridOptionsService
+> {
     pageBoundsListener: PageBoundsListener;
     environment: Environment;
     rowRenderer: RowRenderer;
@@ -347,6 +358,7 @@ interface CoreBeanCollection
     gridDestroySvc: GridDestroyService;
     expansionSvc?: IExpansionService<RowGroupExpansionState | RowGroupBulkExpansionState>;
     sideBar?: ISideBarService;
+    toolbar?: IToolbarService;
     ssrmTxnManager?: IServerSideTransactionManager;
     aggFuncSvc?: IAggFuncService;
     advancedFilter: IAdvancedFilterService;
@@ -382,6 +394,7 @@ interface CoreBeanCollection
     rowSpanSvc?: RowSpanService;
     spannedRowRenderer?: SpannedRowRenderer;
     findSvc?: IFindService;
+    rowGroupPanelBuilder?: IRowGroupPanelBuilder;
     groupFilter?: IGroupFilterService;
     multiFilter?: IMultiFilterService;
     filterPanelSvc?: IFilterPanelService;
@@ -441,4 +454,5 @@ type UntypedBeanNames =
     | 'ssrmStoreUtils'
     | 'statusBarSvc'
     | 'testIdSvc'
+    | 'toolbarMenuBuilder'
     | 'formula';

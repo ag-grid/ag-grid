@@ -64,8 +64,9 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             const sortOption = sortOptions[i];
             const isDescending = sortOption.sort === 'desc';
 
-            let valueA = this.getValue(nodeA, sortOption.column as AgColumn);
-            let valueB = this.getValue(nodeB, sortOption.column as AgColumn);
+            const column = sortOption.column as AgColumn;
+            let valueA = this.getValue(nodeA, column);
+            let valueB = this.getValue(nodeB, column);
 
             let comparatorResult: number;
             const providedComparator = this.getComparator(sortOption, nodeA);
@@ -102,7 +103,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
      * @private
      */
     private getComparator(sortOption: SortOption, rowNode: RowNode): SortComparatorFn | undefined {
-        const colDef = sortOption.column.getColDef();
+        const colDef = (sortOption.column as AgColumn).colDef;
 
         // comparator on col get preference over everything else
         const comparatorOnCol = this.getComparatorFromColDef(colDef, sortOption);
@@ -125,7 +126,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             return;
         }
         // comparator on col get preference over everything else
-        return this.getComparatorFromColDef(primaryColumn.getColDef(), sortOption);
+        return this.getComparatorFromColDef(primaryColumn.colDef, sortOption);
     }
 
     private getComparatorFromColDef(colDef: ColDef, sortOption: SortOption): SortComparatorFn | undefined {
@@ -147,13 +148,13 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 return this.getGroupDataValue(node, column);
             }
 
-            if (node.group && column.getColDef().showRowGroup) {
+            if (node.group && column.colDef.showRowGroup) {
                 return undefined;
             }
         }
 
         const value = beans.valueSvc.getValue(column, node, 'data');
-        if (column.isAllowFormula()) {
+        if (column.colDef.allowFormula) {
             const formula = beans.formula;
             if (formula?.isFormula(value)) {
                 return formula.resolveValue(column, node);
@@ -165,6 +166,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     private getGroupDataValue(node: RowNode, column: AgColumn): any {
         // because they're group rows, no display cols exist, so groupData never populated.
         // instead delegate to getting value from leaf child.
+        // Formulas are currently not supported on row-group columns, so no formula resolution is needed here.
         if (_isGroupUseEntireRow(this.gos, this.pivotActive)) {
             const leafChild = this.firstLeaf(node);
             return leafChild && this.beans.valueSvc.getValue(column, leafChild, 'data');

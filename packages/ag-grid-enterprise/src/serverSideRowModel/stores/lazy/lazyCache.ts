@@ -933,6 +933,13 @@ export class LazyCache extends BeanStub {
             lazyNodesAfterStoreEnd.forEach((lazyNode) => this.destroyRowAtIndex(lazyNode.index));
         }
 
+        // Sort here — before fireStoreUpdatedEvent — so the grid sees sorted data in a single
+        // update. Other sort entry points (transactions in lazyStore.applyServerSideTransaction,
+        // sort changes in lazyStore.refreshAfterSort) stay as they are.
+        if (this.gos.get('serverSideEnableClientSideSort') && this.isStoreFullyLoaded()) {
+            this.clientSideSortRows();
+        }
+
         this.fireStoreUpdatedEvent();
 
         // Happens after store updated, as store updating can clear our excess rows.
@@ -962,37 +969,31 @@ export class LazyCache extends BeanStub {
     /**
      * @returns true if all rows are loaded
      */
-    public isStoreFullyLoaded() {
+    public isStoreFullyLoaded(): boolean {
         const knowsSize = this.isLastRowKnown;
         const hasCorrectRowCount = this.nodeMap.getSize() === this.numberOfRows;
         if (!knowsSize || !hasCorrectRowCount) {
-            return;
+            return false;
         }
 
         if (this.nodesToRefresh.size > 0) {
-            return;
+            return false;
         }
 
-        // nodeMap find cancels early when it finds a matching record.
-        // better to use this than forEach
-        let index = -1;
-        const firstOutOfPlaceNode = this.nodeMap.find((lazyNode) => {
-            index += 1;
-            // node not contiguous, nodes must be missing
-            if (lazyNode.index !== index) {
-                return true;
+        // Walk by index rather than iterating the nodeMap: after moves/restores during
+        // a non-purge refresh, insertion order no longer matches index order, so a
+        // forEach/find comparison against a running counter falsely reports "out of place".
+        for (let i = 0; i < this.numberOfRows; i++) {
+            const lazyNode = this.nodeMap.getBy('index', i);
+            if (!lazyNode) {
+                return false;
             }
-            // node data is out of date
-            if (lazyNode.node.__needsRefreshWhenVisible) {
-                return true;
+            const { node } = lazyNode;
+            if (node.__needsRefreshWhenVisible || node.stub) {
+                return false;
             }
-            // node not yet loaded
-            if (lazyNode.node.stub) {
-                return true;
-            }
-            return false;
-        });
-        return firstOutOfPlaceNode == null;
+        }
+        return true;
     }
 
     public isLastRowIndexKnown() {
@@ -1074,15 +1075,12 @@ export class LazyCache extends BeanStub {
         });
     }
 
-    /**
-     * Creates or updates the grand total row node from server response data.
-     * Uses _createRowNodeFooter with the same sibling pattern as CSRM.
-     */
-    public createOrUpdateGrandTotalNode(data: any): void {
+    /** Creates the grand total row node, or applies new data to the existing one. */
+    public createOrUpdateGrandTotalNode(data: any): RowNode {
         const existingNode = this.store.getGrandTotalNode();
         if (existingNode) {
-            this.blockUtils.updateDataIntoRowNode(existingNode, data);
-            return;
+            existingNode._updateDataNoSibling(data);
+            return existingNode;
         }
 
         const parentNode = this.store.getParentNode();
@@ -1095,6 +1093,7 @@ export class LazyCache extends BeanStub {
         newNode.setRowHeight(rowHeight.height, rowHeight.estimated);
 
         this.nodeManager.addRowNode(newNode);
+        return newNode;
     }
 
     public getOrderedNodeMap() {
@@ -1143,7 +1142,7 @@ export class LazyCache extends BeanStub {
                 store.grandTotalData = data;
                 const grandTotalNode = store.getGrandTotalNode();
                 if (grandTotalNode) {
-                    blockUtils.updateDataIntoRowNode(grandTotalNode, data);
+                    grandTotalNode._updateDataNoSibling(data);
                     updatedNodes.push(grandTotalNode);
                 }
                 continue;
@@ -1220,9 +1219,12 @@ export class LazyCache extends BeanStub {
 
         // Grand total removal — clear data, setDisplayIndexes will destroy the node.
         // The grand total is not in the cache node map so the loop below won't find it.
+        // `null` (vs `undefined`) signals "explicitly cleared by the user" so `needsGrandTotal`
+        // stays `false` until the store is reset — this lets userland code safely remove the
+        // grand total as part of an async refresh without triggering another request per block.
         const idsToRemoveSet = new Set(idsToRemove);
         if (idsToRemoveSet.delete(GRAND_TOTAL_ROW_ID)) {
-            this.store.grandTotalData = undefined;
+            this.store.grandTotalData = null;
         }
 
         // track how many nodes have been deleted, as when we pass other nodes we need to shift them up

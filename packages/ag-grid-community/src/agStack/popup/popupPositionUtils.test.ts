@@ -1,5 +1,10 @@
 import type { Alignment } from './popupPositionUtils';
-import { computeAlignedPosition, findBestPlacement, toRelativeRect } from './popupPositionUtils';
+import {
+    computeAlignedPosition,
+    findBestPlacement,
+    getEffectivePlacements,
+    toRelativeRect,
+} from './popupPositionUtils';
 
 describe('popupPositionUtils', () => {
     describe('toRelativeRect', () => {
@@ -224,6 +229,29 @@ describe('popupPositionUtils', () => {
             // tl-tr: x=1010, clamped to 680 → 680+320=1000 > 900 → overlaps
             // tr-tl: raw (570, 460), clamped (570, 280) → 570+320=890 < 900 → no overlap
             expect(pos).toEqual({ x: 570, y: 280 });
+        });
+
+        it('can mirror placements for RTL when requested', () => {
+            expect(getEffectivePlacements(['tl-tr', 'bl-tr', 'tr-br'], true)).toEqual(['tr-tl', 'br-tl', 'tl-bl']);
+        });
+
+        it('does not mirror placements in RTL when the flag is disabled', () => {
+            expect(getEffectivePlacements(['tl-tr', 'bl-tr', 'tr-br'], true, false)).toEqual([
+                'tl-tr',
+                'bl-tr',
+                'tr-br',
+            ]);
+        });
+
+        it('uses mirrored placements when RTL mirroring is enabled', () => {
+            const cellRect = { top: 200, left: 500, right: 600, bottom: 240 };
+
+            const pos = findBestPlacement(cellRect, targetSize, parentSize, ['tl-tr', 'tr-tl'], {
+                gap: 10,
+                enableRtl: true,
+            });
+
+            expect(pos.x).toBe(500 - 320 - 10);
         });
     });
 });

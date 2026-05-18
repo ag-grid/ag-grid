@@ -599,16 +599,18 @@ export interface ExcelWorksheetConfigParams {
     processNoteCallback?: (params: ProcessNoteForExportParams) => ExcelNote | null | undefined;
 }
 
-export interface ProcessNoteForExportParams<TData = any, TContext = any>
-    extends ProcessCellForExportParams<TData, TContext> {
+export interface ProcessNoteForExportParams<TData = any, TContext = any> extends ProcessCellForExportParams<
+    TData,
+    TContext
+> {
     /**
      * The grid note resolved for the current cell, when the Notes feature is available.
      */
     gridNote?: Note;
     /**
-     * The default Excel note/comment derived from `gridNote` when automatic note export is enabled.
+     * The Excel note/comment value derived from `gridNote` when automatic note export is enabled.
      */
-    defaultNote?: ExcelNote;
+    excelNote?: ExcelNote;
 }
 
 export type ExcelCustomMetadataValue = string | number | boolean;

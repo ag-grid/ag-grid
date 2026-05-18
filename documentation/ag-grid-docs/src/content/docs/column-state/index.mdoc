@@ -57,11 +57,11 @@ any other state attribute.
 When applying a Column State, in cases where some state attributes or columns are missing from the Column State,
 the following rules apply:
 
--   Attributes that are not supplied or are set to `undefined` will remain unchanged. For example if a Column has a Column State with just `pinned`, then Pinned is applied to that Column but other attributes, such as `sort` are left intact.
+- Attributes that are not supplied or are set to `undefined` will remain unchanged. For example if a Column has a Column State with just `pinned`, then Pinned is applied to that Column but other attributes, such as `sort` are left intact.
 
--   When state is applied and there are additional Columns in the grid that do not appear in the provided state, then the `params.defaultState` is applied to those additional Columns.
+- When state is applied and there are additional Columns in the grid that do not appear in the provided state, then the `params.defaultState` is applied to those additional Columns.
 
--   If `params.defaultState` is not provided, then any additional Columns in the grid will not be updated.
+- If `params.defaultState` is not provided, then any additional Columns in the grid will not be updated.
 
 Combining these rules together allows flexible fine-grained state control. Take the following code snippets as
 examples:
@@ -185,9 +185,9 @@ set the Column Group state use the API method `api.setColumnGroupState(stateItem
 
 The example below demonstrates getting and setting Column Group State. Note the following:
 
--   Clicking 'Save State' will save the opened / closed state of column groups.
--   Clicking 'Restore State' will restore the previously saved state.
--   Clicking 'Reset State' will reset the column state to match the Column Definitions,
-    i.e. all Column Groups will be closed.
+- Clicking 'Save State' will save the opened / closed state of column groups.
+- Clicking 'Restore State' will restore the previously saved state.
+- Clicking 'Reset State' will reset the column state to match the Column Definitions,
+  i.e. all Column Groups will be closed.
 
 {% gridExampleRunner title="Column Group State" name="column-group-state" /%}

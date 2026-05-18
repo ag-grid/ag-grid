@@ -77,6 +77,7 @@ import type {
     OverlaySelectorFunc,
     OverlayType,
     PaginationNumberFormatter,
+    PaginationPanel,
     PdfExportParams,
     PivotColumnGroupTotals,
     PivotRowTotals,
@@ -109,6 +110,7 @@ import type {
     TabToNextGridContainer,
     TabToNextHeader,
     Theme,
+    Toolbar,
     TreeDataDisplayType,
     UseGroupTotalRow
 } from 'ag-grid-community';
@@ -245,6 +247,10 @@ export interface Props<TData> {
      modules?: Module[] | undefined;
 
      // @START_PROPS@
+    /** Specifies the toolbar items to use in the toolbar.
+         * @agModule `ToolbarModule`
+         */
+    toolbar?: Toolbar,
     /** Specifies the status bar components to use in the status bar.
          * @agModule `StatusBarModule`
          */
@@ -934,7 +940,6 @@ export interface Props<TData> {
          * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
          * Set to `false` to hide the page size selector.
          * @default true
-         * @initial
          * @agModule `PaginationModule`
          */
     paginationPageSizeSelector?: number[] | boolean,
@@ -956,6 +961,14 @@ export interface Props<TData> {
          * @agModule `PaginationModule`
          */
     suppressPaginationPanel?: boolean,
+    /** Controls which built-in components appear in the pagination panel and in what order.
+         * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+         * Components render in the order they appear in the array. Omitted components are hidden.
+         * An empty array hides the pagination panel entirely.
+         * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+         * @agModule `PaginationModule`
+         */
+    paginationPanels?: PaginationPanel[],
     /** Set to `true` to enable pivot mode.
          * @default false
          * @agModule `PivotModule`
@@ -1019,7 +1032,15 @@ export interface Props<TData> {
          * @agModule `NotesModule`
          */
     notesDataSource?: NotesDataSource | FullWidthNotesDataSource,
+    /** Changes how existing notes are opened.
+         *  - `'hover'` - Existing notes open when hovering a noted cell or full width row.
+         *  - `'click'` - Existing notes open when clicking a noted cell or full width row.
+         * @default 'hover'
+         * @agModule `NotesModule`
+         */
+    noteTrigger?: 'hover' | 'click',
     /** The delay in milliseconds before a note is shown when hovering a noted cell.
+         * Only applies when `noteTrigger = 'hover'`.
          * @default 180
          * @agModule `NotesModule`
          */
@@ -1201,8 +1222,18 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     autoGroupColumnDef?: AutoGroupColumnDef<TData>,
-    /** When `true`, preserves the current group order when sorting on non-group columns.
-         * If a user explicitly resets the current group sort direction, then the current group column order is not preserved.
+    /** When `true`, sorting on non-group columns does not reorder groups; only the rows within
+         * each group are sorted. Group order remains the structural order set at grouping time
+         * (data-insertion order, or `initialGroupOrderComparator` if configured) and is preserved
+         * across filter changes and transactions. If a group column was sorted via `colDef.sort`
+         * and the user later explicitly clears that sort, the structural order is restored.
+         *
+         * With multi-level row grouping, the order is maintained per level: a sort on a group
+         * column at one level only re-orders that level's groups; sibling levels keep their
+         * structural order.
+         *
+         * Applies to row grouping only. Has no effect on tree data, where row order is determined
+         * by the tree structure.
          * @default false
          * @agModule `RowGroupingModule`
          */
@@ -1669,6 +1700,8 @@ export interface Props<TData> {
          */
     gridId?: string,
     /** When enabled, sorts only the rows added/updated by a transaction.
+         *
+         * Ignored when `postSortRows` is configured (falls back to full sort).
          * @default false
          */
     deltaSort?: boolean,
@@ -1914,6 +1947,8 @@ export interface Props<TData> {
          */
     fillOperation?: FillOperation<TData>,
     /** Callback to perform additional sorting after the grid has sorted the rows.
+         *
+         * When configured, `deltaSort` is ignored.
          */
     postSortRows?: PostSortRows<TData>,
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.
@@ -2057,6 +2092,7 @@ export function getProps() {
           modules: [] as any,
 
           // @START_DEFAULTS@
+        toolbar: undefined,
         statusBar: undefined,
         sideBar: undefined,
         suppressContextMenu: undefined,
@@ -2201,6 +2237,7 @@ export function getProps() {
         paginationAutoPageSize: undefined,
         paginateChildRows: undefined,
         suppressPaginationPanel: undefined,
+        paginationPanels: undefined,
         pivotMode: undefined,
         pivotPanelShow: undefined,
         pivotMaxGeneratedColumns: undefined,
@@ -2213,6 +2250,7 @@ export function getProps() {
         aggFuncs: undefined,
         formulaDataSource: undefined,
         notesDataSource: undefined,
+        noteTrigger: undefined,
         noteShowDelay: undefined,
         noteHideDelay: undefined,
         formulaFuncs: undefined,
@@ -2594,4 +2632,3 @@ export function deepToRaw<T extends Record<string, any>>(sourceObj: T): T {
      return objectIterator(sourceObj);
 }
 
-// export const convertToRaw = (value: any) => (value ? (Object.isFrozen(value) ? value : markRaw(toRaw(value))) : value);

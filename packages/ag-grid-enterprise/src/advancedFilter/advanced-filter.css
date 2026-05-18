@@ -4,6 +4,9 @@
     align-items: center;
     background-color: var(--ag-header-background-color);
     border-bottom: var(--ag-header-row-border);
+
+    /* keep advanced-filter row above sticky data rows in the shared pinned-top container. */
+    z-index: 1;
 }
 
 .ag-advanced-filter {

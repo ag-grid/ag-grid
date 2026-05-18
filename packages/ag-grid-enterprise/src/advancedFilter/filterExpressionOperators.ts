@@ -33,9 +33,10 @@ export interface DataTypeFilterExpressionOperators<ConvertedTValue, TValue = Con
     findOperator(displayValue: string): string | null | undefined;
 }
 
-export abstract class FilterExpressionOperators
-    implements Record<BaseCellDataType, DataTypeFilterExpressionOperators<any>>
-{
+export abstract class FilterExpressionOperators implements Record<
+    BaseCellDataType,
+    DataTypeFilterExpressionOperators<any>
+> {
     dateTime: DataTypeFilterExpressionOperators<Date>;
     dateTimeString: DataTypeFilterExpressionOperators<Date, string>;
     text: DataTypeFilterExpressionOperators<string>;
@@ -88,9 +89,10 @@ interface FilterExpressionOperatorsParams {
     translate: (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) => string;
 }
 
-export class TextFilterExpressionOperators<TValue = string>
-    implements DataTypeFilterExpressionOperators<string, TValue>
-{
+export class TextFilterExpressionOperators<TValue = string> implements DataTypeFilterExpressionOperators<
+    string,
+    TValue
+> {
     public operators: { [operator: string]: FilterExpressionOperator<string, TValue> };
 
     constructor(private readonly params: FilterExpressionOperatorsParams) {
@@ -178,9 +180,10 @@ interface ScalarFilterExpressionOperatorsParams<ConvertedTValue> extends FilterE
     equals: (value: ConvertedTValue, operand: ConvertedTValue) => boolean;
 }
 
-export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Date | bigint, TValue = ConvertedTValue>
-    implements DataTypeFilterExpressionOperators<ConvertedTValue, TValue>
-{
+export class ScalarFilterExpressionOperators<
+    ConvertedTValue extends number | Date | bigint,
+    TValue = ConvertedTValue,
+> implements DataTypeFilterExpressionOperators<ConvertedTValue, TValue> {
     public operators: { [operator: string]: FilterExpressionOperator<ConvertedTValue, TValue> };
 
     constructor(private readonly params: ScalarFilterExpressionOperatorsParams<ConvertedTValue>) {

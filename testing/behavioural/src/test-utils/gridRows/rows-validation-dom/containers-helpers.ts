@@ -1,14 +1,11 @@
 /** Determines which row container an element belongs to. */
 export function getRowContainerType(el: HTMLElement): string {
     const containerSelectors: [string, string][] = [
-        ['.ag-center-cols-container', 'center'],
-        ['.ag-pinned-left-cols-container', 'left'],
-        ['.ag-pinned-right-cols-container', 'right'],
-        ['.ag-floating-top-container', 'floating-top'],
-        ['.ag-floating-bottom-container', 'floating-bottom'],
-        ['.ag-full-width-container', 'full-width'],
-        ['.ag-sticky-top-container', 'sticky-top'],
-        ['.ag-sticky-bottom-container', 'sticky-bottom'],
+        ['.ag-grid-scrolling-rows', 'center'],
+        ['.ag-grid-pinned-top-rows-container', 'pinned-top'],
+        ['.ag-grid-pinned-bottom-rows-container', 'pinned-bottom'],
+        ['.ag-grid-sticky-top-rows-container', 'pinned-top'],
+        ['.ag-grid-sticky-bottom-rows-container', 'pinned-bottom'],
     ];
     for (const [selector, name] of containerSelectors) {
         if (el.closest(selector)) {

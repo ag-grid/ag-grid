@@ -1,4 +1,5 @@
 import type { Library } from '@ag-grid-types';
+import type { Dispatch } from 'react';
 import { useEffect } from 'react';
 
 import { updateSearchParams } from './updateSearchParams';
@@ -8,7 +9,7 @@ export const useUpdateDataFromUrl = ({
     setIsIntegratedCharts,
 }: {
     library: Library;
-    setIsIntegratedCharts: React.Dispatch<boolean>;
+    setIsIntegratedCharts: Dispatch<boolean>;
 }) => {
     useEffect(() => {
         const newSearchParams = {} as { integratedCharts: boolean };
@@ -32,5 +33,5 @@ export const useUpdateDataFromUrl = ({
         if (Object.keys(newSearchParams).length) {
             updateSearchParams(newSearchParams);
         }
-    }, [library]);
+    }, [library, setIsIntegratedCharts]);
 };

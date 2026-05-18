@@ -10,7 +10,12 @@ export function setNodesSelected(
     beans: BeanCollection,
     params: { nodes: IRowNode[]; newValue: boolean; source?: SelectionEventSourceType }
 ) {
-    const allNodesValid = params.nodes.every((node) => {
+    const nodes = params.nodes.filter((node): node is IRowNode => !!node);
+    if (!nodes.length) {
+        return;
+    }
+
+    const allNodesValid = nodes.every((node) => {
         if (node.rowPinned && !_isManualPinnedRow(node as RowNode)) {
             _warn(59);
             return false;
@@ -27,7 +32,7 @@ export function setNodesSelected(
         return;
     }
 
-    const { nodes, source, newValue } = params;
+    const { source, newValue } = params;
     beans.selectionSvc?.setNodesSelected({ nodes: nodes as RowNode[], source: source ?? 'api', newValue });
 }
 

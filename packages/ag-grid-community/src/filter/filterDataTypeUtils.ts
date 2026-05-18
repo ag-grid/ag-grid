@@ -219,7 +219,6 @@ export function _getFilterParamsForDataType(
     beans: BeanCollection,
     translate: LocaleTextFunc
 ): { filterParams?: any; filterValueGetter?: string | ValueGetterFunc } {
-    let filterParams: any = existingFilterParams;
     let filterValueGetter: string | ValueGetterFunc | undefined = existingFilterValueGetter;
     const usingSetFilter = filter === 'agSetColumnFilter';
     if (!filterValueGetter && dataTypeDefinition.baseDataType === 'object' && !usingSetFilter) {
@@ -229,7 +228,7 @@ export function _getFilterParamsForDataType(
     const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
     const filterParamsGetter = filterParamsMap[dataTypeDefinition.baseDataType];
     const newFilterParams = filterParamsGetter({ dataTypeDefinition, formatValue, t: translate });
-    filterParams =
+    const filterParams =
         typeof existingFilterParams === 'object'
             ? {
                   ...newFilterParams,

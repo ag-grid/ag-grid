@@ -43,12 +43,8 @@ export class AgDialog<
     TCommon,
     TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
-    TDialogOptions extends AgDialogOptions<
-        TBeanCollection,
-        TProperties,
-        TGlobalEvents,
-        AgPanelPostProcessPopupParams
-    > = AgDialogOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams>,
+    TDialogOptions extends AgDialogOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams> =
+        AgDialogOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams>,
 > extends AgPanel<
     TBeanCollection,
     TProperties,

@@ -8,55 +8,12 @@
  * visually on the left
  */
 
-.ag-pinned-left-floating-top,
-.ag-pinned-right-floating-top,
-.ag-pinned-left-floating-bottom,
-.ag-pinned-right-floating-bottom {
-    overflow: hidden;
-    position: relative;
-    min-width: 0;
-}
-
-.ag-pinned-left-sticky-top,
-.ag-pinned-right-sticky-top {
-    position: relative;
-    height: 100%;
-    overflow: hidden;
-}
-
-.ag-sticky-top-full-width-container,
-.ag-sticky-bottom-full-width-container {
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-}
-
-.ag-pinned-left-header,
-.ag-pinned-right-header {
-    display: inline-block;
-    position: relative;
-    overflow: hidden;
-    height: 100%;
-}
-
-.ag-body-horizontal-scroll:not(.ag-scrollbar-invisible) {
-    .ag-horizontal-left-spacer:not(.ag-scroller-corner) {
-        /* rtl:ignore */
-        border-right: var(--ag-pinned-column-border);
-    }
-
-    .ag-horizontal-right-spacer:not(.ag-scroller-corner) {
-        /* rtl:ignore */
-        border-left: var(--ag-pinned-column-border);
-    }
-}
-
-.ag-pinned-right-header {
+.ag-header-row .ag-grid-pinned-right-cells {
     /* rtl:ignore */
     border-left: var(--ag-pinned-column-border);
 }
 
-.ag-pinned-left-header {
+.ag-header-row .ag-grid-pinned-left-cells {
     /* rtl:ignore */
     border-right: var(--ag-pinned-column-border);
 }
@@ -79,23 +36,23 @@
     border-right: var(--ag-pinned-column-border);
 }
 
-.ag-pinned-left-header .ag-header-cell-resize::after {
+.ag-grid-pinned-left-cells .ag-header-cell-resize::after {
     /* rtl:ignore */
     left: calc(50% - var(--ag-header-column-resize-handle-width));
 }
 
-.ag-pinned-right-header .ag-header-cell-resize::after {
+.ag-grid-pinned-right-cells .ag-header-cell-resize::after {
     /* rtl:ignore */
     left: 50%;
 }
 
-.ag-pinned-left-header .ag-header-cell-resize {
+.ag-grid-pinned-left-cells .ag-header-cell-resize {
     /* pinned left headers always have their resize on the right, even in RTL mode */
     /* rtl:ignore */
     right: -3px;
 }
 
-.ag-pinned-right-header .ag-header-cell-resize {
+.ag-grid-pinned-right-cells .ag-header-cell-resize {
     /* pinned right headers always have their resize on the left, even in RTL mode */
     /* rtl:ignore */
     left: -3px;

@@ -100,9 +100,9 @@ function getLeafPathTrees(columns: AgColumn[]): AbstractColDef[] {
                 leafPathTree = groupDef;
             }
         } else {
-            const colDef = Object.assign({}, node.getColDef());
+            const colDef = Object.assign({}, node.colDef);
             // ensure col contains colId
-            colDef.colId = node.getColId();
+            colDef.colId = node.colId;
             leafPathTree = colDef;
         }
 
@@ -118,12 +118,11 @@ function getLeafPathTrees(columns: AgColumn[]): AbstractColDef[] {
     };
 
     // construct a leaf path tree for each column
-    return columns.map((col) => getLeafPathTree(col, col.getColDef()));
+    return columns.map((col) => getLeafPathTree(col, col.colDef));
 }
 
 function getGridPrimaryColumns(colModel: ColumnModel): AgColumn[] {
     return colModel.getCols().filter((column) => {
-        const colDef = column.getColDef();
-        return column.isPrimary() && !colDef.showRowGroup;
+        return column.primary && !column.colDef.showRowGroup;
     });
 }

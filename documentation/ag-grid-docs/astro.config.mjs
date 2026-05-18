@@ -10,6 +10,8 @@ import svgr from 'vite-plugin-svgr';
 
 import agCacheSitemap from '../../external/ag-website-shared/plugins/agCacheSitemap';
 import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecker';
+import agMkcertPreview from '../../external/ag-website-shared/plugins/agMkcertPreview';
+import agSourcemapCors from '../../external/ag-website-shared/plugins/agSourcemapCors';
 import { SITEMAP_CACHE_DIR } from '../../external/ag-website-shared/src/constants';
 import buildTime from './plugins/agBuildTime';
 import agHotModuleReload from './plugins/agHotModuleReload';
@@ -130,6 +132,7 @@ console.log(
             PORT,
             PUBLIC_SITE_URL,
             PUBLIC_BASE_URL,
+            PUBLIC_HTTPS_SERVER,
             PUBLIC_USE_PUBLISHED_PACKAGES,
             USE_PACKAGES,
             SHOW_DEBUG_LOGS,
@@ -148,18 +151,31 @@ console.log(
     )
 );
 
-const plugins = [svgr(), agHotModuleReload()];
+const plugins = [agSourcemapCors(), svgr(), agHotModuleReload()];
 if (NODE_ENV !== 'test') {
     plugins.push(mkcert()); // mkcert is not necessary for tests
 }
+
+const httpsEnabled = !['0', 'false'].includes(PUBLIC_HTTPS_SERVER);
 
 // https://astro.build/config
 export default defineConfig({
     site: PUBLIC_SITE_URL,
     base: PUBLIC_BASE_URL,
-    experimental: {
-        // Prepare for Astro 6
-        preserveScriptOrder: true,
+    security: {
+        /**
+         * Allow cross-origin dev-server fetches from external example hosts.
+         *
+         * Astro 6's secFetchMiddleware runs before Vite's CORS middleware and
+         * returns 403 for unknown cross-origin subresource requests, so hosts
+         * have to be allowed here as well as in `vite.server.cors.origin` below.
+         */
+        allowedDomains: [
+            // Plunkr
+            { hostname: 'run.plnkr.co', protocol: 'https' },
+            // Codesandbox
+            { hostname: '**.csb.app', protocol: 'https' },
+        ],
     },
     devToolbar: {
         enabled: false,
@@ -167,7 +183,7 @@ export default defineConfig({
     vite: {
         plugins,
         server: {
-            https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER),
+            https: httpsEnabled,
             cors: {
                 /**
                  * CORS allow list for opening examples on external sites
@@ -180,8 +196,15 @@ export default defineConfig({
                 ],
             },
             headers: {
-                'Content-Security-Policy':
-                    "default-src 'self'; script-src 'self' https://*.ag-grid.com https://localhost:4610 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
+                'Content-Security-Policy': [
+                    "default-src 'self'",
+                    "script-src 'self' https://*.ag-grid.com https://localhost:4610 https://localhost:4611 https://www.googletagmanager.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'",
+                    "style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com 'unsafe-inline'",
+                    "font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com data:",
+                    "img-src 'self' data: blob: https:",
+                    "connect-src 'self' https:",
+                    "worker-src 'self' blob:",
+                ].join('; '),
                 'X-Content-Type-Options': 'nosniff',
             },
         },
@@ -221,5 +244,6 @@ export default defineConfig({
         agCacheSitemap({
             cacheFolder: SITEMAP_CACHE_DIR,
         }),
+        agMkcertPreview({ enabled: httpsEnabled }),
     ],
 });

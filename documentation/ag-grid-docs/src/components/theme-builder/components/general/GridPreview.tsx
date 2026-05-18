@@ -114,12 +114,14 @@ const GridPreview = () => {
                                         api.setGridOption('loading', config.loadingOverlay);
                                     }
                                 }}
+                                /* eslint-disable react-hooks/refs -- reading ref for initial grid state */
                                 initialState={{
                                     rowSelection: config.rowSelection
                                         ? stateRef.current.rowSelection || ['5', '3']
                                         : undefined,
                                     cellSelection: stateRef.current.cellSelection,
                                 }}
+                                /* eslint-enable react-hooks/refs */
                                 onSelectionChanged={({ api }) => {
                                     stateRef.current.rowSelection = api.getState().rowSelection || [];
                                 }}

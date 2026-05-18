@@ -243,7 +243,7 @@ export class ColumnFilterService
 
             // at this point, processedFields contains data for which we don't have a filter working yet
             modelKeys.forEach((colId) => {
-                const column = colModel.getColDefCol(colId) || colModel.getCol(colId);
+                const column = colModel.getColDefColOrCol(colId);
 
                 if (!column) {
                     _warn(62, { colId });
@@ -641,7 +641,7 @@ export class ColumnFilterService
     ): IFilterParams['getValue'] {
         const { filterValueSvc, colModel } = this.beans;
         return (rowNode, column) => {
-            const columnToUse = column ? colModel.getCol(column) : filterColumn;
+            const columnToUse = column ? colModel.getColDefColOrCol(column) : filterColumn;
             return columnToUse ? filterValueSvc!.getValue(columnToUse, rowNode, filterValueGetterOverride) : undefined;
         };
     }
@@ -1523,7 +1523,7 @@ export class ColumnFilterService
     }
 
     public getFilterInstance<TFilter extends IFilter>(key: string | AgColumn): Promise<TFilter | null | undefined> {
-        const column = this.beans.colModel.getColDefCol(key);
+        const column = this.beans.colModel.getColDefColOrCol(key);
 
         if (!column) {
             return Promise.resolve(undefined);

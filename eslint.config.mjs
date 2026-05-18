@@ -35,6 +35,7 @@ export const sonarjsConfig = [
             'sonarjs/no-redundant-optional': 1,
             'sonarjs/no-ignored-exceptions': 0,
             'sonarjs/no-alphabetical-sort': 0,
+            'sonarjs/assertions-in-tests': 0,
             'sonarjs/no-redundant-boolean': 0,
             'sonarjs/no-async-constructor': 0,
             'sonarjs/updated-loop-counter': 0,
@@ -77,6 +78,8 @@ export default [
     {
         rules: {
             '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/no-empty-object-type': 'off',
+            '@typescript-eslint/no-require-imports': 'off',
             '@typescript-eslint/consistent-type-imports': [
                 'error',
                 {

@@ -212,6 +212,9 @@ function getDocCode({
     };
 }
 
+// These should use apiDocumentation so that @agModule tag is correctly rendered.
+const DISALLOWED_INTERFACE_NAMES = ['ColDef', 'GridOptions'];
+
 export function getInterfaceDocumentationModel({
     framework,
     interfaceName,
@@ -222,6 +225,12 @@ export function getInterfaceDocumentationModel({
     interfaceLookup,
     codeLookup,
 }: Params): InterfaceDocumentationModel {
+    if (DISALLOWED_INTERFACE_NAMES.includes(interfaceName)) {
+        throw new Error(
+            `<interface-documentation>: '${interfaceName}' should not be used with interfaceDocumentation. Use apiDocumentation with the appropriate properties.json source instead.`
+        );
+    }
+
     const codeData = codeLookup[interfaceName];
     const model = config.asCode
         ? getDocCode({

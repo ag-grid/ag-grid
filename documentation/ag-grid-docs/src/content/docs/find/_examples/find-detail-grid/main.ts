@@ -1,10 +1,8 @@
 import type {
-    FindChangedEvent,
     FirstDataRenderedEvent,
     GetDetailRowDataParams,
     GetFindMatchesParams,
     GetRowIdParams,
-    GridApi,
     GridOptions,
     IDetailCellRendererParams,
 } from 'ag-grid-community';
@@ -15,19 +13,18 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { FindModule, MasterDetailModule } from 'ag-grid-enterprise';
+import { FindModule, MasterDetailModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
 ModuleRegistry.registerModules([
     FindModule,
+    ToolbarModule,
     ClientSideRowModelModule,
     MasterDetailModule,
     RowApiModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
-
-let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     rowData: getData(),
@@ -37,6 +34,9 @@ const gridOptions: GridOptions = {
     },
     masterDetail: true,
     getRowId: (params: GetRowIdParams) => params.data.a1,
+    toolbar: {
+        items: ['agFindToolbarItem'],
+    },
     findOptions: {
         searchDetail: true,
     },
@@ -73,12 +73,6 @@ const gridOptions: GridOptions = {
         },
         getFindMatches,
     } as IDetailCellRendererParams,
-    onFindChanged: (event: FindChangedEvent) => {
-        const { activeMatch, totalMatches, findSearchValue } = event;
-        (document.getElementById('activeMatchNum') as HTMLElement).textContent = findSearchValue?.length
-            ? `${activeMatch?.numOverall ?? 0}/${totalMatches}`
-            : '';
-    },
     onFirstDataRendered: (event: FirstDataRenderedEvent) => {
         event.api.getDisplayedRowAtIndex(0)?.setExpanded(true);
     },
@@ -100,40 +94,7 @@ function getFindMatches(params: GetFindMatchesParams) {
     return numMatches;
 }
 
-function next() {
-    gridApi!.findNext();
-}
-
-function previous() {
-    gridApi!.findPrevious();
-}
-
-function goToFind() {
-    const num = Number((document.getElementById('find-goto') as HTMLInputElement).value);
-    if (isNaN(num) || num < 0) {
-        return;
-    }
-    gridApi!.findGoTo(num, true);
-}
-
-// setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-
-    const findInput = document.getElementById('find-text-box') as HTMLInputElement;
-    findInput.addEventListener('input', (event) => {
-        gridApi.setGridOption('findSearchValue', (event.target as HTMLInputElement).value);
-    });
-    findInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const backwards = event.shiftKey;
-            if (backwards) {
-                previous();
-            } else {
-                next();
-            }
-        }
-    });
+    createGrid(gridDiv, gridOptions);
 });

@@ -16,19 +16,19 @@ const myTheme = themeQuartz.withParams({
 });
 ```
 
-For a full list of relevant parameters, search "header" in the "All Parameters" section of the [Theme Builder](/theme-builder/) or use typescript autocompletion in your IDE.
+For the full list, see the [Headers section](./theming-api/#reference-headers) of the parameters reference.
 
 When the theme parameters are not enough you can use CSS classes, in particular `ag-header`, `ag-header-cell`, and `ag-header-group-cell`:
 
 ```css
-.ag-theme-quartz .ag-header {
+.ag-header {
     font-family: cursive;
 }
-.ag-theme-quartz .ag-header-group-cell {
+.ag-header-group-cell {
     font-weight: normal;
     font-size: 22px;
 }
-.ag-theme-quartz .ag-header-cell {
+.ag-header-cell {
     font-size: 18px;
 }
 ```
@@ -62,27 +62,27 @@ The example below adds some styling to `ag-header-cell-filtered`, so when you fi
 
 ## Styling the First and Last Columns
 
-It's possible to style the all first and last column header (Grouped, Non-Grouped and Floating Filters) using CSS by targeting the `.ag-column-first` and `.ag-column-last` selectors as follows:
+You can style all first and last column headers (Grouped, Non-Grouped and Floating Filters) using CSS by targeting the `.ag-column-first` and `.ag-column-last` selectors as follows:
 
 ```css
 .ag-header-group-cell.ag-column-first {
-    background-color: #2244CC66; /* bluest */
+    background-color: #2244cc66; /* bluest */
 }
 .ag-header-cell.ag-column-first {
-    background-color: #2244CC44; /* bluer */
+    background-color: #2244cc44; /* bluer */
 }
 .ag-floating-filter.ag-column-first {
-    background-color: #2244CC22; /* blue */
+    background-color: #2244cc22; /* blue */
 }
 
 .ag-header-group-cell.ag-column-last {
-    background-color: #33CC3366; /* greenest */
+    background-color: #33cc3366; /* greenest */
 }
 .ag-header-cell.ag-column-last {
-    background-color: #33CC3344; /* greener */
+    background-color: #33cc3344; /* greener */
 }
 .ag-floating-filter.ag-column-last {
-    background-color: #33CC3322; /* green */
+    background-color: #33cc3322; /* green */
 }
 ```
 

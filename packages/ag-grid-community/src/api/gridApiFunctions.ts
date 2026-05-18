@@ -27,6 +27,7 @@ import type {
     _ExcelExportGridApi,
     _FilterGridApi,
     _FindApi,
+    _FormulaGridApi,
     _GridChartsGridApi,
     _HighlightChangesGridApi,
     _InfiniteRowModelGridApi,
@@ -50,6 +51,7 @@ import type {
     _SsrmInfiniteSharedGridApi,
     _StateGridApi,
     _StatusBarGridApi,
+    _ToolbarGridApi,
     _UndoRedoGridApi,
     _ValueApi,
     _ValueCacheApi,
@@ -377,6 +379,10 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         forEachDetailGridInfo: 0,
     }),
 
+    ...mod<_FormulaGridApi<any>>('Formula', {
+        refreshFormulas: 0,
+    }),
+
     ...mod<_ContextMenuGridApi>('ContextMenu', {
         showContextMenu: 0,
     }),
@@ -447,6 +453,10 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         isToolPanelShowing: 0,
         getToolPanelInstance: 0,
         getSideBar: 0,
+    }),
+
+    ...mod<_ToolbarGridApi>('Toolbar', {
+        getToolbarItemInstance: 0,
     }),
 
     ...mod<_StatusBarGridApi>('StatusBar', {

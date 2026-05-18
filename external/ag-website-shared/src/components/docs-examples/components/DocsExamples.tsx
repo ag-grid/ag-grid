@@ -35,7 +35,8 @@ export type ExampleProperty =
     | 'hasExampleConsoleLog'
     | 'hasExampleControls'
     | 'hasSimpleHtml'
-    | 'scriptNonce';
+    | 'scriptNonce'
+    | 'supportedFrameworks';
 
 export interface Props {
     library: Library;
@@ -66,6 +67,14 @@ const URL_MAPPING: Record<
             `https://charts-staging.ag-grid.com/javascript/${pageName}/#example-${exampleName}`,
         production: ({ pageName, exampleName }) =>
             `https://www.ag-grid.com/charts/javascript/${pageName}/#example-${exampleName}`,
+    },
+    studio: {
+        local: ({ pageName, exampleName }) =>
+            `https://localhost:4620/studio/javascript/${pageName}/#example-${exampleName}`,
+        staging: ({ pageName, exampleName }) =>
+            `https://studio-staging.ag-grid.com/javascript/${pageName}/#example-${exampleName}`,
+        production: ({ pageName, exampleName }) =>
+            `https://www.ag-grid.com/studio/javascript/${pageName}/#example-${exampleName}`,
     },
 };
 
@@ -133,6 +142,23 @@ const ALL_PROPERTIES: (ColDef & {
         headerName: 'Nonce',
         enableRowGroup: true,
         minWidth: 115,
+    },
+    {
+        field: 'supportedFrameworks',
+        headerName: 'Supported Frameworks',
+        enableRowGroup: true,
+        filter: 'agSetColumnFilter',
+        minWidth: 200,
+        valueFormatter: ({ value, node }) => {
+            if (node?.group) {
+                return '';
+            }
+            if (!value) {
+                return 'all';
+            }
+
+            return Array.isArray(value) ? value.join(', ') : value;
+        },
     },
 ];
 

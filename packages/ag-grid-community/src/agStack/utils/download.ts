@@ -1,0 +1,29 @@
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _downloadFile(fileName: string, content: Blob) {
+    const win = document.defaultView ?? window;
+
+    if (!win) {
+        return;
+    }
+
+    const element = document.createElement('a');
+    const url = win.URL.createObjectURL(content);
+    element.setAttribute('href', url);
+    element.setAttribute('download', fileName);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.dispatchEvent(
+        new MouseEvent('click', {
+            bubbles: false,
+            cancelable: true,
+            view: win,
+        })
+    );
+
+    element.remove();
+
+    win.setTimeout(() => {
+        win.URL.revokeObjectURL(url);
+    }, 0);
+}

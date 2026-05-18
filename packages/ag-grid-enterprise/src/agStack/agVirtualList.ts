@@ -305,7 +305,7 @@ export class AgVirtualList<
     public getComponentAt(rowIndex: number): C | undefined {
         const comp = this.renderedRows.get(rowIndex);
 
-        return comp && comp.rowComponent;
+        return comp?.rowComponent;
     }
 
     public forEachRenderedRow(func: (comp: C, idx: number) => void): void {

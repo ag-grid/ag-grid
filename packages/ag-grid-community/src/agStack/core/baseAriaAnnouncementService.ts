@@ -10,12 +10,12 @@ import { _debounce } from '../utils/function';
 import { AgBeanStub } from './agBeanStub';
 
 export class BaseAriaAnnouncementService<
-        TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-        TProperties extends BaseProperties,
-        TGlobalEvents extends BaseEvents,
-        TCommon,
-        TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-    >
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+>
     extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IAriaAnnouncementService
 {

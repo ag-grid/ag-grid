@@ -127,7 +127,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
     public override stopCancelled(forceCancel: boolean): boolean {
         const { rowNode, model } = this;
-        if (rowNode && !model.hasRowEdits(rowNode)) {
+        if (rowNode && !model.hasEdits()) {
             return false;
         }
 
@@ -141,7 +141,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
     public override stopCommitted(event: Event | null, commit: boolean): boolean {
         const { rowNode, beans, model, editSvc } = this;
-        if (rowNode && !model.hasRowEdits(rowNode)) {
+        if (rowNode && !model.hasEdits()) {
             return false;
         }
 
@@ -285,7 +285,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const prevEditable = prevCell.isCellEditable();
         const nextEditable = nextCell.isCellEditable();
 
-        const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
+        const rowsMatch = prevPos.rowIndex === nextPos?.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
         if (prevEditable) {
             this.setFocusOutOnEditor(prevCell);

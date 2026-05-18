@@ -1,20 +1,58 @@
 ---
-import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
-import he from 'he';
+import CodeShiki, { LanguageMap } from '@ag-website-shared/components/code/CodeShiki';
+import agDocsTheme from '@ag-website-shared/components/code/theme.json';
 import { getFrameworkFromPath } from '@components/docs/utils/urlPaths';
+import he from 'he';
+import { codeToHtml } from 'shiki';
+import * as snippetTransformer from './snippetTransformer';
 
 const framework = getFrameworkFromPath(Astro.url.pathname);
 
 const {
     // NOTE: Language is passed through by markdoc as `data-language`
     // @see https://github.com/markdoc/markdoc/blob/a13cc583fa3b0420538e772a75628dd15d72b793/src/schema.ts#L56
-    'data-language': language,
+    'data-language': dataLanguage,
     frameworkTransform,
+    suppressFrameworkContext,
+    spaceBetweenProperties,
+    inlineReactProperties,
+    lineNumbers,
+    copyToClipboard,
     ...otherProps
 } = Astro.props;
 
+const frameworkLanguages: Record<string, string> = {
+    react: 'jsx',
+    javascript: 'js',
+    angular: 'ts',
+    vue: 'ts',
+};
+
+const langKey = (dataLanguage || frameworkLanguages[framework] || 'ts') as keyof typeof LanguageMap;
+const shikiLang = LanguageMap[langKey] ?? langKey;
+
 const encodedHtmlContent = await Astro.slots.render('default');
 const content = he.decode(encodedHtmlContent);
+
+const snippet = frameworkTransform
+    ? snippetTransformer.transform(content, framework, {
+          suppressFrameworkContext,
+          spaceBetweenProperties,
+          inlineReactProperties,
+      })
+    : content;
+
+const preHighlightedHtml = await codeToHtml(snippet.trimEnd(), {
+    lang: shikiLang,
+    theme: agDocsTheme,
+} as any);
 ---
 
-<Snippet framework={framework} language={language} content={content} transform={frameworkTransform} {...otherProps} />
+<CodeShiki
+    code={snippet}
+    language={langKey}
+    lineNumbers={lineNumbers}
+    copyToClipboard={copyToClipboard}
+    preHighlightedHtml={preHighlightedHtml}
+    {...otherProps}
+/>

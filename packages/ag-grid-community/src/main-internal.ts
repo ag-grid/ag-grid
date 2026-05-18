@@ -76,6 +76,9 @@ export { BasePopupService as _BasePopupService } from './agStack/popup/basePopup
 export {
     computeAlignedPosition as _computeAlignedPosition,
     findBestPlacement as _findBestPlacement,
+    getEffectivePlacements as _getEffectivePlacements,
+    getRectSize as _getRectSize,
+    fitsWithinBounds as _fitsWithinBounds,
     toRelativeRect as _toRelativeRect,
 } from './agStack/popup/popupPositionUtils';
 export type { Alignment as _Alignment, Anchor as _Anchor } from './agStack/popup/popupPositionUtils';
@@ -118,6 +121,7 @@ export {
     _setAriaLabel,
     _setAriaLabelledBy,
     _setAriaLevel,
+    _setAriaMultiSelectable,
     _setAriaOrientation,
     _setAriaPosInSet,
     _setAriaRole,
@@ -128,7 +132,14 @@ export {
     _setAriaSort,
 } from './agStack/utils/aria';
 export type { AriaSortState } from './agStack/utils/aria';
-export { _areEqual, _flatten, _last, _removeAllFromArray, _removeFromArray } from './agStack/utils/array';
+export {
+    _areEqual,
+    _flatten,
+    _last,
+    _removeAllFromArray,
+    _removeFromArray,
+    _reuseArrayIfEqual,
+} from './agStack/utils/array';
 export { _parseBigIntOrNull } from './agStack/utils/bigInt';
 export { _isBrowserFirefox, _isBrowserSafari, _isIOSUserAgent } from './agStack/utils/browser';
 export { _getDateParts, MONTHS as _MONTHS, _parseDateTimeFromString, _serialiseDate } from './agStack/utils/date';
@@ -202,6 +213,7 @@ export type {
     _ExcelExportGridApi,
     _PdfExportGridApi,
     _FindApi,
+    _FormulaGridApi,
     _GridChartsGridApi,
     _InfiniteRowModelGridApi,
     _MasterDetailGridApi,
@@ -212,6 +224,7 @@ export type {
     _ServerSideRowModelGridApi,
     _SideBarGridApi,
     _StatusBarGridApi,
+    _ToolbarGridApi,
 } from './api/gridApi';
 export type { INoteAccess, INotesFeature, INotesDataService, INotesService } from './interfaces/notes';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
@@ -261,7 +274,13 @@ export {
 } from './components/framework/userCompUtils';
 export type { Bean, NamedBean } from './context/bean';
 export { BeanStub } from './context/beanStub';
-export type { BeanCollection, BeanName, SingletonBean, StatusPanelComponentName } from './context/context';
+export type {
+    BeanCollection,
+    BeanName,
+    SingletonBean,
+    StatusPanelComponentName,
+    ToolbarItemComponentName,
+} from './context/context';
 export type { Context } from './context/context';
 export type { CtrlsService } from './ctrlsService';
 export type { DragAndDropService } from './dragAndDrop/dragAndDropService';
@@ -307,7 +326,7 @@ export type { Environment } from './environment';
 export { _GET_ALL_EVENTS, _PUBLIC_EVENTS, ALWAYS_SYNC_GLOBAL_EVENTS } from './eventTypes';
 export { BaseCreator } from './export/baseCreator';
 export { BaseGridSerializingSession } from './export/baseGridSerializingSession';
-export { _downloadFile } from './export/downloader';
+export { _downloadFile } from './agStack/utils/download';
 export {
     _getFilterModel,
     _refreshFilterUi,
@@ -331,13 +350,12 @@ export type { GridParams } from './grid';
 export { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 export { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
 export { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
-export type { IGridBodyComp, RowAnimationCssClasses } from './gridBodyComp/gridBodyCtrl';
+export type { IGridBodyComp } from './gridBodyComp/gridBodyCtrl';
 export { _getCellPositionForEvent, _getNormalisedMousePosition } from './gridBodyComp/mouseEventUtils';
 export {
     _getRowContainerClass,
     _getRowContainerOptions,
     _getRowSpanContainerClass,
-    _getRowViewportClass,
     RowContainerCtrl,
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 export type {
@@ -358,6 +376,7 @@ export {
     _getCheckboxLocation,
     _getEnableColumnSelection,
     _getFillHandle,
+    _getGrandTotalPinnedFloat,
     _getGrandTotalRow,
     _getGridOption,
     _getGroupAggFiltering,
@@ -401,7 +420,11 @@ export type {
     IAbstractHeaderCellComp,
 } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 export type { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
-export { HeaderComp as _HeaderComp } from './headerRendering/cells/column/headerComp';
+export { AgColumnHeader as _HeaderComp } from './headerRendering/cells/column/agColumnHeader';
+export {
+    applyHeaderWrapperHidden as _applyHeaderWrapperHidden,
+    applyHeaderWrapperMaxHeight as _applyHeaderWrapperMaxHeight,
+} from './headerRendering/cells/columnGroup/headerGroupCellCtrl';
 export type {
     HeaderGroupCellCtrl,
     IHeaderGroupCellComp,
@@ -414,10 +437,19 @@ export type { IGridHeaderComp } from './headerRendering/gridHeaderCtrl';
 export {
     getFloatingFiltersHeight as _getFloatingFiltersHeight,
     getHeaderRowCount as _getHeaderRowCount,
+    getPinnedSectionWidths as _getPinnedSectionWidths,
+    partitionByPinned as _partitionByPinned,
+    updatePinnedSectionWidths as _updatePinnedSectionWidths,
+} from './headerRendering/headerUtils';
+export type {
+    PinnedSectionElements,
+    PinnedSections,
+    PinnedSectionWidths,
+    PinnedSectionWidthsCache,
 } from './headerRendering/headerUtils';
 export type { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
 export { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
-export type { IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
+export type { IHeaderRowsComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
 export type { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 export type { IAggColumnNameService } from './interfaces/iAggColumnNameService';
@@ -437,14 +469,24 @@ export type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 export type { IGroupEditService as _IGroupEditService } from './interfaces/iGroupEditService';
 export type { IGroupFilterService } from './interfaces/iGroupFilterService';
 export type { IRowGroupingEditValueSvc as _IRowGroupingEditValueSvc } from './interfaces/iRowGroupingEditValueSvc';
+export type { IRowGroupPanelBuilder as _IRowGroupPanelBuilder } from './interfaces/iRowGroupPanelBuilder';
 export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
+
 export type { IMenuFactory } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';
+export type {
+    HorizontalSection,
+    HorizontalSectionMap,
+    VerticalSection,
+    VerticalSectionMap,
+} from './interfaces/iGridSection';
+export type { IPinnedSectionCompHost } from './interfaces/iPinnedSectionCompHost';
 export type { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export type { IPivotColDefService } from './interfaces/iPivotColDefService';
 export type { IPivotResultColsService } from './interfaces/iPivotResultColsService';
 export type { IRangeService } from './interfaces/IRangeService';
 export type { IRowChildrenService } from './interfaces/iRowChildrenService';
+
 export type {
     IRowNodeAggregationStage as _IRowNodeAggregationStage,
     IRowNodeFilterAggregateStage as _IRowNodeFilterAggregateStage,
@@ -460,6 +502,7 @@ export type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsSer
 export type { GroupValueResult, IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
 export type { ISideBar, ISideBarService } from './interfaces/iSideBar';
 export type { SortOption } from './interfaces/iSortOption';
+export type { IToolbarComp, IToolbarService } from './interfaces/iToolbar';
 export type { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
 export type { ComponentType, UserCompDetails } from './interfaces/iUserCompDetails';
 export type { IWatermark } from './interfaces/iWatermark';
@@ -491,7 +534,8 @@ export {
     _suppressCellMouseEvent,
 } from './rendering/renderUtils';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
-export type { IRowComp, RowCtrl, RowGui } from './rendering/row/rowCtrl';
+export type { FullWidthTarget } from './rendering/row/iRowModeFeature';
+export type { IRowComp, PinnedCellGroupWidths, RowCtrl, RowGui } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
 export { BaseSelectionService } from './selection/baseSelectionService';
 export type { RowRangeSelectionContext } from './selection/rowRangeSelectionContext';

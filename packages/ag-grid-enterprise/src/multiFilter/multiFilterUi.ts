@@ -61,6 +61,11 @@ export class MultiFilterUi
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
         return new AgPromise<void>((resolve) => {
             AgPromise.all(filterPromises).then((filters) => {
+                if (!this.isAlive()) {
+                    this.destroyBeans(filters ?? []);
+                    resolve();
+                    return;
+                }
                 this.filters = filters!;
                 this.refreshGui('columnMenu').then(() => {
                     resolve();
@@ -112,11 +117,7 @@ export class MultiFilterUi
     }
 
     public override destroy(): void {
-        for (const filter of this.filters) {
-            this.destroyBean(filter);
-        }
-
-        this.filters.length = 0;
+        this.filters = this.destroyBeans(this.filters);
 
         super.destroy();
     }

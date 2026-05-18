@@ -163,6 +163,7 @@ import type {
     OverlayType,
     PaginationChangedEvent,
     PaginationNumberFormatter,
+    PaginationPanel,
     PasteEndEvent,
     PasteStartEvent,
     PdfExportParams,
@@ -226,6 +227,7 @@ import type {
     Theme,
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
+    Toolbar,
     TooltipHideEvent,
     TooltipShowEvent,
     TreeDataDisplayType,
@@ -411,6 +413,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public modules: Module[] | undefined;
 
     // @START@
+    /** Specifies the toolbar items to use in the toolbar.
+     * @agModule `ToolbarModule`
+     */
+    @Input() public toolbar: Toolbar | undefined = undefined;
     /** Specifies the status bar components to use in the status bar.
      * @agModule `StatusBarModule`
      */
@@ -1110,7 +1116,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
      * Set to `false` to hide the page size selector.
      * @default true
-     * @initial
      * @agModule `PaginationModule`
      */
     @Input() public paginationPageSizeSelector: number[] | boolean | undefined = undefined;
@@ -1132,6 +1137,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `PaginationModule`
      */
     @Input({ transform: booleanAttribute }) public suppressPaginationPanel: boolean | undefined = undefined;
+    /** Controls which built-in components appear in the pagination panel and in what order.
+     * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+     * Components render in the order they appear in the array. Omitted components are hidden.
+     * An empty array hides the pagination panel entirely.
+     * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+     * @agModule `PaginationModule`
+     */
+    @Input() public paginationPanels: PaginationPanel[] | undefined = undefined;
     /** Set to `true` to enable pivot mode.
      * @default false
      * @agModule `PivotModule`
@@ -1195,7 +1208,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `NotesModule`
      */
     @Input() public notesDataSource: NotesDataSource | FullWidthNotesDataSource | undefined = undefined;
+    /** Changes how existing notes are opened.
+     *  - `'hover'` - Existing notes open when hovering a noted cell or full width row.
+     *  - `'click'` - Existing notes open when clicking a noted cell or full width row.
+     * @default 'hover'
+     * @agModule `NotesModule`
+     */
+    @Input() public noteTrigger: 'hover' | 'click' | undefined = undefined;
     /** The delay in milliseconds before a note is shown when hovering a noted cell.
+     * Only applies when `noteTrigger = 'hover'`.
      * @default 180
      * @agModule `NotesModule`
      */
@@ -1378,8 +1399,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input() public autoGroupColumnDef: AutoGroupColumnDef<TData> | undefined = undefined;
-    /** When `true`, preserves the current group order when sorting on non-group columns.
-     * If a user explicitly resets the current group sort direction, then the current group column order is not preserved.
+    /** When `true`, sorting on non-group columns does not reorder groups; only the rows within
+     * each group are sorted. Group order remains the structural order set at grouping time
+     * (data-insertion order, or `initialGroupOrderComparator` if configured) and is preserved
+     * across filter changes and transactions. If a group column was sorted via `colDef.sort`
+     * and the user later explicitly clears that sort, the structural order is restored.
+     *
+     * With multi-level row grouping, the order is maintained per level: a sort on a group
+     * column at one level only re-orders that level's groups; sibling levels keep their
+     * structural order.
+     *
+     * Applies to row grouping only. Has no effect on tree data, where row order is determined
+     * by the tree structure.
      * @default false
      * @agModule `RowGroupingModule`
      */
@@ -1848,6 +1879,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public gridId: string | undefined = undefined;
     /** When enabled, sorts only the rows added/updated by a transaction.
+     *
+     * Ignored when `postSortRows` is configured (falls back to full sort).
      * @default false
      */
     @Input({ transform: booleanAttribute }) public deltaSort: boolean | undefined = undefined;
@@ -2093,6 +2126,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public fillOperation: FillOperation<TData> | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.
+     *
+     * When configured, `deltaSort` is ignored.
      */
     @Input() public postSortRows: PostSortRows<TData> | undefined = undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.

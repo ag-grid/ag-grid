@@ -10,6 +10,7 @@ import {
     getRefTokensFromText,
     rangeToRef,
     tagRangeWithFormulaColor,
+    toDisplayRangeParams,
 } from './formulaRangeUtils';
 
 type TrackedRange = { ref: string; tokenIndex?: number | null };
@@ -249,7 +250,7 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
 
     private trackRange(range: CellRange, ref: string, tokenIndex?: number | null): void {
         const existing = this.trackedRanges.get(range);
-        const nextTokenIndex = tokenIndex !== undefined ? tokenIndex : existing?.tokenIndex ?? null;
+        const nextTokenIndex = tokenIndex !== undefined ? tokenIndex : (existing?.tokenIndex ?? null);
 
         if (!existing) {
             this.addTrackedRef(ref);
@@ -573,8 +574,12 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             if (!params) {
                 return undefined;
             }
+            const displayParams = toDisplayRangeParams(this.beans, params);
+            if (!displayParams) {
+                return undefined;
+            }
             this.withSuppressedRangeEvents(() => {
-                created = rangeSvc.addCellRange(params);
+                created = rangeSvc.addCellRange(displayParams);
             });
         } else {
             created = this.findLatestRangeForRef(ref, true) ?? this.findLatestRangeForRef(ref, false);

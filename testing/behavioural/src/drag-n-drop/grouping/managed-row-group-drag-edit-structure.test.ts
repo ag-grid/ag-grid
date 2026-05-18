@@ -254,17 +254,17 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
                 ROOT id:ROOT_NODE_ID
                 └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
                 · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+                · │ ├── LEAF id:a1 level1:"Beta" level2:"Three" value:"Alpha-1"
+                · │ ├── LEAF id:a2 level1:"Beta" level2:"Three" value:"Alpha-2"
                 · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
                 · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
-                · · ├── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
-                · · ├── LEAF id:a1 level1:"Beta" level2:"Four" value:"Alpha-1"
-                · · └── LEAF id:a2 level1:"Beta" level2:"Four" value:"Alpha-2"
+                · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
             `);
 
             expect(api.getRowNode('a1')?.data.level1).toBe('Beta');
-            expect(api.getRowNode('a1')?.data.level2).toBe('Four');
+            expect(api.getRowNode('a1')?.data.level2).toBe('Three');
             expect(api.getRowNode('a2')?.data.level1).toBe('Beta');
-            expect(api.getRowNode('a2')?.data.level2).toBe('Four');
+            expect(api.getRowNode('a2')?.data.level2).toBe('Three');
         }
     });
 

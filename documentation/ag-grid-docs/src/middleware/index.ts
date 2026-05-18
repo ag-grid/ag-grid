@@ -58,7 +58,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
                 body = await prettier.format(body, {
                     parser: 'html',
                 });
-            } catch (e) {
+            } catch {
                 // eslint-disable-next-line no-console
                 console.warn(`Unable to prettier format for [${context.url.pathname}]`);
             }

@@ -100,6 +100,25 @@ describe('Manual pinned rows', () => {
         `);
     });
 
+    test('isRowPinned updates aria-rowindex for rows below pinned top rows', async () => {
+        await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            isRowPinned: (node) => (node.data?.sport === 'rugby' ? 'top' : null),
+        });
+
+        await asyncSetTimeout(0);
+
+        const firstBodyRow = document.querySelector(
+            '#myGrid .ag-grid-scrolling-container > .ag-row[row-index="0"]'
+        ) as HTMLElement | null;
+
+        expect(firstBodyRow).toBeTruthy();
+        // 1 header row + 1 pinned top row + row index (0) + 1 (aria is 1-based)
+        expect(firstBodyRow?.getAttribute('aria-rowindex')).toBe('3');
+    });
+
     test('Setting `grandTotalRow` to pinned value does not reset pinned row state', async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs,
@@ -180,12 +199,54 @@ describe('Manual pinned rows', () => {
 
         assertPinnedRows(api, 'top', ['t-top-0-rugby']);
         assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+        const oldPinnedBottom = getPinnedRows(api, 'bottom')[0];
+        expect(oldPinnedBottom.destroyed).toBe(false);
 
         api.setGridOption('grandTotalRow', 'pinnedTop');
         await asyncSetTimeout(10);
 
         assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID', 't-top-0-rugby']);
         assertPinnedRows(api, 'bottom', []);
+        expect(oldPinnedBottom.destroyed).toBe(true);
+    });
+
+    test('cycle through grandTotalRow positions including pinned', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            getRowId(params) {
+                return `${params.level}-${params.data?.sport}`;
+            },
+            grandTotalRow: 'pinnedTop',
+        });
+
+        // pinnedTop
+        assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID']);
+        assertPinnedRows(api, 'bottom', []);
+        const topPinnedNode = getPinnedRows(api, 'top')[0];
+        expect(topPinnedNode.destroyed).toBe(false);
+
+        api.setGridOption('grandTotalRow', 'top');
+        await asyncSetTimeout(10);
+        assertPinnedRows(api, 'top', []);
+        assertPinnedRows(api, 'bottom', []);
+        expect(topPinnedNode.destroyed).toBe(true);
+
+        api.setGridOption('grandTotalRow', 'pinnedBottom');
+        await asyncSetTimeout(10);
+        assertPinnedRows(api, 'top', []);
+        assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
+
+        const bottomNode = getPinnedRows(api, 'bottom')[0];
+        expect(bottomNode.rowPinned).toBe('bottom');
+        expect(bottomNode.destroyed).toBe(false);
+        expect(bottomNode).not.toBe(topPinnedNode);
+
+        api.setGridOption('grandTotalRow', undefined);
+        await asyncSetTimeout(10);
+        assertPinnedRows(api, 'top', []);
+        assertPinnedRows(api, 'bottom', []);
+        expect(bottomNode.destroyed).toBe(true);
     });
 
     test('pinned row is unpinned when source row is destroyed via transaction remove', async () => {

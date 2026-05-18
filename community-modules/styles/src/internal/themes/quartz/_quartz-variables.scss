@@ -37,6 +37,7 @@
     --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 8%);
     --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 12%);
     --ag-column-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
+    --ag-icon-button-hover-background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
     --ag-input-focus-border-color: var(--ag-active-color);
     --ag-range-selection-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 20%);
     --ag-input-focus-box-shadow: 0 0 0 3px color-mix(in srgb, transparent, var(--ag-input-focus-border-color) 47%);
@@ -98,8 +99,9 @@
     --ag-toggle-button-border-width: 2px;
 
     // FONTS
-    --ag-font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu,
-        Cantarell, 'Helvetica Neue', sans-serif;
+    --ag-font-family:
+        'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+        'Helvetica Neue', sans-serif;
     --ag-font-size: 14px;
     --ag-icon-font-family: agGridQuartz;
 
@@ -116,6 +118,7 @@
 
     --ag-column-panel-apply-button-color: var(--ag-background-color);
     --ag-column-panel-apply-button-background-color: var(--ag-active-color);
+    --ag-note-indicator-color: var(--ag-active-color);
 }
 
 @mixin -dark-vars {

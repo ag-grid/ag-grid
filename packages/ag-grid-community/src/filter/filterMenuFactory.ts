@@ -134,7 +134,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         const afterGuiDetached = () => comp?.afterGuiDetached();
 
         const anchorToElement = _isColumnMenuAnchoringEnabled(this.gos)
-            ? eventSource ?? this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody
+            ? (eventSource ?? this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody)
             : undefined;
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             _setColMenuVisible(column, false, 'contextMenu');
@@ -215,7 +215,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
 
     public isMenuEnabled(column: AgColumn): boolean {
         // for standard, we show menu if filter is enabled, and the menu is not suppressed by passing an empty array
-        return column.isFilterAllowed() && (column.getColDef().menuTabs ?? ['filterMenuTab']).includes('filterMenuTab');
+        return column.isFilterAllowed() && (column.colDef.menuTabs ?? ['filterMenuTab']).includes('filterMenuTab');
     }
 
     public showMenuAfterContextMenuEvent(): void {

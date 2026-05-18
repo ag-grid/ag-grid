@@ -7,7 +7,7 @@ import { _getRowHeightAsNumber } from '../gridOptionsUtils';
 export class PaginationAutoPageSizeService extends BeanStub implements NamedBean {
     beanName = 'paginationAutoPageSizeSvc' as const;
 
-    private centerRowsCtrl: RowContainerCtrl;
+    private scrollingRowsCtrl: RowContainerCtrl;
 
     // Once the body is rendered, we debounce changes to the page size,
     // but we do not want to debounce the first time the body is rendered.
@@ -15,7 +15,7 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
 
     public postConstruct(): void {
         this.beans.ctrlsSvc.whenReady(this, (p) => {
-            this.centerRowsCtrl = p.center;
+            this.scrollingRowsCtrl = p.scrolling;
 
             const listener = this.checkPageSize.bind(this);
             this.addManagedEventListeners({
@@ -29,7 +29,7 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
     }
 
     private notActive(): boolean {
-        return !this.gos.get('paginationAutoPageSize') || this.centerRowsCtrl == null;
+        return !this.gos.get('paginationAutoPageSize') || this.scrollingRowsCtrl == null;
     }
 
     private onPaginationAutoSizeChanged(): void {
@@ -45,7 +45,7 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
             return;
         }
 
-        const bodyHeight = this.centerRowsCtrl.viewportSizeFeature!.getBodyHeight();
+        const bodyHeight = this.scrollingRowsCtrl.viewportSizeFeature!.getBodyHeight();
 
         if (bodyHeight > 0) {
             const beans = this.beans;

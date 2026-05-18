@@ -1,19 +1,26 @@
 :where(.ag-column-moving) {
     .ag-cell {
-        transition: left 0.2s;
+        transition:
+            left 0.2s,
+            right 0.2s;
     }
 
     .ag-spanned-cell-wrapper {
-        transition: left 0.2s;
+        transition:
+            left 0.2s,
+            right 0.2s;
     }
 
     .ag-header-cell {
-        transition: left 0.2s;
+        transition:
+            left 0.2s,
+            right 0.2s;
     }
 
     .ag-header-group-cell {
         transition:
             left 0.2s,
+            right 0.2s,
             width 0.2s;
     }
 }

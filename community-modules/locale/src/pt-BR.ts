@@ -339,6 +339,11 @@ export const AG_GRID_LOCALE_BR = {
     sortAbsoluteDescending: 'Ordenar Absoluto Descendente',
     sortUnSort: 'Limpar Ordenação',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Buscar',
+    toolbarFindPreviousMatch: 'Correspondência Anterior',
+    toolbarFindNextMatch: 'Próxima Correspondência',
+    toolbarQuickFilter: 'Filtro',
+    toolbarMenu: 'Menu',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Soma',
@@ -691,12 +696,16 @@ export const AG_GRID_LOCALE_BR = {
     ariaColumnCellSelection: 'Pressione Enter para alternar a seleção de todas as células visíveis nesta coluna',
     ariaColumnGroupCellSelection:
         'Pressione Enter para alternar a seleção de todas as células visíveis neste grupo de colunas',
+    ariaColumnGroupExpansion: 'Pressione ENTER para expandir ou recolher este grupo de colunas',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Pressione Enter para alternar a seleção de todas as células visíveis neste grupo de colunas. Pressione ALT ENTER para expandir ou recolher este grupo de colunas',
     ariaRowSelectAll: 'Pressione SPACE para alternar a seleção de todas as linhas',
     ariaRowToggleSelection: 'Pressione SPACE para alternar a seleção da linha',
     ariaRowSelect: 'Pressione SPACE para selecionar esta linha',
     ariaRowSelectionDisabled: 'A seleção de linha está desativada para esta linha',
     ariaSearch: 'Pesquisar',
     ariaSortableColumn: 'Pressione ENTER para classificar',
+    ariaSortableColumnWithCellSelection: 'Pressione ALT ENTER para classificar',
     ariaToggleVisibility: 'Pressione SPACE para alternar a visibilidade',
     ariaToggleCellValue: 'Pressione SPACE para alternar o valor da célula',
     ariaUnchecked: 'desmarcado',
@@ -816,8 +825,4 @@ export const AG_GRID_LOCALE_BR = {
     editNote: 'Editar nota',
     deleteNote: 'Remover nota',
     notePlaceholder: 'Adicionar uma nota...',
-    noteHint:
-        'Passe o cursor para visualizar. Clique dentro para editar. Arraste o canto para redimensionar. Pressione Esc para fechar.',
-    noteReadOnlyHint:
-        'Nota somente leitura. Selecione o texto para copiar. Arraste o canto para redimensionar. Pressione Esc para fechar.',
 };

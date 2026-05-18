@@ -26,7 +26,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private suppressFilterButton: boolean;
     private highlightFilterButtonWhenActive: boolean;
     private active: boolean;
-    private iconCreated: boolean = false;
 
     private userCompDetails?: UserCompDetails | null;
     private destroySyncListener: () => null;
@@ -98,7 +97,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupActive(): void {
-        const colDef = this.column.getColDef();
+        const colDef = this.column.colDef;
         const filterExists = !!colDef.filter;
         const floatingFilterExists = !!colDef.floatingFilter;
         this.active = filterExists && floatingFilterExists;
@@ -110,14 +109,13 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-full-body', this.suppressFilterButton);
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-body', !this.suppressFilterButton);
 
-        if (!this.active || this.iconCreated) {
+        if (!this.active || this.eButtonShowMainFilter.firstElementChild) {
             return;
         }
 
         const eMenuIcon = _createIconNoSpan('filter', this.beans, this.column);
 
         if (eMenuIcon) {
-            this.iconCreated = true;
             this.eButtonShowMainFilter.appendChild(eMenuIcon);
         }
     }
@@ -187,7 +185,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             if (!nextCol) {
                 break;
             }
-        } while (!nextCol.getColDef().filter || !nextCol.getColDef().floatingFilter);
+        } while (!nextCol.colDef.filter || !nextCol.colDef.floatingFilter);
 
         return nextCol;
     }
@@ -237,7 +235,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         if (notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             const lastFocusEvent = this.lastFocusEvent;
-            const fromTab = !!(lastFocusEvent && lastFocusEvent.key === KeyCode.TAB);
+            const fromTab = lastFocusEvent?.key === KeyCode.TAB;
 
             if (lastFocusEvent && fromTab) {
                 const shouldFocusLast = lastFocusEvent.shiftKey;
@@ -435,7 +433,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
                 if (this.gos.get('enableFilterHandlers')) {
                     params = {
                         ...params,
-                        model: _getFilterModel(this.beans.colFilter?.model ?? {}, this.column.getColId()),
+                        model: _getFilterModel(this.beans.colFilter?.model ?? {}, this.column.colId),
                         source,
                     };
                 }

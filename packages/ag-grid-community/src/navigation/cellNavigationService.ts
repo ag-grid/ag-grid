@@ -4,24 +4,16 @@ import { _missing } from '../agStack/utils/generic';
 import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowAbove, _getRowBelow } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { RowSpanService } from '../rendering/spanning/rowSpanService';
 import { _warn } from '../validation/logging';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class CellNavigationService extends BeanStub implements NamedBean {
     beanName = 'cellNavigation' as const;
-
-    private rowSpanSvc: RowSpanService | undefined;
-
-    public wireBeans(beans: BeanCollection) {
-        this.rowSpanSvc = beans.rowSpanSvc;
-    }
 
     // returns null if no cell to focus on, ie at the end of the grid
     public getNextCellToFocus(
@@ -190,10 +182,11 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             return null;
         }
 
+        const { beans } = this;
         // adjust spanned cell so when moving down asserts use of last row in cell
-        const adjustedLastCell = this.rowSpanSvc?.getCellEnd(lastCell) ?? lastCell;
+        const adjustedLastCell = beans.rowSpanSvc?.getCellEnd(lastCell) ?? lastCell;
 
-        const rowBelow = _getRowBelow(this.beans, adjustedLastCell, true);
+        const rowBelow = _getRowBelow(beans, adjustedLastCell, true);
         if (rowBelow) {
             return {
                 rowIndex: rowBelow.rowIndex,
@@ -210,11 +203,12 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             return null;
         }
 
+        const { beans } = this;
         // adjust spanned cell so when moving up asserts use of first row in cell
-        const adjustedLastCell = this.rowSpanSvc?.getCellStart(lastCell) ?? lastCell;
+        const adjustedLastCell = beans.rowSpanSvc?.getCellStart(lastCell) ?? lastCell;
 
         const rowAbove = _getRowAbove(
-            this.beans,
+            beans,
             {
                 rowIndex: adjustedLastCell.rowIndex,
                 rowPinned: adjustedLastCell.rowPinned,

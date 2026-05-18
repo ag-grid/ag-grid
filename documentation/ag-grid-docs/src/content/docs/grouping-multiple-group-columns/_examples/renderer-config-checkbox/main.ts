@@ -31,6 +31,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     groupDisplayType: 'multipleColumns',
     rowSelection: {
         mode: 'multiRow',
+        groupSelects: 'descendants',
         selectAll: 'all',
         checkboxLocation: 'autoGroupColumn',
     },

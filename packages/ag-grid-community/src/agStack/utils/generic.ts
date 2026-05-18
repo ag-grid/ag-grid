@@ -38,24 +38,26 @@ export const _jsonEquals = <T1, T2>(val1: T1, val2: T2): boolean => {
 };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+// PERFORMANCE CRITICAL — called per comparison during sort (O(n log n)). Any change here can have
+// a large impact across grouping, filtering, and rendering. Run the sort benchmark to verify.
 export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: boolean = false): number => {
+    // Unwrap `IAggFuncResult`-shaped wrappers (e.g. built-in `avg` / `count`) BEFORE the nullish
+    // check so wrappers carrying a nullish payload (`toNumber() => null` for empty aggregations)
+    // sort with bare nullish instead of being coerced to `0` by the `<` / `>` path.
+    // - `valueA !== null` is required because `typeof null === 'object'`.
+    // - Strict `typeof === 'function'` guards against truthy non-function `toNumber` properties.
+    if (typeof valueA === 'object' && valueA !== null && typeof valueA.toNumber === 'function') {
+        valueA = valueA.toNumber();
+    }
+    if (typeof valueB === 'object' && valueB !== null && typeof valueB.toNumber === 'function') {
+        valueB = valueB.toNumber();
+    }
+
     if (valueA == null) {
         return valueB == null ? 0 : -1;
     }
-
     if (valueB == null) {
         return 1;
-    }
-
-    // this is for aggregations sum and avg, where the result can be a number that is wrapped.
-    // if we didn't do this, then the toString() value would be used, which would result in
-    // the strings getting used instead of the numbers.
-    if (typeof valueA === 'object' && valueA.toNumber) {
-        valueA = valueA.toNumber();
-    }
-
-    if (typeof valueB === 'object' && valueB.toNumber) {
-        valueB = valueB.toNumber();
     }
 
     if (!accentedCompare || typeof valueA !== 'string') {
@@ -68,6 +70,6 @@ export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: bo
         return 0;
     }
 
-    // using locale compare also allows chinese comparisons
+    // localeCompare also handles Chinese / accented collation.
     return valueA.localeCompare(valueB);
 };

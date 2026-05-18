@@ -10,7 +10,7 @@ export const buildRowGroupFeatureSchema = (beans: BeanCollection) => {
         return;
     }
 
-    const groupableColumnIds = groupableColumns.map((col) => col.getColId());
+    const groupableColumnIds = groupableColumns.map((col) => col.colId);
 
     return s.object(
         {

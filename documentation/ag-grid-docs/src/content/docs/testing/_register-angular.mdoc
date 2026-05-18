@@ -103,6 +103,8 @@ export class PoundRenderer implements ICellRendererAngularComp {
 
 @Component({
     selector: 'editor-cell',
+    standalone: true,
+    imports: [FormsModule],
     template: `<input #input [(ngModel)]="value" style="width: 100%">`
     }
 )
@@ -136,6 +138,8 @@ export class EditorComponent implements ICellEditorAngularComp {
 }
 
 @Component({
+    standalone: true,
+    imports: [AgGridAngular],
     template:
         `<div>
             <ag-grid-angular
@@ -202,7 +206,7 @@ It is also possible to use [Angular Testing Library](https://testing-library.com
 
 ```js
 <div data-testid="rowClicked">Row Clicked: {{ rowClicked?.make }}</div>
-<ag-grid-angular [columnDefs]="columnDefs" [rowData]="rowData" (onRowClicked)="onRowClicked($event)" />
+<ag-grid-angular [columnDefs]="columnDefs" [rowData]="rowData" (rowClicked)="onRowClicked($event)" />
 ```
 
 ```js

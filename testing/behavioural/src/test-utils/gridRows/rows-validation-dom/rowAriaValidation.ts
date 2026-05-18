@@ -9,7 +9,9 @@ export function validateRowAriaAttributes(
     rowElements: HTMLElement[],
     rowErrors: GridRowErrors<any>,
     bugs: Readonly<GridRowsBugs>,
-    headerRowCount: number
+    headerRowCount: number,
+    pinnedTopRowCount: number,
+    displayedRowCount: number
 ): void {
     const el = rowElements[0];
     if (!el) {
@@ -43,11 +45,17 @@ export function validateRowAriaAttributes(
         );
     }
 
-    // aria-rowindex: should be headerRowCount + rowNode.rowIndex + 1 (not applicable to pinned rows)
-    if (row.rowIndex != null && !row.rowPinned && headerRowCount >= 0) {
+    // aria-rowindex: 1-based absolute row index across pinned top, body and pinned bottom lanes.
+    if (row.rowIndex != null && headerRowCount >= 0) {
         const ariaRowIndex = el.getAttribute('aria-rowindex');
         if (ariaRowIndex !== null) {
-            const expectedAriaRowIndex = String(headerRowCount + row.rowIndex + 1);
+            const absoluteRowIndex =
+                row.rowPinned === 'top'
+                    ? row.rowIndex
+                    : row.rowPinned === 'bottom'
+                      ? pinnedTopRowCount + displayedRowCount + row.rowIndex
+                      : pinnedTopRowCount + row.rowIndex;
+            const expectedAriaRowIndex = String(headerRowCount + absoluteRowIndex + 1);
             rowErrors.add(
                 ariaRowIndex !== expectedAriaRowIndex &&
                     `aria-rowindex should be ${expectedAriaRowIndex} but got ${JSON.stringify(ariaRowIndex)}`

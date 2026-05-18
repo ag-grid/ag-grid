@@ -1,7 +1,7 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
 import { _isElementOverflowingCallback } from '../agStack/utils/dom';
 import { _exists } from '../agStack/utils/generic';
-import { _getValueUsingField } from '../agStack/utils/value';
+import { _getValueUsingDotField } from '../agStack/utils/value';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -64,7 +64,7 @@ const getCellTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => b
     }
 
     if (ctrl.isCellRenderer()) {
-        const colDef = ctrl.column.getColDef();
+        const colDef = ctrl.column.colDef;
         // create rule for our internal group cell renderer
         const isGroupCellRenderer = !!colDef.showRowGroup || colDef.cellRenderer === 'agGroupCellRenderer';
         if (!isGroupCellRenderer) {
@@ -131,9 +131,10 @@ const resolveCellTooltip = ({
 }): ResolvedCellTooltip | null => {
     const { editSvc, formula, gos } = beans;
     const { column, rowNode } = ctrl;
+    const colDef = column.colDef;
 
     // 1) formula error tooltip has highest priority.
-    if (formula?.active && column.isAllowFormula()) {
+    if (colDef.allowFormula && formula?.active) {
         const error = formula.getFormulaError(column, rowNode);
         if (error) {
             return {
@@ -164,13 +165,15 @@ const resolveCellTooltip = ({
         return { value, location: 'cell', shouldDisplay: shouldDisplayCustomTooltip };
     }
 
-    const colDef = column.getColDef();
     const data = rowNode.data;
 
     // 4) column tooltip field/valueGetter is the final fallback.
     if (colDef.tooltipField && _exists(data)) {
+        const tooltipField = colDef.tooltipField;
         return {
-            value: _getValueUsingField(data, colDef.tooltipField, column.isTooltipFieldContainsDots()),
+            value: column.isTooltipFieldContainsDots()
+                ? _getValueUsingDotField(data, tooltipField)
+                : data[tooltipField],
             location: 'cell',
             shouldDisplay: shouldDisplayColumnTooltip,
         };
@@ -183,7 +186,7 @@ const resolveCellTooltip = ({
             value: valueGetter(
                 _addGridCommonParams(gos, {
                     location: 'cell',
-                    colDef: column.getColDef(),
+                    colDef: column.colDef,
                     column: column,
                     rowIndex: ctrl.cellPosition.rowIndex,
                     node: rowNode,
@@ -220,7 +223,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         const gos = this.gos;
         const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(gos);
         const { column, eGui } = ctrl;
-        const colDef = column.getColDef();
+        const colDef = column.colDef;
 
         if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colDef.headerComponent) {
             shouldDisplayTooltip = _isElementOverflowingCallback(
@@ -243,7 +246,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             shouldDisplayTooltip,
             getAdditionalParams: () => ({
                 column,
-                colDef: column.getColDef(),
+                colDef: column.colDef,
             }),
         };
 
@@ -345,7 +348,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             },
             getAdditionalParams: () => ({
                 column,
-                colDef: column.getColDef(),
+                colDef: column.colDef,
                 rowIndex: ctrl.cellPosition.rowIndex,
                 node: rowNode,
                 data: rowNode.data,
@@ -363,7 +366,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         shouldDisplayTooltip?: () => boolean
     ): TooltipFeature | undefined {
         const tooltipParams: ITooltipCtrl = {
-            getGui: () => ctrl.getFullWidthElement()!,
+            getGui: () => ctrl.getRowContentElement()!,
             getTooltipValue: () => value,
             getLocation: () => 'fullWidthRow',
             shouldDisplayTooltip,

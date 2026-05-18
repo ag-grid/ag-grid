@@ -2,12 +2,13 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { RowNode } from '../../entities/rowNode';
 import type { CellPosition } from '../../interfaces/iCellPosition';
+import type { VerticalSection } from '../../interfaces/iGridSection';
 import type { RowPinnedType } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../cell/cellCtrl';
 import type { RowCtrl } from '../row/rowCtrl';
 import { SpannedRowCtrl } from './spannedRowCtrl';
 
-type SpannedRowContainerType = 'top' | 'bottom' | 'center';
+type SpannedRowContainerType = VerticalSection | 'center';
 export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implements NamedBean {
     beanName = 'spannedRowRenderer' as const;
 
@@ -115,11 +116,11 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
         return ctrl.getAllCellCtrls().find((cellCtrl) => cellCtrl.column === cellPosition.column);
     }
 
-    public getCtrls(container: 'top' | 'bottom' | 'center'): RowCtrl[] {
+    public getCtrls(container: SpannedRowContainerType): RowCtrl[] {
         return [...this.getCtrlsMap(container).values()];
     }
 
-    private destroyRowCtrls(container: 'top' | 'bottom' | 'center'): void {
+    private destroyRowCtrls(container: SpannedRowContainerType): void {
         for (const ctrl of this.getCtrlsMap(container).values()) {
             ctrl.destroyFirstPass(true);
             ctrl.destroySecondPass();

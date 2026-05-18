@@ -10,12 +10,16 @@ import { DropZoneColumnComp } from './dropZoneColumnComp';
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
+    protected readonly embedded: boolean;
+
     constructor(
         horizontal: boolean,
         private readonly dropZonePurpose: TDropZone,
-        protected readonly updateParams?: ColumnStateUpdateParams
+        protected readonly updateParams?: ColumnStateUpdateParams,
+        embedded = false
     ) {
         super(horizontal);
+        this.embedded = embedded;
         this.addElementClasses(this.getGui(), this.dropZonePurpose.toLowerCase());
     }
 
@@ -60,16 +64,16 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return Math.min(numberOfLockedCols, numberOfGroupCols);
     }
 
-    private showOrHideColumnOnExit(draggingEvent: GridDraggingEvent): boolean {
+    private shouldToggleColumnVisibility(draggingEvent: GridDraggingEvent, isGrouped: boolean): boolean {
         return (
-            this.isRowGroupPanel() && _shouldUpdateColVisibilityAfterGroup(this.gos, true) && !draggingEvent.fromNudge
+            this.isRowGroupPanel() &&
+            _shouldUpdateColVisibilityAfterGroup(this.gos, isGrouped) &&
+            !draggingEvent.fromNudge
         );
     }
 
     protected override handleDragEnterEnd(draggingEvent: GridDraggingEvent): void {
-        const hideColumnOnExit = this.showOrHideColumnOnExit(draggingEvent);
-
-        if (hideColumnOnExit) {
+        if (this.shouldToggleColumnVisibility(draggingEvent, true)) {
             const dragItem = draggingEvent.dragSource.getDragItem();
             const columns = dragItem.columns as AgColumn[];
             this.setColumnsVisible(columns, false, 'uiColumnDragged');
@@ -77,9 +81,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     }
 
     protected override handleDragLeaveEnd(draggingEvent: GridDraggingEvent): void {
-        const showColumnOnExit = this.showOrHideColumnOnExit(draggingEvent);
-
-        if (showColumnOnExit) {
+        if (this.shouldToggleColumnVisibility(draggingEvent, false)) {
             const dragItem = draggingEvent.dragSource.getDragItem();
 
             this.setColumnsVisible(dragItem.columns as AgColumn[], true, 'uiColumnDragged');
@@ -96,7 +98,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         if (isDeferredMode(this.updateParams)) {
             return;
         }
-        const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
+        const allowedCols = columns.filter((c) => !c.colDef.lockVisible);
         this.beans.columnStateUpdateStrategy.setColumnsVisible(false, allowedCols, visible, source);
     }
 

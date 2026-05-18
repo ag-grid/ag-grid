@@ -94,8 +94,8 @@ describe('ag-grid grouping custom aggregation object display value', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── ag-Grid-AutoColumn "Group" width:220 flex:1
-            └── rangeTotal "Total" width:200 flex:1 aggFunc:custom
+            ├── ag-Grid-AutoColumn "Group" width:500 flex:1
+            └── rangeTotal "Total" width:500 flex:1 aggFunc:custom
         `);
     });
 
@@ -141,8 +141,8 @@ describe('ag-grid grouping custom aggregation object display value', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── ag-Grid-AutoColumn "Group" width:220 flex:1
-            └── rangeTotal "Total" width:200 flex:1 aggFunc:custom
+            ├── ag-Grid-AutoColumn "Group" width:500 flex:1
+            └── rangeTotal "Total" width:500 flex:1 aggFunc:custom
         `);
     });
 

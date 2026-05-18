@@ -32,20 +32,20 @@ describe('AgRichSelect', () => {
 
     it('announces list state changes through ariaAnnouncementService', () => {
         const richSelect = createRichSelect<string>();
-        const announceValue = jest.fn();
+        const announceValue = vi.fn();
         let stateAnnouncementCallback: ((value: string) => void) | undefined;
         const listComponent = {
-            setLoadMoreRowsCallback: jest.fn(),
-            setStateAnnouncementCallback: jest.fn((callback: (value: string) => void) => {
+            setLoadMoreRowsCallback: vi.fn(),
+            setStateAnnouncementCallback: vi.fn((callback: (value: string) => void) => {
                 stateAnnouncementCallback = callback;
             }),
-            setParentComponent: jest.fn(),
+            setParentComponent: vi.fn(),
         };
 
         richSelect.ariaAnnounce = { announceValue };
-        richSelect.createBean = jest.fn(() => listComponent);
-        richSelect.addManagedListeners = jest.fn();
-        richSelect.getFocusableElement = jest.fn(() => document.createElement('div'));
+        richSelect.createBean = vi.fn(() => listComponent);
+        richSelect.addManagedListeners = vi.fn();
+        richSelect.getFocusableElement = vi.fn(() => document.createElement('div'));
 
         richSelect.createListComponent();
         stateAnnouncementCallback?.('Loading...');
@@ -67,7 +67,7 @@ describe('AgRichSelect', () => {
             placeholder: 'Choose...',
         });
         const eDisplayField = document.createElement('span');
-        const tooltipFeature = { setTooltipAndRefresh: jest.fn() };
+        const tooltipFeature = { setTooltipAndRefresh: vi.fn() };
 
         richSelect.eDisplayField = eDisplayField;
         richSelect.tooltipFeature = tooltipFeature;
@@ -85,7 +85,7 @@ describe('AgRichSelect', () => {
             allowTyping: true,
             valueFormatter: (value) => (value === '' ? '-- SELECT --' : String(value)),
         });
-        const setValue = jest.fn();
+        const setValue = vi.fn();
 
         richSelect.eInput = { setValue } as any;
         richSelect.value = '';
@@ -99,11 +99,11 @@ describe('AgRichSelect', () => {
         const richSelect = createRichSelect<ComplexValue>();
         const unknown = { id: 10, label: 'ten' };
         const listComponent = {
-            getIndicesForValues: jest.fn(() => []),
-            selectValue: jest.fn(),
+            getIndicesForValues: vi.fn(() => []),
+            selectValue: vi.fn(),
         };
         richSelect.listComponent = listComponent;
-        richSelect.renderSelectedValue = jest.fn();
+        richSelect.renderSelectedValue = vi.fn();
 
         richSelect.setValue(unknown, false, false, true);
 
@@ -115,11 +115,11 @@ describe('AgRichSelect', () => {
         const richSelect = createRichSelect<ComplexValue>();
         const value = { id: 11, label: 'eleven' };
         const listComponent = {
-            getIndicesForValues: jest.fn(() => [1]),
-            selectValue: jest.fn(),
+            getIndicesForValues: vi.fn(() => [1]),
+            selectValue: vi.fn(),
         };
         richSelect.listComponent = listComponent;
-        richSelect.renderSelectedValue = jest.fn();
+        richSelect.renderSelectedValue = vi.fn();
 
         richSelect.setValue(value, false, false, true);
 
@@ -157,8 +157,8 @@ describe('AgRichSelect', () => {
 
         richSelect.eWrapper = wrapper;
         richSelect.listComponent = {
-            highlightIndex: jest.fn(),
-            ensureIndexVisible: jest.fn(),
+            highlightIndex: vi.fn(),
+            ensureIndexVisible: vi.fn(),
         };
         richSelect.searchStrings = ['a'];
 
@@ -170,8 +170,8 @@ describe('AgRichSelect', () => {
 
     it('handles async value list rejection by clearing values', async () => {
         const richSelect = createRichSelect<string>();
-        const listComponent = { setIsLoading: jest.fn() };
-        const setValueListInternal = jest.fn();
+        const listComponent = { setIsLoading: vi.fn() };
+        const setValueListInternal = vi.fn();
         richSelect.listComponent = listComponent;
         richSelect.setValueListInternal = setValueListInternal;
 
@@ -190,8 +190,8 @@ describe('AgRichSelect', () => {
 
     it('ignores async value list responses that resolve to undefined', async () => {
         const richSelect = createRichSelect<string>();
-        const setValueListInternal = jest.fn();
-        richSelect.listComponent = { setIsLoading: jest.fn() };
+        const setValueListInternal = vi.fn();
+        richSelect.listComponent = { setIsLoading: vi.fn() };
         richSelect.setValueListInternal = setValueListInternal;
 
         richSelect.setValueList({
@@ -206,10 +206,10 @@ describe('AgRichSelect', () => {
     it('selects current value on refresh when list values are present and picker is displayed', () => {
         const richSelect = createRichSelect<string>();
         const listComponent = {
-            setCurrentList: jest.fn(),
-            refresh: jest.fn(),
-            getIndicesForValues: jest.fn(() => [0]),
-            selectValue: jest.fn(),
+            setCurrentList: vi.fn(),
+            refresh: vi.fn(),
+            getIndicesForValues: vi.fn(() => [0]),
+            selectValue: vi.fn(),
         };
 
         richSelect.listComponent = listComponent;
@@ -229,10 +229,10 @@ describe('AgRichSelect', () => {
     it('does not select current value on refresh when current page does not contain it', () => {
         const richSelect = createRichSelect<string>();
         const listComponent = {
-            setCurrentList: jest.fn(),
-            refresh: jest.fn(),
-            getIndicesForValues: jest.fn(() => []),
-            selectValue: jest.fn(),
+            setCurrentList: vi.fn(),
+            refresh: vi.fn(),
+            getIndicesForValues: vi.fn(() => []),
+            selectValue: vi.fn(),
         };
 
         richSelect.listComponent = listComponent;
@@ -252,10 +252,10 @@ describe('AgRichSelect', () => {
     it('does not auto-select current value when refresh opts out of scroll-to-current behaviour', () => {
         const richSelect = createRichSelect<string>();
         const listComponent = {
-            setCurrentList: jest.fn(),
-            refresh: jest.fn(),
-            getIndicesForValues: jest.fn(() => [0]),
-            selectValue: jest.fn(),
+            setCurrentList: vi.fn(),
+            refresh: vi.fn(),
+            getIndicesForValues: vi.fn(() => [0]),
+            selectValue: vi.fn(),
         };
 
         richSelect.listComponent = listComponent;
@@ -276,13 +276,13 @@ describe('AgRichSelect', () => {
     it('preserves viewport continuity when async paging prepends rows', () => {
         const richSelect = createRichSelect<string>();
         const listComponent = {
-            getScrollTop: jest.fn(() => 500),
-            offsetHoveredIndexOnPrependedRows: jest.fn(),
-            setCurrentList: jest.fn(),
-            restoreScrollOnPrependedRows: jest.fn(),
-            refresh: jest.fn(),
-            getIndicesForValues: jest.fn(() => []),
-            selectValue: jest.fn(),
+            getScrollTop: vi.fn(() => 500),
+            offsetHoveredIndexOnPrependedRows: vi.fn(),
+            setCurrentList: vi.fn(),
+            restoreScrollOnPrependedRows: vi.fn(),
+            refresh: vi.fn(),
+            getIndicesForValues: vi.fn(() => []),
+            selectValue: vi.fn(),
         };
 
         richSelect.listComponent = listComponent;
@@ -302,21 +302,21 @@ describe('AgRichSelect', () => {
     });
 
     it('clears current list immediately while waiting for debounced async search', () => {
-        jest.useFakeTimers();
+        vi.useFakeTimers();
         try {
-            const onSearch = jest.fn();
+            const onSearch = vi.fn();
             const richSelect = createRichSelect<string>({
                 onSearch,
                 searchDebounceDelay: 300,
             });
-            const setValueList = jest.spyOn(richSelect, 'setValueList');
+            const setValueList = vi.spyOn(richSelect, 'setValueList');
 
             richSelect.searchTextFromString('ab');
 
             expect(setValueList).toHaveBeenCalledWith({ valueList: undefined, refresh: true });
             expect(onSearch).not.toHaveBeenCalled();
         } finally {
-            jest.useRealTimers();
+            vi.useRealTimers();
         }
     });
 
@@ -333,9 +333,9 @@ describe('AgRichSelect', () => {
             allowTyping: true,
             multiSelect: true,
         });
-        const setValue = jest.fn();
-        const setInputPlaceholder = jest.fn();
-        const createOrUpdatePillContainer = jest.fn();
+        const setValue = vi.fn();
+        const setInputPlaceholder = vi.fn();
+        const createOrUpdatePillContainer = vi.fn();
 
         richSelect.eInput = {
             getValue: () => 'typed',
@@ -360,13 +360,13 @@ describe('AgRichSelect', () => {
             multiSelect: true,
             placeholder: 'Pick status',
         });
-        const setInputPlaceholder = jest.fn();
-        const createOrUpdatePillContainer = jest.fn();
+        const setInputPlaceholder = vi.fn();
+        const createOrUpdatePillContainer = vi.fn();
 
         richSelect.eInput = {
             getValue: () => '',
             setInputPlaceholder,
-            setValue: jest.fn(),
+            setValue: vi.fn(),
         };
         richSelect.eDeselect = document.createElement('span');
         richSelect.eDisplayField = document.createElement('span');
@@ -392,7 +392,7 @@ describe('AgRichSelect', () => {
             multiSelect: true,
             placeholder: 'Pick status',
         });
-        const setInputPlaceholder = jest.fn();
+        const setInputPlaceholder = vi.fn();
 
         richSelect.value = [];
         richSelect.eInput = {
@@ -468,7 +468,7 @@ describe('AgRichSelect', () => {
             multiSelect: true,
             placeholder: 'Pick status',
         });
-        const setInputPlaceholder = jest.fn();
+        const setInputPlaceholder = vi.fn();
 
         richSelect.value = [];
         richSelect.eInput = {
@@ -489,19 +489,19 @@ describe('AgRichSelect', () => {
             allowTyping: true,
             multiSelect: true,
         });
-        const preventDefault = jest.fn();
+        const preventDefault = vi.fn();
         const inputEl = document.createElement('input');
         inputEl.value = 'typed';
         document.body.appendChild(inputEl);
         inputEl.focus();
         inputEl.setSelectionRange(1, 1);
         const pillContainer = {
-            onNavigationKeyDown: jest.fn(),
+            onNavigationKeyDown: vi.fn(),
             getGui: () => document.createElement('div'),
         };
 
         richSelect.pillContainer = pillContainer;
-        richSelect.listComponent = { highlightIndex: jest.fn() };
+        richSelect.listComponent = { highlightIndex: vi.fn() };
         richSelect.eInput = { getInputElement: () => inputEl };
 
         richSelect.onKeyDown({
@@ -517,8 +517,8 @@ describe('AgRichSelect', () => {
 
     it('consumes horizontal arrows in non-typing mode even when no pill container exists', () => {
         const richSelect = createRichSelect<string>({ allowTyping: false, multiSelect: false });
-        const preventDefault = jest.fn();
-        const highlightIndex = jest.fn();
+        const preventDefault = vi.fn();
+        const highlightIndex = vi.fn();
 
         richSelect.pillContainer = null;
         richSelect.listComponent = { highlightIndex };
@@ -543,8 +543,8 @@ describe('AgRichSelect', () => {
         document.body.appendChild(inputEl);
         inputEl.focus();
         inputEl.setSelectionRange(0, 0);
-        const onNavigationKeyDown = jest.fn();
-        const highlightIndex = jest.fn();
+        const onNavigationKeyDown = vi.fn();
+        const highlightIndex = vi.fn();
 
         richSelect.pillContainer = {
             onNavigationKeyDown,
@@ -555,7 +555,7 @@ describe('AgRichSelect', () => {
 
         richSelect.onKeyDown({
             key: 'ArrowLeft',
-            preventDefault: jest.fn(),
+            preventDefault: vi.fn(),
             isComposing: false,
         });
 
@@ -574,19 +574,19 @@ describe('AgRichSelect', () => {
         document.body.appendChild(inputEl);
         inputEl.focus();
         inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
-        const onNavigationKeyDown = jest.fn();
+        const onNavigationKeyDown = vi.fn();
 
         richSelect.gos = { get: () => true };
         richSelect.pillContainer = {
             onNavigationKeyDown,
             getGui: () => document.createElement('div'),
         };
-        richSelect.listComponent = { highlightIndex: jest.fn() };
+        richSelect.listComponent = { highlightIndex: vi.fn() };
         richSelect.eInput = { getInputElement: () => inputEl };
 
         richSelect.onKeyDown({
             key: 'ArrowRight',
-            preventDefault: jest.fn(),
+            preventDefault: vi.fn(),
             isComposing: false,
         });
 
@@ -608,19 +608,19 @@ describe('AgRichSelect', () => {
         document.body.appendChild(inputEl);
         document.body.appendChild(pillGui);
         focusedPill.focus();
-        const focusTypingInputAtBoundary = jest.fn();
+        const focusTypingInputAtBoundary = vi.fn();
 
         richSelect.pillContainer = {
-            onNavigationKeyDown: jest.fn(),
+            onNavigationKeyDown: vi.fn(),
             getGui: () => pillGui,
         };
-        richSelect.listComponent = { highlightIndex: jest.fn() };
+        richSelect.listComponent = { highlightIndex: vi.fn() };
         richSelect.eInput = { getInputElement: () => inputEl };
         richSelect.focusTypingInputAtBoundary = focusTypingInputAtBoundary;
 
         richSelect.onKeyDown({
             key: 'ArrowRight',
-            preventDefault: jest.fn(),
+            preventDefault: vi.fn(),
             isComposing: false,
         });
 
@@ -637,7 +637,7 @@ describe('AgRichSelect', () => {
         pillGui.appendChild(secondPill);
         document.body.appendChild(pillGui);
         firstPill.focus();
-        const preventDefault = jest.fn();
+        const preventDefault = vi.fn();
 
         (AgPillContainer.prototype as any).onNavigationKeyDown.call(
             {
@@ -688,7 +688,7 @@ describe('AgRichSelect', () => {
             },
             {
                 key: 'ArrowLeft',
-                preventDefault: jest.fn(),
+                preventDefault: vi.fn(),
             }
         );
 
@@ -704,7 +704,7 @@ describe('AgRichSelect', () => {
         pillGui.appendChild(lastPill);
         document.body.appendChild(pillGui);
         lastPill.focus();
-        const focusAfterForwardBoundary = jest.fn();
+        const focusAfterForwardBoundary = vi.fn();
 
         (AgPillContainer.prototype as any).onNavigationKeyDown.call(
             {
@@ -716,7 +716,7 @@ describe('AgRichSelect', () => {
             },
             {
                 key: 'ArrowRight',
-                preventDefault: jest.fn(),
+                preventDefault: vi.fn(),
             }
         );
 
@@ -725,9 +725,9 @@ describe('AgRichSelect', () => {
     });
 
     it('routes pill horizontal key events through the provided callback', () => {
-        const onHorizontalArrowKeyDown = jest.fn();
-        const fallbackNavigation = jest.fn();
-        const stopPropagation = jest.fn();
+        const onHorizontalArrowKeyDown = vi.fn();
+        const fallbackNavigation = vi.fn();
+        const stopPropagation = vi.fn();
 
         (AgPillContainer.prototype as any).onPillKeyDown.call(
             {
@@ -750,7 +750,7 @@ describe('AgRichSelect', () => {
             allowTyping: true,
             multiSelect: true,
         });
-        const toggleListItemSelection = jest.fn();
+        const toggleListItemSelection = vi.fn();
         const listComponent = {
             getLastItemHovered: () => 'Open',
             toggleListItemSelection,
@@ -760,7 +760,7 @@ describe('AgRichSelect', () => {
         richSelect.listComponent = listComponent;
         richSelect.eInput = { getValue: () => 'in-progress search' };
 
-        const preventDefaultWithText = jest.fn();
+        const preventDefaultWithText = vi.fn();
         richSelect.onKeyDown({
             key: ' ',
             preventDefault: preventDefaultWithText,
@@ -772,7 +772,7 @@ describe('AgRichSelect', () => {
 
         richSelect.eInput = { getValue: () => '' };
 
-        const preventDefaultWithoutText = jest.fn();
+        const preventDefaultWithoutText = vi.fn();
         richSelect.onKeyDown({
             key: ' ',
             preventDefault: preventDefaultWithoutText,
@@ -789,8 +789,8 @@ describe('AgRichSelect', () => {
             multiSelect: true,
             suppressMultiSelectPillRenderer: true,
         });
-        const selectValue = jest.fn();
-        const preventDefault = jest.fn();
+        const selectValue = vi.fn();
+        const preventDefault = vi.fn();
 
         richSelect.value = ['Open', 'Closed'];
         richSelect.listComponent = { selectValue };
@@ -799,8 +799,8 @@ describe('AgRichSelect', () => {
         richSelect.eInput = {
             getInputElement: () => ({ selectionStart: 0, selectionEnd: 0 }),
             getValue: () => '',
-            setValue: jest.fn(),
-            setInputPlaceholder: jest.fn(),
+            setValue: vi.fn(),
+            setInputPlaceholder: vi.fn(),
         };
 
         richSelect.onKeyDown({
@@ -820,8 +820,8 @@ describe('AgRichSelect', () => {
             multiSelect: true,
             suppressMultiSelectPillRenderer: true,
         });
-        const selectValue = jest.fn();
-        const preventDefault = jest.fn();
+        const selectValue = vi.fn();
+        const preventDefault = vi.fn();
 
         richSelect.gos = { get: () => true };
         richSelect.value = ['Open', 'Closed'];
@@ -831,8 +831,8 @@ describe('AgRichSelect', () => {
         richSelect.eInput = {
             getInputElement: () => ({ value: 'abc', selectionStart: 3, selectionEnd: 3 }),
             getValue: () => 'abc',
-            setValue: jest.fn(),
-            setInputPlaceholder: jest.fn(),
+            setValue: vi.fn(),
+            setInputPlaceholder: vi.fn(),
         };
 
         richSelect.onKeyDown({
@@ -852,8 +852,8 @@ describe('AgRichSelect', () => {
             multiSelect: true,
             suppressMultiSelectPillRenderer: true,
         });
-        const selectValue = jest.fn();
-        const preventDefault = jest.fn();
+        const selectValue = vi.fn();
+        const preventDefault = vi.fn();
 
         richSelect.value = ['Open', 'Closed'];
         richSelect.listComponent = { selectValue };
@@ -862,8 +862,8 @@ describe('AgRichSelect', () => {
         richSelect.eInput = {
             getInputElement: () => ({ selectionStart: 1, selectionEnd: 1 }),
             getValue: () => 'x',
-            setValue: jest.fn(),
-            setInputPlaceholder: jest.fn(),
+            setValue: vi.fn(),
+            setInputPlaceholder: vi.fn(),
         };
 
         richSelect.onKeyDown({
@@ -888,10 +888,10 @@ describe('AgRichSelect', () => {
             getCurrentList: () => ['Black'],
             getLastItemHovered: () => 'Black',
             getSelectedItems: () => selectedItems,
-            setCurrentList: jest.fn(),
-            refresh: jest.fn(),
-            getIndicesForValues: jest.fn(() => []),
-            selectValue: jest.fn((values: string[]) => {
+            setCurrentList: vi.fn(),
+            refresh: vi.fn(),
+            getIndicesForValues: vi.fn(() => []),
+            selectValue: vi.fn((values: string[]) => {
                 selectedItems.clear();
                 values.forEach((value) => selectedItems.add(value));
             }),
@@ -903,17 +903,17 @@ describe('AgRichSelect', () => {
         richSelect.listComponent = listComponent;
         richSelect.eDeselect = document.createElement('span');
         richSelect.eDisplayField = document.createElement('span');
-        richSelect.createOrUpdatePillContainer = jest.fn();
-        const setInputValue = jest.fn();
+        richSelect.createOrUpdatePillContainer = vi.fn();
+        const setInputValue = vi.fn();
         richSelect.eInput = {
             getValue: () => 'Blac',
             setValue: setInputValue,
-            setInputPlaceholder: jest.fn(),
+            setInputPlaceholder: vi.fn(),
         };
-        richSelect.hidePicker = jest.fn();
-        richSelect.dispatchPickerEventAndHidePicker = jest.fn();
+        richSelect.hidePicker = vi.fn();
+        richSelect.dispatchPickerEventAndHidePicker = vi.fn();
 
-        const preventDefault = jest.fn();
+        const preventDefault = vi.fn();
         richSelect.onEnterKeyDown({ preventDefault } as unknown as KeyboardEvent);
 
         expect(preventDefault).toHaveBeenCalled();
@@ -934,10 +934,10 @@ describe('AgRichSelect', () => {
             getCurrentList: () => ['Black'],
             getLastItemHovered: () => 'Black',
             getSelectedItems: () => selectedItems,
-            setCurrentList: jest.fn(),
-            refresh: jest.fn(),
-            getIndicesForValues: jest.fn(() => []),
-            selectValue: jest.fn((values: string[]) => {
+            setCurrentList: vi.fn(),
+            refresh: vi.fn(),
+            getIndicesForValues: vi.fn(() => []),
+            selectValue: vi.fn((values: string[]) => {
                 selectedItems.clear();
                 values.forEach((value) => selectedItems.add(value));
             }),
@@ -949,17 +949,17 @@ describe('AgRichSelect', () => {
         richSelect.listComponent = listComponent;
         richSelect.eDeselect = document.createElement('span');
         richSelect.eDisplayField = document.createElement('span');
-        richSelect.createOrUpdatePillContainer = jest.fn();
-        const setInputValue = jest.fn();
+        richSelect.createOrUpdatePillContainer = vi.fn();
+        const setInputValue = vi.fn();
         richSelect.eInput = {
             getValue: () => '',
             setValue: setInputValue,
-            setInputPlaceholder: jest.fn(),
+            setInputPlaceholder: vi.fn(),
         };
-        richSelect.hidePicker = jest.fn();
-        richSelect.dispatchPickerEventAndHidePicker = jest.fn();
+        richSelect.hidePicker = vi.fn();
+        richSelect.dispatchPickerEventAndHidePicker = vi.fn();
 
-        richSelect.onEnterKeyDown({ preventDefault: jest.fn() } as unknown as KeyboardEvent);
+        richSelect.onEnterKeyDown({ preventDefault: vi.fn() } as unknown as KeyboardEvent);
 
         expect(listComponent.selectValue).toHaveBeenCalledWith(['Aqua', 'Black']);
         expect(richSelect.value).toEqual(['Aqua', 'Black']);
@@ -973,7 +973,7 @@ describe('AgRichSelect', () => {
             allowTyping: true,
             multiSelect: true,
         });
-        const showPicker = jest.fn();
+        const showPicker = vi.fn();
 
         richSelect.isPickerDisplayed = false;
         richSelect.showPicker = showPicker;
@@ -989,10 +989,10 @@ describe('AgRichSelect', () => {
             allowTyping: true,
             multiSelect: true,
         });
-        const setValue = jest.fn();
-        const resetTypingMultiSelectSearchState = jest.fn();
-        const hidePicker = jest.fn();
-        const dispatchPickerEventAndHidePicker = jest.fn();
+        const setValue = vi.fn();
+        const resetTypingMultiSelectSearchState = vi.fn();
+        const hidePicker = vi.fn();
+        const dispatchPickerEventAndHidePicker = vi.fn();
 
         richSelect.setValue = setValue;
         richSelect.resetTypingMultiSelectSearchState = resetTypingMultiSelectSearchState;
@@ -1018,16 +1018,16 @@ describe('AgRichSelect', () => {
             getCurrentList: () => ['Open'],
             getLastItemHovered: () => undefined,
             getSelectedItems: () => new Set<string>(),
-            selectValue: jest.fn(),
+            selectValue: vi.fn(),
         };
         richSelect.eInput = {
             getValue: () => 'open',
-            setInputPlaceholder: jest.fn(),
+            setInputPlaceholder: vi.fn(),
         };
-        richSelect.hidePicker = jest.fn();
-        richSelect.dispatchPickerEventAndHidePicker = jest.fn();
+        richSelect.hidePicker = vi.fn();
+        richSelect.dispatchPickerEventAndHidePicker = vi.fn();
 
-        const preventDefault = jest.fn();
+        const preventDefault = vi.fn();
         richSelect.onEnterKeyDown({ preventDefault } as unknown as KeyboardEvent);
 
         expect(preventDefault).toHaveBeenCalled();
@@ -1043,9 +1043,9 @@ describe('AgRichSelect', () => {
 
         richSelect.value = ['Open'];
         richSelect.isPickerDisplayed = false;
-        richSelect.dispatchPickerEventAndHidePicker = jest.fn();
+        richSelect.dispatchPickerEventAndHidePicker = vi.fn();
 
-        const preventDefault = jest.fn();
+        const preventDefault = vi.fn();
         richSelect.onEnterKeyDown({ preventDefault } as unknown as KeyboardEvent);
 
         expect(preventDefault).toHaveBeenCalled();

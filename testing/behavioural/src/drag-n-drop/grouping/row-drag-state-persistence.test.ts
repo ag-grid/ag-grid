@@ -230,8 +230,8 @@ describe('row drag state persistence', () => {
         await new GridColumns(reloadApi, 'columns').checkColumns(`
             CENTER
             ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
-            ├── ag-Grid-AutoColumn "Hierarchy" width:220 flex:1
-            └── name "Name" width:200 flex:1
+            ├── ag-Grid-AutoColumn "Hierarchy" width:475 flex:1
+            └── name "Name" width:475 flex:1
         `);
     });
 });

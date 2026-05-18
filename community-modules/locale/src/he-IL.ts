@@ -335,6 +335,11 @@ export const AG_GRID_LOCALE_IL = {
     sortAbsoluteDescending: 'מיון יורד מוחלט',
     sortUnSort: 'נקה מיון',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'חפש',
+    toolbarFindPreviousMatch: 'תאמה קודמת',
+    toolbarFindNextMatch: 'תאמה הבאה',
+    toolbarQuickFilter: 'סנן',
+    toolbarMenu: 'תפריט',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'סכום',
@@ -686,12 +691,16 @@ export const AG_GRID_LOCALE_IL = {
     ariaSelectAllRowCells: 'לחץ על Enter כדי לבחור את כל התאים בשורה זו',
     ariaColumnCellSelection: 'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בעמודה זו',
     ariaColumnGroupCellSelection: 'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בקבוצת עמודות זו',
+    ariaColumnGroupExpansion: 'לחץ על ENTER כדי להרחיב או לכווץ קבוצת עמודות זו',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'לחץ על Enter כדי להחליף את הבחירה של כל התאים הגלויים בקבוצת עמודות זו. לחץ על ALT ENTER כדי להרחיב או לכווץ קבוצת עמודות זו',
     ariaRowSelectAll: 'לחץ על Space כדי להחליף את בחירת כל השורות',
     ariaRowToggleSelection: 'לחץ על Space כדי להחליף את בחירת השורה',
     ariaRowSelect: 'לחץ על SPACE כדי לבחור שורה זו',
     ariaRowSelectionDisabled: 'בחירת שורות מושבתת עבור שורה זו',
     ariaSearch: 'חיפוש',
     ariaSortableColumn: 'לחץ על ENTER למיון',
+    ariaSortableColumnWithCellSelection: 'לחץ על ALT ENTER למיון',
     ariaToggleVisibility: 'לחץ על SPACE כדי להחליף נראות',
     ariaToggleCellValue: 'לחץ על SPACE כדי להחליף ערך תא',
     ariaUnchecked: 'לא מסומן',
@@ -810,6 +819,4 @@ export const AG_GRID_LOCALE_IL = {
     editNote: 'ערוך הערה',
     deleteNote: 'הסר הערה',
     notePlaceholder: 'הוסף הערה...',
-    noteHint: 'רחף כדי להציג תצוגה מקדימה. לחץ פנימה כדי לערוך. גרור את הפינה כדי לשנות את הגודל. לחץ Esc כדי לסגור.',
-    noteReadOnlyHint: 'הערה לקריאה בלבד. בחר טקסט כדי להעתיק. גרור את הפינה כדי לשנות את הגודל. לחץ Esc כדי לסגור.',
 };

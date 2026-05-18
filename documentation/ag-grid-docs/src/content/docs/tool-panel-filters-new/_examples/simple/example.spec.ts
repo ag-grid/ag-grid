@@ -33,7 +33,7 @@ test.agExample(import.meta, () => {
 
         // validate the rowIndex is 0 as the filter should have filtered out all other rows
         const firstCell = agIdFor.cell('1921', 'athlete');
-        await expect(firstCell.locator('..')).toHaveAttribute('row-index', '0');
+        await expect(page.locator('.ag-row').filter({ has: firstCell }).first()).toHaveAttribute('row-index', '0');
         // assert age is 23 and country is Argentina
         await expect(firstCell).toHaveText('Juan Martín del Potro');
         await expect(agIdFor.cell('1921', 'age')).toHaveText('23');
@@ -45,6 +45,11 @@ test.agExample(import.meta, () => {
         await countryFilter.getByRole('button', { name: 'Delete Filter' }).click();
 
         await expect(agIdFor.cell('0', 'athlete').first()).toHaveText('Michael Phelps');
-        await expect(agIdFor.cell('0', 'athlete').first().locator('..')).toHaveAttribute('row-index', '0');
+        await expect(
+            page
+                .locator('.ag-row')
+                .filter({ has: agIdFor.cell('0', 'athlete').first() })
+                .first()
+        ).toHaveAttribute('row-index', '0');
     });
 });

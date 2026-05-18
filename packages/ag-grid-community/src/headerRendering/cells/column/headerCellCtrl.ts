@@ -24,7 +24,7 @@ import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils'
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
-import type { HeaderComp } from './headerComp';
+import type { AgColumnHeader } from './agColumnHeader';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
@@ -73,7 +73,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     ): void {
         this.comp = comp;
 
-        const { rowCtrl, column, beans } = this;
+        const { column, beans } = this;
         const { colResize, context, colHover, rangeSvc } = beans;
         const compBean = setupCompBean(this, context, compBeanInput);
 
@@ -103,9 +103,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.refreshAria();
 
         if (colResize) {
-            this.resizeFeature = compBean.createManagedBean(
-                colResize.createResizeFeature(rowCtrl.pinned, column, eResize, comp, this)
-            );
+            this.resizeFeature = compBean.createManagedBean(colResize.createResizeFeature(column, eResize, comp, this));
         } else {
             _setDisplayed(eResize, false);
         }
@@ -128,6 +126,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader', 'enableAdvancedFilter'],
             () => this.refresh()
         );
+        compBean.addManagedPropertyListener('cellSelection', () => this.refreshAria());
         compBean.addManagedListeners(column, {
             colDefChanged: () => this.refresh(),
             formulaRefChanged: () => this.refresh(),
@@ -340,7 +339,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private setupClassesFromColDef(): void {
         const refreshHeaderClasses = () => {
-            const colDef = this.column.getColDef();
+            const colDef = this.column.colDef;
             const classes = _getHeaderClassesFromColDef(colDef, this.gos, this.column, null);
 
             const oldClasses = this.userHeaderClasses;
@@ -451,7 +450,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private workOutDraggable(): boolean {
-        const colDef = this.column.getColDef();
+        const colDef = this.column.colDef;
         const isSuppressMovableColumns = this.gos.get('suppressMovableColumns');
 
         const colCanMove = !isSuppressMovableColumns && !colDef.suppressMovable && !colDef.lockPosition;
@@ -588,12 +587,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private refreshAriaSort(): void {
         let description: string | null = null;
-        const { beans, column, comp, sortable } = this;
+        const { beans, column, comp, sortable, gos } = this;
         if (sortable) {
             const translate = this.getLocaleTextFunc();
             const sortDef = beans.sortSvc?.getDisplaySortForColumn(column) ?? null;
             comp.setAriaSort(_getAriaSortState(sortDef));
-            description = translate('ariaSortableColumn', 'Press ENTER to sort');
+            description = _getEnableColumnSelection(gos)
+                ? translate('ariaSortableColumnWithCellSelection', 'Press ALT ENTER to sort')
+                : translate('ariaSortableColumn', 'Press ENTER to sort');
         } else {
             comp.setAriaSort();
         }
@@ -723,10 +724,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 }
 
-function isHeaderComp(headerComp: IHeader | undefined): headerComp is HeaderComp {
-    // can't use `instanceof` here as it prevents tree shaking of `HeaderComp`
+function isHeaderComp(headerComp: IHeader | undefined): headerComp is AgColumnHeader {
+    // can't use `instanceof` here as it prevents tree shaking of `AgColumnHeader`
     return (
-        typeof (headerComp as HeaderComp)?.getAnchorElementForMenu === 'function' &&
-        typeof (headerComp as HeaderComp).onMenuKeyboardShortcut === 'function'
+        typeof (headerComp as AgColumnHeader)?.getAnchorElementForMenu === 'function' &&
+        typeof (headerComp as AgColumnHeader).onMenuKeyboardShortcut === 'function'
     );
 }

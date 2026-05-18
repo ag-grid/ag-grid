@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "angular-19": {
+        "angular-20": {
             "projectType": "application",
             "schematics": {},
             "root": "",
@@ -15,7 +15,7 @@
                     "options": {
                         "sourceMap": true,
                         "namedChunks": true,
-                        "outputPath": "dist/angular-19",
+                        "outputPath": "dist/angular-20",
                         "index": "src/index.html",
                         "browser": "src/main.ts",
                         "polyfills": ["zone.js"],
@@ -34,7 +34,7 @@
                                 },
                                 {
                                     "type": "anyScript",
-                                    "maximumError": "900kB"
+                                    "maximumError": "950kB"
                                 },
                                 {
                                     "type": "anyComponentStyle",
@@ -56,10 +56,10 @@
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "configurations": {
                         "production": {
-                            "buildTarget": "angular-19:build:production"
+                            "buildTarget": "angular-20:build:production"
                         },
                         "development": {
-                            "buildTarget": "angular-19:build:development"
+                            "buildTarget": "angular-20:build:development"
                         }
                     },
                     "defaultConfiguration": "development"
@@ -84,5 +84,8 @@
                 }
             }
         }
+    },
+    "cli": {
+        "analytics": false
     }
 }

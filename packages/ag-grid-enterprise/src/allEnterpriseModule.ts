@@ -29,6 +29,7 @@ import { SetFilterModule } from './setFilter/setFilterModule';
 import { SideBarModule } from './sideBar/sideBarModule';
 import { SparklinesModule } from './sparkline/sparklinesModule';
 import { StatusBarModule } from './statusBar/statusBarModule';
+import { ToolbarModule } from './toolbar/toolbarModule';
 import { TreeDataModule } from './treeData/treeDataModule';
 import { VERSION } from './version';
 import { ViewportRowModelModule } from './viewportRowModel/viewportRowModelModule';
@@ -61,6 +62,7 @@ const dependsOn = [
     AdvancedFilterModule,
     SideBarModule,
     StatusBarModule,
+    ToolbarModule,
     ViewportRowModelModule,
     PivotModule,
     TreeDataModule,

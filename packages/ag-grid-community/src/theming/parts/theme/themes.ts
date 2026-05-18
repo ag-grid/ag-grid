@@ -1,4 +1,5 @@
 import { createPart } from '../../../agStack/theming/partImpl';
+import { defaultFontFamily } from '../../../agStack/theming/shared/shared-css';
 import type { Theme } from '../../../agStack/theming/theme';
 import type { ColorValue } from '../../../agStack/theming/themeTypes';
 import {
@@ -23,6 +24,7 @@ import { iconSetBalham } from '../icon-set/balham/icon-set-balham';
 import { iconSetAlpine, iconSetMaterial, iconSetQuartzRegular } from '../icon-set/icon-sets';
 import type { InputStyleParams } from '../input-style/input-styles';
 import { inputStyleBordered, inputStyleUnderlined } from '../input-style/input-styles';
+import type { NoteStyleParams } from '../notes/note-styles';
 import type { TabStyleParams } from '../tab-style/tab-styles';
 import { tabStyleAlpine, tabStyleMaterial, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
 import materialAdjustmentsCSS from './material-adjustments.css';
@@ -32,7 +34,9 @@ export type ThemeDefaultParams = CoreParams &
     CheckboxStyleParams &
     TabStyleParams &
     InputStyleParams &
-    BatchEditStyleParams;
+    BatchEditStyleParams &
+    FormulaStyleParams &
+    NoteStyleParams;
 
 /**
  * Used as an entry point for collecting parameters for automated API
@@ -40,19 +44,11 @@ export type ThemeDefaultParams = CoreParams &
  *
  * @knipIgnore
  */
-export type AllThemeParamsForAPIDocumentation = ThemeDefaultParams & FormulaStyleParams;
+export type AllThemeParamsForAPIDocumentation = ThemeDefaultParams;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const themeQuartzParams = () => ({
-    fontFamily: [
-        { googleFont: 'IBM Plex Sans' },
-        '-apple-system',
-        'BlinkMacSystemFont',
-        'Segoe UI',
-        'Roboto',
-        'Oxygen-Sans',
-        'Ubuntu',
-    ],
+    fontFamily: [{ googleFont: 'IBM Plex Sans' }, ...defaultFontFamily()],
 });
 
 const makeThemeQuartzTreeShakeable = () =>
@@ -170,6 +166,7 @@ export const themeBalhamParams = () => ({
     statusBarLabelFontWeight: 600,
     statusBarValueFontWeight: 600,
     panelTitleBarIconColor: foregroundColor,
+    toolbarTextColor: { ref: 'headerTextColor' },
     colorPickerThumbSize: 13,
     colorPickerTrackSize: 11,
     colorPickerThumbBorderWidth: 2,
@@ -253,6 +250,7 @@ const makeStyleMaterialTreeShakeable = () => {
         statusBarValueFontWeight: 600,
         valueChangeValueHighlightBackgroundColor: '#00acc1',
         panelTitleBarIconColor: foregroundColor,
+        toolbarTextColor: foregroundColor,
         advancedFilterBuilderButtonBarBorder: false,
         filterPanelApplyButtonColor: { ref: 'buttonTextColor' },
         filterPanelApplyButtonBackgroundColor: { ref: 'buttonBackgroundColor' },
@@ -311,7 +309,7 @@ export const themeMaterialParams = () => ({
         calc: 'max(iconSize, cellFontSize) + spacing * 3.75 * rowVerticalPaddingScale',
     },
     headerHeight: {
-        calc: 'max(iconSize, dataFontSize) + spacing * 4.75 * headerVerticalPaddingScale',
+        calc: 'max(iconSize, headerFontSize) + spacing * 4.75 * headerVerticalPaddingScale',
     },
     widgetVerticalSpacing: {
         calc: 'spacing * 1.75',
@@ -341,17 +339,7 @@ export const themeMaterialParams = () => ({
         spread: 4,
         color: foregroundMix(0.16),
     },
-    fontFamily: [
-        { googleFont: 'Roboto' },
-        '-apple-system',
-        'BlinkMacSystemFont',
-        'Segoe UI',
-        'Oxygen-Sans',
-        'Ubuntu',
-        'Cantarell',
-        'Helvetica Neue',
-        'sans-serif',
-    ],
+    fontFamily: [{ googleFont: 'Roboto' }, ...defaultFontFamily()],
     inputHeight: {
         calc: 'max(iconSize, fontSize) + spacing * 3',
     },

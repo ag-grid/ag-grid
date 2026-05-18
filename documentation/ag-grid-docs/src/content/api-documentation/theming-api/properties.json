@@ -259,6 +259,7 @@
         },
         "pickerButtonBackgroundColor": {},
         "pickerButtonBorder": {},
+        "pickerButtonBorderRadius": {},
         "pickerButtonFocusBackgroundColor": {},
         "pickerButtonFocusBorder": {},
         "pickerListBackgroundColor": {},
@@ -386,6 +387,18 @@
         "sideButtonSelectedUnderlineWidth": {},
         "sideButtonSelectedUnderlineTransitionDuration": {},
         "toolPanelSeparatorBorder": {}
+    },
+    "toolbar": {
+        "meta": {
+            "displayName": "Toolbar",
+            "page": {
+                "name": "Quick Access Toolbar",
+                "url": "./toolbar/"
+            }
+        },
+        "toolbarBackgroundColor": {},
+        "toolbarTextColor": {},
+        "toolbarSeparatorBorder": {}
     },
     "colorPicker": {
         "meta": {
@@ -530,5 +543,22 @@
         "findMatchColor": {},
         "findActiveMatchBackgroundColor": {},
         "findActiveMatchColor": {}
+    },
+    "notes": {
+        "meta": {
+            "displayName": "Notes",
+            "page": {
+                "name": "Notes",
+                "url": "./notes/"
+            }
+        },
+        "noteIndicatorColor": {},
+        "noteIndicatorSize": {},
+        "notePopupBackgroundColor": {},
+        "notePopupTextColor": {},
+        "notePopupInputTextColor": {},
+        "notePopupInputBackgroundColor": {},
+        "notePopupBorder": {},
+        "notePopupPadding": {}
     }
 }

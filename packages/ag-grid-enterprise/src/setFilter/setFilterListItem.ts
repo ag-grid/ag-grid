@@ -365,7 +365,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         } = this;
 
         let { value } = this;
-        let formattedValue: string | null = null;
+        let formattedValue: string | null;
 
         if (typeof value === 'function') {
             this.valueFunction = value as () => string;

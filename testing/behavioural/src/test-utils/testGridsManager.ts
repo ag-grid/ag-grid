@@ -186,8 +186,8 @@ export class TestGridsManager {
     }
 
     public static getHTMLElement(api: GridApi | null | undefined): HTMLElement | null {
-        return (api && gridApiHtmlElementsMap.get(api)) ?? api
-            ? (getGridElement(api) as HTMLElement | undefined) ?? null
+        return ((api && gridApiHtmlElementsMap.get(api)) ?? api)
+            ? ((getGridElement(api) as HTMLElement | undefined) ?? null)
             : null;
     }
 

@@ -340,6 +340,11 @@ export const AG_GRID_LOCALE_DE = {
     sortAbsoluteDescending: 'Absolut absteigend sortieren',
     sortUnSort: 'Sortierung aufheben',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'Finden',
+    toolbarFindPreviousMatch: 'Vorherige Übereinstimmung',
+    toolbarFindNextMatch: 'Nächste Übereinstimmung',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Menü',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Summe',
@@ -694,12 +699,16 @@ export const AG_GRID_LOCALE_DE = {
         'Drücken Sie EINGABETASTE, um die Auswahl aller sichtbaren Zellen in dieser Spalte umzuschalten',
     ariaColumnGroupCellSelection:
         'Drücken Sie EINGABETASTE, um die Auswahl aller sichtbaren Zellen in dieser Spaltengruppe umzuschalten',
+    ariaColumnGroupExpansion: 'Drücken Sie EINGABETASTE, um diese Spaltengruppe zu erweitern oder zu reduzieren',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Drücken Sie EINGABETASTE, um die Auswahl aller sichtbaren Zellen in dieser Spaltengruppe umzuschalten. Drücken Sie ALT EINGABETASTE, um diese Spaltengruppe zu erweitern oder zu reduzieren',
     ariaRowSelectAll: 'Drücken Sie LEERTASTE, um die Auswahl aller Zeilen umzuschalten',
     ariaRowToggleSelection: 'Drücken Sie LEERTASTE, um die Zeilenauswahl umzuschalten',
     ariaRowSelect: 'Drücken Sie LEERTASTE, um diese Zeile auszuwählen',
     ariaRowSelectionDisabled: 'Zeilenauswahl ist für diese Zeile deaktiviert',
     ariaSearch: 'Suche',
     ariaSortableColumn: 'Drücken Sie EINGABETASTE, um zu sortieren',
+    ariaSortableColumnWithCellSelection: 'Drücken Sie ALT EINGABETASTE, um zu sortieren',
     ariaToggleVisibility: 'Drücken Sie LEERTASTE, um die Sichtbarkeit umzuschalten',
     ariaToggleCellValue: 'Drücken Sie LEERTASTE, um den Zellenwert umzuschalten',
     ariaUnchecked: 'ungeprüft',
@@ -818,8 +827,4 @@ export const AG_GRID_LOCALE_DE = {
     editNote: 'Notiz bearbeiten',
     deleteNote: 'Notiz entfernen',
     notePlaceholder: 'Notiz hinzufügen...',
-    noteHint:
-        'Zum Anzeigen mit der Maus darüberfahren. Zum Bearbeiten hineinklicken. Ziehen Sie an der Ecke, um die Größe zu ändern. Drücken Sie Esc zum Schließen.',
-    noteReadOnlyHint:
-        'Schreibgeschützte Notiz. Text zum Kopieren markieren. Ziehen Sie an der Ecke, um die Größe zu ändern. Drücken Sie Esc zum Schließen.',
 };

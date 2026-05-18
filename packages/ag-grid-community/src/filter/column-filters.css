@@ -113,6 +113,8 @@
     padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     position: absolute;
     width: 100%;
+
+    /* keep loading overlays above filter body content. */
     z-index: 1;
     align-items: unset;
 

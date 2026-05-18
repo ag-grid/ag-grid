@@ -19,6 +19,7 @@ import type {
 import {
     BeanStub,
     ServerSideTransactionResultStatus,
+    _getGrandTotalPinnedFloat,
     _getGrandTotalRow,
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
@@ -273,10 +274,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns the virtual size of this store
      */
     getRowCount(): number {
+        const rowCount = this.cache.getRowCount();
         if (this.parentRowNode.sibling) {
-            return this.cache.getRowCount() + 1;
+            return rowCount + 1;
         }
-        return this.cache.getRowCount();
+        return rowCount;
     }
 
     /**
@@ -293,7 +295,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns whether or not the row exists within this store
      */
     isDisplayIndexInStore(displayIndex: number): boolean {
-        if (this.cache.getRowCount() === 0) {
+        if (this.getRowCount() === 0) {
             return false;
         }
 
@@ -327,21 +329,41 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             );
         }
 
-        const grandTotalPosition = this.parentRowNode.level === -1 ? _getGrandTotalRow(this.gos) : undefined;
-        let grandTotalNode = this.getGrandTotalNode();
+        // Reconcile the grand total node and its pinned/inline placement. Root store only.
+        // `inlineGrandTotal` is the node to display inline (top or bottom of root rows);
+        // it stays undefined when the grand total is disabled or pinned.
+        let inlineGrandTotalTop: RowNode | undefined;
+        let inlineGrandTotalBottom: RowNode | undefined;
+        if (this.parentRowNode.level === -1) {
+            const grandTotalRow = _getGrandTotalRow(this.gos);
+            let grandTotalNode = this.getGrandTotalNode();
+            if (grandTotalRow && this.grandTotalData) {
+                if (!grandTotalNode) {
+                    grandTotalNode = this.cache.createOrUpdateGrandTotalNode(this.grandTotalData);
+                }
+            } else if (grandTotalNode) {
+                this.destroyGrandTotalRow();
+                grandTotalNode = undefined;
+            }
 
-        if (grandTotalPosition && !grandTotalNode && this.grandTotalData) {
-            this.cache.createOrUpdateGrandTotalNode(this.grandTotalData);
-            grandTotalNode = this.getGrandTotalNode();
-        }
-        // e.g. when cleared via transaction remove or option toggled off
-        if (grandTotalNode && (!grandTotalPosition || !this.grandTotalData)) {
-            this.destroyGrandTotalRow();
-            grandTotalNode = undefined;
+            const pinnedFloat = _getGrandTotalPinnedFloat(grandTotalRow);
+            this.beans.pinnedRowModel?.setGrandTotalPinned(pinnedFloat);
+
+            if (grandTotalNode) {
+                if (pinnedFloat) {
+                    // Pinned grand totals don't take part in the inline display index;
+                    // clear any stale index left from a previous inline placement.
+                    this.blockUtils.clearDisplayIndex(grandTotalNode);
+                } else if (grandTotalRow === 'top') {
+                    inlineGrandTotalTop = grandTotalNode;
+                } else if (grandTotalRow === 'bottom') {
+                    inlineGrandTotalBottom = grandTotalNode;
+                }
+            }
         }
 
-        if (grandTotalPosition === 'top' && grandTotalNode) {
-            this.blockUtils.setDisplayIndex(grandTotalNode, displayIndexSeq, nextRowTop, uiLevel);
+        if (inlineGrandTotalTop) {
+            this.blockUtils.setDisplayIndex(inlineGrandTotalTop, displayIndexSeq, nextRowTop, uiLevel);
         }
 
         // delegate to the store to set the row display indexes
@@ -356,8 +378,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             );
         }
 
-        if (grandTotalPosition === 'bottom' && grandTotalNode) {
-            this.blockUtils.setDisplayIndex(grandTotalNode, displayIndexSeq, nextRowTop, uiLevel);
+        if (inlineGrandTotalBottom) {
+            this.blockUtils.setDisplayIndex(inlineGrandTotalBottom, displayIndexSeq, nextRowTop, uiLevel);
         }
 
         this.displayIndexEnd = displayIndexSeq.value;
@@ -458,7 +480,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns the row node if the display index falls within the store, if it didn't exist this will create a new stub to return
      */
     getRowUsingDisplayIndex(displayRowIndex: number): IRowNode<any> | undefined {
-        if (this.parentRowNode.sibling && displayRowIndex === this.parentRowNode.sibling.rowIndex) {
+        if (displayRowIndex === this.parentRowNode.sibling?.rowIndex) {
             return this.parentRowNode.sibling;
         }
         return this.cache.getRowByDisplayIndex(displayRowIndex);

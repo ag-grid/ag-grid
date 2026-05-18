@@ -27,10 +27,8 @@ export function findLineByLeastSquares(values: number[]) {
     let sum_xy = 0;
     let sum_xx = 0;
 
-    let y = 0;
-
     for (let x = 0; x < len; x++) {
-        y = values[x];
+        const y = values[x];
         sum_x += x;
         sum_y += y;
         sum_xx += x * x;

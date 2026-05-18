@@ -9,40 +9,21 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:local-18",
-        "test:package:local-19",
-        "test:package:local-20",
+        "test:package:local-21",
         "test:package:local-latest",
-        "test:package:production-20"
+        "test:package:production-20",
+        "test:package:production-21"
       ],
       "configurations": {
         "update": {}
       }
     },
-    "test:package:local-18": {
+    "test:package:local-21": {
       "dependsOn": ["^pack"],
-      "command": "{projectRoot}/runLegacy.sh 18",
+      "command": "{projectRoot}/run.sh 21",
       "configurations": {
         "update": {
-          "command": "{projectRoot}/runLegacy.sh -u 18"
-        }
-      }
-    },
-    "test:package:local-19": {
-      "dependsOn": ["^pack"],
-      "command": "{projectRoot}/runLegacy.sh 19",
-      "configurations": {
-        "update": {
-          "command": "{projectRoot}/runLegacy.sh -u 19"
-        }
-      }
-    },
-    "test:package:local-20": {
-      "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh 20",
-      "configurations": {
-        "update": {
-          "command": "{projectRoot}/run.sh -u 20"
+          "command": "{projectRoot}/run.sh -u 21"
         }
       }
     },
@@ -53,6 +34,16 @@
       "configurations": {
         "update": {
           "command": "{projectRoot}/run.sh -p -u 20"
+        }
+      }
+    },
+    "test:package:production-21": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -p 21",
+      "cache": false,
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -p -u 21"
         }
       }
     },

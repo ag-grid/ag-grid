@@ -332,6 +332,12 @@
             }
         },
         "refreshHeader": {},
+        "refreshFormulas": {
+            "more": {
+                "name": "Formula Caching",
+                "url": "./formulas/#caching"
+            }
+        },
         "flashCells": {
             "more": {
                 "name": "Flashing Cells",
@@ -1049,6 +1055,12 @@
             "more": {
                 "name": "Tool Panel Expand / Collapse Column Groups",
                 "url": "./tool-panel-columns/#expand--collapse-column-groups"
+            }
+        },
+        "getToolbarItemInstance": {
+            "more": {
+                "name": "Toolbar",
+                "url": "./toolbar/"
             }
         },
         "getStatusPanel": {

@@ -26,7 +26,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
     ): AgPrimaryCols {
         const columnSelectPanel = parent.createManagedBean(new AgPrimaryCols());
 
-        const columnChooserParams = params ?? column?.getColDef().columnChooserParams ?? {};
+        const columnChooserParams = params ?? column?.colDef.columnChooserParams ?? {};
 
         const {
             contractColumnSelection,
@@ -75,7 +75,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
         const beans = this.beans;
         const { visibleCols, focusSvc, menuUtils } = beans;
         const columnIndex = visibleCols.allCols.indexOf(column as AgColumn);
-        const headerPosition = column ? focusSvc.focusedHeader ?? providedHeaderPosition ?? null : null;
+        const headerPosition = column ? (focusSvc.focusedHeader ?? providedHeaderPosition ?? null) : null;
 
         this.activeColumnChooserDialog = this.createBean(
             new Dialog({

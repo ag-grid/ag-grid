@@ -7,6 +7,7 @@
     "importOrderParserPlugins": ["typescript", "decorators-legacy"],
     "importOrderSeparation": true,
     "importOrderSortSpecifiers": true,
+    "importOrderImportAttributesKeyword": "with",
     "overrides": [
         {
             "files": [
@@ -29,6 +30,19 @@
             "files": "*.astro",
             "options": {
                 "parser": "astro"
+            }
+        },
+        {
+            "files": "*.mdoc",
+            "options": {
+                "parser": "markdown",
+                "embeddedLanguageFormatting": "off"
+            }
+        },
+        {
+            "files": "*.md",
+            "options": {
+                "parser": "markdown"
             }
         }
     ],

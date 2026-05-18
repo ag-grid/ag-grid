@@ -17,7 +17,7 @@ export function GridExample() {
                 <button
                     onClick={() => {
                         setVisibility('hidden'); // Making the grid not-visible will force the 'setScrollPosition' function to invoke the 'attemptSettingScrollPosition' function, which in turn triggers the _waitUntil
-                        const scroller = document.querySelector('.ag-body-viewport')!;
+                        const scroller = document.querySelector('.ag-grid-viewport')!;
                         scroller.scrollTop += 50; // Performing a scroll will trigger a code path that uses the problematic _waitUntil function
                         setTimeout(() => {
                             setShow(false); // Simulating _disposal_ of the Ag-Grid

@@ -336,6 +336,11 @@ export const AG_GRID_LOCALE_KR = {
     sortAbsoluteDescending: '절대 내림차순 정렬',
     sortUnSort: '정렬 해제',
     shiftF2: 'Shift+F2',
+    toolbarFind: '찾기',
+    toolbarFindPreviousMatch: '이전 항목 찾기',
+    toolbarFindNextMatch: '다음 항목 찾기',
+    toolbarQuickFilter: '필터',
+    toolbarMenu: '메뉴',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: '합계',
@@ -687,12 +692,16 @@ export const AG_GRID_LOCALE_KR = {
     ariaSelectAllRowCells: '이 행의 모든 셀을 선택하려면 Enter 키를 누르세요',
     ariaColumnCellSelection: '이 열의 모든 표시 셀 선택을 전환하려면 Enter 키를 누르세요',
     ariaColumnGroupCellSelection: '이 열 그룹의 모든 표시 셀 선택을 전환하려면 Enter 키를 누르세요',
+    ariaColumnGroupExpansion: '이 열 그룹을 확장하거나 축소하려면 ENTER를 누르세요',
+    ariaColumnGroupCellSelectionAndExpansion:
+        '이 열 그룹의 모든 표시 셀 선택을 전환하려면 Enter 키를 누르세요. 이 열 그룹을 확장하거나 축소하려면 ALT ENTER를 누르세요',
     ariaRowSelectAll: '모든 행 선택 전환을 위해 SPACE를 누르세요',
     ariaRowToggleSelection: '행 선택을 전환하려면 SPACE를 누르세요',
     ariaRowSelect: '이 행을 선택하려면 SPACE를 누르세요',
     ariaRowSelectionDisabled: '이 행의 행 선택이 비활성화되었습니다',
     ariaSearch: '검색',
     ariaSortableColumn: '정렬하려면 ENTER를 누르세요',
+    ariaSortableColumnWithCellSelection: '정렬하려면 ALT ENTER를 누르세요',
     ariaToggleVisibility: '가시성을 전환하려면 SPACE를 누르세요',
     ariaToggleCellValue: '셀 값을 전환하려면 SPACE를 누르세요',
     ariaUnchecked: '선택 해제됨',
@@ -811,8 +820,4 @@ export const AG_GRID_LOCALE_KR = {
     editNote: '메모 편집',
     deleteNote: '메모 제거',
     notePlaceholder: '메모 추가...',
-    noteHint:
-        '미리 보려면 마우스를 올리세요. 편집하려면 안쪽을 클릭하세요. 크기를 조절하려면 모서리를 드래그하세요. 닫으려면 Esc를 누르세요.',
-    noteReadOnlyHint:
-        '읽기 전용 메모입니다. 복사하려면 텍스트를 선택하세요. 크기를 조절하려면 모서리를 드래그하세요. 닫으려면 Esc를 누르세요.',
 };

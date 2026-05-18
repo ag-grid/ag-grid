@@ -129,6 +129,48 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         `);
     });
 
+    test('managed row dragging still works when horizontally scrolled', async () => {
+        const api = gridsManager.createGrid(`event-type-${eventType}-horizontal-scroll`, {
+            columnDefs: [
+                { field: 'value', rowDrag: true },
+                { field: 'c2' },
+                { field: 'c3' },
+                { field: 'c4' },
+                { field: 'c5' },
+                { field: 'c6' },
+                { field: 'c7' },
+                { field: 'c8' },
+                { field: 'c9' },
+            ],
+            rowData: [
+                { id: 'row-1', value: 1, c2: 2, c3: 3, c4: 4, c5: 5, c6: 6, c7: 7, c8: 8, c9: 9 },
+                { id: 'row-2', value: 2, c2: 2, c3: 3, c4: 4, c5: 5, c6: 6, c7: 7, c8: 8, c9: 9 },
+                { id: 'row-3', value: 3, c2: 2, c3: 3, c4: 4, c5: 5, c6: 6, c7: 7, c8: 8, c9: 9 },
+            ],
+            rowDragManaged: true,
+            getRowId: (params) => params.data.id,
+            suppressMoveWhenRowDragging: noMove,
+        });
+
+        const gridElement = TestGridsManager.getHTMLElement(api)!;
+        const eGridViewport = gridElement.querySelector('.ag-grid-viewport') as HTMLElement;
+        eGridViewport.scrollLeft = 200;
+        eGridViewport.dispatchEvent(new Event('scroll'));
+        expect(eGridViewport.scrollLeft).toBeGreaterThan(0);
+
+        const reorderDispatcher = new RowDragDispatcher({ api, eventType });
+        await reorderDispatcher.start('row-1');
+        await reorderDispatcher.move('row-3', { yOffsetPercent: 0.8 });
+        await reorderDispatcher.finish();
+
+        await new GridRows(api, `${eventType}-after-horizontal-scroll-drag`).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:row-2 value:2 c2:2 c3:3 c4:4 c5:5 c6:6 c7:7 c8:8 c9:9
+            ├── LEAF id:row-3 value:3 c2:2 c3:3 c4:4 c5:5 c6:6 c7:7 c8:8 c9:9
+            └── LEAF id:row-1 value:1 c2:2 c3:3 c4:4 c5:5 c6:6 c7:7 c8:8 c9:9
+        `);
+    });
+
     test('drag and drop on the same position with multiple selection does nothing', async () => {
         const gridOptions: GridOptions = {
             animateRows: true,

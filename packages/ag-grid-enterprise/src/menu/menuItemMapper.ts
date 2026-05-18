@@ -214,7 +214,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'valueAggSubMenu':
-                    if (aggFuncSvc && valueColsSvc && (column?.isPrimary() || column?.getColDef().pivotValueColumn)) {
+                    if (aggFuncSvc && valueColsSvc && (column?.primary || column?.colDef.pivotValueColumn)) {
                         return {
                             name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                             icon: _createIconNoSpan('menuValue', beans, null),
@@ -254,14 +254,14 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               disabled:
                                   gos.get('functionsReadOnly') ||
                                   column?.isRowGroupActive() ||
-                                  !column?.getColDef().enableRowGroup,
+                                  !column?.colDef.enableRowGroup,
                               action: () => rowGroupColsSvc.addColumns([column], source),
                               icon: _createIconNoSpan('menuAddRowGroup', beans, null),
                           }
                         : null;
                 case 'rowUnGroup': {
                     if (rowGroupColsSvc && gos.isModuleRegistered('SharedRowGrouping')) {
-                        const showRowGroup = column?.getColDef().showRowGroup;
+                        const showRowGroup = column?.colDef.showRowGroup;
                         const lockedGroups = gos.get('groupLockGroupColumns');
                         let name: string;
                         let disabled: boolean;
@@ -297,7 +297,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                             disabled =
                                 gos.get('functionsReadOnly') ||
                                 !column?.isRowGroupActive() ||
-                                !column?.getColDef().enableRowGroup ||
+                                !column?.colDef.enableRowGroup ||
                                 isRowGroupColLocked(column, beans);
                             action = () => rowGroupColsSvc.removeColumns([column], source);
                         }
@@ -629,10 +629,10 @@ function createAggregationSubMenu(
     localeTextFunc: LocaleTextFunc
 ): MenuItemDef[] {
     let columnToUse: AgColumn | undefined;
-    if (column.isPrimary()) {
+    if (column.primary) {
         columnToUse = column;
     } else {
-        const pivotValueColumn = column.getColDef().pivotValueColumn as AgColumn;
+        const pivotValueColumn = column.colDef.pivotValueColumn as AgColumn;
         columnToUse = _exists(pivotValueColumn) ? pivotValueColumn : undefined;
     }
 

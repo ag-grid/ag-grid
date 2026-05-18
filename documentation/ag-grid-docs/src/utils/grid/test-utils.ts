@@ -98,11 +98,17 @@ const excludeErrors = [
     'InstallTrigger is deprecated and will be removed in the future.',
     'onmozfullscreenchange is deprecated.',
     'onmozfullscreenerror is deprecated.',
+    // Emitted by systemjs@0.19.47 (loaded via the SystemJS plunker template); not under our control
+    'Window.fullScreen attribute is deprecated and will be removed in the future.',
     'XML Parsing Error: not well-formed',
     'XML Parsing Error: syntax error',
     'Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content.',
     'Request to access cookie or storage on “<URL>” was blocked because it came from a tracker and Enhanced Tracking Protection is enabled.',
     'This site appears to use a scroll-linked positioning effect.',
+    // React warnings from examples that intentionally render read-only controls / raw style props.
+    'You provided a `checked` prop to a form field without an `onChange` handler.',
+    'Unsupported style property %s. Did you mean %s? white-space whiteSpace',
+    'Unsupported style property %s. Did you mean %s? white-space-collapse whiteSpaceCollapse',
 ];
 
 export function setupConsoleExpectations(page: Page) {
@@ -485,11 +491,11 @@ export async function waitForRowAnimations(page: Page) {
         // AG Grid renders rows across several named containers. Zombie rows only
         // appear as duplicates *within* the same container, not across containers.
         const centerContainerSelectors = [
-            '.ag-center-cols-container',
-            '.ag-sticky-top-container',
-            '.ag-sticky-bottom-container',
-            '.ag-floating-top-container',
-            '.ag-floating-bottom-container',
+            '.ag-grid-scrolling-container',
+            '.ag-grid-pinned-top-rows-container',
+            '.ag-grid-pinned-bottom-rows-container',
+            '.ag-grid-sticky-top-rows-container',
+            '.ag-grid-sticky-bottom-rows-container',
         ].join(', ');
 
         for (const container of document.querySelectorAll(centerContainerSelectors)) {

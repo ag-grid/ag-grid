@@ -1,4 +1,5 @@
 .ag-popup-child {
+    /* grid-managed popups must sit above overlays and row content. */
     z-index: 5;
     top: 0;
 }

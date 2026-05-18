@@ -1,12 +1,11 @@
-import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { IRowContainerComp, RowContainerName, RowCtrl } from 'ag-grid-community';
+import type { IRowContainerComp, RowCtrl } from 'ag-grid-community';
 import {
     RowContainerCtrl,
     _getRowContainerClass,
     _getRowContainerOptions,
     _getRowSpanContainerClass,
-    _getRowViewportClass,
 } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
@@ -14,16 +13,27 @@ import useReactCommentEffect from '../reactComment';
 import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
 import RowComp from './rowComp';
 
-const RowContainerComp = ({ name }: { name: RowContainerName }) => {
+export type ReactRowContainerName = 'scrolling' | 'pinnedTop' | 'pinnedBottom' | 'stickyTop' | 'stickyBottom';
+
+const RowContainerComp = ({
+    name,
+    viewportElement,
+    extraClassName,
+}: {
+    name: ReactRowContainerName;
+    viewportElement?: HTMLElement | null;
+    extraClassName?: string | null;
+}) => {
     const { context, gos } = useContext(BeansContext);
 
     const containerOptions = useMemo(() => _getRowContainerOptions(name), [name]);
 
-    const eViewport = useRef<HTMLDivElement | null>(null);
     const eContainer = useRef<HTMLDivElement | null>(null);
     const eSpanContainer = useRef<HTMLDivElement | null>(null);
     const rowCtrlsRef = useRef<RowCtrl[]>([]);
     const prevRowCtrlsRef = useRef<RowCtrl[]>([]);
+    const [hidden, setHidden] = useState<boolean>(true);
+
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
 
     const isSpanning = !!gos.get('enableCellSpan') && !!containerOptions.getSpannedRowCtrls;
@@ -34,110 +44,97 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     const domOrderRef = useRef<boolean>(false);
     const rowContainerCtrlRef = useRef<RowContainerCtrl>();
 
-    const viewportClasses = useMemo(() => classesList('ag-viewport', _getRowViewportClass(name)), [name]);
-    const containerClasses = useMemo(() => classesList(_getRowContainerClass(name)), [name]);
+    const containerClasses = useMemo(
+        () => classesList(_getRowContainerClass(name), hidden ? 'ag-hidden' : null, extraClassName),
+        [extraClassName, name, hidden]
+    );
     const spanClasses = useMemo(() => classesList('ag-spanning-container', _getRowSpanContainerClass(name)), [name]);
 
-    const shouldRenderViewport = containerOptions.type === 'center' || isSpanning;
-
-    const topLevelRef = shouldRenderViewport ? eViewport : eContainer;
-
-    useReactCommentEffect(' AG Row Container ' + name + ' ', topLevelRef);
-
-    const areElementsReady = useCallback(() => {
-        const viewportReady = !shouldRenderViewport || eViewport.current != null;
-        const containerReady = eContainer.current != null;
-        const spanContainerReady = !isSpanning || eSpanContainer.current != null;
-        return viewportReady && containerReady && spanContainerReady;
-    }, []);
-
-    const areElementsRemoved = useCallback(() => {
-        return eViewport.current == null && eContainer.current == null && eSpanContainer.current == null;
-    }, []);
+    useReactCommentEffect(' AG Row Container ' + name + ' ', eContainer);
 
     const setRef = useCallback(() => {
-        if (areElementsRemoved()) {
+        if (eContainer.current == null && eSpanContainer.current == null) {
             rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
         }
         if (context.isDestroyed()) {
             return;
         }
 
-        if (areElementsReady()) {
-            const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
-                const next = getNextValueIfDifferent(
-                    prevRowCtrlsRef.current,
-                    rowCtrlsRef.current,
-                    domOrderRef.current
-                )!;
-                if (next !== prevRowCtrlsRef.current) {
-                    prevRowCtrlsRef.current = next;
-                    agFlushSync(useFlushSync, () => setRowCtrlsOrdered(next));
-                }
-            };
-
-            const updateSpannedRowCtrlsOrdered = (useFlushSync: boolean) => {
-                const next = getNextValueIfDifferent(
-                    prevSpannedRowCtrlsRef.current,
-                    spannedRowCtrlsRef.current,
-                    domOrderRef.current
-                )!;
-                if (next !== prevSpannedRowCtrlsRef.current) {
-                    prevSpannedRowCtrlsRef.current = next;
-                    agFlushSync(useFlushSync, () => setSpannedRowCtrlsOrdered(next));
-                }
-            };
-
-            const compProxy: IRowContainerComp = {
-                setHorizontalScroll: (offset: number) => {
-                    if (eViewport.current) {
-                        eViewport.current.scrollLeft = offset;
-                    }
-                },
-                setViewportHeight: (height: string) => {
-                    if (eViewport.current) {
-                        eViewport.current.style.height = height;
-                    }
-                },
-                setRowCtrls: ({ rowCtrls, useFlushSync }: { rowCtrls: RowCtrl[]; useFlushSync?: boolean }) => {
-                    const useFlush = !!useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
-                    // Keep a record of the rowCtrls in case we need to reset the Dom order.
-                    rowCtrlsRef.current = rowCtrls;
-                    updateRowCtrlsOrdered(useFlush);
-                },
-                setSpannedRowCtrls: (rowCtrls: RowCtrl[], useFlushSync: boolean) => {
-                    const useFlush = !!useFlushSync && spannedRowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
-                    // Keep a record of the rowCtrls in case we need to reset the Dom order.
-                    spannedRowCtrlsRef.current = rowCtrls;
-                    updateSpannedRowCtrlsOrdered(useFlush);
-                },
-                setDomOrder: (domOrder: boolean) => {
-                    if (domOrderRef.current != domOrder) {
-                        domOrderRef.current = domOrder;
-                        updateRowCtrlsOrdered(false);
-                    }
-                },
-                setContainerWidth: (width: string) => {
-                    if (eContainer.current) {
-                        eContainer.current.style.width = width;
-                    }
-                },
-                setOffsetTop: (offset: string) => {
-                    if (eContainer.current) {
-                        eContainer.current.style.transform = `translateY(${offset})`;
-                    }
-                },
-            };
-
-            rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(name));
-            rowContainerCtrlRef.current.setComp(
-                compProxy,
-                eContainer.current!,
-                eSpanContainer.current ?? undefined,
-                eViewport.current!
-            );
+        const eContainerForCtrl = eContainer.current;
+        const eViewportForCtrl = viewportElement ?? eContainer.current;
+        if (!eContainerForCtrl || !eViewportForCtrl || (isSpanning && !eSpanContainer.current)) {
+            return;
         }
-    }, [areElementsReady, areElementsRemoved]);
+        if (rowContainerCtrlRef.current) {
+            return;
+        }
+
+        const eSpanContainerForCtrl = eSpanContainer.current ?? undefined;
+
+        const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
+            const next = getNextValueIfDifferent(prevRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current)!;
+            if (next !== prevRowCtrlsRef.current) {
+                prevRowCtrlsRef.current = next;
+                agFlushSync(useFlushSync, () => setRowCtrlsOrdered(next));
+            }
+        };
+
+        const updateSpannedRowCtrlsOrdered = (useFlushSync: boolean) => {
+            const next = getNextValueIfDifferent(
+                prevSpannedRowCtrlsRef.current,
+                spannedRowCtrlsRef.current,
+                domOrderRef.current
+            )!;
+            if (next !== prevSpannedRowCtrlsRef.current) {
+                prevSpannedRowCtrlsRef.current = next;
+                agFlushSync(useFlushSync, () => setSpannedRowCtrlsOrdered(next));
+            }
+        };
+
+        const compProxy: IRowContainerComp = {
+            setRowCtrls: ({ rowCtrls, useFlushSync }: { rowCtrls: RowCtrl[]; useFlushSync?: boolean }) => {
+                const useFlush = !!useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
+                rowCtrlsRef.current = rowCtrls;
+                updateRowCtrlsOrdered(useFlush);
+            },
+            setSpannedRowCtrls: (rowCtrls: RowCtrl[], useFlushSync: boolean) => {
+                const useFlush = !!useFlushSync && spannedRowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
+                spannedRowCtrlsRef.current = rowCtrls;
+                updateSpannedRowCtrlsOrdered(useFlush);
+            },
+            setDomOrder: (domOrder: boolean) => {
+                if (domOrderRef.current !== domOrder) {
+                    domOrderRef.current = domOrder;
+                    updateRowCtrlsOrdered(false);
+                }
+            },
+            setContainerWidth: (width: string) => {
+                if (eContainerForCtrl) {
+                    eContainerForCtrl.style.width = width;
+                }
+                if (eSpanContainerForCtrl) {
+                    eSpanContainerForCtrl.style.width = width;
+                }
+            },
+            setOffsetTop: (offset: string) => {
+                eContainerForCtrl.style.transform = `translateY(${offset})`;
+                if (eSpanContainerForCtrl) {
+                    eSpanContainerForCtrl.style.transform = `translateY(${offset})`;
+                }
+            },
+            setHidden: (hidden: boolean) => setHidden(hidden),
+        };
+
+        rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(name));
+        rowContainerCtrlRef.current.setComp(compProxy, eContainerForCtrl, eSpanContainerForCtrl, eViewportForCtrl);
+    }, [context, isSpanning, name, viewportElement]);
+
+    useEffect(
+        () => () => {
+            rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
+        },
+        [context, name]
+    );
 
     const setContainerRef = useCallback(
         (e: HTMLDivElement | null) => {
@@ -153,29 +150,6 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
         },
         [setRef]
     );
-    const setViewportRef = useCallback(
-        (e: HTMLDivElement | null) => {
-            eViewport.current = e;
-            setRef();
-        },
-        [setRef]
-    );
-
-    const buildContainer = () => (
-        <div
-            className={containerClasses}
-            ref={setContainerRef}
-            role={shouldRenderViewport ? 'presentation' : 'rowgroup'}
-        >
-            {rowCtrlsOrdered.map((rowCtrl) => (
-                <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
-            ))}
-        </div>
-    );
-
-    if (!shouldRenderViewport) {
-        return buildContainer();
-    }
 
     const buildSpanContainer = () => (
         <div className={spanClasses} ref={setSpanContainerRef} role={'presentation'}>
@@ -184,9 +158,14 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
             ))}
         </div>
     );
+
+    const rows = rowCtrlsOrdered.map((rowCtrl) => (
+        <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
+    ));
+
     return (
-        <div className={viewportClasses} ref={setViewportRef} role="rowgroup">
-            {buildContainer()}
+        <div className={containerClasses} ref={setContainerRef} role={'presentation'}>
+            {rows}
             {isSpanning ? buildSpanContainer() : null}
         </div>
     );

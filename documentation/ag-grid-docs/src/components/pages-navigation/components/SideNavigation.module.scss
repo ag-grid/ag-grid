@@ -92,9 +92,7 @@
         bottom: 0;
         width: 1px;
         background-color: var(--color-util-brand-200);
-        transition:
-            width $transition-default-timing,
-            background-color $transition-default-timing;
+        transition: background-color $transition-default-timing;
     }
 
     // Dark mode: use primary border colour for inactive line
@@ -108,7 +106,7 @@
 
     // Active items: show full 2px line using pseudo-element
     &:has(:global(.active))::before {
-        width: 2px;
+        width: 1px;
         background-color: var(--active-border);
     }
 }
@@ -118,7 +116,7 @@
     background-color: var(--active-background);
 
     &::before {
-        width: 2px;
+        width: 1px;
         background-color: var(--active-border);
     }
 

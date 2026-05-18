@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-require-imports */
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');

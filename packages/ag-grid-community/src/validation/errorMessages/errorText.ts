@@ -774,6 +774,31 @@ export const AG_GRID_ERRORS = {
     297: () =>
         '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
     298: () => `Columns Tool Panel 'buttons' requires 'apply' to enable Deferred Updates.` as const,
+    301: ({ key }: { key: string }) =>
+        `Toolbar item '${key}' is missing the 'toolbarItem' property and will not be rendered.` as const,
+    302: ({
+        itemName,
+        moduleName,
+        gridScoped,
+        gridId,
+        rowModelType,
+    }: {
+        itemName: string;
+        moduleName: ValidationModuleName | ValidationModuleName[];
+        gridScoped: boolean;
+        gridId: string;
+        rowModelType: RowModelType;
+    }) =>
+        missingModule({
+            reasonOrId: `Toolbar item '${itemName}'`,
+            moduleName,
+            gridId,
+            gridScoped,
+            rowModelType,
+            additionalText: 'The item will not be rendered.',
+        }),
+    303: ({ key }: { key: string }) =>
+        `Multiple toolbar items share the explicit key '${key}'. Only the first item is rendered.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

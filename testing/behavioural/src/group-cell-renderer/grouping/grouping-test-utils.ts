@@ -25,7 +25,7 @@ export function getExpandedConcern(gridOptions: GridOptions): TestPermutation {
 export const groupCellSnapshotter = (container: HTMLDivElement) => {
     const snap: string[] = [];
     // auto group cell or full width row group cell
-    container.querySelectorAll('.ag-cell-group,.ag-full-width-row>.ag-row-group').forEach((el) => {
+    container.querySelectorAll('.ag-cell-group,.ag-full-width-row .ag-row-group').forEach((el) => {
         // strip comp generated comp ids as they're too volatile
         snap.push(el.innerHTML.replaceAll(/id="ag-[0-9]+-[a-zA-Z]+"/g, ''));
     });

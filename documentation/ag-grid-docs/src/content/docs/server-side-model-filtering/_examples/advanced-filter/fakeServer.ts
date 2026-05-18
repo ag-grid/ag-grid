@@ -47,7 +47,7 @@ export function FakeServer(allData) {
             } else if (model.filterType === 'number') {
                 return numberFilterMapper(model.colId, model);
             } else {
-                console.log('filter type not implemented: ' + item.filterType);
+                console.log('filter type not implemented: ' + model.filterType);
                 return ' 1 = 1 ';
             }
         }

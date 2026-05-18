@@ -30,7 +30,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
 
         for (const column of dragColumns) {
             // we don't allow adding secondary columns
-            if (!column.isPrimary()) {
+            if (!column.primary) {
                 continue;
             }
 

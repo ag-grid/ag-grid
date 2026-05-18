@@ -14,11 +14,10 @@ import type { AgDialogCallbacks } from './agDialog';
 import { AgDialog } from './agDialog';
 import type { IAgChartsExports } from './iAgChartsExports';
 
-export interface AgColorPickerParams<TComponentSelectorType extends string>
-    extends Omit<
-        AgPickerFieldParams<TComponentSelectorType>,
-        'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'
-    > {
+export interface AgColorPickerParams<TComponentSelectorType extends string> extends Omit<
+    AgPickerFieldParams<TComponentSelectorType>,
+    'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'
+> {
     pickerType?: string;
     pickerAriaLabelKey?: string;
     pickerAriaLabelValue?: string;

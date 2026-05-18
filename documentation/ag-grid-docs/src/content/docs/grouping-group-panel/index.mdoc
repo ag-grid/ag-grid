@@ -44,6 +44,18 @@ const gridOptions = {
 
 Refer to the [Side Bar](./side-bar/) documentation for further configuration options.
 
+## Row Group Panel in the Toolbar
+
+The Row Group Panel can be embedded in the [Quick Access Toolbar](./toolbar/#row-group-and-pivot-panels) using the `agRowGroupPanelToolbarItem` built-in item, configured independently of `rowGroupPanelShow`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    toolbar: {
+        items: ['agRowGroupPanelToolbarItem'],
+    },
+}
+```
+
 ## Prevent User Grouping from Hiding Columns
 
 After a user applies row grouping to a column, the column is hidden. If the user removes the row grouping, the column is made visible again.

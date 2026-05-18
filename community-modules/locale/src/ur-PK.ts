@@ -336,6 +336,11 @@ export const AG_GRID_LOCALE_PK = {
     sortAbsoluteDescending: 'مکمل اُتری ابجدی ترتیب میں ترتیب دیں',
     sortUnSort: 'ترتیب مٹائیں',
     shiftF2: 'Shift+F2',
+    toolbarFind: 'تلاش',
+    toolbarFindPreviousMatch: 'پچھلا میچ',
+    toolbarFindNextMatch: 'اگلا میچ',
+    toolbarQuickFilter: 'فلٹر',
+    toolbarMenu: 'مینو',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'مجموعہ',
@@ -687,12 +692,16 @@ export const AG_GRID_LOCALE_PK = {
     ariaSelectAllRowCells: 'اس قطار کی تمام سیلز منتخب کرنے کے لیے Enter دبائیں',
     ariaColumnCellSelection: 'اس کالم میں تمام نظر آنے والے سیلز کا انتخاب بدلنے کے لیے Enter دبائیں',
     ariaColumnGroupCellSelection: 'اس کالم گروپ میں تمام نظر آنے والے سیلز کا انتخاب بدلنے کے لیے Enter دبائیں',
+    ariaColumnGroupExpansion: 'اس کالم گروپ کو پھیلانے یا سکیڑنے کے لیے ENTER دبائیں',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'اس کالم گروپ میں تمام نظر آنے والے سیلز کا انتخاب بدلنے کے لیے Enter دبائیں. اس کالم گروپ کو پھیلانے یا سکیڑنے کے لیے ALT ENTER دبائیں',
     ariaRowSelectAll: 'تمام صفوں کا انتخاب ٹوگل کرنے کے لیے SPACE دبائیں',
     ariaRowToggleSelection: 'صف کا انتخاب ٹوگل کرنے کے لیے SPACE دبائیں',
     ariaRowSelect: 'اس صف کو منتخب کرنے کے لیے SPACE دبائیں',
     ariaRowSelectionDisabled: 'اس صف کا انتخاب غیر فعال ہے',
     ariaSearch: 'تلاش',
     ariaSortableColumn: 'ترتیب دینے کے لیے ENTER دبائیں',
+    ariaSortableColumnWithCellSelection: 'ترتیب دینے کے لیے ALT ENTER دبائیں',
     ariaToggleVisibility: 'مرئیت ٹوگل کرنے کے لیے SPACE دبائیں',
     ariaToggleCellValue: 'سیل کی قدر ٹوگل کرنے کے لیے SPACE دبائیں',
     ariaUnchecked: 'غیر چیکڈ',
@@ -811,8 +820,4 @@ export const AG_GRID_LOCALE_PK = {
     editNote: 'نوٹ میں ترمیم کریں',
     deleteNote: 'نوٹ ہٹائیں',
     notePlaceholder: 'ایک نوٹ شامل کریں...',
-    noteHint:
-        'پیش منظر دیکھنے کے لیے ماؤس اوپر لے جائیں۔ ترمیم کے لیے اندر کلک کریں۔ سائز بدلنے کے لیے کونے کو کھینچیں۔ بند کرنے کے لیے Esc دبائیں۔',
-    noteReadOnlyHint:
-        'صرف پڑھنے والا نوٹ۔ نقل کرنے کے لیے متن منتخب کریں۔ سائز بدلنے کے لیے کونے کو کھینچیں۔ بند کرنے کے لیے Esc دبائیں۔',
 };

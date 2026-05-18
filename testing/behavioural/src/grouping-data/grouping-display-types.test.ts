@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, GRAND_TOTAL_ROW_ID, GROUP_TOTAL_ROW_ID_PREFIX } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping display types and footers', () => {
     const gridsManager = new TestGridsManager({
@@ -334,5 +334,93 @@ describe('ag-grid grouping display types and footers', () => {
             │ └─ footer id:rowGroupFooter_row-group-region-South ag-Grid-AutoColumn:"Total South" sales:300 profit:60
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " sales:750 profit:150
         `);
+    });
+
+    test('groupTotalRow: bottom footers never become top sticky rows while scrolling', async () => {
+        const rowData = cachedJSONObjects.array(
+            Array.from({ length: 40 }, (_, i) => ({
+                id: `${i + 1}`,
+                group: i < 20 ? 'A' : 'B',
+                value: i + 1,
+            }))
+        );
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'group', rowGroup: true, hide: true },
+                { field: 'value', aggFunc: 'sum' },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        const root = TestGridsManager.getHTMLElement(api)!;
+        const viewport = root.querySelector<HTMLElement>('.ag-grid-viewport')!;
+        const stickyTopContainer = root.querySelector<HTMLElement>('.ag-grid-sticky-top-rows-container')!;
+        const stickyBottomContainer = root.querySelector<HTMLElement>('.ag-grid-sticky-bottom-rows-container')!;
+
+        const maxScrollTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+        let sawBottomStickyFooter = false;
+        for (let scrollTop = 0; scrollTop <= maxScrollTop; scrollTop += 48) {
+            viewport.scrollTop = scrollTop;
+            await asyncSetTimeout(0);
+            if (stickyBottomContainer.querySelector('.ag-row-footer')) {
+                sawBottomStickyFooter = true;
+            }
+            expect(stickyTopContainer.querySelector('.ag-row-footer')).toBeNull();
+        }
+
+        expect(sawBottomStickyFooter).toBe(true);
+    });
+
+    test('top sticky rows are inserted in reverse visual DOM order', async () => {
+        const rowData = cachedJSONObjects.array(
+            Array.from({ length: 60 }, (_, i) => ({
+                id: `${i + 1}`,
+                region: i < 30 ? 'North' : 'South',
+                country: i % 2 === 0 ? 'Ireland' : 'UK',
+                value: i + 1,
+            }))
+        );
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'value' },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        const root = TestGridsManager.getHTMLElement(api)!;
+        const viewport = root.querySelector<HTMLElement>('.ag-grid-viewport')!;
+        const stickyTopContainer = root.querySelector<HTMLElement>('.ag-grid-sticky-top-rows-container')!;
+
+        const maxScrollTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+        let observedTwoStickyRows = false;
+        for (let scrollTop = 0; scrollTop <= maxScrollTop; scrollTop += 48) {
+            viewport.scrollTop = scrollTop;
+            await asyncSetTimeout(0);
+
+            const stickyRows = Array.from(stickyTopContainer.querySelectorAll<HTMLElement>('.ag-row'));
+            if (stickyRows.length < 2) {
+                continue;
+            }
+
+            const rowIndexes = stickyRows.map((row) => Number.parseInt(row.getAttribute('row-index') || '-1', 10));
+            expect(rowIndexes.every((value, index, arr) => index === 0 || arr[index - 1] > value)).toBe(true);
+            observedTwoStickyRows = true;
+            break;
+        }
+
+        expect(observedTwoStickyRows).toBe(true);
     });
 });

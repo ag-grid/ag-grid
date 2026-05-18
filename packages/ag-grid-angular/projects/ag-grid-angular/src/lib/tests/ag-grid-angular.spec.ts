@@ -9,7 +9,6 @@ import { AgGridAngular } from '../ag-grid-angular.component';
 
 @Component({
     selector: 'app-grid-wrapper',
-    standalone: true,
     imports: [AgGridAngular],
     template: `<ag-grid-angular
         [gridOptions]="gridOptions"

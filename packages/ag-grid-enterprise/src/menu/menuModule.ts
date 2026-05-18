@@ -13,6 +13,7 @@ import { EnterpriseMenuFactory } from './enterpriseMenu';
 import { hideColumnChooser, showColumnChooser, showContextMenu } from './menuApi';
 import { MenuItemMapper } from './menuItemMapper';
 import { MenuUtils } from './menuUtils';
+import { ToolbarMenuBuilder } from './toolbarMenuBuilder';
 
 /**
  * @internal
@@ -20,7 +21,7 @@ import { MenuUtils } from './menuUtils';
 const MenuCoreModule: _ModuleWithoutApi = {
     moduleName: 'MenuCore',
     version: VERSION,
-    beans: [MenuItemMapper, ChartMenuItemMapper, MenuUtils],
+    beans: [MenuItemMapper, ChartMenuItemMapper, MenuUtils, ToolbarMenuBuilder],
     icons: {
         // context menu chart item
         chart: 'chart',

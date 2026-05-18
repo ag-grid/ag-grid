@@ -328,6 +328,13 @@ export const AG_GRID_LOCALE_EN = {
     sortUnSort: 'Clear Sort',
     shiftF2: 'Shift+F2',
 
+    // Toolbar
+    toolbarFind: 'Find',
+    toolbarFindPreviousMatch: 'Previous Match',
+    toolbarFindNextMatch: 'Next Match',
+    toolbarQuickFilter: 'Filter',
+    toolbarMenu: 'Menu',
+
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
     first: 'First',
@@ -690,12 +697,16 @@ export const AG_GRID_LOCALE_EN = {
     ariaSelectAllRowCells: 'Press Enter to select all cells on this row',
     ariaColumnCellSelection: 'Press Enter to toggle selection for all visible cells in this column',
     ariaColumnGroupCellSelection: 'Press Enter to toggle selection for all visible cells in this column group',
+    ariaColumnGroupExpansion: 'Press ENTER to expand or collapse this column group',
+    ariaColumnGroupCellSelectionAndExpansion:
+        'Press Enter to toggle selection for all visible cells in this column group. Press ALT ENTER to expand or collapse this column group',
     ariaRowSelectAll: 'Press Space to toggle all rows selection',
     ariaRowToggleSelection: 'Press Space to toggle row selection',
     ariaRowSelect: 'Press SPACE to select this row',
     ariaRowSelectionDisabled: 'Row Selection is disabled for this row',
     ariaSearch: 'Search',
     ariaSortableColumn: 'Press ENTER to sort',
+    ariaSortableColumnWithCellSelection: 'Press ALT ENTER to sort',
     ariaToggleVisibility: 'Press SPACE to toggle visibility',
     ariaToggleCellValue: 'Press SPACE to toggle cell value',
     ariaUnchecked: 'unchecked',
@@ -819,6 +830,4 @@ export const AG_GRID_LOCALE_EN = {
     editNote: 'Edit Note',
     deleteNote: 'Remove Note',
     notePlaceholder: 'Add a note...',
-    noteHint: 'Hover to preview. Click inside to edit. Drag the corner to resize. Press Esc to close.',
-    noteReadOnlyHint: 'Read-only note. Select text to copy. Drag the corner to resize. Press Esc to close.',
 };

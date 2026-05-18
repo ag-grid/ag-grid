@@ -8,6 +8,7 @@ import type {
     FilterManager,
     IAdvancedFilterBuilderParams,
     JoinAdvancedFilterModel,
+    VerticalSection,
 } from 'ag-grid-community';
 import { Component, FilterButtonComp, RefPlaceholder, _exists, _removeFromParent } from 'ag-grid-community';
 
@@ -242,7 +243,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     private moveItemToIndex(
         item: AdvancedFilterBuilderItem,
         destinationRowIndex: number,
-        destinationPosition: 'top' | 'bottom'
+        destinationPosition: VerticalSection
     ): void {
         const destinationItem = this.items[destinationRowIndex];
         const destinationIsParent =

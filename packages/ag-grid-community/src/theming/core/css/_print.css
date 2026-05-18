@@ -2,7 +2,7 @@
    slightly more specific than screen styles to ensure that customers don't break
    print while overriding screen styles */
 .ag-layout-print {
-    &.ag-body {
+    &.ag-grid-scrolling-rows {
         display: block;
         height: unset;
     }
@@ -35,9 +35,7 @@
 
         .ag-root-wrapper-body,
         .ag-root,
-        .ag-body-viewport,
-        .ag-center-cols-container,
-        .ag-center-cols-viewport,
+        .ag-grid-scrolling-container,
         .ag-body-horizontal-scroll-viewport,
         .ag-virtual-list-viewport {
             /* Need auto height because 100% height elements with overflow hidden
