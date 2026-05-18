@@ -17,7 +17,7 @@ type DefaultAggFuncName = keyof typeof defaultAggFuncNames;
 export class AggFuncService extends BeanStub implements NamedBean, IAggFuncService {
     beanName = 'aggFuncSvc' as const;
 
-    private aggFuncsMap = new Map<string, IAggFunc>();
+    private readonly aggFuncsMap = new Map<string, IAggFunc>();
     private orderedFuncNames: string[] = [];
     private initialised = false;
 
