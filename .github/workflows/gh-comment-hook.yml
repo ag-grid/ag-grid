@@ -54,7 +54,7 @@ jobs:
             if (eventAction !== 'opened') return;
             if (!process.env.JIRA_API_AUTH) return;
 
-            const { addJiraComment, getJiraIssue, getJiraIssueComments, getCurrentJiraUser, unwatchJiraIssue } =
+            const { addJiraComment, getJiraIssueComments } =
                 require('./scripts/ci/_utils.mjs');
 
             // Collect all JIRA tickets referenced in the PR body (using the possibly-updated body)
@@ -98,11 +98,5 @@ jobs:
                     ],
                 };
 
-                const issue = await getJiraIssue(ticket);
-                const isWatching = issue?.fields?.watches?.isWatching ?? false;
                 await addJiraComment(ticket, adf);
-                if (!isWatching) {
-                    const self = await getCurrentJiraUser();
-                    await unwatchJiraIssue(ticket, self);
-                }
             }));
