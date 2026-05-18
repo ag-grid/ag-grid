@@ -190,6 +190,17 @@ export async function unwatchJiraIssue(issueKey, userId) {
     }
 }
 
+export async function getJiraIssueComments(issueKey) {
+    const url = `https://ag-grid.atlassian.net/rest/api/3/issue/${issueKey}/comment?maxResults=100`;
+    try {
+        const data = await commonFetch(url, { method: 'GET' });
+        return data.comments || [];
+    } catch (error) {
+        console.error('Error fetching comments:', error.message);
+        throw error;
+    }
+}
+
 export async function getJiraWatches(issueKey) {
     const url = `https://ag-grid.atlassian.net/rest/api/3/issue/${issueKey}/watchers`;
     try {
