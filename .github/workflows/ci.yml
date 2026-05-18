@@ -397,7 +397,7 @@ jobs:
 
       - name: docs build and link checker
         run: |
-          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+          if [[ "${{ github.event_name }}" != "pull_request" ]] || [[ "${{ needs.detect-changes.outputs.run_docs_ci }}" == "true" ]]; then
             export CHECK_LINKS=true CHECK_REDIRECTS=true
           fi
           yarn nx run ag-grid-docs:build -c staging
