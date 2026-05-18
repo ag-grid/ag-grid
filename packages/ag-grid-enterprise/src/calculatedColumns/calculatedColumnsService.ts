@@ -263,8 +263,19 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private toCalculatedColDef(colDef: CalculatedColumnDef | ColDef): ColDef {
+        // strip fields that conflict with calculatedExpression invariants (see colDefValidations.ts).
+        const sanitised: ColDef = { ...colDef };
+        const invariantProperties: (keyof ColDef)[] = [
+            'field',
+            'valueGetter',
+            'valueSetter',
+            'cellEditor',
+            'cellEditorSelector',
+        ];
+        invariantProperties.forEach((prop) => delete sanitised[prop]);
+
         return {
-            ...colDef,
+            ...sanitised,
             editable: false,
             suppressPaste: true,
         };
@@ -272,9 +283,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     private getColumnSuggestions(calculatedColId: string): ColumnSuggestion[] {
         return (this.beans.colModel.getCols() ?? [])
-            .filter((column) => column.isVisible() && column.getColId() !== calculatedColId)
+            .filter((column) => column.getColId() !== calculatedColId)
             .map((column) => ({
-                type: 'column' as const,
+                type: 'column',
                 value: column.getColId(),
                 label: this.beans.colNames.getDisplayNameForColumn(column, 'header') ?? column.getColId(),
             }));
@@ -282,7 +293,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     private getFunctionSuggestions(): ColumnSuggestion[] {
         return (this.beans.formula?.getFunctionNames() ?? []).map((name) => ({
-            type: 'function' as const,
+            type: 'function',
             value: name,
             label: name,
         }));

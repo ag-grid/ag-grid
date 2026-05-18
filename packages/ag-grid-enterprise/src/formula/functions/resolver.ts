@@ -65,8 +65,14 @@ function resolveRefToAddress(
 ): CellAddress | null {
     const { row, column } = cell;
 
+    if (row.current && !caller?.row) {
+        // fail when a same-row reference is evaluated without a caller,
+        // instead of silently returning null and showing a generic reference error.
+        throw new FormulaError(29);
+    }
+
     const rowNode = row.current
-        ? caller?.row
+        ? caller!.row
         : row.absolute
           ? _getClientSideRowModel(beans)?.getFormulaRow(Number(row.id) - 1)
           : beans.rowModel.getRowNode(row.id);
