@@ -529,9 +529,11 @@ async function processChanges(runContext: RunContext, userDisplayType: UserDispl
 
 (async () => {
     const runContext: RunContext = JSON.parse(args.runContext);
-    runContext.status = Object.values(runContext.jobStatuses).every((status) => status === 'success')
-        ? 'success'
-        : 'failure';
+    // Mirror the workflow's own check: only an explicit 'failure' counts as a failure;
+    // 'skipped' / 'cancelled' / 'n/a' are not failures.
+    runContext.status = Object.values(runContext.jobStatuses).some((status) => status === 'failure')
+        ? 'failure'
+        : 'success';
 
     // temporary - to facilitate testing while this new implementation is being tested
     console.log(runContext);
