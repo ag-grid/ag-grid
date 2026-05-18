@@ -617,8 +617,8 @@ jobs:
         uses: ./external/ag-shared/github/actions/slack-ci-notification
         with:
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-          NOTION_API_TOKEN: ${{ secrets.NOTION_API_TOKEN }}
-          NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
+          NOTION_API_TOKEN: ${{ secrets.SLACK_USER_CONFIG_NOTION_API_TOKEN }}
+          NOTION_DATA_SOURCE_ID: ${{ secrets.SLACK_USER_CONFIG_NOTION_DATA_SOURCE_ID }}
           AG_PROJECT: AgGrid
           LAST_SUCCESSFUL_SHA: ${{ steps.find_latest_sha.outputs.sha }}
           TEAM_CHANNEL: ${{ env.SLACK_CHANNEL }}
