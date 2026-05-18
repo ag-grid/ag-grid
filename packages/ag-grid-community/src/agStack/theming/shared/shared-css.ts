@@ -390,7 +390,7 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
     borderRadius: 4,
     spacing: 8,
     fontSize: 14,
-    fontWeight: 'inherit',
+    fontWeight: 400,
     focusShadow: {
         spread: 3,
         color: accentMix(0.5),
@@ -507,7 +507,7 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
         ref: 'textColor',
     },
     headerHeight: {
-        calc: 'max(iconSize, dataFontSize) + spacing * 4 * headerVerticalPaddingScale',
+        calc: 'max(iconSize, headerFontSize) + spacing * 4 * headerVerticalPaddingScale',
     },
     headerVerticalPaddingScale: 1,
     menuBorder: {
