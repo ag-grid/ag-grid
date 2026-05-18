@@ -106,10 +106,12 @@ export function updateWithGithubPRUrl({ str, baseGithubUrl }) {
 }
 
 export function getGitChanges(currentSha, lastSuccessfulSha, users) {
+    // Trim trailing newline before interpolating — `head -1` keeps it and the
+    // embedded newline would otherwise break the next `git log` command.
     const firstAfterSuccess = execSync(
         `git log --reverse --ancestry-path --pretty=%H ${lastSuccessfulSha}..HEAD | head -1`,
         { stdio: 'pipe', encoding: 'utf-8' }
-    );
+    ).trim();
 
     const gitCommand =
         firstAfterSuccess.length === 0 || firstAfterSuccess === currentSha

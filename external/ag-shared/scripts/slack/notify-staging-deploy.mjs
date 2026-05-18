@@ -26,7 +26,9 @@ if (DEPLOY_TO_STAGING !== 'true') {
     process.exit(0);
 }
 
-const required = { SLACK_BOT_OAUTH_TOKEN, NOTION_API_TOKEN, NOTION_DATA_SOURCE_ID, AG_PROJECT, RUN_ID, CURRENT_SHA, LAST_SUCCESSFUL_SHA, WEBSITE_STATUS_CHANNEL };
+// WEBSITE_STATUS_CHANNEL is optional — when unset we skip the shared-channel
+// post but still send opt-in DMs.
+const required = { SLACK_BOT_OAUTH_TOKEN, NOTION_API_TOKEN, NOTION_DATA_SOURCE_ID, AG_PROJECT, RUN_ID, CURRENT_SHA, LAST_SUCCESSFUL_SHA };
 for (const [name, value] of Object.entries(required)) {
     if (!value) {
         console.error(`Error: ${name} environment variable is not set.`);
@@ -61,13 +63,15 @@ for (const [name, value] of Object.entries(required)) {
     const emoji = getEmoji(AG_PROJECT);
 
     // Post to shared #website-status channel using author names (no slack mentions)
-    // so the channel post doesn't ping contributors.
-    const { changesText: channelChangesText } = buildChangesData('name');
-    const channelText = `:rocket: ${emoji} ${AG_PROJECT} changes were deployed to ${stagingUrl} (<${webUrl}|#${RUN_ID}>)\n${channelChangesText}`;
-    await sendSlackMessage({
-        authToken: SLACK_BOT_OAUTH_TOKEN,
-        data: { channel: WEBSITE_STATUS_CHANNEL, text: channelText, unfurl_links: false },
-    });
+    // so the channel post doesn't ping contributors. Skip when no channel is configured.
+    if (WEBSITE_STATUS_CHANNEL) {
+        const { changesText: channelChangesText } = buildChangesData('name');
+        const channelText = `:rocket: ${emoji} ${AG_PROJECT} changes were deployed to ${stagingUrl} (<${webUrl}|#${RUN_ID}>)\n${channelChangesText}`;
+        await sendSlackMessage({
+            authToken: SLACK_BOT_OAUTH_TOKEN,
+            data: { channel: WEBSITE_STATUS_CHANNEL, text: channelText, unfurl_links: false },
+        });
+    }
 
     // DM each opt-in user whose changes are in this deploy. The DM keeps slack
     // mentions so co-contributors in the change list are linked.

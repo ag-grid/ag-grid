@@ -39,7 +39,15 @@ for (const [name, value] of Object.entries(required)) {
 const THREAD_DEBUG_RAW = true;
 
 (async () => {
-    const jobStatuses = JSON.parse(JOB_STATUSES);
+    let jobStatuses;
+    try {
+        jobStatuses = JSON.parse(JOB_STATUSES);
+    } catch (err) {
+        // Don't fail the workflow over a notification-formatting issue; the
+        // 'Fail job if workflow failed' step is the source of truth for CI status.
+        console.error(`Failed to parse JOB_STATUSES JSON; skipping slack notification. Error: ${err.message}\nReceived: ${JOB_STATUSES}`);
+        process.exit(0);
+    }
     const status = deriveStatus(jobStatuses);
     const changedState = CHANGED_STATE === 'true';
 
