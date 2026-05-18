@@ -46,33 +46,38 @@ for (const [name, value] of Object.entries(required)) {
     }
 
     const changes = getGitChanges(CURRENT_SHA, LAST_SUCCESSFUL_SHA, users);
-    const { uniqueUsers, changesText } = getChangesData({
-        currentSha: CURRENT_SHA,
-        lastSuccessfulSha: LAST_SUCCESSFUL_SHA,
-        project: AG_PROJECT,
-        gitChanges: changes,
-        userDisplayTypeSetting: 'slack',
-        users,
-    });
+    const buildChangesData = (userDisplayTypeSetting) =>
+        getChangesData({
+            currentSha: CURRENT_SHA,
+            lastSuccessfulSha: LAST_SUCCESSFUL_SHA,
+            project: AG_PROJECT,
+            gitChanges: changes,
+            userDisplayTypeSetting,
+            users,
+        });
 
     const webUrl = getRunUrl(AG_PROJECT, RUN_ID);
     const stagingUrl = getStagingUrl(AG_PROJECT);
     const emoji = getEmoji(AG_PROJECT);
 
-    // Post to shared #website-status channel
-    const channelText = `:rocket: ${emoji} ${AG_PROJECT} changes were deployed to ${stagingUrl} (<${webUrl}|#${RUN_ID}>)\n${changesText}`;
+    // Post to shared #website-status channel using author names (no slack mentions)
+    // so the channel post doesn't ping contributors.
+    const { changesText: channelChangesText } = buildChangesData('name');
+    const channelText = `:rocket: ${emoji} ${AG_PROJECT} changes were deployed to ${stagingUrl} (<${webUrl}|#${RUN_ID}>)\n${channelChangesText}`;
     await sendSlackMessage({
         authToken: SLACK_BOT_OAUTH_TOKEN,
         data: { channel: WEBSITE_STATUS_CHANNEL, text: channelText, unfurl_links: false },
     });
 
-    // DM each opt-in user whose changes are in this deploy
+    // DM each opt-in user whose changes are in this deploy. The DM keeps slack
+    // mentions so co-contributors in the change list are linked.
+    const { uniqueUsers, changesText: dmChangesText } = buildChangesData('slack');
     const optInUsers = users.filter((u) => u.stagingNotification === true);
     const changedSlackIds = new Set(
         uniqueUsers.map((github) => users.find((u) => u.github === github)?.slackId).filter(Boolean)
     );
 
-    const dmText = `:rocket: ${emoji} Your recent changes were deployed to ${stagingUrl} (<${webUrl}|#${RUN_ID}>)\n${changesText}`;
+    const dmText = `:rocket: ${emoji} Your recent changes were deployed to ${stagingUrl} (<${webUrl}|#${RUN_ID}>)\n${dmChangesText}`;
     await Promise.all(
         optInUsers
             .filter((u) => changedSlackIds.has(u.slackId))
