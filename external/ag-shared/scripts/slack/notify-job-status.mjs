@@ -72,8 +72,8 @@ const THREAD_DEBUG_RAW = true;
     if (DEBUG_CHANNEL) {
         const debugResp = await sendStatusMessage({ channel: DEBUG_CHANNEL, ctx, changes, users, userDisplayType: 'debug' });
         if (THREAD_DEBUG_RAW && debugResp?.ts) {
-            await sendCodeBlock({ channel: DEBUG_CHANNEL, threadTs: debugResp.ts, code: JSON.stringify(ctx, null, 2) });
-            await sendCodeBlock({ channel: DEBUG_CHANNEL, threadTs: debugResp.ts, code: JSON.stringify(changes, null, 2) });
+            await sendCodeBlock({ channel: DEBUG_CHANNEL, threadTs: debugResp.ts, label: 'Run context', code: JSON.stringify(ctx, null, 2) });
+            await sendCodeBlock({ channel: DEBUG_CHANNEL, threadTs: debugResp.ts, label: 'Detected changes', code: JSON.stringify(changes, null, 2) });
         }
     }
 
@@ -147,12 +147,12 @@ async function sendSuccessMessage({ channel, ctx, changes, users, userDisplayTyp
     });
 }
 
-async function sendCodeBlock({ channel, threadTs, code }) {
+async function sendCodeBlock({ channel, threadTs, label, code }) {
     return sendSlackMessage({
         authToken: SLACK_BOT_OAUTH_TOKEN,
         data: {
             channel,
-            text: `Generated from teamcity response:\n\`\`\`${code}\n\`\`\``,
+            text: `${label}:\n\`\`\`${code}\n\`\`\``,
             thread_ts: threadTs,
         },
     });
