@@ -133,35 +133,6 @@ jobs:
       nx_base: ${{ steps.setup.outputs.base }}
       build_type: ${{ steps.setup.outputs.type }}
       snapshot_branch: ${{ steps.snapshot-prepare.outputs.branch }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
-
-      - name: Fetch Refs
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: 'rw'
-
-      - name: Prepare Snapshot Branch
-        uses: ./.github/actions/snapshot-prepare
-        id: snapshot-prepare
-
-  calc_matrix:
-    name: Calculate Github Matrix
-    needs: [ detect-changes ]
-    if: needs.detect-changes.outputs.run_code_ci == 'true' &&
-      github.event.pull_request.draft == false
-    outputs:
       test_count: ${{ steps.matrix.outputs.test_count }}
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
       test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
@@ -186,7 +157,11 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
-          cache_mode: ro
+          cache_mode: 'rw'
+
+      - name: Prepare Snapshot Branch
+        uses: ./.github/actions/snapshot-prepare
+        id: snapshot-prepare
 
       - name: Calculate Matrix
         id: matrix
@@ -229,11 +204,11 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
-    needs: [ detect-changes, calc_matrix ]
+    needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
-      needs.calc_matrix.outputs.test_count > 0
+      needs.init.outputs.test_count > 0
     strategy:
-      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_matrix )}}
+      matrix: ${{ fromJson(needs.init.outputs.test_matrix )}}
       fail-fast: false
     env:
       NX_PARALLEL: 1
@@ -288,11 +263,11 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     name: e2e Tests
-    needs: [ detect-changes, calc_matrix ]
+    needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
-      needs.calc_matrix.outputs.e2e_test_count > 0
+      needs.init.outputs.e2e_test_count > 0
     strategy:
-      matrix: ${{ fromJson(needs.calc_matrix.outputs.e2e_test_matrix )}}
+      matrix: ${{ fromJson(needs.init.outputs.e2e_test_matrix )}}
       fail-fast: false
     env:
       NX_PARALLEL: 1
@@ -322,15 +297,14 @@ jobs:
           path: |
             reports/
 
-  format_lint_build:
+  lint:
     runs-on: ubuntu-latest
-    name: Format, Lint and Build
+    name: Lint & Format Check
     needs: [ detect-changes ]
     if: ${{ always() && needs.detect-changes.result == 'success' }}
     outputs:
       format: ${{ steps.format.outcome || '' }}
       lint: ${{ steps.lint.outcome || '' }}
-      build: ${{ steps.build.outcome || '' }}
     steps:
       - name: Checkout
         id: checkout
@@ -359,9 +333,29 @@ jobs:
         run: |
           yarn nx lint
 
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    needs: [ detect-changes ]
+    if: needs.detect-changes.outputs.run_code_ci == 'true' &&
+      github.event.pull_request.draft == false
+    outputs:
+      build: ${{ steps.build.outcome || '' }}
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
       - name: nx build
         id: build
-        if: needs.detect-changes.outputs.run_code_ci == 'true'
         run: |
           yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
@@ -433,12 +427,12 @@ jobs:
     name: Framework Package Tests (${{ matrix.framework }})
     permissions:
       contents: write
-    needs: [ calc_matrix, init ]
+    needs: [ init ]
     if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type
       == 'release') || inputs.run_package_tests
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_pkg_matrix )}}
+      matrix: ${{ fromJson(needs.init.outputs.test_pkg_matrix )}}
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
@@ -479,9 +473,9 @@ jobs:
         init,
         test,
         e2e,
-        format_lint_build,
+        lint,
+        build,
         docs,
-        calc_matrix,
         fw_pkg_test,
         sonar_community,
         sonar_enterprise,
@@ -545,13 +539,13 @@ jobs:
           WORKFLOW_STATUS="success"
           if [[ "${{ needs.init.result }}" == "failure" ]] ; then
             WORKFLOW_STATUS="failure"
-          elif [[ "${{ needs.calc_matrix.result }}" == "failure" ]] ; then
-            WORKFLOW_STATUS="failure"
           elif [ "${{ needs.test.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.e2e.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.format_lint_build.result }}" == "failure" ] ; then
+          elif [ "${{ needs.lint.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
+          elif [ "${{ needs.build.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.docs.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
@@ -632,9 +626,9 @@ jobs:
               "changedState": ${{ steps.lastJobStatus.outputs.changedState == 'true' }},
               "jobStatuses":
                 {
-                    "Format": "${{ needs.format_lint_build.outputs.format }}",
-                    "Lint": "${{ needs.format_lint_build.outputs.lint }}",
-                    "Build": "${{ needs.format_lint_build.outputs.build }}",
+                    "Format": "${{ needs.lint.outputs.format }}",
+                    "Lint": "${{ needs.lint.outputs.lint }}",
+                    "Build": "${{ needs.build.outputs.build }}",
                     "Test": "${{ needs.test.result }}",
                     "e2e": "${{ needs.e2e.result }}",
                     "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
