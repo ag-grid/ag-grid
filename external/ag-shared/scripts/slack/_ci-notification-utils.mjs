@@ -1,6 +1,6 @@
 import { execSync } from 'node:child_process';
 
-const JIRA_BASE_URL = 'https://ag-grid.atlassian.net/jira/software/c/projects/AG';
+const JIRA_BASE_URL = 'https://ag-grid.atlassian.net/browse/AG';
 const MANY_CHANGES_LIMIT = 10;
 
 export function getGithubBaseUrl(project) {
