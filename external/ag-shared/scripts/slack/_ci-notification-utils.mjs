@@ -1,12 +1,49 @@
 import { execSync } from 'node:child_process';
 
-const JIRA_BASE_URL = 'https://ag-grid.atlassian.net/browse/AG';
+// ────────────────────────────────────────────────────────────────────────────
+// Per-library config. Add/edit entries here when a new library is onboarded.
+// `project` values match the AG_PROJECT env var set by the calling workflow.
+// ────────────────────────────────────────────────────────────────────────────
+const LIBRARY_CONFIG = {
+    AgGrid: {
+        githubBaseUrl: 'https://github.com/ag-grid/ag-grid',
+        stagingUrl: 'https://grid-staging.ag-grid.com',
+        emoji: ':bento:',
+    },
+    AgCharts: {
+        githubBaseUrl: 'https://github.com/ag-grid/ag-charts',
+        stagingUrl: 'https://charts-staging.ag-grid.com',
+        emoji: ':bar_chart:',
+    },
+    AgStudio: {
+        githubBaseUrl: 'https://github.com/ag-grid/ag-studio',
+        stagingUrl: 'https://studio-staging.ag-grid.com',
+        emoji: ':puzzle:',
+    },
+    Blog: {
+        githubBaseUrl: 'https://github.com/ag-grid/ag-blog-content',
+        stagingUrl: 'https://grid-staging.ag-grid.com',
+        emoji: '',
+    },
+};
+
+const DEFAULT_LIBRARY = 'AgGrid';
+
+// JIRA ticket prefix → project's browse URL. Tickets in commit messages from
+// any library are linked regardless of which prefix they use.
+const JIRA_BASE_URL_BY_PREFIX = {
+    AG: 'https://ag-grid.atlassian.net/browse/AG',
+    AS: 'https://ag-grid.atlassian.net/browse/AS',
+};
+
 const MANY_CHANGES_LIMIT = 10;
 
+function getLibrary(project) {
+    return LIBRARY_CONFIG[project] ?? LIBRARY_CONFIG[DEFAULT_LIBRARY];
+}
+
 export function getGithubBaseUrl(project) {
-    if (project === 'Blog') return 'https://github.com/ag-grid/ag-blog-content';
-    if (project === 'AgCharts') return 'https://github.com/ag-grid/ag-charts';
-    return 'https://github.com/ag-grid/ag-grid';
+    return getLibrary(project).githubBaseUrl;
 }
 
 export function getRunUrl(project, runId) {
@@ -14,14 +51,11 @@ export function getRunUrl(project, runId) {
 }
 
 export function getEmoji(project) {
-    if (project === 'AgGrid') return ':bento:';
-    if (project === 'AgCharts') return ':bar_chart:';
-    return '';
+    return getLibrary(project).emoji;
 }
 
 export function getStagingUrl(project) {
-    if (project === 'AgCharts') return 'https://charts-staging.ag-grid.com';
-    return 'https://grid-staging.ag-grid.com';
+    return getLibrary(project).stagingUrl;
 }
 
 export function getBranchLink(ref, project) {
@@ -61,7 +95,10 @@ export function getUserDisplay(githubUsername, userDisplayType, users) {
 }
 
 export function updateWithJiraUrl(str) {
-    return str.replace(/(AG-[0-9]+)(.*)/gm, `<${JIRA_BASE_URL}/$1|$1>$2`);
+    return str.replace(/((AG|AS)-[0-9]+)(.*)/gm, (_, ticket, prefix, rest) => {
+        const base = JIRA_BASE_URL_BY_PREFIX[prefix];
+        return base ? `<${base}/${ticket}|${ticket}>${rest}` : `${ticket}${rest}`;
+    });
 }
 
 export function updateWithGithubPRUrl({ str, baseGithubUrl }) {

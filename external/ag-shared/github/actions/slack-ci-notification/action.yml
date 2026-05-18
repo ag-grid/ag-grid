@@ -14,7 +14,7 @@ inputs:
         description: Notion API version.
         required: false
     AG_PROJECT:
-        description: Project name (AgGrid | AgCharts | Blog) - used for branding and base URLs.
+        description: Project name (AgGrid | AgCharts | AgStudio | Blog) - used for branding and base URLs.
         required: true
     LAST_SUCCESSFUL_SHA:
         description: SHA of the last successful workflow run on the target branch (used for git diff and change list).
