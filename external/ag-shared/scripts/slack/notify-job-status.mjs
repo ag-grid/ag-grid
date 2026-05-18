@@ -8,6 +8,7 @@ import {
     getGitChanges,
     getJobStatusSummary,
     getRunUrl,
+    ghaError,
 } from './_ci-notification-utils.mjs';
 
 const {
@@ -31,7 +32,7 @@ const {
 const required = { SLACK_BOT_OAUTH_TOKEN, NOTION_API_TOKEN, NOTION_DATA_SOURCE_ID, AG_PROJECT, RUN_ID, CURRENT_SHA, LAST_SUCCESSFUL_SHA, JOB_STATUSES };
 for (const [name, value] of Object.entries(required)) {
     if (!value) {
-        console.error(`Error: ${name} environment variable is not set.`);
+        ghaError(`${name} environment variable is not set.`, { title: 'Slack notification: missing config' });
         process.exit(1);
     }
 }
@@ -45,7 +46,9 @@ const THREAD_DEBUG_RAW = true;
     } catch (err) {
         // Don't fail the workflow over a notification-formatting issue; the
         // 'Fail job if workflow failed' step is the source of truth for CI status.
-        console.error(`Failed to parse JOB_STATUSES JSON; skipping slack notification. Error: ${err.message}\nReceived: ${JOB_STATUSES}`);
+        ghaError(`Failed to parse JOB_STATUSES JSON; skipping slack notification. Error: ${err.message}\nReceived: ${JOB_STATUSES}`, {
+            title: 'Slack notification: bad JOB_STATUSES',
+        });
         process.exit(0);
     }
     const status = deriveStatus(jobStatuses);
@@ -57,7 +60,7 @@ const THREAD_DEBUG_RAW = true;
         notionApiVersion: NOTION_API_VERSION,
     });
     if (error) {
-        console.error('Error fetching Slack user config:', error);
+        ghaError(`Error fetching Slack user config from Notion: ${error}`, { title: 'Slack notification: Notion fetch failed' });
         process.exit(1);
     }
 

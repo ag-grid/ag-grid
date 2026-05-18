@@ -38,6 +38,28 @@ const JIRA_BASE_URL_BY_PREFIX = {
 
 const MANY_CHANGES_LIMIT = 10;
 
+// ────────────────────────────────────────────────────────────────────────────
+// GitHub Actions workflow-command helpers. Emit `::warning::` / `::error::`
+// annotations so failures surface in the Actions run summary even when the
+// script exits 0. https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions
+// ────────────────────────────────────────────────────────────────────────────
+function escapeAnnotation(message) {
+    return String(message).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+}
+
+function emitAnnotation(level, message, { title } = {}) {
+    const titlePart = title ? ` title=${escapeAnnotation(title)}` : '';
+    console.log(`::${level}${titlePart}::${escapeAnnotation(message)}`);
+}
+
+export function ghaWarning(message, opts) {
+    emitAnnotation('warning', message, opts);
+}
+
+export function ghaError(message, opts) {
+    emitAnnotation('error', message, opts);
+}
+
 function getLibrary(project) {
     return LIBRARY_CONFIG[project] ?? LIBRARY_CONFIG[DEFAULT_LIBRARY];
 }

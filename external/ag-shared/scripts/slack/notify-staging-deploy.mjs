@@ -6,6 +6,8 @@ import {
     getGitChanges,
     getRunUrl,
     getStagingUrl,
+    ghaError,
+    ghaWarning,
 } from './_ci-notification-utils.mjs';
 
 const {
@@ -31,7 +33,7 @@ if (DEPLOY_TO_STAGING !== 'true') {
 const required = { SLACK_BOT_OAUTH_TOKEN, NOTION_API_TOKEN, NOTION_DATA_SOURCE_ID, AG_PROJECT, RUN_ID, CURRENT_SHA, LAST_SUCCESSFUL_SHA };
 for (const [name, value] of Object.entries(required)) {
     if (!value) {
-        console.error(`Error: ${name} environment variable is not set.`);
+        ghaError(`${name} environment variable is not set.`, { title: 'Staging deploy notification: missing config' });
         process.exit(1);
     }
 }
@@ -43,7 +45,9 @@ for (const [name, value] of Object.entries(required)) {
         notionApiVersion: NOTION_API_VERSION,
     });
     if (error) {
-        console.error('Error fetching Slack user config:', error);
+        ghaError(`Error fetching Slack user config from Notion: ${error}`, {
+            title: 'Staging deploy notification: Notion fetch failed',
+        });
         process.exit(1);
     }
 
@@ -70,6 +74,10 @@ for (const [name, value] of Object.entries(required)) {
         await sendSlackMessage({
             authToken: SLACK_BOT_OAUTH_TOKEN,
             data: { channel: WEBSITE_STATUS_CHANNEL, text: channelText, unfurl_links: false },
+        });
+    } else {
+        ghaWarning('WEBSITE_STATUS_CHANNEL is not set; skipping shared-channel post (opt-in DMs will still be sent).', {
+            title: 'Staging deploy notification: no shared channel',
         });
     }
 
