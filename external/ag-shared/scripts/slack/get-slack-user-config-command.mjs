@@ -9,11 +9,16 @@ if (!NOTION_API_TOKEN || !NOTION_DATA_SOURCE_ID) {
 
 (async () => {
     try {
-        const results = await getSlackUserConfig({
+        const { results, error } = await getSlackUserConfig({
             notionApiToken: NOTION_API_TOKEN,
             notionDataSourceId: NOTION_DATA_SOURCE_ID,
             notionApiVersion: NOTION_API_VERSION,
         });
+
+        if (error) {
+            console.error('Error fetching Slack user config:', error);
+            process.exit(1);
+        }
 
         console.log(JSON.stringify(results, null, 2));
     } catch (error) {

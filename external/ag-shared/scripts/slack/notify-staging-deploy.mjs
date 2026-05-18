@@ -35,11 +35,15 @@ for (const [name, value] of Object.entries(required)) {
 }
 
 (async () => {
-    const users = await getSlackUserConfig({
+    const { results: users, error } = await getSlackUserConfig({
         notionApiToken: NOTION_API_TOKEN,
         notionDataSourceId: NOTION_DATA_SOURCE_ID,
         notionApiVersion: NOTION_API_VERSION,
     });
+    if (error) {
+        console.error('Error fetching Slack user config:', error);
+        process.exit(1);
+    }
 
     const changes = getGitChanges(CURRENT_SHA, LAST_SUCCESSFUL_SHA, users);
     const { uniqueUsers, changesText } = getChangesData({

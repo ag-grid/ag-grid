@@ -1,4 +1,10 @@
-
+const SLACK_USER_KEY_MAP = {
+    "Slack ID": "slackId",
+    "Full Name": "fullName",
+    "Github": "github",
+    "Staging notification": "stagingNotification",
+    "Git Emails": { key: "gitEmails", extract: extractEmailsFromRichText },
+};
 
 const getDataSourceQueryUrl = (dataSourceId) => `https://api.notion.com/v1/data_sources/${dataSourceId}/query`;
 
@@ -133,13 +139,25 @@ export async function getSlackUserConfig({
         }
     })
     const data = await response.json();
-    const results = simplifyQueryResults(data, {
-        "Slack ID": "slackId",
-        "Full Name": "fullName",
-        "Github": "github",
-        "Staging notification": "stagingNotification",
-        "Git Emails": { key: "gitEmails", extract: extractEmailsFromRichText },
-    });
 
-    return results;
+    if (!Array.isArray(data?.results)) {
+        const notionMessage = data?.message ? ` Notion said: ${data.message}` : "";
+        return { error: `Notion query did not return a 'results' array (status ${response.status}).${notionMessage}` };
+    }
+
+    if (data.results.length === 0) {
+        return { error: "Notion query returned no rows, so the schema cannot be validated. Check the data source has at least one entry." };
+    }
+
+    const expectedHeadings = Object.keys(SLACK_USER_KEY_MAP);
+    const presentHeadings = Object.keys(data.results[0].properties ?? {});
+    const missing = expectedHeadings.filter((h) => !presentHeadings.includes(h));
+    if (missing.length > 0) {
+        const quote = (xs) => xs.map((x) => `"${x}"`).join(", ");
+        return {
+            error: `Notion data source is missing required column(s): ${quote(missing)}. Available columns: ${quote(presentHeadings)}.`,
+        };
+    }
+
+    return { results: simplifyQueryResults(data, SLACK_USER_KEY_MAP) };
 }
