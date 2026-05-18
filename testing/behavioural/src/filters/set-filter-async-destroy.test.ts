@@ -1,5 +1,6 @@
 import type { GridApi, GridOptions, ISetFilterParams, SetFilterValuesFuncParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { SetFilter } from 'ag-grid-enterprise';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, asyncSetTimeout } from '../test-utils';
@@ -55,15 +56,55 @@ describe('Set Filter async destroy safety', () => {
         };
     }
 
-    test('destroy before PROVIDED_CALLBACK success() fires does not throw', async () => {
-        const { api, fireSuccess } = createGridWithAsyncValues();
+    test('success() called after destroy does not resolve allKeys', async () => {
+        let capturedSuccess: ((values: string[]) => void) | undefined;
 
-        // Trigger validateModel by applying a filter model before values have loaded
-        await api.setColumnFilterModel('category', { filterType: 'set', values: ['A'] });
+        const api = gridsManager.createGrid('grid2', {
+            columnDefs: [
+                { field: 'name' },
+                {
+                    field: 'category',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        values: (params: SetFilterValuesFuncParams) => {
+                            capturedSuccess = params.success;
+                        },
+                    } as ISetFilterParams,
+                },
+            ],
+            rowData: ROW_DATA,
+        });
+
+        // getColumnFilterInstance creates the filter and queues the values callback setTimeout
+        // without blocking on allKeys resolution
+        const setFilter = (await api.getColumnFilterInstance('category')) as SetFilter<string>;
+        const valueModel = setFilter.handler.valueModel;
+
+        // Flush the macrotask that fires the values callback so capturedSuccess is populated
+        await asyncSetTimeout(0);
 
         api.destroy();
 
-        // Simulate the delayed async values callback resolving after destroy
+        capturedSuccess?.(['A', 'B', 'C']);
+        await asyncSetTimeout(0);
+
+        // isInitialised() is set inside allKeys.then() — if the guard blocked resolution it stays false
+        expect(valueModel.isInitialised()).toBe(false);
+    });
+
+    test('destroy before PROVIDED_CALLBACK success() fires does not throw', async () => {
+        const { api, fireSuccess } = createGridWithAsyncValues();
+
+        // updateAllValues() invokes the values callback via window.setTimeout, so we must flush
+        // the macrotask queue before capturedSuccess is populated and ready to be called.
+        await asyncSetTimeout(0);
+
+        // Trigger validateModel — don't await, it chains off the still-pending allKeys promise
+        void api.setColumnFilterModel('category', { filterType: 'set', values: ['A'] });
+
+        api.destroy();
+
+        // success() fires after destroy — the isAlive guard should prevent allKeys from resolving
         expect(() => fireSuccess()).not.toThrow();
         await asyncSetTimeout(0);
     });
@@ -74,7 +115,10 @@ describe('Set Filter async destroy safety', () => {
         let filterChangedCount = 0;
         api.addEventListener('filterChanged', () => filterChangedCount++);
 
-        await api.setColumnFilterModel('category', { filterType: 'set', values: ['A'] });
+        // Flush the macrotask that fires the values callback so capturedSuccess is populated
+        await asyncSetTimeout(0);
+
+        void api.setColumnFilterModel('category', { filterType: 'set', values: ['A'] });
 
         api.destroy();
         fireSuccess();
@@ -111,12 +155,14 @@ describe('Set Filter async destroy safety', () => {
             rowData: ROW_DATA,
         });
 
-        // Applying a filter on the name column fires filterChanged → onAnyFilterChanged on the
-        // category set filter, which calls refreshAvailable() and chains off the still-pending
-        // allKeys promise
+        // Flush the macrotask that fires the category values callback so capturedSuccess is populated
+        await asyncSetTimeout(0);
+
+        // Apply a name filter — fires filterChanged → onAnyFilterChanged on the category set filter,
+        // which calls refreshAvailable() and chains off the still-pending allKeys promise
         await api.setColumnFilterModel('name', { filterType: 'set', values: ['Item 1'] });
         api.onFilterChanged();
-        await asyncSetTimeout(0); // let the setTimeout inside onAnyFilterChanged fire
+        await asyncSetTimeout(0); // let the window.setTimeout inside onAnyFilterChanged fire
 
         api.destroy();
 
