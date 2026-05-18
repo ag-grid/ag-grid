@@ -1,8 +1,7 @@
 import { execSync } from 'child_process';
 import fetch from 'node-fetch';
-
-const yargs = require('yargs/yargs');
-const { hideBin } = require('yargs/helpers');
+import { hideBin } from 'yargs/helpers';
+import yargs from 'yargs/yargs';
 
 const args = yargs(hideBin(process.argv))
     .usage(
@@ -10,25 +9,31 @@ const args = yargs(hideBin(process.argv))
     )
     .options({
         'auth-token': {
+            type: 'string',
             demandOption: true,
         },
         'grid-channel': {
+            type: 'string',
             demandOption: true,
         },
         'charts-channel': {
+            type: 'string',
             demandOption: true,
         },
         'website-status-channel': {
+            type: 'string',
             demandOption: true,
         },
         'debug-channel': {
+            type: 'string',
             demandOption: true,
         },
         'run-context': {
+            type: 'string',
             demandOption: true,
         },
     })
-    .parse();
+    .parseSync();
 
 const SLACK_BOT_OAUTH_TOKEN = args.authToken;
 const GRID_TEAM_CITY_CHANNEL = args.gridChannel;
