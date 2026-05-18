@@ -75,6 +75,7 @@ export interface IFormulaDataService extends Bean {
 export interface IFormulaService extends Bean {
     active: boolean;
     hasCachedRows(): boolean;
+    isEvaluationActive(): boolean;
     isFormula(value: unknown): value is `=${string}`;
     setFormulasActive(cols: ColumnCollections): void;
     resolveValue(col: AgColumn, row: RowNode): unknown;

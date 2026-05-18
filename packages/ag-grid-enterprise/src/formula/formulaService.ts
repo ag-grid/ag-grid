@@ -92,12 +92,15 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     private formulaDataSvc: IFormulaDataService | undefined = undefined;
 
     /**
-     * Cached result of the "any column currently allows formulas?" scan, refreshed on every
-     * `setFormulasActive` call (which is the only time the underlying column set changes).
+     * Cached result of the "any column currently uses formula evaluation?" scan, refreshed on
+     * every `setFormulasActive` call (which is the only time the underlying column set changes).
      * Lets property-change listeners skip the O(cols) rescan on every masterDetail /
      * enableCellExpressions toggle.
      */
     private formulaColumnsPresent = false;
+
+    /** Calculated columns use formula evaluation without enabling editable formula behaviours. */
+    private calculatedColumnsActive = false;
 
     public hasCachedRows(): boolean {
         return this.cachedResult.size > 0;
@@ -109,20 +112,36 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      */
     public setFormulasActive(cols: _ColumnCollections): void {
         const columns = cols.list;
-        let formulaColumnsPresent = false;
+        const calculatedColumnsEnabled = this.gos.isModuleRegistered('CalculatedColumns');
+        let editableFormulaColumnsPresent = false;
+        let calculatedColumnsPresent = false;
         for (let i = 0, len = columns.length; i < len; ++i) {
-            if (columns[i].isAllowFormula()) {
-                formulaColumnsPresent = true;
+            const col = columns[i];
+            if (col.isAllowFormula()) {
+                editableFormulaColumnsPresent = true;
+            }
+            if (calculatedColumnsEnabled && col.colDef.calculatedExpression != null) {
+                calculatedColumnsPresent = true;
+            }
+            if (editableFormulaColumnsPresent && calculatedColumnsPresent) {
                 break;
             }
         }
+        const formulaColumnsPresent = editableFormulaColumnsPresent || calculatedColumnsPresent;
         this.formulaColumnsPresent = formulaColumnsPresent;
-        const active = formulaColumnsPresent && this.checkForIncompatibleServices(cols);
+        const compatible = formulaColumnsPresent && this.checkForIncompatibleServices(cols);
+        const active = compatible && editableFormulaColumnsPresent;
+        const calculatedColumnsActive = compatible && calculatedColumnsPresent;
 
-        if (active !== this.active) {
+        if (active !== this.active || calculatedColumnsActive !== this.calculatedColumnsActive) {
             this.active = active;
+            this.calculatedColumnsActive = calculatedColumnsActive;
             this.refreshFormulas(true);
         }
+    }
+
+    public isEvaluationActive(): boolean {
+        return this.active || this.calculatedColumnsActive;
     }
 
     private checkForIncompatibleServices(cols: _ColumnCollections): boolean {
@@ -166,7 +185,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         this.formulaDataSvc = this.beans.formulaDataSvc;
 
         const onCellValueChanged = (event: CellValueChangedEvent) => {
-            if (!this.active) {
+            if (!this.isEvaluationActive()) {
                 return;
             }
             // valueService fires this once for the edited node and once for its pinnedSibling.
@@ -183,7 +202,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             this.bumpValueCacheAndRefresh();
         };
         const onNewColumnsLoaded = () => {
-            if (!this.active) {
+            if (!this.isEvaluationActive()) {
                 return;
             }
             this.rebuildColRefMap();
@@ -192,7 +211,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             this.refreshFormulas(true);
         };
         const onColumnMoved = () => {
-            if (!this.active) {
+            if (!this.isEvaluationActive()) {
                 return;
             }
             // Rebuild unconditionally: `col.formulaRef` is read by the header and formula input,
@@ -210,7 +229,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         };
         const onPinnedRowsChanged = () => {
             const cache = this.cachedResult;
-            if (!this.active || cache.size === 0) {
+            if (!this.isEvaluationActive() || cache.size === 0) {
                 return;
             }
             // Do NOT use `dropRow` here: a pinned row's `pinnedSibling` points back to the
@@ -251,6 +270,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     public override destroy(): void {
         this.active = false;
+        this.calculatedColumnsActive = false;
         super.destroy();
 
         this.cachedResult.clear();
@@ -289,7 +309,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * recompute on next read while keeping parsed ASTs.
      */
     public onRowsChanged(changed: _ChangedRowNodes | undefined, newData: boolean | undefined): void {
-        if (!this.active) {
+        if (!this.isEvaluationActive()) {
             return;
         }
 
@@ -404,11 +424,11 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * Does NOT touch the formula cache; callers are responsible for invalidating values if needed.
      */
     private rebuildColRefMap() {
-        const { beans, active, colRefMap, colToRefMap } = this;
+        const { beans, colRefMap, colToRefMap } = this;
         colRefMap.clear();
         colToRefMap.clear();
 
-        if (!active) {
+        if (!this.isEvaluationActive()) {
             return;
         }
         const list = beans.colModel.getCols();
@@ -465,7 +485,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * `true` if anything was dropped.
      */
     public refreshRow(row: RowNode | string): boolean {
-        if (!this.active) {
+        if (!this.isEvaluationActive()) {
             return false;
         }
 
@@ -557,7 +577,8 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * the same plain cell trigger one `getFormula` + `fetchRawValue` pair, not N.
      */
     public ensureCellFormula(row: RowNode, col: AgColumn): CellFormula | null {
-        if (!this.active || !col.isAllowFormula()) {
+        const calculatedExpression = this.calculatedColumnsActive ? col.colDef.calculatedExpression : undefined;
+        if (!this.isEvaluationActive() || (!col.isAllowFormula() && calculatedExpression == null)) {
             return null;
         }
         const cache = this.cachedResult;
@@ -577,6 +598,16 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
         try {
             const dataSvc = this.formulaDataSvc;
+            if (calculatedExpression != null) {
+                const trimmedExpression = calculatedExpression.trim();
+                if (!trimmedExpression) {
+                    return null;
+                }
+                const formula = trimmedExpression.startsWith('=') ? trimmedExpression : `=${calculatedExpression}`;
+                const cellFormula = new CellFormula(row, col, formula, false, this.beans, this);
+                rowMap.set(col, cellFormula);
+                return cellFormula;
+            }
 
             const fromSource = dataSvc?.hasDataSource() ? dataSvc.getFormula({ column: col, rowNode: row }) : undefined;
             if (_isExpressionString(fromSource)) {
@@ -617,6 +648,10 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     /** Fetch a non-formula value from the grid without triggering nested formula calc. */
     private fetchRawValue(col: AgColumn, row: RowNode): unknown {
+        if (col.colDef.calculatedExpression != null && this.gos.isModuleRegistered('CalculatedColumns')) {
+            return undefined;
+        }
+
         return this.beans.valueSvc.getValue(col, row, 'data');
     }
 
@@ -649,7 +684,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             throw new FormulaError(52);
         }
 
-        const unresolvedDepIterator = unresolvedDeps(this.beans, ast, this);
+        const unresolvedDepIterator = unresolvedDeps(this.beans, ast, this, address);
 
         return { address, ast, unresolvedDepIterator };
     }

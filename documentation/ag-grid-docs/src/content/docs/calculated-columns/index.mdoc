@@ -1,0 +1,95 @@
+---
+title: "Calculated Columns"
+enterprise: true
+---
+
+Calculated Columns let you add read-only values to the grid without storing those values in row data. Each calculated column is defined in the column definition, evaluates against the same row, and can still use normal column features such as sorting, filtering, value formatting and cell rendering.
+
+## Enabling Calculated Columns
+
+Calculated columns are enabled by registering `CalculatedColumnsModule` and setting `calculatedExpression` on a column definition. Bracket references such as `[revenue]` resolve to columns in the same row by `colId`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'revenue' },
+        { field: 'cost' },
+        {
+            colId: 'profit',
+            headerName: 'Profit',
+            calculatedExpression: '[revenue] - [cost]',
+            cellDataType: 'number',
+            sortable: true,
+            filter: true,
+        },
+    ],
+};
+```
+
+{% gridExampleRunner title="Calculated Columns" name="calculated-columns" exampleHeight=350 /%}
+
+Calculated expressions do not need a leading equals sign (`=`). The value inside brackets must match the target column `colId`; if you want field-name-style references, set matching `colId`s on those columns.
+
+Calculated columns are always read-only. They cannot be edited through cell editing, paste, fill handle or delete operations.
+
+## Advanced Calculated Columns
+
+Calculated columns can use the same operators and functions as formulas, and can reference other calculated columns in the same row. This allows you to build chained derived values such as profit, margin and status columns.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'revenue' },
+        { field: 'cost' },
+        {
+            colId: 'profit',
+            calculatedExpression: '[revenue] - [cost]',
+            cellDataType: 'number',
+        },
+        {
+            colId: 'margin',
+            calculatedExpression: '[profit] / [revenue]',
+            cellDataType: 'number',
+            valueFormatter: params => `${Math.round(params.value * 100)}%`,
+        },
+        {
+            colId: 'status',
+            calculatedExpression: 'IF([margin] >= 0.25, "Healthy", "Review")',
+            cellDataType: 'text',
+        },
+    ],
+};
+```
+
+{% gridExampleRunner title="Advanced Calculated Columns" name="calculated-columns-advanced" exampleHeight=390 /%}
+
+When the Column Menu is registered, users can add a calculated column from the header menu using **Add Calculated Column**. Opening the header menu on a calculated column shows **Edit Calculated Column** for changing its title, type, expression and supported column properties, and **Remove Calculated Column** for removing it. Right-clicking cells in a calculated column also shows **Remove Calculated Column**. The dialog and remove action update the current `columnDefs`, so applications can persist the resulting definitions in the same way as any other column definition change.
+
+Header cells and grid cells for calculated columns include the `ag-calculated-column` CSS class, which can be used for custom styling.
+
+Calculated columns can also be managed from the Grid API. Added columns are appended to the current column definitions; use the column moving API afterwards if you need a specific display position.
+
+```{% frameworkTransform=true %}
+api.addCalculatedColumn({
+    colId: 'profitMargin',
+    headerName: 'Profit Margin %',
+    calculatedExpression: 'ROUND(([revenue] - [cost]) / [revenue] * 100, 1)',
+    cellDataType: 'number',
+});
+
+api.updateCalculatedColumn('profitMargin', {
+    calculatedExpression: 'ROUND(([revenue] - [cost]) / [revenue] * 100, 2)',
+});
+
+api.removeCalculatedColumn('profitMargin');
+```
+
+## API
+
+### Column Properties
+
+{% apiDocumentation source="column-properties/properties.json" section="calculatedColumns" names=["calculatedExpression"] /%}
+
+### Grid API
+
+{% apiDocumentation source="grid-api/api.json" section="calculatedColumns" names=["addCalculatedColumn", "updateCalculatedColumn", "removeCalculatedColumn"] /%}

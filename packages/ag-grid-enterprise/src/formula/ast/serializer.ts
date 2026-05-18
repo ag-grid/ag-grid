@@ -126,6 +126,9 @@ function emitA1Ref(beans: BeanCollection, ref: CellRef, isCol: boolean, unsafe: 
 }
 
 function serializeCellA1(beans: BeanCollection, cell: Cell, unsafe: boolean): string {
+    if (cell.row.current && !cell.endColumn && !cell.endRow) {
+        return `[${cell.column.id}]`;
+    }
     const startRef = emitA1Ref(beans, cell.column, true, unsafe) + emitA1Ref(beans, cell.row, false, unsafe);
     const { endColumn, endRow } = cell;
     if (endColumn && endRow) {
@@ -143,6 +146,9 @@ function emitRefRowPart(beans: BeanCollection, ref: CellRef): string {
 }
 
 function serializeCellREF(beans: BeanCollection, cell: Cell): string {
+    if (cell.row.current && !cell.endColumn && !cell.endRow) {
+        return `[${cell.column.id}]`;
+    }
     const start = 'REF(' + emitRefColPart(beans, cell.column) + ',' + emitRefRowPart(beans, cell.row);
     const { endColumn, endRow } = cell;
     if (endColumn && endRow) {

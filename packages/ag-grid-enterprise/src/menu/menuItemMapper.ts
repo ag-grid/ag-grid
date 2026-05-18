@@ -117,6 +117,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             valueColsSvc,
             pinnedRowModel,
             notesSvc,
+            calculatedColsSvc,
         } = beans;
 
         const getStockMenuItem = (
@@ -459,6 +460,30 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 }
+                case 'calculatedColumn':
+                    return calculatedColsSvc
+                        ? {
+                              name: localeTextFunc('calculatedColumnAdd', 'Add Calculated Column'),
+                              icon: _createIconNoSpan('calculatedColumnAdd', beans, null),
+                              action: () => calculatedColsSvc.showAddCalculatedColumnDialog(column),
+                          }
+                        : null;
+                case 'editCalculatedColumn':
+                    return calculatedColsSvc && column?.colDef.calculatedExpression != null
+                        ? {
+                              name: localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
+                              icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
+                              action: () => calculatedColsSvc.showUpdateCalculatedColumnDialog(column),
+                          }
+                        : null;
+                case 'removeCalculatedColumn':
+                    return calculatedColsSvc && column?.colDef.calculatedExpression != null
+                        ? {
+                              name: localeTextFunc('calculatedColumnRemove', 'Remove Calculated Column'),
+                              icon: _createIconNoSpan('calculatedColumnRemove', beans, null),
+                              action: () => calculatedColsSvc.removeCalculatedColumn(column),
+                          }
+                        : null;
                 case 'sortUnSort':
                 case 'sortAscending':
                 case 'sortDescending':

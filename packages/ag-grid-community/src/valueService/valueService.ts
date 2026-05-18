@@ -267,6 +267,10 @@ export class ValueService extends BeanStub implements NamedBean {
         const colDef = column.colDef;
         const colId = column.colId;
 
+        if (!isGroup && colDef.calculatedExpression != null && this.gos.isModuleRegistered('CalculatedColumns')) {
+            return this.beans.formula?.resolveValue(column, rowNode as RowNode);
+        }
+
         // Skipped for group rows — formulas + row grouping are not supported together.
         if (!isGroup && colDef.allowFormula) {
             const formula = this.beans.formula?.getDataSourceFormula(rowNode as RowNode, column);
@@ -580,6 +584,10 @@ export class ValueService extends BeanStub implements NamedBean {
 
     private isSetValueSupported(column: AgColumn, rowNode: IRowNode, newValue: any, colDef: ColDef): boolean {
         const { field, valueSetter } = colDef;
+
+        if (colDef.calculatedExpression != null && this.gos.isModuleRegistered('CalculatedColumns')) {
+            return false;
+        }
 
         const formulaSvc = this.beans.formula;
         const isFormulaValue = column.colDef.allowFormula && formulaSvc?.isFormula(newValue);

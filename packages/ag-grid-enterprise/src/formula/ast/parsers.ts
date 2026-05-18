@@ -47,6 +47,17 @@ const parseOperand = (
         return num;
     }
 
+    if (trimmed.startsWith('[') && trimmed.endsWith(']') && trimmed.length > 2) {
+        const colId = trimmed.slice(1, -1);
+        if (!unsafe && !beans.colModel.getColById(colId)) {
+            throw new FormulaParseError(2, 0, trimmed.length, [trimmed]);
+        }
+        return {
+            column: { id: colId, absolute: false },
+            row: { id: '', absolute: false, current: true },
+        };
+    }
+
     // cell/range
     // Matches: $A$1, A1, $A1, A$1, $A$1:$B10 etc.
     const parsed = parseA1Ref(trimmed);
@@ -193,6 +204,17 @@ function tokenize(expr: string): string[] {
             }
             tokens.push(expr.slice(i, j));
             i = j;
+            continue;
+        }
+
+        // calculated-column same-row reference (e.g. [revenue])
+        if (ch === '[') {
+            const end = expr.indexOf(']', i + 1);
+            if (end < 0) {
+                throw new FormulaParseError(5, i, i + 1, [ch]);
+            }
+            tokens.push(expr.slice(i, end + 1));
+            i = end + 1;
             continue;
         }
 

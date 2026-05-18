@@ -58,12 +58,18 @@ function isRangeCell(cell: Cell): boolean {
 type CellAddress = { row: RowNode; column: AgColumn };
 
 /** Resolve a Cell to concrete grid objects, honouring absolute vs relative semantics. */
-function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | null {
+function resolveRefToAddress(
+    beans: BeanCollection,
+    cell: Cell,
+    caller?: { row: RowNode; column: AgColumn }
+): CellAddress | null {
     const { row, column } = cell;
 
-    const rowNode = row.absolute
-        ? _getClientSideRowModel(beans)?.getFormulaRow(Number(row.id) - 1)
-        : beans.rowModel.getRowNode(row.id);
+    const rowNode = row.current
+        ? caller?.row
+        : row.absolute
+          ? _getClientSideRowModel(beans)?.getFormulaRow(Number(row.id) - 1)
+          : beans.rowModel.getRowNode(row.id);
 
     const agCol = column.absolute ? beans.formula!.getColByRef(column.id) : beans.colModel.getColById(column.id);
 
@@ -90,7 +96,7 @@ export function evalAst(
             throw new FormulaError(25);
         }
 
-        const addr = resolveRefToAddress(beans, v);
+        const addr = resolveRefToAddress(beans, v, caller);
         if (!addr) {
             throw new FormulaError(26);
         }
@@ -120,10 +126,10 @@ function operandToArg(
 
         if (isRangeCell(v)) {
             // return a range iterable with range context
-            return buildRangeArgLazy(beans, v, resolver);
+            return buildRangeArgLazy(beans, v, resolver, caller);
         }
 
-        const addr = resolveRefToAddress(beans, v);
+        const addr = resolveRefToAddress(beans, v, caller);
         if (!addr) {
             throw new FormulaError(26);
         }
@@ -238,7 +244,13 @@ function makeArgIterables(
     return { args, values };
 }
 
-function resolveRowIndex(beans: BeanCollection, ref: CellRef): number {
+function resolveRowIndex(beans: BeanCollection, ref: CellRef, caller?: { row: RowNode; column: AgColumn }): number {
+    if (ref.current) {
+        if (caller?.row.formulaRowIndex == null) {
+            throw new FormulaError(29);
+        }
+        return caller.row.formulaRowIndex;
+    }
     if (ref.absolute) {
         const n = Number(ref.id) - 1;
         if (!Number.isFinite(n) || n < 0) {
@@ -341,9 +353,14 @@ class RangeValuesIterator implements Iterator<unknown> {
     }
 }
 
-function buildRangeArgLazy(beans: BeanCollection, cell: Cell, resolver: FormulaResolver): RangeParam {
-    const r1 = resolveRowIndex(beans, cell.row);
-    const r2 = cell.endRow ? resolveRowIndex(beans, cell.endRow) : r1;
+function buildRangeArgLazy(
+    beans: BeanCollection,
+    cell: Cell,
+    resolver: FormulaResolver,
+    caller?: { row: RowNode; column: AgColumn }
+): RangeParam {
+    const r1 = resolveRowIndex(beans, cell.row, caller);
+    const r2 = cell.endRow ? resolveRowIndex(beans, cell.endRow, caller) : r1;
     const rowStart = Math.min(r1, r2);
     const rowEnd = Math.max(r1, r2);
 
@@ -424,7 +441,12 @@ function* rangeAddrs(
  * Streams uncached formula dependencies from an AST in traversal order.
  * Skips primitives, non-formula cells, cached formula cells, and already-done cells.
  */
-export function* unresolvedDeps(beans: BeanCollection, root: FormulaNode, resolver: FormulaResolver): Generator<Addr> {
+export function* unresolvedDeps(
+    beans: BeanCollection,
+    root: FormulaNode,
+    resolver: FormulaResolver,
+    caller?: { row: RowNode; column: AgColumn }
+): Generator<Addr> {
     const astStack: FormulaNode[] = [root];
 
     while (astStack.length) {
@@ -440,7 +462,7 @@ export function* unresolvedDeps(beans: BeanCollection, root: FormulaNode, resolv
 
             // Single-cell reference
             if (!operandValue.endColumn && !operandValue.endRow) {
-                const cellAddress = resolveRefToAddress(beans, operandValue);
+                const cellAddress = resolveRefToAddress(beans, operandValue, caller);
                 if (!cellAddress) {
                     throw new FormulaError(33);
                 }
@@ -459,8 +481,8 @@ export function* unresolvedDeps(beans: BeanCollection, root: FormulaNode, resolv
             }
 
             // Range reference
-            const firstRowIndex = resolveRowIndex(beans, operandValue.row);
-            const secondRowIndex = resolveRowIndex(beans, operandValue.endRow);
+            const firstRowIndex = resolveRowIndex(beans, operandValue.row, caller);
+            const secondRowIndex = resolveRowIndex(beans, operandValue.endRow, caller);
             const rowStartIndex = Math.min(firstRowIndex, secondRowIndex);
             const rowEndIndex = Math.max(firstRowIndex, secondRowIndex);
 

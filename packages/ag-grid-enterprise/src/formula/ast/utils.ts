@@ -85,5 +85,5 @@ export class FormulaParseError extends FormulaError {
 }
 
 // Shared cell types & guards
-export type CellRef = { id: string; absolute: boolean };
+export type CellRef = { id: string; absolute: boolean; current?: boolean };
 export type Cell = { column: CellRef; row: CellRef; endColumn?: CellRef; endRow?: CellRef };

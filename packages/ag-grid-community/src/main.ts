@@ -242,6 +242,11 @@ export type { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterB
 export type { IAdvancedFilterParams } from './interfaces/iAdvancedFilterParams';
 export type { ContainerType, IAfterGuiAttachedParams } from './interfaces/iAfterGuiAttachedParams';
 export type {
+    CalculatedColumnDef,
+    CalculatedColumnUpdate,
+    ICalculatedColumnsService,
+} from './interfaces/iCalculatedColumns';
+export type {
     AlwaysPassFilter,
     BaseFilter,
     BaseFilterParams,

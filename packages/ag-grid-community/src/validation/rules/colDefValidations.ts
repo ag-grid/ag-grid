@@ -36,6 +36,7 @@ const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> =
 
 export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGroupDef> = {
     allowFormula: 'Formula',
+    calculatedExpression: 'CalculatedColumns',
     aggFunc: 'SharedAggregation',
     autoHeight: 'RowAutoHeight',
     cellClass: 'CellStyle',
@@ -124,6 +125,21 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         },
         allowFormula: {
             supportedRowModels: ['clientSide'],
+        },
+        calculatedExpression: {
+            supportedRowModels: ['clientSide'],
+            validate: (colDef) => {
+                if (colDef.calculatedExpression == null) {
+                    return null;
+                }
+                if (colDef.field || colDef.valueGetter || colDef.valueSetter) {
+                    return 'colDef.calculatedExpression is used as the value source and should not be combined with field, valueGetter or valueSetter.';
+                }
+                if (colDef.editable || colDef.cellEditor || colDef.cellEditorSelector) {
+                    return 'colDef.calculatedExpression columns are read-only and should not be combined with editable, cellEditor or cellEditorSelector.';
+                }
+                return null;
+            },
         },
         cellRendererParams: {
             validate: (colDef) => {
@@ -376,6 +392,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     cellEditorPopupPosition: undefined,
     headerGroupComponent: undefined,
     headerGroupComponentParams: undefined,
+    calculatedExpression: undefined,
     cellStyle: undefined,
     cellRenderer: undefined,
     cellRendererParams: undefined,

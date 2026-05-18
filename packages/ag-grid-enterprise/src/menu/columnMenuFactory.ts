@@ -168,7 +168,21 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             result.push('valueAggSubMenu');
         }
 
-        if (allowPinning || allowValueAgg) {
+        if (gos.isModuleRegistered('CalculatedColumns') && isPrimary) {
+            if (column?.colDef.calculatedExpression != null) {
+                result.push('editCalculatedColumn');
+                result.push('removeCalculatedColumn');
+            }
+            result.push('calculatedColumn');
+        }
+
+        if (
+            allowPinning ||
+            allowValueAgg ||
+            result[result.length - 1] === 'calculatedColumn' ||
+            result[result.length - 1] === 'editCalculatedColumn' ||
+            result[result.length - 1] === 'removeCalculatedColumn'
+        ) {
             result.push(MENU_ITEM_SEPARATOR);
         }
 
