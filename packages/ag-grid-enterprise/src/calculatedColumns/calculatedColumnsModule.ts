@@ -1,5 +1,5 @@
 import type { _CalculatedColumnsGridApi, _ModuleWithApi } from 'ag-grid-community';
-import { _PopupModule } from 'ag-grid-community';
+import { ColumnApiModule, _PopupModule } from 'ag-grid-community';
 
 import { FormulaModule } from '../formula/formulaModule';
 import { VERSION } from '../version';
@@ -19,7 +19,7 @@ export const CalculatedColumnsModule: _ModuleWithApi<_CalculatedColumnsGridApi<a
         updateCalculatedColumn,
         removeCalculatedColumn,
     },
-    dependsOn: [FormulaModule, _PopupModule],
+    dependsOn: [FormulaModule, _PopupModule, ColumnApiModule],
     icons: {
         calculatedColumnAdd: 'plus',
         calculatedColumnEdit: 'edit',

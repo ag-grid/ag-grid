@@ -123,7 +123,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             if (calculatedColumnsEnabled && col.colDef.calculatedExpression != null) {
                 calculatedColumnsPresent = true;
             }
-            if (editableFormulaColumnsPresent && calculatedColumnsPresent) {
+            if (editableFormulaColumnsPresent && (calculatedColumnsPresent || !calculatedColumnsEnabled)) {
                 break;
             }
         }
