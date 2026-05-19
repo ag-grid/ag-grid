@@ -1,64 +1,62 @@
 ---
-root: false
 targets: ['*']
-description: 'Example conventions for AG Charts — loads /example skill for full guide'
-globs: ['**/_examples/**/*', 'packages/ag-charts-website/src/content/gallery/**/*']
+description: 'Working with examples in AG Grid documentation'
+globs: ['_examples/**/*', 'documentation/**/_examples/**/*']
 ---
 
-# Example Conventions
+# Examples Guide
 
-When creating or editing AG Charts examples, follow these conventions:
+This guide covers working with examples in the AG Grid documentation.
 
-1. **Module registration**: Register modules with `ModuleRegistry` before chart creation
-2. **Object-based axes** (v13+): Use `axes: { x: { type: 'category' }, y: { type: 'number' } }` — not legacy array syntax
-3. **Container pattern**: Use `document.getElementById('myChart')` for container setup
-4. **Top-level functions**: Event handlers and chart update functions must be top-level
-5. **Framework compatible**: All public docs examples MUST work across all frameworks (NO `@ag-skip-fws`)
-6. **Controls in HTML**: Place controls BEFORE chart div using this structure:
-    ```html
-    <div class="example-controls">
-        <div class="controls-row">
-            Label Text:
-            <button onclick="handler('value')"><code>'value'</code></button>
-        </div>
-    </div>
-    ```
+## Overview
 
-## API surface verification
+Examples demonstrate AG Grid features in the documentation. They are automatically transformed from vanilla TypeScript into React, Angular, and Vue variants.
 
-Before writing any chart code in an example or plunker, verify every API surface against `packages/ag-charts-types/src` — never trust training data for AG Charts. The rule applies to **all** shapes you touch, not just top-level options:
+## Example Structure
 
--   **Option properties** — top-level option names, nesting, value shapes.
--   **Event payload fields** — before reading `ev.foo` in a listener, grep the relevant `Ag...Event` interface (e.g. `AgSelectionChangeEvent`, `AgNodeClickEvent`). A throwing listener can make the library look broken.
--   **Listener callback arguments** — `itemStyler`, `formatter`, `label` callbacks each have their own `*Params` interface.
--   **Chart instance methods** — verify against `AgChartInstance` / `AgTypedChartInstance` before calling something that sounds plausible (e.g. `getSelection()` does not exist).
+Examples are located in `_examples/` directories within documentation:
 
-When a type definition is not obvious, cross-check with a working example under `packages/ag-charts-website/src/content/docs/*/_examples/` or `packages/ag-charts-website/src/content/gallery/_examples/`. Do this _before_ writing the code, not after the user reports a bug.
+```
+documentation/ag-grid-docs/src/content/docs/feature-name/
+├── index.mdoc           # Documentation page
+└── _examples/
+    └── example-name/
+        ├── main.ts      # Main example code
+        ├── index.html   # HTML template
+        ├── styles.css   # Optional styles
+        └── data.ts      # Optional data file
+```
 
-## Verification gate — no behaviour claims without browser evidence
+## Framework Compatibility
 
-Any claim about user-visible behaviour in a plunker or example requires browser evidence captured during the current session before the claim is made:
+All public documentation examples MUST work across all frameworks:
 
--   "This works" / "it renders correctly"
--   "This is fixed"
--   "This reproduces the bug"
--   "Selection / hover / click behaves as expected"
+- Vanilla JavaScript/TypeScript
+- React
+- Angular
+- Vue 3
 
-Evidence = a screenshot of the relevant state, or a console-log capture showing the expected output, taken via the Chrome extension MCP tools (`mcp__claude-in-chrome__*`) against staging or a plunker URL. Reading source code, reviewing the diff, or reasoning about the change is **not** evidence of runtime behaviour.
+### Writing Framework-Compatible Examples
 
-If the Chrome extension is not connected, say so explicitly and state what was not verified — do not assert behaviour.
+- Use `document.getElementById('myGrid')` or `document.querySelector('#myGrid')` for grid container references
+- Store options in top-level variables
+- Keep event handlers as simple function calls
+- Avoid complex DOM manipulation
+- No external library dependencies
 
-When the user gives you a reference plunker that "works" and yours "doesn't", open both in the browser first and compare observed behaviour before theorising about differences in the code. Static diffs can mislead — a listener that throws at runtime is only visible from the browser console.
+## Validation
 
-## Regenerating Examples After Source Changes
+```bash
+# Validate all examples typecheck
+yarn nx validate-examples ag-grid-docs
 
-The `generate-examples` target depends on ~800 per-example sub-tasks. `--skip-nx-cache` on the parent does NOT always invalidate child caches.
+# Generate framework variants
+yarn nx generate-examples ag-grid-docs
+```
 
-To force a clean regeneration of specific examples:
+## Best Practices
 
-1. Delete the specific example's output across all framework dirs:
-   `rm -rf dist/packages/ag-charts-website/{reactFunctional,reactFunctionalTs,angular,vue3,vanilla,typescript}/<page>/`
-2. Run the full generation: `NX_DAEMON=false yarn nx generate-examples ag-charts-website --skip-nx-cache`
-3. Or for a full clean rebuild: `yarn nx clean && yarn nx generate-examples ag-charts-website`
-
-For full reference (guidelines, validation, framework generation, Plnkr integration), load the `/ag-product:example` skill.
+1. Keep examples focused on a single feature
+2. Use realistic but minimal data
+3. Include comments explaining key concepts
+4. Test in dev server across all frameworks
