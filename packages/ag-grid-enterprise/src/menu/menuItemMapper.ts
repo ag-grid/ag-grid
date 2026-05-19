@@ -122,7 +122,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         } = beans;
 
         const forEachRowInSelection = (action: (node: RowNode) => void) => {
-            rangeSvc?.getCellRanges().forEach((cellRange) => {
+            rangeSvc?.getCellRanges()?.forEach((cellRange) => {
                 rangeSvc.forEachRowInRange(cellRange, (row) => {
                     const node = _getRowNode(beans, row);
                     if (node) {
