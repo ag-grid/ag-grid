@@ -166,9 +166,10 @@ export class PageSummaryComp extends Component {
         const { pagination, lbCurrent } = this;
         const total = pagination.getTotalPages();
         const rawValue = lbCurrent.getValue(true);
-        const value = Number(rawValue);
+        let value = Number(rawValue);
         if (!rawValue?.trim() || !Number.isFinite(value)) {
-            return;
+            value = pagination.getCurrentPage() + 1;
+            lbCurrent.setValue(String(value), true);
         }
         pagination.goToPage(Math.max(1, Math.min(value, total)) - 1);
     }
