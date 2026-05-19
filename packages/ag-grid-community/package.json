@@ -119,7 +119,7 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "ag-charts-types": "13.3.0"
+    "ag-charts-types": "13.3.0-beta.20260519"
   },
   "devDependencies": {
     "web-streams-polyfill": "^4.2.0",
