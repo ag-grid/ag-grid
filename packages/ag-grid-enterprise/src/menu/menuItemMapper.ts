@@ -122,20 +122,22 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             valueColsSvc,
         } = beans;
 
-        const getPinActionHandler = (sideOrRemove: 'top' | 'bottom' | null, { node, column }: IMenuActionParams) => {
-            if (node) {
-                return pinnedRowModel!.pinRow(node as RowNode, sideOrRemove ?? null, column as AgColumn);
-            }
-            // pick selected cells / rows / columns
-            return rangeSvc?.getCellRanges()?.forEach((cellRange) => {
-                rangeSvc.forEachRowInRange(cellRange, (row) => {
-                    const nodeFromSelection = _getRowNode(beans, row);
-                    if (nodeFromSelection) {
-                        pinnedRowModel!.pinRow(nodeFromSelection, sideOrRemove ?? null, null);
-                    }
+        const getPinActionHandler =
+            (sideOrRemove: 'top' | 'bottom' | null) =>
+            ({ node, column }: IMenuActionParams) => {
+                if (node) {
+                    return pinnedRowModel!.pinRow(node as RowNode, sideOrRemove ?? null, column as AgColumn);
+                }
+                // pick selected cells / rows / columns
+                return rangeSvc?.getCellRanges()?.forEach((cellRange) => {
+                    rangeSvc.forEachRowInRange(cellRange, (row) => {
+                        const nodeFromSelection = _getRowNode(beans, row);
+                        if (nodeFromSelection) {
+                            pinnedRowModel!.pinRow(nodeFromSelection, sideOrRemove ?? null, null);
+                        }
+                    });
                 });
-            });
-        };
+            };
 
         const getStockMenuItem = (
             key: DefaultMenuItem,
@@ -208,7 +210,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('pinTop', 'Pin to Top'),
                               icon: _createIconNoSpan('rowPinTop', beans, column),
-                              action: getPinActionHandler.bind(this, 'top'),
+                              action: getPinActionHandler('top'),
                           }
                         : null;
                 case 'pinBottom':
@@ -216,7 +218,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('pinBottom', 'Pin to Bottom'),
                               icon: _createIconNoSpan('rowPinBottom', beans, column),
-                              action: getPinActionHandler.bind(this, 'bottom'),
+                              action: getPinActionHandler('bottom'),
                           }
                         : null;
                 case 'unpinRow':
@@ -224,7 +226,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('unpinRow', 'Unpin Row'),
                               icon: _createIconNoSpan('rowUnpin', beans, column),
-                              action: getPinActionHandler.bind(this, null),
+                              action: getPinActionHandler(null),
                           }
                         : null;
                 case 'valueAggSubMenu':
