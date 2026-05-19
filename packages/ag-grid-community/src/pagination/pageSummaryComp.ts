@@ -164,11 +164,20 @@ export class PageSummaryComp extends Component {
 
     private onInputPage(): void {
         const { pagination, lbCurrent } = this;
-        const total = pagination.getTotalPages();
         const rawValue = lbCurrent.getValue(true);
-        let value = Number(rawValue);
-        if (!rawValue?.trim() || !Number.isFinite(value)) {
-            value = pagination.getCurrentPage() + 1;
+        const rawValueNum = Number(rawValue);
+        let value = 0;
+        if (rawValue?.trim?.()) {
+            value = rawValueNum;
+        }
+        if (!Number.isFinite(value)) {
+            value = pagination.getCurrentPage();
+        }
+        const total = pagination.getTotalPages();
+        if (value <= 0 || value >= total) {
+            value = Math.max(1, Math.min(value, total));
+        }
+        if (rawValueNum !== value) {
             lbCurrent.setValue(String(value), true);
         }
         pagination.goToPage(Math.max(1, Math.min(value, total)) - 1);
@@ -220,11 +229,12 @@ export class PageSummaryComp extends Component {
 
         this.lbCurrent.setMin(1);
         this.lbCurrent.setMax(totalPages);
-        this.lbCurrent.getInputElement().style.width = `${lbTotal.length + 2}ch`;
+        this.lbCurrent.getInputElement().style.width = `${Math.floor(Math.log10(totalPages) + 3)}ch`; // log10 returns number of digits (as an integer part + fraction) - 1
 
         const pagesExist = totalPages > 0;
         const lbCurrent = this.formatNumber(pagesExist ? currentPage + 1 : 0);
-        this.lbCurrent.setValue(lbCurrent);
+        const lbCurrentValue = pagesExist ? currentPage + 1 : 0;
+        this.lbCurrent.setValue(lbCurrentValue.toString());
 
         const strPage = localeTextFunc('page', 'Page');
         const strOf = localeTextFunc('of', 'of');
