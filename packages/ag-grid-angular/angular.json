@@ -28,6 +28,7 @@
                     "builder": "@angular/build:karma",
                     "options": {
                         "main": "projects/ag-grid-angular/src/test.ts",
+                        "polyfills": ["zone.js", "zone.js/testing"],
                         "tsConfig": "projects/ag-grid-angular/tsconfig.spec.json",
                         "karmaConfig": "projects/ag-grid-angular/karma.conf.js"
                     }
