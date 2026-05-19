@@ -89,12 +89,12 @@ jobs:
                     version: 1,
                     content: [
                         paragraph([
-                            txt(`${sentinel}[This issue was mentioned in `),
+                            txt(`This issue was mentioned in `),
                             link(`PR #${issue_number}`, prLink),
                             pr_title ? txt(` — ${pr_title}`) : txt(''),
                             txt(' by '),
                             link('CI workflow', process.env.JOB_URL || '#'),
-                            txt('.]'),
+                            txt(`.\n${sentinel}`),
                         ]),
                     ],
                 };
