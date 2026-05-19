@@ -107,9 +107,13 @@ describe('paginationPanels', () => {
                 expect(id).toMatch(new RegExp(`^${panelId}-`));
             }
 
-            // Page summary IDs
+            // Page summary IDs — exclude internal elements of the input number field,
+            // which use their own component ID prefix for label/input wiring
             const pageSummary = panel.querySelector('.ag-paging-page-summary-panel')!;
-            const pageIds = Array.from(pageSummary.querySelectorAll('[id]')).map((el) => el.id);
+            const numberField = pageSummary.querySelector('.ag-number-field');
+            const pageIds = Array.from(pageSummary.querySelectorAll('[id]'))
+                .filter((el) => numberField == null || el === numberField || !numberField.contains(el))
+                .map((el) => el.id);
             expect(pageIds.length).toBeGreaterThan(0);
             for (const id of pageIds) {
                 expect(id).toMatch(new RegExp(`^${panelId}-`));
@@ -138,7 +142,7 @@ describe('paginationPanels', () => {
             const api = createPaginationGrid(gridsManager);
             const panel = getPagingPanel(api)!;
             const pageNumbers = panel.querySelectorAll('.ag-paging-page-summary-panel .ag-paging-number');
-            expect(pageNumbers[0].textContent).toBe('1'); // current page
+            expect((pageNumbers[0].querySelector('input') as HTMLInputElement).value).toBe('1'); // current page
             expect(pageNumbers[1].textContent).toBe('5'); // total pages
         });
     });

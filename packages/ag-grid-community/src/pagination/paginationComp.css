@@ -43,7 +43,7 @@
     }
 }
 
-.ag-number-field.ag-paging-number {
+:where(.ag-number-field).ag-paging-number {
     display: inline-block;
 }
 

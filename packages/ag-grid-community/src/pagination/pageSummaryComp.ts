@@ -165,11 +165,12 @@ export class PageSummaryComp extends Component {
     private onInputPage(): void {
         const { pagination, lbCurrent } = this;
         const total = pagination.getTotalPages();
-        let value = Number(lbCurrent.getValue(true));
-        if (!(value >= 1 && value <= total)) {
-            value = Math.max(1, Math.min(value, total));
+        const rawValue = lbCurrent.getValue(true);
+        const value = Number(rawValue);
+        if (!rawValue?.trim() || !Number.isFinite(value)) {
+            return;
         }
-        pagination.goToPage(value - 1);
+        pagination.goToPage(Math.max(1, Math.min(value, total)) - 1);
     }
 
     public refresh(): void {
