@@ -232,8 +232,8 @@ export class PageSummaryComp extends Component {
         this.lbCurrent.getInputElement().style.width = `${Math.floor(Math.log10(totalPages) + 3)}ch`; // log10 returns number of digits (as an integer part + fraction) - 1
 
         const pagesExist = totalPages > 0;
-        const lbCurrent = this.formatNumber(pagesExist ? currentPage + 1 : 0);
-        const lbCurrentValue = pagesExist ? currentPage + 1 : 0;
+        const lbCurrentValue = pagesExist ? currentPage + 1 : 1;
+        const lbCurrent = this.formatNumber(lbCurrentValue);
         this.lbCurrent.setValue(lbCurrentValue.toString());
 
         const strPage = localeTextFunc('page', 'Page');
