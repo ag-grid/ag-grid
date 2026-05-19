@@ -98,26 +98,39 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
         const localeTextFunc = this.getLocaleTextFunc();
         const { beans, gos } = this;
+
         const {
-            pinnedCols,
-            colAutosize,
             aggFuncSvc,
-            rowGroupColsSvc,
-            colNames,
-            colModel,
+            chartMenuItemMapper,
             clipboardSvc,
-            expansionSvc,
-            focusSvc,
+            colAutosize,
+            colChooserFactory,
+            colModel,
+            colNames,
             csvCreator,
             excelCreator,
+            expansionSvc,
+            focusSvc,
             menuSvc,
-            colChooserFactory,
-            sortSvc,
-            chartMenuItemMapper,
-            valueColsSvc,
-            pinnedRowModel,
             notesSvc,
+            pinnedCols,
+            pinnedRowModel,
+            rangeSvc,
+            rowGroupColsSvc,
+            sortSvc,
+            valueColsSvc,
         } = beans;
+
+        const forEachRowInSelection = (action: (node: RowNode) => void) => {
+            rangeSvc?.getCellRanges().forEach((cellRange) => {
+                rangeSvc.forEachRowInRange(cellRange, (row) => {
+                    const node = _getRowNode(beans, row);
+                    if (node) {
+                        action(node);
+                    }
+                });
+            });
+        };
 
         const getStockMenuItem = (
             key: DefaultMenuItem,
@@ -190,8 +203,13 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('pinTop', 'Pin to Top'),
                               icon: _createIconNoSpan('rowPinTop', beans, column),
-                              action: ({ node, column }) =>
-                                  node && pinnedRowModel.pinRow(node as RowNode, 'top', column as AgColumn | null),
+                              action: ({ node, column }) => {
+                                  if (node) {
+                                      pinnedRowModel.pinRow(node as RowNode, 'top', column as AgColumn | null);
+                                  } else {
+                                      forEachRowInSelection((node) => pinnedRowModel.pinRow(node, 'top', null));
+                                  }
+                              },
                           }
                         : null;
                 case 'pinBottom':
@@ -199,8 +217,13 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('pinBottom', 'Pin to Bottom'),
                               icon: _createIconNoSpan('rowPinBottom', beans, column),
-                              action: ({ node, column }) =>
-                                  node && pinnedRowModel.pinRow(node as RowNode, 'bottom', column as AgColumn | null),
+                              action: ({ node, column }) => {
+                                  if (node) {
+                                      pinnedRowModel.pinRow(node as RowNode, 'bottom', column as AgColumn | null);
+                                  } else {
+                                      forEachRowInSelection((node) => pinnedRowModel.pinRow(node, 'bottom', null));
+                                  }
+                              },
                           }
                         : null;
                 case 'unpinRow':
@@ -208,8 +231,13 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('unpinRow', 'Unpin Row'),
                               icon: _createIconNoSpan('rowUnpin', beans, column),
-                              action: ({ node, column }) =>
-                                  node && pinnedRowModel.pinRow(node as RowNode, null, column as AgColumn | null),
+                              action: ({ node, column }) => {
+                                  if (node) {
+                                      pinnedRowModel.pinRow(node as RowNode, null, column as AgColumn | null);
+                                  } else {
+                                      forEachRowInSelection((node) => pinnedRowModel.pinRow(node, null, null));
+                                  }
+                              },
                           }
                         : null;
                 case 'valueAggSubMenu':
