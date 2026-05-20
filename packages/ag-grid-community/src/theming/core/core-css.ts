@@ -134,6 +134,26 @@ export interface CoreParams extends SharedThemeParams {
     fullRowEditInvalidBackgroundColor: ColorValue;
 
     /**
+     * Background color for cells in batch edit mode
+     */
+    cellBatchEditBackgroundColor: ColorValue;
+
+    /**
+     * Text color for cells in batch edit mode
+     */
+    cellBatchEditTextColor: ColorValue;
+
+    /**
+     * Background color for rows in batch edit mode
+     */
+    rowBatchEditBackgroundColor: ColorValue;
+
+    /**
+     * Text color for rows in batch edit mode
+     */
+    rowBatchEditTextColor: ColorValue;
+
+    /**
      * Color of the drag handle on draggable rows and column markers
      */
     dragHandleColor: ColorValue;
@@ -646,26 +666,6 @@ export interface CoreParams extends SharedThemeParams {
     statusBarValueFontWeight: FontWeightValue;
 
     /**
-     * Background color for cells in batch edit mode
-     */
-    cellBatchEditBackgroundColor: ColorValue;
-
-    /**
-     * Text color for cells in batch edit mode
-     */
-    cellBatchEditTextColor: ColorValue;
-
-    /**
-     * Background color for rows in batch edit mode
-     */
-    rowBatchEditBackgroundColor: ColorValue;
-
-    /**
-     * Text color for rows in batch edit mode
-     */
-    rowBatchEditTextColor: ColorValue;
-
-    /**
      * The color of the 1st formula field token
      */
     formulaToken1Color: ColorValue;
@@ -936,6 +936,10 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
         onto: 'backgroundColor',
         mix: 0.25,
     },
+    cellBatchEditBackgroundColor: 'rgba(220 181 139 / 16%)',
+    cellBatchEditTextColor: '#422f00',
+    rowBatchEditBackgroundColor: { ref: 'cellBatchEditBackgroundColor' },
+    rowBatchEditTextColor: { ref: 'cellBatchEditTextColor' },
     columnSelectIndentSize: {
         ref: 'iconSize',
     },
@@ -1008,10 +1012,6 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     rowDragIndicatorWidth: 2,
     columnDragIndicatorColor: { ref: 'accentColor' },
     columnDragIndicatorWidth: 2,
-    cellBatchEditBackgroundColor: 'rgba(220 181 139 / 16%)',
-    cellBatchEditTextColor: '#422f00',
-    rowBatchEditBackgroundColor: { ref: 'cellBatchEditBackgroundColor' },
-    rowBatchEditTextColor: { ref: 'cellBatchEditTextColor' },
     formulaToken1Color: '#3269c6',
     formulaToken1BackgroundColor: { ref: 'formulaToken1Color', mix: 0.08 },
     formulaToken1Border: { color: { ref: 'formulaToken1Color' } },
