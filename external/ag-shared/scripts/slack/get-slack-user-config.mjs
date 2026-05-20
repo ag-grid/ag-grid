@@ -131,26 +131,38 @@ export async function getSlackUserConfig({
     notionApiVersion = "2026-03-11",
 }) {
     const queryUrl = getDataSourceQueryUrl(notionDataSourceId);
-    const response = await fetch(queryUrl, {
-        method: "post",
-        headers: {
-            "Authorization": `Bearer ${notionApiToken}`,
-            "Notion-Version": notionApiVersion
+    // Notion paginates query results; loop until `has_more` is false so the user list is complete
+    // even after the data source grows past Notion's default page size.
+    const allResults = [];
+    let startCursor;
+    do {
+        const body = startCursor ? JSON.stringify({ start_cursor: startCursor }) : undefined;
+        const response = await fetch(queryUrl, {
+            method: "post",
+            headers: {
+                "Authorization": `Bearer ${notionApiToken}`,
+                "Notion-Version": notionApiVersion,
+                ...(body ? { "Content-Type": "application/json" } : {}),
+            },
+            ...(body ? { body } : {}),
+        });
+        const data = await response.json();
+
+        if (!Array.isArray(data?.results)) {
+            const notionMessage = data?.message ? ` Notion said: ${data.message}` : "";
+            return { error: `Notion query did not return a 'results' array (status ${response.status}).${notionMessage}` };
         }
-    })
-    const data = await response.json();
 
-    if (!Array.isArray(data?.results)) {
-        const notionMessage = data?.message ? ` Notion said: ${data.message}` : "";
-        return { error: `Notion query did not return a 'results' array (status ${response.status}).${notionMessage}` };
-    }
+        allResults.push(...data.results);
+        startCursor = data.has_more ? data.next_cursor : undefined;
+    } while (startCursor);
 
-    if (data.results.length === 0) {
+    if (allResults.length === 0) {
         return { error: "Notion query returned no rows, so the schema cannot be validated. Check the data source has at least one entry." };
     }
 
     const expectedHeadings = Object.keys(SLACK_USER_KEY_MAP);
-    const presentHeadings = Object.keys(data.results[0].properties ?? {});
+    const presentHeadings = Object.keys(allResults[0].properties ?? {});
     const missing = expectedHeadings.filter((h) => !presentHeadings.includes(h));
     if (missing.length > 0) {
         const quote = (xs) => xs.map((x) => `"${x}"`).join(", ");
@@ -159,5 +171,5 @@ export async function getSlackUserConfig({
         };
     }
 
-    return { results: simplifyQueryResults(data, SLACK_USER_KEY_MAP) };
+    return { results: simplifyQueryResults({ results: allResults }, SLACK_USER_KEY_MAP) };
 }

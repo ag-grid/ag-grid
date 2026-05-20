@@ -84,7 +84,12 @@ export function getBranchLink(ref, project) {
     if (!ref) return '';
     const baseUrl = getGithubBaseUrl(project);
     if (ref === 'refs/heads/latest') return `<${baseUrl}/tree/latest|latest>`;
-    if (ref.startsWith('pull/')) return `<${baseUrl}/${ref}|PR #${ref.slice('pull/'.length)}>`;
+    // GitHub Actions exposes PR refs as `refs/pull/<n>/{merge,head}`; also accept the bare `pull/<n>` form.
+    const pullMatch = ref.match(/^(?:refs\/)?pull\/(\d+)(?:\/[^/]+)?$/);
+    if (pullMatch) {
+        const prNumber = pullMatch[1];
+        return `<${baseUrl}/pull/${prNumber}|PR #${prNumber}>`;
+    }
     if (ref.startsWith('refs/tags/')) {
         const tag = ref.slice('refs/tags/'.length);
         return `<${baseUrl}/tree/${tag}|${tag}>`;
@@ -138,7 +143,7 @@ export function getGitChanges(currentSha, lastSuccessfulSha, users) {
     const gitCommand =
         firstAfterSuccess.length === 0 || firstAfterSuccess === currentSha
             ? `git log ${currentSha} --format="%ae||%an||%h||%s" | head -1`
-            : `git log ${currentSha}...${firstAfterSuccess} --format="%ae||%an||%h||%s" | head -1`;
+            : `git log ${lastSuccessfulSha}..${currentSha} --format="%ae||%an||%h||%s"`;
 
     const rawChanges = execSync(gitCommand, { stdio: 'pipe', encoding: 'utf-8' });
 
