@@ -293,7 +293,6 @@ const makeInputStyleUnderlinedTreeShakeable = () =>
                     mix: 0.3,
                 },
             },
-            pickerButtonBorderRadius: 0,
         },
         css: () => inputStyleBaseCSS + inputStyleUnderlinedCSS,
     });
