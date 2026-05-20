@@ -126,10 +126,11 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             (sideOrRemove: 'top' | 'bottom' | null) =>
             ({ node, column }: IMenuActionParams) => {
                 if (node) {
-                    return pinnedRowModel!.pinRow(node as RowNode, sideOrRemove ?? null, column as AgColumn);
+                    pinnedRowModel!.pinRow(node as RowNode, sideOrRemove ?? null, column as AgColumn);
+                    return;
                 }
                 // pick selected cells / rows / columns
-                return rangeSvc?.getCellRanges()?.forEach((cellRange) => {
+                rangeSvc?.getCellRanges()?.forEach((cellRange) => {
                     rangeSvc.forEachRowInRange(cellRange, (row) => {
                         const nodeFromSelection = _getRowNode(beans, row);
                         if (nodeFromSelection) {
