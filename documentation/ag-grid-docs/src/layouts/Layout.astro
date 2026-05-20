@@ -1,4 +1,5 @@
 ---
+import { Font } from 'astro:assets';
 import { DevTools } from '@ag-website-shared/components/dev-tools/DevTools';
 import { getEntry, type CollectionEntry } from 'astro:content';
 import dsStylesUrl from '@design-system/design-system.scss?url';
@@ -99,6 +100,9 @@ const announcementBannerProps = {
                 />
             )
         }
+
+        <Font cssVariable="--font-ibm-plex-sans" preload />
+        <Font cssVariable="--font-jetbrains-mono" preload />
 
         <!-- Import all global design system CSS -->
         <link rel="stylesheet" href={dsStylesUrl} />
