@@ -1,0 +1,29 @@
+---
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import type { BryntumLiveDemoSection } from './types';
+
+interface Props {
+    section: BryntumLiveDemoSection;
+}
+
+const { section } = Astro.props;
+---
+
+<link rel="stylesheet" href="https://bryntum.com/products/gantt/build/fontawesome/css/fontawesome.css" />
+<link rel="stylesheet" href="https://bryntum.com/products/gantt/build/fontawesome/css/solid.css" />
+<link rel="stylesheet" href="https://bryntum.com/products/gantt/build/gantt.css" />
+<link rel="stylesheet" href="https://bryntum.com/products/gantt/build/svalbard-light.css" />
+<link rel="stylesheet" href={urlWithBaseUrl('/styles/bryntum-gantt-demo.css')} />
+
+<section class="bryntum-demo-section">
+    <div class="bryntum-demo-inner">
+        {section.heading && <h2 class="bryntum-demo-heading">{section.heading}</h2>}
+        <div class="bryntum-demo-frame">
+            <div id="live-gantt-demo" class="bryntum-demo-mount"></div>
+        </div>
+    </div>
+</section>
+
+<script is:inline src="https://bryntum.com/products/gantt/build/gantt.umd.js"></script>
+<script is:inline src={urlWithBaseUrl('/scripts/bryntum-gantt-demo.js')} defer></script>

@@ -1,0 +1,90 @@
+/* Bryntum "Try it yourself!" demo styles — isolated from page styles.
+   Wrapper rules + the column-colour ruleset from bryntum.com's
+   /dist/gantt/examples/advanced/resources/app.css. */
+
+.bryntum-demo-section {
+    padding: 64px 0;
+    background-color: #f4f8ff;
+}
+
+.bryntum-demo-inner {
+    margin: 0 auto;
+    padding: 0 24px;
+    max-width: 1240px;
+}
+
+.bryntum-demo-heading {
+    text-align: center;
+    font-size: 32px;
+    margin: 0 0 32px;
+    color: #101828;
+}
+
+.bryntum-demo-frame {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    min-height: 720px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+    border: 1px solid #d4e3f8;
+    box-shadow:
+        0 16px 40px rgb(15 36 88 / 0.18),
+        0 6px 16px rgb(15 36 88 / 0.1);
+}
+
+.bryntum-demo-mount {
+    width: 100%;
+    height: 100%;
+}
+
+[data-dark-mode='true'] .bryntum-demo-section {
+    background-color: var(--color-bg-primary);
+}
+
+[data-dark-mode='true'] .bryntum-demo-heading {
+    color: var(--color-fg-primary);
+}
+
+[data-dark-mode='true'] .bryntum-demo-frame {
+    background-color: var(--color-util-gray-50);
+    border-color: var(--color-util-gray-300);
+    box-shadow:
+        0 16px 40px rgb(0 0 0 / 0.45),
+        0 6px 16px rgb(0 0 0 / 0.25);
+}
+
+/* From upstream advanced demo app.css */
+.b-status-column-cell,
+.b-complexity-column-cell {
+    font-size: 0.8em;
+}
+
+.b-status-column-cell i::before,
+.b-complexity-column-cell i::before {
+    margin-inline-end: 0.5em;
+}
+
+.Started {
+    color: #bbb;
+}
+
+.Late {
+    color: #ff5722;
+}
+
+.Completed {
+    color: #34d844;
+}
+
+.Easy {
+    color: #69db7c;
+}
+
+.Normal {
+    color: #fdd835;
+}
+
+.Hard {
+    color: #ffa94d;
+}

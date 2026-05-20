@@ -20,6 +20,7 @@ export default [
             '**/systemjs.config.dev.js',
             '.playwright-network-cache/',
             '**/*.ics',
+            'public/**/*.css',
         ],
     },
     {
