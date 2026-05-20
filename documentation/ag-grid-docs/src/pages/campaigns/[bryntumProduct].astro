@@ -4,9 +4,9 @@ import type { BryntumCampaignContent } from '@components/campaigns-components/br
 import Layout from '@layouts/Layout.astro';
 
 export async function getStaticPaths() {
-    const contentModules = import.meta.glob<{ default: BryntumCampaignContent }>(
+    const contentModules = import.meta.glob<BryntumCampaignContent>(
         '../../content/campaigns/bryntum-products/*-original.json',
-        { eager: true }
+        { eager: true, import: 'default' }
     );
 
     const slugAliases: Record<string, string> = {
@@ -14,8 +14,7 @@ export async function getStaticPaths() {
         taskboard: 'task-board',
     };
 
-    return Object.entries(contentModules).map(([path, mod]) => {
-        const content = mod.default;
+    return Object.entries(contentModules).map(([path, content]) => {
         const rawSlug = content.slug ?? path.split('/').pop()?.replace('-original.json', '') ?? '';
         const urlSlug = `bryntum-${slugAliases[rawSlug] ?? rawSlug}`;
 

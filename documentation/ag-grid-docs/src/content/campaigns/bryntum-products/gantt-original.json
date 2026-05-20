@@ -221,7 +221,13 @@
             "body_text": "The JavaScript Gantt engine efficiently handles asynchronous scheduling for any number of tasks, while factoring in dependencies, constraints, and scheduling modes. Built independently of the DOM, it can also run server-side on Node.js. Animated Redraws Moving a task triggers a smooth animation that shows how dependent tasks are affected by the change.",
             "links": [],
             "ctas": [],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/gantt/animated-redraw-big-dataset-3.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/animated-redraw-big-dataset-3.mp4"
+                }
+            ]
         },
         {
             "id": "block_492ed05bbe9a04fbfdaa3f90f6a12ed8",
@@ -255,7 +261,13 @@
                     "title": "View example"
                 }
             ],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/gantt/gantt-taskeditor-svalbard-2.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/gantt-taskeditor-svalbard-2.mp4"
+                }
+            ]
         },
         {
             "id": "block_ff5073f8911439ab5fdb152e35e4e182",
@@ -331,7 +343,13 @@
                     "title": "View docs"
                 }
             ],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/gantt/npm-gantt-edit-3.webm",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/npm-gantt-edit-3.webm"
+                }
+            ]
         },
         {
             "id": "block_a1cdca17a5fa084ca46c61aa1cd7c03a",

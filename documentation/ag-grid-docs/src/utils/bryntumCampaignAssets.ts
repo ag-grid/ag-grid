@@ -3,7 +3,7 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 const ASSETS_BASE = '/images/campaigns/bryntum-products';
 const BRYNTUM_ROOT = 'https://bryntum.com';
 
-export const resolveBryntumImage = (src: string | undefined, productSlug: string): string => {
+export const resolveBryntumAsset = (src: string | undefined, productSlug: string): string => {
     if (!src) {
         return '';
     }

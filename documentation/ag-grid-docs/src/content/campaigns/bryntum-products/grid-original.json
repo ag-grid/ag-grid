@@ -120,7 +120,13 @@
                 }
             ],
             "ctas": [],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/grid/grid-ai-review-svalbard-4.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/grid-ai-review-svalbard-4.mp4"
+                }
+            ]
         },
         {
             "id": "block_7604277ca11f56eba5f68a275bd27e9b",
@@ -276,7 +282,13 @@
                     "title": "View docs"
                 }
             ],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/grid/npm-grid-edit-2.webm",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/npm-grid-edit-2.webm"
+                }
+            ]
         },
         {
             "id": "block_caabe8db4889ef6cf9f9958203e582cb",

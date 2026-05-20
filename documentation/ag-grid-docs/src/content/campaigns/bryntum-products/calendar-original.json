@@ -140,7 +140,13 @@
                     "title": "Try demo"
                 }
             ],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/calendar/calendar-views-svalbard.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/calendar-views-svalbard.mp4"
+                }
+            ]
         },
         {
             "id": "block_43c64c3290d21de094d2e1bf6c8bb680",
@@ -311,7 +317,13 @@
                     "title": "View docs"
                 }
             ],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/calendar/npm-calendar-edit-2.webm",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/npm-calendar-edit-2.webm"
+                }
+            ]
         },
         {
             "id": "block_c5f73c9b161db3a6c4f8fcdda63ddf04",

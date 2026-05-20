@@ -20,7 +20,7 @@ const { section } = Astro.props;
         {
             section.ctas && section.ctas.length > 0 && (
                 <div class={styles.ctaButtons}>
-                    {section.ctas.map((cta, index) => (
+                    {section.ctas.map((cta) => (
                         <a href={resolveBryntumHref(cta.href)} class="button-primary" target="_blank" rel="noopener">
                             {cta.text}
                             <Icon name="arrowRight" />

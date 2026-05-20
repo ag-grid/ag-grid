@@ -114,7 +114,13 @@
                     "title": "Try demo"
                 }
             ],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/taskboard/taskboard-locked-column.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/taskboard-locked-column.mp4"
+                }
+            ]
         },
         {
             "id": "block_a6810390858a4124774049b1a0e766c8",
@@ -238,7 +244,13 @@
                     "title": "Try demo"
                 }
             ],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/taskboard/taskboard-responsive-svalbard.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/taskboard-responsive-svalbard.mp4"
+                }
+            ]
         },
         {
             "id": "block_b0ecec48d200798e5261d055bd3d0058",
@@ -286,7 +298,13 @@
                     "title": "View docs"
                 }
             ],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/taskboard/npm-taskboard-edit-2.webm",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/npm-taskboard-edit-2.webm"
+                }
+            ]
         },
         {
             "id": "block_52d202b854d1b5fdd602e7f3032f1dd5",

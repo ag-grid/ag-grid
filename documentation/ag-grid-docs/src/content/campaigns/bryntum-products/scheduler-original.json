@@ -194,7 +194,13 @@
                 }
             ],
             "ctas": [],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/scheduler/scheduler-overallocation-svalbard-2.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/scheduler-overallocation-svalbard-2.mp4"
+                }
+            ]
         },
         {
             "id": "block_3622808249540b890b8e78c0eff948f3",
@@ -279,7 +285,13 @@
                     "title": "View docs"
                 }
             ],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/scheduler/installing-scheduler-trial-3.webm",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/installing-scheduler-trial-3.webm"
+                }
+            ]
         },
         {
             "id": "",

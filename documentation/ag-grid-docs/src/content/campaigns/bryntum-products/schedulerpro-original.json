@@ -110,7 +110,13 @@
                     "title": "Try demo"
                 }
             ],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/schedulerpro/schedulerpro-skill-matching-zoom.mp4.mp4",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/schedulerpro-skill-matching-zoom.mp4.mp4"
+                }
+            ]
         },
         {
             "id": "block_db9616ac89f5620c3b5018eb7d1c9498",
@@ -262,7 +268,13 @@
                     "title": "View docs"
                 }
             ],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/schedulerpro/npm-schedulerpro-edit-2.webm",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/05/npm-schedulerpro-edit-2.webm"
+                }
+            ]
         },
         {
             "id": "block_25b850dbff9816c567b44d488450401f",

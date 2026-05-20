@@ -299,7 +299,13 @@
                     "title": "View docs"
                 }
             ],
-            "media": []
+            "media": [
+                {
+                    "kind": "video",
+                    "src": "../assets/complete/install-complete-edit-zoom.webm",
+                    "src_original": "https://bryntum.com/wp-content/uploads/2022/06/install-complete-edit-zoom.webm"
+                }
+            ]
         },
         {
             "id": "block_bc3a52d9a2ced50b318892e74a27f522",

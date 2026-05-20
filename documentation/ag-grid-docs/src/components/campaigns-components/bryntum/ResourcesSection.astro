@@ -1,5 +1,5 @@
 ---
-import { resolveBryntumHref, resolveBryntumImage } from '@utils/bryntumCampaignAssets';
+import { resolveBryntumHref, resolveBryntumAsset } from '@utils/bryntumCampaignAssets';
 
 import type { BryntumColumnsWithMediaSection } from './types';
 import styles from '../BryntumCampaign.module.scss';
@@ -31,7 +31,7 @@ const { section, productSlug } = Astro.props;
                             {item.body_text && <p>{item.body_text}</p>}
                             {img && (
                                 <img
-                                    src={resolveBryntumImage(img.src, productSlug)}
+                                    src={resolveBryntumAsset(img.src, productSlug)}
                                     alt={img.alt ?? ''}
                                     loading="lazy"
                                 />
