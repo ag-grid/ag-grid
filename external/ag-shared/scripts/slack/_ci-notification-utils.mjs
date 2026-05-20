@@ -18,7 +18,7 @@ const LIBRARY_CONFIG = {
     AgStudio: {
         githubBaseUrl: 'https://github.com/ag-grid/ag-studio',
         stagingUrl: 'https://studio-staging.ag-grid.com',
-        emoji: ':puzzle:',
+        emoji: ':jigsaw:',
     },
     Blog: {
         githubBaseUrl: 'https://github.com/ag-grid/ag-blog-content',
