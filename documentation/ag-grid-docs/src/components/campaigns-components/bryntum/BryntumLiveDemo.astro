@@ -1,0 +1,46 @@
+---
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import type { BryntumLiveDemoSection } from './types';
+
+interface Props {
+    section: BryntumLiveDemoSection;
+    productSlug: string;
+}
+
+const PRODUCT_CONFIG: Record<string, { mountId: string }> = {
+    gantt: { mountId: 'live-gantt-demo' },
+    scheduler: { mountId: 'live-scheduler-demo' },
+    schedulerpro: { mountId: 'live-schedulerpro-demo' },
+    taskboard: { mountId: 'live-taskboard-demo' },
+    grid: { mountId: 'live-grid-projectdemo' },
+};
+
+const { section, productSlug } = Astro.props;
+const config = PRODUCT_CONFIG[productSlug];
+const bryntumBase = `https://bryntum.com/products/${productSlug}/build`;
+---
+
+{
+    config && (
+        <>
+            <link rel="stylesheet" href={`${bryntumBase}/fontawesome/css/fontawesome.css`} />
+            <link rel="stylesheet" href={`${bryntumBase}/fontawesome/css/solid.css`} />
+            <link rel="stylesheet" href={`${bryntumBase}/${productSlug}.css`} />
+            <link rel="stylesheet" href={`${bryntumBase}/svalbard-light.css`} />
+            <link rel="stylesheet" href={urlWithBaseUrl('/styles/bryntum-demo.css')} />
+
+            <section class="bryntum-demo-section">
+                <div class="bryntum-demo-inner">
+                    {section.heading && <h2 class="bryntum-demo-heading">{section.heading}</h2>}
+                    <div class="bryntum-demo-frame">
+                        <div id={config.mountId} class="bryntum-demo-mount" />
+                    </div>
+                </div>
+            </section>
+
+            <script is:inline src={`${bryntumBase}/${productSlug}.umd.js`} />
+            <script is:inline src={urlWithBaseUrl(`/scripts/bryntum-${productSlug}-demo.js`)} defer />
+        </>
+    )
+}

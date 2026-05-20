@@ -1,8 +1,6 @@
 /* eslint-disable */
 // Bryntum Gantt "Try it yourself!" demo — UMD port of
 // https://bryntum.com/demos/live/gantt/advanced/app.module.js
-// Loaded only by /campaigns/bryntum-gantt/. Depends on the UMD bundle
-// (gantt.umd.js) being present at runtime on window.bryntum.gantt.
 
 (function () {
     function init() {
@@ -12,14 +10,7 @@
         if (mount.dataset.bryntumInitialized === '1') return;
         mount.dataset.bryntumInitialized = '1';
 
-        var b = window.bryntum.gantt;
-        var Toolbar = b.Toolbar;
-        var Toast = b.Toast;
-        var CSSHelper = b.CSSHelper;
-        var ColumnStore = b.ColumnStore;
-        var Column = b.Column;
-        var Gantt = b.Gantt;
-        var ProjectModel = b.ProjectModel;
+        const { Toolbar, Toast, CSSHelper, ColumnStore, Column, Gantt, ProjectModel } = window.bryntum.gantt;
 
         class GanttToolbar extends Toolbar {
             static get type() {
@@ -49,9 +40,7 @@
                         {
                             ref: 'undoRedo',
                             type: 'undoredo',
-                            items: {
-                                transactionsCombo: null,
-                            },
+                            items: { transactionsCombo: null },
                         },
                         {
                             type: 'buttonGroup',
@@ -116,10 +105,7 @@
                             clearable: true,
                             keyStrokeChangeDelay: 100,
                             triggers: {
-                                filter: {
-                                    align: 'end',
-                                    cls: 'fa fa-filter',
-                                },
+                                filter: { align: 'end', cls: 'fa fa-filter' },
                             },
                             onChange: 'up.onFilterChange',
                         },
@@ -141,9 +127,7 @@
                                             type: 'popup',
                                             anchor: true,
                                             cls: 'settings-menu',
-                                            layoutStyle: {
-                                                flexDirection: 'column',
-                                            },
+                                            layoutStyle: { flexDirection: 'column' },
                                             onBeforeShow: 'up.onSettingsShow',
                                             items: [
                                                 {
@@ -245,27 +229,21 @@
             onExpandAllClick() {
                 this.gantt.expandAll();
             }
-
             onCollapseAllClick() {
                 this.gantt.collapseAll();
             }
-
             onZoomInClick() {
                 this.gantt.zoomIn();
             }
-
             onZoomOutClick() {
                 this.gantt.zoomOut();
             }
-
             onZoomToFitClick() {
                 this.gantt.zoomToFit({ leftMargin: 50, rightMargin: 50 });
             }
-
             onShiftPreviousClick() {
                 this.gantt.shiftPrevious();
             }
-
             onShiftNextClick() {
                 this.gantt.shiftNext();
             }
@@ -341,17 +319,11 @@
             static get type() {
                 return 'statuscolumn';
             }
-
             static get isGanttColumn() {
                 return true;
             }
-
             static get defaults() {
-                return {
-                    text: 'Status',
-                    htmlEncode: false,
-                    editor: false,
-                };
+                return { text: 'Status', htmlEncode: false, editor: false };
             }
 
             renderer({ record }) {
@@ -384,7 +356,6 @@
             project: project,
             adopt: 'live-gantt-demo',
             tbar: { type: 'gantttoolbar' },
-
             startDate: '2019-01-12',
             endDate: '2019-03-24',
             resourceImagePath: '//bryntum.com/dist/gantt-next/examples/_shared/images/users/',
@@ -404,14 +375,11 @@
                 { type: 'date', text: 'Deadline', field: 'deadline' },
                 { type: 'addnew' },
             ],
-
             subGridConfigs: {
                 locked: { flex: 3 },
                 normal: { flex: 4 },
             },
-
             columnLines: false,
-
             features: {
                 baselines: { disabled: true },
                 progressLine: { disabled: true, statusDate: new Date(2019, 0, 25) },
@@ -428,10 +396,7 @@
                 dependencyEdit: true,
                 timeRanges: { showCurrentTimeLine: true },
                 labels: {
-                    left: {
-                        field: 'name',
-                        editor: { type: 'textfield' },
-                    },
+                    left: { field: 'name', editor: { type: 'textfield' } },
                 },
             },
         });
