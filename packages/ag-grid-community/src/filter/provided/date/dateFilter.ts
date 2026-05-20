@@ -289,7 +289,8 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         const { params, filterType, beans } = this;
         const dataTypeSvc = beans.dataTypeSvc;
         const values = this.getValues(position);
-        const includeDateTime = dataTypeSvc?.getDateIncludesTimeFlag(params.colDef.cellDataType) ?? true;
+        const includeDateTime =
+            params.includeTime ?? dataTypeSvc?.getDateIncludesTimeFlag(params.colDef.cellDataType) ?? true;
 
         const separator = params.useIsoSeparator ? 'T' : ' ';
         if (values.length > 0) {
