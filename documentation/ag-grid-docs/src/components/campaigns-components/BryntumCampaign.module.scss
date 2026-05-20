@@ -26,7 +26,7 @@
 }
 
 .sectionBgSecondary {
-    background-color: var(--color-bg-secondary);
+    background-color: var(--color-brand-50);
 
     #{$selector-darkmode} & {
         background-color: var(--color-util-gray-100);
@@ -36,11 +36,16 @@
 .sectionBgWhite {
     background-color: var(--color-white);
     color: var(--color-gray-900);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-gray-100);
+        color: var(--color-fg-primary);
+    }
 }
 
 .hero {
-    background-color: var(--color-bg-primary);
-    color: var(--color-fg-primary);
+    background: linear-gradient(180deg, var(--color-bg-site-header) 0%, var(--color-brand-700) 100%);
+    color: var(--color-white);
     padding: $spacing-size-16 0 $spacing-size-20;
 
     #{$selector-darkmode} & {
@@ -67,14 +72,15 @@
     letter-spacing: 0.08em;
     font-size: var(--text-fs-sm);
     font-weight: var(--text-semibold);
-    color: var(--color-fg-secondary);
+    color: var(--color-white);
+    opacity: 0.85;
     margin-bottom: $spacing-size-3;
 }
 
 .heroHeading {
     font-size: 48px;
     line-height: var(--text-lh-3xl);
-    color: var(--color-fg-primary);
+    color: var(--color-white);
     margin: 0 0 $spacing-size-4;
 
     @media screen and (min-width: $breakpoint-site-header-large) {
@@ -85,7 +91,8 @@
 .heroBody {
     font-size: var(--text-fs-lg);
     line-height: var(--text-lh-base);
-    color: var(--color-fg-secondary);
+    color: var(--color-white);
+    opacity: 0.92;
     margin-bottom: $spacing-size-8;
 
     p {
@@ -93,13 +100,8 @@
     }
 
     a {
-        color: var(--color-fg-primary);
+        color: var(--color-white);
         text-decoration: underline;
-        text-decoration-color: var(--color-util-brand-400);
-
-        &:hover {
-            color: var(--color-util-brand-500);
-        }
     }
 }
 
@@ -112,6 +114,12 @@
 .heroMedia {
     display: flex;
     justify-content: center;
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: $spacing-size-6;
+    box-shadow:
+        0 12px 32px rgb(0 0 0 / 0.18),
+        0 4px 12px rgb(0 0 0 / 0.08);
 
     svg,
     img {
@@ -139,7 +147,7 @@
 }
 
 .sectionAltBg {
-    background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);
+    background: linear-gradient(180deg, var(--color-brand-50) 0%, var(--color-bg-primary) 100%);
 
     #{$selector-darkmode} & {
         background: linear-gradient(180deg, var(--color-util-gray-50) 0%, var(--color-util-gray-100) 100%);
@@ -195,8 +203,9 @@
 
     ul {
         list-style: disc;
-        list-style-position: outside;
-        margin: 0 0 $spacing-size-4 $spacing-size-5;
+        list-style-position: inside;
+        margin: 0 0 $spacing-size-4;
+        padding-left: 0;
         color: var(--color-fg-secondary);
         text-align: left;
     }
@@ -204,6 +213,7 @@
     li {
         margin-bottom: $spacing-size-2;
         text-align: left;
+        padding-left: 0;
     }
 
     a {
