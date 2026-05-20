@@ -444,7 +444,13 @@
 }
 
 .ctaOuter {
-    padding: $spacing-size-20 0;
+    padding: $spacing-size-20 0 100px;
+}
+
+.heroCtas a,
+.textMediaCtas a,
+.ctaButtons a {
+    text-decoration: none;
 }
 
 .ctaSection {

@@ -39,10 +39,10 @@ const showAltBg = isAlt && hasMedia && !isWhite;
                 {
                     section.ctas && section.ctas.length > 0 && (
                         <div class={styles.textMediaCtas}>
-                            {section.ctas.map((cta, index) => (
+                            {section.ctas.map((cta) => (
                                 <a
                                     href={resolveBryntumHref(cta.href)}
-                                    class={index === 0 ? 'button-secondary' : 'button-tertiary'}
+                                    class="button-tertiary"
                                     target="_blank"
                                     rel="noopener"
                                 >
