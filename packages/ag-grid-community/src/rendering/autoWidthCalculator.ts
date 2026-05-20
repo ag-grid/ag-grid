@@ -69,7 +69,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
 
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.
-        const dummyContainerWidth = Math.ceil(eDummyContainer.getBoundingClientRect().width);
+        const dummyContainerWidth = eDummyContainer.offsetWidth;
 
         // we are finished with the dummy container, so get rid of it
         eDummyContainer.remove();
