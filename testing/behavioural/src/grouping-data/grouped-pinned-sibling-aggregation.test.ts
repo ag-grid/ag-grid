@@ -521,6 +521,252 @@ describe('ag-grid grouping pinned sibling aggregation', () => {
             expect(api.getPinnedBottomRowCount()).toBe(1);
             expect(api.getPinnedBottomRow(0)?.destroyed).toBe(false);
         });
+
+        test('grouped CSRM pinnedBottom grand total repopulates after clearing rowData and adding via transaction', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'amount', aggFunc: 'sum' },
+                ],
+                rowData: createRowData(),
+                getRowId: (params) => params.data.id,
+                grandTotalRow: 'pinnedBottom',
+                groupDefaultExpanded: -1,
+            });
+
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(1000);
+
+            // Clear all rows via setGridOption, then repopulate via transaction
+            api.setGridOption('rowData', []);
+            applyTransactionChecked(api, { add: createRowData() });
+
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(1000);
+
+            await new GridRows(api, 'after clear+add').check(`
+                ROOT id:ROOT_NODE_ID amount:1000
+                ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                │ ├── LEAF id:fr-paris country:"France" amount:100
+                │ └── LEAF id:fr-lyon country:"France" amount:200
+                ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                · └── LEAF id:it-rome country:"Italy" amount:300
+                PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:1000
+            `);
+        });
+
+        test('grouped CSRM pinnedTop grand total repopulates after clearing rowData and adding via transaction', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'amount', aggFunc: 'sum' },
+                ],
+                rowData: createRowData(),
+                getRowId: (params) => params.data.id,
+                grandTotalRow: 'pinnedTop',
+                groupDefaultExpanded: -1,
+            });
+
+            expect(api.getPinnedTopRowCount()).toBe(1);
+            expect(api.getPinnedTopRow(0)?.aggData?.amount).toBe(1000);
+
+            api.setGridOption('rowData', []);
+            applyTransactionChecked(api, { add: createRowData() });
+
+            expect(api.getPinnedTopRowCount()).toBe(1);
+            expect(api.getPinnedTopRow(0)?.aggData?.amount).toBe(1000);
+
+            await new GridRows(api, 'after clear+add').check(`
+                PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:1000
+                ROOT id:ROOT_NODE_ID amount:1000
+                ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France" amount:300
+                │ ├── LEAF id:fr-paris country:"France" amount:100
+                │ └── LEAF id:fr-lyon country:"France" amount:200
+                ├─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany" amount:400
+                │ ├── LEAF id:de-berlin country:"Germany" amount:150
+                │ └── LEAF id:de-hamburg country:"Germany" amount:250
+                └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy" amount:300
+                · └── LEAF id:it-rome country:"Italy" amount:300
+            `);
+        });
+
+        test('flat CSRM pinnedBottom grand total repopulates after clearing rowData and adding via transaction', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'amount', aggFunc: 'sum' }],
+                rowData: createRowData(),
+                getRowId: (params) => params.data.id,
+                grandTotalRow: 'pinnedBottom',
+            });
+
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(1000);
+
+            api.setGridOption('rowData', []);
+            applyTransactionChecked(api, { add: createRowData() });
+
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(1000);
+
+            await new GridRows(api, 'after clear+add').check(`
+                ROOT id:ROOT_NODE_ID amount:1000
+                ├── LEAF id:fr-paris amount:100
+                ├── LEAF id:fr-lyon amount:200
+                ├── LEAF id:de-berlin amount:150
+                ├── LEAF id:de-hamburg amount:250
+                └── LEAF id:it-rome amount:300
+                PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID amount:1000
+            `);
+        });
+
+        test('flat CSRM pinnedTop grand total repopulates after clearing rowData and adding via transaction', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: [{ field: 'amount', aggFunc: 'sum' }],
+                rowData: createRowData(),
+                getRowId: (params) => params.data.id,
+                grandTotalRow: 'pinnedTop',
+            });
+
+            expect(api.getPinnedTopRowCount()).toBe(1);
+            expect(api.getPinnedTopRow(0)?.aggData?.amount).toBe(1000);
+
+            api.setGridOption('rowData', []);
+            applyTransactionChecked(api, { add: createRowData() });
+
+            expect(api.getPinnedTopRowCount()).toBe(1);
+            expect(api.getPinnedTopRow(0)?.aggData?.amount).toBe(1000);
+
+            await new GridRows(api, 'after clear+add').check(`
+                PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID amount:1000
+                ROOT id:ROOT_NODE_ID amount:1000
+                ├── LEAF id:fr-paris amount:100
+                ├── LEAF id:fr-lyon amount:200
+                ├── LEAF id:de-berlin amount:150
+                ├── LEAF id:de-hamburg amount:250
+                └── LEAF id:it-rome amount:300
+            `);
+        });
+
+        test('grouped CSRM pinnedTop grand total switches between views via setGridOption([]) + applyTransaction', async () => {
+            const VIEW_A: RowData[] = cachedJSONObjects.array([
+                { id: '1', country: 'Electronics', amount: 1000 },
+                { id: '2', country: 'Electronics', amount: 2000 },
+                { id: '3', country: 'Food', amount: 300 },
+                { id: '4', country: 'Food', amount: 200 },
+            ]);
+            const VIEW_B: RowData[] = cachedJSONObjects.array([
+                { id: '5', country: 'Clothing', amount: 500 },
+                { id: '6', country: 'Clothing', amount: 700 },
+                { id: '7', country: 'Books', amount: 150 },
+                { id: '8', country: 'Books', amount: 400 },
+            ]);
+
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'amount', aggFunc: 'sum' },
+                ],
+                rowData: VIEW_A,
+                getRowId: (params) => params.data.id,
+                grandTotalRow: 'pinnedTop',
+                groupDefaultExpanded: -1,
+            });
+
+            expect(api.getPinnedTopRowCount()).toBe(1);
+            expect(api.getPinnedTopRow(0)?.aggData?.amount).toBe(3500);
+
+            // Switch to VIEW_B using the pattern from the bug report
+            api.setGridOption('rowData', []);
+            applyTransactionChecked(api, { add: VIEW_B });
+
+            expect(api.getPinnedTopRowCount()).toBe(1);
+            expect(api.getPinnedTopRow(0)?.aggData?.amount).toBe(1750);
+
+            await new GridRows(api, 'after switch to VIEW_B').check(`
+                PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:1750
+                ROOT id:ROOT_NODE_ID amount:1750
+                ├─┬ LEAF_GROUP id:row-group-country-Clothing ag-Grid-AutoColumn:"Clothing" amount:1200
+                │ ├── LEAF id:5 country:"Clothing" amount:500
+                │ └── LEAF id:6 country:"Clothing" amount:700
+                └─┬ LEAF_GROUP id:row-group-country-Books ag-Grid-AutoColumn:"Books" amount:550
+                · ├── LEAF id:7 country:"Books" amount:150
+                · └── LEAF id:8 country:"Books" amount:400
+            `);
+
+            // Switch back to VIEW_A
+            api.setGridOption('rowData', []);
+            applyTransactionChecked(api, { add: VIEW_A });
+
+            expect(api.getPinnedTopRowCount()).toBe(1);
+            expect(api.getPinnedTopRow(0)?.aggData?.amount).toBe(3500);
+
+            await new GridRows(api, 'after switch back to VIEW_A').check(`
+                PINNED_TOP id:t-top-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:3500
+                ROOT id:ROOT_NODE_ID amount:3500
+                ├─┬ LEAF_GROUP id:row-group-country-Electronics ag-Grid-AutoColumn:"Electronics" amount:3000
+                │ ├── LEAF id:1 country:"Electronics" amount:1000
+                │ └── LEAF id:2 country:"Electronics" amount:2000
+                └─┬ LEAF_GROUP id:row-group-country-Food ag-Grid-AutoColumn:"Food" amount:500
+                · ├── LEAF id:3 country:"Food" amount:300
+                · └── LEAF id:4 country:"Food" amount:200
+            `);
+        });
+
+        test('CSRM pinned grand total stays as a single row after filter change', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'amount', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+                ],
+                rowData: createRowData(),
+                getRowId: (params) => params.data.id,
+                grandTotalRow: 'pinnedBottom',
+                groupDefaultExpanded: -1,
+            });
+
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(1000);
+
+            await api.setColumnFilterModel('amount', { filterType: 'number', type: 'greaterThanOrEqual', filter: 200 });
+            api.onFilterChanged();
+
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            expect(api.getPinnedTopRowCount()).toBe(0);
+            expect(api.getPinnedBottomRow(0)?.aggData?.amount).toBe(750); // lyon 200 + hamburg 250 + rome 300
+        });
+
+        test('CSRM pinned grand total stays as a single row after cycling position', async () => {
+            const api = await gridsManager.createGridAndWait('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'amount', aggFunc: 'sum' },
+                ],
+                rowData: createRowData(),
+                getRowId: (params) => params.data.id,
+                grandTotalRow: 'pinnedBottom',
+                groupDefaultExpanded: -1,
+            });
+
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            const firstPinned = api.getPinnedBottomRow(0)!;
+
+            api.setGridOption('grandTotalRow', 'pinnedTop');
+            expect(api.getPinnedBottomRowCount()).toBe(0);
+            expect(api.getPinnedTopRowCount()).toBe(1);
+            expect(firstPinned.destroyed).toBe(true);
+            const topPinned = api.getPinnedTopRow(0)!;
+
+            api.setGridOption('grandTotalRow', undefined);
+            expect(api.getPinnedBottomRowCount()).toBe(0);
+            expect(api.getPinnedTopRowCount()).toBe(0);
+            expect(topPinned.destroyed).toBe(true);
+
+            api.setGridOption('grandTotalRow', 'pinnedBottom');
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            expect(api.getPinnedBottomRow(0)?.destroyed).toBe(false);
+        });
     });
 
     describe('getAggregatedChildren on pinned siblings', () => {
