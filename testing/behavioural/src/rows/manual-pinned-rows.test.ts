@@ -562,8 +562,12 @@ describe('Manual pinned rows', () => {
             enableRowPinning: true,
             // Pin both a group row and a leaf row.
             isRowPinned: (node) => {
-                if (node.group && node.key === 'A') return 'top';
-                if (!node.group && node.data?.sport === 'rugby') return 'top';
+                if (node.group && node.key === 'A') {
+                    return 'top';
+                }
+                if (!node.group && node.data?.sport === 'rugby') {
+                    return 'top';
+                }
                 return null;
             },
             getRowId(params) {
