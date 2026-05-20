@@ -36,7 +36,10 @@ inputs:
         description: Slack channel that receives debug messages with raw run context.
         required: false
     WEBSITE_STATUS_CHANNEL:
-        description: Slack channel that receives the staging-deploy notification.
+        description: Slack channel that receives the staging-deploy notification (shared across libraries, e.g. #website-status).
+        required: false
+    LIBRARY_WEBSITE_STATUS_CHANNEL:
+        description: Additional library-specific Slack channel that also receives the staging-deploy notification (e.g. #grid-website-status). Optional.
         required: false
     REPORT_URL:
         description: Optional URL for the test report.
@@ -78,5 +81,6 @@ runs:
               CURRENT_SHA: ${{ github.sha }}
               LAST_SUCCESSFUL_SHA: ${{ inputs.LAST_SUCCESSFUL_SHA }}
               WEBSITE_STATUS_CHANNEL: ${{ inputs.WEBSITE_STATUS_CHANNEL }}
+              LIBRARY_WEBSITE_STATUS_CHANNEL: ${{ inputs.LIBRARY_WEBSITE_STATUS_CHANNEL }}
               DEPLOY_TO_STAGING: ${{ inputs.DEPLOY_TO_STAGING }}
           run: node ./external/ag-shared/scripts/slack/notify-staging-deploy.mjs

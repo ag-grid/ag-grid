@@ -36,6 +36,7 @@ env:
   NX_COMMAND_TYPE: ${{ github.event.inputs.nx_command }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   SLACK_CHANNEL: '#ci-grid-gate'
+  LIBRARY_WEBSITE_STATUS_CHANNEL: '#grid-website-status'
   AG_LIBRARY: grid
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "https://registry.ag-grid.com"
@@ -624,6 +625,7 @@ jobs:
           TEAM_CHANNEL: ${{ env.SLACK_CHANNEL }}
           DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
           WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
+          LIBRARY_WEBSITE_STATUS_CHANNEL: ${{ env.LIBRARY_WEBSITE_STATUS_CHANNEL }}
           REPORT_URL: ${{ steps.testReport.outputs.url_html }}
           CHANGED_STATE: ${{ steps.lastJobStatus.outputs.changedState }}
           DEPLOY_TO_STAGING: ${{ needs.docs.outputs.docs_deployed == 'success' }}
