@@ -8,9 +8,10 @@ import styles from '../BryntumCampaign.module.scss';
 interface Props {
     section: BryntumTextMediaSection;
     productSlug: string;
+    isAlt?: boolean;
 }
 
-const { section, productSlug } = Astro.props;
+const { section, productSlug, isAlt = false } = Astro.props;
 const modifiers = section.modifiers ?? [];
 const isReverse = modifiers.includes('reverse');
 const hasShadow = modifiers.includes('added-shadow');
@@ -18,9 +19,10 @@ const isWhite = section.type === 'white-section' || modifiers.includes('white-se
 
 const media = section.media?.[0];
 const hasImage = media?.kind === 'image' && Boolean(media.src);
+const showAltBg = isAlt && hasImage && !isWhite;
 ---
 
-<section class:list={[styles.section, isWhite && styles.sectionBgWhite]}>
+<section class:list={[styles.section, isWhite && styles.sectionBgWhite, showAltBg && styles.sectionAltBg]}>
     <div class={styles.sectionInner}>
         <div
             class:list={[

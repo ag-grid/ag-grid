@@ -12,7 +12,7 @@ interface Props {
 const { section } = Astro.props;
 ---
 
-<section class:list={[styles.section, styles.sectionBgSecondary]}>
+<section class:list={[styles.ctaOuter, styles.sectionBgSecondary]}>
     <div class:list={[styles.sectionInner, styles.ctaSection]}>
         {section.heading && <h2>{section.heading}</h2>}
         {section.body_html && <div set:html={section.body_html} />}

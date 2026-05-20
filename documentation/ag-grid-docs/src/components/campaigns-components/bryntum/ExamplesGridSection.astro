@@ -13,7 +13,7 @@ const { section, productSlug } = Astro.props;
 ---
 
 <section class:list={[styles.section, styles.sectionBgSecondary]}>
-    <div class={styles.sectionInnerWide}>
+    <div class={styles.sectionInner}>
         {section.heading && <h2 class={styles.sectionHeading}>{section.heading}</h2>}
 
         <div class={styles.examplesGrid}>

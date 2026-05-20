@@ -39,8 +39,8 @@
 }
 
 .hero {
-    background: linear-gradient(180deg, var(--color-bg-site-header) 0%, var(--color-brand-700) 100%);
-    color: var(--color-white);
+    background-color: var(--color-bg-primary);
+    color: var(--color-fg-primary);
     padding: $spacing-size-16 0 $spacing-size-20;
 
     #{$selector-darkmode} & {
@@ -53,7 +53,7 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: $spacing-size-10;
-    align-items: center;
+    align-items: start;
 
     @media screen and (min-width: $breakpoint-site-header-large) {
         grid-template-columns: 1.1fr 1fr;
@@ -67,27 +67,25 @@
     letter-spacing: 0.08em;
     font-size: var(--text-fs-sm);
     font-weight: var(--text-semibold);
-    color: var(--color-white);
-    opacity: 0.85;
+    color: var(--color-fg-secondary);
     margin-bottom: $spacing-size-3;
 }
 
 .heroHeading {
-    font-size: var(--text-fs-2xl);
+    font-size: 48px;
     line-height: var(--text-lh-3xl);
-    color: var(--color-white);
+    color: var(--color-fg-primary);
     margin: 0 0 $spacing-size-4;
 
     @media screen and (min-width: $breakpoint-site-header-large) {
-        font-size: var(--text-fs-3xl);
+        font-size: clamp(48px, 5.5vw, 72px);
     }
 }
 
 .heroBody {
     font-size: var(--text-fs-lg);
     line-height: var(--text-lh-base);
-    color: var(--color-white);
-    opacity: 0.92;
+    color: var(--color-fg-secondary);
     margin-bottom: $spacing-size-8;
 
     p {
@@ -95,8 +93,13 @@
     }
 
     a {
-        color: var(--color-white);
+        color: var(--color-fg-primary);
         text-decoration: underline;
+        text-decoration-color: var(--color-util-brand-400);
+
+        &:hover {
+            color: var(--color-util-brand-500);
+        }
     }
 }
 
@@ -127,11 +130,19 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: $spacing-size-10;
-    align-items: center;
+    align-items: start;
 
     @media screen and (min-width: $breakpoint-site-header-large) {
         grid-template-columns: 1fr 1fr;
         gap: $spacing-size-16;
+    }
+}
+
+.sectionAltBg {
+    background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);
+
+    #{$selector-darkmode} & {
+        background: linear-gradient(180deg, var(--color-util-gray-50) 0%, var(--color-util-gray-100) 100%);
     }
 }
 
@@ -184,17 +195,15 @@
 
     ul {
         list-style: disc;
+        list-style-position: outside;
         margin: 0 0 $spacing-size-4 $spacing-size-5;
         color: var(--color-fg-secondary);
-    }
-
-    ul :global(.two-columns) {
-        column-count: 2;
-        column-gap: $spacing-size-6;
+        text-align: left;
     }
 
     li {
         margin-bottom: $spacing-size-2;
+        text-align: left;
     }
 
     a {
@@ -298,7 +307,8 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: $spacing-size-6;
-    margin-top: $spacing-size-10;
+    margin: $spacing-size-10 auto 0;
+    max-width: 1080px;
 
     @media screen and (min-width: $breakpoint-site-header-medium) {
         grid-template-columns: repeat(2, 1fr);
@@ -333,7 +343,7 @@
 
 .exampleCardImage {
     width: 100%;
-    aspect-ratio: 768 / 520;
+    aspect-ratio: 16 / 10;
     object-fit: cover;
     display: block;
 }
@@ -369,18 +379,23 @@
 }
 
 .brandsRow {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-size-6;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-items: center;
+    justify-content: center;
+    gap: $spacing-size-4 $spacing-size-6;
+    max-width: 880px;
+    margin: 0 auto;
 
-    @media screen and (min-width: $breakpoint-site-header-medium) {
-        grid-template-columns: repeat(5, 1fr);
+    a {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
     :global(svg) {
-        max-width: 140px;
+        max-width: 120px;
         height: auto;
         opacity: 0.7;
         filter: grayscale(1);
@@ -395,12 +410,16 @@
     }
 }
 
+.ctaOuter {
+    padding: $spacing-size-20 0;
+}
+
 .ctaSection {
     text-align: center;
 
     h2 {
-        font-size: var(--text-fs-2xl);
-        margin-bottom: $spacing-size-6;
+        font-size: var(--text-fs-3xl);
+        margin-bottom: $spacing-size-8;
     }
 }
 
@@ -408,7 +427,8 @@
     display: inline-flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: $spacing-size-3;
+    gap: $spacing-size-4;
+    font-size: var(--text-fs-lg);
 }
 
 .resourcesGrid {

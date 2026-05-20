@@ -5,7 +5,6 @@ import ExamplesGridSection from './bryntum/ExamplesGridSection.astro';
 import HeroSection from './bryntum/HeroSection.astro';
 import LanguagesSection from './bryntum/LanguagesSection.astro';
 import LiveDemoSection from './bryntum/LiveDemoSection.astro';
-import ResourcesSection from './bryntum/ResourcesSection.astro';
 import TextMediaSection from './bryntum/TextMediaSection.astro';
 import type { BryntumCampaignContent } from './bryntum/types';
 import styles from './BryntumCampaign.module.scss';
@@ -16,6 +15,8 @@ interface Props {
 
 const { content } = Astro.props;
 const productSlug = content.slug;
+
+let twoColumnTextMediaIndex = 0;
 ---
 
 <div class={styles.page}>
@@ -27,14 +28,19 @@ const productSlug = content.slug;
                 case 'text-languages':
                     return <LanguagesSection section={section} />;
                 case 'text-media':
-                case 'white-section':
-                    return <TextMediaSection section={section} productSlug={productSlug} />;
+                case 'white-section': {
+                    const hasImage = section.media?.[0]?.kind === 'image' && Boolean(section.media?.[0]?.src);
+                    const isWhite = section.type === 'white-section';
+                    const qualifies = hasImage && !isWhite;
+                    const isAlt = qualifies ? twoColumnTextMediaIndex++ % 2 === 1 : false;
+                    return <TextMediaSection section={section} productSlug={productSlug} isAlt={isAlt} />;
+                }
                 case 'live-demo':
                     return <LiveDemoSection section={section} />;
                 case 'columns-lib':
                     return <ExamplesGridSection section={section} productSlug={productSlug} />;
                 case 'columnsWithMedia':
-                    return <ResourcesSection section={section} productSlug={productSlug} />;
+                    return null;
                 case 'brands':
                     return <BrandsSection section={section} />;
                 case 'text-button':
