@@ -108,7 +108,13 @@
 .heroCtas {
     display: flex;
     flex-wrap: wrap;
-    gap: $spacing-size-3;
+    align-items: center;
+    gap: $spacing-size-4;
+    font-size: var(--text-fs-lg);
+
+    a {
+        --icon-size: 1.1em;
+    }
 }
 
 .heroMedia {
@@ -230,8 +236,13 @@
 .textMediaCtas {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: $spacing-size-3;
     margin-top: $spacing-size-4;
+
+    a {
+        --icon-size: 1.1em;
+    }
 }
 
 .textMediaVisual {
@@ -418,6 +429,18 @@
         opacity: 1;
         filter: grayscale(0);
     }
+
+    #{$selector-darkmode} & {
+        :global(svg) {
+            filter: brightness(0) invert(1);
+            opacity: 0.55;
+        }
+
+        a:hover :global(svg) {
+            filter: brightness(0) invert(1);
+            opacity: 1;
+        }
+    }
 }
 
 .ctaOuter {
@@ -437,8 +460,13 @@
     display: inline-flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
     gap: $spacing-size-4;
     font-size: var(--text-fs-lg);
+
+    a {
+        --icon-size: 1.1em;
+    }
 }
 
 .resourcesGrid {
