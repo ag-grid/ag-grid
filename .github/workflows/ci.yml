@@ -513,10 +513,18 @@ jobs:
         if: needs.test.result == 'success' || needs.test.result == 'failure' ||
           needs.e2e.result == 'success' || needs.e2e.result == 'failure'
         run: |
+          mkdir -p reports/
+          if [ ! -d test-results/ ]; then
+            echo "No test-results/ directory; nothing to merge."
+            exit 0
+          fi
+          reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
+          if [ -z "$reports" ]; then
+            echo "No JUnit XML files found under test-results/; nothing to merge."
+            exit 0
+          fi
           YARN_REGISTRY=
           yarn global add junit-report-merger
-          reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
-          mkdir -p reports/
           echo "$reports" | (while read name ; do
             yarn exec -s jrm reports/${name} "test-results/**/${name}"
           done)
