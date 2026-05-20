@@ -1,0 +1,70 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { resolveBryntumHref, resolveBryntumImage } from '@utils/bryntumCampaignAssets';
+
+import type { BryntumTextMediaSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumTextMediaSection;
+    productSlug: string;
+}
+
+const { section, productSlug } = Astro.props;
+const modifiers = section.modifiers ?? [];
+const isReverse = modifiers.includes('reverse');
+const hasShadow = modifiers.includes('added-shadow');
+const isWhite = section.type === 'white-section' || modifiers.includes('white-section');
+
+const media = section.media?.[0];
+const hasImage = media?.kind === 'image' && Boolean(media.src);
+---
+
+<section class:list={[styles.section, isWhite && styles.sectionBgWhite]}>
+    <div class={styles.sectionInner}>
+        <div
+            class:list={[
+                hasImage ? styles.textMedia : styles.textMediaSingle,
+                isReverse && hasImage && styles.textMediaReverse,
+            ]}
+        >
+            <div class={styles.textMediaCopy}>
+                {section.heading && <h2>{section.heading}</h2>}
+                {section.body_html && <div set:html={section.body_html} />}
+
+                {
+                    section.ctas && section.ctas.length > 0 && (
+                        <div class={styles.textMediaCtas}>
+                            {section.ctas.map((cta, index) => (
+                                <a
+                                    href={resolveBryntumHref(cta.href)}
+                                    class={index === 0 ? 'button-secondary' : 'button-tertiary'}
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+                                    {cta.text}
+                                    <Icon name="arrowRight" />
+                                </a>
+                            ))}
+                        </div>
+                    )
+                }
+            </div>
+
+            {
+                hasImage && (
+                    <div class={styles.textMediaVisual}>
+                        <img
+                            src={resolveBryntumImage(media.src, productSlug)}
+                            alt={media.alt ?? ''}
+                            width={media.width}
+                            height={media.height}
+                            class:list={[styles.mediaImage, hasShadow && styles.mediaShadow]}
+                            loading="lazy"
+                        />
+                    </div>
+                )
+            }
+        </div>
+    </div>
+</section>

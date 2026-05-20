@@ -1,0 +1,38 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { resolveBryntumHref } from '@utils/bryntumCampaignAssets';
+
+import type { BryntumTextButtonSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumTextButtonSection;
+}
+
+const { section } = Astro.props;
+---
+
+<section class:list={[styles.section, styles.sectionBgSecondary]}>
+    <div class:list={[styles.sectionInner, styles.ctaSection]}>
+        {section.heading && <h2>{section.heading}</h2>}
+        {section.body_html && <div set:html={section.body_html} />}
+
+        {
+            section.ctas && section.ctas.length > 0 && (
+                <div class={styles.ctaButtons}>
+                    {section.ctas.map((cta, index) => (
+                        <a
+                            href={resolveBryntumHref(cta.href)}
+                            class={index === 0 ? 'button-primary' : 'button-secondary'}
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            {cta.text}
+                            <Icon name="arrowRight" />
+                        </a>
+                    ))}
+                </div>
+            )
+        }
+    </div>
+</section>

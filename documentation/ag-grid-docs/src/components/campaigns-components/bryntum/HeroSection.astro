@@ -1,0 +1,57 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { resolveBryntumHref, resolveBryntumImage } from '@utils/bryntumCampaignAssets';
+
+import type { BryntumHeroSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumHeroSection;
+    productSlug: string;
+}
+
+const { section, productSlug } = Astro.props;
+const media = section.media?.[0];
+---
+
+<section class={styles.hero}>
+    <div class:list={[styles.sectionInner, styles.heroInner]}>
+        <div class={styles.heroCopy}>
+            {section.eyebrow && <span class={styles.heroEyebrow}>{section.eyebrow}</span>}
+            {section.heading && <h1 class={styles.heroHeading}>{section.heading}</h1>}
+            {section.body_html && <div class={styles.heroBody} set:html={section.body_html} />}
+
+            {
+                section.ctas && section.ctas.length > 0 && (
+                    <div class={styles.heroCtas}>
+                        {section.ctas.map((cta, index) => (
+                            <a
+                                href={resolveBryntumHref(cta.href)}
+                                class={index === 0 ? 'button-secondary' : 'button-tertiary'}
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                {cta.text}
+                                <Icon name="arrowRight" />
+                            </a>
+                        ))}
+                    </div>
+                )
+            }
+        </div>
+
+        <div class={styles.heroMedia}>
+            {media?.kind === 'svg-inline' && <Fragment set:html={media.markup} />}
+            {
+                media?.kind === 'image' && (
+                    <img
+                        src={resolveBryntumImage(media.src, productSlug)}
+                        alt={media.alt ?? ''}
+                        width={media.width}
+                        height={media.height}
+                    />
+                )
+            }
+        </div>
+    </div>
+</section>

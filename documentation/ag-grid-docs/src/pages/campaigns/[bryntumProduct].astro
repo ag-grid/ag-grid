@@ -1,0 +1,46 @@
+---
+import BryntumCampaign from '@components/campaigns-components/BryntumCampaign.astro';
+import type { BryntumCampaignContent } from '@components/campaigns-components/bryntum/types';
+import Layout from '@layouts/Layout.astro';
+
+export async function getStaticPaths() {
+    const contentModules = import.meta.glob<{ default: BryntumCampaignContent }>(
+        '../../content/campaigns/bryntum-products/*-original.json',
+        { eager: true }
+    );
+
+    const slugAliases: Record<string, string> = {
+        schedulerpro: 'scheduler-pro',
+        taskboard: 'task-board',
+    };
+
+    return Object.entries(contentModules).map(([path, mod]) => {
+        const content = mod.default;
+        const rawSlug = content.slug ?? path.split('/').pop()?.replace('-original.json', '') ?? '';
+        const urlSlug = `bryntum-${slugAliases[rawSlug] ?? rawSlug}`;
+
+        return {
+            params: { bryntumProduct: urlSlug },
+            props: { content },
+        };
+    });
+}
+
+interface Props {
+    content: BryntumCampaignContent;
+}
+
+const { content } = Astro.props;
+const pageTitle = content.meta?.og_title ?? content.title;
+const pageDescription = content.meta?.description ?? '';
+---
+
+<Layout
+    title={pageTitle}
+    description={pageDescription}
+    showDocsNav={false}
+    showSearchBar={true}
+    showAnnouncementBanner={false}
+>
+    <BryntumCampaign content={content} />
+</Layout>

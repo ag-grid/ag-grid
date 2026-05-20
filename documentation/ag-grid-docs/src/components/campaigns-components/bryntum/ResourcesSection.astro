@@ -1,0 +1,45 @@
+---
+import { resolveBryntumHref, resolveBryntumImage } from '@utils/bryntumCampaignAssets';
+
+import type { BryntumColumnsWithMediaSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumColumnsWithMediaSection;
+    productSlug: string;
+}
+
+const { section, productSlug } = Astro.props;
+---
+
+<section class={styles.section}>
+    <div class={styles.sectionInner}>
+        {section.heading && <h2 class={styles.sectionHeading}>{section.heading}</h2>}
+
+        <div class={styles.resourcesGrid}>
+            {
+                section.items.map((item) => {
+                    const img = item.media?.kind === 'image' ? item.media : undefined;
+                    return (
+                        <a
+                            class={styles.resourceCard}
+                            href={resolveBryntumHref(item.href)}
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            {item.heading && <h3>{item.heading}</h3>}
+                            {item.body_text && <p>{item.body_text}</p>}
+                            {img && (
+                                <img
+                                    src={resolveBryntumImage(img.src, productSlug)}
+                                    alt={img.alt ?? ''}
+                                    loading="lazy"
+                                />
+                            )}
+                        </a>
+                    );
+                })
+            }
+        </div>
+    </div>
+</section>

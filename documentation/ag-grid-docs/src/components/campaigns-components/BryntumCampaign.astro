@@ -1,0 +1,47 @@
+---
+import BrandsSection from './bryntum/BrandsSection.astro';
+import CtaSection from './bryntum/CtaSection.astro';
+import ExamplesGridSection from './bryntum/ExamplesGridSection.astro';
+import HeroSection from './bryntum/HeroSection.astro';
+import LanguagesSection from './bryntum/LanguagesSection.astro';
+import LiveDemoSection from './bryntum/LiveDemoSection.astro';
+import ResourcesSection from './bryntum/ResourcesSection.astro';
+import TextMediaSection from './bryntum/TextMediaSection.astro';
+import type { BryntumCampaignContent } from './bryntum/types';
+import styles from './BryntumCampaign.module.scss';
+
+interface Props {
+    content: BryntumCampaignContent;
+}
+
+const { content } = Astro.props;
+const productSlug = content.slug;
+---
+
+<div class={styles.page}>
+    {
+        content.sections.map((section) => {
+            switch (section.type) {
+                case 'heroTBM':
+                    return <HeroSection section={section} productSlug={productSlug} />;
+                case 'text-languages':
+                    return <LanguagesSection section={section} />;
+                case 'text-media':
+                case 'white-section':
+                    return <TextMediaSection section={section} productSlug={productSlug} />;
+                case 'live-demo':
+                    return <LiveDemoSection section={section} />;
+                case 'columns-lib':
+                    return <ExamplesGridSection section={section} productSlug={productSlug} />;
+                case 'columnsWithMedia':
+                    return <ResourcesSection section={section} productSlug={productSlug} />;
+                case 'brands':
+                    return <BrandsSection section={section} />;
+                case 'text-button':
+                    return <CtaSection section={section} />;
+                default:
+                    return null;
+            }
+        })
+    }
+</div>

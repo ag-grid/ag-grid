@@ -1,0 +1,28 @@
+---
+import { resolveBryntumHref } from '@utils/bryntumCampaignAssets';
+
+import type { BryntumBrandsSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumBrandsSection;
+}
+
+const { section } = Astro.props;
+---
+
+<section class={styles.section}>
+    <div class={styles.sectionInnerWide}>
+        {section.heading && <h3 class={styles.brandsHeading}>{section.heading}</h3>}
+
+        <div class={styles.brandsRow}>
+            {
+                section.items.map((item) => (
+                    <a href={resolveBryntumHref(item.href)} target="_blank" rel="noopener">
+                        {item.media?.kind === 'svg-inline' && <Fragment set:html={item.media.markup} />}
+                    </a>
+                ))
+            }
+        </div>
+    </div>
+</section>
