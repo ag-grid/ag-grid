@@ -153,13 +153,15 @@
       "source": {
         "source": "github",
         "repo": "ag-grid/ag-dev-prompts"${AG_DEV_PROMPTS_REF_FIELD}
-      }
+      },
+      "autoUpdate": true
     },
     "openai-codex": {
       "source": {
         "source": "github",
         "repo": "openai/codex-plugin-cc"
-      }
+      },
+      "autoUpdate": true
     }
   }
 }
