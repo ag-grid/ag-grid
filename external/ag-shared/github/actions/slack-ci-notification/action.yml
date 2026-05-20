@@ -13,6 +13,7 @@ inputs:
     NOTION_API_VERSION:
         description: Notion API version.
         required: false
+        default: '2026-03-11'
     AG_PROJECT:
         description: Project name (AgGrid | AgCharts | AgStudio | Blog) - used for branding and base URLs.
         required: true
