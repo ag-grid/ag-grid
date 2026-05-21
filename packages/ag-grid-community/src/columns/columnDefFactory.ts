@@ -57,16 +57,28 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
     public getColumnDefs(
         colDefColsList: AgColumn[],
         showingPivotResult: boolean,
-        lastOrder: AgColumn[] | null,
+        lastOrder: string[] | null,
         colsList: AgColumn[],
         sorted: boolean = false
     ): (ColDef | ColGroupDef)[] | undefined {
         const cols = colDefColsList.slice();
 
         if (showingPivotResult) {
-            cols.sort((a, b) => lastOrder!.indexOf(a) - lastOrder!.indexOf(b));
+            // Position-map indexed by colId: O(N) build + O(N log N) sort, vs O(N²) repeated
+            // `indexOf` walks. lastOrder is required when showingPivotResult is true (callers
+            // captured it during the same refresh that set the flag).
+            const order = lastOrder!;
+            const idxById = new Map<string, number>();
+            for (let i = 0, len = order.length; i < len; ++i) {
+                idxById.set(order[i], i);
+            }
+            cols.sort((a, b) => (idxById.get(a.colId) ?? 0) - (idxById.get(b.colId) ?? 0));
         } else if (lastOrder || sorted) {
-            cols.sort((a, b) => colsList.indexOf(a) - colsList.indexOf(b));
+            const idxByCol = new Map<AgColumn, number>();
+            for (let i = 0, len = colsList.length; i < len; ++i) {
+                idxByCol.set(colsList[i], i);
+            }
+            cols.sort((a, b) => (idxByCol.get(a) ?? 0) - (idxByCol.get(b) ?? 0));
         }
 
         const rowGroupColumns = this.rowGroupColsSvc?.columns;
@@ -80,36 +92,34 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
         rowGroupColumns: AgColumn[] = [],
         pivotColumns: AgColumn[] = []
     ): (ColDef | ColGroupDef)[] {
-        const res: (ColDef | ColGroupDef)[] = [];
+        // Precompute (col → index) maps once instead of `indexOf` per col (which would be O(N²)
+        // across all cols × rowGroup/pivot list lengths).
+        const rowGroupIdx = indexCols(rowGroupColumns);
+        const pivotIdx = indexCols(pivotColumns);
 
+        const res: (ColDef | ColGroupDef)[] = [];
         const colGroupDefs: { [id: string]: ColGroupDef } = {};
 
         for (const col of cols) {
-            const colDef = this.createDefFromColumn(col, rowGroupColumns, pivotColumns);
+            const colDef = this.createDefFromColumn(col, rowGroupIdx, pivotIdx);
 
             let addToResult = true;
-
             let childDef: ColDef | ColGroupDef = colDef;
 
-            let pointer = col.getOriginalParent();
+            let pointer = col.originalParent;
             let lastPointer: AgProvidedColumnGroup | null = null;
             while (pointer) {
-                // we don't include padding groups, as the column groups provided
-                // by application didn't have these. the whole point of padding groups
-                // is to balance the column tree that the user provided.
-                if (pointer.isPadding()) {
-                    pointer = pointer.getOriginalParent();
+                // Padding groups balance the tree depth-wise; they aren't user-defined so we skip them.
+                if (pointer.padding) {
+                    pointer = pointer.originalParent;
                     continue;
                 }
 
                 // if colDef for this group already exists, use it
-                const existingParentDef = colGroupDefs[pointer.getGroupId()];
+                const existingParentDef = colGroupDefs[pointer.groupId];
                 if (existingParentDef) {
                     existingParentDef.children.push(childDef);
-                    // if we added to result, it would be the second time we did it
                     addToResult = false;
-                    // we don't want to continue up the tree, as it has already been
-                    // done for this group
                     break;
                 }
 
@@ -119,7 +129,7 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
                     parentDef.children = [childDef];
                     colGroupDefs[parentDef.groupId!] = parentDef;
                     childDef = parentDef;
-                    pointer = pointer.getOriginalParent();
+                    pointer = pointer.originalParent;
                 }
 
                 if (pointer != null && lastPointer === pointer) {
@@ -142,29 +152,43 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
         const defCloned = _deepCloneDefinition(group.getColGroupDef(), ['children']);
 
         if (defCloned) {
-            defCloned.groupId = group.getGroupId();
+            defCloned.groupId = group.groupId;
         }
 
         return defCloned;
     }
 
-    private createDefFromColumn(col: AgColumn, rowGroupColumns: AgColumn[], pivotColumns: AgColumn[]): ColDef {
+    private createDefFromColumn(
+        col: AgColumn,
+        rowGroupIdx: Map<AgColumn, number>,
+        pivotIdx: Map<AgColumn, number>
+    ): ColDef {
         const colDefCloned = _deepCloneDefinition(col.colDef)!;
+        const rowGroupActive = col.rowGroupActive;
+        const pivotActive = col.pivotActive;
 
         colDefCloned.colId = col.colId;
-
         colDefCloned.width = col.getActualWidth();
-        colDefCloned.rowGroup = col.isRowGroupActive();
-        colDefCloned.rowGroupIndex = col.isRowGroupActive() ? rowGroupColumns.indexOf(col) : null;
-        colDefCloned.pivot = col.isPivotActive();
-        colDefCloned.pivotIndex = col.isPivotActive() ? pivotColumns.indexOf(col) : null;
-        colDefCloned.aggFunc = col.isValueActive() ? col.getAggFunc() : null;
-        colDefCloned.hide = col.isVisible() ? undefined : true;
-        colDefCloned.pinned = col.isPinned() ? col.getPinned() : null;
+        colDefCloned.rowGroup = rowGroupActive;
+        colDefCloned.rowGroupIndex = rowGroupActive ? (rowGroupIdx.get(col) ?? -1) : null;
+        colDefCloned.pivot = pivotActive;
+        colDefCloned.pivotIndex = pivotActive ? (pivotIdx.get(col) ?? -1) : null;
+        colDefCloned.aggFunc = col.aggregationActive ? col.aggFunc : null;
+        colDefCloned.hide = col.visible ? undefined : true;
+        const pinned = col.pinned;
+        colDefCloned.pinned = pinned === 'left' || pinned === 'right' ? pinned : null;
 
         colDefCloned.sort = col.getSortDef();
-        colDefCloned.sortIndex = col.getSortIndex() != null ? col.getSortIndex() : null;
+        colDefCloned.sortIndex = col.sortIndex != null ? col.sortIndex : null;
 
         return colDefCloned;
     }
+}
+
+function indexCols(cols: AgColumn[]): Map<AgColumn, number> {
+    const map = new Map<AgColumn, number>();
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        map.set(cols[i], i);
+    }
+    return map;
 }

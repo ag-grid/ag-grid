@@ -66,8 +66,12 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     }
 
     protected updateIndexMap = (): void => {
-        this.columnIndexMap = {};
-        this.columns.forEach((col, index) => (this.columnIndexMap[col.getId()] = index));
+        const indexMap: { [key: string]: number } = {};
+        const cols = this.columns;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            indexMap[cols[i].colId] = i;
+        }
+        this.columnIndexMap = indexMap;
     };
 
     private setColList(
@@ -203,19 +207,20 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
     public extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] = []): AgColumn[] {
         const previousCols = this.columns;
-        const colsWithIndex: AgColumn[] = [];
-        const colsWithValue: AgColumn[] = [];
-
         const { setFlagFunc, getIndexFunc, getInitialIndexFunc, getValueFunc, getInitialValueFunc } =
             this.columnExtractors;
-
         const primaryCols = this.colModel.getColDefCols();
 
-        // go though all cols.
-        // if value, change
-        // if default only, change only if new
+        // O(1) membership for the prior-set checks below.
+        const oldProvidedSet = oldProvidedCols.length > 0 ? new Set(oldProvidedCols) : null;
+        const previousSet = previousCols.length > 0 ? new Set(previousCols) : null;
+
+        const colsWithIndex: AgColumn[] = [];
+        const colsWithValueSet = new Set<AgColumn>();
+        const colsWithValue: AgColumn[] = [];
+
         for (const col of primaryCols ?? []) {
-            const colIsNew = !oldProvidedCols.includes(col);
+            const colIsNew = !oldProvidedSet?.has(col);
             const colDef = col.colDef;
 
             const value = getValueFunc(colDef);
@@ -227,34 +232,24 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
             const valuePresent = value !== undefined;
             const indexPresent = index !== undefined;
-            const initialValuePresent = initialValue !== undefined;
-            const initialIndexPresent = initialIndex !== undefined;
 
             if (valuePresent) {
-                include = value!; // boolean value is guaranteed as attrToBoolean() is used above
+                include = value!;
             } else if (indexPresent) {
-                if (index === null) {
-                    // if col is new we don't want to use the default / initial if index is set to null. Similarly,
-                    // we don't want to include the property for existing columns, i.e. we want to 'clear' it.
-                    include = false;
-                } else {
-                    // note that 'null >= 0' evaluates to true which means 'rowGroupIndex = null' would enable row
-                    // grouping if the null check didn't exist above.
-                    include = index >= 0;
-                }
+                // `index === null` clears the prop on existing cols; otherwise `index >= 0`
+                // (note `null >= 0 === true`, hence the null guard).
+                include = index !== null && index >= 0;
             } else if (colIsNew) {
-                // as no value or index is 'present' we use the default / initial when col is new
-                if (initialValuePresent) {
+                if (initialValue !== undefined) {
                     include = initialValue!;
-                } else if (initialIndexPresent) {
+                } else if (initialIndex !== undefined) {
                     include = initialIndex != null && initialIndex >= 0;
                 } else {
                     include = false;
                 }
             } else {
-                // otherwise include it if included last time, e.g. if we are extracting row group cols and this col
-                // is an existing row group col (i.e. it exists in 'previousCols') then we should include it.
-                include = previousCols.indexOf(col) >= 0;
+                // Existing col with no value/index: keep its prior inclusion.
+                include = previousSet?.has(col) ?? false;
             }
 
             if (include) {
@@ -263,59 +258,58 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                     colsWithIndex.push(col);
                 } else {
                     colsWithValue.push(col);
+                    colsWithValueSet.add(col);
                 }
             }
         }
 
-        const getIndexForCol = (col: AgColumn): number => {
-            const colDef = col.colDef;
-            return getIndexFunc(colDef) ?? getInitialIndexFunc(colDef)!;
-        };
+        colsWithIndex.sort((colA, colB) => {
+            const a = getIndexFunc(colA.colDef) ?? getInitialIndexFunc(colA.colDef)!;
+            const b = getIndexFunc(colB.colDef) ?? getInitialIndexFunc(colB.colDef)!;
+            return a - b;
+        });
 
-        // sort cols with index, and add these first
-        colsWithIndex.sort((colA, colB) => getIndexForCol(colA) - getIndexForCol(colB));
-
-        const res: AgColumn[] = [];
-
+        // Build `res` in order: indexed cols first, then prior-order value cols, then remaining.
+        // `expandColumnInto` (when hierarchy is active) emits `[...virtuals, source]` deduped
+        // against `resSet` — the shared dedup state keeps total cost O(N) across the loop.
         const groupHierarchCols = this.groupHierarchCols;
-        const addCol = (col: AgColumn) => {
+        const res: AgColumn[] = [];
+        const resSet = new Set<AgColumn>();
+        const addCol = (col: AgColumn): void => {
             if (groupHierarchCols) {
-                groupHierarchCols.expandColumnInto(res, col);
-            } else {
+                groupHierarchCols.expandColumnInto(res, resSet, col);
+            } else if (!resSet.has(col)) {
                 res.push(col);
+                resSet.add(col);
             }
         };
 
-        // Columns with an index specified need to have any virtual hierarchical columns expanded
-        colsWithIndex.forEach(addCol);
-
-        // next, add columns that were there before and in the same order as they were before,
-        // so we are preserving order of current grouping of columns that simply have rowGroup=true...
-        for (const col of previousCols) {
-            if (colsWithValue.indexOf(col) >= 0) {
-                // ...with the caveat that each column added also has any associated virtual columns added here
-                // so they appear before it in the group hierarchy. This is purely a matter of ordering; adding the
-                // virtual columns here means they will not be added below when iterating over `colsWithValue`.
+        for (let i = 0, len = colsWithIndex.length; i < len; ++i) {
+            addCol(colsWithIndex[i]);
+        }
+        for (let i = 0, len = previousCols.length; i < len; ++i) {
+            const col = previousCols[i];
+            if (colsWithValueSet.has(col)) {
                 addCol(col);
             }
         }
-
-        // lastly put in all remaining cols
-        for (const col of colsWithValue) {
-            if (res.indexOf(col) < 0) {
-                addCol(col);
-            }
+        for (let i = 0, len = colsWithValue.length; i < len; ++i) {
+            addCol(colsWithValue[i]);
         }
 
-        // set flag=false for removed cols
         for (const col of previousCols) {
-            if (res.indexOf(col) < 0) {
+            if (!resSet.has(col)) {
                 setFlagFunc(col, false, source);
             }
         }
-        // set flag=true for newly added cols
-        for (const col of res) {
-            if (previousCols.indexOf(col) < 0) {
+        if (previousSet !== null) {
+            for (const col of res) {
+                if (!previousSet.has(col)) {
+                    setFlagFunc(col, true, source);
+                }
+            }
+        } else {
+            for (const col of res) {
                 setFlagFunc(col, true, source);
             }
         }

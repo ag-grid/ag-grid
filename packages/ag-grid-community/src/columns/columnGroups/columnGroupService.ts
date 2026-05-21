@@ -11,8 +11,11 @@ import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn'
 import { _recursivelyCreateColumns, depthFirstOriginalTreeSearch } from '../columnFactoryUtils';
 import type { IColumnKeyCreator } from '../columnKeyCreator';
 import type { GroupInstanceIdCreator } from '../groupInstanceIdCreator';
-import { depthFirstAllColumnTreeSearch } from '../visibleColsService';
 import { createMergedColGroupDef } from './columnGroupUtils';
+
+/** Prefix for synthetic `AgProvidedColumnGroup` IDs created by `wrapAutoColInBalancedTree` to pad
+ *  auto-generated columns up to the user-tree depth. */
+const BALANCED_TREE_WRAPPER_ID_PREFIX = 'FAKE_PATH_';
 
 export interface CreateGroupsParams {
     // all displayed columns sorted - this is the columns the grid should show
@@ -38,8 +41,8 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         depthFirstOriginalTreeSearch(null, gridBalancedTree, (node) => {
             if (isProvidedColumnGroup(node)) {
                 columnGroupState.push({
-                    groupId: node.getGroupId(),
-                    open: node.isExpanded(),
+                    groupId: node.groupId,
+                    open: node.expanded,
                 });
             }
         });
@@ -59,7 +62,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
             if (isProvidedColumnGroup(child)) {
                 const colGroupDef = child.getColGroupDef();
                 const groupState = {
-                    groupId: child.getGroupId(),
+                    groupId: child.groupId,
                     open: !colGroupDef ? undefined : colGroupDef.openByDefault,
                 };
                 stateItems.push(groupState);
@@ -91,7 +94,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
             if (!providedColumnGroup) {
                 continue;
             }
-            if (providedColumnGroup.isExpanded() === newValue) {
+            if (providedColumnGroup.expanded === newValue) {
                 continue;
             }
 
@@ -121,7 +124,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         let keyAsString: string;
 
         if (isProvidedColumnGroup(key)) {
-            keyAsString = key.getId();
+            keyAsString = key.groupId;
         } else {
             keyAsString = key || '';
         }
@@ -133,7 +136,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
         depthFirstOriginalTreeSearch(null, this.beans.colModel.getColTree(), (node) => {
             if (isProvidedColumnGroup(node)) {
-                if (node.getId() === key) {
+                if (node.groupId === key) {
                     res = node;
                 }
             }
@@ -144,7 +147,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
     public getGroupAtDirection(columnGroup: AgColumnGroup, direction: 'After' | 'Before'): AgColumnGroup | null {
         // pick the last displayed column in this group
-        const requiredLevel = columnGroup.getProvidedColumnGroup().getLevel() + columnGroup.getPaddingLevel();
+        const requiredLevel = columnGroup.providedColumnGroup.level + columnGroup.getPaddingLevel();
         const colGroupLeafColumns = columnGroup.getDisplayedLeafColumns();
         const col: AgColumn | null = direction === 'After' ? _last(colGroupLeafColumns) : colGroupLeafColumns[0];
         const getDisplayColMethod: 'getColAfter' | 'getColBefore' = `getCol${direction}` as any;
@@ -172,8 +175,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         let groupPointerLevel: number;
 
         while (true) {
-            const groupPointerProvidedColumnGroup = groupPointer.getProvidedColumnGroup();
-            originalGroupLevel = groupPointerProvidedColumnGroup.getLevel();
+            originalGroupLevel = groupPointer.providedColumnGroup.level;
             groupPointerLevel = groupPointer.getPaddingLevel();
 
             if (originalGroupLevel + groupPointerLevel <= level) {
@@ -186,17 +188,16 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
     }
 
     public updateOpenClosedVisibility(): void {
-        const allColumnGroups = this.beans.visibleCols.getAllTrees();
-
-        depthFirstAllColumnTreeSearch(allColumnGroups, false, (child) => {
-            if (isColumnGroup(child)) {
-                child.calculateDisplayedColumns();
+        const nodes = this.beans.visibleCols.getTreeNodes();
+        for (let i = 0, len = nodes.length; i < len; ++i) {
+            const node = nodes[i];
+            if (isColumnGroup(node)) {
+                node.calculateDisplayedColumns();
             }
-        });
+        }
     }
 
-    // returns the group with matching colId and instanceId. If instanceId is missing,
-    // matches only on the colId.
+    /** Returns the group with matching colId and instanceId. If instanceId is missing, matches only on the colId. */
     public getColumnGroup(colId: string | AgColumnGroup, partId?: number): AgColumnGroup | null {
         if (!colId) {
             return null;
@@ -205,28 +206,18 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
             return colId;
         }
 
-        const allColumnGroups = this.beans.visibleCols.getAllTrees();
         const checkPartId = typeof partId === 'number';
-        let result: AgColumnGroup | null = null;
-
-        depthFirstAllColumnTreeSearch(allColumnGroups, false, (child) => {
-            if (isColumnGroup(child)) {
-                const columnGroup = child;
-                let matched: boolean;
-
-                if (checkPartId) {
-                    matched = colId === columnGroup.getGroupId() && partId === columnGroup.getPartId();
-                } else {
-                    matched = colId === columnGroup.getGroupId();
-                }
-
-                if (matched) {
-                    result = columnGroup;
-                }
+        const nodes = this.beans.visibleCols.getTreeNodes();
+        for (let i = 0, len = nodes.length; i < len; ++i) {
+            const node = nodes[i];
+            if (!isColumnGroup(node)) {
+                continue;
             }
-        });
-
-        return result;
+            if (checkPartId ? colId === node.groupId && partId === node.partId : colId === node.groupId) {
+                return node;
+            }
+        }
+        return null;
     }
 
     public createColumnGroups(params: CreateGroupsParams): (AgColumn | AgColumnGroup)[] {
@@ -261,9 +252,9 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
                 const previousNode = currentlyIterating[from];
                 const previousNodeProvided = isColumnGroup(previousNode)
-                    ? previousNode.getProvidedColumnGroup()
+                    ? previousNode.providedColumnGroup
                     : previousNode;
-                const previousNodeParent = previousNodeProvided.getOriginalParent();
+                const previousNodeParent = previousNodeProvided.originalParent;
 
                 if (previousNodeParent == null) {
                     // if the last node was different, and had a null parent, then we add all the nodes to the final
@@ -292,14 +283,14 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
             for (let i = 1; i < currentlyIterating.length; i++) {
                 const thisNode = currentlyIterating[i];
-                const thisNodeProvided = isColumnGroup(thisNode) ? thisNode.getProvidedColumnGroup() : thisNode;
-                const thisNodeParent = thisNodeProvided.getOriginalParent();
+                const thisNodeProvided = isColumnGroup(thisNode) ? thisNode.providedColumnGroup : thisNode;
+                const thisNodeParent = thisNodeProvided.originalParent;
 
                 const previousNode = currentlyIterating[lastGroupedColIdx];
                 const previousNodeProvided = isColumnGroup(previousNode)
-                    ? previousNode.getProvidedColumnGroup()
+                    ? previousNode.providedColumnGroup
                     : previousNode;
-                const previousNodeParent = previousNodeProvided.getOriginalParent();
+                const previousNodeParent = previousNodeProvided.originalParent;
 
                 if (thisNodeParent !== previousNodeParent) {
                     createGroupToIndex(i);
@@ -374,7 +365,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                 // child is a group, all we do is go to the next level of recursion
                 const originalGroup = child;
                 const newChildren = this.balanceColumnTree(
-                    originalGroup.getChildren(),
+                    originalGroup.children,
                     currentDepth + 1,
                     columnDepth,
                     columnKeyCreator
@@ -432,7 +423,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
         while (pointer?.[0] && isProvidedColumnGroup(pointer[0])) {
             depth++;
-            pointer = pointer[0].getChildren();
+            pointer = pointer[0].children;
         }
         return depth;
     }
@@ -444,7 +435,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
             const abstractColumn = treeChildren[i];
             if (isProvidedColumnGroup(abstractColumn)) {
                 const originalGroup = abstractColumn;
-                const newDepth = this.findMaxDepth(originalGroup.getChildren(), depth + 1);
+                const newDepth = this.findMaxDepth(originalGroup.children, depth + 1);
                 if (maxDepthThisLevel < newDepth) {
                     maxDepthThisLevel = newDepth;
                 }
@@ -454,35 +445,76 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         return maxDepthThisLevel;
     }
 
-    /**
-     * Inserts dummy group columns in the hierarchy above auto-generated columns
-     * in order to ensure auto-generated columns are leaf nodes (and therefore are
-     * displayed correctly)
-     */
-    public balanceTreeForAutoCols(autoCols: AgColumn[], depth: number): (AgColumn | AgProvidedColumnGroup)[] {
-        const tree: (AgColumn | AgProvidedColumnGroup)[] = [];
-
-        for (const col of autoCols) {
-            // at the end, this will be the top of the tree item.
-            let nextChild: AgColumn | AgProvidedColumnGroup = col;
-
-            for (let i = depth - 1; i >= 0; i--) {
-                const autoGroup = new AgProvidedColumnGroup(null, `FAKE_PATH_${col.getId()}_${i}`, true, i);
-                this.createBean(autoGroup);
-                autoGroup.setChildren([nextChild]);
-                nextChild.originalParent = autoGroup;
-                nextChild = autoGroup;
-            }
-
-            if (depth === 0) {
-                col.originalParent = null;
-            }
-
-            // at this point, the nextChild is the top most item in the tree
-            tree.push(nextChild);
+    /** Wrap `col` in `depth` levels of dummy `AgProvidedColumnGroup` nodes so the leaf aligns with
+     *  the user tree's depth. Returns the top-most wrapper (or `col` itself when `depth === 0`). */
+    public wrapAutoColInBalancedTree(col: AgColumn, depth: number): AgColumn | AgProvidedColumnGroup {
+        if (depth === 0) {
+            col.originalParent = null;
+            return col;
         }
+        const colId = col.colId;
+        let nextChild: AgColumn | AgProvidedColumnGroup = col;
+        for (let i = depth - 1; i >= 0; --i) {
+            const autoGroup = new AgProvidedColumnGroup(
+                null,
+                `${BALANCED_TREE_WRAPPER_ID_PREFIX}${colId}_${i}`,
+                true,
+                i
+            );
+            this.createBean(autoGroup);
+            autoGroup.setChildren([nextChild]);
+            nextChild.originalParent = autoGroup;
+            nextChild = autoGroup;
+        }
+        return nextChild;
+    }
 
-        return tree;
+    /** Wrapper cache for service cols (auto-group / selection / row-numbers). Survives across
+     *  `refreshCols` so `(col, depth)`-stable wrappers aren't rebuilt on every refresh. */
+    private readonly serviceColWrapperCache = new Map<
+        AgColumn,
+        { wrapper: AgColumn | AgProvidedColumnGroup; depth: number }
+    >();
+
+    /** Returns the cached wrapper for `col` at `depth`, or builds one. `inUse` is the pass's
+     *  live-set — caller calls `evictStaleServiceWrappers(inUse)` after to drop unused entries. */
+    public wrapServiceColCached(col: AgColumn, depth: number, inUse: Set<AgColumn>): AgColumn | AgProvidedColumnGroup {
+        inUse.add(col);
+        const cache = this.serviceColWrapperCache;
+        const cached = cache.get(col);
+        if (cached?.depth === depth) {
+            return cached.wrapper;
+        }
+        const wrapper = this.wrapAutoColInBalancedTree(col, depth);
+        if (cached !== undefined) {
+            destroyAutoWrapperChain(cached.wrapper);
+        }
+        cache.set(col, { wrapper, depth });
+        return wrapper;
+    }
+
+    /** Destroy wrapper chains for service cols not in `inUse`. Leaf cols are owned by producers
+     *  (auto/sel/rowNum services) — only the wrapper groups are destroyed here. */
+    public evictStaleServiceWrappers(inUse: Set<AgColumn>): void {
+        const cache = this.serviceColWrapperCache;
+        if (cache.size === 0 || cache.size === inUse.size) {
+            return;
+        }
+        for (const [col, entry] of cache) {
+            if (!inUse.has(col)) {
+                destroyAutoWrapperChain(entry.wrapper);
+                cache.delete(col);
+            }
+        }
+    }
+
+    /** Destroys all cached service-col wrappers. Called by ColumnModel on grid teardown. */
+    public destroyAllServiceColWrappers(): void {
+        const cache = this.serviceColWrapperCache;
+        for (const entry of cache.values()) {
+            destroyAutoWrapperChain(entry.wrapper);
+        }
+        cache.clear();
     }
 
     private findExistingGroup(
@@ -501,7 +533,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                 continue;
             }
 
-            if (existingGroup.getId() === newGroupDef.groupId) {
+            if (existingGroup.groupId === newGroupDef.groupId) {
                 return { idx: i, group: existingGroup };
             }
         }
@@ -515,7 +547,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         pinned: ColumnPinnedType,
         isStandaloneStructure?: boolean
     ): AgColumnGroup {
-        const groupId = providedGroup.getGroupId();
+        const groupId = providedGroup.groupId;
         const instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
         const uniqueId = createUniqueColumnGroupId(groupId, instanceId);
 
@@ -524,7 +556,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         // if the user is setting new colDefs, it is possible that the id's overlap, and we
         // would have a false match from above. so we double check we are talking about the
         // same original column group.
-        if (columnGroup && columnGroup.getProvidedColumnGroup() !== providedGroup) {
+        if (columnGroup && columnGroup.providedColumnGroup !== providedGroup) {
             columnGroup = null;
         }
 
@@ -552,7 +584,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                 if (isColumnGroup(columnOrGroup)) {
                     const columnGroup = columnOrGroup;
                     result[columnOrGroup.getUniqueId()] = columnGroup;
-                    recursive(columnGroup.getChildren());
+                    recursive(columnGroup.children);
                 }
             }
         };
@@ -576,8 +608,22 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
             columnsOrGroup.parent = parent;
             if (isColumnGroup(columnsOrGroup)) {
                 const columnGroup = columnsOrGroup;
-                this.setupParentsIntoCols(columnGroup.getChildren(), columnGroup);
+                this.setupParentsIntoCols(columnGroup.children, columnGroup);
             }
         }
+    }
+}
+
+/** Destroys the chain of `AgProvidedColumnGroup` wrappers above an auto-col, stopping at the
+ *  leaf `AgColumn` (its lifecycle is owned by the producing service, not by colGroupSvc). */
+function destroyAutoWrapperChain(top: AgColumn | AgProvidedColumnGroup): void {
+    let node: AgColumn | AgProvidedColumnGroup | null = top;
+    while (node && !node.isColumn) {
+        const wrapper = node as AgProvidedColumnGroup;
+        const child: AgColumn | AgProvidedColumnGroup | undefined = wrapper.children[0];
+        if (wrapper.isAlive()) {
+            wrapper.destroy();
+        }
+        node = child ?? null;
     }
 }

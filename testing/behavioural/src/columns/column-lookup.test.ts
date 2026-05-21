@@ -1,12 +1,15 @@
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import type { Column } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ColumnApiModule, RowSelectionModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
 
 describe('Column lookup', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnApiModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnApiModule, RowSelectionModule, RowGroupingModule],
+    });
 
     beforeEach(() => {
         gridsManager.reset();
@@ -128,6 +131,60 @@ describe('Column lookup', () => {
         });
     });
 
+    // `getColumnState()` iterates every col known to the grid via the internal `getAllCols()`.
+    // Asserting no duplicate entries catches silent over-inclusion of service / hierarchy cols.
+    describe('getColumnState() — every col appears exactly once', () => {
+        function hasNoDuplicates(ids: string[]): boolean {
+            return new Set(ids).size === ids.length;
+        }
+
+        test('plain cols — no duplicates', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+            });
+
+            const ids = api.getColumnState().map((s) => s.colId!);
+            expect(hasNoDuplicates(ids)).toBe(true);
+            expect(ids).toEqual(expect.arrayContaining(['a', 'b', 'c']));
+        });
+
+        test('with row grouping — auto-group col appears exactly once', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'country', rowGroup: true }, { colId: 'value' }],
+                rowData: [{ country: 'A', value: 1 }],
+            });
+
+            const ids = api.getColumnState().map((s) => s.colId!);
+            expect(hasNoDuplicates(ids)).toBe(true);
+            expect(ids).toEqual(expect.arrayContaining(['country', 'value', 'ag-Grid-AutoColumn']));
+        });
+
+        test('with row selection — selection col appears exactly once', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+                rowData: [{ a: 1, b: 2 }],
+            });
+
+            const ids = api.getColumnState().map((s) => s.colId!);
+            expect(hasNoDuplicates(ids)).toBe(true);
+            expect(ids).toEqual(expect.arrayContaining(['a', 'b', 'ag-Grid-SelectionColumn']));
+        });
+
+        test('state survives setGridOption(columnDefs) with no duplicates', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            });
+
+            api.setGridOption('columnDefs', [{ colId: 'x' }, { colId: 'y' }, { colId: 'z' }]);
+
+            const ids = api.getColumnState().map((s) => s.colId!);
+            expect(hasNoDuplicates(ids)).toBe(true);
+            expect(ids).toEqual(expect.arrayContaining(['x', 'y', 'z']));
+            expect(ids).not.toContain('a');
+        });
+    });
+
     describe('getColumnDefs()', () => {
         test('exports column defs with current runtime state', () => {
             const api = gridsManager.createGrid('myGrid', {
@@ -163,6 +220,21 @@ describe('Column lookup', () => {
             expect(params).toEqual({ min: 0, max: 100 });
             // Ensure it's a clone, not the same reference
             expect(params).not.toBe((api.getColumn('x') as any)?.getColDef().cellEditorParams);
+        });
+
+        test('does not pollute Object.prototype when colDef contains __proto__ payload', () => {
+            const pollutionPayload = JSON.parse('{"__proto__":{"polluted":"yes"}}');
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'x', cellEditorParams: pollutionPayload }],
+            });
+
+            // Exporting the colDefs exercises cloneColDef on the payload.
+            const defs = api.getColumnDefs()!;
+            expect(defs).toBeDefined();
+
+            // The clone must not have polluted Object.prototype or a fresh object's prototype.
+            expect(({} as any).polluted).toBeUndefined();
+            expect((Object.prototype as any).polluted).toBeUndefined();
         });
     });
 });

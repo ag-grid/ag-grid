@@ -7,7 +7,6 @@ import type {
     NamedBean,
     RowNode,
     _ChangedRowNodes,
-    _ColumnCollections,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -107,8 +106,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * Recompute `active`, the `formulaColumnsPresent` cache, and trigger a full formula refresh
      * if the active state changed. Called by `columnModel` whenever the column set changes.
      */
-    public setFormulasActive(cols: _ColumnCollections): void {
-        const columns = cols.list;
+    public setFormulasActive(columns: AgColumn[]): void {
         let formulaColumnsPresent = false;
         for (let i = 0, len = columns.length; i < len; ++i) {
             if (columns[i].isAllowFormula()) {
@@ -117,7 +115,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             }
         }
         this.formulaColumnsPresent = formulaColumnsPresent;
-        const active = formulaColumnsPresent && this.checkForIncompatibleServices(cols);
+        const active = formulaColumnsPresent && this.checkForIncompatibleServices(columns);
 
         if (active !== this.active) {
             this.active = active;
@@ -125,7 +123,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
     }
 
-    private checkForIncompatibleServices(cols: _ColumnCollections): boolean {
+    private checkForIncompatibleServices(cols: AgColumn[]): boolean {
         if (this.gos.get('masterDetail')) {
             _warn(295, { blockedService: 'Master Detail' });
             return false;
@@ -141,18 +139,17 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return false;
         }
 
-        const columns = cols.list;
-        for (let i = 0, len = columns.length; i < len; ++i) {
-            const col = columns[i];
-            if (col.isAllowPivot() || col.isPivotActive()) {
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const col = cols[i];
+            if (col.isAllowPivot() || col.pivotActive) {
                 _warn(295, { blockedService: 'Column Pivoting' });
                 return false;
             }
-            if (col.isAllowRowGroup() || col.isRowGroupActive()) {
+            if (col.isAllowRowGroup() || col.rowGroupActive) {
                 _warn(295, { blockedService: 'Row Groups' });
                 return false;
             }
-            if (col.isAllowValue() || col.isValueActive() || col.getAggFunc()) {
+            if (col.isAllowValue() || col.aggregationActive || col.aggFunc) {
                 _warn(295, { blockedService: 'Value Aggregation' });
                 return false;
             }

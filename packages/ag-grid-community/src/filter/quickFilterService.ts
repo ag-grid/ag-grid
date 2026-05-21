@@ -59,15 +59,14 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
         const providedCols = colModel.getColDefCols();
 
         let columnsForQuickFilter =
-            (pivotMode && !gos.get('applyQuickFilterBeforePivotOrAgg')
-                ? pivotResultCols?.getPivotResultCols()?.list
-                : providedCols) ?? [];
+            (pivotMode && !gos.get('applyQuickFilterBeforePivotOrAgg') ? pivotResultCols?.pivotCols : providedCols) ??
+            [];
         if (groupAutoCols) {
             columnsForQuickFilter = columnsForQuickFilter.concat(groupAutoCols);
         }
         this.colsToUse = gos.get('includeHiddenColumnsInQuickFilter')
             ? columnsForQuickFilter
-            : columnsForQuickFilter.filter((col) => col.isVisible() || col.isRowGroupActive());
+            : columnsForQuickFilter.filter((col) => col.visible || col.rowGroupActive);
     }
 
     public isFilterPresent(): boolean {

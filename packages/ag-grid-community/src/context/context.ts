@@ -55,9 +55,9 @@ import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterServic
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAggregatedChildrenSvc } from '../interfaces/iAggregatedChildrenSvc';
+import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
-import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IColumnStateUpdateStrategy } from '../interfaces/iColumnStateUpdateStrategy';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
@@ -311,7 +311,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     eRootDiv: HTMLElement;
     withinStudio?: boolean;
     pivotResultCols?: IPivotResultColsService;
-    autoColSvc?: IColumnCollectionService;
+    autoColSvc?: IAutoColService;
     selectionColSvc?: SelectionColService;
     rowNumbersSvc?: IRowNumbersService;
     colDefFactory?: ColumnDefFactory;

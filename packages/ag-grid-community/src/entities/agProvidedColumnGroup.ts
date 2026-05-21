@@ -15,10 +15,10 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
 
     public originalParent: AgProvidedColumnGroup | null;
 
-    private children: (AgColumn | AgProvidedColumnGroup)[];
-    private expandable = false;
+    public children: (AgColumn | AgProvidedColumnGroup)[];
+    public expandable = false;
 
-    private expanded: boolean;
+    public expanded: boolean;
 
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
@@ -28,9 +28,9 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
 
     constructor(
         private colGroupDef: ColGroupDef | null,
-        private readonly groupId: string,
-        private readonly padding: boolean,
-        private level: number
+        public readonly groupId: string,
+        public readonly padding: boolean,
+        public level: number
     ) {
         super();
         this.expanded = !!colGroupDef?.openByDefault;
@@ -137,7 +137,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         }
     }
 
-    private addLeafColumns(leafColumns: Column[]): void {
+    private addLeafColumns(leafColumns: AgColumn[]): void {
         if (!this.children) {
             return;
         }
@@ -185,7 +185,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
     }
 
     public setExpandable() {
-        if (this.isPadding()) {
+        if (this.padding) {
             return;
         }
         // want to make sure the group doesn't disappear when it's open
@@ -231,7 +231,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         const process = (items: (AgColumn | AgProvidedColumnGroup)[]) => {
             for (const item of items) {
                 // if padding, we add this children instead of the padding
-                const skipBecausePadding = isProvidedColumnGroup(item) && item.isPadding();
+                const skipBecausePadding = isProvidedColumnGroup(item) && item.padding;
                 if (skipBecausePadding) {
                     process(item.children);
                 } else {

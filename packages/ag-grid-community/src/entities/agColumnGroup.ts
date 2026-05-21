@@ -21,6 +21,11 @@ export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColu
     return col instanceof AgColumnGroup;
 }
 
+// INTERNAL CALLERS: prefer direct property access (group.groupId, group.pinned, group.children,
+// group.providedColumnGroup, etc.) over the equivalent getter methods (getGroupId(), getPinned(),
+// getChildren(), getProvidedColumnGroup(), …) on hot paths. The getters are kept for the public
+// ColumnGroup interface; internally the fields are public and reading them directly avoids
+// method-call indirection in tight loops (header refresh, navigation, displayed-tree walks).
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> implements ColumnGroup<TValue> {
     public readonly isColumn = false as const;
@@ -29,27 +34,35 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     public readonly colIdSanitised: string;
 
     // all the children of this group, regardless of whether they are opened or closed
-    private children: (AgColumn | AgColumnGroup)[] | null;
+    public children: (AgColumn | AgColumnGroup)[] | null;
     // depends on the open/closed state of the group, only displaying columns are stored here
-    private displayedChildren: (AgColumn | AgColumnGroup)[] | null = [];
+    public displayedChildren: (AgColumn | AgColumnGroup)[] | null = [];
 
     // The measured height of this column's header when autoHeaderHeight is enabled
-    private autoHeaderHeight: number | null = null;
+    public autoHeaderHeight: number | null = null;
 
     // private moving = false
-    private left: number | null;
-    private oldLeft: number | null;
+    public left: number | null;
+    public oldLeft: number | null;
 
     public parent: AgColumnGroup | null = null;
 
+    /** Final render state: true while this group instance is in `VisibleColsService.tree*`. */
+    public displayed: boolean = false;
+
     constructor(
-        private readonly providedColumnGroup: AgProvidedColumnGroup,
-        private readonly groupId: string,
-        private readonly partId: number,
-        private readonly pinned: ColumnPinnedType
+        public readonly providedColumnGroup: AgProvidedColumnGroup,
+        public readonly groupId: string,
+        public readonly partId: number,
+        public readonly pinned: ColumnPinnedType
     ) {
         super();
         this.colIdSanitised = _escapeString(this.getUniqueId())!;
+    }
+
+    public override destroy(): void {
+        super.destroy();
+        this.displayed = false;
     }
 
     // as the user is adding and removing columns, the groups are recalculated.

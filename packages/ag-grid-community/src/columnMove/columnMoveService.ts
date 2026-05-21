@@ -54,7 +54,13 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
         colAnimation?.start();
         // we want to pull all the columns out first and put them into an ordered list
-        const movedColumns = colModel.getColsForKeys(columnsToMoveKeys);
+        const movedColumns: AgColumn[] = [];
+        for (let i = 0, len = columnsToMoveKeys.length; i < len; ++i) {
+            const col = colModel.getCol(columnsToMoveKeys[i]);
+            if (col) {
+                movedColumns.push(col);
+            }
+        }
 
         if (this.doesMovePassRules(movedColumns, toIndex)) {
             _moveInArray(colModel.getCols(), movedColumns, toIndex);
@@ -177,7 +183,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         if ((!bean.isAlive() || gos.get('ensureDomOrder')) && headerPosition) {
             let restoreFocusColumn: AgColumn | AgColumnGroup | undefined;
             if (isGroup) {
-                const groupId = column.getGroupId();
+                const groupId = column.groupId;
                 const leafCols = column.getLeafColumns();
                 if (!leafCols.length) {
                     return;
@@ -210,7 +216,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const { gos, colModel, dragAndDrop, visibleCols } = this.beans;
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
         const isGroup = isColumnGroup(column);
-        const columns = isGroup ? column.getProvidedColumnGroup().getLeafColumns() : [column];
+        const columns = isGroup ? column.providedColumnGroup.getLeafColumns() : [column];
         const getDragItem = isGroup
             ? () => createDragItemForGroup(column, visibleCols.allCols)
             : () => createDragItem(column);
@@ -254,7 +260,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
 function findGroupWidthId(columnGroup: AgColumnGroup | null, id: any): AgColumnGroup | undefined {
     while (columnGroup) {
-        if (columnGroup.getGroupId() === id) {
+        if (columnGroup.groupId === id) {
             return columnGroup;
         }
         columnGroup = columnGroup.parent;
@@ -265,7 +271,7 @@ function findGroupWidthId(columnGroup: AgColumnGroup | null, id: any): AgColumnG
 
 function createDragItem(column: AgColumn): DragItem {
     const visibleState: { [key: string]: boolean } = {};
-    visibleState[column.getId()] = column.isVisible();
+    visibleState[column.colId] = column.visible;
 
     return {
         columns: [column],
@@ -277,12 +283,12 @@ function createDragItem(column: AgColumn): DragItem {
 // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
 // and in the order they are currently in the screen.
 function createDragItemForGroup(columnGroup: AgColumnGroup, allCols: AgColumn[]): DragItem {
-    const allColumnsOriginalOrder = columnGroup.getProvidedColumnGroup().getLeafColumns();
+    const allColumnsOriginalOrder = columnGroup.providedColumnGroup.getLeafColumns();
 
     // capture visible state, used when re-entering grid to dictate which columns should be visible
     const visibleState: { [key: string]: boolean } = {};
     for (const column of allColumnsOriginalOrder) {
-        visibleState[column.getId()] = column.isVisible();
+        visibleState[column.colId] = column.visible;
     }
 
     const allColumnsCurrentOrder: AgColumn[] = [];

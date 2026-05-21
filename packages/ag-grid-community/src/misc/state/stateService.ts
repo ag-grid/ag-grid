@@ -532,7 +532,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.columnGroupStates = undefined;
 
         const beans = this.beans;
-        const { pivotResultCols, colGroupSvc } = beans;
+        const { pivotResultCols, colGroupSvc, colModel } = beans;
         if (!pivotResultCols?.isPivotResultColsPresent()) {
             return;
         }
@@ -540,7 +540,7 @@ export class StateService extends BeanStub implements NamedBean {
         if (columnStates) {
             const secondaryColumnStates: ColumnState[] = [];
             for (const columnState of columnStates) {
-                if (pivotResultCols.getPivotResultCol(columnState.colId)) {
+                if (colModel.getCol(columnState.colId)?.colDef.pivotKeys != null) {
                     secondaryColumnStates.push(columnState);
                 }
             }

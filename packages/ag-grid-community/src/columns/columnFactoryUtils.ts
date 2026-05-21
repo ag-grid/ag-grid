@@ -1,5 +1,5 @@
 import type { BeanCollection } from '../context/context';
-import { AgColumn } from '../entities/agColumn';
+import { AgColumn, isColumn } from '../entities/agColumn';
 import { AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef, SortDef, SortDirection } from '../entities/colDef';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
@@ -12,14 +12,27 @@ import type { IColumnKeyCreator } from './columnKeyCreator';
 import { ColumnKeyCreator } from './columnKeyCreator';
 import { convertColumnTypes } from './columnUtils';
 
-const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
-    if (isProvidedColumnGroup(child)) {
-        child.setupExpandable();
-    }
-    // we set the original parents at the end, rather than when we go along, as balancing the tree
-    // adds extra levels into the tree. so we can only set parents when balancing is done.
-    child.originalParent = parent;
-};
+interface ColumnTreeBuild {
+    columnTree: (AgColumn | AgProvidedColumnGroup)[];
+    treeDepth: number;
+    columns: AgColumn[];
+}
+
+/** Walks `columnTree` once: finalises each node (`setupExpandable` on groups, `originalParent`
+ *  pointer fixup that has to wait for balancing) and collects leaf columns into the returned array. */
+function finaliseAndCollectColumns(columnTree: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
+    const columns: AgColumn[] = [];
+    depthFirstOriginalTreeSearch(null, columnTree, (child, parent) => {
+        if (isProvidedColumnGroup(child)) {
+            child.setupExpandable();
+        }
+        child.originalParent = parent;
+        if (isColumn(child)) {
+            columns.push(child);
+        }
+    });
+    return columns;
+}
 
 /**
  * A performant approach to _createColumnTree where the function assumes all defs have an ID.
@@ -32,10 +45,10 @@ export function _createColumnTreeWithIds(
     primaryColumns: boolean,
     existingTree: (AgColumn | AgProvidedColumnGroup)[] | undefined,
     source: ColumnEventType
-): { columnTree: (AgColumn | AgProvidedColumnGroup)[]; treeDepth: number } {
+): ColumnTreeBuild {
     const { existingCols, existingGroups } = extractExistingTreeData(existingTree);
-    const colIdMap = new Map<string, AgColumn>(existingCols.map((col) => [col.getId(), col]));
-    const colGroupIdMap = new Map<string, AgProvidedColumnGroup>(existingGroups.map((group) => [group.getId(), group]));
+    const colIdMap = new Map<string, AgColumn>(existingCols.map((col) => [col.colId, col]));
+    const colGroupIdMap = new Map<string, AgProvidedColumnGroup>(existingGroups.map((group) => [group.groupId, group]));
 
     let maxDepth = 0;
     const recursivelyProcessColDef = (def: ColDef | ColGroupDef, level: number): AgColumn | AgProvidedColumnGroup => {
@@ -85,11 +98,12 @@ export function _createColumnTreeWithIds(
     };
     const columnTree = beans.colGroupSvc ? beans.colGroupSvc.balanceColumnTree(root, 0, maxDepth, keyCreator) : root;
 
-    depthFirstOriginalTreeSearch(null, columnTree, depthFirstCallback);
+    const columns = finaliseAndCollectColumns(columnTree);
 
     return {
         columnTree,
         treeDepth: maxDepth,
+        columns,
     };
 }
 
@@ -100,7 +114,7 @@ export function _createColumnTree(
     primaryColumns: boolean,
     existingTree: (AgColumn | AgProvidedColumnGroup)[] | undefined,
     source: ColumnEventType
-): { columnTree: (AgColumn | AgProvidedColumnGroup)[]; treeDepth: number } {
+): ColumnTreeBuild {
     // column key creator dishes out unique column id's in a deterministic way,
     // so if we have two grids (that could be master/slave) with same column definitions,
     // then this ensures the two grids use identical id's.
@@ -126,11 +140,12 @@ export function _createColumnTree(
         ? colGroupSvc.balanceColumnTree(unbalancedTree, 0, treeDepth, columnKeyCreator)
         : unbalancedTree;
 
-    depthFirstOriginalTreeSearch(null, columnTree, depthFirstCallback);
+    const columns = finaliseAndCollectColumns(columnTree);
 
     return {
         columnTree,
         treeDepth,
+        columns,
     };
 }
 
@@ -150,7 +165,7 @@ function extractExistingTreeData(existingTree?: (AgColumn | AgProvidedColumnGrou
                 existingGroups.push(group);
             } else {
                 const col = item;
-                existingColKeys.push(col.getId());
+                existingColKeys.push(col.colId);
                 existingCols.push(col);
             }
         });
@@ -314,14 +329,14 @@ function findExistingColumn(
     }
 
     for (let i = 0; i < existingColsCopy.length; i++) {
-        const def = existingColsCopy[i].getUserProvidedColDef();
+        const def = existingColsCopy[i].userProvidedColDef;
         if (!def) {
             continue;
         }
 
         const newHasId = newColDef.colId != null;
         if (newHasId) {
-            if (existingColsCopy[i].getId() === newColDef.colId) {
+            if (existingColsCopy[i].colId === newColDef.colId) {
                 return { idx: i, column: existingColsCopy[i] };
             }
             continue;
@@ -460,7 +475,7 @@ export function depthFirstOriginalTreeSearch(
     for (let i = 0; i < tree.length; i++) {
         const child = tree[i];
         if (isProvidedColumnGroup(child)) {
-            depthFirstOriginalTreeSearch(child, child.getChildren(), callback);
+            depthFirstOriginalTreeSearch(child, child.children, callback);
         }
         callback(child, parent);
     }

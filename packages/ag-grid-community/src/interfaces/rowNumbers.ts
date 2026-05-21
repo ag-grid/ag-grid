@@ -1,8 +1,8 @@
+import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { AgColumnHeader } from '../headerRendering/cells/column/agColumnHeader';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { CellPosition } from './iCellPosition';
-import type { IColumnCollectionService } from './iColumnCollectionService';
 
 export interface RowNumbersOptions extends Pick<
     ColDef,
@@ -60,7 +60,11 @@ export interface RowNumbersOptions extends Pick<
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface IRowNumbersService extends IColumnCollectionService {
+export interface IRowNumbersService {
+    /** The row-numbers column, or null when not enabled. Singular by design. */
+    column: AgColumn | null;
+    /** Sync the row-numbers col against current `gos.rowNumbers` / formula state. */
+    refreshCols(): void;
     setupForHeader(comp: AgColumnHeader): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
     handleKeyDownOnCell(cell: CellPosition, event: KeyboardEvent): boolean;

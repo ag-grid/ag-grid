@@ -101,7 +101,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
     public setColsPinned(keys: ColKey[], pinned: ColumnPinnedType, source: ColumnEventType): void {
         const { colModel, visibleCols, gos } = this.beans;
-        if (!colModel.cols) {
+        if (!colModel.ready) {
             return;
         }
         if (!keys?.length) {
@@ -133,7 +133,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
                 continue;
             }
 
-            if (column.getPinned() !== actualPinned) {
+            if (column.pinned !== actualPinned) {
                 this.setColPinned(column, actualPinned);
                 updatedCols.push(column);
             }
@@ -166,7 +166,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     }
 
     public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup): number {
-        const pinned = column.getPinned();
+        const pinned = column.pinned;
         if (pinned) {
             const { leftWidth, rightWidth } = this;
 

@@ -8,14 +8,14 @@
  * - Validators catch no errors after heavy mutations
  */
 import type { ColDef, Column } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
+import { PivotModule, RowGroupingModule, RowNumbersModule } from 'ag-grid-enterprise';
 
 import { GridColumns, TestGridsManager } from '../test-utils';
 
 describe('Column Mutations', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule, RowSelectionModule, RowNumbersModule],
     });
 
     afterEach(() => {
@@ -1194,6 +1194,180 @@ describe('Column Mutations', () => {
                 ├── new width:200
                 ├── b width:200
                 └── c width:200 lockPosition:right
+            `);
+        });
+    });
+
+    /**
+     * Locks in the behaviour of the order tracker (`lastOrder` / `lastPivotOrder`) around
+     * service-col recreation. When a service col (auto-group / selection / row-numbers) is
+     * freshly created, the previous order tracker may hold a stale reference that no longer
+     * exists in `colsById`. The order tracker must rebuild so the fresh service col appears at
+     * the head of the displayed list while the user's reorder is preserved for the remaining
+     * cols.
+     */
+    describe('column order preservation across service-col recreation', () => {
+        test('rowSelection toggled on after user reorder: selection col at head, user order kept', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                maintainColumnOrder: true,
+            });
+
+            api.moveColumns(['c'], 0);
+
+            await new GridColumns(api, 'after user reorder').checkColumns(`
+                CENTER
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: true });
+
+            await new GridColumns(api, 'after selection enabled').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
+        test('rowNumbers toggled on after user reorder: rowNumbers col at head, user order kept', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                maintainColumnOrder: true,
+            });
+
+            api.moveColumns(['c'], 0);
+
+            api.setGridOption('rowNumbers', true);
+
+            await new GridColumns(api, 'after rowNumbers enabled').checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
+        test('auto-group col added after user reorder: auto col at head, user order kept', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                maintainColumnOrder: true,
+            });
+
+            api.moveColumns(['c'], 0);
+
+            api.setGridOption('columnDefs', [{ colId: 'a', rowGroup: true }, { colId: 'b' }, { colId: 'c' }]);
+
+            await new GridColumns(api, 'after row grouping enabled').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── c width:200
+                ├── a width:200 rowGroup
+                └── b width:200
+            `);
+        });
+
+        test('toggle rowSelection off then on preserves user reorder', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+                maintainColumnOrder: true,
+            });
+
+            api.moveColumns(['c'], 1);
+
+            await new GridColumns(api, 'after user reorder with selection').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+
+            api.setGridOption('rowSelection', undefined);
+
+            await new GridColumns(api, 'after selection disabled').checkColumns(`
+                CENTER
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: true });
+
+            await new GridColumns(api, 'after selection re-enabled').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
+        test('user-reordered selection col stays at moved position when its config changes', async () => {
+            // With maintainColumnOrder=true and the user having overridden the default
+            // lockPosition so the selection col is movable, a regenerated selection col should
+            // stay at the user's position rather than snapping to the head — per the docs:
+            // "prioritise the order of the columns as they appear in the grid".
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+                selectionColumnDef: { lockPosition: false, suppressMovable: false },
+                maintainColumnOrder: true,
+            });
+
+            // Move selection col to position 2 (after 'a', 'b').
+            api.moveColumns(['ag-Grid-SelectionColumn'], 2);
+
+            await new GridColumns(api, 'user moved selection col').checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── b width:200
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable
+                └── c width:200
+            `);
+
+            // Change selection config — triggers selection col regeneration.
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: true, headerCheckbox: true });
+
+            // Selection col should remain at the user-chosen position.
+            await new GridColumns(api, 'after selection regenerated').checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── b width:200
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable
+                └── c width:200
+            `);
+        });
+
+        test('multiple service cols added simultaneously appear at head in fixed order', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                maintainColumnOrder: true,
+            });
+
+            api.moveColumns(['c'], 0);
+
+            api.setGridOption('columnDefs', [{ colId: 'a', rowGroup: true }, { colId: 'b' }, { colId: 'c' }]);
+            api.setGridOption('rowNumbers', true);
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: true });
+
+            // Display order at head: rowNumber (left-pinned) → selection (left-pinned in center
+            // bucket) → autoGroup → user-reorder preserved.
+            await new GridColumns(api, 'all service cols enabled').checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── c width:200
+                ├── a width:200 rowGroup
+                └── b width:200
             `);
         });
     });

@@ -297,4 +297,90 @@ describe('pivot with groupHierarchy (date-time)', () => {
             └── LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
         `);
     });
+
+    test('re-setting identical columnDefs does not leave destroyed hierarchy columns', async () => {
+        const api = createPivotDateTimeGrid();
+        api.setPivotColumns(['date']);
+        await asyncSetTimeout(0);
+
+        const firstRun = api.getPivotResultColumns();
+        expect(firstRun).not.toBeNull();
+        expect(firstRun!.length).toBeGreaterThan(0);
+
+        // Capture hierarchy column instances before the rebuild. These are the beans at risk
+        // of being destroyed and re-exposed via the ID-equal early-return.
+        const hierarchyColsBefore = api
+            .getColumns()!
+            .filter((c) => c.getColId().startsWith('ag-Grid-HierarchyColumn-date'));
+        expect(hierarchyColsBefore.length).toBeGreaterThan(0);
+
+        // Re-apply the same columnDefs. This rebuilds the colDefTree, which on the buggy
+        // path destroyed the hierarchy beans before keeping them via the ID-equal early-return.
+        api.setGridOption('columnDefs', [
+            { field: 'athlete' },
+            { field: 'country', rowGroup: true },
+            { field: 'sport' },
+            {
+                field: 'date',
+                enablePivot: true,
+                groupHierarchy: ['year', 'month'],
+            },
+            { field: 'total', aggFunc: 'sum' },
+        ]);
+        await asyncSetTimeout(0);
+
+        const hierarchyColsAfter = api
+            .getColumns()!
+            .filter((c) => c.getColId().startsWith('ag-Grid-HierarchyColumn-date'));
+        expect(hierarchyColsAfter.length).toBeGreaterThan(0);
+        for (const col of hierarchyColsAfter) {
+            expect((col as any).isAlive()).toBe(true);
+        }
+
+        await new GridRows(api, 'hierarchy columns after re-setting identical defs', getGridRowsOptions()).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF_GROUP collapsed id:row-group-country-USA ag-Grid-AutoColumn:"USA"
+            └── LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+        `);
+    });
+
+    /**
+     * Locks in the sort behaviour of `GroupHierarchyColService.compareVirtualColumns` when both
+     * a source col and one of its virtual cols are simultaneously row-grouped. The virtual cols
+     * must sort BEFORE the source col, and virtual cols from the same source must keep their
+     * insertion-order within that source's bucket.
+     */
+    test('virtual cols sort before their source col when both are row-grouped', async () => {
+        // A date col with `groupHierarchy: ['year', 'month']` AND `rowGroup: true` makes the
+        // source col plus both virtual cols (year, month) eligible to be row-group cols. The
+        // sort comparator in BaseColsService.sortColumns delegates to
+        // GroupHierarchyColService.compareVirtualColumns for these pairs.
+        const api = gridsManager.createGrid('hierarchyRowGroup', {
+            columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
+            rowData: [
+                { country: 'USA', date: new Date(2020, 0, 1) },
+                { country: 'UK', date: new Date(2021, 5, 15) },
+            ],
+            groupDisplayType: 'multipleColumns',
+        });
+        await asyncSetTimeout(0);
+
+        // Expected order in row-group cols list: [year-virtual, month-virtual, date-source].
+        // The compareVirtualColumns:
+        //   - returns -1 for (year, date) since year is virtual-of date  →  year before date
+        //   - returns -1 for (month, date) since month is virtual-of date  →  month before date
+        //   - returns insertion-order for (year, month) within date's bucket  →  year before month
+        const rowGroupCols = api.getRowGroupColumns().map((c) => c.getColId());
+        const yearIdx = rowGroupCols.findIndex((id) => id.includes('-date-year'));
+        const monthIdx = rowGroupCols.findIndex((id) => id.includes('-date-month'));
+        const dateIdx = rowGroupCols.findIndex((id) => id === 'date');
+        expect(yearIdx).toBeGreaterThanOrEqual(0);
+        expect(monthIdx).toBeGreaterThanOrEqual(0);
+        expect(dateIdx).toBeGreaterThanOrEqual(0);
+        expect(yearIdx).toBeLessThan(monthIdx);
+        expect(monthIdx).toBeLessThan(dateIdx);
+
+        // Sanity: GridColumns snapshot of the displayed structure.
+        await new GridColumns(api, 'date hierarchy as row groups').checkColumns(false);
+    });
 });

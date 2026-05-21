@@ -711,7 +711,7 @@ export class GridBodyScrollFeature extends BeanStub {
         }
 
         // defensive
-        if (!this.visibleCols.isColDisplayed(column)) {
+        if (!column.displayed) {
             return;
         }
 

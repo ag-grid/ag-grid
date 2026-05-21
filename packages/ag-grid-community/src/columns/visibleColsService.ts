@@ -1,4 +1,3 @@
-import { _last } from '../agStack/utils/array';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -7,48 +6,68 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { isColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType } from '../events';
-import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
-import type { ColumnGroupService, CreateGroupsParams } from './columnGroups/columnGroupService';
+import { _isGroupHideColumnsUntilExpanded, _isRowNumbers } from '../gridOptionsUtils';
+import type { ColumnPinnedType } from '../interfaces/iColumn';
+import type { ColumnGroupService } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
-import { getWidthOfColsInList } from './columnUtils';
+import { getWidthOfColsInList, isColumnGroupAutoCol, isColumnSelectionCol, isRowNumberCol } from './columnUtils';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
-// takes in a list of columns, as specified by the column definitions, and returns column groups
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class VisibleColsService extends BeanStub implements NamedBean {
     beanName = 'visibleCols' as const;
 
-    // tree of columns to be displayed for each section
-    public treeLeft: (AgColumn | AgColumnGroup)[];
-    public treeRight: (AgColumn | AgColumnGroup)[];
-    public treeCenter: (AgColumn | AgColumnGroup)[];
+    /** Header tree (groups + leaves) for the left-pinned section. */
+    public treeLeft: (AgColumn | AgColumnGroup)[] = [];
+    /** Header tree (groups + leaves) for the right-pinned section. */
+    public treeRight: (AgColumn | AgColumnGroup)[] = [];
+    /** Header tree (groups + leaves) for the centre (scrollable) section. */
+    public treeCenter: (AgColumn | AgColumnGroup)[] = [];
 
-    // for fast lookup, to see if a column or group is still visible
-    private colsAndGroupsMap: { [id: HeaderColumnId]: AgColumn | AgColumnGroup } = {};
-
-    // leave level columns of the displayed trees
+    /** Displayed leaf cols in the left-pinned section. */
     public leftCols: AgColumn[] = [];
+    /** Displayed leaf cols in the right-pinned section. */
     public rightCols: AgColumn[] = [];
+    /** Displayed leaf cols in the centre section. */
     public centerCols: AgColumn[] = [];
-    // all three lists above combined
+    /** Concatenation of `leftCols + centerCols + rightCols` (RTL: right + center + left). */
     public allCols: AgColumn[] = [];
 
-    public headerGroupRowCount: number = 0; // number of header rows to render
-
+    /** Subset of `allCols` flagged with `colDef.autoHeight`. Rebuilt each refresh. */
     public autoHeightCols: AgColumn[];
 
-    // used by:
-    // + angularGrid -> for setting body width
-    // + rowController -> setting main row widths (when inserting and resizing)
-    // need to cache this
+    /** Number of header rows to render, accounting for group depth + padding rules. */
+    public headerGroupRowCount: number = 0;
+
+    /**
+     * Total pixel width of the centre body. Cached because:
+     *  - `angularGrid` reads it to size the body element.
+     *  - `rowController` reads it when inserting / resizing rows.
+     */
     public bodyWidth = 0;
+    /** Total pixel width of the left-pinned section (cache; may be stale mid column-move). */
     private leftWidth = 0;
+    /** Total pixel width of the right-pinned section (cache; may be stale mid column-move). */
     private rightWidth = 0;
 
+    /** True when `bodyWidth` changed in the last `updateBodyWidths()` — used by virtual col calc in RTL. */
     public isBodyWidthDirty = true;
 
-    // list of all columns (displayed and hidden) in visible order including pinned
+    /** All cols (displayed + hidden) in visible order including pinned sections — drives `aria-colindex`. */
     private ariaOrderColumns: AgColumn[];
+
+    /** Flat depth-first walk of left + center + right trees (via `children` — ALL children).
+     *  Built lazily on first `forEachTreeNode()` after `buildTrees()` / `clear()`. */
+    private cachedTreeNodes: (AgColumn | AgColumnGroup)[] | null = null;
+
+    /** Last refresh's `lastLeftPinned` col — drives an O(1) role-swap in `setFirstRightAndLastLeftPinned`. */
+    private prevLastLeftPinned: AgColumn | null = null;
+    /** Last refresh's `firstRightPinned` col — drives an O(1) role-swap in `setFirstRightAndLastLeftPinned`. */
+    private prevFirstRightPinned: AgColumn | null = null;
+    /** Last refresh's displayed leaf cols — used to clear stale `col.displayed` and reset stale `col.left`. */
+    private prevDisplayedCols: AgColumn[] = [];
+    /** Last refresh's displayed groups — used to clear stale `group.displayed`. */
+    private prevDisplayedGroups: AgColumnGroup[] = [];
 
     public refresh(source: ColumnEventType, skipTreeBuild = false): void {
         const { colFlex, colModel, colGroupSvc, colViewport, selectionColSvc, ctrlsSvc } = this.beans;
@@ -59,11 +78,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         colGroupSvc?.updateOpenClosedVisibility();
 
-        this.leftCols = pickDisplayedCols(this.treeLeft);
-        this.centerCols = pickDisplayedCols(this.treeCenter);
-        this.rightCols = pickDisplayedCols(this.treeRight);
+        const leftCols = pickDisplayedCols(this.treeLeft);
+        const centerCols = pickDisplayedCols(this.treeCenter);
+        const rightCols = pickDisplayedCols(this.treeRight);
+        this.leftCols = leftCols;
+        this.centerCols = centerCols;
+        this.rightCols = rightCols;
 
-        selectionColSvc?.refreshVisibility(this.leftCols, this.centerCols, this.rightCols);
+        selectionColSvc?.refreshVisibility(leftCols, centerCols, rightCols);
 
         this.joinColsAriaOrder(colModel);
         this.joinCols();
@@ -71,7 +93,17 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.headerGroupRowCount = this.getHeaderRowCount();
 
         this.setLeftValues(source);
-        this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
+
+        const allCols = this.allCols;
+        const autoHeightCols: AgColumn[] = [];
+        for (let i = 0, len = allCols.length; i < len; ++i) {
+            const col = allCols[i];
+            if (col.colDef.autoHeight) {
+                autoHeightCols.push(col);
+            }
+        }
+        this.autoHeightCols = autoHeightCols;
+
         // The cached flex viewport width inside `colFlex` only updates from the resize observer
         // in viewportSizeFeature. When pinning changes the logical centre width without resizing
         // the DOM viewport, we must pass the freshly-derived centre width here.
@@ -81,13 +113,12 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         const viewportWidth = ctrlsSvc?.getGridBodyCtrl()?.getViewportWidthWithoutScrollbar();
         let flexParams: { viewportWidth: number } | undefined;
         if (viewportWidth != null) {
-            const centerWidth =
-                viewportWidth - getWidthOfColsInList(this.leftCols) - getWidthOfColsInList(this.rightCols);
+            const centerWidth = viewportWidth - getWidthOfColsInList(leftCols) - getWidthOfColsInList(rightCols);
             flexParams = { viewportWidth: centerWidth > 0 ? centerWidth : 0 };
         }
         colFlex?.refreshFlexedColumns(flexParams);
         this.updateBodyWidths();
-        this.setFirstRightAndLastLeftPinned(colModel, this.leftCols, this.rightCols, source);
+        this.setFirstRightAndLastLeftPinned(leftCols, rightCols, source);
         colViewport.checkViewportColumns(false);
 
         this.eventSvc.dispatchEvent({
@@ -98,21 +129,22 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     private getHeaderRowCount(): number {
         if (!this.gos.get('hidePaddedHeaderRows')) {
-            return this.beans.colModel.cols!.treeDepth;
+            return this.beans.colModel.colsTreeDepth;
         }
 
         let headerGroupRowCount = 0;
-        for (const col of this.allCols) {
-            let parent = col.parent;
+        const allCols = this.allCols;
+        for (let i = 0, len = allCols.length; i < len; ++i) {
+            let parent = allCols[i].parent;
             while (parent) {
-                if (!parent.isPadding()) {
-                    const level = parent.getProvidedColumnGroup().getLevel() + 1;
+                const provided = parent.providedColumnGroup;
+                if (!provided.padding) {
+                    const level = provided.level + 1;
                     if (level > headerGroupRowCount) {
                         headerGroupRowCount = level;
                     }
                     break;
                 }
-
                 parent = parent.parent;
             }
         }
@@ -120,36 +152,27 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return headerGroupRowCount;
     }
 
-    // after setColumnWidth or updateGroupsAndPresentedCols
+    /** Called after `setColumnWidth` or `updateGroupsAndPresentedCols`. */
     public updateBodyWidths(): void {
         const newBodyWidth = getWidthOfColsInList(this.centerCols);
         const newLeftWidth = getWidthOfColsInList(this.leftCols);
         const newRightWidth = getWidthOfColsInList(this.rightCols);
 
-        // this is used by virtual col calculation, for RTL only, as a change to body width can impact displayed
-        // columns, due to RTL inverting the y coordinates
+        // `isBodyWidthDirty` drives the RTL virtual-col calc — body-width changes flip y coords.
         this.isBodyWidthDirty = this.bodyWidth !== newBodyWidth;
 
-        const atLeastOneChanged =
-            this.bodyWidth !== newBodyWidth || this.leftWidth !== newLeftWidth || this.rightWidth !== newRightWidth;
-
-        if (atLeastOneChanged) {
-            this.bodyWidth = newBodyWidth;
-            this.leftWidth = newLeftWidth;
-            this.rightWidth = newRightWidth;
-
-            // this event is fired to allow the grid viewport to resize before the
-            // scrollbar tries to update its visibility.
-            this.eventSvc.dispatchEvent({
-                type: 'columnContainerWidthChanged',
-            });
-
-            // when this fires, it is picked up by the gridPanel, which ends up in
-            // gridPanel calling setWidthAndScrollPosition(), which in turn calls setViewportPosition()
-            this.eventSvc.dispatchEvent({
-                type: 'displayedColumnsWidthChanged',
-            });
+        if (this.bodyWidth === newBodyWidth && this.leftWidth === newLeftWidth && this.rightWidth === newRightWidth) {
+            return;
         }
+        this.bodyWidth = newBodyWidth;
+        this.leftWidth = newLeftWidth;
+        this.rightWidth = newRightWidth;
+
+        // Fire `columnContainerWidthChanged` BEFORE `displayedColumnsWidthChanged` so the grid
+        // viewport resizes before the scrollbar tries to update its visibility.
+        const eventSvc = this.eventSvc;
+        eventSvc.dispatchEvent({ type: 'columnContainerWidthChanged' });
+        eventSvc.dispatchEvent({ type: 'displayedColumnsWidthChanged' });
     }
 
     // sets the left pixel position of each column
@@ -158,183 +181,257 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.setLeftValuesOfGroups();
     }
 
-    private setFirstRightAndLastLeftPinned(
-        colModel: ColumnModel,
-        leftCols: AgColumn[],
-        rightCols: AgColumn[],
-        source: ColumnEventType
-    ): void {
-        const lastLeft = leftCols.length ? _last(leftCols) : null;
-        let firstRight: AgColumn | null = null;
-        if (rightCols.length) {
-            firstRight = this.gos.get('enableRtl') ? _last(rightCols) : rightCols[0];
+    private setFirstRightAndLastLeftPinned(leftCols: AgColumn[], rightCols: AgColumn[], source: ColumnEventType): void {
+        const leftLen = leftCols.length;
+        const newLastLeft = leftLen ? leftCols[leftLen - 1] : null;
+        let newFirstRight: AgColumn | null = null;
+        const rightLen = rightCols.length;
+        if (rightLen) {
+            newFirstRight = this.gos.get('enableRtl') ? rightCols[rightLen - 1] : rightCols[0];
         }
 
-        for (const col of colModel.getCols()) {
-            col.setLastLeftPinned(col === lastLeft, source);
-            col.setFirstRightPinned(col === firstRight, source);
+        const prevLastLeft = this.prevLastLeftPinned;
+        if (prevLastLeft !== newLastLeft) {
+            prevLastLeft?.setLastLeftPinned(false, source);
+            newLastLeft?.setLastLeftPinned(true, source);
+            this.prevLastLeftPinned = newLastLeft;
+        }
+        const prevFirstRight = this.prevFirstRightPinned;
+        if (prevFirstRight !== newFirstRight) {
+            prevFirstRight?.setFirstRightPinned(false, source);
+            newFirstRight?.setFirstRightPinned(true, source);
+            this.prevFirstRightPinned = newFirstRight;
         }
     }
 
     private buildTrees(colModel: ColumnModel, columnGroupSvc: ColumnGroupService | undefined) {
-        const cols = colModel.getColsToShow();
-
-        const leftCols = cols.filter((col) => col.getPinned() == 'left');
-        const rightCols = cols.filter((col) => col.getPinned() == 'right');
-        const centerCols = cols.filter((col) => col.getPinned() != 'left' && col.getPinned() != 'right');
-
+        const { leftCols, rightCols, centerCols } = this.partitionVisibleCols(colModel);
         const idCreator = new GroupInstanceIdCreator();
 
-        const createGroups = (params: CreateGroupsParams): (AgColumn | AgColumnGroup)[] => {
-            return columnGroupSvc ? columnGroupSvc.createColumnGroups(params) : params.columns;
-        };
-        this.treeLeft = createGroups({
-            columns: leftCols,
-            idCreator,
-            pinned: 'left',
-            oldDisplayedGroups: this.treeLeft,
-        });
-        this.treeRight = createGroups({
-            columns: rightCols,
-            idCreator,
-            pinned: 'right',
-            oldDisplayedGroups: this.treeRight,
-        });
-        this.treeCenter = createGroups({
-            columns: centerCols,
-            idCreator,
-            pinned: null,
-            oldDisplayedGroups: this.treeCenter,
-        });
+        if (columnGroupSvc) {
+            this.treeLeft = columnGroupSvc.createColumnGroups({
+                columns: leftCols,
+                idCreator,
+                pinned: 'left',
+                oldDisplayedGroups: this.treeLeft,
+            });
+            this.treeRight = columnGroupSvc.createColumnGroups({
+                columns: rightCols,
+                idCreator,
+                pinned: 'right',
+                oldDisplayedGroups: this.treeRight,
+            });
+            this.treeCenter = columnGroupSvc.createColumnGroups({
+                columns: centerCols,
+                idCreator,
+                pinned: null,
+                oldDisplayedGroups: this.treeCenter,
+            });
+        } else {
+            // No group service: trees are flat lists of cols.
+            this.treeLeft = leftCols;
+            this.treeRight = rightCols;
+            this.treeCenter = centerCols;
+        }
 
-        this.updateColsAndGroupsMap();
+        this.cachedTreeNodes = null;
+        this.refreshDisplayedGroupsFlags();
+    }
+
+    /** Single pass over `colsList` that simultaneously filters cols to "should display now" and
+     *  partitions them by `pinned` position. Replaces 4 separate filter passes (visibility + 3
+     *  pin buckets) with one. Display rules:
+     *  - In pivot mode without pivot results: only show value cols, auto-group cols, and enabled
+     *    selection / row-numbers cols.
+     *  - Otherwise: show auto-group cols (unless `groupHideColumnsUntilExpanded` is managing them)
+     *    or any visible col. */
+    private partitionVisibleCols(colModel: ColumnModel): {
+        leftCols: AgColumn[];
+        rightCols: AgColumn[];
+        centerCols: AgColumn[];
+    } {
+        const leftCols: AgColumn[] = [];
+        const rightCols: AgColumn[] = [];
+        const centerCols: AgColumn[] = [];
+        if (!colModel.ready) {
+            return { leftCols, rightCols, centerCols };
+        }
+
+        const beans = this.beans;
+        const showAutoGroupAndValuesOnly = colModel.pivotMode && !colModel.showingPivotResult;
+        const showSelectionColumn = beans.selectionColSvc?.isSelectionColumnEnabled() ?? false;
+        const showRowNumbers = _isRowNumbers(beans);
+        const hideEmptyAutoColGroups = _isGroupHideColumnsUntilExpanded(this.gos);
+        // Set-ify value cols only on the pivot-only branch — the cross-product (.includes per row)
+        // is O(valueCols × colsList) without this. Empty Set is fine when valueColsSvc is missing.
+        const valueColumnsSet = showAutoGroupAndValuesOnly ? new Set(beans.valueColsSvc?.columns) : null;
+
+        const colsList = colModel.colsList;
+        for (let i = 0, len = colsList.length; i < len; ++i) {
+            const col = colsList[i];
+            const isAutoGroupCol = isColumnGroupAutoCol(col);
+            let visible: boolean;
+            if (valueColumnsSet) {
+                visible =
+                    valueColumnsSet.has(col) ||
+                    (isAutoGroupCol && (!hideEmptyAutoColGroups || col.visible)) ||
+                    (showSelectionColumn && isColumnSelectionCol(col)) ||
+                    (showRowNumbers && isRowNumberCol(col));
+            } else {
+                visible = (isAutoGroupCol && !hideEmptyAutoColGroups) || col.visible;
+            }
+            if (!visible) {
+                continue;
+            }
+            const pinned = col.pinned;
+            if (pinned === 'left') {
+                leftCols.push(col);
+            } else if (pinned === 'right') {
+                rightCols.push(col);
+            } else {
+                centerCols.push(col);
+            }
+        }
+        return { leftCols, rightCols, centerCols };
     }
 
     public clear(): void {
+        // Reset `displayed` on every previously-displayed col/group before dropping the arrays —
+        // external readers of `col.displayed` / `group.displayed` (before the next refresh) must see false.
+        const prevAll = this.allCols;
+        for (let i = 0, len = prevAll.length; i < len; ++i) {
+            prevAll[i].displayed = false;
+        }
+        const prevGroups = this.prevDisplayedGroups;
+        for (let i = 0, len = prevGroups.length; i < len; ++i) {
+            prevGroups[i].displayed = false;
+        }
         this.leftCols = [];
         this.rightCols = [];
         this.centerCols = [];
         this.allCols = [];
+        this.prevDisplayedCols = [];
+        this.prevDisplayedGroups = [];
         this.ariaOrderColumns = [];
+        this.cachedTreeNodes = null;
+        // Drop stale pinned-edge refs — cols they pointed at may be destroyed/replaced after clear.
+        this.prevLastLeftPinned = null;
+        this.prevFirstRightPinned = null;
     }
 
     private joinColsAriaOrder(colModel: ColumnModel): void {
-        const allColumns = colModel.getCols();
-        const pinnedLeft: AgColumn[] = [];
-        const center: AgColumn[] = [];
-        const pinnedRight: AgColumn[] = [];
-
-        for (const col of allColumns) {
-            const pinned = col.getPinned();
-            if (!pinned) {
-                center.push(col);
-            } else if (pinned === true || pinned === 'left') {
-                pinnedLeft.push(col);
-            } else {
-                pinnedRight.push(col);
+        // Reorder cols as [left-pinned, center, right-pinned] writing into a preallocated array.
+        const cols = colModel.getCols();
+        const total = cols.length;
+        let leftCount = 0;
+        let centerCount = 0;
+        for (let i = 0; i < total; ++i) {
+            const pinned = cols[i].pinned;
+            if (pinned === 'left') {
+                ++leftCount;
+            } else if (pinned !== 'right') {
+                ++centerCount;
             }
         }
-
-        this.ariaOrderColumns = pinnedLeft.concat(center).concat(pinnedRight);
+        const ordered = new Array<AgColumn>(total);
+        let leftCursor = 0;
+        let centerCursor = leftCount;
+        let rightCursor = leftCount + centerCount;
+        for (let i = 0; i < total; ++i) {
+            const col = cols[i];
+            const pinned = col.pinned;
+            if (pinned === 'left') {
+                ordered[leftCursor++] = col;
+            } else if (pinned === 'right') {
+                ordered[rightCursor++] = col;
+            } else {
+                ordered[centerCursor++] = col;
+            }
+        }
+        this.ariaOrderColumns = ordered;
     }
 
     public getAriaColIndex(colOrGroup: AgColumn | AgColumnGroup): number {
-        let col: AgColumn;
-
-        if (isColumnGroup(colOrGroup)) {
-            col = colOrGroup.getLeafColumns()[0];
-        } else {
-            col = colOrGroup;
-        }
-
+        const col = isColumnGroup(colOrGroup) ? colOrGroup.getLeafColumns()[0] : colOrGroup;
         return this.ariaOrderColumns.indexOf(col) + 1;
     }
 
     private setLeftValuesOfGroups(): void {
-        // a groups left value is the lest left value of it's children
-        for (const columns of [this.treeLeft, this.treeRight, this.treeCenter]) {
-            for (const column of columns) {
-                if (isColumnGroup(column)) {
-                    const columnGroup = column;
-                    columnGroup.checkLeft();
-                }
-            }
-        }
+        // a group's `left` is the lowest `left` of its children.
+        checkLeftOnGroups(this.treeLeft);
+        checkLeftOnGroups(this.treeRight);
+        checkLeftOnGroups(this.treeCenter);
     }
 
     private setLeftValuesOfCols(source: ColumnEventType): void {
-        const { colModel } = this.beans;
-        if (!colModel.getColDefCols()) {
+        if (!this.beans.colModel.getColDefCols()) {
             return;
         }
 
-        const displayedCols = new Set<AgColumn>();
-        for (const columns of [this.leftCols, this.rightCols, this.centerCols]) {
-            let left = 0;
-            for (const column of columns) {
-                column.setLeft(left, source);
-                left += column.getActualWidth();
-                displayedCols.add(column);
-            }
-        }
+        setLeftsLeftToRight(this.leftCols, source);
+        setLeftsLeftToRight(this.rightCols, source);
+        setLeftsLeftToRight(this.centerCols, source);
 
-        // columns not in the displayed set need their left position reset. this is important for the
-        // rows, as if a col is made visible, then taken out, then made visible again, we don't want
-        // the animation of the cell floating in from the old position, whatever that was.
-        for (const column of colModel.getCols()) {
-            if (!displayedCols.has(column)) {
+        // Cols that just transitioned displayed → hidden need `left` reset — otherwise if the col
+        // is shown again later the cell animates in from the stale old position. Scoping to
+        // `prevDisplayedCols` avoids walking the full master list (only prev-displayed cols can be stale).
+        const prevDisplayed = this.prevDisplayedCols;
+        for (let i = 0, len = prevDisplayed.length; i < len; ++i) {
+            const column = prevDisplayed[i];
+            if (!column.displayed) {
                 column.setLeft(null, source);
             }
         }
     }
 
     private joinCols(): void {
-        if (this.gos.get('enableRtl')) {
-            this.allCols = this.rightCols.concat(this.centerCols).concat(this.leftCols);
-        } else {
-            this.allCols = this.leftCols.concat(this.centerCols).concat(this.rightCols);
+        const { leftCols, centerCols, rightCols } = this;
+        // Clear `displayed` on cols that were shown last refresh — only those can be stale,
+        // since hidden cols already had `displayed === false`.
+        const prevAll = this.allCols;
+        for (let i = 0, len = prevAll.length; i < len; ++i) {
+            prevAll[i].displayed = false;
+        }
+        const all = this.gos.get('enableRtl')
+            ? rightCols.concat(centerCols, leftCols)
+            : leftCols.concat(centerCols, rightCols);
+        this.prevDisplayedCols = prevAll;
+        this.allCols = all;
+        for (let i = 0, len = all.length; i < len; ++i) {
+            all[i].displayed = true;
         }
     }
 
     public getAllTrees(): (AgColumn | AgColumnGroup)[] | null {
-        if (this.treeLeft && this.treeRight && this.treeCenter) {
-            return this.treeLeft.concat(this.treeCenter).concat(this.treeRight);
-        }
-
-        return null;
+        // `| null` is kept for the public API contract (columnGroupApi.getAllDisplayedColumnGroups).
+        return this.treeLeft.concat(this.treeCenter, this.treeRight);
     }
 
-    // gridPanel -> ensureColumnVisible
-    public isColDisplayed(column: AgColumn): boolean {
-        return this.allCols.indexOf(column) >= 0;
+    /** Flat depth-first list of every node in left + center + right trees (via `children` — ALL
+     *  children, displayed or not). Cached and reused until `buildTrees()` / `clear()` invalidates.
+     *  Callers iterate the returned array directly — no callback overhead. */
+    public getTreeNodes(): readonly (AgColumn | AgColumnGroup)[] {
+        let result = this.cachedTreeNodes;
+        if (result === null) {
+            result = [];
+            collectAllTreeNodes(this.treeLeft, result);
+            collectAllTreeNodes(this.treeCenter, result);
+            collectAllTreeNodes(this.treeRight, result);
+            this.cachedTreeNodes = result;
+        }
+        return result;
     }
 
     public getLeftColsForRow(rowNode: RowNode): AgColumn[] {
-        const {
-            leftCols,
-            beans: { colModel },
-        } = this;
-        const colSpanActive = colModel.colSpanActive;
-        if (!colSpanActive) {
-            return leftCols;
-        }
-
-        return this.getColsForRow(rowNode, leftCols);
+        return this.beans.colModel.colSpanActive ? this.getColsForRow(rowNode, this.leftCols) : this.leftCols;
     }
 
     public getRightColsForRow(rowNode: RowNode): AgColumn[] {
-        const {
-            rightCols,
-            beans: { colModel },
-        } = this;
-        const colSpanActive = colModel.colSpanActive;
-        if (!colSpanActive) {
-            return rightCols;
-        }
-
-        return this.getColsForRow(rowNode, rightCols);
+        return this.beans.colModel.colSpanActive ? this.getColsForRow(rowNode, this.rightCols) : this.rightCols;
     }
 
+    /** `filterCallback` is only set for the centre (virtualised) area. For a col-spanned run
+     *  we keep it if ANY spanned col passes the filter. */
     public getColsForRow(
         rowNode: RowNode,
         displayedColumns: AgColumn[],
@@ -343,35 +440,17 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     ): AgColumn[] {
         const result: AgColumn[] = [];
         let lastConsideredCol: AgColumn | null = null;
+        const len = displayedColumns.length;
 
-        for (let i = 0; i < displayedColumns.length; i++) {
+        for (let i = 0; i < len; ++i) {
             const col = displayedColumns[i];
-            const maxAllowedColSpan = displayedColumns.length - i;
-            const colSpan = Math.min(col.getColSpan(rowNode), maxAllowedColSpan);
-            const columnsToCheckFilter: AgColumn[] = [col];
+            const colSpan = Math.min(col.getColSpan(rowNode), len - i);
 
-            if (colSpan > 1) {
-                const colsToRemove = colSpan - 1;
-
-                for (let j = 1; j <= colsToRemove; j++) {
-                    columnsToCheckFilter.push(displayedColumns[i + j]);
-                }
-
-                i += colsToRemove;
-            }
-
-            // see which cols we should take out for column virtualisation
             let filterPasses: boolean;
-
             if (filterCallback) {
-                // if user provided a callback, means some columns may not be in the viewport.
-                // the user will NOT provide a callback if we are talking about pinned areas,
-                // as pinned areas have no horizontal scroll and do not virtualise the columns.
-                // if lots of columns, that means column spanning, and we set filterPasses = true
-                // if one or more of the columns spanned pass the filter.
-                filterPasses = false;
-                for (const colForFilter of columnsToCheckFilter) {
-                    if (filterCallback(colForFilter)) {
+                filterPasses = filterCallback(col);
+                for (let j = 1; !filterPasses && j < colSpan; ++j) {
+                    if (filterCallback(displayedColumns[i + j])) {
                         filterPasses = true;
                     }
                 }
@@ -379,12 +458,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 filterPasses = true;
             }
 
+            if (colSpan > 1) {
+                i += colSpan - 1;
+            }
+
             if (filterPasses) {
-                if (result.length === 0 && lastConsideredCol) {
-                    const gapBeforeColumn = emptySpaceBeforeColumn ? emptySpaceBeforeColumn(col) : false;
-                    if (gapBeforeColumn) {
-                        result.push(lastConsideredCol);
-                    }
+                if (result.length === 0 && lastConsideredCol && emptySpaceBeforeColumn?.(col)) {
+                    result.push(lastConsideredCol);
                 }
                 result.push(col);
             }
@@ -407,14 +487,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     public getColBefore(col: AgColumn): AgColumn | null {
-        const allDisplayedColumns = this.allCols;
-        const oldIndex = allDisplayedColumns.indexOf(col);
-
-        if (oldIndex > 0) {
-            return allDisplayedColumns[oldIndex - 1];
-        }
-
-        return null;
+        const cols = this.allCols;
+        const idx = cols.indexOf(col);
+        return idx > 0 ? cols[idx - 1] : null;
     }
 
     public isPinningLeft(): boolean {
@@ -425,53 +500,33 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return this.rightCols.length > 0;
     }
 
-    private updateColsAndGroupsMap(): void {
-        this.colsAndGroupsMap = {};
-
-        const func = (child: AgColumn | AgColumnGroup) => {
-            this.colsAndGroupsMap[child.getUniqueId()] = child;
-        };
-
-        depthFirstAllColumnTreeSearch(this.treeCenter, false, func);
-        depthFirstAllColumnTreeSearch(this.treeLeft, false, func);
-        depthFirstAllColumnTreeSearch(this.treeRight, false, func);
-    }
-
-    public isVisible(item: AgColumn | AgColumnGroup): boolean {
-        const fromMap = this.colsAndGroupsMap[item.getUniqueId()];
-        // check for reference, in case new column / group with same id is now present
-        return fromMap === item;
-    }
-
-    public getFirstColumn(): AgColumn | null {
-        const isRtl = this.gos.get('enableRtl');
-        const queryOrder: ('leftCols' | 'centerCols' | 'rightCols')[] = ['leftCols', 'centerCols', 'rightCols'];
-
-        if (isRtl) {
-            queryOrder.reverse();
+    private refreshDisplayedGroupsFlags(): void {
+        // Clear `displayed` on every group that was displayed last refresh — only those can
+        // be stale (orphaned by this rebuild). Then flag the newly-displayed set.
+        const prev = this.prevDisplayedGroups;
+        for (let i = 0, len = prev.length; i < len; ++i) {
+            prev[i].displayed = false;
         }
-
-        for (let i = 0; i < queryOrder.length; i++) {
-            const container = this[queryOrder[i]];
-            if (container.length) {
-                return isRtl ? _last(container) : container[0];
+        const next: AgColumnGroup[] = [];
+        const nodes = this.getTreeNodes();
+        for (let i = 0, len = nodes.length; i < len; ++i) {
+            const node = nodes[i];
+            if (isColumnGroup(node)) {
+                node.displayed = true;
+                next.push(node);
             }
         }
-
-        return null;
+        this.prevDisplayedGroups = next;
     }
 
     // used by:
     // + rowRenderer -> for navigation
     public getColAfter(col: AgColumn): AgColumn | null {
-        const allDisplayedColumns = this.allCols;
-        const oldIndex = allDisplayedColumns.indexOf(col);
-
-        if (oldIndex < allDisplayedColumns.length - 1) {
-            return allDisplayedColumns[oldIndex + 1];
-        }
-
-        return null;
+        const cols = this.allCols;
+        const idx = cols.indexOf(col);
+        // When `col` isn't currently displayed (idx === -1) returns the first col (if any).
+        // Header navigation relies on this fall-through.
+        return idx < cols.length - 1 ? cols[idx + 1] : null;
     }
 
     // used by:
@@ -489,54 +544,79 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     public isColAtEdge(col: AgColumn | AgColumnGroup, edge: 'first' | 'last'): boolean {
-        const allColumns = this.allCols;
-        if (!allColumns.length) {
+        const allCols = this.allCols;
+        const allLen = allCols.length;
+        if (!allLen) {
             return false;
         }
-
         const isFirst = edge === 'first';
 
-        let columnToCompare: AgColumn;
+        let target: AgColumn;
         if (isColumnGroup(col)) {
-            const leafColumns = col.getDisplayedLeafColumns();
-            if (!leafColumns.length) {
+            const leaves = col.getDisplayedLeafColumns();
+            const leafLen = leaves.length;
+            if (!leafLen) {
                 return false;
             }
-
-            columnToCompare = isFirst ? leafColumns[0] : _last(leafColumns);
+            target = isFirst ? leaves[0] : leaves[leafLen - 1];
         } else {
-            columnToCompare = col;
+            target = col;
         }
-
-        return (isFirst ? allColumns[0] : _last(allColumns)) === columnToCompare;
+        return (isFirst ? allCols[0] : allCols[allLen - 1]) === target;
     }
 }
 
-export function depthFirstAllColumnTreeSearch(
-    tree: (AgColumn | AgColumnGroup)[] | null,
-    useDisplayedChildren: boolean,
-    callback: (treeNode: AgColumn | AgColumnGroup) => void
-): void {
-    if (!tree) {
-        return;
-    }
-
-    for (let i = 0; i < tree.length; i++) {
+/** Flat depth-first walk via `children` (ALL children) into `out`. */
+function collectAllTreeNodes(tree: (AgColumn | AgColumnGroup)[], out: (AgColumn | AgColumnGroup)[]): void {
+    for (let i = 0, len = tree.length; i < len; ++i) {
         const child = tree[i];
         if (isColumnGroup(child)) {
-            const childTree = useDisplayedChildren ? child.getDisplayedChildren() : child.getChildren();
-            depthFirstAllColumnTreeSearch(childTree, useDisplayedChildren, callback);
+            const children = child.children;
+            if (children) {
+                collectAllTreeNodes(children, out);
+            }
         }
-        callback(child);
+        out.push(child);
     }
 }
 
 function pickDisplayedCols(tree: (AgColumn | AgColumnGroup)[]): AgColumn[] {
-    const res: AgColumn[] = [];
-    depthFirstAllColumnTreeSearch(tree, true, (child) => {
+    const out: AgColumn[] = [];
+    pickDisplayedColsInto(tree, out);
+    return out;
+}
+
+function pickDisplayedColsInto(tree: (AgColumn | AgColumnGroup)[] | null, out: AgColumn[]): void {
+    if (!tree) {
+        return;
+    }
+    for (let i = 0, len = tree.length; i < len; ++i) {
+        const child = tree[i];
         if (isColumn(child)) {
-            res.push(child);
+            out.push(child);
+        } else {
+            pickDisplayedColsInto(child.displayedChildren, out);
         }
-    });
-    return res;
+    }
+}
+
+function checkLeftOnGroups(tree: (AgColumn | AgColumnGroup)[] | null): void {
+    if (!tree) {
+        return;
+    }
+    for (let i = 0, len = tree.length; i < len; ++i) {
+        const node = tree[i];
+        if (isColumnGroup(node)) {
+            node.checkLeft();
+        }
+    }
+}
+
+function setLeftsLeftToRight(columns: AgColumn[], source: ColumnEventType): void {
+    let left = 0;
+    for (let i = 0, len = columns.length; i < len; ++i) {
+        const column = columns[i];
+        column.setLeft(left, source);
+        left += column.getActualWidth();
+    }
 }

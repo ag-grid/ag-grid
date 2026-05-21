@@ -10,7 +10,9 @@ import {
     _isSortTypeValid,
     _normalizeSortDirection,
     _normalizeSortType,
+    isColumn,
 } from '../entities/agColumn';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { IAggFunc, SortDirection, SortType } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType, ColumnsResetEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
@@ -25,9 +27,9 @@ import {
     dispatchColumnResizedEvent,
     dispatchColumnVisibleEvent,
 } from './columnEventUtils';
-import { updateSomeColumnState } from './columnFactoryUtils';
-import type { ColumnCollections, ColumnModel } from './columnModel';
-import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree, getValueFactory, isColumnSelectionCol } from './columnUtils';
+import { depthFirstOriginalTreeSearch, updateSomeColumnState } from './columnFactoryUtils';
+import type { ColumnModel } from './columnModel';
+import { GROUP_AUTO_COLUMN_ID, getValueFactory, isColumnSelectionCol } from './columnUtils';
 
 export interface ColumnStateParams {
     /** True if the column is hidden */
@@ -92,8 +94,8 @@ export function _applyColumnState(
     } = beans;
 
     const providedCols = colModel.getColDefCols() ?? [];
-    const selectionCols = selectionColSvc?.getColumns();
-    if (!providedCols.length && !selectionCols?.length) {
+    const selectionCol = selectionColSvc?.column;
+    if (!providedCols.length && !selectionCol) {
         return false;
     }
 
@@ -146,7 +148,7 @@ export function _applyColumnState(
             const width = getValue('width').value1;
             if (width != null) {
                 // if width provided and valid, use it, otherwise stick with the old width
-                const minColWidth = column.getColDef().minWidth ?? environment.getDefaultColumnMinWidth();
+                const minColWidth = column.colDef.minWidth ?? environment.getDefaultColumnMinWidth();
                 if (minColWidth != null && width >= minColWidth) {
                     column.setActualWidth(width, source);
                 }
@@ -217,39 +219,63 @@ export function _applyColumnState(
         const applyDefaultsFunc = (col: AgColumn) =>
             syncColumnWithStateItem(col, null, rowGroupIndexes, pivotIndexes, false);
 
-        columnsWithNoState.forEach(applyDefaultsFunc);
+        for (let i = 0, len = columnsWithNoState.length; i < len; ++i) {
+            applyDefaultsFunc(columnsWithNoState[i]);
+        }
 
         rowGroupColsSvc?.sortColumns(comparatorByIndex.bind(rowGroupColsSvc, rowGroupIndexes, previousRowGroupCols));
         pivotColsSvc?.sortColumns(comparatorByIndex.bind(pivotColsSvc, pivotIndexes, previousPivotCols));
 
         colModel.refreshCols(false, source);
 
-        const syncColStates = (
-            getCol: (colId: string) => AgColumn | null,
-            colStates: ColumnState[],
-            columns: AgColumn[] = []
-        ) => {
+        // Sync the post-refresh state of service col groups (auto/selection). For each provided
+        // state, look up the matching col in `serviceCols` by colId and apply the state. Service
+        // cols left unmatched get the defaults applied. `serviceCols` is consumed by colId — we
+        // don't need to mutate it, just track which ones were matched.
+        const syncColStates = (colStates: ColumnState[], serviceCols: readonly AgColumn[]) => {
+            const matched = new Set<AgColumn>();
             for (const stateItem of colStates) {
-                const col = getCol(stateItem.colId);
-                _removeFromArray(columns, col);
+                const stateColId = stateItem.colId;
+                let col: AgColumn | null = null;
+                for (let i = 0, len = serviceCols.length; i < len; ++i) {
+                    if (serviceCols[i].colId === stateColId) {
+                        col = serviceCols[i];
+                        matched.add(col);
+                        break;
+                    }
+                }
                 syncColumnWithStateItem(col, stateItem, null, null, true);
             }
-            columns.forEach(applyDefaultsFunc);
+            // Apply defaults to any service col that didn't appear in `colStates`.
+            for (let i = 0, len = serviceCols.length; i < len; ++i) {
+                const c = serviceCols[i];
+                if (!matched.has(c)) {
+                    applyDefaultsFunc(c);
+                }
+            }
         };
 
         // sync newly created auto group columns with ColumnState
-        syncColStates(
-            (colId: string) => autoColSvc?.getColumn(colId) ?? null,
-            autoColStates,
-            autoColSvc?.getColumns()?.slice()
-        );
+        const autoCols = autoColSvc?.columns;
+        if (autoCols && autoCols.length > 0) {
+            syncColStates(autoColStates, autoCols);
+        } else if (autoColStates.length > 0) {
+            // No auto cols present but states want to be applied: apply with null col so the
+            // state still propagates through `syncColumnWithStateItem`'s null branch.
+            for (const stateItem of autoColStates) {
+                syncColumnWithStateItem(null, stateItem, null, null, true);
+            }
+        }
 
         // sync selection columns with ColumnState
-        syncColStates(
-            (colId: string) => selectionColSvc?.getColumn(colId) ?? null,
-            selectionColStates,
-            selectionColSvc?.getColumns()?.slice()
-        );
+        const selectionCol = selectionColSvc?.column;
+        if (selectionCol) {
+            syncColStates(selectionColStates, [selectionCol]);
+        } else if (selectionColStates.length > 0) {
+            for (const stateItem of selectionColStates) {
+                syncColumnWithStateItem(null, stateItem, null, null, true);
+            }
+        }
 
         orderLiveColsLikeState(params, colModel, gos);
         visibleCols.refresh(source);
@@ -271,12 +297,11 @@ export function _applyColumnState(
     // If there are still states left over, see if we can apply them to newly generated
     // pivot result cols or auto cols. Also if defaults exist, ensure they are applied to pivot resul cols
     if (unmatchedAndAutoStates.length > 0 || _exists(params.defaultState)) {
-        const pivotResultColsList = pivotResultCols?.getPivotResultCols()?.list ?? [];
-        unmatchedCount = applyStates(
-            unmatchedAndAutoStates,
-            pivotResultColsList,
-            (id) => pivotResultCols?.getPivotResultCol(id) ?? null
-        ).unmatchedCount;
+        const pivotResultColsList = pivotResultCols?.pivotCols ?? [];
+        unmatchedCount = applyStates(unmatchedAndAutoStates, pivotResultColsList, (id) => {
+            const col = colModel.getCol(id);
+            return col?.colDef.pivotKeys != null ? col : null;
+        }).unmatchedCount;
     }
     colAnimation?.finish();
 
@@ -298,7 +323,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
 
     // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
     const primaryColumnTree = colModel.getColDefColTree();
-    const primaryColumns = _getColumnsFromTree(primaryColumnTree);
+    const primaryColumns = collectLeafColumnsFromTree(primaryColumnTree);
     const columnStates: ColumnState[] = [];
 
     // we start at 1000, so if user has mix of rowGroup and group specified, it will work with both.
@@ -322,15 +347,19 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
     };
 
     autoColSvc?.getColumns()?.forEach(addColState);
-    selectionColSvc?.getColumns()?.forEach(addColState);
+    const selectionCol = selectionColSvc?.column;
+    if (selectionCol) {
+        addColState(selectionCol);
+    }
     primaryColumns?.forEach(addColState);
 
     // apply state before ordering, as changes in row grouping will introduce new columns
     _applyColumnState(beans, { state: columnStates }, source);
 
     const autoCols = autoColSvc?.getColumns() ?? [];
-    const selectionCols = selectionColSvc?.getColumns() ?? [];
-    const orderedCols = [...selectionCols, ...autoCols, ...primaryColumns];
+    const orderedCols = selectionCol
+        ? [selectionCol, ...autoCols, ...primaryColumns]
+        : [...autoCols, ...primaryColumns];
     const orderedColState = orderedCols.map((col) => ({ colId: col.colId }));
 
     // apply the new order when all the cols have been created & are available
@@ -398,12 +427,14 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         const getChangedColumns = (changedPredicate: (cs: ColumnState, c: AgColumn) => boolean): AgColumn[] => {
             const changedColumns: AgColumn[] = [];
 
-            colModel.forAllCols((column) => {
+            const allCols = colModel.getAllCols();
+            for (let i = 0, len = allCols.length; i < len; ++i) {
+                const column = allCols[i];
                 const colStateBefore = columnStateBeforeMap[column.colId];
                 if (colStateBefore && changedPredicate(colStateBefore, column)) {
                     changedColumns.push(column);
                 }
-            });
+            }
 
             return changedColumns;
         };
@@ -427,9 +458,9 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         const valueChangePredicate = (cs: ColumnState, c: AgColumn) => {
             const oldActive = cs.aggFunc != null;
 
-            const activeChanged = oldActive != c.isValueActive();
+            const activeChanged = oldActive != c.aggregationActive;
             // we only check aggFunc if the agg is active
-            const aggFuncChanged = oldActive && cs.aggFunc != c.getAggFunc();
+            const aggFuncChanged = oldActive && cs.aggFunc != c.aggFunc;
 
             return activeChanged || aggFuncChanged;
         };
@@ -441,17 +472,17 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         const resizeChangePredicate = (cs: ColumnState, c: AgColumn) => cs.width != c.getActualWidth();
         dispatchColumnResizedEvent(eventSvc, getChangedColumns(resizeChangePredicate), true, source);
 
-        const pinnedChangePredicate = (cs: ColumnState, c: AgColumn) => cs.pinned != c.getPinned();
+        const pinnedChangePredicate = (cs: ColumnState, c: AgColumn) => cs.pinned != c.pinned;
         dispatchColumnPinnedEvent(eventSvc, getChangedColumns(pinnedChangePredicate), source);
 
-        const visibilityChangePredicate = (cs: ColumnState, c: AgColumn) => cs.hide == c.isVisible();
+        const visibilityChangePredicate = (cs: ColumnState, c: AgColumn) => cs.hide == c.visible;
         dispatchColumnVisibleEvent(eventSvc, getChangedColumns(visibilityChangePredicate), source);
 
         const sortChangePredicate = (cs: ColumnState, c: AgColumn) =>
             !_areSortDefsEqual(c.getSortDef(), {
                 type: _normalizeSortType(cs.sortType),
                 direction: _normalizeSortDirection(cs.sort),
-            }) || cs.sortIndex != c.getSortIndex();
+            }) || cs.sortIndex != c.sortIndex;
         const changedColumns = getChangedColumns(sortChangePredicate);
         if (changedColumns.length > 0) {
             sortSvc?.dispatchSortChangedEvents(source, changedColumns);
@@ -477,29 +508,34 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
     const res: ColumnState[] = [];
 
     const createStateItemFromColumn = (column: AgColumn) => {
-        const rowGroupIndex = column.isRowGroupActive() && rowGroupColumns ? rowGroupColumns.indexOf(column) : null;
-        const pivotIndex = column.isPivotActive() && pivotColumns ? pivotColumns.indexOf(column) : null;
+        const rowGroupActive = column.rowGroupActive;
+        const pivotActive = column.pivotActive;
+        const rowGroupIndex = rowGroupActive && rowGroupColumns ? rowGroupColumns.indexOf(column) : null;
+        const pivotIndex = pivotActive && pivotColumns ? pivotColumns.indexOf(column) : null;
 
-        const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
-        const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
+        const aggFunc = column.aggregationActive ? column.aggFunc : null;
+        const sortIndex = column.sortIndex != null ? column.sortIndex : null;
 
         res.push({
             colId: column.colId,
             width: column.getActualWidth(),
-            hide: !column.isVisible(),
-            pinned: column.getPinned(),
+            hide: !column.visible,
+            pinned: column.pinned,
             sort: column.getSort(),
             sortType: column.getSortDef()?.type,
             sortIndex,
             aggFunc,
-            rowGroup: column.isRowGroupActive(),
+            rowGroup: rowGroupActive,
             rowGroupIndex,
-            pivot: column.isPivotActive(),
+            pivot: pivotActive,
             pivotIndex: pivotIndex,
             flex: column.getFlex() ?? null,
         });
     };
-    colModel.forAllCols((col) => createStateItemFromColumn(col));
+    const allCols = colModel.getAllCols();
+    for (let i = 0, len = allCols.length; i < len; ++i) {
+        createStateItemFromColumn(allCols[i]);
+    }
 
     // for fast looking, store the index of each column
     const colIdToGridIndexMap = new Map<string, number>(colModel.getCols().map((col, index) => [col.colId, index]));
@@ -563,7 +599,7 @@ export function getColumnStateFromColDef(column: AgColumn): ColumnState {
 }
 
 function orderLiveColsLikeState(params: ApplyColumnStateParams, colModel: ColumnModel, gos: GridOptionsService): void {
-    if (!params.applyOrder || !params.state) {
+    if (!params.applyOrder || !params.state || !colModel.ready) {
         return;
     }
     const colIds: string[] = [];
@@ -572,27 +608,37 @@ function orderLiveColsLikeState(params: ApplyColumnStateParams, colModel: Column
             colIds.push(item.colId);
         }
     }
-    sortColsLikeKeys(colModel.cols, colIds, colModel, gos);
-}
-
-function sortColsLikeKeys(
-    cols: ColumnCollections | undefined,
-    colIds: string[],
-    colModel: ColumnModel,
-    gos: GridOptionsService
-): void {
-    if (cols == null) {
+    const newOrder = sortColsLikeKeys(colModel.colsList, colModel.colsById, colIds, gos);
+    if (newOrder === null) {
         return;
     }
 
-    let newOrder: AgColumn[] = [];
+    if (!doesMovePassMarryChildren(newOrder, colModel.colsTree)) {
+        _warn(39);
+        return;
+    }
+
+    colModel.colsList = newOrder;
+}
+
+/** Returns a reordered list of `currentList` so that columns whose colIds appear in `colIds`
+ *  come first (in colIds order), followed by the remaining columns (auto-group cols at the
+ *  start, normal cols at the end). Locked-position columns are then placed at the start/end.
+ *  Returns null if there are no columns to reorder. */
+function sortColsLikeKeys(
+    currentList: AgColumn[],
+    byId: { [id: string]: AgColumn },
+    colIds: string[],
+    gos: GridOptionsService
+): AgColumn[] | null {
+    const newOrder: AgColumn[] = [];
     const processedColIds: { [id: string]: boolean } = {};
 
     for (const colId of colIds) {
         if (processedColIds[colId]) {
             continue;
         }
-        const col = cols.map[colId];
+        const col = byId[colId];
         if (col) {
             newOrder.push(col);
             processedColIds[colId] = true;
@@ -601,10 +647,9 @@ function sortColsLikeKeys(
 
     // add in all other columns
     let autoGroupInsertIndex = 0;
-    for (const col of cols.list) {
+    for (const col of currentList) {
         const colId = col.colId;
-        const alreadyProcessed = processedColIds[colId] != null;
-        if (alreadyProcessed) {
+        if (processedColIds[colId] != null) {
             continue;
         }
 
@@ -625,14 +670,7 @@ function sortColsLikeKeys(
     // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
     // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
     // is less sexy for the code here, but it keeps consistency.
-    newOrder = placeLockedColumns(newOrder, gos);
-
-    if (!doesMovePassMarryChildren(newOrder, colModel.getColTree())) {
-        _warn(39);
-        return;
-    }
-
-    cols.list = newOrder;
+    return placeLockedColumns(newOrder, gos);
 }
 
 function normaliseColumnMovedEventForColumnState(
@@ -689,8 +727,8 @@ function normaliseColumnMovedEventForColumnState(
 
 // sort the lists according to the indexes that were provided
 const comparatorByIndex = (indexes: { [key: string]: number }, oldList: AgColumn[], colA: AgColumn, colB: AgColumn) => {
-    const indexA = indexes[colA.getId()];
-    const indexB = indexes[colB.getId()];
+    const indexA = indexes[colA.colId];
+    const indexB = indexes[colB.colId];
 
     const aHasIndex = indexA != null;
     const bHasIndex = indexB != null;
@@ -730,3 +768,13 @@ const comparatorByIndex = (indexes: { [key: string]: number }, oldList: AgColumn
     // but without index or that b is old and a is new
     return 1;
 };
+
+function collectLeafColumnsFromTree(root: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
+    const result: AgColumn[] = [];
+    depthFirstOriginalTreeSearch(null, root, (node: AgColumn | AgProvidedColumnGroup) => {
+        if (isColumn(node)) {
+            result.push(node);
+        }
+    });
+    return result;
+}

@@ -237,21 +237,19 @@ export {
     _updateColumnState,
 } from './columns/columnFactoryUtils';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
-export type { ColumnCollections as _ColumnCollections } from './columns/columnModel';
 export type { ColumnModel } from './columns/columnModel';
 export type { ColumnNameService } from './columns/columnNameService';
 export { _applyColumnState, _getColumnState, _resetColumnState } from './columns/columnStateUtils';
 export {
-    _areColIdsEqual,
     _columnsMatch,
     _convertColumnEventSourceType,
+    _destroyColIfAlive,
     _destroyColumnTree,
-    _getColumnsFromTree,
     _getColumnStateFromColDef,
     _getSortDefFromColDef,
-    _updateColsMap,
     isColumnGroupAutoCol,
     isColumnSelectionCol,
+    isGroupHierarchyCol,
     isRowNumberCol,
     isSpecialCol,
 } from './columns/columnUtils';
@@ -455,9 +453,9 @@ export type { IAggColumnNameService } from './interfaces/iAggColumnNameService';
 export type { IAggFuncService } from './interfaces/iAggFuncService';
 export type { IAggregatedChildrenSvc as _IAggregatedChildrenSvc } from './interfaces/iAggregatedChildrenSvc';
 export type { ICellRangeFeature } from './interfaces/iCellRangeFeature';
+export type { IAutoColService } from './interfaces/iAutoColService';
 export type { IClipboardService } from './interfaces/iClipboardService';
 export type { IColsService } from './interfaces/iColsService';
-export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
 export type { IColumnStateUpdateStrategy } from './interfaces/iColumnStateUpdateStrategy';
 export type { IEventService } from './interfaces/iEventService';
 export type { IExpansionService } from './interfaces/iExpansionService';
@@ -469,7 +467,7 @@ export type { IGroupEditService as _IGroupEditService } from './interfaces/iGrou
 export type { IGroupFilterService } from './interfaces/iGroupFilterService';
 export type { IRowGroupingEditValueSvc as _IRowGroupingEditValueSvc } from './interfaces/iRowGroupingEditValueSvc';
 export type { IRowGroupPanelBuilder as _IRowGroupPanelBuilder } from './interfaces/iRowGroupPanelBuilder';
-export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
+export type { HierarchyTreeMerge, IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
 
 export type { IMenuFactory } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';

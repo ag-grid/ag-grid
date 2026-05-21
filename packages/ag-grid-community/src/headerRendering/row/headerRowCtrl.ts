@@ -220,14 +220,7 @@ export class HeaderRowCtrl extends BeanStub {
 
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
         const isFocusedAndDisplayed = (ctrl: HeaderCellCtrl) => {
-            const { focusSvc, visibleCols } = this.beans;
-
-            const isFocused = focusSvc.isHeaderWrapperFocused(ctrl);
-            if (!isFocused) {
-                return false;
-            }
-            const isDisplayed = visibleCols.isVisible(ctrl.column);
-            return isDisplayed;
+            return ctrl.column.displayed && this.beans.focusSvc.isHeaderWrapperFocused(ctrl);
         };
 
         if (oldCtrls) {

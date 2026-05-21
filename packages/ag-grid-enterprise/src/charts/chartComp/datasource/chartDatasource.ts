@@ -151,7 +151,7 @@ export class ChartDatasource extends BeanStub {
 
                 // add array of column names to results
                 if (colNamesArr.length > 0) {
-                    colNames[col.getId()] = colNamesArr;
+                    colNames[col.colId] = colNamesArr;
                 }
             }
         }
@@ -423,7 +423,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private updatePivotKeysForSSRM() {
-        const secondaryColumns = this.pivotResultCols?.getPivotResultCols()?.list;
+        const secondaryColumns = this.pivotResultCols?.pivotCols;
 
         if (!secondaryColumns) {
             return;
@@ -451,12 +451,12 @@ export class ChartDatasource extends BeanStub {
         }
 
         const extractSeparator = (columnGroup: AgColumnGroup, childId: string): string => {
-            const groupId = columnGroup.getGroupId();
-            if (!columnGroup.getParent()) {
+            const groupId = columnGroup.groupId;
+            if (!columnGroup.parent) {
                 // removing groupId ('2000') from childId ('2000|Swimming') yields '|Swimming' so first char is separator
                 return childId.split(groupId)[1][0];
             }
-            return extractSeparator(columnGroup.getParent()!, groupId);
+            return extractSeparator(columnGroup.parent, groupId);
         };
 
         const firstSecondaryCol = secondaryColumns[0];

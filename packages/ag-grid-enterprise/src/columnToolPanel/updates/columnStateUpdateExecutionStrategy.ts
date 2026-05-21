@@ -171,7 +171,7 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
     }
 
     public getColumnAggFunc(column: AgColumn): string | IAggFunc | null | undefined {
-        return column.getAggFunc();
+        return column.aggFunc;
     }
 
     public setPivotColumns(columns: AgColumn[], eventType: ColumnEventType): void {
@@ -220,7 +220,7 @@ class SynchronousColumnStateUpdateStrategy implements ColumnStateConcreteUpdateS
     }
 
     public isColumnVisibleInToolPanel(column: AgColumn): boolean {
-        return column.isVisible();
+        return column.visible;
     }
 
     public isColumnSelectedInPivotModeToolPanel(column: AgColumn): boolean {
@@ -260,10 +260,10 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                     continue;
                 }
                 if (
-                    (patch.hide !== undefined && patch.hide !== !column.isVisible()) ||
-                    (patch.rowGroup !== undefined && !!patch.rowGroup !== column.isRowGroupActive()) ||
-                    (patch.pivot !== undefined && !!patch.pivot !== column.isPivotActive()) ||
-                    (patch.aggFunc !== undefined && (patch.aggFunc ?? null) !== (column.getAggFunc() ?? null))
+                    (patch.hide !== undefined && patch.hide !== !column.visible) ||
+                    (patch.rowGroup !== undefined && !!patch.rowGroup !== column.rowGroupActive) ||
+                    (patch.pivot !== undefined && !!patch.pivot !== column.pivotActive) ||
+                    (patch.aggFunc !== undefined && (patch.aggFunc ?? null) !== (column.aggFunc ?? null))
                 ) {
                     return true;
                 }
@@ -312,7 +312,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                 if (!column) {
                     continue;
                 }
-                if (aggFunc !== column.getAggFunc()) {
+                if (aggFunc !== column.aggFunc) {
                     return true;
                 }
             }
@@ -513,7 +513,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         const aggFuncs = ensureAggFuncsDraft(this.state);
         for (const col of columns) {
             if (!liveValueColIds.has(col.colId) && !aggFuncs.values.has(col.colId)) {
-                const existingAggFunc = col.getAggFunc();
+                const existingAggFunc = col.aggFunc;
                 const aggFunc =
                     existingAggFunc != null ? existingAggFunc : this.beans.aggFuncSvc?.getDefaultAggFunc(col);
                 if (aggFunc != null) {
@@ -553,7 +553,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         if (this.state.aggFuncs?.values.has(colId)) {
             return this.state.aggFuncs.values.get(colId);
         }
-        return column.getAggFunc();
+        return column.aggFunc;
     }
 
     public isColumnVisibleInToolPanel(column: AgColumn): boolean {
@@ -561,7 +561,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         if (columnState?.hide !== undefined) {
             return !columnState.hide;
         }
-        return column.isVisible();
+        return column.visible;
     }
 
     public isColumnSelectedInPivotModeToolPanel(column: AgColumn): boolean {
@@ -574,7 +574,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         } else if (this.state.rowGroup) {
             rowGroupActive = this.state.rowGroup.colIds.includes(colId);
         } else {
-            rowGroupActive = column.isRowGroupActive();
+            rowGroupActive = column.rowGroupActive;
         }
 
         let pivotActive: boolean;
@@ -583,7 +583,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         } else if (this.state.pivot) {
             pivotActive = this.state.pivot.colIds.includes(colId);
         } else {
-            pivotActive = column.isPivotActive();
+            pivotActive = column.pivotActive;
         }
 
         let valueActive: boolean;
@@ -786,16 +786,16 @@ function syncPrimaryColDefOrderFromCurrentColumns(beans: BeanStub['beans']): voi
 }
 
 function syncPrimaryColDefOrder(beans: BeanStub['beans'], orderedPrimaryColumns: AgColumn[]): void {
-    const colDefCols = getMutablePrimaryColDefCollection(beans);
-    if (!colDefCols) {
+    const colDefList = beans.colModel.colDefList;
+    if (colDefList.length === 0) {
         return;
     }
 
     const orderedSet = new Set(orderedPrimaryColumns);
-    colDefCols.list = [
+    beans.colModel.replaceColDefList([
         ...orderedPrimaryColumns,
-        ...colDefCols.list.filter((col) => isPrimaryColDefColumn(col) && !orderedSet.has(col)),
-    ];
+        ...colDefList.filter((col) => isPrimaryColDefColumn(col) && !orderedSet.has(col)),
+    ]);
 }
 
 function getPrimaryColumnIds(beans: BeanStub['beans']): string[] {
@@ -806,17 +806,6 @@ function getPrimaryColumns(beans: BeanStub['beans']): AgColumn[] {
     return (beans.colModel.getColDefCols() ?? beans.colModel.getCols()).filter((column) =>
         isPrimaryColDefColumn(column)
     );
-}
-
-function getMutablePrimaryColDefCollection(beans: BeanStub['beans']): { list: AgColumn[] } | undefined {
-    const colDefCols = beans.colModel.colDefCols;
-    const colDefList = colDefCols?.list;
-
-    if (!Array.isArray(colDefList)) {
-        return undefined;
-    }
-
-    return colDefCols as { list: AgColumn[] };
 }
 
 function isPrimaryColDefColumn(column: AgColumn): boolean {

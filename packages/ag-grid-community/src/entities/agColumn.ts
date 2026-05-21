@@ -88,12 +88,15 @@ export class AgColumn<TValue = any>
     private actualWidth: any;
 
     // The measured height of this column's header when autoHeaderHeight is enabled
-    private autoHeaderHeight: number | null = null;
+    public autoHeaderHeight: number | null = null;
 
-    private visible: any;
+    /** User intent: should this column be shown if display rules allow it. */
+    public visible: boolean = false;
+    /** Final render state: this column is currently in `VisibleColsService.allCols`. */
+    public displayed: boolean = false;
     public pinned: ColumnPinnedType;
-    private left: number | null;
-    private oldLeft: number | null;
+    public left: number | null;
+    public oldLeft: number | null;
     public aggFunc: string | IAggFunc | null | undefined;
     private sortDef: SortDef = _getSortDefFromInput();
     public sortIndex: number | null | undefined;
@@ -141,6 +144,7 @@ export class AgColumn<TValue = any>
 
     public override destroy() {
         super.destroy();
+        this.displayed = false;
         this.beans.rowSpanSvc?.deregister(this);
     }
 
@@ -609,9 +613,9 @@ export class AgColumn<TValue = any>
      * Returns the first parent that is not a padding group.
      */
     public getFirstRealParent(): AgProvidedColumnGroup | null {
-        let parent = this.getOriginalParent();
-        while (parent?.isPadding()) {
-            parent = parent.getOriginalParent();
+        let parent = this.originalParent;
+        while (parent?.padding) {
+            parent = parent.originalParent;
         }
         return parent;
     }
@@ -619,7 +623,7 @@ export class AgColumn<TValue = any>
     public getColumnGroupPaddingInfo(): { numberOfParents: number; isSpanningTotal: boolean } {
         let parent = this.parent;
 
-        if (!parent?.isPadding()) {
+        if (!parent?.providedColumnGroup.padding) {
             return { numberOfParents: 0, isSpanningTotal: false };
         }
 
@@ -627,7 +631,7 @@ export class AgColumn<TValue = any>
         let isSpanningTotal = true;
 
         while (parent) {
-            if (!parent.isPadding()) {
+            if (!parent.providedColumnGroup.padding) {
                 isSpanningTotal = false;
                 break;
             }

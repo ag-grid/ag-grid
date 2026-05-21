@@ -1,23 +1,16 @@
 import type {
+    AgProvidedColumnGroup,
     ColDef,
-    ColKey,
-    GridOptions,
+    HierarchyTreeMerge,
     IGroupHierarchyColService,
     NamedBean,
-    PropertyChangedEvent,
-    PropertyValueChangedEvent,
-    _ColumnCollections,
 } from 'ag-grid-community';
 import {
     AgColumn,
     BeanStub,
     GROUP_HIERARCHY_COLUMN_ID_PREFIX,
     _addColumnDefaultAndTypes,
-    _areColIdsEqual,
-    _columnsMatch,
-    _destroyColumnTree,
     _removeAllFromArray,
-    _updateColsMap,
 } from 'ag-grid-community';
 
 import {
@@ -27,193 +20,244 @@ import {
     numericalMonthToNamedMonth,
 } from './groupHierarchyUtils';
 
+/** Planning pass entry: cheap projection of one expected hierarchy col. ColDef construction is
+ *  deferred until the planning pass detects a mismatch with `this.columns`. */
+interface HierarchyPlanEntry {
+    sourceCol: AgColumn;
+    part: string | ColDef;
+    colId: string;
+}
+
 export class GroupHierarchyColService extends BeanStub implements NamedBean, IGroupHierarchyColService {
     beanName = 'groupHierarchyColSvc' as const;
 
-    public columns: _ColumnCollections | null = null;
-    /** Map from primary column to virtual (i.e. generated) columns */
-    private sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();
-    /** Map from virtual column to associated primary column. Inverse of `sourceColumnMap` */
-    private inverseColumnMap = new WeakMap<AgColumn, AgColumn>();
+    /** Generated hierarchy cols (year, quarter, month, etc.). ColumnModel splices these into the
+     *  colDef tree and owns the balanced-tree wrappers (via `colGroupSvc.wrapAutoColInBalancedTree`). */
+    public columns: AgColumn[] = [];
 
-    public addColumns(cols: _ColumnCollections): void {
-        const groupHierarchyCols = this.columns;
-        if (groupHierarchyCols == null) {
-            return;
-        }
+    /** Source col → its generated virtuals. */
+    private readonly sourceColumnMap = new Map<AgColumn, AgColumn[]>();
+    /** Virtual col → its source col. */
+    private readonly inverseColumnMap = new Map<AgColumn, AgColumn>();
 
-        cols.list = groupHierarchyCols.list
-            .filter((col) => !cols.list.some((c) => c.colId === col.colId))
-            .concat(cols.list);
+    /** Wrapper cache keyed by hierarchy leaf col. Survives across `applyToColDefTree` calls so
+     *  `_destroyColumnTree` preserves wrappers when `(col, depth)` is unchanged. */
+    private readonly wrapperCache = new Map<AgColumn, { wrapper: AgColumn | AgProvidedColumnGroup; depth: number }>();
 
-        cols.tree = groupHierarchyCols.tree
-            .filter((col) => !cols.tree.some((c) => c.getId() === col.getId()))
-            .concat(cols.tree);
+    /** Two-phase to skip bean churn on no-op refreshes: plan colIds, compare to `this.columns`,
+     *  rebuild only on mismatch. Returns input refs when no hierarchy cols are active. */
+    public applyToColDefTree(
+        colDefList: AgColumn[],
+        colDefTree: (AgColumn | AgProvidedColumnGroup)[],
+        treeDepth: number
+    ): HierarchyTreeMerge {
+        const plan = this.planHierarchy(colDefList);
 
-        _updateColsMap(cols);
-    }
-
-    public createColumns(cols: _ColumnCollections): void {
-        const newSourceColumnMap = new WeakMap();
-        const newInverseColumnMap = new WeakMap();
-
-        const list = this.createGroupHierarchyColumns(cols, newSourceColumnMap, newInverseColumnMap);
-        const areSame = _areColIdsEqual(list, this.columns?.list ?? []);
-
-        if (areSame) {
-            return;
-        }
-
-        _destroyColumnTree(this.beans, this.columns?.tree);
-        this.columns = null;
-        const { colGroupSvc } = this.beans;
-        const treeDepth = colGroupSvc?.findDepth(cols.tree) ?? 0;
-        const tree = colGroupSvc?.balanceTreeForAutoCols(list, treeDepth) ?? [];
-        this.columns = {
-            list,
-            tree,
-            treeDepth,
-            map: {},
-        };
-        this.sourceColumnMap = newSourceColumnMap;
-        this.inverseColumnMap = newInverseColumnMap;
-    }
-
-    public updateColumns(_event: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void {
-        // No-op
-    }
-
-    public getColumn(key: ColKey): AgColumn | null {
-        return this.columns?.list.find((col) => _columnsMatch(col, key)) ?? null;
-    }
-
-    public getColumns(): AgColumn[] | null {
-        return this.columns?.list ?? null;
-    }
-
-    public expandColumnInto(target: AgColumn[], col: AgColumn): void {
-        const expanded = this.getVirtualColumnsForColumn(col).concat(col);
-        for (const expandedCol of expanded) {
-            if (!target.some((_c) => _columnsMatch(_c, expandedCol) || _c.colId === expandedCol.colId)) {
-                target.push(expandedCol);
+        if (plan.length === 0) {
+            if (this.columns.length > 0) {
+                this.columns = [];
+                this.sourceColumnMap.clear();
+                this.inverseColumnMap.clear();
+                this.wrapperCache.clear();
             }
+            return { list: colDefList, tree: colDefTree };
+        }
+
+        if (!planMatches(plan, this.columns)) {
+            this.rebuildColumns(plan);
+        }
+        return this.composeMerged(colDefTree, colDefList, treeDepth);
+    }
+
+    /** Allocates new hierarchy AgColumns from a plan whose colIds differ from current. */
+    private rebuildColumns(plan: HierarchyPlanEntry[]): void {
+        const sourceMap = this.sourceColumnMap;
+        const inverseMap = this.inverseColumnMap;
+        sourceMap.clear();
+        inverseMap.clear();
+
+        const planLen = plan.length;
+        const newCols: AgColumn[] = new Array(planLen);
+        const beans = this.beans;
+        const gos = this.gos;
+        for (let i = 0; i < planLen; ++i) {
+            const entry = plan[i];
+            const sourceCol = entry.sourceCol;
+            const colDef = this.buildColDefFromPart(entry.part, sourceCol);
+            const colId = colDef.colId!;
+            gos.validateColDef(colDef, colId, true);
+            const newCol = new AgColumn(colDef, null, colId, true);
+            beans.context.createBean(newCol);
+            newCols[i] = newCol;
+            let bucket = sourceMap.get(sourceCol);
+            if (bucket === undefined) {
+                bucket = [];
+                sourceMap.set(sourceCol, bucket);
+            }
+            bucket.push(newCol);
+            inverseMap.set(newCol, sourceCol);
+        }
+
+        this.columns = newCols;
+        // Drop wrapper-cache entries for cols that no longer exist (count may be unchanged).
+        const wrapperCache = this.wrapperCache;
+        const live = new Set<AgColumn>(newCols);
+        for (const col of wrapperCache.keys()) {
+            if (!live.has(col)) {
+                wrapperCache.delete(col);
+            }
+        }
+    }
+
+    /** Build / reuse wrappers and compose `[...wrappers, ...primary]` list + tree. When `colGroupSvc`
+     *  is absent the grid has no wrappers — return input refs unchanged. */
+    private composeMerged(
+        primaryTree: (AgColumn | AgProvidedColumnGroup)[],
+        primaryList: AgColumn[],
+        treeDepth: number
+    ): HierarchyTreeMerge {
+        const colGroupSvc = this.beans.colGroupSvc;
+        if (!colGroupSvc) {
+            return { list: primaryList, tree: primaryTree };
+        }
+        const cols = this.columns;
+        const colsLen = cols.length;
+        const wrapperCache = this.wrapperCache;
+        const primaryTreeLen = primaryTree.length;
+        const newTree = new Array<AgColumn | AgProvidedColumnGroup>(colsLen + primaryTreeLen);
+        for (let i = 0; i < colsLen; ++i) {
+            const col = cols[i];
+            const cached = wrapperCache.get(col);
+            let wrapper: AgColumn | AgProvidedColumnGroup;
+            if (cached?.depth === treeDepth) {
+                wrapper = cached.wrapper;
+            } else {
+                wrapper = colGroupSvc.wrapAutoColInBalancedTree(col, treeDepth);
+                wrapperCache.set(col, { wrapper, depth: treeDepth });
+            }
+            newTree[i] = wrapper;
+        }
+        for (let i = 0; i < primaryTreeLen; ++i) {
+            newTree[colsLen + i] = primaryTree[i];
+        }
+
+        const primaryListLen = primaryList.length;
+        const newList = new Array<AgColumn>(colsLen + primaryListLen);
+        for (let i = 0; i < colsLen; ++i) {
+            newList[i] = cols[i];
+        }
+        for (let i = 0; i < primaryListLen; ++i) {
+            newList[colsLen + i] = primaryList[i];
+        }
+        return { list: newList, tree: newTree };
+    }
+
+    /** Cheap pre-pass: walks `colDefList` gathering expected entries without building any ColDef
+     *  objects. Filters out unrecognised string parts and inline ColDefs missing `colId` so
+     *  `buildColDefFromPart` doesn't have to handle invalid inputs. */
+    private planHierarchy(colDefList: AgColumn[]): HierarchyPlanEntry[] {
+        const plan: HierarchyPlanEntry[] = [];
+        const groupHierarchyConfig = this.gos.get('groupHierarchyConfig');
+        for (let i = 0, len = colDefList.length; i < len; ++i) {
+            const sourceCol = colDefList[i];
+            const parts = hierarchyPartsForCol(sourceCol);
+            if (parts === null) {
+                continue;
+            }
+            const sourceColId = sourceCol.colId;
+            for (let j = 0, m = parts.length; j < m; ++j) {
+                const part = parts[j];
+                if (typeof part === 'string') {
+                    // Valid only when user-configured (via `groupHierarchyConfig`) or a canonical date part.
+                    if (groupHierarchyConfig?.[part] === undefined && !CANONICAL_HIERARCHY_PARTS.has(part)) {
+                        continue;
+                    }
+                    plan.push({ sourceCol, part, colId: `${GROUP_HIERARCHY_COLUMN_ID_PREFIX}-${sourceColId}-${part}` });
+                } else if (part.colId) {
+                    // User-supplied inline ColDef requires an explicit colId.
+                    plan.push({ sourceCol, part, colId: part.colId });
+                }
+            }
+        }
+        return plan;
+    }
+
+    public override destroy(): void {
+        // Hierarchy cols + wrappers live in ColumnModel.colDefTree (destroyed by `_destroyColumnTree`);
+        // just clear local refs here.
+        this.columns = [];
+        this.sourceColumnMap.clear();
+        this.inverseColumnMap.clear();
+        this.wrapperCache.clear();
+        super.destroy();
+    }
+
+    /** Append `[...virtuals, col]` to `target`, deduped against `targetSet`. Caller owns `targetSet`
+     *  so successive calls share O(1) dedup state. */
+    public expandColumnInto(target: AgColumn[], targetSet: Set<AgColumn>, col: AgColumn): void {
+        const virtualCols = this.sourceColumnMap.get(col);
+        if (virtualCols !== undefined) {
+            for (let i = 0, len = virtualCols.length; i < len; ++i) {
+                const vc = virtualCols[i];
+                if (!targetSet.has(vc)) {
+                    targetSet.add(vc);
+                    target.push(vc);
+                }
+            }
+        }
+        if (!targetSet.has(col)) {
+            targetSet.add(col);
+            target.push(col);
         }
     }
 
     public compareVirtualColumns(colA: AgColumn, colB: AgColumn): number | null {
-        const sourceA = this.inverseColumnMap.get(colA);
-        const sourceB = this.inverseColumnMap.get(colB);
-        if (sourceA && sourceA === sourceB) {
-            const hierarchyCols = this.sourceColumnMap.get(sourceA) ?? [];
-            return hierarchyCols?.indexOf(colA) - hierarchyCols?.indexOf(colB);
+        const inverseMap = this.inverseColumnMap;
+        const sourceA = inverseMap.get(colA);
+        const sourceB = inverseMap.get(colB);
+        // Sibling virtuals from the same source: rank by insertion order in the source's bucket.
+        if (sourceA !== undefined && sourceA === sourceB) {
+            const siblings = this.sourceColumnMap.get(sourceA)!;
+            let idxA = -1;
+            let idxB = -1;
+            for (let i = 0, len = siblings.length; i < len; ++i) {
+                const c = siblings[i];
+                if (c === colA) {
+                    idxA = i;
+                } else if (c === colB) {
+                    idxB = i;
+                }
+                if (idxA >= 0 && idxB >= 0) {
+                    break;
+                }
+            }
+            return idxA - idxB;
         }
-
-        if (this.sourceColumnMap.get(colA)?.includes(colB)) {
+        // Virtuals sort BEFORE their source col.
+        if (sourceB === colA) {
             return 1;
         }
-
-        if (this.sourceColumnMap.get(colB)?.includes(colA)) {
+        if (sourceA === colB) {
             return -1;
         }
-
         return null;
     }
 
-    public insertVirtualColumnsForCol(columns: AgColumn<any>[], col: AgColumn<any>): AgColumn[] {
-        const hierarchyCols = this.getVirtualColumnsForColumn(col);
-        if (!hierarchyCols) {
-            return [];
+    public insertVirtualColumnsForCol(columns: AgColumn[], col: AgColumn): AgColumn[] | null {
+        const hierarchyCols = this.sourceColumnMap.get(col);
+        if (hierarchyCols === undefined || hierarchyCols.length === 0) {
+            return null;
         }
 
-        // Index at which to insert the virtual columns
+        // Remove any existing virtuals from `columns` first, then splice them in adjacent to `col`.
         let idxCol = columns.indexOf(col);
         if (idxCol < 0) {
             idxCol = columns.length - 1;
         }
-
-        // For simplicity, reset the `columns` array by removing all associated
-        // virtual columns first
         _removeAllFromArray(columns, hierarchyCols);
-
-        // Insert the virtual columns in the given order
         columns.splice(idxCol, 0, ...hierarchyCols);
 
         return hierarchyCols;
-    }
-
-    private getVirtualColumnsForColumn(col: AgColumn): AgColumn[] {
-        if (this.isGroupHierarchyColsEnabledForCol(col)) {
-            return this.sourceColumnMap.get(col) ?? [];
-        }
-        return [];
-    }
-
-    private isGroupHierarchyColsEnabled(cols: _ColumnCollections): boolean {
-        return cols.list.some((col) => this.isGroupHierarchyColsEnabledForCol(col));
-    }
-
-    private isGroupHierarchyColsEnabledForCol(col: AgColumn): boolean {
-        const def = col.colDef;
-        const groupHierarchy = _getGroupHierarchy(def);
-        return !!(
-            groupHierarchy &&
-            (def.rowGroup ||
-                def.enableRowGroup ||
-                def.rowGroupIndex != null ||
-                def.pivot ||
-                def.enablePivot ||
-                def.pivotIndex != null)
-        );
-    }
-
-    private createGroupHierarchyColDefs(sourceCol: AgColumn): ColDef[] {
-        const colDefs: ColDef[] = [];
-        const sourceColDef = sourceCol.colDef;
-        const groupHierarchy = _getGroupHierarchy(sourceColDef);
-
-        if (!groupHierarchy) {
-            return colDefs;
-        }
-
-        if (!this.isGroupHierarchyColsEnabledForCol(sourceCol)) {
-            return colDefs;
-        }
-
-        for (const part of groupHierarchy) {
-            const colDef: ColDef | null =
-                typeof part === 'string' ? this.createColDefForPart(part, sourceCol, sourceColDef) : part;
-            if (colDef) {
-                colDefs.push(colDef);
-            }
-        }
-
-        return colDefs;
-    }
-
-    private createGroupHierarchyColumns(
-        cols: _ColumnCollections,
-        sourceColMap: WeakMap<AgColumn, AgColumn[]>,
-        inverseColMap: WeakMap<AgColumn, AgColumn>
-    ): AgColumn[] {
-        if (!this.isGroupHierarchyColsEnabled(cols)) {
-            return [];
-        }
-
-        const newCols: AgColumn[] = [];
-
-        for (const col of cols.list) {
-            for (const colDef of this.createGroupHierarchyColDefs(col)) {
-                const colId = colDef.colId!;
-                this.gos.validateColDef(colDef, colId, true);
-                const newCol = new AgColumn(colDef, null, colId, true);
-                this.createBean(newCol);
-                newCols.push(newCol);
-                updateMap(sourceColMap, col, newCol);
-                inverseColMap.set(newCol, col);
-            }
-        }
-
-        return newCols;
     }
 
     private createColDefForPart(part: string, sourceCol: AgColumn, sourceColDef: ColDef): ColDef | null {
@@ -306,9 +350,58 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
                 return null;
         }
     }
+
+    /** Build the real ColDef. Plan pass guarantees string parts are recognised (else filtered out),
+     *  so `createColDefForPart`'s null branch is dead in practice — non-null assertion is safe. */
+    private buildColDefFromPart(part: string | ColDef, sourceCol: AgColumn): ColDef {
+        if (typeof part !== 'string') {
+            return _addColumnDefaultAndTypes(this.beans, part, part.colId!, true);
+        }
+        return this.createColDefForPart(part, sourceCol, sourceCol.colDef)!;
+    }
 }
 
-function updateMap<T extends object>(wm: WeakMap<T, T[]>, key: T, value: T): void {
-    const existing = wm.get(key);
-    wm.set(key, (existing ?? []).concat(value));
+/** Date-part names recognised by `createColDefForPart`'s switch. Used by the plan pass to
+ *  filter out unrecognised strings before they reach the build pass. */
+const CANONICAL_HIERARCHY_PARTS = new Set<string>([
+    'year',
+    'quarter',
+    'month',
+    'formattedMonth',
+    'day',
+    'hour',
+    'minute',
+    'second',
+]);
+
+/** Element-for-element colId match between an entry plan and a flat col list. */
+function planMatches(plan: readonly HierarchyPlanEntry[], current: readonly AgColumn[]): boolean {
+    const len = plan.length;
+    if (len !== current.length) {
+        return false;
+    }
+    for (let i = 0; i < len; ++i) {
+        if (plan[i].colId !== current[i].colId) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/** Returns the hierarchy parts iff the col is eligible for hierarchy generation, else null. */
+function hierarchyPartsForCol(col: AgColumn): NonNullable<ColDef['groupHierarchy']> | null {
+    const def = col.colDef;
+    // Cheap eligibility gate first — only call `_getGroupHierarchy` when the col actually
+    // participates in row-group / pivot.
+    if (
+        !def.rowGroup &&
+        !def.enableRowGroup &&
+        def.rowGroupIndex == null &&
+        !def.pivot &&
+        !def.enablePivot &&
+        def.pivotIndex == null
+    ) {
+        return null;
+    }
+    return _getGroupHierarchy(def) ?? null;
 }

@@ -217,12 +217,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private autoSizeColumnGroupsByColumns(keys: ColKey[], source: ColumnEventType, stopAtGroup?: AgColumnGroup): void {
         const { colModel, ctrlsSvc } = this.beans;
         const columnGroups = new Set<AgColumnGroup>();
-        const columns = colModel.getColsForKeys(keys);
 
-        for (const col of columns) {
-            let parent = col.parent;
+        for (let i = 0, len = keys.length; i < len; ++i) {
+            const col = colModel.getCol(keys[i]);
+            let parent = col?.parent;
             while (parent && parent != stopAtGroup) {
-                if (!parent.isPadding()) {
+                if (!parent.providedColumnGroup.padding) {
                     columnGroups.add(parent);
                 }
                 parent = parent.parent;
@@ -388,7 +388,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 if (column.colDef.suppressSizeToFit) {
                     return true;
                 }
-                const widthOverride = limitsMap?.[column.getId()];
+                const widthOverride = limitsMap?.[column.colId];
                 const minWidth = widthOverride?.minWidth ?? params?.defaultMinWidth;
                 const maxWidth = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
                 const colWidth = column.getActualWidth();
@@ -435,7 +435,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             }
             column.resetActualWidth(source);
 
-            const widthOverride = limitsMap?.[column.getId()];
+            const widthOverride = limitsMap?.[column.colId];
             const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? -Infinity;
             const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth ?? Infinity;
 
@@ -455,8 +455,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (availablePixels <= 0) {
                 // no width, set everything to minimum
                 for (const column of colsToSpread) {
-                    const newWidth =
-                        limitsMap?.[column.getId()]?.minWidth ?? params?.defaultMinWidth ?? column.minWidth;
+                    const newWidth = limitsMap?.[column.colId]?.minWidth ?? params?.defaultMinWidth ?? column.minWidth;
                     column.setActualWidth(newWidth, source, true);
                 }
             } else {

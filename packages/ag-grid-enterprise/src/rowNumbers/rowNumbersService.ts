@@ -5,11 +5,10 @@ import {
     ROW_NUMBERS_COLUMN_ID,
     _addGridCommonParams,
     _applyColumnState,
-    _areColIdsEqual,
     _convertColumnEventSourceType,
     _createElement,
     _debounce,
-    _destroyColumnTree,
+    _destroyColIfAlive,
     _getColumnStateFromColDef,
     _getFirstRow,
     _getRowNode,
@@ -17,7 +16,6 @@ import {
     _isRowNumbers,
     _selectAllCells,
     _setAriaLabel,
-    _updateColsMap,
     isRowNumberCol,
 } from 'ag-grid-community';
 import type {
@@ -36,7 +34,6 @@ import type {
     RowPosition,
     ValueFormatterParams,
     ValueGetterParams,
-    _ColumnCollections,
     _HeaderComp,
 } from 'ag-grid-community';
 
@@ -49,7 +46,8 @@ import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNu
 export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService, RangeSelectionExtension {
     beanName = 'rowNumbersSvc' as const;
 
-    public columns: _ColumnCollections | null;
+    /** The row-numbers column, or null when not enabled. Singular by design — never an array. */
+    public column: AgColumn | null = null;
 
     private isIntegratedWithSelection: boolean = false;
     private isSuppressCellSelectionIntegration: boolean;
@@ -105,62 +103,25 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         this.addDestroyFunc(() => rangeSvc.unregisterRangeSelectionExtension?.(this));
     }
 
-    public addColumns(cols: _ColumnCollections): void {
-        if (this.columns == null) {
+    /** Generate or destroy the row-numbers column based on current options. */
+    public refreshCols(): void {
+        const want = _isRowNumbers(this.beans);
+        const have = !!this.column;
+        if (want === have) {
             return;
         }
-        cols.list = this.columns.list.concat(cols.list);
-        cols.tree = this.columns.tree.concat(cols.tree);
-        _updateColsMap(cols);
-    }
-
-    public createColumns(
-        cols: _ColumnCollections,
-        updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
-    ): void {
-        const destroyCollection = () => {
-            _destroyColumnTree(this.beans, this.columns?.tree);
-            this.columns = null;
-        };
-        const { beans } = this;
-
-        if (!_isRowNumbers(beans)) {
-            destroyCollection();
-            return;
+        if (want) {
+            const colDef = this.createRowNumbersColDef();
+            const colId = colDef.colId!;
+            this.gos.validateColDef(colDef, colId, true);
+            const col = new AgColumn(colDef, null, colId, false);
+            this.createBean(col);
+            this.column = col;
+        } else {
+            const existing = this.column;
+            this.column = null;
+            _destroyColIfAlive(existing);
         }
-
-        const newTreeDepth = cols.treeDepth;
-        const oldTreeDepth = this.columns?.treeDepth ?? -1;
-        const treeDepthSame = oldTreeDepth == newTreeDepth;
-
-        const list = this.generateRowNumberCols();
-        const areSame = _areColIdsEqual(list, this.columns?.list ?? []);
-
-        if (areSame && treeDepthSame) {
-            return;
-        }
-
-        destroyCollection();
-        const { colGroupSvc } = this.beans;
-        const treeDepth = colGroupSvc?.findDepth(cols.tree) ?? 0;
-        const tree = colGroupSvc?.balanceTreeForAutoCols(list, treeDepth) ?? [];
-        this.columns = {
-            list,
-            tree,
-            treeDepth,
-            map: {},
-        };
-
-        const putRowNumbersColsFirstInList = (cols: AgColumn[] | null): AgColumn[] | null => {
-            if (!cols) {
-                return null;
-            }
-            // we use colId, and not instance, to remove old rowNumbersCols
-            const colsFiltered = cols.filter((col) => !isRowNumberCol(col));
-            return [...list, ...colsFiltered];
-        };
-
-        updateOrders(putRowNumbersColsFirstInList);
     }
 
     public handleMouseDownOnCell(cellPosition: CellPosition, mouseEvent: MouseEvent): boolean {
@@ -209,22 +170,23 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     public updateColumns(event: PropertyValueChangedEvent<any>): void {
-        const source = _convertColumnEventSourceType(event.source);
         this.refreshSelectionIntegration();
-        for (const col of this.columns?.list ?? []) {
-            const colDef = this.createRowNumbersColDef();
-            col.setColDef(colDef, null, source);
-
-            _applyColumnState(this.beans, { state: [_getColumnStateFromColDef(colDef, col.colId)] }, source);
+        const col = this.column;
+        if (!col) {
+            return;
         }
+        const source = _convertColumnEventSourceType(event.source);
+        const colDef = this.createRowNumbersColDef();
+        col.setColDef(colDef, null, source);
+        _applyColumnState(this.beans, { state: [_getColumnStateFromColDef(colDef, col.colId)] }, source);
     }
 
-    public getColumn(): AgColumn | null {
-        return this.columns?.list.find(isRowNumberCol) ?? null;
-    }
-
-    public getColumns(): AgColumn[] | null {
-        return this.columns?.list ?? null;
+    public override destroy(): void {
+        const existing = this.column;
+        this.column = null;
+        _destroyColIfAlive(existing);
+        (this.rowNumberOverrides as any) = null;
+        super.destroy();
     }
 
     public setupForHeader(comp: _HeaderComp): void {
@@ -343,11 +305,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private onHeaderClick(_e: MouseEvent): void {
-        if (
-            Date.now() - this.lastColumnResized < 100 ||
-            !this.isIntegratedWithSelection ||
-            this.getColumn()?.resizing
-        ) {
+        if (Date.now() - this.lastColumnResized < 100 || !this.isIntegratedWithSelection || this.column?.resizing) {
             return;
         }
         this.focusAllCellsFromHeaderClick();
@@ -363,7 +321,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private refreshCells(force?: boolean, runAutoSize?: boolean): void {
-        const column = this.getColumn();
+        const column = this.column;
 
         if (!column) {
             return;
@@ -505,20 +463,6 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         return cssClasses;
     }
 
-    private generateRowNumberCols(): AgColumn[] {
-        const { gos, beans } = this;
-        if (!_isRowNumbers(beans)) {
-            return [];
-        }
-
-        const colDef = this.createRowNumbersColDef();
-        const colId = colDef.colId!;
-        gos.validateColDef(colDef, colId, true);
-        const col = new AgColumn(colDef, null, colId, false);
-        this.createBean(col);
-        return [col];
-    }
-
     private focusFirstRenderedCellAtRowPosition(rowPosition?: RowPosition | null) {
         const editSvc = this.beans.editSvc;
 
@@ -568,11 +512,5 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
                 preventScrollOnBrowserFocus: true,
             });
         });
-    }
-
-    public override destroy(): void {
-        _destroyColumnTree(this.beans, this.columns?.tree);
-        (this.rowNumberOverrides as any) = null;
-        super.destroy();
     }
 }

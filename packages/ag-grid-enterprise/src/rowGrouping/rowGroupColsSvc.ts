@@ -7,7 +7,12 @@ import type {
     IColsService,
     NamedBean,
 } from 'ag-grid-community';
-import { BaseColsService, _removeFromArray, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
+import {
+    BaseColsService,
+    _removeFromArray,
+    _shouldUpdateColVisibilityAfterGroup,
+    isGroupHierarchyCol,
+} from 'ag-grid-community';
 
 export class RowGroupColsSvc extends BaseColsService implements NamedBean, IColsService {
     beanName = 'rowGroupColsSvc' as const;
@@ -77,14 +82,14 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
         const { value1: rowGroup, value2: rowGroupIndex } = getValue('rowGroup', 'rowGroupIndex');
         if (rowGroup !== undefined || rowGroupIndex !== undefined) {
             if (typeof rowGroupIndex === 'number' || rowGroup) {
-                if (!column.isRowGroupActive()) {
+                if (!column.rowGroupActive) {
                     this.setColRowGroupActive(column, true, source);
                     this.modifyColumnsNoEventsCallbacks.addCol(column);
                 }
                 if (rowIndex && typeof rowGroupIndex === 'number') {
-                    rowIndex[column.getId()] = rowGroupIndex;
+                    rowIndex[column.colId] = rowGroupIndex;
                 }
-            } else if (column.isRowGroupActive()) {
+            } else if (column.rowGroupActive) {
                 this.setColRowGroupActive(column, false, source);
                 this.modifyColumnsNoEventsCallbacks.removeCol(column);
             }
@@ -92,7 +97,7 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
     }
 
     private setActive(active: boolean, column: AgColumn, source: ColumnEventType): void {
-        if (active === column.isRowGroupActive()) {
+        if (active === column.rowGroupActive) {
             return;
         }
 
@@ -101,8 +106,7 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
         // If this column is a virtual column inserted by the groupHierarchyColSvc, by default we shouldn't make
         // it visible when being grouped or ungrouped -- these are virtual columns, not user data columns, so they
         // should only be made visible if the user explicitly wants to see them
-        const isGroupHierarchyCol = this.beans.groupHierarchyColSvc?.getColumn(column);
-        if (_shouldUpdateColVisibilityAfterGroup(this.gos, active) && !isGroupHierarchyCol) {
+        if (_shouldUpdateColVisibilityAfterGroup(this.gos, active) && !isGroupHierarchyCol(column)) {
             this.colModel.setColsVisible([column], !active, source);
         }
     }
@@ -112,8 +116,13 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
             column.rowGroupActive = rowGroup;
 
             if (rowGroup) {
+                // When a source col becomes row-group-active, its hierarchy virtuals follow.
                 const addedCols = this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
-                addedCols?.forEach((c) => this.setColRowGroupActive(c, rowGroup, source));
+                if (addedCols) {
+                    for (let i = 0, len = addedCols.length; i < len; ++i) {
+                        this.setColRowGroupActive(addedCols[i], rowGroup, source);
+                    }
+                }
             }
 
             column.dispatchColEvent('columnRowGroupChanged', source);

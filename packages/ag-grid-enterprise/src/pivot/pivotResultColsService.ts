@@ -1,5 +1,4 @@
 import type {
-    AbstractColDef,
     AgColumn,
     AgProvidedColumnGroup,
     BeanCollection,
@@ -11,7 +10,6 @@ import type {
     IPivotResultColsService,
     NamedBean,
     VisibleColsService,
-    _ColumnCollections,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -19,8 +17,6 @@ import {
     _createColumnTree,
     _createColumnTreeWithIds,
     _destroyColumnTree,
-    _exists,
-    _getColumnsFromTree,
 } from 'ag-grid-community';
 
 export class PivotResultColsService extends BeanStub implements NamedBean, IPivotResultColsService {
@@ -34,174 +30,144 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         this.visibleCols = beans.visibleCols;
     }
 
-    // if pivoting, these are the generated columns as a result of the pivot
-    private pivotResultCols: _ColumnCollections | null;
+    public pivotCols: AgColumn[] | null = null;
+    public pivotTree: (AgColumn | AgProvidedColumnGroup)[] = [];
+    public pivotTreeDepth = 0;
+    /** Held between clear and the next apply so generated col instances are reused. */
+    private savedPivotTree: (AgColumn | AgProvidedColumnGroup)[] | null = null;
 
-    // Cached aggregation-ordered list: regular columns first, total columns after.
-    // Lazily computed on first access, invalidated when pivot result columns change.
+    /** `undefined` = uncached, `null` = cached-but-empty. */
     private aggOrderedList: AgColumn[] | null | undefined;
 
-    // Saved when pivot is disabled, available to re-use when pivot is restored
-    private previousPivotResultCols: (AgColumn | AgProvidedColumnGroup)[] | null;
-
-    public override destroy(): void {
-        _destroyColumnTree(this.beans, this.pivotResultCols?.tree);
-        super.destroy();
-    }
-
     public isPivotResultColsPresent(): boolean {
-        return this.pivotResultCols != null;
+        return this.pivotCols != null;
     }
 
     public lookupPivotResultCol(pivotKeys: string[], valueColKey: ColKey): AgColumn | null {
-        if (this.pivotResultCols == null) {
+        const pivotCols = this.pivotCols;
+        if (pivotCols == null) {
             return null;
         }
-
         const valueColumnToFind = this.colModel.getColDefCol(valueColKey);
-
-        let foundColumn: AgColumn | null = null;
-
-        for (const column of this.pivotResultCols.list) {
+        for (let i = 0, len = pivotCols.length; i < len; ++i) {
+            const column = pivotCols[i];
             const colDef = column.colDef;
-            const thisPivotKeys = colDef.pivotKeys;
-            const pivotValueColumn = colDef.pivotValueColumn;
-
-            const pivotKeyMatches = _areEqual(thisPivotKeys, pivotKeys);
-            const pivotValueMatches = pivotValueColumn === valueColumnToFind;
-
-            if (pivotKeyMatches && pivotValueMatches) {
-                foundColumn = column;
+            if (colDef.pivotValueColumn === valueColumnToFind && _areEqual(colDef.pivotKeys, pivotKeys)) {
+                return column;
             }
         }
-
-        return foundColumn;
-    }
-
-    public getPivotResultCols(): _ColumnCollections | null {
-        return this.pivotResultCols;
-    }
-
-    public getPivotResultCol(key: ColKey): AgColumn | null {
-        if (!this.pivotResultCols) {
-            return null;
-        }
-        return this.colModel.getColFromCollection(key, this.pivotResultCols);
+        return null;
     }
 
     public getAggregationOrderedList(): AgColumn[] | null {
-        let result = this.aggOrderedList;
-        if (result !== undefined) {
-            return result;
+        const cached = this.aggOrderedList;
+        if (cached !== undefined) {
+            return cached;
         }
-        const list = this.pivotResultCols?.list;
+        const list = this.pivotCols;
         if (!list || list.length === 0) {
             this.aggOrderedList = null;
             return null;
         }
         // Partition: regular columns first (no pivotTotalColumnIds), totals appended after.
-        // Aggregation requires this order because total columns read from already-computed regular results.
-        let hasAnyTotals = false;
-        for (let i = 0; i < list.length; ++i) {
-            const colDef = list[i].colDef;
-            if (colDef.pivotTotalColumnIds != null) {
-                hasAnyTotals = true;
-                break;
-            }
-        }
-        if (!hasAnyTotals) {
-            // No totals — the list is already in the right order.
-            result = list;
-        } else {
-            const regular: AgColumn[] = [];
-            const totals: AgColumn[] = [];
-            for (let i = 0; i < list.length; ++i) {
-                const col = list[i];
-                if (col.colDef.pivotTotalColumnIds != null) {
-                    totals.push(col);
-                } else {
-                    regular.push(col);
+        // Aggregation requires this order because total columns read already-computed regular results.
+        // Defer allocation: until a total is seen the input list is the right answer (returned by reference).
+        let regular: AgColumn[] | null = null;
+        let totals: AgColumn[] | null = null;
+        for (let i = 0, len = list.length; i < len; ++i) {
+            const col = list[i];
+            if (col.colDef.pivotTotalColumnIds != null) {
+                if (totals === null) {
+                    totals = [];
+                    regular = list.slice(0, i);
                 }
+                totals.push(col);
+            } else if (regular !== null) {
+                regular.push(col);
             }
-            result = regular.concat(totals);
         }
+        const result = totals === null ? list : regular!.concat(totals);
         this.aggOrderedList = result;
         return result;
     }
 
     public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
-        this.aggOrderedList = undefined; // Invalidate cached aggregation order
-        if (!this.colModel.ready) {
+        this.aggOrderedList = undefined;
+        const colModel = this.colModel;
+        if (!colModel.ready) {
             return;
         }
-
-        // if no cols passed, and we had no cols anyway, then do nothing
-        if (colDefs == null && this.pivotResultCols == null) {
-            return;
-        }
-
         if (colDefs) {
             this.processPivotResultColDef(colDefs);
-            // if the attempt has come from the API, can't guarantee the user has provided IDs.
-            const createColTreeFunc = source === 'api' ? _createColumnTree : _createColumnTreeWithIds;
-            const balancedTreeResult = createColTreeFunc(
-                this.beans,
-                colDefs,
-                false,
-                this.pivotResultCols?.tree || this.previousPivotResultCols || undefined,
-                source
-            );
-            _destroyColumnTree(this.beans, this.pivotResultCols?.tree, balancedTreeResult.columnTree);
-
-            const tree = balancedTreeResult.columnTree;
-            const treeDepth = balancedTreeResult.treeDepth;
-            const list = _getColumnsFromTree(tree);
-            const map = {};
-
-            this.pivotResultCols = { tree, treeDepth, list, map };
-            for (const col of this.pivotResultCols.list) {
-                this.pivotResultCols.map[col.getId()] = col;
-            }
-            const hasPreviousCols = !!this.previousPivotResultCols;
-            this.previousPivotResultCols = null;
-            this.colModel.refreshCols(!hasPreviousCols, source);
+            this.applyPivotResultColDefs(colDefs, source);
+        } else if (this.pivotCols != null) {
+            this.clearPivotResultCols(source);
         } else {
-            this.previousPivotResultCols = this.pivotResultCols ? this.pivotResultCols.tree : null;
-            this.pivotResultCols = null;
-
-            this.colModel.refreshCols(false, source);
+            return;
         }
         this.visibleCols.refresh(source);
     }
 
-    private processPivotResultColDef(colDefs: (ColDef | ColGroupDef)[] | null) {
+    /** Release pivot trees including any saved tree held over a clear/restore window. */
+    public destroyTrees(): void {
+        _destroyColumnTree(this.pivotTree);
+        if (this.savedPivotTree) {
+            _destroyColumnTree(this.savedPivotTree);
+        }
+    }
+
+    /** Builds a new pivot result column tree from the supplied colDefs and refreshes display. */
+    private applyPivotResultColDefs(colDefs: (ColDef | ColGroupDef)[], source: ColumnEventType): void {
+        const beans = this.beans;
+        // If the attempt has come from the API, can't guarantee the user has provided IDs.
+        const createColTreeFunc = source === 'api' ? _createColumnTree : _createColumnTreeWithIds;
+        const currentPivotTree = this.pivotCols ? this.pivotTree : null;
+        // Restoring after clear when no current tree but savedPivotTree carries the prior cols.
+        const restoring = currentPivotTree == null && this.savedPivotTree != null;
+        const previousTree = currentPivotTree ?? this.savedPivotTree;
+        const balanced = createColTreeFunc(beans, colDefs, false, previousTree ?? undefined, source);
+        _destroyColumnTree(currentPivotTree, balanced.columnTree);
+
+        this.pivotCols = balanced.columns;
+        this.pivotTree = balanced.columnTree;
+        this.pivotTreeDepth = balanced.treeDepth;
+        this.savedPivotTree = null;
+
+        // `newColDefs=true` resets sticky col order; suppress when restoring pivot after a clear
+        // so the prior column order is preserved.
+        this.colModel.refreshCols(!restoring, source);
+    }
+
+    private clearPivotResultCols(source: ColumnEventType): void {
+        this.savedPivotTree = this.pivotTree;
+        this.pivotCols = null;
+        this.pivotTree = [];
+        this.pivotTreeDepth = 0;
+        this.colModel.refreshCols(false, source);
+    }
+
+    private processPivotResultColDef(colDefs: (ColDef | ColGroupDef)[]): void {
         const columnCallback = this.gos.get('processPivotResultColDef');
         const groupCallback = this.gos.get('processPivotResultColGroupDef');
-
-        if (!columnCallback && !groupCallback) {
-            return undefined;
+        if (columnCallback || groupCallback) {
+            visitColDefs(colDefs, columnCallback, groupCallback);
         }
+    }
+}
 
-        const searchForColDefs = (colDefs2: (ColDef | ColGroupDef)[]): void => {
-            colDefs2.forEach((abstractColDef: AbstractColDef) => {
-                const isGroup = _exists((abstractColDef as any).children);
-                if (isGroup) {
-                    const colGroupDef = abstractColDef as ColGroupDef;
-                    if (groupCallback) {
-                        groupCallback(colGroupDef);
-                    }
-                    searchForColDefs(colGroupDef.children);
-                } else {
-                    const colDef = abstractColDef as ColDef;
-                    if (columnCallback) {
-                        columnCallback(colDef);
-                    }
-                }
-            });
-        };
-
-        if (colDefs) {
-            searchForColDefs(colDefs);
+function visitColDefs(
+    colDefs: (ColDef | ColGroupDef)[],
+    columnCallback: ((colDef: ColDef) => void) | undefined,
+    groupCallback: ((colGroupDef: ColGroupDef) => void) | undefined
+): void {
+    for (let i = 0, len = colDefs.length; i < len; ++i) {
+        const def = colDefs[i];
+        const children = (def as ColGroupDef).children;
+        if (children) {
+            groupCallback?.(def as ColGroupDef);
+            visitColDefs(children, columnCallback, groupCallback);
+        } else {
+            columnCallback?.(def);
         }
     }
 }

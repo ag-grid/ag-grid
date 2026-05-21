@@ -1,7 +1,6 @@
 import { _getDocument } from '../../agStack/utils/document';
 import { _getElementSize, _observeResize } from '../../agStack/utils/dom';
 import { _debounce } from '../../agStack/utils/function';
-import type { ColumnCollections } from '../../columns/columnModel';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
@@ -93,15 +92,16 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
      */
     private setRowAutoHeight(rowNode: RowNode, cellHeight: number | undefined, column: AgColumn): void {
         rowNode.__autoHeights ??= {};
+        const colId = column.colId;
 
         // if the cell comp has been unmounted, delete the auto height
         if (cellHeight == undefined) {
-            delete rowNode.__autoHeights[column.getId()];
+            delete rowNode.__autoHeights[colId];
             return;
         }
 
-        const previousCellHeight = rowNode.__autoHeights[column.getId()];
-        rowNode.__autoHeights[column.getId()] = cellHeight;
+        const previousCellHeight = rowNode.__autoHeights[colId];
+        rowNode.__autoHeights[colId] = cellHeight;
         if (previousCellHeight !== cellHeight) {
             this.requestCheckAutoHeight();
         }
@@ -120,7 +120,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         }
 
         let activeColsForRow: AgColumn[] = [];
-        switch (col.getPinned()) {
+        switch (col.pinned) {
             case 'left':
                 activeColsForRow = visibleCols.getLeftColsForRow(node);
                 break;
@@ -142,7 +142,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
      * @returns whether or not auto height has been set up on this cell
      */
     public setupCellAutoHeight(cellCtrl: CellCtrl, eCellWrapper: HTMLElement | undefined, compBean: BeanStub): boolean {
-        if (!cellCtrl.column.isAutoHeight() || !eCellWrapper) {
+        if (!cellCtrl.column.colDef.autoHeight || !eCellWrapper) {
             return false;
         }
 
@@ -201,10 +201,6 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         return true;
     }
 
-    public setAutoHeightActive(cols: ColumnCollections): void {
-        this.active = cols.list.some((col) => col.isVisible() && col.isAutoHeight());
-    }
-
     /**
      * Determines if the row auto height service has cells to grow.
      * @returns true if all of the rendered rows are at least as tall as their rendered cells.
@@ -221,7 +217,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             // and avoid filtering the cols for each row
             if (!renderedAutoHeightCols || this.beans.colModel.colSpanActive) {
                 const renderedCols = this.beans.colViewport.getColsWithinViewport(rowNode);
-                renderedAutoHeightCols = renderedCols.filter((col) => col.isAutoHeight());
+                renderedAutoHeightCols = renderedCols.filter((col) => col.colDef.autoHeight);
             }
 
             if (renderedAutoHeightCols.length === 0) {

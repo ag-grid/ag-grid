@@ -67,22 +67,6 @@ export function _reuseArrayIfEqual<T>(prev: T[] | null | undefined, current: rea
     return current.slice();
 }
 
-/**
- * Utility that uses the fastest looping approach to apply a callback to each element of the array
- * https://jsperf.app/for-for-of-for-in-foreach-comparison
- * If callback returns true, exit early.
- */
-export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boolean | void) {
-    if (!array) {
-        return;
-    }
-    for (const value of array) {
-        if (callback(value)) {
-            return true;
-        }
-    }
-}
-
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _removeFromArray<T>(array: T[], object: T): void {
     const index = array.indexOf(object);

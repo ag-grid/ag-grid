@@ -50,14 +50,14 @@ export class PivotColsSvc extends BaseColsService implements NamedBean, IColsSer
         const { value1: pivot, value2: pivotIndex } = getValue('pivot', 'pivotIndex');
         if (pivot !== undefined || pivotIndex !== undefined) {
             if (typeof pivotIndex === 'number' || pivot) {
-                if (!column.isPivotActive()) {
+                if (!column.pivotActive) {
                     this.setColPivotActive(column, true, source);
                     this.modifyColumnsNoEventsCallbacks.addCol(column);
                 }
                 if (rowIndex && typeof pivotIndex === 'number') {
-                    rowIndex[column.getId()] = pivotIndex;
+                    rowIndex[column.colId] = pivotIndex;
                 }
-            } else if (column.isPivotActive()) {
+            } else if (column.pivotActive) {
                 this.setColPivotActive(column, false, source);
                 this.modifyColumnsNoEventsCallbacks.removeCol(column);
             }
@@ -69,8 +69,13 @@ export class PivotColsSvc extends BaseColsService implements NamedBean, IColsSer
             column.pivotActive = pivot;
 
             if (pivot) {
+                // When a source col becomes pivot-active, its hierarchy virtuals follow.
                 const addedCols = this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
-                addedCols?.forEach((c) => this.setColPivotActive(c, pivot, source));
+                if (addedCols) {
+                    for (let i = 0, len = addedCols.length; i < len; ++i) {
+                        this.setColPivotActive(addedCols[i], pivot, source);
+                    }
+                }
             }
 
             column.dispatchColEvent('columnPivotChanged', source);

@@ -352,7 +352,14 @@ export class GridSerializer extends BeanStub implements NamedBean {
         };
 
         if (columnKeys?.length) {
-            return colModel.getColsForKeys(columnKeys).filter(filterSpecialColumns);
+            const result: AgColumn[] = [];
+            for (let i = 0, len = columnKeys.length; i < len; ++i) {
+                const col = colModel.getCol(columnKeys[i]);
+                if (col && filterSpecialColumns(col)) {
+                    result.push(col);
+                }
+            }
+            return result;
         }
 
         const isTreeData = gos.get('treeData');
@@ -380,11 +387,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
     ): void {
         const directChildrenHeaderGroups: (AgColumn | AgColumnGroup)[] = [];
         for (const columnGroupChild of displayedGroups) {
-            const columnGroup = columnGroupChild as AgColumnGroup;
-            if (!columnGroup.getChildren) {
+            if (!isColumnGroup(columnGroupChild)) {
                 continue;
             }
-            for (const it of columnGroup.getChildren() ?? []) {
+            for (const it of columnGroupChild.children ?? []) {
                 directChildrenHeaderGroups.push(it);
             }
         }

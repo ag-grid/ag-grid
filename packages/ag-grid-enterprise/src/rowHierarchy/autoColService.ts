@@ -1,12 +1,10 @@
 import type {
     ColDef,
-    ColKey,
     ColumnEventType,
-    IColumnCollectionService,
+    IAutoColService,
     NamedBean,
     PropertyValueChangedEvent,
     RowNode,
-    _ColumnCollections,
 } from 'ag-grid-community';
 import {
     AgColumn,
@@ -14,10 +12,8 @@ import {
     GROUP_AUTO_COLUMN_ID,
     _addColumnDefaultAndTypes,
     _applyColumnState,
-    _areColIdsEqual,
-    _columnsMatch,
     _convertColumnEventSourceType,
-    _destroyColumnTree,
+    _destroyColIfAlive,
     _getColumnStateFromColDef,
     _isColumnsSortingCoupledToGroup,
     _isGroupHideColumnsUntilExpanded,
@@ -25,16 +21,15 @@ import {
     _isGroupUseEntireRow,
     _mergeDeep,
     _missing,
-    _updateColsMap,
     _warn,
-    isColumnGroupAutoCol,
 } from 'ag-grid-community';
 
-export class AutoColService extends BeanStub implements NamedBean, IColumnCollectionService {
+export class AutoColService extends BeanStub implements NamedBean, IAutoColService {
     beanName = 'autoColSvc' as const;
 
-    /** Group auto columns */
-    public columns: _ColumnCollections | null;
+    /** Generated auto-group columns. Flat-array — empty when no auto-cols are active. ColumnModel
+     *  owns the balanced-tree wrappers (built/destroyed via `wrapAutoColInBalancedTree`). */
+    public columns: AgColumn[] = [];
 
     public postConstruct(): void {
         this.addManagedPropertyListener('autoGroupColumnDef', this.updateColumns.bind(this));
@@ -55,23 +50,11 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         );
     }
 
-    public addColumns(cols: _ColumnCollections): void {
-        const { columns } = this;
-        if (columns == null) {
-            return;
-        }
-        cols.list = columns.list.concat(cols.list);
-        cols.tree = columns.tree.concat(cols.tree);
-        _updateColsMap(cols);
-    }
-
-    public createColumns(
-        cols: _ColumnCollections,
-        updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void,
-        source: ColumnEventType
-    ): void {
+    /** Generates or destroys auto-group columns based on grouping state. ColumnGroupService owns
+     *  the balanced-tree wrappers; depth-only changes are caught there. */
+    public refreshCols(source: ColumnEventType): void {
         const beans = this.beans;
-        const { colModel, gos, rowGroupColsSvc, colGroupSvc } = beans;
+        const { colModel, gos, rowGroupColsSvc } = beans;
         const isPivotMode = colModel.pivotMode;
         const groupFullWidthRow = _isGroupUseEntireRow(gos, isPivotMode);
         // we need to allow suppressing auto-column separately for group and pivot as the normal situation
@@ -83,77 +66,60 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         const suppressAutoColumn = isPivotMode ? gos.get('pivotSuppressAutoColumn') : this.isSuppressAutoCol();
 
         const rowGroupCols = rowGroupColsSvc?.columns;
-
         const groupingActive = (rowGroupCols && rowGroupCols.length > 0) || gos.get('treeData');
-
         const noAutoCols = !groupingActive || suppressAutoColumn || groupFullWidthRow;
+        const currentCols = this.columns;
 
-        const destroyPrevious = () => {
-            if (this.columns) {
-                _destroyColumnTree(beans, this.columns.tree);
-                this.columns = null;
-            }
-        };
-
-        // function
         if (noAutoCols) {
-            destroyPrevious();
-            return;
-        }
-
-        const list = this.generateAutoCols(rowGroupCols);
-        const autoColsSame = _areColIdsEqual(list, this.columns?.list || null);
-
-        // the new tree depth will equal the current tree depth of cols
-        const newTreeDepth = cols.treeDepth;
-        const oldTreeDepth = this.columns ? this.columns.treeDepth : -1;
-        const treeDepthSame = oldTreeDepth == newTreeDepth;
-
-        if (autoColsSame && treeDepthSame) {
-            // Some things like header could have changed, ensure this is captured by updating the existing cols.
-            const colsMap = new Map(list.map((col) => [col.getId(), col]));
-            for (const col of this.columns?.list ?? []) {
-                const newDef = colsMap.get(col.getId());
-                if (newDef) {
-                    col.setColDef(newDef.colDef, null, source);
-                }
+            if (currentCols.length > 0) {
+                this.destroyColumns();
             }
             return;
         }
 
-        destroyPrevious();
-        const treeDepth = colGroupSvc?.findDepth(cols.tree) ?? 0;
-        const tree = colGroupSvc?.balanceTreeForAutoCols(list, treeDepth) ?? [];
-        this.columns = {
-            list,
-            tree,
-            treeDepth,
-            map: {},
-        };
-
-        const putAutoColsFirstInList = (cols: AgColumn[] | null): AgColumn[] | null => {
-            if (!cols) {
-                return null;
+        // Cheap "same as before?" check — bench-critical: refreshCols runs on every pivot /
+        // grouping transaction. Match colIds element-by-element with no allocation.
+        const doingTreeData = gos.get('treeData');
+        const doingMultiAutoColumn = !doingTreeData && _isGroupMultiAutoColumn(gos);
+        if (autoColIdsMatch(currentCols, rowGroupCols, doingMultiAutoColumn)) {
+            // Existing col instances stay; refresh their colDefs so options changes propagate.
+            for (let i = 0, len = currentCols.length; i < len; ++i) {
+                const col = currentCols[i];
+                const rowGroupCol = doingMultiAutoColumn ? rowGroupCols![i] : undefined;
+                const colDef = this.createAutoColDef(col.colId, rowGroupCol, i);
+                col.setColDef(colDef, null, source);
             }
-            // we use colId, and not instance, to remove old autoGroupCols
-            const colsFiltered = cols.filter((col) => !isColumnGroupAutoCol(col));
-            return [...list, ...colsFiltered];
-        };
+            return;
+        }
 
-        updateOrders(putAutoColsFirstInList);
+        // Columns changed — destroy old, generate new.
+        this.destroyColumns();
+        this.columns = this.generateAutoCols(rowGroupCols);
     }
 
     public updateColumns(event: PropertyValueChangedEvent<'autoGroupColumnDef'>) {
         const source = _convertColumnEventSourceType(event.source);
-        this.columns?.list.forEach((col, index) => this.updateOneAutoCol(col, index, source));
-    }
-
-    public getColumn(key: ColKey): AgColumn | null {
-        return this.columns?.list.find((groupCol) => _columnsMatch(groupCol, key)) ?? null;
+        const cols = this.columns;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            this.updateOneAutoCol(cols[i], i, source);
+        }
     }
 
     public getColumns(): AgColumn[] | null {
-        return this.columns?.list ?? null;
+        return this.columns.length > 0 ? this.columns : null;
+    }
+
+    public override destroy(): void {
+        this.destroyColumns();
+        super.destroy();
+    }
+
+    private destroyColumns(): void {
+        const list = this.columns;
+        this.columns = [];
+        for (let i = 0, len = list.length; i < len; ++i) {
+            _destroyColIfAlive(list[i]);
+        }
     }
 
     private generateAutoCols(rowGroupCols: AgColumn[] = []): AgColumn[] {
@@ -171,9 +137,9 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         // if doing groupDisplayType = "multipleColumns", then we call the method multiple times, once
         // for each column we are grouping by
         if (doingMultiAutoColumn) {
-            rowGroupCols.forEach((rowGroupCol, index) => {
-                autoCols.push(this.createOneAutoCol(rowGroupCol, index));
-            });
+            for (let i = 0, len = rowGroupCols.length; i < len; ++i) {
+                autoCols.push(this.createOneAutoCol(rowGroupCols[i], i));
+            }
         } else {
             autoCols.push(this.createOneAutoCol());
         }
@@ -198,7 +164,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         // if doing multi, set the field
         let colId: string;
         if (rowGroupCol) {
-            colId = `${GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
+            colId = `${GROUP_AUTO_COLUMN_ID}-${rowGroupCol.colId}`;
         } else {
             colId = GROUP_AUTO_COLUMN_ID;
         }
@@ -219,7 +185,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
         const beans = this.beans;
         const underlyingColumn = underlyingColId != null ? beans.colModel.getColDefCol(underlyingColId) : undefined;
-        const colId = colToUpdate.getId();
+        const colId = colToUpdate.colId;
         const colDef = this.createAutoColDef(colId, underlyingColumn ?? undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);
@@ -336,9 +302,9 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
     }
 
     private updateGroupColumnVisibility(): void {
-        const columns = this.columns?.list;
+        const columns = this.columns;
 
-        if (!columns || columns.length === 0) {
+        if (columns.length === 0) {
             return;
         }
 
@@ -347,7 +313,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
 
         let changed = false;
         const setColVisible = (col: AgColumn, visible: boolean): void => {
-            if (visible !== col.isVisible()) {
+            if (visible !== col.visible) {
                 col.setVisible(visible, 'api');
                 changed = true;
             }
@@ -381,9 +347,26 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
             visibleCols.refresh('api');
         }
     }
+}
 
-    public override destroy(): void {
-        _destroyColumnTree(this.beans, this.columns?.tree);
-        super.destroy();
+/** Returns true when `currentCols` matches the colIds `generateAutoCols(rowGroupCols)` would
+ *  produce given `doingMultiAutoColumn`, without allocating an intermediate string array. */
+function autoColIdsMatch(
+    currentCols: readonly AgColumn[],
+    rowGroupCols: readonly AgColumn[] | undefined,
+    doingMultiAutoColumn: boolean
+): boolean {
+    if (!doingMultiAutoColumn || !rowGroupCols) {
+        return currentCols.length === 1 && currentCols[0].colId === GROUP_AUTO_COLUMN_ID;
     }
+    const len = rowGroupCols.length;
+    if (currentCols.length !== len) {
+        return false;
+    }
+    for (let i = 0; i < len; ++i) {
+        if (currentCols[i].colId !== `${GROUP_AUTO_COLUMN_ID}-${rowGroupCols[i].colId}`) {
+            return false;
+        }
+    }
+    return true;
 }

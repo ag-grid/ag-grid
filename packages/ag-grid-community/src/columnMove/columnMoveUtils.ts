@@ -5,10 +5,24 @@ import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { GridOptionsService } from '../gridOptionsService';
 
 export function placeLockedColumns(cols: AgColumn[], gos: GridOptionsService): AgColumn[] {
+    // Fast path: most grids have no locked cols — return the input unchanged, no allocation.
+    let hasLocked = false;
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        const pos = cols[i].colDef.lockPosition;
+        if (pos != null && pos !== false) {
+            hasLocked = true;
+            break;
+        }
+    }
+    if (!hasLocked) {
+        return cols;
+    }
+
     const left: AgColumn[] = [];
     const normal: AgColumn[] = [];
     const right: AgColumn[] = [];
-    cols.forEach((col: AgColumn) => {
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        const col = cols[i];
         const position = col.colDef.lockPosition;
         if (position === 'right') {
             right.push(col);
@@ -17,14 +31,36 @@ export function placeLockedColumns(cols: AgColumn[], gos: GridOptionsService): A
         } else {
             normal.push(col);
         }
-    });
-
-    const isRtl = gos.get('enableRtl');
-    if (isRtl) {
-        return [...right, ...normal, ...left];
     }
 
-    return [...left, ...normal, ...right];
+    const isRtl = gos.get('enableRtl');
+    const leftLen = left.length;
+    const normalLen = normal.length;
+    const rightLen = right.length;
+    const result = new Array<AgColumn>(leftLen + normalLen + rightLen);
+    let pos = 0;
+    if (isRtl) {
+        for (let i = 0; i < rightLen; ++i) {
+            result[pos++] = right[i];
+        }
+        for (let i = 0; i < normalLen; ++i) {
+            result[pos++] = normal[i];
+        }
+        for (let i = 0; i < leftLen; ++i) {
+            result[pos++] = left[i];
+        }
+    } else {
+        for (let i = 0; i < leftLen; ++i) {
+            result[pos++] = left[i];
+        }
+        for (let i = 0; i < normalLen; ++i) {
+            result[pos++] = normal[i];
+        }
+        for (let i = 0; i < rightLen; ++i) {
+            result[pos++] = right[i];
+        }
+    }
+    return result;
 }
 
 export function doesMovePassMarryChildren(

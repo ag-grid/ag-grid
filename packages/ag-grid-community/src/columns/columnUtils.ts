@@ -1,16 +1,11 @@
 import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
-import { _areEqual } from '../agStack/utils/array';
 import { _exists } from '../agStack/utils/generic';
-import type { BeanCollection } from '../context/context';
-import { _getSortDefFromInput, _isSortDefValid, _isSortDirectionValid, isColumn } from '../entities/agColumn';
+import { _getSortDefFromInput, _isSortDefValid, _isSortDirectionValid } from '../entities/agColumn';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
-import type { ColumnInstanceId } from '../interfaces/iColumn';
 import { depthFirstOriginalTreeSearch } from './columnFactoryUtils';
-import type { ColumnCollections } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
@@ -18,64 +13,52 @@ export const SELECTION_COLUMN_ID = 'ag-Grid-SelectionColumn';
 export const ROW_NUMBERS_COLUMN_ID = 'ag-Grid-RowNumbersColumn';
 export const GROUP_HIERARCHY_COLUMN_ID_PREFIX = 'ag-Grid-HierarchyColumn';
 
-// Possible candidate for reuse (alot of recursive traversal duplication)
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getColumnsFromTree(rootColumns: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
-    const result: AgColumn[] = [];
-
-    const recursiveFindColumns = (childColumns: (AgColumn | AgProvidedColumnGroup)[]): void => {
-        for (let i = 0; i < childColumns.length; i++) {
-            const child = childColumns[i];
-            if (isColumn(child)) {
-                result.push(child);
-            } else if (isProvidedColumnGroup(child)) {
-                recursiveFindColumns(child.getChildren());
-            }
-        }
-    };
-
-    recursiveFindColumns(rootColumns);
-
-    return result;
-}
-
 export function getWidthOfColsInList(columnList: AgColumn[]) {
     return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ *  Destroys nodes in `oldTree` that are NOT in `newTree`. Used for column-set transitions. */
 export function _destroyColumnTree(
-    beans: BeanCollection,
     oldTree: (AgColumn | AgProvidedColumnGroup)[] | null | undefined,
     newTree?: (AgColumn | AgProvidedColumnGroup)[] | null
 ): void {
-    const oldObjectsById: { [id: ColumnInstanceId]: (AgColumn | AgProvidedColumnGroup) | null } = {};
-
-    if (!oldTree) {
+    if (!oldTree || oldTree === newTree) {
         return;
     }
-
-    // add in all old columns to be destroyed
-    depthFirstOriginalTreeSearch(null, oldTree, (child) => {
-        oldObjectsById[child.getInstanceId()] = child;
-    });
-
-    // however we don't destroy anything in the new tree. if destroying the grid, there is no new tree
-    if (newTree) {
-        depthFirstOriginalTreeSearch(null, newTree, (child) => {
-            oldObjectsById[child.getInstanceId()] = null;
-        });
+    if (!newTree) {
+        // `isAlive()` (inside `_destroyColIfAlive`) doubles as the de-duplication guard for nodes
+        // reachable via multiple paths.
+        depthFirstOriginalTreeSearch(null, oldTree, _destroyColIfAlive);
+        return;
     }
+    const keep = new Set<AgColumn | AgProvidedColumnGroup>();
+    depthFirstOriginalTreeSearch(null, newTree, (node) => {
+        keep.add(node);
+    });
+    depthFirstOriginalTreeSearch(null, oldTree, (node) => {
+        if (!keep.has(node)) {
+            _destroyColIfAlive(node);
+        }
+    });
+}
 
-    // what's left can be destroyed
-    const colsToDestroy = Object.values(oldObjectsById).filter((item) => item != null);
-    beans.context.destroyBeans(colsToDestroy);
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ *  Destroys a column or group if it's still alive. Safe to call with null/undefined. */
+export function _destroyColIfAlive(col: AgColumn | AgProvidedColumnGroup | null | undefined): void {
+    if (col?.isAlive()) {
+        col.destroy();
+    }
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function isColumnGroupAutoCol(col: AgColumn): boolean {
-    const colId = col.getId();
-    return colId.startsWith(GROUP_AUTO_COLUMN_ID);
+    return col.colId.startsWith(GROUP_AUTO_COLUMN_ID);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function isGroupHierarchyCol(col: AgColumn): boolean {
+    return col.colId.startsWith(GROUP_HIERARCHY_COLUMN_ID_PREFIX);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -96,27 +79,10 @@ export function isSpecialCol(col: ColKey): boolean {
 }
 
 export function convertColumnTypes(type: string | string[]): string[] {
-    let typeKeys: string[] = [];
-
-    if (type instanceof Array) {
-        typeKeys = type;
-    } else if (typeof type === 'string') {
-        typeKeys = type.split(',');
+    if (Array.isArray(type)) {
+        return type;
     }
-    return typeKeys;
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _areColIdsEqual(colsA: AgColumn[] | null, colsB: AgColumn[] | null): boolean {
-    return _areEqual(colsA, colsB, (a, b) => a.colId === b.colId);
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _updateColsMap(cols: ColumnCollections): void {
-    cols.map = {};
-    for (const col of cols.list) {
-        cols.map[col.getId()] = col;
-    }
+    return typeof type === 'string' ? type.split(',') : [];
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
