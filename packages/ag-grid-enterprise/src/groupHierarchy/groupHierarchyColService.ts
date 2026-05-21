@@ -9,6 +9,7 @@ import {
     AgColumn,
     BeanStub,
     GROUP_HIERARCHY_COLUMN_ID_PREFIX,
+    _ColWrapperCache,
     _addColumnDefaultAndTypes,
     _removeAllFromArray,
 } from 'ag-grid-community';
@@ -32,7 +33,8 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     beanName = 'groupHierarchyColSvc' as const;
 
     /** Generated hierarchy cols (year, quarter, month, etc.). ColumnModel splices these into the
-     *  colDef tree and owns the balanced-tree wrappers (via `colGroupSvc.wrapAutoColInBalancedTree`). */
+     *  colDef tree; wrappers around these leaves are built/destroyed by this service's
+     *  `wrapperCache` (a `ColWrapperCache`). */
     public columns: AgColumn[] = [];
 
     /** Source col → its generated virtuals. */
@@ -41,8 +43,14 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     private readonly inverseColumnMap = new Map<AgColumn, AgColumn>();
 
     /** Wrapper cache keyed by hierarchy leaf col. Survives across `applyToColDefTree` calls so
-     *  `_destroyColumnTree` preserves wrappers when `(col, depth)` is unchanged. */
-    private readonly wrapperCache = new Map<AgColumn, { wrapper: AgColumn | AgProvidedColumnGroup; depth: number }>();
+     *  `_destroyColumnTree` preserves wrappers when `(col, depth)` is unchanged. Idempotent
+     *  destruction via `isAlive()` — wrappers reached via both cache eviction and
+     *  `_destroyColumnTree` are destroyed once. */
+    private wrapperCache!: _ColWrapperCache;
+
+    public postConstruct(): void {
+        this.wrapperCache = new _ColWrapperCache(this.beans);
+    }
 
     /** Two-phase to skip bean churn on no-op refreshes: plan colIds, compare to `this.columns`,
      *  rebuild only on mismatch. Returns input refs when no hierarchy cols are active. */
@@ -58,7 +66,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
                 this.columns = [];
                 this.sourceColumnMap.clear();
                 this.inverseColumnMap.clear();
-                this.wrapperCache.clear();
+                this.wrapperCache.destroyAll();
             }
             return { list: colDefList, tree: colDefTree };
         }
@@ -99,14 +107,6 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         }
 
         this.columns = newCols;
-        // Drop wrapper-cache entries for cols that no longer exist (count may be unchanged).
-        const wrapperCache = this.wrapperCache;
-        const live = new Set<AgColumn>(newCols);
-        for (const col of wrapperCache.keys()) {
-            if (!live.has(col)) {
-                wrapperCache.delete(col);
-            }
-        }
     }
 
     /** Build / reuse wrappers and compose `[...wrappers, ...primary]` list + tree. When `colGroupSvc`
@@ -123,20 +123,13 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         const cols = this.columns;
         const colsLen = cols.length;
         const wrapperCache = this.wrapperCache;
+        const inUse = new Set<AgColumn>();
         const primaryTreeLen = primaryTree.length;
         const newTree = new Array<AgColumn | AgProvidedColumnGroup>(colsLen + primaryTreeLen);
         for (let i = 0; i < colsLen; ++i) {
-            const col = cols[i];
-            const cached = wrapperCache.get(col);
-            let wrapper: AgColumn | AgProvidedColumnGroup;
-            if (cached?.depth === treeDepth) {
-                wrapper = cached.wrapper;
-            } else {
-                wrapper = colGroupSvc.wrapAutoColInBalancedTree(col, treeDepth);
-                wrapperCache.set(col, { wrapper, depth: treeDepth });
-            }
-            newTree[i] = wrapper;
+            newTree[i] = wrapperCache.wrapOrReuse(cols[i], treeDepth, inUse);
         }
+        wrapperCache.evictStale(inUse);
         for (let i = 0; i < primaryTreeLen; ++i) {
             newTree[colsLen + i] = primaryTree[i];
         }
@@ -183,12 +176,13 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     }
 
     public override destroy(): void {
-        // Hierarchy cols + wrappers live in ColumnModel.colDefTree (destroyed by `_destroyColumnTree`);
-        // just clear local refs here.
+        // Hierarchy leaf cols + wrappers live in `ColumnModel.colDefTree`, which `_destroyColumnTree`
+        // tears down. Clearing local refs here is enough — `destroyAll` is idempotent via `isAlive()`
+        // so double-destroy from tree-destroy is harmless.
         this.columns = [];
         this.sourceColumnMap.clear();
         this.inverseColumnMap.clear();
-        this.wrapperCache.clear();
+        this.wrapperCache.destroyAll();
         super.destroy();
     }
 
@@ -375,7 +369,7 @@ const CANONICAL_HIERARCHY_PARTS = new Set<string>([
 ]);
 
 /** Element-for-element colId match between an entry plan and a flat col list. */
-function planMatches(plan: readonly HierarchyPlanEntry[], current: readonly AgColumn[]): boolean {
+const planMatches = (plan: readonly HierarchyPlanEntry[], current: readonly AgColumn[]): boolean => {
     const len = plan.length;
     if (len !== current.length) {
         return false;
@@ -386,10 +380,10 @@ function planMatches(plan: readonly HierarchyPlanEntry[], current: readonly AgCo
         }
     }
     return true;
-}
+};
 
 /** Returns the hierarchy parts iff the col is eligible for hierarchy generation, else null. */
-function hierarchyPartsForCol(col: AgColumn): NonNullable<ColDef['groupHierarchy']> | null {
+const hierarchyPartsForCol = (col: AgColumn): NonNullable<ColDef['groupHierarchy']> | null => {
     const def = col.colDef;
     // Cheap eligibility gate first — only call `_getGroupHierarchy` when the col actually
     // participates in row-group / pivot.
@@ -404,4 +398,4 @@ function hierarchyPartsForCol(col: AgColumn): NonNullable<ColDef['groupHierarchy
         return null;
     }
     return _getGroupHierarchy(def) ?? null;
-}
+};

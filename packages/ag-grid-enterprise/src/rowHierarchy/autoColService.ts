@@ -27,8 +27,8 @@ import {
 export class AutoColService extends BeanStub implements NamedBean, IAutoColService {
     beanName = 'autoColSvc' as const;
 
-    /** Generated auto-group columns. Flat-array — empty when no auto-cols are active. ColumnModel
-     *  owns the balanced-tree wrappers (built/destroyed via `wrapAutoColInBalancedTree`). */
+    /** Generated auto-group columns. Flat-array — empty when no auto-cols are active. Wrappers
+     *  around these leaves are built/destroyed by `colGroupSvc.serviceWrapperCache`. */
     public columns: AgColumn[] = [];
 
     public postConstruct(): void {
@@ -351,11 +351,11 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
 
 /** Returns true when `currentCols` matches the colIds `generateAutoCols(rowGroupCols)` would
  *  produce given `doingMultiAutoColumn`, without allocating an intermediate string array. */
-function autoColIdsMatch(
+const autoColIdsMatch = (
     currentCols: readonly AgColumn[],
     rowGroupCols: readonly AgColumn[] | undefined,
     doingMultiAutoColumn: boolean
-): boolean {
+): boolean => {
     if (!doingMultiAutoColumn || !rowGroupCols) {
         return currentCols.length === 1 && currentCols[0].colId === GROUP_AUTO_COLUMN_ID;
     }
@@ -369,4 +369,4 @@ function autoColIdsMatch(
         }
     }
     return true;
-}
+};

@@ -185,10 +185,10 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
     }
 }
 
-function indexCols(cols: AgColumn[]): Map<AgColumn, number> {
+const indexCols = (cols: AgColumn[]): Map<AgColumn, number> => {
     const map = new Map<AgColumn, number>();
     for (let i = 0, len = cols.length; i < len; ++i) {
         map.set(cols[i], i);
     }
     return map;
-}
+};

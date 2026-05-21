@@ -570,7 +570,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 }
 
 /** Flat depth-first walk via `children` (ALL children) into `out`. */
-function collectAllTreeNodes(tree: (AgColumn | AgColumnGroup)[], out: (AgColumn | AgColumnGroup)[]): void {
+const collectAllTreeNodes = (tree: (AgColumn | AgColumnGroup)[], out: (AgColumn | AgColumnGroup)[]): void => {
     for (let i = 0, len = tree.length; i < len; ++i) {
         const child = tree[i];
         if (isColumnGroup(child)) {
@@ -581,15 +581,15 @@ function collectAllTreeNodes(tree: (AgColumn | AgColumnGroup)[], out: (AgColumn 
         }
         out.push(child);
     }
-}
+};
 
-function pickDisplayedCols(tree: (AgColumn | AgColumnGroup)[]): AgColumn[] {
+const pickDisplayedCols = (tree: (AgColumn | AgColumnGroup)[]): AgColumn[] => {
     const out: AgColumn[] = [];
     pickDisplayedColsInto(tree, out);
     return out;
-}
+};
 
-function pickDisplayedColsInto(tree: (AgColumn | AgColumnGroup)[] | null, out: AgColumn[]): void {
+const pickDisplayedColsInto = (tree: (AgColumn | AgColumnGroup)[] | null, out: AgColumn[]): void => {
     if (!tree) {
         return;
     }
@@ -601,9 +601,9 @@ function pickDisplayedColsInto(tree: (AgColumn | AgColumnGroup)[] | null, out: A
             pickDisplayedColsInto(child.displayedChildren, out);
         }
     }
-}
+};
 
-function checkLeftOnGroups(tree: (AgColumn | AgColumnGroup)[] | null): void {
+const checkLeftOnGroups = (tree: (AgColumn | AgColumnGroup)[] | null): void => {
     if (!tree) {
         return;
     }
@@ -613,13 +613,13 @@ function checkLeftOnGroups(tree: (AgColumn | AgColumnGroup)[] | null): void {
             node.checkLeft();
         }
     }
-}
+};
 
-function setLeftsLeftToRight(columns: AgColumn[], source: ColumnEventType): void {
+const setLeftsLeftToRight = (columns: AgColumn[], source: ColumnEventType): void => {
     let left = 0;
     for (let i = 0, len = columns.length; i < len; ++i) {
         const column = columns[i];
         column.setLeft(left, source);
         left += column.getActualWidth();
     }
-}
+};

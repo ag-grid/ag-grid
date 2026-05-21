@@ -20,7 +20,7 @@ interface ColumnTreeBuild {
 
 /** Walks `columnTree` once: finalises each node (`setupExpandable` on groups, `originalParent`
  *  pointer fixup that has to wait for balancing) and collects leaf columns into the returned array. */
-function finaliseAndCollectColumns(columnTree: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
+const finaliseAndCollectColumns = (columnTree: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] => {
     const columns: AgColumn[] = [];
     depthFirstOriginalTreeSearch(null, columnTree, (child, parent) => {
         if (isProvidedColumnGroup(child)) {
@@ -32,7 +32,7 @@ function finaliseAndCollectColumns(columnTree: (AgColumn | AgProvidedColumnGroup
         }
     });
     return columns;
-}
+};
 
 /**
  * A performant approach to _createColumnTree where the function assumes all defs have an ID.

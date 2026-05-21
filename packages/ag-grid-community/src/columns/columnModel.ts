@@ -57,10 +57,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public colsById: { [id: string]: AgColumn } = {};
 
     /** Fallback lookup for ColDef-shaped keys whose `colId` doesn't hit `colsById`. Maps both
-     *  `colDef` (merged) and `userProvidedColDef` (original) by reference, plus `colDef.field` as
-     *  a string when `field !== colId` and the field hasn't already been registered by another
-     *  column (first-write wins; ambiguous fields stay unregistered). Built lazily, invalidated
-     *  whenever `colsById` changes. */
+     *  `colDef` (merged) and `userProvidedColDef` (original) by reference, plus `colDef.field`
+     *  as a string when `field !== colId`. Field-key writes are first-write-wins: when two cols
+     *  share a `field`, the first encountered (in `colsList` order, primary cols before pivot
+     *  cols) owns the key — see test 'string field lookup with two cols sharing field: first
+     *  registered wins'. Built lazily, invalidated whenever `colsById` changes. */
     private cachedColsByDef: Map<ColKey, AgColumn> | null = null;
 
     private cachedAllCols: AgColumn[] | null = null;
@@ -235,8 +236,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const colsList: AgColumn[] = [];
         const colsTree: (AgColumn | AgProvidedColumnGroup)[] = [];
         const colsById: { [id: string]: AgColumn } = {};
-        const colGroupSvc = beans.colGroupSvc;
-        const inUseServiceCols = colGroupSvc ? new Set<AgColumn>() : null;
         const rowNumberCol = beans.rowNumbersSvc?.column;
         if (rowNumberCol) {
             colsList.push(rowNumberCol);
@@ -251,15 +250,22 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 colsList.push(autoCols[i]);
             }
         }
-        for (let i = 0, len = colsList.length; i < len; ++i) {
-            const col = colsList[i];
-            colsById[col.colId] = col;
-            if (colGroupSvc) {
-                colsTree.push(colGroupSvc.wrapServiceColCached(col, sourceTreeDepth, inUseServiceCols!));
+        // `colGroupSvc` is optional (community grids without the column-group module won't have
+        // it). When present we wrap each service col into a depth-balanced tree and evict any
+        // cache entries not touched this pass; otherwise we just populate `colsById`.
+        const serviceWrapperCache = beans.colGroupSvc?.serviceWrapperCache;
+        if (serviceWrapperCache) {
+            const inUse = new Set<AgColumn>();
+            for (let i = 0, len = colsList.length; i < len; ++i) {
+                const col = colsList[i];
+                colsById[col.colId] = col;
+                colsTree.push(serviceWrapperCache.wrapOrReuse(col, sourceTreeDepth, inUse));
             }
-        }
-        if (inUseServiceCols !== null) {
-            colGroupSvc!.evictStaleServiceWrappers(inUseServiceCols);
+            serviceWrapperCache.evictStale(inUse);
+        } else {
+            for (let i = 0, len = colsList.length; i < len; ++i) {
+                colsById[colsList[i].colId] = colsList[i];
+            }
         }
 
         // In pivot mode, sourceList = pivotCols; colDefList cols still need colsById entries for
@@ -344,10 +350,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         _applyColumnState(this.beans, { state }, source);
     }
 
-    /** Reorder `colDefList` only — `newList` MUST be a permutation of the existing col instances
-     *  (no additions, no removals). Used by tool-panel reorder flows; a full refresh is expected
-     *  to follow if the change should propagate to display cols.
-     *  `colsById` content is unchanged (same instances) and `getAllCols` is order-agnostic. */
+    /** Reorder `colDefList` only — `newList` MUST be a permutation of the existing col instances.
+     *  `@internal`; caller is responsible for the invariant. A full refresh should follow to
+     *  propagate to display cols. `colsById` is unchanged; `getAllCols` is order-agnostic. */
     public replaceColDefList(newList: AgColumn[]): void {
         if (this.ready) {
             this.colDefList = newList;
@@ -421,7 +426,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // they aren't reached by the tree-destroy above. `colGroupSvc` owns the cache and
         // destroys them. Hierarchy wrappers live inside `colDefTree` and were already destroyed
         // by `_destroyColumnTree` above — the hierarchy service drops its own refs in its destroy.
-        this.beans.colGroupSvc?.destroyAllServiceColWrappers();
+        this.beans.colGroupSvc?.serviceWrapperCache.destroyAll();
         super.destroy();
     }
 
@@ -500,9 +505,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return this.getCol(key);
     }
 
-    /** Find a column excluding pivot result cols (i.e. user cols, hierarchy cols, service cols).
-     *  Pivot result cols carry `pivotKeys` (set even for placeholder measure cols where
-     *  `pivotValueColumn` is null), so `pivotKeys != null` is the correct discriminator. */
+    /** Find a column excluding pivot result cols. `pivotKeys` is the grid-set discriminator —
+     *  `getColumnDefs()` reads `colDefList`, never pivot cols, so it doesn't round-trip onto
+     *  primary colDefs. O(1) field check; equivalent to a `pivotCols`-membership test. */
     public getColDefCol(key: ColKey): AgColumn | null {
         const col = this.getCol(key);
         return col != null && col.colDef.pivotKeys == null ? col : null;
@@ -557,20 +562,24 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
 /** Apply prevOrder restoration (if any) then lock-position partitioning. Both phases are
  *  short-circuit on no-op: prevOrder=null skips order restore, no lockPosition skips partition. */
-function restoreOrLockColumns(
+const restoreOrLockColumns = (
     colsList: AgColumn[],
     colsById: { [id: string]: AgColumn },
     prevOrder: string[] | null,
     gos: GridOptionsService
-): AgColumn[] {
+): AgColumn[] => {
     const ordered = prevOrder == null ? colsList : applyPrevOrder(colsList, colsById, prevOrder);
     return placeLockedColumns(ordered, gos);
-}
+};
 
 /** Restores `colsList` order to match `prevOrder` (a snapshot of colIds from the previous refresh).
  *  Cols present in `prevOrder` appear in that order; service cols newly added go to the head; user
  *  cols newly added go after their last-known sibling in the prevOrder. */
-function applyPrevOrder(colsList: AgColumn[], colsById: { [id: string]: AgColumn }, prevOrder: string[]): AgColumn[] {
+const applyPrevOrder = (
+    colsList: AgColumn[],
+    colsById: { [id: string]: AgColumn },
+    prevOrder: string[]
+): AgColumn[] => {
     // Phase 1: resolve prevOrder colIds against current colsById.
     const preservedOrder: AgColumn[] = [];
     const colPositionMap = new Map<AgColumn, number>();
@@ -658,10 +667,10 @@ function applyPrevOrder(colsList: AgColumn[], colsById: { [id: string]: AgColumn
         result[pos++] = noSiblings[i];
     }
     return result;
-}
+};
 
 /** Walks ancestors until one with multiple children is found (true), or the root (false). */
-function hasSiblings(col: AgColumn | AgProvidedColumnGroup): boolean {
+const hasSiblings = (col: AgColumn | AgProvidedColumnGroup): boolean => {
     let ancestor = col.originalParent;
     while (ancestor != null) {
         if (ancestor.children.length > 1) {
@@ -670,15 +679,15 @@ function hasSiblings(col: AgColumn | AgProvidedColumnGroup): boolean {
         ancestor = ancestor.originalParent;
     }
     return false;
-}
+};
 
 /** Walks up the parent chain looking for a sibling cousin already present in `positionMap`.
  *  Returns the sibling with the highest position (i.e. last seen in last-order). */
-function findPreviousSibling(
+const findPreviousSibling = (
     col: AgColumn,
     group: AgProvidedColumnGroup | null,
     positionMap: Map<AgColumn, number>
-): AgColumn | null {
+): AgColumn | null => {
     let parent = group ? group.originalParent : col.originalParent;
     let currentGroup = group;
     while (parent != null) {
@@ -690,8 +699,6 @@ function findPreviousSibling(
             if (child === currentGroup || child === col) {
                 continue;
             }
-            // `isColumn` is a `readonly true/false as const` discriminator field — direct read
-            // narrows TS and avoids the prototype-chain walk of `instanceof AgColumn`.
             if (child.isColumn) {
                 const idx = positionMap.get(child);
                 if (idx != null && idx > highestIdx) {
@@ -715,4 +722,4 @@ function findPreviousSibling(
         parent = parent.originalParent;
     }
     return null;
-}
+};

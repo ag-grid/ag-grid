@@ -158,11 +158,11 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
     }
 }
 
-function visitColDefs(
+const visitColDefs = (
     colDefs: (ColDef | ColGroupDef)[],
     columnCallback: ((colDef: ColDef) => void) | undefined,
     groupCallback: ((colGroupDef: ColGroupDef) => void) | undefined
-): void {
+): void => {
     for (let i = 0, len = colDefs.length; i < len; ++i) {
         const def = colDefs[i];
         const children = (def as ColGroupDef).children;
@@ -173,4 +173,4 @@ function visitColDefs(
             columnCallback?.(def);
         }
     }
-}
+};

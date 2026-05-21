@@ -779,7 +779,7 @@ const comparatorByIndex = (indexes: { [key: string]: number }, oldList: AgColumn
     return 1;
 };
 
-function collectLeafColumnsFromTree(root: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
+const collectLeafColumnsFromTree = (root: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] => {
     const result: AgColumn[] = [];
     depthFirstOriginalTreeSearch(null, root, (node: AgColumn | AgProvidedColumnGroup) => {
         if (isColumn(node)) {
@@ -787,4 +787,4 @@ function collectLeafColumnsFromTree(root: (AgColumn | AgProvidedColumnGroup)[]):
         }
     });
     return result;
-}
+};

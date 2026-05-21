@@ -277,3 +277,170 @@ describe('Column destruction', () => {
         }
     });
 });
+
+/** Walks `col.originalParent` upwards and returns the wrapper chain (excludes the leaf col).
+ *  These are `AgProvidedColumnGroup` instances created by `ColWrapperCache.buildWrapper`. */
+const wrapperChainOf = (col: Column): any[] => {
+    const chain: any[] = [];
+    let parent: any = (col as any).originalParent;
+    while (parent) {
+        chain.push(parent);
+        parent = parent.originalParent;
+    }
+    return chain;
+};
+
+describe('ColWrapperCache lifecycle', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            PivotModule,
+            RowNumbersModule,
+            RowSelectionModule,
+            TreeDataModule,
+        ],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('auto col AgColumn instance is preserved across pivot mode toggle (round-trip)', async () => {
+        const api = gridsManager.createGrid('preserve-auto-col-pivot', {
+            columnDefs: [
+                { colId: 'country', rowGroup: true },
+                { colId: 'year', pivot: true },
+                { colId: 'gold', aggFunc: 'sum' },
+            ],
+            rowData: [{ country: 'USA', year: 2020, gold: 3 }],
+            pivotMode: false,
+        });
+
+        const autoColBefore = api.getColumn('ag-Grid-AutoColumn');
+        expect(autoColBefore).not.toBeNull();
+
+        api.setGridOption('pivotMode', true);
+        await asyncSetTimeout(0);
+        api.setGridOption('pivotMode', false);
+        await asyncSetTimeout(0);
+
+        // PR promise: auto col instance survives pivot toggle round-trip.
+        const autoColAfter = api.getColumn('ag-Grid-AutoColumn');
+        expect(autoColAfter).toBe(autoColBefore);
+        expect((autoColAfter as any).isAlive()).toBe(true);
+    });
+
+    test('auto col wrapper chain is preserved across refreshes that keep tree depth stable', () => {
+        const api = gridsManager.createGrid('preserve-wrapper-chain', {
+            // User column group → tree depth = 1, so the auto col gets wrapped.
+            columnDefs: [
+                { headerName: 'Medals', children: [{ colId: 'gold' }, { colId: 'silver' }] },
+                { colId: 'country', rowGroup: true, hide: true },
+            ],
+            rowData: [{ country: 'USA', gold: 3, silver: 1 }],
+        });
+
+        const autoCol = api.getColumn('ag-Grid-AutoColumn')!;
+        const wrappersBefore = wrapperChainOf(autoCol);
+        expect(wrappersBefore.length).toBeGreaterThan(0);
+        for (const w of wrappersBefore) {
+            expect(w.isAlive()).toBe(true);
+        }
+
+        // Trigger a refresh that doesn't touch the auto col's (col, depth) pair.
+        api.setColumnsVisible(['gold'], false);
+        api.setColumnsVisible(['gold'], true);
+
+        const wrappersAfter = wrapperChainOf(autoCol);
+        expect(wrappersAfter).toEqual(wrappersBefore);
+        for (const w of wrappersAfter) {
+            expect(w.isAlive()).toBe(true);
+        }
+    });
+
+    test('auto col wrapper chain is destroyed and rebuilt when tree depth changes', async () => {
+        const api = gridsManager.createGrid('rebuild-wrapper-on-depth-change', {
+            // Start with no user groups → depth 0 → no wrappers.
+            columnDefs: [{ colId: 'gold' }, { colId: 'country', rowGroup: true, hide: true }],
+            rowData: [{ country: 'USA', gold: 3 }],
+        });
+
+        const autoCol = api.getColumn('ag-Grid-AutoColumn')!;
+        expect(wrapperChainOf(autoCol).length).toBe(0);
+
+        // Add a user column group → tree depth bumps to 1 → wrappers are created.
+        api.setGridOption('columnDefs', [
+            { headerName: 'Medals', children: [{ colId: 'gold' }, { colId: 'silver' }] },
+            { colId: 'country', rowGroup: true, hide: true },
+        ]);
+        await asyncSetTimeout(0);
+
+        const wrappersAfterAdd = wrapperChainOf(autoCol);
+        expect(wrappersAfterAdd.length).toBeGreaterThan(0);
+        for (const w of wrappersAfterAdd) {
+            expect(w.isAlive()).toBe(true);
+        }
+
+        // Removing the user group drops depth back to 0 → old wrappers are destroyed and not replaced.
+        api.setGridOption('columnDefs', [{ colId: 'gold' }, { colId: 'country', rowGroup: true, hide: true }]);
+        await asyncSetTimeout(0);
+
+        for (const w of wrappersAfterAdd) {
+            expect(w.isAlive()).toBe(false);
+        }
+        expect(wrapperChainOf(autoCol).length).toBe(0);
+    });
+
+    test('selection col wrapper chain is destroyed when row selection is disabled', async () => {
+        const api = gridsManager.createGrid('destroy-selection-wrappers', {
+            columnDefs: [{ headerName: 'Medals', children: [{ colId: 'gold' }, { colId: 'silver' }] }],
+            rowData: [{ gold: 3, silver: 1 }],
+            rowSelection: { mode: 'multiRow', checkboxes: true },
+        });
+
+        const selectionCol = api.getColumn('ag-Grid-SelectionColumn')!;
+        expect(selectionCol).not.toBeNull();
+        const wrappers = wrapperChainOf(selectionCol);
+        expect(wrappers.length).toBeGreaterThan(0);
+        for (const w of wrappers) {
+            expect(w.isAlive()).toBe(true);
+        }
+
+        // Disable selection → service col is dropped → cache evicts its wrapper chain.
+        api.setGridOption('rowSelection', undefined as any);
+        await asyncSetTimeout(0);
+
+        expect(api.getColumn('ag-Grid-SelectionColumn')).toBeNull();
+        for (const w of wrappers) {
+            expect(w.isAlive()).toBe(false);
+        }
+    });
+
+    test('many no-op refreshes do not allocate new wrappers for service cols', () => {
+        const api = gridsManager.createGrid('cache-reuse-many-refreshes', {
+            columnDefs: [
+                { headerName: 'Medals', children: [{ colId: 'gold' }, { colId: 'silver' }] },
+                { colId: 'country', rowGroup: true, hide: true },
+            ],
+            rowData: [{ country: 'USA', gold: 3, silver: 1 }],
+        });
+
+        const autoCol = api.getColumn('ag-Grid-AutoColumn')!;
+        const wrappersInitial = wrapperChainOf(autoCol);
+        expect(wrappersInitial.length).toBeGreaterThan(0);
+
+        // Drive 20 visibility-toggle refreshes — each calls `refreshCols`, each hits the cache.
+        for (let i = 0; i < 20; ++i) {
+            api.setColumnsVisible(['gold'], false);
+            api.setColumnsVisible(['gold'], true);
+        }
+
+        // Same wrapper instances throughout — no leak, no rebuild.
+        const wrappersAfter = wrapperChainOf(autoCol);
+        expect(wrappersAfter).toEqual(wrappersInitial);
+        for (const w of wrappersAfter) {
+            expect(w.isAlive()).toBe(true);
+        }
+    });
+});

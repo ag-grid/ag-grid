@@ -567,12 +567,15 @@ export class GridColumnsDomValidator {
 
 /**
  * Grid-wide context for `getDisplayedSort`, computed once per validation pass:
+ * - `api`: needed to resolve string `showRowGroup` via the same lookup production uses
+ *   (`getColDefCol`, which matches by colId and by `field`).
  * - `rowGroupCols`: the current rowGroup columns, or `null` when the SharedRowGrouping module is
  *   not registered (e.g. tree-data-only tests). `getRowGroupColumns` is part of that module.
  * - `isSortingCoupled`: mirrors `_isColumnsSortingCoupledToGroup(gos)` — false when a custom
  *   `autoGroupColumnDef.comparator` or `treeData` is configured.
  */
 interface DisplayedSortContext {
+    api: GridApi;
     rowGroupCols: Column[] | null;
     isSortingCoupled: boolean;
 }
@@ -589,65 +592,45 @@ function buildDisplayedSortContext(api: GridApi): DisplayedSortContext {
     // the internal module name matches the existing pattern in `validateHeaderRoot` above.
     const isModuleRegistered = api.isModuleRegistered as (name: string) => boolean;
     const rowGroupCols = isModuleRegistered('SharedRowGrouping') ? api.getRowGroupColumns() : null;
-    return { rowGroupCols, isSortingCoupled: isCoupledSortMode(api) };
+    return { api, rowGroupCols, isSortingCoupled: isCoupledSortMode(api) };
 }
 
-/**
- * Effective displayed sort direction for a column, or `null` when none. Mirrors
- * `SortService.getDisplaySortForColumn` using public API only, and compares direction only —
- * that's what the validator asserts against `aria-sort` in the DOM.
- *
- * INTENTIONAL DUPLICATION of `getDisplaySortForColumn` / `_isColumnsSortingCoupledToGroup`: the
- * validator is a black-box DOM check, so computing the expected answer from the production
- * helpers would let both agree on the same bug. Keep in sync when those helpers change.
- *
- * Approximation: string `showRowGroup` is resolved against `getRowGroupColumns()` only, not
- * all defined columns; no current test config triggers a divergence.
- */
+/** Mirrors `SortService.getDisplaySortForColumn` via public API only.
+ *  Intentional duplication for black-box DOM checks — keep in sync if the production helper changes.
+ *  When `showRowGroup` is set and coupling is active, an own sort is NOT a short-circuit:
+ *  divergent linked cols still render as 'mixed' (aria-sort='other'). */
 function getDisplayedSort(col: Column, ctx: DisplayedSortContext): SortDirection | 'mixed' | null {
     const ownSort = col.getSort() ?? null;
-    if (ownSort) {
+    const colDef = col.getColDef();
+    const showRowGroup = colDef.showRowGroup;
+
+    if (showRowGroup == null || !ctx.isSortingCoupled || !ctx.rowGroupCols) {
         return ownSort;
     }
 
-    const colDef = col.getColDef();
-    const showRowGroup = colDef.showRowGroup;
-    if (showRowGroup == null) {
-        return null;
-    }
-
-    // Coupling OFF → display column shows only its own sort (null at this point).
-    if (!ctx.isSortingCoupled || !ctx.rowGroupCols) {
-        return null;
-    }
-
-    // `=== true` cascades to all rowGroup columns; string resolves to at most one column by colId.
     let linked: Column[];
     if (showRowGroup === true) {
         linked = ctx.rowGroupCols;
     } else {
-        const found = ctx.rowGroupCols.find((c) => c.getColId() === showRowGroup);
-        if (!found) {
-            return null;
+        // String `showRowGroup` resolves through `api.getColumn` (matches `getColDefCol`'s lookup
+        // — colId, then field fallback) and excludes pivot result cols.
+        const found = ctx.api.getColumn(showRowGroup);
+        if (!found || found.getColDef().pivotKeys != null) {
+            return ownSort;
         }
         linked = [found];
     }
     if (linked.length === 0) {
-        return null;
+        return ownSort;
     }
 
-    // When the display column has own data (field/valueGetter), its own (null) sort joins the
-    // mix-check — any non-null linked source then renders as 'mixed'. See `columnHasUniqueData`
-    // in `getDisplaySortForColumn`.
     const columnHasUniqueData = colDef.field != null || colDef.valueGetter != null;
-    let firstSort: SortDirection | null | undefined = columnHasUniqueData ? null : undefined;
-    for (const c of linked) {
-        const s = c.getSort() ?? null;
-        if (firstSort === undefined) {
-            firstSort = s;
-        } else if (firstSort !== s) {
+    const sortableColumns: Column[] = columnHasUniqueData ? [col, ...linked] : linked;
+    const firstSort = sortableColumns[0].getSort() ?? null;
+    for (let i = 1, len = sortableColumns.length; i < len; ++i) {
+        if ((sortableColumns[i].getSort() ?? null) !== firstSort) {
             return 'mixed';
         }
     }
-    return firstSort ?? null;
+    return firstSort;
 }

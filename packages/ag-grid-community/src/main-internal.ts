@@ -237,6 +237,7 @@ export {
     _updateColumnState,
 } from './columns/columnFactoryUtils';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
+export { ColWrapperCache as _ColWrapperCache } from './columns/columnGroups/colWrapperCache';
 export type { ColumnModel } from './columns/columnModel';
 export type { ColumnNameService } from './columns/columnNameService';
 export { _applyColumnState, _getColumnState, _resetColumnState } from './columns/columnStateUtils';
