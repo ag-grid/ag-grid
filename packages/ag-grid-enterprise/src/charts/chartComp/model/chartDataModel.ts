@@ -437,7 +437,7 @@ export class ChartDataModel extends BeanStub {
                 column,
                 colId: column.colId,
                 displayName: this.getColDisplayName(column),
-                selected: allCols.has(column),
+                selected: allCols.has(column) && column.isVisible(),
                 order: order++,
             });
         });
