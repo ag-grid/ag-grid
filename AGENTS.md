@@ -184,6 +184,7 @@ Layered on the shared code-quality guide; enforced by ESLint plus team preferenc
 
 - Always use braces for `if/else/for/while/do`.
 - Cache repeated field access in a local — performance requirement.
+- Performance over bundle size.
 - Canonical array loop: `for (let i = 0, len = a.length; i < len; ++i)`. No `Array.forEach`. `Map.forEach` is fine.
 - No lonely `if` — use guard returns, `if/else if`, or ternaries. Applies to loops too.
 - No nested ternaries — extract to a named variable.

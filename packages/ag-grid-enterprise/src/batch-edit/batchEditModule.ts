@@ -3,6 +3,7 @@ import type { _BatchEditApi, _ModuleWithApi } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
+import batchEditCSS from './batchEdit.css';
 import { cancelBatchEdit, commitBatchEdit, isBatchEditing, startBatchEdit } from './batchEditApi';
 
 /**
@@ -19,5 +20,5 @@ export const BatchEditModule: _ModuleWithApi<_BatchEditApi> = {
         commitBatchEdit,
     },
     dependsOn: [_EditCoreModule, EnterpriseCoreModule],
-    css: [],
+    css: [batchEditCSS],
 };
