@@ -1,4 +1,4 @@
-import { getFormulaErrorDefaultMessage, getFormulaErrorDefinition } from '../i18n';
+import { getFormulaErrorDefaultMessage, getFormulaErrorDefinition, interpolateFormulaErrorMessage } from '../i18n';
 import type { FormulaErrorId, FormulaErrorType } from '../i18n';
 
 interface FormulaOperand {
@@ -69,7 +69,10 @@ export class FormulaError extends Error {
         if (!this.localeKey) {
             return this.message;
         }
-        return translate(this.localeKey, this.defaultMessage, this.variableValues);
+        return interpolateFormulaErrorMessage(
+            translate(this.localeKey, this.defaultMessage, this.variableValues),
+            this.variableValues
+        );
     }
 }
 

@@ -1,16 +1,31 @@
 import type { MockInstance } from 'vitest';
 import { vi } from 'vitest';
 
-import type { GridOptions, Module } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextEditorModule, ValidationModule } from 'ag-grid-community';
-import { CalculatedColumnsModule, FormulaModule } from 'ag-grid-enterprise';
+import type { ColDef, ColGroupDef, GridOptions, Module } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    NumberEditorModule,
+    NumberFilterModule,
+    TextEditorModule,
+    ValidationModule,
+} from 'ag-grid-community';
+import { CalculatedColumnsModule, ColumnMenuModule, FormulaModule } from 'ag-grid-enterprise';
 
+import { createCalculatedColumnReferenceMapper } from '../../../../packages/ag-grid-enterprise/src/calculatedColumns/calculatedColumnReferenceMapper';
 import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 describe('ag-grid calculated columns', () => {
     const gridRowsOpts = { useFormatter: false } as const;
+    let restoreOffsetParent: (() => void) | undefined;
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CalculatedColumnsModule, NumberFilterModule, TextEditorModule] as Module[],
+        modules: [
+            ClientSideRowModelModule,
+            CalculatedColumnsModule,
+            ColumnMenuModule,
+            NumberFilterModule,
+            TextEditorModule,
+            NumberEditorModule,
+        ] as Module[],
     });
 
     beforeEach(() => {
@@ -19,6 +34,8 @@ describe('ag-grid calculated columns', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        restoreOffsetParent?.();
+        restoreOffsetParent = undefined;
     });
 
     function createGrid(id: string, opts: Partial<GridOptions>) {
@@ -27,6 +44,86 @@ describe('ag-grid calculated columns', () => {
             ...opts,
         };
         return gridsManager.createGrid(id, options);
+    }
+
+    function enableOffsetParentPolyfill(): void {
+        if (restoreOffsetParent) {
+            return;
+        }
+
+        const originalOffsetParent = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetParent');
+        Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+            configurable: true,
+            get(this: HTMLElement) {
+                return this.parentElement;
+            },
+        });
+
+        restoreOffsetParent = () => {
+            if (originalOffsetParent) {
+                Object.defineProperty(HTMLElement.prototype, 'offsetParent', originalOffsetParent);
+            } else {
+                delete (HTMLElement.prototype as any).offsetParent;
+            }
+        };
+    }
+
+    function showColumnMenu(api: { showColumnMenu(colKey: string): void }, colKey: string): void {
+        enableOffsetParentPolyfill();
+        api.showColumnMenu(colKey);
+    }
+
+    function clickColumnMenuItem(name: string): void {
+        const menuItemText = Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option-text')).find(
+            (element) => element.textContent?.trim() === name
+        );
+        const menuItem = menuItemText?.closest<HTMLElement>('.ag-menu-option');
+        expect(menuItem).toBeTruthy();
+        menuItem!.click();
+    }
+
+    function getCalculatedColumnDialog(): HTMLElement {
+        const dialog = document.querySelector<HTMLElement>('.ag-calculated-column-form');
+        expect(dialog).toBeTruthy();
+        return dialog!;
+    }
+
+    function setExpression(expression: string): void {
+        const input = getCalculatedColumnDialog().querySelector<HTMLTextAreaElement>('textarea')!;
+        input.value = expression;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    function clickDialogButton(label: string): void {
+        const button = Array.from(getCalculatedColumnDialog().querySelectorAll<HTMLButtonElement>('button')).find(
+            (element) => element.textContent?.trim() === label
+        );
+        expect(button).toBeTruthy();
+        button!.click();
+    }
+
+    function getSuggestionLabels(): string[] {
+        return Array.from(document.querySelectorAll<HTMLElement>('.ag-calculated-column-suggestion')).map(
+            (element) => element.textContent ?? ''
+        );
+    }
+
+    function findColumnDef(columnDefs: (ColDef | ColGroupDef)[], colId: string): ColDef | undefined {
+        for (const colDef of columnDefs) {
+            if ('children' in colDef && colDef.children) {
+                const child = findColumnDef(colDef.children, colId);
+                if (child) {
+                    return child;
+                }
+                continue;
+            }
+
+            if (colDef.colId === colId || colDef.field === colId) {
+                return colDef;
+            }
+        }
+
+        return undefined;
     }
 
     test('same-row bracket references evaluate and recalculate without enabling row numbers', async () => {
@@ -188,6 +285,42 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
+    test('grid api updates calculated column cellDataType without keeping stale boolean renderer', async () => {
+        const api = createGrid('calculated-grid-api-cell-data-type', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                {
+                    colId: 'profitable',
+                    calculatedExpression: 'IF([revenue] > [cost], "yes", "no")',
+                    cellDataType: 'text',
+                },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        api.updateCalculatedColumn('profitable', {
+            calculatedExpression: '[revenue] > [cost]',
+            cellDataType: 'boolean',
+        });
+        await asyncSetTimeout(1);
+
+        expect(api.getColumn('profitable')!.colDef.cellRenderer).toBe('agCheckboxCellRenderer');
+
+        api.updateCalculatedColumn('profitable', {
+            calculatedExpression: 'IF([revenue] > [cost], "yes", "no")',
+            cellDataType: 'text',
+        });
+        await asyncSetTimeout(1);
+
+        await new GridRows(api, 'updated calculated column cell data type', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 revenue:10 cost:3 profitable:"yes"
+        `);
+        expect(api.getColumn('profitable')!.colDef.cellRenderer).toBeUndefined();
+    });
+
     test('grid api refreshes calculated-only formula caches', async () => {
         const rowData = [{ id: 'r1', revenue: 10, cost: 3 }];
         const api = createGrid('calculated-refresh-api', {
@@ -206,6 +339,116 @@ describe('ag-grid calculated columns', () => {
 
         expect(api.refreshFormulas()).toBe(true);
         expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBe(17);
+    });
+
+    test('ROUND function evaluates in calculated columns', async () => {
+        const api = createGrid('calculated-round-function', {
+            rowData: [{ id: 'r1', revenue: 44000, nextRevenue: 58000 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'nextRevenue' },
+                {
+                    colId: 'change',
+                    calculatedExpression: 'ROUND((([nextRevenue] - [revenue]) / [revenue]) * 100, 1)',
+                    cellDataType: 'number',
+                },
+            ],
+        });
+
+        await new GridRows(api, 'rounded calculated column', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 revenue:44000 nextRevenue:58000 change:31.8
+        `);
+    });
+
+    test('display reference mapper qualifies duplicate headers and validates display references', () => {
+        const createGroup = (name: string, parent: any = null) => ({
+            __name: name,
+            getGroupId: () => name,
+            getOriginalParent: () => parent,
+            isPadding: () => false,
+        });
+        const createColumn = (colId: string, headerName: string, groupNames: string[]) => {
+            let parent = null;
+            for (let i = groupNames.length - 1; i >= 0; i--) {
+                parent = createGroup(groupNames[i], parent);
+            }
+            return {
+                __headerName: headerName,
+                getColId: () => colId,
+                getOriginalParent: () => parent,
+            } as any;
+        };
+        const beans = {
+            colNames: {
+                getDisplayNameForColumn: (column: any) => column.__headerName,
+                getDisplayNameForProvidedColumnGroup: (_columnGroup: any, providedColumnGroup: any) =>
+                    providedColumnGroup.__name,
+            },
+        } as any;
+
+        const duplicateFullPathMapper = createCalculatedColumnReferenceMapper(
+            beans,
+            [createColumn('q4-a', 'Q4', ['2025']), createColumn('q4-b', 'Q4', ['2025'])],
+            'calculated_1'
+        );
+        expect(duplicateFullPathMapper.suggestions.map(({ label }) => label)).toEqual(['2025 Q4 (1)', '2025 Q4 (2)']);
+
+        const groupedMapper = createCalculatedColumnReferenceMapper(
+            beans,
+            [createColumn('q4-2025', 'Q4', ['2025']), createColumn('q4-2026', 'Q4', ['2026'])],
+            'calculated_1'
+        );
+
+        expect(groupedMapper.suggestions.map(({ label }) => label)).toEqual(['2025 Q4', '2026 Q4']);
+        expect(groupedMapper.toInternalExpression('[Q4]')).toEqual({
+            error: { type: 'ambiguous', reference: 'Q4' },
+        });
+        expect(groupedMapper.toInternalExpression('[Missing]')).toEqual({
+            error: { type: 'unknown', reference: 'Missing' },
+        });
+        expect(groupedMapper.toInternalExpression('[2025 Q4] - [2026 Q4]')).toEqual({
+            expression: '[q4-2025] - [q4-2026]',
+        });
+        expect(groupedMapper.toDisplayExpression('[q4-2025] - [q4-2026]')).toBe('[2025 Q4] - [2026 Q4]');
+    });
+
+    test('dialog displays header references and stores colId references', async () => {
+        const revenueColId = 'server-revenue-9d5101c8-4c2a-48e0-9ad2';
+        const costColId = 'server-cost-81f3431b-e4aa-4ef8-bef0';
+        const api = createGrid('calculated-dialog-references', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue', colId: revenueColId, headerName: 'Revenue' },
+                { field: 'cost', colId: costColId, headerName: 'Cost' },
+            ],
+        });
+
+        showColumnMenu(api, revenueColId);
+        await asyncSetTimeout(1);
+        clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        clickDialogButton('Columns');
+        expect(getSuggestionLabels()).toEqual(expect.arrayContaining(['Revenue', 'Cost']));
+        expect(getSuggestionLabels()).not.toEqual(expect.arrayContaining([revenueColId, costColId]));
+
+        setExpression('[Missing]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        expect(getCalculatedColumnDialog().textContent).toContain('Unknown column reference "Missing"');
+        expect(api.getColumn('calculated_1')).toBeNull();
+
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        const rowNode = api.getRowNode('r1')!;
+        const calculatedDef = findColumnDef(api.getColumnDefs()!, 'calculated_1');
+
+        expect(calculatedDef?.calculatedExpression).toBe(`[${revenueColId}] - [${costColId}]`);
+        expect(api.getCellValue({ rowNode, colKey: 'calculated_1', useFormatter: false })).toBe(7);
     });
 
     test('calculated columns are always non-editable', async () => {

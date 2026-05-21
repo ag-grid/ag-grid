@@ -35,6 +35,7 @@ export interface ColumnSuggestion {
     type: 'column' | 'function' | 'operator';
     label: string;
     value: string;
+    searchText?: string;
 }
 
 export const DEFAULT_DRAFT: Omit<CalculatedColumnDraft, 'colId' | 'headerName'> = {
@@ -75,6 +76,7 @@ const CalculatedColumnFormElement: ElementParams = {
             cls: 'ag-calculated-column-expression-wrap',
             children: [
                 { tag: 'ag-input-text-area', ref: 'eExpression' },
+                { tag: 'div', ref: 'eExpressionError', cls: 'ag-calculated-column-expression-error' },
                 { tag: 'div', ref: 'eSuggestions', cls: 'ag-calculated-column-suggestions' },
             ],
         },
@@ -115,6 +117,7 @@ export class CalculatedColumnForm extends Component {
     private readonly eTitle: GridInputTextField = RefPlaceholder;
     private readonly eType: GridSelect<CalculatedColumnType> = RefPlaceholder;
     private readonly eExpression: GridInputTextArea = RefPlaceholder;
+    private readonly eExpressionError: HTMLElement = RefPlaceholder;
     private readonly eSortable: GridCheckbox = RefPlaceholder;
     private readonly eFilter: GridCheckbox = RefPlaceholder;
     private readonly eSuggestions: HTMLElement = RefPlaceholder;
@@ -135,7 +138,7 @@ export class CalculatedColumnForm extends Component {
         private draft: CalculatedColumnDraft,
         private readonly getColumnSuggestions: () => ColumnSuggestion[],
         private readonly getFunctionSuggestions: () => ColumnSuggestion[],
-        private readonly onApply: (draft: CalculatedColumnDraft) => void,
+        private readonly onApply: (draft: CalculatedColumnDraft) => string | null,
         private readonly onCancel: () => void
     ) {
         super(CalculatedColumnFormElement, [
@@ -186,11 +189,13 @@ export class CalculatedColumnForm extends Component {
         this.eCancel.type = 'button';
         this.eSuggestions.remove();
         _setDisplayed(this.eSuggestions, false);
+        _setDisplayed(this.eExpressionError, false);
 
         const initialHeaderName = this.draft.headerName;
         this.eTitle.onValueChange((value) => this.updateDraft({ headerName: value || initialHeaderName }));
         this.eType.onValueChange((value) => this.updateDraft({ cellDataType: value ?? DEFAULT_DRAFT.cellDataType }));
         this.eExpression.onValueChange((value) => {
+            this.setExpressionError(null);
             this.updateDraft({ calculatedExpression: value ?? '' });
             this.refreshContextSuggestions();
         });
@@ -213,7 +218,7 @@ export class CalculatedColumnForm extends Component {
             click: () => this.showSuggestions('operator', '', null, this.eOperators),
         });
         this.addManagedElementListeners(this.eApply, {
-            click: () => this.onApply(this.draft),
+            click: () => this.setExpressionError(this.onApply(this.draft)),
         });
         this.addManagedElementListeners(this.eCancel, {
             click: () => this.onCancel(),
@@ -240,6 +245,17 @@ export class CalculatedColumnForm extends Component {
         this.activeReplacement = null;
         this.suggestions = [];
         this.closeSuggestionPopup();
+    }
+
+    private setExpressionError(message: string | null): void {
+        const input = this.eExpression.getInputElement();
+        const isInvalid = !!message;
+
+        input.setCustomValidity(message ?? '');
+        input.classList.toggle('invalid', isInvalid);
+        input.toggleAttribute('aria-invalid', isInvalid);
+        this.eExpressionError.textContent = message ?? '';
+        _setDisplayed(this.eExpressionError, isInvalid);
     }
 
     private updateDraft(partial: Partial<CalculatedColumnDraft>): void {
@@ -295,7 +311,9 @@ export class CalculatedColumnForm extends Component {
 
         const searchLower = search.toLocaleLowerCase();
         this.suggestions = searchLower
-            ? suggestions.filter(({ label, value }) => `${label} ${value}`.toLocaleLowerCase().includes(searchLower))
+            ? suggestions.filter(({ label, value, searchText }) =>
+                  (searchText ?? `${label} ${value}`).toLocaleLowerCase().includes(searchLower)
+              )
             : suggestions;
         this.suggestionSource = source;
         this.activeReplacement = replacement;
@@ -326,13 +344,6 @@ export class CalculatedColumnForm extends Component {
             this.eSuggestions.appendChild(row);
         }
 
-        const hint = _getDocument(this.beans).createElement('div');
-        hint.className = 'ag-calculated-column-suggestion ag-calculated-column-suggestion-hint';
-        hint.textContent = this.getLocaleTextFunc()(
-            'calculatedColumnSuggestionsHint',
-            'Tab/Enter to accept. Esc to close'
-        );
-        this.eSuggestions.appendChild(hint);
         this.openSuggestionPopup();
     }
 

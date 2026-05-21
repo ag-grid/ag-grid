@@ -13,6 +13,11 @@ import { BeanStub } from 'ag-grid-community';
 import { Dialog } from '../widgets/dialog';
 import type { CalculatedColumnDraft, CalculatedColumnType, ColumnSuggestion } from './calculatedColumnForm';
 import { CALCULATED_COLUMN_TYPES, CalculatedColumnForm, DEFAULT_DRAFT } from './calculatedColumnForm';
+import { clearStaleDataTypeProperties } from './calculatedColumnHelpers';
+import {
+    createCalculatedColumnReferenceMapper,
+    translateCalculatedColumnReferenceError,
+} from './calculatedColumnReferenceMapper';
 
 export class CalculatedColumnsService extends BeanStub implements NamedBean, ICalculatedColumnsService {
     public readonly beanName = 'calculatedColsSvc' as const;
@@ -134,7 +139,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 return colDef;
             }
 
-            const nextColDef = { ...colDef, ...safeUpdate };
+            const nextColDef = {
+                ...clearStaleDataTypeProperties(colDef, targetColDef, safeUpdate),
+                ...safeUpdate,
+            };
             nextColDef.calculatedExpression ??= colDef.calculatedExpression;
 
             return this.toCalculatedColDef(nextColDef);
@@ -143,14 +151,28 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     private showDialog(draft: CalculatedColumnDraft, onApply: (draft: CalculatedColumnDraft) => void): void {
         const state: { close?: () => void; resolved: boolean } = { resolved: false };
+        const mapper = createCalculatedColumnReferenceMapper(
+            this.beans,
+            this.beans.colModel.getCols() ?? [],
+            draft.colId
+        );
+        const displayDraft: CalculatedColumnDraft = {
+            ...draft,
+            calculatedExpression: mapper.toDisplayExpression(draft.calculatedExpression),
+        };
 
-        const handleApply = (nextDraft: CalculatedColumnDraft) => {
+        const handleApply = (nextDraft: CalculatedColumnDraft): string | null => {
             if (state.resolved) {
-                return;
+                return null;
+            }
+            const result = mapper.toInternalExpression(nextDraft.calculatedExpression);
+            if ('error' in result) {
+                return translateCalculatedColumnReferenceError(result.error, this.getLocaleTextFunc());
             }
             state.resolved = true;
-            onApply(nextDraft);
+            onApply({ ...nextDraft, calculatedExpression: result.expression });
             state.close?.();
+            return null;
         };
         const handleCancel = () => {
             if (state.resolved) {
@@ -162,8 +184,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
         const form = this.createManagedBean(
             new CalculatedColumnForm(
-                draft,
-                () => this.getColumnSuggestions(draft.colId),
+                displayDraft,
+                () => mapper.suggestions,
                 () => this.getFunctionSuggestions(),
                 handleApply,
                 handleCancel
@@ -279,16 +301,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             editable: false,
             suppressPaste: true,
         };
-    }
-
-    private getColumnSuggestions(calculatedColId: string): ColumnSuggestion[] {
-        return (this.beans.colModel.getCols() ?? [])
-            .filter((column) => column.getColId() !== calculatedColId)
-            .map((column) => ({
-                type: 'column',
-                value: column.getColId(),
-                label: this.beans.colNames.getDisplayNameForColumn(column, 'header') ?? column.getColId(),
-            }));
     }
 
     private getFunctionSuggestions(): ColumnSuggestion[] {

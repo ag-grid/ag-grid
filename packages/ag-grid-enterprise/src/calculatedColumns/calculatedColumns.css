@@ -13,6 +13,13 @@
     position: relative;
 }
 
+.ag-calculated-column-expression-error {
+    color: var(--ag-invalid-color);
+    font-size: 11px;
+    line-height: normal;
+    margin-top: calc(var(--ag-spacing) / 2);
+}
+
 .ag-calculated-column-suggestions {
     position: absolute;
     z-index: 6;
@@ -56,13 +63,6 @@
 .ag-calculated-column-suggestion-active,
 .ag-calculated-column-suggestion:hover {
     background-color: var(--ag-row-hover-color);
-}
-
-.ag-calculated-column-suggestion-hint {
-    border-top: var(--ag-border);
-    color: var(--ag-secondary-foreground-color);
-    cursor: default;
-    font-size: 11px;
 }
 
 .ag-calculated-column-properties {
