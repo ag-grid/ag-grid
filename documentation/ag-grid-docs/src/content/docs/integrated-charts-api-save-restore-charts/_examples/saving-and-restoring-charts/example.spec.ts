@@ -140,28 +140,32 @@ test.agExample(import.meta, () => {
 
             await openChartDataPanel(page);
 
-            // Reorder to [Fat, Sugar, Weight].
-            await reorderSeriesPill(page, 1, 0);
+            // Reorder to [Weight, Sugar, Fat] — Weight moved before Sugar and Fat.
+            // Grid column order is [Sugar, Fat, Weight], so after removing Sugar the grid
+            // order would give [Fat, Weight], but the saved user order should give [Weight, Fat].
+            // The two differ, which lets this test catch an ordering regression.
+            await reorderSeriesPill(page, 2, 0);
             const orderAfterDrag = await getSeriesOrder(page);
-            expect(orderAfterDrag).toEqual(['Fat', 'Sugar', 'Weight']);
+            expect(orderAfterDrag).toEqual(['Weight', 'Sugar', 'Fat']);
 
             // Save the chart via the example's Save button, then clear it.
             await page.getByRole('button', { name: 'Save chart' }).click();
             await page.getByRole('button', { name: 'Clear chart' }).click();
 
-            // Hide 'fat' so only Sugar and Weight remain visible.
+            // Hide 'sugar' so only Weight and Fat remain visible.
             const remoteApi = remoteGrid(page);
-            await remoteApi.applyColumnState({ state: [{ colId: 'fat', hide: true }] });
+            await remoteApi.applyColumnState({ state: [{ colId: 'sugar', hide: true }] });
 
-            // Restore from the saved model (which had fat before sugar).
+            // Restore from the saved model (which had weight before fat).
             await page.getByRole('button', { name: 'Restore chart' }).click();
 
             await openChartDataPanel(page);
 
-            // Fat is hidden — it must not appear as selected. Sugar and Weight should
-            // retain their relative order from the original user-defined sequence.
+            // Sugar is hidden — it must not appear as selected. Weight and Fat must retain
+            // their user-defined relative order [Weight, Fat], not the grid column order
+            // [Fat, Weight] that would result if restore ignored the saved series ordering.
             const orderAfterRestore = await getSeriesOrder(page);
-            expect(orderAfterRestore).toEqual(['Sugar', 'Weight']);
+            expect(orderAfterRestore).toEqual(['Weight', 'Fat']);
         }
     );
 });

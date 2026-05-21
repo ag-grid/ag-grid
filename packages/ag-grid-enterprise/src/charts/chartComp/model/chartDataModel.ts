@@ -399,7 +399,9 @@ export class ChartDataModel extends BeanStub {
                 this.crossFiltering && this.aggFunc
                     ? aggFuncDimension.getColId() === column.colId
                     : (this.useGroupColumnAsCategory && groupingActive && autoGroup) ||
-                      ((!hasSelectedDimension || supportsMultipleDimensions) && allCols.has(column));
+                      ((!hasSelectedDimension || supportsMultipleDimensions) &&
+                          allCols.has(column) &&
+                          column.isVisible());
 
             this.dimensionColState.push({
                 column,
