@@ -1,0 +1,370 @@
+{
+    "schema_version": "1.0",
+    "last_updated": "2026-05-13T00:00:00+01:00",
+    "url": "https://www.ag-grid.com/downloads/beyond-the-prompt/beyond-the-prompt-agenda.json",
+    "conference": {
+        "name": "Beyond The Prompt",
+        "tagline": "A one-day conference on building applications that hold up in production",
+        "organiser": "AG Grid & Bryntum",
+        "contact": "sylwia.vargas@ag-grid.com",
+        "date": "2026-05-19",
+        "timezone": "Europe/London",
+        "venue": {
+            "name": "IET London",
+            "address": "2 Savoy Place, London WC2R 0BL"
+        },
+        "social": {
+            "twitter": "@ag_grid",
+            "bluesky": "@ag-grid.bsky.social",
+            "linkedin": "@ag-grid"
+        },
+        "rooms": {
+            "talks": "Auditorium",
+            "breaks": "Hasslett"
+        }
+    },
+    "speakers": {
+        "phil-hawksworth": {
+            "name": "Phil Hawksworth",
+            "role": "Event MC",
+            "bio": "With a passion for browser technologies, and the empowering properties of the web, Phil loves seeking out ingenuity and simplicity, especially in places where over-engineering is common. After 25 years of building web applications for companies such as Google, Apple, Nike, R/GA, and The London Stock Exchange, he has worked to challenge traditional technical architectures in favour of simplicity and effectiveness, working in Developer Experience at Netlify and Deno.",
+            "social": {
+                "twitter": "https://twitter.com/philhawksworth",
+                "bluesky": "https://bsky.app/profile/philhawksworth.dev",
+                "github": "https://github.com/philhawksworth"
+            }
+        },
+        "john-masterson": {
+            "name": "John Masterson",
+            "title": "CEO",
+            "company": "AG Grid",
+            "bio": "John Masterson is the CEO of AG Grid, which he first joined in 2016 as employee number two. After a detour as CTO of a London health-tech startup, he returned in 2020 and stepped into the CEO role in 2024. He's spent fifteen years building software and leading engineering teams, and is determined to keep AG Grid the first choice for JavaScript developers. Outside of work, John can be found on his bike, in his headphones listening to a podcast, or picking up a guitar.",
+            "social": {}
+        },
+        "mats-bryntse": {
+            "name": "Mats Bryntse",
+            "title": "Founder & CEO",
+            "company": "Bryntum",
+            "bio": "Mats is the founder and CEO of Bryntum, where he and his team build advanced scheduling and project planning tools for modern web apps. For the past 15 years, he has obsessed over JavaScript performance, developer experience, and making complex UIs feel simple. He used to enjoy chess, badminton, and independent thought, until Claude entered his life and optimized those away.",
+            "social": {
+                "twitter": "https://x.com/bryntum",
+                "linkedin": "https://www.linkedin.com/in/matsbryntse/",
+                "github": "https://github.com/matsbryntse"
+            }
+        },
+        "david-khourshid": {
+            "name": "David Khourshid",
+            "title": "Founder",
+            "company": "Stately.ai",
+            "bio": "David is the founder of Stately.ai and creator of XState, the most popular open-source state machine & statecharts library. He's a longtime advocate for event-driven modeling and visual diagramming as the foundation for reliable UIs and, increasingly, AI agents. When he's not at a computer keyboard, he's at a piano keyboard.",
+            "social": {
+                "twitter": "https://x.com/davidkpiano",
+                "linkedin": "https://linkedin.com/in/davidkpiano",
+                "github": "https://github.com/davidkpiano"
+            }
+        },
+        "stephen-cooper": {
+            "name": "Stephen Cooper",
+            "title": "Team Lead",
+            "company": "AG Grid",
+            "bio": "Stephen is the Team Lead for AG Grid and loves sharing practical, experience-based tips, tricks, and case studies from years in the codebase. He's gone deep into grid performance and framework integrations, and has spent more time than he'd like profiling render cycles. Outside of work, life revolves around family, four kids and two dogs, and he's happiest when the whole crew is out together exploring in the park.",
+            "social": {
+                "linkedin": "https://linkedin.com/in/scooper-dev",
+                "github": "https://github.com/StephenCooper"
+            }
+        },
+        "josh-hobson": {
+            "name": "Josh Hobson",
+            "title": "Developer",
+            "company": "AG Grid",
+            "bio": "Josh is a developer at AG Grid, where he's been building AG Studio — a new dashboard library with multi-agent AI baked in. He's a mathematician by training and a maker by instinct, with a particular love for developer tooling, type systems, and intelligent interfaces. Outside of work, Josh can be found tinkering with 3D printers, ski touring in the Alps, or out on long walks with his dog.",
+            "social": {
+                "github": "https://github.com/AlpineJosh"
+            }
+        },
+        "steve-ruiz": {
+            "name": "Steve Ruiz",
+            "title": "CEO",
+            "company": "tldraw",
+            "bio": "A developer, designer, and now startup founder in London. With a background in visual art, Steve works primarily in creative tools for the web. He is known for tldraw, and demos of perfect arrows.",
+            "social": {
+                "twitter": "https://x.com/steveruizok"
+            }
+        },
+        "bernie-sumption": {
+            "name": "Bernie Sumption",
+            "title": "Engineer",
+            "company": "AG Grid",
+            "bio": "Bernie is an engineer at AG Grid specialising in theming. \"The other engineers make it work fast and well, I make it look pretty\" he likes to say. Outside work he goes hiking, plays with his kids, and once made a tweeting cat flap that has 10x more social media followers than he does.",
+            "social": {
+                "linkedin": "https://uk.linkedin.com/in/berniesumption",
+                "github": "https://github.com/BernieSumption"
+            }
+        },
+        "patrick-rau": {
+            "name": "Patrick Rau",
+            "title": "Senior Developer",
+            "company": "TCS",
+            "bio": "Patrick builds and maintains core parts of Team Centric Software's fleetplan platform, specializing in UI integration and complex components like AG Grid, Bryntum's Scheduler Pro, and modules for audit tracking and safety reporting. He's driven by a passion for creating software that makes a real difference for the people who use it. When he's not solving problems at work, you'll find him exploring new technologies through personal projects, gaming, or planning his next trip.",
+            "social": {
+                "linkedin": "https://www.linkedin.com/in/patrick-r-ab2168183/",
+                "github": "https://github.com/14rau"
+            }
+        },
+        "johan-isaksson": {
+            "name": "Johan Isaksson",
+            "title": "Head of Engineering",
+            "company": "Bryntum",
+            "bio": "Johan is responsible for architecture, gate keeping, performance and styling across all Bryntum products. When not checking pull requests, recording performance profiles or tweaking CSS he enjoys watching hockey and playing floorball.",
+            "social": {}
+        },
+        "adam-wang": {
+            "name": "Adam Wang",
+            "title": "AG Studio Product Lead",
+            "company": "AG Grid",
+            "bio": "Adam is the AG Studio Product Lead at AG Grid, with around 10 years of experience in product management across various disciplines. He previously worked on AG Grid Integrated Charts before focusing on AG Studio. He enjoys the creative process of product management and is keen to solve problems by truly understanding user needs. Outside of work, he's a spin instructor who loves to put together a fire playlist. He also collects coloured vinyl.",
+            "social": {
+                "linkedin": "https://www.linkedin.com/in/adam-wang-77a8bb88/"
+            }
+        },
+        "maggie-appleton": {
+            "name": "Maggie Appleton",
+            "title": "Staff Research Engineer",
+            "company": "GitHub",
+            "bio": "Maggie is a Staff Research Engineer at GitHub, where she works on tools for thinking, writing, and building with code. With a background in anthropology, she's known for her visual essays that explore how developers understand systems, languages, and ideas. She's a strong advocate for \"digital gardens\" over traditional publishing, and spends her time mapping out how knowledge grows on the web. Outside of work, she's usually sketching concepts, writing, or connecting dots between code and culture.",
+            "social": {}
+        },
+        "matt-pocock": {
+            "name": "Matt Pocock",
+            "title": "Senior Developer Educator",
+            "company": "AI Hero",
+            "bio": "Matt is a senior developer educator at AI Hero, a TypeScript author, and an educator passionate about bringing real software engineering rigour to the age of AI. He co-organizes the AI Coding for Real Engineers cohort, a community for experienced developers who want to build with AI tools without throwing away everything they already know. Outside of the keyboard, Matt enjoys long runs through the Oxfordshire countryside, loudly supporting Arsenal, and experimenting with new ways to make complex ideas click for developers everywhere.",
+            "social": {
+                "twitter": "https://x.com/mattpocockuk",
+                "github": "https://github.com/mattpocock"
+            }
+        },
+        "sophie-koonin": {
+            "name": "Sophie Koonin",
+            "title": "Web Discipline Lead",
+            "company": "Monzo",
+            "bio": "Sophie leads a team within the Operations collective at Monzo, building the software that powers the bank's award-winning customer experience. She's also Monzo's Web Discipline Lead, advocating for web and empowering others to lead web platform improvements throughout the company. Outside of work, Sophie loves arranging pop songs for her choir Mixtape, playing video games, cooking, and gardening.",
+            "social": {
+                "website": "https://localghost.dev"
+            }
+        },
+        "matt-webb": {
+            "name": "Matt Webb",
+            "title": "Co-Founder",
+            "company": "Inanimate",
+            "bio": "Matt is co-founder of Inanimate, consumer hardware bringing agents into the real world. Previously he has consulted with Google's AI research group, run startup accelerators with R/GA Ventures, and was CEO and co-founder of the design studio BERG which invented some of the world's first internet-connected consumer products like Little Printer (and has work in the New York MoMA). He is co-author of Mind Hacks (O'Reilly, 2004). Since 2000 Matt has blogged at interconnected.org. He writes weekly+ on computing, design, and speculative futures. He lives in London.",
+            "social": {
+                "twitter": "https://x.com/genmon",
+                "bluesky": "https://bsky.app/profile/genmon.fyi",
+                "github": "https://github.com/inanimate-tech",
+                "linkedin": "https://www.linkedin.com/in/genmon"
+            }
+        }
+    },
+    "events": [
+        {
+            "id": "registration",
+            "type": "logistics",
+            "title": "Registration and Coffee",
+            "start": "2026-05-19T08:30:00+01:00",
+            "end": "2026-05-19T09:30:00+01:00",
+            "duration_minutes": 60,
+            "room": "Hasslett"
+        },
+        {
+            "id": "welcome",
+            "type": "talk",
+            "title": "Welcome",
+            "description": "Opening remarks to set the theme for the day: building with tools you can trust.",
+            "start": "2026-05-19T09:30:00+01:00",
+            "end": "2026-05-19T09:40:00+01:00",
+            "duration_minutes": 10,
+            "room": "Auditorium",
+            "tags": ["opening", "welcome"],
+            "speakers": ["phil-hawksworth"]
+        },
+        {
+            "id": "opening-keynote",
+            "type": "keynote",
+            "title": "Opening Keynote",
+            "start": "2026-05-19T09:40:00+01:00",
+            "end": "2026-05-19T10:10:00+01:00",
+            "duration_minutes": 30,
+            "room": "Auditorium",
+            "tags": ["keynote", "production engineering", "AG Grid", "Bryntum"],
+            "speakers": ["john-masterson", "mats-bryntse"]
+        },
+        {
+            "id": "goodbye-slop",
+            "type": "talk",
+            "title": "Goodbye slop; welcome determinism",
+            "description": "Vibe coding feels productive until you have to maintain it. Behind the agent \"thinking...\" you ignore and the code you never opened lies a growing pile of wasted tokens, nondeterministic behavior, and compounding errors hiding in plain sight. This talk pushes back on the status quo: elaborate agent architectures, \"prompting astrology\", overnight automation loops burning through context windows and credit cards. Come for the critique, leave with a framework for using AI to build software you actually understand.",
+            "start": "2026-05-19T10:10:00+01:00",
+            "end": "2026-05-19T10:40:00+01:00",
+            "duration_minutes": 30,
+            "room": "Auditorium",
+            "tags": ["determinism", "agentic AI", "vibe coding", "state machines", "software quality"],
+            "speakers": ["david-khourshid"]
+        },
+        {
+            "id": "coffee-break-1",
+            "type": "break",
+            "title": "Coffee Break",
+            "start": "2026-05-19T10:40:00+01:00",
+            "end": "2026-05-19T11:10:00+01:00",
+            "duration_minutes": 30,
+            "room": "Hasslett"
+        },
+        {
+            "id": "codebase-design",
+            "type": "talk",
+            "title": "Codebase design for the agent era",
+            "description": "As AI agents become part of the development workflow, codebase structure and well-designed system prompts matter more than ever. This session will show you how we're approaching this in the AG Grid and AG Charts codebases.",
+            "start": "2026-05-19T11:10:00+01:00",
+            "end": "2026-05-19T11:35:00+01:00",
+            "duration_minutes": 25,
+            "room": "Auditorium",
+            "tags": ["codebase design", "agentic AI", "system prompts", "developer workflow", "AG Grid"],
+            "speakers": ["stephen-cooper"]
+        },
+        {
+            "id": "ai-in-ag-studio",
+            "type": "talk",
+            "title": "AI in AG Studio",
+            "description": "How do you build a dashboard you can't see? A behind-the-scenes look at AG Studio's multi-agent architecture and the client-side tools that let any LLM build reports it otherwise couldn't.",
+            "start": "2026-05-19T11:35:00+01:00",
+            "end": "2026-05-19T12:00:00+01:00",
+            "duration_minutes": 25,
+            "room": "Auditorium",
+            "tags": ["multi-agent", "dashboards", "LLM tooling", "AG Studio", "AG Grid"],
+            "speakers": ["josh-hobson"]
+        },
+        {
+            "id": "bringing-ai-to-canvas",
+            "type": "talk",
+            "title": "Bringing AI to the Canvas",
+            "description": "At tldraw, we've been bringing agents to our infinite canvas. In December 2025, we ran a one-month experiment named Fairydraw where users could work with three fairies — virtual collaborators who work with you, with your human collaborators, and coordinate together on large tasks.",
+            "start": "2026-05-19T12:00:00+01:00",
+            "end": "2026-05-19T12:25:00+01:00",
+            "duration_minutes": 25,
+            "room": "Auditorium",
+            "tags": ["canvas", "collaborative AI", "agentic AI", "creative tools", "tldraw"],
+            "speakers": ["steve-ruiz"]
+        },
+        {
+            "id": "lunch",
+            "type": "logistics",
+            "title": "Lunch and Product Demos",
+            "start": "2026-05-19T12:25:00+01:00",
+            "end": "2026-05-19T13:35:00+01:00",
+            "duration_minutes": 70,
+            "room": "Hasslett"
+        },
+        {
+            "id": "debugging-css",
+            "type": "talk",
+            "title": "Debugging CSS performance with AI",
+            "description": "CSS performance issues can be subtle and time-consuming. This talk will show you how you can guide AI to uncover bugs without needing to learn the intricacies of CSS rendering internals.",
+            "start": "2026-05-19T13:35:00+01:00",
+            "end": "2026-05-19T14:05:00+01:00",
+            "duration_minutes": 30,
+            "room": "Auditorium",
+            "tags": ["CSS", "performance", "debugging", "AI tooling", "frontend"],
+            "speakers": ["bernie-sumption"]
+        },
+        {
+            "id": "software-moves-fleets",
+            "type": "talk",
+            "title": "Software that moves fleets: Lessons from AG Grid, Bryntum, and Beyond",
+            "description": "In aviation, the software has to be rock solid. Patrick pulls back the curtain on the components powering Fleetplan's UI, including AG Grid, Bryntum's Scheduler Pro, and the modules behind audit tracking and safety reporting that keep operations airtight.",
+            "start": "2026-05-19T14:05:00+01:00",
+            "end": "2026-05-19T14:20:00+01:00",
+            "duration_minutes": 15,
+            "room": "Auditorium",
+            "tags": ["production engineering", "aviation", "AG Grid", "Bryntum", "enterprise software"],
+            "speakers": ["patrick-rau"]
+        },
+        {
+            "id": "product-roadmap",
+            "type": "talk",
+            "title": "Product Roadmap",
+            "description": "AG Grid and Bryntum share what's coming next across their product lines.",
+            "start": "2026-05-19T14:20:00+01:00",
+            "end": "2026-05-19T14:50:00+01:00",
+            "duration_minutes": 30,
+            "room": "Auditorium",
+            "tags": ["product roadmap", "AG Grid", "Bryntum", "AG Studio"],
+            "speakers": ["johan-isaksson", "adam-wang"]
+        },
+        {
+            "id": "coffee-break-2",
+            "type": "break",
+            "title": "Coffee Break",
+            "start": "2026-05-19T14:50:00+01:00",
+            "end": "2026-05-19T15:20:00+01:00",
+            "duration_minutes": 30,
+            "room": "Hasslett"
+        },
+        {
+            "id": "one-click-agentic-sdlc",
+            "type": "talk",
+            "title": "One-click agentic SDLC",
+            "description": "A demo of a headless Claude workflow, built by Bryntum CEO Mats, that turns GitHub issues into mergeable PRs, with agents doing the work, and a custom Kanban UI keeping things in check.",
+            "start": "2026-05-19T15:20:00+01:00",
+            "end": "2026-05-19T15:45:00+01:00",
+            "duration_minutes": 25,
+            "room": "Auditorium",
+            "tags": ["agentic AI", "SDLC", "automation", "GitHub", "CI/CD", "demo"],
+            "speakers": ["mats-bryntse"]
+        },
+        {
+            "id": "agentic-ai-panel",
+            "type": "panel",
+            "title": "How agentic AI is reshaping software engineering",
+            "description": "As AI reshapes how software gets built, what actually changes for engineers, teams, and developer tools? This panel explores the real-world impact of agentic workflows on software engineering — from code review and system design to cognitive skills, ownership, and developer experience. Expect practical insights, rapid-fire hot takes, and honest discussion from engineers building beyond the prompt.",
+            "start": "2026-05-19T15:45:00+01:00",
+            "end": "2026-05-19T16:30:00+01:00",
+            "duration_minutes": 45,
+            "room": "Auditorium",
+            "tags": ["agentic AI", "software engineering", "developer experience", "panel", "future of work"],
+            "speakers": ["maggie-appleton", "matt-pocock", "sophie-koonin", "phil-hawksworth"]
+        },
+        {
+            "id": "vibe-coding-maker",
+            "type": "talk",
+            "title": "Vibe Coding as a Maker",
+            "description": "Matt will show his vibe coding experiments, from his AI clock to an app that points to the centre of the galaxy, and share some learnings from building hardware at his startup, Inanimate. Then we ask: what are the limits of vibing and agentic coding? And how might we create libraries that agents love?",
+            "start": "2026-05-19T16:30:00+01:00",
+            "end": "2026-05-19T17:00:00+01:00",
+            "duration_minutes": 30,
+            "room": "Auditorium",
+            "tags": ["vibe coding", "hardware", "agentic AI", "maker", "creative coding"],
+            "speakers": ["matt-webb"]
+        },
+        {
+            "id": "closing-remarks",
+            "type": "talk",
+            "title": "Closing Remarks",
+            "description": "Closing thoughts to wrap up the day and set the stage for the networking reception.",
+            "start": "2026-05-19T17:00:00+01:00",
+            "end": "2026-05-19T17:10:00+01:00",
+            "duration_minutes": 10,
+            "room": "Auditorium",
+            "tags": ["closing"],
+            "speakers": ["phil-hawksworth"]
+        },
+        {
+            "id": "networking",
+            "type": "networking",
+            "title": "Networking Reception",
+            "start": "2026-05-19T17:10:00+01:00",
+            "end": "2026-05-19T20:00:00+01:00",
+            "duration_minutes": 170
+        }
+    ]
+}

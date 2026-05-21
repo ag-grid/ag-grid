@@ -10,7 +10,7 @@
             "prefix": "lib",
             "architect": {
                 "build": {
-                    "builder": "@angular-devkit/build-angular:ng-packagr",
+                    "builder": "@angular/build:ng-packagr",
                     "options": {
                         "project": "projects/ag-grid-angular/ng-package.json"
                     },
@@ -25,9 +25,10 @@
                     "defaultConfiguration": "production"
                 },
                 "test": {
-                    "builder": "@angular-devkit/build-angular:karma",
+                    "builder": "@angular/build:karma",
                     "options": {
                         "main": "projects/ag-grid-angular/src/test.ts",
+                        "polyfills": ["zone.js", "zone.js/testing"],
                         "tsConfig": "projects/ag-grid-angular/tsconfig.spec.json",
                         "karmaConfig": "projects/ag-grid-angular/karma.conf.js"
                     }

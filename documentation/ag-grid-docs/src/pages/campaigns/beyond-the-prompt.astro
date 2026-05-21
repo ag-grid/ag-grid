@@ -617,8 +617,6 @@ const VENUE_IMAGES: VenueImage[] = [
                         ))
                     }
                 </div>
-
-                <p class={styles.speakersMore}>More speakers to be announced soon...</p>
             </div>
         </section>
 
@@ -630,6 +628,23 @@ const VENUE_IMAGES: VenueImage[] = [
                 <p class={styles.sectionLead}>
                     A single track across the day, with breaks designed for conversation. Some sessions are still being
                     finalised and speakers may be added.
+                </p>
+
+                <p class={styles.agendaDownloads}>
+                    <a
+                        href={urlWithBaseUrl('/downloads/beyond-the-prompt/beyond-the-prompt-agenda.ics')}
+                        download
+                        class={styles.btnPrimary}
+                    >
+                        Download .ics agenda <Icon name="download" />
+                    </a>
+                    <a
+                        href={urlWithBaseUrl('/downloads/beyond-the-prompt/beyond-the-prompt-agenda.json')}
+                        download
+                        class={styles.btnPrimary}
+                    >
+                        Download .json agenda <Icon name="download" />
+                    </a>
                 </p>
             </div>
 

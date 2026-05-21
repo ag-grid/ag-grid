@@ -286,15 +286,18 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     protected createCondition(position: number): DateFilterModel {
         const type = this.getConditionType(position);
         const model: Partial<DateFilterModel> = {};
-        const { params, filterType } = this;
+        const { params, filterType, beans } = this;
+        const dataTypeSvc = beans.dataTypeSvc;
         const values = this.getValues(position);
+        const includeDateTime =
+            params.includeTime ?? dataTypeSvc?.getDateIncludesTimeFlag(params.colDef.cellDataType) ?? true;
 
         const separator = params.useIsoSeparator ? 'T' : ' ';
         if (values.length > 0) {
-            model.dateFrom = _serialiseDate(values[0], true, separator);
+            model.dateFrom = _serialiseDate(values[0], includeDateTime, separator);
         }
         if (values.length > 1) {
-            model.dateTo = _serialiseDate(values[1], true, separator);
+            model.dateTo = _serialiseDate(values[1], includeDateTime, separator);
         }
 
         return {

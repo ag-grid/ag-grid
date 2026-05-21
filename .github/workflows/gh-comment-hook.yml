@@ -65,7 +65,7 @@ jobs:
 
             const prLink = `https://github.com/${owner}/${repo}/pull/${issue_number}`;
             // Sentinel string embedded in the comment so we can detect it later and avoid duplicates
-            const sentinel = `<!-- gh-pr-mention:pr=${issue_number} -->`;
+            const sentinel = `gh-pr-mention:pr=${issue_number}`;
 
             const paragraph = (content) => ({ type: 'paragraph', content: Array.isArray(content) ? content : [content] });
             const txt = (text) => ({ text, type: 'text' });
@@ -77,7 +77,7 @@ jobs:
                 const alreadyPosted = existing?.some(c => {
                     // Comments stored as ADF; fall back to plain text check on stringified body
                     const raw = JSON.stringify(c.body || '');
-                    return raw.includes(`pr=${issue_number}`);
+                    return raw.includes(sentinel);
                 });
                 if (alreadyPosted) {
                     console.log(`Skipping ${ticket} — already has a comment for PR #${issue_number}`);
@@ -89,12 +89,12 @@ jobs:
                     version: 1,
                     content: [
                         paragraph([
-                            txt(`${sentinel}[This issue was mentioned in `),
+                            txt(`This issue was mentioned in `),
                             link(`PR #${issue_number}`, prLink),
                             pr_title ? txt(` — ${pr_title}`) : txt(''),
                             txt(' by '),
                             link('CI workflow', process.env.JOB_URL || '#'),
-                            txt('.]'),
+                            txt(`.\n${sentinel}`),
                         ]),
                     ],
                 };

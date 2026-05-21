@@ -1,4 +1,4 @@
-import type { GridOptionsService, IAggFuncParams } from 'ag-grid-community';
+import type { AgColumn, GridOptionsService, IAggFuncParams } from 'ag-grid-community';
 
 import { mock } from '../test-utils/mock';
 import { AggFuncService } from './aggFuncService';
@@ -13,11 +13,44 @@ function createService(): AggFuncService {
     return service;
 }
 
+function createColumn(allowedAggFuncs?: string[]): AgColumn {
+    return { colDef: { allowedAggFuncs } } as AgColumn;
+}
+
 function createParams(values: any[]): IAggFuncParams {
     return {
         values: values,
     } as IAggFuncParams;
 }
+
+describe('getFuncNames', () => {
+    it('returns built-in functions in priority order', () => {
+        const service = createService();
+        service.getAggFunc('sum');
+        const result = service.getFuncNames(createColumn());
+
+        expect(result).toEqual(['sum', 'avg', 'max', 'min', 'count', 'first', 'last']);
+    });
+
+    it('appends custom functions after built-ins in alphabetical order', () => {
+        const service = createService();
+        service.addAggFuncs({
+            median: () => 0,
+            absolute: () => 0,
+            zScore: () => 0,
+        });
+        const result = service.getFuncNames(createColumn());
+
+        expect(result).toEqual(['sum', 'avg', 'max', 'min', 'count', 'first', 'last', 'absolute', 'median', 'zScore']);
+    });
+
+    it('returns allowedAggFuncs as-is when specified on the column', () => {
+        const service = createService();
+        const result = service.getFuncNames(createColumn(['count', 'sum']));
+
+        expect(result).toEqual(['count', 'sum']);
+    });
+});
 
 describe('aggSum', () => {
     const sum = createService().getAggFunc('sum');

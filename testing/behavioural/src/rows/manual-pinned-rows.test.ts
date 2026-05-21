@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule, PaginationModule, PinnedRowModule } from 'ag-grid-community';
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
@@ -24,7 +24,7 @@ function getPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>): RowN
 
 describe('Manual pinned rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [PinnedRowModule, ClientSideRowModelModule, RowGroupingModule, PaginationModule],
+        modules: [PinnedRowModule, ClientSideRowModelModule, RowGroupingModule, PaginationModule, PivotModule],
     });
 
     const columnDefs = [{ field: 'sport' }];
@@ -495,6 +495,133 @@ describe('Manual pinned rows', () => {
 
         // The row should now be pinned to bottom (after isRowPinned is re-evaluated)
         // Note: isRowPinned is only called on firstDataRendered, so we need to test via setGridOption
+    });
+
+    test('isRowPinnable callback unpins a row when it stops being pinnable', async () => {
+        // Track which sports are pinnable. We start with rugby pinnable, then make it
+        // non-pinnable. The model listens to `rowNodeDataChanged` and re-evaluates pinnability;
+        // when a previously-pinned row becomes non-pinnable, it must be unpinned.
+        let pinnable = new Set(['rugby']);
+
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            isRowPinned: (node) => (node.data?.sport === 'rugby' ? 'top' : null),
+            isRowPinnable: (node) => pinnable.has(node.data?.sport ?? ''),
+            getRowId(params) {
+                return `${params.level}-${params.data?.sport}`;
+            },
+        });
+
+        assertPinnedRows(api, 'top', ['t-top-0-rugby']);
+        const pinnedRugby = getPinnedRows(api, 'top')[0];
+        const sourceRugby = pinnedRugby.pinnedSibling!;
+
+        // Make rugby no longer pinnable, then trigger rowNodeDataChanged via update.
+        pinnable = new Set();
+        api.applyTransaction({ update: [{ sport: 'rugby' }] });
+        await asyncSetTimeout(10);
+
+        // The previously-pinned row should be unpinned (rowNodeDataChanged listener handles it).
+        assertPinnedRows(api, 'top', []);
+        expect(sourceRugby.destroyed).toBe(false); // source row stays alive
+        expect(sourceRugby.pinnedSibling).toBeUndefined();
+        expect(pinnedRugby.destroyed).toBe(true);
+    });
+
+    test('sort change re-sorts pinned containers', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'sport', sortable: true }],
+            rowData,
+            enableRowPinning: true,
+            isRowPinned: (node) => {
+                const s = node.data?.sport;
+                return s === 'tennis' || s === 'football' || s === 'cricket' ? 'top' : null;
+            },
+            getRowId(params) {
+                return `${params.level}-${params.data?.sport}`;
+            },
+        });
+
+        // Initial order matches source row order: football, tennis, cricket
+        assertPinnedRows(api, 'top', ['t-top-0-football', 't-top-0-tennis', 't-top-0-cricket']);
+
+        // Sort ascending by sport — pinned area must re-sort
+        api.applyColumnState({ state: [{ colId: 'sport', sort: 'asc' }] });
+        await asyncSetTimeout(10);
+        assertPinnedRows(api, 'top', ['t-top-0-cricket', 't-top-0-football', 't-top-0-tennis']);
+
+        // Sort descending
+        api.applyColumnState({ state: [{ colId: 'sport', sort: 'desc' }] });
+        await asyncSetTimeout(10);
+        assertPinnedRows(api, 'top', ['t-top-0-tennis', 't-top-0-football', 't-top-0-cricket']);
+
+        // Clear sort — falls back to source row order
+        api.applyColumnState({ state: [{ colId: 'sport', sort: null }] });
+        await asyncSetTimeout(10);
+        assertPinnedRows(api, 'top', ['t-top-0-football', 't-top-0-tennis', 't-top-0-cricket']);
+    });
+
+    test('pivotMode toggle hides pinned leaf clones and shows them again on toggle off', async () => {
+        // In pivot mode, _shouldHidePinnedRows returns !node.group, hiding leaf clones.
+        // Toggling pivotMode off should bring them back.
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'sport' },
+                { field: 'value', aggFunc: 'sum' },
+            ],
+            rowData: [
+                { country: 'A', year: 2024, sport: 'rugby', value: 1 },
+                { country: 'A', year: 2024, sport: 'tennis', value: 2 },
+                { country: 'B', year: 2024, sport: 'rugby', value: 3 },
+            ],
+            enableRowPinning: true,
+            // Pin both a group row and a leaf row.
+            isRowPinned: (node) => {
+                if (node.group && node.key === 'A') {
+                    return 'top';
+                }
+                if (!node.group && node.data?.sport === 'rugby') {
+                    return 'top';
+                }
+                return null;
+            },
+            getRowId(params) {
+                return params.data?.sport ? `leaf-${params.data.country}-${params.data.sport}` : '';
+            },
+            groupDefaultExpanded: -1,
+        });
+
+        // Initially (pivotMode off): both the group AND the leaf clones are visible.
+        const initialPinned = getPinnedRows(api, 'top');
+        const groupClone = initialPinned.find((n) => n.group);
+        const leafClones = initialPinned.filter((n) => !n.group);
+        expect(groupClone).toBeDefined();
+        expect(leafClones.length).toBeGreaterThan(0);
+        const initialCount = initialPinned.length;
+
+        // Turn pivot mode on — leaf clones should be hidden, group clones remain.
+        api.setGridOption('pivotMode', true);
+        await asyncSetTimeout(10);
+
+        const afterPivot = getPinnedRows(api, 'top');
+        expect(afterPivot.every((n) => n.group)).toBe(true); // only groups visible
+        expect(afterPivot.length).toBeLessThan(initialCount);
+
+        // Source nodes for hidden leaves should NOT be destroyed — they're still pinned, just hidden.
+        for (const leaf of leafClones) {
+            expect(leaf.destroyed).toBe(false);
+        }
+
+        // Toggle pivot mode off — leaf clones should come back.
+        api.setGridOption('pivotMode', false);
+        await asyncSetTimeout(10);
+
+        const afterToggleOff = getPinnedRows(api, 'top');
+        expect(afterToggleOff.length).toBe(initialCount);
     });
 
     test('pinned rows survive data updates to other rows', async () => {

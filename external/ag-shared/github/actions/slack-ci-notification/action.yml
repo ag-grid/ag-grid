@@ -1,0 +1,86 @@
+name: slack-ci-notification
+description: Sends CI job-status and staging-deploy notifications to Slack. User mapping is fetched from Notion at runtime.
+inputs:
+    SLACK_BOT_OAUTH_TOKEN:
+        description: Slack OAuth token for sending messages.
+        required: true
+    NOTION_API_TOKEN:
+        description: Notion API token for fetching the slack user config.
+        required: true
+    NOTION_DATA_SOURCE_ID:
+        description: Notion data source id holding the slack user config.
+        required: true
+    NOTION_API_VERSION:
+        description: Notion API version.
+        required: false
+        default: '2026-03-11'
+    AG_PROJECT:
+        description: Project name (AgGrid | AgCharts | AgStudio | Blog) - used for branding and base URLs.
+        required: true
+    LAST_SUCCESSFUL_SHA:
+        description: SHA of the last successful workflow run on the target branch (used for git diff and change list).
+        required: true
+    JOB_STATUSES:
+        description: JSON object mapping job name to status (success | failure | n/a | skipped | cancelled).
+        required: true
+    CHANGED_STATE:
+        description: 'true if the overall workflow status changed compared to the previous run.'
+        required: true
+    DEPLOY_TO_STAGING:
+        description: 'true if changes were deployed to staging in this run.'
+        required: true
+    TEAM_CHANNEL:
+        description: Slack channel that receives the team-facing job-status message (only when CHANGED_STATE is true).
+        required: false
+    DEBUG_CHANNEL:
+        description: Slack channel that receives debug messages with raw run context.
+        required: false
+    WEBSITE_STATUS_CHANNEL:
+        description: Slack channel that receives the staging-deploy notification (shared across libraries, e.g. #website-status).
+        required: false
+    LIBRARY_WEBSITE_STATUS_CHANNEL:
+        description: Additional library-specific Slack channel that also receives the staging-deploy notification (e.g. #grid-website-status). Optional.
+        required: false
+    REPORT_URL:
+        description: Optional URL for the test report.
+        required: false
+
+runs:
+    using: composite
+    steps:
+        - name: Notify job status
+          shell: bash
+          env:
+              SLACK_BOT_OAUTH_TOKEN: ${{ inputs.SLACK_BOT_OAUTH_TOKEN }}
+              NOTION_API_TOKEN: ${{ inputs.NOTION_API_TOKEN }}
+              NOTION_DATA_SOURCE_ID: ${{ inputs.NOTION_DATA_SOURCE_ID }}
+              NOTION_API_VERSION: ${{ inputs.NOTION_API_VERSION }}
+              AG_PROJECT: ${{ inputs.AG_PROJECT }}
+              RUN_ID: ${{ github.run_id }}
+              WORKFLOW: ${{ github.workflow }}
+              REF: ${{ github.ref }}
+              CURRENT_SHA: ${{ github.sha }}
+              LAST_SUCCESSFUL_SHA: ${{ inputs.LAST_SUCCESSFUL_SHA }}
+              TEAM_CHANNEL: ${{ inputs.TEAM_CHANNEL }}
+              DEBUG_CHANNEL: ${{ inputs.DEBUG_CHANNEL }}
+              JOB_STATUSES: ${{ inputs.JOB_STATUSES }}
+              CHANGED_STATE: ${{ inputs.CHANGED_STATE }}
+              REPORT_URL: ${{ inputs.REPORT_URL }}
+          run: node ./external/ag-shared/scripts/slack/notify-job-status.mjs
+
+        - name: Notify staging deploy
+          if: inputs.DEPLOY_TO_STAGING == 'true'
+          shell: bash
+          env:
+              SLACK_BOT_OAUTH_TOKEN: ${{ inputs.SLACK_BOT_OAUTH_TOKEN }}
+              NOTION_API_TOKEN: ${{ inputs.NOTION_API_TOKEN }}
+              NOTION_DATA_SOURCE_ID: ${{ inputs.NOTION_DATA_SOURCE_ID }}
+              NOTION_API_VERSION: ${{ inputs.NOTION_API_VERSION }}
+              AG_PROJECT: ${{ inputs.AG_PROJECT }}
+              RUN_ID: ${{ github.run_id }}
+              CURRENT_SHA: ${{ github.sha }}
+              LAST_SUCCESSFUL_SHA: ${{ inputs.LAST_SUCCESSFUL_SHA }}
+              WEBSITE_STATUS_CHANNEL: ${{ inputs.WEBSITE_STATUS_CHANNEL }}
+              LIBRARY_WEBSITE_STATUS_CHANNEL: ${{ inputs.LIBRARY_WEBSITE_STATUS_CHANNEL }}
+              DEPLOY_TO_STAGING: ${{ inputs.DEPLOY_TO_STAGING }}
+          run: node ./external/ag-shared/scripts/slack/notify-staging-deploy.mjs

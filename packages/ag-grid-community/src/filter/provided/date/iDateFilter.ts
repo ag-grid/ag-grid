@@ -12,6 +12,7 @@ export interface DateFilterModel extends ISimpleFilterModel {
      * The date value(s) associated with the filter.
      * The type is `string` and the format is `YYYY-MM-DD hh:mm:ss`, e.g. 2019-05-24 00:00:00.
      * If `useIsoSeparator = true`, the format is instead `YYYY-MM-DDThh:mm:ss`.
+     * If `includeTime = false`, or `cellDataType = 'date'` (and `includeTime` is not set), the time part is omitted and the format is `YYYY-MM-DD`, e.g. 2019-05-24.
      * Custom filters can have no values (hence both are optional). Range filter has two values (from and to).
      */
     dateFrom: string | null | undefined;

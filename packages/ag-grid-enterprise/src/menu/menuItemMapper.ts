@@ -5,6 +5,7 @@ import type {
     GetNoteParams,
     IAggFuncService,
     IColsService,
+    IMenuActionParams,
     INoteAccess,
     INotesService,
     LocaleTextFunc,
@@ -98,27 +99,47 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
         const localeTextFunc = this.getLocaleTextFunc();
         const { beans, gos } = this;
+
         const {
-            pinnedCols,
-            colAutosize,
             aggFuncSvc,
-            rowGroupColsSvc,
-            colNames,
-            colModel,
+            chartMenuItemMapper,
             clipboardSvc,
-            expansionSvc,
-            focusSvc,
+            colAutosize,
+            colChooserFactory,
+            colModel,
+            colNames,
             csvCreator,
             excelCreator,
+            expansionSvc,
+            focusSvc,
             menuSvc,
-            colChooserFactory,
-            sortSvc,
-            chartMenuItemMapper,
-            valueColsSvc,
-            pinnedRowModel,
             notesSvc,
             calculatedColsSvc,
+            pinnedCols,
+            pinnedRowModel,
+            rangeSvc,
+            rowGroupColsSvc,
+            sortSvc,
+            valueColsSvc,
         } = beans;
+
+        const getPinActionHandler =
+            (sideOrRemove: 'top' | 'bottom' | null) =>
+            ({ node, column }: IMenuActionParams) => {
+                if (node) {
+                    pinnedRowModel!.pinRow(node as RowNode, sideOrRemove ?? null, column as AgColumn);
+                    return;
+                }
+                // pick selected cells / rows / columns
+                rangeSvc?.getCellRanges()?.forEach((cellRange) => {
+                    rangeSvc.forEachRowInRange(cellRange, (row) => {
+                        const nodeFromSelection = _getRowNode(beans, row);
+                        if (nodeFromSelection) {
+                            pinnedRowModel!.pinRow(nodeFromSelection, sideOrRemove ?? null, null);
+                        }
+                    });
+                });
+            };
 
         const getStockMenuItem = (
             key: DefaultMenuItem,
@@ -191,8 +212,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('pinTop', 'Pin to Top'),
                               icon: _createIconNoSpan('rowPinTop', beans, column),
-                              action: ({ node, column }) =>
-                                  node && pinnedRowModel.pinRow(node as RowNode, 'top', column as AgColumn | null),
+                              action: getPinActionHandler('top'),
                           }
                         : null;
                 case 'pinBottom':
@@ -200,8 +220,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('pinBottom', 'Pin to Bottom'),
                               icon: _createIconNoSpan('rowPinBottom', beans, column),
-                              action: ({ node, column }) =>
-                                  node && pinnedRowModel.pinRow(node as RowNode, 'bottom', column as AgColumn | null),
+                              action: getPinActionHandler('bottom'),
                           }
                         : null;
                 case 'unpinRow':
@@ -209,8 +228,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('unpinRow', 'Unpin Row'),
                               icon: _createIconNoSpan('rowUnpin', beans, column),
-                              action: ({ node, column }) =>
-                                  node && pinnedRowModel.pinRow(node as RowNode, null, column as AgColumn | null),
+                              action: getPinActionHandler(null),
                           }
                         : null;
                 case 'valueAggSubMenu':
