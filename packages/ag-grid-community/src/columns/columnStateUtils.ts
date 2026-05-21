@@ -300,7 +300,7 @@ export function _applyColumnState(
         const pivotResultColsList = pivotResultCols?.pivotCols ?? [];
         unmatchedCount = applyStates(unmatchedAndAutoStates, pivotResultColsList, (id) => {
             const col = colModel.getCol(id);
-            return col?.colDef.pivotKeys != null ? col : null;
+            return col?.colDef.pivotKeys == null ? null : col;
         }).unmatchedCount;
     }
     colAnimation?.finish();
@@ -523,7 +523,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
         const pivotIndex = pivotActive && pivotColumns ? pivotColumns.indexOf(column) : null;
 
         const aggFunc = column.aggregationActive ? column.aggFunc : null;
-        const sortIndex = column.sortIndex != null ? column.sortIndex : null;
+        const sortIndex = column.sortIndex ?? null;
 
         res.push({
             colId: column.colId,

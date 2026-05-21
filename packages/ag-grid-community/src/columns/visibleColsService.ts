@@ -284,10 +284,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 continue;
             }
             const pinned = col.pinned;
-            if (pinned === 'left') {
-                leftCols.push(col);
-            } else if (pinned === 'right') {
+            if (pinned === 'right') {
                 rightCols.push(col);
+            } else if (pinned) {
+                leftCols.push(col);
             } else {
                 centerCols.push(col);
             }
@@ -327,9 +327,12 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         let centerCount = 0;
         for (let i = 0; i < total; ++i) {
             const pinned = cols[i].pinned;
-            if (pinned === 'left') {
+            if (pinned === 'right') {
+                continue;
+            }
+            if (pinned) {
                 ++leftCount;
-            } else if (pinned !== 'right') {
+            } else {
                 ++centerCount;
             }
         }
@@ -340,10 +343,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         for (let i = 0; i < total; ++i) {
             const col = cols[i];
             const pinned = col.pinned;
-            if (pinned === 'left') {
-                ordered[leftCursor++] = col;
-            } else if (pinned === 'right') {
+            if (pinned === 'right') {
                 ordered[rightCursor++] = col;
+            } else if (pinned) {
+                ordered[leftCursor++] = col;
             } else {
                 ordered[centerCursor++] = col;
             }

@@ -97,6 +97,47 @@ describe('Column lookup', () => {
             expect(api.getColumn(outsider as any)).toBeNull();
         });
 
+        test('resolves a column by string key matching a `field` when the field differs from colId', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'X', field: 'name' },
+                    { colId: 'Y', field: 'age' },
+                ],
+            });
+
+            // String 'name' is not a colId here, but matches a column's `field` — fallback hits.
+            const byField = api.getColumn('name');
+            expect(byField).not.toBeNull();
+            expect(byField!.getColId()).toBe('X');
+        });
+
+        test('colId takes precedence over field when the string matches both', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'name', field: 'whatever' },
+                    { colId: 'other', field: 'name' },
+                ],
+            });
+
+            // 'name' matches colId of col #1 AND field of col #2 — colId wins.
+            const col = api.getColumn('name');
+            expect(col).not.toBeNull();
+            expect(col!.getColId()).toBe('name');
+        });
+
+        test('resolves a column by fresh ColDef object with only a field (no shared ref)', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'X', field: 'name' }, { field: 'age' }],
+            });
+
+            // Fresh ColDef object (not the same reference passed to columnDefs). Branch behaviour:
+            // colsByDef registers `field` as a fallback key when `field !== colId`.
+            const freshKey: ColDef = { field: 'name' };
+            const col = api.getColumn(freshKey as any);
+            expect(col).not.toBeNull();
+            expect(col!.getColId()).toBe('X');
+        });
+
         test('resolves correct column when two ColDefs share the same field', () => {
             const firstCol: ColDef = { field: 'value', headerName: 'First' };
             const secondCol: ColDef = { field: 'value', headerName: 'Second' };

@@ -237,13 +237,9 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 // (note `null >= 0 === true`, hence the null guard).
                 include = index !== null && index >= 0;
             } else if (colIsNew) {
-                if (initialValue !== undefined) {
-                    include = initialValue!;
-                } else if (initialIndex !== undefined) {
-                    include = initialIndex != null && initialIndex >= 0;
-                } else {
-                    include = false;
-                }
+                // `initialIndex != null && initialIndex >= 0` is false when initialIndex is null/undefined,
+                // so the `??` fallback collapses the original three-way else-if chain to one expression.
+                include = initialValue ?? (initialIndex != null && initialIndex >= 0);
             } else {
                 // Existing col with no value/index: keep its prior inclusion.
                 include = previousSet?.has(col) ?? false;
@@ -299,14 +295,8 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 setFlagFunc(col, false, source);
             }
         }
-        if (previousSet !== null) {
-            for (const col of res) {
-                if (!previousSet.has(col)) {
-                    setFlagFunc(col, true, source);
-                }
-            }
-        } else {
-            for (const col of res) {
+        for (const col of res) {
+            if (!previousSet?.has(col)) {
                 setFlagFunc(col, true, source);
             }
         }

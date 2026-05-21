@@ -179,7 +179,7 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
         colDefCloned.pinned = pinned === 'left' || pinned === 'right' ? pinned : null;
 
         colDefCloned.sort = col.getSortDef();
-        colDefCloned.sortIndex = col.sortIndex != null ? col.sortIndex : null;
+        colDefCloned.sortIndex = col.sortIndex ?? null;
 
         return colDefCloned;
     }

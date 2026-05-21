@@ -619,10 +619,9 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 function destroyAutoWrapperChain(top: AgColumn | AgProvidedColumnGroup): void {
     let node: AgColumn | AgProvidedColumnGroup | null = top;
     while (node && !node.isColumn) {
-        const wrapper = node as AgProvidedColumnGroup;
-        const child: AgColumn | AgProvidedColumnGroup | undefined = wrapper.children[0];
-        if (wrapper.isAlive()) {
-            wrapper.destroy();
+        const child: AgColumn | AgProvidedColumnGroup | undefined = node.children[0];
+        if (node.isAlive()) {
+            node.destroy();
         }
         node = child ?? null;
     }

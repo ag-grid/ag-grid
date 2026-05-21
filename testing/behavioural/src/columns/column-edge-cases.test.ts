@@ -190,6 +190,24 @@ describe('Column Edge Cases', () => {
                 └── b width:200
             `);
         });
+
+        test('pinned: true (boolean shorthand) is treated as left-pinned', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', pinned: true }, { colId: 'b' }, { colId: 'c', pinned: true }],
+            });
+
+            expect(api.getDisplayedLeftColumns().map((c) => c.getColId())).toEqual(['a', 'c']);
+            expect(api.getDisplayedCenterColumns().map((c) => c.getColId())).toEqual(['b']);
+            expect(api.getDisplayedRightColumns().length).toBe(0);
+
+            await new GridColumns(api, 'pinned: true as left').checkColumns(`
+                LEFT
+                ├── a width:200
+                └── c width:200
+                CENTER
+                └── b width:200
+            `);
+        });
     });
 
     describe('column events', () => {
