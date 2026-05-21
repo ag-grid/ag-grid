@@ -56,6 +56,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
      *  namespaced (`pivot_…`, `pivotGroup_…`) so all col sources share one map without collision. */
     public colsById: { [id: string]: AgColumn } = {};
 
+    /** ColDef-reference → AgColumn map. Built lazily on first use, invalidated whenever colsById
+     *  changes. Maps both colDef (merged) and userProvidedColDef (original) so getCol/getColDefCol
+     *  resolve ColDef keys without an explicit colId in O(1) instead of a linear scan. */
+    private cachedColsByDef: Map<object, AgColumn> | null = null;
+
     private cachedAllCols: AgColumn[] | null = null;
 
     /** Snapshot of prior `colsList` colIds (one per pivot mode) so service-col replacements
@@ -140,6 +145,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             colsById[list[i].colId] = list[i];
         }
         this.colsById = colsById;
+        this.cachedColsByDef = null;
 
         rowGroupColsSvc?.extractCols(source, oldCols);
         pivotColsSvc?.extractCols(source, oldCols);
@@ -271,10 +277,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
             colsTree.push(sourceTree[i]);
         }
         const restoreOrder = !newColDefs || _shouldMaintainColumnOrder(this.gos, usePivot);
-        const prevOrder = restoreOrder ? (this.showingPivotResult ? this.lastPivotOrder : this.lastOrder) : null;
+        const lastOrder = this.showingPivotResult ? this.lastPivotOrder : this.lastOrder;
+        const prevOrder = restoreOrder ? lastOrder : null;
         this.colsList = restoreOrLockColumns(colsList, colsById, prevOrder, this.gos);
         this.colsTree = colsTree;
         this.colsById = colsById;
+        this.cachedColsByDef = null;
 
         beans.showRowGroupCols?.refresh();
         beans.quickFilter?.refreshCols();
@@ -443,12 +451,22 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return cached;
     }
 
-    /** Resolve any key (colId string, AgColumn, or ColDef) to its current AgColumn via
-     *  `colsById`. Returns the live instance even if `key` is a stale AgColumn/ColDef ref
-     *  whose colId still exists. */
+    /** Resolve any key (colId string, AgColumn, or ColDef) to its current AgColumn. String and
+     *  keyed-object lookups go through `colsById` (O(1)). ColDef keys without an explicit colId
+     *  fall through to `colsByDef` (lazy-built, also O(1)), which maps both colDef and
+     *  userProvidedColDef references. */
     public getCol(key: Maybe<ColKey>): AgColumn | null {
-        const id = typeof key === 'string' ? key : (key as Maybe<{ colId?: string }>)?.colId;
-        return typeof id === 'string' ? (this.colsById[id] ?? null) : null;
+        if (typeof key === 'string') {
+            return this.colsById[key] ?? null;
+        }
+        if (key == null) {
+            return null;
+        }
+        const id = (key as { colId?: string }).colId;
+        if (typeof id === 'string') {
+            return this.colsById[id] ?? null;
+        }
+        return (this.cachedColsByDef ?? this.loadColsByDef()).get(key) ?? null;
     }
 
     // Historic combined-lookup names — same semantics as `getCol` since `colsById` unifies every
@@ -465,12 +483,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
      *  Placeholder measure cols (no value cols defined) have `pivotKeys: []` and `pivotValueColumn: null`,
      *  so the `pivotKeys` check is the correct discriminator. */
     public getColDefCol(key: ColKey): AgColumn | null {
-        const id = typeof key === 'string' ? key : (key as { colId?: string }).colId;
-        if (typeof id !== 'string') {
-            return null;
+        if (typeof key === 'string') {
+            const col = this.colsById[key];
+            return col != null && col.colDef.pivotKeys == null ? col : null;
         }
-        const col = this.colsById[id];
-        return col && col.colDef.pivotKeys == null ? col : null;
+        const id = (key as { colId?: string }).colId;
+        if (typeof id === 'string') {
+            const col = this.colsById[id];
+            return col != null && col.colDef.pivotKeys == null ? col : null;
+        }
+        const col = (this.cachedColsByDef ?? this.loadColsByDef()).get(key) ?? null;
+        return col != null && col.colDef.pivotKeys == null ? col : null;
     }
 
     /** Get column by string ID. Skips the key-type check that `getCol` does — use this when the
@@ -478,6 +501,32 @@ export class ColumnModel extends BeanStub implements NamedBean {
      *  aggregation lookup). */
     public getColById(key: string): AgColumn | null {
         return this.colsById[key] ?? null;
+    }
+
+    private loadColsByDef(): Map<object, AgColumn> {
+        const map = new Map<object, AgColumn>();
+        const addCol = (col: AgColumn): void => {
+            map.set(col.colDef, col);
+            const provided = col.userProvidedColDef;
+            if (provided != null) {
+                map.set(provided, col);
+            }
+        };
+
+        const colsList = this.colsList;
+        for (let i = 0, len = colsList.length; i < len; ++i) {
+            addCol(colsList[i]);
+        }
+        // In pivot mode colDefList cols are in colsById but not colsList — include them too
+        if (this.showingPivotResult) {
+            const colDefList = this.colDefList;
+            for (let i = 0, len = colDefList.length; i < len; ++i) {
+                addCol(colDefList[i]);
+            }
+        }
+
+        this.cachedColsByDef = map;
+        return map;
     }
 }
 

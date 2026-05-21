@@ -85,7 +85,9 @@ export class SortService extends BeanStub implements NamedBean {
         const sortedColsWithIndices = lastSortIndexCol.getSortDef()
             ? [...allSortedColsWithoutChangesOrGroups, lastSortIndexCol]
             : allSortedColsWithoutChangesOrGroups;
-        sortedColsWithIndices.forEach((col, idx) => this.setColSortIndex(col, idx));
+        for (let i = 0, len = sortedColsWithIndices.length; i < len; ++i) {
+            this.setColSortIndex(sortedColsWithIndices[i], i);
+        }
     }
 
     // gets called by API, so if data changes, use can call this, which will end up
@@ -182,7 +184,9 @@ export class SortService extends BeanStub implements NamedBean {
         // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
         // cols is sorted by first.
         const allColsIndexes: { [id: string]: number } = {};
-        allSortedCols.forEach((col, index) => (allColsIndexes[col.colId] = index));
+        for (let i = 0, len = allSortedCols.length; i < len; ++i) {
+            allColsIndexes[allSortedCols[i].colId] = i;
+        }
 
         // put the columns in order of which one got sorted first
         allSortedCols.sort((a, b) => {
@@ -213,8 +217,9 @@ export class SortService extends BeanStub implements NamedBean {
         }
 
         const indexMap: Map<AgColumn, number> = new Map();
-
-        allSortedCols.forEach((col, idx) => indexMap.set(col, idx));
+        for (let i = 0, len = allSortedCols.length; i < len; ++i) {
+            indexMap.set(allSortedCols[i], i);
+        }
 
         // add the row group cols back
         if (isSortLinked) {

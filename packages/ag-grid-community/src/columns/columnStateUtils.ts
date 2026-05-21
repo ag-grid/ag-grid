@@ -346,20 +346,29 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         columnStates.push(stateItem);
     };
 
-    autoColSvc?.getColumns()?.forEach(addColState);
+    const autoCols = autoColSvc?.getColumns();
+    if (autoCols) {
+        for (let i = 0, len = autoCols.length; i < len; ++i) {
+            addColState(autoCols[i]);
+        }
+    }
     const selectionCol = selectionColSvc?.column;
     if (selectionCol) {
         addColState(selectionCol);
     }
-    primaryColumns?.forEach(addColState);
+    if (primaryColumns) {
+        for (let i = 0, len = primaryColumns.length; i < len; ++i) {
+            addColState(primaryColumns[i]);
+        }
+    }
 
     // apply state before ordering, as changes in row grouping will introduce new columns
     _applyColumnState(beans, { state: columnStates }, source);
 
-    const autoCols = autoColSvc?.getColumns() ?? [];
+    const orderedAutoCols = autoCols ?? [];
     const orderedCols = selectionCol
-        ? [selectionCol, ...autoCols, ...primaryColumns]
-        : [...autoCols, ...primaryColumns];
+        ? [selectionCol, ...orderedAutoCols, ...primaryColumns]
+        : [...orderedAutoCols, ...primaryColumns];
     const orderedColState = orderedCols.map((col) => ({ colId: col.colId }));
 
     // apply the new order when all the cols have been created & are available
@@ -702,7 +711,8 @@ function normaliseColumnMovedEventForColumnState(
     // see if any cols are in a different location
     const movedColumns: AgColumn[] = [];
 
-    afterFiltered.forEach((csAfter: ColumnState, index: number) => {
+    for (let index = 0, len = afterFiltered.length; index < len; ++index) {
+        const csAfter = afterFiltered[index];
         const csBefore = beforeFiltered?.[index];
         if (csBefore && csBefore.colId !== csAfter.colId) {
             const gridCol = colModel.getCol(csBefore.colId);
@@ -710,7 +720,7 @@ function normaliseColumnMovedEventForColumnState(
                 movedColumns.push(gridCol);
             }
         }
-    });
+    }
 
     if (!movedColumns.length) {
         return;

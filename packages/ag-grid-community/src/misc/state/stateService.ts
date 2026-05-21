@@ -419,13 +419,15 @@ export class StateService extends BeanStub implements NamedBean {
         const defaultState: ColumnStateParams = {};
 
         const shouldSetSortState = shouldSetState('sort', sortState);
-        if (shouldSetSortState) {
-            sortState?.sortModel.forEach(({ colId, sort, type }, sortIndex) => {
+        if (shouldSetSortState && sortState) {
+            const sortModel = sortState.sortModel;
+            for (let sortIndex = 0, len = sortModel.length; sortIndex < len; ++sortIndex) {
+                const { colId, sort, type } = sortModel[sortIndex];
                 const columnState = getColumnState(colId);
                 columnState.sort = sort;
                 columnState.sortIndex = sortIndex;
                 columnState.sortType = type;
-            });
+            }
         }
         if (shouldSetSortState || !partialColumnState) {
             defaultState.sort = null;
@@ -433,12 +435,13 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const shouldSetGroupState = shouldSetState('rowGroup', groupState);
-        if (shouldSetGroupState) {
-            groupState?.groupColIds.forEach((colId, rowGroupIndex) => {
-                const columnState = getColumnState(colId);
+        if (shouldSetGroupState && groupState) {
+            const groupColIds = groupState.groupColIds;
+            for (let rowGroupIndex = 0, len = groupColIds.length; rowGroupIndex < len; ++rowGroupIndex) {
+                const columnState = getColumnState(groupColIds[rowGroupIndex]);
                 columnState.rowGroup = true;
                 columnState.rowGroupIndex = rowGroupIndex;
-            });
+            }
         }
         if (shouldSetGroupState || !partialColumnState) {
             defaultState.rowGroup = null;
@@ -446,24 +449,27 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const shouldSetAggregationState = shouldSetState('aggregation', aggregationState);
-        if (shouldSetAggregationState) {
-            aggregationState?.aggregationModel.forEach(({ colId, aggFunc }) => {
+        if (shouldSetAggregationState && aggregationState) {
+            const aggregationModel = aggregationState.aggregationModel;
+            for (let i = 0, len = aggregationModel.length; i < len; ++i) {
+                const { colId, aggFunc } = aggregationModel[i];
                 getColumnState(colId).aggFunc = aggFunc;
-            });
+            }
         }
         if (shouldSetAggregationState || !partialColumnState) {
             defaultState.aggFunc = null;
         }
 
         const shouldSetPivotState = shouldSetState('pivot', pivotState);
-        if (shouldSetPivotState) {
-            pivotState?.pivotColIds.forEach((colId, pivotIndex) => {
-                const columnState = getColumnState(colId);
+        if (shouldSetPivotState && pivotState) {
+            const pivotColIds = pivotState.pivotColIds;
+            for (let pivotIndex = 0, len = pivotColIds.length; pivotIndex < len; ++pivotIndex) {
+                const columnState = getColumnState(pivotColIds[pivotIndex]);
                 columnState.pivot = true;
                 columnState.pivotIndex = pivotIndex;
-            });
+            }
             this.gos.updateGridOptions({
-                options: { pivotMode: !!pivotState?.pivotMode },
+                options: { pivotMode: !!pivotState.pivotMode },
                 source: source as any,
             });
         }

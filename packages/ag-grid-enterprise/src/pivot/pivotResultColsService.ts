@@ -126,7 +126,10 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         const restoring = currentPivotTree == null && this.savedPivotTree != null;
         const previousTree = currentPivotTree ?? this.savedPivotTree;
         const balanced = createColTreeFunc(beans, colDefs, false, previousTree ?? undefined, source);
-        _destroyColumnTree(currentPivotTree, balanced.columnTree);
+        // Destroy nodes from the prior tree (current or saved) that weren't reused by `balanced`.
+        // Using `previousTree` here — not `currentPivotTree` — covers the clear/restore window
+        // where `currentPivotTree` is null but `savedPivotTree` still holds bean references.
+        _destroyColumnTree(previousTree, balanced.columnTree);
 
         this.pivotCols = balanced.columns;
         this.pivotTree = balanced.columnTree;

@@ -90,7 +90,9 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
         const changes: Map<AgColumn, number> = new Map();
         // store all original cols and their index.
-        masterList.forEach((col, idx) => changes.set(col, idx));
+        for (let i = 0, len = masterList.length; i < len; ++i) {
+            changes.set(masterList[i], i);
+        }
 
         masterList.length = 0;
 
@@ -101,23 +103,18 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             }
         }
 
-        masterList.forEach((col, idx) => {
+        for (let i = 0, len = masterList.length; i < len; ++i) {
+            const col = masterList[i];
             const oldIndex = changes.get(col);
-            // if the column was not in the list, we add it as it's a change
-            // idx is irrelevant now.
             if (oldIndex === undefined) {
+                // not in original list — register as a change
                 changes.set(col, 0);
-                return;
+            } else if (!detectOrderChange || oldIndex === i) {
+                // unchanged — drop from change set
+                changes.delete(col);
             }
-
-            if (detectOrderChange && oldIndex !== idx) {
-                // if we're detecting order changes, and the indexes differ, we retain this as it's changed
-                return;
-            }
-
-            // otherwise remove this col, as it's unchanged.
-            changes.delete(col);
-        });
+            // else: detected order change — keep in change set
+        }
 
         this.updateIndexMap();
 

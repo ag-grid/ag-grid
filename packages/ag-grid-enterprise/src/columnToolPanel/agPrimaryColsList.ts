@@ -456,12 +456,18 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             }
             this.displayedColsList.push(item);
             if (item.group && item.expanded) {
-                item.children.forEach(recursiveFunc);
+                const children = item.children;
+                for (let i = 0, len = children.length; i < len; ++i) {
+                    recursiveFunc(children[i]);
+                }
             }
         };
 
         const virtualList = this.virtualList;
-        this.allColsTree.forEach(recursiveFunc);
+        const allColsTree = this.allColsTree;
+        for (let i = 0, len = allColsTree.length; i < len; ++i) {
+            recursiveFunc(allColsTree[i]);
+        }
         virtualList.setModel(new UIColumnModel(this.displayedColsList));
         let focusedRow: number | null = null;
 

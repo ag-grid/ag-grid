@@ -383,4 +383,202 @@ describe('pivot with groupHierarchy (date-time)', () => {
         // Sanity: GridColumns snapshot of the displayed structure.
         await new GridColumns(api, 'date hierarchy as row groups').checkColumns(false);
     });
+
+    test('adding groupHierarchy at runtime creates virtual columns', async () => {
+        const api = gridsManager.createGrid('addHierarchy', {
+            columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true }],
+            rowData: [{ country: 'USA', date: new Date(2020, 5, 15) }],
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(0);
+
+        const beforeIds = api.getAllGridColumns().map((c) => c.getColId());
+        expect(beforeIds.filter((id) => id.startsWith('ag-Grid-HierarchyColumn-date'))).toHaveLength(0);
+
+        api.setGridOption('columnDefs', [
+            { field: 'country' },
+            { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] },
+        ]);
+        await asyncSetTimeout(0);
+
+        const afterIds = api.getAllGridColumns().map((c) => c.getColId());
+        const hierarchyIds = afterIds.filter((id) => id.startsWith('ag-Grid-HierarchyColumn-date'));
+        expect(hierarchyIds.length).toBeGreaterThan(0);
+        expect(new Set(hierarchyIds).size).toBe(hierarchyIds.length);
+
+        await new GridColumns(api, 'hierarchy added at runtime').checkColumns(false);
+        await new GridRows(api, 'rows after hierarchy added').check(false);
+    });
+
+    test('removing groupHierarchy at runtime destroys virtual columns', async () => {
+        const api = gridsManager.createGrid('removeHierarchy', {
+            columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
+            rowData: [{ country: 'USA', date: new Date(2020, 5, 15) }],
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(0);
+
+        const virtualColsBefore = api
+            .getAllGridColumns()
+            .filter((c) => c.getColId().startsWith('ag-Grid-HierarchyColumn-date'));
+        expect(virtualColsBefore.length).toBeGreaterThan(0);
+
+        api.setGridOption('columnDefs', [{ field: 'country' }, { field: 'date', rowGroup: true }]);
+        await asyncSetTimeout(0);
+
+        const virtualColsAfter = api
+            .getAllGridColumns()
+            .filter((c) => c.getColId().startsWith('ag-Grid-HierarchyColumn-date'));
+        expect(virtualColsAfter).toHaveLength(0);
+
+        for (const col of virtualColsBefore) {
+            expect((col as any).isAlive()).toBe(false);
+        }
+
+        await new GridColumns(api, 'hierarchy removed at runtime').checkColumns(false);
+        await new GridRows(api, 'rows after hierarchy removed').check(false);
+    });
+
+    test('changing groupHierarchy array contents regenerates virtuals', async () => {
+        const api = gridsManager.createGrid('changeHierarchy', {
+            columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year'] }],
+            rowData: [{ country: 'USA', date: new Date(2020, 5, 15) }],
+        });
+        await asyncSetTimeout(0);
+
+        const yearVirtualsBefore = api.getAllGridColumns().filter((c) => c.getColId().includes('-date-year'));
+        const monthVirtualsBefore = api.getAllGridColumns().filter((c) => c.getColId().includes('-date-month'));
+        expect(yearVirtualsBefore.length).toBeGreaterThan(0);
+        expect(monthVirtualsBefore).toHaveLength(0);
+
+        api.setGridOption('columnDefs', [
+            { field: 'country' },
+            { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] },
+        ]);
+        await asyncSetTimeout(0);
+
+        const yearVirtualsAfter = api.getAllGridColumns().filter((c) => c.getColId().includes('-date-year'));
+        const monthVirtualsAfter = api.getAllGridColumns().filter((c) => c.getColId().includes('-date-month'));
+        expect(yearVirtualsAfter.length).toBeGreaterThan(0);
+        expect(monthVirtualsAfter.length).toBeGreaterThan(0);
+
+        const allIds = api.getAllGridColumns().map((c) => c.getColId());
+        expect(new Set(allIds).size).toBe(allIds.length);
+
+        await new GridColumns(api, 'hierarchy expanded year → year+month').checkColumns(false);
+        await new GridRows(api, 'rows after hierarchy expanded').check(false);
+    });
+
+    test('getPivotResultColumns() returns null when pivot mode is off', async () => {
+        const api = gridsManager.createGrid('pivotOff', {
+            columnDefs: [{ field: 'country', rowGroup: true }, { field: 'sport' }, { field: 'gold', aggFunc: 'sum' }],
+            rowData: [{ country: 'USA', sport: 'Swim', gold: 5 }],
+        });
+        await asyncSetTimeout(0);
+
+        const cols = api.getPivotResultColumns();
+        expect(cols == null || cols.length === 0).toBe(true);
+    });
+
+    test('toggling pivot mode off after on clears pivot result cols', async () => {
+        const api = createPivotDateTimeGrid();
+        api.setPivotColumns(['date']);
+        await asyncSetTimeout(0);
+
+        expect(api.getPivotResultColumns()).not.toBeNull();
+        expect(api.getPivotResultColumns()!.length).toBeGreaterThan(0);
+
+        api.setGridOption('pivotMode', false);
+        await asyncSetTimeout(0);
+
+        const cols = api.getPivotResultColumns();
+        expect(cols == null || cols.length === 0).toBe(true);
+    });
+
+    test('row-grouping the same hierarchy col twice does not duplicate virtuals', async () => {
+        const api = gridsManager.createGrid('dedup', {
+            columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
+            rowData: [{ country: 'USA', date: new Date(2020, 5, 15) }],
+        });
+        await asyncSetTimeout(0);
+
+        const beforeCount = api.getRowGroupColumns().length;
+        expect(beforeCount).toBeGreaterThan(0);
+
+        api.addRowGroupColumns(['date']);
+        await asyncSetTimeout(0);
+
+        const afterCount = api.getRowGroupColumns().length;
+        expect(afterCount).toBe(beforeCount);
+
+        const ids = api.getRowGroupColumns().map((c) => c.getColId());
+        expect(new Set(ids).size).toBe(ids.length);
+    });
+
+    test('virtual siblings preserve insertion order in multi-sort row-group output', async () => {
+        const api = gridsManager.createGrid('multiSortVirtual', {
+            columnDefs: [
+                { field: 'country' },
+                { field: 'date', rowGroup: true, groupHierarchy: ['year', 'quarter', 'month'] },
+            ],
+            rowData: [{ country: 'USA', date: new Date(2020, 5, 15) }],
+            groupDisplayType: 'multipleColumns',
+        });
+        await asyncSetTimeout(0);
+
+        const rgIds = api.getRowGroupColumns().map((c) => c.getColId());
+        const yearIdx = rgIds.findIndex((id) => id.includes('-date-year'));
+        const quarterIdx = rgIds.findIndex((id) => id.includes('-date-quarter'));
+        const monthIdx = rgIds.findIndex((id) => id.includes('-date-month'));
+        const dateIdx = rgIds.findIndex((id) => id === 'date');
+
+        expect(yearIdx).toBeGreaterThanOrEqual(0);
+        expect(quarterIdx).toBeGreaterThanOrEqual(0);
+        expect(monthIdx).toBeGreaterThanOrEqual(0);
+        expect(dateIdx).toBeGreaterThanOrEqual(0);
+        expect(yearIdx).toBeLessThan(quarterIdx);
+        expect(quarterIdx).toBeLessThan(monthIdx);
+        expect(monthIdx).toBeLessThan(dateIdx);
+    });
+
+    test('clearing pivot then re-applying same pivot reuses saved pivot result cols', async () => {
+        const api = createPivotDateTimeGrid();
+        api.setPivotColumns(['date']);
+        await asyncSetTimeout(0);
+
+        const before = api.getPivotResultColumns();
+        expect(before).not.toBeNull();
+        const colIdsBefore = before!.map((c) => c.getColId());
+
+        api.setPivotColumns([]);
+        await asyncSetTimeout(0);
+
+        api.setPivotColumns(['date']);
+        await asyncSetTimeout(0);
+
+        const after = api.getPivotResultColumns();
+        expect(after).not.toBeNull();
+        expect(after!.map((c) => c.getColId())).toEqual(colIdsBefore);
+    });
+
+    test('hierarchy virtual visibility unchanged by ungrouping then re-grouping its source', async () => {
+        const api = gridsManager.createGrid('hierVirtualVisible', {
+            columnDefs: [{ field: 'country' }, { field: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] }],
+            rowData: [{ country: 'USA', date: new Date(2020, 5, 15) }],
+        });
+        await asyncSetTimeout(0);
+
+        const yearVirtualBefore = api.getAllGridColumns().find((c) => c.getColId().includes('-date-year'));
+        expect(yearVirtualBefore).toBeDefined();
+        const wasVisible = yearVirtualBefore!.isVisible();
+
+        api.removeRowGroupColumns(['date']);
+        await asyncSetTimeout(0);
+        api.addRowGroupColumns(['date']);
+        await asyncSetTimeout(0);
+
+        const yearVirtualAfter = api.getAllGridColumns().find((c) => c.getColId().includes('-date-year'));
+        expect(yearVirtualAfter).toBeDefined();
+        expect(yearVirtualAfter!.isVisible()).toBe(wasVisible);
+    });
 });
