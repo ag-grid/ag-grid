@@ -528,7 +528,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 map.set(provided, col);
             }
             const field = colDef.field;
-            if (field && field !== col.colId) {
+            if (field && field !== col.colId && !map.has(field)) {
                 map.set(field, col);
             }
         }

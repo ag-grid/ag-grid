@@ -154,6 +154,19 @@ describe('Column lookup', () => {
             expect(second!.getColId()).toBe('value_1');
             expect(first).not.toBe(second);
         });
+
+        test('string field lookup with two cols sharing field: first registered wins', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'X', field: 'shared' },
+                    { colId: 'Y', field: 'shared' },
+                ],
+            });
+
+            const col = api.getColumn('shared');
+            expect(col).not.toBeNull();
+            expect(col!.getColId()).toBe('X');
+        });
     });
 
     describe('getColDefCol — ColDef without colId', () => {
