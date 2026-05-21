@@ -374,6 +374,10 @@ export class ChartDataModel extends BeanStub {
         const allCols = this.getAllColumnsFromRanges();
         const isInitialising = this.valueColState.length < 1;
 
+        const savedValueOrder = isInitialising
+            ? undefined
+            : new Map(this.valueColState.map((cs) => [cs.colId, cs.order]));
+
         this.dimensionColState = [];
         this.valueColState = [];
 
@@ -437,6 +441,14 @@ export class ChartDataModel extends BeanStub {
                 order: order++,
             });
         });
+
+        if (savedValueOrder) {
+            let nextOrder = Math.max(...savedValueOrder.values()) + 1;
+            this.valueColState.forEach((cs) => {
+                cs.order = savedValueOrder.has(cs.colId) ? savedValueOrder.get(cs.colId)! : nextOrder++;
+            });
+            this.valueColState.sort((a, b) => a.order - b.order);
+        }
     }
 
     private updateColumnState(updatedCol: ColState, resetOrder?: boolean): void {
