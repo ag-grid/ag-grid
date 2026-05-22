@@ -185,6 +185,7 @@ export type EnterpriseModuleName =
     | 'AdvancedFilter'
     | 'AiToolkit'
     | 'AllEnterprise'
+    | 'AutoGenerateColumns'
     | 'BatchEdit'
     | 'CellSelection'
     | 'Clipboard'
@@ -224,6 +225,7 @@ export type EnterpriseModuleName =
 export type AgModuleName =
     | 'AiToolkitModule'
     | 'AlignedGridsModule'
+    | 'AutoGenerateColumnsModule'
     | 'AllCommunityModule'
     | 'CellApiModule'
     | 'CellStyleModule'

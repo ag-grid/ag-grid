@@ -57,6 +57,7 @@ export type { AgGroupComponentParams as _AgGroupComponentParams } from './agStac
 
 export { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
 export { AiToolkitModule } from './aiToolkit/aiToolkitModule';
+export { AutoGenerateColumnsModule } from './autoGenerateColumns/autoGenerateColumnsModule';
 export { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
 export { MenuModule, ColumnMenuModule, ContextMenuModule } from './menu/menuModule';
 export { RichSelectModule } from './richSelect/richSelectModule';

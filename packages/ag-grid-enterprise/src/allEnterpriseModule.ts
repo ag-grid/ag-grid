@@ -5,6 +5,7 @@ import { AllCommunityModule } from 'ag-grid-community';
 
 import { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
 import { AiToolkitModule } from './aiToolkit/aiToolkitModule';
+import { AutoGenerateColumnsModule } from './autoGenerateColumns/autoGenerateColumnsModule';
 import { BatchEditModule } from './batch-edit/batchEditModule';
 import { IntegratedChartsModule } from './charts/integratedChartsModule';
 import { ClipboardModule } from './clipboard/clipboardModule';
@@ -68,6 +69,7 @@ const dependsOn = [
     BatchEditModule,
     RowGroupingEditModule,
     AiToolkitModule,
+    AutoGenerateColumnsModule,
 ];
 const moduleName: ModuleName = 'AllEnterprise';
 
