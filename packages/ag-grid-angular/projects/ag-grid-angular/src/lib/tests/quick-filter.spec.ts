@@ -12,7 +12,6 @@ import { AgGridAngular } from '../ag-grid-angular.component';
 
 @Component({
     selector: 'app-grid-wrapper',
-    standalone: true,
     imports: [AgGridAngular, FormsModule],
     template: ` <input type="text" id="quickFilter" [(ngModel)]="quickFilterText" />
         <div id="numberOfRows">Number of rows: {{ displayedRows }}</div>
@@ -89,7 +88,7 @@ describe('Quick Filter', () => {
         validateState({ gridRows: 17, displayedRows: 0, templateRows: 0 });
 
         // To have all the async functions run we flush our fakeAsync test environment. This empties the call stack
-        flush();
+        flush(25);
         // So now our component has its displayedRows property updated as the grid callback has been run
         // However, this has not been reflected in our template yet as change detection has not run.
         validateState({ gridRows: 17, displayedRows: 17, templateRows: 0 });
@@ -115,7 +114,7 @@ describe('Quick Filter', () => {
         validateState({ gridRows: 10, displayedRows: 17, templateRows: 17 });
 
         // We now flush out all the async callbacks
-        flush();
+        flush(25);
         // Our component event handler has now been run and updated its displayedRows value
         validateState({ gridRows: 10, displayedRows: 10, templateRows: 17 });
 
@@ -128,7 +127,7 @@ describe('Quick Filter', () => {
 
     it('should filter rows by quickFilterText', fakeAsync(() => {
         fixture.detectChanges();
-        flush();
+        flush(25);
         fixture.detectChanges();
 
         validateState({ gridRows: 17, displayedRows: 17, templateRows: 17 });
@@ -137,7 +136,7 @@ describe('Quick Filter', () => {
         quickFilterDE.nativeElement.dispatchEvent(new Event('input'));
 
         fixture.detectChanges();
-        flush();
+        flush(25);
         fixture.detectChanges();
 
         validateState({ gridRows: 10, displayedRows: 10, templateRows: 10 });

@@ -1,6 +1,6 @@
 import { Direction } from '../agStack/constants/direction';
 import { _isIOSUserAgent } from '../agStack/utils/browser';
-import { _getInnerHeight, _getScrollLeft, _setScrollLeft } from '../agStack/utils/dom';
+import { _getInnerHeight, _getInnerWidth, _getScrollLeft, _setScrollLeft } from '../agStack/utils/dom';
 import { _debounce } from '../agStack/utils/function';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
@@ -13,18 +13,10 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import { _warn } from '../validation/logging';
-import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 
 const VIEWPORT = 'Viewport';
 const FAKE_V_SCROLLBAR = 'fakeVScrollComp';
-const HORIZONTAL_SOURCES = [
-    'fakeHScrollComp',
-    'centerHeader',
-    'topCenter',
-    'bottomCenter',
-    'stickyTopCenter',
-    'stickyBottomCenter',
-] as const;
+const HORIZONTAL_SOURCES = ['fakeHScrollComp'] as const;
 
 type VerticalScrollSource = typeof VIEWPORT | typeof FAKE_V_SCROLLBAR;
 type HorizontalScrollSource = typeof VIEWPORT | (typeof HORIZONTAL_SOURCES)[number];
@@ -66,7 +58,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private lastScrollSource: [VerticalScrollSource | null, HorizontalScrollSource | null] = [null, null];
 
-    private readonly eBodyViewport: HTMLElement;
+    private readonly eGridViewport: HTMLElement;
 
     private scrollLeft = -1;
     private nextScrollTop = -1;
@@ -87,13 +79,12 @@ export class GridBodyScrollFeature extends BeanStub {
     private readonly resetLastHScrollDebounced: () => void;
     private readonly resetLastVScrollDebounced: () => void;
 
-    private centerRowsCtrl: RowContainerCtrl;
     private fakeVScrollComp: VerticalScrollComp;
     private fakeHScrollComp: HorizontalScrollComp;
 
-    constructor(eBodyViewport: HTMLElement) {
+    constructor(eGridViewport: HTMLElement) {
         super();
-        this.eBodyViewport = eBodyViewport;
+        this.eGridViewport = eGridViewport;
         this.resetLastHScrollDebounced = _debounce(
             this,
             () => (this.lastScrollSource[Direction.Horizontal] = null),
@@ -129,12 +120,14 @@ export class GridBodyScrollFeature extends BeanStub {
             scrollGapChanged: invalidateHorizontalScroll,
         });
 
-        this.addManagedElementListeners(this.eBodyViewport, {
-            scroll: invalidateVerticalScroll,
+        this.addManagedElementListeners(this.eGridViewport, {
+            scroll: () => {
+                invalidateVerticalScroll();
+                invalidateHorizontalScroll();
+            },
         });
 
         this.ctrlsSvc.whenReady(this, (p) => {
-            this.centerRowsCtrl = p.center;
             this.fakeVScrollComp = p.fakeVScrollComp;
             this.fakeHScrollComp = p.fakeHScrollComp;
             this.onDisplayedColumnsWidthChanged();
@@ -156,7 +149,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private addHorizontalScrollListeners(): void {
-        this.addManagedElementListeners(this.centerRowsCtrl.eViewport, {
+        this.addManagedElementListeners(this.eGridViewport, {
             scroll: this.onHScroll.bind(this, VIEWPORT),
         });
 
@@ -176,7 +169,7 @@ export class GridBodyScrollFeature extends BeanStub {
             ? _debounce(this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR), SCROLL_DEBOUNCE_TIMEOUT)
             : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
 
-        this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
+        this.addManagedElementListeners(this.eGridViewport, { scroll: onVScroll });
         this.registerScrollPartner(this.fakeVScrollComp, onFakeVScroll);
     }
 
@@ -197,13 +190,13 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {
         // when doing RTL, this method gets called once prematurely
-        const notYetInitialised = this.centerRowsCtrl == null;
+        const notYetInitialised = this.fakeHScrollComp == null;
         if (notYetInitialised) {
             return;
         }
 
         if (scrollLeft === undefined) {
-            scrollLeft = this.centerRowsCtrl.getCenterViewportScrollLeft();
+            scrollLeft = _getScrollLeft(this.eGridViewport, this.enableRtl);
         }
 
         this.setScrollLeftForAllContainersExceptCurrent(Math.abs(scrollLeft));
@@ -222,7 +215,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private getViewportForSource(source: VerticalScrollSource | HorizontalScrollSource): HTMLElement {
         if (source === VIEWPORT) {
-            return this.centerRowsCtrl.eViewport;
+            return this.eGridViewport;
         }
 
         return this.ctrlsSvc.get(source).eViewport;
@@ -247,13 +240,22 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        const centerContainerViewport = this.centerRowsCtrl.eViewport;
-        const { scrollLeft } = centerContainerViewport;
+        let newScrollLeft = _getScrollLeft(this.getViewportForSource(source), this.enableRtl);
 
-        if (this.shouldBlockScrollUpdate(Direction.Horizontal, scrollLeft, true)) {
+        const clampedScrollLeft = this.clampHorizontalScrollPosition(newScrollLeft);
+        if (Math.abs(clampedScrollLeft - newScrollLeft) > 0.1) {
+            _setScrollLeft(this.getViewportForSource(source), Math.abs(clampedScrollLeft), this.enableRtl);
+            newScrollLeft = clampedScrollLeft;
+        }
+
+        if (this.shouldBlockScrollUpdate(Direction.Horizontal, newScrollLeft, true)) {
             return;
         }
-        const newScrollLeft = _getScrollLeft(this.getViewportForSource(source), this.enableRtl);
+
+        if (source !== VIEWPORT) {
+            _setScrollLeft(this.eGridViewport, Math.abs(newScrollLeft), this.enableRtl);
+            newScrollLeft = _getScrollLeft(this.eGridViewport, this.enableRtl);
+        }
 
         this.doHorizontalScroll(newScrollLeft);
         this.resetLastHScrollDebounced();
@@ -265,7 +267,7 @@ export class GridBodyScrollFeature extends BeanStub {
         }
 
         const requestedScrollTop =
-            source === VIEWPORT ? this.eBodyViewport.scrollTop : this.fakeVScrollComp.getScrollPosition();
+            source === VIEWPORT ? this.eGridViewport.scrollTop : this.fakeVScrollComp.getScrollPosition();
         let scrollTop = requestedScrollTop;
 
         if (this.shouldBlockScrollUpdate(Direction.Vertical, scrollTop, true)) {
@@ -275,9 +277,9 @@ export class GridBodyScrollFeature extends BeanStub {
         if (source === VIEWPORT) {
             this.fakeVScrollComp.setScrollPosition(scrollTop);
         } else {
-            this.eBodyViewport.scrollTop = requestedScrollTop;
+            this.eGridViewport.scrollTop = requestedScrollTop;
             // resolve to the browser-applied value in case assignment is clamped.
-            scrollTop = this.eBodyViewport.scrollTop;
+            scrollTop = this.eGridViewport.scrollTop;
             // keep cached vertical metrics in sync even when the fake scrollbar drives scrolling,
             // as setting scrollTop programmatically may not emit a viewport scroll event.
             this.invalidateVerticalScroll();
@@ -292,7 +294,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.nextScrollTop = scrollTop;
 
         // the `scrollGridIfNeeded` will recalculate the rows to be rendered by the grid
-        // so it should only be called after `eBodyViewport` has been scrolled to the correct
+        // so it should only be called after `eGridViewport` has been scrolled to the correct
         // position, otherwise the `first` and `last` row could be miscalculated.
         if (animationFrameSvc?.active) {
             animationFrameSvc.schedule();
@@ -314,7 +316,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
         this.fireScrollEvent(Direction.Horizontal);
         this.horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft);
-        this.centerRowsCtrl.onHorizontalViewportChanged(true);
+        this.ctrlsSvc.getGridBodyCtrl()?.updateColumnViewport(true);
     }
 
     public isScrolling(): boolean {
@@ -367,25 +369,14 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private shouldBlockVerticalScroll(scrollTo: number): boolean {
-        const clientHeight = _getInnerHeight(this.eBodyViewport);
-        const { scrollHeight } = this.eBodyViewport;
+        const clientHeight = _getInnerHeight(this.eGridViewport);
+        const { scrollHeight } = this.eGridViewport;
 
         return !!(scrollTo < 0 || scrollTo + clientHeight > scrollHeight);
     }
 
     private shouldBlockHorizontalScroll(scrollTo: number): boolean {
-        const clientWidth = this.centerRowsCtrl.getCenterWidth();
-        const { scrollWidth } = this.centerRowsCtrl.eViewport;
-
-        if (this.enableRtl) {
-            if (scrollTo > 0) {
-                return true;
-            }
-        } else if (scrollTo < 0) {
-            return true;
-        }
-
-        return Math.abs(scrollTo) + clientWidth > scrollWidth;
+        return Math.abs(this.clampHorizontalScrollPosition(scrollTo) - scrollTo) > 0.1;
     }
 
     private redrawRowsAfterScroll(): void {
@@ -399,11 +390,11 @@ export class GridBodyScrollFeature extends BeanStub {
     // adding and removing the grid from the DOM both resets the scroll position and
     // triggers a resize event, so notify listeners if the scroll position has changed
     public checkScrollLeft(): void {
-        const scrollLeft = this.scrollLeft;
+        const scrollLeft = _getScrollLeft(this.eGridViewport, this.enableRtl);
         let hasHorizontalScrollersOutOfSync = false;
         for (const source of HORIZONTAL_SOURCES) {
             const viewport = this.getViewportForSource(source);
-            if (viewport.scrollLeft !== scrollLeft) {
+            if (_getScrollLeft(viewport, this.enableRtl) !== scrollLeft) {
                 hasHorizontalScrollersOutOfSync = true;
                 break;
             }
@@ -429,21 +420,11 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     // called by scrollHorizontally method and alignedGridsService
-    public setHorizontalScrollPosition(hScrollPosition: number, fromAlignedGridsService = false): void {
-        const minScrollLeft = 0;
-        const maxScrollLeft = this.centerRowsCtrl.eViewport.scrollWidth - this.centerRowsCtrl.getCenterWidth();
+    public setHorizontalScrollPosition(hScrollPosition: number, _fromAlignedGridsService = false): void {
+        hScrollPosition = this.clampHorizontalScrollPosition(hScrollPosition);
 
-        // if this is call is coming from the alignedGridsSvc, we don't need to validate the
-        // scroll, because it has already been validated by the grid firing the scroll event.
-        if (!fromAlignedGridsService && this.shouldBlockScrollUpdate(Direction.Horizontal, hScrollPosition)) {
-            if (this.enableRtl) {
-                hScrollPosition = hScrollPosition > 0 ? 0 : maxScrollLeft;
-            } else {
-                hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
-            }
-        }
-
-        _setScrollLeft(this.centerRowsCtrl.eViewport, Math.abs(hScrollPosition), this.enableRtl);
+        _setScrollLeft(this.eGridViewport, Math.abs(hScrollPosition), this.enableRtl);
+        hScrollPosition = _getScrollLeft(this.eGridViewport, this.enableRtl);
         // we need to manually do the event handling (rather than wait for the event)
         // for the alignedGridsSvc, as if we don't, the aligned grid service gets
         // notified async, and then it's 'consuming' flag doesn't get used right, and
@@ -451,30 +432,49 @@ export class GridBodyScrollFeature extends BeanStub {
         this.doHorizontalScroll(hScrollPosition);
     }
 
+    private getMaxHorizontalScrollLeft(): number {
+        const viewportWidth = _getInnerWidth(this.eGridViewport);
+        const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
+        if (!gridBodyCtrl) {
+            const contentWidth = this.eGridViewport.scrollWidth;
+            return Math.max(0, contentWidth - viewportWidth);
+        }
+
+        const contentWidth = Math.max(gridBodyCtrl.getHorizontalContentWidth(), viewportWidth);
+        return Math.max(0, contentWidth - viewportWidth);
+    }
+
+    private clampHorizontalScrollPosition(scrollLeft: number): number {
+        const maxScrollLeft = this.getMaxHorizontalScrollLeft();
+        return Math.max(0, Math.min(maxScrollLeft, scrollLeft));
+    }
+
     public setVerticalScrollPosition(vScrollPosition: number): void {
         this.invalidateVerticalScroll();
-        this.eBodyViewport.scrollTop = vScrollPosition;
+        this.eGridViewport.scrollTop = vScrollPosition;
     }
 
     public getVScrollPosition(): VerticalScrollPosition {
         if (!this.isVerticalPositionInvalidated) {
             const { lastOffsetHeight, lastScrollTop } = this;
+            const bodyViewportHeight = this.getBodyViewportHeight(lastOffsetHeight);
 
             return {
                 top: lastScrollTop,
-                bottom: lastScrollTop + lastOffsetHeight,
+                bottom: lastScrollTop + bodyViewportHeight,
             };
         }
 
         this.isVerticalPositionInvalidated = false;
 
-        const { scrollTop, offsetHeight } = this.eBodyViewport;
+        const { scrollTop, offsetHeight } = this.eGridViewport;
         this.lastScrollTop = scrollTop;
         this.lastOffsetHeight = offsetHeight;
+        const bodyViewportHeight = this.getBodyViewportHeight(offsetHeight);
 
         return {
             top: scrollTop,
-            bottom: scrollTop + offsetHeight,
+            bottom: scrollTop + bodyViewportHeight,
         };
     }
 
@@ -484,21 +484,27 @@ export class GridBodyScrollFeature extends BeanStub {
      */
     public getApproximateVScollPosition(): VerticalScrollPosition {
         if (this.lastScrollTop >= 0 && this.lastOffsetHeight >= 0) {
+            const bodyViewportHeight = this.getBodyViewportHeight(this.lastOffsetHeight);
             return {
                 top: this.scrollTop,
-                bottom: this.scrollTop + this.lastOffsetHeight,
+                bottom: this.scrollTop + bodyViewportHeight,
             };
         }
         return this.getVScrollPosition();
     }
 
+    private getBodyViewportHeight(totalViewportHeight: number): number {
+        const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
+        return gridBodyCtrl ? gridBodyCtrl.getBodyViewportHeight(totalViewportHeight) : totalViewportHeight;
+    }
+
     public getHScrollPosition(): { left: number; right: number } {
-        return this.centerRowsCtrl.getHScrollPosition();
+        return this.ctrlsSvc.getGridBodyCtrl()?.getHorizontalScrollPosition() ?? { left: 0, right: 0 };
     }
 
     public isHorizontalScrollShowing(): boolean {
         if (this.isHorizontalPositionInvalidated) {
-            this.lastIsHorizontalScrollShowing = this.centerRowsCtrl.isHorizontalScrollShowing();
+            this.lastIsHorizontalScrollShowing = this.beans.scrollVisibleSvc.isHorizontalScrollShowing();
             this.isHorizontalPositionInvalidated = false;
         }
         return this.lastIsHorizontalScrollShowing;
@@ -506,10 +512,10 @@ export class GridBodyScrollFeature extends BeanStub {
 
     // called by the headerRootComp and moveColumnController
     public scrollHorizontally(pixels: number): number {
-        const oldScrollPosition = this.centerRowsCtrl.eViewport.scrollLeft;
+        const oldScrollPosition = _getScrollLeft(this.eGridViewport, this.enableRtl);
 
         this.setHorizontalScrollPosition(oldScrollPosition + pixels);
-        return this.centerRowsCtrl.eViewport.scrollLeft - oldScrollPosition;
+        return _getScrollLeft(this.eGridViewport, this.enableRtl) - oldScrollPosition;
     }
 
     // gets called by rowRenderer when new data loaded, as it will want to scroll to the top
@@ -712,15 +718,16 @@ export class GridBodyScrollFeature extends BeanStub {
         const newHorizontalScroll: number | null = this.getPositionedHorizontalScroll(column, position);
 
         frameworkOverrides.wrapIncoming(() => {
+            const ctrl = this.ctrlsSvc.getGridBodyCtrl();
             if (newHorizontalScroll !== null) {
-                this.centerRowsCtrl.setCenterViewportScrollLeft(newHorizontalScroll);
+                ctrl?.setHorizontalScrollLeft(newHorizontalScroll);
             }
 
             // this will happen anyway, as the move will cause a 'scroll' event on the body, however
             // it is possible that the ensureColumnVisible method is called from within AG Grid and
             // the caller will need to have the columns rendered to continue, which will be before
             // the event has been worked on (which is the case for cell navigation).
-            this.centerRowsCtrl.onHorizontalViewportChanged();
+            ctrl?.updateColumnViewport();
 
             // so when we return back to user, the cells have rendered
             this.animationFrameSvc?.flushAllFrames();
@@ -733,13 +740,13 @@ export class GridBodyScrollFeature extends BeanStub {
     ): number | null {
         const { columnBeforeStart, columnAfterEnd } = this.isColumnOutsideViewport(column);
 
-        const viewportTooSmallForColumn = this.centerRowsCtrl.getCenterWidth() < column.getActualWidth();
-        const viewportWidth = this.centerRowsCtrl.getCenterWidth();
+        const viewportWidth = this.ctrlsSvc.getGridBodyCtrl()?.getCenterWidth() ?? 0;
+        const viewportTooSmallForColumn = viewportWidth < column.getActualWidth();
 
-        const isRtl = this.enableRtl;
-
-        let alignColToStart = (isRtl ? columnBeforeStart : columnAfterEnd) || viewportTooSmallForColumn;
-        let alignColToEnd = isRtl ? columnAfterEnd : columnBeforeStart;
+        // column left values and scroll positions are both "distance from start edge",
+        // so the alignment logic is the same in LTR and RTL.
+        let alignColToStart = columnAfterEnd || viewportTooSmallForColumn;
+        let alignColToEnd = columnBeforeStart;
 
         if (position !== 'auto') {
             alignColToStart = position === 'start';
@@ -756,10 +763,10 @@ export class GridBodyScrollFeature extends BeanStub {
             }
 
             if (alignColToStart) {
-                return isRtl ? colRight : colLeft;
+                return colLeft;
             }
 
-            return isRtl ? colLeft - viewportWidth : colRight - viewportWidth;
+            return colRight - viewportWidth;
         }
 
         return null;
@@ -769,31 +776,27 @@ export class GridBodyScrollFeature extends BeanStub {
         const { start: viewportStart, end: viewportEnd } = this.getViewportBounds();
         const { colLeft, colRight } = this.getColumnBounds(column);
 
-        const isRtl = this.enableRtl;
-
-        const columnBeforeStart = isRtl ? viewportStart > colRight : viewportEnd < colRight;
-        const columnAfterEnd = isRtl ? viewportEnd < colLeft : viewportStart > colLeft;
+        const columnBeforeStart = viewportEnd < colRight;
+        const columnAfterEnd = viewportStart > colLeft;
 
         return { columnBeforeStart, columnAfterEnd };
     }
 
     private getColumnBounds(column: AgColumn): { colLeft: number; colMiddle: number; colRight: number } {
-        const isRtl = this.enableRtl;
-        const bodyWidth = this.visibleCols.bodyWidth;
-        const colWidth = column.getActualWidth();
         const colLeft = column.getLeft()!;
-        const multiplier = isRtl ? -1 : 1;
+        const colWidth = column.getActualWidth();
 
-        const colLeftPixel = isRtl ? bodyWidth - colLeft : colLeft;
-        const colRightPixel = colLeftPixel + colWidth * multiplier;
-        const colMidPixel = colLeftPixel + (colWidth / 2) * multiplier;
-
-        return { colLeft: colLeftPixel, colMiddle: colMidPixel, colRight: colRightPixel };
+        return {
+            colLeft,
+            colMiddle: colLeft + colWidth / 2,
+            colRight: colLeft + colWidth,
+        };
     }
 
     private getViewportBounds(): { start: number; end: number; width: number } {
-        const viewportWidth = this.centerRowsCtrl.getCenterWidth();
-        const scrollPosition = this.centerRowsCtrl.getCenterViewportScrollLeft();
+        const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
+        const viewportWidth = gridBodyCtrl?.getCenterWidth() ?? 0;
+        const scrollPosition = gridBodyCtrl?.getHorizontalScrollLeft() ?? 0;
 
         const viewportStartPixel = scrollPosition;
         const viewportEndPixel = viewportWidth + scrollPosition;

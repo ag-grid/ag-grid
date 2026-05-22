@@ -23,7 +23,7 @@ export const showJsComp = (
     // be wrapping a React filter, so we need to cater for async comps here.
 
     let comp: any;
-    let compGui: HTMLElement;
+    let compGui: HTMLElement | undefined;
     let destroyed = false;
 
     promise.then((c) => {
@@ -33,8 +33,10 @@ export const showJsComp = (
         }
 
         comp = c;
-        compGui = comp.getGui();
-        eParent.appendChild(compGui);
+        compGui = comp.getGui?.();
+        if (compGui) {
+            eParent.appendChild(compGui);
+        }
         setRef(ref, comp);
     });
 

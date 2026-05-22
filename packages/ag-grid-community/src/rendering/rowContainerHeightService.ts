@@ -22,6 +22,8 @@ export class RowContainerHeightService extends BeanStub implements NamedBean {
     public uiContainerHeight: number | null; // how many pixels we actually have
     private pixelsToShave: number; // the number of pixels we need to shave
 
+    public stickyBottomRowsHeight: number = 0;
+
     // the number of pixels we add to each rowTop - depends on the scroll position
     public divStretchOffset: number;
 
@@ -111,6 +113,13 @@ export class RowContainerHeightService extends BeanStub implements NamedBean {
 
     public getRealPixelPosition(modelPixel: number): number {
         return modelPixel - this.divStretchOffset;
+    }
+
+    public getAdjustedUiContainerHeight(): number | null {
+        if (this.uiContainerHeight == null) {
+            return null;
+        }
+        return this.uiContainerHeight - this.stickyBottomRowsHeight;
     }
 
     private getUiBodyHeight(): number {

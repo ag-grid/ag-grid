@@ -74,10 +74,10 @@ describe('grouping leaf ordering', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── id "Id" width:200 flex:1
-            ├── make "Make" width:200 flex:1
-            ├── model "Model" width:200 flex:1
-            └── group "Group" width:200 flex:1 rowGroup
+            ├── id "Id" width:250 flex:1
+            ├── make "Make" width:250 flex:1
+            ├── model "Model" width:250 flex:1
+            └── group "Group" width:250 flex:1 rowGroup
         `);
     });
 
@@ -133,10 +133,10 @@ describe('grouping leaf ordering', () => {
 
         await new GridColumns(api, 'columns').checkColumns(`
             CENTER
-            ├── id "Id" width:200 flex:1
-            ├── make "Make" width:200 flex:1
-            ├── model "Model" width:200 flex:1
-            └── group "Group" width:200 flex:1 rowGroup
+            ├── id "Id" width:250 flex:1
+            ├── make "Make" width:250 flex:1
+            ├── model "Model" width:250 flex:1
+            └── group "Group" width:250 flex:1 rowGroup
         `);
     });
 });

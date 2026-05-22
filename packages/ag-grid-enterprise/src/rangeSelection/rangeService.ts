@@ -134,7 +134,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         this.ctrlsSvc.whenReady(this, (p) => {
             const gridBodyCtrl = p.gridBodyCtrl;
             this.autoScrollService = new AutoScrollService({
-                scrollContainer: gridBodyCtrl.eBodyViewport,
+                scrollContainer: gridBodyCtrl.eGridViewport,
                 scrollAxis: 'xy',
                 getVerticalPosition: () => gridBodyCtrl.scrollFeature.getVScrollPosition().top,
                 setVerticalPosition: (position) => gridBodyCtrl.scrollFeature.setVerticalScrollPosition(position),
@@ -142,6 +142,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
                 setHorizontalPosition: (position) => gridBodyCtrl.scrollFeature.setHorizontalScrollPosition(position),
                 shouldSkipVerticalScroll: () => !_isDomLayout(this.gos, 'normal'),
                 shouldSkipHorizontalScroll: () => !gridBodyCtrl.scrollFeature.isHorizontalScrollShowing(),
+                getTopOffset: () => gridBodyCtrl.getTopPinnedRowsOffset(),
+                getBottomOffset: () => gridBodyCtrl.getBottomPinnedRowsOffset(),
             });
         });
     }
@@ -247,7 +249,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
         this.ctrlsSvc
             .getGridBodyCtrl()
-            .eBodyViewport.addEventListener('scroll', this.bodyScrollListener, { passive: true });
+            .eGridViewport.addEventListener('scroll', this.bodyScrollListener, { passive: true });
 
         this.dispatchChangedEvent(true, false, this.draggingRange.id);
     }
@@ -302,7 +304,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
 
         this.autoScrollService.ensureCleared();
 
-        this.ctrlsSvc.getGridBodyCtrl().eBodyViewport.removeEventListener('scroll', this.bodyScrollListener);
+        this.ctrlsSvc.getGridBodyCtrl().eGridViewport.removeEventListener('scroll', this.bodyScrollListener);
         this.lastMouseEvent = null;
         this.dragging = false;
         this.draggingRange = undefined;

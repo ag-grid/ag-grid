@@ -1,4 +1,12 @@
-import type { Column, GridOptions, IFooterService, IRowNode, NamedBean, RowNode } from 'ag-grid-community';
+import type {
+    Column,
+    GridOptions,
+    IFooterService,
+    IRowNode,
+    NamedBean,
+    RowNode,
+    VerticalSection,
+} from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _getGrandTotalRow, _getGroupTotalRowCallback, _warn } from 'ag-grid-community';
 
 import { _createRowNodeFooter } from './footerUtils';
@@ -12,7 +20,7 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
         callback: (node: RowNode, index: number) => void,
         includeFooterNodes: boolean,
         isRootNode: boolean,
-        position: 'top' | 'bottom'
+        position: VerticalSection
     ): number {
         let index = startIndex;
 
@@ -107,10 +115,10 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
 }
 
 function _positionMatchesGrandTotalRow(
-    position: 'top' | 'bottom',
-    grandTotaRow: GridOptions['grandTotalRow'] | false
+    position: VerticalSection,
+    grandTotalRow: GridOptions['grandTotalRow'] | false
 ): boolean {
-    switch (grandTotaRow) {
+    switch (grandTotalRow) {
         case 'top':
         case 'pinnedTop':
             return position === 'top';

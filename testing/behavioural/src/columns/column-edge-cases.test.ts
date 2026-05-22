@@ -290,7 +290,7 @@ describe('Column Edge Cases', () => {
     });
 
     describe('RTL mode', () => {
-        test('enableRtl reverses column left positions', async () => {
+        test('enableRtl keeps column left positions as start-edge offsets', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { colId: 'a', width: 100 },
@@ -300,12 +300,14 @@ describe('Column Edge Cases', () => {
                 enableRtl: true,
             });
 
+            const colB = api.getColumn('b')!;
             const colA = api.getColumn('a')!;
             const colC = api.getColumn('c')!;
 
-            // In RTL, last column has left=0, positions increase right-to-left
-            expect(colC.getLeft()).toBe(0);
-            expect(colA.getLeft()).toBeGreaterThan(colC.getLeft()!);
+            // Column left values remain start-edge offsets in both LTR and RTL.
+            expect(colA.getLeft()).toBe(0);
+            expect(colB.getLeft()).toBe(100);
+            expect(colC.getLeft()).toBe(300);
 
             await new GridColumns(api, 'RTL columns').checkColumns(false);
         });
@@ -333,6 +335,89 @@ describe('Column Edge Cases', () => {
                 RIGHT
                 └── right width:200
             `);
+        });
+
+        test('allDisplayedColumns order: LTR=[left, center, right], RTL=[right, center, left]', async () => {
+            const columnDefs: ColDef[] = [
+                { colId: 'L1', pinned: 'left' },
+                { colId: 'L2', pinned: 'left' },
+                { colId: 'C1' },
+                { colId: 'C2' },
+                { colId: 'R1', pinned: 'right' },
+                { colId: 'R2', pinned: 'right' },
+            ];
+
+            const ltrApi = gridsManager.createGrid('ltrGrid', { columnDefs, enableRtl: false });
+            expect(ltrApi.getAllDisplayedColumns().map((c: Column) => c.getColId())).toEqual([
+                'L1',
+                'L2',
+                'C1',
+                'C2',
+                'R1',
+                'R2',
+            ]);
+
+            const rtlApi = gridsManager.createGrid('rtlGrid', { columnDefs, enableRtl: true });
+            expect(rtlApi.getAllDisplayedColumns().map((c: Column) => c.getColId())).toEqual([
+                'R1',
+                'R2',
+                'C1',
+                'C2',
+                'L1',
+                'L2',
+            ]);
+        });
+
+        test('getDisplayedColAfter / getDisplayedColBefore navigate within allDisplayedColumns order', async () => {
+            const columnDefs: ColDef[] = [
+                { colId: 'L', pinned: 'left' },
+                { colId: 'C1' },
+                { colId: 'C2' },
+                { colId: 'R', pinned: 'right' },
+            ];
+
+            for (const enableRtl of [false, true]) {
+                const api = gridsManager.createGrid(`grid-${enableRtl}`, { columnDefs, enableRtl });
+                const order = api.getAllDisplayedColumns();
+                // Walk the chain via getDisplayedColAfter and assert it traces allDisplayedColumns.
+                const walked = [order[0]];
+                let cur: Column | null = order[0];
+                while ((cur = api.getDisplayedColAfter(cur))) {
+                    walked.push(cur);
+                }
+                expect(walked.map((c) => c.getColId())).toEqual(order.map((c) => c.getColId()));
+
+                // And the reverse via getDisplayedColBefore.
+                const walkedBack = [order[order.length - 1]];
+                cur = order[order.length - 1];
+                while ((cur = api.getDisplayedColBefore(cur))) {
+                    walkedBack.push(cur);
+                }
+                walkedBack.reverse();
+                expect(walkedBack.map((c) => c.getColId())).toEqual(order.map((c) => c.getColId()));
+
+                // Edge cases: first has no before, last has no after.
+                expect(api.getDisplayedColBefore(order[0])).toBeNull();
+                expect(api.getDisplayedColAfter(order[order.length - 1])).toBeNull();
+            }
+        });
+
+        test('isPinningLeft / isPinningRight reflect presence of pinned columns', async () => {
+            for (const enableRtl of [false, true]) {
+                const noPinApi = gridsManager.createGrid(`no-pin-${enableRtl}`, {
+                    columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                    enableRtl,
+                });
+                expect(noPinApi.isPinningLeft()).toBe(false);
+                expect(noPinApi.isPinningRight()).toBe(false);
+
+                const bothApi = gridsManager.createGrid(`both-${enableRtl}`, {
+                    columnDefs: [{ colId: 'a', pinned: 'left' }, { colId: 'b' }, { colId: 'c', pinned: 'right' }],
+                    enableRtl,
+                });
+                expect(bothApi.isPinningLeft()).toBe(true);
+                expect(bothApi.isPinningRight()).toBe(true);
+            }
         });
     });
 

@@ -36,6 +36,7 @@ env:
   NX_COMMAND_TYPE: ${{ github.event.inputs.nx_command }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   SLACK_CHANNEL: '#ci-grid-gate'
+  LIBRARY_WEBSITE_STATUS_CHANNEL: '#grid-website-status'
   AG_LIBRARY: grid
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "https://registry.ag-grid.com"
@@ -133,34 +134,6 @@ jobs:
       nx_base: ${{ steps.setup.outputs.base }}
       build_type: ${{ steps.setup.outputs.type }}
       snapshot_branch: ${{ steps.snapshot-prepare.outputs.branch }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
-
-      - name: Fetch Refs
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: 'rw'
-
-      - name: Prepare Snapshot Branch
-        uses: ./.github/actions/snapshot-prepare
-        id: snapshot-prepare
-
-  calc_matrix:
-    name: Calculate Github Matrix
-    needs: [ detect-changes, init ]
-    if: needs.detect-changes.outputs.run_code_ci == 'true'
-    outputs:
       test_count: ${{ steps.matrix.outputs.test_count }}
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
       test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
@@ -185,7 +158,11 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
-          cache_mode: ro
+          cache_mode: 'rw'
+
+      - name: Prepare Snapshot Branch
+        uses: ./.github/actions/snapshot-prepare
+        id: snapshot-prepare
 
       - name: Calculate Matrix
         id: matrix
@@ -228,15 +205,14 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
-    needs: [ detect-changes, calc_matrix ]
+    needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
-      needs.calc_matrix.outputs.test_count > 0
+      needs.init.outputs.test_count > 0
     strategy:
-      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_matrix )}}
+      matrix: ${{ fromJson(needs.init.outputs.test_matrix )}}
       fail-fast: false
     env:
       NX_PARALLEL: 1
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
       - name: Checkout
         id: checkout
@@ -288,15 +264,14 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     name: e2e Tests
-    needs: [ detect-changes, calc_matrix ]
+    needs: [ detect-changes, init ]
     if: needs.detect-changes.outputs.run_code_ci == 'true' &&
-      needs.calc_matrix.outputs.e2e_test_count > 0
+      needs.init.outputs.e2e_test_count > 0
     strategy:
-      matrix: ${{ fromJson(needs.calc_matrix.outputs.e2e_test_matrix )}}
+      matrix: ${{ fromJson(needs.init.outputs.e2e_test_matrix )}}
       fail-fast: false
     env:
       NX_PARALLEL: 1
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
       - name: Checkout
         id: checkout
@@ -323,16 +298,14 @@ jobs:
           path: |
             reports/
 
-  format_lint_build:
+  lint:
     runs-on: ubuntu-latest
-    name: Format, Lint and Build
-    needs: [ detect-changes, init ]
-    if: ${{ always() && needs.detect-changes.result == 'success' &&
-      (needs.init.result == 'success' || needs.init.result == 'skipped') }}
+    name: Lint & Format Check
+    needs: [ detect-changes ]
+    if: ${{ always() && needs.detect-changes.result == 'success' }}
     outputs:
       format: ${{ steps.format.outcome || '' }}
       lint: ${{ steps.lint.outcome || '' }}
-      build: ${{ steps.build.outcome || '' }}
     steps:
       - name: Checkout
         id: checkout
@@ -361,23 +334,41 @@ jobs:
         run: |
           yarn nx lint
 
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    needs: [ detect-changes ]
+    if: needs.detect-changes.outputs.run_code_ci == 'true' &&
+      github.event.pull_request.draft == false
+    outputs:
+      build: ${{ steps.build.outcome || '' }}
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
       - name: nx build
         id: build
-        if: needs.detect-changes.outputs.run_code_ci == 'true'
         run: |
           yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
   docs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
-    needs: [ detect-changes, init ]
+    needs: [ detect-changes ]
     if: ${{ (needs.detect-changes.outputs.run_code_ci == 'true' ||
-      needs.detect-changes.outputs.run_docs_ci == 'true') && needs.init.result
-      == 'success' && !inputs.skip_docs }}
+      needs.detect-changes.outputs.run_docs_ci == 'true') &&
+      github.event.pull_request.draft == false && !inputs.skip_docs }}
     strategy:
       fail-fast: false
-    env:
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
     outputs:
       docs_deployed: ${{ steps.deploy_to_staging.outcome }}
     steps:
@@ -400,8 +391,11 @@ jobs:
         run: node scripts/deployments/validateGridModulesList.js
 
       - name: docs build and link checker
-        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c
-          staging
+        run: |
+          if [[ "${{ github.event_name }}" != "pull_request" ]] || [[ "${{ needs.detect-changes.outputs.run_docs_ci }}" == "true" ]]; then
+            export CHECK_LINKS=true CHECK_REDIRECTS=true
+          fi
+          yarn nx run ag-grid-docs:build -c staging
 
       - name: validate base url
         run: node scripts/deployments/sanityCheckBaseUrl.js staging
@@ -434,12 +428,12 @@ jobs:
     name: Framework Package Tests (${{ matrix.framework }})
     permissions:
       contents: write
-    needs: [ calc_matrix, init ]
+    needs: [ init ]
     if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type
       == 'release') || inputs.run_package_tests
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_pkg_matrix )}}
+      matrix: ${{ fromJson(needs.init.outputs.test_pkg_matrix )}}
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
@@ -480,9 +474,9 @@ jobs:
         init,
         test,
         e2e,
-        format_lint_build,
+        lint,
+        build,
         docs,
-        calc_matrix,
         fw_pkg_test,
         sonar_community,
         sonar_enterprise,
@@ -520,10 +514,18 @@ jobs:
         if: needs.test.result == 'success' || needs.test.result == 'failure' ||
           needs.e2e.result == 'success' || needs.e2e.result == 'failure'
         run: |
+          mkdir -p reports/
+          if [ ! -d test-results/ ]; then
+            echo "No test-results/ directory; nothing to merge."
+            exit 0
+          fi
+          reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
+          if [ -z "$reports" ]; then
+            echo "No JUnit XML files found under test-results/; nothing to merge."
+            exit 0
+          fi
           YARN_REGISTRY=
           yarn global add junit-report-merger
-          reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
-          mkdir -p reports/
           echo "$reports" | (while read name ; do
             yarn exec -s jrm reports/${name} "test-results/**/${name}"
           done)
@@ -546,13 +548,13 @@ jobs:
           WORKFLOW_STATUS="success"
           if [[ "${{ needs.init.result }}" == "failure" ]] ; then
             WORKFLOW_STATUS="failure"
-          elif [[ "${{ needs.calc_matrix.result }}" == "failure" ]] ; then
-            WORKFLOW_STATUS="failure"
           elif [ "${{ needs.test.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.e2e.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.format_lint_build.result }}" == "failure" ] ; then
+          elif [ "${{ needs.lint.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
+          elif [ "${{ needs.build.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.docs.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
@@ -613,44 +615,32 @@ jobs:
 
       - name: SlackBot
         if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
-        env:
-          CI_GRID_GATE_CHANNEL: ${{ env.SLACK_CHANNEL }}
-          CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.CHARTS_TEAM_CITY_CHANNEL }}
-          WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
+        uses: ./external/ag-shared/github/actions/slack-ci-notification
+        with:
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-          SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
-          SLACK_GITHUB_MAPPING: ${{ secrets.SLACK_GITHUB_MAPPING }}
-          RUN_CONTEXT: >
+          NOTION_API_TOKEN: ${{ secrets.SLACK_USER_CONFIG_NOTION_API_TOKEN }}
+          NOTION_DATA_SOURCE_ID: ${{ secrets.SLACK_USER_CONFIG_NOTION_DATA_SOURCE_ID }}
+          AG_PROJECT: AgGrid
+          LAST_SUCCESSFUL_SHA: ${{ steps.find_latest_sha.outputs.sha }}
+          TEAM_CHANNEL: ${{ env.SLACK_CHANNEL }}
+          DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
+          WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
+          LIBRARY_WEBSITE_STATUS_CHANNEL: ${{ env.LIBRARY_WEBSITE_STATUS_CHANNEL }}
+          REPORT_URL: ${{ steps.testReport.outputs.url_html }}
+          CHANGED_STATE: ${{ steps.lastJobStatus.outputs.changedState }}
+          DEPLOY_TO_STAGING: ${{ needs.docs.outputs.docs_deployed == 'success' }}
+          JOB_STATUSES: >
             {
-              "workflow": "${{ github.workflow }}",
-              "ref": "${{ github.ref }}",
-              "currentSha": "${{ github.sha }}",
-              "lastSuccessfulSha": "${{ steps.find_latest_sha.outputs.sha }}",
-              "runId": "${{ github.run_id }}",
-              "project": "AgGrid",
-              "reportUrl": "${{ steps.testReport.outputs.url_html }}",
-              "deployToStaging": ${{ needs.docs.outputs.docs_deployed == 'success' }},
-              "changedState": ${{ steps.lastJobStatus.outputs.changedState == 'true' }},
-              "jobStatuses":
-                {
-                    "Format": "${{ needs.format_lint_build.outputs.format }}",
-                    "Lint": "${{ needs.format_lint_build.outputs.lint }}",
-                    "Build": "${{ needs.format_lint_build.outputs.build }}",
-                    "Test": "${{ needs.test.result }}",
-                    "e2e": "${{ needs.e2e.result }}",
-                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
-                    "Docs": "${{ needs.docs.result }}",
-                    "SonarCommunity": "${{ needs.sonar_community.result }}",
-                    "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
-                }
+              "Format": "${{ needs.lint.outputs.format }}",
+              "Lint": "${{ needs.lint.outputs.lint }}",
+              "Build": "${{ needs.build.outputs.build }}",
+              "Test": "${{ needs.test.result }}",
+              "e2e": "${{ needs.e2e.result }}",
+              "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
+              "Docs": "${{ needs.docs.result }}",
+              "SonarCommunity": "${{ needs.sonar_community.result }}",
+              "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
             }
-        run: |
-          npx ts-node ./scripts/agBotSlackMessage.ts --auth-token "$SLACK_BOT_OAUTH_TOKEN" \
-            --grid-channel "$CI_GRID_GATE_CHANNEL" \
-            --charts-channel "$CHARTS_TEAM_CITY_CHANNEL" \
-            --website-status-channel "$WEBSITE_STATUS_CHANNEL" \
-            --debug-channel "$SLACK_DEBUG_CHANNEL" \
-            --run-context "$RUN_CONTEXT"
 
       - name: Fail job if workflow failed
         if: success() && steps.lastJobStatus.outputs.workflowStatus == 'failure'

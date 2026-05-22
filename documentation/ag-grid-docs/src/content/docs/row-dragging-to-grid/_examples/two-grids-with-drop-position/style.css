@@ -54,9 +54,11 @@ button i {
 .factory-red {
     background-color: #cc333344;
 }
+
 .factory-green {
     background-color: #33cc3344;
 }
+
 .factory-blue {
     background-color: #2244cc44;
 }
@@ -64,9 +66,11 @@ button i {
 .red-row {
     background-color: #cc333344;
 }
+
 .green-row {
     background-color: #33cc3344;
 }
+
 .blue-row {
     background-color: #2244cc44;
 }

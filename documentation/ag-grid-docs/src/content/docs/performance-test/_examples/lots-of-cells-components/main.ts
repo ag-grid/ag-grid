@@ -51,7 +51,7 @@ function onScroll() {
     _requestIdleCallback(() => {
         outputText(performance.now() - start);
     });
-    const eBodyViewport = document.querySelector<HTMLElement>('.ag-body-viewport')!;
+    const eBodyViewport = document.querySelector<HTMLElement>('.ag-grid-viewport')!;
     const currScroll = eBodyViewport.scrollTop;
     eBodyViewport.scroll(0, currScroll! + 5000);
 }

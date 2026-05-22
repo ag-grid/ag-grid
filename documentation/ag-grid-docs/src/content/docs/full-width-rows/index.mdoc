@@ -86,6 +86,8 @@ The example below demonstrates the behaviour when Full Width Rows are embedded i
 - A different instance of the Full Width Cell Renderer is created for each one of the following sections: **Pinned Left**, **Pinned Right**, **Non Pinned**.
 - Full Width Rows in the **non pinned** section take the whole width of the section and scroll horizontally.
 - Full Width Rows in the **pinned** sections take the whole width of the section.
+- The renderer can hide a pinned section by {% if isFramework("javascript") %}returning `null` from `getGui()`{% /if %}{% if isFramework("react") %}returning `null`{% /if %}{% if isFramework("angular", "vue") %}rendering an empty template{% /if %}. When a pinned section is hidden, the **non pinned** section expands to fill the available space.
+- In the example below, the **left pinned** section is hidden for every 4th full-width row, and the **right pinned** section is hidden for every 2nd full-width row.
 - The buttons log to the developer console.
 
 {% gridExampleRunner title="Embedded Full Width Rows" name="embedded-full-width"  exampleHeight=595 /%}

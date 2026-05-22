@@ -1,3 +1,4 @@
+import type { HorizontalDirection } from '../agStack/constants/direction';
 import { _areEqual, _last } from '../agStack/utils/array';
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
@@ -388,39 +389,60 @@ function calculateValidMoves(params: {
     return validMoves;
 }
 
+function getSectionElement(pinned: ColumnPinnedType, ctrlsSvc: CtrlsService): HTMLElement | null {
+    let sectionClass: string;
+    if (pinned === 'left') {
+        sectionClass = 'ag-grid-pinned-left-cells';
+    } else if (pinned === 'right') {
+        sectionClass = 'ag-grid-pinned-right-cells';
+    } else {
+        sectionClass = 'ag-grid-scrolling-cells';
+    }
+    return ctrlsSvc
+        .getHeaderRowContainerCtrl()
+        ?.eViewport?.querySelector(`.ag-header-row .${sectionClass}`) as HTMLElement | null;
+}
+
+export function clientXToSectionX(clientX: number, pinned: ColumnPinnedType, ctrlsSvc: CtrlsService): number {
+    const eSection = getSectionElement(pinned, ctrlsSvc);
+    if (!eSection) {
+        return clientX;
+    }
+    return clientX - eSection.getBoundingClientRect().left;
+}
+
+export const normaliseDirection = (
+    hDirection: HorizontalDirection,
+    isRtl: boolean,
+    pinned: ColumnPinnedType | null
+): HorizontalDirection => {
+    if (isRtl && pinned !== 'left') {
+        switch (hDirection) {
+            case 'left':
+                return 'right';
+            case 'right':
+                return 'left';
+        }
+    }
+
+    return hDirection;
+};
+
 export function normaliseX(params: {
     x: number;
     pinned?: ColumnPinnedType;
-    fromKeyboard?: boolean;
-    useHeaderRow?: boolean;
-    skipScrollPadding?: boolean;
-    gos: GridOptionsService;
+    isRtl: boolean;
     ctrlsSvc: CtrlsService;
 }): number {
-    const { pinned, fromKeyboard, gos, ctrlsSvc, useHeaderRow, skipScrollPadding } = params;
-    let eViewport = ctrlsSvc.getHeaderRowContainerCtrl(pinned)?.eViewport;
-
+    const { isRtl, ctrlsSvc, pinned } = params;
     let { x } = params;
 
-    if (!eViewport) {
-        return 0;
-    }
-
-    if (fromKeyboard) {
-        x -= eViewport.getBoundingClientRect().left;
-    }
-
-    // flip the coordinate if doing RTL
-    if (gos.get('enableRtl')) {
-        if (useHeaderRow) {
-            eViewport = eViewport.querySelector('.ag-header-row') as HTMLElement;
+    if (isRtl && pinned !== 'left') {
+        const eSection = getSectionElement(pinned ?? null, ctrlsSvc);
+        if (!eSection) {
+            return 0;
         }
-        x = eViewport.clientWidth - x;
-    }
-
-    // adjust for scroll only if centre container (the pinned containers don't scroll)
-    if (pinned == null && !skipScrollPadding) {
-        x += ctrlsSvc.get('center').getCenterViewportScrollLeft();
+        x = eSection.getBoundingClientRect().width - x;
     }
 
     return x;

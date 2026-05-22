@@ -55,6 +55,23 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             filterChanged: setup,
             cellSelectionChanged: setup,
         });
+
+        // Virtual lists in column panels/choosers create new DOM elements on scroll,
+        // which lose their test IDs. Capture-phase scroll listener re-applies them.
+        const root = _getRootNode(this.beans);
+        const onVirtualListScroll = _debounce(this, () => this.setupAllTestIds(), 100);
+        const onScroll = (e: Event) => {
+            const target = e.target;
+            if (
+                target instanceof HTMLElement &&
+                target.classList.contains('ag-virtual-list-viewport') &&
+                (target.closest('.ag-column-panel') || target.closest('.ag-panel'))
+            ) {
+                onVirtualListScroll();
+            }
+        };
+        root.addEventListener('scroll', onScroll, { capture: true });
+        this.addDestroyFunc(() => root.removeEventListener('scroll', onScroll, { capture: true }));
     }
 
     public setupAllTestIds(): void {
@@ -140,7 +157,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         /** Rows */
 
-        root.querySelectorAll('.ag-row').forEach((row) => {
+        root.querySelectorAll('.ag-row[row-id]').forEach((row) => {
             const rowId = row.getAttribute('row-id');
             setTestId(row, agTestIdFor.rowNode(rowId));
 
@@ -458,7 +475,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         });
     }
 
-    private setupColumnDropArea(root: ParentNode, source: 'panel' | 'toolbar'): void {
+    private setupColumnDropArea(root: Element, source: 'panel' | 'toolbar'): void {
         root.querySelectorAll('.ag-column-drop').forEach((columnDrop) => {
             const dropAreaName = columnDrop.querySelector('.ag-column-drop-list')?.getAttribute('aria-label');
             setTestId(columnDrop, agTestIdFor.columnDropArea(source, dropAreaName));

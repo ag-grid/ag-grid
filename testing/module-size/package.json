@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-module-size",
   "private": true,
-  "version": "35.3.0",
+  "version": "35.3.0-beta.20260519.1722",
   "scripts": {
     "dev": "vite",
     "cp-app": "cp ./src/App_Src.tsx ./src/App_AUTO.tsx",
@@ -14,11 +14,11 @@
     "test:e2e": "run-s \"module-combinations -- {1}\" module-validate --"
   },
   "dependencies": {
-    "ag-grid-react": "35.3.0",
-    "ag-grid-community": "35.3.0",
-    "ag-grid-enterprise": "35.3.0",
-    "ag-charts-community": "13.3.0",
-    "ag-charts-enterprise": "13.3.0",
+    "ag-grid-react": "35.3.0-beta.20260519.1722",
+    "ag-grid-community": "35.3.0-beta.20260519.1722",
+    "ag-grid-enterprise": "35.3.0-beta.20260519.1722",
+    "ag-charts-community": "13.3.0-beta.20260519",
+    "ag-charts-enterprise": "13.3.0-beta.20260519",
     "ag-shared": "0.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -32,7 +32,7 @@
     "glob": "^11.1.0",
     "globals": "^17.5.0",
     "terser": "^5.46.1",
-    "typescript": "^5.5.3",
+    "typescript": "~5.8.3",
     "typescript-eslint": "^8.58.2",
     "vite": "~5.4.19",
     "npm-run-all": "4.1.5"

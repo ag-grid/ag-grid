@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "esnext",
+    "module": "ESNext",
     "useDefineForClassFields": false,
     "strict": true,
     "forceConsistentCasingInFileNames": false,

@@ -174,6 +174,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         chartTitleEdit: ChartTitleEditEvent<TData, TContext>;
         recalculateRowBounds: RecalculateRowBoundsEvent<TData, TContext>;
         stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
+        stickyBottomOffsetChanged: StickyBottomOffsetChangedEvent<TData, TContext>;
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
         columnsReset: ColumnsResetEvent<TData, TContext>;
@@ -882,6 +883,10 @@ export interface PaginationPixelOffsetChangedEvent<TData = any, TContext = any> 
 > {}
 
 export interface StickyTopOffsetChangedEvent extends AgEvent<'stickyTopOffsetChanged'> {
+    offset: number;
+}
+
+export interface StickyBottomOffsetChangedEvent extends AgEvent<'stickyBottomOffsetChanged'> {
     offset: number;
 }
 
@@ -1686,6 +1691,11 @@ export interface RecalculateRowBoundsEvent<TData = any, TContext = any> extends 
 > {}
 export interface StickyTopOffsetChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
     'stickyTopOffsetChanged',
+    TData,
+    TContext
+> {}
+export interface StickyBottomOffsetChangedEvent<TData = any, TContext = any> extends AgGlobalEvent<
+    'stickyBottomOffsetChanged',
     TData,
     TContext
 > {}

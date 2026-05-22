@@ -24,7 +24,7 @@ import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils'
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
-import type { HeaderComp } from './headerComp';
+import type { AgColumnHeader } from './agColumnHeader';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
@@ -73,7 +73,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     ): void {
         this.comp = comp;
 
-        const { rowCtrl, column, beans } = this;
+        const { column, beans } = this;
         const { colResize, context, colHover, rangeSvc } = beans;
         const compBean = setupCompBean(this, context, compBeanInput);
 
@@ -103,9 +103,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.refreshAria();
 
         if (colResize) {
-            this.resizeFeature = compBean.createManagedBean(
-                colResize.createResizeFeature(rowCtrl.pinned, column, eResize, comp, this)
-            );
+            this.resizeFeature = compBean.createManagedBean(colResize.createResizeFeature(column, eResize, comp, this));
         } else {
             _setDisplayed(eResize, false);
         }
@@ -726,10 +724,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 }
 
-function isHeaderComp(headerComp: IHeader | undefined): headerComp is HeaderComp {
-    // can't use `instanceof` here as it prevents tree shaking of `HeaderComp`
+function isHeaderComp(headerComp: IHeader | undefined): headerComp is AgColumnHeader {
+    // can't use `instanceof` here as it prevents tree shaking of `AgColumnHeader`
     return (
-        typeof (headerComp as HeaderComp)?.getAnchorElementForMenu === 'function' &&
-        typeof (headerComp as HeaderComp).onMenuKeyboardShortcut === 'function'
+        typeof (headerComp as AgColumnHeader)?.getAnchorElementForMenu === 'function' &&
+        typeof (headerComp as AgColumnHeader).onMenuKeyboardShortcut === 'function'
     );
 }

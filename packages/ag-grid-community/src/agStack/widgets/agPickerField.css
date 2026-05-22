@@ -18,7 +18,7 @@
 .ag-picker-field-wrapper {
     overflow: hidden;
     border: var(--ag-picker-button-border);
-    border-radius: 5px;
+    border-radius: var(--ag-picker-button-border-radius);
     background-color: var(--ag-picker-button-background-color);
     min-height: max(var(--ag-list-item-height), calc(var(--ag-spacing) * 4));
 

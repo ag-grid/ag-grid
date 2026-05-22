@@ -7,7 +7,7 @@ import type {
     IHeaderGroupComp,
     IHeaderGroupParams,
     IInnerHeaderGroupComponent,
-} from '../../headerRendering/cells/columnGroup/headerGroupComp';
+} from '../../headerRendering/cells/columnGroup/agColumnGroupHeader';
 import type { IDateComp, IDateParams } from '../../interfaces/dateComponent';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { AgGridCommon } from '../../interfaces/iCommon';

@@ -1,6 +1,8 @@
 .ag-resizer {
     position: absolute;
     pointer-events: none;
+
+    /* keep resize handles above popup body content. */
     z-index: 1;
     user-select: none;
 }

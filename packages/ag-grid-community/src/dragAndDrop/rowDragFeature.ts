@@ -78,11 +78,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         beans.ctrlsSvc.whenReady(this, (p) => {
             const getScrollY = () => p.gridBodyCtrl.scrollFeature.getVScrollPosition().top;
             const autoScroll = new AutoScrollService({
-                scrollContainer: p.gridBodyCtrl.eBodyViewport,
+                scrollContainer: p.gridBodyCtrl.eGridViewport,
                 scrollAxis: 'y',
                 getVerticalPosition: getScrollY,
                 setVerticalPosition: (position: number) =>
                     p.gridBodyCtrl.scrollFeature.setVerticalScrollPosition(position),
+                getTopOffset: () => p.gridBodyCtrl.getTopPinnedRowsOffset(),
                 onScrollCallback: () => {
                     const newVScroll = getScrollY();
                     if (this.autoScrollOldV !== newVScroll) {
@@ -208,7 +209,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return null;
         }
 
-        let { sameGrid, rootNode, source, target } = rowsDrop;
+        const { sameGrid, rootNode, source } = rowsDrop;
+        let { target } = rowsDrop;
 
         target ??= rowModel.getRow(rowModel.getRowCount() - 1) ?? null;
 

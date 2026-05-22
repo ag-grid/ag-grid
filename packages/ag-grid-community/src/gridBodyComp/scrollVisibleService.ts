@@ -4,10 +4,17 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import { _isDomLayout } from '../gridOptionsUtils';
+import type { GridBodyCtrl } from './gridBodyCtrl';
 
-export interface SetScrollsVisibleParams {
+interface ScrollVisibilityState {
     horizontalScrollShowing: boolean;
     verticalScrollShowing: boolean;
+}
+
+interface ScrollGapState {
+    horizontalScrollGap: boolean;
+    verticalScrollGap: boolean;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -19,6 +26,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
 
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
+    private refreshTimer = 0;
 
     public wireBeans(beans: BeanCollection) {
         this.ctrlsSvc = beans.ctrlsSvc;
@@ -31,6 +39,11 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     public horizontalScrollGap: boolean;
     public verticalScrollGap: boolean;
 
+    public override destroy(): void {
+        window.clearTimeout(this.refreshTimer);
+        super.destroy();
+    }
+
     public postConstruct(): void {
         const { gos } = this;
         this.horizontalScrollShowing = gos.get('alwaysShowHorizontalScroll') === true;
@@ -39,15 +52,29 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
 
-        const updateScrollVisible = this.updateScrollVisible.bind(this);
+        const refresh = this.refresh.bind(this);
         this.addManagedEventListeners({
-            displayedColumnsChanged: updateScrollVisible,
-            displayedColumnsWidthChanged: updateScrollVisible,
-            newColumnsLoaded: updateScrollVisible,
+            displayedColumnsChanged: refresh,
+            displayedColumnsWidthChanged: refresh,
+            newColumnsLoaded: refresh,
         });
     }
 
-    private updateScrollVisible(): void {
+    public refresh(): void {
+        this.refreshImpl();
+        window.clearTimeout(this.refreshTimer);
+        this.refreshTimer = window.setTimeout(() => this.refreshImpl(), 500);
+    }
+
+    public isHorizontalScrollShowing(): boolean {
+        return this.horizontalScrollShowing;
+    }
+
+    public isVerticalScrollShowing(): boolean {
+        return this.verticalScrollShowing;
+    }
+
+    private refreshImpl(): void {
         // Because of column animation, if user removes cols anywhere except at the RHS,
         // then the cols on the RHS will animate to the left to fill the gap. This animation
         // means just after the cols are removed, the remaining cols are still in the original
@@ -57,38 +84,83 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         const { colAnimation } = this;
         if (colAnimation?.isActive()) {
             colAnimation.executeLaterVMTurn(() => {
-                colAnimation.executeLaterVMTurn(() => this.updateScrollVisibleImpl());
+                colAnimation.executeLaterVMTurn(() => this.refreshScrollState());
             });
         } else {
-            this.updateScrollVisibleImpl();
+            this.refreshScrollState();
         }
     }
 
-    private updateScrollVisibleImpl(): void {
-        const centerRowCtrl = this.ctrlsSvc.get('center');
+    private refreshScrollState(): void {
+        const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
 
-        if (!centerRowCtrl || this.colAnimation?.isActive()) {
+        if (!this.isAlive() || !gridBodyCtrl || this.colAnimation?.isActive()) {
             return;
         }
 
-        const params: SetScrollsVisibleParams = {
-            horizontalScrollShowing: centerRowCtrl.isHorizontalScrollShowing(),
-            verticalScrollShowing: this.verticalScrollShowing,
-        };
-
-        this.setScrollsVisible(params);
-        this.updateScrollGap();
+        const scrollVisibilityState = this.calculateScrollVisibilityState(gridBodyCtrl);
+        this.applyScrollVisibility(scrollVisibilityState);
+        // Gap measurements depend on the current DOM geometry, so they must be read
+        // after visibility updates have synchronously adjusted widths and classes.
+        this.applyScrollGap(this.calculateScrollGapState(gridBodyCtrl, scrollVisibilityState.verticalScrollShowing));
     }
 
-    public updateScrollGap(): void {
-        const centerRowCtrl = this.ctrlsSvc.get('center');
-        const horizontalGap = centerRowCtrl.hasHorizontalScrollGap();
-        const verticalGap = centerRowCtrl.hasVerticalScrollGap();
+    private calculateScrollVisibilityState(gridBodyCtrl: GridBodyCtrl): ScrollVisibilityState {
+        const verticalScrollShowing = this.calculateVerticalScrollShowing(gridBodyCtrl);
+
+        return {
+            horizontalScrollShowing: this.calculateHorizontalScrollShowing(gridBodyCtrl, verticalScrollShowing),
+            verticalScrollShowing,
+        };
+    }
+
+    private calculateVerticalScrollShowing(gridBodyCtrl: GridBodyCtrl): boolean {
+        if (this.gos.get('alwaysShowVerticalScroll')) {
+            return true;
+        }
+
+        if (!_isDomLayout(this.gos, 'normal')) {
+            return false;
+        }
+
+        const bodyViewportHeight = gridBodyCtrl.getBodyViewportHeight(gridBodyCtrl.eGridViewport.clientHeight);
+        const rowContainerHeight = this.beans.rowContainerHeight.uiContainerHeight ?? 0;
+        return rowContainerHeight > bodyViewportHeight;
+    }
+
+    private calculateHorizontalScrollShowing(gridBodyCtrl: GridBodyCtrl, verticalScrollShowing: boolean): boolean {
+        if (this.gos.get('alwaysShowHorizontalScroll')) {
+            return true;
+        }
+
+        return (
+            gridBodyCtrl.getHorizontalContentWidth(verticalScrollShowing) - gridBodyCtrl.getHorizontalViewportWidth() >
+            0.5
+        );
+    }
+
+    private calculateScrollGapState(gridBodyCtrl: GridBodyCtrl, verticalScrollShowing: boolean): ScrollGapState {
+        const { visibleCols, rowContainerHeight } = this.beans;
+        const horizontalContentWidth =
+            visibleCols.bodyWidth +
+            visibleCols.getLeftStickyColumnContainerWidth() +
+            visibleCols.getRightStickyColumnContainerWidth();
+        const horizontalViewportWidth = gridBodyCtrl.getViewportWidthWithoutScrollbar(verticalScrollShowing);
+        const verticalContentHeight = rowContainerHeight.getAdjustedUiContainerHeight() ?? 0;
+        const verticalViewportHeight = gridBodyCtrl.getBodyViewportHeight(gridBodyCtrl.eGridViewport.clientHeight);
+
+        return {
+            horizontalScrollGap: horizontalContentWidth < horizontalViewportWidth - 0.5,
+            verticalScrollGap: verticalContentHeight < verticalViewportHeight - 0.5,
+        };
+    }
+
+    private applyScrollGap({ horizontalScrollGap, verticalScrollGap }: ScrollGapState): void {
         const atLeastOneDifferent =
-            this.horizontalScrollGap !== horizontalGap || this.verticalScrollGap !== verticalGap;
+            this.horizontalScrollGap !== horizontalScrollGap || this.verticalScrollGap !== verticalScrollGap;
         if (atLeastOneDifferent) {
-            this.horizontalScrollGap = horizontalGap;
-            this.verticalScrollGap = verticalGap;
+            this.horizontalScrollGap = horizontalScrollGap;
+            this.verticalScrollGap = verticalScrollGap;
 
             this.eventSvc.dispatchEvent({
                 type: 'scrollGapChanged',
@@ -96,7 +168,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         }
     }
 
-    public setScrollsVisible(params: SetScrollsVisibleParams): void {
+    private applyScrollVisibility(params: ScrollVisibilityState): void {
         const atLeastOneDifferent =
             this.horizontalScrollShowing !== params.horizontalScrollShowing ||
             this.verticalScrollShowing !== params.verticalScrollShowing;

@@ -1,9 +1,8 @@
-import { _getInnerWidth, _setDisplayed } from '../agStack/utils/dom';
+import { _setDisplayed } from '../agStack/utils/dom';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
-import type { ColumnPinnedType } from '../interfaces/iColumn';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private lastResizeAmount: number;
@@ -11,7 +10,6 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private resizeWithShiftKey: boolean;
 
     constructor(
-        private readonly pinned: ColumnPinnedType,
         private readonly column: AgColumn,
         private readonly eResize: HTMLElement,
         private readonly comp: IHeaderCellComp,
@@ -37,6 +35,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
             const finishedWithResizeFunc = horizontalResizeSvc!.addResizeBar({
                 eResizeBar: this.eResize,
+                isColumn: true,
                 onResizeStart: this.onResizeStart.bind(this),
                 onResizing: this.onResizing.bind(this, false),
                 onResizeEnd: this.onResizing.bind(this, true),
@@ -85,7 +84,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         if (this.column.getPinned()) {
             const leftWidth = pinnedCols?.leftWidth ?? 0;
             const rightWidth = pinnedCols?.rightWidth ?? 0;
-            const bodyWidth = _getInnerWidth(ctrlsSvc.getGridBodyCtrl().eBodyViewport) - 50;
+            const bodyWidth = ctrlsSvc.getGridBodyCtrl().getViewportWidthWithoutScrollbar() - 50;
 
             if (leftWidth + rightWidth + (resizeAmountNormalised - lastResizeAmount) > bodyWidth) {
                 return;
@@ -119,8 +118,9 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private normaliseResizeAmount(dragChange: number): number {
         let result = dragChange;
 
-        const notPinningLeft = this.pinned !== 'left';
-        const pinningRight = this.pinned === 'right';
+        const pinned = this.column.getPinned();
+        const notPinningLeft = pinned !== 'left';
+        const pinningRight = pinned === 'right';
 
         if (this.gos.get('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left

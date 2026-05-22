@@ -17,10 +17,10 @@ test.agExample(import.meta, () => {
     test.eachFramework('initial pinned layout', async ({ page }) => {
         await waitForGridContent(page);
 
-        const leftHeaders = await getPinnedHeaderColIds(page, '.ag-pinned-left-header');
+        const leftHeaders = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-left-cells');
         expect(leftHeaders).toEqual(['rowNum', 'athlete', 'age']);
 
-        const rightHeaders = await getPinnedHeaderColIds(page, '.ag-pinned-right-header');
+        const rightHeaders = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-right-cells');
         expect(rightHeaders).toEqual(['total']);
     });
 
@@ -29,10 +29,10 @@ test.agExample(import.meta, () => {
 
         await page.locator('button:text("Clear Pinned")').click();
 
-        const leftHeaders = await getPinnedHeaderColIds(page, '.ag-pinned-left-header');
+        const leftHeaders = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-left-cells');
         expect(leftHeaders).toEqual([]);
 
-        const rightHeaders = await getPinnedHeaderColIds(page, '.ag-pinned-right-header');
+        const rightHeaders = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-right-cells');
         expect(rightHeaders).toEqual([]);
     });
 
@@ -43,10 +43,10 @@ test.agExample(import.meta, () => {
         await page.locator('button:text("Clear Pinned")').click();
         await page.locator('button:text-is("Left = #, Athlete, Age; Right = Total")').click();
 
-        const leftHeaders = await getPinnedHeaderColIds(page, '.ag-pinned-left-header');
+        const leftHeaders = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-left-cells');
         expect(leftHeaders).toEqual(['rowNum', 'athlete', 'age']);
 
-        const rightHeaders = await getPinnedHeaderColIds(page, '.ag-pinned-right-header');
+        const rightHeaders = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-right-cells');
         expect(rightHeaders).toEqual(['total']);
     });
 
@@ -55,10 +55,10 @@ test.agExample(import.meta, () => {
 
         await page.locator('button:text("Left = Country")').click();
 
-        const leftHeaders = await getPinnedHeaderColIds(page, '.ag-pinned-left-header');
+        const leftHeaders = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-left-cells');
         expect(leftHeaders).toEqual(['country']);
 
-        const rightHeaders = await getPinnedHeaderColIds(page, '.ag-pinned-right-header');
+        const rightHeaders = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-right-cells');
         expect(rightHeaders).toEqual([]);
     });
 
@@ -77,13 +77,13 @@ test.agExample(import.meta, () => {
                 ]);
                 await waitForGridContent(page);
 
-                const headersBefore = await getPinnedHeaderColIds(page, '.ag-pinned-left-header');
+                const headersBefore = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-left-cells');
                 expect(headersBefore).toEqual(['athlete', 'age']);
 
                 await remoteApi.sizeColumnsToFit({});
                 await page.waitForTimeout(600);
 
-                const headersAfter = await getPinnedHeaderColIds(page, '.ag-pinned-left-header');
+                const headersAfter = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-left-cells');
                 expect(headersAfter).toEqual(['athlete', 'age']);
 
                 const state = (await remoteApi.getColumnState()) as any[];
@@ -104,13 +104,13 @@ test.agExample(import.meta, () => {
                 ]);
                 await waitForGridContent(page);
 
-                const headersBefore = await getPinnedHeaderColIds(page, '.ag-pinned-right-header');
+                const headersBefore = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-right-cells');
                 expect(headersBefore).toEqual(['gold', 'silver']);
 
                 await remoteApi.sizeColumnsToFit({});
                 await page.waitForTimeout(600);
 
-                const headersAfter = await getPinnedHeaderColIds(page, '.ag-pinned-right-header');
+                const headersAfter = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-right-cells');
                 expect(headersAfter).toEqual(['gold', 'silver']);
 
                 const state = (await remoteApi.getColumnState()) as any[];
@@ -132,17 +132,17 @@ test.agExample(import.meta, () => {
                 ]);
                 await waitForGridContent(page);
 
-                const leftBefore = await getPinnedHeaderColIds(page, '.ag-pinned-left-header');
+                const leftBefore = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-left-cells');
                 expect(leftBefore).toEqual(['athlete', 'age']);
-                const rightBefore = await getPinnedHeaderColIds(page, '.ag-pinned-right-header');
+                const rightBefore = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-right-cells');
                 expect(rightBefore).toEqual(['gold']);
 
                 await remoteApi.sizeColumnsToFit({});
                 await page.waitForTimeout(600);
 
-                const leftAfter = await getPinnedHeaderColIds(page, '.ag-pinned-left-header');
+                const leftAfter = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-left-cells');
                 expect(leftAfter).toEqual(['athlete', 'age']);
-                const rightAfter = await getPinnedHeaderColIds(page, '.ag-pinned-right-header');
+                const rightAfter = await getPinnedHeaderColIds(page, '.ag-header-row .ag-grid-pinned-right-cells');
                 expect(rightAfter).toEqual(['gold']);
 
                 const state = (await remoteApi.getColumnState()) as any[];

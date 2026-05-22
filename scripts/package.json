@@ -58,7 +58,7 @@
     "nx": "20.8.4",
     "rollup": "^2.74.1",
     "terser": "^4.3.9",
-    "typescript": "~5.4.5",
+    "typescript": "~5.8.3",
     "@types/estree": "1.0.8"
   }
 }

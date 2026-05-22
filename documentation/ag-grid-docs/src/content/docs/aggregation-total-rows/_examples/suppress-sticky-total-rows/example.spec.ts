@@ -2,7 +2,7 @@ import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Example', async ({ page }) => {
-        const stickyBottom = page.locator('.ag-sticky-bottom');
+        const stickyBottom = page.locator('.ag-grid-pinned-bottom-rows');
         const stickyGrandTotal = stickyBottom.locator('[data-testid="ag-row:row-id=rowGroupFooter_ROOT_NODE_ID"]');
         const stickyGroupTotals = stickyBottom.locator('[data-testid^="ag-row:row-id=rowGroupFooter_row-group"]');
         const dropdown = page.locator('#input-property-value');

@@ -27,9 +27,7 @@ export function refreshCells<TData = any>(beans: BeanCollection, params: Refresh
 
 export function refreshHeader(beans: BeanCollection) {
     beans.frameworkOverrides.wrapIncoming(() => {
-        for (const c of beans.ctrlsSvc.getHeaderRowContainerCtrls()) {
-            c.refresh();
-        }
+        beans.ctrlsSvc.getHeaderRowContainerCtrl()?.refresh();
     });
 }
 
@@ -75,9 +73,7 @@ export function getCellRendererInstances<TData = any>(
             continue;
         }
 
-        const renderers = rowCtrl.getFullWidthCellRenderers();
-        for (let i = 0; i < renderers.length; i++) {
-            const renderer = renderers[i];
+        for (const renderer of rowCtrl.getModeCellRenderers()) {
             if (renderer != null) {
                 fullWidthRenderers.push(_unwrapUserComp(renderer));
             }

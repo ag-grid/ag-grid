@@ -3,7 +3,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
-import type { RowCtrl, RowGui } from '../rendering/row/rowCtrl';
+import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CheckboxSelectionComponent } from '../selection/checkboxSelectionComponent';
 import type { SelectAllFeature } from '../selection/selectAllFeature';
 import type { ChangedPath } from '../utils/changedPath';
@@ -39,7 +39,7 @@ export interface ISelectionService {
     deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
     createCheckboxSelectionComponent(): CheckboxSelectionComponent;
     createSelectAllFeature(column: AgColumn): SelectAllFeature | undefined;
-    onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: (gui: RowGui) => void, gui?: RowGui): void;
+    onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: () => void): void;
     announceAriaRowSelection(rowNode: RowNode): void;
     /** Called after grouping / treeData */
     updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void;

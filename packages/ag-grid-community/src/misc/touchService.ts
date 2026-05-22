@@ -8,8 +8,8 @@ import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import type { RowContainerEventsFeature } from '../gridBodyComp/rowContainer/rowContainerEventsFeature';
 import { _isLegacyMenuEnabled } from '../gridOptionsUtils';
-import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
-import type { HeaderGroupComp } from '../headerRendering/cells/columnGroup/headerGroupComp';
+import type { AgColumnHeader } from '../headerRendering/cells/column/agColumnHeader';
+import type { AgColumnGroupHeader } from '../headerRendering/cells/columnGroup/agColumnGroupHeader';
 import type { GridHeaderCtrl } from '../headerRendering/gridHeaderCtrl';
 import type { CellMouseListenerFeature } from '../rendering/cell/cellMouseListenerFeature';
 import type { LongTapEvent, TapEvent } from '../widgets/touchListener';
@@ -28,7 +28,7 @@ export class TouchService extends BeanStub implements NamedBean {
         ctrl: GridBodyCtrl,
         listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void
     ): void {
-        this.mockContextMenu(ctrl, ctrl.eBodyViewport, listener);
+        this.mockContextMenu(ctrl, ctrl.eGridViewport, listener);
     }
 
     public mockHeaderContextMenu(
@@ -49,7 +49,7 @@ export class TouchService extends BeanStub implements NamedBean {
             if (cellCtrl?.column) {
                 cellCtrl.dispatchCellContextMenuEvent(touchEvent ?? null);
             }
-            this.beans.contextMenuSvc?.handleContextMenuMouseEvent(undefined, touchEvent, rowCtrl, cellCtrl!);
+            this.beans.contextMenuSvc?.handleContextMenuMouseEvent(undefined, touchEvent, rowCtrl, cellCtrl);
         };
         this.mockContextMenu(ctrl, ctrl.element, listener);
     }
@@ -75,7 +75,7 @@ export class TouchService extends BeanStub implements NamedBean {
         return false;
     }
 
-    public setupForHeader(comp: HeaderComp): void {
+    public setupForHeader(comp: AgColumnHeader): void {
         const { gos, sortSvc, menuSvc } = this.beans;
 
         if (gos.get('suppressTouch')) {
@@ -135,7 +135,7 @@ export class TouchService extends BeanStub implements NamedBean {
         }
     }
 
-    public setupForHeaderGroup(comp: HeaderGroupComp): void {
+    public setupForHeaderGroup(comp: AgColumnGroupHeader): void {
         const params = comp.params;
         if (
             this.beans.menuSvc?.isHeaderContextMenuEnabled(
@@ -150,7 +150,7 @@ export class TouchService extends BeanStub implements NamedBean {
     }
 
     public setupForHeaderGroupElement(
-        comp: HeaderGroupComp,
+        comp: AgColumnGroupHeader,
         eElement: HTMLElement,
         action: (event: MouseEvent) => void
     ): void {

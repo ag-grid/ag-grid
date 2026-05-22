@@ -49,7 +49,7 @@ function locateCellElements(api: GridApi, rowNode: IRowNode, colId: string) {
 export async function editCell(api: GridApi, rowNode: IRowNode, colId: string, newValue: string) {
     const { gridDiv, rowIndex } = locateCellElements(api, rowNode, colId);
 
-    api.setFocusedCell(rowIndex, colId);
+    api.setFocusedCell(rowIndex, colId, rowNode.rowPinned ?? undefined);
     api.startEditingCell({ rowIndex, rowPinned: rowNode.rowPinned, colKey: colId });
     await asyncSetTimeout(0);
 

@@ -28,7 +28,6 @@ export type AgComponentSelectorType =
     | 'AG-FILTERS-TOOL-PANEL-LIST'
     | 'AG-GRID-BODY'
     | 'AG-GRID-HEADER-DROP-ZONES'
-    | 'AG-HEADER-ROOT'
     | 'AG-NAME-VALUE'
     | 'AG-OVERLAY-WRAPPER'
     | 'AG-PAGINATION'

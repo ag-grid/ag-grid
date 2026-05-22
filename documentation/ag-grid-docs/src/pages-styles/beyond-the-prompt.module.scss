@@ -734,6 +734,13 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
     max-width: 720px;
 }
 
+.agendaDownloads {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px 0;
+}
+
 // ─── Full-width section title rule ───────────────────────────────────────────
 // Editorial banner that replaces the large `.sectionTitle` heading on the
 // At a glance / Speakers / Full schedule / The venue sections. Top + bottom
@@ -1037,20 +1044,6 @@ $btp-logo-orange-filter: brightness(0) saturate(100%) invert(31%) sepia(87%) sat
 .speakerBio {
     font-size: 14px;
     line-height: 1.55;
-    color: var(--btp-ink-muted);
-}
-
-.speakersMore {
-    margin-top: 48px;
-    padding: 24px;
-    text-align: center;
-    border: 1.5px dashed var(--btp-border);
-    border-radius: 12px;
-    font-family: 'Geist Mono', ui-monospace, monospace;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--btp-ink-muted);
 }
 

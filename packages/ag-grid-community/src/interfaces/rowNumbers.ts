@@ -1,5 +1,5 @@
 import type { ColDef } from '../entities/colDef';
-import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
+import type { AgColumnHeader } from '../headerRendering/cells/column/agColumnHeader';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { CellPosition } from './iCellPosition';
 import type { IColumnCollectionService } from './iColumnCollectionService';
@@ -61,7 +61,7 @@ export interface RowNumbersOptions extends Pick<
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IRowNumbersService extends IColumnCollectionService {
-    setupForHeader(comp: HeaderComp): void;
+    setupForHeader(comp: AgColumnHeader): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
     handleKeyDownOnCell(cell: CellPosition, event: KeyboardEvent): boolean;
     createRowNumbersRowResizerFeature(ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined;

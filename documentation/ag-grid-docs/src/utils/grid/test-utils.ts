@@ -105,6 +105,10 @@ const excludeErrors = [
     'Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content.',
     'Request to access cookie or storage on “<URL>” was blocked because it came from a tracker and Enhanced Tracking Protection is enabled.',
     'This site appears to use a scroll-linked positioning effect.',
+    // React warnings from examples that intentionally render read-only controls / raw style props.
+    'You provided a `checked` prop to a form field without an `onChange` handler.',
+    'Unsupported style property %s. Did you mean %s? white-space whiteSpace',
+    'Unsupported style property %s. Did you mean %s? white-space-collapse whiteSpaceCollapse',
 ];
 
 export function setupConsoleExpectations(page: Page) {
@@ -487,11 +491,11 @@ export async function waitForRowAnimations(page: Page) {
         // AG Grid renders rows across several named containers. Zombie rows only
         // appear as duplicates *within* the same container, not across containers.
         const centerContainerSelectors = [
-            '.ag-center-cols-container',
-            '.ag-sticky-top-container',
-            '.ag-sticky-bottom-container',
-            '.ag-floating-top-container',
-            '.ag-floating-bottom-container',
+            '.ag-grid-scrolling-container',
+            '.ag-grid-pinned-top-rows-container',
+            '.ag-grid-pinned-bottom-rows-container',
+            '.ag-grid-sticky-top-rows-container',
+            '.ag-grid-sticky-bottom-rows-container',
         ].join(', ');
 
         for (const container of document.querySelectorAll(centerContainerSelectors)) {

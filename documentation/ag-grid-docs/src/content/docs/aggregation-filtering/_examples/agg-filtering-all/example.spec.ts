@@ -5,7 +5,7 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        await expect(page.locator('.ag-center-cols-container .ag-row[row-id]')).toHaveCount(24);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(24);
 
         const totalFilterInput = agIdFor.numberFilterInstanceInput({ source: 'floating-filter', colId: 'total' });
         await totalFilterInput.fill('609');
@@ -19,6 +19,6 @@ test.agExample(import.meta, () => {
         // Disable groupAggFiltering
         await page.locator('#groupAggFiltering').click();
 
-        await expect(page.locator('.ag-center-cols-container .ag-row[row-id]')).toHaveCount(0);
+        await expect(page.locator('.ag-grid-scrolling-container .ag-row[row-id]')).toHaveCount(0);
     });
 });

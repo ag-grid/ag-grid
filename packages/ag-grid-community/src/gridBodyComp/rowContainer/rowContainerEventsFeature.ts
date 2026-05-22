@@ -58,10 +58,13 @@ export class RowContainerEventsFeature extends BeanStub {
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(mouseEvent.target);
 
         if (eventName === 'contextmenu') {
+            if (!cellCtrl && !rowCtrl) {
+                return;
+            }
             if (cellCtrl?.column) {
                 cellCtrl.dispatchCellContextMenuEvent(mouseEvent);
             }
-            this.beans.contextMenuSvc?.handleContextMenuMouseEvent(mouseEvent, undefined, rowCtrl, cellCtrl!);
+            this.beans.contextMenuSvc?.handleContextMenuMouseEvent(mouseEvent, undefined, rowCtrl, cellCtrl);
         } else {
             if (cellCtrl) {
                 cellCtrl.onMouseEvent(eventName, mouseEvent);
@@ -196,7 +199,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         const rowNode = rowCtrl.rowNode;
-        const fullWidthInfo = rowCtrl.findFullWidthInfoForEvent(keyboardEvent);
+        const fullWidthInfo = rowCtrl.findInfoForEvent(keyboardEvent);
 
         let noteParams: GetNoteParams | undefined;
 

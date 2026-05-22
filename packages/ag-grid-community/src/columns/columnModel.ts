@@ -257,7 +257,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         pivotResultColsSvc: IPivotResultColsService | undefined,
         colDefCols: ColumnCollections
     ): ColumnCollections {
-        const pivotResultCols = pivotResultColsSvc?.getPivotResultCols() ?? null;
+        const pivotResultCols = this.pivotMode ? (pivotResultColsSvc?.getPivotResultCols() ?? null) : null;
         this.showingPivotResult = pivotResultCols != null;
 
         const { map, list, tree, treeDepth } = pivotResultCols ?? colDefCols;

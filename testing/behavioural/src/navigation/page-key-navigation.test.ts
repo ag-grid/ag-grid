@@ -2,6 +2,7 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, KeyCode } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
+import { mockGridLayout } from '../test-utils/polyfills/mockGridLayout';
 import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
 
 interface RowData {
@@ -29,6 +30,24 @@ describe('Page Key Navigation', () => {
     });
 
     let api: GridApi<RowData>;
+    let originalGridHeight: number;
+
+    beforeAll(() => {
+        // Page-nav reads viewport offset dimensions from the grid; jsdom returns 0 by default
+        // so the math degenerates. Opt into real mocked dimensions for this file only.
+        mockGridLayout.useRealOffsetDimensions = true;
+        // Shrink the viewport so the body holds ~2 rows. The mock's 'viewport' case returns
+        // `gridHeight - headerHeight`, and production then subtracts the header offset (~49px)
+        // again in getBodyViewportHeight. So gridHeight 164 ⇒ offsetHeight 134 ⇒
+        // bodyViewport ~85px ⇒ Page Down/Up moves by 2 rows.
+        originalGridHeight = mockGridLayout.gridHeight;
+        mockGridLayout.gridHeight = 164;
+    });
+
+    afterAll(() => {
+        mockGridLayout.useRealOffsetDimensions = false;
+        mockGridLayout.gridHeight = originalGridHeight;
+    });
 
     beforeEach(() => {
         api = gridsManager.createGrid('myGrid', {
@@ -40,8 +59,6 @@ describe('Page Key Navigation', () => {
     afterEach(() => {
         gridsManager.reset();
     });
-
-    // mockGridLayout sets rowHeight=42 and viewport ~84px, giving a page size of 2 rows.
 
     test('Page Down moves focus down by one page', () => {
         api.setFocusedCell(0, 'a');

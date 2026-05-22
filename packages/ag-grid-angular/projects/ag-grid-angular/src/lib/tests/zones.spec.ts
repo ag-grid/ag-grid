@@ -27,7 +27,6 @@ function updateCount(counts: Record<string, boolean>, key: string, isInAngularZo
 
 @Component({
     selector: 'test-comp',
-    standalone: true,
     imports: [],
     template: ` {{ getName() }} `,
 })
@@ -58,7 +57,6 @@ export class TestComponent implements ICellRendererAngularComp {
 
 @Component({
     selector: 'app-grid-wrapper',
-    standalone: true,
     imports: [AgGridAngular],
     template: /* HTML */ `<ag-grid-angular
         [gridOptions]="gridOptions"

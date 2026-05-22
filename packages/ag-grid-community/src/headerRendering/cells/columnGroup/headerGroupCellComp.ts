@@ -4,8 +4,9 @@ import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import type { ElementParams } from '../../../utils/element';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
+import type { IHeaderGroupComp } from './agColumnGroupHeader';
+import { applyHeaderWrapperHidden, applyHeaderWrapperMaxHeight } from './headerGroupCellCtrl';
 import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
-import type { IHeaderGroupComp } from './headerGroupComp';
 
 const HeaderGroupCellCompElement: ElementParams = {
     tag: 'div',
@@ -36,21 +37,8 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         const compProxy: IHeaderGroupCellComp = {
             toggleCss: (cssClassName, on) => this.toggleCss(cssClassName, on),
             setUserStyles: (styles: HeaderStyle) => _addStylesToElement(eGui, styles),
-            setHeaderWrapperHidden: (hidden) => {
-                if (hidden) {
-                    this.eHeaderCompWrapper.style.setProperty('display', 'none');
-                } else {
-                    this.eHeaderCompWrapper.style.removeProperty('display');
-                }
-            },
-            setHeaderWrapperMaxHeight: (value) => {
-                if (value != null) {
-                    this.eHeaderCompWrapper.style.setProperty('max-height', `${value}px`);
-                } else {
-                    this.eHeaderCompWrapper.style.removeProperty('max-height');
-                }
-                this.eHeaderCompWrapper.classList.toggle('ag-header-cell-comp-wrapper-limited-height', value != null);
-            },
+            setHeaderWrapperHidden: (hidden) => applyHeaderWrapperHidden(this.eHeaderCompWrapper, hidden),
+            setHeaderWrapperMaxHeight: (value) => applyHeaderWrapperMaxHeight(this.eHeaderCompWrapper, value),
             setResizableDisplayed: (displayed) => _setDisplayed(this.eResize, displayed),
             setWidth: (width) => (eGui.style.width = width),
             setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAttribute('aria-expanded', expanded),

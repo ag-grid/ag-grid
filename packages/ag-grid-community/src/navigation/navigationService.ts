@@ -337,7 +337,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const scrollbarWidth = this.beans.scrollVisibleSvc.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
-        if (beans.ctrlsSvc.get('center').isHorizontalScrollShowing()) {
+        if (beans.scrollVisibleSvc.isHorizontalScrollShowing()) {
             pixelsInOnePage -= scrollbarWidth;
         }
 
@@ -496,7 +496,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         if (editSvc?.isEditing()) {
             res = editSvc?.moveToNextCell(cellCtrl, backwards, event, source);
         } else {
-            res = this.moveToNextCellNotEditing(previous, backwards, event);
+            res = this.moveToNextCellNotEditing(previous, backwards);
         }
 
         if (res === null) {
@@ -508,11 +508,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     // returns null if no navigation should be performed
-    private moveToNextCellNotEditing(
-        previousCell: CellCtrl | RowCtrl,
-        backwards: boolean,
-        event?: KeyboardEvent
-    ): boolean | null {
+    private moveToNextCellNotEditing(previousCell: CellCtrl | RowCtrl, backwards: boolean): boolean | null {
         const displayedColumns = this.beans.visibleCols.allCols;
         let cellPos: CellPosition;
 
@@ -522,11 +518,8 @@ export class NavigationService extends BeanStub implements NamedBean {
                 column: backwards ? displayedColumns[0] : _last(displayedColumns),
             };
 
-            if (this.gos.get('embedFullWidthRows') && event) {
-                const focusedContainer = previousCell.findFullWidthInfoForEvent(event);
-                if (focusedContainer) {
-                    cellPos.column = focusedContainer.column;
-                }
+            if (this.gos.get('embedFullWidthRows')) {
+                cellPos.column = previousCell.getNavigationColumn();
             }
         } else {
             cellPos = previousCell.getFocusedCellPosition();

@@ -1,5 +1,8 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+
 import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
-import type { GridApi, IRowNode, RowPinnedType } from 'ag-grid-community';
+import type { ColDef, GridApi, IRowNode, RowPinnedType } from 'ag-grid-community';
 
 import { GridColumns, GridRows, TestGridsManager } from '../test-utils';
 import { VERSION } from '../version';
@@ -21,7 +24,7 @@ describe('Pinned rows', () => {
     }
 
     function assertPinnedRowData(data: any[], location: 'top' | 'bottom', rowIndices?: string[]) {
-        const pinnedRows = document.querySelectorAll(`.ag-floating-${location} .ag-row-pinned`);
+        const pinnedRows = document.querySelectorAll(`.ag-grid-pinned-${location}-rows-container .ag-row-pinned`);
 
         expect(pinnedRows.length).toBe(data.length);
 
@@ -310,6 +313,32 @@ describe('Pinned rows', () => {
             `);
         });
 
+        test('bottom pinned row keeps sticky left and right lanes in horizontal layouts', () => {
+            const wideColumnDefs: ColDef[] = [
+                { field: 'left', pinned: 'left', width: 180 },
+                { field: 'c1', width: 220 },
+                { field: 'c2', width: 220 },
+                { field: 'c3', width: 220 },
+                { field: 'right', pinned: 'right', width: 180 },
+            ];
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: wideColumnDefs,
+                rowData: [{ left: 'L1', c1: 'C1', c2: 'C2', c3: 'C3', right: 'R1' }],
+                pinnedBottomRowData: [{ left: 'LB', c1: 'CB1', c2: 'CB2', c3: 'CB3', right: 'RB' }],
+            });
+
+            const root = TestGridsManager.getHTMLElement(api)!;
+            const bottomContainer = root.querySelector<HTMLElement>('.ag-grid-pinned-bottom-rows-container')!;
+            const bottomRow = root.querySelector<HTMLElement>('.ag-grid-pinned-bottom-rows-container .ag-row')!;
+            const leftLane = bottomRow.querySelector<HTMLElement>('.ag-grid-pinned-left-cells')!;
+            const rightLane = bottomRow.querySelector<HTMLElement>('.ag-grid-pinned-right-cells')!;
+
+            expect(bottomContainer).toBeTruthy();
+            expect(leftLane).toBeTruthy();
+            expect(rightLane).toBeTruthy();
+            assertBottomPinnedContainerAllowsStickyLanes();
+        });
+
         test('are shown then updated', async () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs, pinnedBottomRowData: bottomData });
 
@@ -545,3 +574,23 @@ describe('Pinned rows', () => {
         });
     });
 });
+
+function assertBottomPinnedContainerAllowsStickyLanes(): void {
+    const themingRelativePath = 'packages/ag-grid-community/src/theming/core/css/_general.css';
+    let repoRoot = process.cwd();
+    while (!existsSync(join(repoRoot, themingRelativePath))) {
+        const parent = dirname(repoRoot);
+        if (parent === repoRoot) {
+            throw new Error(`Cannot locate repository root from cwd: ${process.cwd()}`);
+        }
+        repoRoot = parent;
+    }
+    const themingCss = readFileSync(join(repoRoot, themingRelativePath), 'utf8');
+    const legacyScss = readFileSync(
+        join(repoRoot, 'community-modules/styles/src/internal/base/parts/_common-structural.scss'),
+        'utf8'
+    );
+
+    expect(themingCss).toMatch(/\.ag-grid-pinned-bottom-rows-container[\s\S]*?\{[^}]*overflow:\s*visible;/s);
+    expect(legacyScss).toMatch(/\.ag-grid-pinned-bottom-rows-container[\s\S]*?\{[^}]*overflow:\s*visible;/s);
+}

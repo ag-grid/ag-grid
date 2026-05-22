@@ -91,7 +91,7 @@ export class GridColumnsValidator {
     ): void {
         for (let i = 0; i < cols.length; i++) {
             const col = cols[i];
-            this.validateColumn(col, expectedPinned, cols, i, isRtl);
+            this.validateColumn(col, expectedPinned, cols, i);
         }
 
         // Validate tree structure
@@ -104,8 +104,7 @@ export class GridColumnsValidator {
         col: Column,
         expectedPinned: 'left' | 'right' | null,
         sectionCols: Column[],
-        index: number,
-        isRtl: boolean
+        index: number
     ): void {
         const colErrors = this.errors.get(col);
 
@@ -151,36 +150,16 @@ export class GridColumnsValidator {
         }
 
         // ── Left position consistency ───────────────────────────────────────
-        // In LTR: first column has left=0, positions increase left-to-right
-        // In RTL: last column has left=0, positions increase right-to-left
+        // Column left values are start-edge offsets in both LTR and RTL, so
+        // the section arrays should always increase from 0 by the previous width.
         const left = col.getLeft();
         if (left == null) {
             colErrors.add('Displayed column has null left position.');
-        } else if (isRtl) {
-            // RTL: last column has left=0, each preceding column's left = next.left + next.width
-            if (index === sectionCols.length - 1) {
-                if (left !== 0) {
-                    colErrors.add(`Last column in RTL section has left=${left}, expected 0.`);
-                }
-            } else if (index < sectionCols.length - 1) {
-                const nextCol = sectionCols[index + 1];
-                const nextLeft = nextCol.getLeft();
-                if (nextLeft != null) {
-                    const expectedLeft = nextLeft + nextCol.getActualWidth();
-                    if (left !== expectedLeft) {
-                        colErrors.add(
-                            `Left position (RTL) is ${left}, expected ${expectedLeft} (next.left=${nextLeft} + next.width=${nextCol.getActualWidth()}).`
-                        );
-                    }
-                }
-            }
         } else if (index === 0) {
-            // LTR: first column has left=0
             if (left !== 0) {
                 colErrors.add(`First column in section has left=${left}, expected 0.`);
             }
         } else {
-            // LTR: each column's left = prev.left + prev.width
             const prevCol = sectionCols[index - 1];
             const prevLeft = prevCol.getLeft();
             if (prevLeft != null) {

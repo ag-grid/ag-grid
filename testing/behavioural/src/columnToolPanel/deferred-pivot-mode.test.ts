@@ -1556,6 +1556,53 @@ describe('deferred column tool panel pivot mode', () => {
         expect(hasYearHeaderGroupText).toBe(false);
     });
 
+    test('tool panel shows primary columns after disabling pivot mode with user-supplied pivot result columns', async () => {
+        const gridApi = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: baseColumnDefs,
+            pivotMode: true,
+            rowModelType: 'serverSide',
+            sideBar: {
+                toolPanels: ['columns'],
+                defaultToolPanel: 'columns',
+            },
+            serverSideDatasource: {
+                getRows: (params) => {
+                    params.success({ rowData: rowData.slice(0, 1), rowCount: 1 });
+                },
+            },
+        });
+
+        await waitForNoLoadingRows(gridApi);
+        gridApi.setPivotResultColumns([
+            {
+                headerName: '2000',
+                children: [{ colId: '2000_gold', field: '2000_gold', headerName: 'Gold' }],
+            },
+        ]);
+        expect(gridApi.getPivotResultColumns()?.map((col) => col.getColId())).toEqual(['2000_gold']);
+
+        gridApi.setGridOption('pivotMode', false);
+        await waitForNoLoadingRows(gridApi);
+
+        gridApi.closeToolPanel();
+        gridApi.openToolPanel('columns');
+        await asyncSetTimeout(50);
+
+        const toolPanel = gridApi.getToolPanelInstance('columns') as any;
+        expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual([
+            'athlete',
+            'age',
+            'country',
+            'year',
+            'date',
+            'sport',
+            'gold',
+            'silver',
+            'bronze',
+            'total',
+        ]);
+    });
+
     test('turning pivot mode off and cancelling should keep pivot mode on', async () => {
         const { gridApi, toolPanelGui } = await createDeferredPivotModeGrid();
 

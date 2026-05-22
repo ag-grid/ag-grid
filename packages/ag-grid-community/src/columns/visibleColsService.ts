@@ -13,18 +13,6 @@ import type { ColumnModel } from './columnModel';
 import { getWidthOfColsInList } from './columnUtils';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 
-function _removeAllFromUnorderedArray<T>(array: T[], toRemove: T[]) {
-    for (let i = 0; i < toRemove.length; i++) {
-        const index = array.indexOf(toRemove[i]);
-
-        if (index >= 0) {
-            // preserve the last element, then shorten array length by 1 to delete index
-            array[index] = array[array.length - 1];
-            array.pop();
-        }
-    }
-}
-
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class VisibleColsService extends BeanStub implements NamedBean {
@@ -63,7 +51,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private ariaOrderColumns: AgColumn[];
 
     public refresh(source: ColumnEventType, skipTreeBuild = false): void {
-        const { colFlex, colModel, colGroupSvc, colViewport, selectionColSvc } = this.beans;
+        const { colFlex, colModel, colGroupSvc, colViewport, selectionColSvc, ctrlsSvc } = this.beans;
         // when we open/close col group, skipTreeBuild=false, as we know liveCols haven't changed
         if (!skipTreeBuild) {
             this.buildTrees(colModel, colGroupSvc);
@@ -84,7 +72,20 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         this.setLeftValues(source);
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
-        colFlex?.refreshFlexedColumns();
+        // The cached flex viewport width inside `colFlex` only updates from the resize observer
+        // in viewportSizeFeature. When pinning changes the logical centre width without resizing
+        // the DOM viewport, we must pass the freshly-derived centre width here.
+        // Compute pinned widths directly from the just-updated column lists rather than using
+        // `getCenterWidth()` — the latter reads the cached `leftWidth`/`rightWidth` via
+        // `getLeftStickyColumnContainerWidth`, which is only refreshed by `updateBodyWidths` below.
+        const viewportWidth = ctrlsSvc?.getGridBodyCtrl()?.getViewportWidthWithoutScrollbar();
+        let flexParams: { viewportWidth: number } | undefined;
+        if (viewportWidth != null) {
+            const centerWidth =
+                viewportWidth - getWidthOfColsInList(this.leftCols) - getWidthOfColsInList(this.rightCols);
+            flexParams = { viewportWidth: centerWidth > 0 ? centerWidth : 0 };
+        }
+        colFlex?.refreshFlexedColumns(flexParams);
         this.updateBodyWidths();
         this.setFirstRightAndLastLeftPinned(colModel, this.leftCols, this.rightCols, source);
         colViewport.checkViewportColumns(false);
@@ -163,15 +164,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         rightCols: AgColumn[],
         source: ColumnEventType
     ): void {
-        let lastLeft: AgColumn | null;
-        let firstRight: AgColumn | null;
-
-        if (this.gos.get('enableRtl')) {
-            lastLeft = leftCols ? leftCols[0] : null;
-            firstRight = rightCols ? _last(rightCols) : null;
-        } else {
-            lastLeft = leftCols ? _last(leftCols) : null;
-            firstRight = rightCols ? rightCols[0] : null;
+        const lastLeft = leftCols.length ? _last(leftCols) : null;
+        let firstRight: AgColumn | null = null;
+        if (rightCols.length) {
+            firstRight = this.gos.get('enableRtl') ? _last(rightCols) : rightCols[0];
         }
 
         for (const col of colModel.getCols()) {
@@ -268,40 +264,27 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     private setLeftValuesOfCols(source: ColumnEventType): void {
         const { colModel } = this.beans;
-        const primaryCols = colModel.getColDefCols();
-        if (!primaryCols) {
+        if (!colModel.getColDefCols()) {
             return;
         }
 
-        // go through each list of displayed columns
-        const allColumns = colModel.getCols().slice(0);
-
-        const doingRtl = this.gos.get('enableRtl');
-
+        const displayedCols = new Set<AgColumn>();
         for (const columns of [this.leftCols, this.rightCols, this.centerCols]) {
-            if (doingRtl) {
-                // when doing RTL, we start at the top most pixel (ie RHS) and work backwards
-                let left = getWidthOfColsInList(columns);
-                for (const column of columns) {
-                    left -= column.getActualWidth();
-                    column.setLeft(left, source);
-                }
-            } else {
-                // otherwise normal LTR, we start at zero
-                let left = 0;
-                for (const column of columns) {
-                    column.setLeft(left, source);
-                    left += column.getActualWidth();
-                }
+            let left = 0;
+            for (const column of columns) {
+                column.setLeft(left, source);
+                left += column.getActualWidth();
+                displayedCols.add(column);
             }
-            _removeAllFromUnorderedArray(allColumns, columns);
         }
 
-        // items left in allColumns are columns not displayed, so remove the left position. this is
-        // important for the rows, as if a col is made visible, then taken out, then made visible again,
-        // we don't want the animation of the cell floating in from the old position, whatever that was.
-        for (const column of allColumns) {
-            column.setLeft(null, source);
+        // columns not in the displayed set need their left position reset. this is important for the
+        // rows, as if a col is made visible, then taken out, then made visible again, we don't want
+        // the animation of the cell floating in from the old position, whatever that was.
+        for (const column of colModel.getCols()) {
+            if (!displayedCols.has(column)) {
+                column.setLeft(null, source);
+            }
         }
     }
 
@@ -493,14 +476,16 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     // used by:
     // + angularGrid -> setting pinned body width
-    // note: this should be cached
-    public getColsLeftWidth() {
-        return getWidthOfColsInList(this.leftCols);
+    // note: the cache value `leftWidth` can be stale while actively moving column, so prefer getWidthOfColsInList.
+    public getLeftStickyColumnContainerWidth() {
+        // sometimes the leftCols are empty after a refresh, so attempt to grab cached values.
+        return this.leftCols.length ? getWidthOfColsInList(this.leftCols) : this.leftWidth;
     }
 
-    // note: this should be cached
-    public getDisplayedColumnsRightWidth() {
-        return getWidthOfColsInList(this.rightCols);
+    // note: the cache value `rightWidth` can be stale while actively moving columns, so prefer getWidthOfColsInList.
+    public getRightStickyColumnContainerWidth() {
+        // sometimes the rightCols are empty after a refresh, so attempt to grab cached values.
+        return this.rightCols.length ? getWidthOfColsInList(this.rightCols) : this.rightWidth;
     }
 
     public isColAtEdge(col: AgColumn | AgColumnGroup, edge: 'first' | 'last'): boolean {

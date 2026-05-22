@@ -14,6 +14,7 @@ import type {
     ModuleName,
     RowNode,
     RowSelectedEvent,
+    SelectionChangedEvent,
 } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
 
@@ -143,12 +144,17 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         const masterNode = rowNode.parent!;
 
+        const syncDetailSelectionState = () => {
+            selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, api);
+        };
+
         findSvc?.registerDetailGrid(rowNode, api);
 
-        function onDetailSelectionChanged() {
-            if (masterNode) {
-                selectionSvc?.refreshMasterNodeState(masterNode);
+        function onDetailSelectionChanged(event: SelectionChangedEvent) {
+            if (event.source === 'rowDataChanged' || !masterNode) {
+                return;
             }
+            selectionSvc?.refreshMasterNodeState(masterNode);
         }
 
         function adjustDetailsOnExpandOrCollapseAll({ source }: AgEventTypeParams['expandOrCollapseAll']) {
@@ -165,7 +171,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
                 return;
             }
 
-            selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, api);
+            syncDetailSelectionState();
         }
 
         // initialise selection and expandAll state
@@ -174,7 +180,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
                 return;
             }
 
-            selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, api);
+            syncDetailSelectionState();
 
             api.addEventListener('selectionChanged', onDetailSelectionChanged);
             masterGridApi.addEventListener('rowSelected', onMasterRowSelected);
@@ -238,6 +244,19 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             const mostRecentCall = this.loadRowDataVersion === versionThisCall;
             if (mostRecentCall) {
                 this.comp.setRowData(rowData);
+
+                // firstDataRendered can fire before detail row data is applied. Re-apply
+                // tracked detail selection immediately after rowData is set to avoid losing
+                // master-detail selection restoration on re-expand.
+                const detailNode = params.node as RowNode;
+                const detailApi = detailNode.detailGridInfo?.api;
+                const masterNode = detailNode.parent;
+                const rowSelection = this.gos.get('rowSelection');
+                const masterSelectsDetail =
+                    !!rowSelection && typeof rowSelection === 'object' && rowSelection.masterSelects === 'detail';
+                if (detailApi && masterNode && masterSelectsDetail) {
+                    this.beans.selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, detailApi);
+                }
             }
         };
 

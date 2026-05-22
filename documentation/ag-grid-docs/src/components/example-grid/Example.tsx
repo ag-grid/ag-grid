@@ -221,6 +221,7 @@ const ExampleInner = ({
                     ? []
                     : [
                           { toolbarItem: 'agRowGroupPanelToolbarItem', alignment: 'left' as const },
+                          { toolbarItem: 'separator', alignment: 'left' as const },
                           { toolbarItem: 'agPivotPanelToolbarItem', alignment: 'left' as const },
                       ]),
                 'agQuickFilterToolbarItem',

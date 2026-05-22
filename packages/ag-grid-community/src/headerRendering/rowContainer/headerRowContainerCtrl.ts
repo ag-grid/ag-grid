@@ -4,27 +4,21 @@ import type { AgColumn } from '../../entities/agColumn';
 import { isColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { FocusService } from '../../focusService';
-import { CenterWidthFeature } from '../../gridBodyComp/centerWidthFeature';
 import type { ScrollPartner } from '../../gridBodyComp/gridBodyScrollFeature';
-import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface IHeaderRowContainerComp {
-    setCenterWidth(width: string): void;
+export interface IHeaderRowsComp {
     setViewportScrollLeft(left: number): void;
-    setPinnedContainerWidth(width: string): void;
-    setDisplayed(displayed: boolean): void;
     setCtrls(ctrls: HeaderRowCtrl[]): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
-    public comp: IHeaderRowContainerComp;
-    public hidden: boolean = false;
+    public comp: IHeaderRowsComp;
     private includeFloatingFilter: boolean = false;
 
     private filtersRowCtrl: HeaderRowCtrl | undefined;
@@ -32,20 +26,13 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private groupsRowCtrls: HeaderRowCtrl[] = [];
     public eViewport: HTMLElement;
 
-    constructor(public readonly pinned: ColumnPinnedType) {
-        super();
-    }
-
-    public setComp(comp: IHeaderRowContainerComp, eGui: HTMLElement): void {
+    public setComp(comp: IHeaderRowsComp, eGui: HTMLElement, eScrollViewport: HTMLElement = eGui): void {
         this.comp = comp;
-        this.eViewport = eGui;
+        this.eViewport = eScrollViewport;
 
-        const { pinnedCols, ctrlsSvc, colModel, colMoves } = this.beans;
+        const { ctrlsSvc, colModel, colMoves } = this.beans;
 
-        this.setupCenterWidth();
-        pinnedCols?.setupHeaderPinnedWidth(this);
-
-        this.setupDragAndDrop(colMoves, this.eViewport);
+        this.setupDragAndDrop(colMoves, eGui);
 
         const onDisplayedColsChanged = this.refresh.bind(this, true);
         this.addManagedEventListeners({
@@ -53,8 +40,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             advancedFilterEnabledChanged: onDisplayedColsChanged,
         });
 
-        const headerType = `${typeof this.pinned === 'string' ? this.pinned : 'center'}Header` as const;
-        ctrlsSvc.register(headerType, this);
+        ctrlsSvc.register('headerRowContainerCtrl', this);
 
         if (colModel.ready) {
             this.refresh();
@@ -103,28 +89,23 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             }
 
             for (let i = currentGroupCount; i < groupRowCount; i++) {
-                const ctrl = this.createBean(new HeaderRowCtrl(i, this.pinned, 'group'));
+                const ctrl = this.createBean(new HeaderRowCtrl(i, 'group'));
                 this.groupsRowCtrls.push(ctrl);
             }
         };
 
         const refreshColumns = () => {
             const rowIndex = sequence++;
-            if (this.hidden) {
-                this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
-                return;
-            }
-
             if (this.columnsRowCtrl == null || !keepColumns) {
                 this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
-                this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, 'column'));
+                this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, 'column'));
             } else if (this.columnsRowCtrl.rowIndex !== rowIndex) {
                 this.columnsRowCtrl.setRowIndex(rowIndex);
             }
         };
 
         const refreshFilters = () => {
-            this.includeFloatingFilter = !!filterManager?.hasFloatingFilters() && !this.hidden;
+            this.includeFloatingFilter = !!filterManager?.hasFloatingFilters();
 
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
@@ -147,7 +128,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
                     this.filtersRowCtrl.setRowIndex(rowIndex);
                 }
             } else {
-                this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, 'filter'));
+                this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, 'filter'));
             }
         };
 
@@ -239,7 +220,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     private setupDragAndDrop(colMoves: ColumnMoveService | undefined, dropContainer: HTMLElement): void {
-        const bodyDropTarget = colMoves?.createBodyDropTarget(this.pinned, dropContainer);
+        const bodyDropTarget = colMoves?.createBodyDropTarget(dropContainer);
         if (bodyDropTarget) {
             this.createManagedBean(bodyDropTarget);
         }
@@ -250,20 +231,6 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             return;
         }
 
-        const { column } = position;
-
-        if ((column as AgColumn | AgColumnGroup).getPinned() != this.pinned) {
-            return;
-        }
-
         focusSvc.focusHeaderPosition({ headerPosition: position, scroll: false });
-    }
-
-    private setupCenterWidth(): void {
-        if (this.pinned != null) {
-            return;
-        }
-
-        this.createManagedBean(new CenterWidthFeature((width) => this.comp.setCenterWidth(`${width}px`), true));
     }
 }

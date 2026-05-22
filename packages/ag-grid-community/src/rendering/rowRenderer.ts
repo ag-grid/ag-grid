@@ -228,7 +228,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * @returns true if cellCtrl is present, or if the row is present but has not rendered rows yet
      */
     private isCellBeingRendered(rowIndex: number, column?: AgColumn): boolean {
-        const rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
+        const rowCtrl = this.getRowByPosition({ rowIndex, rowPinned: null });
 
         // if no column, simply check for row ctrl, if no rowCtrl then return false
         if (!column || !rowCtrl) {
@@ -256,7 +256,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             cellCtrl.onCellFocused(event);
         }
         for (const rowCtrl of this.getFullWidthRowCtrls()) {
-            rowCtrl.onFullWidthRowFocused(event);
+            rowCtrl.onRowFocused(event);
         }
     }
 
@@ -290,6 +290,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // registering and de-registering for events is a performance bottleneck. so we register here once and inform
     // all active cells.
     private registerCellEventListeners(): void {
+        const refreshRightPinnedCellPositions = () => {
+            for (const cellCtrl of this.getAllCellCtrls()) {
+                if (cellCtrl.column.getPinned() === 'right') {
+                    cellCtrl.onLeftChanged();
+                }
+            }
+        };
+
         this.addManagedEventListeners({
             cellFocused: (event) => this.onCellFocusChanged(event),
             cellFocusCleared: () => this.updateCellFocus(),
@@ -323,6 +331,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
                     }
                 }
             },
+            // right-pinned cells are anchored via `right` in the flattened layout and depend on
+            // the total pinned-right lane width, even when their own column left does not change.
+            rightPinnedWidthChanged: refreshRightPinnedCellPositions,
         });
 
         this.setupRangeSelectionListeners();
@@ -495,17 +506,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return res;
     }
 
-    private refreshFloatingRowComps(recycleRows = true): void {
-        this.refreshFloatingRows(this.topRowCtrls, 'top', recycleRows);
+    private refreshPinnedRowComps(recycleRows = true): void {
+        this.refreshPinnedRows(this.topRowCtrls, 'top', recycleRows);
 
-        this.refreshFloatingRows(this.bottomRowCtrls, 'bottom', recycleRows);
+        this.refreshPinnedRows(this.bottomRowCtrls, 'bottom', recycleRows);
     }
 
     /**
      * Determines which row controllers need to be destroyed and re-created vs which ones can
      * be re-used.
      *
-     * This is operation is to pinned/floating rows as `this.recycleRows` is to normal/body rows.
+     * This operation is to pinned rows as `this.recycleRows` is to normal/body rows.
      *
      * All `RowCtrl` instances in `rowCtrls` that don't correspond to `RowNode` instances in `rowNodes` are destroyed.
      * All `RowNode` instances in `rowNodes` that don't correspond to `RowCtrl` instances in `rowCtrls` are created.
@@ -514,14 +525,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * @param rowCtrls The list of existing row controllers
      * @param rowNodes The canonical list of row nodes that should have associated controllers
      */
-    private refreshFloatingRows(rowCtrls: RowCtrl[], floating: NonNullable<RowPinnedType>, recycleRows: boolean): void {
+    private refreshPinnedRows(rowCtrls: RowCtrl[], pinned: NonNullable<RowPinnedType>, recycleRows: boolean): void {
         const { pinnedRowModel, beans, printLayout } = this;
         const rowCtrlMap = Object.fromEntries(rowCtrls.map((ctrl) => [ctrl.rowNode.id!, ctrl]));
 
-        pinnedRowModel?.forEachPinnedRow(floating, (node, i) => {
+        pinnedRowModel?.forEachPinnedRow(pinned, (node, i) => {
             const rowCtrl = rowCtrls[i];
             const rowCtrlDoesNotExist =
-                rowCtrl && pinnedRowModel.getPinnedRowById(rowCtrl.rowNode.id!, floating) === undefined;
+                rowCtrl && pinnedRowModel.getPinnedRowById(rowCtrl.rowNode.id!, pinned) === undefined;
 
             if (rowCtrlDoesNotExist) {
                 // ctrl not in new nodes list, destroy
@@ -540,7 +551,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         });
 
         const rowNodeCount =
-            (floating === 'top' ? pinnedRowModel?.getPinnedTopRowCount() : pinnedRowModel?.getPinnedBottomRowCount()) ??
+            (pinned === 'top' ? pinnedRowModel?.getPinnedTopRowCount() : pinnedRowModel?.getPinnedBottomRowCount()) ??
             0;
 
         // Truncate array if rowCtrls is longer than rowNodes
@@ -673,7 +684,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.gridBodyCtrl.updateRowCount();
 
         if (!params.onlyBody) {
-            this.refreshFloatingRowComps(gos.get('enableRowPinning') ? recycleRows : undefined);
+            this.refreshPinnedRowComps(gos.get('enableRowPinning') ? recycleRows : undefined);
         }
 
         this.dispatchDisplayedRowsChanged();
@@ -859,7 +870,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         rowIndex: number,
         callback: IEventListener<RenderedRowEvent>
     ): void {
-        const rowComp = this.rowCtrlsByRowIndex[rowIndex];
+        const rowComp = this.getRowByPosition({ rowIndex, rowPinned: null });
         if (rowComp) {
             rowComp.addEventListener(eventName, callback);
         }
@@ -875,17 +886,20 @@ export class RowRenderer extends BeanStub implements NamedBean {
             cellCtrl.refreshOrDestroyCell(refreshCellParams);
         }
 
-        // refresh the full width rows too
-        this.refreshFullWidth(rowNodes);
+        // full-width rows are mode-rendered and not represented by CellCtrls.
+        if (rowNodes?.length) {
+            for (const rowCtrl of this.getRowCtrls(rowNodes)) {
+                if (rowCtrl.isFullWidth()) {
+                    rowCtrl.refreshRow(refreshCellParams);
+                }
+            }
+        }
     }
 
     public refreshRows(params: RefreshRowsParams = {}): void {
         for (const rowCtrl of this.getRowCtrls(params.rowNodes)) {
             rowCtrl.refreshRow(params);
         }
-
-        // refresh the full width rows too
-        this.refreshFullWidth(params.rowNodes);
     }
 
     /** O(1) lookup of a RowCtrl by its RowNode (O(k) for sticky rows, where k is the sticky row count). */
@@ -932,29 +946,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
     public refreshRowByNode(node: IRowNode | null | undefined): void {
         if (node) {
             this.getRowCtrlByNode(node)?.refreshRow();
-        }
-    }
-
-    private refreshFullWidth(rowNodes?: IRowNode[]): void {
-        if (!rowNodes) {
-            return;
-        }
-
-        let rowRedrawn = false;
-        for (const rowCtrl of this.getRowCtrls(rowNodes)) {
-            if (!rowCtrl.isFullWidth()) {
-                continue;
-            }
-
-            const refreshed = rowCtrl.refreshFullWidth();
-            if (!refreshed) {
-                rowRedrawn = true;
-                this.redrawRow(rowCtrl.rowNode, true);
-            }
-        }
-
-        if (rowRedrawn) {
-            this.dispatchDisplayedRowsChanged(false);
         }
     }
 
@@ -1263,7 +1254,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             rowsToRemove.push(rowIndex!.toString());
         }
 
-        this.refreshFloatingRowComps();
+        this.refreshPinnedRowComps();
         this.removeRowCtrls(rowsToRemove);
         this.redraw({ afterScroll: true });
     }
@@ -1756,9 +1747,9 @@ export function isRowInMap(
 ): boolean {
     // skip this row if it is missing from the provided list
     const id = rowNode.id!;
-    const floating = rowNode.rowPinned;
+    const pinned = rowNode.rowPinned;
 
-    switch (floating) {
+    switch (pinned) {
         case 'top':
             return rowIdsMap.top[id] != null;
         case 'bottom':

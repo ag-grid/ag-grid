@@ -1,10 +1,11 @@
-import { _areEqual, _last } from '../../agStack/utils/array';
+import { _areEqual } from '../../agStack/utils/array';
 import { _missing } from '../../agStack/utils/generic';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import { _getRowHeightAsNumber } from '../../gridOptionsUtils';
+import { applyHorizontalPosition, getResolvedHorizontalOffset } from '../features/horizontalPositionUtils';
 import type { CellSpan } from '../spanning/rowSpanCache';
 import type { CellCtrl } from './cellCtrl';
 
@@ -163,36 +164,38 @@ export class CellPositionFeature extends BeanStub {
         if (!eSetLeft) {
             return;
         }
-        eSetLeft.style.left = this.modifyLeftForPrintLayout(this.getCellLeft()) + 'px';
+        const { gos, visibleCols } = this.beans;
+        const left = getResolvedHorizontalOffset({
+            left: this.getCellLeft(),
+            pinned: this.column.getPinned(),
+            width: this.getCellWidth(),
+            isPrintLayout: this.cellCtrl.printLayout,
+            isRtl: gos.get('enableRtl'),
+            visibleCols,
+        });
+        if (left == null) {
+            return;
+        }
+
+        this.setHorizontalPosition(eSetLeft, left);
     }
 
     private getCellLeft(): number | null {
-        let mostLeftCol: AgColumn;
-
-        if (this.beans.gos.get('enableRtl') && this.colsSpanning) {
-            mostLeftCol = _last(this.colsSpanning);
-        } else {
-            mostLeftCol = this.column;
-        }
-
-        return mostLeftCol.getLeft();
+        // column.getLeft() is "distance from start edge" — in both LTR and RTL,
+        // this.column is the start-edge column of any col-spanning range.
+        return this.column.getLeft();
     }
 
-    private modifyLeftForPrintLayout(leftPosition: number | null): number | null {
-        if (!this.cellCtrl.printLayout || this.column.getPinned() === 'left') {
-            return leftPosition;
-        }
-
-        const { visibleCols } = this.beans;
-        const leftWidth = visibleCols.getColsLeftWidth();
-
-        if (this.column.getPinned() === 'right') {
-            const bodyWidth = visibleCols.bodyWidth;
-            return leftWidth + bodyWidth + (leftPosition || 0);
-        }
-
-        // is in body
-        return leftWidth + (leftPosition || 0);
+    private setHorizontalPosition(eSetLeft: HTMLElement, left: number): void {
+        const { gos, visibleCols } = this.beans;
+        applyHorizontalPosition(eSetLeft, {
+            offset: left,
+            pinned: this.column.getPinned(),
+            width: this.getCellWidth(),
+            isPrintLayout: this.cellCtrl.printLayout,
+            isRtl: gos.get('enableRtl'),
+            visibleCols,
+        });
     }
 
     private _legacyApplyRowSpan(force?: boolean): void {
@@ -206,7 +209,10 @@ export class CellPositionFeature extends BeanStub {
         }
 
         const singleRowHeight = _getRowHeightAsNumber(this.beans);
-        eContent.style.height = `${singleRowHeight * this.rowSpan}px`;
+        const totalRowHeight = singleRowHeight * this.rowSpan;
+
+        eContent.style.height = `${totalRowHeight}px`;
+        // row-spanned cell content must sit above normal cells in the same row.
         eContent.style.zIndex = '1';
     }
 

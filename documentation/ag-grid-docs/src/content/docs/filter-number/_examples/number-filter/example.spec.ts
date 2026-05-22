@@ -28,9 +28,9 @@ test.agExample(import.meta, () => {
         await expect(thirdRowPrice).toHaveText('920.24');
 
         // check the row index attribute is correct on the parent row element
-        await expect(firstRowPrice.locator('..')).toHaveAttribute('row-index', '0');
-        await expect(secondRowPrice.locator('..')).toHaveAttribute('row-index', '1');
-        await expect(thirdRowPrice.locator('..')).toHaveAttribute('row-index', '2');
+        await expect(page.locator('.ag-row').filter({ has: firstRowPrice }).first()).toHaveAttribute('row-index', '0');
+        await expect(page.locator('.ag-row').filter({ has: secondRowPrice }).first()).toHaveAttribute('row-index', '1');
+        await expect(page.locator('.ag-row').filter({ has: thirdRowPrice }).first()).toHaveAttribute('row-index', '2');
 
         // get the row with attribute row-index=0
         // const firstRow = page.locator('[row-index="0"]');

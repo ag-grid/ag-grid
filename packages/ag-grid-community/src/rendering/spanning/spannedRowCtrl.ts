@@ -1,15 +1,14 @@
 import type { AgColumn } from '../../entities/agColumn';
-import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { CellCtrl } from '../cell/cellCtrl';
 import { RowCtrl } from '../row/rowCtrl';
 import { SpannedCellCtrl } from './spannedCellCtrl';
 
 export class SpannedRowCtrl extends RowCtrl {
-    protected override getInitialRowClasses(_rowContainerType: RowContainerType): string[] {
+    protected override getInitialRowClasses(): string[] {
         return ['ag-spanned-row'];
     }
 
-    protected override getNewCellCtrl(col: AgColumn<any>): CellCtrl | undefined {
+    public override getNewCellCtrl(col: AgColumn<any>): CellCtrl | undefined {
         // spanned cells, if handled as a spanned cell of another row, ignore this.
         const cellSpan = this.beans.rowSpanSvc?.getCellSpan(col, this.rowNode);
         if (!cellSpan) {
@@ -25,7 +24,7 @@ export class SpannedRowCtrl extends RowCtrl {
         return new SpannedCellCtrl(cellSpan, this, this.beans);
     }
 
-    protected override isCorrectCtrlForSpan(cell: CellCtrl): boolean {
+    public override isCorrectCtrlForSpan(cell: CellCtrl): boolean {
         // spanned cells, if handled as a spanned cell of another row, ignore this.
         const cellSpan = this.beans.rowSpanSvc?.getCellSpan(cell.column, this.rowNode);
         if (!cellSpan) {

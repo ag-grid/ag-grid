@@ -116,11 +116,13 @@ export class GridCtrl extends BeanStub {
         return this.eGui;
     }
 
-    public setResizeCursor(direction: Direction | false): void {
+    public setResizeCursor(direction: Direction | false, isColumn: boolean = false): void {
         const { view } = this;
 
         if (direction === false) {
             view.setCursor(null);
+        } else if (isColumn) {
+            view.setCursor(direction === Direction.Horizontal ? 'col-resize' : 'row-resize');
         } else {
             view.setCursor(direction === Direction.Horizontal ? 'ew-resize' : 'ns-resize');
         }

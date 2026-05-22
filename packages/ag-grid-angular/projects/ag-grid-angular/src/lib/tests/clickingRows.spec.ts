@@ -11,7 +11,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 @Component({
     selector: 'app-grid-wrapper',
-    standalone: true,
     imports: [AgGridAngular],
     template: `<div data-testid="rowClicked">Row Clicked: {{ rowClicked?.make }}</div>
         <ag-grid-angular [gridOptions]="gridOptions" [columnDefs]="columnDefs" [rowData]="rowData"> </ag-grid-angular>`,

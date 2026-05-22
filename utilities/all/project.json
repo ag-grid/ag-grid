@@ -230,6 +230,13 @@
     "unlink": {
       "command": "./scripts/removeLocalDeps.sh"
     },
+    "slack:user-config": {
+      "cache": false,
+      "command": "node --env-file-if-exists=.env.local ./external/ag-shared/scripts/slack/get-slack-user-config-command.mjs",
+      "options": {
+        "cwd": "{workspaceRoot}"
+      }
+    },
     "snyk:test": {
       "command": "npx snyk test --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=high --exclude=.nx,project.json,dist,.claude --remote-repo-url=https://github.com/ag-grid/ag-grid",
       "options": {

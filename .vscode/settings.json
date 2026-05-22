@@ -24,9 +24,10 @@
     "**/node_modules": true,
     "**/typings": true
   },
-  "typescript.preferences.autoImportFileExcludePatterns": ["**/main", "**/main-umd*"],
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "eslint.experimental.useFlatConfig": true,
+  "js/ts.preferences.autoImportFileExcludePatterns": ["**/main", "**/main-umd*"],
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "eslint.useFlatConfig": true,
+  "eslint.workingDirectories": [{ "mode": "auto" }],
   "[typescript]": {
     "editor.autoClosingBrackets": "always"
   },
@@ -109,7 +110,7 @@
   ],
   "git.autoRepositoryDetection": "subFolders",
   "git.repositoryScanIgnoredFolders": ["node_modules", "dist", "typings"],
-  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
   "angular.enable-strict-mode-prompt": false,
   "json.schemas": [
     {

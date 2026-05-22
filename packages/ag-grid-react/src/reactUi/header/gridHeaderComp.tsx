@@ -1,55 +1,69 @@
-import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useRef, useState } from 'react';
 
 import type { IGridHeaderComp } from 'ag-grid-community';
-import { GridHeaderCtrl } from 'ag-grid-community';
+import { CssClassManager, GridHeaderCtrl } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
-import { CssClasses } from '../utils';
-import HeaderRowContainerComp from './headerRowContainerComp';
+import HeaderRowsComp from './headerRowsComp';
 
-const GridHeaderComp = () => {
-    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
-    const [height, setHeight] = useState<string>();
+const GridHeaderComp = ({ eTopSection, eGridViewport }: { eTopSection: HTMLElement; eGridViewport: HTMLElement }) => {
+    const { context, environment } = useContext(BeansContext);
 
-    const { context } = useContext(BeansContext);
+    const gridHeaderCtrlRef = useRef<GridHeaderCtrl>();
+    const cssManager = useRef<CssClassManager>();
     const eGui = useRef<HTMLDivElement | null>(null);
-    const gridCtrlRef = useRef<GridHeaderCtrl>();
+    const [headerElement, setHeaderElement] = useState<HTMLDivElement | null>(null);
+    const [mounted, setMounted] = useState(false);
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
-        if (!eRef || context.isDestroyed()) {
-            gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
-            return;
-        }
+    if (!cssManager.current) {
+        cssManager.current = new CssClassManager(() => eGui.current);
+    }
 
-        gridCtrlRef.current = context.createBean(new GridHeaderCtrl());
-
-        const compProxy: IGridHeaderComp = {
-            toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
-            setHeightAndMinHeight: (height) => setHeight(height),
-        };
-
-        gridCtrlRef.current!.setComp(compProxy, eRef, eRef);
+    const setHeaderRowFocusableElements = useCallback((elements: HTMLElement[]) => {
+        gridHeaderCtrlRef.current?.setHeaderRowFocusableElements(elements);
     }, []);
 
-    const className = useMemo(() => {
-        const res = cssClasses.toString();
-        return 'ag-header ' + res;
-    }, [cssClasses]);
+    const setRef = useCallback(
+        (eRef: HTMLDivElement | null) => {
+            eGui.current = eRef;
+            setHeaderElement(eRef);
+            if (!eRef || context.isDestroyed()) {
+                eTopSection.style.removeProperty('--ag-header-rows-height');
+                gridHeaderCtrlRef.current = context.destroyBean(gridHeaderCtrlRef.current);
+                setMounted(false);
+                return;
+            }
 
-    const style = useMemo(
-        () => ({
-            height: height,
-            minHeight: height,
-        }),
-        [height]
+            cssManager.current!.toggleCss('ag-header', true);
+
+            const compProxy: IGridHeaderComp = {
+                toggleCss: (name, on) => cssManager.current!.toggleCss(name, on),
+                setHeightAndMinHeight: (height) => {
+                    const borderWidth = environment.getHeaderRowBorderWidth();
+                    const heightWithBorder = height + borderWidth;
+                    eTopSection.style.setProperty('--ag-header-rows-height', `${heightWithBorder}px`);
+                    if (eGui.current) {
+                        eGui.current.style.height = `${heightWithBorder}px`;
+                    }
+                },
+            };
+
+            gridHeaderCtrlRef.current = context.createBean(new GridHeaderCtrl());
+            gridHeaderCtrlRef.current.setComp(compProxy, eRef);
+            setMounted(true);
+        },
+        [context, environment, eTopSection]
     );
 
     return (
-        <div ref={setRef} className={className} style={style} role="presentation">
-            <HeaderRowContainerComp pinned={'left'} />
-            <HeaderRowContainerComp pinned={null} />
-            <HeaderRowContainerComp pinned={'right'} />
+        <div ref={setRef} role="presentation">
+            {mounted && headerElement && (
+                <HeaderRowsComp
+                    eGui={headerElement}
+                    eGridViewport={eGridViewport}
+                    setHeaderRowFocusableElements={setHeaderRowFocusableElements}
+                />
+            )}
         </div>
     );
 };

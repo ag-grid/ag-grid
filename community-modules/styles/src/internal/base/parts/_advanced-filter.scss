@@ -7,6 +7,8 @@
         align-items: center;
         padding-left: var(--ag-cell-horizontal-padding);
         padding-right: var(--ag-cell-horizontal-padding);
+        // keep advanced-filter row above sticky data rows in the shared pinned-top container.
+        z-index: 1;
     }
 
     .ag-advanced-filter {

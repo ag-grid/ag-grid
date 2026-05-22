@@ -158,7 +158,11 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         this.allKeys = new AgPromise<(string | null)[]>((resolve) => {
             switch (this.valuesType) {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
-                    this.getValuesFromRowsAsync().then((values) => resolve(this.processAllValues(values)));
+                    this.getValuesFromRowsAsync().then((values) => {
+                        if (this.isAlive()) {
+                            resolve(this.processAllValues(values));
+                        }
+                    });
 
                     break;
                 case SetFilterModelValuesType.PROVIDED_LIST: {
@@ -178,9 +182,11 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
                     const { column, colDef } = this.params.handlerParams;
                     const params: SetFilterValuesFuncParams<any, TValue> = _addGridCommonParams(this.gos, {
                         success: (values) => {
-                            this.dispatchLocalEvent({ type: 'loadingEnd' });
+                            if (this.isAlive()) {
+                                this.dispatchLocalEvent({ type: 'loadingEnd' });
 
-                            resolve(this.processAllValues(this.uniqueValues(this.validateProvidedValues(values))));
+                                resolve(this.processAllValues(this.uniqueValues(this.validateProvidedValues(values))));
+                            }
                         },
                         colDef,
                         column,

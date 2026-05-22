@@ -1,13 +1,21 @@
 import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 export class FullWidthCellRenderer implements ICellRendererComp {
-    eGui!: HTMLDivElement;
+    eGui: HTMLDivElement | undefined;
     private cssClass!: string;
     private message!: string;
 
     init(params: ICellRendererParams) {
+        const {
+            pinned,
+            node: { rowIndex },
+        } = params;
+
         // pinned rows will have node.rowPinned set to either 'top' or 'bottom' - see docs for row pinning
-        if (params.pinned) {
+        if (pinned) {
+            if ((pinned === 'left' && rowIndex! % 4 === 0) || (pinned === 'right' && rowIndex! % 2 === 0)) {
+                return;
+            }
             this.cssClass = 'example-full-width-pinned';
             this.message = `Pinned full width on ${params.pinned} - index ${params.node.rowIndex}`;
         } else {
@@ -16,7 +24,6 @@ export class FullWidthCellRenderer implements ICellRendererComp {
         }
 
         this.eGui = document.createElement('div');
-
         this.eGui.innerHTML = `<div class="${this.cssClass}"><button>Click</button> ${this.message}</div>`;
 
         const eButton = this.eGui.querySelector('button')!;
@@ -26,7 +33,8 @@ export class FullWidthCellRenderer implements ICellRendererComp {
     }
 
     getGui() {
-        return this.eGui.firstChild as any;
+        const { eGui } = this;
+        return !eGui ? null : (eGui.firstChild as any);
     }
 
     refresh() {

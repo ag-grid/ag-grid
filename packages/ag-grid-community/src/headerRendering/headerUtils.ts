@@ -1,5 +1,7 @@
 import type { ColumnModel } from '../columns/columnModel';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import type { BeanCollection } from '../context/context';
+import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { HeaderRowCtrl } from './row/headerRowCtrl';
 
@@ -17,26 +19,33 @@ export function getFocusHeaderRowCount(beans: BeanCollection): number {
     return beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function getAriaHeaderRowCount(beans: BeanCollection): number {
+    const { ctrlsSvc, colModel, filterManager } = beans;
+    const renderedHeaderRowCount = ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount();
+    const configuredHeaderRowCount =
+        Math.max(getHeaderRowCount(colModel), 0) + (filterManager?.hasFloatingFilters() ? 1 : 0);
+    const baseHeaderRowCount = renderedHeaderRowCount ?? configuredHeaderRowCount;
+    return baseHeaderRowCount + (filterManager?.getHeaderRowCount() ?? 0);
+}
+
 export function getGroupRowsHeight(beans: BeanCollection): number[] {
     const heights: number[] = [];
-    const headerRowContainerCtrls = beans.ctrlsSvc.getHeaderRowContainerCtrls();
+    const headerRowContainerCtrl = beans.ctrlsSvc.getHeaderRowContainerCtrl();
+    if (!headerRowContainerCtrl) {
+        return heights;
+    }
 
-    for (const headerRowContainerCtrl of headerRowContainerCtrls) {
-        if (!headerRowContainerCtrl) {
-            continue;
-        }
+    const groupRowCount = headerRowContainerCtrl.getGroupRowCount() || 0;
 
-        const groupRowCount = headerRowContainerCtrl.getGroupRowCount() || 0;
+    for (let i = 0; i < groupRowCount; i++) {
+        const headerRowCtrl = headerRowContainerCtrl.getGroupRowCtrlAtIndex(i);
 
-        for (let i = 0; i < groupRowCount; i++) {
-            const headerRowCtrl = headerRowContainerCtrl.getGroupRowCtrlAtIndex(i);
-
-            const currentHeightAtPos = heights[i];
-            if (headerRowCtrl) {
-                const newHeight = getColumnGroupHeaderRowHeight(beans, headerRowCtrl);
-                if (currentHeightAtPos == null || newHeight > currentHeightAtPos) {
-                    heights[i] = newHeight;
-                }
+        const currentHeightAtPos = heights[i];
+        if (headerRowCtrl) {
+            const newHeight = getColumnGroupHeaderRowHeight(beans, headerRowCtrl);
+            if (currentHeightAtPos == null || newHeight > currentHeightAtPos) {
+                heights[i] = newHeight;
             }
         }
     }
@@ -97,4 +106,90 @@ export function isHeaderPositionEqual(headerPosA: HeaderPosition, headerPosB: He
 
 export function isHeaderPosition(position: unknown): position is HeaderPosition {
     return (position as HeaderPosition)?.headerRowIndex != null;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface PinnedSectionWidths {
+    leftWidth: number;
+    centerWidth: number;
+    rightWidth: number;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function getPinnedSectionWidths(visibleCols: VisibleColsService, isPrint: boolean): PinnedSectionWidths {
+    if (isPrint) {
+        return { leftWidth: 0, centerWidth: visibleCols.bodyWidth, rightWidth: 0 };
+    }
+    return {
+        leftWidth: visibleCols.getLeftStickyColumnContainerWidth(),
+        centerWidth: visibleCols.bodyWidth,
+        rightWidth: visibleCols.getRightStickyColumnContainerWidth(),
+    };
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface PinnedSectionElements {
+    ePinnedLeft: HTMLElement;
+    eScrolling: HTMLElement;
+    ePinnedRight: HTMLElement;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface PinnedSectionWidthsCache {
+    pinnedLeftWidth: number | undefined;
+    centerWidth: number | undefined;
+    pinnedRightWidth: number | undefined;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function updatePinnedSectionWidths(
+    visibleCols: VisibleColsService,
+    isPrint: boolean,
+    elements: PinnedSectionElements,
+    cache: PinnedSectionWidthsCache
+): void {
+    const { ePinnedLeft, eScrolling, ePinnedRight } = elements;
+    const { leftWidth, centerWidth, rightWidth } = getPinnedSectionWidths(visibleCols, isPrint);
+
+    if (cache.pinnedLeftWidth !== leftWidth) {
+        ePinnedLeft.style.width = leftWidth + 'px';
+        ePinnedLeft.style.display = leftWidth > 0 || isPrint ? '' : 'none';
+        cache.pinnedLeftWidth = leftWidth;
+    }
+    if (cache.centerWidth !== centerWidth) {
+        eScrolling.style.width = centerWidth + 'px';
+        cache.centerWidth = centerWidth;
+    }
+    if (cache.pinnedRightWidth !== rightWidth) {
+        ePinnedRight.style.width = rightWidth + 'px';
+        ePinnedRight.style.display = rightWidth > 0 || isPrint ? '' : 'none';
+        cache.pinnedRightWidth = rightWidth;
+    }
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface PinnedSections<T> {
+    left: T[];
+    center: T[];
+    right: T[];
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function partitionByPinned<T>(items: T[], getPinned: (item: T) => ColumnPinnedType): PinnedSections<T> {
+    const left: T[] = [];
+    const center: T[] = [];
+    const right: T[] = [];
+
+    for (const item of items) {
+        const pinned = getPinned(item);
+        if (pinned === 'left') {
+            left.push(item);
+        } else if (pinned === 'right') {
+            right.push(item);
+        } else {
+            center.push(item);
+        }
+    }
+
+    return { left, center, right };
 }

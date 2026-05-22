@@ -41,7 +41,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     private scrollWidth: number;
     private scrollPosition: number;
 
-    private viewportLeft: number; // same as scrollPosition, except when doing RTL
+    private viewportLeft: number;
     private viewportRight: number;
 
     private suppressColumnVirtualisation: boolean;
@@ -65,19 +65,10 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
         this.scrollWidth = scrollWidth;
         this.scrollPosition = scrollPosition;
-        // we need to call setVirtualViewportLeftAndRight() at least once after the body width changes,
-        // as the viewport can stay the same, but in RTL, if body width changes, we need to work out the
-        // virtual columns again
+        // we need to recalculate at least once after body width changes
         visibleCols.isBodyWidthDirty = true;
-
-        if (this.gos.get('enableRtl')) {
-            const bodyWidth = visibleCols.bodyWidth;
-            this.viewportLeft = bodyWidth - scrollPosition - scrollWidth;
-            this.viewportRight = bodyWidth - scrollPosition;
-        } else {
-            this.viewportLeft = scrollPosition;
-            this.viewportRight = scrollWidth + scrollPosition;
-        }
+        this.viewportLeft = scrollPosition;
+        this.viewportRight = scrollWidth + scrollPosition;
 
         if (this.colModel.ready) {
             this.checkViewportColumns(afterScroll);

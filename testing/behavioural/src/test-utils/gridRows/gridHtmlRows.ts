@@ -8,7 +8,7 @@ export type RowElementReference = string | Element | { readonly id: string | nul
 export type CheckboxState = boolean | 'mixed';
 
 const ROW_SELECTOR = '[row-id]';
-const CENTER_CONTAINER_SELECTOR = '.ag-center-cols-container';
+const CENTER_CONTAINER_SELECTORS = ['.ag-grid-scrolling-container'];
 const ROW_SELECTION_CHECKBOX_QUERIES = [
     '.ag-selection-checkbox input[type="checkbox"]',
     '.ag-selection-checkbox [aria-checked]',
@@ -29,7 +29,16 @@ export function getGridOwnerDocument<TData = any>(api: GridApi<TData>): Document
 
 export function getGridRowsHtmlElements<TData = any>(api: GridApi<TData>): HTMLElement[] {
     const gridElement = getGridHTMLElement(api);
-    return gridElement ? Array.from(gridElement.querySelectorAll<HTMLElement>(ROW_SELECTOR)) : [];
+    if (!gridElement) {
+        return [];
+    }
+    // Find this grid's own root wrapper to exclude rows from nested detail grids
+    const gridRoot = gridElement.querySelector('.ag-root-wrapper');
+    const allRows = Array.from(gridElement.querySelectorAll<HTMLElement>(ROW_SELECTOR));
+    if (!gridRoot) {
+        return allRows;
+    }
+    return allRows.filter((row) => row.closest('.ag-root-wrapper') === gridRoot);
 }
 
 export function getRowHtmlElements<TData = any>(api: GridApi<TData>, reference: RowElementReference): HTMLElement[] {
@@ -46,7 +55,7 @@ export function getRowHtmlElements<TData = any>(api: GridApi<TData>, reference: 
             continue;
         }
 
-        if (rowElement.closest(CENTER_CONTAINER_SELECTOR)) {
+        if (CENTER_CONTAINER_SELECTORS.some((selector) => rowElement.closest(selector))) {
             mainRowElements.push(rowElement);
         } else {
             secondaryRowElements.push(rowElement);

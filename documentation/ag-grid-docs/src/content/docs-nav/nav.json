@@ -534,6 +534,17 @@
                             "url": "https://www.ag-grid.com/charts"
                         }
                     ]
+                },
+                {
+                    "type": "group",
+                    "title": "Dashboards",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "See AG Studio",
+                            "url": "https://www.ag-grid.com/studio"
+                        }
+                    ]
                 }
             ]
         },

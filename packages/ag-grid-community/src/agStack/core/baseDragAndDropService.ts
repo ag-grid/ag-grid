@@ -482,6 +482,7 @@ export abstract class BaseDragAndDropService<
         const style = eGui.style;
 
         style.position = 'absolute';
+        // drag image should remain above all grid layers while dragging.
         style.zIndex = '9999';
         if (this.beans.dragSvc?.hasPointerCapture()) {
             style.pointerEvents = 'none'; // stops the ghost image from interfering with scrolling

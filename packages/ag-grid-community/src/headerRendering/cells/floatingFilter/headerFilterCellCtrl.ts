@@ -26,7 +26,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private suppressFilterButton: boolean;
     private highlightFilterButtonWhenActive: boolean;
     private active: boolean;
-    private iconCreated: boolean = false;
 
     private userCompDetails?: UserCompDetails | null;
     private destroySyncListener: () => null;
@@ -110,14 +109,13 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-full-body', this.suppressFilterButton);
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-body', !this.suppressFilterButton);
 
-        if (!this.active || this.iconCreated) {
+        if (!this.active || this.eButtonShowMainFilter.firstElementChild) {
             return;
         }
 
         const eMenuIcon = _createIconNoSpan('filter', this.beans, this.column);
 
         if (eMenuIcon) {
-            this.iconCreated = true;
             this.eButtonShowMainFilter.appendChild(eMenuIcon);
         }
     }

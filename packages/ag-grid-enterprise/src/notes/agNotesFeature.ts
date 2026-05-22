@@ -1,4 +1,12 @@
-import type { BeanCollection, CellCtrl, GetNoteParams, INotesFeature, Note, RowCtrl, RowGui } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    CellCtrl,
+    FullWidthTarget,
+    GetNoteParams,
+    INotesFeature,
+    Note,
+    RowCtrl,
+} from 'ag-grid-community';
 import { _interpretAsRightClick, _isStopPropagationForAgGrid } from 'ag-grid-community';
 
 import { AgNotesPopup } from './agNotesPopup';
@@ -328,6 +336,15 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
     }
 
     public initialise(): void {
+        for (const target of this.ctrl.getTargets()) {
+            target.compBean.addManagedListeners(target.element, {
+                pointerenter: (event: PointerEvent) =>
+                    this.onPointerEnter(this.getTargetForElement(event.target), event),
+                pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
+                click: (event: MouseEvent) => this.onClick(this.getTargetForElement(event.target), event),
+                contextmenu: () => this.onContextMenu(),
+            });
+        }
         this.refresh();
     }
 
@@ -336,27 +353,15 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
             return;
         }
 
-        this.ctrl.forEachGui(undefined, (gui) => {
-            this.registerGui(gui);
-
-            const position = this.getPositionForGui(gui);
-            const hasNote = !!position && !!this.notesSvc.getNoteAccess(position)?.note;
-            gui.rowComp.toggleCss(CSS_HAS_CELL_NOTES, hasNote);
-        });
+        for (const target of this.ctrl.getTargets()) {
+            const noteParams = this.getNoteParamsForTarget(target);
+            const hasNote = !!this.notesSvc.getNoteAccess(noteParams)?.note;
+            target.element.classList.toggle(CSS_HAS_CELL_NOTES, hasNote);
+        }
     }
 
-    private registerGui(gui: RowGui): void {
-        this.ctrl.addManagedGuiElementListeners(gui, {
-            pointerenter: (event: PointerEvent) => this.onPointerEnter(this.getTargetForGui(gui), event),
-            pointerleave: (event: PointerEvent) => this.onPointerLeave(event),
-            click: (event: MouseEvent) => this.onClick(this.getTargetForGui(gui), event),
-            contextmenu: () => this.onContextMenu(),
-        });
-    }
-
-    private getPositionForGui(gui: RowGui): GetNoteParams {
-        const pinned = this.ctrl.getPinnedForFullWidth(gui);
-        const normalisedPinned = pinned === 'left' || pinned === 'right' ? pinned : undefined;
+    private getNoteParamsForTarget(target: FullWidthTarget): GetNoteParams {
+        const normalisedPinned = target.pinned === 'left' || target.pinned === 'right' ? target.pinned : undefined;
         return {
             rowNode: this.ctrl.rowNode,
             location: 'fullWidthRow',
@@ -364,18 +369,21 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
         };
     }
 
-    private getTargetForGui(gui: RowGui): NoteTarget | undefined {
-        const position = this.getPositionForGui(gui);
-        const focusColumn = this.ctrl.getColumnForFullWidth(gui);
-        if (!focusColumn) {
+    private getTargetForElement(element?: EventTarget | null): NoteTarget | undefined {
+        const target = this.ctrl.getTarget(element);
+        if (!target) {
             return undefined;
         }
 
+        return this.getNoteTargetForFullWidthTarget(target);
+    }
+
+    private getNoteTargetForFullWidthTarget(target: FullWidthTarget): NoteTarget {
         return {
-            noteParams: position,
+            noteParams: this.getNoteParamsForTarget(target),
             rowNode: this.ctrl.rowNode,
-            focusColumn,
-            anchorElement: gui.element,
+            focusColumn: target.column,
+            anchorElement: target.element,
         };
     }
 
@@ -383,24 +391,25 @@ export class AgFullWidthRowNotesFeature extends BaseNotesFeature {
         let matchedTarget: NoteTarget | undefined;
         let firstTarget: NoteTarget | undefined;
 
-        this.ctrl.forEachGui(undefined, (gui) => {
+        for (const fullWidthTarget of this.ctrl.getTargets()) {
             if (matchedTarget) {
-                return;
+                break;
             }
 
-            const target = this.getTargetForGui(gui);
-            if (!target) {
-                return;
-            }
+            const noteTarget = this.getNoteTargetForFullWidthTarget(fullWidthTarget);
 
             if (!firstTarget) {
-                firstTarget = target;
+                firstTarget = noteTarget;
             }
 
-            if (isFullWidthRowNoteParams(target.noteParams) && target.noteParams.pinned === pinned) {
-                matchedTarget = target;
+            const normalisedPinned =
+                fullWidthTarget.pinned === 'left' || fullWidthTarget.pinned === 'right'
+                    ? fullWidthTarget.pinned
+                    : undefined;
+            if (normalisedPinned === pinned) {
+                matchedTarget = noteTarget;
             }
-        });
+        }
 
         return matchedTarget ?? firstTarget;
     }

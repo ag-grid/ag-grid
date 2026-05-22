@@ -170,13 +170,30 @@ For comprehensive testing information, see [Testing Guide](.rulesync/rules/testi
 
 #### Code Quality
 
-For code quality guidelines, see [Code Quality Guide](.rulesync/rules/code-quality.md).
+For shared code quality guidelines, see [Code Quality Guide](.rulesync/rules/code-quality.md).
 
 Essential practices:
 
 - Run `yarn nx format --sort-root-tsconfig-paths=false` before committing
 - Self-review your changes before proposing commits
 - Ensure tests exercise real implementations, not test helpers
+
+#### AG Grid Coding Style
+
+Layered on the shared code-quality guide; enforced by ESLint plus team preferences.
+
+- Always use braces for `if/else/for/while/do`.
+- Cache repeated field access in a local — performance requirement.
+- Performance over bundle size.
+- Canonical array loop: `for (let i = 0, len = a.length; i < len; ++i)`. No `Array.forEach`. `Map.forEach` is fine.
+- No lonely `if` — use guard returns, `if/else if`, or ternaries. Applies to loops too.
+- No nested ternaries — extract to a named variable.
+- No short-circuit side effects (`cond && fn()`). No assignments in expressions.
+- No `for...in`. Use `Object.keys()` + index loops; prefer `Object.keys()` over `Object.entries()` when values aren't needed.
+- No static class properties — use module-level constants.
+- Explicit access modifiers on every class member; `readonly` when not reassigned.
+- Destructure only for 2+ fields; single field uses dot access.
+- `import type` for compile-time-only imports; separate `import type { Foo }` statements, no inline `{ type Foo, Bar }`.
 
 #### Styling
 

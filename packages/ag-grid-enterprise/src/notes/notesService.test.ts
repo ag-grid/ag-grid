@@ -12,6 +12,7 @@ describe('NotesService', () => {
     let column: AgColumn;
     let currentNote: Note | undefined;
     let cellCtrl: { showNote: Mock };
+    let rowCtrl: { isFullWidth: Mock; refreshRow: Mock; rowNode: IRowNode };
     let fullWidthNotesFeature: { show: Mock };
     let fullWidthRowCtrl: { isFullWidth: Mock; getNotesFeature: Mock };
 
@@ -24,6 +25,11 @@ describe('NotesService', () => {
         colDef = {};
         currentNote = undefined;
         cellCtrl = { showNote: vi.fn() };
+        rowCtrl = {
+            isFullWidth: vi.fn(() => true),
+            refreshRow: vi.fn(),
+            rowNode,
+        };
         fullWidthNotesFeature = { show: vi.fn() };
         fullWidthRowCtrl = {
             isFullWidth: vi.fn(() => true),
@@ -165,8 +171,8 @@ describe('NotesService', () => {
     it('opens full-width notes through the notes feature', () => {
         currentNote = { text: 'Full width note' };
         (beans.visibleCols as any).leftCols = [column];
-        (beans.rowRenderer!.getRowCtrlByNode as Mock).mockReturnValue(fullWidthRowCtrl);
         ((service as any).gos.get as Mock).mockReturnValue(true);
+        (beans.rowRenderer!.getRowCtrlByNode as Mock).mockReturnValue(fullWidthRowCtrl);
 
         expect(service.showNote({ rowNode, location: 'fullWidthRow', pinned: 'left' }, true)).toBe(true);
         expect(fullWidthNotesFeature.show).toHaveBeenCalledWith({ pinned: 'left', focusEditor: true });
@@ -179,11 +185,7 @@ describe('NotesService', () => {
 
         const access = service.getNoteAccess({ rowNode, location: 'fullWidthRow', pinned: 'left' });
 
-        expect(access).toEqual(
-            expect.objectContaining({
-                params: { rowNode, location: 'fullWidthRow', pinned: undefined },
-            })
-        );
+        expect(access?.params).toEqual({ rowNode, location: 'fullWidthRow', pinned: undefined });
     });
 
     it('does not expose full-width notes when the datasource does not support them', () => {
@@ -286,5 +288,22 @@ describe('NotesService', () => {
             note: readOnlyNote,
         });
         expect(beans.rowRenderer!.refreshCells).toHaveBeenCalled();
+    });
+
+    it('refreshes matching full width rows through row refresh', () => {
+        (beans.rowRenderer!.getAllRowCtrls as Mock).mockReturnValue([
+            rowCtrl,
+            { isFullWidth: () => false, rowNode, refreshRow: vi.fn() },
+        ]);
+
+        service.refreshNotes({ rowNodes: [rowNode], columns: ['athlete'] });
+
+        expect(beans.rowRenderer!.refreshCells).toHaveBeenCalledWith({
+            rowNodes: [rowNode],
+            columns: ['athlete'],
+            force: true,
+            suppressFlash: true,
+        });
+        expect(rowCtrl.refreshRow).toHaveBeenCalledWith({ force: true, suppressFlash: true });
     });
 });

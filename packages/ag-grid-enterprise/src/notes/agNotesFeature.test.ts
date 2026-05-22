@@ -364,8 +364,6 @@ describe('AgFullWidthRowNotesFeature', () => {
     let guiListeners = new Map<HTMLElement, Record<string, (event: any) => void>>();
     let leftElement: HTMLElement;
     let centerElement: HTMLElement;
-    let leftGui: any;
-    let centerGui: any;
     let rowCtrl: any;
     let noteTrigger: 'hover' | 'click';
     let notesSvc: Pick<
@@ -389,27 +387,35 @@ describe('AgFullWidthRowNotesFeature', () => {
         leftElement = document.createElement('div');
         centerElement = document.createElement('div');
 
-        leftGui = {
+        const makeCompBean = (element: HTMLElement) => ({
+            addManagedListeners: vi.fn((_el: HTMLElement, listeners: Record<string, (event: any) => void>) => {
+                guiListeners.set(element, listeners);
+            }),
+        });
+
+        const leftCompBean = makeCompBean(leftElement);
+        const centerCompBean = makeCompBean(centerElement);
+
+        const leftTarget = {
+            compBean: leftCompBean,
             element: leftElement,
-            rowComp: { toggleCss: vi.fn() },
+            column: { getColId: () => 'athlete' },
+            pinned: 'left' as const,
         };
-        centerGui = {
+        const centerTarget = {
+            compBean: centerCompBean,
             element: centerElement,
-            rowComp: { toggleCss: vi.fn() },
+            column: { getColId: () => 'sport' },
+            pinned: null,
         };
 
         rowCtrl = {
             rowNode: { id: '1', rowIndex: 0, rowPinned: null },
             isFullWidth: vi.fn(() => true),
-            forEachGui: vi.fn((_pinned: any, callback: any) => {
-                callback(leftGui);
-                callback(centerGui);
-            }),
-            addManagedGuiElementListeners: vi.fn((gui: any, listeners: Record<string, (event: any) => void>) => {
-                guiListeners.set(gui.element, listeners);
-            }),
-            getPinnedForFullWidth: vi.fn((gui: any) => (gui === leftGui ? 'left' : null)),
-            getColumnForFullWidth: vi.fn((gui: any) => ({ getColId: () => (gui === leftGui ? 'athlete' : 'sport') })),
+            getTargets: vi.fn(() => [leftTarget, centerTarget]),
+            getTarget: vi.fn((element?: EventTarget | null) =>
+                element === leftElement || leftElement.contains(element as Node) ? leftTarget : centerTarget
+            ),
         };
 
         beans = {
@@ -459,7 +465,9 @@ describe('AgFullWidthRowNotesFeature', () => {
         const feature = new AgFullWidthRowNotesFeature(beans, rowCtrl, notesSvc);
         feature.initialise();
 
-        guiListeners.get(leftElement)?.click?.({ button: 0, ctrlKey: false } as MouseEvent);
+        guiListeners
+            .get(leftElement)
+            ?.click?.({ button: 0, ctrlKey: false, target: leftElement } as unknown as MouseEvent);
 
         expect(context.createBean).toHaveBeenCalledTimes(1);
         expect(notesSvc.getNoteAccess).toHaveBeenCalledWith({
@@ -473,8 +481,12 @@ describe('AgFullWidthRowNotesFeature', () => {
         const feature = new AgFullWidthRowNotesFeature(beans, rowCtrl, notesSvc);
         feature.initialise();
 
-        guiListeners.get(leftElement)?.click?.({ button: 0, ctrlKey: false } as MouseEvent);
-        guiListeners.get(centerElement)?.click?.({ button: 0, ctrlKey: false } as MouseEvent);
+        guiListeners
+            .get(leftElement)
+            ?.click?.({ button: 0, ctrlKey: false, target: leftElement } as unknown as MouseEvent);
+        guiListeners
+            .get(centerElement)
+            ?.click?.({ button: 0, ctrlKey: false, target: centerElement } as unknown as MouseEvent);
 
         expect(context.createBean).toHaveBeenCalledTimes(2);
         expect(notesSvc.getNoteAccess).toHaveBeenCalledWith({

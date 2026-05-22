@@ -1,5 +1,6 @@
 import type { RowNode } from '../entities/rowNode';
 import type { Column } from './iColumn';
+import type { VerticalSection } from './iGridSection';
 import type { IRowNode } from './iRowNode';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -10,7 +11,7 @@ export interface IFooterService {
         callback: (node: RowNode, index: number) => void,
         includeFooterNodes: boolean,
         isRootNode: boolean,
-        position: 'top' | 'bottom'
+        position: VerticalSection
     ): number;
 
     getTopDisplayIndex(

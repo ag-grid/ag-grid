@@ -1,4 +1,11 @@
-import type { BeanCollection, CtrlsService, Environment, IAdvancedFilterCtrl, PopupService } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    CtrlsService,
+    Environment,
+    IAdvancedFilterCtrl,
+    IPinnedSectionCompHost,
+    PopupService,
+} from 'ag-grid-community';
 import { BeanStub, _getAbsoluteHeight, _getAbsoluteWidth, _removeFromParent } from 'ag-grid-community';
 
 import { Dialog } from '../widgets/dialog';
@@ -22,6 +29,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
     }
 
     private eHeaderComp: AdvancedFilterHeaderComp | undefined;
+    private headerCompHost: IPinnedSectionCompHost | undefined;
     private eFilterComp: AdvancedFilterComp | undefined;
     private hasAdvancedFilterParent: boolean;
     private eBuilderComp: AdvancedFilterBuilderComp | undefined;
@@ -50,6 +58,12 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
 
         this.addDestroyFunc(() => {
             this.destroyAdvancedFilterComp();
+            if (this.eHeaderComp) {
+                this.headerCompHost?.unmountComp(this.eHeaderComp.getGui());
+                this.destroyBean(this.eHeaderComp);
+                this.eHeaderComp = undefined;
+                this.headerCompHost = undefined;
+            }
             this.destroyBean(this.eBuilderComp);
             if (this.eBuilderDialog?.isAlive()) {
                 this.destroyBean(this.eBuilderDialog);
@@ -57,16 +71,9 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
         });
     }
 
-    public setupHeaderComp(eCompToInsertBefore: HTMLElement): void {
-        if (this.eHeaderComp) {
-            this.eHeaderComp?.getGui().remove();
-            this.destroyBean(this.eHeaderComp);
-        }
-
-        this.eHeaderComp = this.createManagedBean(
-            new AdvancedFilterHeaderComp(this.enabled && !this.hasAdvancedFilterParent)
-        );
-        eCompToInsertBefore.insertAdjacentElement('beforebegin', this.eHeaderComp.getGui());
+    public mountTopSectionComp(host: IPinnedSectionCompHost): void {
+        this.headerCompHost = host;
+        this.syncHeaderComp();
     }
 
     public focusHeaderComp(): boolean {
@@ -179,7 +186,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
 
     private updateComps(): void {
         this.setAdvancedFilterComp();
-        this.setHeaderCompEnabled();
+        this.syncHeaderComp();
         this.eventSvc.dispatchEvent({
             type: 'headerHeightChanged',
         });
@@ -208,8 +215,29 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
         }
     }
 
-    private setHeaderCompEnabled(): void {
-        this.eHeaderComp?.setEnabled(this.enabled && !this.hasAdvancedFilterParent);
+    private syncHeaderComp(): void {
+        const headerCompHost = this.headerCompHost;
+        if (!headerCompHost) {
+            return;
+        }
+
+        const shouldShowInPinnedTop = this.enabled && !this.hasAdvancedFilterParent;
+        if (!shouldShowInPinnedTop) {
+            if (!this.eHeaderComp) {
+                return;
+            }
+            headerCompHost.unmountComp(this.eHeaderComp.getGui());
+            this.destroyBean(this.eHeaderComp);
+            this.eHeaderComp = undefined;
+            return;
+        }
+
+        if (!this.eHeaderComp) {
+            this.eHeaderComp = this.createManagedBean(new AdvancedFilterHeaderComp(true));
+            headerCompHost.mountComp(this.eHeaderComp.getGui());
+        }
+
+        this.eHeaderComp.refreshLayout();
     }
 
     private destroyAdvancedFilterComp(): void {

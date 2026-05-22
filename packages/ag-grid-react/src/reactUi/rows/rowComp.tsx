@@ -2,6 +2,8 @@ import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMe
 
 import type {
     CellCtrl,
+    HorizontalSection,
+    HorizontalSectionMap,
     ICellRenderer,
     ICellRendererParams,
     IRowComp,
@@ -35,7 +37,6 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     );
     const [rowId, setRowId] = useState<string | null>(() => rowCtrl.rowId);
     const [rowBusinessKey, setRowBusinessKey] = useState<string | null>(() => rowCtrl.businessKey);
-
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(() => rowCtrl.rowStyles);
     // Seeded so bulk-add doesn't flash empty rows; getInitialCellCtrls returns
     // null when creation is deferred or not applicable.
@@ -44,19 +45,33 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     );
     const cellCtrlsRef = useRef<CellCtrl[] | null>(cellCtrlsFlushSync);
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
+    const [embeddedFullWidthCompDetails, setEmbeddedFullWidthCompDetails] =
+        useState<HorizontalSectionMap<UserCompDetails>>();
+    const embeddedFullWidthCompDetailsRef = useRef<HorizontalSectionMap<UserCompDetails>>();
 
     // these styles have initial values, so element is placed into the DOM with them,
     // rather than an transition getting applied.
-    const [top, setTop] = useState<string | undefined>(() =>
-        isDisplayed ? rowCtrl.getInitialRowTop(containerType) : undefined
-    );
+    const [top, setTop] = useState<string | undefined>(() => (isDisplayed ? rowCtrl.getInitialRowTop() : undefined));
     const [transform, setTransform] = useState<string | undefined>(() =>
-        isDisplayed ? rowCtrl.getInitialTransform(containerType) : undefined
+        isDisplayed ? rowCtrl.getInitialTransform() : undefined
     );
 
     const eGui = useRef<HTMLDivElement | null>(null);
+    const eFullWidthAnchor = useRef<HTMLDivElement | null>(null);
+    const ePinnedLeftSection = useRef<HTMLDivElement | null>(null);
+    const ePinnedLeftCells = useRef<HTMLDivElement | null>(null);
+    const eScrollingCells = useRef<HTMLDivElement | null>(null);
+    const ePinnedRightSection = useRef<HTMLDivElement | null>(null);
+    const ePinnedRightCells = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
+    const fullWidthEmbeddedLeftCompRef = useRef<ICellRenderer>();
+    const fullWidthEmbeddedCenterCompRef = useRef<ICellRenderer>();
+    const fullWidthEmbeddedRightCompRef = useRef<ICellRenderer>();
     const fullWidthParamsRef = useRef<ICellRendererParams>();
+    const fullWidthEmbeddedLeftParamsRef = useRef<ICellRendererParams>();
+    const fullWidthEmbeddedCenterParamsRef = useRef<ICellRendererParams>();
+    const fullWidthEmbeddedRightParamsRef = useRef<ICellRendererParams>();
+    const [embeddedSectionHasContent, setEmbeddedSectionHasContent] = useState(() => rowCtrl.embeddedSectionHasContent);
 
     const autoHeightSetup = useRef<boolean>(false);
     const [autoHeightSetupAttempt, setAutoHeightSetupAttempt] = useState<number>(0);
@@ -72,7 +87,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             return;
         }
 
-        const eChild = eGui.current?.firstChild as HTMLElement;
+        const eChild = eFullWidthAnchor.current?.firstChild as HTMLElement;
         if (eChild) {
             rowCtrl.setupDetailRowAutoHeight(eChild);
             autoHeightSetup.current = true;
@@ -146,12 +161,45 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     }
                 }
             },
+            getPinnedLeftRowElement: () => ePinnedLeftCells.current ?? undefined,
+            getPinnedLeftSectionElement: () => ePinnedLeftSection.current ?? undefined,
+            getScrollingRowElement: () => eScrollingCells.current ?? undefined,
+            getPinnedRightRowElement: () => ePinnedRightCells.current ?? undefined,
+            getPinnedRightSectionElement: () => ePinnedRightSection.current ?? undefined,
             showFullWidth: (compDetails) => {
+                embeddedFullWidthCompDetailsRef.current = undefined;
+                setEmbeddedFullWidthCompDetails(undefined);
+                setEmbeddedSectionHasContent({ left: true, center: true, right: true });
                 fullWidthParamsRef.current = compDetails.params;
                 setFullWidthCompDetails(compDetails);
             },
-            getFullWidthCellRenderer: () => fullWidthCompRef.current,
-            getFullWidthCellRendererParams: () => fullWidthParamsRef.current,
+            showEmbeddedFullWidth: (compDetails) => {
+                setFullWidthCompDetails(undefined);
+                setEmbeddedSectionHasContent({ left: true, center: true, right: true });
+                fullWidthEmbeddedLeftParamsRef.current = compDetails.left.params;
+                fullWidthEmbeddedCenterParamsRef.current = compDetails.center.params;
+                fullWidthEmbeddedRightParamsRef.current = compDetails.right.params;
+                embeddedFullWidthCompDetailsRef.current = compDetails;
+                setEmbeddedFullWidthCompDetails(compDetails);
+            },
+            getFullWidthCellRenderers: () => {
+                if (rowCtrl.isEmbeddedFullWidth) {
+                    return [
+                        fullWidthEmbeddedLeftCompRef.current,
+                        fullWidthEmbeddedCenterCompRef.current,
+                        fullWidthEmbeddedRightCompRef.current,
+                    ].filter((r) => r != null);
+                }
+                return fullWidthCompRef.current ? [fullWidthCompRef.current] : [];
+            },
+            getFullWidthCellRendererParams: () =>
+                fullWidthParamsRef.current ?? fullWidthEmbeddedCenterParamsRef.current,
+            getFullWidthCellRendererParamsForPinned: (pinned) =>
+                pinned === 'left'
+                    ? fullWidthEmbeddedLeftParamsRef.current
+                    : pinned === 'right'
+                      ? fullWidthEmbeddedRightParamsRef.current
+                      : fullWidthEmbeddedCenterParamsRef.current,
             refreshFullWidth: (getUpdatedParams) => {
                 const fullWidthParams = getUpdatedParams();
                 fullWidthParamsRef.current = fullWidthParams;
@@ -168,14 +216,139 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     return fullWidthCompRef.current.refresh(fullWidthParams);
                 }
             },
+            refreshEmbeddedFullWidth: (getUpdatedParams) => {
+                const leftParams = getUpdatedParams('left');
+                const centerParams = getUpdatedParams(null);
+                const rightParams = getUpdatedParams('right');
+
+                fullWidthEmbeddedLeftParamsRef.current = leftParams;
+                fullWidthEmbeddedCenterParamsRef.current = centerParams;
+                fullWidthEmbeddedRightParamsRef.current = rightParams;
+
+                const leftRef = fullWidthEmbeddedLeftCompRef.current;
+                const centerRef = fullWidthEmbeddedCenterCompRef.current;
+                const rightRef = fullWidthEmbeddedRightCompRef.current;
+
+                const currentDetails = embeddedFullWidthCompDetailsRef.current;
+                let nextDetails: HorizontalSectionMap<UserCompDetails> | undefined;
+
+                const refreshSection = (
+                    section: HorizontalSection,
+                    params: ICellRendererParams,
+                    renderer: ICellRenderer | undefined,
+                    hasContent: boolean
+                ): boolean => {
+                    const details = currentDetails?.[section];
+                    const isStatelessFrameworkRenderer =
+                        !!details?.componentFromFramework && isComponentStateless(details.componentClass);
+
+                    if (isStatelessFrameworkRenderer) {
+                        if (!gos.get('reactiveCustomComponents') || !currentDetails) {
+                            return false;
+                        }
+
+                        nextDetails ??= { ...currentDetails };
+                        nextDetails[section] = { ...details, params };
+                        return true;
+                    }
+
+                    return renderer?.refresh?.(params) ?? !hasContent;
+                };
+
+                const leftRefreshed = refreshSection(
+                    'left',
+                    leftParams,
+                    leftRef,
+                    rowCtrl.embeddedSectionHasContent.left
+                );
+                const centerRefreshed = refreshSection('center', centerParams, centerRef, true);
+                const rightRefreshed = refreshSection(
+                    'right',
+                    rightParams,
+                    rightRef,
+                    rowCtrl.embeddedSectionHasContent.right
+                );
+
+                if (nextDetails) {
+                    embeddedFullWidthCompDetailsRef.current = nextDetails;
+                    setEmbeddedFullWidthCompDetails(nextDetails);
+                }
+
+                return leftRefreshed && centerRefreshed && rightRefreshed;
+            },
         };
         rowCtrl.setComp(compProxy, eRef, containerType, compBean.current);
     }, []);
 
+    const showEmbeddedFullWidth = isFullWidth && rowCtrl.shouldCreateCellSections();
+
     useLayoutEffect(
-        () => showJsComp(fullWidthCompDetails, context, eGui.current!, fullWidthCompRef),
+        () => showJsComp(fullWidthCompDetails, context, eFullWidthAnchor.current ?? eGui.current!, fullWidthCompRef),
         [fullWidthCompDetails]
     );
+    useLayoutEffect(() => {
+        if (!ePinnedLeftCells.current) {
+            return;
+        }
+        return showJsComp(
+            embeddedFullWidthCompDetails?.left,
+            context,
+            ePinnedLeftCells.current,
+            fullWidthEmbeddedLeftCompRef
+        );
+    }, [embeddedFullWidthCompDetails?.left]);
+    useLayoutEffect(() => {
+        if (!eScrollingCells.current) {
+            return;
+        }
+        return showJsComp(
+            embeddedFullWidthCompDetails?.center,
+            context,
+            eScrollingCells.current,
+            fullWidthEmbeddedCenterCompRef
+        );
+    }, [embeddedFullWidthCompDetails?.center]);
+    useLayoutEffect(() => {
+        if (!ePinnedRightCells.current) {
+            return;
+        }
+        return showJsComp(
+            embeddedFullWidthCompDetails?.right,
+            context,
+            ePinnedRightCells.current,
+            fullWidthEmbeddedRightCompRef
+        );
+    }, [embeddedFullWidthCompDetails?.right]);
+    useLayoutEffect(() => {
+        if (!showEmbeddedFullWidth) {
+            return;
+        }
+        const updateLaneVisibility = () => {
+            const next = {
+                left: !!ePinnedLeftCells.current?.firstElementChild,
+                center: !!eScrollingCells.current?.firstElementChild,
+                right: !!ePinnedRightCells.current?.firstElementChild,
+            };
+            rowCtrl.embeddedSectionHasContent = next;
+            setEmbeddedSectionHasContent((prev) =>
+                prev.left === next.left && prev.center === next.center && prev.right === next.right ? prev : next
+            );
+        };
+
+        updateLaneVisibility();
+        const observer = new MutationObserver(updateLaneVisibility);
+        if (ePinnedLeftCells.current) {
+            observer.observe(ePinnedLeftCells.current, { childList: true });
+        }
+        if (eScrollingCells.current) {
+            observer.observe(eScrollingCells.current, { childList: true });
+        }
+        if (ePinnedRightCells.current) {
+            observer.observe(ePinnedRightCells.current, { childList: true });
+        }
+
+        return () => observer.disconnect();
+    }, [showEmbeddedFullWidth, embeddedFullWidthCompDetails]);
 
     const rowStyles = useMemo(() => {
         const res = { top, transform };
@@ -186,6 +359,34 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     const showFullWidthFramework = isFullWidth && fullWidthCompDetails?.componentFromFramework;
     const showCells = !isFullWidth && cellCtrlsMerged != null;
+
+    const { leftCellCtrls, centerCellCtrls, rightCellCtrls } = useMemo(() => {
+        const left: CellCtrl[] = [];
+        const center: CellCtrl[] = [];
+        const right: CellCtrl[] = [];
+
+        for (const cellCtrl of cellCtrlsMerged ?? []) {
+            const pinned = cellCtrl.column.getPinned();
+            if (pinned === 'left') {
+                left.push(cellCtrl);
+            } else if (pinned === 'right') {
+                right.push(cellCtrl);
+            } else {
+                center.push(cellCtrl);
+            }
+        }
+
+        return {
+            leftCellCtrls: left,
+            centerCellCtrls: center,
+            rightCellCtrls: right,
+        };
+    }, [cellCtrlsMerged]);
+
+    const { leftWidth, centerWidth, rightWidth } = useMemo(
+        () => rowCtrl.getMappedPinnedCellGroupWidths(),
+        [rowCtrl, showEmbeddedFullWidth, embeddedSectionHasContent]
+    );
 
     const reactFullWidthCellRendererStateless = useMemo(() => {
         const res =
@@ -200,8 +401,8 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gos.get('reactiveCustomComponents');
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
-    const showCellsJsx = () =>
-        cellCtrlsMerged?.map((cellCtrl) => (
+    const showCellsJsx = (cellCtrls: CellCtrl[]) =>
+        cellCtrls.map((cellCtrl) => (
             <CellComp
                 cellCtrl={cellCtrl}
                 editingCell={editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false}
@@ -219,6 +420,48 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         );
     };
 
+    const showEmbeddedFrameworkSection = (section: HorizontalSection) => {
+        const details = embeddedFullWidthCompDetails?.[section];
+        if (!details?.componentFromFramework) {
+            return null;
+        }
+
+        const FullWidthComp = details.componentClass;
+        const compRef =
+            section === 'left'
+                ? fullWidthEmbeddedLeftCompRef
+                : section === 'right'
+                  ? fullWidthEmbeddedRightCompRef
+                  : fullWidthEmbeddedCenterCompRef;
+        const stateless = isComponentStateless(details.componentClass);
+        return stateless ? <FullWidthComp {...details.params} /> : <FullWidthComp {...details.params} ref={compRef} />;
+    };
+
+    const renderCellSection = (
+        sectionClass: string,
+        sectionRef: React.Ref<HTMLDivElement> | undefined,
+        wrapperRef: React.Ref<HTMLDivElement>,
+        width: number,
+        children: React.ReactNode,
+        pinned: boolean = false
+    ) => (
+        <div
+            className={sectionClass}
+            role="presentation"
+            ref={sectionRef}
+            style={pinned ? { width: `${width}px`, display: width > 0 ? undefined : 'none' } : undefined}
+        >
+            <div
+                className="ag-grid-container-wrapper"
+                role="presentation"
+                ref={wrapperRef}
+                style={{ width: width || undefined, display: width > 0 ? undefined : 'none' }}
+            >
+                {children}
+            </div>
+        </div>
+    );
+
     return (
         <div
             ref={setRef}
@@ -228,7 +471,65 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             row-id={rowId}
             row-business-key={rowBusinessKey}
         >
-            {showCells ? showCellsJsx() : showFullWidthFramework ? showFullWidthFrameworkJsx() : null}
+            {showCells ? (
+                <>
+                    {renderCellSection(
+                        'ag-grid-pinned-left-cells',
+                        ePinnedLeftSection,
+                        ePinnedLeftCells,
+                        leftWidth,
+                        showCellsJsx(leftCellCtrls),
+                        true
+                    )}
+                    {renderCellSection(
+                        'ag-grid-scrolling-cells',
+                        undefined,
+                        eScrollingCells,
+                        centerWidth,
+                        showCellsJsx(centerCellCtrls)
+                    )}
+                    {renderCellSection(
+                        'ag-grid-pinned-right-cells',
+                        ePinnedRightSection,
+                        ePinnedRightCells,
+                        rightWidth,
+                        showCellsJsx(rightCellCtrls),
+                        true
+                    )}
+                </>
+            ) : showEmbeddedFullWidth ? (
+                <>
+                    {renderCellSection(
+                        'ag-grid-pinned-left-cells',
+                        ePinnedLeftSection,
+                        ePinnedLeftCells,
+                        leftWidth,
+                        showEmbeddedFrameworkSection('left'),
+                        true
+                    )}
+                    {renderCellSection(
+                        'ag-grid-scrolling-cells',
+                        undefined,
+                        eScrollingCells,
+                        centerWidth,
+                        showEmbeddedFrameworkSection('center')
+                    )}
+                    {renderCellSection(
+                        'ag-grid-pinned-right-cells',
+                        ePinnedRightSection,
+                        ePinnedRightCells,
+                        rightWidth,
+                        showEmbeddedFrameworkSection('right'),
+                        true
+                    )}
+                </>
+            ) : showFullWidthFramework ? (
+                <div className="ag-full-width-anchor" role="presentation" ref={eFullWidthAnchor}>
+                    {showFullWidthFrameworkJsx()}
+                </div>
+            ) : isFullWidth ? (
+                <div className="ag-full-width-anchor" role="presentation" ref={eFullWidthAnchor} />
+            ) : null}
         </div>
     );
 };

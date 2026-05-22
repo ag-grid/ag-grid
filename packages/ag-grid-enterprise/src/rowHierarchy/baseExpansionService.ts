@@ -80,14 +80,17 @@ export abstract class BaseExpansionService extends BeanStub {
     private updateExpandedCss(rowCtrl: RowCtrl, rowNode: RowNode): void {
         const expandable = rowNode.isExpandable();
         const expanded = rowNode.expanded == true;
+        const gui = rowCtrl.getGui();
 
-        rowCtrl.forEachGui(undefined, (gui) => {
-            const rowComp = gui.rowComp;
-            rowComp.toggleCss('ag-row-group', expandable);
-            rowComp.toggleCss('ag-row-group-expanded', expandable && expanded);
-            rowComp.toggleCss('ag-row-group-contracted', expandable && !expanded);
-            _setAriaExpanded(gui.element, expandable && expanded);
-        });
+        if (!gui) {
+            return;
+        }
+
+        const rowComp = gui.rowComp;
+        rowComp.toggleCss('ag-row-group', expandable);
+        rowComp.toggleCss('ag-row-group-expanded', expandable && expanded);
+        rowComp.toggleCss('ag-row-group-contracted', expandable && !expanded);
+        _setAriaExpanded(gui.element, expandable && expanded);
     }
 
     protected dispatchStateUpdatedEvent() {

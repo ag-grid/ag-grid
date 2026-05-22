@@ -1,7 +1,7 @@
 import type { _ModuleWithoutApi } from '../../interfaces/iModule';
 import { VERSION } from '../../version';
-import { HeaderComp } from './column/headerComp';
-import { HeaderGroupComp } from './columnGroup/headerGroupComp';
+import { AgColumnHeader } from './column/agColumnHeader';
+import { AgColumnGroupHeader } from './columnGroup/agColumnGroupHeader';
 
 /**
  * @feature Columns -> Column Header
@@ -11,7 +11,7 @@ export const ColumnHeaderCompModule: _ModuleWithoutApi = {
     moduleName: 'ColumnHeaderComp',
     version: VERSION,
     userComponents: {
-        agColumnHeader: HeaderComp,
+        agColumnHeader: AgColumnHeader,
     },
     icons: {
         // button to launch legacy column menu
@@ -29,7 +29,7 @@ export const ColumnGroupHeaderCompModule: _ModuleWithoutApi = {
     moduleName: 'ColumnGroupHeaderComp',
     version: VERSION,
     userComponents: {
-        agColumnGroupHeader: HeaderGroupComp,
+        agColumnGroupHeader: AgColumnGroupHeader,
     },
     icons: {
         // header column group shown when expanded (click to contract)

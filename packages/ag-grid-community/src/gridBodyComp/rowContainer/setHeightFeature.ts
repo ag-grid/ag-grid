@@ -16,7 +16,7 @@ export class SetHeightFeature extends BeanStub {
     }
 
     private onHeightChanged(maxDivHeightScaler: RowContainerHeightService): void {
-        const height = maxDivHeightScaler.uiContainerHeight;
+        const height = maxDivHeightScaler.getAdjustedUiContainerHeight();
         const heightString = height != null ? `${height}px` : ``;
 
         this.eContainer.style.height = heightString;

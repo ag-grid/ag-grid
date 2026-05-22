@@ -1,0 +1,412 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//AG Grid & Bryntum//Beyond The Prompt 2026//EN
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Beyond The Prompt — 19 May 2026
+X-WR-TIMEZONE:Europe/London
+BEGIN:VTIMEZONE
+TZID:Europe/London
+X-LIC-LOCATION:Europe/London
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0000
+TZOFFSETTO:+0100
+TZNAME:BST
+DTSTART:19700329T010000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0000
+TZNAME:GMT
+DTSTART:19701025T020000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:btp-2026-registration@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T083000
+DTEND;TZID=Europe/London:20260519T093000
+SUMMARY:Registration and Coffee
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Hasslett\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-welcome@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T093000
+DTEND;TZID=Europe/London:20260519T094000
+SUMMARY:Welcome | Phil Hawksworth (Event MC)
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:Welcome | Phil Hawksworth (Event MC)\nAuditorium\n\n**Talk desc
+ ription**: Opening remarks to set the theme for the day: building with too
+ ls you can trust.\n\n**Speaker bio**: With a passion for browser technolog
+ ies\, and the empowering properties of the web\, Phil loves seeking out in
+ genuity and simplicity\, especially in places where over-engineering is co
+ mmon. After 25 years of building web applications for companies such as Go
+ ogle\, Apple\, Nike\, R/GA\, and The London Stock Exchange\, he has worked
+  to challenge traditional technical architectures in favour of simplicity 
+ and effectiveness\, working in Developer Experience at Netlify and Deno.\n
+ \n✨ Tag us on social media!\n\n* Twitter: @ag_grid\n* Bsky: @ag-grid.bsk
+ y.social\n* LinkedIn: @ag-grid\n\nConnect with Phil:\n\n* Twitter: https:/
+ /twitter.com/philhawksworth\n* Bluesky: https://bsky.app/profile/philhawks
+ worth.dev\n* GitHub: https://github.com/philhawksworth\n\n----------------
+ -------------------------------
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-keynote@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T094000
+DTEND;TZID=Europe/London:20260519T101000
+SUMMARY:Opening Keynote | John Masterson (CEO\, AG Grid) & Mats Bryntse (Fo
+ under & CEO\, Bryntum)
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:Opening Keynote | John Masterson (CEO\, AG Grid) & Mats Bryntse
+  (Founder & CEO\, Bryntum)\nAuditorium\n\n**Speaker bios**:\n\nJohn Master
+ son is the CEO of AG Grid\, which he first joined in 2016 as employee numb
+ er two. After a detour as CTO of a London health-tech startup\, he returne
+ d in 2020 and stepped into the CEO role in 2024. He's spent fifteen years 
+ building software and leading engineering teams\, and is determined to kee
+ p AG Grid the first choice for JavaScript developers. Outside of work\, Jo
+ hn can be found on his bike\, in his headphones listening to a podcast\, o
+ r picking up a guitar.\n\nMats Bryntse is the founder and CEO of Bryntum\,
+  where he and his team build advanced scheduling and project planning tool
+ s for modern web apps. For the past 15 years\, he has obsessed over JavaSc
+ ript performance\, developer experience\, and making complex UIs feel simp
+ le. He used to enjoy chess\, badminton\, and independent thought\, until C
+ laude entered his life and optimized those away.\n\n\n✨ Tag us on social
+  media!\n\n* Twitter: @ag_grid\n* Bsky: @ag-grid.bsky.social\n* LinkedIn: 
+ @ag-grid\n\nConnect with Mats:\n\n* Twitter: https://x.com/bryntum\n* Link
+ edIn: https://www.linkedin.com/in/matsbryntse/\n* GitHub: https://github.c
+ om/matsbryntse\n\n-----------------------------------------------
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-khourshid@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T101000
+DTEND;TZID=Europe/London:20260519T104000
+SUMMARY:Goodbye slop\; welcome determinism | David Khourshid (Founder\, Sta
+ tely.ai)
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:Goodbye slop\; welcome determinism | David Khourshid (Founder\,
+  Stately.ai)\nAuditorium\n\n**Talk description**: Vibe coding feels produc
+ tive until you have to maintain it. Behind the agent "thinking..." you ign
+ ore and the code you never opened lies a growing pile of wasted tokens\, n
+ ondeterministic behavior\, and compounding errors hiding in plain sight. T
+ his talk pushes back on the status quo: elaborate agent architectures\, "p
+ rompting astrology"\, overnight automation loops burning through context w
+ indows and credit cards. Come for the critique\, leave with a framework fo
+ r using AI to build software you actually understand.\n\n**Speaker bio**: 
+ David is the founder of Stately.ai and creator of XState\, the most popula
+ r open-source state machine & statecharts library. He's a longtime advocat
+ e for event-driven modeling and visual diagramming as the foundation for r
+ eliable UIs and\, increasingly\, AI agents. When he's not at a computer ke
+ yboard\, he's at a piano keyboard.\n\n✨ Tag us on social media!\n\n* Twi
+ tter: @ag_grid\n* Bsky: @ag-grid.bsky.social\n* LinkedIn: @ag-grid\n\nConn
+ ect with David:\n\n* Twitter: https://x.com/davidkpiano\n* LinkedIn: https
+ ://linkedin.com/in/davidkpiano\n* GitHub: https://github.com/davidkpiano\n
+ \n-----------------------------------------------
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-coffee1@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T104000
+DTEND;TZID=Europe/London:20260519T111000
+SUMMARY:Coffee Break
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Hasslett\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-cooper@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T111000
+DTEND;TZID=Europe/London:20260519T113500
+SUMMARY:Codebase design for the agent era | Stephen Cooper (Team Lead\, AG 
+ Grid)
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:Codebase design for the agent era | Stephen Cooper (Team Lead\,
+  AG Grid)\nAuditorium\n\n**Talk description**: As AI agents become part of
+  the development workflow\, codebase structure and well-designed system pr
+ ompts matter more than ever. This session will show you how we're approach
+ ing this in the AG Grid and AG Charts codebases.\n\n**Speaker bio**: Steph
+ en is the Team Lead for AG Grid and loves sharing practical\, experience-b
+ ased tips\, tricks\, and case studies from years in the codebase. He's gon
+ e deep into grid performance and framework integrations\, and has spent mo
+ re time than he'd like profiling render cycles. Outside of work\, life rev
+ olves around family\, four kids and two dogs\, and he's happiest when the 
+ whole crew is out together exploring in the park.\n\n✨ Tag us on social 
+ media!\n\n* Twitter: @ag_grid\n* Bsky: @ag-grid.bsky.social\n* LinkedIn: @
+ ag-grid\n\nConnect with Stephen:\n\n* LinkedIn: https://linkedin.com/in/sc
+ ooper-dev\n* GitHub: https://github.com/StephenCooper\n\n-----------------
+ ------------------------------
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-hobson@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T113500
+DTEND;TZID=Europe/London:20260519T120000
+SUMMARY:AI in AG Studio | Josh Hobson (Developer\, AG Grid)
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:AI in AG Studio | Josh Hobson (Developer\, AG Grid)\nAuditorium
+ \n\n**Talk description**: How do you build a dashboard you can't see? A be
+ hind-the-scenes look at AG Studio's multi-agent architecture and the clien
+ t-side tools that let any LLM build reports it otherwise couldn't.\n\n**Sp
+ eaker bio**: Josh is a developer at AG Grid\, where he's been building AG 
+ Studio — a new dashboard library with multi-agent AI baked in. He's a ma
+ thematician by training and a maker by instinct\, with a particular love f
+ or developer tooling\, type systems\, and intelligent interfaces. Outside 
+ of work\, Josh can be found tinkering with 3D printers\, ski touring in th
+ e Alps\, or out on long walks with his dog.\n\n✨ Tag us on social media!
+ \n\n* Twitter: @ag_grid\n* Bsky: @ag-grid.bsky.social\n* LinkedIn: @ag-gri
+ d\n\nConnect with Josh:\n\n* GitHub: https://github.com/AlpineJosh\n\n----
+ -------------------------------------------
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-ruiz@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T120000
+DTEND;TZID=Europe/London:20260519T122500
+SUMMARY:Bringing AI to the Canvas | Steve Ruiz (CEO\, tldraw)
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:Bringing AI to the Canvas | Steve Ruiz (CEO\, tldraw)\nAuditori
+ um\n\n**Talk description**: At tldraw\, we've been bringing agents to our 
+ infinite canvas. In December 2025\, we ran a one-month experiment named Fa
+ irydraw where users could work with three fairies — virtual collaborator
+ s who work with you\, with your human collaborators\, and coordinate toget
+ her on large tasks.\n\n**Speaker bio**: A developer\, designer\, and now s
+ tartup founder in London. With a background in visual art\, Steve works pr
+ imarily in creative tools for the web. He is known for tldraw\, and demos 
+ of perfect arrows.\n\n✨ Tag us on social media!\n\n* Twitter: @ag_grid\n
+ * Bsky: @ag-grid.bsky.social\n* LinkedIn: @ag-grid\n\nConnect with Steve:\
+ n\n* Twitter: https://x.com/steveruizok\n\n-------------------------------
+ ----------------
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-lunch@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T122500
+DTEND;TZID=Europe/London:20260519T133500
+SUMMARY:Lunch and Product Demos
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Hasslett\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-sumption@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T133500
+DTEND;TZID=Europe/London:20260519T140500
+SUMMARY:Debugging CSS performance with AI | Bernie Sumption (Engineer\, AG 
+ Grid)
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:Debugging CSS performance with AI | Bernie Sumption (Engineer\,
+  AG Grid)\nAuditorium\n\n**Talk description**: CSS performance issues can 
+ be subtle and time-consuming. This talk will show you how you can guide AI
+  to uncover bugs without needing to learn the intricacies of CSS rendering
+  internals.\n\n**Speaker bio**: Bernie is an engineer at AG Grid specialis
+ ing in theming. "The other engineers make it work fast and well\, I make i
+ t look pretty" he likes to say. Outside work he goes hiking\, plays with h
+ is kids\, and once made a tweeting cat flap that has 10x more social media
+  followers than he does.\n\n✨ Tag us on social media!\n\n* Twitter: @ag_
+ grid\n* Bsky: @ag-grid.bsky.social\n* LinkedIn: @ag-grid\n\nConnect with B
+ ernie:\n\n* LinkedIn: https://uk.linkedin.com/in/berniesumption\n* GitHub:
+  https://github.com/BernieSumption\n\n------------------------------------
+ -----------
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-rau@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T140500
+DTEND;TZID=Europe/London:20260519T142000
+SUMMARY:Software that moves fleets: Lessons from AG Grid\, Bryntum\, and Be
+ yond | Patrick Rau (Senior Developer\, TCS)
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:Software that moves fleets: Lessons from AG Grid\, Bryntum\, an
+ d Beyond | Patrick Rau (Senior Developer\, TCS)\nAuditorium\n\n**Talk desc
+ ription**: In aviation\, the software has to be rock solid. Patrick pulls 
+ back the curtain on the components powering Fleetplan's UI\, including AG 
+ Grid\, Bryntum's Scheduler Pro\, and the modules behind audit tracking and
+  safety reporting that keep operations airtight.\n\n**Speaker bio**: Patri
+ ck builds and maintains core parts of Team Centric Software's fleetplan pl
+ atform\, specializing in UI integration and complex components like AG Gri
+ d\, Bryntum's Scheduler Pro\, and modules for audit tracking and safety re
+ porting. He's driven by a passion for creating software that makes a real 
+ difference for the people who use it. When he's not solving problems at wo
+ rk\, you'll find him exploring new technologies through personal projects\
+ , gaming\, or planning his next trip.\n\n✨ Tag us on social media!\n\n* 
+ Twitter: @ag_grid\n* Bsky: @ag-grid.bsky.social\n* LinkedIn: @ag-grid\n\nC
+ onnect with Patrick:\n\n* LinkedIn: https://www.linkedin.com/in/patrick-r-
+ ab2168183/\n* GitHub: https://github.com/14rau\n\n------------------------
+ -----------------------
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-roadmap@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T142000
+DTEND;TZID=Europe/London:20260519T145000
+SUMMARY:Product Roadmap | Johan Isaksson (Head of Engineering\, Bryntum) & 
+ Adam Wang (AG Studio Product Lead\, AG Grid)
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:Product Roadmap | Johan Isaksson (Head of Engineering\, Bryntum
+ ) & Adam Wang (AG Studio Product Lead\, AG Grid)\nAuditorium\n\n**Speaker 
+ bios**:\n\nJohan Isaksson is responsible for architecture\, gate keeping\,
+  performance and styling across all Bryntum products. When not checking pu
+ ll requests\, recording performance profiles or tweaking CSS he enjoys wat
+ ching hockey and playing floorball.\n\nAdam Wang is the AG Studio Product 
+ Lead at AG Grid\, with around 10 years of experience in product management
+  across various disciplines. He previously worked on AG Grid Integrated Ch
+ arts before focusing on AG Studio. He enjoys the creative process of produ
+ ct management and is keen to solve problems by truly understanding user ne
+ eds. Outside of work\, he's a spin instructor who loves to put together a 
+ fire playlist. He also collects coloured vinyl.\n\n\n✨ Tag us on social 
+ media!\n\n* Twitter: @ag_grid\n* Bsky: @ag-grid.bsky.social\n* LinkedIn: @
+ ag-grid\n\nConnect with Adam:\n\n* LinkedIn: https://www.linkedin.com/in/a
+ dam-wang-77a8bb88/\n\n-----------------------------------------------
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-coffee2@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T145000
+DTEND;TZID=Europe/London:20260519T152000
+SUMMARY:Coffee Break
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Hasslett\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-bryntse@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T152000
+DTEND;TZID=Europe/London:20260519T154500
+SUMMARY:One-click agentic SDLC | Mats Bryntse (Founder & CEO\, Bryntum)
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:One-click agentic SDLC | Mats Bryntse (Founder & CEO\, Bryntum)
+ \nAuditorium\n\n**Talk description**: A demo of a headless Claude workflow
+ \, built by Bryntum CEO Mats\, that turns GitHub issues into mergeable PRs
+ \, with agents doing the work\, and a custom Kanban UI keeping things in c
+ heck.\n\n**Speaker bio**: Mats is the founder and CEO of Bryntum\, where h
+ e and his team build advanced scheduling and project planning tools for mo
+ dern web apps. For the past 15 years\, he has obsessed over JavaScript per
+ formance\, developer experience\, and making complex UIs feel simple. He u
+ sed to enjoy chess\, badminton\, and independent thought\, until Claude en
+ tered his life and optimized those away.\n\n✨ Tag us on social media!\n\
+ n* Twitter: @ag_grid\n* Bsky: @ag-grid.bsky.social\n* LinkedIn: @ag-grid\n
+ \nConnect with Mats:\n\n* Twitter: https://x.com/bryntum\n* LinkedIn: http
+ s://www.linkedin.com/in/matsbryntse/\n* GitHub: https://github.com/matsbry
+ ntse\n\n-----------------------------------------------
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-panel@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T154500
+DTEND;TZID=Europe/London:20260519T163000
+SUMMARY:How agentic AI is reshaping software engineering | Panel: Maggie Ap
+ pleton\, Matt Pocock\, Sophie Koonin\, Phil Hawksworth (MC)
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:How agentic AI is reshaping software engineering | Maggie Apple
+ ton (Staff Research Engineer\, GitHub)\, Matt Pocock (Senior Developer Edu
+ cator\, AI Hero)\, Sophie Koonin (Web Discipline Lead\, Monzo)\, Phil Hawk
+ sworth (MC)\nAuditorium\n\n**Talk description**: As AI reshapes how softwa
+ re gets built\, what actually changes for engineers\, teams\, and develope
+ r tools? This panel explores the real-world impact of agentic workflows on
+  software engineering — from code review and system design to cognitive 
+ skills\, ownership\, and developer experience. Expect practical insights\,
+  rapid-fire hot takes\, and honest discussion from engineers building beyo
+ nd the prompt.\n\n**Speaker bios**:\n\nMaggie Appleton is a Staff Research
+  Engineer at GitHub\, where she works on tools for thinking\, writing\, an
+ d building with code. With a background in anthropology\, she's known for 
+ her visual essays that explore how developers understand systems\, languag
+ es\, and ideas. She's a strong advocate for "digital gardens" over traditi
+ onal publishing\, and spends her time mapping out how knowledge grows on t
+ he web. Outside of work\, she's usually sketching concepts\, writing\, or 
+ connecting dots between code and culture.\n\nMatt Pocock is a senior devel
+ oper educator at AI Hero\, a TypeScript author\, and an educator passionat
+ e about bringing real software engineering rigour to the age of AI. He co-
+ organizes the AI Coding for Real Engineers cohort\, a community for experi
+ enced developers who want to build with AI tools without throwing away eve
+ rything they already know. Outside of the keyboard\, Matt enjoys long runs
+  through the Oxfordshire countryside\, loudly supporting Arsenal\, and exp
+ erimenting with new ways to make complex ideas click for developers everyw
+ here.\n\nSophie Koonin leads a team within the Operations collective at Mo
+ nzo\, building the software that powers the bank's award-winning customer 
+ experience. She's also Monzo's Web Discipline Lead\, advocating for web an
+ d empowering others to lead web platform improvements throughout the compa
+ ny. Outside of work\, Sophie loves arranging pop songs for her choir Mixta
+ pe\, playing video games\, cooking\, and gardening.\n\nPhil Hawksworth —
+  With a passion for browser technologies\, and the empowering properties o
+ f the web\, Phil loves seeking out ingenuity and simplicity\, especially i
+ n places where over-engineering is common. After 25 years of building web 
+ applications for companies such as Google\, Apple\, Nike\, R/GA\, and The 
+ London Stock Exchange\, he has worked to challenge traditional technical a
+ rchitectures in favour of simplicity and effectiveness\, working in Develo
+ per Experience at Netlify and Deno.\n\n\n✨ Tag us on social media!\n\n* 
+ Twitter: @ag_grid\n* Bsky: @ag-grid.bsky.social\n* LinkedIn: @ag-grid\n\nC
+ onnect with Matt Pocock:\n\n* Twitter: https://x.com/mattpocockuk\n* GitHu
+ b: https://github.com/mattpocock\n\nConnect with Sophie:\n\n* Website: htt
+ ps://localghost.dev\n\nConnect with Phil:\n\n* Twitter: https://twitter.co
+ m/philhawksworth\n* Bluesky: https://bsky.app/profile/philhawksworth.dev\n
+ * GitHub: https://github.com/philhawksworth\n\n---------------------------
+ --------------------
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-webb@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T163000
+DTEND;TZID=Europe/London:20260519T170000
+SUMMARY:Vibe Coding as a Maker | Matt Webb (Co-Founder\, Inanimate)
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:Vibe Coding as a Maker | Matt Webb (Co-Founder\, Inanimate)\nAu
+ ditorium\n\n**Talk description**: Matt will show his vibe coding experimen
+ ts\, from his AI clock to an app that points to the centre of the galaxy\,
+  and share some learnings from building hardware at his startup\, Inanimat
+ e. Then we ask: what are the limits of vibing and agentic coding? And how 
+ might we create libraries that agents love?\n\n**Speaker bio**: Matt is co
+ -founder of Inanimate\, consumer hardware bringing agents into the real wo
+ rld. Previously he has consulted with Google's AI research group\, run sta
+ rtup accelerators with R/GA Ventures\, and was CEO and co-founder of the d
+ esign studio BERG which invented some of the world's first internet-connec
+ ted consumer products like Little Printer (and has work in the New York Mo
+ MA). He is co-author of Mind Hacks (O'Reilly\, 2004). Since 2000 Matt has 
+ blogged at interconnected.org. He writes weekly+ on computing\, design\, a
+ nd speculative futures. He lives in London.\n\n✨ Tag us on social media!
+ \n\n* Twitter: @ag_grid\n* Bsky: @ag-grid.bsky.social\n* LinkedIn: @ag-gri
+ d\n\nConnect with Matt:\n\n* Twitter: https://x.com/genmon\n* Bluesky: htt
+ ps://bsky.app/profile/genmon.fyi\n* GitHub: https://github.com/inanimate-t
+ ech\n* LinkedIn: https://www.linkedin.com/in/genmon\n\n-------------------
+ ----------------------------
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-closing@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T170000
+DTEND;TZID=Europe/London:20260519T171000
+SUMMARY:Closing Remarks
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+LOCATION:Auditorium\, IET London\, 2 Savoy Place\, London WC2R 0BL
+DESCRIPTION:Closing thoughts to wrap up the day and set the stage for the n
+ etworking reception.
+END:VEVENT
+BEGIN:VEVENT
+UID:btp-2026-networking@ag-grid.com
+DTSTAMP:20260514T131617Z
+DTSTART;TZID=Europe/London:20260519T171000
+DTEND;TZID=Europe/London:20260519T200000
+SUMMARY:Networking Reception
+ORGANIZER;CN=Sylwia Vargas:mailto:sylwia.vargas@ag-grid.com
+DESCRIPTION:
+END:VEVENT
+END:VCALENDAR

@@ -2,7 +2,7 @@ import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Example', async ({ agIdFor, page }) => {
-        const viewport = page.locator('.ag-body-viewport');
+        const viewport = page.locator('.ag-grid-viewport');
         const groupValues = page.locator('.ag-group-value');
 
         // Shrink the viewport so that not all rows fit after expanding groups

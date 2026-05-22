@@ -366,7 +366,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         shouldDisplayTooltip?: () => boolean
     ): TooltipFeature | undefined {
         const tooltipParams: ITooltipCtrl = {
-            getGui: () => ctrl.getFullWidthElement()!,
+            getGui: () => ctrl.getRowContentElement()!,
             getTooltipValue: () => value,
             getLocation: () => 'fullWidthRow',
             shouldDisplayTooltip,

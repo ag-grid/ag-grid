@@ -7,7 +7,7 @@ import type {
     IHeaderGroupComp,
     UserCompDetails,
 } from 'ag-grid-community';
-import { _EmptyBean } from 'ag-grid-community';
+import { _EmptyBean, _applyHeaderWrapperHidden, _applyHeaderWrapperMaxHeight } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
@@ -46,32 +46,14 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
             toggleCss: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
             setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
             setHeaderWrapperHidden: (hidden: boolean) => {
-                const headerCompWrapper = eHeaderCompWrapper.current;
-
-                if (!headerCompWrapper) {
-                    return;
-                }
-
-                if (hidden) {
-                    headerCompWrapper.style.setProperty('display', 'none');
-                } else {
-                    headerCompWrapper.style.removeProperty('display');
+                if (eHeaderCompWrapper.current) {
+                    _applyHeaderWrapperHidden(eHeaderCompWrapper.current, hidden);
                 }
             },
             setHeaderWrapperMaxHeight: (value: number | null) => {
-                const headerCompWrapper = eHeaderCompWrapper.current;
-
-                if (!headerCompWrapper) {
-                    return;
+                if (eHeaderCompWrapper.current) {
+                    _applyHeaderWrapperMaxHeight(eHeaderCompWrapper.current, value);
                 }
-
-                if (value != null) {
-                    headerCompWrapper.style.setProperty('max-height', `${value}px`);
-                } else {
-                    headerCompWrapper.style.removeProperty('max-height');
-                }
-
-                headerCompWrapper.classList.toggle('ag-header-cell-comp-wrapper-limited-height', value != null);
             },
             setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
             setResizableDisplayed: (displayed: boolean) => {
@@ -86,7 +68,10 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
     }, []);
 
     // js comps
-    useLayoutEffect(() => showJsComp(userCompDetails, context, eHeaderCompWrapper.current!), [userCompDetails]);
+    useLayoutEffect(
+        () => showJsComp(userCompDetails, context, eHeaderCompWrapper.current!, userCompRef),
+        [context, userCompDetails]
+    );
 
     // add drag handling, must be done after component is added to the dom
     useEffect(() => {

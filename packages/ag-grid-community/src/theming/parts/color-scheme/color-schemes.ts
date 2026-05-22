@@ -6,7 +6,6 @@ import {
     foregroundBackgroundMix,
     foregroundColor,
 } from '../../../agStack/theming/themeUtils';
-import { baseDarkBatchEditParams } from '../batch-edit/batch-edit-styles';
 
 const makeColorSchemeLightTreeShakeable = () =>
     createPart({
@@ -44,7 +43,7 @@ export const colorSchemeLightCold = /*#__PURE__*/ makeColorSchemeLightColdTreeSh
 const darkParams = () =>
     ({
         ...defaultLightColorSchemeParams,
-        ...baseDarkBatchEditParams,
+        cellBatchEditTextColor: '#f3d0b3',
         backgroundColor: 'hsl(217, 0%, 17%)',
         foregroundColor: '#FFF',
         chromeBackgroundColor: foregroundBackgroundMix(0.05),
@@ -65,7 +64,6 @@ const darkParams = () =>
         checkboxUncheckedBorderColor: foregroundBackgroundMix(0.4),
         toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.4),
         rowBatchEditBackgroundColor: foregroundBackgroundMix(0.1),
-        // dark colours for formula editor / formula ranges
         formulaToken1Color: '#4da3e5',
         formulaToken2Color: '#f55864',
         formulaToken3Color: '#b688f2',

@@ -1,10 +1,12 @@
 import { KeyCode } from '../agStack/constants/keyCode';
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _setAriaDisabled } from '../agStack/utils/aria';
+import { AgInputNumberFieldSelector } from '../agStack/widgets/agInputNumberField';
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
+import type { GridInputNumberField } from '../widgets/gridWidgetTypes';
 import type { PaginationService } from './paginationService';
 import { _formatPaginationNumber } from './paginationUtils';
 
@@ -16,7 +18,8 @@ export class PageSummaryComp extends Component {
     private readonly btPrevious: HTMLElement = RefPlaceholder;
     private readonly btNext: HTMLElement = RefPlaceholder;
     private readonly btLast: HTMLElement = RefPlaceholder;
-    private readonly lbCurrent: HTMLElement = RefPlaceholder;
+    private readonly lbCurrentInput: GridInputNumberField = RefPlaceholder;
+    private readonly lbCurrentStatic: HTMLElement = RefPlaceholder;
     private readonly lbTotal: HTMLElement = RefPlaceholder;
 
     private previousAndFirstButtonsDisabled = false;
@@ -25,10 +28,12 @@ export class PageSummaryComp extends Component {
 
     public ariaStatus = '';
     private readonly idPrefix: string;
+    private readonly suppressPageInput: boolean;
 
-    constructor(idPrefix: string) {
+    constructor(idPrefix: string, suppressPageInput?: boolean) {
         super();
         this.idPrefix = idPrefix;
+        this.suppressPageInput = suppressPageInput ?? false;
     }
 
     public wireBeans(beans: BeanCollection): void {
@@ -37,72 +42,77 @@ export class PageSummaryComp extends Component {
     }
 
     public postConstruct(): void {
+        const noInput = this.suppressPageInput;
         const idPrefix = this.idPrefix;
         const localeTextFunc = this.getLocaleTextFunc();
+        const pageNumberChild = {
+            cls: 'ag-paging-number',
+            attrs: { id: `${idPrefix}-start-page-number` },
+            tag: noInput ? 'span' : 'ag-input-number-field',
+            ref: noInput ? 'lbCurrentStatic' : 'lbCurrentInput',
+        } as const;
 
-        this.setTemplate({
-            tag: 'span',
-            cls: 'ag-paging-page-summary-panel',
-            role: 'presentation',
-            children: [
-                {
-                    tag: 'div',
-                    ref: 'btFirst',
-                    cls: 'ag-button ag-paging-button',
-                    role: 'button',
-                    attrs: { 'aria-label': localeTextFunc('firstPage', 'First Page') },
-                },
-                {
-                    tag: 'div',
-                    ref: 'btPrevious',
-                    cls: 'ag-button ag-paging-button',
-                    role: 'button',
-                    attrs: { 'aria-label': localeTextFunc('previousPage', 'Previous Page') },
-                },
-                {
-                    tag: 'span',
-                    cls: 'ag-paging-description',
-                    children: [
-                        {
-                            tag: 'span',
-                            attrs: { id: `${idPrefix}-start-page` },
-                            children: localeTextFunc('page', 'Page'),
-                        },
-                        {
-                            tag: 'span',
-                            ref: 'lbCurrent',
-                            cls: 'ag-paging-number',
-                            attrs: { id: `${idPrefix}-start-page-number` },
-                        },
-                        {
-                            tag: 'span',
-                            attrs: { id: `${idPrefix}-of-page` },
-                            children: localeTextFunc('of', 'of'),
-                        },
-                        {
-                            tag: 'span',
-                            ref: 'lbTotal',
-                            cls: 'ag-paging-number',
-                            attrs: { id: `${idPrefix}-of-page-number` },
-                        },
-                    ],
-                },
-                {
-                    tag: 'div',
-                    ref: 'btNext',
-                    cls: 'ag-button ag-paging-button',
-                    role: 'button',
-                    attrs: { 'aria-label': localeTextFunc('nextPage', 'Next Page') },
-                },
-                {
-                    tag: 'div',
-                    ref: 'btLast',
-                    cls: 'ag-button ag-paging-button',
-                    role: 'button',
-                    attrs: { 'aria-label': localeTextFunc('lastPage', 'Last Page') },
-                },
-            ],
-        });
+        this.setTemplate(
+            {
+                tag: 'span',
+                cls: 'ag-paging-page-summary-panel',
+                role: 'presentation',
+                children: [
+                    {
+                        tag: 'div',
+                        ref: 'btFirst',
+                        cls: 'ag-button ag-paging-button',
+                        role: 'button',
+                        attrs: { 'aria-label': localeTextFunc('firstPage', 'First Page') },
+                    },
+                    {
+                        tag: 'div',
+                        ref: 'btPrevious',
+                        cls: 'ag-button ag-paging-button',
+                        role: 'button',
+                        attrs: { 'aria-label': localeTextFunc('previousPage', 'Previous Page') },
+                    },
+                    {
+                        tag: 'span',
+                        cls: 'ag-paging-description',
+                        children: [
+                            {
+                                tag: 'span',
+                                attrs: { id: `${idPrefix}-start-page` },
+                                children: localeTextFunc('page', 'Page'),
+                            },
+                            pageNumberChild,
+                            {
+                                tag: 'span',
+                                attrs: { id: `${idPrefix}-of-page` },
+                                children: localeTextFunc('of', 'of'),
+                            },
+                            {
+                                tag: 'span',
+                                ref: 'lbTotal',
+                                cls: 'ag-paging-number',
+                                attrs: { id: `${idPrefix}-of-page-number` },
+                            },
+                        ],
+                    },
+                    {
+                        tag: 'div',
+                        ref: 'btNext',
+                        cls: 'ag-button ag-paging-button',
+                        role: 'button',
+                        attrs: { 'aria-label': localeTextFunc('nextPage', 'Next Page') },
+                    },
+                    {
+                        tag: 'div',
+                        ref: 'btLast',
+                        cls: 'ag-button ag-paging-button',
+                        role: 'button',
+                        attrs: { 'aria-label': localeTextFunc('lastPage', 'Last Page') },
+                    },
+                ],
+            },
+            this.suppressPageInput ? [] : [AgInputNumberFieldSelector]
+        );
 
         const { gos, btFirst, btPrevious, btNext, btLast, beans } = this;
         const isRtl = gos.get('enableRtl');
@@ -113,7 +123,6 @@ export class PageSummaryComp extends Component {
         btLast.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'first' : 'last', beans)!);
 
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast]);
-
         for (const { el, fn } of [
             { el: btFirst, fn: this.onBtFirst.bind(this) },
             { el: btPrevious, fn: this.onBtPrevious.bind(this) },
@@ -131,6 +140,17 @@ export class PageSummaryComp extends Component {
             });
         }
 
+        if (!this.suppressPageInput) {
+            const { lbCurrentInput } = this;
+            lbCurrentInput.onValueChange(this.onInputPage.bind(this));
+            this.addManagedListeners(lbCurrentInput.getInputElement(), {
+                blur: () => {
+                    if (!lbCurrentInput.getInputElement().value.trim()) {
+                        lbCurrentInput.setValue(String(this.pagination.getCurrentPage() + 1), true);
+                    }
+                },
+            });
+        }
         this.refresh();
     }
 
@@ -156,6 +176,22 @@ export class PageSummaryComp extends Component {
         if (!this.lastButtonDisabled) {
             this.pagination.goToLastPage();
         }
+    }
+
+    private onInputPage(): void {
+        const { pagination, lbCurrentInput } = this;
+        const rawValue = lbCurrentInput.getValue(true);
+        if (!rawValue?.trim()) {
+            return;
+        }
+        const rawValueNum = Number(rawValue);
+        let value = Number.isFinite(rawValueNum) ? rawValueNum : pagination.getCurrentPage() + 1;
+        const total = pagination.getTotalPages();
+        value = Math.max(1, Math.min(value, total));
+        if (rawValueNum !== value) {
+            lbCurrentInput.setValue(String(value), true);
+        }
+        pagination.goToPage(value - 1);
     }
 
     public refresh(): void {
@@ -188,27 +224,35 @@ export class PageSummaryComp extends Component {
     }
 
     private updateLabels(): void {
-        const { rowModel, pagination } = this;
+        const { rowModel, pagination, lbCurrentInput, lbCurrentStatic, lbTotal } = this;
         const lastPageFound = rowModel.isLastRowIndexKnown();
         const totalPages = pagination.getTotalPages();
         const currentPage = pagination.getCurrentPage();
         const localeTextFunc = this.getLocaleTextFunc();
 
-        const pagesExist = totalPages > 0;
-        const lbCurrent = this.formatNumber(pagesExist ? currentPage + 1 : 0);
-        this.lbCurrent.textContent = lbCurrent;
-
-        let lbTotal: string;
+        let lbTotalStr: string;
         if (lastPageFound) {
-            lbTotal = this.formatNumber(totalPages);
+            lbTotalStr = this.formatNumber(totalPages);
         } else {
-            lbTotal = localeTextFunc('more', 'more');
+            lbTotalStr = localeTextFunc('more', 'more');
         }
-        this.lbTotal.textContent = lbTotal;
+        lbTotal.textContent = lbTotalStr;
+
+        const pagesExist = totalPages > 0;
+        const lbCurrentValue = pagesExist ? currentPage + 1 : 1;
+        const lbCurrent = this.formatNumber(lbCurrentValue);
+        if (this.suppressPageInput) {
+            lbCurrentStatic.textContent = lbCurrent;
+        } else {
+            lbCurrentInput.setMin(1);
+            lbCurrentInput.setMax(totalPages);
+            lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(totalPages) + 3)}ch`; // log10 returns number of digits (as an integer part + fraction) - 1
+            lbCurrentInput.setValue(lbCurrentValue.toString());
+        }
 
         const strPage = localeTextFunc('page', 'Page');
         const strOf = localeTextFunc('of', 'of');
-        this.ariaStatus = `${strPage} ${lbCurrent} ${strOf} ${lbTotal}`;
+        this.ariaStatus = `${strPage} ${lbCurrent} ${strOf} ${lbTotalStr}`;
     }
 
     private formatNumber(value: number): string {

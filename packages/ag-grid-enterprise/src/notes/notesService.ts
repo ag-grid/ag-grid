@@ -217,7 +217,7 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
             if (rowNodeSet && !rowNodeSet.has(rowCtrl.rowNode)) {
                 continue;
             }
-            rowCtrl.refreshFullWidth();
+            rowCtrl.refreshRow({ force: true, suppressFlash: true });
         }
     }
 

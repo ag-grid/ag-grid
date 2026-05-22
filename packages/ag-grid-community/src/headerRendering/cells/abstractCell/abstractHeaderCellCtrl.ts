@@ -335,7 +335,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        this.beans.colMoves?.moveHeader(hDirection, this.eGui, this.column, this.rowCtrl.pinned, this);
+        this.beans.colMoves?.moveHeader(hDirection, this.eGui, this.column, this.column.getPinned(), this);
     }
 
     private getViewportAdjustedResizeDiff(e: KeyboardEvent): number {

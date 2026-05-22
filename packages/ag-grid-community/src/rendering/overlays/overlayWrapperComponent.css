@@ -2,6 +2,8 @@
     pointer-events: none;
     position: absolute;
     inset: 0;
+
+    /* overlays must sit above grid rows while still below popup layers. */
     z-index: 2;
 }
 

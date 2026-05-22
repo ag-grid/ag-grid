@@ -2,6 +2,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { DragAndDropIcon, DropTarget, GridDraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import type { HorizontalSection } from '../../interfaces/iGridSection';
 import { BodyDropPivotTarget } from './bodyDropPivotTarget';
 import { MoveColumnFeature } from './moveColumnFeature';
 
@@ -16,52 +17,48 @@ export interface DropListener {
 
 export class BodyDropTarget extends BeanStub implements DropTarget {
     private eSecondaryContainers: HTMLElement[][];
-    private currentDropListener: DropListener;
+    private eGridViewport: HTMLElement;
+    private currentDropListener: DropListener | null = null;
+    private lastDetectedSection: ColumnPinnedType = null;
 
-    private moveColumnFeature: MoveColumnFeature;
-    private bodyDropPivotTarget: BodyDropPivotTarget;
+    private moveColumnFeatures: Record<HorizontalSection, MoveColumnFeature>;
+    private bodyDropPivotTargets: Record<HorizontalSection, BodyDropPivotTarget>;
 
-    constructor(
-        private readonly pinned: ColumnPinnedType,
-        private readonly eContainer: HTMLElement
-    ) {
+    constructor(private readonly eContainer: HTMLElement) {
         super();
     }
 
     public postConstruct(): void {
         const { ctrlsSvc, dragAndDrop } = this.beans;
-        const pinned = this.pinned;
         ctrlsSvc.whenReady(this, (p) => {
-            let eSecondaryContainers: HTMLElement[][];
-            const eBodyViewport = p.gridBodyCtrl.eBodyViewport;
-            switch (pinned) {
-                case 'left':
-                    eSecondaryContainers = [
-                        [eBodyViewport, p.left.eContainer],
-                        [p.bottomLeft.eContainer],
-                        [p.topLeft.eContainer],
-                    ];
-                    break;
-                case 'right':
-                    eSecondaryContainers = [
-                        [eBodyViewport, p.right.eContainer],
-                        [p.bottomRight.eContainer],
-                        [p.topRight.eContainer],
-                    ];
-                    break;
-                default:
-                    eSecondaryContainers = [
-                        [eBodyViewport, p.center.eViewport],
-                        [p.bottomCenter.eViewport],
-                        [p.topCenter.eViewport],
-                    ];
-                    break;
+            const eGridViewport = p.gridBodyCtrl.eGridViewport;
+            const ePinnedTop = p.pinnedTop.eViewport;
+            const ePinnedBottom = p.pinnedBottom.eViewport;
+            this.eGridViewport = eGridViewport;
+            const eSecondaryContainers: HTMLElement[][] = [];
+            if (eGridViewport) {
+                eSecondaryContainers.push([eGridViewport]);
+            }
+            if (ePinnedTop && ePinnedTop !== eGridViewport) {
+                eSecondaryContainers.push([ePinnedTop]);
+            }
+            if (ePinnedBottom && ePinnedBottom !== eGridViewport && ePinnedBottom !== ePinnedTop) {
+                eSecondaryContainers.push([ePinnedBottom]);
             }
             this.eSecondaryContainers = eSecondaryContainers;
         });
-
-        this.moveColumnFeature = this.createManagedBean(new MoveColumnFeature(pinned));
-        this.bodyDropPivotTarget = this.createManagedBean(new BodyDropPivotTarget(pinned));
+        const buildMoveFeature = (type: ColumnPinnedType) => this.createManagedBean(new MoveColumnFeature(type));
+        this.moveColumnFeatures = {
+            left: buildMoveFeature('left'),
+            center: buildMoveFeature(null),
+            right: buildMoveFeature('right'),
+        };
+        const buildDropTarget = (type: ColumnPinnedType) => this.createManagedBean(new BodyDropPivotTarget(type));
+        this.bodyDropPivotTargets = {
+            left: buildDropTarget('left'),
+            center: buildDropTarget(null),
+            right: buildDropTarget('right'),
+        };
 
         dragAndDrop!.addDropTarget(this);
         this.addDestroyFunc(() => dragAndDrop!.removeDropTarget(this));
@@ -83,7 +80,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     }
 
     public getIconName(): DragAndDropIcon | null {
-        return this.currentDropListener.getIconName();
+        return this.currentDropListener?.getIconName() ?? null;
     }
 
     // we want to use the bodyPivotTarget if the user is dragging columns in from the toolPanel
@@ -97,28 +94,95 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     }
 
     public onDragEnter(draggingEvent: GridDraggingEvent): void {
-        // we pick the drop listener depending on whether we are in pivot mode are not. if we are
-        // in pivot mode, then dropping cols changes the row group, pivot, value stats. otherwise
-        // we change visibility state and position.
-        this.currentDropListener = this.isDropColumnInPivotMode(draggingEvent)
-            ? this.bodyDropPivotTarget
-            : this.moveColumnFeature;
-        this.currentDropListener.onDragEnter(draggingEvent);
+        const dropListener = this.getDropListener(draggingEvent);
+        this.lastDetectedSection = null;
+        this.currentDropListener = dropListener;
+        dropListener.onDragEnter(draggingEvent);
     }
 
     public onDragLeave(params: GridDraggingEvent): void {
-        this.currentDropListener.onDragLeave(params);
+        const currentDropListener = this.currentDropListener;
+        if (currentDropListener) {
+            currentDropListener.onDragLeave(params);
+            this.currentDropListener = null;
+        }
+        this.lastDetectedSection = null;
     }
 
     public onDragging(params: GridDraggingEvent): void {
-        this.currentDropListener.onDragging(params);
+        let currentDropListener = this.currentDropListener;
+        if (!currentDropListener) {
+            return;
+        }
+
+        const dropListener = this.getDropListener(params);
+        if (currentDropListener !== dropListener) {
+            currentDropListener.onDragLeave(params);
+            currentDropListener = dropListener;
+            this.currentDropListener = dropListener;
+            currentDropListener.onDragEnter(params);
+            params.changed = true;
+        }
+
+        currentDropListener.onDragging(params);
     }
 
     public onDragStop(params: GridDraggingEvent): void {
-        this.currentDropListener.onDragStop(params);
+        const currentDropListener = this.currentDropListener;
+        if (currentDropListener) {
+            currentDropListener.onDragStop(params);
+            this.currentDropListener = null;
+        }
     }
 
     public onDragCancel(): void {
-        this.currentDropListener.onDragCancel();
+        const currentDropListener = this.currentDropListener;
+        if (currentDropListener) {
+            currentDropListener.onDragCancel();
+            this.currentDropListener = null;
+        }
+    }
+
+    private getSection(draggingEvent: GridDraggingEvent): HorizontalSection {
+        const pinnedSection = this.getPinnedSection(draggingEvent);
+
+        switch (pinnedSection) {
+            case 'left':
+            case 'right':
+                return pinnedSection;
+            default:
+                return 'center';
+        }
+    }
+
+    private getDropListener(draggingEvent: GridDraggingEvent): DropListener {
+        const section = this.getSection(draggingEvent);
+        return this.isDropColumnInPivotMode(draggingEvent)
+            ? this.bodyDropPivotTargets[section]
+            : this.moveColumnFeatures[section];
+    }
+
+    private getPinnedSection(draggingEvent: GridDraggingEvent): ColumnPinnedType {
+        const rect = this.eGridViewport.getBoundingClientRect();
+        const x = draggingEvent.event.clientX - rect.left;
+        const { visibleCols } = this.beans;
+        const leftPinnedWidth = visibleCols.getLeftStickyColumnContainerWidth();
+        const rightPinnedWidth = visibleCols.getRightStickyColumnContainerWidth();
+
+        let section: ColumnPinnedType = null;
+        if (x < leftPinnedWidth) {
+            section = 'left';
+        } else if (x > rect.width - rightPinnedWidth) {
+            section = 'right';
+        }
+
+        // suppress oscillation from nudge-triggered re-detection
+        const lastDetectedSection = this.lastDetectedSection;
+        if (draggingEvent.fromNudge && section !== lastDetectedSection && lastDetectedSection !== null) {
+            return lastDetectedSection;
+        }
+
+        this.lastDetectedSection = section;
+        return section;
     }
 }

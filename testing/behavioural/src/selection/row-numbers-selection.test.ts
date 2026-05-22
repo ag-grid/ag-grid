@@ -566,6 +566,9 @@ describe('Row Numbers Keyboard Navigation', () => {
             rowNumbers: true,
         });
 
+        api.ensureIndexVisible(2);
+        await asyncSetTimeout(0);
+
         const gridDiv = getGridElement(api)! as HTMLElement;
         const rowNumberCell = getByTestId(gridDiv, agTestIdFor.rowNumber('2'));
 

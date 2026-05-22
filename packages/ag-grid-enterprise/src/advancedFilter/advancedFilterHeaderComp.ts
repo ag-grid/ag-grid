@@ -2,6 +2,7 @@ import type { BeanCollection, ColumnModel, CtrlsService, ElementParams, FocusSer
 import {
     Component,
     KeyCode,
+    RefPlaceholder,
     _clearElement,
     _findNextFocusableElement,
     _focusInto,
@@ -18,10 +19,19 @@ import { AdvancedFilterComp } from './advancedFilterComp';
 
 const AdvancedFilterHeaderElement: ElementParams = {
     tag: 'div',
-    cls: 'ag-advanced-filter-header',
+    cls: 'ag-row ag-full-width-row ag-advanced-filter-header',
     role: 'row',
+    children: [
+        {
+            tag: 'div',
+            cls: 'ag-full-width-anchor',
+            role: 'presentation',
+            ref: 'eFullWidthAnchor',
+        },
+    ],
 };
 export class AdvancedFilterHeaderComp extends Component {
+    protected readonly eFullWidthAnchor: HTMLElement = RefPlaceholder;
     private colModel: ColumnModel;
     private focusSvc: FocusService;
     private ctrlsSvc: CtrlsService;
@@ -44,20 +54,17 @@ export class AdvancedFilterHeaderComp extends Component {
 
         this.addDestroyFunc(() => this.destroyBean(this.eAdvancedFilter));
 
-        const heightListener = () => {
-            if (this.enabled) {
-                this.setEnabledHeight();
-            }
-        };
+        const refreshLayout = this.refreshLayout.bind(this);
 
         this.addManagedEventListeners({
             gridColumnsChanged: () => this.onGridColumnsChanged(),
-            columnHeaderHeightChanged: heightListener,
-            stylesChanged: heightListener,
+            headerRowsChanged: () => this.setAriaRowIndex(),
+            columnHeaderHeightChanged: refreshLayout,
+            stylesChanged: refreshLayout,
         });
 
-        this.addManagedPropertyListener('headerHeight', heightListener);
-        this.addManagedPropertyListener('floatingFiltersHeight', heightListener);
+        this.addManagedPropertyListener('headerHeight', refreshLayout);
+        this.addManagedPropertyListener('floatingFiltersHeight', refreshLayout);
 
         this.addGuiEventListener('keydown', (event: KeyboardEvent) => this.onKeyDown(event));
 
@@ -83,6 +90,12 @@ export class AdvancedFilterHeaderComp extends Component {
         this.eAdvancedFilter?.refresh();
     }
 
+    public refreshLayout(): void {
+        if (this.enabled) {
+            this.setEnabledHeight();
+        }
+    }
+
     public getHeight(): number {
         return this.height;
     }
@@ -92,7 +105,6 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private setupAdvancedFilter(enabled: boolean): void {
-        const eGui = this.getGui();
         if (enabled) {
             // unmanaged as can be recreated
             this.eAdvancedFilter = this.createBean(new AdvancedFilterComp());
@@ -106,13 +118,13 @@ export class AdvancedFilterHeaderComp extends Component {
             _setAriaColIndex(eAdvancedFilterGui, 1);
             this.setAriaColumnCount(eAdvancedFilterGui);
 
-            eGui.appendChild(eAdvancedFilterGui);
+            this.eFullWidthAnchor.appendChild(eAdvancedFilterGui);
         } else {
-            _clearElement(eGui);
+            _clearElement(this.eFullWidthAnchor);
             this.destroyBean(this.eAdvancedFilter);
             this.height = 0;
         }
-        _setDisplayed(eGui, enabled);
+        _setDisplayed(this.getGui(), enabled);
         this.enabled = enabled;
     }
 
@@ -129,7 +141,8 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private setAriaRowIndex(): void {
-        _setAriaRowIndex(this.getGui(), this.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0);
+        const headerRowCount = this.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0;
+        _setAriaRowIndex(this.getGui(), headerRowCount + 1);
     }
 
     private onGridColumnsChanged(): void {

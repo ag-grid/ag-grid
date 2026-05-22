@@ -14,7 +14,7 @@ import type { DragItem } from '../interfaces/iDragItem';
 import { _warn } from '../validation/logging';
 import { BodyDropTarget } from './columnDrag/bodyDropTarget';
 import { doesMovePassMarryChildren } from './columnMoveUtils';
-import { attemptMoveColumns, normaliseX, setColumnsMoving } from './internalColumnMoveUtils';
+import { attemptMoveColumns, clientXToSectionX, normaliseX, setColumnsMoving } from './internalColumnMoveUtils';
 
 enum MoveDirection {
     LEFT = -1,
@@ -125,8 +125,8 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         return proposedColumnOrder;
     }
 
-    public createBodyDropTarget(pinned: ColumnPinnedType, dropContainer: HTMLElement): BodyDropTarget {
-        return new BodyDropTarget(pinned, dropContainer);
+    public createBodyDropTarget(dropContainer: HTMLElement): BodyDropTarget {
+        return new BodyDropTarget(dropContainer);
     }
 
     public moveHeader(
@@ -141,15 +141,12 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const left = rect.left;
         const isGroup = isColumnGroup(column);
         const width = isGroup ? rect.width : column.getActualWidth();
-        const isLeft = (hDirection === 'left') !== gos.get('enableRtl');
+        const isRtl = gos.get('enableRtl');
+        const isLeft = (hDirection === 'left') !== isRtl;
 
-        const xPosition = normaliseX({
-            x: isLeft ? left - 20 : left + width + 20,
-            pinned,
-            fromKeyboard: true,
-            gos,
-            ctrlsSvc,
-        });
+        const screenX = isLeft ? left - 20 : left + width + 20;
+        const sectionX = clientXToSectionX(screenX, pinned, ctrlsSvc);
+        const xPosition = normaliseX({ x: sectionX, pinned, isRtl, ctrlsSvc });
         const headerPosition = focusSvc.focusedHeader;
 
         attemptMoveColumns({

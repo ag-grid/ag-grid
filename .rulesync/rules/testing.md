@@ -208,6 +208,42 @@ for (const [name, example] of Object.entries(EXAMPLES)) {
 6. **Clean up after tests** - Reset mocks and state in `afterEach`
 7. **Review similar tests** - When adding tests, check related tests for consistency
 
+
+## GridRows and GridColumns Snapshots
+
+For behavioural tests, prefer `GridRows` and `GridColumns` snapshots over raw API assertions where practical. They produce inline snapshots that make the grid state visually readable and update automatically.
+
+```typescript
+import { GridColumns, GridRows } from '../test-utils';
+
+// Snapshot grid rows (rendered cell values, grouping, selection state, etc.)
+await new GridRows(api, 'description').check();
+
+// Snapshot column state (visibility, order, pinning, pivoting, etc.)
+await new GridColumns(api, 'description').checkColumns();
+```
+
+When behaviour cannot be captured by a snapshot — for example verifying a specific return value, event payload, or count — combine snapshots with targeted API checks:
+
+```typescript
+await new GridRows(api, 'after sort').check();
+expect(api.getDisplayedRowCount()).toBe(3);
+```
+
+Update snapshots after intentional grid state changes:
+
+```bash
+./behave.sh --update-grid-rows # update all
+./behave.sh --update-grid-rows "column-lookup"    # update matching files only
+```
+
+Since our test framrwork and mockGridLayout.ts are written as we go,
+if they do not cover a scenario that arise in a new test, they must be updated and fixed.
+
+## Style in Tests
+
+Tests must respect ESLint rules, but the non-lint-enforced coding-style preferences.
+
 ## Coverage
 
 - Aim for meaningful coverage, not 100%

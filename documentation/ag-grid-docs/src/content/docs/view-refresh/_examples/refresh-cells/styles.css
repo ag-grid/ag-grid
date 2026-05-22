@@ -15,10 +15,10 @@
     margin-bottom: 5px;
 }
 
-.ag-floating-top .ag-row {
+.ag-grid-pinned-top-rows-container .ag-row {
     background-color: #99999944;
 }
 
-.ag-floating-bottom .ag-row {
+.ag-grid-pinned-bottom-rows-container .ag-row {
     background-color: #99999944;
 }

@@ -152,6 +152,7 @@ export function _setAriaPosInSet(element: Element, position: number): void {
     _setAriaAttribute(element, 'posinset', position);
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setAriaMultiSelectable(element: Element, multiSelectable: boolean): void {
     _setAriaAttribute(element, 'multiselectable', multiSelectable);
 }

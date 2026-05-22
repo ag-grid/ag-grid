@@ -20,18 +20,22 @@
 .ag-row-level-0 {
     background-color: #cc222244;
 }
+
 .ag-row-level-1 {
     background-color: #33cc3344;
 }
+
 .ag-row-level-2 {
     background-color: #2244cc44;
 }
+
 .legend-item {
     display: inline-block;
     width: 20px;
     height: 20px;
     border: 1px solid darkgrey;
 }
+
 .legend-label {
     position: relative;
     margin-right: 20px;

@@ -9,6 +9,7 @@ import type { Column } from './interfaces/iColumn';
 import type { FocusableContainer, FocusableContainerName } from './interfaces/iFocusableContainer';
 import type { HeaderPosition } from './interfaces/iHeaderPosition';
 import { NavigationService } from './navigation/navigationService';
+import { RowCtrl } from './rendering/row/rowCtrl';
 import { mock } from './test-utils/mock';
 import { _focusNextGridCoreContainer } from './utils/gridFocus';
 
@@ -681,6 +682,40 @@ describe('Focus override callbacks', () => {
                 event: null,
             });
             expect(focusPositionSpy).not.toHaveBeenCalled();
+        });
+
+        test('embedFullWidthRows uses full-width navigation column when tabbing from row ctrl', () => {
+            getOption.mockImplementation((key) => {
+                if (key === 'enableRtl') {
+                    return false;
+                }
+                if (key === 'embedFullWidthRows') {
+                    return true;
+                }
+                return undefined;
+            });
+
+            navigationSvcAny.beans.visibleCols = { allCols: [colA, colB] };
+
+            const rowCtrl = Object.create(RowCtrl.prototype) as RowCtrl;
+            (rowCtrl as any).getRowPosition = vi.fn(() => ({ rowIndex: 3, rowPinned: null }));
+            (rowCtrl as any).getNavigationColumn = vi.fn(() => colA);
+
+            const findNextCellToFocusOnSpy = vi.spyOn(navigationSvcAny, 'findNextCellToFocusOn').mockReturnValue(false);
+
+            navigationSvcAny.moveToNextCellNotEditing(rowCtrl, false);
+
+            expect(findNextCellToFocusOnSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    rowIndex: 3,
+                    rowPinned: null,
+                    column: colA,
+                }),
+                expect.objectContaining({
+                    backwards: false,
+                    startEditing: false,
+                })
+            );
         });
     });
 

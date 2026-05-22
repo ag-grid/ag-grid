@@ -1,4 +1,3 @@
-import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnPinnedEvent } from '../columns/columnEventUtils';
 import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
@@ -10,7 +9,6 @@ import type { ColumnEventType } from '../events';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { SetPinnedWidthFeature } from '../gridBodyComp/rowContainer/setPinnedWidthFeature';
 import { _isDomLayout } from '../gridOptionsUtils';
-import type { HeaderRowContainerCtrl } from '../headerRendering/rowContainer/headerRowContainerCtrl';
 import type { ProcessUnpinnedColumnsParams } from '../interfaces/iCallbackParams';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -22,7 +20,7 @@ export const MIN_CENTER_VIEWPORT_WIDTH = 50;
 export class PinnedColumnService extends BeanStub implements NamedBean {
     beanName = 'pinnedCols' as const;
 
-    private gridBodyCtrl: GridBodyCtrl;
+    private gridBodyCtrl?: GridBodyCtrl;
 
     public leftWidth: number;
     public rightWidth: number;
@@ -35,6 +33,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             displayedColumnsChanged: listener,
             displayedColumnsWidthChanged: listener,
+            columnPinned: this.keepPinnedColumnsNarrowerThanViewport.bind(this),
         });
         this.addManagedPropertyListener('domLayout', listener);
     }
@@ -43,8 +42,8 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         const { gos, visibleCols, eventSvc } = this.beans;
         const printLayout = _isDomLayout(gos, 'print');
 
-        const newLeftWidth = printLayout ? 0 : visibleCols.getColsLeftWidth();
-        const newRightWidth = printLayout ? 0 : visibleCols.getDisplayedColumnsRightWidth();
+        const newLeftWidth = printLayout ? 0 : visibleCols.getLeftStickyColumnContainerWidth();
+        const newRightWidth = printLayout ? 0 : visibleCols.getRightStickyColumnContainerWidth();
 
         if (newLeftWidth != this.leftWidth) {
             this.leftWidth = newLeftWidth;
@@ -58,8 +57,11 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     }
 
     public keepPinnedColumnsNarrowerThanViewport(): void {
-        const eBodyViewport = this.gridBodyCtrl.eBodyViewport;
-        const bodyWidth = _getInnerWidth(eBodyViewport);
+        if (!this.gridBodyCtrl) {
+            return;
+        }
+
+        const bodyWidth = this.getAvailableViewportWidth();
 
         if (bodyWidth <= MIN_CENTER_VIEWPORT_WIDTH) {
             return;
@@ -98,7 +100,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     }
 
     public setColsPinned(keys: ColKey[], pinned: ColumnPinnedType, source: ColumnEventType): void {
-        const { colModel, colAnimation, visibleCols, gos } = this.beans;
+        const { colModel, visibleCols, gos } = this.beans;
         if (!colModel.cols) {
             return;
         }
@@ -110,8 +112,6 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             _warn(37);
             return;
         }
-
-        colAnimation?.start();
 
         let actualPinned: ColumnPinnedType;
         if (pinned === true || pinned === 'left') {
@@ -143,8 +143,6 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             visibleCols.refresh(source);
             dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
         }
-
-        colAnimation?.finish();
     }
 
     public initCol(column: AgColumn): void {
@@ -167,59 +165,12 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         column.dispatchStateUpdatedEvent('pinned');
     }
 
-    public setupHeaderPinnedWidth(ctrl: HeaderRowContainerCtrl): void {
-        const { scrollVisibleSvc } = this.beans;
-
-        if (ctrl.pinned == null) {
-            return;
-        }
-
-        const pinningLeft = ctrl.pinned === 'left';
-        const pinningRight = ctrl.pinned === 'right';
-
-        ctrl.hidden = true;
-
-        const listener = () => {
-            const width = pinningLeft ? this.leftWidth : this.rightWidth;
-            if (width == null) {
-                return;
-            } // can happen at initialisation, width not yet set
-
-            const hidden = width == 0;
-            const hiddenChanged = ctrl.hidden !== hidden;
-            const isRtl = this.gos.get('enableRtl');
-            const scrollbarWidth = scrollVisibleSvc.getScrollbarWidth();
-
-            // if there is a scroll showing (and taking up space, so Windows, and not iOS)
-            // in the body, then we add extra space to keep header aligned with the body,
-            // as body width fits the cols and the scrollbar
-            const addPaddingForScrollbar =
-                scrollVisibleSvc.verticalScrollShowing && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
-            const widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
-
-            ctrl.comp.setPinnedContainerWidth(`${widthWithPadding}px`);
-            ctrl.comp.setDisplayed(!hidden);
-
-            if (hiddenChanged) {
-                ctrl.hidden = hidden;
-                ctrl.refresh();
-            }
-        };
-
-        ctrl.addManagedEventListeners({
-            leftPinnedWidthChanged: listener,
-            rightPinnedWidthChanged: listener,
-            scrollVisibilityChanged: listener,
-            scrollbarWidthChanged: listener,
-        });
-    }
-
     public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup): number {
         const pinned = column.getPinned();
         if (pinned) {
             const { leftWidth, rightWidth } = this;
-            const bodyWidth =
-                _getInnerWidth(this.beans.ctrlsSvc.getGridBodyCtrl().eBodyViewport) - MIN_CENTER_VIEWPORT_WIDTH;
+
+            const bodyWidth = this.getAvailableViewportWidth() - MIN_CENTER_VIEWPORT_WIDTH;
 
             if (leftWidth + rightWidth + diff > bodyWidth) {
                 if (bodyWidth > leftWidth + rightWidth) {
@@ -232,6 +183,10 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         }
 
         return diff;
+    }
+
+    private getAvailableViewportWidth(): number {
+        return this.gridBodyCtrl?.getViewportWidthWithoutScrollbar() ?? 0;
     }
 
     private getPinnedColumnsOverflowingViewport(viewportWidth: number): {

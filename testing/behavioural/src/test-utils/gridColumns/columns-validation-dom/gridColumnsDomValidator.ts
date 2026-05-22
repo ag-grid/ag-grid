@@ -65,44 +65,39 @@ export class GridColumnsDomValidator {
     // ── Header rows ─────────────────────────────────────────────────────────
 
     private validateHeaderRows(_gridColumns: GridColumns, headerRoot: HTMLElement): void {
-        // Check header rows exist in each container
-        const containers = [
-            { name: 'center', selector: '.ag-header-viewport' },
-            { name: 'left', selector: '.ag-pinned-left-header' },
-            { name: 'right', selector: '.ag-pinned-right-header' },
-        ];
+        const headerRows = headerRoot.querySelectorAll('.ag-header-row');
 
-        for (const container of containers) {
-            const el = headerRoot.querySelector(container.selector) as HTMLElement | null;
-            if (!el) {
-                continue; // Container may not exist if no pinned columns
+        for (const row of headerRows) {
+            // Each header row should have role="row"
+            const role = row.getAttribute('role');
+            if (role !== 'row') {
+                this.errors.default.add(`Header row has role="${role ?? 'null'}", expected "row".`);
             }
 
-            const headerRows = el.querySelectorAll('.ag-header-row');
-            for (const row of headerRows) {
-                // Each header row should have role="row"
-                const role = row.getAttribute('role');
-                if (role !== 'row') {
-                    this.errors.default.add(
-                        `Header row in ${container.name} has role="${role ?? 'null'}", expected "row".`
-                    );
-                }
+            // Each header row should have aria-rowindex
+            const ariaRowIndex = row.getAttribute('aria-rowindex');
+            if (ariaRowIndex == null) {
+                this.errors.default.add('Header row is missing aria-rowindex attribute.');
+            }
 
-                // Each header row should have aria-rowindex
-                const ariaRowIndex = row.getAttribute('aria-rowindex');
-                if (ariaRowIndex == null) {
-                    this.errors.default.add(`Header row in ${container.name} is missing aria-rowindex attribute.`);
-                }
+            // Header row type classes
+            const hasColumnType = row.classList.contains('ag-header-row-column');
+            const hasGroupType = row.classList.contains('ag-header-row-group');
+            const hasFilterType = row.classList.contains('ag-header-row-filter');
+            const typeCount = [hasColumnType, hasGroupType, hasFilterType].filter(Boolean).length;
+            if (typeCount !== 1) {
+                this.errors.default.add(
+                    `Header row has ${typeCount} type classes (column=${hasColumnType}, group=${hasGroupType}, filter=${hasFilterType}), expected exactly 1.`
+                );
+            }
 
-                // Header row type classes
-                const hasColumnType = row.classList.contains('ag-header-row-column');
-                const hasGroupType = row.classList.contains('ag-header-row-group');
-                const hasFilterType = row.classList.contains('ag-header-row-filter');
-                const typeCount = [hasColumnType, hasGroupType, hasFilterType].filter(Boolean).length;
-                if (typeCount !== 1) {
-                    this.errors.default.add(
-                        `Header row in ${container.name} has ${typeCount} type classes (column=${hasColumnType}, group=${hasGroupType}, filter=${hasFilterType}), expected exactly 1.`
-                    );
+            for (const selector of [
+                '.ag-grid-pinned-left-cells',
+                '.ag-grid-scrolling-cells',
+                '.ag-grid-pinned-right-cells',
+            ]) {
+                if (!row.querySelector(selector)) {
+                    this.errors.default.add(`Header row is missing required cell group "${selector}".`);
                 }
             }
         }
