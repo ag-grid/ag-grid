@@ -4,8 +4,13 @@ import type { BryntumCampaignContent } from '@components/campaigns-components/br
 import Layout from '@layouts/Layout.astro';
 
 export async function getStaticPaths() {
+    // Match the rewritten `{slug}.json` content files; the original
+    // `{slug}-original.json` files are kept for reference but no longer rendered.
     const contentModules = import.meta.glob<BryntumCampaignContent>(
-        '../../content/campaigns/bryntum-products/*-original.json',
+        [
+            '../../content/campaigns/bryntum-products/*.json',
+            '!../../content/campaigns/bryntum-products/*-original.json',
+        ],
         { eager: true, import: 'default' }
     );
 
