@@ -86,8 +86,6 @@ export function getSitemapConfig({ chartsSitemap, studioSitemap }: { chartsSitem
     return {
         customSitemaps,
         filter: filterIgnoredPages,
-        changefreq: 'daily',
-        priority: 0.7,
         lastmod: new Date(),
     };
 }
