@@ -27,7 +27,7 @@ The pagination panel is composed of three built-in components that can be indivi
 
 - `pageSize` — the page size selector dropdown.
 - `rowSummary` — the row range summary (e.g. `1 to 10 of 50`).
-- `pageSummary` — the current page indicator and navigation buttons (first, previous, next, last).
+- `pageSummary` — navigation buttons (first, previous, next, last) with an editable page number input for direct page navigation. Use `{ type: 'pageSummary', suppressPageInput: true }` to show a read-only page number instead.
 
 The default order is: `['pageSize', 'rowSummary', 'pageSummary']`.
 
@@ -41,6 +41,18 @@ const paginationPanels = ['pageSummary', 'rowSummary', 'pageSize'];
 {% note %}
 When a panel is omitted from `paginationPanels`, its accessibility announcements are also omitted.
 {% /note %}
+
+### Suppressing the Page Input
+
+To disable the editable page input and show a read-only page number instead, use the object form of the `pageSummary` entry with `suppressPageInput: true`:
+
+```js
+paginationPanels: [
+    'rowSummary',
+    { type: 'pageSummary', suppressPageInput: true },
+    'pageSize',
+]
+```
 
 ## Number Formats
 
@@ -70,7 +82,7 @@ In this example the default pagination settings are changed. Note the following:
 
 - `paginationPageSizeSelector` is set to `[200, 500, 1000]`
 - `paginationPageSize` is set to `500`
-- `paginationPanels` is set to `['pageSummary', 'rowSummary', 'pageSize']` to reorder the pagination controls, placing the page navigation first.
+- `paginationPanels` is set to `[{ type: 'pageSummary', suppressPageInput: true }, 'rowSummary', 'pageSize']` to reorder the pagination controls and suppress the page number input.
 - The numbers in the pagination panel are formatted differently using the grid callback `paginationNumberFormatter` and putting the numbers into square brackets i.e. \[x].
 - `api.paginationGoToPage(4)` is called to go to page 4 (0 based, so the 5th page)
 
