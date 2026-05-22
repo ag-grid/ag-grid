@@ -1286,6 +1286,44 @@ describe('ag-grid grouping with pivot', () => {
         `);
     });
 
+    test('pivot column headers fall back to raw key when refData does not contain the key', async () => {
+        const carMappings: Record<string, string> = {
+            a: 'Alpha',
+        };
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'make', pivot: true, hide: true, refData: carMappings },
+                { field: 'price', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        applyTransactionChecked(api, {
+            add: [
+                { id: '1', country: 'UK', make: 'a', price: 35000 },
+                { id: '2', country: 'UK', make: 'b', price: 32000 },
+                { id: '3', country: 'US', make: 'c', price: 30000 },
+            ],
+        });
+
+        await new GridColumns(api, 'pivot with partial refData falls back to raw key').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "Alpha" GROUP
+            │ └── pivot_make_a_price "Price" width:200 columnGroupShow:open
+            ├─┬ "b" GROUP
+            │ └── pivot_make_b_price "Price" width:200 columnGroupShow:open
+            └─┬ "c" GROUP
+              └── pivot_make_c_price "Price" width:200 columnGroupShow:open
+        `);
+    });
+
     test('aggregation value gets hidden on an expanded group if it has a group total row', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
