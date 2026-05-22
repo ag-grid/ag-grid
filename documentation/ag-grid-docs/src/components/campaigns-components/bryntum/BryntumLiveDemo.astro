@@ -11,27 +11,11 @@ interface Props {
 
 const { section, productSlug } = Astro.props;
 const config = LIVE_DEMO_PRODUCT_CONFIG[productSlug];
-const bryntumBase = `https://bryntum.com/products/${productSlug}/build`;
 ---
 
 {
-    /*
-     * Bryntum partner-demo embed.
-     *
-     * The CSS and UMD bundle below are loaded straight from bryntum.com — the
-     * intent is for the embedded demo to track the canonical Bryntum demo
-     * exactly, including any upstream fixes. Trust assumption: bryntum.com is
-     * a trusted partner origin. If that ever changes, the demo bundle/CSS
-     * should be self-hosted under public/ and pinned with an SRI hash.
-     */
     config && (
         <>
-            <link rel="stylesheet" href={`${bryntumBase}/fontawesome/css/fontawesome.css`} />
-            <link rel="stylesheet" href={`${bryntumBase}/fontawesome/css/solid.css`} />
-            <link rel="stylesheet" href={`${bryntumBase}/${productSlug}.css`} />
-            <link rel="stylesheet" href={`${bryntumBase}/svalbard-light.css`} />
-            <link rel="stylesheet" href={urlWithBaseUrl('/styles/bryntum-demo.css')} />
-
             <section class="bryntum-demo-section">
                 <div class="bryntum-demo-inner">
                     {section.heading && <h2 class="bryntum-demo-heading">{section.heading}</h2>}
@@ -41,8 +25,6 @@ const bryntumBase = `https://bryntum.com/products/${productSlug}/build`;
                 </div>
             </section>
 
-            <script is:inline src={urlWithBaseUrl('/scripts/bryntum-demo-bootstrap.js')} />
-            <script is:inline src={`${bryntumBase}/${productSlug}.umd.js`} />
             <script is:inline src={urlWithBaseUrl(`/scripts/bryntum-${productSlug}-demo.js`)} defer />
         </>
     )

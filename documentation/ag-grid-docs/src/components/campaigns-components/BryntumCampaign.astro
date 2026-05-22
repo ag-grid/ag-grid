@@ -1,4 +1,6 @@
 ---
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
 import BrandsSection from './bryntum/BrandsSection.astro';
 import BryntumLiveDemo from './bryntum/BryntumLiveDemo.astro';
 import CtaSection from './bryntum/CtaSection.astro';
@@ -10,6 +12,7 @@ import PartnershipSection from './bryntum/PartnershipSection.astro';
 import TextMediaSection from './bryntum/TextMediaSection.astro';
 import TextMiniDemoSection from './bryntum/TextMiniDemoSection.astro';
 import { LIVE_DEMO_PRODUCT_CONFIG } from './bryntum/liveDemoProducts';
+import { MINI_DEMO_CONFIG } from './bryntum/miniDemoProducts';
 import type { BryntumCampaignContent } from './bryntum/types';
 import styles from './BryntumCampaign.module.scss';
 
@@ -20,6 +23,24 @@ interface Props {
 const { content } = Astro.props;
 const productSlug = content.slug;
 const hasLiveDemo = productSlug in LIVE_DEMO_PRODUCT_CONFIG;
+
+// Collect the unique Bryntum product bundles needed by demo sections on this
+// page. The live-demo section uses the page's product slug; mini-demo sections
+// can configure their own product. Each bundle must only be loaded once or
+// Bryntum throws "bundle was loaded multiple times" at runtime.
+const bryntumProductSlugs = new Set<string>();
+if (hasLiveDemo && content.sections.some((s) => s.type === 'live-demo')) {
+    bryntumProductSlugs.add(productSlug);
+}
+for (const section of content.sections) {
+    if (section.type !== 'text-mini-demo') continue;
+    const config = MINI_DEMO_CONFIG[section.demo_kind ?? 'gantt'];
+    if (config) bryntumProductSlugs.add(config.productSlug);
+}
+const bryntumProducts = [...bryntumProductSlugs].map((slug) => ({
+    slug,
+    base: `https://bryntum.com/products/${slug}/build`,
+}));
 
 // Mark every other qualifying text-media section as `isAlt` so the page
 // alternates the gradient background. Computed up-front to avoid mutating
@@ -39,6 +60,41 @@ const altTextMediaSections = new WeakSet<object>();
     }
 }
 ---
+
+{
+    /*
+     * Bryntum partner-demo assets — loaded once per unique product slug on the
+     * page. The Bryntum UMD bundle throws "bundle was loaded multiple times"
+     * if the same product is loaded more than once, so per-section loading
+     * would break pages that combine a live-demo and a mini-demo for the same
+     * product (e.g. /campaigns/bryntum-gantt).
+     *
+     * The CSS and UMD bundle are loaded straight from bryntum.com so the
+     * embedded demo stays in sync with the canonical Bryntum build. Trust
+     * assumption: bryntum.com is a trusted partner origin. If that ever
+     * changes, the bundle/CSS should be self-hosted under public/ and pinned
+     * with an SRI hash.
+     */
+}
+{
+    bryntumProducts.length > 0 && (
+        <>
+            <link rel="stylesheet" href={urlWithBaseUrl('/styles/bryntum-demo.css')} />
+            {bryntumProducts.map(({ slug, base }) => (
+                <>
+                    <link rel="stylesheet" href={`${base}/fontawesome/css/fontawesome.css`} />
+                    <link rel="stylesheet" href={`${base}/fontawesome/css/solid.css`} />
+                    <link rel="stylesheet" href={`${base}/${slug}.css`} />
+                    <link rel="stylesheet" href={`${base}/svalbard-light.css`} />
+                </>
+            ))}
+            <script is:inline src={urlWithBaseUrl('/scripts/bryntum-demo-bootstrap.js')} />
+            {bryntumProducts.map(({ slug, base }) => (
+                <script is:inline src={`${base}/${slug}.umd.js`} />
+            ))}
+        </>
+    )
+}
 
 <div class={styles.page}>
     {
