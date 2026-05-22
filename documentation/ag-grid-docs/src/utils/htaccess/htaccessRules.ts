@@ -1,13 +1,6 @@
 import { urlWithBaseUrl } from '../urlWithBaseUrl';
 import { SITE_301_REDIRECTS } from './redirects';
 
-
-
-
-
-
-
-
 const modExpiresRules = `
 <IfModule mod_expires.c>
     # Adds caching headers
