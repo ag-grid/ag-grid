@@ -80,6 +80,7 @@ export interface GridChartParams {
     seriesChartTypes?: SeriesChartType[];
     crossFilteringResetCallback?: () => void;
     useGroupColumnAsCategory?: boolean;
+    seriesColOrder?: string[];
 }
 
 export class GridChartComp extends Component {

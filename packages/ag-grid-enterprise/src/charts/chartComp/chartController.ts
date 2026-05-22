@@ -278,6 +278,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             seriesChartTypes,
             seriesGroupType: this.model.seriesGroupType,
             useGroupColumnAsCategory: this.model.useGroupColumnAsCategory,
+            seriesColOrder: this.model.valueColState.map((cs) => cs.colId),
         };
     }
 

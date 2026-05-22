@@ -46,6 +46,7 @@ export interface ChartModelParams {
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
     useGroupColumnAsCategory?: boolean;
+    seriesColOrder?: string[];
 }
 
 export const DEFAULT_CHART_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
@@ -450,6 +451,17 @@ export class ChartDataModel extends BeanStub {
                 cs.order = savedValueOrder.has(cs.colId) ? savedValueOrder.get(cs.colId)! : nextOrder++;
             });
             this.valueColState.sort((a, b) => a.order - b.order);
+        } else if (isInitialising && this.params.seriesColOrder) {
+            // When restoring a saved model the caller may have rebuilt cellRange.columns in
+            // grid column order, overwriting the user-defined series order. seriesColOrder
+            // carries the original ordering so we re-sort here to honour it.
+            const orderMap = new Map(this.params.seriesColOrder.map((id, i) => [id, i]));
+            const sentinel = this.params.seriesColOrder.length;
+            this.valueColState.sort((a, b) => {
+                const ia = orderMap.has(a.colId) ? orderMap.get(a.colId)! : sentinel;
+                const ib = orderMap.has(b.colId) ? orderMap.get(b.colId)! : sentinel;
+                return ia - ib;
+            });
         }
     }
 

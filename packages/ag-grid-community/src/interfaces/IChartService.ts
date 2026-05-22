@@ -77,6 +77,8 @@ export interface ChartModel {
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
     useGroupColumnAsCategory?: boolean;
+    /** Ordered list of value column IDs reflecting the user-defined series order at the time the model was saved. */
+    seriesColOrder?: string[];
 }
 
 export interface IChartService {
