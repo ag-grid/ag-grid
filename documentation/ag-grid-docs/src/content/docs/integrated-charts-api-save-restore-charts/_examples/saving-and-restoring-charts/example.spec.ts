@@ -125,45 +125,55 @@ test.agExample(import.meta, () => {
         expect(orderAfterHide).toEqual(['Fat', 'Sugar']);
     });
 
-    // AG-13924: TC5 — restoring a saved chart model after hiding a column must preserve the
-    // relative series order of the surviving (visible) columns.
+    // AG-13924: TC5 — the customer pattern is to rebuild cellRange.columns from the current
+    // visible grid columns (in grid order) before calling restoreChart(), so that removed
+    // columns are dropped. The saved relative series order must survive that rebuild.
     //
-    // restoreChart() creates a brand-new ChartDataModel. During initialisation the reference
-    // cell range is derived from the saved model and includes all columns, even hidden ones.
-    // The fix ensures hidden columns are excluded from the "selected" set so the panel only
-    // shows the visible series in their user-defined relative order.
+    // getChartModels() now includes seriesColOrder, which carries the user-defined ordering
+    // independently of cellRange.columns. restoreChart() uses it during initialisation to
+    // sort valueColState, so the surviving series come out in the saved relative order even
+    // when cellRange.columns has been rebuilt in grid column order.
     test.vanilla(
-        'TC5 - restore chart preserves relative series order after column hide',
+        'TC5 - restore chart preserves relative series order when cellRange is rebuilt from grid columns',
         async ({ page, remoteGrid }) => {
             await ensureGridReady(page);
             await waitForGridContent(page);
 
             await openChartDataPanel(page);
 
-            // Reorder to [Weight, Sugar, Fat] — Weight moved before Sugar and Fat.
-            // Grid column order is [Sugar, Fat, Weight], so after removing Sugar the grid
-            // order would give [Fat, Weight], but the saved user order should give [Weight, Fat].
+            // Reorder to [Weight, Sugar, Fat].
+            // Grid column order is [Sugar, Fat, Weight], so rebuilding from grid order after
+            // removing Sugar would give [Fat, Weight]. The saved user order gives [Weight, Fat].
             // The two differ, which lets this test catch an ordering regression.
             await reorderSeriesPill(page, 2, 0);
             const orderAfterDrag = await getSeriesOrder(page);
             expect(orderAfterDrag).toEqual(['Weight', 'Sugar', 'Fat']);
 
-            // Save the chart via the example's Save button, then clear it.
-            await page.getByRole('button', { name: 'Save chart' }).click();
-            await page.getByRole('button', { name: 'Clear chart' }).click();
-
-            // Hide 'sugar' so only Weight and Fat remain visible.
+            // Snapshot the current chart model (includes seriesColOrder = [weight, sugar, fat]).
             const remoteApi = remoteGrid(page);
+            const models = await remoteApi.getChartModels();
+            const savedModel = models![0];
+
+            // Clear the chart, then hide 'sugar' so only Fat and Weight remain visible.
+            await page.getByRole('button', { name: 'Clear chart' }).click();
             await remoteApi.applyColumnState({ state: [{ colId: 'sugar', hide: true }] });
 
-            // Restore from the saved model (which had weight before fat).
-            await page.getByRole('button', { name: 'Restore chart' }).click();
+            // Simulate the customer pattern: rebuild cellRange.columns from current visible
+            // columns in grid order (Fat before Weight), dropping Sugar.
+            const modifiedModel = {
+                ...savedModel,
+                cellRange: {
+                    ...savedModel.cellRange,
+                    columns: ['country', 'fat', 'weight'],
+                },
+            };
+
+            // Restore — seriesColOrder in the model must override the rebuilt column order.
+            await remoteApi.restoreChart(modifiedModel as any);
 
             await openChartDataPanel(page);
 
-            // Sugar is hidden — it must not appear as selected. Weight and Fat must retain
-            // their user-defined relative order [Weight, Fat], not the grid column order
-            // [Fat, Weight] that would result if restore ignored the saved series ordering.
+            // Weight must appear before Fat (saved user order), not after (grid column order).
             const orderAfterRestore = await getSeriesOrder(page);
             expect(orderAfterRestore).toEqual(['Weight', 'Fat']);
         }
