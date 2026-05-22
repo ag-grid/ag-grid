@@ -24,7 +24,9 @@
 
 .bryntum-demo-frame {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    /* Default height; per-product modifiers below override to match each widget's
+       natural content height so we don't get large empty space at the bottom. */
+    height: 720px;
     border-radius: var(--radius-lg);
     overflow: hidden;
     background-color: var(--color-bg-primary);
@@ -34,10 +36,20 @@
         0 6px 16px rgb(15 36 88 / 0.1);
 }
 
-@media (min-width: 1024px) {
-    .bryntum-demo-frame {
-        min-height: 720px;
-    }
+.bryntum-demo-frame--gantt {
+    height: 720px;
+}
+
+.bryntum-demo-frame--scheduler {
+    height: 720px;
+}
+
+.bryntum-demo-frame--schedulerpro {
+    height: 770px;
+}
+
+.bryntum-demo-frame--taskboard {
+    height: 720px;
 }
 
 .bryntum-demo-mount {

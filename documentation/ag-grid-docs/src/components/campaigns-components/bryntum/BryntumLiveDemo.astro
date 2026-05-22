@@ -19,7 +19,7 @@ const config = LIVE_DEMO_PRODUCT_CONFIG[productSlug];
             <section class="bryntum-demo-section">
                 <div class="bryntum-demo-inner">
                     {section.heading && <h2 class="bryntum-demo-heading">{section.heading}</h2>}
-                    <div class="bryntum-demo-frame">
+                    <div class:list={['bryntum-demo-frame', `bryntum-demo-frame--${productSlug}`]}>
                         <div id={config.mountId} class="bryntum-demo-mount" />
                     </div>
                 </div>
