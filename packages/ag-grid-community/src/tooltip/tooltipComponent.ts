@@ -6,6 +6,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
 
 export type TooltipLocation =
     | 'advancedFilter'
+    | 'calculatedColumnExpression'
     | 'cell'
     | 'cellEditor'
     | 'cellFormula'

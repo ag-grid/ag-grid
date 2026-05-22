@@ -12,7 +12,9 @@ import {
 } from 'ag-grid-community';
 import {
     CalculatedColumnsModule,
+    ClipboardModule,
     ColumnMenuModule,
+    ContextMenuModule,
     FormulaModule,
     ServerSideRowModelModule,
     ViewportRowModelModule,
@@ -38,7 +40,9 @@ describe('ag-grid calculated columns', () => {
             ServerSideRowModelModule,
             ViewportRowModelModule,
             CalculatedColumnsModule,
+            ClipboardModule,
             ColumnMenuModule,
+            ContextMenuModule,
             NumberFilterModule,
             TextEditorModule,
             NumberEditorModule,
@@ -106,23 +110,41 @@ describe('ag-grid calculated columns', () => {
     }
 
     function setExpression(expression: string): void {
-        const input = getCalculatedColumnDialog().querySelector<HTMLTextAreaElement>('textarea')!;
+        const input = getExpressionInput();
         input.value = expression;
         input.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     function clickDialogButton(label: string): void {
+        const button = getDialogButton(label);
+        button.click();
+    }
+
+    function getDialogButton(label: string): HTMLButtonElement {
         const button = Array.from(getCalculatedColumnDialog().querySelectorAll<HTMLButtonElement>('button')).find(
             (element) => element.textContent?.trim() === label
         );
         expect(button).toBeTruthy();
-        button!.click();
+        return button!;
     }
 
     function getSuggestionLabels(): string[] {
         return Array.from(document.querySelectorAll<HTMLElement>('.ag-calculated-column-suggestion')).map(
             (element) => element.textContent ?? ''
         );
+    }
+
+    function getOpenMenuEntries(): string[] {
+        return Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option, .ag-menu-separator')).map(
+            (element) =>
+                element.classList.contains('ag-menu-separator')
+                    ? 'separator'
+                    : (element.querySelector<HTMLElement>('.ag-menu-option-text')?.textContent?.trim() ?? '')
+        );
+    }
+
+    function getExpressionInput(): HTMLTextAreaElement {
+        return getCalculatedColumnDialog().querySelector<HTMLTextAreaElement>('textarea')!;
     }
 
     function findColumnDef(columnDefs: (ColDef | ColGroupDef)[], colId: string): ColDef | undefined {
@@ -629,7 +651,8 @@ describe('ag-grid calculated columns', () => {
         clickDialogButton('Apply');
         await asyncSetTimeout(1);
 
-        expect(getCalculatedColumnDialog().textContent).toContain('Unknown column reference "Missing"');
+        expect(getExpressionInput()).toHaveClass('invalid');
+        expect(getExpressionInput().validationMessage).toContain('Unknown column reference "Missing"');
         expect(api.getColumn('calculated_1')).toBeNull();
 
         setExpression('[Revenue] - [Cost]');
@@ -641,6 +664,95 @@ describe('ag-grid calculated columns', () => {
 
         expect(calculatedDef?.calculatedExpression).toBe('[Revenue] - [Cost]');
         expect(api.getCellValue({ rowNode, colKey: 'calculated_1', useFormatter: false })).toBe(7);
+    });
+
+    test('calculated column menu items are grouped by separators', async () => {
+        const api = createGrid('calculated-menu-separators', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[Revenue] - [Cost]' },
+            ],
+        });
+
+        showColumnMenu(api, 'profit');
+        await asyncSetTimeout(10);
+
+        const headerMenuEntries = getOpenMenuEntries();
+        const editIndex = headerMenuEntries.indexOf('Edit Calculated Column');
+        const addIndex = headerMenuEntries.indexOf('Add Calculated Column');
+        expect(headerMenuEntries[editIndex - 1]).toBe('separator');
+        expect(headerMenuEntries).toEqual(
+            expect.arrayContaining(['Edit Calculated Column', 'Remove Calculated Column', 'Add Calculated Column'])
+        );
+        expect(headerMenuEntries[addIndex + 1]).toBe('separator');
+
+        api.hidePopupMenu();
+        api.showContextMenu({
+            rowNode: api.getRowNode('r1'),
+            column: api.getColumn('profit'),
+            value: 7,
+            source: 'api',
+        });
+        await asyncSetTimeout(10);
+
+        const contextMenuEntries = getOpenMenuEntries();
+        const removeIndex = contextMenuEntries.indexOf('Remove Calculated Column');
+        expect(contextMenuEntries[removeIndex - 1]).toBe('separator');
+        expect(contextMenuEntries[removeIndex + 1]).toBe('separator');
+    });
+
+    test('dialog type list contains the default data types only', async () => {
+        const api = createGrid('calculated-dialog-types', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        getCalculatedColumnDialog()
+            .querySelector<HTMLElement>('.ag-select .ag-picker-field-wrapper')!
+            .dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        await asyncSetTimeout(1);
+
+        const typeOptions = Array.from(document.querySelectorAll<HTMLElement>('.ag-list-item')).map((element) =>
+            element.textContent?.trim()
+        );
+        expect(typeOptions).toEqual(['Text', 'Number', 'Date', 'Boolean']);
+    });
+
+    test('dialog validates formula syntax and function names before apply', async () => {
+        const api = createGrid('calculated-dialog-validation', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        setExpression('[Revenue] +');
+        expect(getExpressionInput()).toHaveClass('invalid');
+        expect(getExpressionInput().validationMessage).toContain("Missing operand for '+'");
+        expect(getDialogButton('Apply').disabled).toBe(true);
+
+        setExpression('BOGUS([Revenue])');
+        expect(getExpressionInput()).toHaveClass('invalid');
+        expect(getExpressionInput().validationMessage).toContain('Unsupported operation BOGUS');
+        expect(api.getColumn('calculated_1')).toBeNull();
+
+        setExpression('[Revenue] - [Cost]');
+        expect(getExpressionInput()).not.toHaveClass('invalid');
+        expect(getExpressionInput().validationMessage).toBe('');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        expect(api.getColumn('calculated_1')).toBeTruthy();
     });
 
     test('calculated columns are always non-editable', async () => {

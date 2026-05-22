@@ -13,13 +13,6 @@
     position: relative;
 }
 
-.ag-calculated-column-expression-error {
-    color: var(--ag-invalid-color);
-    font-size: 11px;
-    line-height: normal;
-    margin-top: calc(var(--ag-spacing) / 2);
-}
-
 .ag-calculated-column-suggestions {
     position: absolute;
     z-index: 6;

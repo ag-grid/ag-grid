@@ -82,6 +82,7 @@ export interface IFormulaService extends Bean {
     getDataSourceFormula(row: RowNode, col: AgColumn): string | undefined;
     getFormulaError(col: AgColumn, row: RowNode): Error | null;
     normaliseFormula(value: string, shorthand: boolean): string | null;
+    validateExpression(expression: string): Error | null;
     getColByRef(ref: string): AgColumn | null;
     getColRef(col: AgColumn): string | null;
     getColByCalculatedRef(ref: string): AgColumn | null;

@@ -10,6 +10,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _warnOnce } from 'ag-grid-community';
 
+import type { FormulaError } from '../formula/ast/utils';
 import { Dialog } from '../widgets/dialog';
 import type { CalculatedColumnDraft, CalculatedColumnType, ColumnSuggestion } from './calculatedColumnForm';
 import { CALCULATED_COLUMN_TYPES, CalculatedColumnForm, DEFAULT_DRAFT } from './calculatedColumnForm';
@@ -23,7 +24,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     public readonly beanName = 'calculatedColsSvc' as const;
 
     public addCalculatedColumn(colDef: CalculatedColumnDef): void {
-        if (!this.validateExpression(colDef.calculatedExpression, colDef.colId ?? '')) {
+        if (!this.validateHeaderReferences(colDef.calculatedExpression, colDef.colId ?? '')) {
             return;
         }
         const nextDefs = [...this.getColumnDefs(), this.toCalculatedColDef(colDef)];
@@ -37,7 +38,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
         if (
             colDef.calculatedExpression != null &&
-            !this.validateExpression(colDef.calculatedExpression, targetColumn.getColId())
+            !this.validateHeaderReferences(colDef.calculatedExpression, targetColumn.getColId())
         ) {
             return;
         }
@@ -50,7 +51,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     // Mirrors the dialog's commit-time validation so API callers get a synchronous error rather
     // than a delayed parse failure when a header reference is unknown or ambiguous.
-    private validateExpression(expression: string, excludedColId: string): boolean {
+    private validateHeaderReferences(expression: string, excludedColId: string): boolean {
         const mapper = createCalculatedColumnReferenceMapper(
             this.beans,
             this.beans.colModel.getCols() ?? [],
@@ -62,6 +63,11 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             return false;
         }
         return true;
+    }
+
+    private validateFormulaExpression(expression: string): string | null {
+        const error = this.beans.formula?.validateExpression(`=${expression}`);
+        return error ? (error as FormulaError).getTranslatedMessage(this.getLocaleTextFunc()) : null;
     }
 
     public showAddCalculatedColumnDialog(column: AgColumn | null): void {
@@ -183,13 +189,30 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             draft.colId
         );
 
+        const getValidatedExpression = (
+            nextDraft: CalculatedColumnDraft
+        ): { valid: true; expression: string } | { valid: false; error: string } => {
+            const result = mapper.toInternalExpression(nextDraft.calculatedExpression);
+            if ('error' in result) {
+                return {
+                    valid: false,
+                    error: translateCalculatedColumnReferenceError(result.error, this.getLocaleTextFunc()),
+                };
+            }
+            const error = this.validateFormulaExpression(result.expression);
+            return error ? { valid: false, error } : { valid: true, expression: result.expression };
+        };
+        const handleValidate = (nextDraft: CalculatedColumnDraft): string | null => {
+            const result = getValidatedExpression(nextDraft);
+            return result.valid ? null : result.error;
+        };
         const handleApply = (nextDraft: CalculatedColumnDraft): string | null => {
             if (state.resolved) {
                 return null;
             }
-            const result = mapper.toInternalExpression(nextDraft.calculatedExpression);
-            if ('error' in result) {
-                return translateCalculatedColumnReferenceError(result.error, this.getLocaleTextFunc());
+            const result = getValidatedExpression(nextDraft);
+            if (!result.valid) {
+                return result.error;
             }
             state.resolved = true;
             onApply({ ...nextDraft, calculatedExpression: result.expression });
@@ -209,6 +232,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 draft,
                 () => mapper.suggestions,
                 () => this.getFunctionSuggestions(),
+                handleValidate,
                 handleApply,
                 handleCancel
             )

@@ -106,7 +106,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         }
 
         if (_exists(node) && isCalculatedColumn) {
-            defaultMenuOptions.push('removeCalculatedColumn', 'separator');
+            defaultMenuOptions.push('separator', 'removeCalculatedColumn', 'separator');
         }
 
         if (_exists(node) && column && notesSvc?.hasDataSource()) {

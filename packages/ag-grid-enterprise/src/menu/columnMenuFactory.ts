@@ -169,20 +169,16 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         }
 
         if (gos.isModuleRegistered('CalculatedColumns') && isPrimary) {
+            result.push(MENU_ITEM_SEPARATOR);
             if (column?.colDef.calculatedExpression != null) {
                 result.push('editCalculatedColumn');
                 result.push('removeCalculatedColumn');
             }
             result.push('calculatedColumn');
+            result.push(MENU_ITEM_SEPARATOR);
         }
 
-        if (
-            allowPinning ||
-            allowValueAgg ||
-            result[result.length - 1] === 'calculatedColumn' ||
-            result[result.length - 1] === 'editCalculatedColumn' ||
-            result[result.length - 1] === 'removeCalculatedColumn'
-        ) {
+        if (allowPinning || allowValueAgg) {
             result.push(MENU_ITEM_SEPARATOR);
         }
 

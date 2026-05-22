@@ -20,7 +20,7 @@ import {
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
 import type { FormulaNode } from './ast/utils';
-import { FormulaError } from './ast/utils';
+import { FormulaError, findFirstInvalidOperation } from './ast/utils';
 import { CellFormula } from './cellFormula';
 import type { Addr, FormulaResolver, FormulaVisitorContext } from './functions/resolver';
 import { evalAst, formulaVisitorSetVisited, formulaVisitorSetVisiting, unresolvedDeps } from './functions/resolver';
@@ -575,6 +575,22 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return serializeFormula(beans, parseFormula(beans, value), !shorthand, false);
         } catch {
             return null;
+        }
+    }
+
+    /**
+     * Validate an expression's syntax and function names without running it. Cell references are
+     * NOT validated — callers that care about ref resolution (e.g. the calculated-columns dialog)
+     * do that separately, and the formula cell editor relies on runtime cellFormula tooltips.
+     * @returns the first encountered FormulaError, or null when the expression is well-formed.
+     */
+    public validateExpression(expression: string): FormulaError | null {
+        try {
+            const ast = parseFormula(this.beans, expression, true);
+            const bad = findFirstInvalidOperation(ast, (name) => !!this.getFunction(name));
+            return bad ? new FormulaError(27, [bad]) : null;
+        } catch (error) {
+            return error instanceof FormulaError ? error : new FormulaError(1);
         }
     }
 

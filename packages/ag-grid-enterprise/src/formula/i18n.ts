@@ -149,16 +149,3 @@ export const getFormulaErrorDefaultMessage = (errorId: FormulaErrorId, variableV
 export const interpolateFormulaErrorMessage = (message: string, variableValues?: readonly unknown[]): string => {
     return interpolateVariables(message, normaliseVariableValues(variableValues));
 };
-
-export const translateFormulaError = (
-    translate: (key: string, defaultValue: string, variableValues?: string[]) => string,
-    errorId: FormulaErrorId,
-    variableValues?: readonly unknown[]
-): string => {
-    const [localeKey, defaultMessage] = getFormulaErrorDefinition(errorId);
-    const normalizedVariableValues = normaliseVariableValues(variableValues);
-    return interpolateVariables(
-        translate(localeKey, defaultMessage, normalizedVariableValues),
-        normalizedVariableValues
-    );
-};

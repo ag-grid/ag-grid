@@ -1,4 +1,11 @@
-import type { ElementParams, GridInputTextArea, GridInputTextField, GridSelect } from 'ag-grid-community';
+import type {
+    ElementParams,
+    GridInputTextArea,
+    GridInputTextField,
+    GridSelect,
+    ITooltipCtrl,
+    TooltipFeature,
+} from 'ag-grid-community';
 import {
     AgInputTextAreaSelector,
     AgInputTextFieldSelector,
@@ -10,16 +17,7 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
-export type CalculatedColumnType =
-    | 'text'
-    | 'number'
-    | 'bigint'
-    | 'boolean'
-    | 'date'
-    | 'dateString'
-    | 'dateTime'
-    | 'dateTimeString'
-    | 'object';
+export type CalculatedColumnType = 'text' | 'number' | 'boolean' | 'date';
 
 export interface CalculatedColumnDraft {
     colId: string;
@@ -43,13 +41,8 @@ export const DEFAULT_DRAFT: Omit<CalculatedColumnDraft, 'colId' | 'headerName'> 
 export const CALCULATED_COLUMN_TYPES: Record<CalculatedColumnType, true> = {
     text: true,
     number: true,
-    bigint: true,
     boolean: true,
     date: true,
-    dateString: true,
-    dateTime: true,
-    dateTimeString: true,
-    object: true,
 };
 
 const OPERATOR_SUGGESTIONS: ColumnSuggestion[] = ['+', '-', '*', '/', '^', '&', '=', '<>', '>', '>=', '<', '<='].map(
@@ -71,7 +64,6 @@ const CalculatedColumnFormElement: ElementParams = {
             cls: 'ag-calculated-column-expression-wrap',
             children: [
                 { tag: 'ag-input-text-area', ref: 'eExpression' },
-                { tag: 'div', ref: 'eExpressionError', cls: 'ag-calculated-column-expression-error' },
                 { tag: 'div', ref: 'eSuggestions', cls: 'ag-calculated-column-suggestions' },
             ],
         },
@@ -103,7 +95,6 @@ export class CalculatedColumnForm extends Component {
     private readonly eTitle: GridInputTextField = RefPlaceholder;
     private readonly eType: GridSelect<CalculatedColumnType> = RefPlaceholder;
     private readonly eExpression: GridInputTextArea = RefPlaceholder;
-    private readonly eExpressionError: HTMLElement = RefPlaceholder;
     private readonly eSuggestions: HTMLElement = RefPlaceholder;
     private readonly eColumns: HTMLButtonElement = RefPlaceholder;
     private readonly eFunctions: HTMLButtonElement = RefPlaceholder;
@@ -116,11 +107,14 @@ export class CalculatedColumnForm extends Component {
     private activeReplacement: { start: number; end: number } | null = null;
     private suggestionSource: HTMLElement | null = null;
     private hideSuggestionPopup: (() => void) | undefined;
+    private validationTooltipFeature?: TooltipFeature;
+    private expressionValidationMessage: string | null = null;
 
     constructor(
         private draft: CalculatedColumnDraft,
         private readonly getColumnSuggestions: () => ColumnSuggestion[],
         private readonly getFunctionSuggestions: () => ColumnSuggestion[],
+        private readonly onValidate: (draft: CalculatedColumnDraft) => string | null,
         private readonly onApply: (draft: CalculatedColumnDraft) => string | null,
         private readonly onCancel: () => void
     ) {
@@ -135,16 +129,8 @@ export class CalculatedColumnForm extends Component {
             .addOptions([
                 { value: 'text', text: translate('dataTypeText', 'Text') },
                 { value: 'number', text: translate('dataTypeNumber', 'Number') },
-                { value: 'bigint', text: translate('dataTypeBigInt', 'BigInt') },
-                { value: 'boolean', text: translate('dataTypeBoolean', 'Boolean') },
                 { value: 'date', text: translate('dataTypeDate', 'Date') },
-                { value: 'dateString', text: translate('dataTypeDateString', 'Date String') },
-                { value: 'dateTime', text: translate('dataTypeDateTime', 'Date Time') },
-                {
-                    value: 'dateTimeString',
-                    text: translate('dataTypeDateTimeString', 'Date Time String'),
-                },
-                { value: 'object', text: translate('dataTypeObject', 'Object') },
+                { value: 'boolean', text: translate('dataTypeBoolean', 'Boolean') },
             ])
             .setValue(this.draft.cellDataType, true);
         this.eExpression
@@ -164,14 +150,15 @@ export class CalculatedColumnForm extends Component {
         this.eCancel.type = 'button';
         this.eSuggestions.remove();
         _setDisplayed(this.eSuggestions, false);
-        _setDisplayed(this.eExpressionError, false);
+
+        this.setupValidationTooltip();
 
         const initialHeaderName = this.draft.headerName;
         this.eTitle.onValueChange((value) => this.updateDraft({ headerName: value || initialHeaderName }));
         this.eType.onValueChange((value) => this.updateDraft({ cellDataType: value ?? DEFAULT_DRAFT.cellDataType }));
         this.eExpression.onValueChange((value) => {
-            this.setExpressionError(null);
             this.updateDraft({ calculatedExpression: value ?? '' });
+            this.setExpressionError(this.onValidate(this.draft));
             this.refreshContextSuggestions();
         });
         const input = this.eExpression.getInputElement();
@@ -226,8 +213,22 @@ export class CalculatedColumnForm extends Component {
         input.setCustomValidity(message ?? '');
         input.classList.toggle('invalid', isInvalid);
         input.toggleAttribute('aria-invalid', isInvalid);
-        this.eExpressionError.textContent = message ?? '';
-        _setDisplayed(this.eExpressionError, isInvalid);
+        this.expressionValidationMessage = message;
+        this.eApply.disabled = isInvalid;
+        this.validationTooltipFeature?.setTooltipAndRefresh(message);
+        // set title to empty string to prevent default browser tooltip from showing when validation tooltip is active
+        input.setAttribute('title', '');
+    }
+
+    private setupValidationTooltip(): void {
+        this.validationTooltipFeature = this.createOptionalManagedBean(
+            this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+                getGui: () => this.eExpression.getInputElement(),
+                getTooltipValue: () => this.expressionValidationMessage,
+                getLocation: () => 'calculatedColumnExpression',
+                shouldDisplayTooltip: () => !!this.expressionValidationMessage,
+            } as ITooltipCtrl)
+        );
     }
 
     private updateDraft(partial: Partial<CalculatedColumnDraft>): void {
