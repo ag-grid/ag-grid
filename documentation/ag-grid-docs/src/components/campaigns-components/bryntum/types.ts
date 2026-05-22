@@ -18,9 +18,10 @@ export interface BryntumImageMedia {
     src_original?: string;
 }
 
-export interface BryntumSvgMedia {
-    kind: 'svg-inline';
-    markup: string;
+export interface BryntumSvgFileMedia {
+    kind: 'svg-file';
+    src: string;
+    alt?: string;
 }
 
 export interface BryntumVideoMedia {
@@ -28,7 +29,7 @@ export interface BryntumVideoMedia {
     src?: string;
 }
 
-export type BryntumMedia = BryntumImageMedia | BryntumSvgMedia | BryntumVideoMedia;
+export type BryntumMedia = BryntumImageMedia | BryntumSvgFileMedia | BryntumVideoMedia;
 
 export interface BryntumSectionBase {
     id?: string;

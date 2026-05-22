@@ -2,6 +2,7 @@
 import { resolveBryntumAsset } from '@utils/bryntumCampaignAssets';
 
 import BryntumCtaList from './BryntumCtaList.astro';
+import { getBryntumSvg } from './bryntumSvg';
 import type { BryntumHeroSection } from './types';
 import styles from '../BryntumCampaign.module.scss';
 
@@ -12,6 +13,7 @@ interface Props {
 
 const { section, productSlug } = Astro.props;
 const media = section.media?.[0];
+const svgMarkup = media?.kind === 'svg-file' ? getBryntumSvg(media.src) : undefined;
 ---
 
 <section class={styles.hero}>
@@ -30,7 +32,7 @@ const media = section.media?.[0];
         </div>
 
         <div class={styles.heroMedia}>
-            {media?.kind === 'svg-inline' && <Fragment set:html={media.markup} />}
+            {svgMarkup && <Fragment set:html={svgMarkup} />}
             {
                 media?.kind === 'image' && (
                     <img

@@ -1,6 +1,7 @@
 ---
 import { resolveBryntumHref } from '@utils/bryntumCampaignAssets';
 
+import { getBryntumSvg } from './bryntumSvg';
 import type { BryntumBrandsSection } from './types';
 import styles from '../BryntumCampaign.module.scss';
 
@@ -9,6 +10,10 @@ interface Props {
 }
 
 const { section } = Astro.props;
+const itemsWithSvg = section.items.map((item) => ({
+    item,
+    svgMarkup: item.media?.kind === 'svg-file' ? getBryntumSvg(item.media.src) : undefined,
+}));
 ---
 
 <section class={styles.section}>
@@ -17,14 +22,14 @@ const { section } = Astro.props;
 
         <div class={styles.brandsRow}>
             {
-                section.items.map((item) => (
+                itemsWithSvg.map(({ item, svgMarkup }) => (
                     <a
                         href={resolveBryntumHref(item.href)}
                         target="_blank"
                         rel="noopener"
                         aria-label={item.label ?? 'Customer logo'}
                     >
-                        {item.media?.kind === 'svg-inline' && <Fragment set:html={item.media.markup} />}
+                        {svgMarkup && <Fragment set:html={svgMarkup} />}
                     </a>
                 ))
             }

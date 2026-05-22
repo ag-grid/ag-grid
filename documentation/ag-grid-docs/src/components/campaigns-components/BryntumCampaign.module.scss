@@ -58,7 +58,7 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: $spacing-size-10;
-    align-items: start;
+    align-items: center;
 
     @media screen and (min-width: $breakpoint-site-header-large) {
         grid-template-columns: 1.1fr 1fr;
@@ -120,12 +120,6 @@
 .heroMedia {
     display: flex;
     justify-content: center;
-    background-color: var(--color-white);
-    border-radius: var(--radius-lg);
-    padding: $spacing-size-6;
-    box-shadow:
-        0 12px 32px rgb(0 0 0 / 0.18),
-        0 4px 12px rgb(0 0 0 / 0.08);
 
     svg,
     img {
