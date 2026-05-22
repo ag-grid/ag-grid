@@ -1,5 +1,5 @@
 import { _removeFromParent } from '../agStack/utils/dom';
-import type { PaginationPanel } from '../entities/gridOptions';
+import type { PaginationPanel, PaginationPanelParams } from '../entities/gridOptions';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';
 import type { Component, ComponentSelector } from '../widgets/component';
@@ -79,7 +79,8 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     private buildComponents(idPrefix: string): void {
         const panels = this.gos.get('paginationPanels') ?? DEFAULT_PANELS;
         const seen = new Set<string>();
-        for (const panelName of panels) {
+        for (const panel of panels) {
+            const panelName = typeof panel === 'string' ? panel : (panel as PaginationPanelParams).type;
             if (seen.has(panelName)) {
                 continue;
             }
@@ -92,7 +93,9 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
                 this.rowSummaryComp = this.createManagedBean(new RowSummaryComp(idPrefix));
                 this.appendChild(this.rowSummaryComp);
             } else if (panelName === 'pageSummary') {
-                this.pageSummaryComp = this.createManagedBean(new PageSummaryComp(idPrefix));
+                const suppressPageInput =
+                    typeof panel === 'object' ? (panel as PaginationPanelParams).suppressPageInput : undefined;
+                this.pageSummaryComp = this.createManagedBean(new PageSummaryComp(idPrefix, suppressPageInput));
                 this.appendChild(this.pageSummaryComp);
             }
         }
