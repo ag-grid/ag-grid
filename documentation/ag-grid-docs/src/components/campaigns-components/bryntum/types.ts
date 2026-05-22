@@ -90,6 +90,7 @@ export interface BryntumBrandsSection extends BryntumSectionBase {
     type: 'brands';
     items: Array<{
         href?: string;
+        label?: string;
         media: BryntumMedia;
     }>;
 }

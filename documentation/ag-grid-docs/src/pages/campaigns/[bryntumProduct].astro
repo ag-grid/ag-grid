@@ -14,9 +14,8 @@ export async function getStaticPaths() {
         taskboard: 'task-board',
     };
 
-    return Object.entries(contentModules).map(([path, content]) => {
-        const rawSlug = content.slug ?? path.split('/').pop()?.replace('-original.json', '') ?? '';
-        const urlSlug = `bryntum-${slugAliases[rawSlug] ?? rawSlug}`;
+    return Object.values(contentModules).map((content) => {
+        const urlSlug = `bryntum-${slugAliases[content.slug] ?? content.slug}`;
 
         return {
             params: { bryntumProduct: urlSlug },

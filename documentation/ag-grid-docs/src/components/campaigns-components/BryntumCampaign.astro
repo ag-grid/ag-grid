@@ -7,6 +7,7 @@ import HeroSection from './bryntum/HeroSection.astro';
 import LanguagesSection from './bryntum/LanguagesSection.astro';
 import LiveDemoSection from './bryntum/LiveDemoSection.astro';
 import TextMediaSection from './bryntum/TextMediaSection.astro';
+import { LIVE_DEMO_PRODUCT_CONFIG } from './bryntum/liveDemoProducts';
 import type { BryntumCampaignContent } from './bryntum/types';
 import styles from './BryntumCampaign.module.scss';
 
@@ -16,8 +17,25 @@ interface Props {
 
 const { content } = Astro.props;
 const productSlug = content.slug;
+const hasLiveDemo = productSlug in LIVE_DEMO_PRODUCT_CONFIG;
 
-let twoColumnTextMediaIndex = 0;
+// Mark every other qualifying text-media section as `isAlt` so the page
+// alternates the gradient background. Computed up-front to avoid mutating
+// state inside the .map() below.
+const altTextMediaSections = new WeakSet<object>();
+{
+    let qualifiedIndex = 0;
+    for (const section of content.sections) {
+        if (section.type !== 'text-media') continue;
+        const firstMedia = section.media?.[0];
+        const hasImage = firstMedia?.kind === 'image' && Boolean(firstMedia.src);
+        if (!hasImage) continue;
+        if (qualifiedIndex % 2 === 1) {
+            altTextMediaSections.add(section);
+        }
+        qualifiedIndex++;
+    }
+}
 ---
 
 <div class={styles.page}>
@@ -29,25 +47,22 @@ let twoColumnTextMediaIndex = 0;
                 case 'text-languages':
                     return <LanguagesSection section={section} />;
                 case 'text-media':
-                case 'white-section': {
-                    const hasImage = section.media?.[0]?.kind === 'image' && Boolean(section.media?.[0]?.src);
-                    const isWhite = section.type === 'white-section';
-                    const qualifies = hasImage && !isWhite;
-                    const isAlt = qualifies ? twoColumnTextMediaIndex++ % 2 === 1 : false;
-                    return <TextMediaSection section={section} productSlug={productSlug} isAlt={isAlt} />;
-                }
-                case 'live-demo': {
-                    const liveDemoProducts = ['gantt', 'scheduler', 'schedulerpro', 'taskboard', 'grid'];
-                    return liveDemoProducts.includes(productSlug) ? (
+                case 'white-section':
+                    return (
+                        <TextMediaSection
+                            section={section}
+                            productSlug={productSlug}
+                            isAlt={altTextMediaSections.has(section)}
+                        />
+                    );
+                case 'live-demo':
+                    return hasLiveDemo ? (
                         <BryntumLiveDemo section={section} productSlug={productSlug} />
                     ) : (
                         <LiveDemoSection section={section} />
                     );
-                }
                 case 'columns-lib':
                     return <ExamplesGridSection section={section} productSlug={productSlug} />;
-                case 'columnsWithMedia':
-                    return null;
                 case 'brands':
                     return <BrandsSection section={section} />;
                 case 'text-button':

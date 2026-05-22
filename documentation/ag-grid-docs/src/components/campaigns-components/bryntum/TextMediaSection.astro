@@ -1,7 +1,7 @@
 ---
-import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { resolveBryntumAsset, resolveBryntumHref } from '@utils/bryntumCampaignAssets';
+import { resolveBryntumAsset } from '@utils/bryntumCampaignAssets';
 
+import BryntumCtaList from './BryntumCtaList.astro';
 import type { BryntumTextMediaSection } from './types';
 import styles from '../BryntumCampaign.module.scss';
 
@@ -34,23 +34,16 @@ const showAltBg = isAlt && hasMedia && !isWhite;
         >
             <div class={styles.textMediaCopy}>
                 {section.heading && <h2>{section.heading}</h2>}
+                {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
                 {section.body_html && <div set:html={section.body_html} />}
 
                 {
-                    section.ctas && section.ctas.length > 0 && (
-                        <div class={styles.textMediaCtas}>
-                            {section.ctas.map((cta) => (
-                                <a
-                                    href={resolveBryntumHref(cta.href)}
-                                    class="button-tertiary"
-                                    target="_blank"
-                                    rel="noopener"
-                                >
-                                    {cta.text}
-                                    <Icon name="arrowRight" />
-                                </a>
-                            ))}
-                        </div>
+                    section.ctas && (
+                        <BryntumCtaList
+                            ctas={section.ctas}
+                            buttonClass="button-tertiary"
+                            wrapperClass={styles.textMediaCtas}
+                        />
                     )
                 }
             </div>
@@ -76,7 +69,7 @@ const showAltBg = isAlt && hasMedia && !isWhite;
                                 loop
                                 playsinline
                                 preload="metadata"
-                                aria-label={section.heading}
+                                aria-label={section.heading ?? 'Product demo video'}
                                 class:list={[styles.mediaImage, hasShadow && styles.mediaShadow]}
                             />
                         )}

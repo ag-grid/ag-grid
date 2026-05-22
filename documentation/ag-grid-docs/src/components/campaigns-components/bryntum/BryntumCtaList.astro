@@ -1,0 +1,27 @@
+---
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+
+import { resolveBryntumHref } from '@utils/bryntumCampaignAssets';
+import type { BryntumCta } from './types';
+
+interface Props {
+    ctas: BryntumCta[];
+    buttonClass: string;
+    wrapperClass?: string;
+}
+
+const { ctas, buttonClass, wrapperClass } = Astro.props;
+---
+
+{
+    ctas.length > 0 && (
+        <div class={wrapperClass}>
+            {ctas.map((cta) => (
+                <a href={resolveBryntumHref(cta.href)} class={buttonClass} target="_blank" rel="noopener">
+                    {cta.text}
+                    <Icon name="arrowRight" />
+                </a>
+            ))}
+        </div>
+    )
+}

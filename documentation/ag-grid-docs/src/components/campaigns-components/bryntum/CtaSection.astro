@@ -1,7 +1,5 @@
 ---
-import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { resolveBryntumHref } from '@utils/bryntumCampaignAssets';
-
+import BryntumCtaList from './BryntumCtaList.astro';
 import type { BryntumTextButtonSection } from './types';
 import styles from '../BryntumCampaign.module.scss';
 
@@ -15,18 +13,12 @@ const { section } = Astro.props;
 <section class:list={[styles.ctaOuter, styles.sectionBgSecondary]}>
     <div class:list={[styles.sectionInner, styles.ctaSection]}>
         {section.heading && <h2>{section.heading}</h2>}
+        {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
         {section.body_html && <div set:html={section.body_html} />}
 
         {
-            section.ctas && section.ctas.length > 0 && (
-                <div class={styles.ctaButtons}>
-                    {section.ctas.map((cta) => (
-                        <a href={resolveBryntumHref(cta.href)} class="button-primary" target="_blank" rel="noopener">
-                            {cta.text}
-                            <Icon name="arrowRight" />
-                        </a>
-                    ))}
-                </div>
+            section.ctas && (
+                <BryntumCtaList ctas={section.ctas} buttonClass="button-primary" wrapperClass={styles.ctaButtons} />
             )
         }
     </div>

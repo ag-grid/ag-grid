@@ -1,49 +1,48 @@
 /* Bryntum "Try it yourself!" demo styles — isolated from page styles.
-   Wrapper rules + the column-colour ruleset from bryntum.com's
-   /dist/gantt/examples/advanced/resources/app.css. */
+   Wrapper rules use the site's CSS-custom-property design tokens (which
+   cascade through :root). The .Started/.Late/etc. status colours below
+   are taken verbatim from bryntum.com's upstream demo CSS and are kept
+   as-is so the embedded demo matches the canonical Bryntum styling. */
 
 .bryntum-demo-section {
     padding: 64px 0;
-    background-color: #f4f8ff;
+    background-color: var(--color-bg-secondary);
 }
 
 .bryntum-demo-inner {
     margin: 0 auto;
-    padding: 0 24px;
-    max-width: 1240px;
+    padding: 0 var(--layout-horizontal-margins);
+    max-width: var(--layout-max-width);
 }
 
 .bryntum-demo-heading {
     text-align: center;
-    font-size: 32px;
+    font-size: var(--text-fs-2xl);
     margin: 0 0 32px;
-    color: #101828;
+    color: var(--color-fg-primary);
 }
 
 .bryntum-demo-frame {
     width: 100%;
     aspect-ratio: 4 / 3;
-    min-height: 720px;
-    border-radius: 10px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    background-color: #fff;
-    border: 1px solid #d4e3f8;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-secondary);
     box-shadow:
         0 16px 40px rgb(15 36 88 / 0.18),
         0 6px 16px rgb(15 36 88 / 0.1);
 }
 
+@media (min-width: 1024px) {
+    .bryntum-demo-frame {
+        min-height: 720px;
+    }
+}
+
 .bryntum-demo-mount {
     width: 100%;
     height: 100%;
-}
-
-[data-dark-mode='true'] .bryntum-demo-section {
-    background-color: var(--color-bg-primary);
-}
-
-[data-dark-mode='true'] .bryntum-demo-heading {
-    color: var(--color-fg-primary);
 }
 
 [data-dark-mode='true'] .bryntum-demo-frame {
@@ -54,7 +53,7 @@
         0 6px 16px rgb(0 0 0 / 0.25);
 }
 
-/* From upstream advanced demo app.css */
+/* From upstream advanced demo app.css — vendor styles kept as-is. */
 .b-status-column-cell,
 .b-complexity-column-cell {
     font-size: 0.8em;

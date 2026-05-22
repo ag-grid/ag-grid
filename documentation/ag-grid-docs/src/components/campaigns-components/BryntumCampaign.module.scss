@@ -353,7 +353,7 @@
 
     &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgb(0 0 0 / 0.08);
+        box-shadow: var(--shadow-md);
     }
 
     #{$selector-darkmode} & {
@@ -444,7 +444,7 @@
 }
 
 .ctaOuter {
-    padding: $spacing-size-20 0 100px;
+    padding: $spacing-size-20 0 $spacing-size-24;
 }
 
 .heroCtas a,
@@ -472,57 +472,5 @@
 
     a {
         --icon-size: 1.1em;
-    }
-}
-
-.resourcesGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: $spacing-size-6;
-    margin-top: $spacing-size-8;
-
-    @media screen and (min-width: $breakpoint-site-header-medium) {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-.resourceCard {
-    display: flex;
-    flex-direction: column;
-    padding: $spacing-size-5;
-    background-color: var(--color-bg-secondary);
-    border: 1px solid var(--color-border-secondary);
-    border-radius: var(--radius-lg);
-    text-decoration: none;
-    color: var(--color-fg-primary);
-    min-height: 180px;
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgb(0 0 0 / 0.08);
-    }
-
-    h3 {
-        font-size: var(--text-fs-lg);
-        margin: 0 0 $spacing-size-2;
-    }
-
-    p {
-        color: var(--color-fg-secondary);
-        margin: 0;
-    }
-
-    img {
-        margin-top: auto;
-        max-width: 100%;
-        border-radius: var(--radius-md);
-    }
-
-    #{$selector-darkmode} & {
-        background-color: var(--color-util-gray-50);
-        border-color: var(--color-util-gray-300);
     }
 }
