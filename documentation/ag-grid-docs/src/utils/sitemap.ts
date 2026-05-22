@@ -87,5 +87,11 @@ export function getSitemapConfig({ chartsSitemap, studioSitemap }: { chartsSitem
         customSitemaps,
         filter: filterIgnoredPages,
         lastmod: new Date(),
+        namespaces: {
+            news: false,
+            xhtml: false,
+            image: false,
+            video: false,
+        },
     };
 }
