@@ -182,6 +182,7 @@ const OTHER_GRID_OPTIONS: GridOptionKey[] = ['theme', 'rowSelection'];
 // These are all of type boolean | something else
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysWithType<boolean>[] = [
+    'autoGenerateColumnDefs',
     'cellSelection',
     'sideBar',
     'rowNumbers',
@@ -341,7 +342,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'hidePaddedHeaderRows',
     'ssrmExpandAllAffectsAllRows',
     'animateColumnResizing',
-    'autoGenerateColumnDefs',
 ];
 
 /** @knipIgnore Used in example generation */
