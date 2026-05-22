@@ -45,11 +45,10 @@ function useTheme(theme: string, isDark: boolean) {
             themePart = themeMaterial;
             break;
     }
-    const gridDiv = document.getElementById('myGrid')!;
     if (isDark) {
-        gridDiv.setAttribute('data-ag-theme-mode', 'dark');
+        document.body.setAttribute('data-ag-theme-mode', 'dark');
     } else {
-        gridDiv.removeAttribute('data-ag-theme-mode');
+        document.body.removeAttribute('data-ag-theme-mode');
     }
     gridApi.setGridOption('theme', themePart);
 }

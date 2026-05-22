@@ -197,7 +197,7 @@ export class ThemeImpl {
                 const params = modeParams[mode];
                 if (mode !== defaultModeName) {
                     const escapedMode = typeof CSS === 'object' ? CSS.escape(mode) : mode; // check for CSS global in case we're running in tests
-                    const wrapPrefix = `:where([data-ag-theme-mode="${escapedMode}"]) & {\n`;
+                    const wrapPrefix = `:where(html[data-ag-theme-mode="${escapedMode}"],body[data-ag-theme-mode="${escapedMode}"],.ag-theme-mode[data-ag-theme-mode="${escapedMode}"]) & {\n`;
                     variablesCss += wrapPrefix;
                     inheritanceCss += wrapPrefix;
                 }
