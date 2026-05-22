@@ -41,8 +41,8 @@
             "id": "block_agbryntum_partnership",
             "type": "partnership",
             "heading": "Your JavaScript toolkit just got bigger",
-            "body_html": "<p>Following our 2025 <a href=\"https://blog.ag-grid.com/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, the components you trust for data now sit alongside the best tools for scheduling and project planning.</p><p>If you already trust AG Grid for your data, Bryntum Gantt is the natural next component in your stack — built by the same kind of team, to the same standard.</p>",
-            "body_text": "Following our 2025 partnership with Bryntum, the components you trust for data now sit alongside the best tools for scheduling and project planning. If you already trust AG Grid for your data, Bryntum Gantt is the natural next component in your stack — built by the same kind of team, to the same standard.",
+            "body_html": "<p>Following our 2025 <a href=\"https://blog.ag-grid.com/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, the components you trust for data now sit alongside the best tools for scheduling and project planning.</p><p>You already trust AG Grid for your data, Bryntum Task Board brings that same standard to kanban-style task workflows — built by the same kind of team, to the same standard.</p>",
+            "body_text": "Following our 2025 partnership with Bryntum, the components you trust for data now sit alongside the best tools for scheduling and project planning. You already trust AG Grid for your data, Bryntum Task Board brings that same standard to kanban-style task workflows — built by the same kind of team, to the same standard.",
             "logo_light_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-light.svg",
             "logo_dark_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-dark.svg",
             "logo_alt": "AG Grid x Bryntum partnership"

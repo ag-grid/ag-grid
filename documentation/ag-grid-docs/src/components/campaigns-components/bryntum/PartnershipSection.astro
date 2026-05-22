@@ -17,10 +17,6 @@ const logoAlt = section.logo_alt ?? 'AG Grid and Bryntum partnership';
 <section class:list={[styles.section, styles.sectionBgSecondary]}>
     <div class={styles.sectionInner}>
         <div class={styles.partnership}>
-            {section.heading && <h2 class={styles.partnershipHeading}>{section.heading}</h2>}
-            {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
-            {section.body_html && <div class={styles.partnershipBody} set:html={section.body_html} />}
-
             {
                 (lightSrc || darkSrc) && (
                     <div class={styles.partnershipLogos}>
@@ -33,6 +29,9 @@ const logoAlt = section.logo_alt ?? 'AG Grid and Bryntum partnership';
                     </div>
                 )
             }
+            {section.heading && <h2 class={styles.partnershipHeading}>{section.heading}</h2>}
+            {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
+            {section.body_html && <div class={styles.partnershipBody} set:html={section.body_html} />}
         </div>
     </div>
 </section>
