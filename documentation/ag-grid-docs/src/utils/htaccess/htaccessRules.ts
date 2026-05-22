@@ -135,6 +135,10 @@ ${modExpiresRules}
 ${modDeflateRules}
 ${modRewriteRules}
 
+Header always set X-Frame-Options "SAMEORIGIN"                                                                                                                                                                                          
+Header always set Referrer-Policy "strict-origin-when-cross-origin"                                                                                                                                                                     
+Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"  
+
 # CORS settings
 Header add Access-Control-Allow-Origin "*"
 Header add Access-Control-Allow-Methods: "GET,POST,OPTIONS,DELETE,PUT"
