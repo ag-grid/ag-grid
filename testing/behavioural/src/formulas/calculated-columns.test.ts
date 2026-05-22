@@ -527,7 +527,10 @@ describe('ag-grid calculated columns', () => {
             [createColumn('q4-a', 'Q4', ['2025']), createColumn('q4-b', 'Q4', ['2025'])],
             'calculated_1'
         );
-        expect(duplicateFullPathMapper.suggestions.map(({ label }) => label)).toEqual(['2025 Q4 (1)', '2025 Q4 (2)']);
+        expect(duplicateFullPathMapper.suggestions.map(({ label }) => label)).toEqual([
+            '2025 Q4 (q4-a)',
+            '2025 Q4 (q4-b)',
+        ]);
 
         const groupedMapper = createCalculatedColumnReferenceMapper(
             beans,
@@ -544,6 +547,61 @@ describe('ag-grid calculated columns', () => {
         });
         expect(groupedMapper.toInternalExpression('[2025 Q4] - [2026 Q4]')).toEqual({
             expression: '[2025 Q4] - [2026 Q4]',
+        });
+    });
+
+    test('duplicate full-path suffix is stable across column reorder', () => {
+        const createGroup = (name: string, parent: any = null) => ({
+            __name: name,
+            getGroupId: () => name,
+            getOriginalParent: () => parent,
+            isPadding: () => false,
+        });
+        const createColumn = (colId: string, headerName: string, groupNames: string[]) => {
+            let parent = null;
+            for (let i = groupNames.length - 1; i >= 0; i--) {
+                parent = createGroup(groupNames[i], parent);
+            }
+            return { __headerName: headerName, getColId: () => colId, getOriginalParent: () => parent } as any;
+        };
+        const beans = {
+            colNames: {
+                getDisplayNameForColumn: (column: any) => column.__headerName,
+                getDisplayNameForProvidedColumnGroup: (_columnGroup: any, providedColumnGroup: any) =>
+                    providedColumnGroup.__name,
+            },
+        } as any;
+
+        const colA = createColumn('q4-a', 'Q4', ['2025']);
+        const colB = createColumn('q4-b', 'Q4', ['2025']);
+
+        const forward = createCalculatedColumnReferenceMapper(beans, [colA, colB], 'calculated_1');
+        const reversed = createCalculatedColumnReferenceMapper(beans, [colB, colA], 'calculated_1');
+
+        expect(forward.suggestions.map(({ label }) => label)).toEqual(['2025 Q4 (q4-a)', '2025 Q4 (q4-b)']);
+        expect(reversed.suggestions.map(({ label }) => label)).toEqual(['2025 Q4 (q4-b)', '2025 Q4 (q4-a)']);
+    });
+
+    test('reference suffix escapes special characters in colId', () => {
+        const createColumn = (colId: string, headerName: string) =>
+            ({ __headerName: headerName, getColId: () => colId, getOriginalParent: () => null }) as any;
+        const beans = {
+            colNames: {
+                getDisplayNameForColumn: (column: any) => column.__headerName,
+                getDisplayNameForProvidedColumnGroup: () => null,
+            },
+        } as any;
+
+        const mapper = createCalculatedColumnReferenceMapper(
+            beans,
+            [createColumn('weird]name', 'Total'), createColumn('plain', 'Total')],
+            'calculated_1'
+        );
+
+        const [first, second] = mapper.suggestions.map(({ label }) => label);
+        expect(first.includes(']')).toBe(false);
+        expect(mapper.toInternalExpression(`[${first}] + [${second}]`)).toEqual({
+            expression: `[${first}] + [${second}]`,
         });
     });
 

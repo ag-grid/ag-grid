@@ -8,12 +8,12 @@ import type {
     ICalculatedColumnsService,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _warnOnce } from 'ag-grid-community';
 
 import { Dialog } from '../widgets/dialog';
 import type { CalculatedColumnDraft, CalculatedColumnType, ColumnSuggestion } from './calculatedColumnForm';
 import { CALCULATED_COLUMN_TYPES, CalculatedColumnForm, DEFAULT_DRAFT } from './calculatedColumnForm';
-import { clearStaleDataTypeProperties } from './calculatedColumnHelpers';
+import { clearStaleDataTypeProperties, collectColIdsAndFields } from './calculatedColumnHelpers';
 import {
     createCalculatedColumnReferenceMapper,
     translateCalculatedColumnReferenceError,
@@ -23,6 +23,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     public readonly beanName = 'calculatedColsSvc' as const;
 
     public addCalculatedColumn(colDef: CalculatedColumnDef): void {
+        if (!this.validateExpression(colDef.calculatedExpression, colDef.colId ?? '')) {
+            return;
+        }
         const nextDefs = [...this.getColumnDefs(), this.toCalculatedColDef(colDef)];
         this.beans.gridApi.updateGridOptions({ columnDefs: nextDefs });
     }
@@ -32,11 +35,33 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (targetColumn?.colDef.calculatedExpression == null) {
             return;
         }
+        if (
+            colDef.calculatedExpression != null &&
+            !this.validateExpression(colDef.calculatedExpression, targetColumn.getColId())
+        ) {
+            return;
+        }
 
         const targetColId = targetColumn.getColId();
         const nextDefs = this.updateCalculatedColumnDef(this.getColumnDefs(), targetColumn, colDef);
         this.beans.gridApi.updateGridOptions({ columnDefs: nextDefs });
         this.refreshCalculatedColumn(targetColId);
+    }
+
+    // Mirrors the dialog's commit-time validation so API callers get a synchronous error rather
+    // than a delayed parse failure when a header reference is unknown or ambiguous.
+    private validateExpression(expression: string, excludedColId: string): boolean {
+        const mapper = createCalculatedColumnReferenceMapper(
+            this.beans,
+            this.beans.colModel.getCols() ?? [],
+            excludedColId
+        );
+        const result = mapper.toInternalExpression(expression);
+        if ('error' in result) {
+            _warnOnce(translateCalculatedColumnReferenceError(result.error, this.getLocaleTextFunc()));
+            return false;
+        }
+        return true;
     }
 
     public showAddCalculatedColumnDialog(column: AgColumn | null): void {
@@ -77,8 +102,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private createUniqueColId(): string {
+        const usedIds = collectColIdsAndFields(this.getColumnDefs());
         let index = 1;
-        while (this.beans.colModel.getColById(`calculated_${index}`)) {
+        while (usedIds.has(`calculated_${index}`)) {
             index++;
         }
         return `calculated_${index}`;

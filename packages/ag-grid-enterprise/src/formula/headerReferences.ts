@@ -27,7 +27,6 @@ export function createHeaderReferenceEntries(
         }
     }
 
-    const fullPathSuffix = new Map<string, number>();
     for (const entry of entries) {
         const unique = getReferenceCandidates(entry.path).find((value) => candidateCounts.get(value) === 1);
         if (unique) {
@@ -35,10 +34,7 @@ export function createHeaderReferenceEntries(
             continue;
         }
 
-        const fullPath = joinReferencePath(entry.path);
-        const occurrence = (fullPathSuffix.get(fullPath) ?? 0) + 1;
-        fullPathSuffix.set(fullPath, occurrence);
-        entry.reference = `${fullPath} (${occurrence})`;
+        entry.reference = `${joinReferencePath(entry.path)} (${getStableReferenceSuffix(entry.colId)})`;
     }
 
     return entries;
@@ -94,4 +90,8 @@ function getReferenceCandidates(path: string[]): string[] {
 
 function joinReferencePath(path: string[]): string {
     return path.filter(Boolean).join(' ');
+}
+
+function getStableReferenceSuffix(colId: string): string {
+    return encodeURIComponent(colId);
 }

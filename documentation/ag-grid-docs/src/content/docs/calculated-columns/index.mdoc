@@ -41,6 +41,8 @@ When the Column Menu is registered, users can add a calculated column from the h
 
 In the dialog, references are shown by header names, for example `[Revenue]`. If headers are duplicated under groups, the dialog uses the shortest unique group path, such as `[2025 Q4]` and `[2026 Q4]`.
 
+If two columns share the same header _and_ the same group hierarchy, the reference falls back to appending the `colId`, for example `[2025 Q4 (revenue-q4)]`. This keeps the reference stable when columns are reordered. Give your columns distinct headers or group hierarchies to avoid this.
+
 The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `2025` and `2026` column groups. The year groups start collapsed and show a calculated `Total` column; expanding a group reveals the quarter columns. Expressions use grouped references such as `[2025 Q4]` and `[2026 Q4]`.
 
 {% gridExampleRunner title="Column Groups with Duplicate Headers" name="calculated-columns-column-groups" exampleHeight=420 /%}
