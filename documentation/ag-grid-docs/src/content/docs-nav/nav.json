@@ -574,6 +574,12 @@
                                     "type": "item",
                                     "title": "Column State",
                                     "path": "column-state"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Auto-Generate Columns",
+                                    "path": "auto-generate-columns",
+                                    "enterprise": true
                                 }
                             ]
                         },
