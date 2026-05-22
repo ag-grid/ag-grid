@@ -1,6 +1,5 @@
-import type { ElementParams, GridCheckbox, GridInputTextArea, GridInputTextField, GridSelect } from 'ag-grid-community';
+import type { ElementParams, GridInputTextArea, GridInputTextField, GridSelect } from 'ag-grid-community';
 import {
-    AgCheckboxSelector,
     AgInputTextAreaSelector,
     AgInputTextFieldSelector,
     AgSelectSelector,
@@ -27,8 +26,6 @@ export interface CalculatedColumnDraft {
     headerName: string;
     cellDataType: CalculatedColumnType;
     calculatedExpression: string;
-    sortable: boolean;
-    filter: boolean;
 }
 
 export interface ColumnSuggestion {
@@ -41,8 +38,6 @@ export interface ColumnSuggestion {
 export const DEFAULT_DRAFT: Omit<CalculatedColumnDraft, 'colId' | 'headerName'> = {
     cellDataType: 'text',
     calculatedExpression: '',
-    sortable: false,
-    filter: false,
 };
 
 export const CALCULATED_COLUMN_TYPES: Record<CalculatedColumnType, true> = {
@@ -91,15 +86,6 @@ const CalculatedColumnFormElement: ElementParams = {
         },
         {
             tag: 'div',
-            cls: 'ag-calculated-column-properties',
-            children: [
-                { tag: 'span', ref: 'ePropertiesTitle', cls: 'ag-calculated-column-properties-title' },
-                { tag: 'ag-checkbox', ref: 'eSortable' },
-                { tag: 'ag-checkbox', ref: 'eFilter' },
-            ],
-        },
-        {
-            tag: 'div',
             cls: 'ag-calculated-column-actions',
             children: [
                 { tag: 'button', ref: 'eCancel', cls: 'ag-button ag-standard-button ag-calculated-column-action' },
@@ -118,10 +104,7 @@ export class CalculatedColumnForm extends Component {
     private readonly eType: GridSelect<CalculatedColumnType> = RefPlaceholder;
     private readonly eExpression: GridInputTextArea = RefPlaceholder;
     private readonly eExpressionError: HTMLElement = RefPlaceholder;
-    private readonly eSortable: GridCheckbox = RefPlaceholder;
-    private readonly eFilter: GridCheckbox = RefPlaceholder;
     private readonly eSuggestions: HTMLElement = RefPlaceholder;
-    private readonly ePropertiesTitle: HTMLElement = RefPlaceholder;
     private readonly eColumns: HTMLButtonElement = RefPlaceholder;
     private readonly eFunctions: HTMLButtonElement = RefPlaceholder;
     private readonly eOperators: HTMLButtonElement = RefPlaceholder;
@@ -141,12 +124,7 @@ export class CalculatedColumnForm extends Component {
         private readonly onApply: (draft: CalculatedColumnDraft) => string | null,
         private readonly onCancel: () => void
     ) {
-        super(CalculatedColumnFormElement, [
-            AgInputTextFieldSelector,
-            AgSelectSelector,
-            AgInputTextAreaSelector,
-            AgCheckboxSelector,
-        ]);
+        super(CalculatedColumnFormElement, [AgInputTextFieldSelector, AgSelectSelector, AgInputTextAreaSelector]);
     }
 
     public postConstruct(): void {
@@ -174,9 +152,6 @@ export class CalculatedColumnForm extends Component {
             .setInputPlaceholder(translate('calculatedColumnExpressionPlaceholder', 'Type here'))
             .setRows(3)
             .setValue(this.draft.calculatedExpression, true);
-        this.eSortable.setLabel(translate('sortable', 'Sortable')).setValue(this.draft.sortable, true);
-        this.eFilter.setLabel(translate('filter', 'Filter')).setValue(this.draft.filter, true);
-        this.ePropertiesTitle.textContent = translate('calculatedColumnProperties', 'Properties');
         this.eColumns.textContent = translate('calculatedColumnColumns', 'Columns');
         this.eFunctions.textContent = translate('calculatedColumnFunctions', 'Functions');
         this.eOperators.textContent = translate('calculatedColumnOperators', 'Operators');
@@ -199,9 +174,6 @@ export class CalculatedColumnForm extends Component {
             this.updateDraft({ calculatedExpression: value ?? '' });
             this.refreshContextSuggestions();
         });
-        this.eSortable.onValueChange((value) => this.updateDraft({ sortable: value === true }));
-        this.eFilter.onValueChange((value) => this.updateDraft({ filter: value === true }));
-
         const input = this.eExpression.getInputElement();
         this.addManagedElementListeners(input, {
             click: () => this.refreshContextSuggestions(),

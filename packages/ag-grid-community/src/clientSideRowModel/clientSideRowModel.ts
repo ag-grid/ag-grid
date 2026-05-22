@@ -338,7 +338,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             nextRowTop += rowNode.rowHeight!;
         }
 
-        if (this.beans.formula?.active) {
+        if (this.beans.formula?.isEvaluationActive()) {
             const formulaRows = this.formulaRows;
             for (let i = 0, len = formulaRows.length; i < len; ++i) {
                 const rowNode = formulaRows[i];
@@ -1152,7 +1152,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private doRowsToDisplay(): void {
         const { rootNode, beans } = this;
 
-        if (beans.formula?.active) {
+        if (beans.formula?.isEvaluationActive()) {
             const unfilteredRows = rootNode?.childrenAfterSort ?? [];
             this.formulaRows = unfilteredRows;
             this.rowsToDisplay = unfilteredRows.filter((row) => !row.softFiltered);

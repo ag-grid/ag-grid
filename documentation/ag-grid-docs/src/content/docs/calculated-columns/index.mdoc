@@ -7,7 +7,7 @@ Calculated Columns let you add read-only values to the grid without storing thos
 
 ## Enabling Calculated Columns
 
-Calculated columns are enabled by registering `CalculatedColumnsModule` and setting `calculatedExpression` on a column definition. Bracket references such as `[Revenue]` resolve to columns in the same row by `colId`.
+Calculated columns are enabled by registering `CalculatedColumnsModule` and setting `calculatedExpression` on a column definition. Bracket references such as `[Revenue]` resolve to columns in the same row using the column header shown by the grid.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -27,17 +27,21 @@ const gridOptions = {
 
 {% gridExampleRunner title="Calculated Columns" name="calculated-columns" exampleHeight=350 /%}
 
-Calculated expressions do not need a leading equals sign (`=`). The value inside brackets must match the target column `colId`; if you want field-name-style references, set matching `colId`s on those columns.
+Calculated expressions do not need a leading equals sign (`=`). The value inside brackets must match a unique column header reference. If headers are duplicated under groups, include the shortest unique group path, for example `[2026 Q4]`.
+
+Calculated Columns are supported with all row models. Same-row bracket references are reliable everywhere. Cross-row and range references depend on the referenced rows being loaded in the current row model.
+
+For Server-Side, Infinite and Viewport Row Models, sorting and filtering are datasource or server responsibilities. The grid displays calculated values for loaded rows, but does not client-sort or client-filter remote datasets by calculated results.
 
 Calculated columns are always read-only. They cannot be edited through cell editing, paste, fill handle or delete operations.
 
 ## References with Column Groups
 
-When the Column Menu is registered, users can add a calculated column from the header menu using **Add Calculated Column**. Opening the header menu on a calculated column shows **Edit Calculated Column** for changing its title, type, expression and supported column properties, and **Remove Calculated Column** for removing it. Right-clicking cells in a calculated column also shows **Remove Calculated Column**.
+When the Column Menu is registered, users can add a calculated column from the header menu using **Add Calculated Column**. Opening the header menu on a calculated column shows **Edit Calculated Column** for changing its title, type and expression, and **Remove Calculated Column** for removing it. Right-clicking cells in a calculated column also shows **Remove Calculated Column**.
 
 In the dialog, references are shown by header names, for example `[Revenue]`. If headers are duplicated under groups, the dialog uses the shortest unique group path, such as `[2025 Q4]` and `[2026 Q4]`.
 
-The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `2025` and `2026` column groups. The year groups start collapsed and show a calculated `Total` column; expanding a group reveals the quarter columns. Stored expressions remain `colId` based internally, while the dialog displays grouped references.
+The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `2025` and `2026` column groups. The year groups start collapsed and show a calculated `Total` column; expanding a group reveals the quarter columns. Expressions use grouped references such as `[2025 Q4]` and `[2026 Q4]`.
 
 {% gridExampleRunner title="Column Groups with Duplicate Headers" name="calculated-columns-column-groups" exampleHeight=420 /%}
 
@@ -59,13 +63,13 @@ const gridOptions = {
         },
         {
             colId: 'margin',
-            calculatedExpression: '[profit] / [Revenue]',
+            calculatedExpression: '[Profit] / [Revenue]',
             cellDataType: 'number',
             valueFormatter: params => `${Math.round(params.value * 100)}%`,
         },
         {
             colId: 'status',
-            calculatedExpression: 'IF([margin] >= 0.25, "Healthy", "Review")',
+            calculatedExpression: 'IF([Margin] >= 0.25, "Healthy", "Review")',
             cellDataType: 'text',
         },
     ],

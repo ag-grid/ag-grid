@@ -4,15 +4,29 @@ import { vi } from 'vitest';
 import type { ColDef, ColGroupDef, GridOptions, Module } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    InfiniteRowModelModule,
     NumberEditorModule,
     NumberFilterModule,
     TextEditorModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { CalculatedColumnsModule, ColumnMenuModule, FormulaModule } from 'ag-grid-enterprise';
+import {
+    CalculatedColumnsModule,
+    ColumnMenuModule,
+    FormulaModule,
+    ServerSideRowModelModule,
+    ViewportRowModelModule,
+} from 'ag-grid-enterprise';
 
 import { createCalculatedColumnReferenceMapper } from '../../../../packages/ag-grid-enterprise/src/calculatedColumns/calculatedColumnReferenceMapper';
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
+import {
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    waitForEvent,
+} from '../test-utils';
 
 describe('ag-grid calculated columns', () => {
     const gridRowsOpts = { useFormatter: false } as const;
@@ -20,6 +34,9 @@ describe('ag-grid calculated columns', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
+            InfiniteRowModelModule,
+            ServerSideRowModelModule,
+            ViewportRowModelModule,
             CalculatedColumnsModule,
             ColumnMenuModule,
             NumberFilterModule,
@@ -141,17 +158,17 @@ describe('ag-grid calculated columns', () => {
                 {
                     colId: 'profit',
                     headerName: 'Profit',
-                    calculatedExpression: '[revenueCol] - [cost]',
+                    calculatedExpression: '[Revenue] - [Cost]',
                     cellDataType: 'number',
                 },
                 {
                     colId: 'profitable',
-                    calculatedExpression: 'IF([profit] > 10, "yes", "no")',
+                    calculatedExpression: 'IF([Profit] > 10, "yes", "no")',
                     cellDataType: 'text',
                 },
                 {
                     colId: 'name',
-                    calculatedExpression: '[first] & " " & [last]',
+                    calculatedExpression: '[First] & " " & [Last]',
                     cellDataType: 'text',
                 },
             ],
@@ -217,7 +234,7 @@ describe('ag-grid calculated columns', () => {
                 { field: 'cost' },
                 {
                     colId: 'profit',
-                    calculatedExpression: '[revenue] - [cost]',
+                    calculatedExpression: '[Revenue] - [Cost]',
                     cellDataType: 'number',
                     sortable: true,
                     filter: 'agNumberColumnFilter',
@@ -255,7 +272,7 @@ describe('ag-grid calculated columns', () => {
         api.addCalculatedColumn({
             colId: 'profit',
             headerName: 'Profit',
-            calculatedExpression: '[revenue] - [cost]',
+            calculatedExpression: '[Revenue] - [Cost]',
             cellDataType: 'number',
         });
         await asyncSetTimeout(1);
@@ -266,7 +283,7 @@ describe('ag-grid calculated columns', () => {
         `);
 
         api.updateCalculatedColumn('profit', {
-            calculatedExpression: '[revenue] * [cost]',
+            calculatedExpression: '[Revenue] * [Cost]',
         });
         await asyncSetTimeout(1);
 
@@ -293,7 +310,7 @@ describe('ag-grid calculated columns', () => {
                 { field: 'cost' },
                 {
                     colId: 'profitable',
-                    calculatedExpression: 'IF([revenue] > [cost], "yes", "no")',
+                    calculatedExpression: 'IF([Revenue] > [Cost], "yes", "no")',
                     cellDataType: 'text',
                 },
             ],
@@ -301,7 +318,7 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         api.updateCalculatedColumn('profitable', {
-            calculatedExpression: '[revenue] > [cost]',
+            calculatedExpression: '[Revenue] > [Cost]',
             cellDataType: 'boolean',
         });
         await asyncSetTimeout(1);
@@ -309,7 +326,7 @@ describe('ag-grid calculated columns', () => {
         expect(api.getColumn('profitable')!.colDef.cellRenderer).toBe('agCheckboxCellRenderer');
 
         api.updateCalculatedColumn('profitable', {
-            calculatedExpression: 'IF([revenue] > [cost], "yes", "no")',
+            calculatedExpression: 'IF([Revenue] > [Cost], "yes", "no")',
             cellDataType: 'text',
         });
         await asyncSetTimeout(1);
@@ -328,7 +345,7 @@ describe('ag-grid calculated columns', () => {
             columnDefs: [
                 { field: 'revenue' },
                 { field: 'cost' },
-                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+                { colId: 'profit', calculatedExpression: '[Revenue] - [Cost]', cellDataType: 'number' },
             ],
         });
 
@@ -341,6 +358,124 @@ describe('ag-grid calculated columns', () => {
         expect(api.getCellValue({ rowNode, colKey: 'profit', useFormatter: false })).toBe(17);
     });
 
+    test.each([
+        {
+            name: 'server-side',
+            options: (rowData: any[]): Partial<GridOptions> => ({
+                rowModelType: 'serverSide',
+                serverSideDatasource: {
+                    getRows: (params: any) => {
+                        params.success({
+                            rowData: rowData.slice(params.request.startRow, params.request.endRow),
+                            rowCount: rowData.length,
+                        });
+                    },
+                },
+            }),
+        },
+        {
+            name: 'infinite',
+            options: (rowData: any[]): Partial<GridOptions> => ({
+                rowModelType: 'infinite',
+                cacheBlockSize: rowData.length,
+                datasource: {
+                    getRows: (params: any) => {
+                        params.successCallback(rowData.slice(params.startRow, params.endRow), rowData.length);
+                    },
+                },
+            }),
+        },
+        {
+            name: 'viewport',
+            options: (rowData: any[]): Partial<GridOptions> => {
+                let viewportParams: any;
+                return {
+                    rowModelType: 'viewport',
+                    viewportRowModelPageSize: rowData.length,
+                    viewportRowModelBufferSize: 0,
+                    viewportDatasource: {
+                        init: (params: any) => {
+                            viewportParams = params;
+                            params.setRowCount(rowData.length);
+                        },
+                        setViewportRange: (firstRow: number, lastRow: number) => {
+                            const rows: Record<number, any> = {};
+                            for (let rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
+                                rows[rowIndex] = rowData[rowIndex];
+                            }
+                            viewportParams.setRowData(rows);
+                        },
+                    },
+                };
+            },
+        },
+    ])('same-row calculated columns evaluate with the $name row model', async ({ name, options }) => {
+        const rowData = [
+            { id: 'r1', revenue: 10, cost: 3 },
+            { id: 'r2', revenue: 20, cost: 8 },
+        ];
+        const api = createGrid(`calculated-${name}-row-model`, {
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[Revenue] - [Cost]' },
+                {
+                    colId: 'doubleProfit',
+                    headerName: 'Double Profit',
+                    calculatedExpression: '[Profit] * 2',
+                    cellDataType: 'number',
+                },
+            ],
+            ...options(rowData),
+        });
+        await asyncSetTimeout(10);
+
+        const firstRow = api.getDisplayedRowAtIndex(0)!;
+        expect(api.getCellValue({ rowNode: firstRow, colKey: 'profit', useFormatter: false })).toBe(7);
+        expect(api.getCellValue({ rowNode: firstRow, colKey: 'doubleProfit', useFormatter: false })).toBe(14);
+
+        firstRow.data.revenue = 15;
+        expect(api.refreshFormulas()).toBe(true);
+        expect(api.getCellValue({ rowNode: firstRow, colKey: 'profit', useFormatter: false })).toBe(12);
+        expect(api.getCellValue({ rowNode: firstRow, colKey: 'doubleProfit', useFormatter: false })).toBe(24);
+    });
+
+    test('server-side store updates invalidate calculated column caches', async () => {
+        let rowData = [{ id: 'r1', revenue: 10, cost: 3 }];
+        const api = createGrid('calculated-server-side-cache', {
+            rowModelType: 'serverSide',
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[Revenue] - [Cost]' },
+            ],
+            serverSideDatasource: {
+                getRows: (params: any) => {
+                    params.success({ rowData, rowCount: rowData.length });
+                },
+            },
+        });
+        await asyncSetTimeout(10);
+
+        expect(
+            api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'profit', useFormatter: false })
+        ).toBe(7);
+
+        rowData = [{ id: 'r1', revenue: 20, cost: 4 }];
+        const modelUpdated = waitForEvent('modelUpdated', api);
+        api.setGridOption('serverSideDatasource', {
+            getRows: (params: any) => {
+                params.success({ rowData, rowCount: rowData.length });
+            },
+        });
+        await modelUpdated;
+        await asyncSetTimeout(10);
+
+        expect(
+            api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'profit', useFormatter: false })
+        ).toBe(16);
+    });
+
     test('ROUND function evaluates in calculated columns', async () => {
         const api = createGrid('calculated-round-function', {
             rowData: [{ id: 'r1', revenue: 44000, nextRevenue: 58000 }],
@@ -349,7 +484,7 @@ describe('ag-grid calculated columns', () => {
                 { field: 'nextRevenue' },
                 {
                     colId: 'change',
-                    calculatedExpression: 'ROUND((([nextRevenue] - [revenue]) / [revenue]) * 100, 1)',
+                    calculatedExpression: 'ROUND((([Next Revenue] - [Revenue]) / [Revenue]) * 100, 1)',
                     cellDataType: 'number',
                 },
             ],
@@ -408,12 +543,12 @@ describe('ag-grid calculated columns', () => {
             error: { type: 'unknown', reference: 'Missing' },
         });
         expect(groupedMapper.toInternalExpression('[2025 Q4] - [2026 Q4]')).toEqual({
-            expression: '[q4-2025] - [q4-2026]',
+            expression: '[2025 Q4] - [2026 Q4]',
         });
-        expect(groupedMapper.toDisplayExpression('[q4-2025] - [q4-2026]')).toBe('[2025 Q4] - [2026 Q4]');
+        expect(groupedMapper.toDisplayExpression('[2025 Q4] - [2026 Q4]')).toBe('[2025 Q4] - [2026 Q4]');
     });
 
-    test('dialog displays header references and stores colId references', async () => {
+    test('dialog displays and stores header references', async () => {
         const revenueColId = 'server-revenue-9d5101c8-4c2a-48e0-9ad2';
         const costColId = 'server-cost-81f3431b-e4aa-4ef8-bef0';
         const api = createGrid('calculated-dialog-references', {
@@ -425,7 +560,7 @@ describe('ag-grid calculated columns', () => {
         });
 
         showColumnMenu(api, revenueColId);
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(10);
         clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
@@ -447,7 +582,7 @@ describe('ag-grid calculated columns', () => {
         const rowNode = api.getRowNode('r1')!;
         const calculatedDef = findColumnDef(api.getColumnDefs()!, 'calculated_1');
 
-        expect(calculatedDef?.calculatedExpression).toBe(`[${revenueColId}] - [${costColId}]`);
+        expect(calculatedDef?.calculatedExpression).toBe('[Revenue] - [Cost]');
         expect(api.getCellValue({ rowNode, colKey: 'calculated_1', useFormatter: false })).toBe(7);
     });
 
@@ -462,7 +597,7 @@ describe('ag-grid calculated columns', () => {
                 { field: 'cost' },
                 {
                     colId: 'profit',
-                    calculatedExpression: '[revenue] - [cost]',
+                    calculatedExpression: '[Revenue] - [Cost]',
                     editable: true,
                     cellEditor: 'agTextCellEditor',
                 },
@@ -489,7 +624,7 @@ describe('ag-grid calculated columns', () => {
                 {
                     colId: 'profit',
                     field: 'profit',
-                    calculatedExpression: '[revenue] - [cost]',
+                    calculatedExpression: '[Revenue] - [Cost]',
                 },
             ],
         });
@@ -509,7 +644,7 @@ describe('ag-grid calculated columns', () => {
                 { field: 'cost' },
                 {
                     colId: 'profit',
-                    calculatedExpression: '[revenue] - [cost]',
+                    calculatedExpression: '[Revenue] - [Cost]',
                 },
             ],
         });
@@ -529,9 +664,9 @@ describe('ag-grid calculated columns', () => {
                 { field: 'revenue' },
                 { field: 'cost' },
                 { colId: 'unknown', calculatedExpression: '[missing] + 1' },
-                { colId: 'invalid', calculatedExpression: '[revenue] +' },
-                { colId: 'cycleA', calculatedExpression: '[cycleB] + 1' },
-                { colId: 'cycleB', calculatedExpression: '[cycleA] + 1' },
+                { colId: 'invalid', calculatedExpression: '[Revenue] +' },
+                { colId: 'cycleA', headerName: 'Cycle A', calculatedExpression: '[Cycle B] + 1' },
+                { colId: 'cycleB', headerName: 'Cycle B', calculatedExpression: '[Cycle A] + 1' },
             ],
         });
 
@@ -554,7 +689,7 @@ describe('ag-grid calculated columns', () => {
                 columnDefs: [
                     { field: 'revenue' },
                     { field: 'cost' },
-                    { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+                    { colId: 'profit', calculatedExpression: '[Revenue] - [Cost]' },
                 ],
             });
 
@@ -577,7 +712,7 @@ describe('ag-grid calculated columns', () => {
         const initialColumnDefs = [
             { field: 'revenue' },
             { field: 'cost' },
-            { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' as const },
+            { colId: 'profit', calculatedExpression: '[Revenue] - [Cost]', cellDataType: 'number' as const },
         ];
         const firstApi = createGrid('calculated-roundtrip-1', { rowData, columnDefs: initialColumnDefs });
 
@@ -593,7 +728,7 @@ describe('ag-grid calculated columns', () => {
         const profitDef = persistedColumnDefs?.find(
             (def): def is { colId: string; calculatedExpression?: string } => 'colId' in def && def.colId === 'profit'
         );
-        expect(profitDef?.calculatedExpression).toBe('[revenue] - [cost]');
+        expect(profitDef?.calculatedExpression).toBe('[Revenue] - [Cost]');
 
         const secondApi = createGrid('calculated-roundtrip-2', { rowData, columnDefs: persistedColumnDefs! });
         await new GridRows(secondApi, 'restored', gridRowsOpts).check(`
@@ -612,7 +747,7 @@ describe('ag-grid calculated columns', () => {
                 columnDefs: [
                     { field: 'revenue' },
                     { field: 'cost' },
-                    { colId: 'profit', field: 'revenue', calculatedExpression: '[revenue] - [cost]' },
+                    { colId: 'profit', field: 'revenue', calculatedExpression: '[Revenue] - [Cost]' },
                 ],
             });
 
@@ -639,7 +774,7 @@ describe('ag-grid calculated columns', () => {
                     { field: 'cost' },
                     {
                         field: 'profit',
-                        calculatedExpression: '[revenue] - [cost]',
+                        calculatedExpression: '[Revenue] - [Cost]',
                         editable: true,
                         cellDataType: 'text',
                     },

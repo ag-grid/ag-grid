@@ -30,20 +30,18 @@ const columnDefs: ColDef<SalesRow>[] = [
     { field: 'product', flex: 1 },
     {
         field: 'revenue',
-        colId: 'revenue',
         editable: true,
         valueFormatter: currencyFormatter,
     },
     {
         field: 'cost',
-        colId: 'cost',
         editable: true,
         valueFormatter: currencyFormatter,
     },
     {
         colId: 'profit',
         headerName: 'Profit',
-        calculatedExpression: '[revenue] - [cost]',
+        calculatedExpression: '[Revenue] - [Cost]',
         cellDataType: 'number',
         sortable: true,
         filter: 'agNumberColumnFilter',

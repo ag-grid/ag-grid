@@ -65,12 +65,6 @@
     background-color: var(--ag-row-hover-color);
 }
 
-.ag-calculated-column-properties {
-    display: flex;
-    flex-direction: column;
-    gap: calc(var(--ag-spacing) / 2);
-}
-
 .ag-calculated-column-actions {
     display: flex;
     justify-content: flex-end;

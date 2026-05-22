@@ -1,9 +1,9 @@
-import { _getClientSideRowModel } from 'ag-grid-community';
 import type { AgColumn, BeanCollection, FormulaParam, RangeParam, RowNode } from 'ag-grid-community';
 
 import type { Cell, CellRef, FormulaNode } from '../ast/utils';
 import { FormulaError } from '../ast/utils';
 import type { CellFormula } from '../cellFormula';
+import { getFormulaRowByIndex, getFormulaRowIndex, isFormulaRowAvailable } from '../rowAccess';
 
 /**
  * This file contains utils for resolving formula AST to values
@@ -74,12 +74,12 @@ function resolveRefToAddress(
     const rowNode = row.current
         ? caller!.row
         : row.absolute
-          ? _getClientSideRowModel(beans)?.getFormulaRow(Number(row.id) - 1)
+          ? getFormulaRowByIndex(beans, Number(row.id) - 1)
           : beans.rowModel.getRowNode(row.id);
 
     const agCol = column.absolute ? beans.formula!.getColByRef(column.id) : beans.colModel.getColById(column.id);
 
-    if (!rowNode || !agCol) {
+    if (!rowNode || (!row.current && !isFormulaRowAvailable(rowNode)) || !agCol) {
         return null;
     }
     return { row: rowNode, column: agCol };
@@ -252,10 +252,11 @@ function makeArgIterables(
 
 function resolveRowIndex(beans: BeanCollection, ref: CellRef, caller?: { row: RowNode; column: AgColumn }): number {
     if (ref.current) {
-        if (caller?.row.formulaRowIndex == null) {
+        const currentRowIndex = caller?.row ? getFormulaRowIndex(caller.row) : null;
+        if (currentRowIndex == null) {
             throw new FormulaError(29);
         }
-        return caller.row.formulaRowIndex;
+        return currentRowIndex;
     }
     if (ref.absolute) {
         const n = Number(ref.id) - 1;
@@ -265,10 +266,11 @@ function resolveRowIndex(beans: BeanCollection, ref: CellRef, caller?: { row: Ro
         return n;
     }
     const node = beans.rowModel?.getRowNode?.(ref.id);
-    if (node?.formulaRowIndex == null) {
+    const rowIndex = node ? getFormulaRowIndex(node) : null;
+    if (rowIndex == null) {
         throw new FormulaError(29);
     }
-    return node.formulaRowIndex;
+    return rowIndex;
 }
 
 function resolveCol(beans: BeanCollection, ref: CellRef): AgColumn {
@@ -335,7 +337,7 @@ class RangeValuesIterator implements Iterator<unknown> {
         }
 
         if (this.currentRowIndex <= this.rowEndIndex) {
-            const row = _getClientSideRowModel(this.beans)?.getFormulaRow(this.currentRowIndex);
+            const row = getFormulaRowByIndex(this.beans, this.currentRowIndex);
             if (!row) {
                 throw new FormulaError(32);
             }
@@ -433,7 +435,7 @@ function* rangeAddrs(
     const [colIndexMin, colIndexMax] = colRange;
 
     for (let rowIndex = rowStartIndex; rowIndex <= rowEndIndex; rowIndex++) {
-        const rowNode = _getClientSideRowModel(beans)?.getFormulaRow(rowIndex);
+        const rowNode = getFormulaRowByIndex(beans, rowIndex);
         if (!rowNode) {
             continue;
         }

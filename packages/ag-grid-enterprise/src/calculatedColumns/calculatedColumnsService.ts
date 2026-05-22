@@ -156,10 +156,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             this.beans.colModel.getCols() ?? [],
             draft.colId
         );
-        const displayDraft: CalculatedColumnDraft = {
-            ...draft,
-            calculatedExpression: mapper.toDisplayExpression(draft.calculatedExpression),
-        };
 
         const handleApply = (nextDraft: CalculatedColumnDraft): string | null => {
             if (state.resolved) {
@@ -184,7 +180,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
         const form = this.createManagedBean(
             new CalculatedColumnForm(
-                displayDraft,
+                draft,
                 () => mapper.suggestions,
                 () => this.getFunctionSuggestions(),
                 handleApply,
@@ -196,9 +192,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 title: this.getLocaleTextFunc()('calculatedColumn', 'Calculated Column'),
                 component: form,
                 width: 300,
-                height: 376,
+                height: 320,
                 minWidth: 260,
-                minHeight: 340,
+                minHeight: 280,
                 centered: true,
                 movable: true,
                 resizable: false,
@@ -257,8 +253,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                     ? (cellDataType as CalculatedColumnType)
                     : DEFAULT_DRAFT.cellDataType,
             calculatedExpression: colDef.calculatedExpression ?? '',
-            sortable: column.isSortable(),
-            filter: column.isFilterAllowed(),
         };
     }
 
@@ -277,8 +271,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             headerName: draft.headerName,
             calculatedExpression: draft.calculatedExpression,
             cellDataType: draft.cellDataType,
-            sortable: draft.sortable,
-            filter: draft.filter,
             editable: false,
             suppressPaste: true,
         };

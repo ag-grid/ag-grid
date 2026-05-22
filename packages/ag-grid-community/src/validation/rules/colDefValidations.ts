@@ -127,7 +127,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
             supportedRowModels: ['clientSide'],
         },
         calculatedExpression: {
-            supportedRowModels: ['clientSide'],
             validate: (colDef) => {
                 if (colDef.calculatedExpression == null) {
                     return null;

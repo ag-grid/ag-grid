@@ -84,6 +84,8 @@ export interface IFormulaService extends Bean {
     normaliseFormula(value: string, shorthand: boolean): string | null;
     getColByRef(ref: string): AgColumn | null;
     getColRef(col: AgColumn): string | null;
+    getColByCalculatedRef(ref: string): AgColumn | null;
+    getCalculatedRef(col: AgColumn): string | null;
     updateFormulaByOffset(params: {
         value: string;
         rowDelta?: number;
