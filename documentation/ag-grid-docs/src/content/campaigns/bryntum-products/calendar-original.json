@@ -11,7 +11,9 @@
         {
             "id": "block_50bba12076720a48ac737bca5c196075",
             "type": "heroTBM",
-            "modifiers": ["animated-hero"],
+            "modifiers": [
+                "animated-hero"
+            ],
             "eyebrow": "Bryntum Calendar",
             "heading": "A Modern JavaScript Calendar Solution",
             "body_html": "<p>The Bryntum Calendar is a modern calendar component with multiple views. Built using pure JavaScript, it easily integrates with <a href=\"https://bryntum.com/products/react-calendar/\"><span class=\"s1\">React</span></a>, <a href=\"https://bryntum.com/products/angular-calendar\"><span class=\"s1\">Angular</span></a>, and <a href=\"https://bryntum.com/products/vue-calendar/\"><span class=\"s1\">Vue</span></a> applications.</p>",
@@ -36,17 +38,22 @@
             ]
         },
         {
-            "id": "block_8b8e37585522ff408c1d176399f93813",
-            "type": "text-languages",
-            "modifiers": ["additional-padding"],
-            "heading": "Easy Integration With Your Stack",
-            "body_text": "",
-            "languages": []
+            "id": "block_agbryntum_partnership",
+            "type": "partnership",
+            "heading": "Your JavaScript toolkit just got bigger",
+            "body_html": "<p>Following our 2025 <a href=\"https://blog.ag-grid.com/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, the components you trust for data now sit alongside the best tools for scheduling and project planning.</p><p>If you already trust AG Grid for your data, Bryntum Gantt is the natural next component in your stack — built by the same kind of team, to the same standard.</p>",
+            "body_text": "Following our 2025 partnership with Bryntum, the components you trust for data now sit alongside the best tools for scheduling and project planning. If you already trust AG Grid for your data, Bryntum Gantt is the natural next component in your stack — built by the same kind of team, to the same standard.",
+            "logo_light_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-light.svg",
+            "logo_dark_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-dark.svg",
+            "logo_alt": "AG Grid x Bryntum partnership"
         },
         {
             "id": "block_dec4a474ba08484c3bd147cc587e5ce5",
             "type": "text-media",
-            "modifiers": ["image", "added-shadow"],
+            "modifiers": [
+                "image",
+                "added-shadow"
+            ],
             "heading": "Why choose a JavaScript event Calendar?",
             "body_html": "<p>Built with JavaScript, a core web technology, the JavaScript calendar component integrates into existing applications with a ready-to-implement range of interactive features.</p> <p>Choosing the Bryntum JavaScript Calendar for your application provides users with an expertly designed and highly performant calendar that has been thoroughly tested and proven in industry applications.</p>",
             "body_text": "Built with JavaScript, a core web technology, the JavaScript calendar component integrates into existing applications with a ready-to-implement range of interactive features. Choosing the Bryntum JavaScript Calendar for your application provides users with an expertly designed and highly performant calendar that has been thoroughly tested and proven in industry applications.",
@@ -66,7 +73,11 @@
         {
             "id": "block_20bf74698f4e9c691fa32da9577b475a",
             "type": "text-media",
-            "modifiers": ["image", "reverse", "added-shadow"],
+            "modifiers": [
+                "image",
+                "reverse",
+                "added-shadow"
+            ],
             "heading": "Powerful and Flexible",
             "body_html": "<p class=\"p1\">Built using JavaScript (ES6+), the Bryntum Calendar runs efficiently and integrates easily. Benefit from:</p> <ul> <li>Fast performance, even with <a href=\"/products/calendar/examples/megadataset/\">massive data sets</a>.</li> <li>Convenient exports to <a href=\"/products/calendar/examples/exporttoexcel/\">Excel</a>, <a href=\"/products/calendar/examples/exporttoics/\">ICS</a>, and <a href=\"/products/calendar/examples/print/\">print</a> formats.</li> <li>Configurable date and time settings, allowing you to <a href=\"/products/calendar/examples/shifted/\">start days at 6 PM</a> or divide time into six-minute <a href=\"/products/calendar/examples/day-time-ticks/\">intervals</a>.</li> </ul>",
             "body_text": "Built using JavaScript (ES6+), the Bryntum Calendar runs efficiently and integrates easily. Benefit from: Fast performance, even with massive data sets . Convenient exports to Excel , ICS , and print formats. Configurable date and time settings, allowing you to start days at 6 PM or divide time into six-minute intervals .",
@@ -111,7 +122,10 @@
         {
             "id": "block_0b3a2b388d8b3c162ad4de5e0fe504b2",
             "type": "text-media",
-            "modifiers": ["video-file", "added-shadow"],
+            "modifiers": [
+                "video-file",
+                "added-shadow"
+            ],
             "heading": "Multiple Views",
             "body_html": "<p class=\"p1\">Switch between layouts to understand tasks in a variety of ways. The Bryntum Calendar supports multiple views, including:</p> <ul class=\"ul1\"> <li class=\"li1\"><a href=\"/products/calendar/examples/basic/\">Day, Week, Month, Year, and Agenda views</a></li> <li class=\"li1\"><a href=\"/products/calendar/examples/day-agenda/\">Day Agenda,</a> <a href=\"/products/calendar/examples/listview/\">Grid</a> views</li> <li class=\"li1\"><a href=\"/products/calendar/examples/dual-dayview/\">Dual-Day</a> view</li> </ul>",
             "body_text": "Switch between layouts to understand tasks in a variety of ways. The Bryntum Calendar supports multiple views, including: Day, Week, Month, Year, and Agenda views Day Agenda, Grid views Dual-Day view",
@@ -151,7 +165,11 @@
         {
             "id": "block_43c64c3290d21de094d2e1bf6c8bb680",
             "type": "text-media",
-            "modifiers": ["image", "reverse", "added-shadow"],
+            "modifiers": [
+                "image",
+                "reverse",
+                "added-shadow"
+            ],
             "heading": "Resource-First View",
             "body_html": "<p class=\"p1\">Stay on top of your team member’s events at a glance:</p> <ul> <li>Instantly see whose events you’re viewing, <span style=\"font-weight: 400;\">based on</span> friendly avatars in the header.</li> <li>Drag and drop events to quickly reassign them.</li> <li>Enjoy a clear and inviting layout.</li> </ul>",
             "body_text": "Stay on top of your team member’s events at a glance: Instantly see whose events you’re viewing, based on friendly avatars in the header. Drag and drop events to quickly reassign them. Enjoy a clear and inviting layout.",
@@ -177,7 +195,11 @@
         {
             "id": "block_7f8a8ef5340328b7601457cdd648ee6d",
             "type": "text-media",
-            "modifiers": ["code", "fiddle-section", "added-shadow"],
+            "modifiers": [
+                "code",
+                "fiddle-section",
+                "added-shadow"
+            ],
             "heading": "Live Demo",
             "body_html": "<p class=\"pre-title\">Try it yourself</p>  <p>The calendar has full support for recurring tasks. Your tasks can repeat in any pattern you need – daily, weekly, monthly, or yearly.</p>",
             "body_text": "Try it yourself  The calendar has full support for recurring tasks. Your tasks can repeat in any pattern you need – daily, weekly, monthly, or yearly.",
@@ -188,7 +210,10 @@
         {
             "id": "block_8f1c153294c4e8675efe148425adf91f",
             "type": "text-media",
-            "modifiers": ["image", "added-shadow"],
+            "modifiers": [
+                "image",
+                "added-shadow"
+            ],
             "heading": "Fully Customizable",
             "body_html": "<p>The Bryntum Calendar is styled with CSS variables, which you can use to modify the calendar’s appearance.</p> <ul class=\"ul1\"> <li>Use our themes or <a href=\"/products/calendar/examples/custom-theme/\">create your own</a>.</li> <li class=\"li1\">Tailor the rendering of <a href=\"/products/calendar/examples/custom-rendering/\">events, headings, and more</a>.</li> <li class=\"li1\">Adapt the UI for <a href=\"/products/calendar/examples/month-agenda/\">mobile devices</a> with layouts that adjust to any <a href=\"/products/calendar/examples/responsive/\">screen size</a>.</li> <li class=\"li1\">Add links and buttons to <a href=\"/products/calendar/examples/tooltips/\">customize tooltips</a>.</li> <li class=\"li1\">Customize the <a href=\"/products/calendar/examples/eventedit/\">event editor</a>, <a href=\"/products/calendar/examples/custom-menus/\">context menu</a>, and <a href=\"/products/calendar/examples/sidebar-customization/\">sidebar</a>.</li> </ul>",
             "body_text": "The Bryntum Calendar is styled with CSS variables, which you can use to modify the calendar’s  appearance. Use our themes or create your own . Tailor the rendering of events, headings, and more . Adapt the UI for mobile devices with layouts that adjust to any screen size . Add links and buttons to customize tooltips . Customize the event editor , context menu , and sidebar .",
@@ -241,7 +266,11 @@
         {
             "id": "block_aa0b0e20cb1c4626408c493f793c1527",
             "type": "text-media",
-            "modifiers": ["image", "reverse", "added-shadow"],
+            "modifiers": [
+                "image",
+                "reverse",
+                "added-shadow"
+            ],
             "heading": "More Than a Date Picker",
             "body_html": "<p class=\"p1\">The Bryntum Calendar has unique features to support your team’s productivity:</p> <ul class=\"ul1\"> <li class=\"li1\"><a href=\"/products/calendar/examples/travel-time/\">Visualize travel time</a> for real-world planning.</li> <li class=\"li1\">Track workload with the <a href=\"/products/calendar/examples/resource-time-capacity/\">capacity tick renderer</a>.</li> <li>Switch between <a href=\"/products/calendar/examples/resource-modes/\">related resource calendars</a>.</li> </ul>",
             "body_text": "The Bryntum Calendar has unique features to support your team’s productivity: Visualize travel time for real-world planning. Track workload with the capacity tick renderer . Switch between related resource calendars .",
@@ -274,7 +303,10 @@
         {
             "id": "block_a19229e400d243cafae6308f92930552",
             "type": "text-media",
-            "modifiers": ["image", "added-shadow"],
+            "modifiers": [
+                "image",
+                "added-shadow"
+            ],
             "heading": "50+ More Widgets",
             "body_html": "<p class=\"p1\">Choose from a <a href=\"/products/calendar/examples/kitchen-sink/\">wide range of UI components</a> that easily make your app polished and professional:</p> <ul class=\"ul1\"> <li class=\"li1\">Add ready-to-use <strong>menus, toggles, sliders, charts, and more</strong> to the Bryntum Calendar.</li> <li class=\"li1\">Meet user needs with fewer clicks and less searching.</li> <li class=\"li1\">Implement and style widgets easily with our clear documentation.</li> </ul>",
             "body_text": "Choose from a wide range of UI components that easily make your app polished and professional: Add ready-to-use menus, toggles, sliders, charts, and more to the Bryntum Calendar. Meet user needs with fewer clicks and less searching. Implement and style widgets easily with our clear documentation.",
@@ -305,7 +337,10 @@
         {
             "id": "block_617eaaab91d4a755174cd10eb7eb8c4c",
             "type": "text-media",
-            "modifiers": ["video-file", "added-shadow"],
+            "modifiers": [
+                "video-file",
+                "added-shadow"
+            ],
             "heading": "Install with npm",
             "body_html": "<p>Try Bryntum Calendar directly from npm. <strong>No login or authorization required</strong>. Just install the trial, configure, and start building.</p>",
             "body_text": "Try Bryntum Calendar directly from npm. No login or authorization required . Just install the trial, configure, and start building.",
@@ -418,7 +453,9 @@
         {
             "id": "block_c7a78f49c8affeafe308dd371d3fff82",
             "type": "text-button",
-            "modifiers": ["variant-2"],
+            "modifiers": [
+                "variant-2"
+            ],
             "heading": "Ready to get started?",
             "body_html": "",
             "body_text": "",

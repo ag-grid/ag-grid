@@ -11,7 +11,9 @@
         {
             "id": "block_752dc716eb48d2f18b2d877ec8f9d45d",
             "type": "heroTBM",
-            "modifiers": ["animated-hero"],
+            "modifiers": [
+                "animated-hero"
+            ],
             "eyebrow": "Bryntum Task Board",
             "heading": "A Super Flexible Kanban Board Component",
             "body_html": "<p>Visualize and manage your work with the Bryntum Task Board. Built using modern JavaScript, our Kanban component easily integrates with <a href=\"https://bryntum.com/products/react-task-board/\">React</a>, <a href=\"https://bryntum.com/products/angular-task-board/\">Angular</a>, and <a href=\"https://bryntum.com/products/vue-task-board/\">Vue</a> applications.</p>",
@@ -36,17 +38,23 @@
             ]
         },
         {
-            "id": "block_c4c48fc006f627864ae78ffd183ba6b6",
-            "type": "text-languages",
-            "modifiers": ["additional-padding"],
-            "heading": "Easy Integration With Your Stack",
-            "body_text": "",
-            "languages": []
+            "id": "block_agbryntum_partnership",
+            "type": "partnership",
+            "heading": "Your JavaScript toolkit just got bigger",
+            "body_html": "<p>Following our 2025 <a href=\"https://blog.ag-grid.com/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, the components you trust for data now sit alongside the best tools for scheduling and project planning.</p><p>If you already trust AG Grid for your data, Bryntum Gantt is the natural next component in your stack — built by the same kind of team, to the same standard.</p>",
+            "body_text": "Following our 2025 partnership with Bryntum, the components you trust for data now sit alongside the best tools for scheduling and project planning. If you already trust AG Grid for your data, Bryntum Gantt is the natural next component in your stack — built by the same kind of team, to the same standard.",
+            "logo_light_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-light.svg",
+            "logo_dark_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-dark.svg",
+            "logo_alt": "AG Grid x Bryntum partnership"
         },
         {
             "id": "block_a2016e10d3e520694a7ca1d3ffe417d9",
             "type": "text-media",
-            "modifiers": ["image", "reverse", "added-shadow"],
+            "modifiers": [
+                "image",
+                "reverse",
+                "added-shadow"
+            ],
             "heading": "Get All the Right Features",
             "body_html": "<p>The Bryntum Task Board includes a set of optional features thoughtfully designed to fit your workflow:</p> <ul> <li>Customize the rendering and styling of cards, columns and swimlanes.</li> <li>Toggle features on or off at runtime via a flexible API.</li> <li>Scroll smoothly through <a href=\"/products/taskboard/examples/bigdataset/\">massive data sets</a>.</li> </ul>",
             "body_text": "The Bryntum Task Board includes a set of optional features thoughtfully designed to fit your workflow: Customize the rendering and styling of cards, columns and swimlanes. Toggle features on or off at runtime via a flexible API. Scroll smoothly through massive data sets .",
@@ -81,7 +89,10 @@
         {
             "id": "block_c57f051d24cd8095d56be8d6b7b4e1d6",
             "type": "text-media",
-            "modifiers": ["video-file", "added-shadow"],
+            "modifiers": [
+                "video-file",
+                "added-shadow"
+            ],
             "heading": "Organize Tasks Into Swimlanes and Columns",
             "body_html": "<p>Part of a busy team? Stay on top of tasks with ease by tailoring your Task Board with <a href=\"/products/taskboard/examples/swimlanes/\">swimlanes</a> and any number of columns.</p> <ul> <li><a href=\"/products/taskboard/examples/locked-column/\">Lock an important column</a> in place for quick access.</li> <li>Hide less important tasks by collapsing swimlanes and columns.</li> <li><a href=\"/products/taskboard/examples/filtering/\">Filter</a> and <a href=\"/products/taskboard/examples/sorting/\">sort</a> tasks to focus on your highest priorities.</li> </ul>",
             "body_text": "Part of a busy team? Stay on top of tasks with ease by tailoring your Task Board with swimlanes and any number of columns. Lock an important column in place for quick access. Hide less important tasks by collapsing swimlanes and columns. Filter and sort tasks to focus on your highest priorities.",
@@ -125,7 +136,11 @@
         {
             "id": "block_a6810390858a4124774049b1a0e766c8",
             "type": "text-media",
-            "modifiers": ["image", "reverse", "added-shadow"],
+            "modifiers": [
+                "image",
+                "reverse",
+                "added-shadow"
+            ],
             "heading": "Fully Customize Your Component",
             "body_html": "<p>Get creative with the many ways you can style the Task Board:</p> <ul> <li>Choose from <a href=\"/products/taskboard/examples/themes\">five built-in themes</a> or create your own using CSS variables.</li> <li>Display custom text or markup in cards using the <a href=\"/products/taskboard/docs/#TaskBoard/view/TaskBoardBase#config-taskRenderer\"><code>taskRenderer</code></a> method.</li> <li>Configure which elements appear on each card using the <a href=\"/products/taskboard/docs/#TaskBoard/view/mixin/TaskItems#config-bodyItems\"><code>bodyItems</code></a>.</li> <li>Easily render <a href=\"/products/taskboard/examples/task-items\">icons, tags, images, and progress bars</a>.</li> </ul>",
             "body_text": "Get creative with the many ways you can style the Task Board: Choose from five built-in themes or create your own using CSS variables. Display custom text or markup in cards using the taskRenderer method. Configure which elements appear on each card using the bodyItems . Easily render icons, tags, images, and progress bars .",
@@ -180,7 +195,10 @@
         {
             "id": "block_0284d081fe88dec979b28b8edc99b607",
             "type": "text-media",
-            "modifiers": ["image", "added-shadow"],
+            "modifiers": [
+                "image",
+                "added-shadow"
+            ],
             "heading": "Benefit From Instantly Familiar UX",
             "body_html": "<p class=\"p1\">Reduce your users’ admin load with the Task Board’s inviting and intuitive interactions:</p> <ul> <li>Verify changes with <a href=\"/products/taskboard/examples/task-drag/\">confirmation dialogs</a></li> <li><a href=\"/products/taskboard/examples/scrolling/\">Auto-scroll to any swimlane or column</a> for easy navigation.</li> <li>Edit tasks directly with <a href=\"/products/taskboard/examples/simple-task-edit/\">inline editing</a>, or use the <a href=\"/products/taskboard/examples/task-edit/\">task editor</a> and <a href=\"/products/taskboard/examples/task-menu/\">context menu options</a>.</li> </ul>",
             "body_text": "Reduce your users’ admin load with the Task Board’s inviting and intuitive interactions: Verify changes with confirmation dialogs Auto-scroll to any swimlane or column for easy navigation. Edit tasks directly with inline editing , or use the task editor and context menu options .",
@@ -227,7 +245,11 @@
         {
             "id": "block_efbed03a4634d73418579ac95db35f94",
             "type": "text-media",
-            "modifiers": ["video-file", "reverse", "added-shadow"],
+            "modifiers": [
+                "video-file",
+                "reverse",
+                "added-shadow"
+            ],
             "heading": "Looks Great In Any Screen Size",
             "body_html": "<p>Responsiveness is built into the core of the Task Board. Filter out unimportant columns to focus on the relevant details on small screens.</p>",
             "body_text": "Responsiveness is built into the core of the Task Board. Filter out unimportant columns to focus on the relevant details on small screens.",
@@ -255,7 +277,10 @@
         {
             "id": "block_b0ecec48d200798e5261d055bd3d0058",
             "type": "text-media",
-            "modifiers": ["image", "added-shadow"],
+            "modifiers": [
+                "image",
+                "added-shadow"
+            ],
             "heading": "50+ More Widgets",
             "body_html": "<p class=\"p1\">Choose from a <a href=\"/products/taskboard/examples/kitchen-sink/\">wide range of UI elements</a> that easily make your app polished and professional:</p> <ul class=\"ul1\"> <li class=\"li1\">Add <strong>lists, menus, toggles, sliders, and more</strong> to the Bryntum Calendar.</li> <li class=\"li1\">Meet user needs with fewer clicks and less searching.</li> <li class=\"li1\">Implement widgets easily with our clear documentation.</li> </ul>",
             "body_text": "Choose from a wide range of UI elements that easily make your app polished and professional: Add lists, menus, toggles, sliders, and more to the Bryntum Calendar. Meet user needs with fewer clicks and less searching. Implement widgets easily with our clear documentation.",
@@ -286,7 +311,10 @@
         {
             "id": "block_2a1afe0e84ff67bd07149cb448ead2cd",
             "type": "text-media",
-            "modifiers": ["video-file", "added-shadow"],
+            "modifiers": [
+                "video-file",
+                "added-shadow"
+            ],
             "heading": "Install with npm",
             "body_html": "<p>Try Bryntum Task Board directly from npm. <strong>No login or authorization required</strong>. Just install the trial, configure, and start building.</p>",
             "body_text": "Try Bryntum Task Board directly from npm. No login or authorization required . Just install the trial, configure, and start building.",
@@ -399,7 +427,9 @@
         {
             "id": "block_8a58bff5bad522fd483190d0373a2f4a",
             "type": "text-button",
-            "modifiers": ["variant-2"],
+            "modifiers": [
+                "variant-2"
+            ],
             "heading": "Ready to get started?",
             "body_html": "",
             "body_text": "",

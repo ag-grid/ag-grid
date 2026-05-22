@@ -6,6 +6,7 @@ import ExamplesGridSection from './bryntum/ExamplesGridSection.astro';
 import HeroSection from './bryntum/HeroSection.astro';
 import LanguagesSection from './bryntum/LanguagesSection.astro';
 import LiveDemoSection from './bryntum/LiveDemoSection.astro';
+import PartnershipSection from './bryntum/PartnershipSection.astro';
 import TextMediaSection from './bryntum/TextMediaSection.astro';
 import { LIVE_DEMO_PRODUCT_CONFIG } from './bryntum/liveDemoProducts';
 import type { BryntumCampaignContent } from './bryntum/types';
@@ -67,6 +68,8 @@ const altTextMediaSections = new WeakSet<object>();
                     return <BrandsSection section={section} />;
                 case 'text-button':
                     return <CtaSection section={section} />;
+                case 'partnership':
+                    return <PartnershipSection section={section} />;
                 default:
                     return null;
             }

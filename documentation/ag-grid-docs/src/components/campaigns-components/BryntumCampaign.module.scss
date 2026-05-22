@@ -285,6 +285,70 @@
     }
 }
 
+.partnership {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.partnershipHeading {
+    font-size: var(--text-fs-2xl);
+    line-height: var(--text-lh-3xl);
+    margin: 0 0 $spacing-size-4;
+}
+
+.partnershipBody {
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-base);
+    color: var(--color-fg-secondary);
+
+    p {
+        margin-bottom: $spacing-size-3;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    a {
+        color: var(--color-fg-primary);
+        text-decoration: underline;
+        text-decoration-color: var(--color-util-brand-400);
+
+        &:hover {
+            color: var(--color-util-brand-500);
+        }
+    }
+}
+
+.partnershipLogos {
+    margin-top: $spacing-size-8;
+}
+
+.partnershipLogoLight,
+.partnershipLogoDark {
+    max-width: 360px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+.partnershipLogoLight {
+    display: block;
+
+    #{$selector-darkmode} & {
+        display: none;
+    }
+}
+
+.partnershipLogoDark {
+    display: none;
+
+    #{$selector-darkmode} & {
+        display: block;
+    }
+}
+
 .languagesHeading {
     text-align: center;
     font-size: var(--text-fs-xl);

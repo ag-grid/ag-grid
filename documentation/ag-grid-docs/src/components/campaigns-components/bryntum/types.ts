@@ -102,6 +102,15 @@ export interface BryntumTextButtonSection extends BryntumSectionBase {
     ctas?: BryntumCta[];
 }
 
+export interface BryntumPartnershipSection extends BryntumSectionBase {
+    type: 'partnership';
+    body_html?: string;
+    body_text?: string;
+    logo_light_src?: string;
+    logo_dark_src?: string;
+    logo_alt?: string;
+}
+
 export type BryntumSection =
     | BryntumHeroSection
     | BryntumLanguagesSection
@@ -110,7 +119,8 @@ export type BryntumSection =
     | BryntumColumnsLibSection
     | BryntumColumnsWithMediaSection
     | BryntumBrandsSection
-    | BryntumTextButtonSection;
+    | BryntumTextButtonSection
+    | BryntumPartnershipSection;
 
 export interface BryntumCampaignContent {
     url?: string;
