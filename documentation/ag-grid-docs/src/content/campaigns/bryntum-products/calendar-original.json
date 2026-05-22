@@ -48,6 +48,12 @@
             "logo_alt": "AG Grid x Bryntum partnership"
         },
         {
+            "id": "block_agbryntum_intro_video_calendar",
+            "type": "intro-video",
+            "video_src": "https://www.youtube.com/embed/FjaXo0VtLUM?feature=oembed",
+            "title": "Bryntum Calendar"
+        },
+        {
             "id": "block_dec4a474ba08484c3bd147cc587e5ce5",
             "type": "text-media",
             "modifiers": [

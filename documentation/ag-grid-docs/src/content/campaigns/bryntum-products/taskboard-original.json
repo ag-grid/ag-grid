@@ -46,6 +46,12 @@
             "logo_alt": "AG Grid x Bryntum partnership"
         },
         {
+            "id": "block_agbryntum_intro_video_taskboard",
+            "type": "intro-video",
+            "video_src": "https://www.youtube.com/embed/HqyiViksBQU?feature=oembed",
+            "title": "Bryntum Task Board Intro"
+        },
+        {
             "id": "block_a2016e10d3e520694a7ca1d3ffe417d9",
             "type": "text-media",
             "modifiers": ["image", "reverse", "added-shadow"],

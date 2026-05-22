@@ -120,6 +120,12 @@ export interface BryntumTextMiniDemoSection extends BryntumSectionBase {
     demo_position?: 'right' | 'left' | 'below';
 }
 
+export interface BryntumIntroVideoSection extends BryntumSectionBase {
+    type: 'intro-video';
+    video_src: string;
+    title?: string;
+}
+
 export type BryntumSection =
     | BryntumHeroSection
     | BryntumLanguagesSection
@@ -130,7 +136,8 @@ export type BryntumSection =
     | BryntumBrandsSection
     | BryntumTextButtonSection
     | BryntumPartnershipSection
-    | BryntumTextMiniDemoSection;
+    | BryntumTextMiniDemoSection
+    | BryntumIntroVideoSection;
 
 export interface BryntumCampaignContent {
     url?: string;

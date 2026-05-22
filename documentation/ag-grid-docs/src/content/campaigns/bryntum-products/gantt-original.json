@@ -48,6 +48,12 @@
             "logo_alt": "AG Grid x Bryntum partnership"
         },
         {
+            "id": "block_agbryntum_intro_video_gantt",
+            "type": "intro-video",
+            "video_src": "https://www.youtube.com/embed/aR1rHGZfOV8?feature=oembed",
+            "title": "Bryntum Gantt Chart"
+        },
+        {
             "id": "block_3f15ff5b45b62a6f88bc0de39e399b5d",
             "type": "text-media",
             "modifiers": [

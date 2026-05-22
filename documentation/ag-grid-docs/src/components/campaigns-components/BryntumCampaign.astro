@@ -6,6 +6,7 @@ import BryntumLiveDemo from './bryntum/BryntumLiveDemo.astro';
 import CtaSection from './bryntum/CtaSection.astro';
 import ExamplesGridSection from './bryntum/ExamplesGridSection.astro';
 import HeroSection from './bryntum/HeroSection.astro';
+import IntroVideoSection from './bryntum/IntroVideoSection.astro';
 import LanguagesSection from './bryntum/LanguagesSection.astro';
 import LiveDemoSection from './bryntum/LiveDemoSection.astro';
 import PartnershipSection from './bryntum/PartnershipSection.astro';
@@ -129,6 +130,8 @@ const altTextMediaSections = new WeakSet<object>();
                     return <PartnershipSection section={section} />;
                 case 'text-mini-demo':
                     return <TextMiniDemoSection section={section} />;
+                case 'intro-video':
+                    return <IntroVideoSection section={section} />;
                 default:
                     return null;
             }

@@ -46,6 +46,12 @@
             "logo_alt": "AG Grid x Bryntum partnership"
         },
         {
+            "id": "block_agbryntum_intro_video_schedulerpro",
+            "type": "intro-video",
+            "video_src": "https://www.youtube.com/embed/W0CnKcrnoIc?feature=oembed",
+            "title": "Bryntum Scheduler Pro Intro"
+        },
+        {
             "id": "block_ca62340a695d26f1e58162162bd1cb2b",
             "type": "text-media",
             "modifiers": ["image", "reverse", "added-shadow"],

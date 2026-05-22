@@ -291,6 +291,21 @@
     margin: 0 auto;
 }
 
+.introVideo {
+    max-width: 1024px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-bg-tertiary);
+
+    iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+}
+
 .partnershipHeading {
     font-size: var(--text-fs-2xl);
     line-height: var(--text-lh-3xl);

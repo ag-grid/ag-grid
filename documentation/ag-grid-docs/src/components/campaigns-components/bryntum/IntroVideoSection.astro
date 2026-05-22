@@ -1,0 +1,26 @@
+---
+import type { BryntumIntroVideoSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumIntroVideoSection;
+}
+
+const { section } = Astro.props;
+const title = section.title ?? 'Product intro video';
+---
+
+<section class={styles.section}>
+    <div class={styles.sectionInner}>
+        <div class={styles.introVideo}>
+            <iframe
+                src={section.video_src}
+                title={title}
+                loading="lazy"
+                frameborder="0"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+        </div>
+    </div>
+</section>
