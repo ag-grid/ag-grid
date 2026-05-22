@@ -145,6 +145,45 @@ describe('paginationPanels', () => {
             expect((pageNumbers[0].querySelector('input') as HTMLInputElement).value).toBe('1'); // current page
             expect(pageNumbers[1].textContent).toBe('5'); // total pages
         });
+
+        test('page input navigates on value change', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            input.value = '3';
+            input.dispatchEvent(new Event('input'));
+
+            expect(api.paginationGetCurrentPage()).toBe(2);
+        });
+
+        test('clearing the input does not navigate', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            api.paginationGoToPage(2);
+
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+
+            expect(api.paginationGetCurrentPage()).toBe(2);
+        });
+
+        test('blurring with empty input resets to current page', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const input = panel.querySelector<HTMLInputElement>('.ag-paging-page-summary-panel input')!;
+
+            api.paginationGoToPage(2);
+
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new Event('blur'));
+
+            expect(api.paginationGetCurrentPage()).toBe(2);
+            expect(input.value).toBe('3');
+        });
     });
 
     describe('reordering', () => {
@@ -499,6 +538,78 @@ describe('paginationPanels', () => {
                 expect(numbers[0].textContent).toBe('11');
                 expect(numbers[1].textContent).toBe('20');
             });
+        });
+    });
+
+    describe('suppressPageInput', () => {
+        test('default (no config): page summary renders an input field', () => {
+            const api = createPaginationGrid(gridsManager);
+            const panel = getPagingPanel(api)!;
+            const pageSummary = panel.querySelector('.ag-paging-page-summary-panel')!;
+            expect(pageSummary.querySelector('input')).not.toBeNull();
+        });
+
+        test('string "pageSummary": page summary renders an input field', () => {
+            const api = createPaginationGrid(gridsManager, { paginationPanels: ['pageSummary'] });
+            const panel = getPagingPanel(api)!;
+            const pageSummary = panel.querySelector('.ag-paging-page-summary-panel')!;
+            expect(pageSummary.querySelector('input')).not.toBeNull();
+        });
+
+        test('{ type: "pageSummary" } with no suppressPageInput: renders an input field', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPanels: [{ type: 'pageSummary' }],
+            });
+            const panel = getPagingPanel(api)!;
+            const pageSummary = panel.querySelector('.ag-paging-page-summary-panel')!;
+            expect(pageSummary.querySelector('input')).not.toBeNull();
+        });
+
+        test('suppressPageInput: true renders static span, not an input', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPanels: [{ type: 'pageSummary', suppressPageInput: true }],
+            });
+            const panel = getPagingPanel(api)!;
+            const pageSummary = panel.querySelector('.ag-paging-page-summary-panel')!;
+            expect(pageSummary.querySelector('input')).toBeNull();
+            const pageNumbers = pageSummary.querySelectorAll('.ag-paging-number');
+            expect(pageNumbers[0].textContent).toBe('1'); // current page as static text
+            expect(pageNumbers[1].textContent).toBe('5'); // total pages
+        });
+
+        test('suppressPageInput: true — navigation buttons still work', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPanels: [{ type: 'pageSummary', suppressPageInput: true }],
+            });
+            const panel = getPagingPanel(api)!;
+            const nextBtn = panel.querySelector<HTMLElement>('[aria-label="Next Page"]')!;
+            nextBtn.click();
+            expect(api.paginationGetCurrentPage()).toBe(1);
+
+            const pageSummary = panel.querySelector('.ag-paging-page-summary-panel')!;
+            const pageNumbers = pageSummary.querySelectorAll('.ag-paging-number');
+            expect(pageNumbers[0].textContent).toBe('2');
+        });
+
+        test('suppressPageInput: false renders an input field', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPanels: [{ type: 'pageSummary', suppressPageInput: false }],
+            });
+            const panel = getPagingPanel(api)!;
+            const pageSummary = panel.querySelector('.ag-paging-page-summary-panel')!;
+            expect(pageSummary.querySelector('input')).not.toBeNull();
+        });
+
+        test('suppressPageInput: true mixed with other panels', () => {
+            const api = createPaginationGrid(gridsManager, {
+                paginationPanels: ['rowSummary', { type: 'pageSummary', suppressPageInput: true }, 'pageSize'],
+            });
+            const panel = getPagingPanel(api)!;
+            expect(panel.querySelector('.ag-paging-row-summary-panel')).toBeTruthy();
+            expect(panel.querySelector('.ag-paging-page-size')).toBeTruthy();
+            const pageSummary = panel.querySelector('.ag-paging-page-summary-panel')!;
+            expect(pageSummary.querySelector('input')).toBeNull();
+            expect(pageSummary.querySelectorAll('.ag-paging-number')[0].textContent).toBe('1');
         });
     });
 

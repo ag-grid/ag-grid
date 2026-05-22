@@ -953,10 +953,11 @@ export interface Props<TData> {
          */
     suppressPaginationPanel?: boolean,
     /** Controls which built-in components appear in the pagination panel and in what order.
-         * Accepts an array of names: `'pageSize'`, `'rowSummary'`, `'pageSummary'`.
+         * Accepts an array of panel names (`'pageSize'`, `'rowSummary'`, `'pageSummary'`) or config objects.
          * Components render in the order they appear in the array. Omitted components are hidden.
          * An empty array hides the pagination panel entirely.
          * When not set, all three components render in the default order: [`pageSize`, `rowSummary`, `pageSummary`].
+         * Use `{ type: 'pageSummary', suppressPageInput: true }` to render a read-only page summary.
          * @agModule `PaginationModule`
          */
     paginationPanels?: PaginationPanel[],

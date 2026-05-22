@@ -18,7 +18,8 @@ export class PageSummaryComp extends Component {
     private readonly btPrevious: HTMLElement = RefPlaceholder;
     private readonly btNext: HTMLElement = RefPlaceholder;
     private readonly btLast: HTMLElement = RefPlaceholder;
-    private readonly lbCurrent: GridInputNumberField = RefPlaceholder;
+    private readonly lbCurrentInput: GridInputNumberField = RefPlaceholder;
+    private readonly lbCurrentStatic: HTMLElement = RefPlaceholder;
     private readonly lbTotal: HTMLElement = RefPlaceholder;
 
     private previousAndFirstButtonsDisabled = false;
@@ -27,10 +28,12 @@ export class PageSummaryComp extends Component {
 
     public ariaStatus = '';
     private readonly idPrefix: string;
+    private readonly suppressPageInput: boolean;
 
-    constructor(idPrefix: string) {
+    constructor(idPrefix: string, suppressPageInput?: boolean) {
         super();
         this.idPrefix = idPrefix;
+        this.suppressPageInput = suppressPageInput ?? false;
     }
 
     public wireBeans(beans: BeanCollection): void {
@@ -41,6 +44,20 @@ export class PageSummaryComp extends Component {
     public postConstruct(): void {
         const idPrefix = this.idPrefix;
         const localeTextFunc = this.getLocaleTextFunc();
+        const pageNumberChild = this.suppressPageInput
+            ? ({
+                  tag: 'span',
+                  ref: 'lbCurrentStatic',
+                  cls: 'ag-paging-number',
+                  attrs: { id: `${idPrefix}-start-page-number` },
+              } as const)
+            : ({
+                  tag: 'ag-input-number-field',
+                  ref: 'lbCurrentInput',
+                  cls: 'ag-paging-number',
+                  attrs: { id: `${idPrefix}-start-page-number` },
+              } as const);
+
         this.setTemplate(
             {
                 tag: 'span',
@@ -70,12 +87,7 @@ export class PageSummaryComp extends Component {
                                 attrs: { id: `${idPrefix}-start-page` },
                                 children: localeTextFunc('page', 'Page'),
                             },
-                            {
-                                tag: 'ag-input-number-field',
-                                ref: 'lbCurrent',
-                                cls: 'ag-paging-number',
-                                attrs: { id: `${idPrefix}-start-page-number` },
-                            },
+                            pageNumberChild,
                             {
                                 tag: 'span',
                                 attrs: { id: `${idPrefix}-of-page` },
@@ -105,10 +117,10 @@ export class PageSummaryComp extends Component {
                     },
                 ],
             },
-            [AgInputNumberFieldSelector]
+            this.suppressPageInput ? [] : [AgInputNumberFieldSelector]
         );
 
-        const { gos, btFirst, btPrevious, btNext, btLast, beans, lbCurrent } = this;
+        const { gos, btFirst, btPrevious, btNext, btLast, beans } = this;
         const isRtl = gos.get('enableRtl');
 
         btFirst.insertAdjacentElement('afterbegin', _createIconNoSpan(isRtl ? 'last' : 'first', beans)!);
@@ -134,7 +146,16 @@ export class PageSummaryComp extends Component {
             });
         }
 
-        lbCurrent.onValueChange(this.onInputPage.bind(this));
+        if (!this.suppressPageInput) {
+            this.lbCurrentInput.onValueChange(this.onInputPage.bind(this));
+            this.addManagedListeners(this.lbCurrentInput.getInputElement(), {
+                blur: () => {
+                    if (!this.lbCurrentInput.getInputElement().value.trim()) {
+                        this.lbCurrentInput.setValue(String(this.pagination.getCurrentPage() + 1), true);
+                    }
+                },
+            });
+        }
         this.refresh();
     }
 
@@ -163,24 +184,19 @@ export class PageSummaryComp extends Component {
     }
 
     private onInputPage(): void {
-        const { pagination, lbCurrent } = this;
-        const rawValue = lbCurrent.getValue(true);
+        const { pagination, lbCurrentInput } = this;
+        const rawValue = lbCurrentInput.getValue(true);
+        if (!rawValue?.trim()) {
+            return;
+        }
         const rawValueNum = Number(rawValue);
-        let value = 0;
-        if (rawValue?.trim?.()) {
-            value = rawValueNum;
-        }
-        if (!Number.isFinite(value)) {
-            value = pagination.getCurrentPage();
-        }
+        let value = Number.isFinite(rawValueNum) ? rawValueNum : pagination.getCurrentPage() + 1;
         const total = pagination.getTotalPages();
-        if (value <= 0 || value >= total) {
-            value = Math.max(1, Math.min(value, total));
-        }
+        value = Math.max(1, Math.min(value, total));
         if (rawValueNum !== value) {
-            lbCurrent.setValue(String(value), true);
+            lbCurrentInput.setValue(String(value), true);
         }
-        pagination.goToPage(Math.max(1, Math.min(value, total)) - 1);
+        pagination.goToPage(value - 1);
     }
 
     public refresh(): void {
@@ -227,14 +243,17 @@ export class PageSummaryComp extends Component {
         }
         this.lbTotal.textContent = lbTotal;
 
-        this.lbCurrent.setMin(1);
-        this.lbCurrent.setMax(totalPages);
-        this.lbCurrent.getInputElement().style.width = `${Math.floor(Math.log10(totalPages) + 3)}ch`; // log10 returns number of digits (as an integer part + fraction) - 1
-
         const pagesExist = totalPages > 0;
         const lbCurrentValue = pagesExist ? currentPage + 1 : 1;
         const lbCurrent = this.formatNumber(lbCurrentValue);
-        this.lbCurrent.setValue(lbCurrentValue.toString());
+        if (this.suppressPageInput) {
+            this.lbCurrentStatic.textContent = lbCurrent;
+        } else {
+            this.lbCurrentInput.setMin(1);
+            this.lbCurrentInput.setMax(totalPages);
+            this.lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(totalPages) + 3)}ch`; // log10 returns number of digits (as an integer part + fraction) - 1
+            this.lbCurrentInput.setValue(lbCurrentValue.toString());
+        }
 
         const strPage = localeTextFunc('page', 'Page');
         const strOf = localeTextFunc('of', 'of');
