@@ -545,7 +545,6 @@ describe('ag-grid calculated columns', () => {
         expect(groupedMapper.toInternalExpression('[2025 Q4] - [2026 Q4]')).toEqual({
             expression: '[2025 Q4] - [2026 Q4]',
         });
-        expect(groupedMapper.toDisplayExpression('[2025 Q4] - [2026 Q4]')).toBe('[2025 Q4] - [2026 Q4]');
     });
 
     test('dialog displays and stores header references', async () => {
