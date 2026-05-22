@@ -42,21 +42,15 @@ export class PageSummaryComp extends Component {
     }
 
     public postConstruct(): void {
+        const noInput = this.suppressPageInput;
         const idPrefix = this.idPrefix;
         const localeTextFunc = this.getLocaleTextFunc();
-        const pageNumberChild = this.suppressPageInput
-            ? ({
-                  tag: 'span',
-                  ref: 'lbCurrentStatic',
-                  cls: 'ag-paging-number',
-                  attrs: { id: `${idPrefix}-start-page-number` },
-              } as const)
-            : ({
-                  tag: 'ag-input-number-field',
-                  ref: 'lbCurrentInput',
-                  cls: 'ag-paging-number',
-                  attrs: { id: `${idPrefix}-start-page-number` },
-              } as const);
+        const pageNumberChild = {
+            cls: 'ag-paging-number',
+            attrs: { id: `${idPrefix}-start-page-number` },
+            tag: noInput ? 'span' : 'ag-input-number-field',
+            ref: noInput ? 'lbCurrentStatic' : 'lbCurrentInput',
+        } as const;
 
         this.setTemplate(
             {
@@ -147,11 +141,12 @@ export class PageSummaryComp extends Component {
         }
 
         if (!this.suppressPageInput) {
-            this.lbCurrentInput.onValueChange(this.onInputPage.bind(this));
-            this.addManagedListeners(this.lbCurrentInput.getInputElement(), {
+            const { lbCurrentInput } = this;
+            lbCurrentInput.onValueChange(this.onInputPage.bind(this));
+            this.addManagedListeners(lbCurrentInput.getInputElement(), {
                 blur: () => {
-                    if (!this.lbCurrentInput.getInputElement().value.trim()) {
-                        this.lbCurrentInput.setValue(String(this.pagination.getCurrentPage() + 1), true);
+                    if (!lbCurrentInput.getInputElement().value.trim()) {
+                        lbCurrentInput.setValue(String(this.pagination.getCurrentPage() + 1), true);
                     }
                 },
             });
@@ -229,35 +224,35 @@ export class PageSummaryComp extends Component {
     }
 
     private updateLabels(): void {
-        const { rowModel, pagination } = this;
+        const { rowModel, pagination, lbCurrentInput, lbCurrentStatic, lbTotal } = this;
         const lastPageFound = rowModel.isLastRowIndexKnown();
         const totalPages = pagination.getTotalPages();
         const currentPage = pagination.getCurrentPage();
         const localeTextFunc = this.getLocaleTextFunc();
 
-        let lbTotal: string;
+        let lbTotalStr: string;
         if (lastPageFound) {
-            lbTotal = this.formatNumber(totalPages);
+            lbTotalStr = this.formatNumber(totalPages);
         } else {
-            lbTotal = localeTextFunc('more', 'more');
+            lbTotalStr = localeTextFunc('more', 'more');
         }
-        this.lbTotal.textContent = lbTotal;
+        lbTotal.textContent = lbTotalStr;
 
         const pagesExist = totalPages > 0;
         const lbCurrentValue = pagesExist ? currentPage + 1 : 1;
         const lbCurrent = this.formatNumber(lbCurrentValue);
         if (this.suppressPageInput) {
-            this.lbCurrentStatic.textContent = lbCurrent;
+            lbCurrentStatic.textContent = lbCurrent;
         } else {
-            this.lbCurrentInput.setMin(1);
-            this.lbCurrentInput.setMax(totalPages);
-            this.lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(totalPages) + 3)}ch`; // log10 returns number of digits (as an integer part + fraction) - 1
-            this.lbCurrentInput.setValue(lbCurrentValue.toString());
+            lbCurrentInput.setMin(1);
+            lbCurrentInput.setMax(totalPages);
+            lbCurrentInput.getInputElement().style.width = `${Math.floor(Math.log10(totalPages) + 3)}ch`; // log10 returns number of digits (as an integer part + fraction) - 1
+            lbCurrentInput.setValue(lbCurrentValue.toString());
         }
 
         const strPage = localeTextFunc('page', 'Page');
         const strOf = localeTextFunc('of', 'of');
-        this.ariaStatus = `${strPage} ${lbCurrent} ${strOf} ${lbTotal}`;
+        this.ariaStatus = `${strPage} ${lbCurrent} ${strOf} ${lbTotalStr}`;
     }
 
     private formatNumber(value: number): string {
