@@ -215,11 +215,15 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         super.cleanupEditors(position, includeEditing);
 
         const { startedRows } = this;
-        for (const rowNode of startedRows) {
+        // Snapshot and clear before dispatching so re-entrant calls (e.g. from React's async
+        // cell-editor attachment racing with virtualization recycling) cannot add duplicates
+        // back into startedRows and cause rowEditingStopped to fire more than once.
+        const rowsToCleanup = [...startedRows];
+        startedRows.clear();
+        for (const rowNode of rowsToCleanup) {
             this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
             this.destroyEditorsForRow(rowNode);
         }
-        startedRows.clear();
     }
 
     /**
