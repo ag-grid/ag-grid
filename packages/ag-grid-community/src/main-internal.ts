@@ -92,6 +92,7 @@ export { AutoScrollService } from './agStack/rendering/autoScrollService';
 export { CssClassManager } from './agStack/rendering/cssClassManager';
 export { sharedDefaults as _sharedThemeDefaults } from './agStack/theming/shared/shared-css';
 export type { SharedThemeParams as _SharedThemeParams } from './agStack/theming/shared/shared-css';
+export { _initStyledRoot } from './agStack/theming/styledRoot';
 export { _asThemeImpl, createSharedTheme as _createSharedTheme } from './agStack/theming/themeImpl';
 export type { ThemeLogger as _ThemeLogger } from './agStack/theming/themeLogger';
 export { getParamType as _getParamType, paramValueToCss as _paramValueToCss } from './agStack/theming/themeTypeUtils';

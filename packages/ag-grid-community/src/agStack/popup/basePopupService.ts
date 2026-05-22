@@ -2,7 +2,7 @@ import { Direction } from '../constants/direction';
 import { KeyCode } from '../constants/keyCode';
 import { AgBeanStub } from '../core/agBeanStub';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
-import type { AgStylesChangedEvent, BaseEvents } from '../interfaces/baseEvents';
+import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type {
     AddPopupParams,
@@ -15,6 +15,7 @@ import type {
 } from '../interfaces/iPopup';
 import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
+import { _initStyledRoot } from '../theming/styledRoot';
 import { _setAriaLabel, _setAriaOwns, _setAriaRole } from '../utils/aria';
 import { _getActiveDomElement, _getDocument } from '../utils/document';
 import {
@@ -31,7 +32,6 @@ import { computeAlignedPosition, toRelativeRect } from './popupPositionUtils';
 
 interface AgPopup {
     element: HTMLElement;
-    wrapper: HTMLElement;
     hideFunc: (params?: PopupEventParams) => void;
     isAnchored: boolean;
     instanceId: number;
@@ -65,10 +65,6 @@ export abstract class BasePopupService<
     beanName = 'popupSvc' as const;
 
     protected popupList: AgPopup[] = [];
-
-    public postConstruct(): void {
-        this.addManagedEventListeners({ stylesChanged: this.handleThemeChange.bind(this) });
-    }
 
     public getPopupParent(): HTMLElement {
         const ePopupParent = this.gos.get('popupParent');
@@ -409,14 +405,36 @@ export abstract class BasePopupService<
 
         this.initialisePopupPosition(eChild);
 
-        const wrapperEl = this.createPopupWrapper(eChild, !!alwaysOnTop, ariaLabel, ariaOwns);
-        const removeListeners = this.addEventListenersToPopup({ ...params, wrapperEl });
+        eChild.classList.add('ag-popup-child');
+
+        if (!eChild.hasAttribute('role')) {
+            _setAriaRole(eChild, 'dialog');
+        }
+
+        if (ariaLabel) {
+            _setAriaLabel(eChild, ariaLabel);
+        } else if (ariaOwns) {
+            eChild.id ||= `popup-component-${instanceIdSeq}`;
+            _setAriaOwns(ariaOwns, eChild.id);
+        }
+
+        const wrapperEl = _createAgElement({ tag: 'div', cls: 'ag-popup' });
+        wrapperEl.appendChild(eChild);
+        const disconnect = _initStyledRoot(this.beans.environment, this.getPopupParent(), wrapperEl);
+
+        if (alwaysOnTop) {
+            this.setAlwaysOnTop(eChild, true);
+        } else {
+            this.bringPopupToFront(eChild);
+        }
+
+        const removeListeners = this.addEventListenersToPopup({ ...params, wrapperEl, disconnect });
 
         if (positionCallback) {
             positionCallback();
         }
 
-        this.addPopupToPopupList(eChild, wrapperEl, removeListeners, anchorToElement);
+        this.addPopupToPopupList(eChild, removeListeners, anchorToElement);
 
         return {
             hideFunc: removeListeners,
@@ -435,50 +453,10 @@ export abstract class BasePopupService<
         }
     }
 
-    private createPopupWrapper(
-        element: HTMLElement,
-        alwaysOnTop: boolean,
-        ariaLabel?: string,
-        ariaOwns?: HTMLElement
-    ): HTMLElement {
-        const ePopupParent = this.getPopupParent();
-
-        // add env CSS class to child, in case user provided a popup parent, which means
-        // theme class may be missing
-        const { environment, gos } = this.beans;
-        const eWrapper = _createAgElement({ tag: 'div' });
-        environment.applyThemeClasses(eWrapper);
-
-        eWrapper.classList.add('ag-popup');
-        element.classList.add(gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr', 'ag-popup-child');
-
-        if (!element.hasAttribute('role')) {
-            _setAriaRole(element, 'dialog');
-        }
-
-        if (ariaLabel) {
-            _setAriaLabel(element, ariaLabel);
-        } else if (ariaOwns) {
-            element.id ||= `popup-component-${instanceIdSeq}`;
-            _setAriaOwns(ariaOwns, element.id);
-        }
-
-        eWrapper.appendChild(element);
-        ePopupParent.appendChild(eWrapper);
-
-        if (alwaysOnTop) {
-            this.setAlwaysOnTop(element, true);
-        } else {
-            this.bringPopupToFront(element);
-        }
-
-        return eWrapper;
-    }
-
     protected abstract isStopPropagation(event: Event): boolean;
 
     private addEventListenersToPopup(
-        params: AddPopupParams<string> & { wrapperEl: HTMLElement }
+        params: AddPopupParams<string> & { wrapperEl: HTMLElement; disconnect: () => void }
     ): (popupParams?: PopupEventParams) => void {
         const beans = this.beans;
         const eDocument = _getDocument(beans);
@@ -518,7 +496,7 @@ export abstract class BasePopupService<
 
             popupHidden = true;
 
-            wrapperEl.remove();
+            params.disconnect();
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
             eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
@@ -558,13 +536,11 @@ export abstract class BasePopupService<
 
     private addPopupToPopupList(
         element: HTMLElement,
-        wrapperEl: HTMLElement,
         removeListeners: (popupParams?: PopupEventParams) => void,
         anchorToElement?: HTMLElement
     ): void {
         this.popupList.push({
             element: element,
-            wrapper: wrapperEl,
             hideFunc: removeListeners,
             instanceId: instanceIdSeq,
             isAnchored: !!anchorToElement,
@@ -827,15 +803,6 @@ export abstract class BasePopupService<
         while (innerElsScrollMap.length) {
             const currentEl = innerElsScrollMap.pop();
             currentEl![0].scrollTop = currentEl![1];
-        }
-    }
-
-    private handleThemeChange(e: AgStylesChangedEvent) {
-        if (e.themeChanged) {
-            const environment = this.beans.environment;
-            for (const popup of this.popupList) {
-                environment.applyThemeClasses(popup.wrapper);
-            }
         }
     }
 }

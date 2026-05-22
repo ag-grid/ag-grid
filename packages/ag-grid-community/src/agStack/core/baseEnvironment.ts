@@ -1,5 +1,5 @@
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
-import type { BaseEvents } from '../interfaces/baseEvents';
+import type { AgStylesChangedEvent, BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IEnvironment } from '../interfaces/iEnvironment';
 import type { IPropertiesService } from '../interfaces/iProperties';
@@ -9,6 +9,7 @@ import {
     _unregisterInstanceUsingThemingAPI,
     _useParamsCss,
 } from '../theming/inject';
+import { _initStyledRootFromInnerOfThreeElements } from '../theming/styledRoot';
 import type { Theme } from '../theming/theme';
 import { ThemeImpl } from '../theming/themeImpl';
 import type { ParamType } from '../theming/themeTypeUtils';
@@ -40,7 +41,6 @@ export abstract class BaseEnvironment<
     public eStyleContainer: HTMLElement;
     public cssLayer: string | undefined;
     public styleNonce: string | undefined;
-    private mutationObserver: MutationObserver;
     private readonly sizeEls = new Map<CssVariable<TChangeKeys>, HTMLElement>();
     private readonly lastKnownValues = new Map<CssVariable<TChangeKeys>, number>();
     private eMeasurementContainer: HTMLElement | undefined;
@@ -84,52 +84,42 @@ export abstract class BaseEnvironment<
         this.handleThemeChange();
 
         this.getSizeEl(LIST_ITEM_HEIGHT);
+        this.addDestroyFunc(_initStyledRootFromInnerOfThreeElements(this, eRootDiv));
         this.initVariables();
 
         this.addDestroyFunc(() => _unregisterInstanceUsingThemingAPI(this));
 
-        this.mutationObserver = new MutationObserver(() => {
+        const mutationObserver = new MutationObserver(() => {
             this.fireStylesChangedEvent('theme');
         });
-        this.addDestroyFunc(() => this.mutationObserver.disconnect());
-    }
-
-    public applyThemeClasses(el: HTMLElement, extraClasses: string[] = []): void {
-        const { theme } = this;
-        const themeClass = theme ? theme._getCssClass() : this.applyLegacyThemeClasses();
-
-        for (const className of Array.from(el.classList)) {
-            if (className.startsWith('ag-theme-')) {
-                el.classList.remove(className);
-            }
-        }
-        if (themeClass) {
-            const oldClass = el.className;
-            el.className = `${oldClass}${oldClass ? ' ' : ''}${themeClass}${extraClasses?.length ? ' ' + extraClasses.join(' ') : ''}`;
-        }
-    }
-
-    private applyLegacyThemeClasses(): string {
-        let themeClass = '';
-        this.mutationObserver.disconnect();
-        let node: HTMLElement | null = this.eRootDiv;
+        let node = eRootDiv.parentElement;
         while (node) {
-            let isThemeEl = false;
-            for (const className of Array.from(node.classList)) {
-                if (className.startsWith('ag-theme-')) {
-                    isThemeEl = true;
-                    themeClass = themeClass ? `${themeClass} ${className}` : className;
-                }
-            }
-            if (isThemeEl) {
-                this.mutationObserver.observe(node, {
+            if (node.className.includes('ag-theme-')) {
+                mutationObserver.observe(node, {
                     attributes: true,
                     attributeFilter: ['class'],
                 });
             }
             node = node.parentElement;
         }
-        return themeClass;
+        this.addDestroyFunc(() => mutationObserver.disconnect());
+    }
+
+    public getStyledRootClasses(): [inheritClass: string, applyClass: string, directionClass: string] {
+        const { theme } = this;
+        const [inheritClass, applyClass] = theme
+            ? theme._getCssClasses()
+            : ['', getLegacyThemeClasses(this.eRootDiv.parentElement)];
+        const directionClass = this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
+        return [inheritClass, applyClass, directionClass];
+    }
+
+    public onThemeChanged(handler: () => void): () => void {
+        const listener = (e: AgStylesChangedEvent) => {
+            if (e.themeChanged) handler();
+        };
+        this.eventSvc.addListener('stylesChanged', listener);
+        return () => this.eventSvc.removeListener('stylesChanged', listener);
     }
 
     public addGlobalCSS(css: string, debugId: string): void {
@@ -263,7 +253,7 @@ export abstract class BaseEnvironment<
     }
 
     private handleNewTheme(newTheme: ThemeImpl | undefined): void {
-        const { gos, eRootDiv, globalCSS } = this;
+        const { gos, globalCSS } = this;
         const additionalCss = this.getAdditionalCss();
         if (newTheme) {
             _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce, additionalCss);
@@ -290,7 +280,6 @@ export abstract class BaseEnvironment<
             this.styleNonce
         );
 
-        this.applyThemeClasses(eRootDiv);
         this.fireStylesChangedEvent('theme');
     }
 
@@ -300,6 +289,15 @@ export abstract class BaseEnvironment<
             [`${change}Changed`]: true,
         });
     }
+}
+
+function getLegacyThemeClasses(node: HTMLElement | null): string {
+    let themeClasses: string[] = [];
+    while (node) {
+        themeClasses.push(...Array.from(node.classList).filter((c) => c.startsWith('ag-theme-')));
+        node = node.parentElement;
+    }
+    return themeClasses.join(' ');
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

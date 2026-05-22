@@ -3,7 +3,11 @@ export interface IEnvironment {
 
     addGlobalCSS(css: string, debugId: string): void;
 
-    applyThemeClasses(el: HTMLElement): void;
-
     getDefaultListItemHeight(): number;
+
+    /** Returns `[inheritClass, applyClass, directionClass]` for the three styled-root levels. */
+    getStyledRootClasses(): [inheritClass: string, applyClass: string, directionClass: string];
+
+    /** Subscribes to theme-change events. Returns an unsubscribe fn. */
+    onThemeChanged(handler: () => void): () => void;
 }

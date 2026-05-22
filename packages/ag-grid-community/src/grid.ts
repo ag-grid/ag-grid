@@ -1,5 +1,6 @@
 import type { AgContextParams } from './agStack/core/agContext';
 import { AgContext } from './agStack/core/agContext';
+import { _createStyledRootElements } from './agStack/theming/styledRoot';
 import { _missing } from './agStack/utils/generic';
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
@@ -32,7 +33,6 @@ import {
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
-import { _createElement } from './utils/element';
 import { NoModulesRegisteredError, missingRowModelTypeError } from './validation/errorMessages/errorText';
 import { _error, _logPreInitErr } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
@@ -47,8 +47,6 @@ export interface GridParams {
     frameworkOverrides?: IFrameworkOverrides;
     // INTERNAL - bean instances to add to the context
     providedBeanInstances?: { [key: string]: any };
-    // INTERNAL - set by frameworks if the provided grid div is safe to set a theme class on
-    setThemeOnGridDiv?: boolean;
     // INTERNAL - set by studio
     withinStudio?: boolean;
 
@@ -86,29 +84,18 @@ export function createGrid<TData>(
         _error(11);
         return {} as GridApi;
     }
-    const gridParams: GridParams | undefined = params;
-    let destroyCallback: (() => void) | undefined;
-    if (!gridParams?.setThemeOnGridDiv) {
-        // frameworks already create an element owned by our code, so we can set
-        // the theme class on it. JS users calling createGrid directly are
-        // passing an element owned by their application, so we can't set a
-        // class name on it and must create a wrapper.
-        const newGridDiv = _createElement({ tag: 'div' });
-        newGridDiv.style.height = '100%';
-        eGridDiv.appendChild(newGridDiv);
-        eGridDiv = newGridDiv;
-        destroyCallback = () => eGridDiv.remove();
-    }
+    const [outer, inner] = _createStyledRootElements();
+    eGridDiv.appendChild(outer);
     const api = new GridCoreCreator().create(
-        eGridDiv,
+        inner,
         gridOptions,
         (context) => {
-            const gridComp = new GridComp(eGridDiv);
+            const gridComp = new GridComp(inner);
             context.createBean(gridComp);
         },
         undefined,
         params,
-        destroyCallback
+        () => outer.remove()
     );
 
     return api;

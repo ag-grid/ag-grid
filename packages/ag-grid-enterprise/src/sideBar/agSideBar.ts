@@ -325,7 +325,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
             wrapper = existingToolPanelWrapper;
             wrapper.setDefParent(def.parent ?? null);
         } else {
-            wrapper = this.createBean(new ToolPanelWrapper());
+            wrapper = this.createBean(new ToolPanelWrapper(!!def.parent));
 
             const created = wrapper.setToolPanelDef(
                 def,
@@ -360,10 +360,6 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
         externalParent: HTMLElement | null | undefined
     ): void {
         const wrapperGui = wrapper.getGui();
-        if (externalParent) {
-            this.beans.environment.applyThemeClasses(externalParent, ['ag-external', 'ag-tool-panel-external']);
-            wrapperGui.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
-        }
         const correctParent = externalParent ?? wrapper.getDefParent() ?? this.getGui();
         if (wrapperGui.parentElement !== correctParent) {
             correctParent.appendChild(wrapperGui);

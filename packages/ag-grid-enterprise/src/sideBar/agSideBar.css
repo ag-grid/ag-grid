@@ -25,6 +25,7 @@
 .ag-tool-panel-external {
     display: flex;
     flex-direction: row;
+    background-color: var(--ag-wrapper-background-color);
 }
 
 :where(.ag-tool-panel-external) .ag-tool-panel-wrapper {

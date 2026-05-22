@@ -25,7 +25,6 @@ type FocusableContainerComp = Component & FocusableContainer;
 type HeaderDropZonesComp = Component & { getFocusableContainers?: () => FocusableContainerComp[] };
 
 const GridComp = ({ context }: GridCompProps) => {
-    const [rtlClass, setRtlClass] = useState<string>('');
     const [layoutClass, setLayoutClass] = useState<string>('');
     const [cursor, setCursor] = useState<string | null>(null);
     const [userSelect, setUserSelect] = useState<string | null>(null);
@@ -60,7 +59,6 @@ const GridComp = ({ context }: GridCompProps) => {
 
         const compProxy: IGridComp = {
             destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
-            setRtlClass,
             forceFocusOutOfContainer: (up?: boolean) => {
                 if (!up && paginationCompRef.current?.isDisplayed()) {
                     paginationCompRef.current.forceFocusOutOfContainer(up);
@@ -201,10 +199,7 @@ const GridComp = ({ context }: GridCompProps) => {
         };
     }, [tabGuardReady, eGridBodyParent, context]);
 
-    const rootWrapperClasses = useMemo(
-        () => classesList('ag-root-wrapper', rtlClass, layoutClass),
-        [rtlClass, layoutClass]
-    );
+    const rootWrapperClasses = useMemo(() => classesList('ag-root-wrapper', layoutClass), [layoutClass]);
     const rootWrapperBodyClasses = useMemo(
         () => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass),
         [layoutClass]

@@ -36,7 +36,6 @@ export class GridComp extends TabGuardComp {
     public postConstruct(): void {
         const compProxy: IGridComp = {
             destroyGridUi: () => this.destroyBean(this),
-            setRtlClass: (cssClass: string) => this.addCss(cssClass),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this),

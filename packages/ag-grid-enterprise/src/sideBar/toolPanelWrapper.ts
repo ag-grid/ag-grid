@@ -7,7 +7,7 @@ import type {
     UserCompDetails,
     UserComponentFactory,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder } from 'ag-grid-community';
+import { Component, RefPlaceholder, _createAgElement, _initStyledRoot } from 'ag-grid-community';
 
 import { AgHorizontalResize } from './agHorizontalResize';
 
@@ -46,18 +46,25 @@ export class ToolPanelWrapper extends Component {
     private animationId: number = 0;
     private defParent: HTMLElement | null = null;
 
-    constructor() {
+    constructor(private readonly isExternal: boolean) {
         super(ToolPanelElement);
     }
 
     public postConstruct(): void {
         const eGui = this.getGui();
         const resizeBar = (this.resizeBar = this.createManagedBean(new AgHorizontalResize()));
-
-        eGui.setAttribute('id', `ag-${this.getCompId()}`);
-
         resizeBar.elementToResize = eGui;
         this.appendChild(resizeBar);
+
+        if (this.isExternal) {
+            const externalDiv = _createAgElement({ tag: 'div', cls: 'ag-tool-panel-external' });
+            externalDiv.appendChild(eGui);
+            const newGui = _createAgElement({ tag: 'div', cls: 'ag-styled-root' });
+            this.addDestroyFunc(_initStyledRoot(this.beans.environment, newGui, externalDiv));
+            this.setGui(newGui);
+        }
+
+        this.getGui().setAttribute('id', `ag-${this.getCompId()}`);
     }
 
     public getToolPanelId(): string {

@@ -26,7 +26,7 @@ import type {
     UpdateChartParams,
     VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _focusInto, _warn } from 'ag-grid-community';
+import { BeanStub, _focusInto, _initStyledRoot, _warn } from 'ag-grid-community';
 
 import { VERSION as GRID_VERSION } from '../version';
 import type { AgChartsExports } from './agChartsExports';
@@ -286,31 +286,15 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const chartComp = new GridChartComp(gridChartParams);
         this.createBean(chartComp);
 
-        const chartRef = this.createChartRef(chartComp);
+        const styledRootDisconnect = chartContainer
+            ? _initStyledRoot(this.beans.environment, chartContainer, chartComp.getGui())
+            : undefined;
 
-        if (chartContainer) {
-            // if container exists, means developer initiated chart create via API, so place in provided container
-            chartContainer.appendChild(chartRef.chartElement);
-        } else if (createChartContainerFunc) {
-            // otherwise, user created chart via grid UI, check if developer provides containers (e.g. if the application
-            // is using its own dialogs rather than the grid provided dialogs)
-            createChartContainerFunc(chartRef);
-        } else {
-            // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog
-            chartComp.addEventListener('destroyed', () => {
-                this.activeChartComps.delete(chartComp);
-                this.activeCharts.delete(chartRef);
-            });
-        }
-
-        return chartRef;
-    }
-
-    private createChartRef(chartComp: GridChartComp): ChartRef {
         const chartRef: ChartRef = {
             destroyChart: () => {
                 if (this.activeCharts.has(chartRef)) {
                     this.destroyBean(chartComp);
+                    styledRootDisconnect?.();
                     this.activeChartComps.delete(chartComp);
                     this.activeCharts.delete(chartRef);
                 }
@@ -326,6 +310,16 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
         this.activeCharts.add(chartRef);
         this.activeChartComps.add(chartComp);
+
+        if (!chartContainer && createChartContainerFunc) {
+            createChartContainerFunc(chartRef);
+        } else if (!chartContainer) {
+            // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog
+            chartComp.addEventListener('destroyed', () => {
+                this.activeChartComps.delete(chartComp);
+                this.activeCharts.delete(chartRef);
+            });
+        }
 
         return chartRef;
     }
