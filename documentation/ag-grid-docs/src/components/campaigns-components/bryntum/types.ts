@@ -111,6 +111,15 @@ export interface BryntumPartnershipSection extends BryntumSectionBase {
     logo_alt?: string;
 }
 
+export interface BryntumTextMiniDemoSection extends BryntumSectionBase {
+    type: 'text-mini-demo';
+    body_html?: string;
+    body_text?: string;
+    ctas?: BryntumCta[];
+    demo_kind?: 'gantt' | 'calendar';
+    demo_position?: 'right' | 'left' | 'below';
+}
+
 export type BryntumSection =
     | BryntumHeroSection
     | BryntumLanguagesSection
@@ -120,7 +129,8 @@ export type BryntumSection =
     | BryntumColumnsWithMediaSection
     | BryntumBrandsSection
     | BryntumTextButtonSection
-    | BryntumPartnershipSection;
+    | BryntumPartnershipSection
+    | BryntumTextMiniDemoSection;
 
 export interface BryntumCampaignContent {
     url?: string;

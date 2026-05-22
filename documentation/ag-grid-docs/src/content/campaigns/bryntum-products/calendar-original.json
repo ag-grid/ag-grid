@@ -194,18 +194,13 @@
         },
         {
             "id": "block_7f8a8ef5340328b7601457cdd648ee6d",
-            "type": "text-media",
-            "modifiers": [
-                "code",
-                "fiddle-section",
-                "added-shadow"
-            ],
+            "type": "text-mini-demo",
             "heading": "Live Demo",
             "body_html": "<p class=\"pre-title\">Try it yourself</p>  <p>The calendar has full support for recurring tasks. Your tasks can repeat in any pattern you need – daily, weekly, monthly, or yearly.</p>",
             "body_text": "Try it yourself  The calendar has full support for recurring tasks. Your tasks can repeat in any pattern you need – daily, weekly, monthly, or yearly.",
-            "links": [],
             "ctas": [],
-            "media": []
+            "demo_kind": "calendar",
+            "demo_position": "right"
         },
         {
             "id": "block_8f1c153294c4e8675efe148425adf91f",

@@ -1,0 +1,86 @@
+---
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import BryntumCtaList from './BryntumCtaList.astro';
+import type { BryntumTextMiniDemoSection } from './types';
+import styles from '../BryntumCampaign.module.scss';
+
+interface Props {
+    section: BryntumTextMiniDemoSection;
+}
+
+const { section } = Astro.props;
+const demoKind = section.demo_kind ?? 'gantt';
+const demoPosition = section.demo_position ?? 'right';
+
+// Map demo kind → Bryntum product slug + mount id + per-product asset script.
+const DEMO_CONFIG: Record<string, { productSlug: string; mountId: string; scriptPath: string }> = {
+    gantt: {
+        productSlug: 'gantt',
+        mountId: 'live-gantt-mini-demo',
+        scriptPath: '/scripts/bryntum-gantt-mini-demo.js',
+    },
+    calendar: {
+        productSlug: 'calendar',
+        mountId: 'live-calendar-mini-demo',
+        scriptPath: '/scripts/bryntum-calendar-mini-demo.js',
+    },
+};
+
+const config = DEMO_CONFIG[demoKind];
+const bryntumBase = config ? `https://bryntum.com/products/${config.productSlug}/build` : null;
+---
+
+{
+    config && bryntumBase && (
+        <>
+            {/*
+             * Bryntum partner-demo embed.
+             *
+             * The CSS and UMD bundle below are loaded straight from bryntum.com so
+             * the embedded demo stays in sync with the canonical Bryntum build.
+             * Trust assumption: bryntum.com is a trusted partner origin. If that
+             * ever changes, the bundle/CSS should be self-hosted and pinned.
+             */}
+            <link rel="stylesheet" href={`${bryntumBase}/fontawesome/css/fontawesome.css`} />
+            <link rel="stylesheet" href={`${bryntumBase}/fontawesome/css/solid.css`} />
+            <link rel="stylesheet" href={`${bryntumBase}/${config.productSlug}.css`} />
+            <link rel="stylesheet" href={`${bryntumBase}/svalbard-light.css`} />
+            <link rel="stylesheet" href={urlWithBaseUrl('/styles/bryntum-demo.css')} />
+
+            <section class={styles.section}>
+                <div class={styles.sectionInner}>
+                    <div
+                        class:list={[
+                            styles.miniDemo,
+                            demoPosition === 'left' && styles.miniDemoReverse,
+                            demoPosition === 'below' && styles.miniDemoStacked,
+                        ]}
+                    >
+                        <div class={styles.miniDemoCopy}>
+                            {section.heading && <h2>{section.heading}</h2>}
+                            {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
+                            {section.body_html && <div set:html={section.body_html} />}
+
+                            {section.ctas && (
+                                <BryntumCtaList
+                                    ctas={section.ctas}
+                                    buttonClass="button-tertiary"
+                                    wrapperClass={styles.textMediaCtas}
+                                />
+                            )}
+                        </div>
+
+                        <div class={styles.miniDemoFrame}>
+                            <div id={config.mountId} class="bryntum-mini-demo-mount" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <script is:inline src={urlWithBaseUrl('/scripts/bryntum-demo-bootstrap.js')} />
+            <script is:inline src={`${bryntumBase}/${config.productSlug}.umd.js`} />
+            <script is:inline src={urlWithBaseUrl(config.scriptPath)} defer />
+        </>
+    )
+}

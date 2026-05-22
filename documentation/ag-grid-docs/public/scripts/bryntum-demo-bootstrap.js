@@ -11,7 +11,16 @@ window.bryntumDemoInit = function (namespace, mountId, factory) {
             return;
         }
 
-        var api = window.bryntum && window.bryntum[namespace];
+        // Resolve the Bryntum API surface. The published UMD currently leaves
+        // window.bryntum.<namespace> empty and registers public classes on the
+        // internal window.bryntum._classes registry; prefer that when present
+        // and fall back to the public namespace (which is the documented path
+        // and may be restored in a future build).
+        var publicNs = window.bryntum && window.bryntum[namespace];
+        var classes = window.bryntum && window.bryntum._classes;
+        var publicHasContents = publicNs && Object.keys(publicNs).length > 0;
+        var api = publicHasContents ? publicNs : classes;
+
         if (!api) {
             // Bryntum UMD bundle did not load (CDN failure, CSP block, or
             // upstream rename). Warn so the empty demo frame doesn't look like

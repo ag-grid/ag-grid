@@ -215,16 +215,10 @@
         },
         {
             "id": "block_308bfebd6b6058ced7d49c6b5f4ae83d",
-            "type": "text-media",
-            "modifiers": [
-                "code",
-                "fiddle-section",
-                "added-shadow"
-            ],
+            "type": "text-mini-demo",
             "heading": "The World’s Most Flexible JS Gantt Chart",
             "body_html": "<p class=\"pre-title\">By developers, for developers</p>  <p><span style=\"font-weight: 400;\">A Gantt chart encapsulates an enormous amount of complexity. We provide you with a simple, yet highly configurable and well-tested API, so you don’t have to worry about the small details.</span></p>",
             "body_text": "By developers, for developers  A Gantt chart encapsulates an enormous amount of complexity. We provide you with a simple, yet highly configurable and well-tested API, so you don’t have to worry about the small details.",
-            "links": [],
             "ctas": [
                 {
                     "text": "View API Docs",
@@ -232,7 +226,8 @@
                     "title": "View API Docs"
                 }
             ],
-            "media": []
+            "demo_kind": "gantt",
+            "demo_position": "right"
         },
         {
             "id": "block_9acd2c85d89f9b4d895ff10ee9aac96e",

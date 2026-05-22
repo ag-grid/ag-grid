@@ -349,6 +349,101 @@
     }
 }
 
+/* Embedded mini-demo (text + small Bryntum widget side-by-side). */
+.miniDemo {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-size-10;
+    align-items: start;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        grid-template-columns: 1fr 1.3fr;
+        gap: $spacing-size-16;
+    }
+}
+
+.miniDemoReverse {
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        grid-template-columns: 1.3fr 1fr;
+
+        .miniDemoFrame {
+            order: 1;
+        }
+
+        .miniDemoCopy {
+            order: 2;
+        }
+    }
+}
+
+.miniDemoStacked {
+    grid-template-columns: 1fr;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.miniDemoCopy {
+    h2 {
+        font-size: var(--text-fs-2xl);
+        line-height: var(--text-lh-3xl);
+        margin: 0 0 $spacing-size-4;
+    }
+
+    p {
+        font-size: var(--text-fs-base);
+        line-height: var(--text-lh-base);
+        color: var(--color-fg-secondary);
+        margin-bottom: $spacing-size-3;
+    }
+
+    :global(.pre-title) {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: var(--text-fs-sm);
+        font-weight: var(--text-semibold);
+        color: var(--color-fg-tertiary);
+        margin-bottom: $spacing-size-2;
+    }
+
+    a {
+        color: var(--color-fg-primary);
+        text-decoration: underline;
+        text-decoration-color: var(--color-util-brand-400);
+
+        &:hover {
+            color: var(--color-util-brand-500);
+        }
+    }
+}
+
+.miniDemoFrame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-secondary);
+    box-shadow: var(--shadow-md);
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        aspect-ratio: 16 / 11;
+        min-height: 420px;
+    }
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-util-gray-50);
+        border-color: var(--color-util-gray-300);
+    }
+
+    :global(.bryntum-mini-demo-mount) {
+        width: 100%;
+        height: 100%;
+    }
+}
+
 .languagesHeading {
     text-align: center;
     font-size: var(--text-fs-xl);

@@ -11,9 +11,7 @@
         {
             "id": "block_0bc8388be5eda92312da19c25f1d7b70",
             "type": "heroTBM",
-            "modifiers": [
-                "animated-hero"
-            ],
+            "modifiers": ["animated-hero"],
             "eyebrow": "Bryntum Scheduler",
             "heading": "The Scheduling Component With All the Features",
             "body_html": "<p>Bryntum Scheduler is a modern, high-performance UI component that integrates seamlessly with all JavaScript frameworks, including <a href=\"/products/react-scheduler/\">React</a>, <a href=\"/products/angular-scheduler/\">Angular</a>, and <a href=\"/products/vue-scheduler/\">Vue</a>.</p>",
@@ -50,11 +48,7 @@
         {
             "id": "block_37b7ed910ff1f314c2115ab92055bf8c",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "heading": "Feature-Rich",
             "body_html": "<p>Based on our <a href=\"/products/grid\">Grid component</a>, Bryntum Scheduler inherits many of its capabilities, making for an interactive Scheduler that supports:</p> <ul> <li>Drag-and-drop event resizing</li> <li>A convenient event editor and keyboard navigation</li> <li><a href=\"/products/scheduler/examples/export/\">PDF, PNG,</a> <a href=\"/products/scheduler/examples/exporttoexcel/\">Excel</a>, <a href=\"/products/scheduler/examples/exporttoics/\">ICS</a> and <a href=\"/products/scheduler/examples/print/\">print</a> formats for exporting data</li> <li><a href=\"/products/scheduler/examples/responsive/\">Responsive rendering</a></li> <li><a href=\"/products/scheduler/examples/dragfromgrid/\">Drag-and-drop event assignment</a></li> </ul>",
             "body_text": "Based on our Grid component , Bryntum Scheduler inherits many of its capabilities, making for an interactive Scheduler that supports: Drag-and-drop event resizing A convenient event editor and keyboard navigation PDF, PNG, Excel , ICS and print formats for exporting data Responsive rendering Drag-and-drop event assignment",
@@ -117,10 +111,7 @@
         {
             "id": "block_5ab711fa9026978a2304b954034d59f1",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "added-shadow"],
             "heading": "Optimized for Performance",
             "body_html": "<p>The Scheduler combines the following techniques to achieve quick loading times and deliver a smooth scrolling performance:</p> <ul> <li>Virtual rendering</li> <li>Minimal DOM footprint</li> <li>Extensive element reuse</li> </ul> <p>Bryntum Scheduler maintains its excellent performance at scale and with additional featues, <a href=\"/products/scheduler/examples/paged/\">like pagination</a>.</p>",
             "body_text": "The Scheduler combines the following techniques to achieve quick loading times and deliver a smooth scrolling performance: Virtual rendering Minimal DOM footprint Extensive element reuse Bryntum Scheduler maintains its excellent performance at scale and with additional featues, like pagination .",
@@ -145,11 +136,7 @@
         {
             "id": "block_6fb298a3a638c2c29b8f7fbc5f0fbe4f",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "heading": "Fully Customizable",
             "body_html": "<p>Bryntum Scheduler offers an array of customization options, with an extensive and reactive API for making changes on the fly, allowing you to:</p> <ul> <li>Choose from five preset themes or use a <a href=\"/products/scheduler/examples/custom-theme/\">custom theme</a></li> <li><a href=\"/products/scheduler/examples/custom-event-buttons/\">Style event bars</a></li> <li>Render custom content</li> <li>Customize the <a href=\"/products/scheduler/examples/custom-event-editor/\">event editor</a></li> <li>Add <a href=\"/products/scheduler/examples/schedule-context-advanced/\">hover widgets</a></li> </ul>",
             "body_text": "Bryntum Scheduler offers an array of customization options, with an extensive and reactive API for making changes on the fly, allowing you to: Choose from five preset themes or use a custom theme Style event bars Render custom content Customize the event editor Add hover widgets",
@@ -186,10 +173,7 @@
         {
             "id": "block_35b80aec3b5a6c0ba5ef9594bd1ce23f",
             "type": "text-media",
-            "modifiers": [
-                "video-file",
-                "added-shadow"
-            ],
+            "modifiers": ["video-file", "added-shadow"],
             "heading": "Simplified Planning",
             "body_html": "<p>Bryntum Scheduler includes event and capacity summaries to support decision making. Schedule and plan with confidence knowing you can:</p> <ul> <li><a href=\"/products/scheduler/examples/tree-summary-custom/\">Prevent task overallocation</a></li> <li><a href=\"/products/scheduler/examples/summary/\">See the totals</a> for events and other categories</li> <li>View <a href=\"/products/scheduler/examples/groupsummary/\">group summaries</a></li> <li>Display <a href=\"/products/scheduler/examples/tree-summary/\">group capacity limits</a></li> </ul>",
             "body_text": "Bryntum Scheduler includes event and capacity summaries to support decision making. Schedule and plan with confidence knowing you can: Prevent task overallocation See the totals for events and other categories View group summaries Display group capacity limits",
@@ -223,11 +207,7 @@
         {
             "id": "block_3622808249540b890b8e78c0eff948f3",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "heading": "Build Advanced Solutions",
             "body_html": "<p>Empower users with advanced scheduling capabilities, so that they can:</p> <ul> <li>Visualize <a href=\"/products/scheduler/examples/dependencies/\">task dependencies</a></li> <li><a href=\"/products/scheduler/examples/partners/\">Sync events</a></li> <li>Display <a href=\"/products/scheduler/examples/groupsummary/\">group summaries</a></li> <li><a href=\"/products/scheduler/examples/merge-cells/\">Merge events</a></li> </ul>",
             "body_text": "Empower users with advanced scheduling capabilities, so that they can: Visualize task dependencies Sync events Display group summaries Merge events",
@@ -264,10 +244,7 @@
         {
             "id": "block_760c4c7cdc72f4963f0b44a291de9598",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "added-shadow"],
             "heading": "50+ More Widgets",
             "body_html": "<p class=\"p1\">Choose from a <a href=\"/products/scheduler/examples/kitchen-sink/\">wide range of UI elements</a> that easily make your app polished and professional:</p> <ul class=\"ul1\"> <li class=\"li1\">Add <strong>chat boxes, menus, toggles, sliders, and more</strong> to your Bryntum Scheduler app.</li> <li class=\"li1\">Meet user needs with fewer clicks and less searching.</li> <li class=\"li1\">Implement widgets easily with our clear documentation.</li> </ul>",
             "body_text": "Choose from a wide range of UI elements that easily make your app polished and professional: Add chat boxes, menus, toggles, sliders, and more to your Bryntum Scheduler app. Meet user needs with fewer clicks and less searching. Implement widgets easily with our clear documentation.",
@@ -298,11 +275,7 @@
         {
             "id": "block_e95276f79fc286d24c6d6f98e5da5a29",
             "type": "text-media",
-            "modifiers": [
-                "video-file",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["video-file", "reverse", "added-shadow"],
             "heading": "Install with npm",
             "body_html": "<p>Try Bryntum Scheduler directly from npm. <strong>No login or authorization required</strong>. Just install the trial, configure, and start building.</p>",
             "body_text": "Try Bryntum Scheduler directly from npm. No login or authorization required . Just install the trial, configure, and start building.",
@@ -423,9 +396,7 @@
         {
             "id": "block_d65063f8288be8a4ef64332d3c788ca8",
             "type": "text-button",
-            "modifiers": [
-                "variant-2"
-            ],
+            "modifiers": ["variant-2"],
             "heading": "Ready to get started?",
             "body_html": "",
             "body_text": "",

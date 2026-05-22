@@ -8,6 +8,7 @@ import LanguagesSection from './bryntum/LanguagesSection.astro';
 import LiveDemoSection from './bryntum/LiveDemoSection.astro';
 import PartnershipSection from './bryntum/PartnershipSection.astro';
 import TextMediaSection from './bryntum/TextMediaSection.astro';
+import TextMiniDemoSection from './bryntum/TextMiniDemoSection.astro';
 import { LIVE_DEMO_PRODUCT_CONFIG } from './bryntum/liveDemoProducts';
 import type { BryntumCampaignContent } from './bryntum/types';
 import styles from './BryntumCampaign.module.scss';
@@ -70,6 +71,8 @@ const altTextMediaSections = new WeakSet<object>();
                     return <CtaSection section={section} />;
                 case 'partnership':
                     return <PartnershipSection section={section} />;
+                case 'text-mini-demo':
+                    return <TextMiniDemoSection section={section} />;
                 default:
                     return null;
             }
