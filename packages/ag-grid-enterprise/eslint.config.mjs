@@ -100,6 +100,7 @@ export default [
             'playwright.config.ts',
             'esbuildBuild.cjs',
             'vitest.umd.config.ts',
+            'scripts/',
         ],
     },
 ];

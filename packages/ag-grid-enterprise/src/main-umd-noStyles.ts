@@ -7,7 +7,7 @@ import { AllEnterpriseModule } from './main';
 
 _setUmd();
 ModuleRegistry.registerModules([AllEnterpriseModule]);
-export * from 'ag-grid-community';
+export * from './community-public';
 export * from './main';
 // Export the overridden createGrid function which automatically registers AG Charts modules if present
 export { createGrid } from './main-umd-shared';

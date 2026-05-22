@@ -277,6 +277,12 @@
         "cwd": "{projectRoot}"
       }
     },
+    "generate-community-reexports": {
+      "command": "npx tsx scripts/generate-community-reexports.ts",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "test": {
       "command": "npx vitest run",
       "outputs": ["{workspaceRoot}/reports/ag-grid-enterprise.xml"],

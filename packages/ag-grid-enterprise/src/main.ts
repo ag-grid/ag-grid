@@ -89,4 +89,4 @@ export { GridChartsModule, IntegratedChartsModule } from './charts/integratedCha
 
 export { AllEnterpriseModule } from './allEnterpriseModule';
 
-export * from 'ag-grid-community';
+export * from './community-public';
