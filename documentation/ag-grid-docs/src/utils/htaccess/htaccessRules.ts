@@ -73,6 +73,19 @@ const modRewriteRules = `
     # RewriteCond %{HTTP_HOST} !^www\\. [NC]
     # RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
     
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^angulargrid\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ https://ag-grid.com/$1 [R=301,L]
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^angular-grid\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ https://ag-grid.com/$1 [R=301,L]
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^javascript-grid\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ https://ag-grid.com/$1 [R=301,L]
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^react-grid\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ https://ag-grid.com/$1 [R=301,L]
+    
     # Redirect angulargrid.com to ag-grid.com
     RewriteCond %{HTTP_HOST} ^angulargrid\\.com$ [OR]
     RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
