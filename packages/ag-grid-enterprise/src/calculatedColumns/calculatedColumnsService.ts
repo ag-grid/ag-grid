@@ -8,7 +8,7 @@ import type {
     ICalculatedColumnsService,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _isTrimmedStringLargerThan, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _isStringLargerThan, _warnOnce } from 'ag-grid-community';
 
 import type { FormulaError } from '../formula/ast/utils';
 import { Dialog } from '../widgets/dialog';
@@ -24,7 +24,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     public readonly beanName = 'calculatedColsSvc' as const;
 
     public addCalculatedColumn(colDef: CalculatedColumnDef): void {
-        if (!_isTrimmedStringLargerThan(colDef.calculatedExpression, 0)) {
+        if (!_isStringLargerThan(colDef.calculatedExpression, 0, true)) {
             _warnOnce('addCalculatedColumn: calculatedExpression is required and cannot be empty.');
             return;
         }
@@ -41,7 +41,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             return;
         }
         if (colDef.calculatedExpression !== undefined) {
-            if (!_isTrimmedStringLargerThan(colDef.calculatedExpression, 0)) {
+            if (!_isStringLargerThan(colDef.calculatedExpression, 0, true)) {
                 _warnOnce('updateCalculatedColumn: calculatedExpression cannot be empty.');
                 return;
             }

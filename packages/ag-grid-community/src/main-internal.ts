@@ -201,7 +201,7 @@ export {
     _camelCaseToHumanText,
     _escapeString,
     _isExpressionString,
-    _isTrimmedStringLargerThan,
+    _isStringLargerThan,
     _toString,
 } from './agStack/utils/string';
 export type { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';

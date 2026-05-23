@@ -29,6 +29,7 @@ import { shiftNode } from './functions/utils';
 import { createHeaderReferenceEntries } from './headerReferences';
 import type { FormulaErrorId, FormulaErrorType } from './i18n';
 import { isValidFunctionName } from './refUtils';
+import { isFormulaRowAvailable } from './rowAccess';
 
 /** Shared params object for `rowRenderer.refreshCells`, hoisted to avoid per-call allocation. */
 const REFRESH_CELLS_PARAMS = { suppressFlash: true, force: true } as const;
@@ -644,6 +645,13 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (!this.isEvaluationActive() || (!col.isAllowFormula() && calculatedExpression == null)) {
             return null;
         }
+
+        // for (SSRM/Infinite first-block load) - Stub / failed-load / data-less rows can't be evaluated.
+        // returning null here keeps cells blank until the row renders with real data.
+        if (!isFormulaRowAvailable(row)) {
+            return null;
+        }
+
         const cache = this.cachedResult;
         let rowMap = cache.get(row);
         const cached = rowMap?.get(col);

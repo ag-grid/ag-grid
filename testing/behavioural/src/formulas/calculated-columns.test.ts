@@ -147,6 +147,20 @@ describe('ag-grid calculated columns', () => {
         return getCalculatedColumnDialog().querySelector<HTMLTextAreaElement>('textarea')!;
     }
 
+    // Polls until the first row has data. `modelUpdated` is unreliable across row models in
+    // jsdom (Viewport may fire it before the listener is attached, or never trigger
+    // setViewportRange at all); polling on the actual row data is the one signal every row
+    // model exposes consistently.
+    async function waitForFirstRow(api: { getDisplayedRowAtIndex(index: number): any }): Promise<void> {
+        for (let i = 0; i < 50; i++) {
+            if (api.getDisplayedRowAtIndex(0)?.data != null) {
+                return;
+            }
+            await asyncSetTimeout(10);
+        }
+        throw new Error('Timed out waiting for first row to load');
+    }
+
     function findColumnDef(columnDefs: (ColDef | ColGroupDef)[], colId: string): ColDef | undefined {
         for (const colDef of columnDefs) {
             if ('children' in colDef && colDef.children) {
@@ -450,7 +464,8 @@ describe('ag-grid calculated columns', () => {
             ],
             ...options(rowData),
         });
-        await asyncSetTimeout(10);
+
+        await waitForFirstRow(api);
 
         const firstRow = api.getDisplayedRowAtIndex(0)!;
         expect(api.getCellValue({ rowNode: firstRow, colKey: 'profit', useFormatter: false })).toBe(7);
@@ -477,7 +492,7 @@ describe('ag-grid calculated columns', () => {
                 },
             },
         });
-        await asyncSetTimeout(10);
+        await waitForFirstRow(api);
 
         expect(
             api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'profit', useFormatter: false })
