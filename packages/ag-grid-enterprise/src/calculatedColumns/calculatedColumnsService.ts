@@ -8,7 +8,7 @@ import type {
     ICalculatedColumnsService,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _isTrimmedStringLargerThan, _warnOnce } from 'ag-grid-community';
 
 import type { FormulaError } from '../formula/ast/utils';
 import { Dialog } from '../widgets/dialog';
@@ -24,6 +24,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     public readonly beanName = 'calculatedColsSvc' as const;
 
     public addCalculatedColumn(colDef: CalculatedColumnDef): void {
+        if (!_isTrimmedStringLargerThan(colDef.calculatedExpression, 0)) {
+            _warnOnce('addCalculatedColumn: calculatedExpression is required and cannot be empty.');
+            return;
+        }
         if (!this.validateHeaderReferences(colDef.calculatedExpression, colDef.colId ?? '')) {
             return;
         }
@@ -36,11 +40,14 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (targetColumn?.colDef.calculatedExpression == null) {
             return;
         }
-        if (
-            colDef.calculatedExpression != null &&
-            !this.validateHeaderReferences(colDef.calculatedExpression, targetColumn.getColId())
-        ) {
-            return;
+        if (colDef.calculatedExpression !== undefined) {
+            if (!_isTrimmedStringLargerThan(colDef.calculatedExpression, 0)) {
+                _warnOnce('updateCalculatedColumn: calculatedExpression cannot be empty.');
+                return;
+            }
+            if (!this.validateHeaderReferences(colDef.calculatedExpression, targetColumn.getColId())) {
+                return;
+            }
         }
 
         const targetColId = targetColumn.getColId();
