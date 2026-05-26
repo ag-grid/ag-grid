@@ -26,10 +26,9 @@ import type { Addr, FormulaResolver, FormulaVisitorContext } from './functions/r
 import { evalAst, formulaVisitorSetVisited, formulaVisitorSetVisiting, unresolvedDeps } from './functions/resolver';
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
 import { shiftNode } from './functions/utils';
-import { createHeaderReferenceEntries } from './headerReferences';
 import type { FormulaErrorId, FormulaErrorType } from './i18n';
 import { isValidFunctionName } from './refUtils';
-import { isFormulaRowAvailable } from './rowAccess';
+import { isCalculatedColumnRowAvailable, isFormulaRowAvailable } from './rowAccess';
 
 /** Shared params object for `rowRenderer.refreshCells`, hoisted to avoid per-call allocation. */
 const REFRESH_CELLS_PARAMS = { suppressFlash: true, force: true } as const;
@@ -87,12 +86,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Reverse lookup for A1 labels by column instance. */
     private readonly colToRefMap: Map<AgColumn, string> = new Map();
 
-    /** Map calculated-column header references, e.g. "Revenue" or "2026 Q4", to columns. */
-    private readonly calculatedRefMap: Map<string, AgColumn> = new Map();
-
-    /** Reverse lookup for calculated-column header references by column instance. */
-    private readonly colToCalculatedRefMap: Map<AgColumn, string> = new Map();
-
     /** Lazy-sorted, validated subset of `supportedOperations` keys surfaced to autocomplete. */
     private functionNames: string[] | null = null;
 
@@ -137,16 +130,18 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
         const formulaColumnsPresent = editableFormulaColumnsPresent || calculatedColumnsPresent;
         this.formulaColumnsPresent = formulaColumnsPresent;
-        const compatible = formulaColumnsPresent && this.checkForIncompatibleServices(cols);
+        const editableFormulasCompatible =
+            editableFormulaColumnsPresent && this.checkForEditableFormulaIncompatibleServices(cols);
+        const calculatedColumnsCompatible =
+            calculatedColumnsPresent && this.checkForCalculatedColumnIncompatibleServices(cols);
         const editableFormulasSupported = this.beans.rowModel.getType() === 'clientSide';
-        const active = compatible && editableFormulaColumnsPresent && editableFormulasSupported;
-        const calculatedColumnsActive = compatible && calculatedColumnsPresent;
+        const active = editableFormulasCompatible && editableFormulasSupported;
+        const calculatedColumnsActive = calculatedColumnsCompatible;
 
         if (active !== this.active || calculatedColumnsActive !== this.calculatedColumnsActive) {
             this.active = active;
             this.calculatedColumnsActive = calculatedColumnsActive;
             this.rebuildColRefMap();
-            this.rebuildCalculatedRefMap();
             this.refreshFormulas(true);
         }
     }
@@ -155,7 +150,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         return this.active || this.calculatedColumnsActive;
     }
 
-    private checkForIncompatibleServices(cols: _ColumnCollections): boolean {
+    private checkForBaseIncompatibleServices(): boolean {
         if (this.gos.get('masterDetail')) {
             _warn(295, { blockedService: 'Master Detail' });
             return false;
@@ -168,6 +163,31 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
         if (this.gos.get('enableCellExpressions')) {
             _warn(295, { blockedService: 'Cell Expressions' });
+            return false;
+        }
+
+        return true;
+    }
+
+    private checkForCalculatedColumnIncompatibleServices(cols: _ColumnCollections): boolean {
+        if (!this.checkForBaseIncompatibleServices()) {
+            return false;
+        }
+
+        const columns = cols.list;
+        for (let i = 0, len = columns.length; i < len; ++i) {
+            const col = columns[i];
+            if (col.isAllowPivot() || col.isPivotActive()) {
+                _warn(295, { blockedService: 'Column Pivoting' });
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private checkForEditableFormulaIncompatibleServices(cols: _ColumnCollections): boolean {
+        if (!this.checkForBaseIncompatibleServices()) {
             return false;
         }
 
@@ -217,7 +237,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 return;
             }
             this.rebuildColRefMap();
-            this.rebuildCalculatedRefMap();
             // Columns may have been destroyed and recreated; every cached CellFormula's `.column`
             // reference could be dangling, so we can't safely keep the ASTs around either.
             this.refreshFormulas(true);
@@ -298,8 +317,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         this.cachedResult.clear();
         this.colRefMap.clear();
         this.colToRefMap.clear();
-        this.calculatedRefMap.clear();
-        this.colToCalculatedRefMap.clear();
         this.supportedOperations.clear();
         this.functionNames = null;
         this.activeCtx = null;
@@ -485,22 +502,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
     }
 
-    private rebuildCalculatedRefMap(): void {
-        const { beans, calculatedRefMap, colToCalculatedRefMap } = this;
-        calculatedRefMap.clear();
-        colToCalculatedRefMap.clear();
-
-        if (!this.isEvaluationActive()) {
-            return;
-        }
-
-        const entries = createHeaderReferenceEntries(beans, beans.colModel.getCols() ?? []);
-        for (const entry of entries) {
-            calculatedRefMap.set(entry.reference, entry.column);
-            colToCalculatedRefMap.set(entry.column, entry.reference);
-        }
-    }
-
     /** Lookup a column by A1-style reference label, e.g. "A", "AB". */
     public getColByRef(ref: string): AgColumn | null {
         return this.colRefMap.get(ref.toUpperCase()) ?? null;
@@ -509,14 +510,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Find the A1-style label for a given column (reverse lookup). */
     public getColRef(col: AgColumn): string | null {
         return this.colToRefMap.get(col) ?? null;
-    }
-
-    public getColByCalculatedRef(ref: string): AgColumn | null {
-        return this.calculatedRefMap.get(ref) ?? null;
-    }
-
-    public getCalculatedRef(col: AgColumn): string | null {
-        return this.colToCalculatedRefMap.get(col) ?? null;
     }
 
     /** Clear all cached results and re-render cells. */
@@ -648,7 +641,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
         // for (SSRM/Infinite first-block load) - Stub / failed-load / data-less rows can't be evaluated.
         // returning null here keeps cells blank until the row renders with real data.
-        if (!isFormulaRowAvailable(row)) {
+        if (calculatedExpression != null ? !isCalculatedColumnRowAvailable(row) : !isFormulaRowAvailable(row)) {
             return null;
         }
 

@@ -1781,12 +1781,14 @@ export interface _FormulaGridApi<TData = any> {
 export interface _CalculatedColumnsGridApi<TData = any> {
     /**
      * Add a new calculated column to the end of the column definitions.
+     * The `calculatedExpression` should reference other columns by `colId`, e.g. `[revenue] - [cost]`.
      * @agModule `CalculatedColumnsModule`
      */
     addCalculatedColumn<TValue = any>(colDef: CalculatedColumnDef<TData, TValue>): void;
 
     /**
      * Update an existing calculated column.
+     * The `calculatedExpression` should reference other columns by `colId`, e.g. `[revenue] - [cost]`.
      * No-op if the supplied column key does not resolve to a calculated column.
      * @agModule `CalculatedColumnsModule`
      */

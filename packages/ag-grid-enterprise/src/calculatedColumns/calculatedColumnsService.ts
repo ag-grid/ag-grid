@@ -14,11 +14,15 @@ import type { FormulaError } from '../formula/ast/utils';
 import { Dialog } from '../widgets/dialog';
 import type { CalculatedColumnDraft, CalculatedColumnType, ColumnSuggestion } from './calculatedColumnForm';
 import { CALCULATED_COLUMN_TYPES, CalculatedColumnForm, DEFAULT_DRAFT } from './calculatedColumnForm';
-import { clearStaleDataTypeProperties, collectColIdsAndFields } from './calculatedColumnHelpers';
 import {
     createCalculatedColumnReferenceMapper,
     translateCalculatedColumnReferenceError,
 } from './calculatedColumnReferenceMapper';
+import {
+    clearStaleDataTypeProperties,
+    collectColIdsAndFields,
+    replaceBracketReferences,
+} from './calculatedColumnUtils';
 
 export class CalculatedColumnsService extends BeanStub implements NamedBean, ICalculatedColumnsService {
     public readonly beanName = 'calculatedColsSvc' as const;
@@ -28,7 +32,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             _warnOnce('addCalculatedColumn: calculatedExpression is required and cannot be empty.');
             return;
         }
-        if (!this.validateHeaderReferences(colDef.calculatedExpression, colDef.colId ?? '')) {
+        if (
+            !this.validateColumnReferences(colDef.calculatedExpression) ||
+            !this.validateFormulaExpression(colDef.calculatedExpression)
+        ) {
             return;
         }
         const nextDefs = [...this.getColumnDefs(), this.toCalculatedColDef(colDef)];
@@ -45,7 +52,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 _warnOnce('updateCalculatedColumn: calculatedExpression cannot be empty.');
                 return;
             }
-            if (!this.validateHeaderReferences(colDef.calculatedExpression, targetColumn.getColId())) {
+            if (
+                !this.validateColumnReferences(colDef.calculatedExpression) ||
+                !this.validateFormulaExpression(colDef.calculatedExpression)
+            ) {
                 return;
             }
         }
@@ -56,25 +66,40 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         this.refreshCalculatedColumn(targetColId);
     }
 
-    // Mirrors the dialog's commit-time validation so API callers get a synchronous error rather
-    // than a delayed parse failure when a header reference is unknown or ambiguous.
-    private validateHeaderReferences(expression: string, excludedColId: string): boolean {
-        const mapper = createCalculatedColumnReferenceMapper(
-            this.beans,
-            this.beans.colModel.getCols() ?? [],
-            excludedColId
-        );
-        const result = mapper.toInternalExpression(expression);
-        if ('error' in result) {
-            _warnOnce(translateCalculatedColumnReferenceError(result.error, this.getLocaleTextFunc()));
+    private getFormulaExpressionError(expression: string): string | null {
+        const error = this.beans.formula?.validateExpression(`=${expression}`);
+        return error ? (error as FormulaError).getTranslatedMessage(this.getLocaleTextFunc()) : null;
+    }
+
+    private validateFormulaExpression(expression: string): boolean {
+        const error = this.getFormulaExpressionError(expression);
+        if (error) {
+            _warnOnce(error);
             return false;
         }
         return true;
     }
 
-    private validateFormulaExpression(expression: string): string | null {
-        const error = this.beans.formula?.validateExpression(`=${expression}`);
-        return error ? (error as FormulaError).getTranslatedMessage(this.getLocaleTextFunc()) : null;
+    private validateColumnReferences(expression: string): boolean {
+        let invalidReference: string | undefined;
+        replaceBracketReferences(expression, (ref) => {
+            if (invalidReference == null && !this.beans.colModel.getColById(ref)) {
+                invalidReference = ref;
+            }
+            return ref;
+        });
+
+        if (invalidReference != null) {
+            _warnOnce(
+                translateCalculatedColumnReferenceError(
+                    { type: 'unknown', reference: invalidReference },
+                    this.getLocaleTextFunc()
+                )
+            );
+            return false;
+        }
+
+        return true;
     }
 
     public showAddCalculatedColumnDialog(column: AgColumn | null): void {
@@ -206,7 +231,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                     error: translateCalculatedColumnReferenceError(result.error, this.getLocaleTextFunc()),
                 };
             }
-            const error = this.validateFormulaExpression(result.expression);
+            const error = this.getFormulaExpressionError(result.expression);
             return error ? { valid: false, error } : { valid: true, expression: result.expression };
         };
         const handleValidate = (nextDraft: CalculatedColumnDraft): string | null => {
@@ -254,7 +279,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 minHeight: 280,
                 centered: true,
                 movable: true,
-                resizable: false,
+                resizable: true,
                 modal: false,
                 cssIdentifier: 'calculated-column',
             })
@@ -309,7 +334,11 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 typeof cellDataType === 'string' && cellDataType in CALCULATED_COLUMN_TYPES
                     ? (cellDataType as CalculatedColumnType)
                     : DEFAULT_DRAFT.cellDataType,
-            calculatedExpression: colDef.calculatedExpression ?? '',
+            calculatedExpression: createCalculatedColumnReferenceMapper(
+                this.beans,
+                this.beans.colModel.getCols() ?? [],
+                colId
+            ).toDisplayExpression(colDef.calculatedExpression ?? ''),
         };
     }
 

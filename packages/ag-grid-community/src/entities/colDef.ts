@@ -322,9 +322,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     allowFormula?: boolean;
     /**
      * Expression used to calculate this column's value from other columns in the same row.
-     * Use bracket references to read other columns by their header name, e.g. `[Revenue] - [Cost]`.
-     * When two columns share the same header under different groups, use the shortest unique group
-     * path, e.g. `[2025 Q4]` and `[2026 Q4]`. Calculated columns are read-only.
+     * Use bracket references to read other columns by `colId`, e.g. `[revenue] - [cost]`.
+     * Calculated columns are read-only.
      * @agModule `CalculatedColumnsModule`
      */
     calculatedExpression?: string;

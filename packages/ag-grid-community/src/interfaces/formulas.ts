@@ -85,8 +85,6 @@ export interface IFormulaService extends Bean {
     validateExpression(expression: string): Error | null;
     getColByRef(ref: string): AgColumn | null;
     getColRef(col: AgColumn): string | null;
-    getColByCalculatedRef(ref: string): AgColumn | null;
-    getCalculatedRef(col: AgColumn): string | null;
     updateFormulaByOffset(params: {
         value: string;
         rowDelta?: number;

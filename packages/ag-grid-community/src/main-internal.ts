@@ -262,6 +262,7 @@ export {
     isRowNumberCol,
     isSpecialCol,
 } from './columns/columnUtils';
+export { DATA_TYPE_DERIVED_COL_DEF_PROPERTIES as _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES } from './columns/dataTypeService';
 export type { DataTypeService } from './columns/dataTypeService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
 export type { VisibleColsService } from './columns/visibleColsService';

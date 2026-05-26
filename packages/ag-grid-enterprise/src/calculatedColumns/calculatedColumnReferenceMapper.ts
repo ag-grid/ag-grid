@@ -2,6 +2,7 @@ import type { AgColumn, BeanCollection } from 'ag-grid-community';
 
 import { createHeaderReferenceEntries, isAmbiguousHeaderReference } from '../formula/headerReferences';
 import type { ColumnSuggestion } from './calculatedColumnForm';
+import { replaceBracketReferences } from './calculatedColumnUtils';
 
 interface CalculatedColumnReferenceError {
     type: 'unknown' | 'ambiguous';
@@ -11,6 +12,7 @@ interface CalculatedColumnReferenceError {
 interface CalculatedColumnReferenceMapper {
     suggestions: ColumnSuggestion[];
     toInternalExpression(expression: string): { expression: string } | { error: CalculatedColumnReferenceError };
+    toDisplayExpression(expression: string): string;
 }
 
 type TranslateFn = (key: string, defaultValue: string, variableValues?: string[]) => string;
@@ -23,7 +25,7 @@ export function translateCalculatedColumnReferenceError(
         error.type === 'ambiguous'
             ? [
                   'calculatedColumnExpressionAmbiguousReference',
-                  'Ambiguous column reference "${variable}". Use a more specific column reference.',
+                  'Ambiguous column reference "${variable}". Use the Columns list or a more specific group path.',
               ]
             : ['calculatedColumnExpressionUnknownReference', 'Unknown column reference "${variable}".'];
     return translate(localeKey, defaultMessage, [error.reference]).replace('${variable}', error.reference);
@@ -36,6 +38,7 @@ export function createCalculatedColumnReferenceMapper(
 ): CalculatedColumnReferenceMapper {
     const entries = createHeaderReferenceEntries(beans, columns, excludedColId);
     const referenceToColId = new Map(entries.map((entry) => [entry.reference, entry.colId]));
+    const colIdToReference = new Map(entries.map((entry) => [entry.colId, entry.reference]));
 
     return {
         suggestions: entries.map(({ leafName, reference }) => ({
@@ -46,41 +49,21 @@ export function createCalculatedColumnReferenceMapper(
         })),
         toInternalExpression(expression: string) {
             let error: CalculatedColumnReferenceError | undefined;
-            visitBracketReferences(expression, (ref) => {
-                if (referenceToColId.has(ref)) {
-                    return;
+            const internalExpression = replaceBracketReferences(expression, (ref) => {
+                const colId = referenceToColId.get(ref);
+                if (colId != null) {
+                    return colId;
                 }
                 error ??= {
                     type: isAmbiguousHeaderReference(entries, ref) ? 'ambiguous' : 'unknown',
                     reference: ref,
                 };
+                return ref;
             });
-            return error !== undefined ? { error } : { expression };
+            return error !== undefined ? { error } : { expression: internalExpression };
+        },
+        toDisplayExpression(expression: string) {
+            return replaceBracketReferences(expression, (ref) => colIdToReference.get(ref) ?? ref);
         },
     };
-}
-
-// String-literal handling mirrors the parser's isInsideStringLiteral in formula/ast/parsers.ts —
-// keep the two in sync if either side adds new quote-escape semantics.
-function visitBracketReferences(expression: string, visitReference: (reference: string) => void): void {
-    let inString = false;
-    for (let i = 0; i < expression.length; i++) {
-        const char = expression[i];
-        if (char === '"') {
-            if (expression[i + 1] === '"') {
-                i++;
-            } else {
-                inString = !inString;
-            }
-            continue;
-        }
-        if (!inString && char === '[') {
-            const end = expression.indexOf(']', i + 1);
-            if (end === -1) {
-                continue;
-            }
-            visitReference(expression.slice(i + 1, end));
-            i = end;
-        }
-    }
 }

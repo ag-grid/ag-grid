@@ -127,8 +127,7 @@ function emitA1Ref(beans: BeanCollection, ref: CellRef, isCol: boolean, unsafe: 
 
 function serializeCellA1(beans: BeanCollection, cell: Cell, unsafe: boolean, useCalculatedRefs: boolean): string {
     if (useCalculatedRefs && cell.row.current && !cell.endColumn && !cell.endRow) {
-        const column = beans.colModel.getColById(cell.column.id);
-        return `[${(column && beans.formula?.getCalculatedRef(column)) || cell.column.id}]`;
+        return `[${cell.column.id}]`;
     }
     const startRef = emitA1Ref(beans, cell.column, true, unsafe) + emitA1Ref(beans, cell.row, false, unsafe);
     const { endColumn, endRow } = cell;
@@ -148,8 +147,7 @@ function emitRefRowPart(beans: BeanCollection, ref: CellRef): string {
 
 function serializeCellREF(beans: BeanCollection, cell: Cell, useCalculatedRefs: boolean): string {
     if (useCalculatedRefs && cell.row.current && !cell.endColumn && !cell.endRow) {
-        const column = beans.colModel.getColById(cell.column.id);
-        return `[${(column && beans.formula?.getCalculatedRef(column)) || cell.column.id}]`;
+        return `[${cell.column.id}]`;
     }
     const start = 'REF(' + emitRefColPart(beans, cell.column) + ',' + emitRefRowPart(beans, cell.row);
     const { endColumn, endRow } = cell;

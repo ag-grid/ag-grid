@@ -45,7 +45,7 @@ const columnDefs: ColDef<SalesRow>[] = [
     {
         colId: 'profit',
         headerName: 'Profit',
-        calculatedExpression: '[Revenue] - [Cost]',
+        calculatedExpression: '[revenue] - [cost]',
         cellDataType: 'number',
         sortable: true,
         filter: 'agNumberColumnFilter',
@@ -54,7 +54,7 @@ const columnDefs: ColDef<SalesRow>[] = [
     {
         colId: 'margin',
         headerName: 'Margin',
-        calculatedExpression: '[Profit] / [Revenue]',
+        calculatedExpression: '[profit] / [revenue]',
         cellDataType: 'number',
         sortable: true,
         filter: 'agNumberColumnFilter',
@@ -63,7 +63,7 @@ const columnDefs: ColDef<SalesRow>[] = [
     {
         colId: 'status',
         headerName: 'Status',
-        calculatedExpression: 'IF([Margin] >= 0.25, "Healthy", "Review")',
+        calculatedExpression: 'IF([margin] >= 0.25, "Healthy", "Review")',
         cellDataType: 'text',
         sortable: true,
         filter: 'agTextColumnFilter',

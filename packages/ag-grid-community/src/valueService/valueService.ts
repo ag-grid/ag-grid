@@ -267,7 +267,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const colDef = column.colDef;
         const colId = column.colId;
 
-        if (!isGroup && colDef.calculatedExpression != null && this.gos.isModuleRegistered('CalculatedColumns')) {
+        if (colDef.calculatedExpression != null && this.gos.isModuleRegistered('CalculatedColumns')) {
             return this.beans.formula?.resolveValue(column, rowNode as RowNode);
         }
 

@@ -41,7 +41,7 @@ const columnDefs: ColDef<SalesRow>[] = [
     {
         colId: 'profit',
         headerName: 'Profit',
-        calculatedExpression: '[Revenue] - [Cost]',
+        calculatedExpression: '[revenue] - [cost]',
         cellDataType: 'number',
         sortable: true,
         filter: 'agNumberColumnFilter',

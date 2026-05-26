@@ -50,12 +50,14 @@ const parseOperand = (
 
     if (trimmed.startsWith('[') && trimmed.endsWith(']') && trimmed.length > 2) {
         const columnReference = trimmed.slice(1, -1);
-        const column = beans.formula?.getColByCalculatedRef(columnReference);
+        const column = beans.colModel.getColById(columnReference);
 
         if (!unsafe && !column) {
             throw new FormulaParseError(2, 0, trimmed.length, [trimmed]);
         }
 
+        // Unsafe mode (e.g. paste-time parsing without grid context) stores the raw reference
+        // as the AST id — downstream lookups via getColById will not resolve it.
         return {
             column: { id: column?.getColId() ?? columnReference, absolute: false },
             row: { id: '', absolute: false, current: true },
