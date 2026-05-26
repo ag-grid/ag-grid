@@ -52,10 +52,7 @@
         {
             "id": "block_948f4b16be9cc9a1ee3a72452105c843",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "added-shadow"],
             "heading": "A Scheduler Built for Pros",
             "body_html": "<p>Scheduler Pro is our pro-grade scheduling product, handling inter-task dependencies, constraints and working-time calendars. Written in ES2020 &amp; TypeScript, it drops cleanly into any React, Angular or Vue app.</p>",
             "body_text": "Scheduler Pro is our pro-grade scheduling product, handling inter-task dependencies, constraints and working-time calendars. Written in ES2020 & TypeScript, it drops cleanly into any React, Angular or Vue app.",
@@ -86,11 +83,7 @@
         {
             "id": "block_7279369cdb8981e50e221bd66736d060",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "heading": "Feature-Packed Gantt Chart",
             "body_html": "<p>Our Gantt chart is the most capable JavaScript Gantt component on the market. A wide-reaching API and a vast feature set together cover every project-management need you have. Written in pure JavaScript / TypeScript, it drops cleanly into any React, Angular or Vue app.</p>",
             "body_text": "Our Gantt chart is the most capable JavaScript Gantt component on the market. A wide-reaching API and a vast feature set together cover every project-management need you have. Written in pure JavaScript / TypeScript, it drops cleanly into any React, Angular or Vue app.",
@@ -121,11 +114,7 @@
         {
             "id": "block_d52edbe07e584bc8721052395c4ba60d",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "calendar",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "calendar", "added-shadow"],
             "heading": "Tailorable Calendar",
             "body_html": "<p>Our contemporary Calendar component delivers a complete calendar toolkit with day, week, month, year and agenda views. It ships with a set of polished widgets too — filters, an event editor, a month navigation bar and more.</p>",
             "body_text": "Our contemporary Calendar component delivers a complete calendar toolkit with day, week, month, year and agenda views. It ships with a set of polished widgets too — filters, an event editor, a month navigation bar and more.",
@@ -156,9 +145,7 @@
         {
             "id": "block_6c4410366c4202d5577375e4c860c979",
             "type": "text-button",
-            "modifiers": [
-                "variant-2"
-            ],
+            "modifiers": ["variant-2"],
             "heading": "Ready to dive in?",
             "body_html": "",
             "body_text": "",
@@ -178,11 +165,7 @@
         {
             "id": "block_2a6c70a402771bbc11de5d07f6290a54",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "heading": "Blazing-Fast Grid",
             "body_html": "<p>Bryntum Grid is a capable, high-throughput table component for the web. It’s feature-packed and chews through big datasets without breaking a sweat. Written in pure JavaScript, it plays nicely with the framework you’re already on.</p>",
             "body_text": "Bryntum Grid is a capable, high-throughput table component for the web. It’s feature-packed and chews through big datasets without breaking a sweat. Written in pure JavaScript, it plays nicely with the framework you’re already on.",
@@ -213,10 +196,7 @@
         {
             "id": "block_f56f7ec18ae04336c9ab389bfcf96da0",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "added-shadow"],
             "heading": "Kanban Task Board Component",
             "body_html": "<p>Our contemporary JS Kanban Task Board web component makes it easy to keep on top of day-to-day work. It supports swimlanes and lets you drag tasks across columns. A handful of config lines is enough to match your workflow with any number of columns &amp; swimlanes.</p>",
             "body_text": "Our contemporary JS Kanban Task Board web component makes it easy to keep on top of day-to-day work. It supports swimlanes and lets you drag tasks across columns. A handful of config lines is enough to match your workflow with any number of columns & swimlanes.",
@@ -247,11 +227,7 @@
         {
             "id": "block_29545995be5809df3ce8ee752d81e2a6",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "heading": "Schedule Just About Anything",
             "body_html": "<p>Bryntum Scheduler is a flexible scheduling widget for cases where you don’t need the heavy lifting of Scheduler Pro. It’s still loaded with features and options</p>",
             "body_text": "Bryntum Scheduler is a flexible scheduling widget for cases where you don’t need the heavy lifting of Scheduler Pro. It’s still loaded with features and options",
@@ -282,10 +258,7 @@
         {
             "id": "block_6c11329d4d70b0cbf2db97c221a78ebd",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "added-shadow"],
             "heading": "50+ Additional Widgets",
             "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/grid/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel and meet user needs with fewer clicks and less searching. Drop lists, menus, toggles, sliders and more into Bryntum components.</p>",
             "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel and meet user needs with fewer clicks and less searching. Drop lists, menus, toggles, sliders and more into Bryntum components.",
@@ -316,11 +289,7 @@
         {
             "id": "block_5de00a582eb994795ddeece5d75822ea",
             "type": "text-media",
-            "modifiers": [
-                "video-file",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["video-file", "reverse", "added-shadow"],
             "heading": "Install via npm",
             "body_html": "<p>Pull Bryntum components straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial packages, configure them, and you’re ready to build.</p>",
             "body_text": "Pull Bryntum components straight from npm. No sign-in or auth needed . Install the trial packages, configure them, and you’re ready to build.",

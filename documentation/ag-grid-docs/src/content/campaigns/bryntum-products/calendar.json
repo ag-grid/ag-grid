@@ -11,9 +11,7 @@
         {
             "id": "block_50bba12076720a48ac737bca5c196075",
             "type": "heroTBM",
-            "modifiers": [
-                "animated-hero"
-            ],
+            "modifiers": ["animated-hero"],
             "eyebrow": "Bryntum Calendar",
             "heading": "A Contemporary JavaScript Calendar Toolkit",
             "body_html": "<p>The Bryntum Calendar is a contemporary calendar component offering multiple views. Written in pure JavaScript, it slots cleanly into <a href=\"https://bryntum.com/products/react-calendar/\"><span class=\"s1\">React</span></a>, <a href=\"https://bryntum.com/products/angular-calendar\"><span class=\"s1\">Angular</span></a> and <a href=\"https://bryntum.com/products/vue-calendar/\"><span class=\"s1\">Vue</span></a> apps.</p>",
@@ -56,10 +54,7 @@
         {
             "id": "block_dec4a474ba08484c3bd147cc587e5ce5",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "added-shadow"],
             "heading": "Why pick a JavaScript event Calendar?",
             "body_html": "<p>Built on JavaScript, a foundational web technology, the calendar component drops into existing applications with a ready-to-wire-up set of interactive features.</p> <p>Picking the Bryntum JavaScript Calendar gives your users a thoughtfully designed and high-performing calendar that has been thoroughly tested and battle-proven in production apps.</p>",
             "body_text": "Built on JavaScript, a foundational web technology, the calendar component drops into existing applications with a ready-to-wire-up set of interactive features. Picking the Bryntum JavaScript Calendar gives your users a thoughtfully designed and high-performing calendar that has been thoroughly tested and battle-proven in production apps.",
@@ -79,11 +74,7 @@
         {
             "id": "block_20bf74698f4e9c691fa32da9577b475a",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "heading": "Capable and Flexible",
             "body_html": "<p class=\"p1\">Written in modern JavaScript (ES6+), the Bryntum Calendar runs lean and embeds without fuss. You get:</p> <ul> <li>Snappy performance, even on <a href=\"/products/calendar/examples/megadataset/\">huge datasets</a>.</li> <li>One-click exports to <a href=\"/products/calendar/examples/exporttoexcel/\">Excel</a>, <a href=\"/products/calendar/examples/exporttoics/\">ICS</a> and <a href=\"/products/calendar/examples/print/\">print</a> formats.</li> <li>Tunable date and time settings — <a href=\"/products/calendar/examples/shifted/\">begin days at 6 PM</a> or slice time into six-minute <a href=\"/products/calendar/examples/day-time-ticks/\">intervals</a>.</li> </ul>",
             "body_text": "Written in modern JavaScript (ES6+), the Bryntum Calendar runs lean and embeds without fuss. You get: Snappy performance, even on huge datasets . One-click exports to Excel , ICS and print formats. Tunable date and time settings — begin days at 6 PM or slice time into six-minute intervals .",
@@ -128,10 +119,7 @@
         {
             "id": "block_0b3a2b388d8b3c162ad4de5e0fe504b2",
             "type": "text-media",
-            "modifiers": [
-                "video-file",
-                "added-shadow"
-            ],
+            "modifiers": ["video-file", "added-shadow"],
             "heading": "Several Layouts",
             "body_html": "<p class=\"p1\">Flip between layouts to see tasks from a few angles. The Bryntum Calendar offers several views, including:</p> <ul class=\"ul1\"> <li class=\"li1\"><a href=\"/products/calendar/examples/basic/\">Day, Week, Month, Year and Agenda layouts</a></li> <li class=\"li1\"><a href=\"/products/calendar/examples/day-agenda/\">Day Agenda,</a> <a href=\"/products/calendar/examples/listview/\">Grid</a> layouts</li> <li class=\"li1\"><a href=\"/products/calendar/examples/dual-dayview/\">Dual-Day</a> layout</li> </ul>",
             "body_text": "Flip between layouts to see tasks from a few angles. The Bryntum Calendar offers several views, including: Day, Week, Month, Year and Agenda layouts Day Agenda, Grid layouts Dual-Day layout",
@@ -171,11 +159,7 @@
         {
             "id": "block_43c64c3290d21de094d2e1bf6c8bb680",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "heading": "Resource-First Layout",
             "body_html": "<p class=\"p1\">Keep an eye on every teammate’s events at a glance:</p> <ul> <li>Spot whose events you’re looking at right away, <span style=\"font-weight: 400;\">thanks to</span> friendly avatars in the header.</li> <li>Drag and drop events to reassign them in a beat.</li> <li>Enjoy a tidy, welcoming layout.</li> </ul>",
             "body_text": "Keep an eye on every teammate’s events at a glance: Spot whose events you’re looking at right away, thanks to friendly avatars in the header. Drag and drop events to reassign them in a beat. Enjoy a tidy, welcoming layout.",
@@ -211,10 +195,7 @@
         {
             "id": "block_8f1c153294c4e8675efe148425adf91f",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "added-shadow"],
             "heading": "Fully Tailorable",
             "body_html": "<p>The Bryntum Calendar is themed with CSS variables, so you can tweak its appearance to taste.</p> <ul class=\"ul1\"> <li>Pick one of our themes or <a href=\"/products/calendar/examples/custom-theme/\">roll your own</a>.</li> <li class=\"li1\">Adjust the rendering of <a href=\"/products/calendar/examples/custom-rendering/\">events, headings and more</a>.</li> <li class=\"li1\">Reflow the UI for <a href=\"/products/calendar/examples/month-agenda/\">mobile devices</a> with layouts that respond to any <a href=\"/products/calendar/examples/responsive/\">screen size</a>.</li> <li class=\"li1\">Drop links and buttons into <a href=\"/products/calendar/examples/tooltips/\">tailored tooltips</a>.</li> <li class=\"li1\">Customise the <a href=\"/products/calendar/examples/eventedit/\">event editor</a>, <a href=\"/products/calendar/examples/custom-menus/\">context menu</a> and <a href=\"/products/calendar/examples/sidebar-customization/\">sidebar</a>.</li> </ul>",
             "body_text": "The Bryntum Calendar is themed with CSS variables, so you can tweak its appearance to taste. Pick one of our themes or roll your own . Adjust the rendering of events, headings and more . Reflow the UI for mobile devices with layouts that respond to any screen size . Drop links and buttons into tailored tooltips . Customise the event editor , context menu and sidebar .",
@@ -267,11 +248,7 @@
         {
             "id": "block_aa0b0e20cb1c4626408c493f793c1527",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "heading": "Beyond a Date Picker",
             "body_html": "<p class=\"p1\">The Bryntum Calendar packs distinctive features that boost your team’s productivity:</p> <ul class=\"ul1\"> <li class=\"li1\"><a href=\"/products/calendar/examples/travel-time/\">Show travel time</a> for grounded, real-world planning.</li> <li class=\"li1\">Monitor workload via the <a href=\"/products/calendar/examples/resource-time-capacity/\">capacity tick renderer</a>.</li> <li>Jump between <a href=\"/products/calendar/examples/resource-modes/\">linked resource calendars</a>.</li> </ul>",
             "body_text": "The Bryntum Calendar packs distinctive features that boost your team’s productivity: Show travel time for grounded, real-world planning. Monitor workload via the capacity tick renderer . Jump between linked resource calendars .",
@@ -304,10 +281,7 @@
         {
             "id": "block_a19229e400d243cafae6308f92930552",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "added-shadow"],
             "heading": "50+ Additional Widgets",
             "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/calendar/examples/kitchen-sink/\">broad set of UI components</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in ready-made <strong>menus, toggles, sliders, charts and more</strong> alongside the Bryntum Calendar.</li> <li class=\"li1\">Cut clicks and searching to meet user needs faster.</li> <li class=\"li1\">Wire up and style widgets straightforwardly via our clear docs.</li> </ul>",
             "body_text": "Pick from a broad set of UI components that quickly give your app a polished, professional feel: Drop in ready-made menus, toggles, sliders, charts and more alongside the Bryntum Calendar. Cut clicks and searching to meet user needs faster. Wire up and style widgets straightforwardly via our clear docs.",
@@ -338,10 +312,7 @@
         {
             "id": "block_617eaaab91d4a755174cd10eb7eb8c4c",
             "type": "text-media",
-            "modifiers": [
-                "video-file",
-                "added-shadow"
-            ],
+            "modifiers": ["video-file", "added-shadow"],
             "heading": "Install via npm",
             "body_html": "<p>Pull Bryntum Calendar straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial, configure it, and you’re ready to build.</p>",
             "body_text": "Pull Bryntum Calendar straight from npm. No sign-in or auth needed . Install the trial, configure it, and you’re ready to build.",
@@ -454,9 +425,7 @@
         {
             "id": "block_c7a78f49c8affeafe308dd371d3fff82",
             "type": "text-button",
-            "modifiers": [
-                "variant-2"
-            ],
+            "modifiers": ["variant-2"],
             "heading": "Ready to dive in?",
             "body_html": "",
             "body_text": "",

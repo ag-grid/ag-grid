@@ -11,9 +11,7 @@
         {
             "id": "block_67e17f6b1228d9d75851bddbf1df0ace",
             "type": "heroTBM",
-            "modifiers": [
-                "animated-hero"
-            ],
+            "modifiers": ["animated-hero"],
             "eyebrow": "Bryntum Scheduler Pro",
             "heading": "A Pro-Grade Scheduling Component",
             "body_html": "<p class=\"p1\">Bryntum Scheduler Pro is a JavaScript UI component built for precise planning — it accounts for resource availability, dependencies and constraints out of the box.</p>",
@@ -56,11 +54,7 @@
         {
             "id": "block_ca62340a695d26f1e58162162bd1cb2b",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "heading": "Link Up Your Tasks",
             "body_html": "<p class=\"p1\">Once your tasks and dependencies are set, the pro-grade scheduling engine handles the rest by:</p> <ul> <li>Arranging tasks based on how they relate and on the rules you’ve set.</li> <li>Auto-shifting downstream tasks whenever you move a leading task.</li> </ul>",
             "body_text": "Once your tasks and dependencies are set, the pro-grade scheduling engine handles the rest by: Arranging tasks based on how they relate and on the rules you’ve set. Auto-shifting downstream tasks whenever you move a leading task.",
@@ -86,10 +80,7 @@
         {
             "id": "block_86cff8bcd91213c53bcd78636afc0cd6",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "added-shadow"],
             "heading": "Don’t Over-Allocate Your Resources",
             "body_html": "<p>Track your team’s workload with a built-in histogram so you can decide faster and more fairly.</p> <ul> <li>Bright red highlights make over-capacity workloads obvious at a glance <span class=\"s1\">— no digging through tables or reports.</span></li> <li>Tweak task assignments to keep the plan balanced.</li> </ul>",
             "body_text": "Track your team’s workload with a built-in histogram so you can decide faster and more fairly. Bright red highlights make over-capacity workloads obvious at a glance — no digging through tables or reports. Tweak task assignments to keep the plan balanced.",
@@ -115,11 +106,7 @@
         {
             "id": "block_b27deebef856877e482370a5bc9b1a9a",
             "type": "text-media",
-            "modifiers": [
-                "video-file",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["video-file", "reverse", "added-shadow"],
             "heading": "Assign Tasks by Skill",
             "body_html": "<p>Let Scheduler Pro handle the logic behind the scenes so planning stays efficient:</p> <ul> <li>Match the right tasks with the right people without fuss.</li> <li>Pair tasks with teammates based on skills and availability.</li> <li>Auto-schedule tasks or drag them into suggested time slots.</li> </ul>",
             "body_text": "Let Scheduler Pro handle the logic behind the scenes so planning stays efficient: Match the right tasks with the right people without fuss. Pair tasks with teammates based on skills and availability. Auto-schedule tasks or drag them into suggested time slots.",
@@ -142,10 +129,7 @@
         {
             "id": "block_db9616ac89f5620c3b5018eb7d1c9498",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "added-shadow"],
             "heading": "Adaptive, Smarter Planning",
             "body_html": "<p class=\"p1\">Plan with confidence for real-world conditions:</p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Spot peak activity windows and overloaded categories via the heatmap.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Lean on </span><a href=\"https://bryntum.com/products/schedulerpro/examples/nested-events-dependencies/\"><span style=\"font-weight: 400;\">nested events</span></a> to make related-task handling simpler.</li> <li aria-level=\"1\" style=\"font-weight: 400;\"><a href=\"https://bryntum.com/products/schedulerpro/examples/travel-time/\"><span style=\"font-weight: 400;\">Factor travel time in</span></a><span style=\"font-weight: 400;\"> for tighter callout and field-routing planning.</span></li> <li><span style=\"font-weight: 400;\">Settle </span><a href=\"https://bryntum.com/products/schedulerpro/examples/conflicts/\"><span style=\"font-weight: 400;\">scheduling conflicts</span></a><span style=\"font-weight: 400;\"> and keep the schedule intact.</span></li> </ul>",
             "body_text": "Plan with confidence for real-world conditions: Spot peak activity windows and overloaded categories via the heatmap. Lean on nested events to make related-task handling simpler. Factor travel time in for tighter callout and field-routing planning. Settle scheduling conflicts and keep the schedule intact.",
@@ -192,11 +176,7 @@
         {
             "id": "block_78337de647f86a668cc457859b96e116",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "heading": "Tailor Task Editing",
             "body_html": "<p><span style=\"font-weight: 400;\">Bryntum Scheduler Pro also ships with a capable, customisable task editor:</span></p> <ul> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Tweak any built-in field and bring your own.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Edit predecessors, successors and constraints.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Show or hide any of the preconfigured fields.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><a href=\"https://bryntum.com/products/schedulerpro/examples/calendar-editor/\"><span style=\"font-weight: 400;\">Create and edit multiple calendars</span></a><span style=\"font-weight: 400;\">.</span></li> <li aria-level=\"1\" style=\"font-weight: 400;\"><span style=\"font-weight: 400;\">Apply changes live, then roll them back if needed.</span></li> </ul>",
             "body_text": "Bryntum Scheduler Pro also ships with a capable, customisable task editor: Tweak any built-in field and bring your own. Edit predecessors, successors and constraints. Show or hide any of the preconfigured fields. Create and edit multiple calendars . Apply changes live, then roll them back if needed.",
@@ -227,10 +207,7 @@
         {
             "id": "block_568e2c365c073264165eb83fbaa79716",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "added-shadow"],
             "heading": "Style It However You Like",
             "body_html": "<p class=\"p1\">Make the scheduler feel on-brand with flexible styling controls.</p> <ul> <li class=\"p1\">Adjust our built-in themes via CSS variables, no fuss.</li> <li class=\"p1\">Roll your own custom theme.</li> <li class=\"p1\">Pick from preconfigured taskbar styles and colour sets.</li> </ul>",
             "body_text": "Make the scheduler feel on-brand with flexible styling controls. Adjust our built-in themes via CSS variables, no fuss. Roll your own custom theme. Pick from preconfigured taskbar styles and colour sets.",
@@ -256,11 +233,7 @@
         {
             "id": "block_e81c12ec56ed0ff49bce53b58de2f4c3",
             "type": "text-media",
-            "modifiers": [
-                "image",
-                "reverse",
-                "added-shadow"
-            ],
+            "modifiers": ["image", "reverse", "added-shadow"],
             "heading": "50+ Additional Widgets",
             "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/scheduler/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in <strong>buttons, menus, toggles, charts and more </strong>alongside Bryntum Scheduler Pro.</li> <li class=\"li1\">Cut clicks and searching to meet user needs faster.</li> <li class=\"li1\">Wire up widgets straightforwardly via our clear docs.</li> </ul>",
             "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel: Drop in buttons, menus, toggles, charts and more alongside Bryntum Scheduler Pro. Cut clicks and searching to meet user needs faster. Wire up widgets straightforwardly via our clear docs.",
@@ -291,10 +264,7 @@
         {
             "id": "block_4348e94e0e5a386380b5721919b78cf1",
             "type": "text-media",
-            "modifiers": [
-                "video-file",
-                "added-shadow"
-            ],
+            "modifiers": ["video-file", "added-shadow"],
             "heading": "Install via npm",
             "body_html": "<p>Pull Bryntum Scheduler Pro straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial, configure it, and you’re ready to build.</p>",
             "body_text": "Pull Bryntum Scheduler Pro straight from npm. No sign-in or auth needed . Install the trial, configure it, and you’re ready to build.",
@@ -407,9 +377,7 @@
         {
             "id": "block_e6ae0c59c6f32222da3fcfad36ae9a1d",
             "type": "text-button",
-            "modifiers": [
-                "variant-2"
-            ],
+            "modifiers": ["variant-2"],
             "heading": "Ready to dive in?",
             "body_html": "",
             "body_text": "",

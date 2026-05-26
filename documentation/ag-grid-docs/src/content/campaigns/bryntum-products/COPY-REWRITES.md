@@ -212,15 +212,15 @@ Source: `calendar-original.json` → `calendar.json` · 73 copy strings rewritte
 
 ### `.sections[7].body_html`
 
-**Original:** <p class="pre-title">Try it yourself</p>  <p>The calendar has full support for recurring tasks. Your tasks can repeat in any pattern you need – daily, weekly, monthly, or yearly.</p>
+**Original:** <p class="pre-title">Try it yourself</p> <p>The calendar has full support for recurring tasks. Your tasks can repeat in any pattern you need – daily, weekly, monthly, or yearly.</p>
 
-**Rewritten:** <p class="pre-title">Have a play yourself</p>  <p>The calendar handles recurring tasks out of the box. Repeat tasks on any cadence you need – daily, weekly, monthly or yearly.</p>
+**Rewritten:** <p class="pre-title">Have a play yourself</p> <p>The calendar handles recurring tasks out of the box. Repeat tasks on any cadence you need – daily, weekly, monthly or yearly.</p>
 
 ### `.sections[7].body_text`
 
-**Original:** Try it yourself  The calendar has full support for recurring tasks. Your tasks can repeat in any pattern you need – daily, weekly, monthly, or yearly.
+**Original:** Try it yourself The calendar has full support for recurring tasks. Your tasks can repeat in any pattern you need – daily, weekly, monthly, or yearly.
 
-**Rewritten:** Have a play yourself  The calendar handles recurring tasks out of the box. Repeat tasks on any cadence you need – daily, weekly, monthly or yearly.
+**Rewritten:** Have a play yourself The calendar handles recurring tasks out of the box. Repeat tasks on any cadence you need – daily, weekly, monthly or yearly.
 
 ### `.sections[8].heading`
 
@@ -904,7 +904,7 @@ Source: `gantt-original.json` → `gantt.json` · 76 copy strings rewritten
 
 ### `.meta.description`
 
-**Original:** A configurable and super fast Gantt chart component. Includes a powerful TypeScript scheduling engine, and  supports React, Angular and Vue.
+**Original:** A configurable and super fast Gantt chart component. Includes a powerful TypeScript scheduling engine, and supports React, Angular and Vue.
 
 **Rewritten:** A highly configurable, blazing-fast Gantt chart component. Ships with a capable TypeScript scheduling engine and supports React, Angular and Vue.
 
@@ -916,7 +916,7 @@ Source: `gantt-original.json` → `gantt.json` · 76 copy strings rewritten
 
 ### `.meta.og_description`
 
-**Original:** A configurable and super fast Gantt chart component. Includes a powerful TypeScript scheduling engine, and  supports React, Angular and Vue.
+**Original:** A configurable and super fast Gantt chart component. Includes a powerful TypeScript scheduling engine, and supports React, Angular and Vue.
 
 **Rewritten:** A highly configurable, blazing-fast Gantt chart component. Ships with a capable TypeScript scheduling engine and supports React, Angular and Vue.
 
@@ -1126,15 +1126,15 @@ Source: `gantt-original.json` → `gantt.json` · 76 copy strings rewritten
 
 ### `.sections[7].body_html`
 
-**Original:** <p class="pre-title">By developers, for developers</p>  <p><span style="font-weight: 400;">A Gantt chart encapsulates an enormous amount of complexity. We provide you with a simple, yet highly configurable and well-tested API, so you don’t have to worry about the small details.</span></p>
+**Original:** <p class="pre-title">By developers, for developers</p> <p><span style="font-weight: 400;">A Gantt chart encapsulates an enormous amount of complexity. We provide you with a simple, yet highly configurable and well-tested API, so you don’t have to worry about the small details.</span></p>
 
-**Rewritten:** <p class="pre-title">From developers, to developers</p>  <p><span style="font-weight: 400;">A Gantt chart wraps up a huge amount of complexity. We give you a clean, deeply configurable and thoroughly tested API, so the small details aren’t your problem.</span></p>
+**Rewritten:** <p class="pre-title">From developers, to developers</p> <p><span style="font-weight: 400;">A Gantt chart wraps up a huge amount of complexity. We give you a clean, deeply configurable and thoroughly tested API, so the small details aren’t your problem.</span></p>
 
 ### `.sections[7].body_text`
 
-**Original:** By developers, for developers  A Gantt chart encapsulates an enormous amount of complexity. We provide you with a simple, yet highly configurable and well-tested API, so you don’t have to worry about the small details.
+**Original:** By developers, for developers A Gantt chart encapsulates an enormous amount of complexity. We provide you with a simple, yet highly configurable and well-tested API, so you don’t have to worry about the small details.
 
-**Rewritten:** From developers, to developers  A Gantt chart wraps up a huge amount of complexity. We give you a clean, deeply configurable and thoroughly tested API, so the small details aren’t your problem.
+**Rewritten:** From developers, to developers A Gantt chart wraps up a huge amount of complexity. We give you a clean, deeply configurable and thoroughly tested API, so the small details aren’t your problem.
 
 ### `.sections[7].ctas[0].text`
 

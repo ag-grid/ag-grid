@@ -30,7 +30,8 @@
             ],
             "media": [
                 {
-                    "kind": "svg-file", "src": "heroes/schedulerpro.svg"
+                    "kind": "svg-file",
+                    "src": "heroes/schedulerpro.svg"
                 }
             ]
         },
@@ -339,31 +340,36 @@
                 {
                     "href": "/company/customers/",
                     "media": {
-                        "kind": "svg-file", "src": "brands/brand-1.svg"
+                        "kind": "svg-file",
+                        "src": "brands/brand-1.svg"
                     }
                 },
                 {
                     "href": "/company/customers/",
                     "media": {
-                        "kind": "svg-file", "src": "brands/brand-2.svg"
+                        "kind": "svg-file",
+                        "src": "brands/brand-2.svg"
                     }
                 },
                 {
                     "href": "/company/customers/",
                     "media": {
-                        "kind": "svg-file", "src": "brands/brand-3.svg"
+                        "kind": "svg-file",
+                        "src": "brands/brand-3.svg"
                     }
                 },
                 {
                     "href": "/company/customers/",
                     "media": {
-                        "kind": "svg-file", "src": "brands/brand-4.svg"
+                        "kind": "svg-file",
+                        "src": "brands/brand-4.svg"
                     }
                 },
                 {
                     "href": "/company/customers/",
                     "media": {
-                        "kind": "svg-file", "src": "brands/brand-5.svg"
+                        "kind": "svg-file",
+                        "src": "brands/brand-5.svg"
                     }
                 }
             ]
