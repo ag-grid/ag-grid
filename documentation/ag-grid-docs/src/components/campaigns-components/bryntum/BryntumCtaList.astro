@@ -19,7 +19,7 @@ const { ctas, buttonClass, wrapperClass } = Astro.props;
             {ctas.map((cta) => (
                 <a href={resolveBryntumHref(cta.href)} class={buttonClass} target="_blank" rel="noopener">
                     {cta.text}
-                    <Icon name="arrowRight" />
+                    <Icon name="chevronRight" />
                 </a>
             ))}
         </div>

@@ -35,7 +35,7 @@ const showAltBg = isAlt && hasMedia && !isWhite;
             <div class={styles.textMediaCopy}>
                 {section.heading && <h2>{section.heading}</h2>}
                 {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
-                {section.body_html && <div set:html={section.body_html} />}
+                {section.body_html && <div class={styles.bodyText} set:html={section.body_html} />}
 
                 {
                     section.ctas && (

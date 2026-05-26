@@ -110,7 +110,6 @@
     flex-wrap: wrap;
     align-items: center;
     gap: $spacing-size-4;
-    font-size: var(--text-fs-lg);
 
     a {
         --icon-size: 1.1em;
@@ -215,7 +214,13 @@
         text-align: left;
         padding-left: 0;
     }
+}
 
+// Inline links inside `body_html` content. Scoped to `.bodyText` (added to
+// the body-html wrapper div) rather than to `.textMediaCopy a`, so it doesn't
+// override the styling of CTA buttons (e.g. `.button-tertiary`) that are
+// also rendered as descendants of `.textMediaCopy`.
+.bodyText {
     a {
         color: var(--color-fg-primary);
         text-decoration: underline;
@@ -414,16 +419,6 @@
         font-weight: var(--text-semibold);
         color: var(--color-fg-tertiary);
         margin-bottom: $spacing-size-2;
-    }
-
-    a {
-        color: var(--color-fg-primary);
-        text-decoration: underline;
-        text-decoration-color: var(--color-util-brand-400);
-
-        &:hover {
-            color: var(--color-util-brand-500);
-        }
     }
 }
 
