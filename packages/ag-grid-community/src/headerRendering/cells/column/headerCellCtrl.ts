@@ -340,7 +340,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private setupClassesFromColDef(): void {
         const refreshHeaderClasses = () => {
             const colDef = this.column.colDef;
-            const classes = _getHeaderClassesFromColDef(colDef, this.gos, this.column, null);
+            const classes = _getHeaderClassesFromColDef(colDef, this.beans, this.column, null);
 
             const oldClasses = this.userHeaderClasses;
             this.userHeaderClasses = new Set(classes);

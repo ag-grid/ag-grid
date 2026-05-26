@@ -48,6 +48,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private isSsrm: boolean = false;
     private cellExpressions: boolean = false;
     private groupSuppressBlankHeader: boolean = false;
+    private calculatedColumnsRegistered: boolean = false;
 
     // Bean refs — assigned in wireBeans. Initialised to undefined so the property slot
     // exists in the same shape from construction time.
@@ -77,6 +78,7 @@ export class ValueService extends BeanStub implements NamedBean {
         this.cellExpressions = gos.get('enableCellExpressions');
         this.isTreeData = gos.get('treeData');
         this.groupSuppressBlankHeader = gos.get('groupSuppressBlankHeader');
+        this.calculatedColumnsRegistered = this.beans.calculatedColsSvc != null;
         this.executeValueGetter =
             this.valueCache && gos.get('valueCache')
                 ? this.executeValueGetterWithValueCache
@@ -206,7 +208,9 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
 
-        let result = this.resolveValue(column, rowNode, ignoreAggData, isGroup);
+        let result = this.calculatedColumnsRegistered
+            ? this.resolveValueWithCalculatedColumns(column, rowNode, ignoreAggData, isGroup)
+            : this.resolveValueWithoutCalculatedColumns(column, rowNode, ignoreAggData, isGroup);
 
         if (result === undefined) {
             // For showRowGroup columns on group rows, if no value was resolved and the row's
@@ -258,7 +262,22 @@ export class ValueService extends BeanStub implements NamedBean {
         return !!node.expanded;
     }
 
-    private resolveValue(
+    private resolveValueWithCalculatedColumns(
+        column: AgColumn,
+        rowNode: IRowNode,
+        ignoreAggData: boolean,
+        isGroup: boolean | undefined
+    ): any {
+        const { calculatedExpression } = column.colDef;
+
+        if (calculatedExpression != null) {
+            return this.beans.formula?.resolveValue(column, rowNode as RowNode);
+        }
+
+        return this.resolveValueWithoutCalculatedColumns(column, rowNode, ignoreAggData, isGroup);
+    }
+
+    private resolveValueWithoutCalculatedColumns(
         column: AgColumn,
         rowNode: IRowNode,
         ignoreAggData: boolean,
@@ -266,10 +285,6 @@ export class ValueService extends BeanStub implements NamedBean {
     ): any {
         const colDef = column.colDef;
         const colId = column.colId;
-
-        if (colDef.calculatedExpression != null && this.gos.isModuleRegistered('CalculatedColumns')) {
-            return this.beans.formula?.resolveValue(column, rowNode as RowNode);
-        }
 
         // Skipped for group rows — formulas + row grouping are not supported together.
         if (!isGroup && colDef.allowFormula) {
@@ -585,7 +600,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private isSetValueSupported(column: AgColumn, rowNode: IRowNode, newValue: any, colDef: ColDef): boolean {
         const { field, valueSetter } = colDef;
 
-        if (colDef.calculatedExpression != null && this.gos.isModuleRegistered('CalculatedColumns')) {
+        if (colDef.calculatedExpression != null && this.calculatedColumnsRegistered) {
             return false;
         }
 

@@ -134,7 +134,7 @@ const resolveCellTooltip = ({
     const colDef = column.colDef;
 
     // 1) formula error tooltip has highest priority.
-    const isCalculatedColumn = colDef.calculatedExpression != null && gos.isModuleRegistered('CalculatedColumns');
+    const isCalculatedColumn = colDef.calculatedExpression != null && beans.calculatedColsSvc != null;
     if ((colDef.allowFormula && formula?.active) || (isCalculatedColumn && formula)) {
         const error = formula.getFormulaError(column, rowNode);
         if (error) {

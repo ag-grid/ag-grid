@@ -91,9 +91,19 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         const defaultMenuOptions: DefaultMenuItem[] = [];
 
-        const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos, notesSvc } = this.beans;
-        const isCalculatedColumn =
-            column?.getColDef().calculatedExpression != null && gos.isModuleRegistered('CalculatedColumns');
+        const {
+            clipboardSvc,
+            chartSvc,
+            csvCreator,
+            excelCreator,
+            colModel,
+            rangeSvc,
+            gos,
+            notesSvc,
+            calculatedColsSvc,
+        } = this.beans;
+
+        const isCalculatedColumn = column?.getColDef().calculatedExpression != null && calculatedColsSvc != null;
 
         if (_exists(node) && clipboardSvc) {
             if (column) {

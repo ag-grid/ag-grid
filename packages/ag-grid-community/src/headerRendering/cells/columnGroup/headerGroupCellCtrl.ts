@@ -340,7 +340,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private addClasses(): void {
         const { column } = this;
         const colGroupDef = column.getColGroupDef();
-        const classes = _getHeaderClassesFromColDef(colGroupDef, this.gos, null, column);
+        const classes = _getHeaderClassesFromColDef(colGroupDef, this.beans, null, column);
 
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified

@@ -1030,7 +1030,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private isCalculatedColumn(): boolean {
-        return this.column.colDef.calculatedExpression != null && this.gos.isModuleRegistered('CalculatedColumns');
+        return this.column.colDef.calculatedExpression != null && this.beans.calculatedColsSvc != null;
     }
 
     public dispatchCellContextMenuEvent(event: Event | null) {

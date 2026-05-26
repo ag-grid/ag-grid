@@ -138,7 +138,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.refreshAriaLabel();
         this.setupTooltip();
 
-        const classes = _getToolPanelClassesFromColDef(columnGroup.getColGroupDef(), gos, null, columnGroup);
+        const classes = _getToolPanelClassesFromColDef(columnGroup.getColGroupDef(), this.beans, null, columnGroup);
         for (const c of classes) {
             this.toggleCss(c, true);
         }

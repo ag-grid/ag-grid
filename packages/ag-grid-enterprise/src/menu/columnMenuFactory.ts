@@ -168,7 +168,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             result.push('valueAggSubMenu');
         }
 
-        if (gos.isModuleRegistered('CalculatedColumns') && isPrimary) {
+        if (beans.calculatedColsSvc != null && isPrimary) {
             result.push(MENU_ITEM_SEPARATOR);
             if (column?.colDef.calculatedExpression != null) {
                 result.push('editCalculatedColumn');
