@@ -356,12 +356,18 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             pagingPanel.querySelectorAll('.ag-paging-page-summary-panel .ag-paging-number').forEach((pagingNumber) => {
                 const dataRef = pagingNumber.getAttribute('data-ref');
                 switch (dataRef) {
-                    case 'lbCurrent':
+                    case 'lbCurrentStatic':
                         setTestId(
                             pagingNumber,
                             agTestIdFor.paginationSummaryPanelCurrentPage(pagingNumber.textContent)
                         );
                         break;
+                    case 'lbCurrentInput': {
+                        const inputValue =
+                            pagingNumber.querySelector<HTMLInputElement>('input')?.value ?? pagingNumber.textContent;
+                        setTestId(pagingNumber, agTestIdFor.paginationSummaryPanelCurrentPage(inputValue));
+                        break;
+                    }
                     case 'lbTotal':
                         setTestId(pagingNumber, agTestIdFor.paginationSummaryPanelTotalPage(pagingNumber.textContent));
                         break;
