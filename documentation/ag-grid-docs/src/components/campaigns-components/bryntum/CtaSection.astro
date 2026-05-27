@@ -12,6 +12,7 @@ const { section } = Astro.props;
 
 <section class:list={[styles.ctaOuter, styles.sectionBgSecondary]}>
     <div class:list={[styles.sectionInner, styles.ctaSection]}>
+        {section.eyebrow && <span class={styles.sectionEyebrow}>{section.eyebrow}</span>}
         {section.heading && <h2>{section.heading}</h2>}
         {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
         {section.body_html && <div set:html={section.body_html} />}

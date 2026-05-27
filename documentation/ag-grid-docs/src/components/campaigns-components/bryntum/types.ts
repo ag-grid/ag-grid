@@ -35,11 +35,17 @@ export interface BryntumSectionBase {
     id?: string;
     modifiers?: string[];
     heading?: string;
+    /**
+     * Optional small uppercase label rendered above the section heading.
+     * The hero section uses its own dedicated eyebrow styling; on every
+     * other section type this surfaces as `.sectionEyebrow` (brand-coloured,
+     * small caps).
+     */
+    eyebrow?: string;
 }
 
 export interface BryntumHeroSection extends BryntumSectionBase {
     type: 'heroTBM';
-    eyebrow?: string;
     body_html?: string;
     body_text?: string;
     ctas?: BryntumCta[];
@@ -64,6 +70,8 @@ export interface BryntumTextMediaSection extends BryntumSectionBase {
 export interface BryntumLiveDemoSection extends BryntumSectionBase {
     type: 'live-demo';
     demo_src?: string | null;
+    /** Optional supporting copy rendered between the heading and the live demo iframe. */
+    body_text?: string;
     media?: BryntumMedia[];
 }
 
@@ -73,6 +81,8 @@ export interface BryntumColumnsLibSection extends BryntumSectionBase {
         heading?: string;
         href?: string;
         body_text?: string;
+        /** Short supporting copy rendered under the card title. */
+        description?: string;
         media?: BryntumMedia;
     }>;
 }

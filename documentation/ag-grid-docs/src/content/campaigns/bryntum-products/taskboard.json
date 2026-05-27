@@ -3,16 +3,15 @@
     "slug": "taskboard",
     "title": "Bryntum Task Board – Kanban Component",
     "meta": {
-        "description": "https://youtu.be/HqyiViksBQU Have a Play Below — drag the slider to zoom or try the built-in filtering.",
+        "description": "https://youtu.be/HqyiViksBQU Have a Play Below. Drag the slider to zoom or try the built-in filtering.",
         "og_title": "Bryntum Task Board – Kanban Component",
-        "og_description": "https://youtu.be/HqyiViksBQU Have a Play Below — drag the slider to zoom or try the built-in filtering."
+        "og_description": "https://youtu.be/HqyiViksBQU Have a Play Below. Drag the slider to zoom or try the built-in filtering."
     },
     "sections": [
         {
             "id": "block_752dc716eb48d2f18b2d877ec8f9d45d",
             "type": "heroTBM",
             "modifiers": ["animated-hero"],
-            "eyebrow": "Bryntum Task Board",
             "heading": "A Highly Flexible Kanban Board Component",
             "body_html": "<p>See and steer your work with the Bryntum Task Board. Written in modern JavaScript, our Kanban component drops cleanly into <a href=\"https://bryntum.com/products/react-task-board/\">React</a>, <a href=\"https://bryntum.com/products/angular-task-board/\">Angular</a> and <a href=\"https://bryntum.com/products/vue-task-board/\">Vue</a> apps.</p>",
             "body_text": "See and steer your work with the Bryntum Task Board. Written in modern JavaScript, our Kanban component drops cleanly into React , Angular and Vue apps.",
@@ -39,8 +38,8 @@
             "id": "block_agbryntum_partnership",
             "type": "partnership",
             "heading": "Your JavaScript stack just expanded",
-            "body_html": "<p>Since our 2025 <a href=\"https://blog.ag-grid.com/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, the components you rely on for data now ship alongside leading tools for scheduling and project planning.</p><p>You already lean on AG Grid for your data layer; Bryntum Task Board applies that same bar to kanban-style task workflows — crafted by a similar team, held to the same bar.</p>",
-            "body_text": "Since our 2025 partnership with Bryntum, the components you rely on for data now ship alongside leading tools for scheduling and project planning. You already lean on AG Grid for your data layer; Bryntum Task Board applies that same bar to kanban-style task workflows — crafted by a similar team, held to the same bar.",
+            "body_html": "<p>Since our 2025 <a href=\"https://blog.ag-grid.com/ag-grid-and-bryntum-join-forces-to-strengthen-developer-tooling-for-modern-web-applications/\">partnership with Bryntum</a>, the components you rely on for data now ship alongside leading tools for scheduling and project planning. You already lean on AG Grid for your data layer; Bryntum Task Board applies that same bar to kanban-style task workflows, crafted by a similar team and held to the same bar.</p>",
+            "body_text": "Since our 2025 partnership with Bryntum, the components you rely on for data now ship alongside leading tools for scheduling and project planning. You already lean on AG Grid for your data layer; Bryntum Task Board applies that same bar to kanban-style task workflows, crafted by a similar team and held to the same bar.",
             "logo_light_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-light.svg",
             "logo_dark_src": "/images/campaigns/bryntum-products/shared/ag-grid-x-bryntum-dark.svg",
             "logo_alt": "AG Grid x Bryntum partnership"
@@ -55,6 +54,7 @@
             "id": "block_a2016e10d3e520694a7ca1d3ffe417d9",
             "type": "text-media",
             "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Feature Set",
             "heading": "All the Right Features",
             "body_html": "<p>The Bryntum Task Board ships with a set of optional features carefully designed to suit your workflow:</p> <ul> <li>Tailor the rendering and styling of cards, columns and swimlanes.</li> <li>Flip features on or off at runtime via a flexible API.</li> <li>Scroll smoothly through <a href=\"/products/taskboard/examples/bigdataset/\">huge datasets</a>.</li> </ul>",
             "body_text": "The Bryntum Task Board ships with a set of optional features carefully designed to suit your workflow: Tailor the rendering and styling of cards, columns and swimlanes. Flip features on or off at runtime via a flexible API. Scroll smoothly through huge datasets .",
@@ -90,6 +90,7 @@
             "id": "block_c57f051d24cd8095d56be8d6b7b4e1d6",
             "type": "text-media",
             "modifiers": ["video-file", "added-shadow"],
+            "eyebrow": "Organisation",
             "heading": "Group Tasks Into Swimlanes and Columns",
             "body_html": "<p>On a busy team? Stay on top of tasks by tailoring your Task Board with <a href=\"/products/taskboard/examples/swimlanes/\">swimlanes</a> and any number of columns.</p> <ul> <li><a href=\"/products/taskboard/examples/locked-column/\">Pin an important column</a> in place for fast access.</li> <li>Tuck away lower-priority tasks by collapsing swimlanes and columns.</li> <li><a href=\"/products/taskboard/examples/filtering/\">Filter</a> and <a href=\"/products/taskboard/examples/sorting/\">sort</a> tasks to keep your top priorities in view.</li> </ul>",
             "body_text": "On a busy team? Stay on top of tasks by tailoring your Task Board with swimlanes and any number of columns. Pin an important column in place for fast access. Tuck away lower-priority tasks by collapsing swimlanes and columns. Filter and sort tasks to keep your top priorities in view.",
@@ -134,6 +135,7 @@
             "id": "block_a6810390858a4124774049b1a0e766c8",
             "type": "text-media",
             "modifiers": ["image", "reverse", "added-shadow"],
+            "eyebrow": "Customisation",
             "heading": "Fully Shape Your Component",
             "body_html": "<p>Get creative with the many ways you can style the Task Board:</p> <ul> <li>Pick from <a href=\"/products/taskboard/examples/themes\">five built-in themes</a> or roll your own using CSS variables.</li> <li>Render custom text or markup in cards via the <a href=\"/products/taskboard/docs/#TaskBoard/view/TaskBoardBase#config-taskRenderer\"><code>taskRenderer</code></a> method.</li> <li>Choose which elements appear on each card with <a href=\"/products/taskboard/docs/#TaskBoard/view/mixin/TaskItems#config-bodyItems\"><code>bodyItems</code></a>.</li> <li>Drop in <a href=\"/products/taskboard/examples/task-items\">icons, tags, images and progress bars</a> with ease.</li> </ul>",
             "body_text": "Get creative with the many ways you can style the Task Board: Pick from five built-in themes or roll your own using CSS variables. Render custom text or markup in cards via the taskRenderer method. Choose which elements appear on each card with bodyItems . Drop in icons, tags, images and progress bars with ease.",
@@ -181,7 +183,9 @@
             "id": "",
             "type": "live-demo",
             "modifiers": [],
+            "eyebrow": "Live Demo",
             "heading": "Have a Play Below",
+            "body_text": "Drag cards between columns, tailor swimlanes and edit task content live. The Bryntum Task Board is fully wired up below.",
             "demo_src": null,
             "media": []
         },
@@ -189,6 +193,7 @@
             "id": "block_0284d081fe88dec979b28b8edc99b607",
             "type": "text-media",
             "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Familiar UX",
             "heading": "Lean on Instantly Familiar UX",
             "body_html": "<p class=\"p1\">Cut down on user admin with the Task Board’s welcoming, intuitive interactions:</p> <ul> <li>Confirm changes with <a href=\"/products/taskboard/examples/task-drag/\">confirmation dialogs</a></li> <li><a href=\"/products/taskboard/examples/scrolling/\">Auto-scroll to any swimlane or column</a> for fast navigation.</li> <li>Edit tasks in place with <a href=\"/products/taskboard/examples/simple-task-edit/\">inline editing</a>, or reach for the <a href=\"/products/taskboard/examples/task-edit/\">task editor</a> and <a href=\"/products/taskboard/examples/task-menu/\">context menu options</a>.</li> </ul>",
             "body_text": "Cut down on user admin with the Task Board’s welcoming, intuitive interactions: Confirm changes with confirmation dialogs Auto-scroll to any swimlane or column for fast navigation. Edit tasks in place with inline editing , or reach for the task editor and context menu options .",
@@ -236,6 +241,7 @@
             "id": "block_efbed03a4634d73418579ac95db35f94",
             "type": "text-media",
             "modifiers": ["video-file", "reverse", "added-shadow"],
+            "eyebrow": "Responsive Design",
             "heading": "Great On Any Screen Size",
             "body_html": "<p>Responsiveness sits at the heart of the Task Board. Filter out unneeded columns to keep the relevant details in view on small screens.</p>",
             "body_text": "Responsiveness sits at the heart of the Task Board. Filter out unneeded columns to keep the relevant details in view on small screens.",
@@ -264,6 +270,7 @@
             "id": "block_b0ecec48d200798e5261d055bd3d0058",
             "type": "text-media",
             "modifiers": ["image", "added-shadow"],
+            "eyebrow": "Component Library",
             "heading": "50+ Additional Widgets",
             "body_html": "<p class=\"p1\">Pick from a <a href=\"/products/taskboard/examples/kitchen-sink/\">broad set of UI elements</a> that quickly give your app a polished, professional feel:</p> <ul class=\"ul1\"> <li class=\"li1\">Drop in <strong>lists, menus, toggles, sliders and more</strong> alongside the Bryntum Calendar.</li> <li class=\"li1\">Cut clicks and searching to meet user needs faster.</li> <li class=\"li1\">Wire up widgets straightforwardly via our clear docs.</li> </ul>",
             "body_text": "Pick from a broad set of UI elements that quickly give your app a polished, professional feel: Drop in lists, menus, toggles, sliders and more alongside the Bryntum Calendar. Cut clicks and searching to meet user needs faster. Wire up widgets straightforwardly via our clear docs.",
@@ -295,6 +302,7 @@
             "id": "block_2a1afe0e84ff67bd07149cb448ead2cd",
             "type": "text-media",
             "modifiers": ["video-file", "added-shadow"],
+            "eyebrow": "Quick Start",
             "heading": "Install via npm",
             "body_html": "<p>Pull Bryntum Task Board straight from npm. <strong>No sign-in or auth needed</strong>. Install the trial, configure it, and you’re ready to build.</p>",
             "body_text": "Pull Bryntum Task Board straight from npm. No sign-in or auth needed . Install the trial, configure it, and you’re ready to build.",
@@ -318,12 +326,14 @@
             "id": "block_52d202b854d1b5fdd602e7f3032f1dd5",
             "type": "columns-lib",
             "modifiers": [],
+            "eyebrow": "Examples Gallery",
             "heading": "Sample Demos to Try",
             "items": [
                 {
                     "heading": "taskboard-task-items-svalbard",
                     "href": "/products/taskboard/examples/task-items",
                     "body_text": "Customised task content",
+                    "description": "Render bespoke cards with avatars, badges and inline actions.",
                     "media": {
                         "kind": "image",
                         "src": "../assets/taskboard/taskboard-task-items-svalbard-768x501.png",
@@ -337,6 +347,7 @@
                     "heading": "taskboard-bigdataset-svalbard",
                     "href": "/products/taskboard/examples/bigdataset/?theme=svalbard-dark",
                     "body_text": "Big dataset",
+                    "description": "Smoothly handle thousands of tasks without losing interactivity.",
                     "media": {
                         "kind": "image",
                         "src": "../assets/taskboard/taskboard-bigdataset-svalbard-768x501.png",
@@ -350,6 +361,7 @@
                     "heading": "taskboard-swimlanes-content-svalbard",
                     "href": "/products/taskboard/examples/swimlanes-content/",
                     "body_text": "Bespoke swimlane content",
+                    "description": "Tailor swimlane headers with counters, totals and quick actions.",
                     "media": {
                         "kind": "image",
                         "src": "../assets/taskboard/taskboard-swimlanes-content-svalbard-768x501.png",
@@ -365,6 +377,7 @@
             "id": "block_84e50a8f1498f01eb60fd1e17d3a2520",
             "type": "brands",
             "modifiers": [],
+            "eyebrow": "Trusted Worldwide",
             "heading": "Used by the world’s most respected companies",
             "items": [
                 {
@@ -408,6 +421,7 @@
             "id": "block_8a58bff5bad522fd483190d0373a2f4a",
             "type": "text-button",
             "modifiers": ["variant-2"],
+            "eyebrow": "Get Started",
             "heading": "Ready to dive in?",
             "body_html": "",
             "body_text": "",
