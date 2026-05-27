@@ -20,6 +20,7 @@ import {
     buildOrganization,
     buildSoftwareApplication,
     buildWebSite,
+    siteRootUrl,
     type JsonLdObject,
 } from '@ag-website-shared/utils/structuredData';
 
@@ -75,11 +76,9 @@ const includeStructuredData = !hidePageFromSearchEngines && !isArchive;
 const sameAsUrls = includeStructuredData
     ? footerItems.flatMap((group) => group.links.filter((link) => link.iconName).map((link) => link.url))
     : [];
-const organizationLogoUrl = new URL(
-    '/images/ag-logos/png-logos/AG-Grid-Logo_Light-Theme_476_140.png',
-    metadata.canonicalUrlBase
-).toString();
-const licensePricingUrl = new URL('/license-pricing/', metadata.canonicalUrlBase).toString();
+const siteRoot = siteRootUrl(metadata.canonicalUrlBase);
+const organizationLogoUrl = `${siteRoot}images/ag-logos/png-logos/AG-Grid-Logo_Light-Theme_476_140.png`;
+const licensePricingUrl = `${siteRoot}license-pricing/`;
 const structuredData: JsonLdObject[] = includeStructuredData
     ? [
           buildOrganization({

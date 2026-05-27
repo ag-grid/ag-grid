@@ -66,6 +66,20 @@ describe('canonicalUrlBase normalisation', () => {
         expect(withSlash['@id']).toBe(`${CANONICAL_URL_BASE}/#organization`);
         expect(withSlash.url).toBe(`${CANONICAL_URL_BASE}/`);
     });
+
+    test('subpath canonical bases (AG Charts / AG Studio) retain the subpath in IDs and URLs', () => {
+        const chartsBase = 'https://www.ag-grid.com/charts';
+
+        const org = buildOrganization({
+            canonicalUrlBase: chartsBase,
+            name: 'AG Charts',
+            logoUrl: `${chartsBase}/images/logo.png`,
+            sameAs: [],
+        });
+
+        expect(org['@id']).toBe('https://www.ag-grid.com/charts/#organization');
+        expect(org.url).toBe('https://www.ag-grid.com/charts/');
+    });
 });
 
 describe('buildSoftwareApplication', () => {

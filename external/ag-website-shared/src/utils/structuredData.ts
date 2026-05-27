@@ -58,20 +58,23 @@ interface BreadcrumbListInput {
 }
 
 /**
- * Build an absolute URL by resolving `pathWithFragment` against
- * `canonicalUrlBase`. Robust to a base that does or does not end in `/` —
- * `https://example.com` and `https://example.com/` both produce the same
- * absolute output, which is essential for stable `@id` references and for
- * intra-graph cross-links to resolve.
+ * Return `canonicalUrlBase` with a trailing slash, so callers can append a
+ * site-root-relative path or fragment without worrying about the input form
+ * or doubled slashes. Works for both host-level bases (`https://example.com`)
+ * and subpath bases (`https://example.com/charts`) — both produce the same
+ * output as their trailing-slash equivalents.
+ *
+ * `new URL('/x', base)` is NOT a safe substitute for subpath bases — the
+ * absolute path resolves against the host and discards the subpath segment.
  */
-function resolveUrl(canonicalUrlBase: string, pathWithFragment: string): string {
-    return new URL(pathWithFragment, canonicalUrlBase).toString();
+export function siteRootUrl(canonicalUrlBase: string): string {
+    return canonicalUrlBase.endsWith('/') ? canonicalUrlBase : `${canonicalUrlBase}/`;
 }
 
-export const getOrganizationId = (canonicalUrlBase: string): string => resolveUrl(canonicalUrlBase, '/#organization');
-export const getWebSiteId = (canonicalUrlBase: string): string => resolveUrl(canonicalUrlBase, '/#website');
+export const getOrganizationId = (canonicalUrlBase: string): string => `${siteRootUrl(canonicalUrlBase)}#organization`;
+export const getWebSiteId = (canonicalUrlBase: string): string => `${siteRootUrl(canonicalUrlBase)}#website`;
 export const getSoftwareApplicationId = (canonicalUrlBase: string): string =>
-    resolveUrl(canonicalUrlBase, '/#software-application');
+    `${siteRootUrl(canonicalUrlBase)}#software-application`;
 
 const ARTICLE_ID_FRAGMENT = '#article';
 const BREADCRUMB_ID_FRAGMENT = '#breadcrumb';
@@ -81,7 +84,7 @@ export function buildOrganization({ canonicalUrlBase, name, logoUrl, sameAs }: O
         '@type': 'Organization',
         '@id': getOrganizationId(canonicalUrlBase),
         name,
-        url: resolveUrl(canonicalUrlBase, '/'),
+        url: siteRootUrl(canonicalUrlBase),
         logo: logoUrl,
         sameAs,
     };
@@ -91,7 +94,7 @@ export function buildWebSite({ canonicalUrlBase, name, description }: WebSiteInp
     return {
         '@type': 'WebSite',
         '@id': getWebSiteId(canonicalUrlBase),
-        url: resolveUrl(canonicalUrlBase, '/'),
+        url: siteRootUrl(canonicalUrlBase),
         name,
         description,
         inLanguage: 'en',
@@ -114,7 +117,7 @@ export function buildSoftwareApplication({
         applicationCategory,
         operatingSystem,
         softwareVersion: version,
-        url: resolveUrl(canonicalUrlBase, '/'),
+        url: siteRootUrl(canonicalUrlBase),
         publisher: { '@id': getOrganizationId(canonicalUrlBase) },
     };
     if (offers && offers.length > 0) {
