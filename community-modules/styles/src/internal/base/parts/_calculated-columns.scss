@@ -1,0 +1,85 @@
+@mixin output {
+    .ag-calculated-column-panel .ag-panel-content-wrapper {
+        padding: var(--ag-grid-size);
+    }
+
+    .ag-calculated-column-form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--ag-grid-size);
+        min-width: 260px;
+    }
+
+    .ag-calculated-column-expression-wrap {
+        position: relative;
+    }
+
+    .ag-calculated-column-expression-error {
+        color: var(--ag-invalid-color);
+        font-size: 11px;
+        line-height: normal;
+        margin-top: calc(var(--ag-grid-size) / 2);
+    }
+
+    .ag-calculated-column-suggestions {
+        position: absolute;
+        z-index: 6;
+        top: calc(100% - 1px);
+        left: 0;
+        min-width: 190px;
+        max-height: 160px;
+        overflow-y: auto;
+        border: var(--ag-borders) var(--ag-border-color);
+        border-radius: var(--ag-border-radius);
+        background-color: var(--ag-background-color);
+        box-shadow: var(--ag-popup-shadow);
+    }
+
+    .ag-calculated-column-expression-tools {
+        display: flex;
+        gap: calc(var(--ag-grid-size) / 2);
+    }
+
+    .ag-calculated-column-expression-tool {
+        flex: 1 1 0;
+        min-width: 0;
+        border: var(--ag-borders) var(--ag-border-color);
+        border-radius: var(--ag-border-radius);
+        padding: calc(var(--ag-grid-size) / 2) var(--ag-grid-size);
+        background: var(--ag-background-color);
+        color: var(--ag-foreground-color);
+        cursor: pointer;
+        font: inherit;
+
+        &:hover {
+            background-color: var(--ag-row-hover-color);
+        }
+    }
+
+    .ag-calculated-column-suggestion {
+        padding: var(--ag-grid-size);
+        cursor: pointer;
+    }
+
+    .ag-calculated-column-suggestion-active,
+    .ag-calculated-column-suggestion:hover {
+        background-color: var(--ag-row-hover-color);
+    }
+
+    .ag-calculated-column-properties {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--ag-grid-size) / 2);
+    }
+
+    .ag-calculated-column-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: calc(var(--ag-grid-size) / 2);
+        margin-top: var(--ag-grid-size);
+    }
+
+    .ag-calculated-column-action {
+        min-width: 72px;
+    }
+}

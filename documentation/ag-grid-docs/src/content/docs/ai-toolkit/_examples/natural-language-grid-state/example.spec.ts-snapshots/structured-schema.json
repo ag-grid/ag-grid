@@ -1,0 +1,1080 @@
+{
+  "type": "object",
+  "required": [
+    "aggregation",
+    "filter",
+    "sort",
+    "pivot",
+    "columnVisibility",
+    "columnSizing",
+    "rowGroup"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "aggregation": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Aggregation configuration for the grid",
+      "required": [
+        "aggregationModel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "aggregationModel": {
+          "type": "array",
+          "description": "Array of column aggregations",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "aggFunc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "age"
+                    ]
+                  },
+                  "aggFunc": {
+                    "type": "string",
+                    "description": "Aggregation function",
+                    "enum": [
+                      "sum",
+                      "avg",
+                      "max",
+                      "min",
+                      "count",
+                      "first",
+                      "last"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "aggFunc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "gold"
+                    ]
+                  },
+                  "aggFunc": {
+                    "type": "string",
+                    "description": "Aggregation function",
+                    "enum": [
+                      "sum",
+                      "avg",
+                      "max",
+                      "min",
+                      "count",
+                      "first",
+                      "last"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "aggFunc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "silver"
+                    ]
+                  },
+                  "aggFunc": {
+                    "type": "string",
+                    "description": "Aggregation function",
+                    "enum": [
+                      "sum",
+                      "avg",
+                      "max",
+                      "min",
+                      "count",
+                      "first",
+                      "last"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "aggFunc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "bronze"
+                    ]
+                  },
+                  "aggFunc": {
+                    "type": "string",
+                    "description": "Aggregation function",
+                    "enum": [
+                      "sum",
+                      "avg",
+                      "max",
+                      "min",
+                      "count",
+                      "first",
+                      "last"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "aggFunc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "total"
+                    ]
+                  },
+                  "aggFunc": {
+                    "type": "string",
+                    "description": "Aggregation function",
+                    "enum": [
+                      "sum",
+                      "avg",
+                      "max",
+                      "min",
+                      "count",
+                      "first",
+                      "last"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "filter": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "filterModel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "filterModel": {
+          "type": "object",
+          "required": [
+            "athlete",
+            "age",
+            "country",
+            "year",
+            "sport",
+            "gold",
+            "silver",
+            "bronze",
+            "total"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "athlete": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "operator",
+                "conditions"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for text filters with multiple conditions",
+                  "enum": [
+                    "text"
+                  ]
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "Logical operator to combine multiple filter conditions. Must be included even with a single filter to adhere to the API.",
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ]
+                },
+                "conditions": {
+                  "type": "array",
+                  "description": "Array of filter conditions to be combined",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "filterType",
+                      "type",
+                      "filter",
+                      "filterTo"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "filterType": {
+                        "type": "string",
+                        "description": "Filter type identifier for text filters",
+                        "enum": [
+                          "text"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Text filter operation type",
+                        "enum": [
+                          "contains",
+                          "notContains",
+                          "equals",
+                          "notEqual",
+                          "startsWith",
+                          "endsWith",
+                          "blank",
+                          "notBlank"
+                        ]
+                      },
+                      "filter": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Primary filter value"
+                      },
+                      "filterTo": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Secondary filter value for range operations"
+                      }
+                    }
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "age": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "operator",
+                "conditions"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for number filters with multiple conditions",
+                  "enum": [
+                    "number"
+                  ]
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "Logical operator to combine multiple filter conditions. Must be included even with a single filter to adhere to the API.",
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ]
+                },
+                "conditions": {
+                  "type": "array",
+                  "description": "Array of filter conditions to be combined",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "filterType",
+                      "type",
+                      "filter",
+                      "filterTo"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "filterType": {
+                        "type": "string",
+                        "description": "Filter type identifier for number filters",
+                        "enum": [
+                          "number"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Number filter operation type",
+                        "enum": [
+                          "equals",
+                          "notEqual",
+                          "greaterThan",
+                          "greaterThanOrEqual",
+                          "lessThan",
+                          "lessThanOrEqual",
+                          "inRange",
+                          "blank",
+                          "notBlank"
+                        ]
+                      },
+                      "filter": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Primary filter value"
+                      },
+                      "filterTo": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Secondary filter value for range operations"
+                      }
+                    }
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "country": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "values"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for set filters",
+                  "enum": [
+                    "set"
+                  ]
+                },
+                "values": {
+                  "type": "array",
+                  "description": "Array of values to include in the filter",
+                  "items": {
+                    "type": "string",
+                    "description": "Filter values"
+                  }
+                }
+              }
+            },
+            "year": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "operator",
+                "conditions"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for number filters with multiple conditions",
+                  "enum": [
+                    "number"
+                  ]
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "Logical operator to combine multiple filter conditions. Must be included even with a single filter to adhere to the API.",
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ]
+                },
+                "conditions": {
+                  "type": "array",
+                  "description": "Array of filter conditions to be combined",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "filterType",
+                      "type",
+                      "filter",
+                      "filterTo"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "filterType": {
+                        "type": "string",
+                        "description": "Filter type identifier for number filters",
+                        "enum": [
+                          "number"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Number filter operation type",
+                        "enum": [
+                          "equals",
+                          "notEqual",
+                          "greaterThan",
+                          "greaterThanOrEqual",
+                          "lessThan",
+                          "lessThanOrEqual",
+                          "inRange",
+                          "blank",
+                          "notBlank"
+                        ]
+                      },
+                      "filter": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Primary filter value"
+                      },
+                      "filterTo": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Secondary filter value for range operations"
+                      }
+                    }
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "sport": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "values"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for set filters",
+                  "enum": [
+                    "set"
+                  ]
+                },
+                "values": {
+                  "type": "array",
+                  "description": "Array of values to include in the filter",
+                  "items": {
+                    "type": "string",
+                    "description": "Filter values"
+                  }
+                }
+              }
+            },
+            "gold": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "operator",
+                "conditions"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for number filters with multiple conditions",
+                  "enum": [
+                    "number"
+                  ]
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "Logical operator to combine multiple filter conditions. Must be included even with a single filter to adhere to the API.",
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ]
+                },
+                "conditions": {
+                  "type": "array",
+                  "description": "Array of filter conditions to be combined",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "filterType",
+                      "type",
+                      "filter",
+                      "filterTo"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "filterType": {
+                        "type": "string",
+                        "description": "Filter type identifier for number filters",
+                        "enum": [
+                          "number"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Number filter operation type",
+                        "enum": [
+                          "equals",
+                          "notEqual",
+                          "greaterThan",
+                          "greaterThanOrEqual",
+                          "lessThan",
+                          "lessThanOrEqual",
+                          "inRange",
+                          "blank",
+                          "notBlank"
+                        ]
+                      },
+                      "filter": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Primary filter value"
+                      },
+                      "filterTo": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Secondary filter value for range operations"
+                      }
+                    }
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "silver": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "operator",
+                "conditions"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for number filters with multiple conditions",
+                  "enum": [
+                    "number"
+                  ]
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "Logical operator to combine multiple filter conditions. Must be included even with a single filter to adhere to the API.",
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ]
+                },
+                "conditions": {
+                  "type": "array",
+                  "description": "Array of filter conditions to be combined",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "filterType",
+                      "type",
+                      "filter",
+                      "filterTo"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "filterType": {
+                        "type": "string",
+                        "description": "Filter type identifier for number filters",
+                        "enum": [
+                          "number"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Number filter operation type",
+                        "enum": [
+                          "equals",
+                          "notEqual",
+                          "greaterThan",
+                          "greaterThanOrEqual",
+                          "lessThan",
+                          "lessThanOrEqual",
+                          "inRange",
+                          "blank",
+                          "notBlank"
+                        ]
+                      },
+                      "filter": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Primary filter value"
+                      },
+                      "filterTo": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Secondary filter value for range operations"
+                      }
+                    }
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "bronze": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "operator",
+                "conditions"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for number filters with multiple conditions",
+                  "enum": [
+                    "number"
+                  ]
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "Logical operator to combine multiple filter conditions. Must be included even with a single filter to adhere to the API.",
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ]
+                },
+                "conditions": {
+                  "type": "array",
+                  "description": "Array of filter conditions to be combined",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "filterType",
+                      "type",
+                      "filter",
+                      "filterTo"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "filterType": {
+                        "type": "string",
+                        "description": "Filter type identifier for number filters",
+                        "enum": [
+                          "number"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Number filter operation type",
+                        "enum": [
+                          "equals",
+                          "notEqual",
+                          "greaterThan",
+                          "greaterThanOrEqual",
+                          "lessThan",
+                          "lessThanOrEqual",
+                          "inRange",
+                          "blank",
+                          "notBlank"
+                        ]
+                      },
+                      "filter": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Primary filter value"
+                      },
+                      "filterTo": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Secondary filter value for range operations"
+                      }
+                    }
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "total": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "operator",
+                "conditions"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for number filters with multiple conditions",
+                  "enum": [
+                    "number"
+                  ]
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "Logical operator to combine multiple filter conditions. Must be included even with a single filter to adhere to the API.",
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ]
+                },
+                "conditions": {
+                  "type": "array",
+                  "description": "Array of filter conditions to be combined",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "filterType",
+                      "type",
+                      "filter",
+                      "filterTo"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "filterType": {
+                        "type": "string",
+                        "description": "Filter type identifier for number filters",
+                        "enum": [
+                          "number"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Number filter operation type",
+                        "enum": [
+                          "equals",
+                          "notEqual",
+                          "greaterThan",
+                          "greaterThanOrEqual",
+                          "lessThan",
+                          "lessThanOrEqual",
+                          "inRange",
+                          "blank",
+                          "notBlank"
+                        ]
+                      },
+                      "filter": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Primary filter value"
+                      },
+                      "filterTo": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Secondary filter value for range operations"
+                      }
+                    }
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sort": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Sort configuration for the grid",
+      "required": [
+        "sortModel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "sortModel": {
+          "type": "array",
+          "description": "Array of sort configurations",
+          "items": {
+            "type": "object",
+            "required": [
+              "colId",
+              "sort",
+              "type"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "colId": {
+                "type": "string",
+                "description": "Column ID that supports sorting",
+                "enum": [
+                  "athlete",
+                  "age",
+                  "country",
+                  "year",
+                  "sport",
+                  "gold",
+                  "silver",
+                  "bronze",
+                  "total"
+                ]
+              },
+              "sort": {
+                "type": "string",
+                "description": "Sort direction: ascending or descending",
+                "enum": [
+                  "asc",
+                  "desc"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "description": "Sort type: default or absolute values",
+                "enum": [
+                  "default",
+                  "absolute"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "pivot": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Pivot configuration for the grid",
+      "required": [
+        "pivotMode",
+        "pivotColIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "pivotMode": {
+          "type": "boolean",
+          "description": "Whether pivot mode is enabled"
+        },
+        "pivotColIds": {
+          "type": "array",
+          "description": "Array of column IDs to use as pivot columns",
+          "items": {
+            "type": "string",
+            "description": "Column ID that supports pivoting",
+            "enum": [
+              "country",
+              "sport"
+            ]
+          }
+        }
+      }
+    },
+    "columnVisibility": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Column visibility configuration for the grid",
+      "required": [
+        "hiddenColIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "hiddenColIds": {
+          "type": "array",
+          "description": "Array of column IDs to hide",
+          "items": {
+            "$ref": "#/$defs/allColumnIds"
+          }
+        }
+      }
+    },
+    "columnSizing": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Column sizing configuration for the grid",
+      "required": [
+        "columnSizingModel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "columnSizingModel": {
+          "type": "array",
+          "description": "Array of column sizing configurations",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "width"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "$ref": "#/$defs/resizableColumnId"
+                  },
+                  "width": {
+                    "type": "number",
+                    "description": "Fixed width in pixels",
+                    "minimum": 20
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "flex"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "$ref": "#/$defs/resizableColumnId"
+                  },
+                  "flex": {
+                    "type": "number",
+                    "description": "Flex sizing ratio",
+                    "minimum": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "rowGroup": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Row grouping configuration for the grid",
+      "required": [
+        "groupColIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "groupColIds": {
+          "type": "array",
+          "description": "Array of column IDs to group by",
+          "items": {
+            "type": "string",
+            "description": "Column ID that supports row grouping",
+            "enum": [
+              "athlete",
+              "country",
+              "year",
+              "sport"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "allColumnIds": {
+      "_defs": {},
+      "_nullable": false,
+      "description": "athlete\nage\ncountry\nyear\nsport\ngold\nsilver\nbronze\ntotal",
+      "_enum": [
+        "athlete",
+        "age",
+        "country",
+        "year",
+        "sport",
+        "gold",
+        "silver",
+        "bronze",
+        "total"
+      ],
+      "type": "string"
+    },
+    "resizableColumnId": {
+      "_defs": {},
+      "_nullable": false,
+      "description": "Column ID that supports resizing",
+      "_enum": [
+        "athlete",
+        "age",
+        "country",
+        "year",
+        "sport",
+        "gold",
+        "silver",
+        "bronze",
+        "total"
+      ],
+      "type": "string"
+    }
+  }
+}

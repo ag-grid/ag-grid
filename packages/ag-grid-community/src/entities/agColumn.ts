@@ -385,6 +385,9 @@ export class AgColumn<TValue = any>
     }
 
     public isSuppressPaste(rowNode: IRowNode): boolean {
+        if (this.colDef.calculatedExpression != null && this.beans.calculatedColsSvc != null) {
+            return true;
+        }
         return this.isColumnFunc(rowNode, this.colDef?.suppressPaste ?? null);
     }
 

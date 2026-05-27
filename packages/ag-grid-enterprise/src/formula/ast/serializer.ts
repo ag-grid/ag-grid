@@ -1,6 +1,6 @@
-import { _getClientSideRowModel } from 'ag-grid-community';
 import type { AgColumn, BeanCollection, ColumnModel } from 'ag-grid-community';
 
+import { getFormulaRowByIndex, getFormulaRowIndex } from '../rowAccess';
 import { getDefBySymbol } from './operators';
 import type { InfixOpDef } from './operators';
 import { FormulaError } from './utils';
@@ -35,14 +35,14 @@ export function colIdFromIndex(cols: AgColumn[], idx: number): string | null {
 
 export function rowIndexFromId(beans: BeanCollection, rowId: string): number | null {
     const row = beans.rowModel?.getRowNode?.(rowId);
-    const formulaRowIndex = row?.formulaRowIndex;
+    const formulaRowIndex = row ? getFormulaRowIndex(row) : null;
     if (formulaRowIndex != null) {
         return formulaRowIndex + 1; // convert 0-based to 1-based
     }
     return null;
 }
 export function rowIdFromIndex(beans: BeanCollection, idx: number): string | null {
-    return _getClientSideRowModel(beans)?.getFormulaRow?.(idx - 1)?.id ?? null;
+    return getFormulaRowByIndex(beans, idx - 1)?.id ?? null;
 }
 
 const LETTERS_ONLY = /^[A-Za-z]+$/;
@@ -125,7 +125,10 @@ function emitA1Ref(beans: BeanCollection, ref: CellRef, isCol: boolean, unsafe: 
     return ref.absolute ? '$' + raw : '' + raw;
 }
 
-function serializeCellA1(beans: BeanCollection, cell: Cell, unsafe: boolean): string {
+function serializeCellA1(beans: BeanCollection, cell: Cell, unsafe: boolean, useCalculatedRefs: boolean): string {
+    if (useCalculatedRefs && cell.row.current && !cell.endColumn && !cell.endRow) {
+        return `[${cell.column.id}]`;
+    }
     const startRef = emitA1Ref(beans, cell.column, true, unsafe) + emitA1Ref(beans, cell.row, false, unsafe);
     const { endColumn, endRow } = cell;
     if (endColumn && endRow) {
@@ -142,7 +145,10 @@ function emitRefRowPart(beans: BeanCollection, ref: CellRef): string {
     return 'ROW(' + quoteString(rowValueForREF(beans, ref)) + (ref.absolute ? ',true)' : ')');
 }
 
-function serializeCellREF(beans: BeanCollection, cell: Cell): string {
+function serializeCellREF(beans: BeanCollection, cell: Cell, useCalculatedRefs: boolean): string {
+    if (useCalculatedRefs && cell.row.current && !cell.endColumn && !cell.endRow) {
+        return `[${cell.column.id}]`;
+    }
     const start = 'REF(' + emitRefColPart(beans, cell.column) + ',' + emitRefRowPart(beans, cell.row);
     const { endColumn, endRow } = cell;
     if (endColumn && endRow) {
@@ -224,7 +230,8 @@ export function serializeFormula(
     beans: BeanCollection,
     root: FormulaNode,
     useRefFormat: boolean,
-    unsafe: boolean
+    unsafe: boolean,
+    useCalculatedRefs = false
 ): string {
     function emit(node: FormulaNode): string {
         if (node.type === 'operand') {
@@ -238,7 +245,9 @@ export function serializeFormula(
             if (typeof v === 'boolean') {
                 return v ? 'TRUE' : 'FALSE';
             }
-            return useRefFormat ? serializeCellREF(beans, v as Cell) : serializeCellA1(beans, v as Cell, unsafe);
+            return useRefFormat
+                ? serializeCellREF(beans, v as Cell, useCalculatedRefs)
+                : serializeCellA1(beans, v as Cell, unsafe, useCalculatedRefs);
         }
 
         // node is FormulaOperation here.

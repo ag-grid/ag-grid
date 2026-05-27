@@ -212,7 +212,6 @@ export class ChartMenu extends Component {
             eventSource,
             showMenu: () => this.showMenu({ eventSource }),
             chartMenuContext: this.chartMenuContext,
-            closeOnElementClick: this.eChartContainer,
         });
     }
 

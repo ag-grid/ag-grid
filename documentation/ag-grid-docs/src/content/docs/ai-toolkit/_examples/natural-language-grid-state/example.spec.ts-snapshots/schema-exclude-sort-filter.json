@@ -1,0 +1,354 @@
+{
+  "type": "object",
+  "required": [
+    "aggregation",
+    "pivot",
+    "columnVisibility",
+    "columnSizing",
+    "rowGroup"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "aggregation": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Aggregation configuration for the grid",
+      "required": [
+        "aggregationModel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "aggregationModel": {
+          "type": "array",
+          "description": "Array of column aggregations",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "aggFunc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "age"
+                    ]
+                  },
+                  "aggFunc": {
+                    "type": "string",
+                    "description": "Aggregation function",
+                    "enum": [
+                      "sum",
+                      "avg",
+                      "max",
+                      "min",
+                      "count",
+                      "first",
+                      "last"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "aggFunc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "gold"
+                    ]
+                  },
+                  "aggFunc": {
+                    "type": "string",
+                    "description": "Aggregation function",
+                    "enum": [
+                      "sum",
+                      "avg",
+                      "max",
+                      "min",
+                      "count",
+                      "first",
+                      "last"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "aggFunc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "silver"
+                    ]
+                  },
+                  "aggFunc": {
+                    "type": "string",
+                    "description": "Aggregation function",
+                    "enum": [
+                      "sum",
+                      "avg",
+                      "max",
+                      "min",
+                      "count",
+                      "first",
+                      "last"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "aggFunc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "bronze"
+                    ]
+                  },
+                  "aggFunc": {
+                    "type": "string",
+                    "description": "Aggregation function",
+                    "enum": [
+                      "sum",
+                      "avg",
+                      "max",
+                      "min",
+                      "count",
+                      "first",
+                      "last"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "aggFunc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "type": "string",
+                    "description": "Column identifier",
+                    "enum": [
+                      "total"
+                    ]
+                  },
+                  "aggFunc": {
+                    "type": "string",
+                    "description": "Aggregation function",
+                    "enum": [
+                      "sum",
+                      "avg",
+                      "max",
+                      "min",
+                      "count",
+                      "first",
+                      "last"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "pivot": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Pivot configuration for the grid",
+      "required": [
+        "pivotMode",
+        "pivotColIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "pivotMode": {
+          "type": "boolean",
+          "description": "Whether pivot mode is enabled"
+        },
+        "pivotColIds": {
+          "type": "array",
+          "description": "Array of column IDs to use as pivot columns",
+          "items": {
+            "type": "string",
+            "description": "Column ID that supports pivoting",
+            "enum": [
+              "country",
+              "sport"
+            ]
+          }
+        }
+      }
+    },
+    "columnVisibility": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Column visibility configuration for the grid",
+      "required": [
+        "hiddenColIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "hiddenColIds": {
+          "type": "array",
+          "description": "Array of column IDs to hide",
+          "items": {
+            "$ref": "#/$defs/allColumnIds"
+          }
+        }
+      }
+    },
+    "columnSizing": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Column sizing configuration for the grid",
+      "required": [
+        "columnSizingModel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "columnSizingModel": {
+          "type": "array",
+          "description": "Array of column sizing configurations",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "width"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "$ref": "#/$defs/resizableColumnId"
+                  },
+                  "width": {
+                    "type": "number",
+                    "description": "Fixed width in pixels",
+                    "minimum": 20
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "flex"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "$ref": "#/$defs/resizableColumnId"
+                  },
+                  "flex": {
+                    "type": "number",
+                    "description": "Flex sizing ratio",
+                    "minimum": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "rowGroup": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Row grouping configuration for the grid",
+      "required": [
+        "groupColIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "groupColIds": {
+          "type": "array",
+          "description": "Array of column IDs to group by",
+          "items": {
+            "type": "string",
+            "description": "Column ID that supports row grouping",
+            "enum": [
+              "athlete",
+              "country",
+              "year",
+              "sport"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "allColumnIds": {
+      "_defs": {},
+      "_nullable": false,
+      "description": "athlete\nage\ncountry\nyear\nsport\ngold\nsilver\nbronze\ntotal",
+      "_enum": [
+        "athlete",
+        "age",
+        "country",
+        "year",
+        "sport",
+        "gold",
+        "silver",
+        "bronze",
+        "total"
+      ],
+      "type": "string"
+    },
+    "resizableColumnId": {
+      "_defs": {},
+      "_nullable": false,
+      "description": "Column ID that supports resizing",
+      "_enum": [
+        "athlete",
+        "age",
+        "country",
+        "year",
+        "sport",
+        "gold",
+        "silver",
+        "bronze",
+        "total"
+      ],
+      "type": "string"
+    }
+  }
+}

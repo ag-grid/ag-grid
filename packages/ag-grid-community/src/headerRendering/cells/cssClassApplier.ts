@@ -1,5 +1,6 @@
 import { _missing } from '../../agStack/utils/generic';
 import type { VisibleColsService } from '../../columns/visibleColsService';
+import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
@@ -12,25 +13,32 @@ import type { IAbstractHeaderCellComp } from './abstractCell/abstractHeaderCellC
 
 const CSS_FIRST_COLUMN = 'ag-column-first';
 const CSS_LAST_COLUMN = 'ag-column-last';
+const CSS_CALCULATED_COLUMN = 'ag-calculated-column';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getHeaderClassesFromColDef(
     abstractColDef: AbstractColDef | null,
-    gos: GridOptionsService,
+    beans: BeanCollection,
     column: AgColumn | null,
     columnGroup: AgColumnGroup | null
 ): string[] {
+    const calculatedClasses =
+        column?.colDef.calculatedExpression != null && beans.calculatedColsSvc != null ? [CSS_CALCULATED_COLUMN] : [];
+
     if (_missing(abstractColDef)) {
-        return [];
+        return calculatedClasses;
     }
 
-    return getColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, gos, column, columnGroup);
+    return [
+        ...calculatedClasses,
+        ...getColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, beans.gos, column, columnGroup),
+    ];
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getToolPanelClassesFromColDef(
     abstractColDef: AbstractColDef | null,
-    gos: GridOptionsService,
+    beans: BeanCollection,
     column: AgColumn | null,
     columnGroup: AgProvidedColumnGroup | null
 ): string[] {
@@ -38,7 +46,7 @@ export function _getToolPanelClassesFromColDef(
         return [];
     }
 
-    return getColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, gos, column, columnGroup);
+    return getColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, beans.gos, column, columnGroup);
 }
 
 export function refreshFirstAndLastStyles(

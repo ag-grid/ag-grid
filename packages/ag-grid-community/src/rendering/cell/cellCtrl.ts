@@ -60,6 +60,7 @@ const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
 const CSS_CELL_LAST_LEFT_PINNED = 'ag-cell-last-left-pinned';
 const CSS_CELL_NOT_INLINE_EDITING = 'ag-cell-not-inline-editing';
 const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
+const CSS_CALCULATED_COLUMN = 'ag-calculated-column';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ICellComp {
@@ -297,7 +298,8 @@ export class CellCtrl extends BeanStub {
     }
 
     private checkFormulaError() {
-        if (!this.beans.formula?.active) {
+        const formula = this.beans.formula;
+        if (!formula || (!formula.active && !this.isCalculatedColumn())) {
             return;
         }
         this.eGui.classList.toggle('formula-error', this.hasFormulaError());
@@ -306,7 +308,7 @@ export class CellCtrl extends BeanStub {
     private hasFormulaError(): boolean {
         const formula = this.beans.formula;
 
-        if (!formula?.active) {
+        if (!formula || (!formula.active && !this.isCalculatedColumn())) {
             return false;
         }
 
@@ -988,6 +990,7 @@ export class CellCtrl extends BeanStub {
         const autoHeight = this.column.isAutoHeight() == true;
         comp.toggleCss(CSS_AUTO_HEIGHT, autoHeight);
         comp.toggleCss(CSS_NORMAL_HEIGHT, !autoHeight);
+        this.setCalculatedColumnCss();
     }
 
     public onColumnHover(): void {
@@ -1007,6 +1010,7 @@ export class CellCtrl extends BeanStub {
         }
 
         this.setWrapText();
+        this.setCalculatedColumnCss();
 
         if (this.editSvc?.isEditing(this)) {
             this.editSvc?.handleColDefChanged(this);
@@ -1019,6 +1023,14 @@ export class CellCtrl extends BeanStub {
         const value = this.column.colDef.wrapText == true;
 
         this.comp.toggleCss(CSS_CELL_WRAP_TEXT, value);
+    }
+
+    private setCalculatedColumnCss(): void {
+        this.comp.toggleCss(CSS_CALCULATED_COLUMN, this.isCalculatedColumn());
+    }
+
+    private isCalculatedColumn(): boolean {
+        return this.column.colDef.calculatedExpression != null && this.beans.calculatedColsSvc != null;
     }
 
     public dispatchCellContextMenuEvent(event: Event | null) {

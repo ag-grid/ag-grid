@@ -91,7 +91,19 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         const defaultMenuOptions: DefaultMenuItem[] = [];
 
-        const { clipboardSvc, chartSvc, csvCreator, excelCreator, colModel, rangeSvc, gos, notesSvc } = this.beans;
+        const {
+            clipboardSvc,
+            chartSvc,
+            csvCreator,
+            excelCreator,
+            colModel,
+            rangeSvc,
+            gos,
+            notesSvc,
+            calculatedColsSvc,
+        } = this.beans;
+
+        const isCalculatedColumn = column?.getColDef().calculatedExpression != null && calculatedColsSvc != null;
 
         if (_exists(node) && clipboardSvc) {
             if (column) {
@@ -101,6 +113,10 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
                 }
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
+        }
+
+        if (_exists(node) && isCalculatedColumn) {
+            defaultMenuOptions.push('separator', 'removeCalculatedColumn', 'separator');
         }
 
         if (_exists(node) && column && notesSvc?.hasDataSource()) {

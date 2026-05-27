@@ -75,6 +75,10 @@ export function isCellEditable(beans: BeanCollection, editPosition: Required<Edi
     const rowNode = editPosition.rowNode;
     const colDef = column.getColDef();
 
+    if (colDef.calculatedExpression != null && beans.calculatedColsSvc != null) {
+        return false;
+    }
+
     if (!rowNode) {
         return existingEditing(beans, editPosition);
     }

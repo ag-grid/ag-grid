@@ -2,7 +2,7 @@ import type { ColDef, Column } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 describe('pivot column identity across columnDefs updates', () => {
     const gridsManager = new TestGridsManager({
@@ -303,6 +303,36 @@ describe('pivot column identity across columnDefs updates', () => {
 
         for (const col of api.getPivotResultColumns() ?? []) {
             expect(col.getColDef().headerName).toBe('Gold Medals');
+        }
+    });
+
+    // skipped on `latest` — bean leak fix lands with AG-17366-column-model-rewrite
+    test.skip('pivot result cols dropped across a clear/restore window are destroyed (no bean leak)', async () => {
+        const api = gridsManager.createGrid('clearRestoreLeak', {
+            columnDefs: baseColumnDefs,
+            pivotMode: true,
+            groupDefaultExpanded: -1,
+            pivotDefaultExpanded: -1,
+        });
+        applyTransactionChecked(api, { add: olympicLikeRows });
+        await asyncSetTimeout(0);
+
+        const oldPivotCols = api.getPivotResultColumns() ?? [];
+        expect(oldPivotCols.length).toBeGreaterThan(0);
+
+        api.setPivotColumns([]);
+        await asyncSetTimeout(0);
+
+        api.setPivotColumns(['sport']);
+        await asyncSetTimeout(0);
+
+        const newPivotCols = api.getPivotResultColumns() ?? [];
+        const newSet = new Set(newPivotCols);
+
+        for (const oldCol of oldPivotCols) {
+            if (!newSet.has(oldCol)) {
+                expect((oldCol as any).isAlive()).toBe(false);
+            }
         }
     });
 });

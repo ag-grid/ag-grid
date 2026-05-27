@@ -11,7 +11,8 @@
     z-index: 99999;
 
     &:where(.ag-cell-editor-tooltip),
-    &:where(.ag-cell-formula-tooltip) {
+    &:where(.ag-cell-formula-tooltip),
+    &:where(.ag-calculated-column-expression-tooltip) {
         background-color: var(--ag-tooltip-error-background-color);
         color: var(--ag-tooltip-error-text-color);
         border: var(--ag-tooltip-error-border);

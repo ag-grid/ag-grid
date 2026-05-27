@@ -1,0 +1,111 @@
+---
+title: "Calculated Columns"
+enterprise: true
+---
+
+Calculated Columns let you add read-only values to the grid without storing those values in row data. Each calculated column is defined in the column definition, evaluates against the same row, and can still use normal column features such as sorting, filtering, value formatting and cell rendering.
+
+## Enabling Calculated Columns
+
+Calculated columns are enabled by registering `CalculatedColumnsModule` and setting `calculatedExpression` on a column definition. In source code and Grid API calls, bracket references such as `[revenue]` resolve to the same-row value from the column with that `colId`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'revenue' },
+        { field: 'cost' },
+        {
+            colId: 'profit',
+            calculatedExpression: '[revenue] - [cost]',
+            cellDataType: 'number',
+            sortable: true,
+            filter: true,
+        },
+    ],
+};
+```
+
+{% gridExampleRunner title="Calculated Columns" name="calculated-columns" exampleHeight=350 /%}
+
+Calculated expressions do not need a leading equals sign (`=`). The value inside brackets must match a column `colId`, which defaults to the `field` when no explicit `colId` is provided.
+
+Calculated Columns are supported with all row models. Same-row bracket references are reliable everywhere. Cross-row and range references depend on the referenced rows being loaded in the current row model.
+
+For Server-Side, Infinite and Viewport Row Models, sorting and filtering are datasource or server responsibilities. The grid displays calculated values for loaded rows, but does not client-sort or client-filter remote datasets by calculated results.
+
+Calculated columns are always read-only. They cannot be edited through cell editing, paste, fill handle or delete operations.
+
+## References with Column Groups
+
+When the Column Menu is registered, users can add a calculated column from the header menu using **Add Calculated Column**. Opening the header menu on a calculated column shows **Edit Calculated Column** for changing its title, type and expression, and **Remove Calculated Column** for removing it. Right-clicking cells in a calculated column also shows **Remove Calculated Column**.
+
+In the dialog, references are shown by header names, for example `[Revenue]`. If headers are duplicated under groups, the dialog uses the shortest unique group path, such as `[2025 Q4]` and `[2026 Q4]`. These display references are translated back to `colId` references before the column definition is updated.
+
+If two columns share the same header _and_ the same group hierarchy, the reference falls back to appending the `colId`, for example `[2025 Q4 (revenue-q4)]`. This keeps the reference stable when columns are reordered. Give your columns distinct headers or group hierarchies to avoid this.
+
+The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `2025` and `2026` column groups. The year groups start collapsed and show a calculated `Total` column; expanding a group reveals the quarter columns. The dialog shows grouped references such as `[2025 Q4]` and `[2026 Q4]`, while the source code stores stable `colId` references such as `[q4_2025]` and `[q4_2026]`.
+
+{% gridExampleRunner title="Column Groups with Duplicate Headers" name="calculated-columns-column-groups" exampleHeight=420 /%}
+
+The dialog and remove action update the current `columnDefs`, so applications can persist the resulting definitions in the same way as any other column definition change.
+
+## Advanced Calculated Columns
+
+Calculated columns can use the same operators and functions as formulas, and can reference other calculated columns in the same row. This allows chained derived values such as profit, margin and status.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'revenue' },
+        { field: 'cost' },
+        {
+            colId: 'profit',
+            calculatedExpression: '[revenue] - [cost]',
+            cellDataType: 'number',
+        },
+        {
+            colId: 'margin',
+            calculatedExpression: '[profit] / [revenue]',
+            cellDataType: 'number',
+            valueFormatter: params => `${Math.round(params.value * 100)}%`,
+        },
+        {
+            colId: 'status',
+            calculatedExpression: 'IF([margin] >= 0.25, "Healthy", "Review")',
+            cellDataType: 'text',
+        },
+    ],
+};
+```
+
+{% gridExampleRunner title="Advanced Calculated Columns" name="calculated-columns-advanced" exampleHeight=390 /%}
+
+Header cells and grid cells for calculated columns include the `ag-calculated-column` CSS class, which can be used for custom styling.
+
+Calculated columns can also be managed from the Grid API. Added columns are appended to the current column definitions; use the column moving API afterwards if you need a specific display position.
+
+```{% frameworkTransform=true %}
+api.addCalculatedColumn({
+    colId: 'profitMargin',
+    calculatedExpression: '([revenue] - [cost]) / [revenue]',
+    cellDataType: 'number',
+    valueFormatter: params => `${(params.value * 100).toFixed(1)}%`,
+});
+
+api.updateCalculatedColumn('profitMargin', {
+    calculatedExpression: '([revenue] - [cost]) / [revenue]',
+    valueFormatter: params => `${(params.value * 100).toFixed(2)}%`,
+});
+
+api.removeCalculatedColumn('profitMargin');
+```
+
+## API
+
+### Column Properties
+
+{% apiDocumentation source="column-properties/properties.json" section="calculatedColumns" names=["calculatedExpression"] /%}
+
+### Grid API
+
+{% apiDocumentation source="grid-api/api.json" section="calculatedColumns" names=["addCalculatedColumn", "updateCalculatedColumn", "removeCalculatedColumn"] /%}

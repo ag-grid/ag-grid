@@ -48,6 +48,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private isSsrm: boolean = false;
     private cellExpressions: boolean = false;
     private groupSuppressBlankHeader: boolean = false;
+    private calculatedColumnsRegistered: boolean = false;
 
     // Bean refs — assigned in wireBeans. Initialised to undefined so the property slot
     // exists in the same shape from construction time.
@@ -77,6 +78,7 @@ export class ValueService extends BeanStub implements NamedBean {
         this.cellExpressions = gos.get('enableCellExpressions');
         this.isTreeData = gos.get('treeData');
         this.groupSuppressBlankHeader = gos.get('groupSuppressBlankHeader');
+        this.calculatedColumnsRegistered = this.beans.calculatedColsSvc != null;
         this.executeValueGetter =
             this.valueCache && gos.get('valueCache')
                 ? this.executeValueGetterWithValueCache
@@ -206,7 +208,9 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
 
-        let result = this.resolveValue(column, rowNode, ignoreAggData, isGroup);
+        let result = this.calculatedColumnsRegistered
+            ? this.resolveValueWithCalculatedColumns(column, rowNode, ignoreAggData, isGroup)
+            : this.resolveValueWithoutCalculatedColumns(column, rowNode, ignoreAggData, isGroup);
 
         if (result === undefined) {
             // For showRowGroup columns on group rows, if no value was resolved and the row's
@@ -258,7 +262,22 @@ export class ValueService extends BeanStub implements NamedBean {
         return !!node.expanded;
     }
 
-    private resolveValue(
+    private resolveValueWithCalculatedColumns(
+        column: AgColumn,
+        rowNode: IRowNode,
+        ignoreAggData: boolean,
+        isGroup: boolean | undefined
+    ): any {
+        const { calculatedExpression } = column.colDef;
+
+        if (calculatedExpression != null) {
+            return this.beans.formula?.resolveValue(column, rowNode as RowNode);
+        }
+
+        return this.resolveValueWithoutCalculatedColumns(column, rowNode, ignoreAggData, isGroup);
+    }
+
+    private resolveValueWithoutCalculatedColumns(
         column: AgColumn,
         rowNode: IRowNode,
         ignoreAggData: boolean,
@@ -277,21 +296,16 @@ export class ValueService extends BeanStub implements NamedBean {
 
         // Only group rows have aggData — skip for leaf rows
         const aggData = isGroup && !ignoreAggData ? rowNode.aggData : undefined;
-        const isTreeData = this.isTreeData;
-        if (isTreeData && aggData?.[colId] !== undefined) {
-            return aggData[colId];
-        }
-
         const data = rowNode.data;
-        const field = colDef.field;
-        const valueGetter = colDef.valueGetter;
 
-        if (isTreeData) {
-            if (valueGetter) {
-                return this.executeValueGetter(valueGetter, data, column, rowNode);
+        if (this.isTreeData) {
+            if (aggData?.[colId] !== undefined) {
+                return aggData[colId];
             }
-            if (field && data) {
-                return column.fieldContainsDots ? _getValueUsingDotField(data, field) : data[field];
+
+            const treeValue = this.readByValueGetterOrField(column, rowNode, data);
+            if (treeValue !== undefined) {
+                return treeValue;
             }
         }
 
@@ -303,37 +317,74 @@ export class ValueService extends BeanStub implements NamedBean {
             return aggData[colId];
         }
 
-        // don't retrieve group values from field or valueGetter for multiple auto cols
-        const rowGroupColId = colDef.showRowGroup;
-        const allowUserValuesForCell = typeof rowGroupColId !== 'string' || !isGroup;
+        return this.readUserValueForCell(column, rowNode, data, ignoreAggData, isGroup);
+    }
 
-        // SSRM agg data comes from the data attribute, so ignore that instead
-        const isSsrm = this.isSsrm;
-        const ignoreSsrmAggData = isSsrm && ignoreAggData && !!colDef.aggFunc;
+    private readByValueGetterOrField(column: AgColumn, rowNode: IRowNode, data: any): any {
+        const { valueGetter, field } = column.colDef;
 
-        if (valueGetter && !ignoreSsrmAggData) {
-            return allowUserValuesForCell ? this.executeValueGetter(valueGetter, data, column, rowNode) : undefined;
+        if (valueGetter) {
+            return this.executeValueGetter(valueGetter, data, column, rowNode);
         }
 
-        const ssrmFooterGroupCol =
-            isSsrm && rowNode.footer && rowNode.field && (rowGroupColId === true || rowGroupColId === rowNode.field);
-        if (ssrmFooterGroupCol) {
-            // SSRM footer rows have no groupData — read the group value from data using the row field.
-            if (!data) {
-                return undefined;
-            }
-            const rowField = rowNode.field!;
-            return column.fieldContainsDots ? _getValueUsingDotField(data, rowField) : data[rowField];
-        }
-
-        if (field && data && !ignoreSsrmAggData) {
-            if (!allowUserValuesForCell) {
-                return undefined;
-            }
+        if (field && data) {
             return column.fieldContainsDots ? _getValueUsingDotField(data, field) : data[field];
         }
 
         return undefined;
+    }
+
+    private readUserValueForCell(
+        column: AgColumn,
+        rowNode: IRowNode,
+        data: any,
+        ignoreAggData: boolean,
+        isGroup: boolean | undefined
+    ): any {
+        const colDef = column.colDef;
+        const rowGroupColId = colDef.showRowGroup;
+        const allowUserValuesForCell = typeof rowGroupColId !== 'string' || !isGroup;
+        const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!colDef.aggFunc;
+
+        if (colDef.valueGetter && !ignoreSsrmAggData) {
+            if (!allowUserValuesForCell) {
+                return undefined;
+            }
+            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
+        }
+
+        const ssrmFooterValue = this.readSsrmFooterGroupValue(column, rowNode, data, rowGroupColId);
+        if (ssrmFooterValue !== undefined) {
+            return ssrmFooterValue;
+        }
+
+        const field = colDef.field;
+        if (!field || !data || ignoreSsrmAggData || !allowUserValuesForCell) {
+            return undefined;
+        }
+        return column.fieldContainsDots ? _getValueUsingDotField(data, field) : data[field];
+    }
+
+    private readSsrmFooterGroupValue(
+        column: AgColumn,
+        rowNode: IRowNode,
+        data: any,
+        rowGroupColId: ColDef['showRowGroup']
+    ): any {
+        if (!this.isSsrm || !rowNode.footer) {
+            return undefined;
+        }
+        const rowField = rowNode.field;
+
+        if (!rowField || (rowGroupColId !== true && rowGroupColId !== rowField)) {
+            return undefined;
+        }
+
+        if (!data) {
+            return undefined;
+        }
+
+        return column.fieldContainsDots ? _getValueUsingDotField(data, rowField) : data[rowField];
     }
 
     public parseValue<TValueNew = any, TValueOld = any, TValue = any>(
@@ -580,6 +631,10 @@ export class ValueService extends BeanStub implements NamedBean {
 
     private isSetValueSupported(column: AgColumn, rowNode: IRowNode, newValue: any, colDef: ColDef): boolean {
         const { field, valueSetter } = colDef;
+
+        if (colDef.calculatedExpression != null && this.calculatedColumnsRegistered) {
+            return false;
+        }
 
         const formulaSvc = this.beans.formula;
         const isFormulaValue = column.colDef.allowFormula && formulaSvc?.isFormula(newValue);

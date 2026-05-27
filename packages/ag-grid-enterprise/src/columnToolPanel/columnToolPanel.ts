@@ -432,9 +432,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const children = eGui.children;
 
         for (let i = 0; i < children.length; i++) {
-            const { style } = children[i] as HTMLElement;
-            style.removeProperty('height');
-            style.removeProperty('flex');
+            const style = (children[i] as HTMLElement | undefined)?.style;
+            style?.removeProperty('height');
+            style?.removeProperty('flex');
         }
     }
 

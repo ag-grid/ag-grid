@@ -55,6 +55,7 @@ import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterServic
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAggregatedChildrenSvc } from '../interfaces/iAggregatedChildrenSvc';
+import type { ICalculatedColumnsService } from '../interfaces/iCalculatedColumns';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
@@ -408,6 +409,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     formulaDataSvc?: IFormulaDataService;
     formula?: IFormulaService;
     formulaInputManager?: IFormulaInputManagerService;
+    calculatedColsSvc?: ICalculatedColumnsService;
     notesDataSvc?: INotesDataService;
     notesSvc?: INotesService;
     columnStateUpdateStrategy: IColumnStateUpdateStrategy;

@@ -679,5 +679,15 @@
             }
         },
         "allowFormula": {}
+    },
+    "calculatedColumns": {
+        "meta": {
+            "displayName": "Columns: Calculated Columns",
+            "page": {
+                "name": "Calculated Columns",
+                "url": "./calculated-columns/"
+            }
+        },
+        "calculatedExpression": {}
     }
 }

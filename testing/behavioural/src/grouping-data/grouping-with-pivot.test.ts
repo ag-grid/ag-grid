@@ -1176,6 +1176,154 @@ describe('ag-grid grouping with pivot', () => {
         expect(newPivotColumns[0].getColId()).toBe('year');
     });
 
+    test('pivot column headers use refData to map keys to display values and sort by display name', async () => {
+        const carMappings: Record<string, string> = {
+            a: 'Zenith',
+            b: 'Alpha',
+            c: 'Mid',
+        };
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'make', pivot: true, hide: true, refData: carMappings },
+                { field: 'price', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        applyTransactionChecked(api, {
+            add: [
+                { id: '1', country: 'UK', make: 'a', price: 35000 },
+                { id: '2', country: 'UK', make: 'b', price: 32000 },
+                { id: '3', country: 'US', make: 'c', price: 30000 },
+            ],
+        });
+
+        await new GridColumns(api, 'pivot with refData sorts by display name').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "Alpha" GROUP
+            │ └── pivot_make_b_price "Price" width:200 columnGroupShow:open
+            ├─┬ "Mid" GROUP
+            │ └── pivot_make_c_price "Price" width:200 columnGroupShow:open
+            └─┬ "Zenith" GROUP
+              └── pivot_make_a_price "Price" width:200 columnGroupShow:open
+        `);
+
+        api.setGridOption('enableStrictPivotColumnOrder', true);
+        api.setGridOption('columnDefs', [
+            { field: 'country', rowGroup: true, hide: true },
+            {
+                field: 'make',
+                pivot: true,
+                hide: true,
+                refData: carMappings,
+                pivotComparator: (a, b) => b.localeCompare(a),
+            },
+            { field: 'price', aggFunc: 'sum', hide: true },
+        ]);
+
+        await new GridColumns(api, 'pivot with refData and reverse pivotComparator').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "Zenith" GROUP
+            │ └── pivot_make_a_price "Price" width:200 columnGroupShow:open
+            ├─┬ "Mid" GROUP
+            │ └── pivot_make_c_price "Price" width:200 columnGroupShow:open
+            └─┬ "Alpha" GROUP
+              └── pivot_make_b_price "Price" width:200 columnGroupShow:open
+        `);
+    });
+
+    test('pivot column headers use refData with multiple pivot columns', async () => {
+        const carMappings: Record<string, string> = {
+            tyt: 'Toyota',
+            frd: 'Ford',
+        };
+
+        const colourMappings: Record<string, string> = {
+            cb: 'Cadet Blue',
+            fg: 'Forest Green',
+        };
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'make', pivot: true, hide: true, refData: carMappings },
+                { field: 'colour', pivot: true, hide: true, refData: colourMappings },
+                { field: 'price', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        applyTransactionChecked(api, {
+            add: [
+                { id: '1', country: 'UK', make: 'tyt', colour: 'cb', price: 35000 },
+                { id: '2', country: 'UK', make: 'frd', colour: 'fg', price: 32000 },
+            ],
+        });
+
+        await new GridColumns(api, 'pivot with multiple refData columns').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "Ford" GROUP closed
+            │ ├─┬ "Forest Green" GROUP hidden
+            │ │ └── pivot_make-colour_frd-fg_price "Price" width:200 columnGroupShow:open hidden
+            │ └── pivot_make-colour_frd_price "Price" width:200 columnGroupShow:closed
+            └─┬ "Toyota" GROUP closed
+              ├─┬ "Cadet Blue" GROUP hidden
+              │ └── pivot_make-colour_tyt-cb_price "Price" width:200 columnGroupShow:open hidden
+              └── pivot_make-colour_tyt_price "Price" width:200 columnGroupShow:closed
+        `);
+    });
+
+    test('pivot column headers fall back to raw key when refData does not contain the key', async () => {
+        const carMappings: Record<string, string> = {
+            a: 'Alpha',
+        };
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'make', pivot: true, hide: true, refData: carMappings },
+                { field: 'price', aggFunc: 'sum', hide: true },
+            ],
+            pivotMode: true,
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        applyTransactionChecked(api, {
+            add: [
+                { id: '1', country: 'UK', make: 'a', price: 35000 },
+                { id: '2', country: 'UK', make: 'b', price: 32000 },
+                { id: '3', country: 'US', make: 'c', price: 30000 },
+            ],
+        });
+
+        await new GridColumns(api, 'pivot with partial refData falls back to raw key').checkColumns(`
+            CENTER
+            ├── ag-Grid-AutoColumn "Group" width:200
+            ├─┬ "Alpha" GROUP
+            │ └── pivot_make_a_price "Price" width:200 columnGroupShow:open
+            ├─┬ "b" GROUP
+            │ └── pivot_make_b_price "Price" width:200 columnGroupShow:open
+            └─┬ "c" GROUP
+              └── pivot_make_c_price "Price" width:200 columnGroupShow:open
+        `);
+    });
+
     test('aggregation value gets hidden on an expanded group if it has a group total row', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [

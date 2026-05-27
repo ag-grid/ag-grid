@@ -56,6 +56,20 @@ const SORTED_CELL_DATA_TYPES_FOR_MATCHING: readonly Exclude<BaseCellDataType, 'd
     'date',
 ] as const;
 
+// Properties that the data-type service may implicitly set when cellDataType is applied.
+// Keep this list aligned with columnDefinitionPropsPerDataType and data type value parsers/formatters.
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const DATA_TYPE_DERIVED_COL_DEF_PROPERTIES = [
+    'cellRenderer',
+    'cellEditorParams',
+    'comparator',
+    'getFindText',
+    'keyCreator',
+    'suppressKeyboardEvent',
+    'valueFormatter',
+    'valueParser',
+] as const satisfies readonly (keyof ColDef)[];
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class DataTypeService extends BeanStub implements NamedBean {
     beanName = 'dataTypeSvc' as const;

@@ -946,7 +946,8 @@
         white-space: normal;
 
         &.ag-cell-editor-tooltip,
-        &.ag-cell-formula-tooltip {
+        &.ag-cell-formula-tooltip,
+        &.ag-calculated-column-expression-tooltip {
             background-color: var(--ag-tooltip-error-background-color);
             color: var(--ag-tooltip-error-text-color);
             border: var(--ag-borders) var(--ag-tooltip-error-border-color);

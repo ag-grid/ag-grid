@@ -16,7 +16,6 @@ const HTML_ESCAPES: { [id: string]: string } = {
  * The first call to toString() returns back something other than a string (eg a number to render)
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-
 export function _toString(toEscape?: string | null): string | null {
     return toEscape?.toString().toString() ?? null;
 }
@@ -28,10 +27,23 @@ export function _escapeString(toEscape?: string | null): string | null {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _isStringLargerThan(value: unknown, length: number, trim?: boolean): value is string {
+    if (typeof value !== 'string') {
+        return false;
+    }
+
+    if (trim) {
+        value = value.trim();
+    }
+
+    return typeof value === 'string' && value.length > length;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _isExpressionString(value: unknown): value is `=${string}` {
     // 61 = '='.codePointAt(0). Direct integer read is cheaper than `startsWith('=')`, which pays
     // for argument-length and UTF-16 boundary handling on a single-char prefix.
-    return typeof value === 'string' && value.length > 1 && value.codePointAt(0) === 61;
+    return _isStringLargerThan(value, 1) && value.codePointAt(0) === 61;
 }
 
 /**

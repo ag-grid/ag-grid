@@ -1,6 +1,7 @@
 import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
 import { _isBrowserSafari } from '../../agStack/utils/browser';
 import { _exists } from '../../agStack/utils/generic';
+import { _isStringLargerThan } from '../../agStack/utils/string';
 import { AgInputTextFieldSelector } from '../../agStack/widgets/agInputTextField';
 import type { ElementParams } from '../../utils/element';
 import type { GridInputTextField } from '../../widgets/gridWidgetTypes';
@@ -53,7 +54,7 @@ class TextCellEditorInput<TValue = any> implements CellEditorInput<
 
         let internalErrors: string[] | null = [];
 
-        if (maxLength != null && typeof value === 'string' && value.length > maxLength) {
+        if (maxLength != null && _isStringLargerThan(value, maxLength)) {
             internalErrors.push(
                 translate('maxLengthValidation', `Must be ${maxLength} characters or fewer.`, [String(maxLength)])
             );

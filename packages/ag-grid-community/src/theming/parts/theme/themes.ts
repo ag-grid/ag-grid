@@ -12,19 +12,21 @@ import {
 } from '../../../agStack/theming/themeUtils';
 import type { CoreParams } from '../../core/core-css';
 import { createTheme } from '../../createTheme';
-import type { BatchEditStyleParams } from '../batch-edit/batch-edit-styles';
 import type { ButtonStyleParams } from '../button-style/button-styles';
-import { buttonStyleAlpine, buttonStyleBalham, buttonStyleBase } from '../button-style/button-styles';
+import {
+    buttonStyleAlpine,
+    buttonStyleBalham,
+    buttonStyleBase,
+    buttonStyleQuartz,
+} from '../button-style/button-styles';
 import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
 import type { CheckboxStyleParams } from '../checkbox-style/checkbox-styles';
 import { colorSchemeVariable } from '../color-scheme/color-schemes';
 import { columnDropStyleBordered, columnDropStylePlain } from '../column-drop-style/column-drop-styles';
-import type { FormulaStyleParams } from '../formula-style/formula-styles';
 import { iconSetBalham } from '../icon-set/balham/icon-set-balham';
 import { iconSetAlpine, iconSetMaterial, iconSetQuartzRegular } from '../icon-set/icon-sets';
 import type { InputStyleParams } from '../input-style/input-styles';
 import { inputStyleBordered, inputStyleUnderlined } from '../input-style/input-styles';
-import type { NoteStyleParams } from '../notes/note-styles';
 import type { TabStyleParams } from '../tab-style/tab-styles';
 import { tabStyleAlpine, tabStyleMaterial, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
 import materialAdjustmentsCSS from './material-adjustments.css';
@@ -33,10 +35,7 @@ export type ThemeDefaultParams = CoreParams &
     ButtonStyleParams &
     CheckboxStyleParams &
     TabStyleParams &
-    InputStyleParams &
-    BatchEditStyleParams &
-    FormulaStyleParams &
-    NoteStyleParams;
+    InputStyleParams;
 
 /**
  * Used as an entry point for collecting parameters for automated API
@@ -53,6 +52,7 @@ export const themeQuartzParams = () => ({
 
 const makeThemeQuartzTreeShakeable = () =>
     createTheme()
+        .withPart(buttonStyleQuartz)
         .withPart(checkboxStyleDefault)
         .withPart(colorSchemeVariable)
         .withPart(iconSetQuartzRegular)

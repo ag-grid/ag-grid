@@ -1,0 +1,109 @@
+{
+  "type": "object",
+  "required": [
+    "columnVisibility",
+    "columnSizing"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "columnVisibility": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Column visibility configuration for the grid",
+      "required": [
+        "hiddenColIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "hiddenColIds": {
+          "type": "array",
+          "description": "Array of column IDs to hide",
+          "items": {
+            "$ref": "#/$defs/allColumnIds"
+          }
+        }
+      }
+    },
+    "columnSizing": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Column sizing configuration for the grid",
+      "required": [
+        "columnSizingModel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "columnSizingModel": {
+          "type": "array",
+          "description": "Array of column sizing configurations",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "width"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "$ref": "#/$defs/resizableColumnId"
+                  },
+                  "width": {
+                    "type": "number",
+                    "description": "Fixed width in pixels",
+                    "minimum": 20
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "flex"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "$ref": "#/$defs/resizableColumnId"
+                  },
+                  "flex": {
+                    "type": "number",
+                    "description": "Flex sizing ratio",
+                    "minimum": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "allColumnIds": {
+      "_defs": {},
+      "_nullable": false,
+      "description": "athlete\ncountry",
+      "_enum": [
+        "athlete",
+        "country"
+      ],
+      "type": "string"
+    },
+    "resizableColumnId": {
+      "_defs": {},
+      "_nullable": false,
+      "description": "Column ID that supports resizing",
+      "_enum": [
+        "athlete",
+        "country"
+      ],
+      "type": "string"
+    }
+  }
+}

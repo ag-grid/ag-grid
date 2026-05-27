@@ -8,14 +8,21 @@
  * - Validators catch no errors after heavy mutations
  */
 import type { ColDef, Column } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
+import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridColumns, TestGridsManager } from '../test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('Column Mutations', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, PivotModule],
+        modules: [
+            ClientSideRowModelModule,
+            RowGroupingModule,
+            PivotModule,
+            RowSelectionModule,
+            RowNumbersModule,
+            TreeDataModule,
+        ],
     });
 
     afterEach(() => {
@@ -1195,6 +1202,874 @@ describe('Column Mutations', () => {
                 ├── b width:200
                 └── c width:200 lockPosition:right
             `);
+        });
+    });
+
+    /**
+     * Locks in the behaviour of the order tracker (`lastOrder` / `lastPivotOrder`) around
+     * service-col recreation. When a service col (auto-group / selection / row-numbers) is
+     * freshly created, the previous order tracker may hold a stale reference that no longer
+     * exists in `colsById`. The order tracker must rebuild so the fresh service col appears at
+     * the head of the displayed list while the user's reorder is preserved for the remaining
+     * cols.
+     */
+    describe('column order preservation across service-col recreation', () => {
+        test('rowSelection toggled on after user reorder: selection col at head, user order kept', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                maintainColumnOrder: true,
+            });
+
+            api.moveColumns(['c'], 0);
+
+            await new GridColumns(api, 'after user reorder').checkColumns(`
+                CENTER
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: true });
+
+            await new GridColumns(api, 'after selection enabled').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
+        test('rowNumbers toggled on after user reorder: rowNumbers col at head, user order kept', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                maintainColumnOrder: true,
+            });
+
+            api.moveColumns(['c'], 0);
+
+            api.setGridOption('rowNumbers', true);
+
+            await new GridColumns(api, 'after rowNumbers enabled').checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
+        test('auto-group col added after user reorder: auto col at head, user order kept', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                maintainColumnOrder: true,
+            });
+
+            api.moveColumns(['c'], 0);
+
+            api.setGridOption('columnDefs', [{ colId: 'a', rowGroup: true }, { colId: 'b' }, { colId: 'c' }]);
+
+            await new GridColumns(api, 'after row grouping enabled').checkColumns(`
+                CENTER
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── c width:200
+                ├── a width:200 rowGroup
+                └── b width:200
+            `);
+        });
+
+        test('toggle rowSelection off then on preserves user reorder', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+                maintainColumnOrder: true,
+            });
+
+            api.moveColumns(['c'], 1);
+
+            await new GridColumns(api, 'after user reorder with selection').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+
+            api.setGridOption('rowSelection', undefined);
+
+            await new GridColumns(api, 'after selection disabled').checkColumns(`
+                CENTER
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: true });
+
+            await new GridColumns(api, 'after selection re-enabled').checkColumns(`
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── c width:200
+                ├── a width:200
+                └── b width:200
+            `);
+        });
+
+        test('user-reordered selection col stays at moved position when its config changes', async () => {
+            // With maintainColumnOrder=true and the user having overridden the default
+            // lockPosition so the selection col is movable, a regenerated selection col should
+            // stay at the user's position rather than snapping to the head — per the docs:
+            // "prioritise the order of the columns as they appear in the grid".
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+                selectionColumnDef: { lockPosition: false, suppressMovable: false },
+                maintainColumnOrder: true,
+            });
+
+            // Move selection col to position 2 (after 'a', 'b').
+            api.moveColumns(['ag-Grid-SelectionColumn'], 2);
+
+            await new GridColumns(api, 'user moved selection col').checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── b width:200
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable
+                └── c width:200
+            `);
+
+            // Change selection config — triggers selection col regeneration.
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: true, headerCheckbox: true });
+
+            // Selection col should remain at the user-chosen position.
+            await new GridColumns(api, 'after selection regenerated').checkColumns(`
+                CENTER
+                ├── a width:200
+                ├── b width:200
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable
+                └── c width:200
+            `);
+        });
+
+        test('multiple service cols added simultaneously appear at head in fixed order', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                maintainColumnOrder: true,
+            });
+
+            api.moveColumns(['c'], 0);
+
+            api.setGridOption('columnDefs', [{ colId: 'a', rowGroup: true }, { colId: 'b' }, { colId: 'c' }]);
+            api.setGridOption('rowNumbers', true);
+            api.setGridOption('rowSelection', { mode: 'multiRow', checkboxes: true });
+
+            // Display order at head: rowNumber (left-pinned) → selection (left-pinned in center
+            // bucket) → autoGroup → user-reorder preserved.
+            await new GridColumns(api, 'all service cols enabled').checkColumns(`
+                LEFT
+                └── ag-Grid-RowNumbersColumn width:60 !resizable !sortable suppressMovable lockPosition:left
+                CENTER
+                ├── ag-Grid-SelectionColumn width:50 !resizable !sortable suppressMovable lockPosition:left
+                ├── ag-Grid-AutoColumn "Group" width:200
+                ├── c width:200
+                ├── a width:200 rowGroup
+                └── b width:200
+            `);
+        });
+    });
+
+    describe('service col instance preservation across configuration changes', () => {
+        test('autoGroupColumnDef change keeps auto-col instance, updates the colDef', async () => {
+            const api = gridsManager.createGrid('autoGroup', {
+                columnDefs: [{ field: 'country', rowGroup: true }, { field: 'value' }],
+                rowData: [
+                    { country: 'USA', value: 1 },
+                    { country: 'UK', value: 2 },
+                ],
+                autoGroupColumnDef: { headerName: 'Group A', width: 180 },
+            });
+            await asyncSetTimeout(0);
+
+            const autoColBefore = api.getColumn('ag-Grid-AutoColumn');
+            expect(autoColBefore).not.toBeNull();
+            expect(autoColBefore!.getColDef().headerName).toBe('Group A');
+            expect(autoColBefore!.getActualWidth()).toBe(180);
+
+            api.setGridOption('autoGroupColumnDef', { headerName: 'Group B', width: 220 });
+            await asyncSetTimeout(0);
+
+            const autoColAfter = api.getColumn('ag-Grid-AutoColumn');
+            expect(autoColAfter).toBe(autoColBefore);
+            expect(autoColAfter!.getColDef().headerName).toBe('Group B');
+            expect(autoColAfter!.getActualWidth()).toBe(220);
+
+            await new GridColumns(api, 'autoGroupColumnDef changed; auto col instance preserved').checkColumns(false);
+            await new GridRows(api, 'rows after autoGroupColumnDef change').check(false);
+        });
+
+        test('pivot mode toggle preserves selection col instance', async () => {
+            const api = gridsManager.createGrid('pivotToggle', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true },
+                    { field: 'sport', enablePivot: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { country: 'USA', sport: 'Swimming', gold: 5 },
+                    { country: 'UK', sport: 'Running', gold: 3 },
+                ],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+            });
+            await asyncSetTimeout(0);
+
+            const selBefore = api.getColumn('ag-Grid-SelectionColumn');
+            expect(selBefore).not.toBeNull();
+
+            api.setGridOption('pivotMode', true);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('ag-Grid-SelectionColumn')).toBe(selBefore);
+
+            api.setGridOption('pivotMode', false);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('ag-Grid-SelectionColumn')).toBe(selBefore);
+            expect((selBefore as any).isAlive()).toBe(true);
+        });
+    });
+
+    describe('lastOrder per pivot mode (maintainColumnOrder)', () => {
+        test('user reorder in primary mode is preserved after pivot toggle round-trip', async () => {
+            const api = gridsManager.createGrid('lastOrder', {
+                columnDefs: [
+                    { colId: 'country', rowGroup: true },
+                    { colId: 'sport', enablePivot: true },
+                    { colId: 'gold', aggFunc: 'sum' },
+                    { colId: 'silver', aggFunc: 'sum' },
+                    { colId: 'bronze', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { country: 'USA', sport: 'Swim', gold: 1, silver: 2, bronze: 3 },
+                    { country: 'UK', sport: 'Run', gold: 4, silver: 5, bronze: 6 },
+                ],
+                maintainColumnOrder: true,
+            });
+            await asyncSetTimeout(0);
+
+            api.moveColumns(['bronze'], 0);
+            await asyncSetTimeout(0);
+            const primaryOrderBefore = api
+                .getAllDisplayedColumns()
+                .map((c) => c.getColId())
+                .filter((id) => !id.startsWith('ag-Grid'));
+            expect(primaryOrderBefore[0]).toBe('bronze');
+
+            api.setGridOption('pivotMode', true);
+            await asyncSetTimeout(0);
+            api.setGridOption('pivotMode', false);
+            await asyncSetTimeout(0);
+
+            const primaryOrderAfter = api
+                .getAllDisplayedColumns()
+                .map((c) => c.getColId())
+                .filter((id) => !id.startsWith('ag-Grid'));
+
+            expect(primaryOrderAfter).toEqual(primaryOrderBefore);
+        });
+    });
+
+    describe('applyColumnState resilience', () => {
+        test('unknown colIds in state are ignored, valid colIds updated', () => {
+            const api = gridsManager.createGrid('unknownState', {
+                columnDefs: [
+                    { colId: 'a', width: 100 },
+                    { colId: 'b', width: 100 },
+                ],
+            });
+
+            expect(() =>
+                api.applyColumnState({
+                    state: [
+                        { colId: 'a', width: 175 },
+                        { colId: 'does-not-exist', width: 999 },
+                        { colId: 'also-fake', sort: 'asc' },
+                        { colId: 'b', width: 225 },
+                    ],
+                })
+            ).not.toThrow();
+
+            const widths = Object.fromEntries(api.getColumnState().map((s) => [s.colId, s.width]));
+            expect(widths['a']).toBe(175);
+            expect(widths['b']).toBe(225);
+            expect(widths['does-not-exist']).toBeUndefined();
+            expect(widths['also-fake']).toBeUndefined();
+        });
+    });
+
+    describe('setColumnsVisible idempotence', () => {
+        test('setting same visibility twice does not refire columnVisible event', async () => {
+            const api = gridsManager.createGrid('idempotent', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+            });
+
+            let eventCount = 0;
+            api.addEventListener('columnVisible', () => {
+                eventCount++;
+            });
+
+            api.setColumnsVisible(['a'], false);
+            await asyncSetTimeout(0);
+            expect(eventCount).toBe(1);
+
+            api.setColumnsVisible(['a'], false);
+            await asyncSetTimeout(0);
+            expect(eventCount).toBe(1);
+
+            api.setColumnsVisible(['a'], true);
+            await asyncSetTimeout(0);
+            expect(eventCount).toBe(2);
+        });
+    });
+
+    describe('locked columns + maintainColumnOrder + new cols', () => {
+        test('lockPosition cols stay locked when new cols added via setGridOption', async () => {
+            const api = gridsManager.createGrid('lockedMaintain', {
+                columnDefs: [
+                    { colId: 'leftLock', lockPosition: 'left' },
+                    { colId: 'a' },
+                    { colId: 'b' },
+                    { colId: 'rightLock', lockPosition: 'right' },
+                ],
+                maintainColumnOrder: true,
+            });
+            await asyncSetTimeout(0);
+
+            api.moveColumns(['b'], 1);
+            await asyncSetTimeout(0);
+
+            const orderBefore = api.getAllDisplayedColumns().map((c) => c.getColId());
+            expect(orderBefore[0]).toBe('leftLock');
+            expect(orderBefore[orderBefore.length - 1]).toBe('rightLock');
+
+            api.setGridOption('columnDefs', [
+                { colId: 'leftLock', lockPosition: 'left' },
+                { colId: 'a' },
+                { colId: 'b' },
+                { colId: 'c' },
+                { colId: 'rightLock', lockPosition: 'right' },
+            ]);
+            await asyncSetTimeout(0);
+
+            const orderAfter = api.getAllDisplayedColumns().map((c) => c.getColId());
+            expect(orderAfter[0]).toBe('leftLock');
+            expect(orderAfter[orderAfter.length - 1]).toBe('rightLock');
+            expect(orderAfter).toContain('c');
+        });
+    });
+
+    describe('getColumnDefs rowGroupIndex / pivotIndex', () => {
+        test('rowGroupIndex reflects row-group ordering in exported defs', async () => {
+            const api = gridsManager.createGrid('rgIndex', {
+                columnDefs: [
+                    { colId: 'a' },
+                    { colId: 'b', rowGroup: true, rowGroupIndex: 1 },
+                    { colId: 'c', rowGroup: true, rowGroupIndex: 0 },
+                ],
+                rowData: [{ a: 1, b: 'x', c: 'y' }],
+            });
+            await asyncSetTimeout(0);
+
+            const defs = api.getColumnDefs()! as ColDef[];
+            const byId = Object.fromEntries(defs.map((d) => [d.colId, d]));
+            expect(byId['b'].rowGroup).toBe(true);
+            expect(byId['c'].rowGroup).toBe(true);
+            expect(byId['b'].rowGroupIndex).toBe(1);
+            expect(byId['c'].rowGroupIndex).toBe(0);
+            expect(byId['a'].rowGroup).toBeFalsy();
+        });
+
+        test('pivotIndex reflects pivot ordering in exported defs', async () => {
+            const api = gridsManager.createGrid('pivIndex', {
+                columnDefs: [
+                    { colId: 'a' },
+                    { colId: 'b', pivot: true, pivotIndex: 1 },
+                    { colId: 'c', pivot: true, pivotIndex: 0 },
+                    { colId: 'val', aggFunc: 'sum' },
+                ],
+                pivotMode: true,
+                rowData: [{ a: 1, b: 'x', c: 'y', val: 5 }],
+            });
+            await asyncSetTimeout(0);
+
+            const defs = api.getColumnDefs()! as ColDef[];
+            const byId = Object.fromEntries(defs.map((d) => [d.colId, d]));
+            expect(byId['b'].pivot).toBe(true);
+            expect(byId['c'].pivot).toBe(true);
+            expect(byId['b'].pivotIndex).toBe(1);
+            expect(byId['c'].pivotIndex).toBe(0);
+        });
+    });
+
+    describe('applyColumnState with applyOrder including auto cols', () => {
+        test('applyOrder repositions the auto-group col among user cols', async () => {
+            const api = gridsManager.createGrid('applyOrderAuto', {
+                columnDefs: [{ colId: 'country', rowGroup: true }, { colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                rowData: [{ country: 'USA', a: 1, b: 2, c: 3 }],
+            });
+            await asyncSetTimeout(0);
+
+            api.applyColumnState({
+                state: [
+                    { colId: 'a' },
+                    { colId: 'ag-Grid-AutoColumn' },
+                    { colId: 'b' },
+                    { colId: 'c' },
+                    { colId: 'country' },
+                ],
+                applyOrder: true,
+            });
+            await asyncSetTimeout(0);
+
+            const order = api.getAllDisplayedColumns().map((c) => c.getColId());
+            const autoIdx = order.indexOf('ag-Grid-AutoColumn');
+            const aIdx = order.indexOf('a');
+            const bIdx = order.indexOf('b');
+            expect(autoIdx).toBeGreaterThan(aIdx);
+            expect(autoIdx).toBeLessThan(bIdx);
+        });
+    });
+
+    describe('service col wrapper cache identity', () => {
+        test('selection col instance preserved across multiple rowGroup toggles', async () => {
+            const api = gridsManager.createGrid('selWrapperIdentity', {
+                columnDefs: [{ colId: 'country' }, { colId: 'sport' }, { colId: 'value' }],
+                rowData: [{ country: 'USA', sport: 'Swim', value: 1 }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+            });
+            await asyncSetTimeout(0);
+
+            const selCol = api.getColumn('ag-Grid-SelectionColumn');
+            expect(selCol).not.toBeNull();
+
+            api.setRowGroupColumns(['country']);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('ag-Grid-SelectionColumn')).toBe(selCol);
+
+            api.setRowGroupColumns(['country', 'sport']);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('ag-Grid-SelectionColumn')).toBe(selCol);
+
+            api.setRowGroupColumns([]);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('ag-Grid-SelectionColumn')).toBe(selCol);
+            expect((selCol as any).isAlive()).toBe(true);
+        });
+
+        test('rowNumbers col instance preserved across pivot toggles', async () => {
+            const api = gridsManager.createGrid('rnWrapperIdentity', {
+                columnDefs: [
+                    { colId: 'country', rowGroup: true },
+                    { colId: 'sport', enablePivot: true },
+                    { colId: 'value', aggFunc: 'sum' },
+                ],
+                rowData: [{ country: 'USA', sport: 'Swim', value: 1 }],
+                rowNumbers: true,
+            });
+            await asyncSetTimeout(0);
+
+            const rnCol = api.getColumn('ag-Grid-RowNumbersColumn');
+            expect(rnCol).not.toBeNull();
+
+            api.setGridOption('pivotMode', true);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('ag-Grid-RowNumbersColumn')).toBe(rnCol);
+
+            api.setGridOption('pivotMode', false);
+            await asyncSetTimeout(0);
+            expect(api.getColumn('ag-Grid-RowNumbersColumn')).toBe(rnCol);
+            expect((rnCol as any).isAlive()).toBe(true);
+        });
+    });
+
+    describe('deeply nested column group depth', () => {
+        test('tree depth reflects 4-level nested groups', async () => {
+            const api = gridsManager.createGrid('deepGroups', {
+                columnDefs: [
+                    {
+                        headerName: 'L1',
+                        children: [
+                            {
+                                headerName: 'L2',
+                                children: [
+                                    {
+                                        headerName: 'L3',
+                                        children: [{ colId: 'leaf' }],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            await new GridColumns(api, 'four-level nested groups').checkColumns(false);
+            const leaf = api.getColumn('leaf');
+            expect(leaf).not.toBeNull();
+        });
+    });
+
+    describe('state round-trip with rowGroup + pivot active', () => {
+        test('getColumnState ↔ applyColumnState preserves rowGroupIndex + pivotIndex', async () => {
+            const api = gridsManager.createGrid('stateRoundTrip', {
+                columnDefs: [
+                    { colId: 'country', rowGroup: true, rowGroupIndex: 0 },
+                    { colId: 'year', rowGroup: true, rowGroupIndex: 1 },
+                    { colId: 'sport', pivot: true, pivotIndex: 0 },
+                    { colId: 'gold', aggFunc: 'sum' },
+                ],
+                rowData: [{ country: 'USA', year: 2020, sport: 'Swim', gold: 1 }],
+                pivotMode: true,
+            });
+            await asyncSetTimeout(0);
+
+            const stateBefore = api.getColumnState();
+
+            api.resetColumnState();
+            await asyncSetTimeout(0);
+            api.applyColumnState({ state: stateBefore, applyOrder: true });
+            await asyncSetTimeout(0);
+
+            const stateAfter = api.getColumnState();
+            const pickRelevant = (s: any) => ({
+                colId: s.colId,
+                rowGroup: s.rowGroup ?? false,
+                rowGroupIndex: s.rowGroupIndex ?? null,
+                pivot: s.pivot ?? false,
+                pivotIndex: s.pivotIndex ?? null,
+                aggFunc: s.aggFunc ?? null,
+            });
+            expect(stateAfter.map(pickRelevant)).toEqual(stateBefore.map(pickRelevant));
+        });
+    });
+
+    describe('insertVirtualColumnsForCol splice position', () => {
+        test('hierarchy virtuals precede source col, in declared order', async () => {
+            const api = gridsManager.createGrid('splicePos', {
+                columnDefs: [
+                    { colId: 'a' },
+                    { colId: 'b', rowGroup: true },
+                    { colId: 'date', rowGroup: true, groupHierarchy: ['year', 'month'] },
+                    { colId: 'c' },
+                ],
+                rowData: [{ a: 1, b: 'x', date: new Date(2020, 5, 15), c: 2 }],
+                groupDisplayType: 'multipleColumns',
+            });
+            await asyncSetTimeout(0);
+
+            const rgIds = api.getRowGroupColumns().map((c) => c.getColId());
+            const dateIdx = rgIds.indexOf('date');
+            const yearIdx = rgIds.findIndex((id) => id.includes('-date-year'));
+            const monthIdx = rgIds.findIndex((id) => id.includes('-date-month'));
+
+            expect(dateIdx).toBeGreaterThanOrEqual(0);
+            expect(yearIdx).toBeGreaterThanOrEqual(0);
+            expect(monthIdx).toBeGreaterThanOrEqual(0);
+            expect(yearIdx).toBeLessThan(monthIdx);
+            expect(monthIdx).toBeLessThan(dateIdx);
+            expect(new Set(rgIds).size).toBe(rgIds.length);
+        });
+    });
+
+    describe('balanceColumnTree padding (mixed-depth user trees)', () => {
+        test('flat leaf and grouped leaf coexist at the same render depth', async () => {
+            const api = gridsManager.createGrid('mixDepth', {
+                columnDefs: [
+                    { colId: 'flat' },
+                    {
+                        headerName: 'OuterGroup',
+                        children: [{ colId: 'nested' }],
+                    },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            await new GridColumns(api, 'flat + nested coexist').checkColumns(false);
+
+            expect(api.getColumn('flat')).not.toBeNull();
+            expect(api.getColumn('nested')).not.toBeNull();
+        });
+
+        test('autoGroupCol wraps to match user tree depth when rowGroup is added', async () => {
+            const api = gridsManager.createGrid('autoColDepth', {
+                columnDefs: [
+                    { colId: 'country', rowGroup: true },
+                    {
+                        headerName: 'Stats',
+                        children: [
+                            {
+                                headerName: 'Medals',
+                                children: [{ colId: 'gold' }, { colId: 'silver' }],
+                            },
+                        ],
+                    },
+                ],
+                rowData: [{ country: 'USA', gold: 1, silver: 2 }],
+            });
+            await asyncSetTimeout(0);
+
+            await new GridColumns(api, 'auto col wrapped to deep tree').checkColumns(false);
+            expect(api.getColumn('ag-Grid-AutoColumn')).not.toBeNull();
+        });
+    });
+
+    describe('service wrapper cache lifecycle', () => {
+        test('disabling rowSelection destroys the cached selection-col wrapper', async () => {
+            const api = gridsManager.createGrid('selWrapperDestroy', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                rowData: [{ a: 1, b: 2 }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+            });
+            await asyncSetTimeout(0);
+
+            const sel = api.getColumn('ag-Grid-SelectionColumn');
+            expect(sel).not.toBeNull();
+
+            api.setGridOption('rowSelection', undefined);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('ag-Grid-SelectionColumn')).toBeNull();
+            expect((sel as any).isAlive()).toBe(false);
+
+            await new GridColumns(api, 'after disabling rowSelection').checkColumns(false);
+        });
+    });
+
+    describe('applyPrevOrder edge cases (maintainColumnOrder)', () => {
+        test('all cols replaced (no preserved anchors) keeps freshly-emitted order', async () => {
+            const api = gridsManager.createGrid('allReplaced', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                maintainColumnOrder: true,
+            });
+            await asyncSetTimeout(0);
+
+            api.moveColumns(['c'], 0);
+            await asyncSetTimeout(0);
+
+            api.setGridOption('columnDefs', [{ colId: 'x' }, { colId: 'y' }, { colId: 'z' }]);
+            await asyncSetTimeout(0);
+
+            const order = api.getAllDisplayedColumns().map((c) => c.getColId());
+            expect(order).toEqual(['x', 'y', 'z']);
+
+            await new GridColumns(api, 'all replaced — fresh order kept').checkColumns(false);
+        });
+
+        test('new sibling col joins the group via the multi-level ancestor walk', async () => {
+            const api = gridsManager.createGrid('multiLevelAnchor', {
+                columnDefs: [
+                    {
+                        headerName: 'Outer',
+                        children: [{ headerName: 'Inner', children: [{ colId: 'a' }, { colId: 'b' }] }, { colId: 'c' }],
+                    },
+                    { colId: 'd' },
+                ],
+                maintainColumnOrder: true,
+            });
+            await asyncSetTimeout(0);
+
+            api.moveColumns(['d'], 0);
+            await asyncSetTimeout(0);
+
+            api.setGridOption('columnDefs', [
+                {
+                    headerName: 'Outer',
+                    children: [
+                        { headerName: 'Inner', children: [{ colId: 'a' }, { colId: 'b' }, { colId: 'b2' }] },
+                        { colId: 'c' },
+                    ],
+                },
+                { colId: 'd' },
+            ]);
+            await asyncSetTimeout(0);
+
+            const order = api.getAllDisplayedColumns().map((c) => c.getColId());
+            const b = order.indexOf('b');
+            const b2 = order.indexOf('b2');
+            const c = order.indexOf('c');
+            expect(b).toBeGreaterThanOrEqual(0);
+            expect(b2).toBeGreaterThanOrEqual(0);
+            expect(c).toBeGreaterThanOrEqual(0);
+            expect(b2).toBeGreaterThan(b);
+            expect(b2).toBeLessThan(c);
+
+            await new GridColumns(api, 'new sibling placed via ancestor walk').checkColumns(false);
+        });
+    });
+
+    describe('group reuse by groupId across colDef changes', () => {
+        test('AgProvidedColumnGroup with same groupId is reused after setColumnDefs', async () => {
+            const api = gridsManager.createGrid('groupReuse', {
+                columnDefs: [
+                    {
+                        headerName: 'G1',
+                        groupId: 'g1',
+                        children: [{ colId: 'a' }, { colId: 'b' }],
+                    },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            const beforeCount = api.getAllGridColumns().length;
+            api.setGridOption('columnDefs', [
+                {
+                    headerName: 'G1 Renamed',
+                    groupId: 'g1',
+                    children: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                },
+            ]);
+            await asyncSetTimeout(0);
+
+            const afterCount = api.getAllGridColumns().length;
+            expect(afterCount).toBe(beforeCount + 1);
+            expect(api.getColumn('c')).not.toBeNull();
+
+            await new GridColumns(api, 'group reused with new child').checkColumns(false);
+        });
+    });
+
+    describe('getColDefColOrCol vs getCol semantics', () => {
+        test('getColumn resolves both user cols and service cols by id', async () => {
+            const api = gridsManager.createGrid('getColSurface', {
+                columnDefs: [{ field: 'country', rowGroup: true }, { field: 'value' }],
+                rowData: [{ country: 'USA', value: 1 }],
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+                rowNumbers: true,
+            });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('value')).not.toBeNull();
+            expect(api.getColumn('country')).not.toBeNull();
+            expect(api.getColumn('ag-Grid-AutoColumn')).not.toBeNull();
+            expect(api.getColumn('ag-Grid-SelectionColumn')).not.toBeNull();
+            expect(api.getColumn('ag-Grid-RowNumbersColumn')).not.toBeNull();
+            expect(api.getColumn('does-not-exist')).toBeNull();
+        });
+    });
+
+    describe('rowGroupIndex null clears the prior flag', () => {
+        test('setting rowGroupIndex: null via applyColumnState removes the col from rowGroup set', async () => {
+            const api = gridsManager.createGrid('clearRG', {
+                columnDefs: [{ colId: 'country', rowGroup: true, rowGroupIndex: 0 }, { colId: 'value' }],
+                rowData: [{ country: 'USA', value: 1 }],
+            });
+            await asyncSetTimeout(0);
+
+            expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['country']);
+
+            api.applyColumnState({ state: [{ colId: 'country', rowGroupIndex: null }] });
+            await asyncSetTimeout(0);
+
+            expect(api.getRowGroupColumns()).toHaveLength(0);
+
+            await new GridColumns(api, 'rowGroupIndex null clears flag').checkColumns(false);
+            await new GridRows(api, 'rows after clearing rowGroup').check(false);
+        });
+    });
+
+    describe('applyColumnState second pass for pivot result cols', () => {
+        test('applyColumnState applies sort to pivot result col by colId', async () => {
+            const api = gridsManager.createGrid('applyPivotState', {
+                columnDefs: [
+                    { colId: 'country', rowGroup: true },
+                    { colId: 'sport', pivot: true },
+                    { colId: 'gold', aggFunc: 'sum' },
+                ],
+                pivotMode: true,
+                rowData: [
+                    { country: 'USA', sport: 'Swim', gold: 5 },
+                    { country: 'USA', sport: 'Run', gold: 3 },
+                    { country: 'UK', sport: 'Swim', gold: 2 },
+                ],
+            });
+            await asyncSetTimeout(0);
+
+            const pivotCols = api.getPivotResultColumns();
+            expect(pivotCols).not.toBeNull();
+            expect(pivotCols!.length).toBeGreaterThan(0);
+
+            const targetColId = pivotCols![0].getColId();
+
+            api.applyColumnState({ state: [{ colId: targetColId, sort: 'desc' }] });
+            await asyncSetTimeout(0);
+
+            const target = api.getColumn(targetColId);
+            expect(target).not.toBeNull();
+            expect(target!.getSort()).toBe('desc');
+
+            await new GridRows(api, 'rows sorted by pivot result col').check(false);
+        });
+    });
+
+    describe('autoColService groupDisplayType=custom suppresses auto col', () => {
+        test('with groupDisplayType=custom, no auto-group col is created', async () => {
+            const api = gridsManager.createGrid('customGroupDisplay', {
+                columnDefs: [{ colId: 'country', rowGroup: true }, { colId: 'value' }],
+                rowData: [
+                    { country: 'USA', value: 1 },
+                    { country: 'UK', value: 2 },
+                ],
+                groupDisplayType: 'custom',
+            });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('ag-Grid-AutoColumn')).toBeNull();
+            expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['country']);
+
+            await new GridColumns(api, 'groupDisplayType=custom — no auto col').checkColumns(false);
+        });
+    });
+
+    describe('isPivotActive transitions', () => {
+        test('pivotMode reflects toggles via setGridOption', async () => {
+            const api = gridsManager.createGrid('pivotActive', {
+                columnDefs: [
+                    { colId: 'country', rowGroup: true },
+                    { colId: 'sport', pivot: true },
+                    { colId: 'gold', aggFunc: 'sum' },
+                ],
+                rowData: [{ country: 'USA', sport: 'Swim', gold: 1 }],
+            });
+            await asyncSetTimeout(0);
+
+            expect(api.isPivotMode()).toBe(false);
+
+            api.setGridOption('pivotMode', true);
+            await asyncSetTimeout(0);
+            expect(api.isPivotMode()).toBe(true);
+
+            api.setGridOption('pivotMode', false);
+            await asyncSetTimeout(0);
+            expect(api.isPivotMode()).toBe(false);
+        });
+    });
+
+    describe('treeData auto-col lifecycle', () => {
+        test('treeData=true creates auto-group col without rowGroup colDef', async () => {
+            const api = gridsManager.createGrid('treeDataAuto', {
+                columnDefs: [{ field: 'jobTitle' }, { field: 'employmentType' }],
+                rowData: [
+                    { orgHierarchy: ['Erica'], jobTitle: 'CEO', employmentType: 'Permanent' },
+                    { orgHierarchy: ['Erica', 'Malcolm'], jobTitle: 'VP', employmentType: 'Permanent' },
+                ],
+                treeData: true,
+                getDataPath: (data: any) => data.orgHierarchy,
+                groupDefaultExpanded: -1,
+            });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('ag-Grid-AutoColumn')).not.toBeNull();
+
+            await new GridColumns(api, 'treeData auto col').checkColumns(false);
         });
     });
 });

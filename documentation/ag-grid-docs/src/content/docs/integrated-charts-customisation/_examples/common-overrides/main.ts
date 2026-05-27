@@ -65,7 +65,10 @@ const gridOptions: GridOptions = {
                         padding: 10,
                         strokeWidth: 2,
                     },
-                    paddingX: 30,
+                    padding: {
+                        left: 15,
+                        right: 15,
+                    },
                 },
             },
         },
