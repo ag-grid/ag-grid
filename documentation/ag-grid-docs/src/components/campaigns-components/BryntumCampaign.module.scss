@@ -988,6 +988,11 @@
 // arrows draw between tasks once both rows have settled.
 
 .heroMedia :global(svg.schedulerpro) {
+    // The Scheduler Pro hero packs in more rows and longer labels than the
+    // other Bryntum hero illustrations, so the default 600px cap leaves the
+    // text feeling cramped. Allow it to render slightly larger.
+    max-width: 720px;
+
     :global(.schedulerpro-robert-name),
     :global(.schedulerpro-lindsey-name),
     :global(.schedulerpro-christopher-name),
