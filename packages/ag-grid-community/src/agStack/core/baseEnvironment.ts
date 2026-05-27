@@ -83,8 +83,8 @@ export abstract class BaseEnvironment<
         this.addManagedPropertyListener('theme', () => this.handleThemeChange());
         this.handleThemeChange();
 
-        this.getSizeEl(LIST_ITEM_HEIGHT);
         this.addDestroyFunc(_initStyledRootFromInnerOfThreeElements(this, eRootDiv));
+        this.getSizeEl(LIST_ITEM_HEIGHT);
         this.initVariables();
 
         this.addDestroyFunc(() => _unregisterInstanceUsingThemingAPI(this));

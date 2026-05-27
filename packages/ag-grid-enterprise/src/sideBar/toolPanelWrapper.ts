@@ -45,26 +45,31 @@ export class ToolPanelWrapper extends Component {
     private params: IToolPanelParams;
     private animationId: number = 0;
     private defParent: HTMLElement | null = null;
+    private hasStyledRoot = false;
 
-    constructor(private readonly isExternal: boolean) {
+    constructor() {
         super(ToolPanelElement);
     }
 
     public postConstruct(): void {
         const eGui = this.getGui();
         const resizeBar = (this.resizeBar = this.createManagedBean(new AgHorizontalResize()));
+
+        eGui.setAttribute('id', `ag-${this.getCompId()}`);
+
         resizeBar.elementToResize = eGui;
         this.appendChild(resizeBar);
+    }
 
-        if (this.isExternal) {
-            const externalDiv = _createAgElement({ tag: 'div', cls: 'ag-tool-panel-external' });
-            externalDiv.appendChild(eGui);
-            const newGui = _createAgElement({ tag: 'div', cls: 'ag-styled-root' });
-            this.addDestroyFunc(_initStyledRoot(this.beans.environment, newGui, externalDiv));
-            this.setGui(newGui);
-        }
-
-        this.getGui().setAttribute('id', `ag-${this.getCompId()}`);
+    public ensureStyledRoot(): void {
+        if (this.hasStyledRoot) return;
+        this.hasStyledRoot = true;
+        const innerGui = this.getGui();
+        const externalDiv = _createAgElement({ tag: 'div', cls: 'ag-tool-panel-external' });
+        externalDiv.appendChild(innerGui);
+        const newGui = _createAgElement({ tag: 'div', cls: 'ag-styled-root' });
+        this.addDestroyFunc(_initStyledRoot(this.beans.environment, newGui, externalDiv));
+        this.setGui(newGui);
     }
 
     public getToolPanelId(): string {
