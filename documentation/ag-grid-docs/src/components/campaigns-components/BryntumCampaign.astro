@@ -96,28 +96,39 @@ const altTextMediaSections = new WeakSet<object>();
                     <link rel="stylesheet" data-bryntum-theme={slug} href={`${base}/svalbard-light.css`} />
                 </>
             ))}
-            <script is:inline>
-                {`(function () {
-    var html = document.documentElement;
-    function syncTheme() {
-        var dark = html.dataset.darkMode === 'true';
-        var fromSuffix = dark ? '-light.css' : '-dark.css';
-        var toSuffix = dark ? '-dark.css' : '-light.css';
-        var links = document.querySelectorAll('link[data-bryntum-theme]');
-        for (var i = 0; i < links.length; i++) {
-            var href = links[i].href;
-            if (href.indexOf(fromSuffix) !== -1) {
-                links[i].href = href.replace(fromSuffix, toSuffix);
-            }
-        }
-    }
-    syncTheme();
-    new MutationObserver(syncTheme).observe(html, {
-        attributes: true,
-        attributeFilter: ['data-dark-mode']
-    });
-})();`}
-            </script>
+            {/*
+             * `set:html` is the canonical Astro pattern for injecting a literal
+             * JS string into an inline <script>. The previous form
+             * `<script is:inline>{`…`}</script>` did NOT work: `is:inline`
+             * disables expression evaluation inside the tag, so the page
+             * shipped the literal template-literal source to the browser and
+             * the IIFE never ran.
+             */}
+            <script
+                is:inline
+                set:html={`
+                    (function () {
+                        var html = document.documentElement;
+                        function syncTheme() {
+                            var dark = html.dataset.darkMode === 'true';
+                            var fromSuffix = dark ? '-light.css' : '-dark.css';
+                            var toSuffix = dark ? '-dark.css' : '-light.css';
+                            var links = document.querySelectorAll('link[data-bryntum-theme]');
+                            for (var i = 0; i < links.length; i++) {
+                                var href = links[i].href;
+                                if (href.indexOf(fromSuffix) !== -1) {
+                                    links[i].href = href.replace(fromSuffix, toSuffix);
+                                }
+                            }
+                        }
+                        syncTheme();
+                        new MutationObserver(syncTheme).observe(html, {
+                            attributes: true,
+                            attributeFilter: ['data-dark-mode'],
+                        });
+                    })();
+                `}
+            />
             <script is:inline src={urlWithBaseUrl('/scripts/bryntum-demo-bootstrap.js')} />
             {bryntumProducts.map(({ slug, base }) => (
                 <script is:inline src={`${base}/${slug}.umd.js`} />
