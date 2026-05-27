@@ -46,7 +46,7 @@ function _buildColumnDefs(
 ): (ColDef | ColGroupDef)[] {
     const objectValues = config.objectValues ?? 'recurse';
     const arrayValues = config.arrayValues ?? 'include';
-    const nullValues = config.nullValues ?? 'include';
+    const nullishValues = config.nullishValues ?? 'include';
 
     const keys = Object.keys(obj);
     const defs: (ColDef | ColGroupDef)[] = [];
@@ -69,7 +69,7 @@ function _buildColumnDefs(
                 defs.push(_makeLeafColDef(field, key, prefix));
             }
         } else if (value == null) {
-            if (nullValues === 'include') {
+            if (nullishValues === 'include') {
                 defs.push(_makeLeafColDef(field, key, prefix));
             }
         } else if (typeof value !== 'function') {

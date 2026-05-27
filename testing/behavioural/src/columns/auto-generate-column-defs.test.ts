@@ -887,10 +887,10 @@ describe('Auto-Generate Column Defs', () => {
             });
         });
 
-        describe('nullValues', () => {
-            test('nullValues: include (default) creates columns for null/undefined', async () => {
+        describe('nullishValues', () => {
+            test('nullishValues: include (default) creates columns for null/undefined', async () => {
                 const api = createGrid({
-                    autoGenerateColumnDefs: { nullValues: 'include' },
+                    autoGenerateColumnDefs: { nullishValues: 'include' },
                     rowData: [{ name: 'Alice', middle: null, suffix: undefined, age: 30 }],
                 });
 
@@ -903,9 +903,9 @@ describe('Auto-Generate Column Defs', () => {
                 `);
             });
 
-            test('nullValues: skip ignores null and undefined values', async () => {
+            test('nullishValues: skip ignores null and undefined values', async () => {
                 const api = createGrid({
-                    autoGenerateColumnDefs: { nullValues: 'skip' },
+                    autoGenerateColumnDefs: { nullishValues: 'skip' },
                     rowData: [{ name: 'Alice', middle: null, suffix: undefined, age: 30 }],
                 });
 
@@ -920,7 +920,7 @@ describe('Auto-Generate Column Defs', () => {
         describe('combined config', () => {
             test('config object with all options set', async () => {
                 const api = createGrid({
-                    autoGenerateColumnDefs: { objectValues: 'flat', arrayValues: 'include', nullValues: 'skip' },
+                    autoGenerateColumnDefs: { objectValues: 'flat', arrayValues: 'include', nullishValues: 'skip' },
                     rowData: [
                         { name: 'Alice', address: { city: 'London' }, tags: ['admin'], middle: null, score: 100 },
                     ],
