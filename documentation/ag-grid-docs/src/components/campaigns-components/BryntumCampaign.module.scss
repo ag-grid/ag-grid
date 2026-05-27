@@ -727,3 +727,303 @@
         --icon-size: 1.1em;
     }
 }
+
+// =============================================================================
+// Hero SVG animations
+//
+// Each Bryntum campaign hero ships with a bespoke SVG illustrating the product.
+// We animate them on page load so the hero feels alive without JavaScript, and
+// so each illustration tells its own story (tasks building, schedules rolling
+// in, calendar events arriving, kanban cards landing in their columns).
+//
+// Animations run a single time forward and are scoped via `:global()` because
+// SVGs are rendered inline as descendants of `.heroMedia`. Users with the
+// reduced-motion preference get every animation cancelled.
+// =============================================================================
+
+@keyframes bryntumFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes bryntumFadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bryntumFadeInDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bryntumSlideInLeft {
+    from { opacity: 0; transform: translateX(-48px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes bryntumPopIn {
+    0%   { opacity: 0; transform: scale(0); }
+    60%  { transform: scale(1.18); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bryntumDrawLine {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes bryntumGrowX {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+
+@keyframes bryntumDiamondIn {
+    0%   { opacity: 0; transform: scale(0) rotate(-135deg); }
+    70%  { transform: scale(1.1) rotate(10deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+// Fade in to a translucent end state. The Scheduler hero ships with a white
+// "elapsed time" overlay rect baked at `opacity="0.25"` in the SVG; we ramp the
+// element opacity up to that same value so the underlying task bars and labels
+// remain legible after the animation finishes (a generic fade-to-1 would leave
+// the overlay solid white and hide the text behind it).
+@keyframes bryntumFadeInOverlay {
+    from { opacity: 0; }
+    to   { opacity: 0.25; }
+}
+
+// ----- Gantt -----------------------------------------------------------------
+//
+// Sequential project plan reveal: the group bar wipes in left-to-right, tasks
+// slide in from the left in row order, their progress fills wipe to the right,
+// dependency arrows draw between connected tasks, arrowheads pop on, and the
+// final milestone diamond rotates and pops into place.
+
+.heroMedia :global(svg.gantt) {
+    :global(.gantt-group-one) {
+        transform-box: fill-box;
+        transform-origin: left center;
+        animation: bryntumGrowX 0.55s ease-out 0.1s both;
+    }
+
+    :global(.gantt-apache),
+    :global(.gantt-ports),
+    :global(.gantt-firewall) {
+        animation: bryntumSlideInLeft 0.55s ease-out both;
+    }
+    :global(.gantt-apache)   { animation-delay: 0.35s; }
+    :global(.gantt-ports)    { animation-delay: 0.55s; }
+    :global(.gantt-firewall) { animation-delay: 0.75s; }
+
+    :global(.gantt-ports-progress),
+    :global(.gantt-firewall-progress) {
+        transform-box: fill-box;
+        transform-origin: left center;
+        animation: bryntumGrowX 0.6s ease-out both;
+    }
+    :global(.gantt-ports-progress)    { animation-delay: 1s; }
+    :global(.gantt-firewall-progress) { animation-delay: 1.2s; }
+
+    :global(.gantt-stroke-apache-ports),
+    :global(.gantt-stroke-apache-ports-light),
+    :global(.gantt-stroke-apache-ports-fake),
+    :global(.gantt-stroke-apache-firewall),
+    :global(.gantt-stroke-apache-firewall-light),
+    :global(.gantt-stroke-ports-confirm),
+    :global(.gantt-stroke-ports-confirm-light) {
+        stroke-dasharray: 260;
+        stroke-dashoffset: 260;
+        animation: bryntumDrawLine 0.7s ease-out both;
+    }
+    :global(.gantt-stroke-apache-ports),
+    :global(.gantt-stroke-apache-ports-light),
+    :global(.gantt-stroke-apache-ports-fake)         { animation-delay: 1.4s; }
+    :global(.gantt-stroke-apache-firewall),
+    :global(.gantt-stroke-apache-firewall-light)     { animation-delay: 1.6s; }
+    :global(.gantt-stroke-ports-confirm),
+    :global(.gantt-stroke-ports-confirm-light)       { animation-delay: 1.85s; }
+
+    :global(.gantt-arrow-apache-ports),
+    :global(.gantt-arrow-apache-firewall),
+    :global(.gantt-arrow-ports-confirm) {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: bryntumPopIn 0.4s ease-out both;
+    }
+    :global(.gantt-arrow-apache-ports)    { animation-delay: 2.05s; }
+    :global(.gantt-arrow-apache-firewall) { animation-delay: 2.2s; }
+    :global(.gantt-arrow-ports-confirm)   { animation-delay: 2.4s; }
+
+    :global(.gantt-confirm-diamond) {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: bryntumDiamondIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 2.55s both;
+    }
+    :global(.gantt-confirm-text) {
+        animation: bryntumFadeIn 0.4s ease-out 2.85s both;
+    }
+}
+
+// ----- Scheduler -------------------------------------------------------------
+//
+// The vertical "now" timeline draws downward, the star at its head pops in,
+// then resource tasks slide in from the left top-to-bottom. Finally the soft
+// "elapsed time" overlay fades over the leftmost tasks.
+
+.heroMedia :global(svg.scheduler) {
+    :global(.scheduler-progress-bar) {
+        stroke-dasharray: 480;
+        stroke-dashoffset: 480;
+        animation: bryntumDrawLine 0.9s ease-out 0.1s both;
+    }
+
+    :global(.scheduler-progress-star) {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: bryntumPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+    }
+
+    :global(.scheduler-strategy),
+    :global(.scheduler-setup),
+    :global(.scheduler-website),
+    :global(.scheduler-test),
+    :global(.scheduler-implementation) {
+        animation: bryntumSlideInLeft 0.55s ease-out both;
+    }
+    :global(.scheduler-strategy)       { animation-delay: 0.7s; }
+    :global(.scheduler-setup)          { animation-delay: 0.85s; }
+    :global(.scheduler-website)        { animation-delay: 1s; }
+    :global(.scheduler-test)           { animation-delay: 1.15s; }
+    :global(.scheduler-implementation) { animation-delay: 1.3s; }
+
+    :global(.scheduler-progress-block) {
+        animation: bryntumFadeInOverlay 0.6s ease-out 1.6s both;
+    }
+}
+
+// ----- Scheduler Pro ---------------------------------------------------------
+//
+// Resources (avatar + name on the left rail) fade up row-by-row, then their
+// task blocks slide in from the left a beat later. Cross-resource dependency
+// arrows draw between tasks once both rows have settled.
+
+.heroMedia :global(svg.schedulerpro) {
+    :global(.schedulerpro-robert-name),
+    :global(.schedulerpro-lindsey-name),
+    :global(.schedulerpro-christopher-name),
+    :global(.schedulerpro-anika-name) {
+        animation: bryntumFadeInUp 0.5s ease-out both;
+    }
+    :global(.schedulerpro-robert-name)      { animation-delay: 0.2s; }
+    :global(.schedulerpro-lindsey-name)     { animation-delay: 0.4s; }
+    :global(.schedulerpro-christopher-name) { animation-delay: 0.6s; }
+    :global(.schedulerpro-anika-name)       { animation-delay: 0.8s; }
+
+    :global(.schedulerpro-robert-meeting1),
+    :global(.schedulerpro-robert-meeting2),
+    :global(.schedulerpro-lindsey),
+    :global(.schedulerpro-christopher),
+    :global(.schedulerpro-anika) {
+        animation: bryntumSlideInLeft 0.5s ease-out both;
+    }
+    :global(.schedulerpro-robert-meeting1) { animation-delay: 0.55s; }
+    :global(.schedulerpro-robert-meeting2) { animation-delay: 0.7s; }
+    :global(.schedulerpro-lindsey)         { animation-delay: 0.75s; }
+    :global(.schedulerpro-christopher)     { animation-delay: 0.95s; }
+    :global(.schedulerpro-anika)           { animation-delay: 1.15s; }
+
+    :global(.schedulerpro-robert-stroke) {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+        animation: bryntumDrawLine 0.45s ease-out 0.85s both;
+    }
+    :global(.schedulerpro-robert-arrow) {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: bryntumPopIn 0.35s ease-out 1.25s both;
+    }
+    :global(.schedulerpro-lindsey-stroke) {
+        stroke-dasharray: 240;
+        stroke-dashoffset: 240;
+        animation: bryntumDrawLine 0.75s ease-out 1.45s both;
+    }
+    :global(.schedulerpro-lindsey-arrow) {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: bryntumPopIn 0.4s ease-out 2.15s both;
+    }
+    :global(.schedulerpro-lindsey-stroke-fake) {
+        animation: bryntumFadeIn 0.4s ease-out 1.3s both;
+    }
+}
+
+// ----- Calendar --------------------------------------------------------------
+//
+// The week grid lines fade in first to set the canvas, day numbers cascade in,
+// the soft "today" indicator pops, then calendar events appear in reading
+// order across the month (top-left to bottom-right).
+
+.heroMedia :global(svg) :global(.cal-grid) {
+    animation: bryntumFadeIn 0.5s ease-out 0.05s both;
+}
+
+.heroMedia :global(svg) :global(.cal-days) {
+    animation: bryntumFadeIn 0.4s ease-out 0.4s both;
+}
+
+.heroMedia :global(svg) :global(.cal-today) {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: bryntumPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.7s both;
+}
+
+.heroMedia :global(svg) :global(.cal-event) {
+    animation: bryntumFadeInUp 0.5s ease-out both;
+}
+
+.heroMedia :global(svg) :global(.cal-event--1) { animation-delay: 0.95s; }
+.heroMedia :global(svg) :global(.cal-event--2) { animation-delay: 1.05s; }
+.heroMedia :global(svg) :global(.cal-event--3) { animation-delay: 1.2s; }
+.heroMedia :global(svg) :global(.cal-event--4) { animation-delay: 1.3s; }
+.heroMedia :global(svg) :global(.cal-event--5) { animation-delay: 1.4s; }
+.heroMedia :global(svg) :global(.cal-event--6) { animation-delay: 1.55s; }
+
+// ----- Task Board ------------------------------------------------------------
+//
+// Column headings (Requested / In Progress / Completed) fade in left-to-right,
+// then cards drop into their columns in reading order across rows so the board
+// fills from the top of column 1 across to column 3 row by row.
+
+.heroMedia :global(svg.task-board) {
+    :global(.board-text) {
+        animation: bryntumFadeInDown 0.4s ease-out both;
+    }
+    :global(.board-text:nth-of-type(1)) { animation-delay: 0.1s; }
+    :global(.board-text:nth-of-type(2)) { animation-delay: 0.25s; }
+    :global(.board-text:nth-of-type(3)) { animation-delay: 0.4s; }
+
+    :global(.board-block) {
+        animation: bryntumFadeInDown 0.5s ease-out both;
+    }
+    :global(.board-block--1) { animation-delay: 0.55s; } // Requested, row 1
+    :global(.board-block--5) { animation-delay: 0.7s; }  // In progress, row 1
+    :global(.board-block--7) { animation-delay: 0.85s; } // Completed, row 1
+    :global(.board-block--2) { animation-delay: 1s; }    // Requested, row 2
+    :global(.board-block--6) { animation-delay: 1.15s; } // In progress, row 2
+    :global(.board-block--8) { animation-delay: 1.3s; }  // Completed, row 2
+    :global(.board-block--3) { animation-delay: 1.45s; } // Requested, row 3
+    :global(.board-block--9) { animation-delay: 1.6s; }  // Completed, row 3
+    :global(.board-block--4) { animation-delay: 1.75s; } // Requested, row 4
+}
+
+// Disable every hero animation when the user opts out of motion. The cascade
+// is wide enough that we use `!important` to undo per-element rules above.
+@media (prefers-reduced-motion: reduce) {
+    .heroMedia :global(svg) *,
+    .heroMedia :global(svg) {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        stroke-dashoffset: 0 !important;
+    }
+}

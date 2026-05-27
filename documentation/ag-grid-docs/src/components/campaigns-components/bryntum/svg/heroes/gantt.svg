@@ -12,7 +12,7 @@
       font-family: Helvetica, sans-serif;
       font-weight: 600;
       font-size: 12px;
-      fill: #9b9b9b;
+      fill: #fff;
       }
     </style>
 <clippath id="ports-clip">
