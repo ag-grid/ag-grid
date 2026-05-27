@@ -1,17 +1,52 @@
 [
     {
-        "title": "AG Grid",
-        "description": "Best JavaScript Grid in the World",
-        "url": "https://www.ag-grid.com"
+        "label": "",
+        "items": [
+            {
+                "title": "AG Grid",
+                "description": "Best JavaScript Grid in the World",
+                "url": "https://www.ag-grid.com"
+            },
+            {
+                "title": "AG Charts",
+                "description": "Best JavaScript Charts in the World",
+                "url": "https://www.ag-grid.com/charts"
+            },
+            {
+                "title": "AG Studio",
+                "description": "Best JavaScript Dashboard in the World",
+                "url": "https://www.ag-grid.com/studio"
+            },
+            {
+                "title": "Bryntum Gantt",
+                "description": "Speed-tuned Gantt chart for project planning",
+                "url": "/campaigns/bryntum-gantt"
+            }
+        ]
     },
     {
-        "title": "AG Charts",
-        "description": "Best JavaScript Charts in the World",
-        "url": "https://www.ag-grid.com/charts"
-    },
-    {
-        "title": "AG Studio",
-        "description": "Best JavaScript Dashboard in the World",
-        "url": "https://www.ag-grid.com/studio"
+        "label": "",
+        "items": [
+            {
+                "title": "Bryntum Scheduler",
+                "description": "Resource scheduling timeline component",
+                "url": "/campaigns/bryntum-scheduler"
+            },
+            {
+                "title": "Bryntum Scheduler Pro",
+                "description": "Scheduler with auto-scheduling and constraints",
+                "url": "/campaigns/bryntum-scheduler-pro"
+            },
+            {
+                "title": "Bryntum Calendar",
+                "description": "Flexible JavaScript event calendar",
+                "url": "/campaigns/bryntum-calendar"
+            },
+            {
+                "title": "Bryntum Task Board",
+                "description": "Kanban-style task board component",
+                "url": "/campaigns/bryntum-task-board"
+            }
+        ]
     }
 ]

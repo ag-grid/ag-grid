@@ -1,3 +1,13 @@
+import BryntumCalendarDark from '@ag-website-shared/images/inline-svgs/bryntum-calendar-dark.svg?react';
+import BryntumCalendarLight from '@ag-website-shared/images/inline-svgs/bryntum-calendar.svg?react';
+import BryntumGanttDark from '@ag-website-shared/images/inline-svgs/bryntum-gantt-dark.svg?react';
+import BryntumGanttLight from '@ag-website-shared/images/inline-svgs/bryntum-gantt.svg?react';
+import BryntumSchedulerProDark from '@ag-website-shared/images/inline-svgs/bryntum-scheduler-pro-dark.svg?react';
+import BryntumSchedulerProLight from '@ag-website-shared/images/inline-svgs/bryntum-scheduler-pro.svg?react';
+import BryntumSchedulerDark from '@ag-website-shared/images/inline-svgs/bryntum-scheduler-dark.svg?react';
+import BryntumSchedulerLight from '@ag-website-shared/images/inline-svgs/bryntum-scheduler.svg?react';
+import BryntumTaskBoardDark from '@ag-website-shared/images/inline-svgs/bryntum-task-board-dark.svg?react';
+import BryntumTaskBoardLight from '@ag-website-shared/images/inline-svgs/bryntum-task-board.svg?react';
 import ChartsDark from '@ag-website-shared/images/inline-svgs/chart-dark.svg?react';
 import ChartsLight from '@ag-website-shared/images/inline-svgs/chart-light.svg?react';
 import GridDark from '@ag-website-shared/images/inline-svgs/grid-dark.svg?react';
@@ -8,9 +18,33 @@ import { useEffect, useRef, useState } from 'react';
 
 import styles from './ProductDropdown.module.scss';
 
-export const ProductDropdown = ({ items, children }) => {
+interface ProductItem {
+    title: string;
+    description: string;
+    url: string;
+}
+
+interface ProductGroup {
+    label: string;
+    items: ProductItem[];
+}
+
+/**
+ * The menu prop accepts either the new grouped shape (`ProductGroup[]`) or
+ * the legacy flat list (`ProductItem[]`). The flat list is wrapped in a
+ * single unnamed group on the fly so older call-sites keep working without
+ * needing to be touched.
+ */
+type ProductMenu = ProductGroup[] | ProductItem[];
+
+const isGrouped = (menu: ProductMenu): menu is ProductGroup[] =>
+    menu.length > 0 && (menu as ProductGroup[])[0].items !== undefined;
+
+export const ProductDropdown = ({ items, children }: { items: ProductMenu; children?: React.ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const groups: ProductGroup[] = isGrouped(items) ? items : [{ label: '', items }];
 
     const handleMenuToggle = () => {
         setIsOpen(!isOpen);
@@ -29,8 +63,8 @@ export const ProductDropdown = ({ items, children }) => {
         };
     }, []);
 
-    const getIconComponent = (title: string) => {
-        switch (title) {
+    const getIconComponent = (item: ProductItem) => {
+        switch (item.title) {
             case 'AG Grid':
                 return (
                     <>
@@ -49,6 +83,41 @@ export const ProductDropdown = ({ items, children }) => {
                     <>
                         <StudioLight className={styles.iconLight} />
                         <StudioDark className={styles.iconDark} />
+                    </>
+                );
+            case 'Bryntum Gantt':
+                return (
+                    <>
+                        <BryntumGanttLight className={styles.iconLight} />
+                        <BryntumGanttDark className={styles.iconDark} />
+                    </>
+                );
+            case 'Bryntum Scheduler':
+                return (
+                    <>
+                        <BryntumSchedulerLight className={styles.iconLight} />
+                        <BryntumSchedulerDark className={styles.iconDark} />
+                    </>
+                );
+            case 'Bryntum Scheduler Pro':
+                return (
+                    <>
+                        <BryntumSchedulerProLight className={styles.iconLight} />
+                        <BryntumSchedulerProDark className={styles.iconDark} />
+                    </>
+                );
+            case 'Bryntum Calendar':
+                return (
+                    <>
+                        <BryntumCalendarLight className={styles.iconLight} />
+                        <BryntumCalendarDark className={styles.iconDark} />
+                    </>
+                );
+            case 'Bryntum Task Board':
+                return (
+                    <>
+                        <BryntumTaskBoardLight className={styles.iconLight} />
+                        <BryntumTaskBoardDark className={styles.iconDark} />
                     </>
                 );
             default:
@@ -71,20 +140,29 @@ export const ProductDropdown = ({ items, children }) => {
                 Products
                 <span className={styles.arrow}></span>
             </button>
-            {isOpen && (
-                <div className={styles.customContent}>
-                    {items.map((item, index) => (
-                        <a key={index} href={item.url} className={styles.itemsWrapper}>
-                            <div className={styles.placeholderIcon}>{getIconComponent(item.title)}</div>
-                            <div className={styles.productsWrapper}>
-                                <div className={styles.productTitle}>{item.title}</div>
-                                <div className={styles.productDescription}>{item.description}</div>
-                            </div>
-                        </a>
-                    ))}
-                    {children}
-                </div>
-            )}
+            {/*
+             * Always render the content so its open *and* close transitions
+             * can both play. Visibility/pointer-events are driven from CSS via
+             * the parent `.open` class so the dropdown is fully removed from
+             * the accessibility tree and pointer interactions while collapsed.
+             */}
+            <div className={styles.customContent}>
+                {groups.map((group, groupIndex) => (
+                    <div key={groupIndex} className={styles.column}>
+                        {group.label && <div className={styles.columnHeading}>{group.label}</div>}
+                        {group.items.map((item, index) => (
+                            <a key={index} href={item.url} className={styles.itemsWrapper}>
+                                <div className={styles.placeholderIcon}>{getIconComponent(item)}</div>
+                                <div className={styles.productsWrapper}>
+                                    <div className={styles.productTitle}>{item.title}</div>
+                                    <div className={styles.productDescription}>{item.description}</div>
+                                </div>
+                            </a>
+                        ))}
+                    </div>
+                ))}
+                {children}
+            </div>
         </div>
     );
 };
