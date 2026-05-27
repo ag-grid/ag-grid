@@ -292,12 +292,16 @@ export abstract class BaseEnvironment<
 }
 
 function getLegacyThemeClasses(node: HTMLElement | null): string {
-    let themeClasses: string[] = [];
+    let themeClasses = new Set<string>();
     while (node) {
-        themeClasses.push(...Array.from(node.classList).filter((c) => c.startsWith('ag-theme-')));
+        for (const cls of node.classList) {
+            if (cls.startsWith('ag-theme-')) {
+                themeClasses.add(cls);
+            }
+        }
         node = node.parentElement;
     }
-    return themeClasses.join(' ');
+    return [...themeClasses].join(' ');
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
