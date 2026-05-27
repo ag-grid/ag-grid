@@ -1,4 +1,6 @@
 ---
+import { decorateBryntumHtml } from '@utils/bryntumCampaignAssets';
+
 import BryntumCtaList from './BryntumCtaList.astro';
 import type { BryntumTextButtonSection } from './types';
 import styles from '../BryntumCampaign.module.scss';
@@ -15,7 +17,7 @@ const { section } = Astro.props;
         {section.eyebrow && <span class={styles.sectionEyebrow}>{section.eyebrow}</span>}
         {section.heading && <h2>{section.heading}</h2>}
         {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
-        {section.body_html && <div set:html={section.body_html} />}
+        {section.body_html && <div set:html={decorateBryntumHtml(section.body_html)} />}
 
         {
             section.ctas && (

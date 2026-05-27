@@ -1,4 +1,5 @@
 ---
+import { decorateBryntumHtml } from '@utils/bryntumCampaignAssets';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 import type { BryntumPartnershipSection } from './types';
@@ -32,7 +33,11 @@ const logoAlt = section.logo_alt ?? 'AG Grid and Bryntum partnership';
             {section.eyebrow && <span class={styles.sectionEyebrow}>{section.eyebrow}</span>}
             {section.heading && <h2 class={styles.partnershipHeading}>{section.heading}</h2>}
             {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
-            {section.body_html && <div class={styles.partnershipBody} set:html={section.body_html} />}
+            {
+                section.body_html && (
+                    <div class={styles.partnershipBody} set:html={decorateBryntumHtml(section.body_html)} />
+                )
+            }
         </div>
     </div>
 </section>

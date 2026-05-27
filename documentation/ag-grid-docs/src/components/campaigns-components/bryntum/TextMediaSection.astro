@@ -1,5 +1,5 @@
 ---
-import { resolveBryntumAsset } from '@utils/bryntumCampaignAssets';
+import { decorateBryntumHtml, resolveBryntumAsset } from '@utils/bryntumCampaignAssets';
 
 import BryntumCtaList from './BryntumCtaList.astro';
 import type { BryntumTextMediaSection } from './types';
@@ -36,7 +36,7 @@ const showAltBg = isAlt && hasMedia && !isWhite;
                 {section.eyebrow && <span class={styles.sectionEyebrow}>{section.eyebrow}</span>}
                 {section.heading && <h2>{section.heading}</h2>}
                 {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
-                {section.body_html && <div class={styles.bodyText} set:html={section.body_html} />}
+                {section.body_html && <div class={styles.bodyText} set:html={decorateBryntumHtml(section.body_html)} />}
 
                 {
                     section.ctas && (

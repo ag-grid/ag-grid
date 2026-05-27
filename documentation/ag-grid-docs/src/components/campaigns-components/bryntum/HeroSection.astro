@@ -1,5 +1,5 @@
 ---
-import { resolveBryntumAsset } from '@utils/bryntumCampaignAssets';
+import { decorateBryntumHtml, resolveBryntumAsset } from '@utils/bryntumCampaignAssets';
 
 import BryntumCtaList from './BryntumCtaList.astro';
 import { getBryntumSvg } from './bryntumSvg';
@@ -22,7 +22,7 @@ const svgMarkup = media?.kind === 'svg-file' ? getBryntumSvg(media.src) : undefi
             {section.eyebrow && <span class={styles.heroEyebrow}>{section.eyebrow}</span>}
             {section.heading && <h1 class={styles.heroHeading}>{section.heading}</h1>}
             {/* body_html is treated as trusted content sourced from curated *-original.json files. */}
-            {section.body_html && <div class={styles.heroBody} set:html={section.body_html} />}
+            {section.body_html && <div class={styles.heroBody} set:html={decorateBryntumHtml(section.body_html)} />}
 
             {
                 section.ctas && (
