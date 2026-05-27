@@ -14,7 +14,7 @@ import GridDark from '@ag-website-shared/images/inline-svgs/grid-dark.svg?react'
 import GridLight from '@ag-website-shared/images/inline-svgs/grid-light.svg?react';
 import StudioDark from '@ag-website-shared/images/inline-svgs/studio-dark.svg?react';
 import StudioLight from '@ag-website-shared/images/inline-svgs/studio-light.svg?react';
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 
 import styles from './ProductDropdown.module.scss';
 
@@ -22,6 +22,10 @@ interface ProductItem {
     title: string;
     description: string;
     url: string;
+    // Optional inline heading rendered above this item — used to mark a
+    // category boundary mid-column (e.g. "Bryntum" between the AG products
+    // and the Bryntum products in the same column).
+    inlineHeading?: string;
 }
 
 interface ProductGroup {
@@ -150,15 +154,28 @@ export const ProductDropdown = ({ items, children }: { items: ProductMenu; child
                 {groups.map((group, groupIndex) => (
                     <div key={groupIndex} className={styles.column}>
                         {group.label && <div className={styles.columnHeading}>{group.label}</div>}
-                        {group.items.map((item, index) => (
-                            <a key={index} href={item.url} className={styles.itemsWrapper}>
-                                <div className={styles.placeholderIcon}>{getIconComponent(item)}</div>
-                                <div className={styles.productsWrapper}>
-                                    <div className={styles.productTitle}>{item.title}</div>
-                                    <div className={styles.productDescription}>{item.description}</div>
-                                </div>
-                            </a>
-                        ))}
+                        {group.items.map((item, index) => {
+                            const isBryntum = item.title.startsWith('Bryntum');
+                            const placeholderClass = isBryntum
+                                ? `${styles.placeholderIcon} ${styles.placeholderIconBryntum}`
+                                : styles.placeholderIcon;
+                            return (
+                                <Fragment key={index}>
+                                    {item.inlineHeading && (
+                                        <div className={`${styles.columnHeading} ${styles.inlineHeading}`}>
+                                            {item.inlineHeading}
+                                        </div>
+                                    )}
+                                    <a href={item.url} className={styles.itemsWrapper}>
+                                        <div className={placeholderClass}>{getIconComponent(item)}</div>
+                                        <div className={styles.productsWrapper}>
+                                            <div className={styles.productTitle}>{item.title}</div>
+                                            <div className={styles.productDescription}>{item.description}</div>
+                                        </div>
+                                    </a>
+                                </Fragment>
+                            );
+                        })}
                     </div>
                 ))}
                 {children}

@@ -227,11 +227,10 @@
     }
 }
 
-// Bryntum products live in the second dropdown column. Their icons already
-// have their own gradient/contrast so the AG-style square tile around them
-// reads as visual noise — drop the chrome and let the icon sit directly on
-// the dropdown surface in both colour schemes.
-.column:nth-child(2) .placeholderIcon {
+// Bryntum product icons already have their own gradient/contrast, so the
+// AG-style square tile around them reads as visual noise. Drop the chrome
+// and let the icon sit directly on the dropdown surface in both schemes.
+.placeholderIconBryntum {
     background: transparent;
     box-shadow: none;
 
@@ -240,6 +239,14 @@
         background: transparent;
         box-shadow: none;
     }
+}
+
+// Inline category heading rendered between two items in the same column
+// (e.g. the "Bryntum" divider between AG Studio and Bryntum Gantt). Reuses
+// the columnHeading typography but adds a top spacer so it visually
+// separates the preceding item from the new category.
+.inlineHeading {
+    margin-top: $spacing-size-2;
 }
 
 .itemsWrapper:hover {
