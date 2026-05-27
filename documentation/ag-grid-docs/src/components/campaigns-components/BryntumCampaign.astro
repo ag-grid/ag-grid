@@ -86,9 +86,38 @@ const altTextMediaSections = new WeakSet<object>();
                     <link rel="stylesheet" href={`${base}/fontawesome/css/fontawesome.css`} />
                     <link rel="stylesheet" href={`${base}/fontawesome/css/solid.css`} />
                     <link rel="stylesheet" href={`${base}/${slug}.css`} />
-                    <link rel="stylesheet" href={`${base}/svalbard-light.css`} />
+                    {/*
+                     * Bryntum ships every theme as light and dark variants
+                     * (svalbard-light.css / svalbard-dark.css). The inline
+                     * script below mirrors the AG site's dark-mode state
+                     * onto these links so the embedded demos follow the
+                     * site's colour scheme.
+                     */}
+                    <link rel="stylesheet" data-bryntum-theme={slug} href={`${base}/svalbard-light.css`} />
                 </>
             ))}
+            <script is:inline>
+                {`(function () {
+    var html = document.documentElement;
+    function syncTheme() {
+        var dark = html.dataset.darkMode === 'true';
+        var fromSuffix = dark ? '-light.css' : '-dark.css';
+        var toSuffix = dark ? '-dark.css' : '-light.css';
+        var links = document.querySelectorAll('link[data-bryntum-theme]');
+        for (var i = 0; i < links.length; i++) {
+            var href = links[i].href;
+            if (href.indexOf(fromSuffix) !== -1) {
+                links[i].href = href.replace(fromSuffix, toSuffix);
+            }
+        }
+    }
+    syncTheme();
+    new MutationObserver(syncTheme).observe(html, {
+        attributes: true,
+        attributeFilter: ['data-dark-mode']
+    });
+})();`}
+            </script>
             <script is:inline src={urlWithBaseUrl('/scripts/bryntum-demo-bootstrap.js')} />
             {bryntumProducts.map(({ slug, base }) => (
                 <script is:inline src={`${base}/${slug}.umd.js`} />
