@@ -47,6 +47,27 @@ describe('buildWebSite', () => {
     });
 });
 
+describe('canonicalUrlBase normalisation', () => {
+    test('a trailing slash on canonicalUrlBase does not duplicate in IDs or URLs', () => {
+        const withSlash = buildOrganization({
+            canonicalUrlBase: `${CANONICAL_URL_BASE}/`,
+            name: 'AG Grid',
+            logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
+            sameAs: [],
+        });
+        const withoutSlash = buildOrganization({
+            canonicalUrlBase: CANONICAL_URL_BASE,
+            name: 'AG Grid',
+            logoUrl: `${CANONICAL_URL_BASE}/images/logo.png`,
+            sameAs: [],
+        });
+
+        expect(withSlash).toEqual(withoutSlash);
+        expect(withSlash['@id']).toBe(`${CANONICAL_URL_BASE}/#organization`);
+        expect(withSlash.url).toBe(`${CANONICAL_URL_BASE}/`);
+    });
+});
+
 describe('buildSoftwareApplication', () => {
     test('uses default applicationCategory and operatingSystem when not provided, and omits offers when empty', () => {
         const result = buildSoftwareApplication({

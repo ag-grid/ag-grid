@@ -79,6 +79,7 @@ const organizationLogoUrl = new URL(
     '/images/ag-logos/png-logos/AG-Grid-Logo_Light-Theme_476_140.png',
     metadata.canonicalUrlBase
 ).toString();
+const licensePricingUrl = new URL('/license-pricing/', metadata.canonicalUrlBase).toString();
 const structuredData: JsonLdObject[] = includeStructuredData
     ? [
           buildOrganization({
@@ -92,29 +93,25 @@ const structuredData: JsonLdObject[] = includeStructuredData
               name: metadata.title,
               description: metadata.description,
           }),
-          ...(isHomepage
-              ? [
-                    buildSoftwareApplication({
-                        canonicalUrlBase: metadata.canonicalUrlBase,
-                        name: 'AG Grid',
-                        version: agGridVersion.split('-')[0],
-                        offers: [
-                            {
-                                '@type': 'Offer',
-                                name: 'AG Grid Community',
-                                price: '0',
-                                priceCurrency: 'USD',
-                                url: `${metadata.canonicalUrlBase}/license-pricing/`,
-                            },
-                            {
-                                '@type': 'Offer',
-                                name: 'AG Grid Enterprise',
-                                url: `${metadata.canonicalUrlBase}/license-pricing/`,
-                            },
-                        ],
-                    }),
-                ]
-              : []),
+          buildSoftwareApplication({
+              canonicalUrlBase: metadata.canonicalUrlBase,
+              name: 'AG Grid',
+              version: agGridVersion.split('-')[0],
+              offers: [
+                  {
+                      '@type': 'Offer',
+                      name: 'AG Grid Community',
+                      price: '0',
+                      priceCurrency: 'USD',
+                      url: licensePricingUrl,
+                  },
+                  {
+                      '@type': 'Offer',
+                      name: 'AG Grid Enterprise',
+                      url: licensePricingUrl,
+                  },
+              ],
+          }),
           ...(pageStructuredData ?? []),
       ]
     : [];

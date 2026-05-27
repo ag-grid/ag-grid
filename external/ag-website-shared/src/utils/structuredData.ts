@@ -57,24 +57,31 @@ interface BreadcrumbListInput {
     items: BreadcrumbItem[];
 }
 
-const ORGANIZATION_ID_FRAGMENT = '#organization';
-const WEBSITE_ID_FRAGMENT = '#website';
-const SOFTWARE_APPLICATION_ID_FRAGMENT = '#software-application';
+/**
+ * Build an absolute URL by resolving `pathWithFragment` against
+ * `canonicalUrlBase`. Robust to a base that does or does not end in `/` —
+ * `https://example.com` and `https://example.com/` both produce the same
+ * absolute output, which is essential for stable `@id` references and for
+ * intra-graph cross-links to resolve.
+ */
+function resolveUrl(canonicalUrlBase: string, pathWithFragment: string): string {
+    return new URL(pathWithFragment, canonicalUrlBase).toString();
+}
+
+export const getOrganizationId = (canonicalUrlBase: string): string => resolveUrl(canonicalUrlBase, '/#organization');
+export const getWebSiteId = (canonicalUrlBase: string): string => resolveUrl(canonicalUrlBase, '/#website');
+export const getSoftwareApplicationId = (canonicalUrlBase: string): string =>
+    resolveUrl(canonicalUrlBase, '/#software-application');
+
 const ARTICLE_ID_FRAGMENT = '#article';
 const BREADCRUMB_ID_FRAGMENT = '#breadcrumb';
-
-export const getOrganizationId = (canonicalUrlBase: string): string =>
-    `${canonicalUrlBase}/${ORGANIZATION_ID_FRAGMENT}`;
-export const getWebSiteId = (canonicalUrlBase: string): string => `${canonicalUrlBase}/${WEBSITE_ID_FRAGMENT}`;
-export const getSoftwareApplicationId = (canonicalUrlBase: string): string =>
-    `${canonicalUrlBase}/${SOFTWARE_APPLICATION_ID_FRAGMENT}`;
 
 export function buildOrganization({ canonicalUrlBase, name, logoUrl, sameAs }: OrgInput): JsonLdObject {
     return {
         '@type': 'Organization',
         '@id': getOrganizationId(canonicalUrlBase),
         name,
-        url: `${canonicalUrlBase}/`,
+        url: resolveUrl(canonicalUrlBase, '/'),
         logo: logoUrl,
         sameAs,
     };
@@ -84,7 +91,7 @@ export function buildWebSite({ canonicalUrlBase, name, description }: WebSiteInp
     return {
         '@type': 'WebSite',
         '@id': getWebSiteId(canonicalUrlBase),
-        url: `${canonicalUrlBase}/`,
+        url: resolveUrl(canonicalUrlBase, '/'),
         name,
         description,
         inLanguage: 'en',
@@ -107,7 +114,7 @@ export function buildSoftwareApplication({
         applicationCategory,
         operatingSystem,
         softwareVersion: version,
-        url: `${canonicalUrlBase}/`,
+        url: resolveUrl(canonicalUrlBase, '/'),
         publisher: { '@id': getOrganizationId(canonicalUrlBase) },
     };
     if (offers && offers.length > 0) {
