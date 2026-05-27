@@ -51,8 +51,14 @@
             "imageSrc": "images/about/jon-williams.webp"
         },
         {
-            "name": "Jason Osmond",
+            "name": "Jason Forget",
             "role": "Chair of the Board",
+            "bio": "Jason is a technology executive with deep experience scaling developer-first software companies into global enterprise platforms. He has built and led high-growth go-to-market organizations, transforming product-led adoption into large-scale enterprise revenue engines and helping developer-focused products achieve broad adoption across many of the world’s leading enterprises. Jason will partner closely with the leadership team to accelerate enterprise growth while preserving the developer trust and community momentum while driving long-term success. At AG Grid, he will work with the team to expand enterprise adoption, strengthen strategic customer relationships, and help scale the company’s next phase of growth.",
+            "imageSrc": "images/about/jason-forget.webp"
+        },
+        {
+            "name": "Jason Osmond",
+            "role": "Non Executive Director",
             "bio": "Jason is a seasoned technology executive with over 25 years' of experience driving growth, scaling operations, and building high-performing, commercially focused organisations. He brings a strong track record of value creation through strategic leadership, operational discipline, and a focus on sustainable, recurring revenue models. As Chairman, Jason works closely with AG Grid's leadership team to support long-term growth and market expansion.",
             "imageSrc": "images/about/jason-osmond.webp"
         }
