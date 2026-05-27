@@ -15,6 +15,10 @@ import type {
     BodyScrollEvent,
     BulkEditingStartedEvent,
     BulkEditingStoppedEvent,
+    CalculatedColumnCreatedEvent,
+    CalculatedColumnExpressionChangedEvent,
+    CalculatedColumnRemovedEvent,
+    CalculatedColumnValidationStateChangedEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -2484,6 +2488,24 @@ export interface GridOptions<TData = any> {
      * Paste operation has ended.
      */
     onPasteEnd?(event: PasteEndEvent<TData>): void;
+
+    // *** Calculated Columns *** //
+    /**
+     * A calculated column has been created.
+     */
+    onCalculatedColumnCreated?(event: CalculatedColumnCreatedEvent<TData>): void;
+    /**
+     * A calculated column expression has changed.
+     */
+    onCalculatedColumnExpressionChanged?(event: CalculatedColumnExpressionChangedEvent<TData>): void;
+    /**
+     * A calculated column has been removed.
+     */
+    onCalculatedColumnRemoved?(event: CalculatedColumnRemovedEvent<TData>): void;
+    /**
+     * A calculated column expression has changed between valid and invalid.
+     */
+    onCalculatedColumnValidationStateChanged?(event: CalculatedColumnValidationStateChangedEvent<TData>): void;
 
     // *** Columns *** //
     /**

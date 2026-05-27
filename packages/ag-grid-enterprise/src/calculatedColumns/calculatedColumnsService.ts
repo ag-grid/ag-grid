@@ -2,9 +2,11 @@ import type {
     AgColumn,
     CalculatedColumnDef,
     CalculatedColumnUpdate,
+    CalculatedColumnValidationReason,
     ColDef,
     ColGroupDef,
     ColKey,
+    ColumnEventType,
     ICalculatedColumnsService,
     NamedBean,
 } from 'ag-grid-community';
@@ -24,10 +26,29 @@ import {
     replaceBracketReferences,
 } from './calculatedColumnUtils';
 
+type ValidationState = 'valid' | CalculatedColumnValidationReason;
+
+type CalcColEventCommonParams = {
+    column: AgColumn;
+    columns: AgColumn[];
+    expression: string;
+    source: ColumnEventType;
+};
+
 export class CalculatedColumnsService extends BeanStub implements NamedBean, ICalculatedColumnsService {
     public readonly beanName = 'calculatedColsSvc' as const;
 
-    public addCalculatedColumn(colDef: CalculatedColumnDef): void {
+    private validationStatesByColId = new Map<string, ValidationState>();
+    private validationStatesInitialised = false;
+    private suppressValidationChecks = 0;
+
+    public postConstruct(): void {
+        this.addManagedEventListeners({
+            newColumnsLoaded: (event) => this.checkValidationStates(event.source),
+        });
+    }
+
+    public addCalculatedColumn(colDef: CalculatedColumnDef, source: 'api' | 'calculatedColumn' = 'api'): void {
         if (!_isStringLargerThan(colDef.calculatedExpression, 0, true)) {
             _warnOnce('addCalculatedColumn: calculatedExpression is required and cannot be empty.');
             return;
@@ -38,15 +59,32 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         ) {
             return;
         }
-        const nextDefs = [...this.getColumnDefs(), this.toCalculatedColDef(colDef)];
-        this.beans.gridApi.updateGridOptions({ columnDefs: nextDefs });
+
+        const colId = colDef.colId ?? this.createUniqueColId();
+        const nextColDef = this.toCalculatedColDef({ ...colDef, colId });
+        const nextDefs = [...this.getColumnDefs(), nextColDef];
+        this.updateColumnDefs(nextDefs);
+
+        const column = this.beans.colModel.getColById(colId);
+        if (column) {
+            this.dispatchCreatedOrRemovedEvent(
+                'calculatedColumnCreated',
+                this.getEventCommonParams(column, colDef.calculatedExpression, source)
+            );
+        }
+        this.checkValidationStates(source, true);
     }
 
-    public updateCalculatedColumn(column: ColKey, colDef: CalculatedColumnUpdate): void {
+    public updateCalculatedColumn(
+        column: ColKey,
+        colDef: CalculatedColumnUpdate,
+        source: 'api' | 'calculatedColumn' = 'api'
+    ): void {
         const targetColumn = this.beans.colModel.getColDefColOrCol(column);
         if (targetColumn?.colDef.calculatedExpression == null) {
             return;
         }
+        const oldExpression = targetColumn.colDef.calculatedExpression;
         if (colDef.calculatedExpression !== undefined) {
             if (!_isStringLargerThan(colDef.calculatedExpression, 0, true)) {
                 _warnOnce('updateCalculatedColumn: calculatedExpression cannot be empty.');
@@ -60,9 +98,18 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             }
         }
 
-        const targetColId = targetColumn.getColId();
+        const targetColId = targetColumn.colId;
         const nextDefs = this.updateCalculatedColumnDef(this.getColumnDefs(), targetColumn, colDef);
-        this.beans.gridApi.updateGridOptions({ columnDefs: nextDefs });
+        this.updateColumnDefs(nextDefs);
+        const nextColumn = this.beans.colModel.getColById(targetColId) ?? targetColumn;
+        const newExpression = nextColumn.colDef.calculatedExpression ?? oldExpression;
+        if (colDef.calculatedExpression !== undefined && oldExpression !== newExpression) {
+            this.dispatchExpressionChangedEvent(
+                this.getEventCommonParams(nextColumn, newExpression, source),
+                oldExpression
+            );
+        }
+        this.checkValidationStates(source, true);
         this.refreshCalculatedColumn(targetColId);
     }
 
@@ -80,7 +127,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return true;
     }
 
-    private validateColumnReferences(expression: string): boolean {
+    private getInvalidColumnReference(expression: string): string | undefined {
         let invalidReference: string | undefined;
         replaceBracketReferences(expression, (ref) => {
             if (invalidReference == null && !this.beans.colModel.getColById(ref)) {
@@ -88,6 +135,12 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             }
             return ref;
         });
+
+        return invalidReference;
+    }
+
+    private validateColumnReferences(expression: string): boolean {
+        const invalidReference = this.getInvalidColumnReference(expression);
 
         if (invalidReference != null) {
             _warnOnce(
@@ -102,41 +155,64 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return true;
     }
 
-    public showAddCalculatedColumnDialog(column: AgColumn | null): void {
-        const colId = this.createUniqueColId();
-        const headerName = this.getLocaleTextFunc()('calculatedColumnDefaultTitle', 'New title');
-        const draft: CalculatedColumnDraft = { colId, headerName, ...DEFAULT_DRAFT };
-        this.showDialog(draft, (nextDraft) => {
-            const nextDefs = this.insertCalculatedColumn(this.getColumnDefs(), column, this.toColDef(nextDraft));
-            this.beans.gridApi.updateGridOptions({ columnDefs: nextDefs });
-            this.focusCalculatedColumn(nextDraft.colId);
-        });
-    }
-
-    public showUpdateCalculatedColumnDialog(column: AgColumn | null): void {
-        if (column?.colDef.calculatedExpression == null) {
+    public openCalculatedColumnDialog(column: AgColumn | null, mode: 'add' | 'edit'): void {
+        if (mode === 'add') {
+            const colId = this.createUniqueColId();
+            const headerName = this.getLocaleTextFunc()('calculatedColumnDefaultTitle', 'New title');
+            const draft: CalculatedColumnDraft = { colId, headerName, ...DEFAULT_DRAFT };
+            this.showDialog(draft, (nextDraft) => {
+                const nextDefs = this.insertCalculatedColumn(this.getColumnDefs(), column, this.toColDef(nextDraft));
+                this.updateColumnDefs(nextDefs);
+                this.focusCalculatedColumn(nextDraft.colId);
+                const newColumn = this.beans.colModel.getColById(nextDraft.colId);
+                if (newColumn) {
+                    this.dispatchCreatedOrRemovedEvent(
+                        'calculatedColumnCreated',
+                        this.getEventCommonParams(newColumn, nextDraft.calculatedExpression, 'calculatedColumn')
+                    );
+                }
+                this.checkValidationStates('calculatedColumn', true);
+            });
             return;
         }
 
+        if (column?.colDef.calculatedExpression == null) {
+            return;
+        }
         const draft = this.toDraft(column);
         this.focusCalculatedColumn(draft.colId);
         this.showDialog(draft, (nextDraft) => {
             const { colId: _, ...update } = this.toColDef(nextDraft);
-            this.updateCalculatedColumn(column, update);
+            this.updateCalculatedColumn(column.colId, update, 'calculatedColumn');
         });
     }
 
-    public removeCalculatedColumn(column: AgColumn | null): void {
+    public removeCalculatedColumn(column: AgColumn | null, source: 'api' | 'calculatedColumn' = 'api'): void {
         if (column?.colDef.calculatedExpression == null) {
             return;
         }
 
+        const expression = column.colDef.calculatedExpression;
         const nextDefs = this.removeCalculatedColumnDef(this.getColumnDefs(), column);
-        this.beans.gridApi.updateGridOptions({ columnDefs: nextDefs });
+        this.updateColumnDefs(nextDefs);
+        this.dispatchCreatedOrRemovedEvent(
+            'calculatedColumnRemoved',
+            this.getEventCommonParams(column, expression, source)
+        );
+        this.checkValidationStates(source, true);
     }
 
     private getColumnDefs(): (ColDef | ColGroupDef)[] {
         return this.beans.colModel.getColumnDefs(true) ?? [];
+    }
+
+    private updateColumnDefs(columnDefs: (ColDef | ColGroupDef)[]): void {
+        this.suppressValidationChecks++;
+        try {
+            this.beans.gridApi.updateGridOptions({ columnDefs });
+        } finally {
+            this.suppressValidationChecks--;
+        }
     }
 
     private createUniqueColId(): string {
@@ -153,7 +229,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         column: AgColumn | null,
         calculatedColDef: ColDef
     ): (ColDef | ColGroupDef)[] {
-        const targetColId = column?.getColId();
+        const targetColId = column?.colId;
         if (!targetColId) {
             return [...columnDefs, calculatedColDef];
         }
@@ -186,7 +262,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         colDefUpdate: CalculatedColumnUpdate
     ): (ColDef | ColGroupDef)[] {
         const targetColDef = column.getUserProvidedColDef();
-        const targetColId = column.getColId();
+        const targetColId = column.colId;
         const safeUpdate: ColDef = { ...colDefUpdate };
         delete safeUpdate.colId;
 
@@ -297,7 +373,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         column: AgColumn
     ): (ColDef | ColGroupDef)[] {
         const targetColDef = column.getUserProvidedColDef();
-        const targetColId = column.getColId();
+        const targetColId = column.colId;
 
         return columnDefs.reduce<(ColDef | ColGroupDef)[]>((nextDefs, colDef) => {
             if ('children' in colDef && colDef.children) {
@@ -323,7 +399,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     private toDraft(column: AgColumn): CalculatedColumnDraft {
         const colDef = column.colDef;
-        const colId = column.getColId();
+        const colId = column.colId;
         const cellDataType = colDef.cellDataType;
         const displayName = this.beans.colNames.getDisplayNameForColumn(column, 'header');
 
@@ -379,6 +455,83 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             editable: false,
             suppressPaste: true,
         };
+    }
+
+    private getExpressionValidationState(expression: string): ValidationState {
+        if (this.getInvalidColumnReference(expression) != null) {
+            return 'unknownReference';
+        }
+        return this.getFormulaExpressionError(expression) == null ? 'valid' : 'invalidExpression';
+    }
+
+    private checkValidationStates(source: ColumnEventType, forceDispatch = false): void {
+        if (this.suppressValidationChecks > 0) {
+            return;
+        }
+
+        const shouldDispatch = forceDispatch || this.validationStatesInitialised;
+        const previousStates = this.validationStatesByColId;
+        const nextStates = new Map<string, ValidationState>();
+
+        for (const column of this.beans.colModel.getCols() ?? []) {
+            const expression = column.colDef.calculatedExpression;
+            if (expression == null) {
+                continue;
+            }
+
+            const colId = column.colId;
+            const state = this.getExpressionValidationState(expression);
+            nextStates.set(colId, state);
+
+            const previousState = previousStates.get(colId);
+            if (shouldDispatch && previousState !== undefined && previousState !== state) {
+                const valid = state === 'valid';
+                this.dispatchValidationStateChangedEvent(
+                    this.getEventCommonParams(column, expression, source),
+                    valid,
+                    valid ? undefined : state
+                );
+            }
+        }
+
+        this.validationStatesByColId = nextStates;
+        this.validationStatesInitialised = true;
+    }
+
+    private getEventCommonParams(
+        column: AgColumn,
+        expression: string,
+        source: ColumnEventType
+    ): CalcColEventCommonParams {
+        return { column, columns: [column], expression, source };
+    }
+
+    private dispatchCreatedOrRemovedEvent(
+        type: 'calculatedColumnCreated' | 'calculatedColumnRemoved',
+        commonParams: CalcColEventCommonParams
+    ): void {
+        this.eventSvc.dispatchEvent({ type, ...commonParams } as Parameters<typeof this.eventSvc.dispatchEvent>[0]);
+    }
+
+    private dispatchExpressionChangedEvent(commonParams: CalcColEventCommonParams, oldExpression: string): void {
+        this.eventSvc.dispatchEvent({
+            type: 'calculatedColumnExpressionChanged',
+            ...commonParams,
+            oldExpression,
+        });
+    }
+
+    private dispatchValidationStateChangedEvent(
+        commonParams: CalcColEventCommonParams,
+        valid: boolean,
+        reason?: CalculatedColumnValidationReason
+    ): void {
+        this.eventSvc.dispatchEvent({
+            type: 'calculatedColumnValidationStateChanged',
+            ...commonParams,
+            valid,
+            reason,
+        });
     }
 
     private getFunctionSuggestions(): ColumnSuggestion[] {

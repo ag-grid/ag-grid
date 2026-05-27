@@ -686,12 +686,14 @@ describe('ag-grid calculated columns', () => {
     test('dialog displays and stores header references', async () => {
         const revenueColId = 'server-revenue-9d5101c8-4c2a-48e0-9ad2';
         const costColId = 'server-cost-81f3431b-e4aa-4ef8-bef0';
+        const created = vi.fn();
         const api = createGrid('calculated-dialog-references', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
                 { field: 'revenue', colId: revenueColId, headerName: 'Revenue' },
                 { field: 'cost', colId: costColId, headerName: 'Cost' },
             ],
+            onCalculatedColumnCreated: created,
         });
 
         showColumnMenu(api, revenueColId);
@@ -719,6 +721,13 @@ describe('ag-grid calculated columns', () => {
         const calculatedDef = findColumnDef(api.getColumnDefs()!, 'calculated_1');
 
         expect(calculatedDef?.calculatedExpression).toBe(`[${revenueColId}] - [${costColId}]`);
+        expect(created).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: api.getColumn('calculated_1'),
+                expression: `[${revenueColId}] - [${costColId}]`,
+                source: 'calculatedColumn',
+            })
+        );
         expect(api.getCellValue({ rowNode, colKey: 'calculated_1', useFormatter: false })).toBe(7);
 
         showColumnMenu(api, 'calculated_1');
@@ -727,6 +736,190 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         expect(getExpressionInput().value).toBe('[Revenue] - [Cost]');
+    });
+
+    test('dispatches calculated column API lifecycle events', async () => {
+        const created = vi.fn();
+        const changed = vi.fn();
+        const removed = vi.fn();
+        const api = createGrid('calculated-api-events', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+            onCalculatedColumnCreated: created,
+            onCalculatedColumnExpressionChanged: changed,
+            onCalculatedColumnRemoved: removed,
+        });
+
+        api.addCalculatedColumn({ colId: 'profit', calculatedExpression: '[revenue] - [cost]' });
+        await asyncSetTimeout(1);
+        expect(created).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: api.getColumn('profit'),
+                expression: '[revenue] - [cost]',
+                source: 'api',
+            })
+        );
+
+        api.updateCalculatedColumn('profit', { headerName: 'Profit' });
+        await asyncSetTimeout(1);
+        expect(changed).not.toHaveBeenCalled();
+
+        api.updateCalculatedColumn('profit', { calculatedExpression: '[revenue] * [cost]' });
+        await asyncSetTimeout(1);
+        expect(changed).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: api.getColumn('profit'),
+                oldExpression: '[revenue] - [cost]',
+                expression: '[revenue] * [cost]',
+                source: 'api',
+            })
+        );
+
+        const removedColumn = api.getColumn('profit');
+        api.removeCalculatedColumn('profit');
+        await asyncSetTimeout(1);
+        expect(removed).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: removedColumn,
+                expression: '[revenue] * [cost]',
+                source: 'api',
+            })
+        );
+    });
+
+    test('does not dispatch calculated column lifecycle events for rejected API mutations', async () => {
+        const created = vi.fn();
+        const changed = vi.fn();
+        const api = createGrid('calculated-rejected-api-events', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            onCalculatedColumnCreated: created,
+            onCalculatedColumnExpressionChanged: changed,
+        });
+        const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        try {
+            api.addCalculatedColumn({ colId: 'bad', calculatedExpression: '[missing] + 1' });
+            api.updateCalculatedColumn('profit', { calculatedExpression: '[missing] + 1' });
+            await asyncSetTimeout(1);
+
+            expect(api.getColumn('bad')).toBeNull();
+            expect(created).not.toHaveBeenCalled();
+            expect(changed).not.toHaveBeenCalled();
+            expect(api.getColumn('profit')?.getColDef().calculatedExpression).toBe('[revenue] - [cost]');
+        } finally {
+            consoleWarnSpy.mockRestore();
+        }
+    });
+
+    test('dispatches calculated column UI update and remove events', async () => {
+        const changed = vi.fn();
+        const removed = vi.fn();
+        const api = createGrid('calculated-ui-events', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue', headerName: 'Revenue' },
+                { field: 'cost', headerName: 'Cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            onCalculatedColumnExpressionChanged: changed,
+            onCalculatedColumnRemoved: removed,
+        });
+
+        showColumnMenu(api, 'profit');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Edit Calculated Column');
+        await asyncSetTimeout(1);
+
+        setExpression('[Revenue] * [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        expect(changed).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: api.getColumn('profit'),
+                oldExpression: '[revenue] - [cost]',
+                expression: '[revenue] * [cost]',
+                source: 'calculatedColumn',
+            })
+        );
+
+        const removedColumn = api.getColumn('profit');
+        showColumnMenu(api, 'profit');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Remove Calculated Column');
+        await asyncSetTimeout(1);
+
+        expect(removed).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: removedColumn,
+                expression: '[revenue] * [cost]',
+                source: 'calculatedColumn',
+            })
+        );
+    });
+
+    test('dispatches calculated column validation state changes after column references change', async () => {
+        const validationStateChanged = vi.fn();
+        const api = createGrid('calculated-validation-events', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            onCalculatedColumnValidationStateChanged: validationStateChanged,
+        });
+
+        await asyncSetTimeout(1);
+        expect(validationStateChanged).not.toHaveBeenCalled();
+
+        api.updateGridOptions({
+            columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue] - [cost]' }],
+        });
+        await asyncSetTimeout(1);
+
+        expect(validationStateChanged).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: api.getColumn('profit'),
+                valid: false,
+                reason: 'unknownReference',
+            })
+        );
+
+        validationStateChanged.mockClear();
+        api.updateGridOptions({
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        expect(validationStateChanged).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: api.getColumn('profit'),
+                valid: true,
+            })
+        );
+        expect(validationStateChanged.mock.calls[0][0].reason).toBeUndefined();
+    });
+
+    test('does not dispatch validation state changes for initial invalid calculated columns', async () => {
+        const validationStateChanged = vi.fn();
+        createGrid('calculated-initial-invalid-validation-events', {
+            rowData: [{ id: 'r1', revenue: 10 }],
+            columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue] - [missing]' }],
+            onCalculatedColumnValidationStateChanged: validationStateChanged,
+        });
+
+        await asyncSetTimeout(1);
+        expect(validationStateChanged).not.toHaveBeenCalled();
     });
 
     test('calculated column menu items are grouped by separators', async () => {

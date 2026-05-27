@@ -67,6 +67,39 @@
             }
         }
     },
+    "calculatedColumns": {
+        "meta": {
+            "displayName": "Calculated Columns",
+            "page": {
+                "name": "Calculated Columns",
+                "url": "./calculated-columns/"
+            }
+        },
+        "calculatedColumnCreated": {
+            "more": {
+                "name": "Calculated Columns Events",
+                "url": "./calculated-columns/#events"
+            }
+        },
+        "calculatedColumnExpressionChanged": {
+            "more": {
+                "name": "Calculated Columns Events",
+                "url": "./calculated-columns/#events"
+            }
+        },
+        "calculatedColumnRemoved": {
+            "more": {
+                "name": "Calculated Columns Events",
+                "url": "./calculated-columns/#events"
+            }
+        },
+        "calculatedColumnValidationStateChanged": {
+            "more": {
+                "name": "Calculated Columns Events",
+                "url": "./calculated-columns/#events"
+            }
+        }
+    },
     "components": {
         "meta": {
             "displayName": "Components",

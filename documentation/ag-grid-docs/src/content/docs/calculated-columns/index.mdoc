@@ -85,6 +85,10 @@ Header cells and grid cells for calculated columns include the `ag-calculated-co
 Calculated columns can also be managed from the Grid API. Added columns are appended to the current column definitions; use the column moving API afterwards if you need a specific display position.
 
 ```{% frameworkTransform=true %}
+const calculatedColumns = api
+    .getColumns()
+    .filter(column => column.getColDef().calculatedExpression != null);
+
 api.addCalculatedColumn({
     colId: 'profitMargin',
     calculatedExpression: '([revenue] - [cost]) / [revenue]',
@@ -100,6 +104,8 @@ api.updateCalculatedColumn('profitMargin', {
 api.removeCalculatedColumn('profitMargin');
 ```
 
+Calculated Column events also use stored `colId` references in their expression payloads. For example, an event raised from the dialog still reports `[revenue]`, not `[Revenue]`.
+
 ## API
 
 ### Column Properties
@@ -109,3 +115,7 @@ api.removeCalculatedColumn('profitMargin');
 ### Grid API
 
 {% apiDocumentation source="grid-api/api.json" section="calculatedColumns" names=["addCalculatedColumn", "updateCalculatedColumn", "removeCalculatedColumn"] /%}
+
+### Events
+
+{% apiDocumentation source="grid-events/events.json" section="calculatedColumns" names=["calculatedColumnCreated", "calculatedColumnExpressionChanged", "calculatedColumnRemoved", "calculatedColumnValidationStateChanged"] /%}

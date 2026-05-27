@@ -62,6 +62,10 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         cutEnd: CutEndEvent<TData, TContext>;
         pasteStart: PasteStartEvent<TData, TContext>;
         pasteEnd: PasteEndEvent<TData, TContext>;
+        calculatedColumnCreated: CalculatedColumnCreatedEvent<TData, TContext>;
+        calculatedColumnExpressionChanged: CalculatedColumnExpressionChangedEvent<TData, TContext>;
+        calculatedColumnRemoved: CalculatedColumnRemovedEvent<TData, TContext>;
+        calculatedColumnValidationStateChanged: CalculatedColumnValidationStateChangedEvent<TData, TContext>;
         fillStart: FillStartEvent<TData, TContext>;
         fillEnd: FillEndEvent<TData, TContext>;
         cellSelectionDeleteStart: CellSelectionDeleteStartEvent<TData, TContext>;
@@ -670,6 +674,65 @@ export interface PasteEndEvent<TData = any, TContext = any> extends AgGlobalEven
     source: string;
 }
 
+/**
+ * Why a calculated column's validation flipped to invalid:
+ * - `'unknownReference'` – the expression references a column id that no longer exists in the grid.
+ * - `'invalidExpression'` – the expression failed formula parsing (e.g. syntax error or unknown function).
+ */
+export type CalculatedColumnValidationReason = 'unknownReference' | 'invalidExpression';
+
+/**
+ * Shared shape for calculated-column events. Extends {@link ColumnEvent}, so consumers get
+ * `column`, `columns`, and `source` (a {@link ColumnEventType}, e.g. `'api'` for programmatic mutations
+ * or `'calculatedColumn'` for actions taken via the calculated-column dialog or menu).
+ */
+export interface CalculatedColumnBaseEvent<T extends AgEventType, TData = any, TContext = any> extends ColumnEvent<
+    T,
+    TData,
+    TContext
+> {
+    /** The calculated column the event relates to. Always set — calc-col events always target exactly one column. */
+    column: Column;
+    /** The current expression on the column — uses internal `[colId]` references, not header-name references. */
+    expression: string;
+}
+
+export interface CalculatedColumnCreatedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
+    'calculatedColumnCreated',
+    TData,
+    TContext
+> {}
+
+export interface CalculatedColumnRemovedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
+    'calculatedColumnRemoved',
+    TData,
+    TContext
+> {}
+
+export interface CalculatedColumnExpressionChangedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
+    'calculatedColumnExpressionChanged',
+    TData,
+    TContext
+> {
+    /** Previous expression value — uses internal `[colId]` references, not header-name references. */
+    oldExpression: string;
+}
+
+/**
+ * Fired when a calculated column's expression validity flips. Includes cascading flips — e.g. column
+ * `A` becomes invalid because a column it references was removed elsewhere; in that case `source`
+ * reports whatever ColumnEventType triggered the column-set change.
+ */
+export interface CalculatedColumnValidationStateChangedEvent<
+    TData = any,
+    TContext = any,
+> extends CalculatedColumnBaseEvent<'calculatedColumnValidationStateChanged', TData, TContext> {
+    /** `true` when the expression parses and resolves all referenced columns; `false` otherwise. */
+    valid: boolean;
+    /** Why the expression is invalid. Only set when `valid` is `false`. */
+    reason?: CalculatedColumnValidationReason;
+}
+
 export interface FillStartEvent<TData = any, TContext = any> extends AgGlobalEvent<'fillStart', TData, TContext> {}
 
 export interface FillEndEvent<TData = any, TContext = any> extends AgGlobalEvent<'fillEnd', TData, TContext> {
@@ -979,7 +1042,8 @@ export type ColumnEventType =
     | 'columnRowGroupChanged'
     | 'cellDataTypeInferred'
     | 'rowNumbersService'
-    | 'viewportSizeFeature';
+    | 'viewportSizeFeature'
+    | 'calculatedColumn';
 
 export interface ColumnEvent<
     T extends AgEventType | ColumnEventName = any,
