@@ -20,6 +20,7 @@ type OverlayCompType =
     | 'agNoRowsOverlay'
     | 'agNoMatchingRowsOverlay'
     | 'agExportingOverlay'
+    | 'agFileInputOverlay'
     | 'activeOverlay';
 
 type OverlayDef = Readonly<{
@@ -73,6 +74,14 @@ const ExportingOverlayDef: OverlayDef = {
     exclusive: true,
 };
 
+const FileInputOverlayDef: OverlayDef = {
+    id: 'agFileInputOverlay',
+    overlayType: 'fileInput',
+    comp: overlayCompType('fileInputOverlayComponent'),
+    wrapperCls: 'ag-overlay-file-input-wrapper',
+    exclusive: true,
+};
+
 const CustomOverlayDef: Readonly<OverlayDef> = {
     id: 'activeOverlay',
     comp: overlayCompType('activeOverlay'),
@@ -91,6 +100,7 @@ const getActiveOverlayDef = (activeOverlay: any): OverlayDef | null => {
                 agNoRowsOverlay: NoRowsOverlayDef,
                 agNoMatchingRowsOverlay: NoMatchingRowsOverlayDef,
                 agExportingOverlay: ExportingOverlayDef,
+                agFileInputOverlay: FileInputOverlayDef,
             } as Record<string, OverlayDef>
         )[activeOverlay] ?? CustomOverlayDef
     );
@@ -105,6 +115,7 @@ const getOverlayDefForType = (overlayType: OverlayType | null): OverlayDef | nul
             noRows: NoRowsOverlayDef,
             noMatchingRows: NoMatchingRowsOverlayDef,
             exporting: ExportingOverlayDef,
+            fileInput: FileInputOverlayDef,
         } as Record<OverlayType, OverlayDef>
     )[overlayType];
 };
@@ -156,6 +167,7 @@ export class OverlayService extends BeanStub implements NamedBean {
                 'overlayComponentParams',
                 'loadingOverlayComponentParams',
                 'noRowsOverlayComponentParams',
+                'autoGenerateColumnDefs',
             ],
             (params) => this.onPropChange(new Set(params.changeSet?.properties))
         );
@@ -387,13 +399,24 @@ export class OverlayService extends BeanStub implements NamedBean {
                 return LoadingOverlayDef;
             }
         } else if (this.showInitialOverlay) {
-            if (!this.isDisabled(LoadingOverlayDef) && (!gos.get('columnDefs') || !gos.get('rowData'))) {
-                // if no columns or no row data, we show the initial loading overlay
-                return LoadingOverlayDef;
+            if (!gos.get('columnDefs') || !gos.get('rowData')) {
+                if (gos.get('autoGenerateColumnDefs') && !this.isDisabled(FileInputOverlayDef)) {
+                    return FileInputOverlayDef;
+                }
+                if (!this.isDisabled(LoadingOverlayDef)) {
+                    return LoadingOverlayDef;
+                }
             }
             this.disableInitialOverlay();
         } else {
             this.disableInitialOverlay();
+        }
+
+        if (gos.get('autoGenerateColumnDefs') && !this.isDisabled(FileInputOverlayDef)) {
+            const rowData = gos.get('rowData');
+            if (rowData == null || (Array.isArray(rowData) && rowData.length === 0)) {
+                return FileInputOverlayDef;
+            }
         }
 
         // activeOverlay already checked above

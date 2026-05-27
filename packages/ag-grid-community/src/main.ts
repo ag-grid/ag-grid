@@ -456,6 +456,7 @@ export type {
 
 // Overlays
 export type { IExportingOverlay, IExportingOverlayComp } from './rendering/overlays/exportingOverlayComponent';
+export type { IFileInputOverlay, IFileInputOverlayComp } from './rendering/overlays/fileInputOverlayComponent';
 export type { ILoadingOverlay, ILoadingOverlayComp } from './rendering/overlays/loadingOverlayComponent';
 export type {
     INoMatchingRowsOverlay,
@@ -464,7 +465,9 @@ export type {
 export type { INoRowsOverlay, INoRowsOverlayComp } from './rendering/overlays/noRowsOverlayComponent';
 export type {
     ExportingOverlayUserParams,
+    FileInputOverlayUserParams,
     IExportingOverlayParams,
+    IFileInputOverlayParams,
     ILoadingOverlayParams,
     INoMatchingRowsOverlayParams,
     INoRowsOverlayParams,

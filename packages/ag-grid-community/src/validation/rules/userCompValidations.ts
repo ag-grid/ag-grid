@@ -27,6 +27,7 @@ export const USER_COMP_MODULES: Record<UserComponentName, ValidationModuleName> 
     agExportingOverlay: 'Overlay',
     agNoRowsOverlay: 'Overlay',
     agNoMatchingRowsOverlay: 'Overlay',
+    agFileInputOverlay: 'Overlay',
     agTooltipComponent: 'Tooltip',
     agReadOnlyFloatingFilter: 'CustomFilter',
     agTextColumnFilter: 'TextFilter',

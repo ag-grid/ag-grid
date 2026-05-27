@@ -59,6 +59,7 @@ import type {
     DragStartedEvent,
     DragStoppedEvent,
     ExpandOrCollapseAllEvent,
+    FileInputEvent,
     FillEndEvent,
     FillStartEvent,
     FilterChangedEvent,
@@ -1038,7 +1039,7 @@ export interface GridOptions<TData = any> {
     suppressNoRowsOverlay?: boolean;
 
     /**
-     * List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`.
+     * List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`, `fileInput`.
      */
     suppressOverlays?: OverlayType[];
 
@@ -2743,6 +2744,13 @@ export interface GridOptions<TData = any> {
      * DOM event `keyDown` happened on a cell.
      */
     onCellKeyDown?(event: CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>): void;
+
+    // *** File Input *** //
+    /**
+     * Files have been received via the file drop overlay (drag-and-drop or file browser).
+     * Call `event.resolve(rowData)` to load parsed data, or `event.reject(message)` to show an error.
+     */
+    onFileInput?(event: FileInputEvent<TData>): void;
 
     // *** Miscellaneous *** //
     /**

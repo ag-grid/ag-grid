@@ -799,6 +799,8 @@ export const AG_GRID_ERRORS = {
         }),
     303: ({ key }: { key: string }) =>
         `Multiple toolbar items share the explicit key '${key}'. Only the first item is rendered.` as const,
+    304: () =>
+        `Files were dropped on the grid but no 'onFileInput' callback is configured. Provide an 'onFileInput' callback to handle file input when using 'autoGenerateColumnDefs'.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

@@ -92,6 +92,7 @@ import type {
     ExcelExportParams,
     ExcelStyle,
     ExpandOrCollapseAllEvent,
+    FileInputEvent,
     FillEndEvent,
     FillOperation,
     FillStartEvent,
@@ -1068,7 +1069,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressNoRowsOverlay: boolean | undefined = undefined;
-    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`.
+    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`, `fileInput`.
      */
     @Input() public suppressOverlays: OverlayType[] | undefined = undefined;
     /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows, exporting etc).
@@ -2446,6 +2447,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>> =
         new EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>>();
+    /** Files have been received via the file drop overlay (drag-and-drop or file browser).
+     * Call `event.resolve(rowData)` to load parsed data, or `event.reject(message)` to show an error.
+     */
+    @Output() public fileInput: EventEmitter<FileInputEvent<TData>> = new EventEmitter<FileInputEvent<TData>>();
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet      */
     @Output() public gridReady: EventEmitter<GridReadyEvent<TData>> = new EventEmitter<GridReadyEvent<TData>>();
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */

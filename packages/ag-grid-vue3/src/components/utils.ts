@@ -171,6 +171,7 @@ import type {
     DragStartedEvent,
     DragStoppedEvent,
     ExpandOrCollapseAllEvent,
+    FileInputEvent,
     FillEndEvent,
     FillStartEvent,
     FilterChangedEvent,
@@ -892,7 +893,7 @@ export interface Props<TData> {
          * @initial
          */
     suppressNoRowsOverlay?: boolean,
-    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`.
+    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`, `fileInput`.
          */
     suppressOverlays?: OverlayType[],
     /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows, exporting etc).
@@ -2038,6 +2039,7 @@ export interface Props<TData> {
    'onChart-options-changed'?: ChartOptionsChangedEvent<TData>,
    'onChart-destroyed'?: ChartDestroyedEvent<TData>,
    'onCell-key-down'?: CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>,
+   'onFile-input'?: FileInputEvent<TData>,
    'onGrid-ready'?: GridReadyEvent<TData>,
    'onGrid-pre-destroyed'?: GridPreDestroyedEvent<TData>,
    'onFirst-data-rendered'?: FirstDataRenderedEvent<TData>,
@@ -2521,6 +2523,7 @@ export function getProps() {
         'onVirtual-row-removed': undefined,
         'onRow-clicked': undefined,
         'onRow-double-clicked': undefined,
+        'onFile-input': undefined,
         'onGrid-ready': undefined,
         'onGrid-pre-destroyed': undefined,
         'onGrid-size-changed': undefined,
