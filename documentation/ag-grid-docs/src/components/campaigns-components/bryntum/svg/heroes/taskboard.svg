@@ -54,9 +54,9 @@
 <lineargradient id="linear-gradient-10" x1="202.32" x2="207.46" xlink:href="#linear-gradient" y1="1152.59" y2="1158.03"></lineargradient>
 <lineargradient id="linear-gradient-11" x1="199.52" x2="215.51" xlink:href="#linear-gradient-3" y1="1143.43" y2="1143.43"></lineargradient>
 </defs>
-<text class="board-text" data-id="board-text" x="18.3" y="24.8">Requested</text>
-<text class="board-text" data-id="board-text" x="304.5" y="24.8">In Progress</text>
-<text class="board-text" data-id="board-text" x="593.1" y="24.8">Completed</text>
+<text class="board-text" data-id="board-text" fill="#fff" x="18.3" y="24.8">Requested</text>
+<text class="board-text" data-id="board-text" fill="#fff" x="304.5" y="24.8">In Progress</text>
+<text class="board-text" data-id="board-text" fill="#fff" x="593.1" y="24.8">Completed</text>
 <g class="board-block board-block--1" filter="url(#shadow)">
 <rect fill="#fff" height="108" rx="6" width="264" x="16.52" y="45.87"></rect>
 <text data-id="board-text" x="32.0" y="92.8">Confirm Ports Availability</text>
