@@ -244,9 +244,18 @@
 // Inline category heading rendered between two items in the same column
 // (e.g. the "Bryntum" divider between AG Studio and Bryntum Gantt). Reuses
 // the columnHeading typography but adds a top spacer so it visually
-// separates the preceding item from the new category.
+// separates the preceding item from the new category, a small left padding
+// so it lines up under the AG product titles, and a slightly lighter
+// foreground so it reads quieter than a top-of-column heading.
 .inlineHeading {
     margin-top: $spacing-size-2;
+    padding-left: $spacing-size-1;
+    color: var(--color-fg-quinary);
+
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
+        color: var(--color-fg-quinary);
+    }
 }
 
 .itemsWrapper:hover {
