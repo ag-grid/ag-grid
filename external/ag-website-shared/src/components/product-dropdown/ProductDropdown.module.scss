@@ -227,6 +227,21 @@
     }
 }
 
+// Bryntum products live in the second dropdown column. Their icons already
+// have their own gradient/contrast so the AG-style square tile around them
+// reads as visual noise — drop the chrome and let the icon sit directly on
+// the dropdown surface in both colour schemes.
+.column:nth-child(2) .placeholderIcon {
+    background: transparent;
+    box-shadow: none;
+
+    #{$selector-darkmode}:has([data-is-homepage='false']) &,
+    #{$selector-darkmode}:has([data-is-homepage='true'] :global(.header-scrolled)) & {
+        background: transparent;
+        box-shadow: none;
+    }
+}
+
 .itemsWrapper:hover {
     background: var(--color-util-brand-50);
     cursor: pointer;

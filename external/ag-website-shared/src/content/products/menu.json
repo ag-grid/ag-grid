@@ -16,17 +16,17 @@
                 "title": "AG Studio",
                 "description": "Best JavaScript Dashboard in the World",
                 "url": "https://www.ag-grid.com/studio"
-            },
-            {
-                "title": "Bryntum Gantt",
-                "description": "Speed-tuned Gantt chart for project planning",
-                "url": "/campaigns/bryntum-gantt"
             }
         ]
     },
     {
-        "label": "",
+        "label": "Bryntum",
         "items": [
+            {
+                "title": "Bryntum Gantt",
+                "description": "Speed-tuned Gantt chart for project planning",
+                "url": "/campaigns/bryntum-gantt"
+            },
             {
                 "title": "Bryntum Scheduler",
                 "description": "Resource scheduling timeline component",
