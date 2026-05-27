@@ -3365,11 +3365,17 @@ export type ProcessPivotResultColDef<TData = any, TValue = any> = (colDef: ColDe
 export type ProcessPivotResultColGroupDef<TData = any> = (colDef: ColGroupDef<TData>) => void;
 
 export interface AutoGenerateColumnDefsConfig {
-    /** How to handle plain-object values. `'recurse'` creates column groups (default), `'skip'` ignores them, `'flat'` creates a leaf column. */
+    /** How to handle plain-object values. `'recurse'` creates column groups, `'skip'` ignores them, `'flat'` creates a leaf column.
+     * @default 'recurse'
+     */
     objectValues?: 'recurse' | 'skip' | 'flat';
-    /** How to handle array values. `'include'` creates a leaf column (default), `'skip'` ignores them. */
+    /** How to handle array values. `'include'` creates a leaf column, `'skip'` ignores them.
+     * @default 'include'
+     */
     arrayValues?: 'include' | 'skip';
-    /** How to handle `null` and `undefined` values. `'include'` creates a leaf column (default), `'skip'` ignores them. */
+    /** How to handle `null` and `undefined` values. `'include'` creates a leaf column, `'skip'` ignores them.
+     * @default 'include'
+     */
     nullValues?: 'include' | 'skip';
 }
 

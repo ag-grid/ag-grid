@@ -572,13 +572,13 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Column State",
-                                    "path": "column-state"
+                                    "title": "Auto-Generate Columns",
+                                    "path": "auto-generate-columns"
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Auto-Generate Columns",
-                                    "path": "auto-generate-columns"
+                                    "title": "Column State",
+                                    "path": "column-state"
                                 }
                             ]
                         },
