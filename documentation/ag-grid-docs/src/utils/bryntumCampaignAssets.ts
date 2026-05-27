@@ -34,7 +34,9 @@ export const resolveBryntumAsset = (src: string | undefined, productSlug: string
 
 // Append the AG → Bryntum tracking param to URLs that point at bryntum.com.
 // Returns the URL untouched for non-Bryntum hosts and for URLs that already
-// carry the param (idempotent).
+// carry the param (idempotent). Splits on the first `#` only so URLs that
+// embed an extra `#` inside their fragment (e.g. the Bryntum docs SPA's
+// "/docs/#path#anchor" pattern) keep the full fragment intact.
 export const withBryntumUtm = (url: string): string => {
     if (!BRYNTUM_HOST_RE.test(url)) {
         return url;
@@ -42,36 +44,72 @@ export const withBryntumUtm = (url: string): string => {
     if (new RegExp(`[?&]${BRYNTUM_UTM_KEY}=`).test(url)) {
         return url;
     }
-    const [base, hash = ''] = url.split('#');
+    const hashIdx = url.indexOf('#');
+    const base = hashIdx === -1 ? url : url.slice(0, hashIdx);
+    const fragment = hashIdx === -1 ? '' : url.slice(hashIdx);
     const separator = base.includes('?') ? '&' : '?';
-    return `${base}${separator}${BRYNTUM_UTM}${hash ? `#${hash}` : ''}`;
+    return `${base}${separator}${BRYNTUM_UTM}${fragment}`;
 };
 
-// Walk an HTML string and apply withBryntumUtm() to every anchor href that
-// points at bryntum.com. Used for body_html content from JSON files where we
-// can't decorate hrefs at the call site.
+// Path prefixes inside curated body_html that originated from bryntum.com and
+// must be repointed at the Bryntum site. Anything else (e.g. absolute URLs to
+// blog.ag-grid.com) is left alone so /campaigns/bryntum- pages don't end up
+// rewriting genuinely AG-bound anchors.
+const BRYNTUM_RELATIVE_PATH_RE = /^\/?(?:products|download|store|company|contact|examples|changelog)(?:[/?#]|$)/i;
+
+const isBryntumRelativePath = (href: string): boolean => BRYNTUM_RELATIVE_PATH_RE.test(href);
+
+// Given a raw href, return the bryntum.com-rooted, UTM-decorated URL if the
+// href points at Bryntum (absolute bryntum.com or one of the known relative
+// prefixes), or `null` if the href should be left untouched. Stray whitespace
+// from the scraped JSON content is trimmed so href=" /products/..." doesn't
+// produce a URL with a literal space in it.
+const resolveBryntumBodyHref = (href: string): string | null => {
+    const trimmed = href.trim();
+    if (!trimmed) {
+        return null;
+    }
+    if (BRYNTUM_HOST_RE.test(trimmed)) {
+        return withBryntumUtm(trimmed);
+    }
+    if (isBryntumRelativePath(trimmed)) {
+        const normalised = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+        return withBryntumUtm(`${BRYNTUM_ROOT}${normalised}`);
+    }
+    return null;
+};
+
+// Walk an HTML string and rewrite every anchor href that targets Bryntum —
+// either an absolute bryntum.com URL or a curated relative path from the
+// scraped content (e.g. "/products/scheduler/examples/export/") — to its
+// canonical bryntum.com form with the AG attribution param applied. Hrefs that
+// don't match a Bryntum prefix are left untouched.
 export const decorateBryntumHtml = (html: string | undefined): string => {
     if (!html) {
         return '';
     }
-    return html.replace(
-        /(<a\b[^>]*\bhref=)(["'])(https?:\/\/(?:www\.)?bryntum\.com[^"']*)\2/gi,
-        (_match, prefix, quote, url) => `${prefix}${quote}${withBryntumUtm(url)}${quote}`
-    );
+    return html.replace(/(<a\b[^>]*\bhref=)(["'])([^"']+)\2/gi, (match, prefix, quote, url) => {
+        const resolved = resolveBryntumBodyHref(url);
+        return resolved ? `${prefix}${quote}${resolved}${quote}` : match;
+    });
 };
 
 export const resolveBryntumHref = (href: string | undefined): string => {
     if (!href) {
         return '#';
     }
-    if (href.startsWith('mailto:') || href.startsWith('#')) {
-        return href;
+    const trimmed = href.trim();
+    if (!trimmed) {
+        return '#';
     }
-    if (href.startsWith('http')) {
-        return withBryntumUtm(href);
+    if (trimmed.startsWith('mailto:') || trimmed.startsWith('#')) {
+        return trimmed;
     }
-    if (href.startsWith('/')) {
-        return withBryntumUtm(`${BRYNTUM_ROOT}${href}`);
+    if (trimmed.startsWith('http')) {
+        return withBryntumUtm(trimmed);
     }
-    return withBryntumUtm(`${BRYNTUM_ROOT}/${href}`);
+    if (trimmed.startsWith('/')) {
+        return withBryntumUtm(`${BRYNTUM_ROOT}${trimmed}`);
+    }
+    return withBryntumUtm(`${BRYNTUM_ROOT}/${trimmed}`);
 };
