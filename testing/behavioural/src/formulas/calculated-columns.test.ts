@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 import { vi } from 'vitest';
 
@@ -96,13 +97,16 @@ describe('ag-grid calculated columns', () => {
         api.showColumnMenu(colKey);
     }
 
-    function clickColumnMenuItem(name: string): void {
-        const menuItemText = Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option-text')).find(
-            (element) => element.textContent?.trim() === name
-        );
-        const menuItem = menuItemText?.closest<HTMLElement>('.ag-menu-option');
-        expect(menuItem).toBeTruthy();
-        menuItem!.click();
+    async function clickColumnMenuItem(name: string): Promise<void> {
+        const menuItem = await waitFor(() => {
+            const menuItemText = Array.from(document.querySelectorAll<HTMLElement>('.ag-menu-option-text')).find(
+                (element) => element.textContent?.trim() === name
+            );
+            const element = menuItemText?.closest<HTMLElement>('.ag-menu-option');
+            expect(element).toBeTruthy();
+            return element!;
+        });
+        menuItem.click();
     }
 
     function getCalculatedColumnDialog(): HTMLElement {
@@ -692,7 +696,7 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, revenueColId);
         await asyncSetTimeout(10);
-        clickColumnMenuItem('Add Calculated Column');
+        await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
         clickDialogButton('Columns');
@@ -719,7 +723,7 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'calculated_1');
         await asyncSetTimeout(10);
-        clickColumnMenuItem('Edit Calculated Column');
+        await clickColumnMenuItem('Edit Calculated Column');
         await asyncSetTimeout(1);
 
         expect(getExpressionInput().value).toBe('[Revenue] - [Cost]');
@@ -770,7 +774,7 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'revenue');
         await asyncSetTimeout(10);
-        clickColumnMenuItem('Add Calculated Column');
+        await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
         getCalculatedColumnDialog()
@@ -792,7 +796,7 @@ describe('ag-grid calculated columns', () => {
 
         showColumnMenu(api, 'revenue');
         await asyncSetTimeout(10);
-        clickColumnMenuItem('Add Calculated Column');
+        await clickColumnMenuItem('Add Calculated Column');
         await asyncSetTimeout(1);
 
         setExpression('[Revenue] +');
