@@ -114,6 +114,53 @@
     a {
         --icon-size: 1.1em;
     }
+
+    // Primary hero CTA (e.g. "Browse Examples"): white pill with brand-blue
+    // text + chevron, no visible border so it reads cleanly on the dark hero.
+    a:first-child {
+        --icon-color: var(--color-link);
+
+        color: var(--color-link);
+        border-color: transparent;
+
+        &:hover {
+            color: var(--color-link-hover);
+        }
+
+        // Dark mode flips the primary CTA to a solid white pill with dark
+        // text and chevron so it still reads as the dominant action against
+        // the near-black hero gradient.
+        #{$selector-darkmode} & {
+            --icon-color: var(--color-gray-900);
+
+            background-color: var(--color-white);
+            color: var(--color-gray-900);
+            border-color: transparent;
+
+            &:hover {
+                background-color: var(--color-white);
+                color: var(--color-gray-900);
+                border-color: transparent;
+                opacity: 0.9;
+            }
+        }
+    }
+
+    // Subordinate hero CTA (e.g. "Get the Trial" / "Purchase Now"): translucent
+    // white pill with white text + chevron, sat against the dark hero gradient.
+    a + a {
+        --icon-color: var(--color-white);
+
+        background-color: rgb(255 255 255 / 0.12);
+        color: var(--color-white);
+        border-color: transparent;
+
+        &:hover {
+            background-color: rgb(255 255 255 / 0.2);
+            color: var(--color-white);
+            border-color: transparent;
+        }
+    }
 }
 
 .heroMedia {
@@ -178,15 +225,6 @@
 }
 
 .textMediaCopy {
-    .preTitle {
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        font-size: var(--text-fs-sm);
-        font-weight: var(--text-semibold);
-        color: var(--color-fg-tertiary);
-        margin-bottom: $spacing-size-2;
-    }
-
     h2 {
         font-size: var(--text-fs-2xl);
         line-height: var(--text-lh-3xl);
@@ -222,13 +260,19 @@
 // also rendered as descendants of `.textMediaCopy`.
 .bodyText {
     a {
-        color: var(--color-fg-primary);
-        text-decoration: underline;
-        text-decoration-color: var(--color-util-brand-400);
+        color: var(--color-link);
+        font-weight: var(--text-semibold);
+        text-decoration: none;
 
         &:hover {
-            color: var(--color-util-brand-500);
+            color: var(--color-link-hover);
         }
+    }
+
+    // Bryntum's exported body_html sometimes nests `<span style="font-weight: 400;">`
+    // inside anchors; force the link's bolder weight to win over the inline style.
+    a span {
+        font-weight: inherit !important;
     }
 }
 
@@ -325,12 +369,12 @@
     }
 
     a {
-        color: var(--color-fg-primary);
-        text-decoration: underline;
-        text-decoration-color: var(--color-util-brand-400);
+        color: var(--color-link);
+        font-weight: var(--text-semibold);
+        text-decoration: none;
 
         &:hover {
-            color: var(--color-util-brand-500);
+            color: var(--color-link-hover);
         }
     }
 }
@@ -614,6 +658,16 @@
 .textMediaCtas a,
 .ctaButtons a {
     text-decoration: none;
+
+    // Slide the trailing chevron rightwards on hover so every CTA gets a
+    // small "go" cue. Mirrors the pattern used on the AG Grid homepage hero.
+    :global(.icon) {
+        transition: transform $transition-default-timing;
+    }
+
+    &:hover :global(.icon) {
+        transform: translate(3px, 0);
+    }
 }
 
 .ctaSection {

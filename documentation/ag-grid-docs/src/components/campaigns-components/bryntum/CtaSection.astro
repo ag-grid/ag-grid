@@ -18,7 +18,11 @@ const { section } = Astro.props;
 
         {
             section.ctas && (
-                <BryntumCtaList ctas={section.ctas} buttonClass="button-primary" wrapperClass={styles.ctaButtons} />
+                <BryntumCtaList
+                    ctas={section.ctas}
+                    buttonClass={['button', 'button-tertiary']}
+                    wrapperClass={styles.ctaButtons}
+                />
             )
         }
     </div>
