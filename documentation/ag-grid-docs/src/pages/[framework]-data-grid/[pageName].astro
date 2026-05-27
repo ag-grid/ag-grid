@@ -15,12 +15,6 @@ import { DocsNav } from '@ag-website-shared/components/docs-navigation/DocsNav';
 import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { agLibraryVersion } from '@constants';
-import {
-    buildBreadcrumbList,
-    buildTechArticle,
-    getSoftwareApplicationId,
-    type JsonLdObject,
-} from '@ag-website-shared/utils/structuredData';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -46,32 +40,9 @@ const descriptionWithSeoTagline = `${description ? `${description} ` : ''}${seoT
 
 const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
 const { data: apiNavData } = (await getEntry('apiNav', 'nav')) as CollectionEntry<'apiNav'>;
-const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
 
 const isApiPage = isApiMenuPath({ pageName, menuData: apiNavData });
 const menuData = isApiPage ? apiNavData : docsNavData;
-
-const pageUrl = new URL(path, metadata.canonicalUrlBase).toString();
-const pageStructuredData: JsonLdObject[] = [
-    buildTechArticle({
-        canonicalUrlBase: metadata.canonicalUrlBase,
-        pageUrl,
-        title,
-        description: descriptionWithSeoTagline,
-        aboutEntityId: getSoftwareApplicationId(metadata.canonicalUrlBase),
-    }),
-    buildBreadcrumbList({
-        pageUrl,
-        items: [
-            { name: 'Home', url: `${metadata.canonicalUrlBase}/` },
-            {
-                name: `${frameworkDisplayText} Data Grid`,
-                url: new URL(`/${currentFramework}-data-grid/`, metadata.canonicalUrlBase).toString(),
-            },
-            { name: title, url: pageUrl },
-        ],
-    }),
-];
 
 const { Content } = await render(page);
 
@@ -102,7 +73,6 @@ const headings = await getHeadings({
     description={descriptionWithSeoTagline}
     showSearchBar={true}
     showDocsNav={true}
-    pageStructuredData={pageStructuredData}
 >
     <div class:list={[hidePageMenu && styles.noLeftMenu, styles.contentViewport, 'layout-grid']}>
         {
