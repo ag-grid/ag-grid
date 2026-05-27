@@ -1,0 +1,543 @@
+{
+  "type": "object",
+  "required": [
+    "filter",
+    "sort",
+    "columnVisibility",
+    "columnSizing"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "filter": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "filterModel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "filterModel": {
+          "type": "object",
+          "required": [
+            "ag-Grid-HierarchyColumn-transactionDate-formattedMonth",
+            "transactionDate",
+            "country",
+            "status",
+            "amount",
+            "merchant",
+            "category",
+            "currency"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "ag-Grid-HierarchyColumn-transactionDate-formattedMonth": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "values"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for set filters",
+                  "enum": [
+                    "set"
+                  ]
+                },
+                "values": {
+                  "type": "array",
+                  "description": "Array of values to include in the filter",
+                  "items": {
+                    "type": "string",
+                    "description": "Filter values"
+                  }
+                }
+              }
+            },
+            "transactionDate": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "operator",
+                "conditions"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for date filters with multiple conditions",
+                  "enum": [
+                    "date"
+                  ]
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "Logical operator to combine multiple filter conditions. Must be included even with a single filter to adhere to the API.",
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ]
+                },
+                "conditions": {
+                  "type": "array",
+                  "description": "Array of filter conditions to be combined",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "filterType",
+                      "type",
+                      "dateFrom",
+                      "dateTo"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "filterType": {
+                        "type": "string",
+                        "description": "Filter type identifier for date filters",
+                        "enum": [
+                          "date"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Date filter operation type",
+                        "enum": [
+                          "equals",
+                          "notEqual",
+                          "lessThan",
+                          "greaterThan",
+                          "inRange",
+                          "blank",
+                          "notBlank"
+                        ]
+                      },
+                      "dateFrom": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Primary date filter value in YYYY-MM-DD HH:mm:ss format",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                      },
+                      "dateTo": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Secondary date filter value for range operations in YYYY-MM-DD HH:mm:ss format",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                      }
+                    }
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "country": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "values"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for set filters",
+                  "enum": [
+                    "set"
+                  ]
+                },
+                "values": {
+                  "type": "array",
+                  "description": "Array of values to include in the filter",
+                  "items": {
+                    "type": "string",
+                    "description": "Filter values"
+                  }
+                }
+              }
+            },
+            "status": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "values"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for set filters",
+                  "enum": [
+                    "set"
+                  ]
+                },
+                "values": {
+                  "type": "array",
+                  "description": "Array of values to include in the filter",
+                  "items": {
+                    "type": "string",
+                    "description": "Filter values"
+                  }
+                }
+              }
+            },
+            "amount": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "operator",
+                "conditions"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for number filters with multiple conditions",
+                  "enum": [
+                    "number"
+                  ]
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "Logical operator to combine multiple filter conditions. Must be included even with a single filter to adhere to the API.",
+                  "enum": [
+                    "AND",
+                    "OR"
+                  ]
+                },
+                "conditions": {
+                  "type": "array",
+                  "description": "Array of filter conditions to be combined",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "filterType",
+                      "type",
+                      "filter",
+                      "filterTo"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "filterType": {
+                        "type": "string",
+                        "description": "Filter type identifier for number filters",
+                        "enum": [
+                          "number"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Number filter operation type",
+                        "enum": [
+                          "equals",
+                          "notEqual",
+                          "greaterThan",
+                          "greaterThanOrEqual",
+                          "lessThan",
+                          "lessThanOrEqual",
+                          "inRange",
+                          "blank",
+                          "notBlank"
+                        ]
+                      },
+                      "filter": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Primary filter value"
+                      },
+                      "filterTo": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Secondary filter value for range operations"
+                      }
+                    }
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "merchant": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "values"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for set filters",
+                  "enum": [
+                    "set"
+                  ]
+                },
+                "values": {
+                  "type": "array",
+                  "description": "Array of values to include in the filter",
+                  "items": {
+                    "type": "string",
+                    "description": "Filter values"
+                  }
+                }
+              }
+            },
+            "category": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "values"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for set filters",
+                  "enum": [
+                    "set"
+                  ]
+                },
+                "values": {
+                  "type": "array",
+                  "description": "Array of values to include in the filter",
+                  "items": {
+                    "type": "string",
+                    "description": "Filter values"
+                  }
+                }
+              }
+            },
+            "currency": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "required": [
+                "filterType",
+                "values"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "filterType": {
+                  "type": "string",
+                  "description": "Filter type identifier for set filters",
+                  "enum": [
+                    "set"
+                  ]
+                },
+                "values": {
+                  "type": "array",
+                  "description": "Array of values to include in the filter",
+                  "items": {
+                    "type": "string",
+                    "description": "Filter values"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sort": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Sort configuration for the grid",
+      "required": [
+        "sortModel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "sortModel": {
+          "type": "array",
+          "description": "Array of sort configurations",
+          "items": {
+            "type": "object",
+            "required": [
+              "colId",
+              "sort",
+              "type"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "colId": {
+                "type": "string",
+                "description": "Column ID that supports sorting",
+                "enum": [
+                  "ag-Grid-HierarchyColumn-transactionDate-formattedMonth",
+                  "transactionDate",
+                  "country",
+                  "status",
+                  "amount",
+                  "merchant",
+                  "category",
+                  "currency"
+                ]
+              },
+              "sort": {
+                "type": "string",
+                "description": "Sort direction: ascending or descending",
+                "enum": [
+                  "asc",
+                  "desc"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "description": "Sort type: default or absolute values",
+                "enum": [
+                  "default",
+                  "absolute"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "columnVisibility": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Column visibility configuration for the grid",
+      "required": [
+        "hiddenColIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "hiddenColIds": {
+          "type": "array",
+          "description": "Array of column IDs to hide",
+          "items": {
+            "$ref": "#/$defs/allColumnIds"
+          }
+        }
+      }
+    },
+    "columnSizing": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Column sizing configuration for the grid",
+      "required": [
+        "columnSizingModel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "columnSizingModel": {
+          "type": "array",
+          "description": "Array of column sizing configurations",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "width"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "$ref": "#/$defs/resizableColumnId"
+                  },
+                  "width": {
+                    "type": "number",
+                    "description": "Fixed width in pixels",
+                    "minimum": 20
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "colId",
+                  "flex"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "colId": {
+                    "$ref": "#/$defs/resizableColumnId"
+                  },
+                  "flex": {
+                    "type": "number",
+                    "description": "Flex sizing ratio",
+                    "minimum": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "allColumnIds": {
+      "_defs": {},
+      "_nullable": false,
+      "description": "ag-Grid-HierarchyColumn-transactionDate-formattedMonth\ntransactionDate\ncountry\nstatus\namount\nmerchant\ncategory\ncurrency",
+      "_enum": [
+        "ag-Grid-HierarchyColumn-transactionDate-formattedMonth",
+        "transactionDate",
+        "country",
+        "status",
+        "amount",
+        "merchant",
+        "category",
+        "currency"
+      ],
+      "type": "string"
+    },
+    "resizableColumnId": {
+      "_defs": {},
+      "_nullable": false,
+      "description": "Column ID that supports resizing",
+      "_enum": [
+        "ag-Grid-HierarchyColumn-transactionDate-formattedMonth",
+        "transactionDate",
+        "country",
+        "status",
+        "amount",
+        "merchant",
+        "category",
+        "currency"
+      ],
+      "type": "string"
+    }
+  }
+}
