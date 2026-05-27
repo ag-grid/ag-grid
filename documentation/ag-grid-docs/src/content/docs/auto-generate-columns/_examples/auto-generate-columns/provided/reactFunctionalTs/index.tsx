@@ -2,8 +2,13 @@ import React, { StrictMode, useCallback, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, ValidationModule } from 'ag-grid-community';
-import { AutoGenerateColumnsModule } from 'ag-grid-enterprise';
+import {
+    AutoGenerateColumnsModule,
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextFilterModule,
+    ValidationModule,
+} from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import FileDropOverlay from './fileDropOverlay';

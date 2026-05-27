@@ -1,5 +1,8 @@
-import { BeanStub, _camelCaseToHumanText } from 'ag-grid-community';
-import type { AutoGenerateColumnDefsConfig, ColDef, ColGroupDef, NamedBean } from 'ag-grid-community';
+import { _camelCaseToHumanText } from '../agStack/utils/string';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { AutoGenerateColumnDefsConfig } from '../entities/gridOptions';
 
 export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
     beanName = 'autoGenColsSvc' as const;
@@ -78,8 +81,6 @@ function _buildColumnDefs(
 
 function _makeLeafColDef(field: string, key: string, prefix: string | undefined): ColDef {
     const colDef: ColDef = { field };
-    // Override headerName for nested fields; without this the grid derives it from the
-    // dot-notation field (e.g. "user.name" → "User Name"), duplicating the group name.
     if (prefix) {
         colDef.headerName = _camelCaseToHumanText(key) ?? key;
     }

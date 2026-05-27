@@ -138,6 +138,7 @@ type InternalModuleName =
 export type CommunityModuleName =
     | 'AlignedGrids'
     | 'AllCommunity'
+    | 'AutoGenerateColumns'
     | 'CellApi'
     | 'CellStyle'
     | 'CheckboxEditor'
@@ -185,7 +186,6 @@ export type EnterpriseModuleName =
     | 'AdvancedFilter'
     | 'AiToolkit'
     | 'AllEnterprise'
-    | 'AutoGenerateColumns'
     | 'BatchEdit'
     | 'CellSelection'
     | 'Clipboard'

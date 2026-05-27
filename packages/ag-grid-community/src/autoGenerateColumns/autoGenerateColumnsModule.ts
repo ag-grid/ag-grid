@@ -1,6 +1,4 @@
-import type { _ModuleWithoutApi } from 'ag-grid-community';
-
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { AutoGenerateColumnsService } from './autoGenerateColumnsService';
 
@@ -12,5 +10,4 @@ export const AutoGenerateColumnsModule: _ModuleWithoutApi = {
     moduleName: 'AutoGenerateColumns',
     version: VERSION,
     beans: [AutoGenerateColumnsService],
-    dependsOn: [EnterpriseCoreModule],
 };

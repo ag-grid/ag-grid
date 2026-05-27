@@ -1,5 +1,6 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
+    AutoGenerateColumnsModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberFilterModule,
@@ -7,7 +8,6 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { AutoGenerateColumnsModule } from 'ag-grid-enterprise';
 
 import { FileDropOverlay } from './fileDropOverlay_typescript';
 

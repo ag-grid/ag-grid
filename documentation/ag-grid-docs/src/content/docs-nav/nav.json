@@ -578,8 +578,7 @@
                                 {
                                     "type": "item",
                                     "title": "Auto-Generate Columns",
-                                    "path": "auto-generate-columns",
-                                    "isEnterprise": true
+                                    "path": "auto-generate-columns"
                                 }
                             ]
                         },

@@ -26,8 +26,7 @@
                 {
                     "moduleName": "AutoGenerateColumnsModule",
                     "name": "Auto-Generate Columns",
-                    "path": "auto-generate-columns",
-                    "isEnterprise": true
+                    "path": "auto-generate-columns"
                 }
             ]
         },

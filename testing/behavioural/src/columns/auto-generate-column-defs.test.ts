@@ -1,6 +1,10 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
-import { AutoGenerateColumnsModule } from 'ag-grid-enterprise';
+import {
+    AutoGenerateColumnsModule,
+    ClientSideRowModelModule,
+    NumberFilterModule,
+    TextFilterModule,
+} from 'ag-grid-community';
 
 import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 

@@ -2,13 +2,13 @@ import { createApp, defineComponent, ref } from 'vue';
 
 import type { ColDef } from 'ag-grid-community';
 import {
+    AutoGenerateColumnsModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AutoGenerateColumnsModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import { FileDropOverlay } from './fileDropOverlay';

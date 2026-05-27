@@ -1,6 +1,11 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { AutoGenerateColumnsModule } from 'ag-grid-enterprise';
+import {
+    AutoGenerateColumnsModule,
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,

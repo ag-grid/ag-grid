@@ -4,7 +4,6 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     AdvancedFilter: 1,
     AiToolkit: 1,
     AllEnterprise: 1,
-    AutoGenerateColumns: 1,
     BatchEdit: 1,
     CellSelection: 1,
     Clipboard: 1,

@@ -984,6 +984,7 @@ export type {
 // Public AG Grid Modules and ModuleRegistry
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 export { AllCommunityModule } from './allCommunityModule';
+export { AutoGenerateColumnsModule } from './autoGenerateColumns/autoGenerateColumnsModule';
 export { RowApiModule, ScrollApiModule } from './api/apiModule';
 export { ClientSideRowModelApiModule, ClientSideRowModelModule } from './clientSideRowModel/clientSideRowModelModule';
 export { ColumnAutoSizeModule } from './columnAutosize/columnAutosizeModule';

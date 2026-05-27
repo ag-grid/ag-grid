@@ -4,6 +4,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 import type { IOverlayAngularComp } from 'ag-grid-angular';
 import type { ColDef } from 'ag-grid-community';
 import {
+    AutoGenerateColumnsModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberFilterModule,
@@ -11,7 +12,6 @@ import {
     ValidationModule,
 } from 'ag-grid-community';
 import type { IOverlayParams } from 'ag-grid-community';
-import { AutoGenerateColumnsModule } from 'ag-grid-enterprise';
 
 import './styles.css';
 
