@@ -127,7 +127,10 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             // 3. We then react to the `modelUpdated` event (above) to actually add the footer to the pinned row model.
             // Otherwise we would run into either an infinite recursion of `modelUpdated` events, or be missing the `sibling`
             // on the root node.
-            if (level === -1) {
+            // Skip this path when unpinning an existing clone (called from RowNode._destroy):
+            // the standard unpin path below cleans the DOM without mutating _grandTotalPinned.
+            const unpinningExistingClone = float == null && rowNode.rowPinned != null;
+            if (level === -1 && !unpinningExistingClone) {
                 this._grandTotalPinned = float;
                 // CSRM goes through reMapRows so the modelUpdated listener picks up the
                 // change; SSRM has no model-update path so we apply it directly.

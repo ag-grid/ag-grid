@@ -1,7 +1,7 @@
 import markdoc from '@astrojs/markdoc';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
 import dotenvExpand from 'dotenv-expand';
 import * as sass from 'sass';
 import { loadEnv } from 'vite';
@@ -160,6 +160,22 @@ const httpsEnabled = !['0', 'false'].includes(PUBLIC_HTTPS_SERVER);
 
 // https://astro.build/config
 export default defineConfig({
+    fonts: [
+        {
+            provider: fontProviders.google(),
+            name: 'IBM Plex Sans',
+            cssVariable: '--font-ibm-plex-sans',
+            weights: ['400', '500', '700'],
+            styles: ['normal'],
+        },
+        {
+            provider: fontProviders.google(),
+            name: 'JetBrains Mono',
+            cssVariable: '--font-jetbrains-mono',
+            weights: ['400', '700'],
+            styles: ['normal'],
+        },
+    ],
     site: PUBLIC_SITE_URL,
     base: PUBLIC_BASE_URL,
     security: {

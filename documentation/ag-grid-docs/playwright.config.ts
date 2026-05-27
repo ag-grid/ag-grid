@@ -18,6 +18,7 @@ if (process.env.FRAMEWORK) {
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+    snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
     testDir: './src/content/docs/',
     /* Run tests in files in parallel */
     fullyParallel: true,

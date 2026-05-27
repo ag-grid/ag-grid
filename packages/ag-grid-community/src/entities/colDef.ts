@@ -320,6 +320,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `FormulaModule`
      */
     allowFormula?: boolean;
+    /**
+     * Expression used to calculate this column's value from other columns in the same row.
+     * Use bracket references to read other columns by `colId`, e.g. `[revenue] - [cost]`.
+     * Calculated columns are read-only.
+     * @agModule `CalculatedColumnsModule`
+     */
+    calculatedExpression?: string;
     /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
     /** A function or expression to format a value, should return a string. */

@@ -22,6 +22,12 @@
                     "moduleName": "ColumnHoverModule",
                     "name": "Column Hover",
                     "path": "grid-api/#reference-colHover-isColumnHovered"
+                },
+                {
+                    "moduleName": "CalculatedColumnsModule",
+                    "name": "Calculated Columns",
+                    "path": "calculated-columns",
+                    "isEnterprise": true
                 }
             ]
         },

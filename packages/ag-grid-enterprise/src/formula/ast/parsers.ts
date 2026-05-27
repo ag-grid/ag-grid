@@ -1,7 +1,8 @@
-import { _getClientSideRowModel, _isExpressionString } from 'ag-grid-community';
+import { _isExpressionString } from 'ag-grid-community';
 import type { BeanCollection } from 'ag-grid-community';
 
 import { isFormulaIdentChar, isFormulaIdentStart, isStandaloneRefToken, parseA1Ref } from '../refUtils';
+import { getFormulaRowByIndex } from '../rowAccess';
 import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
 import type { OperatorDef } from './operators';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
@@ -47,6 +48,22 @@ const parseOperand = (
         return num;
     }
 
+    if (trimmed.startsWith('[') && trimmed.endsWith(']') && trimmed.length > 2) {
+        const columnReference = trimmed.slice(1, -1);
+        const column = beans.colModel.getColById(columnReference);
+
+        if (!unsafe && !column) {
+            throw new FormulaParseError(2, 0, trimmed.length, [trimmed]);
+        }
+
+        // Unsafe mode (e.g. paste-time parsing without grid context) stores the raw reference
+        // as the AST id — downstream lookups via getColById will not resolve it.
+        return {
+            column: { id: column?.getColId() ?? columnReference, absolute: false },
+            row: { id: '', absolute: false, current: true },
+        };
+    }
+
     // cell/range
     // Matches: $A$1, A1, $A1, A$1, $A$1:$B10 etc.
     const parsed = parseA1Ref(trimmed);
@@ -65,8 +82,7 @@ const parseOperand = (
 
         const toCell = (colAbs: boolean, colStr: string, rowAbs: boolean, rowStr: string, unsafe: boolean): Cell => {
             const col = colAbs || unsafe ? colStr.toUpperCase() : beans.formula?.getColByRef(colStr)?.colId;
-            const row =
-                rowAbs || unsafe ? rowStr : _getClientSideRowModel(beans)?.getFormulaRow(Number(rowStr) - 1)?.id; // TODO handle NaN
+            const row = rowAbs || unsafe ? rowStr : getFormulaRowByIndex(beans, Number(rowStr) - 1)?.id;
 
             if (col == null || row == null) {
                 throw new FormulaParseError(2, 0, 0, [trimmed]);
@@ -193,6 +209,17 @@ function tokenize(expr: string): string[] {
             }
             tokens.push(expr.slice(i, j));
             i = j;
+            continue;
+        }
+
+        // calculated-column same-row reference (e.g. [revenue])
+        if (ch === '[') {
+            const end = expr.indexOf(']', i + 1);
+            if (end < 0) {
+                throw new FormulaParseError(5, i, i + 1, [ch]);
+            }
+            tokens.push(expr.slice(i, end + 1));
+            i = end + 1;
             continue;
         }
 

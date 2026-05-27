@@ -138,7 +138,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.setupTooltip();
 
-        const classes = _getToolPanelClassesFromColDef(column.colDef, gos, column, null);
+        const classes = _getToolPanelClassesFromColDef(column.colDef, this.beans, column, null);
         for (const c of classes) {
             this.toggleCss(c, true);
         }

@@ -7,7 +7,7 @@ Our Figma design system lets designers prototype and customise AG Grid applicati
 
 {% imageCaption imagePath="resources/AG-Grid-Figma-Design-System.png" alt="AG Grid Figma Design System" centered=true constrained=false /%}
 
-The [AG Grid design system](https://www.figma.com/community/file/1360600846643230092) replicates the [Quartz](/example?theme=quartz) and [Alpine](/example?theme=alpine) AG Grid themes within Figma. These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes.
+The [AG Grid design system](https://www.figma.com/community/file/1360600846643230092) replicates the [Quartz](/example?theme=quartz) AG Grid theme within Figma. This default theme can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes.
 
 The design system is built to be consistent with the JavaScript library, easing designer-to-developer handoff.
 
@@ -33,7 +33,7 @@ Watch our [short introduction video](https://youtu.be/Ymmm7wxLy7Y) to the design
 
 ## Customising the Design System
 
-The AG Grid design system uses [Figma's native variables feature](https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma) for all of its customisable attributes. Most of the [Theme parameters](./theming-parameters/) used by the Quartz and Alpine themes are referenced in Figma and can be extended to your own theme.
+The AG Grid design system utilises [Figma's native variables feature](https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma) for all of its customisable attributes. The majority of the [Theme parameters](./theming-api/) used by the Quartz theme are referenced within Figma and can be extended to your own theme.
 
 You can find more information about how to create and manage themes within the Figma file under the **Create your own theme** page in the Figma file.
 
@@ -41,16 +41,14 @@ You can find more information about how to create and manage themes within the F
 
 ## Generating AG Grid Themes From Figma Variables
 
-If you have created your own theme in Figma using the variables feature, you can export those variables and use the [Style Dictionary](https://styledictionary.com/) NPM package to create an [AG Grid theme](./theming-parameters/#setting-theme-parameters). An example Style Dictionary project and full instructions are included in our [design systems GitHub repo](https://github.com/ag-grid/ag-grid-figma-design-system/).
+If you have created your own theme in Figma using the variables feature, you can export those variables as a `.json` file and transform that content to create an [AG Grid theme](./theming-parameters/#setting-theme-parameters). An example theme transformation project and full instructions are included in our [design systems GitHub repo](https://github.com/ag-grid/ag-grid-figma-design-system/).
 
 To export your Figma Variables as JSON...
 
-1. In the Resources panel go to the Plugins tab.
-2. Search for the [Design Tokens](https://www.figma.com/community/plugin/888356646278934516/design-tokens) Figma plugin.
-3. In the [Design Tokens](https://www.figma.com/community/plugin/888356646278934516/design-tokens) plugin settings enable the options "**Add mode to design token name (if 2 or more modes)**" and "**Add mode to design token value**".
-4. Click run for the [Design Tokens](https://www.figma.com/community/plugin/888356646278934516/design-tokens) and select the 'Export Design Tokens File' option.
-5. Deselect all ‘include types...’ except for "Figma Variables"
-6. Click the 'Save & Export' button and save the json file.
+- Open the local variables panel within the AG Grid Figma Design System file.
+- Select the "AG Theme" collection.
+- Right-click on the header of the "mode" you wish to export.
+- Click "Export mode" and save the tokens `.json` file to your computer.
 
 {% imageCaption imagePath="resources/FDS-export-variables.png" alt="Export Figma Variables" centered=true constrained=false /%}
 

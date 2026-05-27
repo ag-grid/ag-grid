@@ -1,4 +1,4 @@
-import { getFormulaErrorDefaultMessage, getFormulaErrorDefinition } from '../i18n';
+import { getFormulaErrorDefaultMessage, getFormulaErrorDefinition, interpolateFormulaErrorMessage } from '../i18n';
 import type { FormulaErrorId, FormulaErrorType } from '../i18n';
 
 interface FormulaOperand {
@@ -69,7 +69,10 @@ export class FormulaError extends Error {
         if (!this.localeKey) {
             return this.message;
         }
-        return translate(this.localeKey, this.defaultMessage, this.variableValues);
+        return interpolateFormulaErrorMessage(
+            translate(this.localeKey, this.defaultMessage, this.variableValues),
+            this.variableValues
+        );
     }
 }
 
@@ -85,5 +88,26 @@ export class FormulaParseError extends FormulaError {
 }
 
 // Shared cell types & guards
-export type CellRef = { id: string; absolute: boolean };
+export type CellRef = { id: string; absolute: boolean; current?: boolean };
 export type Cell = { column: CellRef; row: CellRef; endColumn?: CellRef; endRow?: CellRef };
+
+/**
+ * Walk an AST depth-first and return the first operation name for which `isValid` returns false.
+ * Used by pre-evaluation validators that want to catch unsupported function names without running
+ * the formula. Returns null when every operation is valid.
+ */
+export function findFirstInvalidOperation(node: FormulaNode, isValid: (name: string) => boolean): string | null {
+    if (node.type !== 'operation') {
+        return null;
+    }
+    if (!isValid(node.operation)) {
+        return node.operation;
+    }
+    for (const operand of node.operands) {
+        const bad = findFirstInvalidOperation(operand, isValid);
+        if (bad) {
+            return bad;
+        }
+    }
+    return null;
+}

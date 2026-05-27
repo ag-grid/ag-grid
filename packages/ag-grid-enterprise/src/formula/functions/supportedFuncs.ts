@@ -1,7 +1,7 @@
 import { COUNT, COUNTA, COUNTBLANK, COUNTIF } from './counting/functions';
 import { NOW, TODAY } from './dates/functions';
 import { EQUALS, GT, GTE, IF, LT, LTE, MAX, MIN, NOT_EQUALS } from './logic/functions';
-import { AVERAGE, DIVIDE, MEDIAN, MINUS, PERCENT, POWER, PRODUCT, RAND, SUM, SUMIF } from './numbers/functions';
+import { AVERAGE, DIVIDE, MEDIAN, MINUS, PERCENT, POWER, PRODUCT, RAND, ROUND, SUM, SUMIF } from './numbers/functions';
 import { CONCAT } from './strings/functions';
 
 export default {
@@ -24,6 +24,7 @@ export default {
     MAX,
     AVERAGE,
     MEDIAN,
+    ROUND,
 
     // counting
     COUNT,

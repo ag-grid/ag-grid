@@ -197,13 +197,20 @@ export {
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './agStack/utils/locale';
 export { _isPromise } from './agStack/utils/promise';
-export { _camelCaseToHumanText, _escapeString, _isExpressionString, _toString } from './agStack/utils/string';
+export {
+    _camelCaseToHumanText,
+    _escapeString,
+    _isExpressionString,
+    _isStringLargerThan,
+    _toString,
+} from './agStack/utils/string';
 export type { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
 export type {
     _AdvancedFilterGridApi,
     _AggregationGridApi,
     _AiToolkitGridApi,
     _BatchEditApi,
+    _CalculatedColumnsGridApi,
     _CellSelectionGridApi,
     _ClientSideRowModelGridApi,
     _ClipboardGridApi,
@@ -256,6 +263,7 @@ export {
     isRowNumberCol,
     isSpecialCol,
 } from './columns/columnUtils';
+export { DATA_TYPE_DERIVED_COL_DEF_PROPERTIES as _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES } from './columns/dataTypeService';
 export type { DataTypeService } from './columns/dataTypeService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
 export type { VisibleColsService } from './columns/visibleColsService';

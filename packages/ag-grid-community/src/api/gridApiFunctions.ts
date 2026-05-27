@@ -5,6 +5,7 @@ import type {
     _AggregationGridApi,
     _AiToolkitGridApi,
     _BatchEditApi,
+    _CalculatedColumnsGridApi,
     _CellSelectionGridApi,
     _ClientSideRowModelGridApi,
     _ClipboardGridApi,
@@ -381,6 +382,12 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
 
     ...mod<_FormulaGridApi<any>>('Formula', {
         refreshFormulas: 0,
+    }),
+
+    ...mod<_CalculatedColumnsGridApi<any>>('CalculatedColumns', {
+        addCalculatedColumn: 0,
+        updateCalculatedColumn: 0,
+        removeCalculatedColumn: 0,
     }),
 
     ...mod<_ContextMenuGridApi>('ContextMenu', {

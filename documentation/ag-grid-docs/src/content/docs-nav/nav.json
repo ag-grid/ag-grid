@@ -618,6 +618,12 @@
                             "type": "item",
                             "title": "Column Spanning",
                             "path": "column-spanning"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Calculated Columns",
+                            "path": "calculated-columns",
+                            "isEnterprise": true
                         }
                     ]
                 },

@@ -69,9 +69,22 @@ const modRewriteRules = `
     RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
     RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
 
-    # rollback for now 
-    # RewriteCond %{HTTP_HOST} !^www\\. [NC]
-    # RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+    # Redirect non-www to www
+    RewriteCond %{HTTP_HOST} ^ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
+    
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^angulargrid\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ https://ag-grid.com/$1 [R=301,L]
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^angular-grid\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ https://ag-grid.com/$1 [R=301,L]
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^javascript-grid\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ https://ag-grid.com/$1 [R=301,L]
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^react-grid\\.ag-grid\\.com$ [NC]
+    RewriteRule ^(.*)$ https://ag-grid.com/$1 [R=301,L]
     
     # Redirect angulargrid.com to ag-grid.com
     RewriteCond %{HTTP_HOST} ^angulargrid\\.com$ [OR]
@@ -134,6 +147,10 @@ AddType application/typescript ts tsx
 ${modExpiresRules}
 ${modDeflateRules}
 ${modRewriteRules}
+
+Header always set X-Frame-Options "SAMEORIGIN"                                                                                                                                                                                          
+Header always set Referrer-Policy "strict-origin-when-cross-origin"                                                                                                                                                                     
+Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"  
 
 # CORS settings
 Header add Access-Control-Allow-Origin "*"

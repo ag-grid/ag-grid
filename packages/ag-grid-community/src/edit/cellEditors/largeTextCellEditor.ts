@@ -1,6 +1,7 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
 import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
 import { _exists } from '../../agStack/utils/generic';
+import { _isStringLargerThan } from '../../agStack/utils/string';
 import { AgInputTextAreaSelector } from '../../agStack/widgets/agInputTextArea';
 import type { ElementParams } from '../../utils/element';
 import type { GridInputTextArea } from '../../widgets/gridWidgetTypes';
@@ -145,7 +146,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
 
         let internalErrors: string[] | null = [];
 
-        if (typeof value === 'string' && maxLength != null && value.length > maxLength) {
+        if (maxLength != null && _isStringLargerThan(value, maxLength)) {
             internalErrors.push(
                 translate('maxLengthValidation', `Must be ${maxLength} characters or fewer.`, [String(maxLength)])
             );

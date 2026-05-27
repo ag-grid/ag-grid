@@ -520,7 +520,7 @@ export class ExcelCreator
                     headerClasses = headerClasses.concat(
                         _getHeaderClassesFromColDef(
                             col.getDefinition(),
-                            gos,
+                            this.beans,
                             (column as AgColumn) || null,
                             (columnGroup as AgColumnGroup) || null
                         )

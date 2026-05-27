@@ -210,7 +210,7 @@ const baseParams: InputStyleParams = {
         ref: 'inputTextColor',
     },
     pickerButtonBorder: false,
-    pickerButtonBorderRadius: 0,
+    pickerButtonBorderRadius: { ref: 'borderRadius' },
     pickerButtonFocusBorder: { ref: 'inputFocusBorder' },
     pickerButtonBackgroundColor: { ref: 'backgroundColor' },
     pickerButtonFocusBackgroundColor: { ref: 'backgroundColor' },
@@ -260,9 +260,6 @@ const makeInputStyleBorderedTreeShakeable = () =>
                 color: { ref: 'invalidColor' },
             },
             pickerButtonBorder: true,
-            pickerButtonBorderRadius: {
-                ref: 'borderRadius',
-            },
             pickerListBorder: true,
         },
         css: () => inputStyleBaseCSS + inputStyleBorderedCSS,

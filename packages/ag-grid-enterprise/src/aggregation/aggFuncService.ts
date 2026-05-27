@@ -10,12 +10,15 @@ const defaultAggFuncNames = {
     count: 'Count',
     avg: 'Average',
 } as const;
+
+const DEFAULT_AGG_FUNC_ORDER: DefaultAggFuncName[] = ['sum', 'avg', 'max', 'min', 'count', 'first', 'last'];
 type DefaultAggFuncName = keyof typeof defaultAggFuncNames;
 
 export class AggFuncService extends BeanStub implements NamedBean, IAggFuncService {
     beanName = 'aggFuncSvc' as const;
 
-    private aggFuncsMap: { [key in string]: IAggFunc } = {};
+    private readonly aggFuncsMap = new Map<string, IAggFunc>();
+    private orderedFuncNames: string[] = [];
     private initialised = false;
 
     public postConstruct(): void {
@@ -32,22 +35,16 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
     }
 
     private initialiseWithDefaultAggregations(): void {
-        const aggMap = this.aggFuncsMap as { [key in DefaultAggFuncName]: IAggFunc };
-        aggMap['sum'] = aggSum;
-        aggMap['first'] = aggFirst;
-        aggMap['last'] = aggLast;
-        aggMap['min'] = aggMin;
-        aggMap['max'] = aggMax;
-        aggMap['count'] = aggCount;
-        aggMap['avg'] = aggAvg;
+        const funcMap = this.aggFuncsMap;
+        funcMap.set('sum', aggSum);
+        funcMap.set('first', aggFirst);
+        funcMap.set('last', aggLast);
+        funcMap.set('min', aggMin);
+        funcMap.set('max', aggMax);
+        funcMap.set('count', aggCount);
+        funcMap.set('avg', aggAvg);
         this.initialised = true;
-    }
-
-    private isAggFuncPossible(column: AgColumn, func: string): boolean {
-        const allKeys = this.getFuncNames(column);
-        const allowed = allKeys.includes(func);
-        const funcExists = _exists(this.aggFuncsMap[func]);
-        return allowed && funcExists;
+        this.updateOrderedFuncNames();
     }
 
     public getDefaultFuncLabel(fctName: DefaultAggFuncName): string {
@@ -57,11 +54,14 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
     public getDefaultAggFunc(column: AgColumn): string | null {
         const defaultAgg = column.colDef.defaultAggFunc;
 
-        if (_exists(defaultAgg) && this.isAggFuncPossible(column, defaultAgg)) {
+        const isAggFuncPossible = (func: string) =>
+            _exists(this.aggFuncsMap.get(func)) && this.getFuncNames(column).includes(func);
+
+        if (_exists(defaultAgg) && isAggFuncPossible(defaultAgg)) {
             return defaultAgg;
         }
 
-        if (this.isAggFuncPossible(column, 'sum')) {
+        if (isAggFuncPossible('sum')) {
             return 'sum';
         }
 
@@ -76,24 +76,39 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
         }
         for (const key of Object.keys(aggFuncs)) {
             if (aggFuncs[key]) {
-                this.aggFuncsMap[key] = aggFuncs[key];
+                this.aggFuncsMap.set(key, aggFuncs[key]);
             }
         }
+        this.updateOrderedFuncNames();
     }
 
     public getAggFunc(name: string): IAggFunc {
         this.init();
-        return this.aggFuncsMap[name];
+        return this.aggFuncsMap.get(name)!;
     }
 
     public getFuncNames(column: AgColumn): string[] {
-        const userAllowedFuncs = column.colDef.allowedAggFuncs;
+        return column.colDef.allowedAggFuncs ?? this.orderedFuncNames.slice();
+    }
 
-        return userAllowedFuncs == null ? Object.keys(this.aggFuncsMap).sort() : userAllowedFuncs;
+    private updateOrderedFuncNames(): void {
+        const result: string[] = [];
+        for (const key of DEFAULT_AGG_FUNC_ORDER) {
+            if (this.aggFuncsMap.has(key)) {
+                result.push(key);
+            }
+        }
+        for (const key of [...this.aggFuncsMap.keys()].sort()) {
+            if (!(key in defaultAggFuncNames)) {
+                result.push(key);
+            }
+        }
+        this.orderedFuncNames = result;
     }
 
     public clear(): void {
-        this.aggFuncsMap = {};
+        this.aggFuncsMap.clear();
+        this.orderedFuncNames = [];
     }
 }
 

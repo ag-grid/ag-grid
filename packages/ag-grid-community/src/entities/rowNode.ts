@@ -126,6 +126,9 @@ export class RowNode<TData = any>
 
     /**
      * Either 'top' or 'bottom' if row pinned, otherwise `undefined` or `null`.
+     * Invariant: only the pinned clone has this set; the source row keeps it null
+     * even while its `pinnedSibling` clone is in a container. Several pin/destroy
+     * code paths rely on this asymmetry to disambiguate clone vs source.
      * If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES`
      */
     public rowPinned: RowPinnedType;
@@ -134,6 +137,7 @@ export class RowNode<TData = any>
      * If using manual row pinning, a reference to the sibling node.
      * If this node is in the pinned section, `pinnedSibling` is the source row.
      * If this node is in the main viewport, `pinnedSibling` is the pinned row.
+     * If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES`
      */
     public pinnedSibling?: RowNode<TData>;
 
@@ -955,10 +959,10 @@ export class RowNode<TData = any>
         }
         this.destroyed = true;
 
-        // Check pinnedSibling.rowPinned to ensure we're the source row (not a pinned clone being destroyed).
-        // Also prevents re-entrance when _destroyRowNodeSibling clears rowPinned before calling _destroy.
+        // Unpin my clone if I'm the source. Only clones have rowPinned (see _createPinnedSibling),
+        // so this naturally no-ops when the recursive destroy hits the clone.
         const pinnedSibling = this.pinnedSibling;
-        if (pinnedSibling?.rowPinned && !this.rowPinned) {
+        if (pinnedSibling?.rowPinned) {
             this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
         }
 
