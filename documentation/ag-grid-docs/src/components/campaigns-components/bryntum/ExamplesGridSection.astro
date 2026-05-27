@@ -14,7 +14,11 @@ const { section, productSlug } = Astro.props;
 
 <section class:list={[styles.section, styles.sectionBgSecondary]}>
     <div class={styles.sectionInner}>
-        {section.eyebrow && <span class:list={[styles.sectionEyebrow, styles.sectionEyebrowCentered]}>{section.eyebrow}</span>}
+        {
+            section.eyebrow && (
+                <span class:list={[styles.sectionEyebrow, styles.sectionEyebrowCentered]}>{section.eyebrow}</span>
+            )
+        }
         {section.heading && <h2 class={styles.sectionHeading}>{section.heading}</h2>}
 
         <div class={styles.examplesGrid}>
@@ -38,9 +42,7 @@ const { section, productSlug } = Astro.props;
                             )}
                             <div class={styles.exampleCardBody}>
                                 <p class={styles.exampleCardLabel}>{item.body_text ?? item.heading}</p>
-                                {item.description && (
-                                    <p class={styles.exampleCardDescription}>{item.description}</p>
-                                )}
+                                {item.description && <p class={styles.exampleCardDescription}>{item.description}</p>}
                             </div>
                         </a>
                     );

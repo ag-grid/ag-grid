@@ -18,7 +18,11 @@ const itemsWithSvg = section.items.map((item) => ({
 
 <section class={styles.section}>
     <div class={styles.sectionInnerWide}>
-        {section.eyebrow && <span class:list={[styles.sectionEyebrow, styles.sectionEyebrowCentered]}>{section.eyebrow}</span>}
+        {
+            section.eyebrow && (
+                <span class:list={[styles.sectionEyebrow, styles.sectionEyebrowCentered]}>{section.eyebrow}</span>
+            )
+        }
         {section.heading && <h3 class={styles.brandsHeading}>{section.heading}</h3>}
 
         <div class={styles.brandsRow}>

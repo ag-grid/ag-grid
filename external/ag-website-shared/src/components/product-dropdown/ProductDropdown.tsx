@@ -2,9 +2,9 @@ import BryntumCalendarDark from '@ag-website-shared/images/inline-svgs/bryntum-c
 import BryntumCalendarLight from '@ag-website-shared/images/inline-svgs/bryntum-calendar.svg?react';
 import BryntumGanttDark from '@ag-website-shared/images/inline-svgs/bryntum-gantt-dark.svg?react';
 import BryntumGanttLight from '@ag-website-shared/images/inline-svgs/bryntum-gantt.svg?react';
+import BryntumSchedulerDark from '@ag-website-shared/images/inline-svgs/bryntum-scheduler-dark.svg?react';
 import BryntumSchedulerProDark from '@ag-website-shared/images/inline-svgs/bryntum-scheduler-pro-dark.svg?react';
 import BryntumSchedulerProLight from '@ag-website-shared/images/inline-svgs/bryntum-scheduler-pro.svg?react';
-import BryntumSchedulerDark from '@ag-website-shared/images/inline-svgs/bryntum-scheduler-dark.svg?react';
 import BryntumSchedulerLight from '@ag-website-shared/images/inline-svgs/bryntum-scheduler.svg?react';
 import BryntumTaskBoardDark from '@ag-website-shared/images/inline-svgs/bryntum-task-board-dark.svg?react';
 import BryntumTaskBoardLight from '@ag-website-shared/images/inline-svgs/bryntum-task-board.svg?react';
