@@ -1,9 +1,4 @@
-import type {
-    AgChartInstance,
-    AgSparklineOptions,
-    AgSparklineTooltipRendererParams,
-    AgSparklineTooltipRendererResult,
-} from 'ag-charts-types';
+import type { AgChartInstance, AgSparklineOptions } from 'ag-charts-types';
 
 import type { AgColumn, Environment, ICellRenderer, ISparklineCellRendererParams, RowNode } from 'ag-grid-community';
 import {
@@ -21,16 +16,6 @@ import {
     getSparklineSummary,
     interpolateTemplate,
 } from './sparklinesUtils';
-
-function tooltipRendererWithXValue(
-    params: AgSparklineTooltipRendererParams<unknown>
-): AgSparklineTooltipRendererResult {
-    return { content: `${params.xValue} ${params.yValue}` };
-}
-
-function tooltipRenderer(params: AgSparklineTooltipRendererParams<unknown>): AgSparklineTooltipRendererResult {
-    return { content: `${params.yValue}` };
-}
 
 const COMPONENT_PREFIX = 'ag-sparkline';
 
@@ -136,17 +121,11 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
             this.sparklineOptions.type ??= 'line';
 
-            // Only install the Grid's default tooltip renderer when the user didn't
-            // supply one — the chart-side sparkline preset wraps whatever sits at
-            // `tooltip.renderer` and injects `params.context` from the chart-level
-            // `context` field via `callWithContext`, so no per-callback wrapping is
-            // needed for context propagation.
-            if (!this.sparklineOptions.tooltip?.renderer) {
-                this.sparklineOptions.tooltip = {
-                    ...this.sparklineOptions.tooltip,
-                    renderer: this.getDefaultTooltipRenderer(),
-                };
-            }
+            // No `tooltip.renderer` is installed when the user didn't supply one — the
+            // chart-side sparkline preset produces a sensible default that includes
+            // the x value when it is user-meaningful. Installing a function here would
+            // poison the chart's structural-options cache key and disable the optimised
+            // creation path for every sparkline cell.
 
             // create new sparkline
             this.sparklineInstance = params.createSparkline!(this.sparklineOptions);
@@ -199,12 +178,6 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             data: this.params?.data,
             cellData: this.params?.value,
         };
-    }
-
-    private getDefaultTooltipRenderer() {
-        const xKeyProvided = this.sparklineOptions.xKey;
-        const tupleData = Array.isArray(this.sparklineOptions.data?.[0]);
-        return xKeyProvided || tupleData ? tooltipRendererWithXValue : tooltipRenderer;
     }
 
     public override destroy() {
