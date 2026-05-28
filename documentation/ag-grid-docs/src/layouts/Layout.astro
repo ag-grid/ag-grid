@@ -10,10 +10,18 @@ import Plausible from '@components/Plausible.astro';
 import { Footer } from '@ag-website-shared/components/footer/Footer';
 import styles from '@layouts/Layout.module.scss';
 import { getApiPaths } from '@utils/apiMenuPath';
-import { SITE_BASE_URL, PUBLIC_GTM_ID, PUBLIC_GTM_AUTH, PUBLIC_GTM_PREVIEW } from '@constants';
+import { SITE_BASE_URL, PUBLIC_GTM_ID, PUBLIC_GTM_AUTH, PUBLIC_GTM_PREVIEW, agGridVersion } from '@constants';
 import GoogleTagManager from '@ag-website-shared/components/google-tag-manager/GoogleTagManager.astro';
 import GoogleTagManagerBody from '@ag-website-shared/components/google-tag-manager/GoogleTagManagerBody.astro';
 import AnnouncementBanner from '@components/announcement-banner/AnnouncementBanner.astro';
+import JsonLd from '@ag-website-shared/components/structured-data/JsonLd.astro';
+import {
+    buildOrganization,
+    buildSoftwareApplication,
+    buildWebSite,
+    siteRootUrl,
+    type JsonLdObject,
+} from '@ag-website-shared/utils/structuredData';
 
 interface Props {
     title: string;
@@ -26,6 +34,7 @@ interface Props {
     showMicrosoftMessage?: boolean;
     showAnnouncementBanner?: boolean;
     overrideSocialImage?: string;
+    pageStructuredData?: JsonLdObject[];
 }
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
@@ -51,6 +60,7 @@ const {
     showMicrosoftMessage,
     showAnnouncementBanner = false,
     overrideSocialImage,
+    pageStructuredData,
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -60,6 +70,49 @@ const lightModeCSSUrl = `url("${urlWithBaseUrl('/images/sun.svg')}")`;
 const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
 
 const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.replaceAll('/', '');
+
+const includeStructuredData = !hidePageFromSearchEngines && !isArchive;
+const sameAsUrls = includeStructuredData
+    ? footerItems.flatMap((group) => group.links.filter((link) => link.iconName).map((link) => link.url))
+    : [];
+const siteRoot = siteRootUrl(metadata.canonicalUrlBase);
+const organizationLogoUrl = `${siteRoot}images/ag-logos/png-logos/AG-Grid-Logo_Light-Theme_476_140.png`;
+const licensePricingUrl = `${siteRoot}license-pricing/`;
+const structuredData: JsonLdObject[] = includeStructuredData
+    ? [
+          buildOrganization({
+              canonicalUrlBase: metadata.canonicalUrlBase,
+              name: 'AG Grid',
+              logoUrl: organizationLogoUrl,
+              sameAs: sameAsUrls,
+          }),
+          buildWebSite({
+              canonicalUrlBase: metadata.canonicalUrlBase,
+              name: metadata.title,
+              description: metadata.description,
+          }),
+          buildSoftwareApplication({
+              canonicalUrlBase: metadata.canonicalUrlBase,
+              name: 'AG Grid',
+              version: agGridVersion.split('-')[0],
+              offers: [
+                  {
+                      '@type': 'Offer',
+                      name: 'AG Grid Community',
+                      price: '0',
+                      priceCurrency: 'USD',
+                      url: licensePricingUrl,
+                  },
+                  {
+                      '@type': 'Offer',
+                      name: 'AG Grid Enterprise',
+                      url: licensePricingUrl,
+                  },
+              ],
+          }),
+          ...(pageStructuredData ?? []),
+      ]
+    : [];
 
 const announcementBannerProps = {
     href: urlWithBaseUrl('/campaigns/beyond-the-prompt/'),
@@ -117,6 +170,8 @@ const announcementBannerProps = {
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={socialImage} />
+
+        {structuredData.length > 0 && <JsonLd data={structuredData} />}
 
         {
             !isDev && (
