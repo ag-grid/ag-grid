@@ -19,6 +19,7 @@ import {
     FormulaModule,
     RowGroupingModule,
     ServerSideRowModelModule,
+    TreeDataModule,
     ViewportRowModelModule,
 } from 'ag-grid-enterprise';
 
@@ -46,6 +47,7 @@ describe('ag-grid calculated columns', () => {
             ColumnMenuModule,
             ContextMenuModule,
             RowGroupingModule,
+            TreeDataModule,
             NumberFilterModule,
             TextEditorModule,
             NumberEditorModule,
@@ -482,6 +484,7 @@ describe('ag-grid calculated columns', () => {
                 { field: 'revenue', aggFunc: 'sum' },
                 { field: 'cost', aggFunc: 'sum' },
                 { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+                { colId: 'doubleProfit', calculatedExpression: '[profit] * 2', cellDataType: 'number' },
             ],
             groupDefaultExpanded: -1,
         });
@@ -500,8 +503,97 @@ describe('ag-grid calculated columns', () => {
 
         expect(emeaGroup.group).toBe(true);
         expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'profit', useFormatter: false })).toBe(19);
+        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'doubleProfit', useFormatter: false })).toBe(38);
         expect(apacGroup.group).toBe(true);
         expect(api.getCellValue({ rowNode: apacGroup, colKey: 'profit', useFormatter: false })).toBe(10);
+        expect(api.getCellValue({ rowNode: apacGroup, colKey: 'doubleProfit', useFormatter: false })).toBe(20);
+    });
+
+    test('calculated columns stay blank on row groups without aggregate source values while leaf rows still evaluate', async () => {
+        const api = createGrid('calculated-row-groups-no-aggregates', {
+            rowData: [
+                { id: 'r1', productType: 'A', product: 'Solar panel kit', revenue: 142000, cost: 96000 },
+                { id: 'r2', productType: 'A', product: 'Smart thermostat', revenue: 78000, cost: 52000 },
+                { id: 'r3', productType: 'B', product: 'Battery pack', revenue: 126000, cost: 101000 },
+            ],
+            columnDefs: [
+                { field: 'productType', rowGroup: true, hide: true },
+                { field: 'product' },
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        const groupA = api.getRowNode('row-group-productType-A')!;
+        expect(groupA.group).toBe(true);
+        expect(api.getDisplayedRowCount()).toBe(2);
+        expect(api.getCellValue({ rowNode: groupA, colKey: 'profit', useFormatter: false })).toBeUndefined();
+
+        groupA.setExpanded(true, undefined, true);
+        await asyncSetTimeout(1);
+
+        expect(api.getDisplayedRowCount()).toBe(4);
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: false })).toBe(46000);
+        expect(api.getCellValue({ rowNode: api.getRowNode('r2')!, colKey: 'profit', useFormatter: false })).toBe(26000);
+    });
+
+    test('calculated columns evaluate on tree data rows and stay blank on filler groups', async () => {
+        const parentApi = createGrid('calculated-tree-data-parent', {
+            treeData: true,
+            treeDataChildrenField: 'children',
+            rowData: [
+                {
+                    id: 'parent',
+                    name: 'Parent',
+                    revenue: 100,
+                    cost: 40,
+                    children: [{ id: 'child', name: 'Child', revenue: 30, cost: 10 }],
+                },
+            ],
+            columnDefs: [
+                { field: 'name' },
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(1);
+
+        expect(
+            parentApi.getCellValue({ rowNode: parentApi.getRowNode('parent')!, colKey: 'profit', useFormatter: false })
+        ).toBe(60);
+        expect(
+            parentApi.getCellValue({ rowNode: parentApi.getRowNode('child')!, colKey: 'profit', useFormatter: false })
+        ).toBe(20);
+
+        const fillerApi = createGrid('calculated-tree-data-filler', {
+            treeData: true,
+            getDataPath: (data) => data.path,
+            rowData: [{ id: 'leaf', path: ['Dept', 'Team', 'Leaf'], revenue: 30, cost: 10 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(1);
+
+        let fillerGroup: any;
+        fillerApi.forEachNode((node) => {
+            if (node.group && !node.data && !fillerGroup) {
+                fillerGroup = node;
+            }
+        });
+
+        expect(fillerGroup).toBeTruthy();
+        expect(fillerApi.getCellValue({ rowNode: fillerGroup, colKey: 'profit', useFormatter: false })).toBeUndefined();
+        expect(
+            fillerApi.getCellValue({ rowNode: fillerApi.getRowNode('leaf')!, colKey: 'profit', useFormatter: false })
+        ).toBe(20);
     });
 
     test.each([
