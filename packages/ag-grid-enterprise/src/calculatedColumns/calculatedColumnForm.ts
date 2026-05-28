@@ -122,7 +122,26 @@ export class CalculatedColumnForm extends Component {
     }
 
     public postConstruct(): void {
+        this.setupFormFields();
+        this.setupActionButtons();
+        this.setupSuggestions();
+        this.setupValidationTooltip();
+        this.addFormFieldListeners();
+        this.setupExpressionEditor();
+        this.addActionListeners();
+        this.addFormListeners();
+        this.addDestroyFunc(() => this.closeSuggestionPopup());
+    }
+
+    public hideSuggestions(): void {
+        this.activeReplacement = null;
+        this.suggestions = [];
+        this.closeSuggestionPopup();
+    }
+
+    private setupFormFields(): void {
         const translate = this.getLocaleTextFunc();
+
         this.eTitle.setLabel(translate('calculatedColumnTitle', 'Title')).setValue(this.draft.headerName, true);
         this.eType
             .setLabel(translate('calculatedColumnType', 'Type'))
@@ -138,21 +157,25 @@ export class CalculatedColumnForm extends Component {
             .setInputPlaceholder(translate('calculatedColumnExpressionPlaceholder', 'Type here'))
             .setRows(3)
             .setValue(this.draft.calculatedExpression, true);
-        this.eColumns.textContent = translate('calculatedColumnColumns', 'Columns');
-        this.eFunctions.textContent = translate('calculatedColumnFunctions', 'Functions');
-        this.eOperators.textContent = translate('calculatedColumnOperators', 'Operators');
-        this.eApply.textContent = translate('calculatedColumnApply', 'Apply');
-        this.eCancel.textContent = translate('calculatedColumnCancel', 'Cancel');
-        this.eColumns.type = 'button';
-        this.eFunctions.type = 'button';
-        this.eOperators.type = 'button';
-        this.eApply.type = 'button';
-        this.eCancel.type = 'button';
+    }
+
+    private setupActionButtons(): void {
+        const translate = this.getLocaleTextFunc();
+
+        const actions = ['Columns', 'Functions', 'Operators', 'Apply', 'Cancel'] as const;
+        for (const action of actions) {
+            const btn = this[`e${action}`];
+            btn.textContent = translate(`calculatedColumn${action}`, action);
+            btn.type = 'button';
+        }
+    }
+
+    private setupSuggestions(): void {
         this.eSuggestions.remove();
         _setDisplayed(this.eSuggestions, false);
+    }
 
-        this.setupValidationTooltip();
-
+    private addFormFieldListeners(): void {
         const initialHeaderName = this.draft.headerName;
         this.eTitle.onValueChange((value) => this.updateDraft({ headerName: value || initialHeaderName }));
         this.eType.onValueChange((value) => this.updateDraft({ cellDataType: value ?? DEFAULT_DRAFT.cellDataType }));
@@ -161,12 +184,21 @@ export class CalculatedColumnForm extends Component {
             this.setExpressionError(this.onValidate(this.draft));
             this.refreshContextSuggestions();
         });
+    }
+
+    private setupExpressionEditor(): void {
         const input = this.eExpression.getInputElement();
+        // prevents spellcheck while writing formulas
+        input.setAttribute('spellcheck', 'false');
+
         this.addManagedElementListeners(input, {
             click: () => this.refreshContextSuggestions(),
             keydown: (event: KeyboardEvent) => this.onExpressionKeyDown(event),
             keyup: (event: KeyboardEvent) => this.onExpressionKeyUp(event),
         });
+    }
+
+    private addActionListeners(): void {
         this.addManagedElementListeners(this.eColumns, {
             click: () => this.showSuggestions('column', '', null, this.eColumns),
         });
@@ -182,6 +214,9 @@ export class CalculatedColumnForm extends Component {
         this.addManagedElementListeners(this.eCancel, {
             click: () => this.onCancel(),
         });
+    }
+
+    private addFormListeners(): void {
         this.addManagedElementListeners(this.getGui(), {
             keydown: (event: KeyboardEvent) => {
                 if (this.suggestions.length && event.key === KeyCode.ESCAPE) {
@@ -197,13 +232,6 @@ export class CalculatedColumnForm extends Component {
                     }
                 }, 0),
         });
-        this.addDestroyFunc(() => this.closeSuggestionPopup());
-    }
-
-    public hideSuggestions(): void {
-        this.activeReplacement = null;
-        this.suggestions = [];
-        this.closeSuggestionPopup();
     }
 
     private setExpressionError(message: string | null): void {

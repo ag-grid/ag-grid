@@ -47,7 +47,7 @@ The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `202
 
 {% gridExampleRunner title="Column Groups with Duplicate Headers" name="calculated-columns-column-groups" exampleHeight=420 /%}
 
-The dialog and remove action update the current `columnDefs`, so applications can persist the resulting definitions in the same way as any other column definition change.
+The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`.
 
 ## Advanced Calculated Columns
 
@@ -82,7 +82,7 @@ const gridOptions = {
 
 Header cells and grid cells for calculated columns include the `ag-calculated-column` CSS class, which can be used for custom styling.
 
-Calculated columns can also be managed from the Grid API. Added columns are appended to the current column definitions; use the column moving API afterwards if you need a specific display position.
+Calculated columns can also be managed from the Grid API. API-created columns are appended to the current column tree; use the column moving API afterwards if you need a specific display position. The original application-provided `columnDefs` are not mutated, but `api.getColumnDefs()` includes dynamic calculated columns for persistence.
 
 ```{% frameworkTransform=true %}
 const calculatedColumns = api
