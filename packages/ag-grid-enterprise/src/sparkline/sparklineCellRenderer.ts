@@ -1,10 +1,8 @@
 import type {
     AgChartInstance,
-    AgChartTheme,
     AgSparklineOptions,
     AgSparklineTooltipRendererParams,
     AgSparklineTooltipRendererResult,
-    AgTooltipRendererResult,
 } from 'ag-charts-types';
 
 import type { AgColumn, Environment, ICellRenderer, ISparklineCellRendererParams, RowNode } from 'ag-grid-community';
@@ -22,7 +20,6 @@ import {
     getSparklineAriaTemplate,
     getSparklineSummary,
     interpolateTemplate,
-    wrapFn,
 } from './sparklinesUtils';
 
 function tooltipRendererWithXValue(
@@ -134,26 +131,21 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 ...params.sparklineOptions,
                 ...(styleNonce ? { styleNonce } : {}),
                 data,
+                context: this.createContext(),
             } as AgSparklineOptions;
 
             this.sparklineOptions.type ??= 'line';
 
-            if (this.sparklineOptions.tooltip?.renderer) {
-                this.wrapTooltipRenderer();
-            } else {
-                const renderer = this.getDefaultTooltipRenderer();
+            // Only install the Grid's default tooltip renderer when the user didn't
+            // supply one — the chart-side sparkline preset wraps whatever sits at
+            // `tooltip.renderer` and injects `params.context` from the chart-level
+            // `context` field via `callWithContext`, so no per-callback wrapping is
+            // needed for context propagation.
+            if (!this.sparklineOptions.tooltip?.renderer) {
                 this.sparklineOptions.tooltip = {
                     ...this.sparklineOptions.tooltip,
-                    renderer,
+                    renderer: this.getDefaultTooltipRenderer(),
                 };
-            }
-
-            // Only bar sparklines have itemStyler
-            const theme = this.sparklineOptions?.theme as AgChartTheme;
-            if (this.sparklineOptions.type === 'bar' && this.sparklineOptions.itemStyler) {
-                this.wrapItemStyler(this.sparklineOptions);
-            } else if (theme?.overrides?.bar?.series?.itemStyler) {
-                this.wrapItemStyler(theme.overrides.bar.series);
             }
 
             // create new sparkline
@@ -165,6 +157,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 data,
                 width,
                 height,
+                context: this.createContext(),
                 ...(styleNonce ? { styleNonce } : {}),
             });
 
@@ -208,43 +201,10 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         };
     }
 
-    private getDefaultTooltipRenderer(userRendererResult?: AgTooltipRendererResult) {
-        const userTitle = userRendererResult?.title;
+    private getDefaultTooltipRenderer() {
         const xKeyProvided = this.sparklineOptions.xKey;
         const tupleData = Array.isArray(this.sparklineOptions.data?.[0]);
-
-        const showXValue = !userTitle && (xKeyProvided || tupleData);
-
-        return showXValue ? tooltipRendererWithXValue : tooltipRenderer;
-    }
-
-    private wrapItemStyler(container: { itemStyler?: any }) {
-        container.itemStyler = wrapFn(container.itemStyler, (fn, stylerParams: any): any => {
-            return fn({
-                ...stylerParams,
-                context: this.createContext(),
-            });
-        });
-    }
-
-    private wrapTooltipRenderer() {
-        this.sparklineOptions.tooltip = {
-            ...this.sparklineOptions.tooltip,
-            renderer: wrapFn(this.sparklineOptions.tooltip!.renderer!, (fn, tooltipParams: any): any => {
-                const userRendererResult = fn({
-                    ...tooltipParams,
-                    context: this.createContext(),
-                });
-
-                if (typeof userRendererResult === 'string') {
-                    return userRendererResult;
-                }
-                return {
-                    ...this.getDefaultTooltipRenderer(userRendererResult)(tooltipParams),
-                    ...userRendererResult,
-                };
-            }),
-        };
+        return xKeyProvided || tupleData ? tooltipRendererWithXValue : tooltipRenderer;
     }
 
     public override destroy() {
