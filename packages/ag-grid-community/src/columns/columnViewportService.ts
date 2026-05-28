@@ -142,6 +142,9 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         this.rowsOfHeadersToRenderLeft = {};
         this.rowsOfHeadersToRenderRight = {};
         this.rowsOfHeadersToRenderCenter = {};
+        this.columnsToRenderLeft = [];
+        this.columnsToRenderRight = [];
+        this.columnsToRenderCenter = [];
         this.colsWithinViewportHash = '';
     }
 
