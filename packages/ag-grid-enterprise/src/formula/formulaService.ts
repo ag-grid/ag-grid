@@ -695,13 +695,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     private ensureCalculatedCellFormula(row: RowNode, col: AgColumn, calculatedExpression: string): CellFormula | null {
-        if (!isCalculatedColumnRowAvailable(row)) {
-            return null;
-        }
-        if (row.group && !this.canEvaluateCalculatedColumnForRow(row, col, new Set<string>())) {
-            return null;
-        }
-
         const cache = this.cachedResult;
         let rowMap = cache.get(row);
         const cached = rowMap?.get(col);
@@ -716,6 +709,13 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         rowMap.set(col, null);
 
         try {
+            if (!isCalculatedColumnRowAvailable(row)) {
+                return null;
+            }
+            if (row.group && !this.canEvaluateCalculatedColumnForRow(row, col, new Set<string>())) {
+                return null;
+            }
+
             const trimmedExpression = calculatedExpression.trim();
             if (!trimmedExpression) {
                 return null;
