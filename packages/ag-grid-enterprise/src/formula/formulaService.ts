@@ -778,7 +778,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     /** Fetch a non-formula value from the grid without triggering nested formula calc. */
     private fetchRawValue(col: AgColumn, row: RowNode): unknown {
-        if (col.colDef.calculatedExpression != null && this.beans.calculatedColsSvc != null) {
+        if (col.isCalculatedCol) {
             return undefined;
         }
 

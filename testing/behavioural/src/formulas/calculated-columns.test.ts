@@ -596,6 +596,173 @@ describe('ag-grid calculated columns', () => {
         ).toBe(20);
     });
 
+    test('calculated columns evaluate on group and grand total footer rows', async () => {
+        const api = createGrid('calculated-row-group-footers', {
+            rowData: [
+                { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
+                { id: 'r2', region: 'EMEA', revenue: 20, cost: 8 },
+                { id: 'r3', region: 'APAC', revenue: 15, cost: 5 },
+            ],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            grandTotalRow: 'bottom',
+        });
+        await asyncSetTimeout(1);
+
+        const emeaFooter = api.getRowNode('rowGroupFooter_row-group-region-EMEA')!;
+        const apacFooter = api.getRowNode('rowGroupFooter_row-group-region-APAC')!;
+        const grandTotal = api.getRowNode('rowGroupFooter_ROOT_NODE_ID')!;
+
+        expect(emeaFooter).toBeTruthy();
+        expect(api.getCellValue({ rowNode: emeaFooter, colKey: 'profit', useFormatter: false })).toBe(19);
+        expect(apacFooter).toBeTruthy();
+        expect(api.getCellValue({ rowNode: apacFooter, colKey: 'profit', useFormatter: false })).toBe(10);
+        expect(grandTotal).toBeTruthy();
+        expect(api.getCellValue({ rowNode: grandTotal, colKey: 'profit', useFormatter: false })).toBe(29);
+    });
+
+    test('calculated columns aggregate across multiple group levels', async () => {
+        const api = createGrid('calculated-multi-level-groups', {
+            rowData: [
+                { id: 'r1', region: 'EMEA', country: 'UK', revenue: 10, cost: 3 },
+                { id: 'r2', region: 'EMEA', country: 'DE', revenue: 20, cost: 8 },
+                { id: 'r3', region: 'EMEA', country: 'DE', revenue: 5, cost: 1 },
+            ],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(1);
+
+        const emeaGroup = api.getRowNode('row-group-region-EMEA')!;
+        const ukGroup = api.getRowNode('row-group-region-EMEA-country-UK')!;
+        const deGroup = api.getRowNode('row-group-region-EMEA-country-DE')!;
+
+        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'profit', useFormatter: false })).toBe(23);
+        expect(api.getCellValue({ rowNode: ukGroup, colKey: 'profit', useFormatter: false })).toBe(7);
+        expect(api.getCellValue({ rowNode: deGroup, colKey: 'profit', useFormatter: false })).toBe(16);
+    });
+
+    test('sorting on a calculated column orders group rows by aggregate result', async () => {
+        const api = createGrid('calculated-sort-grouped', {
+            rowData: [
+                { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
+                { id: 'r2', region: 'EMEA', revenue: 20, cost: 8 },
+                { id: 'r3', region: 'APAC', revenue: 15, cost: 5 },
+            ],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+                {
+                    colId: 'profit',
+                    calculatedExpression: '[revenue] - [cost]',
+                    cellDataType: 'number',
+                    sortable: true,
+                },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        api.applyColumnState({ state: [{ colId: 'profit', sort: 'asc' }], defaultState: { sort: null } });
+        await asyncSetTimeout(1);
+
+        const ascOrder: string[] = [];
+        api.forEachNodeAfterFilterAndSort((node) => {
+            if (node.group && node.key) {
+                ascOrder.push(node.key);
+            }
+        });
+        expect(ascOrder).toEqual(['APAC', 'EMEA']);
+
+        api.applyColumnState({ state: [{ colId: 'profit', sort: 'desc' }], defaultState: { sort: null } });
+        await asyncSetTimeout(1);
+
+        const descOrder: string[] = [];
+        api.forEachNodeAfterFilterAndSort((node) => {
+            if (node.group && node.key) {
+                descOrder.push(node.key);
+            }
+        });
+        expect(descOrder).toEqual(['EMEA', 'APAC']);
+    });
+
+    test('grid api adds a calculated column while grouped and it evaluates on group rows', async () => {
+        const api = createGrid('calculated-api-while-grouped', {
+            rowData: [
+                { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
+                { id: 'r2', region: 'EMEA', revenue: 20, cost: 8 },
+                { id: 'r3', region: 'APAC', revenue: 15, cost: 5 },
+            ],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+            ],
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(1);
+
+        const created = waitForEvent('calculatedColumnCreated', api);
+        api.addCalculatedColumn({
+            colId: 'profit',
+            calculatedExpression: '[revenue] - [cost]',
+            cellDataType: 'number',
+        });
+        await created;
+        await asyncSetTimeout(1);
+
+        const emeaGroup = api.getRowNode('row-group-region-EMEA')!;
+        const apacGroup = api.getRowNode('row-group-region-APAC')!;
+        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'profit', useFormatter: false })).toBe(19);
+        expect(api.getCellValue({ rowNode: apacGroup, colKey: 'profit', useFormatter: false })).toBe(10);
+    });
+
+    test('calculated columns aggregate on tree data parents with aggregated inputs', async () => {
+        const api = createGrid('calculated-tree-data-aggregated', {
+            treeData: true,
+            getDataPath: (data) => data.path,
+            rowData: [
+                { id: 'l1', path: ['Dept', 'Team A', 'Leaf 1'], revenue: 30, cost: 10 },
+                { id: 'l2', path: ['Dept', 'Team A', 'Leaf 2'], revenue: 20, cost: 5 },
+                { id: 'l3', path: ['Dept', 'Team B', 'Leaf 3'], revenue: 40, cost: 25 },
+            ],
+            columnDefs: [
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(1);
+
+        let deptGroup: any;
+        let teamAGroup: any;
+        api.forEachNode((node) => {
+            if (node.key === 'Dept') {
+                deptGroup = node;
+            }
+            if (node.key === 'Team A') {
+                teamAGroup = node;
+            }
+        });
+
+        expect(api.getCellValue({ rowNode: teamAGroup, colKey: 'profit', useFormatter: false })).toBe(35);
+        expect(api.getCellValue({ rowNode: deptGroup, colKey: 'profit', useFormatter: false })).toBe(50);
+        expect(api.getCellValue({ rowNode: api.getRowNode('l3')!, colKey: 'profit', useFormatter: false })).toBe(15);
+    });
+
     test.each([
         {
             name: 'server-side',

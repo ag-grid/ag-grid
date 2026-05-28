@@ -31,5 +31,8 @@ export function isFormulaRowAvailable(row: RowNode): boolean {
  * stricter {@link isFormulaRowAvailable}.
  */
 export function isCalculatedColumnRowAvailable(row: RowNode): boolean {
-    return isFormulaRowAvailable(row) || (!row.stub && !row.failedLoad && row.group === true && row.level !== -1);
+    return (
+        isFormulaRowAvailable(row) ||
+        (!row.stub && !row.failedLoad && row.group === true && (row.level !== -1 || row.footer === true))
+    );
 }

@@ -35,6 +35,29 @@ For Server-Side, Infinite and Viewport Row Models, sorting and filtering are dat
 
 Calculated columns are always read-only. They cannot be edited through cell editing, paste, fill handle or delete operations.
 
+## Row Groups and Tree Data
+
+Calculated columns are full columns, so [Row Grouping](./grouping/), [Tree Data](./tree-data/), [Aggregation](./aggregation/), sorting and filtering apply to them the same way they apply to any other column.
+
+On a group row, the expression evaluates against the **aggregated** values of the columns it references. With the setup below, the `profit` cell on a region group shows `sum(revenue) - sum(cost)` for that region:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'region', rowGroup: true, hide: true },
+        { field: 'revenue', aggFunc: 'sum' },
+        { field: 'cost', aggFunc: 'sum' },
+        { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+    ],
+};
+```
+
+Because the inputs are aggregated before the expression runs, `[revenue] / [cost]` on a group is `sum(revenue) / sum(cost)`, not the average of each leaf row's ratio. Choose expressions whose group-level result is meaningful under this rule.
+
+A group cell stays blank unless every referenced column produces an aggregated value. Reference a column with no `aggFunc`, and group rows for that calculated column are blank while the leaf rows still evaluate. Filler group rows in Tree Data, which have no aggregates of their own, stay blank for the same reason.
+
+Group and grand-total footer rows show the same calculated value as the group they total. Tree Data parent rows evaluate against their aggregated children in the same way as Row Group rows.
+
 ## References with Column Groups
 
 When the Column Menu is registered, users can add a calculated column from the header menu using **Add Calculated Column**. Opening the header menu on a calculated column shows **Edit Calculated Column** for changing its title, type and expression, and **Remove Calculated Column** for removing it. Right-clicking cells in a calculated column also shows **Remove Calculated Column**.
@@ -83,6 +106,10 @@ const gridOptions = {
 Header cells and grid cells for calculated columns include the `ag-calculated-column` CSS class, which can be used for custom styling.
 
 Calculated columns can also be managed from the Grid API. API-created columns are appended to the current column tree; use the column moving API afterwards if you need a specific display position. The original application-provided `columnDefs` are not mutated, but `api.getColumnDefs()` includes dynamic calculated columns for persistence.
+
+A column added from the header menu is placed after the column it was created from, where that anchor is a leaf column. When the anchor is a column-group header or the auto-group column, or when the anchor column is later removed, the calculated column falls back to the end of the column tree.
+
+Replacing the grid's columns with `setColumnDefs` (or `updateGridOptions({ columnDefs })`) is a full reset: it clears calculated columns added through the API or the dialog. To keep user-created calculated columns across a replacement, read the current definitions from `api.getColumnDefs()` and include them in the new array.
 
 ```{% frameworkTransform=true %}
 const calculatedColumns = api
