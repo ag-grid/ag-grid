@@ -65,24 +65,22 @@ export class GridColumnsDomValidator {
             }
         }
 
-        if (!gridColumns.hasColumnGroups) {
-            return;
-        }
-
         const expectedGroupIds = new Set<string>();
-        const visitGroups = (items: (Column | ColumnGroup)[]) => {
-            for (const item of items) {
-                if (!item.isColumn) {
-                    const group = item as ColumnGroup;
-                    expectedGroupIds.add(String(group.getUniqueId()));
-                    const children = group.getDisplayedChildren();
-                    if (children) {
-                        visitGroups(children);
+        if (gridColumns.hasColumnGroups) {
+            const visitGroups = (items: (Column | ColumnGroup)[]) => {
+                for (const item of items) {
+                    if (!item.isColumn) {
+                        const group = item as ColumnGroup;
+                        expectedGroupIds.add(String(group.getUniqueId()));
+                        const children = group.getDisplayedChildren();
+                        if (children) {
+                            visitGroups(children);
+                        }
                     }
                 }
-            }
-        };
-        visitGroups([...gridColumns.leftTree, ...gridColumns.centerTree, ...gridColumns.rightTree]);
+            };
+            visitGroups([...gridColumns.leftTree, ...gridColumns.centerTree, ...gridColumns.rightTree]);
+        }
 
         for (const cell of headerRoot.querySelectorAll('.ag-header-group-cell[col-id]')) {
             const colId = cell.getAttribute('col-id');
