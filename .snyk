@@ -288,6 +288,14 @@ ignore:
         reason: Not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - 'karma-coverage@2.2.1 > minimatch@3.1.2 > brace-expansion@1.1.12':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'karma@6.4.4 > glob@7.2.3 > minimatch@3.1.2 > brace-expansion@1.1.12':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-PICOMATCH-15765511:
     - jest-environment-node@29.7.0 > @jest/environment@29.7.0 > @jest/fake-timers@29.7.0 > jest-mock@29.7.0 > jest-util@29.7.0 > picomatch@2.3.1:
         reason: Used in build & dev - not included in final production build
@@ -513,6 +521,38 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - '@angular/build@20.3.26 > tinyglobby@0.2.14 > picomatch@4.0.3':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'ng-packagr@20.3.2 > tinyglobby@0.2.15 > picomatch@4.0.3':
+        reason: Angular build dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/build@20.3.26 > vite@7.3.2 > picomatch@4.0.3':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/build@20.3.26 > vite@7.3.2 > tinyglobby@0.2.15 > picomatch@4.0.3':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'ng-packagr@20.3.2 > @rollup/plugin-json@6.1.0 > @rollup/pluginutils@5.3.0 > picomatch@4.0.3':
+        reason: Angular build dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/cli@20.3.26 > pacote@21.0.4 > @npmcli/run-script@10.0.4 > node-gyp@12.3.0 > tinyglobby@0.2.15 > picomatch@4.0.3':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'karma@6.4.4 > chokidar@3.6.0 > anymatch@3.1.3 > picomatch@2.3.1':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'karma@6.4.4 > chokidar@3.6.0 > readdirp@3.6.0 > picomatch@2.3.1':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-FLATTED-15700433:
     - stylelint@16.25.0 > file-entry-cache@10.1.4 > flat-cache@6.1.18 > flatted@3.4.0:
         reason: Test dependency - not included in final production build
@@ -526,6 +566,10 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - 'karma@6.4.4 > log4js@6.9.1 > flatted@3.4.0':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-SVGO-15423912:
     - cssnano@7.1.2 > cssnano-preset-default@7.0.10 > postcss-svgo@7.1.0 > svgo@4.0.0:
         reason: Used in build & dev - not included in final production build
@@ -721,6 +765,10 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - '@angular/cli@20.3.26 > pacote@21.0.4 > sigstore@4.1.0 > @sigstore/tuf@4.0.2 > tuf-js@4.1.0 > @tufjs/models@4.1.0 > minimatch@10.1.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-MINIMATCH-15353389:
     - glob@11.1.0 > minimatch@10.1.1:
         reason: Used in build & dev - not included in final production build
@@ -1014,6 +1062,22 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - '@angular/cli@20.3.26 > pacote@21.0.4 > sigstore@4.1.0 > @sigstore/tuf@4.0.2 > tuf-js@4.1.0 > @tufjs/models@4.1.0 > minimatch@10.1.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'karma-coverage@2.2.1 > minimatch@3.1.2':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'karma@6.4.4 > minimatch@3.1.2':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'karma@6.4.4 > glob@7.2.3 > minimatch@3.1.2':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-FORMDATA-10841150:
     - request@2.88.2 > form-data@2.3.3:
         reason: Only used for building and getting changelog/pipeline data
@@ -1029,6 +1093,10 @@ ignore:
         reason: Not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - '@angular/cli@20.3.26 > pacote@21.0.4 > sigstore@4.1.0 > @sigstore/tuf@4.0.2 > tuf-js@4.1.0 > @tufjs/models@4.1.0 > minimatch@10.1.1 > @isaacs/brace-expansion@5.0.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-AJV-15274295:
     - 'stylelint@17.9.0 > table@6.9.0 > ajv@8.17.1':
         reason: Used in linting - not included in final production build
@@ -1078,6 +1146,10 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > ajv@8.17.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-MINIMATCH-15309438:
     - jest-runner@29.7.0 > @jest/transform@29.7.0 > babel-plugin-istanbul@6.1.1 > test-exclude@6.0.0 > minimatch@3.1.2:
         reason: test/lint library - not in final production build
@@ -1439,6 +1511,22 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - '@angular/cli@20.3.26 > pacote@21.0.4 > sigstore@4.1.0 > @sigstore/tuf@4.0.2 > tuf-js@4.1.0 > @tufjs/models@4.1.0 > minimatch@10.1.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'karma-coverage@2.2.1 > minimatch@3.1.2':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'karma@6.4.4 > minimatch@3.1.2':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'karma@6.4.4 > glob@7.2.3 > minimatch@3.1.2':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-AXIOS-15252993:
     - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/enhanced@0.9.1 > @module-federation/dts-plugin@0.9.1 > axios@1.13.1':
         reason: Build dependency - not included in final production build
@@ -1489,6 +1577,10 @@ ignore:
         reason: MCP dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > express-rate-limit@8.2.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-FILETYPE-15609896:
     - 'rulesync@8.8.1 > fastmcp@3.34.0 > file-type@21.3.0':
         reason: MCP dependency - not included in final production build
@@ -1551,6 +1643,10 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - 'karma@6.4.4 > http-proxy@1.18.1 > follow-redirects@1.15.11':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-KOA-15353398:
     - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/enhanced@0.9.1 > @module-federation/dts-plugin@0.9.1 > koa@2.15.4':
         reason: Build dependency - not included in final production build
@@ -1577,6 +1673,10 @@ ignore:
         reason: MCP dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > router@2.2.0 > path-to-regexp@8.3.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-PATHTOREGEXP-15789765:
     - '@modelcontextprotocol/server-sequential-thinking@2025.12.18 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > router@2.2.0 > path-to-regexp@8.3.0':
         reason: MCP dependency - not included in final production build
@@ -1594,6 +1694,10 @@ ignore:
         reason: MCP dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > router@2.2.0 > path-to-regexp@8.3.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-QS-14724253:
     - '@nx/web@20.8.4 > http-server@14.1.1 > union@0.5.0 > qs@6.14.0':
         reason: Build dependency - not included in final production build
@@ -1611,6 +1715,10 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - 'karma@6.4.4 > body-parser@1.20.3 > qs@6.13.0':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-QS-15268416:
     - '@nx/web@20.8.4 > http-server@14.1.1 > union@0.5.0 > qs@6.14.0':
         reason: Build dependency - not included in final production build
@@ -1652,4 +1760,440 @@ ignore:
         reason: MCP dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+    - 'karma@6.4.4 > body-parser@1.20.3 > qs@6.13.0':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > qs@6.14.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > express@5.2.1 > body-parser@2.2.2 > qs@6.14.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-AXIOS-16417750:
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/enhanced@0.9.1 > @module-federation/dts-plugin@0.9.1 > axios@1.13.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.4.0 > pipenet@1.4.0 > axios@1.13.5':
+        reason: MCP dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'vite-plugin-mkcert@1.17.9 > axios@1.13.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-BABELPLUGINTRANSFORMMODULESSYSTEMJS-16624576:
+    - '@nx/js@20.8.4 > @babel/preset-env@7.28.5 > @babel/plugin-transform-modules-systemjs@7.28.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @babel/preset-env@7.28.5 > @babel/plugin-transform-modules-systemjs@7.28.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @babel/preset-env@7.28.5 > @babel/plugin-transform-modules-systemjs@7.28.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @babel/preset-env@7.28.5 > @babel/plugin-transform-modules-systemjs@7.28.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @babel/preset-env@7.28.5 > @babel/plugin-transform-modules-systemjs@7.28.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @babel/preset-env@7.28.5 > @babel/plugin-transform-modules-systemjs@7.28.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @babel/preset-env@7.28.5 > @babel/plugin-transform-modules-systemjs@7.28.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @babel/preset-env@7.28.5 > @babel/plugin-transform-modules-systemjs@7.28.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'babel-preset-react-app@10.1.0 > @babel/preset-env@7.28.5 > @babel/plugin-transform-modules-systemjs@7.28.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-BASICFTP-16438941:
+    - '@axe-core/cli@4.11.2 > chromedriver@147.0.4 > proxy-agent@8.0.1 > pac-proxy-agent@9.0.1 > get-uri@8.0.0 > basic-ftp@5.3.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-BRACEEXPANSION-16755174:
+    - 'eslint-plugin-import-x@4.16.2 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Linting dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'eslint-plugin-sonarjs@4.0.3 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Linting dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@typescript-eslint/parser@8.59.0 > @typescript-eslint/typescript-estree@8.59.0 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'eslint@10.2.1 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Linting dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@typescript-eslint/eslint-plugin@8.59.0 > @typescript-eslint/type-utils@8.59.0 > @typescript-eslint/typescript-estree@8.59.0 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'typescript-eslint@8.59.0 > @typescript-eslint/parser@8.59.0 > @typescript-eslint/typescript-estree@8.59.0 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Linting dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'typescript-eslint@8.59.0 > @typescript-eslint/eslint-plugin@8.59.0 > @typescript-eslint/type-utils@8.59.0 > @typescript-eslint/typescript-estree@8.59.0 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Linting dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'replace-in-file@8.4.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'rimraf@6.1.3 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/cli@20.3.26 > pacote@21.0.4 > @npmcli/package-json@7.0.5 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-FASTURI-16642394:
+    - '@modelcontextprotocol/server-sequential-thinking@2025.12.18 > @modelcontextprotocol/sdk@1.26.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'rulesync@8.8.1 > @modelcontextprotocol/sdk@1.27.1 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: MCP dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'stylelint@17.9.0 > table@6.9.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'rulesync@8.8.1 > fastmcp@3.34.0 > @modelcontextprotocol/sdk@1.26.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: MCP dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > schema-utils@4.3.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > volar-service-yaml@0.0.70 > yaml-language-server@1.20.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'ng-packagr@20.3.2 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Angular build dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/build@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv@8.18.0 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/cli@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv@8.18.0 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/build@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/cli@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-FASTURI-16642399:
+    - '@modelcontextprotocol/server-sequential-thinking@2025.12.18 > @modelcontextprotocol/sdk@1.26.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'rulesync@8.8.1 > @modelcontextprotocol/sdk@1.27.1 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: MCP dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'stylelint@17.9.0 > table@6.9.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'rulesync@8.8.1 > fastmcp@3.34.0 > @modelcontextprotocol/sdk@1.26.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: MCP dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/node@2.7.41 > @module-federation/enhanced@2.3.3 > schema-utils@4.3.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > volar-service-yaml@0.0.70 > yaml-language-server@1.20.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'ng-packagr@20.3.2 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Angular build dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/build@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv@8.18.0 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/cli@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv@8.18.0 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/build@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/cli@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-HONO-16438966:
+    - '@modelcontextprotocol/server-sequential-thinking@2025.12.18 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'rulesync@8.8.1 > @modelcontextprotocol/sdk@1.27.1 > hono@4.11.7':
+        reason: MCP dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'rulesync@8.8.1 > fastmcp@3.34.0 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
+        reason: MCP dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'rulesync@8.8.1 > fastmcp@3.34.0 > hono@4.11.9':
+        reason: MCP dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/cli@20.3.26 > @modelcontextprotocol/sdk@1.26.0 > hono@4.11.7':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-TMP-16881240:
+    - '@nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'nx@20.8.4 > tmp@0.2.5':
+        reason: Build dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'patch-package@8.0.1 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@axe-core/cli@4.11.2 > selenium-webdriver@4.41.0 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/esbuild@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/eslint@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/rollup@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/web@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > @nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'karma@6.4.4 > tmp@0.2.5':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-SHELLQUOTE-16799355:
+    - 'npm-run-all@4.1.5 > shell-quote@1.8.3':
+        reason: Dev script dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'npm-run-all2@8.0.4 > shell-quote@1.8.3':
+        reason: Dev script dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-DEVALUE-16697433:
+    - '@astrojs/react@5.0.4 > devalue@5.7.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'astro@6.1.9 > devalue@5.7.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-IMMUTABLE-15423650:
+    - '@angular/build@20.3.26 > sass@1.90.0 > immutable@5.1.4':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-PACOTE-8225084:
+    - '@angular/cli@20.3.26 > pacote@21.0.4':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-SOCKETIOPARSER-15680278:
+    - 'karma@6.4.4 > socket.io@4.8.1 > socket.io-parser@4.2.4':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-TAR-15307072:
+    - '@angular/cli@20.3.26 > pacote@21.0.4 > tar@7.5.2':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-TAR-15416075:
+    - '@angular/cli@20.3.26 > pacote@21.0.4 > tar@7.5.2':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-TAR-15456201:
+    - '@angular/cli@20.3.26 > pacote@21.0.4 > tar@7.5.2':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
 patch: {}
