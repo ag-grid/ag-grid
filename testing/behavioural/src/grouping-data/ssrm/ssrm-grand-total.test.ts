@@ -1498,6 +1498,300 @@ describe('SSRM grand total row', () => {
         expect(api.getRowNode(GRAND_TOTAL_ID)?.data?.value).toBe(expectedTotal);
     });
 
+    test('pinnedBottom grand total is replaced (not duplicated) after filter change', async () => {
+        const api: GridApi<RowData> = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value', filter: 'agNumberColumnFilter' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'pinnedBottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    const filter = params.request.filterModel as { value?: { filter?: number } } | null;
+                    const threshold = filter?.value?.filter;
+                    const filtered = threshold != null ? flatRows.filter((r) => r.value > threshold) : flatRows;
+                    const rowData: any[] = [...filtered];
+                    if (params.needsGrandTotal) {
+                        const total = filtered.reduce((s, r) => s + r.value, 0);
+                        rowData.push({ id: GRAND_TOTAL_ID, value: total });
+                    }
+                    setTimeout(() => params.success({ rowData, rowCount: filtered.length }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(60);
+
+        await new GridRows(api, 'pinnedBottom initial').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:1 id:"1" value:10
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:60
+        `);
+
+        api.setFilterModel({ value: { type: 'greaterThan', filter: 15 } });
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(50);
+
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(50);
+
+        await new GridRows(api, 'pinnedBottom after filter').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:"2" value:20
+            └── LEAF id:3 id:"3" value:30
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:50
+        `);
+    });
+
+    test('pinnedTop grand total is replaced (not duplicated) after filter change', async () => {
+        const api: GridApi<RowData> = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value', filter: 'agNumberColumnFilter' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'pinnedTop',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    const filter = params.request.filterModel as { value?: { filter?: number } } | null;
+                    const threshold = filter?.value?.filter;
+                    const filtered = threshold != null ? flatRows.filter((r) => r.value > threshold) : flatRows;
+                    const rowData: any[] = [...filtered];
+                    if (params.needsGrandTotal) {
+                        const total = filtered.reduce((s, r) => s + r.value, 0);
+                        rowData.push({ id: GRAND_TOTAL_ID, value: total });
+                    }
+                    setTimeout(() => params.success({ rowData, rowCount: filtered.length }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        expect(api.getPinnedTopRowCount()).toBe(1);
+        expect(api.getPinnedTopRow(0)?.data?.value).toBe(60);
+
+        api.setFilterModel({ value: { type: 'greaterThan', filter: 15 } });
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(20);
+
+        expect(api.getPinnedTopRowCount()).toBe(1);
+        expect(api.getPinnedBottomRowCount()).toBe(0);
+        expect(api.getPinnedTopRow(0)?.data?.value).toBe(50);
+    });
+
+    test('pinnedBottom grand total survives repeated filter changes', async () => {
+        const api: GridApi<RowData> = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value', filter: 'agNumberColumnFilter' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'pinnedBottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    const filter = params.request.filterModel as { value?: { filter?: number } } | null;
+                    const threshold = filter?.value?.filter;
+                    const filtered = threshold != null ? flatRows.filter((r) => r.value > threshold) : flatRows;
+                    const rowData: any[] = [...filtered];
+                    if (params.needsGrandTotal) {
+                        const total = filtered.reduce((s, r) => s + r.value, 0);
+                        rowData.push({ id: GRAND_TOTAL_ID, value: total });
+                    }
+                    setTimeout(() => params.success({ rowData, rowCount: filtered.length }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        const thresholds = [15, 25, undefined, 9, 15];
+        const expectedValues = [50, 30, 60, 60, 50];
+        for (let i = 0; i < thresholds.length; i++) {
+            const t = thresholds[i];
+            api.setFilterModel(t === undefined ? null : { value: { type: 'greaterThan', filter: t } });
+            await waitForNoLoadingRows(api);
+            await asyncSetTimeout(10);
+
+            expect(api.getPinnedBottomRowCount()).toBe(1);
+            expect(api.getPinnedBottomRow(0)?.data?.value).toBe(expectedValues[i]);
+        }
+    });
+
+    test('pinnedBottom grand total is replaced after aggregation change', async () => {
+        // Aggregation change resets the store entirely — exercises the pinned cleanup path.
+        const api: GridApi<RowData> = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value', aggFunc: 'sum' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'pinnedBottom',
+            serverSideDatasource: createFlatDatasource(),
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+
+        api.setColumnAggFunc('value', 'avg');
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(20);
+
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+    });
+
+    test('pinnedBottom grand total is replaced after refreshServerSide({ purge: true })', async () => {
+        let total = 60;
+        const api: GridApi<RowData> = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'pinnedBottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    const rowData: any[] = [...flatRows];
+                    if (params.needsGrandTotal) {
+                        rowData.push({ id: GRAND_TOTAL_ID, value: total });
+                    }
+                    setTimeout(() => params.success({ rowData, rowCount: flatRows.length }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(60);
+
+        total = 123;
+        api.refreshServerSide({ purge: true });
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(20);
+
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(123);
+    });
+
+    test('pinnedBottom grand total with grouped grid survives filter change', async () => {
+        interface GroupedRow {
+            id: string;
+            category: string;
+            value: number;
+        }
+
+        const serverRows: GroupedRow[] = [
+            { id: 'a1', category: 'A', value: 10 },
+            { id: 'a2', category: 'A', value: 20 },
+            { id: 'b1', category: 'B', value: 30 },
+        ];
+
+        const api = gridManager.createGrid(null, {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                { field: 'value', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+            ],
+            autoGroupColumnDef: { headerName: 'Category' },
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<GroupedRow>) => params.data.id,
+            grandTotalRow: 'pinnedBottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    const { request } = params;
+                    const filter = request.filterModel as { value?: { filter?: number } } | null;
+                    const threshold = filter?.value?.filter;
+                    const filtered = threshold != null ? serverRows.filter((r) => r.value > threshold) : serverRows;
+                    let rowData: any[];
+
+                    if (request.groupKeys.length === 0) {
+                        const groups = new Map<string, number>();
+                        for (const row of filtered) {
+                            groups.set(row.category, (groups.get(row.category) ?? 0) + row.value);
+                        }
+                        rowData = [...groups.entries()].map(([category, value]) => ({
+                            id: `category:${category}`,
+                            category,
+                            value,
+                            group: true,
+                            leafGroup: true,
+                            key: category,
+                        }));
+                        if (params.needsGrandTotal) {
+                            const total = filtered.reduce((s, r) => s + r.value, 0);
+                            rowData.push({ id: GRAND_TOTAL_ID, value: total });
+                        }
+                    } else {
+                        const groupKey = request.groupKeys[0];
+                        rowData = filtered.filter((r) => r.category === groupKey).map((r) => ({ ...r }));
+                    }
+
+                    const dataRowCount =
+                        request.groupKeys.length === 0
+                            ? rowData.filter((r: any) => r.id !== GRAND_TOTAL_ID).length
+                            : rowData.length;
+                    setTimeout(() => params.success({ rowData, rowCount: dataRowCount }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(60);
+
+        // Filter out category A entirely
+        api.setFilterModel({ value: { type: 'greaterThan', filter: 25 } });
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(20);
+
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+        expect(api.getPinnedBottomRow(0)?.data?.value).toBe(30);
+    });
+
+    test('switching from pinnedBottom to bottom after filter change leaves no orphan pinned row', async () => {
+        const api: GridApi<RowData> = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value', filter: 'agNumberColumnFilter' }],
+            rowModelType: 'serverSide',
+            getRowId: (params: GetRowIdParams<RowData>) => params.data.id,
+            grandTotalRow: 'pinnedBottom',
+            serverSideDatasource: {
+                getRows(params: IServerSideGetRowsParams) {
+                    const filter = params.request.filterModel as { value?: { filter?: number } } | null;
+                    const threshold = filter?.value?.filter;
+                    const filtered = threshold != null ? flatRows.filter((r) => r.value > threshold) : flatRows;
+                    const rowData: any[] = [...filtered];
+                    if (params.needsGrandTotal) {
+                        const total = filtered.reduce((s, r) => s + r.value, 0);
+                        rowData.push({ id: GRAND_TOTAL_ID, value: total });
+                    }
+                    setTimeout(() => params.success({ rowData, rowCount: filtered.length }), 0);
+                },
+            },
+        });
+
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+
+        api.setFilterModel({ value: { type: 'greaterThan', filter: 15 } });
+        await waitForNoLoadingRows(api);
+        await asyncSetTimeout(20);
+        expect(api.getPinnedBottomRowCount()).toBe(1);
+
+        api.setGridOption('grandTotalRow', 'bottom');
+        await asyncSetTimeout(20);
+
+        expect(api.getPinnedBottomRowCount()).toBe(0);
+        expect(api.getPinnedTopRowCount()).toBe(0);
+
+        await new GridRows(api, 'after switch to inline bottom').check(unindentText`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:"2" value:20
+            ├── LEAF id:3 id:"3" value:30
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"rowGroupFooter_ROOT_NODE_ID" value:50
+        `);
+    });
+
     test('async grand total via transaction: filter change hides then restores grand total', async () => {
         const computeTotal = (threshold?: number) =>
             flatRows.filter((r) => threshold === undefined || r.value > threshold).reduce((s, r) => s + r.value, 0);
