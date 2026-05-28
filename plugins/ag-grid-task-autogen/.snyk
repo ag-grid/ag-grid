@@ -148,3 +148,12 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
+  SNYK-JS-TMP-16881240:
+    - '@nx/devkit@20.8.4 > tmp@0.2.5':
+        reason: Build dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'nx@20.8.4 > tmp@0.2.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z

@@ -1149,6 +1149,18 @@ ignore:
         reason: Dev dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-05-28T00:00:00.000Z
+    - 'ng-packagr@20.3.2 > ajv@8.17.1':
+        reason: Angular build dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/build@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@angular/cli@20.3.26 > @angular-devkit/architect@0.2003.26 > @angular-devkit/core@20.3.26 > ajv-formats@3.0.1 > ajv@8.17.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
   SNYK-JS-MINIMATCH-15309438:
     - jest-runner@29.7.0 > @jest/transform@29.7.0 > babel-plugin-istanbul@6.1.1 > test-exclude@6.0.0 > minimatch@3.1.2:
         reason: test/lint library - not in final production build

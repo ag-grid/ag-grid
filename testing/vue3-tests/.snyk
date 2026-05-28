@@ -85,4 +85,9 @@ ignore:
         reason: Used in build & dev - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T11:46:21.570Z
+  SNYK-JS-SHELLQUOTE-16799355:
+    - 'npm-run-all@4.1.5 > shell-quote@1.8.3':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
 patch: {}

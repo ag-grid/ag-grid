@@ -256,4 +256,41 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+  SNYK-JS-AXIOS-16417750:
+    - 'vite-plugin-mkcert@1.17.9 > axios@1.13.1':
+        reason: Build dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-BRACEEXPANSION-16755174:
+    - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-DEVALUE-16697433:
+    - '@astrojs/react@5.0.4 > devalue@5.7.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'astro@6.1.9 > devalue@5.7.1':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-FASTURI-16642394:
+    - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > volar-service-yaml@0.0.70 > yaml-language-server@1.20.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-FASTURI-16642399:
+    - 'playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Testing dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@astrojs/check@0.9.8 > @astrojs/language-server@2.16.6 > volar-service-yaml@0.0.70 > yaml-language-server@1.20.0 > ajv@8.17.1 > fast-uri@3.1.0':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
 patch: {}

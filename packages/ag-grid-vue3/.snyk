@@ -84,4 +84,14 @@ ignore:
         reason: Build dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+  SNYK-JS-BRACEEXPANSION-16755174:
+    - 'replace-in-file@8.4.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-SHELLQUOTE-16799355:
+    - 'npm-run-all2@8.0.4 > shell-quote@1.8.3':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
 patch: {}

@@ -269,4 +269,13 @@ ignore:
         reason: Used in testing - ReDOS attack would only affect developer machines
         expires: 2026-06-08T00:00:00.000Z
         created: 2026-02-27T18:30:10.093Z
+  SNYK-JS-BRACEEXPANSION-16755174:
+    - '@typescript-eslint/parser@8.59.0 > @typescript-eslint/typescript-estree@8.59.0 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Linting dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - '@typescript-eslint/eslint-plugin@8.59.0 > @typescript-eslint/type-utils@8.59.0 > @typescript-eslint/typescript-estree@8.59.0 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Linting dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
 patch: {}
