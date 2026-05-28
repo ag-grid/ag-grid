@@ -121,13 +121,8 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
             this.sparklineOptions.type ??= 'line';
 
-            // No `tooltip.renderer` is installed when the user didn't supply one — the
-            // chart-side sparkline preset produces a sensible default that includes
-            // the x value when it is user-meaningful. Installing a function here would
-            // poison the chart's structural-options cache key and disable the optimised
-            // creation path for every sparkline cell.
-
-            // create new sparkline
+            // No default `tooltip.renderer` install — the chart-side sparkline preset
+            // supplies one. A function here would poison the structural-options cache.
             this.sparklineInstance = params.createSparkline!(this.sparklineOptions);
             return true;
         } else if (this.sparklineInstance) {
