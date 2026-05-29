@@ -68,7 +68,7 @@ export abstract class AgAbstractInputField<
 
     public override postConstruct() {
         super.postConstruct();
-        this.setInputType(this.inputType!);
+        this.setInputType(this.inputType ?? 'text');
 
         const { eLabel, eWrapper, eInput, className } = this;
         eLabel.classList.add(`${className}-label`);
@@ -96,10 +96,47 @@ export abstract class AgAbstractInputField<
         this.activateTabIndex([eInput], tabIndex);
     }
 
+    /**
+     * Registers input and IME composition listeners.
+     * Handles a browser quirk: after compositionend, some IMEs fire an input event
+     * that duplicates the committed character. We capture the correct value at
+     * compositionend and correct the DOM on the following input event if needed.
+     */
     protected addInputListeners() {
+        let valueAtCompositionEnd: string | null = null;
+
         this.addManagedElementListeners(this.eInput, {
-            input: (e: InputEvent) => this.setValue((e.target as HTMLInputElement).value as TValue),
+            compositionstart: () => {
+                valueAtCompositionEnd = null;
+            },
+            compositionend: () => {
+                valueAtCompositionEnd = (this.eInput as HTMLInputElement).value;
+                this.setValue(valueAtCompositionEnd as TValue);
+            },
+            input: (e: InputEvent) => {
+                if (e.isComposing) {
+                    return;
+                }
+
+                if (valueAtCompositionEnd !== null) {
+                    this.reconcileValueAfterComposition(e.target as HTMLInputElement, valueAtCompositionEnd);
+                    valueAtCompositionEnd = null;
+                    return;
+                }
+
+                this.setValue((e.target as HTMLInputElement).value as TValue);
+            },
         });
+    }
+
+    /**
+     * Corrects DOM if the browser duplicated the committed character in the input
+     * event that follows compositionend. Internal state was already set in compositionend.
+     */
+    private reconcileValueAfterComposition(inputEl: HTMLInputElement, correctValue: string): void {
+        if (inputEl.value !== correctValue) {
+            inputEl.value = correctValue;
+        }
     }
 
     public setInputType(inputType?: string) {
