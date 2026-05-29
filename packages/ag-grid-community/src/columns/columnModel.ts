@@ -187,6 +187,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const {
             autoColSvc,
             selectionColSvc,
+            calculatedColsSvc,
             rowNumbersSvc,
             quickFilter,
             pivotResultCols,
@@ -211,6 +212,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.restoreColOrder(cols);
         }
 
+        calculatedColsSvc?.orderDynamicColumns(cols.list);
         this.positionLockedCols(cols);
         showRowGroupCols?.refresh();
         quickFilter?.refreshCols();

@@ -340,6 +340,7 @@ describe('ag-grid calculated columns', () => {
         });
         await asyncSetTimeout(1);
 
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual(['revenue', 'cost', 'profit']);
         await new GridRows(api, 'added calculated column', gridRowsOpts).check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 revenue:10 cost:3 profit:7
@@ -414,6 +415,70 @@ describe('ag-grid calculated columns', () => {
 
         expect(findColumnDef(api.getColumnDefs()!, 'profit')?.calculatedExpression).toBe('[revenue] - [cost]');
         expect(findColumnDef(api.getColumnDefs()!, 'margin')).toBeUndefined();
+    });
+
+    test('reset column state removes dynamic calculated columns and restores provided calculated columns', async () => {
+        const removed = vi.fn();
+        const api = createGrid('calculated-reset-column-state', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            onCalculatedColumnRemoved: removed,
+        });
+
+        api.addCalculatedColumn({ colId: 'margin', calculatedExpression: '[profit] / [revenue]' });
+        await asyncSetTimeout(1);
+
+        expect(api.getColumn('margin')).toBeTruthy();
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'revenue',
+            'cost',
+            'profit',
+            'margin',
+        ]);
+        const columnState = api.getColumnState();
+
+        api.updateCalculatedColumn('profit', {
+            headerName: 'Updated Profit',
+            calculatedExpression: '[revenue] * [cost]',
+        });
+        await asyncSetTimeout(1);
+        api.removeCalculatedColumn('profit');
+        await asyncSetTimeout(1);
+
+        expect(api.getColumn('profit')).toBeNull();
+        expect(removed).toHaveBeenCalledTimes(1);
+
+        api.resetColumnState();
+        await asyncSetTimeout(1);
+
+        expect(api.getColumn('margin')).toBeNull();
+        expect(api.getColumn('profit')).toBeTruthy();
+        expect(removed).toHaveBeenCalledTimes(1);
+        expect(findColumnDef(api.getColumnDefs()!, 'margin')).toBeUndefined();
+        expect(findColumnDef(api.getColumnDefs()!, 'profit')).toEqual(
+            expect.objectContaining({
+                colId: 'profit',
+                headerName: 'Profit',
+                calculatedExpression: '[revenue] - [cost]',
+            })
+        );
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual(['revenue', 'cost', 'profit']);
+
+        expect(api.applyColumnState({ state: columnState, applyOrder: true })).toBe(true);
+        await asyncSetTimeout(1);
+
+        expect(api.getColumn('margin')).toBeTruthy();
+        expect(findColumnDef(api.getColumnDefs()!, 'margin')?.calculatedExpression).toBe('[profit] / [revenue]');
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'revenue',
+            'cost',
+            'profit',
+            'margin',
+        ]);
     });
 
     test('grid api updates calculated column cellDataType without keeping stale boolean renderer', async () => {
@@ -1106,9 +1171,124 @@ describe('ag-grid calculated columns', () => {
         expect(
             projectedYear2025?.children.map((colDef) => ('children' in colDef ? colDef.groupId : colDef.colId))
         ).toEqual(['revenue_2025', 'calculated_1', 'cost_2025']);
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'revenue_2025',
+            'calculated_1',
+            'cost_2025',
+            'revenue_2026',
+            'cost_2026',
+        ]);
         expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBe(
             '[revenue_2025] - [cost_2025]'
         );
+    });
+
+    test('dialog inserts calculated columns after generated auto group columns in visible order', async () => {
+        const api = createGrid('calculated-dialog-auto-group-order', {
+            rowData: [{ id: 'r1', productType: 'A', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'productType', rowGroup: true, hide: true }, { field: 'revenue' }, { field: 'cost' }],
+        });
+
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'ag-Grid-AutoColumn',
+            'revenue',
+            'cost',
+        ]);
+
+        showColumnMenu(api, 'ag-Grid-AutoColumn');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'ag-Grid-AutoColumn',
+            'calculated_1',
+            'revenue',
+            'cost',
+        ]);
+        expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBe('[revenue] - [cost]');
+    });
+
+    test('dialog inserts calculated columns after the clicked generated auto group column in multiple-columns mode', async () => {
+        const api = createGrid('calculated-dialog-multiple-auto-group-order', {
+            groupDisplayType: 'multipleColumns',
+            rowData: [{ id: 'r1', productType: 'A', country: 'UK', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'productType', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'revenue' },
+                { field: 'cost' },
+            ],
+        });
+
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'ag-Grid-AutoColumn-productType',
+            'ag-Grid-AutoColumn-country',
+            'revenue',
+            'cost',
+        ]);
+
+        showColumnMenu(api, 'ag-Grid-AutoColumn-productType');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'ag-Grid-AutoColumn-productType',
+            'calculated_1',
+            'ag-Grid-AutoColumn-country',
+            'revenue',
+            'cost',
+        ]);
+        expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBe('[revenue] - [cost]');
+    });
+
+    test('dialog-anchored calculated column can be moved away from its anchor and stays moved across refreshes', async () => {
+        const api = createGrid('calculated-dialog-anchor-then-move', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3, other: 1 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }, { field: 'other' }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        // Placed immediately after its anchor on creation.
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'revenue',
+            'calculated_1',
+            'cost',
+            'other',
+        ]);
+
+        api.moveColumns(['calculated_1'], 3);
+        await asyncSetTimeout(1);
+
+        // A subsequent column refresh must not snap it back to the anchor.
+        api.setColumnsVisible(['other'], false);
+        await asyncSetTimeout(1);
+        api.setColumnsVisible(['other'], true);
+        await asyncSetTimeout(1);
+
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'revenue',
+            'cost',
+            'other',
+            'calculated_1',
+        ]);
     });
 
     test('dispatches calculated column API lifecycle events', async () => {

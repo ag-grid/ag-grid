@@ -23,6 +23,8 @@ import {
 import {
     clearStaleDataTypeProperties,
     collectColIdsAndFields,
+    indexOfColDef,
+    indexOfColId,
     replaceBracketReferences,
 } from './calculatedColumnUtils';
 
@@ -40,6 +42,7 @@ type DynamicCalculatedColumn = {
     colDef: ColDef;
     anchorColId?: string;
     anchorColDef?: ColDef | null;
+    visibleAnchorColId?: string;
 };
 
 type DynamicCalculatedColumnOverride = {
@@ -56,11 +59,19 @@ type DynamicCalculatedColumnSuppression = {
 export class CalculatedColumnsService extends BeanStub implements NamedBean, ICalculatedColumnsService {
     public readonly beanName = 'calculatedColsSvc' as const;
 
+    // calculated columns added via API/dialog, projected into the column tree (not in user `columnDefs`).
     private dynamicColumns: DynamicCalculatedColumn[] = [];
+    // dynamic columns parked by `resetColumnState` so a later `applyColumnState` can restore them.
+    private inactiveDynamicColumns: DynamicCalculatedColumn[] = [];
+    // edits to user-declared calculated columns, applied over the original colDef during projection.
     private readonly dynamicOverrides = new Map<string, DynamicCalculatedColumnOverride>();
+    // user-declared calculated columns removed by the user, suppressed from the projected tree.
     private readonly dynamicSuppressions = new Map<string, DynamicCalculatedColumnSuppression>();
+    // last known validation state per calculated column, to detect changes and fire validation events.
     private validationStatesByColId = new Map<string, ValidationState>();
+    // guards the first validation pass so we don't emit spurious change events before the baseline exists.
     private validationStatesInitialised = false;
+    // re-entry counter: when > 0, projection-triggered refreshes skip validation checks.
     private suppressValidationChecks = 0;
 
     public postConstruct(): void {
@@ -83,6 +94,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
         const colId = colDef.colId ?? this.createUniqueColId();
         const nextColDef = this.toCalculatedColDef({ ...colDef, colId });
+        this.removeInactiveDynamicColumn(colId);
         this.dynamicColumns.push({ colId, colDef: nextColDef });
         this.refreshDynamicColumns(source);
 
@@ -193,11 +205,13 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             const headerName = this.getLocaleTextFunc()('calculatedColumnDefaultTitle', 'New title');
             const draft: CalculatedColumnDraft = { colId, headerName, ...DEFAULT_DRAFT };
             this.showDialog(draft, (nextDraft) => {
+                this.removeInactiveDynamicColumn(nextDraft.colId);
                 this.dynamicColumns.push({
                     colId: nextDraft.colId,
                     colDef: this.toColDef(nextDraft),
                     anchorColId: column?.colId,
                     anchorColDef: column?.getUserProvidedColDef(),
+                    visibleAnchorColId: column?.colId,
                 });
                 this.refreshDynamicColumns('calculatedColumn');
                 this.focusCalculatedColumn(nextDraft.colId);
@@ -230,7 +244,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
 
         const expression = column.colDef.calculatedExpression;
-        const dynamicIndex = this.getDynamicColumnIndex(column.colId);
+        const dynamicIndex = indexOfColId(this.dynamicColumns, column.colId);
         if (dynamicIndex >= 0) {
             this.dynamicColumns.splice(dynamicIndex, 1);
             this.removeDynamicAnchors(column.colId);
@@ -260,6 +274,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const sourceColumnDefs = columnDefs ?? [];
         const result = this.projectColumnDefs(sourceColumnDefs, insertedDynamicColIds);
         let projectedColumnDefs = result.columnDefs;
+        let visibleAnchorInsertIndex = 0;
 
         for (const dynamicColumn of this.dynamicColumns) {
             if (insertedDynamicColIds.has(dynamicColumn.colId)) {
@@ -269,22 +284,81 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             if (projectedColumnDefs === sourceColumnDefs) {
                 projectedColumnDefs = sourceColumnDefs.slice();
             }
-            projectedColumnDefs.push(dynamicColumn.colDef);
+            const insertIndex =
+                dynamicColumn.visibleAnchorColId != null ? visibleAnchorInsertIndex : projectedColumnDefs.length;
+            projectedColumnDefs.splice(insertIndex, 0, dynamicColumn.colDef);
             insertedDynamicColIds.add(dynamicColumn.colId);
             this.insertDynamicColumnsAfterDynamicColumn(
                 dynamicColumn.colId,
                 projectedColumnDefs,
                 insertedDynamicColIds
             );
+            if (dynamicColumn.visibleAnchorColId != null) {
+                visibleAnchorInsertIndex = indexOfColDef(projectedColumnDefs, dynamicColumn.colId) + 1;
+            }
         }
 
         return projectedColumnDefs;
     }
 
-    public resetDynamicColumnDefs(): void {
+    public orderDynamicColumns(columns: AgColumn[]): void {
+        for (let i = this.dynamicColumns.length - 1; i >= 0; --i) {
+            const dynamicColumn = this.dynamicColumns[i];
+            const visibleAnchorColId = dynamicColumn.visibleAnchorColId;
+            if (visibleAnchorColId == null) {
+                continue;
+            }
+
+            if (this.moveColumnAfter(columns, dynamicColumn.colId, visibleAnchorColId)) {
+                dynamicColumn.visibleAnchorColId = undefined;
+            }
+        }
+    }
+
+    public resetDynamicColumnDefs(preserveCreatedColumns = false): boolean {
+        if (!preserveCreatedColumns) {
+            this.inactiveDynamicColumns = [];
+        }
+
+        if (!this.hasDynamicColumnState()) {
+            return false;
+        }
+
+        if (preserveCreatedColumns) {
+            for (let i = 0, len = this.dynamicColumns.length; i < len; ++i) {
+                this.addInactiveDynamicColumn(this.dynamicColumns[i]);
+            }
+        }
+
         this.dynamicColumns = [];
         this.dynamicOverrides.clear();
         this.dynamicSuppressions.clear();
+        return true;
+    }
+
+    public restoreDynamicColumnDefs(colIds: string[]): boolean {
+        if (!this.inactiveDynamicColumns.length) {
+            return false;
+        }
+
+        let restored = false;
+        for (let i = 0, len = colIds.length; i < len; ++i) {
+            const colId = colIds[i];
+            const inactiveIndex = indexOfColId(this.inactiveDynamicColumns, colId);
+            if (inactiveIndex < 0) {
+                continue;
+            }
+
+            const inactiveDynamicColumn = this.inactiveDynamicColumns[inactiveIndex];
+            this.inactiveDynamicColumns.splice(inactiveIndex, 1);
+            if (this.getDynamicColumn(colId)) {
+                continue;
+            }
+
+            this.dynamicColumns.push(inactiveDynamicColumn);
+            restored = true;
+        }
+        return restored;
     }
 
     private hasDynamicColumnState(): boolean {
@@ -308,6 +382,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
         for (let i = 0, len = this.dynamicColumns.length; i < len; ++i) {
             usedIds.add(this.dynamicColumns[i].colId);
+        }
+        for (let i = 0, len = this.inactiveDynamicColumns.length; i < len; ++i) {
+            usedIds.add(this.inactiveDynamicColumns[i].colId);
         }
 
         let index = 1;
@@ -402,22 +479,31 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private getDynamicColumn(colId: string): DynamicCalculatedColumn | undefined {
-        for (let i = 0, len = this.dynamicColumns.length; i < len; ++i) {
-            const dynamicColumn = this.dynamicColumns[i];
-            if (dynamicColumn.colId === colId) {
-                return dynamicColumn;
-            }
-        }
-        return undefined;
+        const index = indexOfColId(this.dynamicColumns, colId);
+        return index < 0 ? undefined : this.dynamicColumns[index];
     }
 
-    private getDynamicColumnIndex(colId: string): number {
-        for (let i = 0, len = this.dynamicColumns.length; i < len; ++i) {
-            if (this.dynamicColumns[i].colId === colId) {
-                return i;
-            }
+    private addInactiveDynamicColumn(dynamicColumn: DynamicCalculatedColumn): void {
+        this.removeInactiveDynamicColumn(dynamicColumn.colId);
+        this.inactiveDynamicColumns.push(dynamicColumn);
+    }
+
+    private removeInactiveDynamicColumn(colId: string): void {
+        const inactiveIndex = indexOfColId(this.inactiveDynamicColumns, colId);
+        if (inactiveIndex >= 0) {
+            this.inactiveDynamicColumns.splice(inactiveIndex, 1);
         }
-        return -1;
+    }
+
+    private moveColumnAfter(columns: AgColumn[], colId: string, anchorColId: string): boolean {
+        const columnIndex = indexOfColId(columns, colId);
+        if (columnIndex < 0 || indexOfColId(columns, anchorColId) < 0) {
+            return false;
+        }
+
+        const [column] = columns.splice(columnIndex, 1);
+        columns.splice(indexOfColId(columns, anchorColId) + 1, 0, column);
+        return true;
     }
 
     private insertDynamicColumnsAfterDynamicColumn(

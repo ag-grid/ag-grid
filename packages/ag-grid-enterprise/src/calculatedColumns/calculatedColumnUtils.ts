@@ -1,6 +1,27 @@
 import type { ColDef, ColGroupDef } from 'ag-grid-community';
 import { _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES } from 'ag-grid-community';
 
+/** Returns the index of the first item with a matching `colId`, or -1. Works for any colId-keyed list (dynamic column records, `AgColumn`s, etc.). */
+export function indexOfColId<T extends { colId: string }>(items: T[], colId: string): number {
+    for (let i = 0, len = items.length; i < len; ++i) {
+        if (items[i].colId === colId) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+/** Returns the index of the first leaf colDef whose `colId` or `field` matches, or -1. Column groups are skipped. */
+export function indexOfColDef(columnDefs: (ColDef | ColGroupDef)[], colId: string): number {
+    for (let i = 0, len = columnDefs.length; i < len; ++i) {
+        const colDef = columnDefs[i];
+        if (!('children' in colDef) && (colDef.colId === colId || colDef.field === colId)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 /**
  * Walks a (possibly nested) columnDefs tree and returns every `colId` and `field` it encounters
  * on leaf columns. Used by `createUniqueColId` to scan the user-provided source of truth for id
