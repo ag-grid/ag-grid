@@ -131,6 +131,12 @@ jobs:
                         console.warn(`JIRA ticket ${issue_key} not found.`);
                         return;
                     }
+                    const components = issue.fields.components || [];
+                    const isChartsOnly = components.length > 0 && components.every(c => c.name === 'Charts');
+                    if (isChartsOnly) {
+                        console.log(`::warning:: JIRA ticket ${issue_key} only has the 'Charts' component, skipping.`);
+                        return;
+                    }
                     const isTransitioning = moveOrMention === 'move' && !readOnlyTransitions.has(issue.fields.status.name.toUpperCase());
                     
                     // blocks section
