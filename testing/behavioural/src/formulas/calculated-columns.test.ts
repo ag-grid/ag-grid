@@ -1291,6 +1291,45 @@ describe('ag-grid calculated columns', () => {
         ]);
     });
 
+    test('dialog columns from different auto group columns each stay under their own anchor', async () => {
+        const api = createGrid('calculated-dialog-multiple-anchors', {
+            groupDisplayType: 'multipleColumns',
+            rowData: [{ id: 'r1', productType: 'A', country: 'UK', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'productType', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'revenue' },
+                { field: 'cost' },
+            ],
+        });
+
+        showColumnMenu(api, 'ag-Grid-AutoColumn-productType');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+        setExpression('[Revenue] - [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        showColumnMenu(api, 'ag-Grid-AutoColumn-country');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+        setExpression('[Revenue] + [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        // Adding the second column must not displace the first from its own anchor.
+        expect(api.getAllDisplayedColumns().map((column) => column.getColId())).toEqual([
+            'ag-Grid-AutoColumn-productType',
+            'calculated_1',
+            'ag-Grid-AutoColumn-country',
+            'calculated_2',
+            'revenue',
+            'cost',
+        ]);
+    });
+
     test('dispatches calculated column API lifecycle events', async () => {
         const created = vi.fn();
         const changed = vi.fn();

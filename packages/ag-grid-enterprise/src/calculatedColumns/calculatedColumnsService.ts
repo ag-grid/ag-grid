@@ -6,6 +6,7 @@ import type {
     ColDef,
     ColGroupDef,
     ColKey,
+    Column,
     ColumnEventType,
     ICalculatedColumnsService,
     NamedBean,
@@ -77,7 +78,20 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     public postConstruct(): void {
         this.addManagedEventListeners({
             newColumnsLoaded: (event) => this.checkValidationStates(event.source),
+            columnMoved: (event) => this.releaseVisibleAnchors(event.columns),
         });
+    }
+
+    private releaseVisibleAnchors(columns: Column[] | null | undefined): void {
+        if (!columns) {
+            return;
+        }
+        for (let i = 0, len = columns.length; i < len; ++i) {
+            const dynamicColumn = this.getDynamicColumn(columns[i].getColId());
+            if (dynamicColumn) {
+                dynamicColumn.visibleAnchorColId = undefined;
+            }
+        }
     }
 
     public addCalculatedColumn(colDef: CalculatedColumnDef, source: 'api' | 'calculatedColumn' = 'api'): void {
@@ -305,12 +319,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         for (let i = this.dynamicColumns.length - 1; i >= 0; --i) {
             const dynamicColumn = this.dynamicColumns[i];
             const visibleAnchorColId = dynamicColumn.visibleAnchorColId;
-            if (visibleAnchorColId == null) {
-                continue;
-            }
-
-            if (this.moveColumnAfter(columns, dynamicColumn.colId, visibleAnchorColId)) {
-                dynamicColumn.visibleAnchorColId = undefined;
+            if (visibleAnchorColId != null) {
+                this.moveColumnAfter(columns, dynamicColumn.colId, visibleAnchorColId);
             }
         }
     }
@@ -495,15 +505,14 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
     }
 
-    private moveColumnAfter(columns: AgColumn[], colId: string, anchorColId: string): boolean {
+    private moveColumnAfter(columns: AgColumn[], colId: string, anchorColId: string): void {
         const columnIndex = indexOfColId(columns, colId);
         if (columnIndex < 0 || indexOfColId(columns, anchorColId) < 0) {
-            return false;
+            return;
         }
 
         const [column] = columns.splice(columnIndex, 1);
         columns.splice(indexOfColId(columns, anchorColId) + 1, 0, column);
-        return true;
     }
 
     private insertDynamicColumnsAfterDynamicColumn(
