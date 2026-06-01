@@ -110,18 +110,20 @@ export abstract class BaseEnvironment<
         this.mutationObserver.disconnect();
         let node = this.eRootDiv.parentElement;
         while (node) {
-            let isThemeEl = false;
-            for (const cls of node.classList) {
-                if (cls.startsWith('ag-theme-')) {
-                    isThemeEl = true;
-                    themeClasses.add(cls);
+            if (!node.classList.contains('ag-styled-root')) {
+                let isThemeEl = false;
+                for (const cls of node.classList) {
+                    if (cls.startsWith('ag-theme-')) {
+                        isThemeEl = true;
+                        themeClasses.add(cls);
+                    }
                 }
-            }
-            if (isThemeEl) {
-                this.mutationObserver.observe(node, {
-                    attributes: true,
-                    attributeFilter: ['class'],
-                });
+                if (isThemeEl) {
+                    this.mutationObserver.observe(node, {
+                        attributes: true,
+                        attributeFilter: ['class'],
+                    });
+                }
             }
             node = node.parentElement;
         }
