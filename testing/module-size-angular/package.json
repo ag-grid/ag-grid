@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-module-size-angular",
-  "version": "35.3.1-beta.20260529.1416",
+  "version": "35.3.1-beta.20260601.1350",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -20,9 +20,9 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
-    "ag-grid-angular": "35.3.1-beta.20260529.1416",
-    "ag-grid-community": "35.3.1-beta.20260529.1416",
-    "ag-grid-enterprise": "35.3.1-beta.20260529.1416",
+    "ag-grid-angular": "35.3.1-beta.20260601.1350",
+    "ag-grid-community": "35.3.1-beta.20260601.1350",
+    "ag-grid-enterprise": "35.3.1-beta.20260601.1350",
     "ag-charts-community": "13.3.1-beta.20260528",
     "ag-charts-enterprise": "13.3.1-beta.20260528",
     "rxjs": "~7.8.2",
