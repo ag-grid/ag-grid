@@ -20,8 +20,8 @@ import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 // Documented ordering rules:
 //   1. `api.addCalculatedColumn` appends to the end of the column tree (no position argument).
 //   2. A column added from the header menu is placed AFTER the leaf column it was created from.
-//   3. When that anchor is a column-group header or the auto-group column, the calc col falls back
-//      to the END of the tree.
+//   3. When that anchor is a generated visible column, e.g. the auto-group column, the calc col is
+//      placed after that visible column.
 //   4. When the anchor column is later removed, the dependent calc col falls back to the END.
 //   5. `setColumnDefs` / `updateGridOptions({ columnDefs })` is a full reset: dynamic calc cols are
 //      cleared.
@@ -330,9 +330,9 @@ describe('calculated columns - display ordering', () => {
         expect(order(api)).toEqual(['revenue', first, second, 'cost']);
     });
 
-    // === Rule 3: group-header / auto-group anchor falls back to the end ==========================
+    // === Rule 3: generated visible column anchors use visible order =============================
 
-    test('dialog add anchored on the auto-group column falls back to the end', async () => {
+    test('dialog add anchored on the auto-group column lands after the visible anchor', async () => {
         const api = createGrid('dialog-autogroup-anchor', {
             rowData: [
                 { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
@@ -348,8 +348,7 @@ describe('calculated columns - display ordering', () => {
         // `getAllGridColumns` includes the hidden rowGroup `region` col.
         expect(order(api)).toEqual(['ag-Grid-AutoColumn', 'region', 'revenue', 'cost']);
         const id = await addViaDialog(api, 'ag-Grid-AutoColumn', '[Revenue] - [Cost]');
-        // Anchor is the auto-group service column, not a real leaf in the column tree → end.
-        expect(order(api)).toEqual(['ag-Grid-AutoColumn', 'region', 'revenue', 'cost', id]);
+        expect(order(api)).toEqual(['ag-Grid-AutoColumn', id, 'region', 'revenue', 'cost']);
     });
 
     // === Rule 4: anchor removed — orphaned dependent falls back to the end =======================
