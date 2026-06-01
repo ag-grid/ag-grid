@@ -1,6 +1,149 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-AXIOS-17111079:
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.320Z
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.315Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.310Z
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.305Z
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.299Z
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.295Z
+    - '@nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.291Z
+    - '@axe-core/cli@4.11.2 > chromedriver@147.0.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.284Z
+    - nx@20.8.4 > axios@1.15.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.277Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.4.0 > pipenet@1.4.0 > axios@1.13.5:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.272Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.255Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.248Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/enhanced@0.9.1 > @module-federation/dts-plugin@0.9.1 > axios@1.13.1':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.238Z
+  SNYK-JS-AXIOS-17111062:
+    - '@nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.507Z
+    - '@nx/rollup@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.504Z
+    - '@nx/eslint-plugin@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.496Z
+    - '@nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.491Z
+    - '@nx/esbuild@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.488Z
+    - '@nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.483Z
+    - '@nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.478Z
+    - '@axe-core/cli@4.11.2 > chromedriver@147.0.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.474Z
+    - nx@20.8.4 > axios@1.15.2:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.440Z
+    - rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.4.0 > pipenet@1.4.0 > axios@1.13.5:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.433Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @nx/web@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.422Z
+    - '@nx/react@20.8.4 > @nx/eslint@20.8.4 > @nx/js@20.8.4 > @nx/workspace@20.8.4 > nx@20.8.4 > axios@1.15.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.405Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/enhanced@0.9.1 > @module-federation/dts-plugin@0.9.1 > axios@1.13.1':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.394Z
+  SNYK-JS-AXIOS-17111060:
+    - rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.4.0 > pipenet@1.4.0 > axios@1.13.5:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:57:58.697Z
+    - '@nx/react@20.8.4 > @nx/module-federation@20.8.4 > @module-federation/enhanced@0.9.1 > @module-federation/dts-plugin@0.9.1 > axios@1.13.1':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:57:58.693Z
   SNYK-JS-AXIOS-16299904:
     - rulesync@8.8.1 > fastmcp@3.34.0 > mcp-proxy@6.4.0 > pipenet@1.4.0 > axios@1.13.5:
         reason: Dev dependency - not included in final production build

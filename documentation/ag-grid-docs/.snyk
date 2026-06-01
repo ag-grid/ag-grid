@@ -1,6 +1,24 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-AXIOS-17111079:
+    - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:16.324Z
+  SNYK-JS-AXIOS-17111062:
+    - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:58:09.511Z
+  SNYK-JS-AXIOS-17111060:
+    - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: 2026-06-08T00:00:00.000Z
+        created: 2026-06-01T10:57:58.703Z
   SNYK-JS-AXIOS-16299904:
     - vite-plugin-mkcert@1.17.9 > axios@1.13.1:
         reason: Dev dependency - not included in final production build
