@@ -1,11 +1,4 @@
-import type {
-    AgChartInstance,
-    AgChartTheme,
-    AgSparklineOptions,
-    AgSparklineTooltipRendererParams,
-    AgSparklineTooltipRendererResult,
-    AgTooltipRendererResult,
-} from 'ag-charts-types';
+import type { AgChartInstance, AgSparklineOptions } from 'ag-charts-types';
 
 import type { AgColumn, Environment, ICellRenderer, ISparklineCellRendererParams, RowNode } from 'ag-grid-community';
 import {
@@ -22,18 +15,7 @@ import {
     getSparklineAriaTemplate,
     getSparklineSummary,
     interpolateTemplate,
-    wrapFn,
 } from './sparklinesUtils';
-
-function tooltipRendererWithXValue(
-    params: AgSparklineTooltipRendererParams<unknown>
-): AgSparklineTooltipRendererResult {
-    return { content: `${params.xValue} ${params.yValue}` };
-}
-
-function tooltipRenderer(params: AgSparklineTooltipRendererParams<unknown>): AgSparklineTooltipRendererResult {
-    return { content: `${params.yValue}` };
-}
 
 const COMPONENT_PREFIX = 'ag-sparkline';
 
@@ -134,29 +116,13 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 ...params.sparklineOptions,
                 ...(styleNonce ? { styleNonce } : {}),
                 data,
+                context: this.createContext(),
             } as AgSparklineOptions;
 
             this.sparklineOptions.type ??= 'line';
 
-            if (this.sparklineOptions.tooltip?.renderer) {
-                this.wrapTooltipRenderer();
-            } else {
-                const renderer = this.getDefaultTooltipRenderer();
-                this.sparklineOptions.tooltip = {
-                    ...this.sparklineOptions.tooltip,
-                    renderer,
-                };
-            }
-
-            // Only bar sparklines have itemStyler
-            const theme = this.sparklineOptions?.theme as AgChartTheme;
-            if (this.sparklineOptions.type === 'bar' && this.sparklineOptions.itemStyler) {
-                this.wrapItemStyler(this.sparklineOptions);
-            } else if (theme?.overrides?.bar?.series?.itemStyler) {
-                this.wrapItemStyler(theme.overrides.bar.series);
-            }
-
-            // create new sparkline
+            // No default `tooltip.renderer` install — the chart-side sparkline preset
+            // supplies one. A function here would poison the structural-options cache.
             this.sparklineInstance = params.createSparkline!(this.sparklineOptions);
             return true;
         } else if (this.sparklineInstance) {
@@ -165,6 +131,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 data,
                 width,
                 height,
+                context: this.createContext(),
                 ...(styleNonce ? { styleNonce } : {}),
             });
 
@@ -205,45 +172,6 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         return {
             data: this.params?.data,
             cellData: this.params?.value,
-        };
-    }
-
-    private getDefaultTooltipRenderer(userRendererResult?: AgTooltipRendererResult) {
-        const userTitle = userRendererResult?.title;
-        const xKeyProvided = this.sparklineOptions.xKey;
-        const tupleData = Array.isArray(this.sparklineOptions.data?.[0]);
-
-        const showXValue = !userTitle && (xKeyProvided || tupleData);
-
-        return showXValue ? tooltipRendererWithXValue : tooltipRenderer;
-    }
-
-    private wrapItemStyler(container: { itemStyler?: any }) {
-        container.itemStyler = wrapFn(container.itemStyler, (fn, stylerParams: any): any => {
-            return fn({
-                ...stylerParams,
-                context: this.createContext(),
-            });
-        });
-    }
-
-    private wrapTooltipRenderer() {
-        this.sparklineOptions.tooltip = {
-            ...this.sparklineOptions.tooltip,
-            renderer: wrapFn(this.sparklineOptions.tooltip!.renderer!, (fn, tooltipParams: any): any => {
-                const userRendererResult = fn({
-                    ...tooltipParams,
-                    context: this.createContext(),
-                });
-
-                if (typeof userRendererResult === 'string') {
-                    return userRendererResult;
-                }
-                return {
-                    ...this.getDefaultTooltipRenderer(userRendererResult)(tooltipParams),
-                    ...userRendererResult,
-                };
-            }),
         };
     }
 

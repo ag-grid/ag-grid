@@ -12,6 +12,7 @@ import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community'
 import { PivotModule, RowGroupingModule, RowNumbersModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { getGridHTMLElement } from '../test-utils/gridRows/gridHtmlRows';
 
 describe('Column Mutations', () => {
     const gridsManager = new TestGridsManager({
@@ -1013,6 +1014,64 @@ describe('Column Mutations', () => {
 
             expect(api.getAllGridColumns().length).toBe(0);
             await new GridColumns(api, 'cleared').checkColumns('empty');
+        });
+
+        test('setColumnDefs round-trip empty, populated, empty leaves no stale header DOM', async () => {
+            const columnDefs = [
+                { colId: 'a', field: 'a' },
+                { colId: 'b', field: 'b' },
+            ];
+            const rowData = [
+                { a: 'a1', b: 'b1' },
+                { a: 'a2', b: 'b2' },
+            ];
+            const api = gridsManager.createGrid('myGrid', { columnDefs, rowData });
+
+            const gridElement = getGridHTMLElement(api)!;
+            const headerCellCount = () => gridElement.querySelectorAll('.ag-header-cell[col-id]').length;
+
+            expect(headerCellCount()).toBe(2);
+            await new GridColumns(api, 'initial').checkColumns(`
+                CENTER
+                ├── a "A" width:200
+                └── b "B" width:200
+            `);
+            await new GridRows(api, 'initial').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 a:"a1" b:"b1"
+                └── LEAF id:1 a:"a2" b:"b2"
+            `);
+
+            api.setGridOption('columnDefs', []);
+            expect(headerCellCount()).toBe(0);
+            await new GridColumns(api, 'cleared').checkColumns('empty');
+            await new GridRows(api, 'cleared').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0
+                └── LEAF id:1
+            `);
+
+            api.setGridOption('columnDefs', columnDefs);
+            expect(headerCellCount()).toBe(2);
+            await new GridColumns(api, 're-added').checkColumns(`
+                CENTER
+                ├── a "A" width:200
+                └── b "B" width:200
+            `);
+            await new GridRows(api, 're-added').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 a:"a1" b:"b1"
+                └── LEAF id:1 a:"a2" b:"b2"
+            `);
+
+            api.setGridOption('columnDefs', []);
+            expect(headerCellCount()).toBe(0);
+            await new GridColumns(api, 'cleared again').checkColumns('empty');
+            await new GridRows(api, 'cleared again').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0
+                └── LEAF id:1
+            `);
         });
 
         test('column tree depth is consistent across sections', async () => {

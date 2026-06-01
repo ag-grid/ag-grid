@@ -50,4 +50,18 @@ ignore:
         reason: Testing dependency - not included in final production build
         expires: 2026-08-28T00:00:00.000Z
         created: 2026-04-28T12:12:51.000Z
+  SNYK-JS-BRACEEXPANSION-16755174:
+    - 'eslint@10.2.1 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Linting dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+    - 'typescript-eslint@8.59.0 > @typescript-eslint/eslint-plugin@8.59.0 > @typescript-eslint/type-utils@8.59.0 > @typescript-eslint/typescript-estree@8.59.0 > minimatch@10.2.5 > brace-expansion@5.0.5':
+        reason: Linting dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
+  SNYK-JS-SHELLQUOTE-16799355:
+    - 'npm-run-all@4.1.5 > shell-quote@1.8.3':
+        reason: Dev dependency - not included in final production build
+        expires: 2026-08-28T00:00:00.000Z
+        created: 2026-05-28T00:00:00.000Z
 patch: {}

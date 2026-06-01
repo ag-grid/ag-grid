@@ -2,9 +2,11 @@ import type {
     AgColumn,
     CalculatedColumnDef,
     CalculatedColumnUpdate,
+    CalculatedColumnValidationReason,
     ColDef,
     ColGroupDef,
     ColKey,
+    ColumnEventType,
     ICalculatedColumnsService,
     NamedBean,
 } from 'ag-grid-community';
@@ -24,10 +26,50 @@ import {
     replaceBracketReferences,
 } from './calculatedColumnUtils';
 
+type ValidationState = 'valid' | CalculatedColumnValidationReason;
+
+type CalcColEventCommonParams = {
+    column: AgColumn;
+    columns: AgColumn[];
+    expression: string;
+    source: ColumnEventType;
+};
+
+type DynamicCalculatedColumn = {
+    colId: string;
+    colDef: ColDef;
+    anchorColId?: string;
+    anchorColDef?: ColDef | null;
+};
+
+type DynamicCalculatedColumnOverride = {
+    colId: string;
+    colDef: ColDef;
+    targetColDef: ColDef | null;
+};
+
+type DynamicCalculatedColumnSuppression = {
+    colId: string;
+    targetColDef: ColDef | null;
+};
+
 export class CalculatedColumnsService extends BeanStub implements NamedBean, ICalculatedColumnsService {
     public readonly beanName = 'calculatedColsSvc' as const;
 
-    public addCalculatedColumn(colDef: CalculatedColumnDef): void {
+    private dynamicColumns: DynamicCalculatedColumn[] = [];
+    private readonly dynamicOverrides = new Map<string, DynamicCalculatedColumnOverride>();
+    private readonly dynamicSuppressions = new Map<string, DynamicCalculatedColumnSuppression>();
+    private validationStatesByColId = new Map<string, ValidationState>();
+    private validationStatesInitialised = false;
+    private suppressValidationChecks = 0;
+
+    public postConstruct(): void {
+        this.addManagedEventListeners({
+            newColumnsLoaded: (event) => this.checkValidationStates(event.source),
+        });
+    }
+
+    public addCalculatedColumn(colDef: CalculatedColumnDef, source: 'api' | 'calculatedColumn' = 'api'): void {
         if (!_isStringLargerThan(colDef.calculatedExpression, 0, true)) {
             _warnOnce('addCalculatedColumn: calculatedExpression is required and cannot be empty.');
             return;
@@ -38,15 +80,32 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         ) {
             return;
         }
-        const nextDefs = [...this.getColumnDefs(), this.toCalculatedColDef(colDef)];
-        this.beans.gridApi.updateGridOptions({ columnDefs: nextDefs });
+
+        const colId = colDef.colId ?? this.createUniqueColId();
+        const nextColDef = this.toCalculatedColDef({ ...colDef, colId });
+        this.dynamicColumns.push({ colId, colDef: nextColDef });
+        this.refreshDynamicColumns(source);
+
+        const column = this.beans.colModel.getColById(colId);
+        if (column) {
+            this.dispatchCreatedOrRemovedEvent(
+                'calculatedColumnCreated',
+                this.getEventCommonParams(column, colDef.calculatedExpression, source)
+            );
+        }
+        this.checkValidationStates(source, true);
     }
 
-    public updateCalculatedColumn(column: ColKey, colDef: CalculatedColumnUpdate): void {
+    public updateCalculatedColumn(
+        column: ColKey,
+        colDef: CalculatedColumnUpdate,
+        source: 'api' | 'calculatedColumn' = 'api'
+    ): void {
         const targetColumn = this.beans.colModel.getColDefColOrCol(column);
         if (targetColumn?.colDef.calculatedExpression == null) {
             return;
         }
+        const oldExpression = targetColumn.colDef.calculatedExpression;
         if (colDef.calculatedExpression !== undefined) {
             if (!_isStringLargerThan(colDef.calculatedExpression, 0, true)) {
                 _warnOnce('updateCalculatedColumn: calculatedExpression cannot be empty.');
@@ -60,9 +119,29 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             }
         }
 
-        const targetColId = targetColumn.getColId();
-        const nextDefs = this.updateCalculatedColumnDef(this.getColumnDefs(), targetColumn, colDef);
-        this.beans.gridApi.updateGridOptions({ columnDefs: nextDefs });
+        const targetColId = targetColumn.colId;
+        const nextColDef = this.getUpdatedCalculatedColDef(targetColumn, colDef);
+        const dynamicColumn = this.getDynamicColumn(targetColId);
+        if (dynamicColumn) {
+            dynamicColumn.colDef = nextColDef;
+        } else {
+            this.dynamicOverrides.set(targetColId, {
+                colId: targetColId,
+                colDef: nextColDef,
+                targetColDef: targetColumn.getUserProvidedColDef(),
+            });
+            this.dynamicSuppressions.delete(targetColId);
+        }
+        this.refreshDynamicColumns(source);
+        const nextColumn = this.beans.colModel.getColById(targetColId) ?? targetColumn;
+        const newExpression = nextColumn.colDef.calculatedExpression ?? oldExpression;
+        if (colDef.calculatedExpression !== undefined && oldExpression !== newExpression) {
+            this.dispatchExpressionChangedEvent(
+                this.getEventCommonParams(nextColumn, newExpression, source),
+                oldExpression
+            );
+        }
+        this.checkValidationStates(source, true);
         this.refreshCalculatedColumn(targetColId);
     }
 
@@ -80,7 +159,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return true;
     }
 
-    private validateColumnReferences(expression: string): boolean {
+    private getInvalidColumnReference(expression: string): string | undefined {
         let invalidReference: string | undefined;
         replaceBracketReferences(expression, (ref) => {
             if (invalidReference == null && !this.beans.colModel.getColById(ref)) {
@@ -88,6 +167,12 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             }
             return ref;
         });
+
+        return invalidReference;
+    }
+
+    private validateColumnReferences(expression: string): boolean {
+        const invalidReference = this.getInvalidColumnReference(expression);
 
         if (invalidReference != null) {
             _warnOnce(
@@ -102,45 +187,129 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return true;
     }
 
-    public showAddCalculatedColumnDialog(column: AgColumn | null): void {
-        const colId = this.createUniqueColId();
-        const headerName = this.getLocaleTextFunc()('calculatedColumnDefaultTitle', 'New title');
-        const draft: CalculatedColumnDraft = { colId, headerName, ...DEFAULT_DRAFT };
-        this.showDialog(draft, (nextDraft) => {
-            const nextDefs = this.insertCalculatedColumn(this.getColumnDefs(), column, this.toColDef(nextDraft));
-            this.beans.gridApi.updateGridOptions({ columnDefs: nextDefs });
-            this.focusCalculatedColumn(nextDraft.colId);
-        });
-    }
-
-    public showUpdateCalculatedColumnDialog(column: AgColumn | null): void {
-        if (column?.colDef.calculatedExpression == null) {
+    public openCalculatedColumnDialog(column: AgColumn | null, mode: 'add' | 'edit'): void {
+        if (mode === 'add') {
+            const colId = this.createUniqueColId();
+            const headerName = this.getLocaleTextFunc()('calculatedColumnDefaultTitle', 'New title');
+            const draft: CalculatedColumnDraft = { colId, headerName, ...DEFAULT_DRAFT };
+            this.showDialog(draft, (nextDraft) => {
+                this.dynamicColumns.push({
+                    colId: nextDraft.colId,
+                    colDef: this.toColDef(nextDraft),
+                    anchorColId: column?.colId,
+                    anchorColDef: column?.getUserProvidedColDef(),
+                });
+                this.refreshDynamicColumns('calculatedColumn');
+                this.focusCalculatedColumn(nextDraft.colId);
+                const newColumn = this.beans.colModel.getColById(nextDraft.colId);
+                if (newColumn) {
+                    this.dispatchCreatedOrRemovedEvent(
+                        'calculatedColumnCreated',
+                        this.getEventCommonParams(newColumn, nextDraft.calculatedExpression, 'calculatedColumn')
+                    );
+                }
+                this.checkValidationStates('calculatedColumn', true);
+            });
             return;
         }
 
+        if (column?.colDef.calculatedExpression == null) {
+            return;
+        }
         const draft = this.toDraft(column);
         this.focusCalculatedColumn(draft.colId);
         this.showDialog(draft, (nextDraft) => {
             const { colId: _, ...update } = this.toColDef(nextDraft);
-            this.updateCalculatedColumn(column, update);
+            this.updateCalculatedColumn(column.colId, update, 'calculatedColumn');
         });
     }
 
-    public removeCalculatedColumn(column: AgColumn | null): void {
+    public removeCalculatedColumn(column: AgColumn | null, source: 'api' | 'calculatedColumn' = 'api'): void {
         if (column?.colDef.calculatedExpression == null) {
             return;
         }
 
-        const nextDefs = this.removeCalculatedColumnDef(this.getColumnDefs(), column);
-        this.beans.gridApi.updateGridOptions({ columnDefs: nextDefs });
+        const expression = column.colDef.calculatedExpression;
+        const dynamicIndex = this.getDynamicColumnIndex(column.colId);
+        if (dynamicIndex >= 0) {
+            this.dynamicColumns.splice(dynamicIndex, 1);
+            this.removeDynamicAnchors(column.colId);
+        } else {
+            this.dynamicOverrides.delete(column.colId);
+            this.dynamicSuppressions.set(column.colId, {
+                colId: column.colId,
+                targetColDef: column.getUserProvidedColDef(),
+            });
+        }
+        this.refreshDynamicColumns(source);
+        this.dispatchCreatedOrRemovedEvent(
+            'calculatedColumnRemoved',
+            this.getEventCommonParams(column, expression, source)
+        );
+        this.checkValidationStates(source, true);
     }
 
-    private getColumnDefs(): (ColDef | ColGroupDef)[] {
-        return this.beans.colModel.getColumnDefs(true) ?? [];
+    public createProjectedColumnDefs(
+        columnDefs: (ColDef | ColGroupDef)[] | undefined
+    ): (ColDef | ColGroupDef)[] | undefined {
+        if (!this.hasDynamicColumnState()) {
+            return columnDefs;
+        }
+
+        const insertedDynamicColIds = new Set<string>();
+        const sourceColumnDefs = columnDefs ?? [];
+        const result = this.projectColumnDefs(sourceColumnDefs, insertedDynamicColIds);
+        let projectedColumnDefs = result.columnDefs;
+
+        for (const dynamicColumn of this.dynamicColumns) {
+            if (insertedDynamicColIds.has(dynamicColumn.colId)) {
+                continue;
+            }
+
+            if (projectedColumnDefs === sourceColumnDefs) {
+                projectedColumnDefs = sourceColumnDefs.slice();
+            }
+            projectedColumnDefs.push(dynamicColumn.colDef);
+            insertedDynamicColIds.add(dynamicColumn.colId);
+            this.insertDynamicColumnsAfterDynamicColumn(
+                dynamicColumn.colId,
+                projectedColumnDefs,
+                insertedDynamicColIds
+            );
+        }
+
+        return projectedColumnDefs;
+    }
+
+    public resetDynamicColumnDefs(): void {
+        this.dynamicColumns = [];
+        this.dynamicOverrides.clear();
+        this.dynamicSuppressions.clear();
+    }
+
+    private hasDynamicColumnState(): boolean {
+        return this.dynamicColumns.length > 0 || this.dynamicOverrides.size > 0 || this.dynamicSuppressions.size > 0;
+    }
+
+    private refreshDynamicColumns(source: ColumnEventType): void {
+        this.suppressValidationChecks++;
+        try {
+            this.beans.colModel.refreshDynamicColumns(source);
+        } finally {
+            this.suppressValidationChecks--;
+        }
     }
 
     private createUniqueColId(): string {
-        const usedIds = collectColIdsAndFields(this.getColumnDefs());
+        const usedIds = collectColIdsAndFields(this.beans.colModel.getProvidedColumnDefs() ?? []);
+        const currentColumns = this.beans.colModel.getCols() ?? [];
+        for (let i = 0, len = currentColumns.length; i < len; ++i) {
+            usedIds.add(currentColumns[i].colId);
+        }
+        for (let i = 0, len = this.dynamicColumns.length; i < len; ++i) {
+            usedIds.add(this.dynamicColumns[i].colId);
+        }
+
         let index = 1;
         while (usedIds.has(`calculated_${index}`)) {
             index++;
@@ -148,69 +317,155 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return `calculated_${index}`;
     }
 
-    private insertCalculatedColumn(
-        columnDefs: (ColDef | ColGroupDef)[],
-        column: AgColumn | null,
-        calculatedColDef: ColDef
-    ): (ColDef | ColGroupDef)[] {
-        const targetColId = column?.getColId();
-        if (!targetColId) {
-            return [...columnDefs, calculatedColDef];
-        }
-
-        let didInsert = false;
-        const insertInto = (defs: (ColDef | ColGroupDef)[]): (ColDef | ColGroupDef)[] => {
-            const nextDefs: (ColDef | ColGroupDef)[] = [];
-            for (const colDef of defs) {
-                nextDefs.push(
-                    'children' in colDef && colDef.children
-                        ? { ...colDef, children: insertInto(colDef.children) }
-                        : colDef
-                );
-
-                if (!('children' in colDef) && (colDef.colId ?? colDef.field) === targetColId) {
-                    nextDefs.push(calculatedColDef);
-                    didInsert = true;
-                }
-            }
-            return nextDefs;
-        };
-
-        const nextDefs = insertInto(columnDefs);
-        return didInsert ? nextDefs : [...columnDefs, calculatedColDef];
-    }
-
-    private updateCalculatedColumnDef(
-        columnDefs: (ColDef | ColGroupDef)[],
-        column: AgColumn,
-        colDefUpdate: CalculatedColumnUpdate
-    ): (ColDef | ColGroupDef)[] {
-        const targetColDef = column.getUserProvidedColDef();
-        const targetColId = column.getColId();
+    private getUpdatedCalculatedColDef(column: AgColumn, colDefUpdate: CalculatedColumnUpdate): ColDef {
+        const dynamicColumn = this.getDynamicColumn(column.colId);
+        const dynamicOverride = this.dynamicOverrides.get(column.colId);
+        const baseColDef =
+            dynamicColumn?.colDef ?? dynamicOverride?.colDef ?? column.getUserProvidedColDef() ?? column.colDef;
         const safeUpdate: ColDef = { ...colDefUpdate };
         delete safeUpdate.colId;
 
-        return columnDefs.map((colDef) => {
+        const nextColDef = {
+            ...clearStaleDataTypeProperties(baseColDef, column.getUserProvidedColDef(), safeUpdate),
+            ...safeUpdate,
+        };
+        nextColDef.calculatedExpression ??= baseColDef.calculatedExpression;
+        nextColDef.colId ??= column.colId;
+
+        return this.toCalculatedColDef(nextColDef);
+    }
+
+    private projectColumnDefs(
+        columnDefs: (ColDef | ColGroupDef)[],
+        insertedDynamicColIds: Set<string>
+    ): { columnDefs: (ColDef | ColGroupDef)[]; changed: boolean } {
+        let changed = false;
+        const projectedColumnDefs: (ColDef | ColGroupDef)[] = [];
+
+        for (const colDef of columnDefs) {
             if ('children' in colDef && colDef.children) {
-                return { ...colDef, children: this.updateCalculatedColumnDef(colDef.children, column, colDefUpdate) };
+                const childResult = this.projectColumnDefs(colDef.children, insertedDynamicColIds);
+                if (childResult.changed) {
+                    projectedColumnDefs.push({ ...colDef, children: childResult.columnDefs });
+                    changed = true;
+                } else {
+                    projectedColumnDefs.push(colDef);
+                }
+                continue;
             }
 
-            const isTarget =
-                this.isCalculatedColumnDef(colDef) &&
-                (colDef === targetColDef || colDef.colId === targetColId || colDef.field === targetColId);
-
-            if (!isTarget) {
-                return colDef;
+            if (this.isColDefSuppressed(colDef)) {
+                changed = true;
+                continue;
             }
 
-            const nextColDef = {
-                ...clearStaleDataTypeProperties(colDef, targetColDef, safeUpdate),
-                ...safeUpdate,
-            };
-            nextColDef.calculatedExpression ??= colDef.calculatedExpression;
+            const override = this.getColDefOverride(colDef);
+            const projectedColDef = override?.colDef ?? colDef;
+            projectedColumnDefs.push(projectedColDef);
+            changed ||= override != null;
 
-            return this.toCalculatedColDef(nextColDef);
-        });
+            if (this.insertDynamicColumnsAfterUserColumn(colDef, projectedColumnDefs, insertedDynamicColIds)) {
+                changed = true;
+            }
+        }
+
+        return { columnDefs: changed ? projectedColumnDefs : columnDefs, changed };
+    }
+
+    private insertDynamicColumnsAfterUserColumn(
+        colDef: ColDef,
+        targetColumnDefs: (ColDef | ColGroupDef)[],
+        insertedDynamicColIds: Set<string>
+    ): boolean {
+        let changed = false;
+        const colId = colDef.colId ?? colDef.field;
+
+        for (const dynamicColumn of this.dynamicColumns) {
+            if (
+                insertedDynamicColIds.has(dynamicColumn.colId) ||
+                !this.matchesColumnDef(colDef, dynamicColumn.anchorColId, dynamicColumn.anchorColDef)
+            ) {
+                continue;
+            }
+
+            targetColumnDefs.push(dynamicColumn.colDef);
+            insertedDynamicColIds.add(dynamicColumn.colId);
+            this.insertDynamicColumnsAfterDynamicColumn(dynamicColumn.colId, targetColumnDefs, insertedDynamicColIds);
+            changed = true;
+        }
+
+        if (colId != null) {
+            this.insertDynamicColumnsAfterDynamicColumn(colId, targetColumnDefs, insertedDynamicColIds);
+        }
+
+        return changed;
+    }
+
+    private getDynamicColumn(colId: string): DynamicCalculatedColumn | undefined {
+        for (let i = 0, len = this.dynamicColumns.length; i < len; ++i) {
+            const dynamicColumn = this.dynamicColumns[i];
+            if (dynamicColumn.colId === colId) {
+                return dynamicColumn;
+            }
+        }
+        return undefined;
+    }
+
+    private getDynamicColumnIndex(colId: string): number {
+        for (let i = 0, len = this.dynamicColumns.length; i < len; ++i) {
+            if (this.dynamicColumns[i].colId === colId) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private insertDynamicColumnsAfterDynamicColumn(
+        anchorColId: string,
+        targetColumnDefs: (ColDef | ColGroupDef)[],
+        insertedDynamicColIds: Set<string>
+    ): void {
+        for (const dynamicColumn of this.dynamicColumns) {
+            if (insertedDynamicColIds.has(dynamicColumn.colId) || dynamicColumn.anchorColId !== anchorColId) {
+                continue;
+            }
+
+            targetColumnDefs.push(dynamicColumn.colDef);
+            insertedDynamicColIds.add(dynamicColumn.colId);
+            this.insertDynamicColumnsAfterDynamicColumn(dynamicColumn.colId, targetColumnDefs, insertedDynamicColIds);
+        }
+    }
+
+    private getColDefOverride(colDef: ColDef): DynamicCalculatedColumnOverride | undefined {
+        for (const override of this.dynamicOverrides.values()) {
+            if (this.matchesColumnDef(colDef, override.colId, override.targetColDef)) {
+                return override;
+            }
+        }
+        return undefined;
+    }
+
+    private isColDefSuppressed(colDef: ColDef): boolean {
+        for (const suppression of this.dynamicSuppressions.values()) {
+            if (this.matchesColumnDef(colDef, suppression.colId, suppression.targetColDef)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private matchesColumnDef(colDef: ColDef, colId: string | undefined, targetColDef?: ColDef | null): boolean {
+        return colDef === targetColDef || (colId != null && (colDef.colId === colId || colDef.field === colId));
+    }
+
+    private removeDynamicAnchors(colId: string): void {
+        for (let i = 0, len = this.dynamicColumns.length; i < len; ++i) {
+            const dynamicColumn = this.dynamicColumns[i];
+            if (dynamicColumn.anchorColId === colId) {
+                dynamicColumn.anchorColId = undefined;
+                dynamicColumn.anchorColDef = undefined;
+            }
+        }
     }
 
     private showDialog(draft: CalculatedColumnDraft, onApply: (draft: CalculatedColumnDraft) => void): void {
@@ -292,38 +547,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         dialog.addEventListener('destroyed', () => this.destroyBean(form));
     }
 
-    private removeCalculatedColumnDef(
-        columnDefs: (ColDef | ColGroupDef)[],
-        column: AgColumn
-    ): (ColDef | ColGroupDef)[] {
-        const targetColDef = column.getUserProvidedColDef();
-        const targetColId = column.getColId();
-
-        return columnDefs.reduce<(ColDef | ColGroupDef)[]>((nextDefs, colDef) => {
-            if ('children' in colDef && colDef.children) {
-                nextDefs.push({ ...colDef, children: this.removeCalculatedColumnDef(colDef.children, column) });
-                return nextDefs;
-            }
-
-            const isTarget =
-                this.isCalculatedColumnDef(colDef) &&
-                (colDef === targetColDef || colDef.colId === targetColId || colDef.field === targetColId);
-
-            if (!isTarget) {
-                nextDefs.push(colDef);
-            }
-
-            return nextDefs;
-        }, []);
-    }
-
-    private isCalculatedColumnDef(colDef: ColDef | ColGroupDef): colDef is ColDef {
-        return !('children' in colDef) && colDef.calculatedExpression != null;
-    }
-
     private toDraft(column: AgColumn): CalculatedColumnDraft {
         const colDef = column.colDef;
-        const colId = column.getColId();
+        const colId = column.colId;
         const cellDataType = colDef.cellDataType;
         const displayName = this.beans.colNames.getDisplayNameForColumn(column, 'header');
 
@@ -379,6 +605,83 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             editable: false,
             suppressPaste: true,
         };
+    }
+
+    private getExpressionValidationState(expression: string): ValidationState {
+        if (this.getInvalidColumnReference(expression) != null) {
+            return 'unknownReference';
+        }
+        return this.getFormulaExpressionError(expression) == null ? 'valid' : 'invalidExpression';
+    }
+
+    private checkValidationStates(source: ColumnEventType, forceDispatch = false): void {
+        if (this.suppressValidationChecks > 0) {
+            return;
+        }
+
+        const shouldDispatch = forceDispatch || this.validationStatesInitialised;
+        const previousStates = this.validationStatesByColId;
+        const nextStates = new Map<string, ValidationState>();
+
+        for (const column of this.beans.colModel.getCols() ?? []) {
+            const expression = column.colDef.calculatedExpression;
+            if (expression == null) {
+                continue;
+            }
+
+            const colId = column.colId;
+            const state = this.getExpressionValidationState(expression);
+            nextStates.set(colId, state);
+
+            const previousState = previousStates.get(colId);
+            if (shouldDispatch && previousState !== undefined && previousState !== state) {
+                const valid = state === 'valid';
+                this.dispatchValidationStateChangedEvent(
+                    this.getEventCommonParams(column, expression, source),
+                    valid,
+                    valid ? undefined : state
+                );
+            }
+        }
+
+        this.validationStatesByColId = nextStates;
+        this.validationStatesInitialised = true;
+    }
+
+    private getEventCommonParams(
+        column: AgColumn,
+        expression: string,
+        source: ColumnEventType
+    ): CalcColEventCommonParams {
+        return { column, columns: [column], expression, source };
+    }
+
+    private dispatchCreatedOrRemovedEvent(
+        type: 'calculatedColumnCreated' | 'calculatedColumnRemoved',
+        commonParams: CalcColEventCommonParams
+    ): void {
+        this.eventSvc.dispatchEvent({ type, ...commonParams } as Parameters<typeof this.eventSvc.dispatchEvent>[0]);
+    }
+
+    private dispatchExpressionChangedEvent(commonParams: CalcColEventCommonParams, oldExpression: string): void {
+        this.eventSvc.dispatchEvent({
+            type: 'calculatedColumnExpressionChanged',
+            ...commonParams,
+            oldExpression,
+        });
+    }
+
+    private dispatchValidationStateChangedEvent(
+        commonParams: CalcColEventCommonParams,
+        valid: boolean,
+        reason?: CalculatedColumnValidationReason
+    ): void {
+        this.eventSvc.dispatchEvent({
+            type: 'calculatedColumnValidationStateChanged',
+            ...commonParams,
+            valid,
+            reason,
+        });
     }
 
     private getFunctionSuggestions(): ColumnSuggestion[] {

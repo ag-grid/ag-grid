@@ -483,7 +483,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('calculatedColumnAdd', 'Add Calculated Column'),
                               icon: _createIconNoSpan('calculatedColumnAdd', beans, null),
-                              action: () => calculatedColsSvc.showAddCalculatedColumnDialog(column),
+                              action: () => calculatedColsSvc.openCalculatedColumnDialog(column, 'add'),
                           }
                         : null;
                 case 'editCalculatedColumn':
@@ -491,7 +491,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
                               icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
-                              action: () => calculatedColsSvc.showUpdateCalculatedColumnDialog(column),
+                              action: () => calculatedColsSvc.openCalculatedColumnDialog(column, 'edit'),
                           }
                         : null;
                 case 'removeCalculatedColumn':
@@ -499,7 +499,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('calculatedColumnRemove', 'Remove Calculated Column'),
                               icon: _createIconNoSpan('calculatedColumnRemove', beans, null),
-                              action: () => calculatedColsSvc.removeCalculatedColumn(column),
+                              action: () => calculatedColsSvc.removeCalculatedColumn(column, 'calculatedColumn'),
                           }
                         : null;
                 case 'sortUnSort':

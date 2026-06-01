@@ -160,6 +160,29 @@ const announcementBannerProps = {
         <!-- Import all global design system CSS -->
         <link rel="stylesheet" href={dsStylesUrl} />
 
+        {
+            /* Astro's font system generates @font-face with hashed names (e.g. "IBM Plex Sans-abc123")
+            rather than the original font name. AG Grid's Quartz theme hardcodes font-family: 'IBM Plex Sans',
+            so we redirect its CSS variable to the Astro-generated variable which resolves to the correct name.
+            This must come after stylesheet imports so it wins the cascade over any theme CSS that also sets
+            --ag-font-family on the same selectors. */
+        }
+        <style is:global>
+            .ag-theme-quartz,
+            .ag-theme-quartz-dark,
+            .ag-theme-quartz-auto-dark {
+                --ag-font-family: var(
+                    --font-ibm-plex-sans,
+                    'IBM Plex Sans',
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    'Segoe UI',
+                    Roboto,
+                    sans-serif
+                );
+            }
+        </style>
+
         <!-- Facebook Meta Tags -->
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />

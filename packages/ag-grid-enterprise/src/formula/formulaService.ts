@@ -27,7 +27,7 @@ import { evalAst, formulaVisitorSetVisited, formulaVisitorSetVisiting, unresolve
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
 import { shiftNode } from './functions/utils';
 import type { FormulaErrorId, FormulaErrorType } from './i18n';
-import { isValidFunctionName } from './refUtils';
+import { isValidFunctionName, visitCalculatedColumnReferences } from './refUtils';
 import { isCalculatedColumnRowAvailable } from './rowAccess';
 
 /** Shared params object for `rowRenderer.refreshCells`, hoisted to avoid per-call allocation. */
@@ -156,11 +156,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return false;
         }
 
-        if (this.gos.get('treeData')) {
-            _warn(295, { blockedService: 'Tree Data' });
-            return false;
-        }
-
         if (this.gos.get('enableCellExpressions')) {
             _warn(295, { blockedService: 'Cell Expressions' });
             return false;
@@ -188,6 +183,11 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     private checkForEditableFormulaIncompatibleServices(cols: _ColumnCollections): boolean {
         if (!this.checkForBaseIncompatibleServices()) {
+            return false;
+        }
+
+        if (this.gos.get('treeData')) {
+            _warn(295, { blockedService: 'Tree Data' });
             return false;
         }
 
@@ -713,6 +713,10 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         rowMap.set(col, null);
 
         try {
+            if (row.group && !this.canEvaluateCalculatedColumnForRow(row, col, new Set<string>())) {
+                return null;
+            }
+
             const trimmedExpression = calculatedExpression.trim();
             if (!trimmedExpression) {
                 return null;
@@ -725,6 +729,35 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             rowMap.delete(col);
             throw e;
         }
+    }
+
+    private canEvaluateCalculatedColumnForRow(row: RowNode, col: AgColumn, visiting: Set<string>): boolean {
+        const calculatedExpression = col.colDef.calculatedExpression;
+        if (calculatedExpression == null) {
+            return this.fetchRawValue(col, row) !== undefined;
+        }
+
+        if (visiting.has(col.colId)) {
+            return true;
+        }
+
+        visiting.add(col.colId);
+        let canEvaluate = true;
+        visitCalculatedColumnReferences(calculatedExpression, (reference) => {
+            if (!canEvaluate) {
+                return;
+            }
+
+            const referencedColumn = this.beans.colModel.getColById(reference);
+            if (!referencedColumn) {
+                canEvaluate = false;
+                return;
+            }
+
+            canEvaluate = this.canEvaluateCalculatedColumnForRow(row, referencedColumn, visiting);
+        });
+        visiting.delete(col.colId);
+        return canEvaluate;
     }
 
     private coerceFormulaValue(cell: CellFormula, value: unknown): unknown {
@@ -745,7 +778,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     /** Fetch a non-formula value from the grid without triggering nested formula calc. */
     private fetchRawValue(col: AgColumn, row: RowNode): unknown {
-        if (col.colDef.calculatedExpression != null && this.beans.calculatedColsSvc != null) {
+        if (col.isCalculatedCol) {
             return undefined;
         }
 

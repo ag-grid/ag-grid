@@ -2,24 +2,8 @@ import type { AgSparklineOptions } from 'ag-charts-types';
 
 import type { LocaleTextFunc } from 'ag-grid-community';
 
-const WrappedFunctionMarker = Symbol('WrappedFunctionMarker');
-
-type FunctionParams = (...args: any[]) => any;
-type WrapperFunctionParams = (fn: FunctionParams, ...args: any[]) => any;
 type SparklineTranslate = (key: string, defaultValue: string, variableValues?: string[]) => string;
 type SparklineNumberFormatter = (value: number) => string;
-
-export const wrapFn = (fn: FunctionParams, wrapperFn: WrapperFunctionParams) => {
-    if ((fn as any)[WrappedFunctionMarker]) {
-        return fn;
-    }
-
-    const wrapped = (...args: any[]) => wrapperFn(fn, ...args);
-
-    wrapped[WrappedFunctionMarker] = WrappedFunctionMarker;
-
-    return wrapped;
-};
 
 // ARIA
 const defaultSparklineAriaDescription =

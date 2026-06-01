@@ -211,6 +211,22 @@ function addSnykIgnoreEntry(snykFile, vulnId, depPath, reason, expires) {
     // so collapse it to `ignore:` before inserting any vuln block beneath it.
     content = content.replace(/^ignore:[ \t]*\{[ \t]*\}[ \t]*$/m, 'ignore:');
 
+    // Detect the file's existing indentation so we match it exactly. Different repos
+    // write .snyk files at different indentation depths (e.g. ag-grid uses 2/4/8 for
+    // vuln-id/list-item/property, others use 4/8/14). Mixing depths within one file
+    // produces invalid YAML, so derive the widths from any existing entry and fall back
+    // to the 4/8/14 style for an empty file (matching the historical default here).
+    const idIndentMatch = content.match(/^( +)(?:SNYK-\S+|CVE-\d+-\d+|GHSA-\S+):\s*$/m);
+    const dashIndentMatch = content.match(/^( +)- /m);
+    const propIndentMatch = content.match(/^( +)(?:reason|expires|created):/m);
+    const idIndent = idIndentMatch ? idIndentMatch[1].length : 4;
+    const dashIndent = dashIndentMatch ? dashIndentMatch[1].length : 8;
+    const propIndent = propIndentMatch ? propIndentMatch[1].length : 14;
+    const idPad = ' '.repeat(idIndent);
+    const dashPad = ' '.repeat(dashIndent);
+    const propPad = ' '.repeat(propIndent);
+    const reasonTextPad = ' '.repeat(propIndent + 4);
+
     // Use js-yaml to get a correctly-quoted key for the dep path.
     // Dump as a single-key mapping, strip the ": null" value, then append ":".
     // e.g. "@nx/foo@1 > bar@2"  →  "'@nx/foo@1 > bar@2':"
@@ -219,15 +235,15 @@ function addSnykIgnoreEntry(snykFile, vulnId, depPath, reason, expires) {
         .trim()
         .replace(/:\s*null\s*$/, '') + ':';
 
-    // Indent reason text at 18 spaces for the >- block scalar content
-    const reasonText = reason.split('\n').map(l => '                  ' + l).join('\n');
+    // Indent reason block-scalar content one level deeper than the properties.
+    const reasonText = reason.split('\n').map(l => reasonTextPad + l).join('\n');
 
-    // Build path entry with snyk's exact indentation (8-space list item, 14-space props)
-    const pathEntry = `        - ${quotedKey}\n` +
-                      `              reason: >-\n` +
+    // Build path entry matching the file's detected indentation.
+    const pathEntry = `${dashPad}- ${quotedKey}\n` +
+                      `${propPad}reason: >-\n` +
                       `${reasonText}\n` +
-                      `              expires: ${expires}\n` +
-                      `              created: ${created}\n`;
+                      `${propPad}expires: ${expires}\n` +
+                      `${propPad}created: ${created}\n`;
 
     // Returns the index just after the newline that terminates a matched line
     function afterLine(matchIndex, matchLength) {
@@ -242,14 +258,15 @@ function addSnykIgnoreEntry(snykFile, vulnId, depPath, reason, expires) {
         const idLineEnd = afterLine(idMatch.index, idMatch[0].length);
 
         // Search for an existing entry with the same dep path within this vuln's block.
-        // The block ends at the next 4-space-indented line (another vuln ID or section key).
+        // The block ends at the next line indented no deeper than the vuln ID (another
+        // vuln ID or a top-level section key); path/property lines are indented deeper.
         const afterId = content.slice(idLineEnd);
-        const nextBlockMatch = afterId.match(/^[ ]{4}\S/m);
+        const nextBlockMatch = afterId.match(new RegExp(`^[ ]{0,${idIndent}}\\S`, 'm'));
         const vulnBlockContent = nextBlockMatch ? afterId.slice(0, nextBlockMatch.index) : afterId;
 
-        // An entry: 8-space list item line + property lines (12+ space indent)
+        // An entry: the list-item line plus its deeper-indented property lines.
         const keyEsc = quotedKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const existingEntryRe = new RegExp(`        - ${keyEsc}\\n(?:[ ]{12,}[^\\n]*\\n)*`);
+        const existingEntryRe = new RegExp(`^[ ]{${dashIndent}}- ${keyEsc}\\n(?:[ ]{${dashIndent + 1},}[^\\n]*\\n)*`, 'm');
         const existingEntry = vulnBlockContent.match(existingEntryRe);
 
         if (existingEntry) {
@@ -266,9 +283,9 @@ function addSnykIgnoreEntry(snykFile, vulnId, depPath, reason, expires) {
         const ignoreMatch = content.match(/^ignore:\s*$/m);
         if (ignoreMatch) {
             const insertAt = afterLine(ignoreMatch.index, ignoreMatch[0].length);
-            content = content.slice(0, insertAt) + `    ${vulnId}:\n${pathEntry}` + content.slice(insertAt);
+            content = content.slice(0, insertAt) + `${idPad}${vulnId}:\n${pathEntry}` + content.slice(insertAt);
         } else {
-            content += `\n    ${vulnId}:\n${pathEntry}`;
+            content += `\n${idPad}${vulnId}:\n${pathEntry}`;
         }
     }
 

@@ -103,6 +103,8 @@ export class AgColumn<TValue = any>
     public highlighted: ColumnHighlightPosition | null;
     public formulaRef: string | null = null;
 
+    public isCalculatedCol = false;
+
     private lastLeftPinned: boolean = false;
     private firstRightPinned: boolean = false;
 
@@ -177,6 +179,7 @@ export class AgColumn<TValue = any>
         const colSpanChanged = colDef.spanRows !== this.colDef.spanRows;
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
+        this.initCalculatedCol();
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
@@ -201,6 +204,8 @@ export class AgColumn<TValue = any>
 
     // this is done after constructor as it uses gridOptionsService
     public postConstruct(): void {
+        this.initCalculatedCol();
+
         this.initState();
 
         this.initMinAndMaxWidths();
@@ -385,10 +390,14 @@ export class AgColumn<TValue = any>
     }
 
     public isSuppressPaste(rowNode: IRowNode): boolean {
-        if (this.colDef.calculatedExpression != null && this.beans.calculatedColsSvc != null) {
+        if (this.isCalculatedCol) {
             return true;
         }
         return this.isColumnFunc(rowNode, this.colDef?.suppressPaste ?? null);
+    }
+
+    private initCalculatedCol(): void {
+        this.isCalculatedCol = this.colDef.calculatedExpression != null && this.beans.calculatedColsSvc != null;
     }
 
     public isResizable(): boolean {

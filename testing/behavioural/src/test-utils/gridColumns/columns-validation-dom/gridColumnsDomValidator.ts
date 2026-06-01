@@ -36,6 +36,60 @@ export class GridColumnsDomValidator {
         if (gridColumns.hasColumnGroups) {
             this.validateGroupHeaders(gridColumns, headerRoot);
         }
+
+        // ── Stale header cells (cells in DOM that no longer correspond to a column/group)
+        this.validateNoStaleHeaderCells(gridColumns, headerRoot);
+    }
+
+    /**
+     * Verifies the DOM contains no `.ag-header-cell` / `.ag-header-group-cell` whose `col-id` is not
+     * in the set the grid currently expects to render.
+     *
+     * Expected columns: `getAllDisplayedVirtualColumns()` — viewport-aware, so when column
+     * virtualisation drops a column from the DOM it is also dropped from the expected set.
+     * Expected groups: every group in the displayed trees, including padding groups (header rows
+     * are not column-virtualised at the group level in our test env, viewportRight === 0).
+     */
+    private validateNoStaleHeaderCells(gridColumns: GridColumns, headerRoot: HTMLElement): void {
+        const expectedColIds = new Set<string>();
+        for (const col of gridColumns.api.getAllDisplayedVirtualColumns() ?? []) {
+            expectedColIds.add(col.getColId());
+        }
+
+        for (const cell of headerRoot.querySelectorAll('.ag-header-cell[col-id]')) {
+            const colId = cell.getAttribute('col-id');
+            if (colId != null && !expectedColIds.has(colId)) {
+                this.errors.default.add(
+                    `Stale .ag-header-cell[col-id="${colId}"] found in DOM but column is not displayed.`
+                );
+            }
+        }
+
+        const expectedGroupIds = new Set<string>();
+        if (gridColumns.hasColumnGroups) {
+            const visitGroups = (items: (Column | ColumnGroup)[]) => {
+                for (const item of items) {
+                    if (!item.isColumn) {
+                        const group = item as ColumnGroup;
+                        expectedGroupIds.add(String(group.getUniqueId()));
+                        const children = group.getDisplayedChildren();
+                        if (children) {
+                            visitGroups(children);
+                        }
+                    }
+                }
+            };
+            visitGroups([...gridColumns.leftTree, ...gridColumns.centerTree, ...gridColumns.rightTree]);
+        }
+
+        for (const cell of headerRoot.querySelectorAll('.ag-header-group-cell[col-id]')) {
+            const colId = cell.getAttribute('col-id');
+            if (colId != null && !expectedGroupIds.has(colId)) {
+                this.errors.default.add(
+                    `Stale .ag-header-group-cell[col-id="${colId}"] found in DOM but group is not displayed.`
+                );
+            }
+        }
     }
 
     // ── Header root ─────────────────────────────────────────────────────────

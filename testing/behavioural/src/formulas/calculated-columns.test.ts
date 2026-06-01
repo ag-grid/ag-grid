@@ -19,6 +19,7 @@ import {
     FormulaModule,
     RowGroupingModule,
     ServerSideRowModelModule,
+    TreeDataModule,
     ViewportRowModelModule,
 } from 'ag-grid-enterprise';
 
@@ -46,6 +47,7 @@ describe('ag-grid calculated columns', () => {
             ColumnMenuModule,
             ContextMenuModule,
             RowGroupingModule,
+            TreeDataModule,
             NumberFilterModule,
             TextEditorModule,
             NumberEditorModule,
@@ -179,6 +181,25 @@ describe('ag-grid calculated columns', () => {
 
             if (colDef.colId === colId || colDef.field === colId) {
                 return colDef;
+            }
+        }
+
+        return undefined;
+    }
+
+    function findGroupDef(columnDefs: (ColDef | ColGroupDef)[], groupId: string): ColGroupDef | undefined {
+        for (const colDef of columnDefs) {
+            if (!('children' in colDef) || !colDef.children) {
+                continue;
+            }
+
+            if (colDef.groupId === groupId) {
+                return colDef;
+            }
+
+            const child = findGroupDef(colDef.children, groupId);
+            if (child) {
+                return child;
             }
         }
 
@@ -344,6 +365,57 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
+    test('grid api calculated column mutations do not mutate provided column definitions', async () => {
+        const revenueColDef: ColDef = { field: 'revenue' };
+        const costColDef: ColDef = { field: 'cost' };
+        const profitColDef: ColDef = {
+            colId: 'profit',
+            calculatedExpression: '[revenue] - [cost]',
+            cellDataType: 'number',
+        };
+        const columnDefs: ColDef[] = [revenueColDef, costColDef, profitColDef];
+        const api = createGrid('calculated-grid-api-no-mutation', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs,
+        });
+
+        api.addCalculatedColumn({ colId: 'margin', calculatedExpression: '[profit] / [revenue]' });
+        await asyncSetTimeout(1);
+
+        expect(columnDefs).toEqual([revenueColDef, costColDef, profitColDef]);
+        expect(columnDefs).toHaveLength(3);
+        expect(findColumnDef(api.getColumnDefs()!, 'margin')?.calculatedExpression).toBe('[profit] / [revenue]');
+
+        api.updateCalculatedColumn('profit', { headerName: 'Profit', calculatedExpression: '[revenue] * [cost]' });
+        await asyncSetTimeout(1);
+
+        expect(profitColDef).toEqual({
+            colId: 'profit',
+            calculatedExpression: '[revenue] - [cost]',
+            cellDataType: 'number',
+        });
+        expect(findColumnDef(api.getColumnDefs()!, 'profit')).toEqual(
+            expect.objectContaining({
+                colId: 'profit',
+                headerName: 'Profit',
+                calculatedExpression: '[revenue] * [cost]',
+            })
+        );
+
+        api.removeCalculatedColumn('profit');
+        await asyncSetTimeout(1);
+
+        expect(columnDefs).toEqual([revenueColDef, costColDef, profitColDef]);
+        expect(findColumnDef(api.getColumnDefs()!, 'profit')).toBeUndefined();
+        expect(findColumnDef(api.getColumnDefs()!, 'margin')).toBeTruthy();
+
+        api.setGridOption('columnDefs', columnDefs.slice());
+        await asyncSetTimeout(1);
+
+        expect(findColumnDef(api.getColumnDefs()!, 'profit')?.calculatedExpression).toBe('[revenue] - [cost]');
+        expect(findColumnDef(api.getColumnDefs()!, 'margin')).toBeUndefined();
+    });
+
     test('grid api updates calculated column cellDataType without keeping stale boolean renderer', async () => {
         const api = createGrid('calculated-grid-api-cell-data-type', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
@@ -412,6 +484,7 @@ describe('ag-grid calculated columns', () => {
                 { field: 'revenue', aggFunc: 'sum' },
                 { field: 'cost', aggFunc: 'sum' },
                 { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+                { colId: 'doubleProfit', calculatedExpression: '[profit] * 2', cellDataType: 'number' },
             ],
             groupDefaultExpanded: -1,
         });
@@ -430,8 +503,264 @@ describe('ag-grid calculated columns', () => {
 
         expect(emeaGroup.group).toBe(true);
         expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'profit', useFormatter: false })).toBe(19);
+        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'doubleProfit', useFormatter: false })).toBe(38);
         expect(apacGroup.group).toBe(true);
         expect(api.getCellValue({ rowNode: apacGroup, colKey: 'profit', useFormatter: false })).toBe(10);
+        expect(api.getCellValue({ rowNode: apacGroup, colKey: 'doubleProfit', useFormatter: false })).toBe(20);
+    });
+
+    test('calculated columns stay blank on row groups without aggregate source values while leaf rows still evaluate', async () => {
+        const api = createGrid('calculated-row-groups-no-aggregates', {
+            rowData: [
+                { id: 'r1', productType: 'A', product: 'Solar panel kit', revenue: 142000, cost: 96000 },
+                { id: 'r2', productType: 'A', product: 'Smart thermostat', revenue: 78000, cost: 52000 },
+                { id: 'r3', productType: 'B', product: 'Battery pack', revenue: 126000, cost: 101000 },
+            ],
+            columnDefs: [
+                { field: 'productType', rowGroup: true, hide: true },
+                { field: 'product' },
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        const groupA = api.getRowNode('row-group-productType-A')!;
+        expect(groupA.group).toBe(true);
+        expect(api.getDisplayedRowCount()).toBe(2);
+        expect(api.getCellValue({ rowNode: groupA, colKey: 'profit', useFormatter: false })).toBeUndefined();
+
+        groupA.setExpanded(true, undefined, true);
+        await asyncSetTimeout(1);
+
+        expect(api.getDisplayedRowCount()).toBe(4);
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: false })).toBe(46000);
+        expect(api.getCellValue({ rowNode: api.getRowNode('r2')!, colKey: 'profit', useFormatter: false })).toBe(26000);
+    });
+
+    test('calculated columns evaluate on tree data rows and stay blank on filler groups', async () => {
+        const parentApi = createGrid('calculated-tree-data-parent', {
+            treeData: true,
+            treeDataChildrenField: 'children',
+            rowData: [
+                {
+                    id: 'parent',
+                    name: 'Parent',
+                    revenue: 100,
+                    cost: 40,
+                    children: [{ id: 'child', name: 'Child', revenue: 30, cost: 10 }],
+                },
+            ],
+            columnDefs: [
+                { field: 'name' },
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(1);
+
+        expect(
+            parentApi.getCellValue({ rowNode: parentApi.getRowNode('parent')!, colKey: 'profit', useFormatter: false })
+        ).toBe(60);
+        expect(
+            parentApi.getCellValue({ rowNode: parentApi.getRowNode('child')!, colKey: 'profit', useFormatter: false })
+        ).toBe(20);
+
+        const fillerApi = createGrid('calculated-tree-data-filler', {
+            treeData: true,
+            getDataPath: (data) => data.path,
+            rowData: [{ id: 'leaf', path: ['Dept', 'Team', 'Leaf'], revenue: 30, cost: 10 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(1);
+
+        let fillerGroup: any;
+        fillerApi.forEachNode((node) => {
+            if (node.group && !node.data && !fillerGroup) {
+                fillerGroup = node;
+            }
+        });
+
+        expect(fillerGroup).toBeTruthy();
+        expect(fillerApi.getCellValue({ rowNode: fillerGroup, colKey: 'profit', useFormatter: false })).toBeUndefined();
+        expect(
+            fillerApi.getCellValue({ rowNode: fillerApi.getRowNode('leaf')!, colKey: 'profit', useFormatter: false })
+        ).toBe(20);
+    });
+
+    test('calculated columns evaluate on group and grand total footer rows', async () => {
+        const api = createGrid('calculated-row-group-footers', {
+            rowData: [
+                { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
+                { id: 'r2', region: 'EMEA', revenue: 20, cost: 8 },
+                { id: 'r3', region: 'APAC', revenue: 15, cost: 5 },
+            ],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            grandTotalRow: 'bottom',
+        });
+        await asyncSetTimeout(1);
+
+        const emeaFooter = api.getRowNode('rowGroupFooter_row-group-region-EMEA')!;
+        const apacFooter = api.getRowNode('rowGroupFooter_row-group-region-APAC')!;
+        const grandTotal = api.getRowNode('rowGroupFooter_ROOT_NODE_ID')!;
+
+        expect(emeaFooter).toBeTruthy();
+        expect(api.getCellValue({ rowNode: emeaFooter, colKey: 'profit', useFormatter: false })).toBe(19);
+        expect(apacFooter).toBeTruthy();
+        expect(api.getCellValue({ rowNode: apacFooter, colKey: 'profit', useFormatter: false })).toBe(10);
+        expect(grandTotal).toBeTruthy();
+        expect(api.getCellValue({ rowNode: grandTotal, colKey: 'profit', useFormatter: false })).toBe(29);
+    });
+
+    test('calculated columns aggregate across multiple group levels', async () => {
+        const api = createGrid('calculated-multi-level-groups', {
+            rowData: [
+                { id: 'r1', region: 'EMEA', country: 'UK', revenue: 10, cost: 3 },
+                { id: 'r2', region: 'EMEA', country: 'DE', revenue: 20, cost: 8 },
+                { id: 'r3', region: 'EMEA', country: 'DE', revenue: 5, cost: 1 },
+            ],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(1);
+
+        const emeaGroup = api.getRowNode('row-group-region-EMEA')!;
+        const ukGroup = api.getRowNode('row-group-region-EMEA-country-UK')!;
+        const deGroup = api.getRowNode('row-group-region-EMEA-country-DE')!;
+
+        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'profit', useFormatter: false })).toBe(23);
+        expect(api.getCellValue({ rowNode: ukGroup, colKey: 'profit', useFormatter: false })).toBe(7);
+        expect(api.getCellValue({ rowNode: deGroup, colKey: 'profit', useFormatter: false })).toBe(16);
+    });
+
+    test('sorting on a calculated column orders group rows by aggregate result', async () => {
+        const api = createGrid('calculated-sort-grouped', {
+            rowData: [
+                { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
+                { id: 'r2', region: 'EMEA', revenue: 20, cost: 8 },
+                { id: 'r3', region: 'APAC', revenue: 15, cost: 5 },
+            ],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+                {
+                    colId: 'profit',
+                    calculatedExpression: '[revenue] - [cost]',
+                    cellDataType: 'number',
+                    sortable: true,
+                },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        api.applyColumnState({ state: [{ colId: 'profit', sort: 'asc' }], defaultState: { sort: null } });
+        await asyncSetTimeout(1);
+
+        const ascOrder: string[] = [];
+        api.forEachNodeAfterFilterAndSort((node) => {
+            if (node.group && node.key) {
+                ascOrder.push(node.key);
+            }
+        });
+        expect(ascOrder).toEqual(['APAC', 'EMEA']);
+
+        api.applyColumnState({ state: [{ colId: 'profit', sort: 'desc' }], defaultState: { sort: null } });
+        await asyncSetTimeout(1);
+
+        const descOrder: string[] = [];
+        api.forEachNodeAfterFilterAndSort((node) => {
+            if (node.group && node.key) {
+                descOrder.push(node.key);
+            }
+        });
+        expect(descOrder).toEqual(['EMEA', 'APAC']);
+    });
+
+    test('grid api adds a calculated column while grouped and it evaluates on group rows', async () => {
+        const api = createGrid('calculated-api-while-grouped', {
+            rowData: [
+                { id: 'r1', region: 'EMEA', revenue: 10, cost: 3 },
+                { id: 'r2', region: 'EMEA', revenue: 20, cost: 8 },
+                { id: 'r3', region: 'APAC', revenue: 15, cost: 5 },
+            ],
+            columnDefs: [
+                { field: 'region', rowGroup: true, hide: true },
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+            ],
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(1);
+
+        const created = waitForEvent('calculatedColumnCreated', api);
+        api.addCalculatedColumn({
+            colId: 'profit',
+            calculatedExpression: '[revenue] - [cost]',
+            cellDataType: 'number',
+        });
+        await created;
+        await asyncSetTimeout(1);
+
+        const emeaGroup = api.getRowNode('row-group-region-EMEA')!;
+        const apacGroup = api.getRowNode('row-group-region-APAC')!;
+        expect(api.getCellValue({ rowNode: emeaGroup, colKey: 'profit', useFormatter: false })).toBe(19);
+        expect(api.getCellValue({ rowNode: apacGroup, colKey: 'profit', useFormatter: false })).toBe(10);
+    });
+
+    test('calculated columns aggregate on tree data parents with aggregated inputs', async () => {
+        const api = createGrid('calculated-tree-data-aggregated', {
+            treeData: true,
+            getDataPath: (data) => data.path,
+            rowData: [
+                { id: 'l1', path: ['Dept', 'Team A', 'Leaf 1'], revenue: 30, cost: 10 },
+                { id: 'l2', path: ['Dept', 'Team A', 'Leaf 2'], revenue: 20, cost: 5 },
+                { id: 'l3', path: ['Dept', 'Team B', 'Leaf 3'], revenue: 40, cost: 25 },
+            ],
+            columnDefs: [
+                { field: 'revenue', aggFunc: 'sum' },
+                { field: 'cost', aggFunc: 'sum' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]', cellDataType: 'number' },
+            ],
+            groupDefaultExpanded: -1,
+        });
+        await asyncSetTimeout(1);
+
+        let deptGroup: any;
+        let teamAGroup: any;
+        api.forEachNode((node) => {
+            if (node.key === 'Dept') {
+                deptGroup = node;
+            }
+            if (node.key === 'Team A') {
+                teamAGroup = node;
+            }
+        });
+
+        expect(api.getCellValue({ rowNode: teamAGroup, colKey: 'profit', useFormatter: false })).toBe(35);
+        expect(api.getCellValue({ rowNode: deptGroup, colKey: 'profit', useFormatter: false })).toBe(50);
+        expect(api.getCellValue({ rowNode: api.getRowNode('l3')!, colKey: 'profit', useFormatter: false })).toBe(15);
     });
 
     test.each([
@@ -686,12 +1015,14 @@ describe('ag-grid calculated columns', () => {
     test('dialog displays and stores header references', async () => {
         const revenueColId = 'server-revenue-9d5101c8-4c2a-48e0-9ad2';
         const costColId = 'server-cost-81f3431b-e4aa-4ef8-bef0';
+        const created = vi.fn();
         const api = createGrid('calculated-dialog-references', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [
                 { field: 'revenue', colId: revenueColId, headerName: 'Revenue' },
                 { field: 'cost', colId: costColId, headerName: 'Cost' },
             ],
+            onCalculatedColumnCreated: created,
         });
 
         showColumnMenu(api, revenueColId);
@@ -719,6 +1050,13 @@ describe('ag-grid calculated columns', () => {
         const calculatedDef = findColumnDef(api.getColumnDefs()!, 'calculated_1');
 
         expect(calculatedDef?.calculatedExpression).toBe(`[${revenueColId}] - [${costColId}]`);
+        expect(created).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: api.getColumn('calculated_1'),
+                expression: `[${revenueColId}] - [${costColId}]`,
+                source: 'calculatedColumn',
+            })
+        );
         expect(api.getCellValue({ rowNode, colKey: 'calculated_1', useFormatter: false })).toBe(7);
 
         showColumnMenu(api, 'calculated_1');
@@ -727,6 +1065,234 @@ describe('ag-grid calculated columns', () => {
         await asyncSetTimeout(1);
 
         expect(getExpressionInput().value).toBe('[Revenue] - [Cost]');
+    });
+
+    test('dialog adds calculated columns inside groups without mutating provided column definitions', async () => {
+        const year2025: ColGroupDef = {
+            groupId: 'year_2025',
+            headerName: '2025',
+            children: [
+                { field: 'revenue2025', colId: 'revenue_2025', headerName: 'Revenue' },
+                { field: 'cost2025', colId: 'cost_2025', headerName: 'Cost' },
+            ],
+        };
+        const year2026: ColGroupDef = {
+            groupId: 'year_2026',
+            headerName: '2026',
+            children: [
+                { field: 'revenue2026', colId: 'revenue_2026', headerName: 'Revenue' },
+                { field: 'cost2026', colId: 'cost_2026', headerName: 'Cost' },
+            ],
+        };
+        const columnDefs: ColGroupDef[] = [year2025, year2026];
+        const api = createGrid('calculated-dialog-group-no-mutation', {
+            rowData: [{ id: 'r1', revenue2025: 10, cost2025: 3, revenue2026: 20, cost2026: 8 }],
+            columnDefs,
+        });
+
+        showColumnMenu(api, 'revenue_2025');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Add Calculated Column');
+        await asyncSetTimeout(1);
+
+        setExpression('[2025 Revenue] - [2025 Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        expect(columnDefs).toEqual([year2025, year2026]);
+        expect(year2025.children).toHaveLength(2);
+
+        const projectedYear2025 = findGroupDef(api.getColumnDefs()!, 'year_2025');
+        expect(
+            projectedYear2025?.children.map((colDef) => ('children' in colDef ? colDef.groupId : colDef.colId))
+        ).toEqual(['revenue_2025', 'calculated_1', 'cost_2025']);
+        expect(findColumnDef(api.getColumnDefs()!, 'calculated_1')?.calculatedExpression).toBe(
+            '[revenue_2025] - [cost_2025]'
+        );
+    });
+
+    test('dispatches calculated column API lifecycle events', async () => {
+        const created = vi.fn();
+        const changed = vi.fn();
+        const removed = vi.fn();
+        const api = createGrid('calculated-api-events', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+            onCalculatedColumnCreated: created,
+            onCalculatedColumnExpressionChanged: changed,
+            onCalculatedColumnRemoved: removed,
+        });
+
+        api.addCalculatedColumn({ colId: 'profit', calculatedExpression: '[revenue] - [cost]' });
+        await asyncSetTimeout(1);
+        expect(created).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: api.getColumn('profit'),
+                expression: '[revenue] - [cost]',
+                source: 'api',
+            })
+        );
+
+        api.updateCalculatedColumn('profit', { headerName: 'Profit' });
+        await asyncSetTimeout(1);
+        expect(changed).not.toHaveBeenCalled();
+
+        api.updateCalculatedColumn('profit', { calculatedExpression: '[revenue] * [cost]' });
+        await asyncSetTimeout(1);
+        expect(changed).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: api.getColumn('profit'),
+                oldExpression: '[revenue] - [cost]',
+                expression: '[revenue] * [cost]',
+                source: 'api',
+            })
+        );
+
+        const removedColumn = api.getColumn('profit');
+        api.removeCalculatedColumn('profit');
+        await asyncSetTimeout(1);
+        expect(removed).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: removedColumn,
+                expression: '[revenue] * [cost]',
+                source: 'api',
+            })
+        );
+    });
+
+    test('does not dispatch calculated column lifecycle events for rejected API mutations', async () => {
+        const created = vi.fn();
+        const changed = vi.fn();
+        const api = createGrid('calculated-rejected-api-events', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            onCalculatedColumnCreated: created,
+            onCalculatedColumnExpressionChanged: changed,
+        });
+        const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        try {
+            api.addCalculatedColumn({ colId: 'bad', calculatedExpression: '[missing] + 1' });
+            api.updateCalculatedColumn('profit', { calculatedExpression: '[missing] + 1' });
+            await asyncSetTimeout(1);
+
+            expect(api.getColumn('bad')).toBeNull();
+            expect(created).not.toHaveBeenCalled();
+            expect(changed).not.toHaveBeenCalled();
+            expect(api.getColumn('profit')?.getColDef().calculatedExpression).toBe('[revenue] - [cost]');
+        } finally {
+            consoleWarnSpy.mockRestore();
+        }
+    });
+
+    test('dispatches calculated column UI update and remove events', async () => {
+        const changed = vi.fn();
+        const removed = vi.fn();
+        const api = createGrid('calculated-ui-events', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue', headerName: 'Revenue' },
+                { field: 'cost', headerName: 'Cost' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            onCalculatedColumnExpressionChanged: changed,
+            onCalculatedColumnRemoved: removed,
+        });
+
+        showColumnMenu(api, 'profit');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Edit Calculated Column');
+        await asyncSetTimeout(1);
+
+        setExpression('[Revenue] * [Cost]');
+        clickDialogButton('Apply');
+        await asyncSetTimeout(1);
+
+        expect(changed).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: api.getColumn('profit'),
+                oldExpression: '[revenue] - [cost]',
+                expression: '[revenue] * [cost]',
+                source: 'calculatedColumn',
+            })
+        );
+
+        const removedColumn = api.getColumn('profit');
+        showColumnMenu(api, 'profit');
+        await asyncSetTimeout(10);
+        await clickColumnMenuItem('Remove Calculated Column');
+        await asyncSetTimeout(1);
+
+        expect(removed).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: removedColumn,
+                expression: '[revenue] * [cost]',
+                source: 'calculatedColumn',
+            })
+        );
+    });
+
+    test('dispatches calculated column validation state changes after column references change', async () => {
+        const validationStateChanged = vi.fn();
+        const api = createGrid('calculated-validation-events', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            onCalculatedColumnValidationStateChanged: validationStateChanged,
+        });
+
+        await asyncSetTimeout(1);
+        expect(validationStateChanged).not.toHaveBeenCalled();
+
+        api.updateGridOptions({
+            columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue] - [cost]' }],
+        });
+        await asyncSetTimeout(1);
+
+        expect(validationStateChanged).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: api.getColumn('profit'),
+                valid: false,
+                reason: 'unknownReference',
+            })
+        );
+
+        validationStateChanged.mockClear();
+        api.updateGridOptions({
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+        });
+        await asyncSetTimeout(1);
+
+        expect(validationStateChanged).toHaveBeenCalledWith(
+            expect.objectContaining({
+                column: api.getColumn('profit'),
+                valid: true,
+            })
+        );
+        expect(validationStateChanged.mock.calls[0][0].reason).toBeUndefined();
+    });
+
+    test('does not dispatch validation state changes for initial invalid calculated columns', async () => {
+        const validationStateChanged = vi.fn();
+        createGrid('calculated-initial-invalid-validation-events', {
+            rowData: [{ id: 'r1', revenue: 10 }],
+            columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue] - [missing]' }],
+            onCalculatedColumnValidationStateChanged: validationStateChanged,
+        });
+
+        await asyncSetTimeout(1);
+        expect(validationStateChanged).not.toHaveBeenCalled();
     });
 
     test('calculated column menu items are grouped by separators', async () => {
