@@ -252,7 +252,7 @@ export default defineConfig({
         react(),
         markdoc(),
         sitemap(getSitemapConfig({ chartsSitemap: CHARTS_SITEMAP_INDEX_URL, studioSitemap: STUDIO_SITEMAP_INDEX_URL })),
-        agHtaccessGen({ include: HTACCESS === 'true' }),
+        agHtaccessGen({ htaccessEnv: HTACCESS }),
         agRedirectsChecker({
             skip: CHECK_REDIRECTS !== 'true',
         }),

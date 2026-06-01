@@ -17,6 +17,10 @@ cd documentation/ag-grid-docs/dist
 FILENAME=release_"$ZIP_PREFIX"_v"$ZIP_PREFIX".zip
 echo "Creating $FILENAME"
 zip -qr ../../../$FILENAME *
+# The glob above skips dotfiles, so add the generated .htaccess explicitly (present on staging/production builds)
+if [ -f .htaccess ]; then
+  zip -q ../../../$FILENAME .htaccess
+fi
 
 cd ../../../
 
